@@ -1,0 +1,22 @@
+#targets:
+#  $default:
+#    builders:
+#      route_collector|route_gen:
+#        enabled: true
+
+builders:
+  route_collector:
+    target: ":auto_route_annotation"
+    import: "package:auto_route_annotation/builder.dart"
+    builder_factories: ["routeCollector"]
+    build_extensions: {".dart": [".auto_route.dart"]}
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["routeCollector|route_builder"]
+    runs_before: ["route_gen|route_builder"]
+  route_gen:
+    import: 'package:auto_route_annotation/builder.dart'
+    builder_factories: ['routeBuilder']
+    build_extensions: { '.dart': ['.router.dart'] }
+    auto_apply: dependents
+    build_to: source

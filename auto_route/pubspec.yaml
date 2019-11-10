@@ -1,0 +1,13 @@
+name: auto_route
+description: A new Flutter package.
+version: 0.0.1
+author:
+homepage:
+
+environment:
+  sdk: ">=2.5.0 <3.0.0"
+
+dependencies:
+
+
+dev_dependencies:

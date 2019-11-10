@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/auto_route_annotation/auto_route_annotation.iml" filepath="$PROJECT_DIR$/auto_route_annotation/auto_route_annotation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/auto_route_library.iml" filepath="$PROJECT_DIR$/.idea/auto_route_library.iml" />
+    </modules>
+  </component>
+</project>
