@@ -1,3 +1,0 @@
-class RouterApp {
-  const RouterApp();
-}

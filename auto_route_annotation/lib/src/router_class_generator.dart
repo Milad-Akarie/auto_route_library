@@ -22,6 +22,8 @@ class RouterClassGenerator {
     _generateRouteNames();
     _generateRouteGeneratorFunction();
 
+    _generateNeededFunctions();
+
     // close router class
     _writeln("}");
     _generateArgumentHolders();
@@ -36,9 +38,18 @@ class RouterClassGenerator {
   void _generateRouteNames() {
     _newLine();
     routes.forEach((r) {
-      final routeName = _routeNameFromClassName(r.className);
+      final routeName = _generateRouteName(r);
       return _writeln(" static const $routeName = '/${routeName}';");
     });
+  }
+
+  String _generateRouteName(RouteConfig r) {
+    String routeName = _routeNameFromClassName(r.className);
+    if (r.name != null) {
+      final strippedName = r.name.replaceAll(r"\s", "");
+      if (strippedName.isNotEmpty) routeName = strippedName;
+    }
+    return routeName;
   }
 
   _routeNameFromClassName(String className) {
@@ -63,7 +74,7 @@ class RouterClassGenerator {
   }
 
   generateRoute(RouteConfig r) {
-    _writeln("case ${_routeNameFromClassName(r.className)}:");
+    _writeln("case ${_generateRouteName(r)}:");
 
     StringBuffer constructorParams = StringBuffer("");
 
@@ -72,16 +83,20 @@ class RouterClassGenerator {
         final param = r.parameters[0];
 
         // throw in exception if passed args are not the same as declared args
-        _writeln("if (args is! ${param.type}) throw ('Expected ${param.type} found \${args.runtimeType}');");
+        _writeln("_checkArgsType<${param.type}>(args);");
+        _writeln("final typedArgs = args as ${param.type};");
+
         if (param.isPositional)
-          constructorParams.write("args as ${param.type}");
-        else
-          constructorParams.write("${param.name}:args as ${param.type}");
+          constructorParams.write("typedArgs");
+        else {
+          constructorParams.write("${param.name}: typedArgs");
+          if (param.defaultValueCode != null) constructorParams.write(" ?? ${param.defaultValueCode}");
+        }
       } else {
         // throw in exception if passed args are not the same as declared args
-        _writeln(
-            "if (args is! ${r.className}Arguments) throw ('Expected ${r.className}Arguments found \${args.runtimeType}');");
-        _writeln("final typedArgs = args as ${r.className}Arguments;");
+        _writeln("_checkArgsType<${r.className}Arguments>(args);");
+
+        _writeln("final typedArgs = args as ${r.className}Arguments ?? ${r.className}Arguments();");
 
         r.parameters.asMap().forEach((i, param) {
           if (param.isPositional)
@@ -93,8 +108,11 @@ class RouterClassGenerator {
         });
       }
     }
-    _writeln(
-        "return MaterialPageRoute(builder: (_) => ${r.className}(${constructorParams.toString()}), settings: settings);");
+    _write(
+        "return MaterialPageRoute(builder: (_) => ${r.className}(${constructorParams.toString()}), settings: settings");
+    if (r.fullscreenDialog != null) _write(",fullscreenDialog:${r.fullscreenDialog.toString()}");
+    if (r.maintainState != null) _write(",maintainState:${r.maintainState.toString()}");
+    _writeln(");");
     _writeln("break;");
   }
 
@@ -125,10 +143,18 @@ class RouterClassGenerator {
     _writeln("$argsClassName({");
     r.parameters.asMap().forEach((i, param) {
       _write("this.${param.name}");
+      if (param.defaultValueCode != null) _write(" = ${param.defaultValueCode}");
       if (i != r.parameters.length - 1) _write(",");
     });
     _writeln("});");
 
     _writeln("}");
+  }
+
+  void _generateNeededFunctions() {
+    _newLine();
+    _writeln("static void _checkArgsType<T>(Object args) {");
+    _writeln("if (args != null && args is! T)");
+    _writeln("throw ('Arguments Mistype: expected \${T.toString()} passed \${args.runtimeType}');\n}");
   }
 }

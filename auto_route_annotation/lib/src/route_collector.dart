@@ -1,25 +1,27 @@
-import 'package:auto_route/route_gen_annotation.dart';
+import 'package:analyzer/dart/element/element.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'route_builder_config.dart';
 
-const TypeChecker autoRoute = TypeChecker.fromRuntime(AutoRoute);
-
-class RouteCollector extends Generator {
+class RouteCollector extends GeneratorForAnnotation<AutoRoute> {
   final List<RouteConfig> collectedRoutes;
 
-  RouteCollector(this.collectedRoutes);
+  RouteCollector(this.collectedRoutes) {
+    print("--------------Router Collecter construct");
+  }
 
   @override
-  generate(LibraryReader library, BuildStep buildStep) async {
-    final inputId = buildStep.inputId;
-    library.annotatedWith(autoRoute).forEach((el) {
-      final RouteConfigBuilder configBuilder =
-          RouteConfigBuilder(library: library, inputId: inputId, annotatedElement: el);
-      collectedRoutes.add(configBuilder.build());
-    });
+  generateForAnnotatedElement(Element element, ConstantReader annotation, BuildStep buildStep) async {
+    final RouteConfigBuilder configBuilder =
+        RouteConfigBuilder(classElement: element, inputId: buildStep.inputId, annotation: annotation);
+    collectedRoutes.add(configBuilder.build());
 
-    return null;
+//    return "// ${element.name}";
+//
+//    final outputFile = AssetId(buildStep.inputId.package, 'lib/app.router.dart');
+//
+//    return buildStep.writeAsString(outputFile, "//generated}");
   }
 }
