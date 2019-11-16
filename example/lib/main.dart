@@ -1,15 +1,17 @@
-import 'package:auto_route/router.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+import 'router.dart';
 
-@AutoRouteApp(["ProductDetails,login"])
+void main() {
+  runApp(MyApp());
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       onGenerateRoute: Router.onGenerateRoute,
-      initialRoute: Router.HomeScreen,
+      initialRoute: Router.homePageRoute,
     );
   }
 }

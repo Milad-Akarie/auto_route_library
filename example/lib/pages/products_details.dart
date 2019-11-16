@@ -1,12 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-@AutoRoute()
-class ProductDetails extends StatelessWidget {
-  final int id;
-  final String name;
+import '../transitions.dart';
 
-  const ProductDetails(this.id, {this.name = "default name"});
+@AutoRoute(transitionBuilder: rotationTransition, durationInMilliseconds: 800)
+class ProductDetails extends StatelessWidget {
+  final String name;
+  final int id;
+
+  const ProductDetails({this.id, this.name = "default value"});
 
   @override
   Widget build(BuildContext context) {

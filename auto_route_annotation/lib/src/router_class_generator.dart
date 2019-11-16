@@ -32,7 +32,12 @@ class RouterClassGenerator {
 
   void _generateImports() {
     _writeln("import 'package:flutter/material.dart';");
+    // write route imports
     routes.forEach((r) => _writeln(r.import));
+
+    // write transition builders imports
+    final builderFunctionsImports = routes.where((r) => r.transitionBuilder != null).map((r) => r.transitionBuilder.import).toSet();
+    builderFunctionsImports.forEach((import) => _writeln(import));
   }
 
   void _generateRouteNames() {
@@ -64,7 +69,8 @@ class RouterClassGenerator {
     _writeln("switch (settings.name) {");
     routes.forEach((r) => generateRoute(r));
 
-    _generateUnknownRoutePage();
+    // build unknown route error page if route is not found
+    _writeln("default: return _unknownRoutePage(settings.name);");
     // close switch case
     _writeln("}");
     _newLine();
@@ -82,8 +88,9 @@ class RouterClassGenerator {
       if (r.parameters.length == 1) {
         final param = r.parameters[0];
 
-        // throw in exception if passed args are not the same as declared args
-        _writeln("_checkArgsType<${param.type}>(args);");
+        // show an error page if passed args are not the same as declared args
+        _writeln("final errorRoute = _checkArgsType<${param.type}>(args);");
+        _writeln("if (errorRoute != null) return errorRoute;");
         _writeln("final typedArgs = args as ${param.type};");
 
         if (param.isPositional)
@@ -93,8 +100,9 @@ class RouterClassGenerator {
           if (param.defaultValueCode != null) constructorParams.write(" ?? ${param.defaultValueCode}");
         }
       } else {
-        // throw in exception if passed args are not the same as declared args
-        _writeln("_checkArgsType<${r.className}Arguments>(args);");
+        // show an error page  if passed args are not the same as declared args
+        _writeln("final errorRoute = _checkArgsType<${r.className}Arguments>(args);");
+        _writeln("if (errorRoute != null) return errorRoute;");
 
         _writeln("final typedArgs = args as ${r.className}Arguments ?? ${r.className}Arguments();");
 
@@ -108,24 +116,25 @@ class RouterClassGenerator {
         });
       }
     }
-    _write(
-        "return MaterialPageRoute(builder: (_) => ${r.className}(${constructorParams.toString()}), settings: settings");
-    if (r.fullscreenDialog != null) _write(",fullscreenDialog:${r.fullscreenDialog.toString()}");
-    if (r.maintainState != null) _write(",maintainState:${r.maintainState.toString()}");
+
+    final widget = "${r.className}(${constructorParams.toString()})";
+    if (r.transitionBuilder == null) {
+      _write("return MaterialPageRoute(builder: (_) => $widget, settings: settings,");
+      if (r.fullscreenDialog != null) _write("fullscreenDialog:${r.fullscreenDialog.toString()},");
+      if (r.maintainState != null) _write("maintainState:${r.maintainState.toString()},");
+    } else {
+      _write("return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,");
+      if (r.maintainState != null) _write(",maintainState:${r.maintainState.toString()}");
+      _write("transitionsBuilder: ${r.transitionBuilder.name},");
+      if (r.durationInMilliseconds != null) _write("transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),");
+    }
     _writeln(");");
     _writeln("break;");
   }
 
-  void _generateUnknownRoutePage() {
-    _writeln("default:");
-    _writeln(
-        "return MaterialPageRoute(builder: (_) => \n Scaffold(body: \n Container(color: Colors.redAccent,\n child: Center(\n  child: Text(\n 'Route name \${settings.name} is not registered'),),),),);");
-  }
-
   void _generateArgumentHolders() {
-    _newLine();
-    _writeln("//----------------------------------------------");
     final routesWithArgsHolders = routes.where((r) => r.parameters != null && r.parameters.length > 1);
+    if (routesWithArgsHolders.isNotEmpty) _writeln("\n//----------------------------------------------");
     routesWithArgsHolders.forEach((r) {
       _generateArgsHolder(r);
     });
@@ -152,9 +161,27 @@ class RouterClassGenerator {
   }
 
   void _generateNeededFunctions() {
-    _newLine();
-    _writeln("static void _checkArgsType<T>(Object args) {");
-    _writeln("if (args != null && args is! T)");
-    _writeln("throw ('Arguments Mistype: expected \${T.toString()} passed \${args.runtimeType}');\n}");
+    _writeln("\nstatic PageRoute _unknownRoutePage(String routeName) => "
+        "MaterialPageRoute(builder: (ctx) => Scaffold(body: Container("
+        "color: Colors.redAccent,width: MediaQuery.of(ctx).size.width,"
+        "padding: const EdgeInsets.symmetric(horizontal: 16.0),"
+        "child: Column(mainAxisAlignment: MainAxisAlignment.center,children: <Widget>["
+        "Text('Route name \$routeName is not found!', textAlign: TextAlign.center,),"
+        "const SizedBox(height: 16.0),"
+        "OutlineButton.icon(label: Text('Back'), icon: Icon(Icons.arrow_back), onPressed: () => Navigator.of(ctx).pop(),)"
+        "],),),),);");
+
+    _writeln("\nstatic PageRoute _checkArgsType<T>(Object args) {"
+        "if (args != null && args is! T)"
+        "return MaterialPageRoute(builder: (ctx) => Scaffold(body: Container("
+        "color: Colors.redAccent,width: MediaQuery.of(ctx).size.width,"
+        "padding: const EdgeInsets.symmetric(horizontal: 16.0),"
+        "child: Column(mainAxisAlignment: MainAxisAlignment.center,children: <Widget>["
+        "const Text('Arguments Mistype!',textAlign: TextAlign.center,style: const TextStyle(fontSize: 20),),"
+        "const SizedBox(height: 8.0),"
+        "Text('Expected (\${T.toString()}),  found (\${args.runtimeType})', textAlign: TextAlign.center,),"
+        "const SizedBox(height: 16.0),"
+        "OutlineButton.icon(label: Text('Back'), icon: Icon(Icons.arrow_back), onPressed: () => Navigator.of(ctx).pop(),)"
+        "],),),),); else return null;}");
   }
 }

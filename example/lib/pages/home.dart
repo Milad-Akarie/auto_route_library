@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import 'router.dart';
+import '../router.dart';
 
-@AutoRoute(name: "HomeScreen", fullscreenDialog: false)
+@AutoRoute()
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(Router.productDetailsRoute, arguments: 123);
+          Navigator.of(context).pushNamed(Router.LoginRouteName,arguments: 299);
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

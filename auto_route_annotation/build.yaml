@@ -1,23 +1,19 @@
-
 builders:
-    route_collector:
-      import: "package:auto_route_annotation/builder.dart"
-      builder_factories: ["routeCollector"]
-      build_extensions: {'.dart': ['.auto_route.dart']}
-      auto_apply: dependents
-      build_to: cache
-      applies_builders: [":router_builder"]
-      runs_before: [":router_builder"]
-    router_builder:
-      import: 'package:auto_route_annotation/builder.dart'
-      builder_factories: ['routeBuilder']
-      required_inputs: [".auto.route.dart"]
-      build_extensions: {'.dart':  ['.router.dart'] }
-      auto_apply: dependents
-      build_to: source
-#      applies_builders: [":extract_archive_builder"]
-#post_process_builders:
-#  extract_archive_builder:
+  autoRouteGenerator:
+    import: "package:auto_route_annotation/builder.dart"
+    builder_factories: ["autoRouteGenerator"]
+    build_extensions: {'.dart': ['.auto_route_config.dart']}
+    auto_apply: dependents
+    build_to: cache
+
+#  transitionGenerator:
 #    import: "package:auto_route_annotation/builder.dart"
-#    builder_factory: "postProcessBuilder"
-#    input_extensions: [".router.dart"]
+#    builder_factories: ["transitionGenerator"]
+#    build_extensions: {'.dart': ['.transition_config.dart']}
+#    auto_apply: dependents
+#    build_to: cache
+#post_process_builders:
+#  router_file_generator:
+#    import: "package:auto_route_annotation/builder.dart"
+#    builder_factory: "routerFileGeneratorBuilder"
+#    input_extensions: [".auto_route_config.json"]
