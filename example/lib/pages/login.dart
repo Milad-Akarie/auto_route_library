@@ -1,16 +1,17 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/auto_route_transitions.dart';
+import 'package:auto_route/auto_route_annotation.dart';
 import 'package:flutter/material.dart';
 
-@AutoRoute(name: "LoginRouteName", transitionBuilder: RouteTransitions.slideFromRight,fullscreenDialog: true)
-class Login extends StatelessWidget {
+@AutoRoute(initial: true)
+class LoginScreen extends StatelessWidget {
   final int id;
-
-  const Login({this.id = 100});
+  final String userName;
+  LoginScreen({this.id = 100, this.userName});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.red,
+      appBar: AppBar(),
       body: Container(
         child: Center(child: Text(id.toString())),
       ),

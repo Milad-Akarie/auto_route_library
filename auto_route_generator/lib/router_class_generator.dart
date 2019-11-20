@@ -1,5 +1,5 @@
-import 'package:auto_route_annotation/src/route_builder_config.dart';
-import 'package:auto_route_annotation/src/string_utils.dart';
+import 'package:auto_route_generator/route_config_builder.dart';
+import 'package:auto_route_generator/string_utils.dart';
 
 class RouterClassGenerator {
   final List<RouteConfig> routes;
@@ -9,16 +9,15 @@ class RouterClassGenerator {
   RouterClassGenerator(this.routes);
 
   // helper functions
-  _write(Object obj) => _stringBuffer.write(obj);
+  void _write(Object obj) => _stringBuffer.write(obj);
 
-  _writeln([Object obj]) => _stringBuffer.writeln(obj);
+  void _writeln([Object obj]) => _stringBuffer.writeln(obj);
 
-  _newLine() => _stringBuffer.writeln();
+  void _newLine() => _stringBuffer.writeln();
 
   String generate() {
     _generateImports();
-    _newLine();
-    _writeln("class Router {");
+    _writeln("\nclass Router {");
     _generateRouteNames();
     _generateRouteGeneratorFunction();
 
@@ -31,20 +30,25 @@ class RouterClassGenerator {
   }
 
   void _generateImports() {
-    _writeln("import 'package:flutter/material.dart';");
     // write route imports
-    routes.forEach((r) => _writeln(r.import));
-
-    // write transition builders imports
-    final builderFunctionsImports = routes.where((r) => r.transitionBuilder != null).map((r) => r.transitionBuilder.import).toSet();
-    builderFunctionsImports.forEach((import) => _writeln(import));
+    final imports = List<String>();
+    imports.add("import 'package:flutter/material.dart';");
+    routes.forEach((r) {
+      imports.add(r.import);
+      if (r.transitionBuilder != null) imports.add(r.transitionBuilder.import);
+    });
+    imports.toSet().forEach((import) => _writeln(import));
   }
 
   void _generateRouteNames() {
     _newLine();
     routes.forEach((r) {
-      final routeName = _generateRouteName(r);
-      return _writeln(" static const $routeName = '/${routeName}';");
+      if (r.initial != null && r.initial)
+        _writeln(" static const initialRoute = '/';");
+      else {
+        final routeName = _generateRouteName(r);
+        return _writeln(" static const $routeName = '/$routeName';");
+      }
     });
   }
 
@@ -57,7 +61,7 @@ class RouterClassGenerator {
     return routeName;
   }
 
-  _routeNameFromClassName(String className) {
+  String _routeNameFromClassName(String className) {
     final name = toLowerCamelCase(className);
     return "${name}Route";
   }
@@ -67,6 +71,7 @@ class RouterClassGenerator {
     _writeln("static Route<dynamic> onGenerateRoute(RouteSettings settings) {");
     _writeln("final args = settings.arguments;");
     _writeln("switch (settings.name) {");
+
     routes.forEach((r) => generateRoute(r));
 
     // build unknown route error page if route is not found
@@ -79,8 +84,9 @@ class RouterClassGenerator {
     _writeln("}");
   }
 
-  generateRoute(RouteConfig r) {
-    _writeln("case ${_generateRouteName(r)}:");
+  void generateRoute(RouteConfig r) {
+    final caseName = (r.initial != null && r.initial) ? "initialRoute" : _generateRouteName(r);
+    _writeln("case $caseName:");
 
     StringBuffer constructorParams = StringBuffer("");
 
@@ -89,8 +95,9 @@ class RouterClassGenerator {
         final param = r.parameters[0];
 
         // show an error page if passed args are not the same as declared args
-        _writeln("final errorRoute = _checkArgsType<${param.type}>(args);");
-        _writeln("if (errorRoute != null) return errorRoute;");
+        _writeln("if(_hasInvalidArgs<${param.type}>(args))");
+        _writeln("return _misTypedArgsRoute<${param.type}>(args);");
+
         _writeln("final typedArgs = args as ${param.type};");
 
         if (param.isPositional)
@@ -101,8 +108,8 @@ class RouterClassGenerator {
         }
       } else {
         // show an error page  if passed args are not the same as declared args
-        _writeln("final errorRoute = _checkArgsType<${r.className}Arguments>(args);");
-        _writeln("if (errorRoute != null) return errorRoute;");
+        _writeln("if(_hasInvalidArgs<${r.className}Arguments>(args))");
+        _writeln("return _misTypedArgsRoute<${r.className}Arguments>(args);");
 
         _writeln("final typedArgs = args as ${r.className}Arguments ?? ${r.className}Arguments();");
 
@@ -123,13 +130,14 @@ class RouterClassGenerator {
       if (r.fullscreenDialog != null) _write("fullscreenDialog:${r.fullscreenDialog.toString()},");
       if (r.maintainState != null) _write("maintainState:${r.maintainState.toString()},");
     } else {
-      _write("return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,");
+      _write(
+          "return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,");
       if (r.maintainState != null) _write(",maintainState:${r.maintainState.toString()}");
       _write("transitionsBuilder: ${r.transitionBuilder.name},");
-      if (r.durationInMilliseconds != null) _write("transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),");
+      if (r.durationInMilliseconds != null)
+        _write("transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),");
     }
     _writeln(");");
-    _writeln("break;");
   }
 
   void _generateArgumentHolders() {
@@ -171,8 +179,10 @@ class RouterClassGenerator {
         "OutlineButton.icon(label: Text('Back'), icon: Icon(Icons.arrow_back), onPressed: () => Navigator.of(ctx).pop(),)"
         "],),),),);");
 
-    _writeln("\nstatic PageRoute _checkArgsType<T>(Object args) {"
-        "if (args != null && args is! T)"
+    _writeln("static bool _hasInvalidArgs<T>(Object args) {"
+        "return (args != null && args is! T);\n}");
+
+    _writeln("\nstatic PageRoute _misTypedArgsRoute<T>(Object args) {"
         "return MaterialPageRoute(builder: (ctx) => Scaffold(body: Container("
         "color: Colors.redAccent,width: MediaQuery.of(ctx).size.width,"
         "padding: const EdgeInsets.symmetric(horizontal: 16.0),"
@@ -182,6 +192,6 @@ class RouterClassGenerator {
         "Text('Expected (\${T.toString()}),  found (\${args.runtimeType})', textAlign: TextAlign.center,),"
         "const SizedBox(height: 16.0),"
         "OutlineButton.icon(label: Text('Back'), icon: Icon(Icons.arrow_back), onPressed: () => Navigator.of(ctx).pop(),)"
-        "],),),),); else return null;}");
+        "],),),),);}");
   }
 }
