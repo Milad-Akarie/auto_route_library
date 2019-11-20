@@ -1,7 +1,9 @@
-import 'package:auto_route/route_gen_annotation.dart';
+import 'package:auto_route/auto_route_annotation.dart';
+import 'package:auto_route/transition_builders.dart';
+import 'package:example/router.dart';
 import 'package:flutter/material.dart';
 
-@AutoRoute()
+@AutoRoute(initial: true)
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -66,7 +68,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).pushNamed("sdf", arguments: "invalid");
+          Navigator.of(context).pushNamed(Router.loginRoute, arguments: 299);
         },
         tooltip: 'Increment',
         child: Icon(Icons.add),

@@ -1,4 +1,4 @@
-name: auto_route_annotation
+name: auto_route_generator
 description: A new Flutter package.
 version: 0.0.1
 author:
@@ -10,6 +10,7 @@ environment:
 dependencies:
   build: '>=0.12.0 <2.0.0'
   source_gen: ^0.9.4+6
+  glob:
   auto_route:
     path: ../auto_route/
 
