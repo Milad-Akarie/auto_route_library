@@ -18,7 +18,9 @@ class RouteConfigBuilder {
 
     final path = inputId.path;
     final package = inputId.package;
-    buildConfig.import = "import 'package:$package/${path.replaceFirst('lib/', '')}';";
+    buildConfig.import = "'package:$package/${path.replaceFirst('lib/', '')}'";
+
+
 
     buildConfig.parameters = classElement.unnamedConstructor.parameters
         ?.map((param) => RouteParameter.fromParameterElement(param))
@@ -40,15 +42,12 @@ class RouteConfigBuilder {
 
     if (annotation.peek("transitionBuilder") != null) {
       final res = annotation.peek("transitionBuilder").objectValue.toFunctionValue();
-      final import = "import 'package:${res.source.uri.path.replaceFirst('lib/', '')}';";
+      final import = "'package:${res.source.uri.path.replaceFirst('lib/', '')}'";
 
       final displayName = res.displayName.replaceFirst(RegExp("^_"), "");
-      print(displayName);
       final functionName = (res.isStatic && res.enclosingElement?.displayName != null)
           ? "${res.enclosingElement.displayName}.$displayName"
           : displayName;
-      print(functionName);
-
       buildConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
     }
 

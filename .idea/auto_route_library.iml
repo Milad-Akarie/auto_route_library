@@ -9,6 +9,9 @@
       <excludeFolder url="file://$MODULE_DIR$/auto_route_annotation/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/auto_route_annotation/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/auto_route_annotation/build" />
+      <excludeFolder url="file://$MODULE_DIR$/auto_route_generator/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/auto_route_generator/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/auto_route_generator/build" />
       <excludeFolder url="file://$MODULE_DIR$/example/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/example/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/example/build" />

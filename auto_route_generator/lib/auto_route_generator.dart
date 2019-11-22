@@ -9,6 +9,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'route_config_builder.dart';
+import 'string_utils.dart';
 
 class AutoRouteGenerator extends GeneratorForAnnotation<AutoRoute> {
   final _routerFile = File("lib/router.dart");
@@ -30,7 +31,8 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRoute> {
       _routes = (existingConfig != null && existingConfig.isNotEmpty) ? jsonDecode(existingConfig) : Map();
     }
 
-    _routes[routeConfig.className] = routeConfig.toJson();
+    _routes[encodeString(routeConfig.import)] = routeConfig.toJson();
+
     _routerConfigFile.writeAsString(jsonEncode(_routes));
 
     final routesConfig = _routes.values.map<RouteConfig>((v) => RouteConfig.fromJson(v)).toList();
