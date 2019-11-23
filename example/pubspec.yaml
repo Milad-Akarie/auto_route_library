@@ -10,7 +10,6 @@ dependencies:
     sdk: flutter
   auto_route:
     path: ../auto_route/
-
   cupertino_icons: ^0.1.2
 
 dev_dependencies:

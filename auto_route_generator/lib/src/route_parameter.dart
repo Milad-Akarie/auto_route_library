@@ -15,7 +15,7 @@ class RouteParameter {
     isPositional = parameterElement.isPositional;
     defaultValueCode = parameterElement.defaultValueCode;
 
-    final path = parameterElement.type.element?.source?.uri.toString();
+    final path = parameterElement.type.element.source.uri.toString();
     // we don't need to import core types
     if (path != null && !path.startsWith("dart:core/"))
       import = "'$path'";
