@@ -42,4 +42,11 @@ class RouteConfig {
     maintainState = json['maintainState'];
     parameters = json['parameters']?.map<RouteParameter>((v) => RouteParameter.fromJson(v))?.toList();
   }
+
+  @override
+  String toString() {
+    return 'RouteConfig{initial: $initial, import: $import, className: $className}';
+  }
+
+
 }

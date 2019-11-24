@@ -32,12 +32,17 @@ class RouterClassGenerator {
   void _generateImports() {
     // write route imports
     final imports = List<String>();
-    imports.add("import 'package:flutter/material.dart';");
+    imports.add("'package:flutter/material.dart'");
     routes.forEach((r) {
       imports.add(r.import);
       if (r.transitionBuilder != null) imports.add(r.transitionBuilder.import);
+      if (r.parameters != null) {
+        r.parameters.forEach((param) {
+          if (param.import != null) imports.add(param.import);
+        });
+      }
     });
-    imports.toSet().forEach((import) => _writeln(import));
+    imports.toSet().forEach((import) => _writeln("import $import;"));
   }
 
   void _generateRouteNames() {
@@ -130,12 +135,10 @@ class RouterClassGenerator {
       if (r.fullscreenDialog != null) _write("fullscreenDialog:${r.fullscreenDialog.toString()},");
       if (r.maintainState != null) _write("maintainState:${r.maintainState.toString()},");
     } else {
-      _write(
-          "return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,");
+      _write("return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,");
       if (r.maintainState != null) _write(",maintainState:${r.maintainState.toString()}");
       _write("transitionsBuilder: ${r.transitionBuilder.name},");
-      if (r.durationInMilliseconds != null)
-        _write("transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),");
+      if (r.durationInMilliseconds != null) _write("transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),");
     }
     _writeln(");");
   }

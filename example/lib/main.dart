@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'router.dart';
 
 void main() {
-  runApp(MyApp());
+   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

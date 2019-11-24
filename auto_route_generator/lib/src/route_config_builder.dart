@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:auto_route/auto_route_annotation.dart';
 import 'package:auto_route_generator/route_config_builder.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
@@ -18,21 +19,17 @@ class RouteConfigBuilder {
 
     final path = inputId.path;
     final package = inputId.package;
-    buildConfig.import = "import 'package:$package/${path.replaceFirst('lib/', '')}';";
+    buildConfig.import = "'package:$package/${path.replaceFirst('lib/', '')}'";
 
-    buildConfig.parameters = classElement.unnamedConstructor.parameters
-        ?.map((param) => RouteParameter.fromParameterElement(param))
-        ?.toList();
+    buildConfig.parameters = classElement.unnamedConstructor.parameters?.map((param) => RouteParameter.fromParameterElement(param))?.toList();
 
     if (annotation.peek("name") != null) buildConfig.name = annotation.peek("name").stringValue;
-
+//    print(annotation.instanceOf(TypeChecker.fromRuntime(InitialRoute)));
     if (annotation.peek("initial") != null) buildConfig.initial = annotation.peek("initial").boolValue;
 
-    if (annotation.peek("fullscreenDialog") != null)
-      buildConfig.fullscreenDialog = annotation.peek("fullscreenDialog").boolValue;
+    if (annotation.peek("fullscreenDialog") != null) buildConfig.fullscreenDialog = annotation.peek("fullscreenDialog").boolValue;
 
-    if (annotation.peek("maintainState") != null)
-      buildConfig.maintainState = annotation.peek("maintainState").boolValue;
+    if (annotation.peek("maintainState") != null) buildConfig.maintainState = annotation.peek("maintainState").boolValue;
 
     if (annotation.peek("durationInMilliseconds") != null) {
       buildConfig.durationInMilliseconds = annotation.peek("durationInMilliseconds").intValue;
@@ -40,15 +37,11 @@ class RouteConfigBuilder {
 
     if (annotation.peek("transitionBuilder") != null) {
       final res = annotation.peek("transitionBuilder").objectValue.toFunctionValue();
-      final import = "import 'package:${res.source.uri.path.replaceFirst('lib/', '')}';";
+      final import = "'package:${res.source.uri.path.replaceFirst('lib/', '')}'";
 
       final displayName = res.displayName.replaceFirst(RegExp("^_"), "");
-      print(displayName);
-      final functionName = (res.isStatic && res.enclosingElement?.displayName != null)
-          ? "${res.enclosingElement.displayName}.$displayName"
-          : displayName;
-      print(functionName);
-
+      final functionName =
+          (res.isStatic && res.enclosingElement?.displayName != null) ? "${res.enclosingElement.displayName}.$displayName" : displayName;
       buildConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
     }
 
