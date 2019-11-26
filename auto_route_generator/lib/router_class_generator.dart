@@ -1,4 +1,4 @@
-import 'package:auto_route_generator/route_config_builder.dart';
+import 'package:auto_route_generator/route_config_visitor.dart';
 import 'package:auto_route_generator/string_utils.dart';
 
 class RouterClassGenerator {

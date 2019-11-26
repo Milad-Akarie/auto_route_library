@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,42 +9,63 @@ import 'package:dart_style/dart_style.dart';
 import 'package:glob/glob.dart';
 import 'package:source_gen/source_gen.dart';
 
-import 'route_config_builder.dart';
-
+import 'route_config_visitor.dart';
 
 class AutoRouteGenerator extends GeneratorForAnnotation<AutoRoute> {
   final _routerFile = File("lib/router.dart");
-  List<RouteConfig> _routeConfigs;
+  final _routeConfigs = Map<String, RouteConfig>();
   final _formatter = DartFormatter();
   final _autoRouteFilesGlob = Glob("**.auto_route.json");
 
+  AutoRouteGenerator() {
+    _readExistingConfigFiles();
+  }
+
+  // read existingConfig files on builder initialization
+  void _readExistingConfigFiles() {
+    _autoRouteFilesGlob.listSync().forEach((input) {
+      final file = File(input.path);
+      final routePathKey = _stripPath(input.path);
+      try {
+        final jsonData = jsonDecode(file.readAsStringSync());
+        _routeConfigs[routePathKey] = (RouteConfig.fromJson(jsonData));
+      } catch (_) {
+        // delete files with invalid json data
+        file.delete();
+      }
+    });
+  }
 
   @override
   generateForAnnotatedElement(Element element, ConstantReader annotation, BuildStep buildStep) async {
     // return early if @AutoRoute is used for a none class element
     if (element is! ClassElement) return null;
 
-    // generate route config
-    final configBuilder = RouteConfigBuilder(classElement: element, inputId: buildStep.inputId, annotation: annotation);
-    final routeConfig = configBuilder.build();
+    final routeClassVisitor = RouteClassVisitor(buildStep.inputId, annotation);
+    routeClassVisitor.visitClassElement(element);
+    final routeConfig = routeClassVisitor.routeConfig;
 
-    return buildStep
-        .writeAsString(buildStep.inputId.changeExtension(".auto_route.json"), '${jsonEncode(routeConfig.toJson())}')
-        .then(_generateRouterCass);
+    final inputID = buildStep.inputId.changeExtension(".auto_route.json");
+    final routePathKey = _stripPath(inputID.path);
+    // add or replace new route config
+    _routeConfigs[routePathKey] = routeConfig;
+    return buildStep.writeAsString(inputID, jsonEncode(routeConfig.toJson())).then(_generateRouterCass);
   }
 
-  FutureOr _generateRouterCass(_) {
-    _routeConfigs = List<RouteConfig>();
+  // this function is called every time a buildStep is generated
+  _generateRouterCass(_) {
+    // check for deleted route files and remove them from the routeConfigs list
+    final newList = _autoRouteFilesGlob.listSync().map((input) => _stripPath(input.path));
+    _routeConfigs.removeWhere((k, _) => !newList.contains(k));
 
-    _autoRouteFilesGlob.listSync().forEach((input) {
-      final file = File(input.path);
-      _routeConfigs.add(RouteConfig.fromJson(jsonDecode(file.readAsStringSync())));
-    });
+    // throw an exception if there's more than one class annotated with @InitialRoute()
+    if (_routeConfigs.values.where((r) => r.initial != null).length > 1)
+      throw ("\n ------------ There can be only one initial route ------------ \n");
 
-    if (_routeConfigs.where((r) => r.initial != null && r.initial).length > 1)
-      throw ("------------ There can be only one initial route! ------------");
-
-    final formattedOutput = _formatter.format(RouterClassGenerator(_routeConfigs).generate());
-    _routerFile.writeAsStringSync(formattedOutput);
+    // format the output before it's written to the router.dart file.
+    final formattedOutput = _formatter.format(RouterClassGenerator(_routeConfigs.values.toList()).generate());
+    _routerFile.writeAsString(formattedOutput);
   }
+
+  String _stripPath(String path) => path.substring(path.indexOf("lib/"), path.length);
 }

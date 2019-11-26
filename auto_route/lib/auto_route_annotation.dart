@@ -39,14 +39,14 @@ class AutoRoute {
     this.transitionBuilder,
     this.durationInMilliseconds,
   });
-
 }
 
-class InitialRoute extends AutoRoute{
+class InitialRoute extends AutoRoute {
   // initial route will have an explicit name of "/"
   // there could be only one initial route.
   final bool initial = true;
-  const InitialRoute();
 
+  const InitialRoute() : super();
 }
+
 const initialRoute = const InitialRoute();

@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route_annotation.dart';
-import 'package:example/pages/custom_paramater.dart';
 import 'package:flutter/material.dart';
 
-@AutoRoute(name: "customName")
+@AutoRoute()
 class SecondPage extends StatelessWidget {
   final String name;
   const SecondPage(this.name);
