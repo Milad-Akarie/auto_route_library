@@ -1,13 +1,9 @@
 class AutoRoute {
   // optional route name
+  // this should be a valid dart variable name
+  //
   // if not provided (className+Route) will be generated
-  /// this property is ignored if  [initial] is true
-  /// initialRoute will be generated instead
   final String name;
-
-//  // initial route will have an explicit name of "/"
-//  // there could be only one initial route.
-//  final bool initial;
 
   /// passed to the fullscreenDialog property in [MaterialPageRoute]
   /// this property is ignored if a [transitionBuilder] is provided
@@ -41,11 +37,9 @@ class AutoRoute {
   });
 }
 
+// initial route will have an explicit name of "/"
+// there could be only one initial route.
 class InitialRoute extends AutoRoute {
-  // initial route will have an explicit name of "/"
-  // there could be only one initial route.
-  final bool initial = true;
-
   const InitialRoute() : super();
 }
 

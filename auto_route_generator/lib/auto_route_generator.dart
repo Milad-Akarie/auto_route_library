@@ -30,15 +30,16 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRoute> {
         final jsonData = jsonDecode(file.readAsStringSync());
         _routeConfigs[routePathKey] = (RouteConfig.fromJson(jsonData));
       } catch (_) {
-        // delete files with invalid json data
+        // delete config files with invalid json data
         file.delete();
       }
     });
   }
 
   @override
-  generateForAnnotatedElement(Element element, ConstantReader annotation, BuildStep buildStep) async {
-    // return early if @AutoRoute is used for a none class element
+  generateForAnnotatedElement(
+      Element element, ConstantReader annotation, BuildStep buildStep) async {
+    // return early if annotation is used for a none class element
     if (element is! ClassElement) return null;
 
     final routeClassVisitor = RouteClassVisitor(buildStep.inputId, annotation);
@@ -49,13 +50,16 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRoute> {
     final routePathKey = _stripPath(inputID.path);
     // add or replace new route config
     _routeConfigs[routePathKey] = routeConfig;
-    return buildStep.writeAsString(inputID, jsonEncode(routeConfig.toJson())).then(_generateRouterCass);
+    return buildStep
+        .writeAsString(inputID, jsonEncode(routeConfig.toJson()))
+        .then(_generateRouterCass);
   }
 
   // this function is called every time a buildStep is generated
   _generateRouterCass(_) {
     // check for deleted route files and remove them from the routeConfigs list
-    final newList = _autoRouteFilesGlob.listSync().map((input) => _stripPath(input.path));
+    final newList =
+        _autoRouteFilesGlob.listSync().map((input) => _stripPath(input.path));
     _routeConfigs.removeWhere((k, _) => !newList.contains(k));
 
     // throw an exception if there's more than one class annotated with @InitialRoute()
@@ -63,9 +67,12 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRoute> {
       throw ("\n ------------ There can be only one initial route ------------ \n");
 
     // format the output before it's written to the router.dart file.
-    final formattedOutput = _formatter.format(RouterClassGenerator(_routeConfigs.values.toList()).generate());
+    final formattedOutput = _formatter
+        .format(RouterClassGenerator(_routeConfigs.values.toList()).generate());
     _routerFile.writeAsString(formattedOutput);
   }
 
-  String _stripPath(String path) => path.substring(path.indexOf("lib/"), path.length);
+// stripped paths are used as  route identifiers
+  String _stripPath(String path) =>
+      path.substring(path.indexOf("lib/"), path.length);
 }
