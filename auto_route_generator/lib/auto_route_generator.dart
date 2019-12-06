@@ -63,8 +63,9 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRoute> {
     _routeConfigs.removeWhere((k, _) => !newList.contains(k));
 
     // throw an exception if there's more than one class annotated with @InitialRoute()
-    if (_routeConfigs.values.where((r) => r.initial != null).length > 1)
+    if (_routeConfigs.values.where((r) => r.initial != null).length > 1) {
       throw ("\n ------------ There can be only one initial route ------------ \n");
+    }
 
     // format the output before it's written to the router.dart file.
     final formattedOutput = _formatter

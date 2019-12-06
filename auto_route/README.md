@@ -6,7 +6,7 @@ AutoRoute is a route generation library, where everything needed for navigation 
 ### Installation
 ```yaml
 dependencies:
-// add auto_route to your dependencies
+# add auto_route to your dependencies
   auto_route:
 
 dev_dependencies:

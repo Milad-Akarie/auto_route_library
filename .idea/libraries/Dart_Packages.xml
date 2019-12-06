@@ -31,6 +31,13 @@
             </list>
           </value>
         </entry>
+        <entry key="auto_route_generator">
+          <value>
+            <list>
+              <option value="$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/auto_route_generator-0.1.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="boolean_selector">
           <value>
             <list>
@@ -482,6 +489,7 @@
       <root url="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/async-2.3.0/lib" />
       <root url="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/async-2.4.0/lib" />
       <root url="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/auto_route-0.1.0/lib" />
+      <root url="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/auto_route_generator-0.1.0/lib" />
       <root url="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/boolean_selector-1.0.5/lib" />
       <root url="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/build-1.2.1/lib" />
       <root url="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/build_config-0.4.1+1/lib" />

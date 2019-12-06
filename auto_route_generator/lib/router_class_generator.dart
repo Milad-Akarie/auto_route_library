@@ -50,9 +50,9 @@ class RouterClassGenerator {
   void _generateRouteNames() {
     _newLine();
     routes.forEach((r) {
-      if (r.initial != null && r.initial)
+      if (r.initial != null && r.initial) {
         _writeln("static const initialRoute = '/';");
-      else {
+      } else {
         final routeName = _generateRouteName(r);
         return _writeln("static const $routeName = '/$routeName';");
       }
@@ -109,12 +109,13 @@ class RouterClassGenerator {
 
         _writeln("final typedArgs = args as ${param.type};");
 
-        if (param.isPositional)
+        if (param.isPositional) {
           constructorParams.write("typedArgs");
-        else {
+        } else {
           constructorParams.write("${param.name}: typedArgs");
-          if (param.defaultValueCode != null)
+          if (param.defaultValueCode != null) {
             constructorParams.write(" ?? ${param.defaultValueCode}");
+          }
         }
       } else {
         // show an error page  if passed args are not the same as declared args
@@ -125,12 +126,14 @@ class RouterClassGenerator {
             "final typedArgs = args as ${r.className}Arguments ?? ${r.className}Arguments();");
 
         r.parameters.asMap().forEach((i, param) {
-          if (param.isPositional)
+          if (param.isPositional) {
             constructorParams.write("typedArgs.${param.name}");
-          else
+          } else {
             constructorParams.write("${param.name}:typedArgs.${param.name}");
-
-          if (i != r.parameters.length - 1) constructorParams.write(",");
+          }
+          if (i != r.parameters.length - 1) {
+            constructorParams.write(",");
+          }
         });
       }
     }

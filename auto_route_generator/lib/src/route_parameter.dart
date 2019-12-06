@@ -20,10 +20,11 @@ class RouteParameter {
     _addImport(paramType.element.source.uri);
 
     // import generic types
-    if (paramType is ParameterizedType)
+    if (paramType is ParameterizedType) {
       paramType.typeArguments.forEach((type) {
         if (type.element.source != null) _addImport(type.element.source.uri);
       });
+    }
   }
 
   void _addImport(Uri uri) {
@@ -32,8 +33,10 @@ class RouteParameter {
 
     // we don't need to import core dart types
     // or core flutter types
-    if (!path.startsWith("dart:core/") && !path.startsWith("package:flutter/"))
+    if (!path.startsWith("dart:core/") &&
+        !path.startsWith("package:flutter/")) {
       imports.add("'$path'");
+    }
   }
 
   Iterable<DartType> getGenericTypes(DartType type) {

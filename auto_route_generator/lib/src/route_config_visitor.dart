@@ -23,15 +23,18 @@ class RouteClassVisitor extends SimpleElementVisitor {
       // return early if route is Initial
       return;
     }
-    if (annotation.peek("name") != null)
+    if (annotation.peek("name") != null) {
       routeConfig.name = annotation.peek("name").stringValue;
+    }
 
-    if (annotation.peek("fullscreenDialog") != null)
+    if (annotation.peek("fullscreenDialog") != null) {
       routeConfig.fullscreenDialog =
           annotation.peek("fullscreenDialog").boolValue;
+    }
 
-    if (annotation.peek("maintainState") != null)
+    if (annotation.peek("maintainState") != null) {
       routeConfig.maintainState = annotation.peek("maintainState").boolValue;
+    }
 
     if (annotation.peek("durationInMilliseconds") != null) {
       routeConfig.durationInMilliseconds =
