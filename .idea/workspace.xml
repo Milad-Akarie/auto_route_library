@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c39d1896-e89b-4357-bf16-f488eab3c4e5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/auto_route/example/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/auto_route_generator/example/README.md" afterDir="false" />
+    <list default="true" id="c39d1896-e89b-4357-bf16-f488eab3c4e5" name="Default Changelist" comment="format code&#10;publish auto_route:0.1.1 on pub.dev">
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auto_route/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auto_route/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auto_route/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route/pubspec.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/auto_route_generator/CHANGELOG.md" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/CHANGELOG.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/auto_route_generator.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/auto_route_generator.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/router_class_generator.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/router_class_generator.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_visitor.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_visitor.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/src/route_parameter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/src/route_parameter.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/pubspec.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/auto_route_generator/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/pubspec.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/lib/router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/router.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
@@ -32,8 +24,36 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/README.md">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/example/pubspec.yaml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="329">
+              <caret line="19" selection-start-line="19" selection-end-line="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/example/lib/screens/second_page.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="112">
+              <caret line="4" column="18" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="18" />
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/example/lib/screens/home.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="140">
+              <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -381,7 +401,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575659631198</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="format code&#10;publish auto_route:0.1.1 on pub.dev">
+      <created>1575662459550</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1575662459550</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TodoView">
@@ -395,9 +422,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.21428572" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.21428572" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="4" />
@@ -408,7 +436,7 @@
       <window_info anchor="bottom" id="Run" order="1" weight="0.38492063" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32936507" />
       <window_info anchor="bottom" id="Debug" order="3" />
-      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.4993895" visible="true" weight="0.2744898" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="4" sideWeight="0.4993895" visible="true" weight="0.2744898" />
       <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.50061053" side_tool="true" weight="0.31530613" />
       <window_info anchor="bottom" id="Flutter Performance" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32936507" />
@@ -450,7 +478,8 @@
     <MESSAGE value="first commit" />
     <MESSAGE value="wip" />
     <MESSAGE value="publish auto_route:0.1.0 on pub.dev" />
-    <option name="LAST_COMMIT_MESSAGE" value="publish auto_route:0.1.0 on pub.dev" />
+    <MESSAGE value="format code&#10;publish auto_route:0.1.1 on pub.dev" />
+    <option name="LAST_COMMIT_MESSAGE" value="format code&#10;publish auto_route:0.1.1 on pub.dev" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -709,26 +738,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/example/lib/screens/second_page.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="4" column="18" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example/lib/screens/home.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="112">
@@ -751,15 +760,35 @@
         <state relative-caret-position="-1322" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/example/pubspec.yaml">
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/screens/home.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        <state relative-caret-position="140">
+          <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/example/lib/screens/second_page.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="4" column="18" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/pubspec.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="19" selection-start-line="19" selection-end-line="19" />
+        </state>
+      </provider>
     </entry>
   </component>
   <component name="masterDetails">

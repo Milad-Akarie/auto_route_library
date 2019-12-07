@@ -32,10 +32,10 @@ packages:
   auto_route_generator:
     dependency: "direct dev"
     description:
-      name: auto_route_generator
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
+      path: "../auto_route_generator"
+      relative: true
+    source: path
+    version: "0.1.1"
   boolean_selector:
     dependency: transitive
     description:
