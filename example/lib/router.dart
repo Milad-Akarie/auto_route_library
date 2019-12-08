@@ -4,16 +4,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:example/screens/second_page.dart';
 import 'package:example/screens/home.dart';
+import 'package:example/screens/second_page.dart';
 
 class Router {
-  static const secondScreenRoute = '/secondScreenRoute';
   static const initialRoute = '/';
+  static const secondScreenRoute = '/secondScreenRoute';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
+      case initialRoute:
+        return MaterialPageRoute(
+          builder: (_) => HomeScreen(),
+          settings: settings,
+        );
       case secondScreenRoute:
         if (_hasInvalidArgs<SecondScreenArguments>(args))
           return _misTypedArgsRoute<SecondScreenArguments>(args);
@@ -22,11 +27,6 @@ class Router {
         return MaterialPageRoute(
           builder: (_) =>
               SecondScreen(title: typedArgs.title, message: typedArgs.message),
-          settings: settings,
-        );
-      case initialRoute:
-        return MaterialPageRoute(
-          builder: (_) => HomeScreen(),
           settings: settings,
         );
       default:
