@@ -23,6 +23,8 @@ class AutoRoute {
   /// the generator can import it into router.dart
   final Function transitionBuilder;
 
+  final String navigatorName;
+
   /// route transition duration in milliseconds
   /// is passed to [PageRouteBuilder]
   /// this property is ignored unless a [transitionBuilder] is provided
@@ -30,6 +32,7 @@ class AutoRoute {
 
   const AutoRoute({
     this.name,
+    this.navigatorName,
     this.fullscreenDialog,
     this.maintainState,
     this.transitionBuilder,
@@ -40,7 +43,7 @@ class AutoRoute {
 // initial route will have an explicit name of "/"
 // there could be only one initial route.
 class InitialRoute extends AutoRoute {
-  const InitialRoute() : super();
+  const InitialRoute({String navigatorName}) : super(navigatorName: navigatorName);
 }
 
 const initialRoute = const InitialRoute();

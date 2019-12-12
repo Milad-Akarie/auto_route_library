@@ -16,20 +16,25 @@ class RouteClassVisitor extends SimpleElementVisitor {
     final package = inputId.package;
     routeConfig.import = "'package:$package/${path.replaceFirst('lib/', '')}'";
 
-    final isInitial =
-        annotation.instanceOf(TypeChecker.fromRuntime(InitialRoute));
+    if (annotation.peek("navigatorName") != null) {
+      routeConfig.navigatorName = annotation.peek("navigatorName").stringValue;
+    } else {
+      routeConfig.navigatorName = "root";
+    }
+
+    final isInitial = annotation.instanceOf(TypeChecker.fromRuntime(InitialRoute));
     if (isInitial) {
       routeConfig.initial = true;
       // return early if route is Initial
       return;
     }
+
     if (annotation.peek("name") != null) {
       routeConfig.name = annotation.peek("name").stringValue;
     }
 
     if (annotation.peek("fullscreenDialog") != null) {
-      routeConfig.fullscreenDialog =
-          annotation.peek("fullscreenDialog").boolValue;
+      routeConfig.fullscreenDialog = annotation.peek("fullscreenDialog").boolValue;
     }
 
     if (annotation.peek("maintainState") != null) {
@@ -37,23 +42,18 @@ class RouteClassVisitor extends SimpleElementVisitor {
     }
 
     if (annotation.peek("durationInMilliseconds") != null) {
-      routeConfig.durationInMilliseconds =
-          annotation.peek("durationInMilliseconds").intValue;
+      routeConfig.durationInMilliseconds = annotation.peek("durationInMilliseconds").intValue;
     }
 
     if (annotation.peek("transitionBuilder") != null) {
-      final function =
-          annotation.peek("transitionBuilder").objectValue.toFunctionValue();
-      final import =
-          "'package:${function.source.uri.path.replaceFirst('lib/', '')}'";
+      final function = annotation.peek("transitionBuilder").objectValue.toFunctionValue();
+      final import = "'package:${function.source.uri.path.replaceFirst('lib/', '')}'";
 
       final displayName = function.displayName.replaceFirst(RegExp("^_"), "");
-      final functionName =
-          (function.isStatic && function.enclosingElement?.displayName != null)
-              ? "${function.enclosingElement.displayName}.$displayName"
-              : displayName;
-      routeConfig.transitionBuilder =
-          CustomTransitionBuilder(functionName, import);
+      final functionName = (function.isStatic && function.enclosingElement?.displayName != null)
+          ? "${function.enclosingElement.displayName}.$displayName"
+          : displayName;
+      routeConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
     }
   }
 
@@ -62,9 +62,8 @@ class RouteClassVisitor extends SimpleElementVisitor {
     routeConfig.className = element.displayName;
     final unnamedConstructor = element.unnamedConstructor;
     if (unnamedConstructor != null && unnamedConstructor.parameters != null) {
-      routeConfig.parameters = unnamedConstructor.parameters
-          .map((param) => RouteParameter.fromParameterElement(param))
-          .toList();
+      routeConfig.parameters =
+          unnamedConstructor.parameters.map((param) => RouteParameter.fromParameterElement(param)).toList();
     }
   }
 }

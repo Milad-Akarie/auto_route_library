@@ -25,9 +25,9 @@ packages:
   auto_route:
     dependency: "direct main"
     description:
-      name: auto_route
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../auto_route"
+      relative: true
+    source: path
     version: "0.1.1"
   build:
     dependency: "direct main"

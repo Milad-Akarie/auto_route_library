@@ -2,10 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c39d1896-e89b-4357-bf16-f488eab3c4e5" name="Default Changelist" comment="format code&#10;publish auto_route:0.1.1 on pub.dev">
+      <change afterPath="$PROJECT_DIR$/example/lib/generic_type.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/lib/generic_type_two.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/lib/router_base.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/lib/screens/home_nested_page.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/example/lib/screens/nested_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/router.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route/lib/auto_route_annotation.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route/lib/auto_route_annotation.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/auto_route_generator.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/auto_route_generator.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/router_class_generator.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/router_class_generator.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/src/route_config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/src/route_config.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_visitor.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_visitor.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/src/route_parameter.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/src/route_parameter.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/lib/string_utils.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/lib/string_utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auto_route_generator/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route_generator/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/router.dart" beforeDir="false" afterPath="$PROJECT_DIR$/auto_route/lib/router_utils.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/screens/home.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/screens/home.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/lib/screens/second_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/screens/second_page.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/example/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/pubspec.yaml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,25 +35,30 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Nexus_5_API_19" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="Nexus_4_API_19" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/example/pubspec.yaml">
+        <entry file="file://$PROJECT_DIR$/example/lib/router.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="532">
-              <caret line="19" selection-start-line="19" selection-end-line="19" />
+            <state relative-caret-position="233">
+              <caret line="47" column="64" lean-forward="true" selection-start-line="47" selection-start-column="64" selection-end-line="47" selection-end-column="64" />
+              <folding>
+                <element signature="e#214#253#0" expanded="true" />
+                <element signature="e#881#1544#0" expanded="true" />
+                <element signature="e#1858#2575#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/example/lib/screens/second_page.dart">
+        <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="84">
-              <caret line="4" column="18" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="18" />
+            <state relative-caret-position="276">
+              <caret line="12" column="16" lean-forward="true" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
               <folding>
-                <element signature="e#0#55#0" expanded="true" />
+                <element signature="e#0#39#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -43,10 +67,63 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/example/lib/screens/home.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="84">
-              <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
+            <state relative-caret-position="92">
+              <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
               <folding>
                 <element signature="e#0#55#0" expanded="true" />
+                <element signature="e#277#593#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/auto_route/lib/router_utils.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-304">
+              <caret line="45" column="30" selection-start-line="45" selection-start-column="30" selection-end-line="45" selection-end-column="30" />
+              <folding>
+                <element signature="e#1075#1179#0" expanded="true" />
+                <element signature="e#2112#2175#0" expanded="true" />
+                <element signature="e#2423#2488#0" expanded="true" />
+                <element signature="e#2556#2732#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/example/lib/screens/nested_page.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="368">
+              <caret line="16" column="38" lean-forward="true" selection-start-line="16" selection-start-column="38" selection-end-line="16" selection-end-column="38" />
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/example/lib/screens/second_page.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="283">
+              <caret line="21" column="60" selection-start-line="21" selection-start-column="60" selection-end-line="21" selection-end-column="60" />
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/example/lib/screens/home_nested_page.dart">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="115">
+              <caret line="5" column="41" lean-forward="true" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
+              <folding>
+                <element signature="e#0#55#0" expanded="true" />
+                <element signature="e#279#354#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -83,6 +160,10 @@
       <find>$lib$</find>
       <find>generate(</find>
       <find>const</find>
+      <find>_has</find>
+      <find>_unk</find>
+      <find>_m</find>
+      <find>??</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -102,24 +183,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/auto_route_annotation/lib/src/router_class_generator.dart" />
-        <option value="$PROJECT_DIR$/example/.dart_tool/build/098d3ee73e6cc294616d3a2e2c3c81ad/asset_graph.json" />
-        <option value="$PROJECT_DIR$/example/.dart_tool/build/098d3ee73e6cc294616d3a2e2c3c81ad/error_cache/example/1/lib/pages/home.dart" />
-        <option value="$PROJECT_DIR$/example/build/flutter_assets/FontManifest.json" />
-        <option value="$PROJECT_DIR$/example/build/flutter_assets/AssetManifest.json" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/router_class_generator.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/auto_route_generator.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_builder_config.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_builder/route_config.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_builder/route_builder_config.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/route_config.dart" />
         <option value="$PROJECT_DIR$/auto_route_generator/lib/src/custom_builder_function.dart" />
         <option value="$PROJECT_DIR$/auto_route/lib/auto_route_transitions.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/build.yaml" />
         <option value="$PROJECT_DIR$/auto_route_generator/lib/builder.dart" />
         <option value="$PROJECT_DIR$/auto_route_generator/lib/src/custom_transtion_builder.dart" />
         <option value="$PROJECT_DIR$/example/lib/transitions.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_config.dart" />
         <option value="$PROJECT_DIR$/example/lib/routes.json" />
         <option value="$PROJECT_DIR$/example/lib/pages/login.dart" />
         <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_builder.dart" />
@@ -127,16 +195,9 @@
         <option value="$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/pages/third_page.auto_route.json" />
         <option value="$PROJECT_DIR$/auto_route_generator/lib/route_config_builder.dart" />
         <option value="$PROJECT_DIR$/auto_route_generator/lib/route_config_visitor.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_parameter.dart" />
-        <option value="$PROJECT_DIR$/auto_route/lib/auto_route_annotation.dart" />
         <option value="$PROJECT_DIR$/example/lib/pages/generic_class_tw.dart" />
         <option value="$PROJECT_DIR$/example/lib/pages/generic_class.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/router_class_generator.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/auto_route_generator.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/string_utils.dart" />
-        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_visitor.dart" />
         <option value="$PROJECT_DIR$/auto_route_generator/LICENSE" />
-        <option value="$PROJECT_DIR$/example/lib/router.dart" />
         <option value="$PROJECT_DIR$/example/lib/pages/products_details.dart" />
         <option value="$PROJECT_DIR$/example/lib/pages/third_page.dart" />
         <option value="$PROJECT_DIR$/auto_route/lib/transition_builders.dart" />
@@ -147,20 +208,47 @@
         <option value="$PROJECT_DIR$/auto_route/README.md" />
         <option value="$PROJECT_DIR$/auto_route/pubspec.yaml" />
         <option value="$PROJECT_DIR$/auto_route_generator/README.md" />
-        <option value="$PROJECT_DIR$/auto_route_generator/pubspec.yaml" />
-        <option value="$PROJECT_DIR$/example/lib/screens/second_page.dart" />
         <option value="$PROJECT_DIR$/example/lib/screens/products_details.dart" />
-        <option value="$PROJECT_DIR$/example/lib/screens/home.dart" />
-        <option value="$PROJECT_DIR$/example/lib/main.dart" />
+        <option value="$PROJECT_DIR$/example/lib/generic_type.dart" />
+        <option value="$PROJECT_DIR$/example/lib/generic_type_two.dart" />
+        <option value="$PROJECT_DIR$/auto_route_generator/pubspec.yaml" />
         <option value="$PROJECT_DIR$/example/pubspec.yaml" />
+        <option value="$PROJECT_DIR$/example/lib/router_base.dart" />
+        <option value="$PROJECT_DIR$/example/lib/nested_router.dart" />
+        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_config.dart" />
+        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_config_visitor.dart" />
+        <option value="$PROJECT_DIR$/auto_route/lib/auto_route_annotation.dart" />
+        <option value="$PROJECT_DIR$/auto_route_generator/lib/string_utils.dart" />
+        <option value="$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/screens/nested_page.auto_route.json" />
+        <option value="$PROJECT_DIR$/auto_route_generator/lib/src/route_parameter.dart" />
+        <option value="$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/screens/second_page.auto_route.json" />
+        <option value="$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/screens/home_nested_page.auto_route.json" />
+        <option value="$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/screens/home.auto_route.json" />
+        <option value="$PROJECT_DIR$/auto_route_generator/build.yaml" />
+        <option value="$PROJECT_DIR$/auto_route_generator/lib/router_class_generator.dart" />
+        <option value="$PROJECT_DIR$/example/lib/screens/nested_page.dart" />
+        <option value="$PROJECT_DIR$/example/lib/router.dart" />
+        <option value="$PROJECT_DIR$/auto_route_generator/lib/auto_route_generator.dart" />
+        <option value="$PROJECT_DIR$/example/lib/screens/home_nested_page.dart" />
+        <option value="$PROJECT_DIR$/example/lib/screens/second_page.dart" />
+        <option value="$PROJECT_DIR$/example/lib/main.dart" />
+        <option value="$PROJECT_DIR$/example/lib/screens/home.dart" />
+        <option value="$PROJECT_DIR$/auto_route/lib/router_utils.dart" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" />
+        <option value="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" fullScreen="true">
-    <option name="x" value="210" />
-    <option name="y" value="131" />
-    <option name="width" value="1260" />
-    <option name="height" value="788" />
+    <option name="x" value="1920" />
+    <option name="width" value="1920" />
+    <option name="height" value="1080" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -168,6 +256,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="CatdeaLogs" />
       <pane id="Scope">
         <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
           <expand>
@@ -222,55 +312,93 @@
         <subPane>
           <expand>
             <path>
-              <item name="auto_route" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
+              <item name=".idea" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
               <item name="auto_route" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="auto_route" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
               <item name="auto_route" type="462c0819:PsiDirectoryNode" />
-              <item name="auto_route" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="auto_route" type="b2602c69:ProjectViewProjectNode" />
-              <item name="auto_route" type="462c0819:PsiDirectoryNode" />
-              <item name="auto_route" type="462c0819:PsiDirectoryNode" />
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
+              <item name="auto_route_generator" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
+              <item name="auto_route_generator" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
+              <item name="auto_route_generator" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
               <item name="example" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="auto_route" type="b2602c69:ProjectViewProjectNode" />
-              <item name="auto_route" type="462c0819:PsiDirectoryNode" />
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
               <item name="example" type="462c0819:PsiDirectoryNode" />
+              <item name=".dart_tool" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="auto_route" type="b2602c69:ProjectViewProjectNode" />
-              <item name="auto_route" type="462c0819:PsiDirectoryNode" />
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
+              <item name="example" type="462c0819:PsiDirectoryNode" />
+              <item name=".dart_tool" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
+              <item name="example" type="462c0819:PsiDirectoryNode" />
+              <item name=".dart_tool" type="462c0819:PsiDirectoryNode" />
+              <item name="build" type="462c0819:PsiDirectoryNode" />
+              <item name="entrypoint" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
               <item name="example" type="462c0819:PsiDirectoryNode" />
               <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="auto_route" type="b2602c69:ProjectViewProjectNode" />
-              <item name="auto_route" type="462c0819:PsiDirectoryNode" />
+              <item name="auto_route_library" type="b2602c69:ProjectViewProjectNode" />
+              <item name="auto_route_library" type="462c0819:PsiDirectoryNode" />
               <item name="example" type="462c0819:PsiDirectoryNode" />
               <item name="lib" type="462c0819:PsiDirectoryNode" />
               <item name="screens" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="auto_route" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="PackagesPane" />
-      <pane id="CatdeaLogs" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
     <property name="dart.analysis.tool.window.force.activate" value="false" />
     <property name="io.flutter.reload.alreadyRun" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/example/lib/pages" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/example/lib/screens" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -279,11 +407,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/example/lib/screens" />
+      <recent name="$PROJECT_DIR$/example/lib" />
+      <recent name="$PROJECT_DIR$/auto_route/lib" />
       <recent name="$PROJECT_DIR$/example/lib/pages" />
       <recent name="$PROJECT_DIR$/auto_route_generator/lib/src" />
-      <recent name="$PROJECT_DIR$/auto_route_annotation/lib/src" />
-      <recent name="$PROJECT_DIR$/example/lib" />
-      <recent name="$PROJECT_DIR$/route_gen/lib" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/auto_route_generator/lib/src" />
@@ -316,53 +444,6 @@
     <configuration name="Unnamed" type="FlutterRunConfigurationType" factoryName="Flutter" singleton="false" nameIsGenerated="true">
       <option name="filePath" value="$PROJECT_DIR$/example/lib/main.dart" />
       <method v="2" />
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
-      <module name="auto_route_library" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="WORKING_DIRECTORY" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType" factoryName="Kotlin script">
-      <module name="auto_route_library" />
-      <option name="filePath" />
-      <option name="vmParameters" />
-      <option name="alternativeJrePath" />
-      <option name="programParameters" />
-      <option name="passParentEnvs" value="true" />
-      <option name="workingDirectory" />
-      <option name="isAlternativeJrePathEnabled" value="false" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="filePath" />
-      <option name="vmParameters" />
-      <option name="alternativeJrePath" />
-      <option name="programParameters" />
-      <option name="passParentEnvs" value="true" />
-      <option name="workingDirectory" />
-      <option name="isAlternativeJrePathEnabled" value="false" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="WORKING_DIRECTORY" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
     </configuration>
   </component>
   <component name="SvnConfiguration">
@@ -417,10 +498,11 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
+    <frame x="1920" y="0" width="1920" height="1080" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Captures" order="0" weight="0.25" />
-      <window_info active="true" content_ui="combo" id="Project" order="1" visible="true" weight="0.21672772" />
+      <window_info content_ui="combo" id="Project" order="1" visible="true" weight="0.24866879" />
       <window_info id="Structure" order="2" side_tool="true" />
       <window_info id="Image Layers" order="3" />
       <window_info id="Designer" order="4" />
@@ -428,15 +510,15 @@
       <window_info id="Capture Tool" order="6" />
       <window_info id="Favorites" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Dart Analysis" order="0" weight="0.32936507" />
-      <window_info anchor="bottom" id="Run" order="1" weight="0.38492063" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.4484127" />
       <window_info anchor="bottom" id="TODO" order="2" weight="0.32936507" />
       <window_info anchor="bottom" id="Debug" order="3" />
-      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.4993895" visible="true" weight="0.2744898" />
+      <window_info anchor="bottom" id="Terminal" order="4" sideWeight="0.4993895" weight="0.51984125" />
       <window_info anchor="bottom" id="Event Log" order="5" sideWeight="0.50061053" side_tool="true" weight="0.31530613" />
       <window_info anchor="bottom" id="Flutter Performance" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32936507" />
-      <window_info anchor="bottom" id="Messages" order="8" weight="0.32857144" />
-      <window_info anchor="bottom" id="Find" order="9" weight="0.32857144" />
+      <window_info anchor="bottom" id="Messages" order="8" weight="0.32837301" />
+      <window_info anchor="bottom" id="Find" order="9" weight="0.32837301" />
       <window_info anchor="right" id="Capture Analysis" order="0" />
       <window_info anchor="right" id="Theme Preview" order="1" />
       <window_info anchor="right" id="Flutter Inspector" order="2" />
@@ -489,79 +571,10 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/dev-tools/flutter/packages/flutter/lib/src/widgets/routes.dart" />
-    <entry file="file://$USER_HOME$/dev-tools/flutter/packages/flutter/lib/src/widgets/pages.dart" />
-    <entry file="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/source_gen-0.9.4+6/lib/src/constants/reader.dart" />
-    <entry file="file://$USER_HOME$/dev-tools/flutter/packages/flutter/lib/src/widgets/navigator.dart" />
-    <entry file="file://$PROJECT_DIR$/example/lib/routes.json" />
-    <entry file="file://$PROJECT_DIR$/example/lib/pages/login.dart" />
-    <entry file="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/glob-1.2.0/lib/glob.dart" />
-    <entry file="file://$USER_HOME$/dev-tools/flutter/bin/cache/pkg/sky_engine/lib/io/file.dart" />
-    <entry file="file://$PROJECT_DIR$/example/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="54" column="17" lean-forward="true" selection-start-line="54" selection-start-column="17" selection-end-line="54" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/dev-tools/flutter/bin/cache/pkg/sky_engine/lib/io/file_system_entity.dart" />
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/src/route_config_builder.dart" />
-    <entry file="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-0.39.1/lib/dart/element/element.dart" />
-    <entry file="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-0.39.1/lib/dart/element/visitor.dart" />
-    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/pages/second_page.auto_route.json" />
-    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/pages/third_page.auto_route.json" />
-    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/pages/home.auto_route.json" />
-    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/pages/products_details.auto_route.json" />
-    <entry file="file://$USER_HOME$/dev/sdk/flutter/packages/flutter/lib/cupertino.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="11" column="7" lean-forward="true" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#1425#0" expanded="true" />
-            <element signature="e#380#421#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/src/route_parameter.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="34" selection-start-line="34" selection-end-line="34" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/dev/sdk/flutter/packages/flutter/lib/material.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="16" column="16" selection-start-line="16" selection-start-column="8" selection-end-line="16" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#5073#0" expanded="true" />
-            <element signature="e#602#635#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example/lib/pages/generic_class.dart" />
     <entry file="file://$PROJECT_DIR$/example/lib/pages/generic_class_tw.dart" />
     <entry file="file://$PROJECT_DIR$/example/lib/transitions.dart" />
     <entry file="file://$PROJECT_DIR$/example/lib/pages/custom_paramater.dart" />
-    <entry file="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/source_gen-0.9.4+6/lib/src/builder.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7896">
-          <caret line="295" column="3" lean-forward="true" selection-start-line="295" selection-start-column="3" selection-end-line="295" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/src/route_config.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="896">
-          <caret line="34" column="30" selection-start-line="34" selection-start-column="30" selection-end-line="34" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/dev/sdk/flutter/.pub-cache/hosted/pub.dartlang.org/source_gen-0.9.4+6/lib/src/builder.dart" />
     <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/src/custom_transtion_builder.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="364">
@@ -569,61 +582,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/builder.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" column="17" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/string_utils.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/router_class_generator.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="29" selection-start-line="29" selection-end-line="29" />
-          <folding>
-            <element signature="e#0#64#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/route_config_visitor.dart">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret column="39" selection-start-column="39" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/auto_route_generator.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="703">
-          <caret line="69" column="48" selection-start-line="69" selection-start-column="48" selection-end-line="69" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/src/route_config_visitor.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="11" column="19" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#52#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route/lib/auto_route_annotation.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="731">
-          <caret line="46" selection-start-line="46" selection-end-line="46" />
         </state>
       </provider>
     </entry>
@@ -663,13 +625,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/build.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="4" column="45" selection-start-line="4" selection-start-column="45" selection-end-line="4" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/auto_route/pubspec.yaml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="112">
@@ -685,54 +640,287 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/example/lib/screens/products_details.dart" />
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-15" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/generic_type.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="21" selection-start-column="21" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-0.39.1/lib/dart/element/element.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="1437" column="31" selection-start-line="1437" selection-start-column="31" selection-end-line="1437" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/router_utils.dart" />
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/pubspec.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="16" column="23" selection-start-line="16" selection-start-column="23" selection-end-line="16" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/router_base.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/.dart_tool/pub/bin/build_runner/build_runner.dart.snapshot.dart2">
+      <provider selected="true" editor-type-id="LargeFileEditor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/src/route_config_visitor.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-238">
+          <caret line="30" selection-start-line="30" selection-end-line="30" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/string_utils.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="4" column="29" lean-forward="true" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
+          <folding>
+            <element signature="e#34#83#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/nested_router.dart" />
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/src/route_config.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret line="2" column="39" selection-start-line="2" selection-start-column="39" selection-end-line="2" selection-end-column="39" />
+          <folding>
+            <element signature="e#1184#1744#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_route/lib/auto_route_annotation.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="235">
+          <caret line="40" column="1" selection-start-line="40" selection-start-column="1" selection-end-line="40" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/dev-tools/flutter/packages/flutter/lib/src/widgets/navigator.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10603">
+          <caret line="821" column="35" lean-forward="true" selection-start-line="821" selection-start-column="35" selection-end-line="821" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/dev-tools/flutter/packages/flutter/lib/src/widgets/framework.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="241">
+          <caret line="247" column="8" selection-start-line="247" selection-start-column="8" selection-end-line="247" selection-end-column="8" />
+          <folding>
+            <element signature="e#9799#10058#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/pubspec.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="393">
+          <caret line="25" selection-start-line="25" selection-end-line="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/screens/nested_page.auto_route.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="338" selection-start-column="338" selection-end-column="338" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/generic_type_two.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="23">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/analyzer-0.38.5/lib/dart/element/element.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13225">
+          <caret line="623" column="11" selection-start-line="623" selection-start-column="11" selection-end-line="623" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/098d3ee73e6cc294616d3a2e2c3c81ad/asset_graph.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-33204" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/src/route_parameter.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/screens/second_page.auto_route.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="529">
+          <caret line="23" column="46" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/screens/home_nested_page.auto_route.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" column="10" selection-start-line="5" selection-start-column="10" selection-end-line="5" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/generated/example/lib/screens/home.auto_route.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="6" column="5" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/.dart_tool/build/entrypoint/build.dart">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/auto_route_generator.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="874">
+          <caret line="40" column="45" lean-forward="true" selection-start-line="40" selection-start-column="45" selection-end-line="40" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+            <element signature="e#832#1237#0" expanded="true" />
+            <element signature="e#2067#2536#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/router_class_generator.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="92">
+          <caret line="4" column="36" lean-forward="true" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#64#0" expanded="true" />
+            <element signature="e#492#882#0" expanded="true" />
+            <element signature="e#1573#1866#0" expanded="true" />
+            <element signature="e#2870#5731#0" expanded="true" />
+            <element signature="e#5767#6043#0" expanded="true" />
+            <element signature="e#6087#6759#0" expanded="true" />
+            <element signature="e#6799#6927#0" expanded="true" />
+            <element signature="e#7005#7601#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/lib/builder.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="5" column="14" selection-start-line="5" selection-start-column="14" selection-end-line="5" selection-end-column="14" />
+          <folding>
+            <element signature="e#169#272#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/auto_route_generator/build.yaml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/screens/home_nested_page.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="5" column="41" lean-forward="true" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+            <element signature="e#279#354#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/screens/nested_page.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="16" column="38" lean-forward="true" selection-start-line="16" selection-start-column="38" selection-end-line="16" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/screens/second_page.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="21" column="60" selection-start-line="21" selection-start-column="60" selection-end-line="21" selection-end-column="60" />
+          <folding>
+            <element signature="e#0#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/example/lib/main.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
+        <state relative-caret-position="276">
+          <caret line="12" column="16" lean-forward="true" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/auto_route_generator/pubspec.yaml">
+    <entry file="file://$PROJECT_DIR$/auto_route/lib/router_utils.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="11" column="20" selection-start-line="11" selection-start-column="20" selection-end-line="11" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example/lib/router.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1322" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example/pubspec.yaml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="19" selection-start-line="19" selection-end-line="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/example/lib/screens/second_page.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="4" column="18" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="18" />
+        <state relative-caret-position="-304">
+          <caret line="45" column="30" selection-start-line="45" selection-start-column="30" selection-end-line="45" selection-end-column="30" />
           <folding>
-            <element signature="e#0#55#0" expanded="true" />
+            <element signature="e#1075#1179#0" expanded="true" />
+            <element signature="e#2112#2175#0" expanded="true" />
+            <element signature="e#2423#2488#0" expanded="true" />
+            <element signature="e#2556#2732#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/example/lib/screens/home.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="5" column="42" selection-start-line="5" selection-start-column="42" selection-end-line="5" selection-end-column="42" />
+        <state relative-caret-position="92">
+          <caret line="4" lean-forward="true" selection-start-line="4" selection-end-line="4" />
           <folding>
             <element signature="e#0#55#0" expanded="true" />
+            <element signature="e#277#593#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/example/lib/router.dart">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="47" column="64" lean-forward="true" selection-start-line="47" selection-start-column="64" selection-end-line="47" selection-end-column="64" />
+          <folding>
+            <element signature="e#214#253#0" expanded="true" />
+            <element signature="e#881#1544#0" expanded="true" />
+            <element signature="e#1858#2575#0" expanded="true" />
           </folding>
         </state>
       </provider>
