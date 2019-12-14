@@ -2,7 +2,7 @@
 // common route transition builder
 import 'package:flutter/material.dart';
 
-class TransitionBuilders {
+class TransitionsBuilders {
   static const RouteTransitionsBuilder slideRight = _slideRight;
 
   static Widget _slideRight(BuildContext context, Animation<double> animation,
