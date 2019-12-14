@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:auto_route_generator/utils.dart';
 
 // holds constructor parameter info to be used
 // in generating route parameters.
@@ -17,6 +18,7 @@ class RouteParameter {
     name = parameterElement.name;
     isPositional = parameterElement.isPositional;
     defaultValueCode = parameterElement.defaultValueCode;
+    // ignore: deprecated_member_use
     isRequired = parameterElement.isRequired;
 
     // import type
@@ -38,34 +40,9 @@ class RouteParameter {
   }
 
   void _addImport(Uri uri) {
-    if (uri == null) return;
-    final path = uri.toString();
-    // we don't need to import core dart types
-    // or core flutter types
-    if (!path.startsWith("dart:core/") && !path.startsWith("package:flutter/")) {
-      imports.add("'$path'");
+    final import = getImport(uri);
+    if (import != null) {
+      imports.add(import);
     }
   }
-
-  Iterable<DartType> getGenericTypes(DartType type) {
-    return type is ParameterizedType ? type.typeArguments : const [];
-  }
-
-  RouteParameter.fromJson(Map json) {
-    type = json['type'];
-    name = json['name'];
-    isRequired = json['isRequired'];
-    isPositional = json['isPositional'];
-    defaultValueCode = json['defaultValueCode'];
-    if (json['imports'] != null) imports = json['imports'].cast<String>();
-  }
-
-  Map<String, dynamic> toJson() => {
-        "type": type,
-        "name": name,
-        "isPositional": isPositional,
-        "isRequired": isRequired,
-        "defaultValueCode": defaultValueCode,
-        if (imports != null) "imports": imports,
-      };
 }

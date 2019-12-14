@@ -1,17 +1,12 @@
-import 'package:auto_route/auto_route_annotation.dart';
-import 'package:example/generic_type_two.dart';
-import 'package:example/router.dart';
 import 'package:flutter/material.dart';
 
-import '../generic_type.dart';
+import 'nested/nested_router.gr.dart';
 
-@AutoRoute()
 class SecondScreen extends StatelessWidget {
   final String title;
   final String message;
-  final GenericType<List<GenericTypeTwo<String>>> generic;
 
-  const SecondScreen({@required this.title, this.message, this.generic});
+  const SecondScreen({@required this.title, this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +23,7 @@ class SecondScreen extends StatelessWidget {
           FlatButton(
             child: Text("NestedScreen Screen"),
             onPressed: () {
-              NestedRouter.navigator.pushNamed(NestedRouter.initialRoute);
+              NestedRouter.navigator.pushNamed(NestedRouter.nestedPage);
             },
           ),
         ],

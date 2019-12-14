@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'navigation_keys_container.dart';
+
+// returns an error page routes with a helper message.
 PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
       builder: (ctx) => Scaffold(
         body: Container(
@@ -10,10 +13,11 @@ PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                 child: Text(
                   routeName == "/"
-                      ? 'Initial route not found! \n did you forget to annotate your home page with @InitialRoute()?'
+                      ? 'Initial route not found! \n did you forget to annotate your home page with @initial?'
                       : 'Route name $routeName is not found!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
@@ -30,6 +34,8 @@ PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
       ),
     );
 
+// checks whether the passed args are valid
+// if isRequired is true the passed args can not be null.
 bool hasInvalidArgs<T>(Object args, {bool isRequired = false}) {
   if (isRequired) {
     return (args is! T);
@@ -71,27 +77,6 @@ PageRoute misTypedArgsRoute<T>(Object args) {
   );
 }
 
-GlobalKey<NavigatorState> getNavigatorKey([String navigatorName = "root"]) {
-  return _NavigationKeysContainer().getNavigatorKey(navigatorName);
-}
-
-class _NavigationKeysContainer {
-  static final _NavigationKeysContainer _instance = _NavigationKeysContainer._internal();
-  Map<String, GlobalKey<NavigatorState>> _navigatorKeys;
-
-  factory _NavigationKeysContainer() {
-    return _instance;
-  }
-
-  _NavigationKeysContainer._internal() {
-    _navigatorKeys = {};
-  }
-
-  GlobalKey<NavigatorState> getNavigatorKey(String navigatorName) {
-    // initiate keys lazily
-    if (!_navigatorKeys.keys.contains(navigatorName)) {
-      _navigatorKeys[navigatorName] = GlobalKey<NavigatorState>(debugLabel: navigatorName);
-    }
-    return _navigatorKeys[navigatorName];
-  }
+GlobalKey<NavigatorState> getNavigatorKey<T>() {
+  return NavigationKeysContainer().get<T>();
 }

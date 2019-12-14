@@ -1,13 +1,13 @@
 ```dart
-@AutoRoute()
-class LoginScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
 
-// use @InitialRoute() or @initialRoute to annotate the initial route.
-@initialRoute
-class HomeScreen extends StatelessWidget {}
+class HomeScreen extends StatelessWidget{}
+
+class LoginScreen extends StatelessWidget {}
+
+@autoRouter
+class $Router{
+@initial
+ HomeScreen homeScreenRoute;
+ LoginScreen loginScreenRoute;
+}
 ```
