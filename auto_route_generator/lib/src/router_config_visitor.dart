@@ -27,6 +27,10 @@ class RouterConfigVisitor extends SimpleElementVisitor {
     routeConfig.name = field.name;
     routeConfig.className = type.displayName;
 
+    final classElement = type.element as ClassElement;
+//     print(    classElement.type.accessors.toString());
+
+    routeConfig.hasWrapper = classElement.allSupertypes.map<String>((el) => el.displayName).contains("AutoRouteWrapper");
     final constructor = (type.element as ClassElement).unnamedConstructor;
     if (constructor != null && constructor.parameters.isNotEmpty) {
       routeConfig.parameters = constructor.parameters

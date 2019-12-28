@@ -23,5 +23,7 @@ class RouteConfig {
 
   String cupertinoNavTitle;
 
+  bool hasWrapper;
+
   RouteConfig();
 }

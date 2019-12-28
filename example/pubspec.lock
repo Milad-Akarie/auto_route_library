@@ -28,14 +28,14 @@ packages:
       path: "../auto_route"
       relative: true
     source: path
-    version: "0.1.1"
+    version: "0.2.0+1"
   auto_route_generator:
     dependency: "direct dev"
     description:
       path: "../auto_route_generator"
       relative: true
     source: path
-    version: "0.1.3"
+    version: "0.2.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -333,6 +333,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.4.0"
+  provider:
+    dependency: "direct main"
+    description:
+      name: provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.0"
   pub_semver:
     dependency: transitive
     description:
