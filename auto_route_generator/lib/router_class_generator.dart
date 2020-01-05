@@ -133,7 +133,7 @@ class RouterClassGenerator {
       }
     }
 
-    final widget = "${r.className}(${constructorParams.toString()})";
+    final widget = "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
     if (r.routeType != RouteType.custom) {
       if (r.routeType == RouteType.cupertino) {
         _write(

@@ -1,7 +1,11 @@
+import 'package:auto_route/auto_route_wrapper.dart';
 import 'package:example/screens/nested/nested_router.gr.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+import '../router.dart';
+
+class LoginScreen extends StatelessWidget implements AutoRouteWrapper {
   final double id;
 
   const LoginScreen({this.id = 20.0});
@@ -28,4 +32,7 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  Widget get wrappedRoute => Provider(child: this, create: (_) => Model(),);
 }

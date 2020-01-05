@@ -1,8 +1,9 @@
+import 'package:auto_route/auto_route_wrapper.dart';
 import 'package:flutter/material.dart';
 
 import 'nested/nested_router.gr.dart';
 
-class SecondScreen extends StatelessWidget {
+class SecondScreen extends StatelessWidget implements AutoRouteWrapper {
   final String title;
   final String message;
 
@@ -30,4 +31,7 @@ class SecondScreen extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  Widget get wrappedRoute => Container(child: this);
 }
