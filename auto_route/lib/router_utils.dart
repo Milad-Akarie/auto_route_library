@@ -13,8 +13,7 @@ PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+	              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                 child: Text(
                   routeName == "/"
 		                  ? 'Initial route not found! \n did you forget to annotate your home page with @initial or @MaterialRoute(initial:true)?'

@@ -38,9 +38,7 @@ class RouterClassGenerator {
         });
       }
     });
-    imports
-        .where((import) => import != null)
-        .forEach((import) => _writeln('import $import;'));
+    imports.where((import) => import != null).forEach((import) => _writeln('import $import;'));
   }
 
   void _generateRouteNames(List<RouteConfig> routes) {
@@ -102,10 +100,9 @@ class RouterClassGenerator {
         }
       } else {
         // if router has any required params the argument class holder becomes required.
-        final hasRequiredParams =
-            r.parameters
-                .where((p) => p.isRequired)
-                .isNotEmpty;
+        final hasRequiredParams = r.parameters
+            .where((p) => p.isRequired)
+            .isNotEmpty;
         // show an error page  if passed args are not the same as declared args
         _writeln('if(hasInvalidArgs<${r.className}Arguments>(args');
         if (hasRequiredParams) {
@@ -133,18 +130,15 @@ class RouterClassGenerator {
       }
     }
 
-    final widget =
-        "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
+    final widget = "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
 
     if (r.routeType == RouteType.cupertino) {
-      _write(
-          'return CupertinoPageRoute(builder: (_) => $widget, settings: settings,');
+      _write('return CupertinoPageRoute(builder: (_) => $widget, settings: settings,');
       if (r.cupertinoNavTitle != null) {
         _write("title:'${r.cupertinoNavTitle}',");
       }
     } else if (r.routeType == RouteType.material) {
-      _write(
-          'return MaterialPageRoute(builder: (_) => $widget, settings: settings,');
+      _write('return MaterialPageRoute(builder: (_) => $widget, settings: settings,');
     } else {
       _write(
           'return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,');
@@ -163,15 +157,13 @@ class RouterClassGenerator {
         _write('opaque:${r.customRouteOpaque.toString()},');
       }
       if (r.customRouteBarrierDismissible != null) {
-        _write(
-            'barrierDismissible:${r.customRouteBarrierDismissible.toString()},');
+        _write('barrierDismissible:${r.customRouteBarrierDismissible.toString()},');
       }
       if (r.transitionBuilder != null) {
         _write('transitionsBuilder: ${r.transitionBuilder.name},');
       }
       if (r.durationInMilliseconds != null) {
-        _write(
-            'transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),');
+        _write('transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),');
       }
     }
     _writeln(');');
@@ -214,8 +206,7 @@ class RouterClassGenerator {
         _write('@required ');
       }
       _write('this.${param.name}');
-      if (param.defaultValueCode != null)
-        _write(' = ${param.defaultValueCode}');
+      if (param.defaultValueCode != null) _write(' = ${param.defaultValueCode}');
       if (i != r.parameters.length - 1) _write(',');
     });
     _writeln('});');
@@ -241,9 +232,7 @@ class RouterClassGenerator {
   }
 
   void _generateHelperFunctions() {
-    _writeln(
-        'static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();');
-    _writeln(
-        'static NavigatorState get navigator => navigatorKey.currentState;');
+    _writeln('static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();');
+    _writeln('static NavigatorState get navigator => navigatorKey.currentState;');
   }
 }

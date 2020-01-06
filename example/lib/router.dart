@@ -6,7 +6,7 @@ import 'screens/login_screen.dart';
 
 @AutoRouter()
 class $Router {
-	@MaterialRoute(initial: true)
+  @MaterialRoute(initial: true)
   HomeScreen homeScreenRoute;
 
   SecondScreen secondScreenRoute;
