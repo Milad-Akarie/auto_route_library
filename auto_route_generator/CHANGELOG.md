@@ -1,3 +1,8 @@
+## [0.2.1]
+* add Route Wrapper
+* add initial flag as a property in all route types
+* change prefix const route names with class name.
+* add fullscreenDialog property to @CustomRoute()
 ## [0.2.0]
 ### Breaking Changes!
 * change to using a single config file instead of annotating the actual widget class due to performance issues.

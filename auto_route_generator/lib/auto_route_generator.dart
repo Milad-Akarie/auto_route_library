@@ -9,7 +9,7 @@ import 'route_config_visitor.dart';
 
 class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouter> {
   @override
-  generateForAnnotatedElement(Element element, ConstantReader annotation, BuildStep buildStep) async {
+  dynamic generateForAnnotatedElement(Element element, ConstantReader annotation, BuildStep buildStep) async {
     // return early if annotation is used for a none class element
     if (element is! ClassElement) return null;
 
@@ -17,18 +17,19 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouter> {
     // to use the stripped name for the generated class
 
     if (!element.displayName.startsWith(r'$')) {
-      throw ("\n ------------ Class name must be prefixed with \$ ------------ \n");
+      throw ('\n ------------ Class name must be prefixed with \$ ------------ \n');
     }
-    final routerClassName = element.displayName.replaceFirst(r"$", "");
+    final routerClassName = element.displayName.replaceFirst(r'$', '');
 
     final visitor = RouterConfigVisitor(annotation);
+
     element.visitChildren(visitor);
     final routes = visitor.routeConfigs;
     //  throw an exception if there's more than one class annotated with @initial
     if (routes
         .where((r) => r.initial != null && r.initial)
         .length > 1) {
-      throw ("\n ------------ There can be only one initial route per navigator ------------ \n");
+      throw ('\n ------------ There can be only one initial route per navigator ------------ \n');
     }
 
     return RouterClassGenerator(routerClassName, routes).generate();

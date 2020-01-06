@@ -24,10 +24,11 @@ class RouterClassGenerator {
 
   void _generateImports() {
     // write route imports
-    final imports = List<String>();
-    imports.add("'package:flutter/material.dart'");
-    imports.add("'package:flutter/cupertino.dart'");
-    imports.add("'package:auto_route/router_utils.dart'");
+    final Set<String> imports = {
+      "'package:flutter/material.dart'",
+      "'package:flutter/cupertino.dart'",
+      "'package:auto_route/router_utils.dart'"
+    };
     routes.forEach((r) {
       imports.add(r.import);
       if (r.transitionBuilder != null) imports.add(r.transitionBuilder.import);
@@ -38,9 +39,8 @@ class RouterClassGenerator {
       }
     });
     imports
-        .toSet()
         .where((import) => import != null)
-        .forEach((import) => _writeln("import $import;"));
+        .forEach((import) => _writeln('import $import;'));
   }
 
   void _generateRouteNames(List<RouteConfig> routes) {
@@ -57,48 +57,48 @@ class RouterClassGenerator {
 
   void _generateRouteGeneratorFunction(List<RouteConfig> routes) {
     _newLine();
-    _writeln("static Route<dynamic> onGenerateRoute(RouteSettings settings) {");
-    _writeln("final args = settings.arguments;");
-    _writeln("switch (settings.name) {");
+    _writeln('static Route<dynamic> onGenerateRoute(RouteSettings settings) {');
+    _writeln('final args = settings.arguments;');
+    _writeln('switch (settings.name) {');
 
     routes.forEach((r) => generateRoute(r));
 
     // build unknown route error page if route is not found
-    _writeln("default: return unknownRoutePage(settings.name);");
+    _writeln('default: return unknownRoutePage(settings.name);');
     // close switch case
-    _writeln("}");
+    _writeln('}');
     _newLine();
 
     // close onGenerateRoute function
-    _writeln("}");
+    _writeln('}');
   }
 
   void generateRoute(RouteConfig r) {
-    _writeln("case ${r.name}:");
+    _writeln('case $className.${r.name}:');
 
-    StringBuffer constructorParams = StringBuffer("");
+    StringBuffer constructorParams = StringBuffer('');
 
     if (r.parameters != null && r.parameters.isNotEmpty) {
       if (r.parameters.length == 1) {
         final param = r.parameters[0];
 
         // show an error page if passed args are not the same as declared args
-        _writeln("if(hasInvalidArgs<${param.type}>(args");
+        _writeln('if(hasInvalidArgs<${param.type}>(args');
         if (param.isRequired) {
-          _write(",isRequired:true");
+          _write(',isRequired:true');
         }
-        _write("))");
-        _writeln("{return misTypedArgsRoute<${param.type}>(args);}");
+        _write('))');
+        _writeln('{return misTypedArgsRoute<${param.type}>(args);}');
 
-        _writeln("final typedArgs = args as ${param.type}");
+        _writeln('final typedArgs = args as ${param.type}');
         if (param.defaultValueCode != null) {
-          _write(" ?? ${param.defaultValueCode}");
+          _write(' ?? ${param.defaultValueCode}');
         }
         _write(';');
         if (param.isPositional) {
-          constructorParams.write("typedArgs");
+          constructorParams.write('typedArgs');
         } else {
-          constructorParams.write("${param.name}: typedArgs");
+          constructorParams.write('${param.name}: typedArgs');
         }
       } else {
         // if router has any required params the argument class holder becomes required.
@@ -107,73 +107,74 @@ class RouterClassGenerator {
                 .where((p) => p.isRequired)
                 .isNotEmpty;
         // show an error page  if passed args are not the same as declared args
-        _writeln("if(hasInvalidArgs<${r.className}Arguments>(args");
+        _writeln('if(hasInvalidArgs<${r.className}Arguments>(args');
         if (hasRequiredParams) {
-          _write(",isRequired:true");
+          _write(',isRequired:true');
         }
-        _write("))");
-        _writeln("{return misTypedArgsRoute<${r.className}Arguments>(args);}");
+        _write('))');
+        _writeln('{return misTypedArgsRoute<${r.className}Arguments>(args);}');
 
-        _writeln("final typedArgs = args as ${r.className}Arguments");
+        _writeln('final typedArgs = args as ${r.className}Arguments');
         if (!hasRequiredParams) {
-          _write(" ?? ${r.className}Arguments()");
+          _write(' ?? ${r.className}Arguments()');
         }
-        _write(";");
+        _write(';');
 
         r.parameters.asMap().forEach((i, param) {
           if (param.isPositional) {
-            constructorParams.write("typedArgs.${param.name}");
+            constructorParams.write('typedArgs.${param.name}');
           } else {
-            constructorParams.write("${param.name}:typedArgs.${param.name}");
+            constructorParams.write('${param.name}:typedArgs.${param.name}');
           }
           if (i != r.parameters.length - 1) {
-            constructorParams.write(",");
+            constructorParams.write(',');
           }
         });
       }
     }
 
-    final widget = "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
-    if (r.routeType != RouteType.custom) {
-      if (r.routeType == RouteType.cupertino) {
-        _write(
-            "return CupertinoPageRoute(builder: (_) => $widget, settings: settings,");
-        if (r.cupertinoNavTitle != null) {
-          _write("title:'${r.cupertinoNavTitle}',");
-        }
-      } else {
-        _write(
-            "return MaterialPageRoute(builder: (_) => $widget, settings: settings,");
-      }
+    final widget =
+        "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
 
-      if (r.fullscreenDialog != null) {
-        _write("fullscreenDialog:${r.fullscreenDialog.toString()},");
+    if (r.routeType == RouteType.cupertino) {
+      _write(
+          'return CupertinoPageRoute(builder: (_) => $widget, settings: settings,');
+      if (r.cupertinoNavTitle != null) {
+        _write("title:'${r.cupertinoNavTitle}',");
       }
-      if (r.maintainState != null) {
-        _write("maintainState:${r.maintainState.toString()},");
-      }
+    } else if (r.routeType == RouteType.material) {
+      _write(
+          'return MaterialPageRoute(builder: (_) => $widget, settings: settings,');
     } else {
       _write(
-          "return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,");
-      if (r.maintainState != null) {
-        _write("maintainState:${r.maintainState.toString()},");
-      }
+          'return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,');
+    }
+
+    // generated shared props
+    if (r.fullscreenDialog != null) {
+      _write('fullscreenDialog:${r.fullscreenDialog.toString()},');
+    }
+    if (r.maintainState != null) {
+      _write('maintainState:${r.maintainState.toString()},');
+    }
+
+    if (r.routeType != RouteType.custom) {
       if (r.customRouteOpaque != null) {
-        _write("opaque:${r.customRouteOpaque.toString()},");
+        _write('opaque:${r.customRouteOpaque.toString()},');
       }
       if (r.customRouteBarrierDismissible != null) {
         _write(
-            "barrierDismissible:${r.customRouteBarrierDismissible.toString()},");
+            'barrierDismissible:${r.customRouteBarrierDismissible.toString()},');
       }
       if (r.transitionBuilder != null) {
-        _write("transitionsBuilder: ${r.transitionBuilder.name},");
+        _write('transitionsBuilder: ${r.transitionBuilder.name},');
       }
       if (r.durationInMilliseconds != null) {
         _write(
-            "transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),");
+            'transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),');
       }
     }
-    _writeln(");");
+    _writeln(');');
   }
 
   void _generateArgumentHolders() {
@@ -189,7 +190,7 @@ class RouterClassGenerator {
     });
 
     if (routesWithArgsHolders.isNotEmpty) {
-      _generateBoxed("Arguments holder classes");
+      _generateBoxed('Arguments holder classes');
       routesWithArgsHolders.values.forEach((r) {
         _generateArgsHolder(r);
       });
@@ -197,52 +198,52 @@ class RouterClassGenerator {
   }
 
   void _generateArgsHolder(RouteConfig r) {
-    _writeln("//${r.className} arguments holder class");
-    final argsClassName = "${r.className}Arguments";
+    _writeln('//${r.className} arguments holder class');
+    final argsClassName = '${r.className}Arguments';
 
     // generate fields
-    _writeln("class $argsClassName{");
+    _writeln('class $argsClassName{');
     r.parameters.forEach((param) {
-      _writeln("final ${param.type} ${param.name};");
+      _writeln('final ${param.type} ${param.name};');
     });
 
     // generate constructor
-    _writeln("$argsClassName({");
+    _writeln('$argsClassName({');
     r.parameters.asMap().forEach((i, param) {
       if (param.isRequired) {
-        _write("@required ");
+        _write('@required ');
       }
-      _write("this.${param.name}");
+      _write('this.${param.name}');
       if (param.defaultValueCode != null)
-        _write(" = ${param.defaultValueCode}");
-      if (i != r.parameters.length - 1) _write(",");
+        _write(' = ${param.defaultValueCode}');
+      if (i != r.parameters.length - 1) _write(',');
     });
-    _writeln("});");
+    _writeln('});');
 
-    _writeln("}");
+    _writeln('}');
   }
 
   void _generateBoxed(String message) {
-    _writeln("\n//".padRight(77, "-"));
-    _writeln("// $message");
-    _writeln("//".padRight(77, "-"));
+    _writeln('\n//'.padRight(77, '*'));
+    _writeln('// $message');
+    _writeln('//'.padRight(77, '*'));
     _newLine();
   }
 
   void _generateRouterClass() {
-    _writeln("\nclass $className {");
+    _writeln('\nclass $className {');
     _generateRouteNames(routes);
     _generateHelperFunctions();
     _generateRouteGeneratorFunction(routes);
 
     // close router class
-    _writeln("}");
+    _writeln('}');
   }
 
   void _generateHelperFunctions() {
     _writeln(
-        "static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();");
+        'static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();');
     _writeln(
-        "static NavigatorState get navigator => navigatorKey.currentState;");
+        'static NavigatorState get navigator => navigatorKey.currentState;');
   }
 }

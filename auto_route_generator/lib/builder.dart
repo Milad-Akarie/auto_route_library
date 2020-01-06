@@ -5,5 +5,5 @@ import 'auto_route_generator.dart';
 
 Builder autoRouteGenerator(BuilderOptions options) {
   // gr stands for generated router.
-  return LibraryBuilder(AutoRouteGenerator(), generatedExtension: ".gr.dart");
+	return LibraryBuilder(AutoRouteGenerator(), generatedExtension: '.gr.dart');
 }

@@ -17,7 +17,7 @@ PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
                 const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                 child: Text(
                   routeName == "/"
-                      ? 'Initial route not found! \n did you forget to annotate your home page with @initial?'
+		                  ? 'Initial route not found! \n did you forget to annotate your home page with @initial or @MaterialRoute(initial:true)?'
                       : 'Route name $routeName is not found!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),

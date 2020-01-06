@@ -1,4 +1,3 @@
-// @AutoRouter() annotation
 class AutoRouter {
   const AutoRouter();
 }
@@ -14,64 +13,82 @@ class Initial {
 const initial = const Initial();
 
 class MaterialRoute {
-  /// passed to the fullscreenDialog property in [MaterialPageRoute]
-  final bool fullscreenDialog;
+	// initial route will have an explicit name of "/"
+// there could be only one initial route per navigator.
+	final bool initial;
 
-  /// passed to the maintainState property in [MaterialPageRoute]
-  final bool maintainState;
+	/// passed to the fullscreenDialog property in [MaterialPageRoute]
+	final bool fullscreenDialog;
 
-  const MaterialRoute({this.fullscreenDialog, this.maintainState});
+	/// passed to the maintainState property in [MaterialPageRoute]
+	final bool maintainState;
+
+	const MaterialRoute({this.initial, this.fullscreenDialog, this.maintainState});
 }
 
 // forces usage of CupertinoPageRoute instead of MaterialPageRoute
 class CupertinoRoute {
-  /// passed to the fullscreenDialog property in [CupertinoPageRoute]
-  final bool fullscreenDialog;
+	// initial route will have an explicit name of "/"
+// there could be only one initial route per navigator.
+	final bool initial;
 
-  /// passed to the maintainState property in [CupertinoPageRoute]
-  final bool maintainState;
+	/// passed to the fullscreenDialog property in [CupertinoPageRoute]
+	final bool fullscreenDialog;
 
-  /// passed to the title property in [CupertinoPageRoute]
-  final String title;
+	/// passed to the maintainState property in [CupertinoPageRoute]
+	final bool maintainState;
 
-  const CupertinoRoute({
-    this.fullscreenDialog,
-    this.maintainState,
-    this.title,
-  });
+	/// passed to the title property in [CupertinoPageRoute]
+	final String title;
+
+	const CupertinoRoute({
+		this.fullscreenDialog,
+		this.maintainState,
+		this.initial,
+		this.title,
+	});
 }
 
 class CustomRoute {
-  /// passed to the maintainState property in [PageRouteBuilder]
-  final bool maintainState;
+	// initial route will have an explicit name of "/"
+// there could be only one initial route per navigator.
+	final bool initial;
 
-  /// this builder function is passed to the transition builder
-  /// function in [PageRouteBuilder]
-  ///
-  /// I couldn't type this function from here but it should match
-  /// typedef [RouteTransitionsBuilder] = Widget Function(BuildContext context, Animation<double> animation,
-  /// Animation<double> secondaryAnimation, Widget child);
-  ///
-  /// you should only reference the function so
-  /// the generator can import it into router.dart
-  final Function transitionsBuilder;
+	/// passed to the fullscreenDialog property in [PageRouteBuilder]
+	final bool fullscreenDialog;
 
-  /// route transition duration in milliseconds
-  /// is passed to [PageRouteBuilder]
-  /// this property is ignored unless a [transitionBuilder] is provided
-  final int durationInMilliseconds;
+	/// passed to the maintainState property in [PageRouteBuilder]
+	final bool maintainState;
 
-  /// passed to the opaque property in [PageRouteBuilder]
-  final bool opaque;
+	/// this builder function is passed to the transition builder
+	/// function in [PageRouteBuilder]
+	///
+	/// I couldn't type this function from here but it should match
+	/// typedef [RouteTransitionsBuilder] = Widget Function(BuildContext context, Animation<double> animation,
+	/// Animation<double> secondaryAnimation, Widget child);
+	///
+	/// you should only reference the function so
+	/// the generator can import it into router.dart
+	final Function transitionsBuilder;
 
-  /// passed to the barrierDismissible property in [PageRouteBuilder]
-  final bool barrierDismissible;
+	/// route transition duration in milliseconds
+	/// is passed to [PageRouteBuilder]
+	/// this property is ignored unless a [transitionBuilder] is provided
+	final int durationInMilliseconds;
 
-  const CustomRoute({
-    this.transitionsBuilder,
-    this.durationInMilliseconds,
-    this.opaque,
-    this.barrierDismissible,
-    this.maintainState,
-  });
+	/// passed to the opaque property in [PageRouteBuilder]
+	final bool opaque;
+
+	/// passed to the barrierDismissible property in [PageRouteBuilder]
+	final bool barrierDismissible;
+
+	const CustomRoute({
+		this.fullscreenDialog,
+		this.maintainState,
+		this.initial,
+		this.transitionsBuilder,
+		this.durationInMilliseconds,
+		this.opaque,
+		this.barrierDismissible,
+	});
 }

@@ -11,5 +11,5 @@ class CustomTransitionBuilder {
     import = json['import'];
   }
 
-  Map<String, dynamic> toJson() => {"import": import, "name": name};
+  Map<String, dynamic> toJson() => {'import': import, 'name': name};
 }

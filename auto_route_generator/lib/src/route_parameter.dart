@@ -10,7 +10,7 @@ class RouteParameter {
   bool isPositional;
   bool isRequired;
   String defaultValueCode;
-  List<String> imports = [];
+  Set<String> imports = {};
 
   RouteParameter.fromParameterElement(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
@@ -18,8 +18,7 @@ class RouteParameter {
     name = parameterElement.name;
     isPositional = parameterElement.isPositional;
     defaultValueCode = parameterElement.defaultValueCode;
-    // ignore: deprecated_member_use
-    isRequired = parameterElement.isRequired;
+    isRequired = parameterElement.isRequiredNamed;
 
     // import type
     _addImport(paramType.element.source.uri);

@@ -1,11 +1,10 @@
 name: auto_route
 description: AutoRoute is a route generation library, where everything needed for navigation is automatically generated for you.
-version: 0.2.0+1
-author: Milad Akarie <milad.akarie@gmail.com>
+version: 0.2.1
 homepage: https://github.com/Milad-Akarie/auto_route_library
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
+  sdk: ">=2.5.0 <3.0.0"
 
 dependencies:
   flutter:

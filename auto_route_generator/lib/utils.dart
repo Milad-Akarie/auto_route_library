@@ -5,7 +5,7 @@ String getImport(Uri uri) {
   final path = uri.toString();
   // we don't need to import core dart types
   // or core flutter types
-  if (!path.startsWith("dart:core/") && !path.startsWith("package:flutter/")) {
+  if (!path.startsWith('dart:core/') && !path.startsWith('package:flutter/')) {
     return "'$path'";
   } else
     return null;

@@ -4,16 +4,12 @@ import 'package:example/screens/second_screen.dart';
 
 import 'screens/login_screen.dart';
 
-@autoRouter
+@AutoRouter()
 class $Router {
-  @initial
+	@MaterialRoute(initial: true)
   HomeScreen homeScreenRoute;
 
   SecondScreen secondScreenRoute;
 
   LoginScreen loginScreenDialog;
-}
-
-class Model {
-  String value = "model value";
 }
