@@ -27,8 +27,8 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouter> {
     final routes = visitor.routeConfigs;
     //  throw an exception if there's more than one class annotated with @initial
     if (routes
-        .where((r) => r.initial != null && r.initial)
-        .length > 1) {
+		    .where((r) => r.initial != null && r.initial)
+		    .length > 1) {
       throw ('\n ------------ There can be only one initial route per navigator ------------ \n');
     }
 

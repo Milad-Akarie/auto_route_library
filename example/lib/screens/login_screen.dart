@@ -35,8 +35,8 @@ class LoginScreen extends StatelessWidget implements AutoRouteWrapper {
 
   @override
   Widget get wrappedRoute =>
-		  Provider(
-			  child: this,
-			  create: (_) => Model(),
-		  );
+      Provider(
+        child: this,
+        create: (_) => Model(),
+      );
 }

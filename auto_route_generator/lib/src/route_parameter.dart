@@ -18,7 +18,7 @@ class RouteParameter {
     name = parameterElement.name;
     isPositional = parameterElement.isPositional;
     defaultValueCode = parameterElement.defaultValueCode;
-    isRequired = parameterElement.isRequiredNamed;
+    isRequired = parameterElement.hasRequired;
 
     // import type
     _addImport(paramType.element.source.uri);

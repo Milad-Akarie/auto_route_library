@@ -1,14 +1,17 @@
 // general utils
 
 String getImport(Uri uri) {
-  if (uri == null) return null;
+	if (uri == null) {
+		return null;
+	}
   final path = uri.toString();
   // we don't need to import core dart types
   // or core flutter types
   if (!path.startsWith('dart:core/') && !path.startsWith('package:flutter/')) {
     return "'$path'";
-  } else
+  } else {
     return null;
+  }
 }
 
 String toLowerCamelCase(String s) {

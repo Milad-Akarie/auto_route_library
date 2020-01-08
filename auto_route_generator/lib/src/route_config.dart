@@ -26,4 +26,9 @@ class RouteConfig {
   bool hasWrapper;
 
   RouteConfig();
+
+  @override
+  String toString() {
+	  return 'RouteConfig{import: $import, name: $name, initial: $initial, fullscreenDialog: $fullscreenDialog, customRouteOpaque: $customRouteOpaque, customRouteBarrierDismissible: $customRouteBarrierDismissible, maintainState: $maintainState, className: $className, parameters: $parameters, transitionBuilder: $transitionBuilder, durationInMilliseconds: $durationInMilliseconds, routeType: $routeType, cupertinoNavTitle: $cupertinoNavTitle, hasWrapper: $hasWrapper}';
+  }
 }
