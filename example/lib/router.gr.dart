@@ -10,13 +10,16 @@ import 'package:auto_route/router_utils.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/second_screen.dart';
 import 'package:example/screens/login_screen.dart';
-import 'package:auto_route/transitions_builders.dart';
 
 class Router {
   static const homeScreenRoute = '/';
-  static const secondScreenRoute = '/secondScreenRoute';
-  static const loginScreenDialog = '/loginScreenDialog';
-
+  static const secondScreenRoute = 'custom_cupertino/name';
+  static const loginScreenDialog = 'custom_route_name';
+  static const routes = [
+    homeScreenRoute,
+    secondScreenRoute,
+    loginScreenDialog,
+  ];
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
@@ -24,15 +27,13 @@ class Router {
         return MaterialPageRoute(
           builder: (_) => HomeScreen().wrappedRoute,
           settings: settings,
-          fullscreenDialog: true,
-          maintainState: true,
         );
       case Router.secondScreenRoute:
         if (hasInvalidArgs<SecondScreenArguments>(args, isRequired: true)) {
           return misTypedArgsRoute<SecondScreenArguments>(args);
         }
         final typedArgs = args as SecondScreenArguments;
-        return MaterialPageRoute(
+        return CupertinoPageRoute(
           builder: (_) =>
               SecondScreen(title: typedArgs.title, message: typedArgs.message)
                   .wrappedRoute,
@@ -47,10 +48,6 @@ class Router {
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               LoginScreen(id: typedArgs).wrappedRoute,
           settings: settings,
-          opaque: true,
-          barrierDismissible: true,
-          transitionsBuilder: TransitionsBuilders.fadeIn,
-          transitionDuration: Duration(milliseconds: 100),
         );
       default:
         return unknownRoutePage(settings.name);

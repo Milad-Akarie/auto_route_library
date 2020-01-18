@@ -9,14 +9,6 @@ class AutoRouter {
 
 const autoRouter = const AutoRouter();
 
-// initial route will have an explicit name of "/"
-// there could be only one initial route per navigator.
-class Initial {
-  const Initial();
-}
-
-const initial = const Initial();
-
 class MaterialRoute {
   // initial route will have an explicit name of "/"
 // there could be only one initial route per navigator.
@@ -28,9 +20,24 @@ class MaterialRoute {
   /// passed to the maintainState property in [MaterialPageRoute]
   final bool maintainState;
 
-  const MaterialRoute(
-      {this.initial, this.fullscreenDialog, this.maintainState});
+  /// route path name which will be assigned to the given variable name
+  /// const homeScreen = '[name]';
+  /// if null a kabab cased variable name
+  /// prefixed with '/' will be used;
+  /// homeScreen -> home-screen
+  final String name;
+
+  const MaterialRoute({
+    this.initial,
+    this.fullscreenDialog,
+    this.maintainState,
+    this.name,
+  });
 }
+
+// initial route will have an explicit name of "/"
+// there could be only one initial route per navigator.
+const initial = const MaterialRoute(initial: true);
 
 // forces usage of CupertinoPageRoute instead of MaterialPageRoute
 class CupertinoRoute {
@@ -47,12 +54,19 @@ class CupertinoRoute {
   /// passed to the title property in [CupertinoPageRoute]
   final String title;
 
-  const CupertinoRoute({
-    this.fullscreenDialog,
-    this.maintainState,
-    this.initial,
-    this.title,
-  });
+  /// route path name which will be assigned to the given variable name
+  /// const homeScreen = '[name]';
+  /// if null a kabab cased variable name
+  /// prefixed with '/' will be used;
+  /// homeScreen -> home-screen
+  final String name;
+
+  const CupertinoRoute(
+      {this.fullscreenDialog,
+      this.maintainState,
+      this.initial,
+      this.title,
+      this.name});
 }
 
 class CustomRoute {
@@ -88,13 +102,20 @@ class CustomRoute {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
-  const CustomRoute({
-    this.fullscreenDialog,
-    this.maintainState,
-    this.initial,
-    this.transitionsBuilder,
-    this.durationInMilliseconds,
-    this.opaque,
-    this.barrierDismissible,
-  });
+  /// route path name which will be assigned to the given variable name
+  /// const homeScreen = '[name]';
+  /// if null a kabab cased variable name
+  /// prefixed with '/' will be used;
+  /// homeScreen -> home-screen
+  final String name;
+
+  const CustomRoute(
+      {this.fullscreenDialog,
+      this.maintainState,
+      this.initial,
+      this.transitionsBuilder,
+      this.durationInMilliseconds,
+      this.opaque,
+      this.barrierDismissible,
+      this.name});
 }

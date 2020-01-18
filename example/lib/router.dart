@@ -1,20 +1,16 @@
 import 'package:auto_route/auto_route_annotations.dart';
-import 'package:auto_route/transitions_builders.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/login_screen.dart';
 import 'package:example/screens/second_screen.dart';
 
-@AutoRouter(generateNavigator: false, generateRouteList: false)
+@AutoRouter(generateNavigator: true, generateRouteList: false)
 class $Router {
-  @MaterialRoute(initial: true, fullscreenDialog: true, maintainState: true)
+  @MaterialRoute(initial: true)
   HomeScreen homeScreenRoute;
+
+  @CupertinoRoute(name: '/custom_cupertino_name')
   SecondScreen secondScreenRoute;
 
-  @CustomRoute(
-    transitionsBuilder: TransitionsBuilders.fadeIn,
-    durationInMilliseconds: 100,
-    opaque: true,
-    barrierDismissible: true,
-  )
+  @CustomRoute(name: '/custom_route_name')
   LoginScreen loginScreenDialog;
 }
