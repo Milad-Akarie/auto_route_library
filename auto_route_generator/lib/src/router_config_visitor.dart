@@ -4,7 +4,6 @@ import 'package:auto_route_generator/route_config_visitor.dart';
 import 'package:auto_route_generator/utils.dart';
 
 const _validRouteAnnotations = [
-  'Initial',
   'MaterialRoute',
   'CupertinoRoute',
   'CustomRoute'
@@ -58,21 +57,12 @@ class RouterConfigVisitor extends SimpleElementVisitor {
       if (!_validRouteAnnotations.contains(type)) {
         return;
       }
-
-      // return early if @initial annotation was used
-      //
-      // route type will default to MaterialPageRoute
-      if (type == 'Initial') {
-        routeConfig.initial = true;
-        return;
-      }
-
       routeConfig.fullscreenDialog =
           autoRoute.getField('fullscreenDialog')?.toBoolValue();
       routeConfig.maintainState =
           autoRoute.getField('maintainState')?.toBoolValue();
       routeConfig.initial = autoRoute.getField('initial')?.toBoolValue();
-
+      routeConfig.pathName = autoRoute.getField('name')?.toStringValue();
       if (type == 'CupertinoRoute') {
         routeConfig.routeType = RouteType.cupertino;
         routeConfig.cupertinoNavTitle =

@@ -1,9 +1,9 @@
 // general utils
 
 String getImport(Uri uri) {
-	if (uri == null) {
-		return null;
-	}
+  if (uri == null) {
+    return null;
+  }
   final path = uri.toString();
   // we don't need to import core dart types
   // or core flutter types
@@ -20,4 +20,9 @@ String toLowerCamelCase(String s) {
 
 String capitalize(String s) {
   return s[0].toUpperCase() + s.substring(1);
+}
+
+String toKababCase(String s) {
+  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'),
+      (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
 }
