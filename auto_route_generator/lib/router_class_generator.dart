@@ -1,12 +1,14 @@
 import 'package:auto_route_generator/route_config_visitor.dart';
+import 'package:auto_route_generator/src/router_config.dart';
 
 class RouterClassGenerator {
   final List<RouteConfig> routes;
 
   final StringBuffer _stringBuffer = StringBuffer();
   final String className;
+  final RouterConfig routerConfig;
 
-  RouterClassGenerator(this.className, this.routes);
+  RouterClassGenerator(this.className, this.routes, this.routerConfig);
 
   // helper functions
   void _write(Object obj) => _stringBuffer.write(obj);
@@ -55,6 +57,12 @@ class RouterClassGenerator {
         return _writeln("static const $routeName = '/$routeName';");
       }
     });
+
+    if (routerConfig.generateRouteList) {
+      _writeln("static const routes = [");
+      routes.forEach((r) => _write('${r.name},'));
+      _write("];");
+    }
   }
 
   void _generateRouteGeneratorFunction(List<RouteConfig> routes) {
@@ -105,9 +113,7 @@ class RouterClassGenerator {
       } else {
         // if router has any required params the argument class holder becomes required.
         final hasRequiredParams =
-            r.parameters
-                .where((p) => p.isRequired)
-                .isNotEmpty;
+            r.parameters.where((p) => p.isRequired).isNotEmpty;
         // show an error page  if passed args are not the same as declared args
         _writeln('if(hasInvalidArgs<${r.className}Arguments>(args');
         if (hasRequiredParams) {
@@ -244,9 +250,11 @@ class RouterClassGenerator {
   }
 
   void _generateHelperFunctions() {
-    _writeln(
-        'static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();');
-    _writeln(
-        'static NavigatorState get navigator => navigatorKey.currentState;');
+    if (routerConfig.generateNavigator) {
+      _writeln(
+          "static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();");
+      _writeln(
+          "static NavigatorState get navigator => navigatorKey.currentState;");
+    }
   }
 }

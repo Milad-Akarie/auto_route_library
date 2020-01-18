@@ -1,5 +1,10 @@
 class AutoRouter {
-  const AutoRouter();
+  final bool generateNavigator;
+  final bool generateRouteList;
+  const AutoRouter({
+    this.generateNavigator = true,
+    this.generateRouteList = false,
+  });
 }
 
 const autoRouter = const AutoRouter();
@@ -23,7 +28,8 @@ class MaterialRoute {
   /// passed to the maintainState property in [MaterialPageRoute]
   final bool maintainState;
 
-  const MaterialRoute({this.initial, this.fullscreenDialog, this.maintainState});
+  const MaterialRoute(
+      {this.initial, this.fullscreenDialog, this.maintainState});
 }
 
 // forces usage of CupertinoPageRoute instead of MaterialPageRoute

@@ -2,7 +2,6 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
 import 'package:auto_route_generator/route_config_visitor.dart';
 import 'package:auto_route_generator/utils.dart';
-import 'package:source_gen/source_gen.dart';
 
 const _validRouteAnnotations = [
   'Initial',
@@ -12,11 +11,10 @@ const _validRouteAnnotations = [
 ];
 
 // extracts route configs from class fields
-class RouterConfigVisitor extends SimpleElementVisitor<RouteConfig> {
-  final ConstantReader annotation;
+class RouterConfigVisitor extends SimpleElementVisitor {
   final routeConfigs = List<RouteConfig>();
 
-  RouterConfigVisitor(this.annotation);
+  RouterConfigVisitor();
 
   @override
   RouteConfig visitFieldElement(FieldElement field) {
@@ -88,13 +86,13 @@ class RouterConfigVisitor extends SimpleElementVisitor<RouteConfig> {
         routeConfig.customRouteBarrierDismissible =
             autoRoute.getField('barrierDismissible')?.toBoolValue();
         final function =
-        autoRoute.getField('transitionsBuilder')?.toFunctionValue();
+            autoRoute.getField('transitionsBuilder')?.toFunctionValue();
         if (function != null) {
           final import = getImport(function.source.uri);
           final displayName =
-          function.displayName.replaceFirst(RegExp('^_'), '');
+              function.displayName.replaceFirst(RegExp('^_'), '');
           final functionName = (function.isStatic &&
-              function.enclosingElement?.displayName != null)
+                  function.enclosingElement?.displayName != null)
               ? '${function.enclosingElement.displayName}.$displayName'
               : displayName;
           routeConfig.transitionBuilder =
