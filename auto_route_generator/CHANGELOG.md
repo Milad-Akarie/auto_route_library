@@ -1,3 +1,12 @@
+## [0.2.2]
+
+- Add option to generate a list with all route names
+- change generating navigator key is now optional
+- Fix prevent importing system library files
+- Change generated route path name are now Kabab cased (url-friendly)
+- Add ability to use custom path names in all route types
+- Update README file
+
 ## [0.2.1+3]
 
 - fix custom route not generating custom properties

@@ -1,7 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/auto_route_annotations.dart';
 import 'package:auto_route_generator/router_class_generator.dart';
-import 'package:auto_route_generator/src/router_config.dart';
 import 'package:auto_route_generator/src/router_config_visitor.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
