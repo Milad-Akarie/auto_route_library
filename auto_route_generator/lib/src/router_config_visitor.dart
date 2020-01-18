@@ -25,7 +25,7 @@ class RouterConfigVisitor extends SimpleElementVisitor {
     final routeConfig = RouteConfig();
     _extractMetaData(field, routeConfig);
 
-    final import = getImport(type.element.source.uri);
+    final import = getImport(type.element);
 
     if (import != null) {
       routeConfig.import = import;
@@ -78,7 +78,7 @@ class RouterConfigVisitor extends SimpleElementVisitor {
         final function =
             autoRoute.getField('transitionsBuilder')?.toFunctionValue();
         if (function != null) {
-          final import = getImport(function.source.uri);
+          final import = getImport(function);
           final displayName =
               function.displayName.replaceFirst(RegExp('^_'), '');
           final functionName = (function.isStatic &&

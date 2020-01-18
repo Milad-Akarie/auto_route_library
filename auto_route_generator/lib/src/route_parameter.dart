@@ -21,7 +21,7 @@ class RouteParameter {
     isRequired = parameterElement.hasRequired;
 
     // import type
-    _addImport(paramType.element.source.uri);
+    _addImport(paramType.element);
 
     // import generic types recursively
     _checkForParameterizedTypes(paramType);
@@ -32,14 +32,14 @@ class RouteParameter {
       paramType.typeArguments.forEach((type) {
         _checkForParameterizedTypes(type);
         if (type.element.source != null) {
-          _addImport(type.element.source.uri);
+          _addImport(type.element);
         }
       });
     }
   }
 
-  void _addImport(Uri uri) {
-    final import = getImport(uri);
+  void _addImport(Element element) {
+    final import = getImport(element);
     if (import != null) {
       imports.add(import);
     }
