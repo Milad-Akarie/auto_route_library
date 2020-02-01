@@ -1,4 +1,5 @@
 import 'package:auto_route_generator/route_config_visitor.dart';
+import 'package:auto_route_generator/src/route_guard.dart';
 
 import 'custom_transtion_builder.dart';
 
@@ -21,6 +22,7 @@ class RouteConfig {
   CustomTransitionBuilder transitionBuilder;
   int durationInMilliseconds;
   RouteType routeType = RouteType.material;
+  List<Guard> guards = [];
 
   String cupertinoNavTitle;
 

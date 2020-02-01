@@ -1,7 +1,9 @@
 import 'package:example/router.gr.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -9,7 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       onGenerateRoute: Router.onGenerateRoute,
       initialRoute: Router.homeScreenRoute,
-      navigatorKey: Router.navigatorKey,
+      navigatorKey: Router.navigator.key,
     );
   }
 }

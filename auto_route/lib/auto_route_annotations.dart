@@ -9,7 +9,7 @@ class AutoRouter {
 
 const autoRouter = const AutoRouter();
 
-class MaterialRoute {
+class AutoRoute {
   // initial route will have an explicit name of "/"
 // there could be only one initial route per navigator.
   final bool initial;
@@ -27,7 +27,7 @@ class MaterialRoute {
   /// homeScreen -> home-screen
   final String name;
 
-  const MaterialRoute({
+  const AutoRoute({
     this.initial,
     this.fullscreenDialog,
     this.maintainState,
@@ -35,51 +35,47 @@ class MaterialRoute {
   });
 }
 
+class MaterialRoute extends AutoRoute {
+  const MaterialRoute({
+    bool initial,
+    bool fullscreenDialog,
+    bool maintainState,
+    String name,
+  }) : super(
+          initial: initial,
+          fullscreenDialog: fullscreenDialog,
+          maintainState: maintainState,
+          name: name,
+        );
+}
+
+const materialRoute = const MaterialRoute();
 // initial route will have an explicit name of "/"
 // there could be only one initial route per navigator.
 const initial = const MaterialRoute(initial: true);
 
 // forces usage of CupertinoPageRoute instead of MaterialPageRoute
-class CupertinoRoute {
-  // initial route will have an explicit name of "/"
-// there could be only one initial route per navigator.
-  final bool initial;
-
-  /// passed to the fullscreenDialog property in [CupertinoPageRoute]
-  final bool fullscreenDialog;
-
-  /// passed to the maintainState property in [CupertinoPageRoute]
-  final bool maintainState;
-
+class CupertinoRoute extends AutoRoute {
   /// passed to the title property in [CupertinoPageRoute]
   final String title;
 
-  /// route path name which will be assigned to the given variable name
-  /// const homeScreen = '[name]';
-  /// if null a kabab cased variable name
-  /// prefixed with '/' will be used;
-  /// homeScreen -> home-screen
-  final String name;
-
   const CupertinoRoute(
-      {this.fullscreenDialog,
-      this.maintainState,
-      this.initial,
-      this.title,
-      this.name});
+      {bool initial,
+      bool fullscreenDialog,
+      bool maintainState,
+      String name,
+      this.title})
+      : super(
+          initial: initial,
+          fullscreenDialog: fullscreenDialog,
+          maintainState: maintainState,
+          name: name,
+        );
 }
 
-class CustomRoute {
-  // initial route will have an explicit name of "/"
-// there could be only one initial route per navigator.
-  final bool initial;
+const cupertinoRoute = const CupertinoRoute();
 
-  /// passed to the fullscreenDialog property in [PageRouteBuilder]
-  final bool fullscreenDialog;
-
-  /// passed to the maintainState property in [PageRouteBuilder]
-  final bool maintainState;
-
+class CustomRoute extends AutoRoute {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
@@ -102,20 +98,32 @@ class CustomRoute {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
-  /// route path name which will be assigned to the given variable name
-  /// const homeScreen = '[name]';
-  /// if null a kabab cased variable name
-  /// prefixed with '/' will be used;
-  /// homeScreen -> home-screen
-  final String name;
+  const CustomRoute({
+    bool initial,
+    bool fullscreenDialog,
+    bool maintainState,
+    String name,
+    this.transitionsBuilder,
+    this.durationInMilliseconds,
+    this.opaque,
+    this.barrierDismissible,
+  }) : super(
+          initial: initial,
+          fullscreenDialog: fullscreenDialog,
+          maintainState: maintainState,
+          name: name,
+        );
 
-  const CustomRoute(
-      {this.fullscreenDialog,
-      this.maintainState,
-      this.initial,
-      this.transitionsBuilder,
-      this.durationInMilliseconds,
-      this.opaque,
-      this.barrierDismissible,
-      this.name});
+  const CustomRoute.asDefualt({
+    this.transitionsBuilder,
+    this.durationInMilliseconds,
+    this.opaque,
+    this.barrierDismissible,
+  }) : super();
+}
+
+class GuardedBy {
+  final List<Type> guards;
+
+  const GuardedBy(this.guards);
 }

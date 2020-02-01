@@ -29,7 +29,7 @@ class RouterClassGenerator {
     final imports = {
       "'package:flutter/material.dart'",
       "'package:flutter/cupertino.dart'",
-      "'package:auto_route/router_utils.dart'"
+      "'package:auto_route/auto_route.dart'"
     };
     routes.forEach((r) {
       imports.add(r.import);
@@ -39,6 +39,11 @@ class RouterClassGenerator {
       if (r.parameters != null) {
         r.parameters.forEach((param) {
           if (param.imports != null) imports.addAll(param.imports);
+        });
+      }
+      if (r.guards != null) {
+        r.guards.forEach((g) {
+          imports.add(g.import);
         });
       }
     });
@@ -252,10 +257,26 @@ class RouterClassGenerator {
 
   void _generateHelperFunctions() {
     if (routerConfig.generateNavigator) {
+      // _writeln(
+      //     "static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();");
+
+      final routesWithGuards =
+          routes.where((r) => r.guards != null && r.guards.isNotEmpty);
+
+      _writeln('static const _guardedRoutes = const{');
+      routesWithGuards.forEach((r) {
+        _write('${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
+      });
+      _write('};');
+
       _writeln(
-          "static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();");
-      _writeln(
-          "static NavigatorState get navigator => navigatorKey.currentState;");
+          'static ExtendedNavigator get navigator => NavigationService.findOrCreate<$className>(');
+      if (routesWithGuards.isNotEmpty) {
+        _write('guardedRoutes: _guardedRoutes');
+      }
+      _write(');');
+      // _writeln(
+      //     "static NavigatorState get navigator => navigatorKey.currentState;");
     }
   }
 }

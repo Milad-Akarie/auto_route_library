@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route_wrapper.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import 'nested/nested_router.gr.dart';
@@ -17,7 +17,7 @@ class SecondScreen extends StatelessWidget implements AutoRouteWrapper {
         children: <Widget>[
           Expanded(
             child: Navigator(
-              key: NestedRouter.navigatorKey,
+              key: NestedRouter.navigator.key,
               onGenerateRoute: NestedRouter.onGenerateRoute,
             ),
           ),

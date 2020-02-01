@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'navigation_keys_container.dart';
-
 // returns an error page routes with a helper message.
 PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
       builder: (ctx) => Scaffold(
@@ -75,8 +73,4 @@ PageRoute misTypedArgsRoute<T>(Object args) {
       ),
     ),
   );
-}
-
-GlobalKey<NavigatorState> getNavigatorKey<T>() {
-  return NavigationKeysContainer().get<T>();
 }
