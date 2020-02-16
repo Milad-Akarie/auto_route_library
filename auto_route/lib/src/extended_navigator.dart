@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
-class ExtendedNavigator extends NavigatorState {
+class ExtendedNavigator {
   final Map<String, List<Type>> guardedRoutes;
 
   ExtendedNavigator([this.guardedRoutes]);
@@ -44,10 +44,6 @@ class ExtendedNavigator extends NavigatorState {
       if (!await NavigationService.getGuardByType(guard)
           .canNavigate(key.currentContext, routeName, arguments)) return false;
     }
-    // await for (Type guard in Stream.fromIterable(guardedRoutes[routeName])) {
-    //   if (!await NavigationService.getGuardByType(guard)
-    //       .canNavigate(key.currentContext, routeName, arguments)) return false;
-    // }
     return true;
   }
 }

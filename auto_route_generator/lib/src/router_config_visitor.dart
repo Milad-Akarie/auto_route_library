@@ -26,7 +26,7 @@ class RouterConfigVisitor extends SimpleElementVisitor {
     _extractMetaData(field, routeConfig);
 
     guardsChecker
-        .firstAnnotationOfExact(field, throwOnUnresolved: false)
+        .firstAnnotationOfExact(field)
         ?.getField('guards')
         ?.toListValue()
         ?.map((g) => g.toTypeValue())

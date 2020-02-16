@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget implements AutoRouteWrapper {
               NavigationService.registerGuard(AuthGuard());
               NavigationService.registerGuard(UserRoleGaurd());
 
-              print(await Router.navigator.pushNamed(Router.secondScreenRoute));
+              print(await Router.instance.pushNamed(Router.secondScreenRoute));
             },
           ),
         ),

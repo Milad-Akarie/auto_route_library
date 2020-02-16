@@ -9,20 +9,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/second_screen.dart';
-import 'package:example/router.dart';
 import 'package:example/screens/login_screen.dart';
-import 'package:auto_route/src/transitions_builders.dart';
 
-class Router {
+import 'auto_router_base.dart';
+
+class Router extends AutoRouterBase {
   static const homeScreenRoute = '/';
   static const secondScreenRoute = 'custom-name';
   static const loginScreenDialog = '/login-screen-dialog';
-  static const _guardedRoutes = const {
-    secondScreenRoute: [AuthGuard],
-  };
-  static ExtendedNavigator get navigator =>
-      NavigationService.findOrCreate<Router>(guardedRoutes: _guardedRoutes);
-  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+
+  Router._() : super();
+  static final Router _instance = Router._();
+  static Router get instance => _instance;
+
+  Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
       case Router.homeScreenRoute:

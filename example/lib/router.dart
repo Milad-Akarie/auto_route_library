@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:example/router.gr.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/login_screen.dart';
 import 'package:example/screens/second_screen.dart';
+import 'package:flutter/material.dart';
 
 @CustomRoute.asDefualt()
 @AutoRouter(generateNavigator: true)
@@ -27,7 +29,7 @@ class AuthGuard extends RouteGuard {
       BuildContext context, String routeName, Object arguments) async {
     print('auth Guard');
 
-    final res = await Router.navigator.pushNamed(Router.loginScreenDialog);
+    final res = await Router.instance.pushNamed(Router.loginScreenDialog);
 
     return res;
   }
@@ -39,7 +41,7 @@ class UserRoleGaurd extends RouteGuard {
       BuildContext context, String routeName, Object arguments) async {
     print('UserRoleGaurd Guard');
 
-    Router.navigator.pushNamed(Router.loginScreenDialog);
+    Router.instance.pushNamed(Router.loginScreenDialog);
     return true;
   }
 }
