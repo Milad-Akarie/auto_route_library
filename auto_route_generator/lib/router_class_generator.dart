@@ -32,7 +32,7 @@ class RouterClassGenerator {
       "'package:auto_route/auto_route.dart'"
     };
     routes.forEach((r) {
-      imports.add(r.import);
+      imports.addAll(r.imports);
       if (r.transitionBuilder != null) {
         imports.add(r.transitionBuilder.import);
       }
@@ -150,18 +150,19 @@ class RouterClassGenerator {
     final widget =
         "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
 
+    final returnType = r.returnType ?? 'dynamic';
     if (r.routeType == RouteType.cupertino) {
       _write(
-          'return CupertinoPageRoute(builder: (_) => $widget, settings: settings,');
+          'return CupertinoPageRoute<$returnType>(builder: (_) => $widget, settings: settings,');
       if (r.cupertinoNavTitle != null) {
         _write("title:'${r.cupertinoNavTitle}',");
       }
     } else if (r.routeType == RouteType.material) {
       _write(
-          'return MaterialPageRoute(builder: (_) => $widget, settings: settings,');
+          'return MaterialPageRoute<$returnType>(builder: (_) => $widget, settings: settings,');
     } else {
       _write(
-          'return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,');
+          'return PageRouteBuilder<$returnType>(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,');
 
       if (r.customRouteOpaque != null) {
         _write('opaque:${r.customRouteOpaque.toString()},');
@@ -257,9 +258,6 @@ class RouterClassGenerator {
 
   void _generateHelperFunctions() {
     if (routerConfig.generateNavigator) {
-      // _writeln(
-      //     "static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();");
-
       final routesWithGuards =
           routes.where((r) => r.guards != null && r.guards.isNotEmpty);
 
@@ -269,10 +267,9 @@ class RouterClassGenerator {
       });
       _write('};');
 
-      _writeln(
-          'static ExtendedNavigator get navigator => NavigationService.findOrCreate<$className>(');
+      _writeln('static final navigator = ExtendedNavigator(');
       if (routesWithGuards.isNotEmpty) {
-        _write('guardedRoutes: _guardedRoutes');
+        _write('_guardedRoutes');
       }
       _write(');');
       // _writeln(

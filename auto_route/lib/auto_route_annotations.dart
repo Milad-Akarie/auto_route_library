@@ -1,8 +1,6 @@
 class AutoRouter {
-  final bool generateNavigator;
   final bool generateRouteList;
   const AutoRouter({
-    this.generateNavigator = true,
     this.generateRouteList = false,
   });
 }
@@ -27,12 +25,17 @@ class AutoRoute {
   /// homeScreen -> home-screen
   final String name;
 
-  const AutoRoute({
-    this.initial,
-    this.fullscreenDialog,
-    this.maintainState,
-    this.name,
-  });
+  // the results type returned
+  /// from this page route MaterialPageRoute<[returnType]>()
+  /// defualts to dynamic
+  final Type returnType;
+
+  const AutoRoute(
+      {this.initial,
+      this.fullscreenDialog,
+      this.maintainState,
+      this.name,
+      this.returnType});
 }
 
 class MaterialRoute extends AutoRoute {
@@ -41,11 +44,13 @@ class MaterialRoute extends AutoRoute {
     bool fullscreenDialog,
     bool maintainState,
     String name,
+    Type returnType,
   }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
           name: name,
+          returnType: returnType,
         );
 }
 
@@ -59,17 +64,19 @@ class CupertinoRoute extends AutoRoute {
   /// passed to the title property in [CupertinoPageRoute]
   final String title;
 
-  const CupertinoRoute(
-      {bool initial,
-      bool fullscreenDialog,
-      bool maintainState,
-      String name,
-      this.title})
-      : super(
+  const CupertinoRoute({
+    bool initial,
+    bool fullscreenDialog,
+    bool maintainState,
+    String name,
+    this.title,
+    Type returnType,
+  }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
           name: name,
+          returnType: returnType,
         );
 }
 
@@ -107,11 +114,13 @@ class CustomRoute extends AutoRoute {
     this.durationInMilliseconds,
     this.opaque,
     this.barrierDismissible,
+    Type returnType,
   }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
           name: name,
+          returnType: returnType,
         );
 
   const CustomRoute.asDefualt({

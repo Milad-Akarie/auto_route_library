@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
-  Router.instance.registerGuards([AuthGuard()]);
+  Router.navigator.addGuard(AuthGuard());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateRoute: Router.instance.onGenerateRoute,
-      initialRoute: Router.homeScreenRoute,
-      navigatorKey: Router.instance.key,
+      onGenerateRoute: Router.onGenerateRoute,
+      initialRoute: Router.homeScreen,
+      navigatorKey: Router.navigator.key,
     );
   }
 }
