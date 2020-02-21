@@ -22,7 +22,8 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouter> {
     }
     final routerClassName = element.displayName.replaceFirst(r'$', '');
 
-    final visitor = RouterConfigVisitor();
+    final routerConfig = RouterConfig.fromAnnotation(annotation);
+    final visitor = RouterConfigVisitor(routerConfig.globalRouteConfig);
 
     element.visitChildren(visitor);
     final routes = visitor.routeConfigs;
@@ -30,7 +31,6 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouter> {
     if (routes.where((r) => r.initial != null && r.initial).length > 1) {
       throw ('\n ------------ There can be only one initial route per navigator ------------ \n');
     }
-    final routerConfig = RouterConfig.fromAnnotation(annotation);
     return RouterClassGenerator(routerClassName, routes, routerConfig)
         .generate();
   }

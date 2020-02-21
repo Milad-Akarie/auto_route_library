@@ -3,6 +3,11 @@
 import 'package:analyzer/dart/element/element.dart';
 
 String getImport(Element element) {
+  // return early if source is null
+  if (element.source == null) {
+    return null;
+  }
+
   // we don't need to import core dart types
   // or core flutter types
   if (!element.source.isInSystemLibrary) {

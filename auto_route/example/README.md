@@ -4,7 +4,7 @@ class HomeScreen extends StatelessWidget{}
 
 class LoginScreen extends StatelessWidget {}
 
-@AutoRouter(generateRouteList: true)
+@MaterialAutoRouter()
 class $Router{
 @initial
  HomeScreen homeScreenRoute;

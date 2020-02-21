@@ -9,7 +9,6 @@ class RouterClassGenerator {
   final RouterConfig routerConfig;
 
   RouterClassGenerator(this.className, this.routes, this.routerConfig);
-
   // helper functions
   void _write(Object obj) => _stringBuffer.write(obj);
 
@@ -257,23 +256,19 @@ class RouterClassGenerator {
   }
 
   void _generateHelperFunctions() {
-    if (routerConfig.generateNavigator) {
-      final routesWithGuards =
-          routes.where((r) => r.guards != null && r.guards.isNotEmpty);
+    final routesWithGuards =
+        routes.where((r) => r.guards != null && r.guards.isNotEmpty);
 
-      _writeln('static const _guardedRoutes = const{');
-      routesWithGuards.forEach((r) {
-        _write('${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
-      });
-      _write('};');
+    _writeln('static const _guardedRoutes = const{');
+    routesWithGuards.forEach((r) {
+      _write('${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
+    });
+    _write('};');
 
-      _writeln('static final navigator = ExtendedNavigator(');
-      if (routesWithGuards.isNotEmpty) {
-        _write('_guardedRoutes');
-      }
-      _write(');');
-      // _writeln(
-      //     "static NavigatorState get navigator => navigatorKey.currentState;");
+    _writeln('static final navigator = ExtendedNavigator(');
+    if (routesWithGuards.isNotEmpty) {
+      _write('_guardedRoutes');
     }
+    _write(');');
   }
 }

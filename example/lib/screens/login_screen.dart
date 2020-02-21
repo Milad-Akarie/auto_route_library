@@ -14,8 +14,7 @@ class LoginScreen extends StatelessWidget {
         child: FlatButton(
           child: Text("Login Screen Screen"),
           onPressed: () {
-            // NestedRouter.navigator.pushNamed(NestedRouter.nestedPage);
-            Router.navigator.pop(true);
+            Router.navigator.pop<bool>(false);
           },
         ),
       ),

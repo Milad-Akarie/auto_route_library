@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
           child: FlatButton(
             child: Text("Second Screen"),
             onPressed: () async {
-              Router.navigator.pushNamed(Router.secondScreenRoute,
+              Router.navigator.pushNamed(Router.secondScreen,
                   arguments: SecondScreenArguments(title: 'title'));
             },
           ),

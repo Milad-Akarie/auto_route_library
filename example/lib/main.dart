@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
-  Router.navigator.addGuard(AuthGuard());
+  Router.navigator.addGuards([
+    AuthGuard(),
+  ]);
 }
 
 class MyApp extends StatelessWidget {

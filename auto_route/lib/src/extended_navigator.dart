@@ -12,7 +12,10 @@ class ExtendedNavigator {
 
   NavigatorState get _navigator => _key.currentState;
   GlobalKey<NavigatorState> get key => _key;
-  Map<Type, RouteGuard> get registeredGuards => _registeredGuards;
+
+  void addGuards(List<RouteGuard> guards) {
+    guards.forEach((g) => addGuard(g));
+  }
 
   void addGuard(RouteGuard guard) {
     assert(guard != null);
@@ -102,7 +105,7 @@ class ExtendedNavigator {
 
   RouteGuard _getGuard(Type guardType) {
     if (_registeredGuards[guardType] == null) {
-      throw ('$guardType is not registered! \nYou have to add your guards to the navigator by calling navigator.addGaurd()');
+      throw ('$guardType is not registered! \nYou have to add your guards to the navigator by calling navigator.addGuard()');
     }
     return _registeredGuards[guardType];
   }

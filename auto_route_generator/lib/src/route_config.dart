@@ -1,13 +1,9 @@
 import 'package:auto_route_generator/route_config_visitor.dart';
-import 'package:auto_route_generator/src/route_guard_config.dart';
-import 'package:auto_route_generator/src/route_parameter_config.dart';
 
 import 'custom_transtion_builder.dart';
 
 /// holds the extracted route configs
 /// to be used in [RouterClassGenerator]
-
-enum RouteType { material, cupertino, custom }
 
 class RouteConfig {
   List<String> imports = [];
@@ -20,15 +16,21 @@ class RouteConfig {
   bool maintainState;
   String className;
   String returnType;
-  List<RouteParameterConfig> parameters;
+  List<RouteParamConfig> parameters;
   CustomTransitionBuilder transitionBuilder;
   int durationInMilliseconds;
-  RouteType routeType = RouteType.material;
-  List<RouteGuardConifg> guards = [];
+  int routeType = RouteType.material;
+  List<RouteGuardConfig> guards = [];
 
   String cupertinoNavTitle;
 
   bool hasWrapper;
 
   RouteConfig();
+}
+
+class RouteType {
+  static const int material = 0;
+  static const int cupertino = 1;
+  static const int custom = 2;
 }
