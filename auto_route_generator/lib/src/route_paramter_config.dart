@@ -4,7 +4,7 @@ import 'package:auto_route_generator/utils.dart';
 
 // holds constructor parameter info to be used
 // in generating route parameters.
-class RouteParameter {
+class RouteParamConfig {
   String type;
   String name;
   bool isPositional;
@@ -12,9 +12,9 @@ class RouteParameter {
   String defaultValueCode;
   Set<String> imports = {};
 
-  RouteParameter.fromParameterElement(ParameterElement parameterElement) {
+  RouteParamConfig.fromParameterElement(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
-    type = paramType.toString();
+    type = paramType.name;
     name = parameterElement.name;
     isPositional = parameterElement.isPositional;
     defaultValueCode = parameterElement.defaultValueCode;

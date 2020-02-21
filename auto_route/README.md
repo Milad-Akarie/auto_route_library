@@ -9,8 +9,9 @@ AutoRoute is a route generation library, where everything needed for navigation 
 - [Customization](#customization)
 - [Passing Arguments to Routes](#passing-arguments-to-routes)
 - [Navigating Using a Global Navigator Key aka Navigating Without Context](#navigating-using-a-global-navigator-key-aka-navigating-without-context)
-- [Handling Wrapped Routes](#handling-wrapped-routes)
 - [Nested Navigators](#nested-navigators)
+- [Route guards](#-route-guards)
+- [Handling Wrapped Routes](#handling-wrapped-routes)
 - [Custom Route Transitions](#custom-route-transitions)
 
 ### Installation
@@ -31,13 +32,13 @@ dev_dependencies:
 
 ---
 
-First create a router config class then annotate it with @autoRouter and prefix it's name with **\$** to get a generated class with the same name minus the $.  
+First create a router config class then annotate it with @MaterialAutoRouter, @CupertinoAutoRoute or @CustomAutoRoute. It's name must be prefixed with **\$** to get a generated class with the same name minus the $.  
 $Router => Router
 
 ##### Note: using \$ prefix is mandatory.
 
 ```dart
-@autoRouter or @AutoRouter(pass config flags)
+@MaterialAutoRouter(...config)  //CustomAutoRoute(..config)
 class $Router {
 
 }
@@ -48,7 +49,7 @@ class $Router {
 **Only use the @MaterialRoute() or @CupertinoRoute() annotations to customize your route**
 
 ```dart
-@autoRouter
+@MaterialAutoRouter()
 class $Router {
  // use @initial or @CupertinoRoute(initial: true) to annotate your initial route.
   @initial
@@ -88,7 +89,7 @@ class MyApp extends StatelessWidget {
     // hook up the onGenerateRoute function in the generated Router class
     // with your Material app
       onGenerateRoute: MyRouter.onGenerateRoute,
-      // optional
+      navigatorKey: MyRouter.navigator.key,
       initialRoute: MyRouter.homeScreenRoute,
     );
   }
@@ -100,13 +101,13 @@ class MyApp extends StatelessWidget {
 ```dart
 class Router{
    // your route names will be generated as static const Strings
-  static const loginScreenRoute = '/loginScreenRoute';
+  static const loginScreenRoute = '/login-screen-route';
 
       static Route<dynamic> onGenerateRoute(RouteSettings settings) {
         switch (settings.name) {
         // The generated code for LoginScreen is
           case Router.loginScreenRoute:
-            return CupertinoPageRoute(
+            return CupertinoPageRoute<dynamic>(
               builder: (_) => LoginScreen(),
               settings: settings,
               fullscreenDialog: true
@@ -123,12 +124,20 @@ class Router{
 
 ---
 
-##### @AutoRouter
+##### @MaterialAutoRouter  |  @CupertinoAutoRouter
 
 | Property                 | Default value | Definition                                                      |
-| ------------------------ | ------------- | --------------------------------------------------------------- |
-| generateNavigator [bool] | true          | if true a navigator key will be generated with helper accessors |
+| ------------------------ | ------------- | --------------------------------------------------------------- 
 | generateRouteList [bool] | false         | if true a list of all routes will be generated                  |
+
+#### @CustomAutoRouter
+
+| Property                        | Default value | Definition                                                                       |
+| ------------------------------- | :-----------: | -------------------------------------------------------------------------------- |
+| transitionsBuilder [Function]   |     null      | extension for the transitionsBuilder property in PageRouteBuilder                |
+| opaque [bool]                   |     true      | extension for the opaque property in PageRouteBuilder                            |
+| barrierDismissible [bool]       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |
+| durationInMilliseconds [double] |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |
 
 #### @MaterialRoute | @CupertinoRoute | @CustomRoute
 
@@ -145,7 +154,7 @@ class Router{
 | -------------- | :-----------: | ------------------------------------------------------ |
 | title [String] |     null      | extension for the title property in CupertinoPageRoute |
 
-#### @CustomeRoute Specific => PageRouteBuilder
+#### @CustomRoute Specific => PageRouteBuilder
 
 | Property                        | Default value | Definition                                                                       |
 | ------------------------------- | :-----------: | -------------------------------------------------------------------------------- |
@@ -226,7 +235,7 @@ class WelcomeScreenArguments {
           return misTypedArgsRoute<WelcomeScreenArguments>(args);
         final typedArgs =
             args as WelcomeScreenArguments ?? WelcomeScreenArguments();
-        return MaterialPageRoute(
+        return MaterialPageRoute<dynamic>(
           builder: (_) =>
               WelcomeScreen(title: typedArgs.title, message: typedArgs.message),
           settings: settings,
@@ -252,7 +261,7 @@ Simply assign MyRouter.navigatorKey to the MaterialApp property "navigatorKey" a
   MaterialApp(
       onGenerateRoute: MyRouter.onGenerateRoute,
       // hook up the navigatorKey
-      navigatorKey: MyRouter.navigatorKey,
+      navigatorKey: MyRouter.navigator.key,
     );
 }
 ```
@@ -270,7 +279,7 @@ MyRouter.navigator.pushNamed(MyRouter.secondScreen);
 Create your nested router class and define your routes as before.
 
 ```dart
-@autoRouter
+@MaterialAutoRouter()
 class $MyNestedRouter {
   @initial
   NestedHomePage nestedHomePage;
@@ -282,7 +291,7 @@ class $MyNestedRouter {
 
 ```dart
  Navigator(
-          key: MyNestedRouter.navigatorKey,
+          key: MyNestedRouter.navigator.key,
           onGenerateRoute: MyNestedRouter.onGenerateRoute),
 ```
 
@@ -291,6 +300,39 @@ And That's that! Now use your nested router's navigator to navigate within your 
 ```dart
 MyNestedRouter.navigator.pushNamed("your Nested route")
 ```
+
+### Route guards
+---
+Implementing route guards requires a little bit of setup:
+1. Create your route guard by extending RouteGuard from the autoRoute package
+ ```dart
+class AuthGuard extends RouteGuard {
+  @override
+  Future<bool> canNavigate(
+      BuildContext context, String routeName, Object arguments) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token_key') != null;
+  }
+}
+ ```
+ 2. Register your guards
+ ```dart
+ // you need to register the guards before they're needed
+ // main function is a good place to register your guards
+  void main() {
+      Router.navigator.addGuards([
+        AuthGuard(),
+      ]);
+      runApp(MyApp());
+}
+ ```
+ 3. Annotated the routes you want to guard with @GuardedBy([..guards]) and pass in your guards as types.
+ ```dart
+  @GuardedBy([AuthGuard])
+  ProfileScreen profileScreen;
+  ```
+
 
 ### Handling Wrapped Routes
 
@@ -314,10 +356,12 @@ To use custom Transitions use the @CustomRoute() annotation and pass in your pre
 The TransitionsBuilder function needs to be passed as a static/const reference that has the same signature as the TransitionsBuilder Function of the PageRouteBuilder class.  
 The included **TransitionsBuilders** Class contains a preset of common Transitions builders
 
+
 ```dart
 @CustomRoute(transitionsBuilder: TransitionBuilders.slideBottom,durationInMilliseconds: 400)
 LoginScreen loginScreenRoute;
 ```
+Use **@CustomAutoRouter()** to define global custom route Transitions.
 
 You can of course use your own transitionsBuilder function as long as it has the same function signature.  
 The function has to take in exactly a BuildContext, Animation[Double], Animation[Double] and a child Widget and it needs to return a Widget, typically you would wrap your child with one of flutter's transition Widgets as follows.

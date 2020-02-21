@@ -1,27 +1,19 @@
-import 'package:auto_route/auto_route_wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../model.dart';
 import '../router.gr.dart';
 
-class HomeScreen extends StatelessWidget implements AutoRouteWrapper {
-  @override
-  Widget get wrappedRoute => Provider(create: (ctx) => Model(), child: this);
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print("built");
     return Scaffold(
       appBar: AppBar(),
       body: Container(
         child: Center(
           child: FlatButton(
-	          child: Text(Provider
-			          .of<Model>(context, listen: false)
-			          .value),
-            onPressed: () {
-              Router.navigator.pushNamed(Router.secondScreenRoute, arguments: SecondScreenArguments(title: "Title"));
+            child: Text("Second Screen"),
+            onPressed: () async {
+              Router.navigator.pushNamed(Router.secondScreen,
+                  arguments: SecondScreenArguments(title: 'title'));
             },
           ),
         ),

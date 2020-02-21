@@ -1,13 +1,10 @@
-import 'package:auto_route/auto_route_wrapper.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import 'nested/nested_router.gr.dart';
-
 class SecondScreen extends StatelessWidget implements AutoRouteWrapper {
-  final String title;
   final String message;
 
-  const SecondScreen({@required this.title, this.message});
+  const SecondScreen({title, this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -15,17 +12,9 @@ class SecondScreen extends StatelessWidget implements AutoRouteWrapper {
       appBar: AppBar(),
       body: Column(
         children: <Widget>[
-          Expanded(
-            child: Navigator(
-              key: NestedRouter.navigatorKey,
-              onGenerateRoute: NestedRouter.onGenerateRoute,
-            ),
-          ),
           FlatButton(
             child: Text("NestedScreen Screen"),
-            onPressed: () {
-              NestedRouter.navigator.pushNamed(NestedRouter.nestedPage);
-            },
+            onPressed: () {},
           ),
         ],
       ),

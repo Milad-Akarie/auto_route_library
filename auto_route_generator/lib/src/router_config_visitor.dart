@@ -1,19 +1,19 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/visitor.dart';
+import 'package:auto_route/auto_route_annotations.dart';
 import 'package:auto_route_generator/route_config_visitor.dart';
 import 'package:auto_route_generator/utils.dart';
+import 'package:source_gen/source_gen.dart';
 
-const _validRouteAnnotations = [
-  'MaterialRoute',
-  'CupertinoRoute',
-  'CustomRoute'
-];
+const TypeChecker guardsChecker = TypeChecker.fromRuntime(GuardedBy);
+const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
 
 // extracts route configs from class fields
 class RouterConfigVisitor extends SimpleElementVisitor {
   final routeConfigs = List<RouteConfig>();
+  final RouteConfig _globConfig;
 
-  RouterConfigVisitor();
+  RouterConfigVisitor(this._globConfig);
 
   @override
   RouteConfig visitFieldElement(FieldElement field) {
@@ -25,10 +25,20 @@ class RouterConfigVisitor extends SimpleElementVisitor {
     final routeConfig = RouteConfig();
     _extractMetaData(field, routeConfig);
 
+    guardsChecker
+        .firstAnnotationOfExact(field)
+        ?.getField('guards')
+        ?.toListValue()
+        ?.map((g) => g.toTypeValue())
+        ?.forEach((guard) {
+      routeConfig.guards.add(
+          RouteGuardConfig(type: guard.name, import: getImport(guard.element)));
+    });
+
     final import = getImport(type.element);
 
     if (import != null) {
-      routeConfig.import = import;
+      routeConfig.imports.add(import);
     }
     routeConfig.name = field.name;
     routeConfig.className = type.name;
@@ -40,7 +50,7 @@ class RouterConfigVisitor extends SimpleElementVisitor {
     final constructor = (type.element as ClassElement).unnamedConstructor;
     if (constructor != null && constructor.parameters.isNotEmpty) {
       routeConfig.parameters = constructor.parameters
-          .map((p) => RouteParameter.fromParameterElement(p))
+          .map((p) => RouteParamConfig.fromParameterElement(p))
           .toList();
     }
 
@@ -48,47 +58,66 @@ class RouterConfigVisitor extends SimpleElementVisitor {
     return routeConfig;
   }
 
-  void _extractMetaData(FieldElement field, RouteConfig routeConfig) {
-    if (field.metadata != null && field.metadata.isNotEmpty) {
-      final autoRoute = field.metadata.first.computeConstantValue();
-
-      final type = autoRoute.type.toString();
-      // only continue if annotation is MaterialRoute, Initial CupertinoRoute or CustomRoute.
-      if (!_validRouteAnnotations.contains(type)) {
-        return;
-      }
-      routeConfig.fullscreenDialog =
-          autoRoute.getField('fullscreenDialog')?.toBoolValue();
-      routeConfig.maintainState =
-          autoRoute.getField('maintainState')?.toBoolValue();
-      routeConfig.initial = autoRoute.getField('initial')?.toBoolValue();
-      routeConfig.pathName = autoRoute.getField('name')?.toStringValue();
-      if (type == 'CupertinoRoute') {
-        routeConfig.routeType = RouteType.cupertino;
-        routeConfig.cupertinoNavTitle =
-            autoRoute.getField('title')?.toStringValue();
-      } else if (type == 'CustomRoute') {
-        routeConfig.routeType = RouteType.custom;
-        routeConfig.durationInMilliseconds =
-            autoRoute.getField('durationInMilliseconds').toIntValue();
-        routeConfig.customRouteOpaque =
-            autoRoute.getField('opaque')?.toBoolValue();
+  void _extractMetaData(Element field, RouteConfig routeConfig) {
+    final routeAnnotation = autoRouteChecker.firstAnnotationOf(field);
+    if (routeAnnotation == null) {
+      routeConfig.routeType = _globConfig.routeType;
+      if (_globConfig.routeType == RouteType.custom) {
+        routeConfig.transitionBuilder = _globConfig.transitionBuilder;
+        routeConfig.durationInMilliseconds = _globConfig.durationInMilliseconds;
         routeConfig.customRouteBarrierDismissible =
-            autoRoute.getField('barrierDismissible')?.toBoolValue();
-        final function =
-            autoRoute.getField('transitionsBuilder')?.toFunctionValue();
-        if (function != null) {
-          final import = getImport(function);
-          final displayName =
-              function.displayName.replaceFirst(RegExp('^_'), '');
-          final functionName = (function.isStatic &&
-                  function.enclosingElement?.displayName != null)
-              ? '${function.enclosingElement.displayName}.$displayName'
-              : displayName;
-          routeConfig.transitionBuilder =
-              CustomTransitionBuilder(functionName, import);
-        }
+            _globConfig.customRouteBarrierDismissible;
+        routeConfig.customRouteOpaque = _globConfig.customRouteOpaque;
       }
+      return;
+    }
+
+    final autoRoute = ConstantReader(routeAnnotation);
+
+    routeConfig.fullscreenDialog =
+        autoRoute.peek('fullscreenDialog')?.boolValue;
+    routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
+    routeConfig.initial = autoRoute.peek('initial')?.boolValue;
+    routeConfig.pathName = autoRoute.peek('name')?.stringValue;
+    final returnType = autoRoute.peek('returnType')?.typeValue;
+    if (returnType != null) {
+      routeConfig.returnType = returnType.name;
+      final import = getImport(returnType.element);
+      if (import != null) {
+        routeConfig.imports.add(import);
+      }
+    }
+
+    if ((autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute)))) {
+      routeConfig.routeType = RouteType.material;
+    } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CupertinoRoute))) {
+      routeConfig.routeType = RouteType.cupertino;
+      routeConfig.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
+    } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
+      routeConfig.routeType = RouteType.custom;
+      routeConfig.durationInMilliseconds =
+          autoRoute.peek('durationInMilliseconds')?.intValue;
+      routeConfig.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
+      routeConfig.customRouteBarrierDismissible =
+          autoRoute.peek('barrierDismissible')?.boolValue;
+      final function =
+          autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      if (function != null) {
+        final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
+        final functionName = (function.isStatic &&
+                function.enclosingElement?.displayName != null)
+            ? '${function.enclosingElement.displayName}.$displayName'
+            : displayName;
+
+        var import;
+        if (function.enclosingElement?.name != 'TransitionsBuilders') {
+          import = getImport(function);
+        }
+        routeConfig.transitionBuilder =
+            CustomTransitionBuilder(functionName, import);
+      }
+    } else {
+      routeConfig.routeType = _globConfig.routeType;
     }
   }
 }

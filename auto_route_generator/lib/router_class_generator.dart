@@ -9,7 +9,6 @@ class RouterClassGenerator {
   final RouterConfig routerConfig;
 
   RouterClassGenerator(this.className, this.routes, this.routerConfig);
-
   // helper functions
   void _write(Object obj) => _stringBuffer.write(obj);
 
@@ -29,16 +28,21 @@ class RouterClassGenerator {
     final imports = {
       "'package:flutter/material.dart'",
       "'package:flutter/cupertino.dart'",
-      "'package:auto_route/router_utils.dart'"
+      "'package:auto_route/auto_route.dart'"
     };
     routes.forEach((r) {
-      imports.add(r.import);
+      imports.addAll(r.imports);
       if (r.transitionBuilder != null) {
         imports.add(r.transitionBuilder.import);
       }
       if (r.parameters != null) {
         r.parameters.forEach((param) {
           if (param.imports != null) imports.addAll(param.imports);
+        });
+      }
+      if (r.guards != null) {
+        r.guards.forEach((g) {
+          imports.add(g.import);
         });
       }
     });
@@ -145,18 +149,19 @@ class RouterClassGenerator {
     final widget =
         "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
 
+    final returnType = r.returnType ?? 'dynamic';
     if (r.routeType == RouteType.cupertino) {
       _write(
-          'return CupertinoPageRoute(builder: (_) => $widget, settings: settings,');
+          'return CupertinoPageRoute<$returnType>(builder: (_) => $widget, settings: settings,');
       if (r.cupertinoNavTitle != null) {
         _write("title:'${r.cupertinoNavTitle}',");
       }
     } else if (r.routeType == RouteType.material) {
       _write(
-          'return MaterialPageRoute(builder: (_) => $widget, settings: settings,');
+          'return MaterialPageRoute<$returnType>(builder: (_) => $widget, settings: settings,');
     } else {
       _write(
-          'return PageRouteBuilder(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,');
+          'return PageRouteBuilder<$returnType>(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,');
 
       if (r.customRouteOpaque != null) {
         _write('opaque:${r.customRouteOpaque.toString()},');
@@ -251,11 +256,19 @@ class RouterClassGenerator {
   }
 
   void _generateHelperFunctions() {
-    if (routerConfig.generateNavigator) {
-      _writeln(
-          "static GlobalKey<NavigatorState> get navigatorKey => getNavigatorKey<$className>();");
-      _writeln(
-          "static NavigatorState get navigator => navigatorKey.currentState;");
+    final routesWithGuards =
+        routes.where((r) => r.guards != null && r.guards.isNotEmpty);
+
+    _writeln('static const _guardedRoutes = const{');
+    routesWithGuards.forEach((r) {
+      _write('${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
+    });
+    _write('};');
+
+    _writeln('static final navigator = ExtendedNavigator(');
+    if (routesWithGuards.isNotEmpty) {
+      _write('_guardedRoutes');
     }
+    _write(');');
   }
 }

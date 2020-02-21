@@ -5,10 +5,8 @@ import 'custom_transtion_builder.dart';
 /// holds the extracted route configs
 /// to be used in [RouterClassGenerator]
 
-enum RouteType { material, cupertino, custom }
-
 class RouteConfig {
-  String import;
+  List<String> imports = [];
   String name;
   String pathName;
   bool initial;
@@ -17,19 +15,22 @@ class RouteConfig {
   bool customRouteBarrierDismissible;
   bool maintainState;
   String className;
-  List<RouteParameter> parameters;
+  String returnType;
+  List<RouteParamConfig> parameters;
   CustomTransitionBuilder transitionBuilder;
   int durationInMilliseconds;
-  RouteType routeType = RouteType.material;
+  int routeType = RouteType.material;
+  List<RouteGuardConfig> guards = [];
 
   String cupertinoNavTitle;
 
   bool hasWrapper;
 
   RouteConfig();
+}
 
-  @override
-  String toString() {
-    return 'RouteConfig{import: $import, name: $name, initial: $initial, fullscreenDialog: $fullscreenDialog, customRouteOpaque: $customRouteOpaque, customRouteBarrierDismissible: $customRouteBarrierDismissible, maintainState: $maintainState, className: $className, parameters: $parameters, transitionBuilder: $transitionBuilder, durationInMilliseconds: $durationInMilliseconds, routeType: $routeType, cupertinoNavTitle: $cupertinoNavTitle, hasWrapper: $hasWrapper}';
-  }
+class RouteType {
+  static const int material = 0;
+  static const int cupertino = 1;
+  static const int custom = 2;
 }
