@@ -76,7 +76,7 @@ class ExtendedNavigator {
   }
 
   @optionalTypeArgs
-  bool pop<T extends Object>([T result]) => _navigator.pop<T>(result);
+  void pop<T extends Object>([T result]) => _navigator.pop<T>(result);
 
   bool canPop() => _navigator.canPop();
 
