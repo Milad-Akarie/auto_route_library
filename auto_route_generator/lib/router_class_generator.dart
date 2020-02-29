@@ -1,4 +1,4 @@
-import 'package:auto_route_generator/route_config_visitor.dart';
+import 'package:auto_route_generator/route_config_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
 
 class RouterClassGenerator {
@@ -53,10 +53,10 @@ class RouterClassGenerator {
 
   void _generateRouteNames(List<RouteConfig> routes) {
     _newLine();
-    routes.forEach((r) {
+    routes.where((r) => !r.isUnknownRoute).forEach((r) {
       final routeName = r.name;
       final pathName = r.pathName ?? "/${toKababCase(routeName)}";
-      if (r.initial != null && r.initial) {
+      if (r.initial == true) {
         _writeln("static const $routeName = '/';");
       } else {
         return _writeln("static const $routeName = '$pathName';");
@@ -65,7 +65,9 @@ class RouterClassGenerator {
 
     if (routerConfig.generateRouteList) {
       _writeln("static const routes = [");
-      routes.forEach((r) => _write('${r.name},'));
+      routes
+          .where((r) => !r.isUnknownRoute)
+          .forEach((r) => _write('${r.name},'));
       _write("];");
     }
   }
@@ -76,10 +78,22 @@ class RouterClassGenerator {
     _writeln('final args = settings.arguments;');
     _writeln('switch (settings.name) {');
 
-    routes.forEach((r) => generateRoute(r));
+    routes.where((r) => !r.isUnknownRoute).forEach((r) {
+      _writeln('case $className.${r.name}:');
+
+      _generateRoute(r);
+    });
 
     // build unknown route error page if route is not found
-    _writeln('default: return unknownRoutePage(settings.name);');
+    final unknowRoute =
+        routes.firstWhere((r) => r.isUnknownRoute == true, orElse: () => null);
+    if (unknowRoute != null) {
+      _writeln('default: ');
+      _generateRouteBuilder(
+          unknowRoute, '${unknowRoute.className}(settings.name)');
+    } else {
+      _writeln('default: return unknownRoutePage(settings.name);');
+    }
     // close switch case
     _writeln('}');
     _newLine();
@@ -88,9 +102,7 @@ class RouterClassGenerator {
     _writeln('}');
   }
 
-  void generateRoute(RouteConfig r) {
-    _writeln('case $className.${r.name}:');
-
+  void _generateRoute(RouteConfig r) {
     final constructorParams = StringBuffer('');
 
     if (r.parameters != null && r.parameters.isNotEmpty) {
@@ -146,47 +158,10 @@ class RouterClassGenerator {
       }
     }
 
-    final widget =
+    final constructor =
         "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
 
-    final returnType = r.returnType ?? 'dynamic';
-    if (r.routeType == RouteType.cupertino) {
-      _write(
-          'return CupertinoPageRoute<$returnType>(builder: (_) => $widget, settings: settings,');
-      if (r.cupertinoNavTitle != null) {
-        _write("title:'${r.cupertinoNavTitle}',");
-      }
-    } else if (r.routeType == RouteType.material) {
-      _write(
-          'return MaterialPageRoute<$returnType>(builder: (_) => $widget, settings: settings,');
-    } else {
-      _write(
-          'return PageRouteBuilder<$returnType>(pageBuilder: (ctx, animation, secondaryAnimation) => $widget, settings: settings,');
-
-      if (r.customRouteOpaque != null) {
-        _write('opaque:${r.customRouteOpaque.toString()},');
-      }
-      if (r.customRouteBarrierDismissible != null) {
-        _write(
-            'barrierDismissible:${r.customRouteBarrierDismissible.toString()},');
-      }
-      if (r.transitionBuilder != null) {
-        _write('transitionsBuilder: ${r.transitionBuilder.name},');
-      }
-      if (r.durationInMilliseconds != null) {
-        _write(
-            'transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),');
-      }
-    }
-    // generated shared props
-    if (r.fullscreenDialog != null) {
-      _write('fullscreenDialog:${r.fullscreenDialog.toString()},');
-    }
-    if (r.maintainState != null) {
-      _write('maintainState:${r.maintainState.toString()},');
-    }
-
-    _writeln(');');
+    _generateRouteBuilder(r, constructor);
   }
 
   void _generateArgumentHolders() {
@@ -259,16 +234,59 @@ class RouterClassGenerator {
     final routesWithGuards =
         routes.where((r) => r.guards != null && r.guards.isNotEmpty);
 
-    _writeln('static const _guardedRoutes = const{');
-    routesWithGuards.forEach((r) {
-      _write('${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
-    });
-    _write('};');
+    if (routesWithGuards.isNotEmpty) {
+      _writeln('static const _guardedRoutes = {');
+      routesWithGuards.forEach((r) {
+        _write('${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
+      });
+      _write('};');
+    }
 
     _writeln('static final navigator = ExtendedNavigator(');
     if (routesWithGuards.isNotEmpty) {
       _write('_guardedRoutes');
     }
     _write(');');
+  }
+
+  void _generateRouteBuilder(RouteConfig r, String constructor) {
+    final returnType = r.returnType ?? 'dynamic';
+    if (r.routeType == RouteType.cupertino) {
+      _write(
+          'return CupertinoPageRoute<$returnType>(builder: (_) => $constructor, settings: settings,');
+      if (r.cupertinoNavTitle != null) {
+        _write("title:'${r.cupertinoNavTitle}',");
+      }
+    } else if (r.routeType == RouteType.material) {
+      _write(
+          'return MaterialPageRoute<$returnType>(builder: (_) => $constructor, settings: settings,');
+    } else {
+      _write(
+          'return PageRouteBuilder<$returnType>(pageBuilder: (ctx, animation, secondaryAnimation) => $constructor, settings: settings,');
+
+      if (r.customRouteOpaque != null) {
+        _write('opaque:${r.customRouteOpaque.toString()},');
+      }
+      if (r.customRouteBarrierDismissible != null) {
+        _write(
+            'barrierDismissible:${r.customRouteBarrierDismissible.toString()},');
+      }
+      if (r.transitionBuilder != null) {
+        _write('transitionsBuilder: ${r.transitionBuilder.name},');
+      }
+      if (r.durationInMilliseconds != null) {
+        _write(
+            'transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),');
+      }
+    }
+    // generated shared props
+    if (r.fullscreenDialog != null) {
+      _write('fullscreenDialog:${r.fullscreenDialog.toString()},');
+    }
+    if (r.maintainState != null) {
+      _write('maintainState:${r.maintainState.toString()},');
+    }
+
+    _writeln(');');
   }
 }

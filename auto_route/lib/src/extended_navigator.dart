@@ -75,8 +75,11 @@ class ExtendedNavigator {
         arguments: arguments);
   }
 
+  /// This returns dynamic because there was a breaking change
+  /// in [NavigatorState] in flutter 1.15.+ and it now returns void
+  /// instead of bool
   @optionalTypeArgs
-  bool pop<T extends Object>([T result]) => _navigator.pop<T>(result);
+  dynamic pop<T extends Object>([T result]) => _navigator.pop<T>(result);
 
   bool canPop() => _navigator.canPop();
 

@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:auto_route_generator/route_config_resolver.dart';
 import 'package:source_gen/source_gen.dart';
 
-import '../route_config_visitor.dart';
 import '../utils.dart';
 
 /// Extracts and holds router configs

@@ -10,7 +10,7 @@ AutoRoute is a route generation library, where everything needed for navigation 
 - [Passing Arguments to Routes](#passing-arguments-to-routes)
 - [Navigating Using a Global Navigator Key aka Navigating Without Context](#navigating-using-a-global-navigator-key-aka-navigating-without-context)
 - [Nested Navigators](#nested-navigators)
-- [Route guards](#-route-guards)
+- [Route guards](#route-guards)
 - [Handling Wrapped Routes](#handling-wrapped-routes)
 - [Custom Route Transitions](#custom-route-transitions)
 
@@ -124,11 +124,11 @@ class Router{
 
 ---
 
-##### @MaterialAutoRouter  |  @CupertinoAutoRouter
+##### @MaterialAutoRouter | @CupertinoAutoRouter
 
-| Property                 | Default value | Definition                                                      |
-| ------------------------ | ------------- | --------------------------------------------------------------- 
-| generateRouteList [bool] | false         | if true a list of all routes will be generated                  |
+| Property                 | Default value | Definition                                     |
+| ------------------------ | ------------- | ---------------------------------------------- |
+| generateRouteList [bool] | false         | if true a list of all routes will be generated |
 
 #### @CustomAutoRouter
 
@@ -162,6 +162,10 @@ class Router{
 | opaque [bool]                   |     true      | extension for the opaque property in PageRouteBuilder                            |
 | barrierDismissible [bool]       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |
 | durationInMilliseconds [double] |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |
+
+#### @unkownRoute
+
+Marks route as a custome route-not-found page. There can be only one unknown route per Router.
 
 ### Passing Arguments to Routes
 
@@ -302,37 +306,44 @@ MyNestedRouter.navigator.pushNamed("your Nested route")
 ```
 
 ### Route guards
+
 ---
+
 Implementing route guards requires a little bit of setup:
+
 1. Create your route guard by extending RouteGuard from the autoRoute package
- ```dart
+
+```dart
 class AuthGuard extends RouteGuard {
-  @override
-  Future<bool> canNavigate(
-      BuildContext context, String routeName, Object arguments) async {
+ @override
+ Future<bool> canNavigate(
+     BuildContext context, String routeName, Object arguments) async {
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token_key') != null;
-  }
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   return prefs.getString('token_key') != null;
+ }
 }
- ```
- 2. Register your guards
- ```dart
- // you need to register the guards before they're needed
- // main function is a good place to register your guards
-  void main() {
-      Router.navigator.addGuards([
-        AuthGuard(),
-      ]);
-      runApp(MyApp());
-}
- ```
- 3. Annotated the routes you want to guard with @GuardedBy([..guards]) and pass in your guards as types.
- ```dart
-  @GuardedBy([AuthGuard])
-  ProfileScreen profileScreen;
-  ```
+```
 
+2.  Register your guards
+
+```dart
+// you need to register the guards before they're needed
+// main function is a good place to register your guards
+ void main() {
+     Router.navigator.addGuards([
+       AuthGuard(),
+     ]);
+     runApp(MyApp());
+}
+```
+
+3.  Annotated the routes you want to guard with @GuardedBy([..guards]) and pass in your guards as types.
+
+```dart
+ @GuardedBy([AuthGuard])
+ ProfileScreen profileScreen;
+```
 
 ### Handling Wrapped Routes
 
@@ -356,11 +367,11 @@ To use custom Transitions use the @CustomRoute() annotation and pass in your pre
 The TransitionsBuilder function needs to be passed as a static/const reference that has the same signature as the TransitionsBuilder Function of the PageRouteBuilder class.  
 The included **TransitionsBuilders** Class contains a preset of common Transitions builders
 
-
 ```dart
 @CustomRoute(transitionsBuilder: TransitionBuilders.slideBottom,durationInMilliseconds: 400)
 LoginScreen loginScreenRoute;
 ```
+
 Use **@CustomAutoRouter()** to define global custom route Transitions.
 
 You can of course use your own transitionsBuilder function as long as it has the same function signature.  

@@ -12,7 +12,7 @@ class LoginScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Center(
         child: FlatButton(
-          child: Text("Login Screen Screen"),
+          child: Text("Login"),
           onPressed: () {
             Router.navigator.pop<bool>(false);
           },

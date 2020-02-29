@@ -168,6 +168,14 @@ class CustomRoute extends AutoRoute {
         );
 }
 
+/// Widgets annotated with [unknowRoute] must have a defualt constructor
+/// that takes in one positional String Parameter, MyUnknownRoute(String routeName)
+class UnknownRoute {
+  const UnknownRoute._();
+}
+
+const unknownRoute = const UnknownRoute._();
+
 // holds RouteGuard info
 class GuardedBy {
   final List<Type> guards;

@@ -1,11 +1,22 @@
+# ChangeLog
+
+## [0.3.1]
+
+- Fix Compilation Fails in flutter 1.15.+
+- Fix third party imports src instead of library
+- Fix guardedRoutes is generated even if it's empty
+- Add support for custom unknown route screen
+
 ## [0.3.0] Breaking Changes!
+
 - Add global route customization
-Use MaterialAutoRouter, CupertinoAutoRouter or CustomAutoRouter instead of AutoRouter
+  Use MaterialAutoRouter, CupertinoAutoRouter or CustomAutoRouter instead of AutoRouter
 - Navigator key is now accessed by calling Router.navigator.key instead of Router.navigatorKey.
 - Add Route guards
 - Add optional returnType param in all AutoRoute types.
-- Remove generate Navigator Key optionality.
+- Remove generate Navigator Key optional.
 - Fix generate error when using dynamic vars in route widget constructors
+
 ## [0.2.2]
 
 - Add option to generate a list with all route names
