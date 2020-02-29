@@ -1,29 +1,44 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/visitor.dart';
 import 'package:auto_route/auto_route_annotations.dart';
-import 'package:auto_route_generator/route_config_visitor.dart';
+import 'package:auto_route_generator/route_config_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
+import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 const TypeChecker guardsChecker = TypeChecker.fromRuntime(GuardedBy);
 const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
+const TypeChecker unknownRouteChecker = TypeChecker.fromRuntime(UnknownRoute);
 
 // extracts route configs from class fields
-class RouterConfigVisitor extends SimpleElementVisitor {
-  final routeConfigs = List<RouteConfig>();
+class RouterConfigResolver {
   final RouteConfig _globConfig;
+  final routeConfig = RouteConfig();
+  final Resolver _resolver;
 
-  RouterConfigVisitor(this._globConfig);
+  RouterConfigResolver(this._globConfig, this._resolver);
 
-  @override
-  RouteConfig visitFieldElement(FieldElement field) {
+  Future<RouteConfig> resolve(FieldElement field) async {
     final type = field.type;
+
     if (type.element is! ClassElement) {
-      return null;
+      throw ('[${type.getDisplayString()}] is not a class');
     }
 
-    final routeConfig = RouteConfig();
-    _extractMetaData(field, routeConfig);
+    final classElement = type.element as ClassElement;
+
+    routeConfig.isUnknownRoute =
+        unknownRouteChecker.hasAnnotationOfExact(field);
+
+    if (routeConfig.isUnknownRoute) {
+      if (classElement.unnamedConstructor.parameters.length > 1 ||
+          classElement.unnamedConstructor.parameters.first.type
+                  .getDisplayString() !=
+              'String') {
+        throw ("UnknowRoute must have a defualt constructor with a positional String Parameter, MyUnknownRoute(String routeName)");
+      }
+    }
+
+    _extractRouteMetaData(field);
 
     guardsChecker
         .firstAnnotationOfExact(field)
@@ -31,8 +46,8 @@ class RouterConfigVisitor extends SimpleElementVisitor {
         ?.toListValue()
         ?.map((g) => g.toTypeValue())
         ?.forEach((guard) {
-      routeConfig.guards.add(
-          RouteGuardConfig(type: guard.name, import: getImport(guard.element)));
+      routeConfig.guards.add(RouteGuardConfig(
+          type: guard.getDisplayString(), import: getImport(guard.element)));
     });
 
     final import = getImport(type.element);
@@ -41,25 +56,27 @@ class RouterConfigVisitor extends SimpleElementVisitor {
       routeConfig.imports.add(import);
     }
     routeConfig.name = field.name;
-    routeConfig.className = type.name;
+    routeConfig.className = type.getDisplayString();
 
-    final classElement = type.element as ClassElement;
     routeConfig.hasWrapper = classElement.allSupertypes
-        .map<String>((el) => el.name)
+        .map<String>((el) => el.getDisplayString())
         .contains('AutoRouteWrapper');
-    final constructor = (type.element as ClassElement).unnamedConstructor;
+
+    final constructor = classElement.unnamedConstructor;
     if (constructor != null && constructor.parameters.isNotEmpty) {
-      routeConfig.parameters = constructor.parameters
-          .map((p) => RouteParamConfig.fromParameterElement(p))
-          .toList();
+      routeConfig.parameters = [];
+      for (ParameterElement p in constructor.parameters) {
+        routeConfig.parameters
+            .add(await RouteParamterResolver(_resolver).resolve(p));
+      }
     }
 
-    routeConfigs.add(routeConfig);
     return routeConfig;
   }
 
-  void _extractMetaData(Element field, RouteConfig routeConfig) {
+  void _extractRouteMetaData(FieldElement field) {
     final routeAnnotation = autoRouteChecker.firstAnnotationOf(field);
+
     if (routeAnnotation == null) {
       routeConfig.routeType = _globConfig.routeType;
       if (_globConfig.routeType == RouteType.custom) {
@@ -81,7 +98,7 @@ class RouterConfigVisitor extends SimpleElementVisitor {
     routeConfig.pathName = autoRoute.peek('name')?.stringValue;
     final returnType = autoRoute.peek('returnType')?.typeValue;
     if (returnType != null) {
-      routeConfig.returnType = returnType.name;
+      routeConfig.returnType = returnType.getDisplayString();
       final import = getImport(returnType.element);
       if (import != null) {
         routeConfig.imports.add(import);

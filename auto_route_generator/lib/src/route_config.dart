@@ -1,4 +1,4 @@
-import 'package:auto_route_generator/route_config_visitor.dart';
+import 'package:auto_route_generator/route_config_resolver.dart';
 
 import 'custom_transtion_builder.dart';
 
@@ -25,6 +25,8 @@ class RouteConfig {
   String cupertinoNavTitle;
 
   bool hasWrapper;
+
+  bool isUnknownRoute;
 
   RouteConfig();
 }

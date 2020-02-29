@@ -10,7 +10,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/second_screen.dart';
 import 'package:example/router.dart';
-import 'package:example/screens/third_screen.dart';
+import 'package:example/screens/profile_screen.dart';
 import 'package:example/screens/login_screen.dart';
 
 class Router {
@@ -18,13 +18,7 @@ class Router {
   static const secondScreen = '/second-screen';
   static const profileScreen = '/profile-screen';
   static const loginScreenDialog = '/login-screen-dialog';
-  static const routes = [
-    homeScreen,
-    secondScreen,
-    profileScreen,
-    loginScreenDialog,
-  ];
-  static const _guardedRoutes = const {
+  static const _guardedRoutes = {
     secondScreen: [AuthGuard],
     profileScreen: [AuthGuard],
   };
@@ -33,8 +27,8 @@ class Router {
     final args = settings.arguments;
     switch (settings.name) {
       case Router.homeScreen:
-        return PageRouteBuilder<dynamic>(
-          pageBuilder: (ctx, animation, secondaryAnimation) => HomeScreen(),
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => HomeScreen(),
           settings: settings,
         );
       case Router.secondScreen:
@@ -43,15 +37,13 @@ class Router {
         }
         final typedArgs =
             args as SecondScreenArguments ?? SecondScreenArguments();
-        return PageRouteBuilder<dynamic>(
-          pageBuilder: (ctx, animation, secondaryAnimation) =>
-              SecondScreen(title: typedArgs.title, message: typedArgs.message)
-                  .wrappedRoute,
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => SecondScreen(
+                  title: typedArgs.title,
+                  message: typedArgs.message,
+                  func: typedArgs.func)
+              .wrappedRoute,
           settings: settings,
-          opaque: true,
-          barrierDismissible: true,
-          transitionsBuilder: TransitionsBuilders.slideLeft,
-          transitionDuration: Duration(milliseconds: 300),
         );
       case Router.profileScreen:
         if (hasInvalidArgs<ProfileScreenArguments>(args)) {
@@ -59,14 +51,10 @@ class Router {
         }
         final typedArgs =
             args as ProfileScreenArguments ?? ProfileScreenArguments();
-        return PageRouteBuilder<dynamic>(
-          pageBuilder: (ctx, animation, secondaryAnimation) =>
+        return MaterialPageRoute<dynamic>(
+          builder: (_) =>
               ProfileScreen(title: typedArgs.title, message: typedArgs.message),
           settings: settings,
-          opaque: true,
-          barrierDismissible: true,
-          transitionsBuilder: TransitionsBuilders.slideLeft,
-          transitionDuration: Duration(milliseconds: 300),
         );
       case Router.loginScreenDialog:
         if (hasInvalidArgs<double>(args)) {
@@ -92,7 +80,8 @@ class Router {
 class SecondScreenArguments {
   final dynamic title;
   final String message;
-  SecondScreenArguments({this.title, this.message});
+  final Function func;
+  SecondScreenArguments({this.title, this.message, this.func});
 }
 
 //ProfileScreen arguments holder class

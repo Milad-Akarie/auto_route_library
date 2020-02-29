@@ -9,6 +9,9 @@ void main() {
   ]);
 }
 
+bool getBool() => true;
+void getNothing() {}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
