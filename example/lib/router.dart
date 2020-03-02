@@ -25,9 +25,7 @@ class $Router {
 
 class AuthGuard extends RouteGuard {
   @override
-  Future<bool> canNavigate(
-      BuildContext context, String routeName, Object arguments) async {
-    print('routeGuard func');
+  Future<bool> canNavigate(BuildContext context, String routeName, Object arguments) async {
     return true;
   }
 }

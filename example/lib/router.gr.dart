@@ -38,11 +38,9 @@ class Router {
         final typedArgs =
             args as SecondScreenArguments ?? SecondScreenArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (_) => SecondScreen(
-                  title: typedArgs.title,
-                  message: typedArgs.message,
-                  func: typedArgs.func)
-              .wrappedRoute,
+          builder: (_) =>
+              SecondScreen(title: typedArgs.title, message: typedArgs.message)
+                  .wrappedRoute,
           settings: settings,
         );
       case Router.profileScreen:
@@ -80,8 +78,7 @@ class Router {
 class SecondScreenArguments {
   final dynamic title;
   final String message;
-  final Function func;
-  SecondScreenArguments({this.title, this.message, this.func});
+  SecondScreenArguments({this.title, this.message});
 }
 
 //ProfileScreen arguments holder class

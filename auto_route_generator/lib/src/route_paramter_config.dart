@@ -14,11 +14,11 @@ class RouteParamConfig {
   Set<String> imports = {};
 }
 
-class RouteParamterResolver {
+class RouteParameterResolver {
   final Resolver _resolver;
   final Set<String> imports = {};
 
-  RouteParamterResolver(this._resolver);
+  RouteParameterResolver(this._resolver);
 
   Future<RouteParamConfig> resolve(ParameterElement parameterElement) async {
     final paramConfig = RouteParamConfig();
@@ -41,12 +41,12 @@ class RouteParamterResolver {
 
   Future<void> _checkForParameterizedTypes(DartType paramType) async {
     if (paramType is ParameterizedType) {
-      paramType.typeArguments.forEach((type) async {
+      for (DartType type in paramType.typeArguments) {
         await _checkForParameterizedTypes(type);
         if (type.element.source != null) {
           await _addImport(type.element);
         }
-      });
+      }
     }
   }
 

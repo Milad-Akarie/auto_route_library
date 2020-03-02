@@ -1,4 +1,7 @@
 # ChangeLog
+## [0.3.2]
+
+- Fix generic arguments are not imported.
 
 ## [0.3.1]
 

@@ -32,10 +32,10 @@ packages:
   auto_route:
     dependency: "direct main"
     description:
-      path: "../auto_route"
-      relative: true
-    source: path
-    version: "0.3.0"
+      name: auto_route
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.1"
   build:
     dependency: "direct main"
     description:

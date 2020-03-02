@@ -67,7 +67,7 @@ class RouterConfigResolver {
       routeConfig.parameters = [];
       for (ParameterElement p in constructor.parameters) {
         routeConfig.parameters
-            .add(await RouteParamterResolver(_resolver).resolve(p));
+            .add(await RouteParameterResolver(_resolver).resolve(p));
       }
     }
 
