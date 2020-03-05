@@ -6,17 +6,17 @@ import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/login_screen.dart';
 import 'package:example/screens/profile_screen.dart';
 import 'package:example/screens/second_screen.dart';
-import 'package:flutter/material.dart';
+import 'router.gr.dart';
 
 @MaterialAutoRouter()
 class $Router {
   @initial
+  @GuardedBy([AuthGuard])
   HomeScreen homeScreen;
 
   @GuardedBy([AuthGuard])
   SecondScreen secondScreen;
 
-  @GuardedBy([AuthGuard])
   ProfileScreen profileScreen;
 
   @CustomRoute(returnType: bool)
@@ -25,7 +25,9 @@ class $Router {
 
 class AuthGuard extends RouteGuard {
   @override
-  Future<bool> canNavigate(BuildContext context, String routeName, Object arguments) async {
-    return true;
+  Future<bool> canNavigate(ExtendedNavigatorState navigator, String routeName,
+      Object arguments) async {
+    await Future.delayed(Duration(milliseconds: 900));
+    return navigator.pushReplacementNamed(Routes.loginScreenDialog);
   }
 }

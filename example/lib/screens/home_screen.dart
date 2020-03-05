@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import '../router.gr.dart';
@@ -12,7 +13,10 @@ class HomeScreen extends StatelessWidget {
           child: FlatButton(
             child: Text("Second Screen"),
             onPressed: () async {
-              Router.navigator.pushNamed(Router.secondScreen, arguments: SecondScreenArguments(title: 'title'));
+              ExtendedNavigator.of(context).pushNamed(
+                Routes.secondScreen,
+                arguments: SecondScreenArguments(title: 'title'),
+              );
             },
           ),
         ),

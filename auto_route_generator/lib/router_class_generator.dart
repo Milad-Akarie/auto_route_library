@@ -18,6 +18,7 @@ class RouterClassGenerator {
 
   String generate() {
     _generateImports();
+    _generateRoutesClass();
     _generateRouterClass();
     _generateArgumentHolders();
     return _stringBuffer.toString();
@@ -51,8 +52,8 @@ class RouterClassGenerator {
         .forEach((import) => _writeln('import $import;'));
   }
 
-  void _generateRouteNames(List<RouteConfig> routes) {
-    _newLine();
+  void _generateRoutesClass() {
+    _writeln('abstract class Routes{');
     routes.where((r) => !r.isUnknownRoute).forEach((r) {
       final routeName = r.name;
       final pathName = r.pathName ?? "/${toKababCase(routeName)}";
@@ -64,22 +65,24 @@ class RouterClassGenerator {
     });
 
     if (routerConfig.generateRouteList) {
-      _writeln("static const routes = [");
+      _writeln("static const all = [");
       routes
           .where((r) => !r.isUnknownRoute)
           .forEach((r) => _write('${r.name},'));
       _write("];");
     }
+    _writeln('}');
   }
 
   void _generateRouteGeneratorFunction(List<RouteConfig> routes) {
     _newLine();
-    _writeln('static Route<dynamic> onGenerateRoute(RouteSettings settings) {');
+    _writeln('@override');
+    _writeln('Route<dynamic> onGenerateRoute(RouteSettings settings) {');
     _writeln('final args = settings.arguments;');
     _writeln('switch (settings.name) {');
 
     routes.where((r) => !r.isUnknownRoute).forEach((r) {
-      _writeln('case $className.${r.name}:');
+      _writeln('case Routes.${r.name}:');
 
       _generateRoute(r);
     });
@@ -221,8 +224,7 @@ class RouterClassGenerator {
   }
 
   void _generateRouterClass() {
-    _writeln('\nclass $className {');
-    _generateRouteNames(routes);
+    _writeln('\nclass $className extends RouterBase {');
     _generateHelperFunctions();
     _generateRouteGeneratorFunction(routes);
 
@@ -235,18 +237,20 @@ class RouterClassGenerator {
         routes.where((r) => r.guards != null && r.guards.isNotEmpty);
 
     if (routesWithGuards.isNotEmpty) {
-      _writeln('static const _guardedRoutes = {');
+      _writeln('@override');
+      _writeln('Map<String, List<Type>> get guardedRoutes => {');
       routesWithGuards.forEach((r) {
-        _write('${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
+        _write(
+            'Routes.${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
       });
       _write('};');
     }
 
-    _writeln('static final navigator = ExtendedNavigator(');
-    if (routesWithGuards.isNotEmpty) {
-      _write('_guardedRoutes');
-    }
-    _write(');');
+    // _writeln('static final navigator = ExtendedNavigator(');
+    // if (routesWithGuards.isNotEmpty) {
+    //   _write('_guardedRoutes');
+    // }
+    // _write(');');
   }
 
   void _generateRouteBuilder(RouteConfig r, String constructor) {

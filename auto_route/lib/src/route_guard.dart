@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:auto_route/auto_route.dart';
 
 abstract class RouteGuard {
   Future<bool> canNavigate(
-      BuildContext context, String routeName, Object arguments);
+      ExtendedNavigatorState navigator, String routeName, Object arguments);
 }

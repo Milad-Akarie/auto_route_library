@@ -8,30 +8,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/home_screen.dart';
-import 'package:example/screens/second_screen.dart';
 import 'package:example/router.dart';
+import 'package:example/screens/second_screen.dart';
 import 'package:example/screens/profile_screen.dart';
 import 'package:example/screens/login_screen.dart';
 
-class Router {
+abstract class Routes {
   static const homeScreen = '/';
   static const secondScreen = '/second-screen';
   static const profileScreen = '/profile-screen';
   static const loginScreenDialog = '/login-screen-dialog';
-  static const _guardedRoutes = {
-    secondScreen: [AuthGuard],
-    profileScreen: [AuthGuard],
-  };
-  static final navigator = ExtendedNavigator(_guardedRoutes);
-  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+}
+
+class Router extends RouterBase {
+  @override
+  Map<String, List<Type>> get guardedRoutes => {
+        Routes.homeScreen: [AuthGuard],
+        Routes.secondScreen: [AuthGuard],
+      };
+  @override
+  Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
-      case Router.homeScreen:
+      case Routes.homeScreen:
         return MaterialPageRoute<dynamic>(
           builder: (_) => HomeScreen(),
           settings: settings,
         );
-      case Router.secondScreen:
+      case Routes.secondScreen:
         if (hasInvalidArgs<SecondScreenArguments>(args)) {
           return misTypedArgsRoute<SecondScreenArguments>(args);
         }
@@ -43,7 +47,7 @@ class Router {
                   .wrappedRoute,
           settings: settings,
         );
-      case Router.profileScreen:
+      case Routes.profileScreen:
         if (hasInvalidArgs<ProfileScreenArguments>(args)) {
           return misTypedArgsRoute<ProfileScreenArguments>(args);
         }
@@ -54,7 +58,7 @@ class Router {
               ProfileScreen(title: typedArgs.title, message: typedArgs.message),
           settings: settings,
         );
-      case Router.loginScreenDialog:
+      case Routes.loginScreenDialog:
         if (hasInvalidArgs<double>(args)) {
           return misTypedArgsRoute<double>(args);
         }
