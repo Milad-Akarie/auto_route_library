@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
-class ExtendedNavigator extends Navigator {
-  final RouterBase router;
+class ExtendedNavigator<T extends RouterBase> extends Navigator {
+  final T router;
   final List<RouteGuard> guards;
 
   ExtendedNavigator({
@@ -13,36 +13,44 @@ class ExtendedNavigator extends Navigator {
     String initialRoute,
     RouteFactory onUnknownRoute,
     List<NavigatorObserver> observers,
+    Key key,
   }) : super(
             onGenerateRoute: router.onGenerateRoute,
             onUnknownRoute: onUnknownRoute,
             initialRoute: initialRoute,
-            observers: observers = const <NavigatorObserver>[]);
+            observers: observers = const <NavigatorObserver>[],
+            key: key);
 
   @override
   ExtendedNavigatorState createState() {
-    return ExtendedNavigatorState(
-      guards: guards,
-      guardedRoutes: router.guardedRoutes,
+    return _NavigationStatesContainer._instance.create<T>(
+      guards,
+      router.guardedRoutes,
     );
   }
 
   ExtendedNavigator call(_, __) => this;
+
+  static ExtendedNavigatorState ofRouter<T extends RouterBase>() =>
+      _NavigationStatesContainer._instance.get<T>();
+
+  static ExtendedNavigatorState get root =>
+      _NavigationStatesContainer._instance.getRootRouter();
 
   static ExtendedNavigatorState of(
     BuildContext context, {
     bool rootNavigator = false,
     bool nullOk = false,
   }) {
-    final NavigatorState navigator = rootNavigator
+    final ExtendedNavigatorState navigator = rootNavigator
         ? context.findRootAncestorStateOfType<ExtendedNavigatorState>()
         : context.findAncestorStateOfType<ExtendedNavigatorState>();
     assert(() {
       if (navigator == null && !nullOk) {
         throw FlutterError(
-            'Navigator operation requested with a context that does not include a Navigator.\n'
-            'The context used to push or pop routes from the Navigator must be that of a '
-            'widget that is a descendant of a Navigator widget.');
+            'ExtendedNavigator operation requested with a context that does not include a ExtendedNavigator.\n'
+            'The context used to push or pop routes from the ExtendedNavigator must be that of a '
+            'widget that is a descendant of a ExtendedNavigator widget.');
       }
       return true;
     }());
@@ -51,24 +59,24 @@ class ExtendedNavigator extends Navigator {
 }
 
 class ExtendedNavigatorState extends NavigatorState {
+  final Map<String, List<Type>> guardedRoutes;
+  final _registeredGuards = <Type, RouteGuard>{};
+
+  ExtendedNavigatorState({
+    List<RouteGuard> guards,
+    this.guardedRoutes,
+  }) {
+    guards?.forEach(_addGuard);
+  }
+
   @override
   void initState() {
     super.initState();
-    pushReplacementNamed(widget.initialRoute);
+
+    pushReplacementNamed(widget.initialRoute ?? Navigator.defaultRouteName);
   }
 
-  final Map<String, List<Type>> guardedRoutes;
-  // final _key = GlobalKey<NavigatorState>();
-  final _registeredGuards = <Type, RouteGuard>{};
-
-  ExtendedNavigatorState({List<RouteGuard> guards, this.guardedRoutes}) {
-    guards?.forEach(addGuard);
-  }
-
-  // NavigatorState get _navigator => _key.currentState;
-  // GlobalKey<NavigatorState> get key => _key;
-
-  void addGuard(RouteGuard guard) {
+  void _addGuard(RouteGuard guard) {
     assert(guard != null);
     _registeredGuards[guard.runtimeType] = guard;
   }
@@ -132,13 +140,6 @@ class ExtendedNavigatorState extends NavigatorState {
         arguments: arguments);
   }
 
-  // /// This returns dynamic because there was a breaking change
-  // /// in [NavigatorState] in flutter 1.15.+ and it now returns void
-  // /// instead of bool
-
-  // @optionalTypeArgs
-  // dynamic pop<T extends Object>([T result]) => _navigator.pop<T>(result);
-
   Future<bool> canNavigate(String routeName) => _canNavigate(routeName);
 
   Future<bool> _canNavigate(String routeName, [Object arguments]) async {
@@ -156,8 +157,33 @@ class ExtendedNavigatorState extends NavigatorState {
   RouteGuard _getGuard(Type guardType) {
     if (_registeredGuards[guardType] == null) {
       throw ('$guardType is not registered!'
-          '\nYou have to add your guards to the navigator by calling navigator.addGuard()');
+          '\nYou have to add your guards to the ExtendedNavigator');
     }
     return _registeredGuards[guardType];
+  }
+}
+
+class _NavigationStatesContainer {
+  // ensure we only have one instance of the container
+  static final _NavigationStatesContainer _instance =
+      _NavigationStatesContainer._();
+  final Map<Type, ExtendedNavigatorState> _navigatorKeys = {};
+
+  _NavigationStatesContainer._();
+
+  ExtendedNavigatorState create<T extends RouterBase>(
+      List<RouteGuard> guards, Map<String, List<Type>> guardedRoutes) {
+    return _navigatorKeys[T] = ExtendedNavigatorState(
+      guards: guards,
+      guardedRoutes: guardedRoutes,
+    );
+  }
+
+  ExtendedNavigatorState getRootRouter() {
+    return _navigatorKeys.isNotEmpty ? _navigatorKeys.values.first : null;
+  }
+
+  ExtendedNavigatorState get<T extends RouterBase>() {
+    return _navigatorKeys[T];
   }
 }

@@ -1,11 +1,10 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:example/router.dart';
 import 'package:flutter/material.dart';
-
-import '../router.gr.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('building home scree');
     return Scaffold(
       appBar: AppBar(),
       body: Container(
@@ -13,7 +12,7 @@ class HomeScreen extends StatelessWidget {
           child: FlatButton(
             child: Text("Second Screen"),
             onPressed: () async {
-              ExtendedNavigator.of(context).pushNamed(
+              ExtendedNavigator.root.pushNamed(
                 Routes.secondScreen,
                 arguments: SecondScreenArguments(title: 'title'),
               );

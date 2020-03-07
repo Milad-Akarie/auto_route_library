@@ -7,16 +7,13 @@ void main() {
   runApp(MyApp());
 }
 
-bool getBool() => true;
-void getNothing() {}
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       builder: ExtendedNavigator(
+        // initialRoute: Routes.secondScreen,
         router: Router(),
-        initialRoute: Routes.homeScreen,
         guards: [AuthGuard()],
       ),
     );

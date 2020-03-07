@@ -10,17 +10,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/router.dart';
 import 'package:example/screens/second_screen.dart';
-import 'package:example/screens/profile_screen.dart';
 import 'package:example/screens/login_screen.dart';
 
 abstract class Routes {
   static const homeScreen = '/';
   static const secondScreen = '/second-screen';
-  static const profileScreen = '/profile-screen';
   static const loginScreenDialog = '/login-screen-dialog';
 }
 
 class Router extends RouterBase {
+  int _initalRouteFireCount = 0;
   @override
   Map<String, List<Type>> get guardedRoutes => {
         Routes.homeScreen: [AuthGuard],
@@ -28,6 +27,11 @@ class Router extends RouterBase {
       };
   @override
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    if (settings.isInitialRoute && _initalRouteFireCount == 0) {
+      _initalRouteFireCount++;
+      return PageRouteBuilder(pageBuilder: (_, __, ___) => Container());
+    }
+
     final args = settings.arguments;
     switch (settings.name) {
       case Routes.homeScreen:
@@ -45,17 +49,6 @@ class Router extends RouterBase {
           builder: (_) =>
               SecondScreen(title: typedArgs.title, message: typedArgs.message)
                   .wrappedRoute,
-          settings: settings,
-        );
-      case Routes.profileScreen:
-        if (hasInvalidArgs<ProfileScreenArguments>(args)) {
-          return misTypedArgsRoute<ProfileScreenArguments>(args);
-        }
-        final typedArgs =
-            args as ProfileScreenArguments ?? ProfileScreenArguments();
-        return MaterialPageRoute<dynamic>(
-          builder: (_) =>
-              ProfileScreen(title: typedArgs.title, message: typedArgs.message),
           settings: settings,
         );
       case Routes.loginScreenDialog:
@@ -83,11 +76,4 @@ class SecondScreenArguments {
   final dynamic title;
   final String message;
   SecondScreenArguments({this.title, this.message});
-}
-
-//ProfileScreen arguments holder class
-class ProfileScreenArguments {
-  final dynamic title;
-  final String message;
-  ProfileScreenArguments({this.title, this.message});
 }
