@@ -12,10 +12,12 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
     this.guards,
     String initialRoute,
     RouteFactory onUnknownRoute,
+    Widget placeHolder,
     List<NavigatorObserver> observers,
     Key key,
   }) : super(
-            onGenerateRoute: router.onGenerateRoute,
+            onGenerateRoute: (settings) =>
+                router.onGenerate(settings, placeHolder),
             onUnknownRoute: onUnknownRoute,
             initialRoute: initialRoute,
             observers: observers = const <NavigatorObserver>[],
@@ -72,7 +74,6 @@ class ExtendedNavigatorState extends NavigatorState {
   @override
   void initState() {
     super.initState();
-
     pushReplacementNamed(widget.initialRoute ?? Navigator.defaultRouteName);
   }
 

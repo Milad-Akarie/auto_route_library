@@ -27,8 +27,15 @@ class AuthGuard extends RouteGuard {
   @override
   Future<bool> canNavigate(ExtendedNavigatorState navigator, String routeName,
       Object arguments) async {
-    await Future.delayed(Duration(milliseconds: 300));
-    return await navigator.pushReplacementNamed(Routes.loginScreenDialog) ==
-        true;
+    if (!await isLoggedIn()) {
+      navigator.pushReplacementNamed(Routes.loginScreenDialog);
+      return false;
+    }
+    return true;
   }
 }
+
+Future<bool> isLoggedIn() async =>
+    Future.delayed(Duration(milliseconds: 300), () => isUserLoggedIn);
+
+bool isUserLoggedIn = false;

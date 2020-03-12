@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/router.dart';
 import 'package:flutter/material.dart';
+
+import '../router.gr.dart';
 
 class LoginScreen extends StatelessWidget {
   final double id;
@@ -14,7 +17,9 @@ class LoginScreen extends StatelessWidget {
         child: FlatButton(
           child: Text("Login"),
           onPressed: () {
-            ExtendedNavigator.of(context).pop<bool>(true);
+            isUserLoggedIn = true;
+            ExtendedNavigator.of(context)
+                .pushReplacementNamed(Routes.homeScreen);
           },
         ),
       ),

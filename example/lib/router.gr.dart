@@ -19,19 +19,13 @@ abstract class Routes {
 }
 
 class Router extends RouterBase {
-  int _initalRouteFireCount = 0;
   @override
   Map<String, List<Type>> get guardedRoutes => {
-        Routes.homeScreen: [AuthGuard],
+        // Routes.homeScreen: [AuthGuard],
         Routes.secondScreen: [AuthGuard],
       };
   @override
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    if (settings.isInitialRoute && _initalRouteFireCount == 0) {
-      _initalRouteFireCount++;
-      return PageRouteBuilder(pageBuilder: (_, __, ___) => Container());
-    }
-
     final args = settings.arguments;
     switch (settings.name) {
       case Routes.homeScreen:
