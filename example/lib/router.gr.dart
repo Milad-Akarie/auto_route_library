@@ -21,7 +21,7 @@ abstract class Routes {
 class Router extends RouterBase {
   @override
   Map<String, List<Type>> get guardedRoutes => {
-        // Routes.homeScreen: [AuthGuard],
+        Routes.homeScreen: [AuthGuard],
         Routes.secondScreen: [AuthGuard],
       };
   @override

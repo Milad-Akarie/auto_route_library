@@ -11,16 +11,24 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: FlatButton(
-          child: Text("Login"),
-          onPressed: () {
-            isUserLoggedIn = true;
-            ExtendedNavigator.of(context)
-                .pushReplacementNamed(Routes.homeScreen);
-          },
+    return WillPopScope(
+      onWillPop: () async {
+        ExtendedNavigator.root.pop(false);
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: FlatButton(
+            child: Text("Login"),
+            onPressed: () async {
+              // final prefs = await SharedPreferences.getInstance();
+              // prefs.setString('token', 'token value');
+              // ExtendedNavigator.of(context)
+              //     .pushReplacementNamed(Routes.homeScreen);
+              ExtendedNavigator.of(context).pop(true);
+            },
+          ),
         ),
       ),
     );

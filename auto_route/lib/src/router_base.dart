@@ -16,8 +16,4 @@ abstract class RouterBase {
   }
 
   Route<dynamic> onGenerateRoute(RouteSettings settings);
-
-  // final _navigatorKey = GlobalKey<ExtendedNavigatorState>();
-  // GlobalKey<ExtendedNavigatorState> get navigatorKey => _navigatorKey;
-  // ExtendedNavigatorState get navigatorState => navigatorKey.currentState;
 }

@@ -14,6 +14,7 @@ class SecondScreen extends StatelessWidget implements AutoRouteWrapper {
       appBar: AppBar(),
       body: Column(
         children: <Widget>[
+          Text("Second Screen here"),
           Expanded(
             child: ExtendedNavigator<NestedRouter>(
               router: NestedRouter(),
