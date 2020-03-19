@@ -21,6 +21,9 @@ class RouterClassGenerator {
     _generateRoutesClass();
     _generateRouterClass();
     _generateArgumentHolders();
+    if (routerConfig.generateNavigationHelper) {
+      _generateNavigationHelpers();
+    }
     return _stringBuffer.toString();
   }
 
@@ -42,9 +45,7 @@ class RouterClassGenerator {
         });
       }
       if (r.guards != null) {
-        r.guards.forEach((g) {
-          imports.add(g.import);
-        });
+        r.guards.forEach((g) => imports.add(g.import));
       }
     });
     imports
@@ -181,9 +182,7 @@ class RouterClassGenerator {
 
     if (routesWithArgsHolders.isNotEmpty) {
       _generateBoxed('Arguments holder classes');
-      routesWithArgsHolders.values.forEach((r) {
-        _generateArgsHolder(r);
-      });
+      routesWithArgsHolders.values.forEach(_generateArgsHolder);
     }
   }
 
@@ -293,4 +292,62 @@ class RouterClassGenerator {
 
     _writeln(');');
   }
+
+  void _generateNavigationHelpers() {
+    _writeln(
+        'extension ${className}NavigationHelperMethods on ExtendedNavigatorState {');
+    routes.forEach(_generateHelperMethod);
+    _writeln('}');
+  }
+
+  void _generateHelperMethod(RouteConfig route) {
+    final t = route.returnType ?? 'T';
+    _write('Future<$t> push${capitalize(route.name)}<$t>(');
+    // generate constructor
+    if (route.parameters != null) {
+      _write('{');
+      route.parameters.forEach((param) {
+        if (param.isRequired) {
+          _write('@required ');
+        }
+        _write('${param.type} ${param.name}');
+        if (param.defaultValueCode != null) {
+          _write(' = ${param.defaultValueCode}');
+        }
+        _write(',');
+      });
+      if (route.guards?.isNotEmpty == true) {
+        _write('OnNavigationRejected onReject');
+      }
+      _write('}');
+    }
+    _writeln(')');
+    _write(' => pushNamed<$t>(Routes.${route.name}');
+    if (route.parameters != null) {
+      _write(',arguments: ');
+      if (route.parameters.length == 1) {
+        _write('${route.parameters.first.name}');
+      } else {
+        _write('${route.className}Arguments(');
+        _write(route.parameters.map((p) => '${p.name}: ${p.name}').join(','));
+        _write(')');
+      }
+
+      if (route.guards?.isNotEmpty == true) {
+        _write(',onReject:onReject');
+      }
+    }
+    _write(');');
+  }
 }
+
+// extension RouterNavigationHelperMethods on ExtendedNavigatorState {
+//   Future<T> toHomeScreen<T>() => pushNamed<T>(Routes.homeScreen);
+
+//   Future<T> toSecondScreen<T>({title, String message}) =>
+//       pushNamed<T>(Routes.secondScreen,
+//           arguments: SecondScreenArguments(
+//             title: title,
+//             message: message,
+//           ));
+// }

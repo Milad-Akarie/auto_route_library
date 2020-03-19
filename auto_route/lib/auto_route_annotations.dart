@@ -1,21 +1,23 @@
 class AutoRouter {
   final bool generateRouteList;
-
-  const AutoRouter._(this.generateRouteList);
+  final bool generateNavigationHelper;
+  const AutoRouter._(this.generateRouteList, this.generateNavigationHelper);
 }
 
 // Defaults created routes to MaterialPageRoute unless
 // overridden by AutoRoute annotation
 class MaterialAutoRouter extends AutoRouter {
-  const MaterialAutoRouter({bool generateRouteList})
-      : super._(generateRouteList);
+  const MaterialAutoRouter(
+      {bool generateRouteList, bool generateNavigationHelper})
+      : super._(generateRouteList, generateNavigationHelper);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
 // overridden by AutoRoute annotation
 class CupertinoAutoRouter extends AutoRouter {
-  const CupertinoAutoRouter({bool generateRouteList})
-      : super._(generateRouteList);
+  const CupertinoAutoRouter(
+      {bool generateRouteList, bool generateNavigationHelper})
+      : super._(generateRouteList, generateNavigationHelper);
 }
 
 // Defaults created routes to PageRouteBuilder unless
@@ -48,7 +50,8 @@ class CustomAutoRouter extends AutoRouter {
     this.barrierDismissible,
     this.durationInMilliseconds,
     this.opaque,
-  }) : super._(generateRouteList);
+    bool generateNavigationHelper,
+  }) : super._(generateRouteList, generateNavigationHelper);
 }
 
 class AutoRoute {

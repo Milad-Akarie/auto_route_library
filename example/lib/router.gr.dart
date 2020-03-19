@@ -34,16 +34,17 @@ class Router extends RouterBase {
           settings: settings,
         );
       case Routes.secondScreen:
-        if (hasInvalidArgs<SecondScreenArguments>(args)) {
+        if (hasInvalidArgs<SecondScreenArguments>(args, isRequired: true)) {
           return misTypedArgsRoute<SecondScreenArguments>(args);
         }
-        final typedArgs =
-            args as SecondScreenArguments ?? SecondScreenArguments();
-        return MaterialPageRoute<dynamic>(
-          builder: (_) =>
+        final typedArgs = args as SecondScreenArguments;
+        return PageRouteBuilder<dynamic>(
+          pageBuilder: (ctx, animation, secondaryAnimation) =>
               SecondScreen(title: typedArgs.title, message: typedArgs.message)
                   .wrappedRoute,
           settings: settings,
+          transitionsBuilder: TransitionsBuilders.fadeIn,
+          transitionDuration: Duration(milliseconds: 300),
         );
       case Routes.loginScreenDialog:
         if (hasInvalidArgs<double>(args)) {
@@ -67,7 +68,22 @@ class Router extends RouterBase {
 
 //SecondScreen arguments holder class
 class SecondScreenArguments {
-  final dynamic title;
+  final String title;
   final String message;
-  SecondScreenArguments({this.title, this.message});
+  SecondScreenArguments({@required this.title, this.message});
+}
+
+extension RouterNavigationHelperMethods on ExtendedNavigatorState {
+  Future<T> pushHomeScreen<T>() => pushNamed<T>(Routes.homeScreen);
+  Future<T> pushSecondScreen<T>(
+          {@required String title,
+          String message,
+          OnNavigationRejected onReject}) =>
+      pushNamed<T>(Routes.secondScreen,
+          arguments: SecondScreenArguments(title: title, message: message),
+          onReject: onReject);
+  Future<bool> pushLoginScreenDialog<bool>({
+    double id = 20.0,
+  }) =>
+      pushNamed<bool>(Routes.loginScreenDialog, arguments: id);
 }

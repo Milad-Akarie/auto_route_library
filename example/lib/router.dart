@@ -2,46 +2,49 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:example/router.gr.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/login_screen.dart';
 import 'package:example/screens/second_screen.dart';
-import 'router.gr.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 export 'package:auto_route/auto_route.dart';
 export 'router.gr.dart';
 
-@MaterialAutoRouter()
+@MaterialAutoRouter(generateNavigationHelper: true)
 class $Router {
   @initial
   @GuardedBy([AuthGuard])
   HomeScreen homeScreen;
 
   @GuardedBy([AuthGuard])
+  @CustomRoute(
+      transitionsBuilder: TransitionsBuilders.fadeIn,
+      durationInMilliseconds: 300)
   SecondScreen secondScreen;
 
   @CustomRoute(returnType: bool)
   LoginScreen loginScreenDialog;
 }
 
+// static ExtendedNavigatorState get navigator =>
+//     ExtendedNavigator.ofRouter<Router>();
 class AuthGuard extends RouteGuard {
   @override
   Future<bool> canNavigate(ExtendedNavigatorState navigator, String routeName,
       Object arguments) async {
-    print('guarding $routeName');
+    // return true;
+    return routeName == '/';
+    // return false;
+    final prefs = await SharedPreferences.getInstance();
 
-    // final prefs = await SharedPreferences.getInstance();
-    // print('token: ${prefs.getString('token')}');
-    if (!await isLoggedIn()) {
-      final res =
-          await navigator.pushReplacementNamed(Routes.loginScreenDialog);
-      print(res);
-      return res == true;
+    // await Future.delayed(Duration(seconds: 1));
+    if (prefs.getString('token') == null) {
+      // final res =
+      //     await navigator.pushReplacementNamed(Routes.loginScreenDialog);
+      navigator.pushReplacementNamed(Routes.loginScreenDialog);
+      return false;
     } else
       return true;
   }
 }
-
-Future<bool> isLoggedIn() async =>
-    Future.delayed(Duration(milliseconds: 20), () => isUserLoggedIn);
-
-bool isUserLoggedIn = false;

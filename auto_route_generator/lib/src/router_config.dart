@@ -8,13 +8,15 @@ import '../utils.dart';
 /// to be used in [RouterClassGenerator]
 
 class RouterConfig {
-  bool generateRouteList = false;
+  bool generateRouteList;
+  bool generateNavigationHelper;
   final globalRouteConfig = RouteConfig();
 
   RouterConfig.fromAnnotation(ConstantReader autoRouter) {
-    if (autoRouter.peek('generateRouteList') != null) {
-      generateRouteList = autoRouter.peek('generateRouteList').boolValue;
-    }
+    generateRouteList =
+        autoRouter.peek('generateRouteList')?.boolValue ?? false;
+    generateNavigationHelper =
+        autoRouter.peek('generateNavigationHelper')?.boolValue ?? false;
 
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       globalRouteConfig.routeType = RouteType.cupertino;

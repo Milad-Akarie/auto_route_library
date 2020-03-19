@@ -4,6 +4,12 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+RectTween _createRectTween(Rect begin, Rect end) {
+  return MaterialRectArcTween(begin: begin, end: end);
+}
+
+typedef OnNavigationRejected = Function(RouteGuard guard);
+
 class ExtendedNavigator<T extends RouterBase> extends Navigator {
   final T router;
   final List<RouteGuard> guards;
@@ -13,14 +19,17 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
     this.guards,
     String initialRoute,
     RouteFactory onUnknownRoute,
-    Widget placeHolder,
-    List<NavigatorObserver> observers,
+    List<NavigatorObserver> observers = const <NavigatorObserver>[],
     Key key,
-  }) : super(
-            onGenerateRoute: (settings) => router.onGenerateRoute(settings),
+  })  : assert(observers != null),
+        super(
+            onGenerateRoute: router.onGenerateRoute,
             onUnknownRoute: onUnknownRoute,
             initialRoute: initialRoute,
-            observers: observers = const <NavigatorObserver>[],
+            observers: [
+              HeroController(createRectTween: _createRectTween),
+              ...observers,
+            ],
             key: key);
 
   @override
@@ -36,7 +45,7 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
   static ExtendedNavigatorState ofRouter<T extends RouterBase>() =>
       _NavigationStatesContainer._instance.get<T>();
 
-  static ExtendedNavigatorState get root =>
+  static ExtendedNavigatorState get rootNavigator =>
       _NavigationStatesContainer._instance.getRootNavigator();
 
   static ExtendedNavigatorState of(
@@ -71,105 +80,96 @@ class ExtendedNavigatorState extends NavigatorState {
     guards?.forEach(_addGuard);
   }
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  final _redirectInitalRoute = 'redirect-intial-route';
+  @override
+  Future<T> push<T extends Object>(Route<T> route) async {
+    if (route.settings.isInitialRoute &&
+        _hasGuards(route.settings.name) &&
+        route.settings.arguments != _redirectInitalRoute) {
+      super.push<T>(
+        PageRouteBuilder<T>(
+          transitionDuration: Duration(milliseconds: 0),
+          pageBuilder: (context, __, ___) => Container(
+            color: Colors.white,
+          ),
+        ),
+      );
+      return pushReplacementNamed(route.settings.name,
+          arguments: _redirectInitalRoute);
+    }
+    return super.push<T>(route);
+  }
+
   void _addGuard(RouteGuard guard) {
     assert(guard != null);
     _registeredGuards[guard.runtimeType] = guard;
   }
 
   @override
-  Future<T> push<T extends Object>(Route<T> route) async {
-    print(_hasGuards(route.settings.name));
-
-    if (!_hasGuards(route.settings.name)) {
-      return super.push<T>(route);
-    }
-
-    if (route.settings.isInitialRoute) {
-      super.push(
-        PageRouteBuilder(
-          transitionDuration: Duration(milliseconds: 0),
-          pageBuilder: (_, __, ___) => Container(color: Colors.black),
-        ),
-      );
-      if (await _canNavigate(route.settings)) {
-        // await route.popped;
-        maybePop();
-        // super.pushReplacement(route);
-      }
-    }
-
-    return await _canNavigate(route.settings) ? super.push<T>(route) : null;
+  @optionalTypeArgs
+  Future<T> pushNamed<T extends Object>(String routeName,
+      {Object arguments, OnNavigationRejected onReject}) async {
+    return await _canNavigate(routeName,
+            arguments: arguments, onReject: onReject)
+        ? super.pushNamed<T>(routeName, arguments: arguments)
+        : null;
   }
 
-  // @override
-  // @optionalTypeArgs
-  // Future<T> pushNamed<T extends Object>(String routeName,
-  //     {Object arguments}) async {
-  //   return await _canNavigate(routeName, arguments)
-  //       ? super.pushNamed<T>(routeName, arguments: arguments)
-  //       : null;
-  // }
+  @override
+  @optionalTypeArgs
+  Future<T> pushReplacementNamed<T extends Object, TO extends Object>(
+    String routeName, {
+    TO result,
+    Object arguments,
+    OnNavigationRejected onReject,
+  }) async {
+    return await _canNavigate(routeName,
+            arguments: arguments, onReject: onReject)
+        ? super.pushReplacementNamed<T, TO>(routeName,
+            arguments: arguments, result: result)
+        : null;
+  }
 
-  // @override
-  // @optionalTypeArgs
-  // Future<T> pushReplacementNamed<T extends Object, TO extends Object>(
-  //   String routeName, {
-  //   TO result,
-  //   Object arguments,
-  // }) async {
-  //   return await _canNavigate(routeName, arguments)
-  //       ? super.pushReplacementNamed<T, TO>(routeName,
-  //           arguments: arguments, result: result)
-  //       : null;
-  // }
-
-  // @override
-  // @optionalTypeArgs
-  // Future<T> popAndPushNamed<T extends Object, TO extends Object>(
-  //   String routeName, {
-  //   TO result,
-  //   Object arguments,
-  // }) {
-  //   pop<TO>(result);
-  //   return pushNamed<T>(routeName, arguments: arguments);
-  // }
-
-  // @override
-  // @optionalTypeArgs
-  // Future<T> pushNamedAndRemoveUntil<T extends Object>(
-  //   String newRouteName,
-  //   RoutePredicate predicate, {
-  //   Object arguments,
-  // }) async {
-  //   return await _canNavigate(newRouteName, arguments)
-  //       ? super.pushNamedAndRemoveUntil<T>(newRouteName, predicate,
-  //           arguments: arguments)
-  //       : null;
-  // }
-
-  // @optionalTypeArgs
-  // Future<T> pushNamedAndRemoveUntilRoute<T extends Object>(
-  //   String newRouteName,
-  //   String anchorRoute, {
-  //   Object arguments,
-  // }) async {
-  //   return pushNamedAndRemoveUntil<T>(
-  //       newRouteName, ModalRoute.withName(anchorRoute),
-  //       arguments: arguments);
-  // }
+  @override
+  @optionalTypeArgs
+  Future<T> pushNamedAndRemoveUntil<T extends Object>(
+    String newRouteName,
+    RoutePredicate predicate, {
+    Object arguments,
+    OnNavigationRejected onReject,
+  }) async {
+    return await _canNavigate(newRouteName,
+            arguments: arguments, onReject: onReject)
+        ? super.pushNamedAndRemoveUntil<T>(
+            newRouteName,
+            predicate,
+            arguments: arguments,
+          )
+        : null;
+  }
 
   bool _hasGuards(String routeName) =>
       guardedRoutes != null && guardedRoutes[routeName] != null;
 
-  Future<bool> canNavigate(String routeName) async =>
-      !_hasGuards(routeName) &&
-      await _canNavigate(RouteSettings(name: routeName));
+  Future<bool> canNavigate(String routeName) => _canNavigate(routeName);
 
-  Future<bool> _canNavigate(RouteSettings settings) async {
-    assert(guardedRoutes != null);
-    for (Type guardType in guardedRoutes[settings.name]) {
-      if (!await _getGuard(guardType)
-          .canNavigate(this, settings.name, settings.arguments)) return false;
+  Future<bool> _canNavigate(String routeName,
+      {Object arguments, OnNavigationRejected onReject}) async {
+    if (!_hasGuards(routeName)) {
+      return true;
+    }
+    for (Type guardType in guardedRoutes[routeName]) {
+      if (!await _getGuard(guardType).canNavigate(this, routeName, arguments)) {
+        if (onReject != null) {
+          onReject(_getGuard(guardType));
+        }
+        return false;
+      }
     }
     return true;
   }
