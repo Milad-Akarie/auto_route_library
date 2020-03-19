@@ -34,7 +34,7 @@ class RouterConfigResolver {
           classElement.unnamedConstructor.parameters.first.type
                   .getDisplayString() !=
               'String') {
-        throw ("UnknowRoute must have a defualt constructor with a positional String Parameter, MyUnknownRoute(String routeName)");
+        throw ("UnknownRoute must have a default constructor with a positional String Parameter, MyUnknownRoute(String routeName)");
       }
     }
 

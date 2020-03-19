@@ -85,12 +85,12 @@ class RouterClassGenerator {
     });
 
     // build unknown route error page if route is not found
-    final unknowRoute =
+    final unknownRoute =
         routes.firstWhere((r) => r.isUnknownRoute == true, orElse: () => null);
-    if (unknowRoute != null) {
+    if (unknownRoute != null) {
       _writeln('default: ');
       _generateRouteBuilder(
-          unknowRoute, '${unknowRoute.className}(settings.name)');
+          unknownRoute, '${unknownRoute.className}(settings.name)');
     } else {
       _writeln('default: return unknownRoutePage(settings.name);');
     }
