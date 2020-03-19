@@ -242,7 +242,7 @@ class RouterClassGenerator {
       _write('};');
     }
 
-    _writeln('static final navigator = ExtendedNavigator(');
+    _writeln('static final ExtendedNavigator navigator = ExtendedNavigator(');
     if (routesWithGuards.isNotEmpty) {
       _write('_guardedRoutes');
     }
