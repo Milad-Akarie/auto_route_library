@@ -1,4 +1,8 @@
 # ChangeLog
+## [0.3.2+1]
+- Fix typos
+- Fix warning for "Type Annotate Public APIs"
+
 ## [0.3.2]
 
 - Fix generic arguments are not imported.
