@@ -8,20 +8,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/home_screen.dart';
-import 'package:example/router.dart';
 import 'package:example/screens/second_screen.dart';
+import 'package:example/main.dart';
 import 'package:example/screens/login_screen.dart';
 
 abstract class Routes {
   static const homeScreen = '/';
   static const secondScreen = '/second-screen';
-  static const loginScreenDialog = '/login-screen-dialog';
+  static const loginScreen = '/login-screen';
 }
 
 class Router extends RouterBase {
   @override
   Map<String, List<Type>> get guardedRoutes => {
-        Routes.homeScreen: [AuthGuard],
         Routes.secondScreen: [AuthGuard],
       };
 
@@ -50,16 +49,14 @@ class Router extends RouterBase {
                   .wrappedRoute,
           settings: settings,
         );
-      case Routes.loginScreenDialog:
+      case Routes.loginScreen:
         if (hasInvalidArgs<double>(args)) {
           return misTypedArgsRoute<double>(args);
         }
         final typedArgs = args as double ?? 20.0;
-        return PageRouteBuilder<dynamic>(
-          pageBuilder: (ctx, animation, secondaryAnimation) =>
-              LoginScreen(id: typedArgs),
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => LoginScreen(id: typedArgs),
           settings: settings,
-          fullscreenDialog: true,
         );
       default:
         return unknownRoutePage(settings.name);
@@ -76,23 +73,4 @@ class SecondScreenArguments {
   final String title;
   final String message;
   SecondScreenArguments({@required this.title, this.message});
-}
-
-//**************************************************************************
-// Navigation helper methods extension
-//***************************************************************************
-
-extension RouterNavigationHelperMethods on ExtendedNavigatorState {
-  Future pushHomeScreen() => pushNamed(Routes.homeScreen);
-  Future pushSecondScreen(
-          {@required String title,
-          String message,
-          OnNavigationRejected onReject}) =>
-      pushNamed(Routes.secondScreen,
-          arguments: SecondScreenArguments(title: title, message: message),
-          onReject: onReject);
-  Future pushLoginScreenDialog({
-    double id = 20.0,
-  }) =>
-      pushNamed(Routes.loginScreenDialog, arguments: id);
 }

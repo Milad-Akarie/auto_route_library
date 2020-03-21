@@ -7,6 +7,14 @@ void main() {
   runApp(MyApp());
 }
 
+class AuthGuard extends RouteGuard {
+  @override
+  Future<bool> canNavigate(ExtendedNavigatorState navigator, String routeName,
+      Object arguments) async {
+    return true;
+  }
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
