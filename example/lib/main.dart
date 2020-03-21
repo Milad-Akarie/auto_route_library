@@ -1,24 +1,20 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:example/router.dart';
 import 'package:example/router.gr.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
-  Router.navigator.addGuards([
-    AuthGuard(),
-  ]);
 }
-
-bool getBool() => true;
-void getNothing() {}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateRoute: Router.onGenerateRoute,
-      initialRoute: Router.homeScreen,
-      navigatorKey: Router.navigator.key,
+      builder: ExtendedNavigator<Router>(
+        router: Router(),
+        guards: [AuthGuard()],
+      ),
     );
   }
 }

@@ -4,14 +4,15 @@ import 'package:analyzer/dart/element/element.dart';
 
 String getImport(Element element) {
   // return early if source is null
-  if (element.source == null) {
+  final source = element.librarySource ?? element.source;
+  if (source == null) {
     return null;
   }
 
   // we don't need to import core dart types
   // or core flutter types
-  if (!element.source.isInSystemLibrary) {
-    final path = element.source.uri.toString();
+  if (!source.isInSystemLibrary) {
+    final path = source.uri.toString();
     if (!path.startsWith('package:flutter/')) {
       return "'$path'";
     }

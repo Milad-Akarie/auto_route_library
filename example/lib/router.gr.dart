@@ -8,61 +8,58 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/home_screen.dart';
-import 'package:example/screens/second_screen.dart';
 import 'package:example/router.dart';
-import 'package:example/screens/profile_screen.dart';
+import 'package:example/screens/second_screen.dart';
 import 'package:example/screens/login_screen.dart';
 
-class Router {
+abstract class Routes {
   static const homeScreen = '/';
   static const secondScreen = '/second-screen';
-  static const profileScreen = '/profile-screen';
   static const loginScreenDialog = '/login-screen-dialog';
-  static const _guardedRoutes = {
-    secondScreen: [AuthGuard],
-    profileScreen: [AuthGuard],
-  };
-  static final navigator = ExtendedNavigator(_guardedRoutes);
-  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+}
+
+class Router extends RouterBase {
+  @override
+  Map<String, List<Type>> get guardedRoutes => {
+        Routes.homeScreen: [AuthGuard],
+        Routes.secondScreen: [AuthGuard],
+      };
+
+  //This will probably be removed in future versions
+  //you should call ExtendedNavigator.ofRouter<Router>() directly
+  static ExtendedNavigatorState get navigator =>
+      ExtendedNavigator.ofRouter<Router>();
+
+  @override
+  Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
-      case Router.homeScreen:
+      case Routes.homeScreen:
         return MaterialPageRoute<dynamic>(
           builder: (_) => HomeScreen(),
           settings: settings,
         );
-      case Router.secondScreen:
-        if (hasInvalidArgs<SecondScreenArguments>(args)) {
+      case Routes.secondScreen:
+        if (hasInvalidArgs<SecondScreenArguments>(args, isRequired: true)) {
           return misTypedArgsRoute<SecondScreenArguments>(args);
         }
-        final typedArgs =
-            args as SecondScreenArguments ?? SecondScreenArguments();
+        final typedArgs = args as SecondScreenArguments;
         return MaterialPageRoute<dynamic>(
           builder: (_) =>
               SecondScreen(title: typedArgs.title, message: typedArgs.message)
                   .wrappedRoute,
           settings: settings,
         );
-      case Router.profileScreen:
-        if (hasInvalidArgs<ProfileScreenArguments>(args)) {
-          return misTypedArgsRoute<ProfileScreenArguments>(args);
-        }
-        final typedArgs =
-            args as ProfileScreenArguments ?? ProfileScreenArguments();
-        return MaterialPageRoute<dynamic>(
-          builder: (_) =>
-              ProfileScreen(title: typedArgs.title, message: typedArgs.message),
-          settings: settings,
-        );
-      case Router.loginScreenDialog:
+      case Routes.loginScreenDialog:
         if (hasInvalidArgs<double>(args)) {
           return misTypedArgsRoute<double>(args);
         }
         final typedArgs = args as double ?? 20.0;
-        return PageRouteBuilder<bool>(
+        return PageRouteBuilder<dynamic>(
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               LoginScreen(id: typedArgs),
           settings: settings,
+          fullscreenDialog: true,
         );
       default:
         return unknownRoutePage(settings.name);
@@ -76,14 +73,26 @@ class Router {
 
 //SecondScreen arguments holder class
 class SecondScreenArguments {
-  final dynamic title;
+  final String title;
   final String message;
-  SecondScreenArguments({this.title, this.message});
+  SecondScreenArguments({@required this.title, this.message});
 }
 
-//ProfileScreen arguments holder class
-class ProfileScreenArguments {
-  final dynamic title;
-  final String message;
-  ProfileScreenArguments({this.title, this.message});
+//**************************************************************************
+// Navigation helper methods extension
+//***************************************************************************
+
+extension RouterNavigationHelperMethods on ExtendedNavigatorState {
+  Future pushHomeScreen() => pushNamed(Routes.homeScreen);
+  Future pushSecondScreen(
+          {@required String title,
+          String message,
+          OnNavigationRejected onReject}) =>
+      pushNamed(Routes.secondScreen,
+          arguments: SecondScreenArguments(title: title, message: message),
+          onReject: onReject);
+  Future pushLoginScreenDialog({
+    double id = 20.0,
+  }) =>
+      pushNamed(Routes.loginScreenDialog, arguments: id);
 }

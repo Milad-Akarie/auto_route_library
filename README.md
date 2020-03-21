@@ -2,13 +2,14 @@
 
 AutoRoute is a route generation library, where everything needed for navigation is automatically generated for you.
 
+
 ---
 
 - [Installation](#installation)
 - [Setup and Usage](#setup-and-usage)
+- [Navigation](#navigation)
 - [Customization](#customization)
 - [Passing Arguments to Routes](#passing-arguments-to-routes)
-- [Navigating Using a Global Navigator Key aka Navigating Without Context](#navigating-using-a-global-navigator-key-aka-navigating-without-context)
 - [Nested Navigators](#nested-navigators)
 - [Route guards](#route-guards)
 - [Handling Wrapped Routes](#handling-wrapped-routes)
@@ -63,7 +64,7 @@ class $Router {
 }
 ```
 
-#### Now simply Run the generator
+#### Next simply Run the generator
 
 Use the [watch] flag to watch the files system for edits and rebuild as necessary.
 
@@ -86,27 +87,32 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    // hook up the onGenerateRoute function in the generated Router class
-    // with your Material app
-      onGenerateRoute: MyRouter.onGenerateRoute,
-      navigatorKey: MyRouter.navigator.key,
-      initialRoute: MyRouter.homeScreenRoute,
+    // Tell MaterialApp to use our ExtendedNavigator instead of
+    // the native one by assigning it to it's builder
+    // instead of return the nativeNavigator we're returning our ExtendedNavigator
+     builder: ExtendedNavigator<Router>(router: Router()),
+     // this's a shorthand for
+     builder: (ctx, nativeNavigator) => ExtendedNavigator<Router>(router: Router())
     );
   }
 }
 ```
 
-#### Inside of the Generated class
+#### Inside of the Generated file
 
 ```dart
-class Router{
-   // your route names will be generated as static const Strings
-  static const loginScreenRoute = '/login-screen-route';
-
-      static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+// a Routes class that holds all of your static route names
+abstract class Routes {
+  static const homeScreen = '/';
+  static const secondScreen = '/second-screen';
+}
+// the onGenerateRoute function implementation
+class Router extends RouterBase{
+      @override
+      Route<dynamic> onGenerateRoute(RouteSettings settings) {
         switch (settings.name) {
         // The generated code for LoginScreen is
-          case Router.loginScreenRoute:
+          case Routes.loginScreenRoute:
             return CupertinoPageRoute<dynamic>(
               builder: (_) => LoginScreen(),
               settings: settings,
@@ -118,19 +124,60 @@ class Router{
             return unknownRoutePage(settings.name);
         }
  } }
+
+ // Argument holder classes if exist ...
+```
+
+## Navigation
+
+You can either use context to look up your Navigator in your widgets tree or without context,
+using ExtendedNavigator.ofRouter<yourRouter>()
+
+```dart
+// with context
+ExtendedNavigator.of(context).pushNamed(Routes.secondScreen)
+// without context
+ExtendedNavigator.ofRouter<Router>().pushNamed(Routes.secondScreen)
+// or if you're working with only one navigator
+ExtenedNavigator.rootNavigator.pushNamed(..)
+```
+
+### Navigation helper methods extension
+
+to generate extension methods set the generateNavigationHelperExtension property inside of MaterialAutoRouter() to true
+
+This will generate
+
+```dart
+extension RouterNavigationHelperMethods on ExtendedNavigatorState {
+  Future pushHomeScreen() => pushNamed(Routes.homeScreen);
+  Future<bool> pushSecondScreen(
+          {@required String title, String message}) =>
+      pushNamed<bool>(Routes.secondScreen,
+          arguments: SecondScreenArguments(title: title, message: message));
+}
+```
+
+Then use it like follows
+
+```dart
+ExtendedNavigator.of(context).pushSecondScreen(args...);
+//or
+ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 ```
 
 ### Customization
 
 ---
 
-##### @MaterialAutoRouter | @CupertinoAutoRouter
+##### MaterialAutoRouter | CupertinoAutoRouter
 
-| Property                 | Default value | Definition                                     |
-| ------------------------ | ------------- | ---------------------------------------------- |
-| generateRouteList [bool] | false         | if true a list of all routes will be generated |
+| Property                                 | Default value | Definition                                                                               |
+| ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
+| generateRouteList [bool]                 | false         | if true a list of all routes will be generated                                           |
+| generateNavigationHelperExtension [bool] | false         | if true an Navigator extenstion will be generated with helper push methods of all routes |
 
-#### @CustomAutoRouter
+#### CustomAutoRouter
 
 | Property                        | Default value | Definition                                                                       |
 | ------------------------------- | :-----------: | -------------------------------------------------------------------------------- |
@@ -139,7 +186,7 @@ class Router{
 | barrierDismissible [bool]       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |
 | durationInMilliseconds [double] |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |
 
-#### @MaterialRoute | @CupertinoRoute | @CustomRoute
+#### MaterialRoute | CupertinoRoute | CustomRoute
 
 | Property                | Default value | Definition                                                                                 |
 | ----------------------- | :-----------: | ------------------------------------------------------------------------------------------ |
@@ -148,13 +195,13 @@ class Router{
 | fullscreenDialog [bool] |     false     | extension for the fullscreenDialog property in PageRoute                                   |
 | maintainState [bool]    |     true      | extension for the maintainState property in PageRoute                                      |
 
-#### @CupertinoRoute Specific => CupertinoPageRoute
+#### CupertinoRoute Specific => CupertinoPageRoute
 
 | Property       | Default value | Definition                                             |
 | -------------- | :-----------: | ------------------------------------------------------ |
 | title [String] |     null      | extension for the title property in CupertinoPageRoute |
 
-#### @CustomRoute Specific => PageRouteBuilder
+#### CustomRoute Specific => PageRouteBuilder
 
 | Property                        | Default value | Definition                                                                       |
 | ------------------------------- | :-----------: | -------------------------------------------------------------------------------- |
@@ -163,7 +210,7 @@ class Router{
 | barrierDismissible [bool]       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |
 | durationInMilliseconds [double] |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |
 
-#### @unkownRoute
+#### unkownRoute
 
 Marks route as a custome route-not-found page. There can be only one unknown route per Router.
 
@@ -190,7 +237,7 @@ class ProductDetails extends StatelessWidget {
 
 ```dart
  final args = settings.arguments;
-  case Router.productDetailsRoute:
+  case Routes.productDetailsRoute:
    // ProductDetails screen is expecting a productId of type <int>
    // so we check the passed arguments against it
     if (hasInvalidArgs<int>(args))
@@ -233,7 +280,7 @@ class WelcomeScreenArguments {
   WelcomeScreenArguments({this.title = "Default Title",@required this.message});
 }
 
- case Router.welcomeScreenRoute:
+ case Routes.welcomeScreenRoute:
       // if your class holder contains at least one required field the whole argument class is considered required and can not be null
         if (hasInvalidArgs<WelcomeScreenArguments>(args,isRequired: true))
           return misTypedArgsRoute<WelcomeScreenArguments>(args);
@@ -249,33 +296,12 @@ class WelcomeScreenArguments {
 ##### Pass your typed args using the generated arguments holder class
 
 ```dart
-Navigator.of(ctx).pushNamed(Router.welcomeScreenRoute,
+ExtendedNavigator.of(ctx).pushNamed(Router.welcomeScreenRoute,
     arguments: WelcomeScreenArguments(
         title: "Hello World!"
         message: "Let's AutoRoute!"
         )
     );
-```
-
-### Navigating Using a Global Navigator Key aka Navigating Without Context
-
-Simply assign MyRouter.navigatorKey to the MaterialApp property "navigatorKey" as follows
-
-```dart
-  MaterialApp(
-      onGenerateRoute: MyRouter.onGenerateRoute,
-      // hook up the navigatorKey
-      navigatorKey: MyRouter.navigator.key,
-    );
-}
-```
-
-#### Now use the navigator inside of MyRouter any where in your app.
-
----
-
-```dart
-MyRouter.navigator.pushNamed(MyRouter.secondScreen);
 ```
 
 ### Nested Navigators
@@ -294,15 +320,16 @@ class $MyNestedRouter {
 ##### Hook up your nested navigator with the Generated Router class
 
 ```dart
- Navigator(
-          key: MyNestedRouter.navigator.key,
-          onGenerateRoute: MyNestedRouter.onGenerateRoute),
+ ExtendedNavigator<MyNestedRouter>(router: MyNestedRouter()),
 ```
 
 And That's that! Now use your nested router's navigator to navigate within your nested navigator as follows
 
 ```dart
-MyNestedRouter.navigator.pushNamed("your Nested route")
+// inside of widgets below your nested ExtendedNavigator()
+ExtendedNavigator.of(context).pushNamed(...)
+// or without context
+ExtendedNavigator.ofRouter<MyNestedRouter>.pushNamed(...)
 ```
 
 ### Route guards
@@ -317,7 +344,7 @@ Implementing route guards requires a little bit of setup:
 class AuthGuard extends RouteGuard {
  @override
  Future<bool> canNavigate(
-     BuildContext context, String routeName, Object arguments) async {
+     ExtendedNavigatorState navigator, String routeName, Object arguments) async {
 
    SharedPreferences prefs = await SharedPreferences.getInstance();
    return prefs.getString('token_key') != null;
@@ -326,15 +353,19 @@ class AuthGuard extends RouteGuard {
 ```
 
 2.  Register your guards
+    pass your guards to the guards property inside of ExtendedNavigator
 
 ```dart
-// you need to register the guards before they're needed
-// main function is a good place to register your guards
- void main() {
-     Router.navigator.addGuards([
-       AuthGuard(),
-     ]);
-     runApp(MyApp());
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      builder: ExtendedNavigator<Router>(
+        router: Router(),
+        guards: [AuthGuard()],
+      ),
+    );
+  }
 }
 ```
 

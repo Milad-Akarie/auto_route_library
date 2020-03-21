@@ -21,13 +21,9 @@ class RouteConfig {
   int durationInMilliseconds;
   int routeType = RouteType.material;
   List<RouteGuardConfig> guards = [];
-
   String cupertinoNavTitle;
-
   bool hasWrapper;
-
   bool isUnknownRoute;
-
   RouteConfig();
 }
 

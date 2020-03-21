@@ -18,8 +18,12 @@ class RouterClassGenerator {
 
   String generate() {
     _generateImports();
+    _generateRoutesClass();
     _generateRouterClass();
     _generateArgumentHolders();
+    if (routerConfig.generateNavigationHelper) {
+      _generateNavigationHelpers();
+    }
     return _stringBuffer.toString();
   }
 
@@ -41,9 +45,7 @@ class RouterClassGenerator {
         });
       }
       if (r.guards != null) {
-        r.guards.forEach((g) {
-          imports.add(g.import);
-        });
+        r.guards.forEach((g) => imports.add(g.import));
       }
     });
     imports
@@ -51,8 +53,8 @@ class RouterClassGenerator {
         .forEach((import) => _writeln('import $import;'));
   }
 
-  void _generateRouteNames(List<RouteConfig> routes) {
-    _newLine();
+  void _generateRoutesClass() {
+    _writeln('abstract class Routes{');
     routes.where((r) => !r.isUnknownRoute).forEach((r) {
       final routeName = r.name;
       final pathName = r.pathName ?? "/${toKababCase(routeName)}";
@@ -64,22 +66,24 @@ class RouterClassGenerator {
     });
 
     if (routerConfig.generateRouteList) {
-      _writeln("static const routes = [");
+      _writeln("static const all = [");
       routes
           .where((r) => !r.isUnknownRoute)
           .forEach((r) => _write('${r.name},'));
       _write("];");
     }
+    _writeln('}');
   }
 
   void _generateRouteGeneratorFunction(List<RouteConfig> routes) {
     _newLine();
-    _writeln('static Route<dynamic> onGenerateRoute(RouteSettings settings) {');
+    _writeln('@override');
+    _writeln('Route<dynamic> onGenerateRoute(RouteSettings settings) {');
     _writeln('final args = settings.arguments;');
     _writeln('switch (settings.name) {');
 
     routes.where((r) => !r.isUnknownRoute).forEach((r) {
-      _writeln('case $className.${r.name}:');
+      _writeln('case Routes.${r.name}:');
 
       _generateRoute(r);
     });
@@ -178,9 +182,7 @@ class RouterClassGenerator {
 
     if (routesWithArgsHolders.isNotEmpty) {
       _generateBoxed('Arguments holder classes');
-      routesWithArgsHolders.values.forEach((r) {
-        _generateArgsHolder(r);
-      });
+      routesWithArgsHolders.values.forEach(_generateArgsHolder);
     }
   }
 
@@ -221,8 +223,7 @@ class RouterClassGenerator {
   }
 
   void _generateRouterClass() {
-    _writeln('\nclass $className {');
-    _generateRouteNames(routes);
+    _writeln('\nclass $className extends RouterBase {');
     _generateHelperFunctions();
     _generateRouteGeneratorFunction(routes);
 
@@ -235,18 +236,21 @@ class RouterClassGenerator {
         routes.where((r) => r.guards != null && r.guards.isNotEmpty);
 
     if (routesWithGuards.isNotEmpty) {
-      _writeln('static const _guardedRoutes = {');
+      _writeln('@override');
+      _writeln('Map<String, List<Type>> get guardedRoutes => {');
       routesWithGuards.forEach((r) {
-        _write('${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
+        _write(
+            'Routes.${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
       });
       _write('};');
     }
 
-    _writeln('static final navigator = ExtendedNavigator(');
-    if (routesWithGuards.isNotEmpty) {
-      _write('_guardedRoutes');
-    }
-    _write(');');
+    _writeln('''\n\n\n //This will probably be removed in future versions
+  //you should call ExtendedNavigator.ofRouter<Router>() directly''');
+    _writeln('''
+    static ExtendedNavigatorState get navigator =>
+      ExtendedNavigator.ofRouter<$className>();
+      ''');
   }
 
   void _generateRouteBuilder(RouteConfig r, String constructor) {
@@ -276,7 +280,7 @@ class RouterClassGenerator {
       }
       if (r.durationInMilliseconds != null) {
         _write(
-            'transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),');
+            'transitionDuration: const Duration(milliseconds: ${r.durationInMilliseconds}),');
       }
     }
     // generated shared props
@@ -288,5 +292,53 @@ class RouterClassGenerator {
     }
 
     _writeln(');');
+  }
+
+  void _generateNavigationHelpers() {
+    _generateBoxed('Navigation helper methods extension');
+    _writeln(
+        'extension ${className}NavigationHelperMethods on ExtendedNavigatorState {');
+    routes.forEach(_generateHelperMethod);
+    _writeln('}');
+  }
+
+  void _generateHelperMethod(RouteConfig route) {
+    final genericType = route.returnType == null ? '' : '<${route.returnType}>';
+    _write('Future$genericType push${capitalize(route.name)}(');
+    // generate constructor
+    if (route.parameters != null) {
+      _write('{');
+      route.parameters.forEach((param) {
+        if (param.isRequired) {
+          _write('@required ');
+        }
+        _write('${param.type} ${param.name}');
+        if (param.defaultValueCode != null) {
+          _write(' = ${param.defaultValueCode}');
+        }
+        _write(',');
+      });
+      if (route.guards?.isNotEmpty == true) {
+        _write('OnNavigationRejected onReject');
+      }
+      _write('}');
+    }
+    _writeln(')');
+    _write(' => pushNamed$genericType(Routes.${route.name}');
+    if (route.parameters != null) {
+      _write(',arguments: ');
+      if (route.parameters.length == 1) {
+        _write('${route.parameters.first.name}');
+      } else {
+        _write('${route.className}Arguments(');
+        _write(route.parameters.map((p) => '${p.name}: ${p.name}').join(','));
+        _write(')');
+      }
+
+      if (route.guards?.isNotEmpty == true) {
+        _write(',onReject:onReject');
+      }
+    }
+    _write(');');
   }
 }

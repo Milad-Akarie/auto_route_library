@@ -4,28 +4,30 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/auto_route_annotations.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/login_screen.dart';
-import 'package:example/screens/profile_screen.dart';
 import 'package:example/screens/second_screen.dart';
-import 'package:flutter/material.dart';
 
-@MaterialAutoRouter()
+export 'package:auto_route/auto_route.dart';
+export 'router.gr.dart';
+
+@MaterialAutoRouter(
+  generateNavigationHelperExtension: true,
+)
 class $Router {
   @initial
+  @GuardedBy([AuthGuard])
   HomeScreen homeScreen;
 
   @GuardedBy([AuthGuard])
   SecondScreen secondScreen;
 
-  @GuardedBy([AuthGuard])
-  ProfileScreen profileScreen;
-
-  @CustomRoute(returnType: bool)
+  @CustomRoute(fullscreenDialog: true)
   LoginScreen loginScreenDialog;
 }
 
 class AuthGuard extends RouteGuard {
   @override
-  Future<bool> canNavigate(BuildContext context, String routeName, Object arguments) async {
+  Future<bool> canNavigate(ExtendedNavigatorState navigator, String routeName,
+      Object arguments) async {
     return true;
   }
 }

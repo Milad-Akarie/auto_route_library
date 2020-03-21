@@ -1,21 +1,32 @@
-import 'package:example/router.gr.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:example/router.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
   final double id;
 
-  const LoginScreen({this.id = 20.0});
+  LoginScreen({this.id = 20.0}) {
+    print('constructing  login screen');
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: FlatButton(
-          child: Text("Login"),
-          onPressed: () {
-            Router.navigator.pop<bool>(false);
-          },
+    print('building login screen');
+    return WillPopScope(
+      onWillPop: () async {
+        ExtendedNavigator.rootNavigator.pop(false);
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: FlatButton(
+            child: Text("Login"),
+            onPressed: () async {
+              ExtendedNavigator.of(context)
+                  .pushReplacementNamed(Routes.homeScreen);
+            },
+          ),
         ),
       ),
     );
