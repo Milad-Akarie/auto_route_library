@@ -24,6 +24,12 @@ class Router extends RouterBase {
         Routes.homeScreen: [AuthGuard],
         Routes.secondScreen: [AuthGuard],
       };
+
+  //This will probably be removed in future versions
+  //you should call ExtendedNavigator.ofRouter<Router>() directly
+  static ExtendedNavigatorState get navigator =>
+      ExtendedNavigator.ofRouter<Router>();
+
   @override
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
@@ -38,23 +44,22 @@ class Router extends RouterBase {
           return misTypedArgsRoute<SecondScreenArguments>(args);
         }
         final typedArgs = args as SecondScreenArguments;
-        return PageRouteBuilder<dynamic>(
-          pageBuilder: (ctx, animation, secondaryAnimation) =>
+        return MaterialPageRoute<dynamic>(
+          builder: (_) =>
               SecondScreen(title: typedArgs.title, message: typedArgs.message)
                   .wrappedRoute,
           settings: settings,
-          transitionsBuilder: TransitionsBuilders.fadeIn,
-          transitionDuration: Duration(milliseconds: 300),
         );
       case Routes.loginScreenDialog:
         if (hasInvalidArgs<double>(args)) {
           return misTypedArgsRoute<double>(args);
         }
         final typedArgs = args as double ?? 20.0;
-        return PageRouteBuilder<bool>(
+        return PageRouteBuilder<dynamic>(
           pageBuilder: (ctx, animation, secondaryAnimation) =>
               LoginScreen(id: typedArgs),
           settings: settings,
+          fullscreenDialog: true,
         );
       default:
         return unknownRoutePage(settings.name);
@@ -73,17 +78,21 @@ class SecondScreenArguments {
   SecondScreenArguments({@required this.title, this.message});
 }
 
+//**************************************************************************
+// Navigation helper methods extension
+//***************************************************************************
+
 extension RouterNavigationHelperMethods on ExtendedNavigatorState {
-  Future<T> pushHomeScreen<T>() => pushNamed<T>(Routes.homeScreen);
-  Future<T> pushSecondScreen<T>(
+  Future pushHomeScreen() => pushNamed(Routes.homeScreen);
+  Future pushSecondScreen(
           {@required String title,
           String message,
           OnNavigationRejected onReject}) =>
-      pushNamed<T>(Routes.secondScreen,
+      pushNamed(Routes.secondScreen,
           arguments: SecondScreenArguments(title: title, message: message),
           onReject: onReject);
-  Future<bool> pushLoginScreenDialog<bool>({
+  Future pushLoginScreenDialog({
     double id = 20.0,
   }) =>
-      pushNamed<bool>(Routes.loginScreenDialog, arguments: id);
+      pushNamed(Routes.loginScreenDialog, arguments: id);
 }

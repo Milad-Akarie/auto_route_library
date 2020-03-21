@@ -16,6 +16,11 @@ abstract class Routes {
 }
 
 class NestedRouter extends RouterBase {
+  //This will probably be removed in future versions
+  //you should call ExtendedNavigator.ofRouter<Router>() directly
+  static ExtendedNavigatorState get navigator =>
+      ExtendedNavigator.ofRouter<NestedRouter>();
+
   @override
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
@@ -51,4 +56,18 @@ class NestedScreenTwoArguments {
   final dynamic title;
   final String message;
   NestedScreenTwoArguments({this.title, this.message});
+}
+
+//**************************************************************************
+// Navigation helper methods extension
+//***************************************************************************
+
+extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
+  Future pushNestedScreen() => pushNamed(Routes.nestedScreen);
+  Future pushNestedScreenTwo({
+    dynamic title,
+    String message,
+  }) =>
+      pushNamed(Routes.nestedScreenTwo,
+          arguments: NestedScreenTwoArguments(title: title, message: message));
 }

@@ -245,11 +245,12 @@ class RouterClassGenerator {
       _write('};');
     }
 
-    // _writeln('static final navigator = ExtendedNavigator(');
-    // if (routesWithGuards.isNotEmpty) {
-    //   _write('_guardedRoutes');
-    // }
-    // _write(');');
+    _writeln('''\n\n\n //This will probably be removed in future versions
+  //you should call ExtendedNavigator.ofRouter<Router>() directly''');
+    _writeln('''
+    static ExtendedNavigatorState get navigator =>
+      ExtendedNavigator.ofRouter<$className>();
+      ''');
   }
 
   void _generateRouteBuilder(RouteConfig r, String constructor) {
@@ -279,7 +280,7 @@ class RouterClassGenerator {
       }
       if (r.durationInMilliseconds != null) {
         _write(
-            'transitionDuration: Duration(milliseconds: ${r.durationInMilliseconds}),');
+            'transitionDuration: const Duration(milliseconds: ${r.durationInMilliseconds}),');
       }
     }
     // generated shared props
@@ -294,6 +295,7 @@ class RouterClassGenerator {
   }
 
   void _generateNavigationHelpers() {
+    _generateBoxed('Navigation helper methods extension');
     _writeln(
         'extension ${className}NavigationHelperMethods on ExtendedNavigatorState {');
     routes.forEach(_generateHelperMethod);
@@ -301,8 +303,8 @@ class RouterClassGenerator {
   }
 
   void _generateHelperMethod(RouteConfig route) {
-    final t = route.returnType ?? 'T';
-    _write('Future<$t> push${capitalize(route.name)}<$t>(');
+    final genericType = route.returnType == null ? '' : '<${route.returnType}>';
+    _write('Future$genericType push${capitalize(route.name)}(');
     // generate constructor
     if (route.parameters != null) {
       _write('{');
@@ -322,7 +324,7 @@ class RouterClassGenerator {
       _write('}');
     }
     _writeln(')');
-    _write(' => pushNamed<$t>(Routes.${route.name}');
+    _write(' => pushNamed$genericType(Routes.${route.name}');
     if (route.parameters != null) {
       _write(',arguments: ');
       if (route.parameters.length == 1) {
@@ -340,14 +342,3 @@ class RouterClassGenerator {
     _write(');');
   }
 }
-
-// extension RouterNavigationHelperMethods on ExtendedNavigatorState {
-//   Future<T> toHomeScreen<T>() => pushNamed<T>(Routes.homeScreen);
-
-//   Future<T> toSecondScreen<T>({title, String message}) =>
-//       pushNamed<T>(Routes.secondScreen,
-//           arguments: SecondScreenArguments(
-//             title: title,
-//             message: message,
-//           ));
-// }

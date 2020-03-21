@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import 'nested_screens/nested_router.gr.dart';
+
 class SecondScreen extends StatelessWidget implements AutoRouteWrapper {
   final String message;
 
@@ -14,21 +16,11 @@ class SecondScreen extends StatelessWidget implements AutoRouteWrapper {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Hero(
-              tag: 'hero',
-              child: Icon(
-                Icons.ac_unit,
-                size: 400,
+            Expanded(
+              child: ExtendedNavigator<NestedRouter>(
+                router: NestedRouter(),
               ),
-            ),
-
-            Text("Second Screen here"),
-
-            // Expanded(
-            //   child: ExtendedNavigator<NestedRouter>(
-            //     router: NestedRouter(),
-            //   ),
-            // )
+            )
           ],
         ),
       ),

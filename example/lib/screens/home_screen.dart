@@ -27,7 +27,8 @@ class HomeScreen extends StatelessWidget {
 
                   //     });
 
-                  ExtendedNavigator.rootNavigator.pushNamed(Routes.secondScreen,
+                  ExtendedNavigator.ofRouter<Router>().pushNamed(
+                      Routes.secondScreen,
                       arguments: SecondScreenArguments(title: 'title'),
                       onReject: (guard) {
                     showDialog(

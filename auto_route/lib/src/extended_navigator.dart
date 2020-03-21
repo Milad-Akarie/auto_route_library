@@ -69,7 +69,7 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
   }
 }
 
-class ExtendedNavigatorState extends NavigatorState {
+class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState {
   final Map<String, List<Type>> guardedRoutes;
   final _registeredGuards = <Type, RouteGuard>{};
 
@@ -77,20 +77,18 @@ class ExtendedNavigatorState extends NavigatorState {
     List<RouteGuard> guards,
     this.guardedRoutes,
   }) {
-    guards?.forEach(_addGuard);
+    guards?.forEach(_registerGuard);
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  final _redirectInitalRoute = 'redirect-intial-route';
+  /// if initial route is guarded we push
+  /// a placeholder route until next distention is
+  /// decided by the route guard
+  final _redirectInitialRoute = 'redirect-intial-route';
   @override
   Future<T> push<T extends Object>(Route<T> route) async {
     if (route.settings.isInitialRoute &&
         _hasGuards(route.settings.name) &&
-        route.settings.arguments != _redirectInitalRoute) {
+        route.settings.arguments != _redirectInitialRoute) {
       super.push<T>(
         PageRouteBuilder<T>(
           transitionDuration: Duration(milliseconds: 0),
@@ -99,13 +97,14 @@ class ExtendedNavigatorState extends NavigatorState {
           ),
         ),
       );
+
       return pushReplacementNamed(route.settings.name,
-          arguments: _redirectInitalRoute);
+          arguments: _redirectInitialRoute);
     }
     return super.push<T>(route);
   }
 
-  void _addGuard(RouteGuard guard) {
+  void _registerGuard(RouteGuard guard) {
     assert(guard != null);
     _registeredGuards[guard.runtimeType] = guard;
   }
@@ -154,7 +153,9 @@ class ExtendedNavigatorState extends NavigatorState {
   }
 
   bool _hasGuards(String routeName) =>
-      guardedRoutes != null && guardedRoutes[routeName] != null;
+      routeName != null &&
+      guardedRoutes != null &&
+      guardedRoutes[routeName] != null;
 
   Future<bool> canNavigate(String routeName) => _canNavigate(routeName);
 
@@ -177,9 +178,15 @@ class ExtendedNavigatorState extends NavigatorState {
   RouteGuard _getGuard(Type guardType) {
     if (_registeredGuards[guardType] == null) {
       throw ('$guardType is not registered!'
-          '\nYou have to add your guards to the ExtendedNavigator');
+          '\nYou have to add your guards to ExtendedNavigator widget');
     }
     return _registeredGuards[guardType];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _NavigationStatesContainer._instance.remove<T>();
   }
 }
 
@@ -193,7 +200,7 @@ class _NavigationStatesContainer {
 
   ExtendedNavigatorState create<T extends RouterBase>(
       List<RouteGuard> guards, Map<String, List<Type>> guardedRoutes) {
-    return _navigatorKeys[T] = ExtendedNavigatorState(
+    return _navigatorKeys[T] = ExtendedNavigatorState<T>(
       guards: guards,
       guardedRoutes: guardedRoutes,
     );
@@ -201,6 +208,10 @@ class _NavigationStatesContainer {
 
   ExtendedNavigatorState getRootNavigator() {
     return _navigatorKeys.isNotEmpty ? _navigatorKeys.values.first : null;
+  }
+
+  ExtendedNavigatorState remove<T extends RouterBase>() {
+    return _navigatorKeys.remove(T);
   }
 
   ExtendedNavigatorState get<T extends RouterBase>() {

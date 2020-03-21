@@ -16,7 +16,8 @@ class RouterConfig {
     generateRouteList =
         autoRouter.peek('generateRouteList')?.boolValue ?? false;
     generateNavigationHelper =
-        autoRouter.peek('generateNavigationHelper')?.boolValue ?? false;
+        autoRouter.peek('generateNavigationHelperExtension')?.boolValue ??
+            false;
 
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       globalRouteConfig.routeType = RouteType.cupertino;

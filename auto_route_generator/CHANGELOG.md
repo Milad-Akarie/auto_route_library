@@ -1,4 +1,13 @@
 # ChangeLog
+
+## [0.4.0] Breaking Changes
+- Change using ExtendedNavigator instead of the native Navigator
+- Fix initial route does not go through guards
+- Change generated router class is no longer static
+- Change routes are generated in their own class now "Routers"
+- Add option to generate navigation helper methods extension
+- Update README file
+
 ## [0.3.2]
 
 - Fix generic arguments are not imported.

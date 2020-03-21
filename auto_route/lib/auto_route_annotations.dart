@@ -1,23 +1,27 @@
 class AutoRouter {
+  // if true a list of all routes will be generated
   final bool generateRouteList;
-  final bool generateNavigationHelper;
-  const AutoRouter._(this.generateRouteList, this.generateNavigationHelper);
+  // if true a Navigator extension will be generated with
+  // helper push methods of all routes
+  final bool generateNavigationHelperExtension;
+  const AutoRouter._(
+      this.generateRouteList, this.generateNavigationHelperExtension);
 }
 
 // Defaults created routes to MaterialPageRoute unless
 // overridden by AutoRoute annotation
 class MaterialAutoRouter extends AutoRouter {
   const MaterialAutoRouter(
-      {bool generateRouteList, bool generateNavigationHelper})
-      : super._(generateRouteList, generateNavigationHelper);
+      {bool generateRouteList, bool generateNavigationHelperExtension})
+      : super._(generateRouteList, generateNavigationHelperExtension);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
 // overridden by AutoRoute annotation
 class CupertinoAutoRouter extends AutoRouter {
   const CupertinoAutoRouter(
-      {bool generateRouteList, bool generateNavigationHelper})
-      : super._(generateRouteList, generateNavigationHelper);
+      {bool generateRouteList, bool generateNavigationHelperExtension})
+      : super._(generateRouteList, generateNavigationHelperExtension);
 }
 
 // Defaults created routes to PageRouteBuilder unless
@@ -50,8 +54,8 @@ class CustomAutoRouter extends AutoRouter {
     this.barrierDismissible,
     this.durationInMilliseconds,
     this.opaque,
-    bool generateNavigationHelper,
-  }) : super._(generateRouteList, generateNavigationHelper);
+    bool generateNavigationHelperExtension,
+  }) : super._(generateRouteList, generateNavigationHelperExtension);
 }
 
 class AutoRoute {
@@ -171,7 +175,7 @@ class CustomRoute extends AutoRoute {
         );
 }
 
-/// Widgets annotated with [unknowRoute] must have a defualt constructor
+/// Widgets annotated with [unknownRoute] must have a default constructor
 /// that takes in one positional String Parameter, MyUnknownRoute(String routeName)
 class UnknownRoute {
   const UnknownRoute._();
