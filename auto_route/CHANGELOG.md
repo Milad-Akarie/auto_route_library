@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [0.4.1] Breaking Changes
+- Fix isInitialRoute not defined for RouteSettings in flutter 1.15.+
+
 ## [0.4.0] Breaking Changes
 - Change using ExtendedNavigator instead of the native Navigator
 - Fix initial route does not go through guards

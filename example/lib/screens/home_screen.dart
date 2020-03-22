@@ -1,4 +1,4 @@
-import 'package:example/router.dart';
+import 'package:example/router/router.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
