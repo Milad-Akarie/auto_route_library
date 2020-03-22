@@ -86,13 +86,14 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState {
   final _redirectInitialRoute = 'redirect-intial-route';
   @override
   Future<T> push<T extends Object>(Route<T> route) async {
-    if (route.settings.isInitialRoute &&
-        _hasGuards(route.settings.name) &&
+    final routeName = route.settings.name;
+    if (routeName == '/' &&
+        _hasGuards(routeName) &&
         route.settings.arguments != _redirectInitialRoute) {
       super.push<T>(
         PageRouteBuilder<T>(
-          transitionDuration: Duration(milliseconds: 0),
-          pageBuilder: (context, __, ___) => Container(
+          transitionDuration: const Duration(milliseconds: 0),
+          pageBuilder: (_, __, ___) => Container(
             color: Colors.white,
           ),
         ),
