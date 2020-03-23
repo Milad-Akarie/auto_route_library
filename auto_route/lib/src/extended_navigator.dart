@@ -69,7 +69,8 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
   }
 }
 
-class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState {
+class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
+    with WidgetsBindingObserver {
   final Map<String, List<Type>> guardedRoutes;
   final _registeredGuards = <Type, RouteGuard>{};
 
@@ -78,6 +79,12 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState {
     this.guardedRoutes,
   }) {
     guards?.forEach(_registerGuard);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   /// if initial route is guarded we push
@@ -153,6 +160,20 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState {
         : null;
   }
 
+  // On soft back button pressed in Android
+  @override
+  Future<bool> didPopRoute() {
+    assert(mounted);
+    return maybePop();
+  }
+
+  @override
+  Future<bool> didPushRoute(String route) async {
+    assert(mounted);
+    pushNamed(route);
+    return true;
+  }
+
   bool _hasGuards(String routeName) =>
       routeName != null &&
       guardedRoutes != null &&
@@ -188,6 +209,7 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState {
   void dispose() {
     super.dispose();
     _NavigationStatesContainer._instance.remove<T>();
+    WidgetsBinding.instance.removeObserver(this);
   }
 }
 

@@ -42,7 +42,7 @@ packages:
       path: "../auto_route"
       relative: true
     source: path
-    version: "0.4.0"
+    version: "0.4.1"
   auto_route_generator:
     dependency: "direct dev"
     description:
@@ -435,7 +435,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.15"
+    version: "0.2.11"
   timing:
     dependency: transitive
     description:
