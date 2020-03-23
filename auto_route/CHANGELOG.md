@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [0.4.2] Breaking Changes
+- Fix Android soft back button always exists App
+
 ## [0.4.1] Breaking Changes
 - Fix isInitialRoute not defined for RouteSettings in flutter 1.15.+
 

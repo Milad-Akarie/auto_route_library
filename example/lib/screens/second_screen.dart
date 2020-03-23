@@ -10,18 +10,24 @@ class SecondScreen extends StatelessWidget implements AutoRouteWrapper {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: ExtendedNavigator<NestedRouter>(
-                router: NestedRouter(),
-              ),
-            )
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        print('will pop called');
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: ExtendedNavigator<NestedRouter>(
+                  router: NestedRouter(),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
