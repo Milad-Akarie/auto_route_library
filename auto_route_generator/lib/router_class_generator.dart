@@ -109,57 +109,34 @@ class RouterClassGenerator {
   void _generateRoute(RouteConfig r) {
     final constructorParams = StringBuffer('');
 
-    if (r.parameters != null && r.parameters.isNotEmpty) {
-      if (r.parameters.length == 1) {
-        final param = r.parameters[0];
-
-        // show an error page if passed args are not the same as declared args
-        _writeln('if(hasInvalidArgs<${param.type}>(args');
-        if (param.isRequired) {
-          _write(',isRequired:true');
-        }
-        _write('))');
-        _writeln('{return misTypedArgsRoute<${param.type}>(args);}');
-
-        _writeln('final typedArgs = args as ${param.type}');
-        if (param.defaultValueCode != null) {
-          _write(' ?? ${param.defaultValueCode}');
-        }
-        _write(';');
-        if (param.isPositional) {
-          constructorParams.write('typedArgs');
-        } else {
-          constructorParams.write('${param.name}: typedArgs');
-        }
-      } else {
-        // if router has any required params the argument class holder becomes required.
-        final hasRequiredParams =
-            r.parameters.where((p) => p.isRequired).isNotEmpty;
-        // show an error page  if passed args are not the same as declared args
-        _writeln('if(hasInvalidArgs<${r.className}Arguments>(args');
-        if (hasRequiredParams) {
-          _write(',isRequired:true');
-        }
-        _write('))');
-        _writeln('{return misTypedArgsRoute<${r.className}Arguments>(args);}');
-
-        _writeln('final typedArgs = args as ${r.className}Arguments');
-        if (!hasRequiredParams) {
-          _write(' ?? ${r.className}Arguments()');
-        }
-        _write(';');
-
-        r.parameters.asMap().forEach((i, param) {
-          if (param.isPositional) {
-            constructorParams.write('typedArgs.${param.name}');
-          } else {
-            constructorParams.write('${param.name}:typedArgs.${param.name}');
-          }
-          if (i != r.parameters.length - 1) {
-            constructorParams.write(',');
-          }
-        });
+    if (r.parameters?.isNotEmpty == true) {
+      // if router has any required params the argument class holder becomes required.
+      final hasRequiredParams =
+          r.parameters.where((p) => p.isRequired).isNotEmpty;
+      // show an error page  if passed args are not the same as declared args
+      _writeln('if(hasInvalidArgs<${r.className}Arguments>(args');
+      if (hasRequiredParams) {
+        _write(',isRequired:true');
       }
+      _write('))');
+      _writeln('{return misTypedArgsRoute<${r.className}Arguments>(args);}');
+
+      _writeln('final typedArgs = args as ${r.className}Arguments');
+      if (!hasRequiredParams) {
+        _write(' ?? ${r.className}Arguments()');
+      }
+      _write(';');
+
+      r.parameters.asMap().forEach((i, param) {
+        if (param.isPositional) {
+          constructorParams.write('typedArgs.${param.name}');
+        } else {
+          constructorParams.write('${param.name}:typedArgs.${param.name}');
+        }
+        if (i != r.parameters.length - 1) {
+          constructorParams.write(',');
+        }
+      });
     }
 
     final constructor =
@@ -169,16 +146,16 @@ class RouterClassGenerator {
   }
 
   void _generateArgumentHolders() {
-    final routesWithArgsHolders = Map<String, RouteConfig>();
+    final routesWithArgsHolders = <String, RouteConfig>{};
 
     // make sure we only generated holder classes for
-    // routes with 2+ parameters
+    // routes with parameters
     // also prevent duplicate class with the same name from being generated;
-    routes.forEach((r) {
-      if (r.parameters != null && r.parameters.length > 1) {
+    routes.where((r) => r.parameters?.isNotEmpty == true).forEach(
+      (r) {
         routesWithArgsHolders[r.className] = r;
-      }
-    });
+      },
+    );
 
     if (routesWithArgsHolders.isNotEmpty) {
       _generateBoxed('Arguments holder classes');
@@ -327,14 +304,9 @@ class RouterClassGenerator {
     _write(' => pushNamed$genericType(Routes.${route.name}');
     if (route.parameters != null) {
       _write(',arguments: ');
-      if (route.parameters.length == 1) {
-        _write('${route.parameters.first.name}');
-      } else {
-        _write('${route.className}Arguments(');
-        _write(route.parameters.map((p) => '${p.name}: ${p.name}').join(','));
-        _write(')');
-      }
-
+      _write('${route.className}Arguments(');
+      _write(route.parameters.map((p) => '${p.name}: ${p.name}').join(','));
+      _write(')');
       if (route.guards?.isNotEmpty == true) {
         _write(',onReject:onReject');
       }

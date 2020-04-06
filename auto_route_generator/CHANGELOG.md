@@ -1,5 +1,10 @@
 # ChangeLog
 
+## [0.4.3] Breaking Changes
+- Add ability to pass initial route arguments to ExtendedNavigator
+- Change single route parameters will have argument holder classes too as requested
+- Fix ExtendedNavigator.ofRouter<T>() returns null in inspector mode
+
 ## [0.4.0] Breaking Changes
 - Change using ExtendedNavigator instead of the native Navigator
 - Fix initial route does not go through guards

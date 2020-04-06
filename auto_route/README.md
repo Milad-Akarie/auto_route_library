@@ -91,8 +91,10 @@ class MyApp extends StatelessWidget {
     // the native one by assigning it to it's builder
     // instead of return the nativeNavigator we're returning our ExtendedNavigator
      builder: ExtendedNavigator<Router>(router: Router()),
-     // this's a shorthand for
-     builder: (ctx, nativeNavigator) => ExtendedNavigator<Router>(router: Router())
+     // ExtendedNavigator is just a widget so you can still wrap it with other widgets
+     builder: (ctx, nativeNavigator) => Theme(data:...,
+     child: ExtendedNavigator<Router>(router: Router())
+     ,)
     );
   }
 }
@@ -175,7 +177,7 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 | Property                                 | Default value | Definition                                                                               |
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
 | generateRouteList [bool]                 | false         | if true a list of all routes will be generated                                           |
-| generateNavigationHelperExtension [bool] | false         | if true an Navigator extenstion will be generated with helper push methods of all routes |
+| generateNavigationHelperExtension [bool] | false         | if true a Navigator extenstion will be generated with helper push methods of all routes |
 
 #### CustomAutoRouter
 
@@ -219,41 +221,7 @@ Marks route as a custome route-not-found page. There can be only one unknown rou
 ---
 
 ##### That's the fun part!
-
-You don't actually need to do anything extra. AutoRoute automatically detects your route parameters and handles them for you, and because **Types** are important it will make sure you pass the right argument Type
-
-```dart
-class ProductDetails extends StatelessWidget {
-  final int productId;
-// your route parameters are handled based on
-// your widget route constructor
-  const ProductDetails(this.productId);
-  @override
-  Widget build(BuildContext context)...
-}
-```
-
-#### Generated code for the above example
-
-```dart
- final args = settings.arguments;
-  case Routes.productDetailsRoute:
-   // ProductDetails screen is expecting a productId of type <int>
-   // so we check the passed arguments against it
-    if (hasInvalidArgs<int>(args))
-    // if the passed in args are mistyped, an error route page will be displayed instead
-    return misTypedArgsRoute<int>(args);
-    // otherwise we navigate to the desired screen
-    final typedArgs = args as int;
-    return MaterialPageRoute(
-      builder: (_) => ProductDetails(typedArgs),
-      settings: settings,
-    );
-```
-
-#### Passing multiple arguments (Don't worry, We're not using a dynamic Map!)
-
-Since you can only pass one argument to the Navigator, if you define more then one parameter in your screen constructor autoRoute will automatically generate a class that holds your screen arguments and keep them typed.
+You don't actually need to do anything extra. AutoRoute automatically detects your route parameters and handles them for you, it will automatically generate a class that holds your screen arguments and keep them typed.
 
 ```dart
 class WelcomeScreen extends StatelessWidget {
@@ -317,7 +285,7 @@ class $MyNestedRouter {
 }
 ```
 
-##### Hook up your nested navigator with the Generated Router class
+##### Hook up your nested router with an ExtendedNavigator widget
 
 ```dart
  ExtendedNavigator<MyNestedRouter>(router: MyNestedRouter()),

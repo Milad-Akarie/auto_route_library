@@ -1,9 +1,10 @@
-import 'package:example/router/router.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:example/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen() {
-    print('constructing  Home screen');
+  HomeScreen(String name) {
+    print('constructing  Home screen $name');
   }
   @override
   Widget build(BuildContext context) {
@@ -13,19 +14,12 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Hero(
-            tag: 'hero',
-            child: Icon(Icons.ac_unit),
-          ),
+
           Container(
             child: Center(
               child: FlatButton(
                 child: Text("Second Screen"),
                 onPressed: () async {
-                  // ExtendedNavigator.of(context)
-                  //     .pushSecondScreen(title: 'title', onReject: (guard) {
-
-                  //     });
 
                   ExtendedNavigator.ofRouter<Router>().pushNamed(
                       Routes.secondScreen,

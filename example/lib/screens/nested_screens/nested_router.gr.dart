@@ -23,11 +23,17 @@ class NestedRouter extends RouterBase {
 
   @override
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    print(settings);
     final args = settings.arguments;
     switch (settings.name) {
       case Routes.nestedScreen:
+        if (hasInvalidArgs<NestedScreenArguments>(args)) {
+          return misTypedArgsRoute<NestedScreenArguments>(args);
+        }
+        final typedArgs =
+            args as NestedScreenArguments ?? NestedScreenArguments();
         return MaterialPageRoute<dynamic>(
-          builder: (_) => NestedScreen(),
+          builder: (_) => NestedScreen(typedArgs.x),
           settings: settings,
         );
       case Routes.nestedScreenTwo:
@@ -51,6 +57,12 @@ class NestedRouter extends RouterBase {
 // Arguments holder classes
 //***************************************************************************
 
+//NestedScreen arguments holder class
+class NestedScreenArguments {
+  final int x;
+  NestedScreenArguments({this.x});
+}
+
 //NestedScreenTwo arguments holder class
 class NestedScreenTwoArguments {
   final dynamic title;
@@ -63,7 +75,10 @@ class NestedScreenTwoArguments {
 //***************************************************************************
 
 extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
-  Future pushNestedScreen() => pushNamed(Routes.nestedScreen);
+  Future pushNestedScreen({
+    int x,
+  }) =>
+      pushNamed(Routes.nestedScreen, arguments: NestedScreenArguments(x: x));
   Future pushNestedScreenTwo({
     dynamic title,
     String message,
