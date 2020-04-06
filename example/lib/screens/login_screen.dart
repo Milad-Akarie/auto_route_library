@@ -5,13 +5,10 @@ import 'package:flutter/material.dart';
 class LoginScreen extends StatelessWidget {
   final double id;
 
-  LoginScreen({this.id = 20.0}) {
-    print('constructing  login screen');
-  }
+  LoginScreen({this.id = 20.0});
 
   @override
   Widget build(BuildContext context) {
-    print('building login screen');
     return WillPopScope(
       onWillPop: () async {
         ExtendedNavigator.rootNavigator.pop(false);
@@ -25,6 +22,7 @@ class LoginScreen extends StatelessWidget {
             onPressed: () async {
               ExtendedNavigator.of(context)
                   .pushReplacementNamed(Routes.homeScreen);
+              // ExtendedNavigator.rootNavigator.pop(true);
             },
           ),
         ),

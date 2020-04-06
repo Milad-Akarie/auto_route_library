@@ -4,6 +4,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+part 'router_base.dart';
+
 RectTween _createRectTween(Rect begin, Rect end) {
   return MaterialRectArcTween(begin: begin, end: end);
 }
@@ -11,19 +13,21 @@ RectTween _createRectTween(Rect begin, Rect end) {
 typedef OnNavigationRejected = Function(RouteGuard guard);
 
 class ExtendedNavigator<T extends RouterBase> extends Navigator {
-  final T router;
-  final List<RouteGuard> guards;
-
   ExtendedNavigator({
     @required this.router,
     this.guards,
     String initialRoute,
     RouteFactory onUnknownRoute,
+    Object initialRouteArgs,
     List<NavigatorObserver> observers = const <NavigatorObserver>[],
     Key key,
-  })  : assert(observers != null),
+  })  : assert(router != null),
+        assert(observers != null),
         super(
-            onGenerateRoute: router.onGenerateRoute,
+            onGenerateRoute: (settings) => router._onGenerateRoute(
+                  settings,
+                  initialRouteArgs,
+                ),
             onUnknownRoute: onUnknownRoute,
             initialRoute: initialRoute,
             observers: [
@@ -32,11 +36,14 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
             ],
             key: key);
 
+  final T router;
+  final List<RouteGuard> guards;
+
   @override
   ExtendedNavigatorState createState() {
     return _NavigationStatesContainer._instance.create<T>(
       guards,
-      router.guardedRoutes,
+      router,
     );
   }
 
@@ -73,43 +80,27 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
     with WidgetsBindingObserver {
   final Map<String, List<Type>> guardedRoutes;
   final _registeredGuards = <Type, RouteGuard>{};
+  final RouterBase router;
 
   ExtendedNavigatorState({
     List<RouteGuard> guards,
-    this.guardedRoutes,
-  }) {
+    this.router,
+  }) : guardedRoutes = router.guardedRoutes {
     guards?.forEach(_registerGuard);
   }
 
   @override
   void initState() {
+    router._onRePushInitialRoute = (RouteSettings settings) {
+      pushReplacementNamed(settings.name, arguments: settings.arguments);
+    };
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
 
-  /// if initial route is guarded we push
-  /// a placeholder route until next distention is
-  /// decided by the route guard
-  final _redirectInitialRoute = 'redirect-intial-route';
   @override
   Future<T> push<T extends Object>(Route<T> route) async {
-    final routeName = route.settings.name;
-    if (routeName == '/' &&
-        _hasGuards(routeName) &&
-        route.settings.arguments != _redirectInitialRoute) {
-      super.push<T>(
-        PageRouteBuilder<T>(
-          transitionDuration: const Duration(milliseconds: 0),
-          pageBuilder: (_, __, ___) => Container(
-            color: Colors.white,
-          ),
-        ),
-      );
-
-      return pushReplacementNamed(route.settings.name,
-          arguments: _redirectInitialRoute);
-    }
-    return super.push<T>(route);
+    return super.push<T>(route..settings);
   }
 
   void _registerGuard(RouteGuard guard) {
@@ -174,16 +165,11 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
     return true;
   }
 
-  bool _hasGuards(String routeName) =>
-      routeName != null &&
-      guardedRoutes != null &&
-      guardedRoutes[routeName] != null;
-
   Future<bool> canNavigate(String routeName) => _canNavigate(routeName);
 
   Future<bool> _canNavigate(String routeName,
       {Object arguments, OnNavigationRejected onReject}) async {
-    if (!_hasGuards(routeName)) {
+    if (!router._hasGuards(routeName)) {
       return true;
     }
     for (Type guardType in guardedRoutes[routeName]) {
@@ -206,9 +192,14 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
   }
 
   @override
+  void deactivate() {
+    super.deactivate();
+    _NavigationStatesContainer._instance.remove<T>();
+  }
+
+  @override
   void dispose() {
     super.dispose();
-    _NavigationStatesContainer._instance.remove<T>();
     WidgetsBinding.instance.removeObserver(this);
   }
 }
@@ -222,10 +213,10 @@ class _NavigationStatesContainer {
   _NavigationStatesContainer._();
 
   ExtendedNavigatorState create<T extends RouterBase>(
-      List<RouteGuard> guards, Map<String, List<Type>> guardedRoutes) {
+      List<RouteGuard> guards, RouterBase router) {
     return _navigatorKeys[T] = ExtendedNavigatorState<T>(
       guards: guards,
-      guardedRoutes: guardedRoutes,
+      router: router,
     );
   }
 

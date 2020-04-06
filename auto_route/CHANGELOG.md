@@ -1,6 +1,10 @@
 # ChangeLog
+## [0.4.3] Breaking Changes
+- Add ability to pass initial route arguments to ExtendedNavigator
+- Change single route parameters will have argument holder classes too as requested
+- Fix ExtendedNavigator.ofRouter<T>() returns null in inspector mode
 
-## [0.4.2] Breaking Changes
+## [0.4.2]
 - Fix Android soft back button always exists App
 
 ## [0.4.1] Breaking Changes
