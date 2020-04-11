@@ -10,6 +10,7 @@ import '../utils.dart';
 class RouterConfig {
   bool generateRouteList;
   bool generateNavigationHelper;
+  bool generateArgsHolderForSingleParameterRoutes;
   final globalRouteConfig = RouteConfig();
 
   RouterConfig.fromAnnotation(ConstantReader autoRouter) {
@@ -18,6 +19,10 @@ class RouterConfig {
     generateNavigationHelper =
         autoRouter.peek('generateNavigationHelperExtension')?.boolValue ??
             false;
+    generateArgsHolderForSingleParameterRoutes = autoRouter
+            .peek('generateArgsHolderForSingleParameterRoutes')
+            ?.boolValue ??
+        true;
 
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       globalRouteConfig.routeType = RouteType.cupertino;

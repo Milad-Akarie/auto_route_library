@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       builder: ExtendedNavigator<Router>(
         initialRoute: Routes.homeScreen,
         router: Router(),
-        initialRouteArgs: HomeScreenArguments(name: 'name'),
+        initialRouteArgs: "name",
         guards: [AuthGuard()],
       ),
     );

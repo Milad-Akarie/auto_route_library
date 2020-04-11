@@ -4,24 +4,39 @@ class AutoRouter {
   // if true a Navigator extension will be generated with
   // helper push methods of all routes
   final bool generateNavigationHelperExtension;
+
+  // defaults to true
+  final bool generateArgsHolderForSingleParameterRoutes;
+
   const AutoRouter._(
-      this.generateRouteList, this.generateNavigationHelperExtension);
+      this.generateRouteList,
+      this.generateNavigationHelperExtension,
+      this.generateArgsHolderForSingleParameterRoutes);
 }
 
 // Defaults created routes to MaterialPageRoute unless
 // overridden by AutoRoute annotation
 class MaterialAutoRouter extends AutoRouter {
-  const MaterialAutoRouter(
-      {bool generateRouteList, bool generateNavigationHelperExtension})
-      : super._(generateRouteList, generateNavigationHelperExtension);
+  const MaterialAutoRouter({
+    bool generateRouteList,
+    bool generateNavigationHelperExtension,
+    bool generateArgsHolderForSingleParameterRoutes,
+  }) : super._(generateRouteList, generateNavigationHelperExtension,
+            generateArgsHolderForSingleParameterRoutes);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
 // overridden by AutoRoute annotation
 class CupertinoAutoRouter extends AutoRouter {
-  const CupertinoAutoRouter(
-      {bool generateRouteList, bool generateNavigationHelperExtension})
-      : super._(generateRouteList, generateNavigationHelperExtension);
+  const CupertinoAutoRouter({
+    bool generateRouteList,
+    bool generateNavigationHelperExtension,
+    bool generateArgsHolderForSingleParameterRoutes,
+  }) : super._(
+          generateRouteList,
+          generateNavigationHelperExtension,
+          generateArgsHolderForSingleParameterRoutes,
+        );
 }
 
 // Defaults created routes to PageRouteBuilder unless
@@ -49,13 +64,18 @@ class CustomAutoRouter extends AutoRouter {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
   const CustomAutoRouter({
-    bool generateRouteList,
     this.transitionsBuilder,
     this.barrierDismissible,
     this.durationInMilliseconds,
     this.opaque,
+    bool generateRouteList,
     bool generateNavigationHelperExtension,
-  }) : super._(generateRouteList, generateNavigationHelperExtension);
+    bool generateArgsHolderForSingleParameterRoutes,
+  }) : super._(
+          generateRouteList,
+          generateNavigationHelperExtension,
+          generateArgsHolderForSingleParameterRoutes,
+        );
 }
 
 class AutoRoute {

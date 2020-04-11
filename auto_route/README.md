@@ -178,6 +178,7 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
 | generateRouteList [bool]                 | false         | if true a list of all routes will be generated                                           |
 | generateNavigationHelperExtension [bool] | false         | if true a Navigator extenstion will be generated with helper push methods of all routes |
+| generateArgsHolderForSingleParameterRoutes [bool] | true         | if true argument holder classes will always be generated for routes with parameters |
 
 #### CustomAutoRouter
 
@@ -271,6 +272,9 @@ ExtendedNavigator.of(ctx).pushNamed(Router.welcomeScreenRoute,
         )
     );
 ```
+
+Note: if you don't want auto_route to generate arguments holder class for single parameter routes set
+generateArgsHolderForSingleParameterRoutes to false in AutoRouter()
 
 ### Nested Navigators
 
