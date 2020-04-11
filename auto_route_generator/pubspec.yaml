@@ -1,6 +1,6 @@
 name: auto_route_generator
 description: Generator For AutoRoute which is a route generation library, where everything needed for navigation is automatically generated for you.
-version: 0.4.3
+version: 0.4.4
 homepage: https://github.com/Milad-Akarie/auto_route_library
 
 environment:
@@ -10,7 +10,8 @@ dependencies:
   build: ^1.0.0
   source_gen: ^0.9.0
   analyzer: ">=0.39.2 <0.40.0"
-  auto_route: ^0.4.3
+  auto_route:
+        ^0.4.4
 #    path: ../auto_route
 
 dev_dependencies:

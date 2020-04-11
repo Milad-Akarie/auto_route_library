@@ -89,6 +89,9 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
     guards?.forEach(_registerGuard);
   }
 
+  ExtendedNavigatorState get parent =>
+      context.findAncestorStateOfType<ExtendedNavigatorState>();
+
   @override
   void initState() {
     router._onRePushInitialRoute = (RouteSettings settings) {
@@ -98,9 +101,17 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
     WidgetsBinding.instance.addObserver(this);
   }
 
+  WillPopCallback _willPopCallback;
+
   @override
-  Future<T> push<T extends Object>(Route<T> route) async {
-    return super.push<T>(route..settings);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final modelRoute = ModalRoute.of(context);
+    if (modelRoute != null) {
+      modelRoute.addScopedWillPopCallback(_willPopCallback = () async {
+        return !await maybePop();
+      });
+    }
   }
 
   void _registerGuard(RouteGuard guard) {
@@ -193,8 +204,11 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
 
   @override
   void deactivate() {
-    super.deactivate();
+    if (_willPopCallback != null) {
+      ModalRoute.of(context).removeScopedWillPopCallback(_willPopCallback);
+    }
     _NavigationStatesContainer._instance.remove<T>();
+    super.deactivate();
   }
 
   @override

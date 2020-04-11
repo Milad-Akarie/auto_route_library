@@ -23,7 +23,6 @@ class NestedRouter extends RouterBase {
 
   @override
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    print(settings);
     final args = settings.arguments;
     switch (settings.name) {
       case Routes.nestedScreen:
