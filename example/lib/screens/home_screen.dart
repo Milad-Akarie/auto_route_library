@@ -6,6 +6,7 @@ class HomeScreen extends StatelessWidget {
   HomeScreen(String name) {
     print('constructing  Home screen $name');
   }
+
   @override
   Widget build(BuildContext context) {
     print('building home scree');
@@ -14,16 +15,14 @@ class HomeScreen extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-
           Container(
             child: Center(
               child: FlatButton(
                 child: Text("Second Screen"),
                 onPressed: () async {
-
                   ExtendedNavigator.ofRouter<Router>().pushNamed(
                       Routes.secondScreen,
-                      arguments: SecondScreenArguments(title: 'title'),
+                      arguments: SecondScreenArguments(message: 'title'),
                       onReject: (guard) {
                     showDialog(
                         context: context,

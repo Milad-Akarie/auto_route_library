@@ -137,16 +137,17 @@ class RouterClassGenerator {
         final hasRequiredParams =
             r.parameters.where((p) => p.isRequired).isNotEmpty;
         // show an error page  if passed args are not the same as declared args
-        _writeln('if(hasInvalidArgs<${r.className}Arguments>(args');
+        _writeln('if(hasInvalidArgs<${r.argumentsHolderClassName}>(args');
         if (hasRequiredParams) {
           _write(',isRequired:true');
         }
         _write('))');
-        _writeln('{return misTypedArgsRoute<${r.className}Arguments>(args);}');
+        _writeln(
+            '{return misTypedArgsRoute<${r.argumentsHolderClassName}>(args);}');
 
-        _writeln('final typedArgs = args as ${r.className}Arguments');
+        _writeln('final typedArgs = args as ${r.argumentsHolderClassName}');
         if (!hasRequiredParams) {
-          _write(' ?? ${r.className}Arguments()');
+          _write(' ?? ${r.argumentsHolderClassName}()');
         }
         _write(';');
 
@@ -190,7 +191,7 @@ class RouterClassGenerator {
 
   void _generateArgsHolder(RouteConfig r) {
     _writeln('//${r.className} arguments holder class');
-    final argsClassName = '${r.className}Arguments';
+    final argsClassName = '${r.argumentsHolderClassName}';
 
     // generate fields
     _writeln('class $argsClassName{');
@@ -333,7 +334,7 @@ class RouterClassGenerator {
           !routerConfig.generateArgsHolderForSingleParameterRoutes) {
         _write('${route.parameters.first.name}');
       } else {
-        _write('${route.className}Arguments(');
+        _write('${route.argumentsHolderClassName}(');
         _write(route.parameters.map((p) => '${p.name}: ${p.name}').join(','));
         _write(')');
       }

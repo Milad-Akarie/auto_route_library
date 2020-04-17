@@ -21,7 +21,7 @@ class RouterConfigResolver {
     final type = field.type;
 
     if (type.element is! ClassElement) {
-      throw ('[${type.getDisplayString()}] is not a class');
+      throw ('\n[${type.getDisplayString()}] is not a class');
     }
 
     final classElement = type.element as ClassElement;
@@ -30,11 +30,11 @@ class RouterConfigResolver {
         unknownRouteChecker.hasAnnotationOfExact(field);
 
     if (routeConfig.isUnknownRoute) {
-      if (classElement.unnamedConstructor.parameters.length > 1 ||
-          classElement.unnamedConstructor.parameters.first.type
-                  .getDisplayString() !=
-              'String') {
-        throw ("UnknowRoute must have a defualt constructor with a positional String Parameter, MyUnknownRoute(String routeName)");
+      final params = classElement.unnamedConstructor.parameters ?? [];
+      if (params.isEmpty ||
+          params.length > 1 ||
+          params.first.type.getDisplayString() != 'String') {
+        throw ("\nUnknowRoute must have a defualt constructor with a positional String Parameter, MyUnknownRoute(String routeName)\n");
       }
     }
 

@@ -1,4 +1,5 @@
 import 'package:auto_route_generator/route_config_resolver.dart';
+import 'package:auto_route_generator/utils.dart';
 
 import 'custom_transtion_builder.dart';
 
@@ -25,6 +26,10 @@ class RouteConfig {
   bool hasWrapper;
   bool isUnknownRoute;
   RouteConfig();
+
+  String get argumentsHolderClassName {
+    return '${className}Arguments';
+  }
 }
 
 class RouteType {
