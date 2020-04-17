@@ -1,5 +1,9 @@
 # ChangeLog
 
+## [0.4.5]
+
+- Fix @unknownRoute generates error
+
 ## [0.4.4]
 
 - Change generating arguments holder for single parameter routes is now optional
