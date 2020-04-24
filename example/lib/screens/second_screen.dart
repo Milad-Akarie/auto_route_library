@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class SecondScreen extends StatelessWidget {
   final String message;
 
-  SecondScreen({this.message});
+  SecondScreen({@required this.message});
 
   final tabViews = <Widget>[
     Icon(Icons.book),

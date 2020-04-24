@@ -10,7 +10,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/nested_screens/nested_screen.dart';
 import 'package:example/screens/nested_screens/nested_screen_two.dart';
 
-abstract class Routes {
+abstract class NestedRoutes {
   static const nestedScreen = '/';
   static const nestedScreenTwo = '/nested-screen-two';
 }
@@ -25,17 +25,16 @@ class NestedRouter extends RouterBase {
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
-      case Routes.nestedScreen:
-        if (hasInvalidArgs<NestedScreenArguments>(args)) {
+      case NestedRoutes.nestedScreen:
+        if (hasInvalidArgs<NestedScreenArguments>(args, isRequired: true)) {
           return misTypedArgsRoute<NestedScreenArguments>(args);
         }
-        final typedArgs =
-            args as NestedScreenArguments ?? NestedScreenArguments();
+        final typedArgs = args as NestedScreenArguments;
         return MaterialPageRoute<dynamic>(
           builder: (_) => NestedScreen(typedArgs.x),
           settings: settings,
         );
-      case Routes.nestedScreenTwo:
+      case NestedRoutes.nestedScreenTwo:
         if (hasInvalidArgs<NestedScreenTwoArguments>(args)) {
           return misTypedArgsRoute<NestedScreenTwoArguments>(args);
         }
@@ -59,7 +58,7 @@ class NestedRouter extends RouterBase {
 //NestedScreen arguments holder class
 class NestedScreenArguments {
   final int x;
-  NestedScreenArguments({this.x});
+  NestedScreenArguments({@required this.x});
 }
 
 //NestedScreenTwo arguments holder class
@@ -75,13 +74,14 @@ class NestedScreenTwoArguments {
 
 extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
   Future pushNestedScreen({
-    int x,
+    @required int x,
   }) =>
-      pushNamed(Routes.nestedScreen, arguments: NestedScreenArguments(x: x));
+      pushNamed(NestedRoutes.nestedScreen,
+          arguments: NestedScreenArguments(x: x));
   Future pushNestedScreenTwo({
     dynamic title,
     String message,
   }) =>
-      pushNamed(Routes.nestedScreenTwo,
+      pushNamed(NestedRoutes.nestedScreenTwo,
           arguments: NestedScreenTwoArguments(title: title, message: message));
 }

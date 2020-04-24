@@ -11,7 +11,10 @@ class RouterConfig {
   bool generateRouteList;
   bool generateNavigationHelper;
   bool generateArgsHolderForSingleParameterRoutes;
+  bool alwaysUseLeadingSlashes;
+
   final globalRouteConfig = RouteConfig();
+  String routesClassName;
 
   RouterConfig.fromAnnotation(ConstantReader autoRouter) {
     generateRouteList =
@@ -23,6 +26,11 @@ class RouterConfig {
             .peek('generateArgsHolderForSingleParameterRoutes')
             ?.boolValue ??
         true;
+    alwaysUseLeadingSlashes =
+        autoRouter.peek('alwaysUseLeadingSlashes')?.boolValue ?? true;
+
+    routesClassName =
+        autoRouter.peek('routesClassName')?.stringValue ?? 'Routes';
 
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       globalRouteConfig.routeType = RouteType.cupertino;

@@ -8,21 +8,38 @@ class AutoRouter {
   // defaults to true
   final bool generateArgsHolderForSingleParameterRoutes;
 
+  // defualts to 'Routes'
+  final String routesClassName;
+
+  // This only effects non-initial routes
+  // initial routes will always be named "/"
+  // defualts to true
+  final bool alwaysUseLeadingSlashes;
+
   const AutoRouter._(
-      this.generateRouteList,
-      this.generateNavigationHelperExtension,
-      this.generateArgsHolderForSingleParameterRoutes);
+    this.generateRouteList,
+    this.generateNavigationHelperExtension,
+    this.generateArgsHolderForSingleParameterRoutes,
+    this.routesClassName,
+    this.alwaysUseLeadingSlashes,
+  );
 }
 
 // Defaults created routes to MaterialPageRoute unless
 // overridden by AutoRoute annotation
 class MaterialAutoRouter extends AutoRouter {
-  const MaterialAutoRouter({
-    bool generateRouteList,
-    bool generateNavigationHelperExtension,
-    bool generateArgsHolderForSingleParameterRoutes,
-  }) : super._(generateRouteList, generateNavigationHelperExtension,
-            generateArgsHolderForSingleParameterRoutes);
+  const MaterialAutoRouter(
+      {bool generateRouteList,
+      bool generateNavigationHelperExtension,
+      bool generateArgsHolderForSingleParameterRoutes,
+      String routesClassName,
+      bool alwaysUseLeadingSlashes})
+      : super._(
+            generateRouteList,
+            generateNavigationHelperExtension,
+            generateArgsHolderForSingleParameterRoutes,
+            routesClassName,
+            alwaysUseLeadingSlashes);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
@@ -32,10 +49,14 @@ class CupertinoAutoRouter extends AutoRouter {
     bool generateRouteList,
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
+    String routesClassName,
+    bool alwaysUseLeadingSlashes,
   }) : super._(
           generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
+          routesClassName,
+          alwaysUseLeadingSlashes,
         );
 }
 
@@ -63,24 +84,28 @@ class CustomAutoRouter extends AutoRouter {
 
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
-  const CustomAutoRouter({
-    this.transitionsBuilder,
-    this.barrierDismissible,
-    this.durationInMilliseconds,
-    this.opaque,
-    bool generateRouteList,
-    bool generateNavigationHelperExtension,
-    bool generateArgsHolderForSingleParameterRoutes,
-  }) : super._(
+  const CustomAutoRouter(
+      {this.transitionsBuilder,
+      this.barrierDismissible,
+      this.durationInMilliseconds,
+      this.opaque,
+      bool generateRouteList,
+      bool generateNavigationHelperExtension,
+      bool generateArgsHolderForSingleParameterRoutes,
+      String routesClassName,
+      bool alwaysUseLeadingSlashes})
+      : super._(
           generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
+          routesClassName,
+          alwaysUseLeadingSlashes,
         );
 }
 
 class AutoRoute {
   // initial route will have an explicit name of "/"
-// there could be only one initial route per navigator.
+  // there could be only one initial route per navigator.
   final bool initial;
 
   /// passed to the fullscreenDialog property in [MaterialPageRoute]
