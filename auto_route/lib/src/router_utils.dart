@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // returns an error page routes with a helper message.
@@ -73,4 +76,32 @@ PageRoute misTypedArgsRoute<T>(Object args) {
       ),
     ),
   );
+}
+
+PageRoute<T> buildAdaptivePageRoute<T>({
+  @required WidgetBuilder builder,
+  RouteSettings settings,
+  bool maintainState = true,
+  bool fullscreenDialog = false,
+  String cupertinoTitle,
+}) {
+  assert(builder != null);
+  assert(maintainState != null);
+  assert(fullscreenDialog != null);
+  if (Platform.isIOS) {
+    return CupertinoPageRoute<T>(
+      builder: builder,
+      settings: settings,
+      maintainState: maintainState,
+      fullscreenDialog: fullscreenDialog,
+      title: cupertinoTitle,
+    );
+  } else {
+    return MaterialPageRoute<T>(
+      builder: builder,
+      settings: settings,
+      maintainState: maintainState,
+      fullscreenDialog: fullscreenDialog,
+    );
+  }
 }

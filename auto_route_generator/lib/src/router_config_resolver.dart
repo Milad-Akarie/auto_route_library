@@ -12,7 +12,7 @@ const TypeChecker unknownRouteChecker = TypeChecker.fromRuntime(UnknownRoute);
 // extracts route configs from class fields
 class RouterConfigResolver {
   final RouteConfig _globConfig;
-  final routeConfig = RouteConfig();
+  final _routeConfig = RouteConfig();
   final Resolver _resolver;
 
   RouterConfigResolver(this._globConfig, this._resolver);
@@ -26,10 +26,10 @@ class RouterConfigResolver {
 
     final classElement = type.element as ClassElement;
 
-    routeConfig.isUnknownRoute =
+    _routeConfig.isUnknownRoute =
         unknownRouteChecker.hasAnnotationOfExact(field);
 
-    if (routeConfig.isUnknownRoute) {
+    if (_routeConfig.isUnknownRoute) {
       final params = classElement.unnamedConstructor.parameters ?? [];
       if (params.isEmpty ||
           params.length > 1 ||
@@ -46,76 +46,83 @@ class RouterConfigResolver {
         ?.toListValue()
         ?.map((g) => g.toTypeValue())
         ?.forEach((guard) {
-      routeConfig.guards.add(RouteGuardConfig(
+      _routeConfig.guards.add(RouteGuardConfig(
           type: guard.getDisplayString(), import: getImport(guard.element)));
     });
 
     final import = getImport(type.element);
 
     if (import != null) {
-      routeConfig.imports.add(import);
+      _routeConfig.imports.add(import);
     }
-    routeConfig.name = field.name;
-    routeConfig.className = type.getDisplayString();
+    _routeConfig.name = field.name;
+    _routeConfig.className = type.getDisplayString();
 
-    routeConfig.hasWrapper = classElement.allSupertypes
+    _routeConfig.hasWrapper = classElement.allSupertypes
         .map<String>((el) => el.getDisplayString())
         .contains('AutoRouteWrapper');
 
     final constructor = classElement.unnamedConstructor;
     if (constructor != null && constructor.parameters.isNotEmpty) {
-      routeConfig.parameters = [];
+      _routeConfig.parameters = [];
       for (ParameterElement p in constructor.parameters) {
-        routeConfig.parameters
+        _routeConfig.parameters
             .add(await RouteParameterResolver(_resolver).resolve(p));
       }
     }
 
-    return routeConfig;
+    return _routeConfig;
   }
 
   void _extractRouteMetaData(FieldElement field) {
     final routeAnnotation = autoRouteChecker.firstAnnotationOf(field);
 
-    if (routeAnnotation == null) {
-      routeConfig.routeType = _globConfig.routeType;
+    ConstantReader autoRoute;
+    if (routeAnnotation != null) {
+      autoRoute = ConstantReader(routeAnnotation);
+      _routeConfig.initial = autoRoute.peek('initial')?.boolValue;
+    }
+    if (autoRoute == null || _routeConfig.initial == true) {
+      _routeConfig.routeType = _globConfig.routeType;
       if (_globConfig.routeType == RouteType.custom) {
-        routeConfig.transitionBuilder = _globConfig.transitionBuilder;
-        routeConfig.durationInMilliseconds = _globConfig.durationInMilliseconds;
-        routeConfig.customRouteBarrierDismissible =
+        _routeConfig.transitionBuilder = _globConfig.transitionBuilder;
+        _routeConfig.durationInMilliseconds =
+            _globConfig.durationInMilliseconds;
+        _routeConfig.customRouteBarrierDismissible =
             _globConfig.customRouteBarrierDismissible;
-        routeConfig.customRouteOpaque = _globConfig.customRouteOpaque;
+        _routeConfig.customRouteOpaque = _globConfig.customRouteOpaque;
       }
       return;
     }
 
-    final autoRoute = ConstantReader(routeAnnotation);
-
-    routeConfig.fullscreenDialog =
+    _routeConfig.fullscreenDialog =
         autoRoute.peek('fullscreenDialog')?.boolValue;
-    routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
-    routeConfig.initial = autoRoute.peek('initial')?.boolValue;
-    routeConfig.pathName = autoRoute.peek('name')?.stringValue;
+    _routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
+    _routeConfig.pathName = autoRoute.peek('name')?.stringValue;
     final returnType = autoRoute.peek('returnType')?.typeValue;
     if (returnType != null) {
-      routeConfig.returnType = returnType.getDisplayString();
+      _routeConfig.returnType = returnType.getDisplayString();
       final import = getImport(returnType.element);
       if (import != null) {
-        routeConfig.imports.add(import);
+        _routeConfig.imports.add(import);
       }
     }
 
     if ((autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute)))) {
-      routeConfig.routeType = RouteType.material;
+      _routeConfig.routeType = RouteType.material;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CupertinoRoute))) {
-      routeConfig.routeType = RouteType.cupertino;
-      routeConfig.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
+      _routeConfig.routeType = RouteType.cupertino;
+      _routeConfig.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
+    } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(AdaptiveRoute))) {
+      _routeConfig.routeType = RouteType.adaptive;
+      _routeConfig.cupertinoNavTitle =
+          autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
-      routeConfig.routeType = RouteType.custom;
-      routeConfig.durationInMilliseconds =
+      _routeConfig.routeType = RouteType.custom;
+      _routeConfig.durationInMilliseconds =
           autoRoute.peek('durationInMilliseconds')?.intValue;
-      routeConfig.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      routeConfig.customRouteBarrierDismissible =
+      _routeConfig.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
+      _routeConfig.customRouteBarrierDismissible =
           autoRoute.peek('barrierDismissible')?.boolValue;
       final function =
           autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
@@ -130,11 +137,11 @@ class RouterConfigResolver {
         if (function.enclosingElement?.name != 'TransitionsBuilders') {
           import = getImport(function);
         }
-        routeConfig.transitionBuilder =
+        _routeConfig.transitionBuilder =
             CustomTransitionBuilder(functionName, import);
       }
     } else {
-      routeConfig.routeType = _globConfig.routeType;
+      _routeConfig.routeType = _globConfig.routeType;
     }
   }
 }

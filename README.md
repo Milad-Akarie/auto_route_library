@@ -172,14 +172,15 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 
 ---
 
-##### MaterialAutoRouter | CupertinoAutoRouter
+##### MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter
 
 | Property                                 | Default value | Definition                                                                               |
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
 | generateRouteList [bool]                 | false         | if true a list of all routes will be generated                                           |
 | generateNavigationHelperExtension [bool] | false         | if true a Navigator extenstion will be generated with helper push methods of all routes |
 | generateArgsHolderForSingleParameterRoutes [bool] | true         | if true argument holder classes will always be generated for routes with parameters |
-
+| useLeadingSlashes [bool] | true         | if true route names will be prefixed with '/' |
+| routesClassName [string] | 'Routes'         | the name of the generated Routes class |
 #### CustomAutoRouter
 
 | Property                        | Default value | Definition                                                                       |
@@ -189,7 +190,7 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 | barrierDismissible [bool]       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |
 | durationInMilliseconds [double] |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |
 
-#### MaterialRoute | CupertinoRoute | CustomRoute
+#### MaterialRoute | CupertinoRoute | AdaptiveRoute | CustomRoute
 
 | Property                | Default value | Definition                                                                                 |
 | ----------------------- | :-----------: | ------------------------------------------------------------------------------------------ |
@@ -352,12 +353,12 @@ class MyApp extends StatelessWidget {
 
 ---
 
-To wrap your route with a parent widget like a Provider or such, simply implement AutoRouteWrapper, and let wrappedRoute accessor return (this) as the child of your wrapper widget.
+To wrap your route with a parent widget like a Provider or such, simply implement AutoRouteWrapper, and let wrappedRoute(context) method return (this) as the child of your wrapper widget.
 
 ```dart
 class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
   @override
-  Widget get wrappedRoute => Provider(create: (ctx) => ProductsBloc(), child: this);
+  Widget wrappedRoute(BuildContext context) => Provider(create: (ctx) => ProductsBloc(), child: this);
   ...
   }
 ```

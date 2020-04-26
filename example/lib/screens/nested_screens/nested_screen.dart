@@ -1,9 +1,12 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/screens/nested_screens/nested_router.gr.dart';
+import 'package:example/screens/nested_screens/nested_router.gr.dart'
+    as nestedRouter;
 import 'package:flutter/material.dart';
 
+import 'nested_router.gr.dart';
+
 class NestedScreen extends StatelessWidget {
-  NestedScreen(int x);
+  NestedScreen();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -12,7 +15,7 @@ class NestedScreen extends StatelessWidget {
           child: Text("NestedScreen two Screen"),
           onPressed: () {
             ExtendedNavigator.ofRouter<NestedRouter>()
-                .pushNamed(Routes.nestedScreenTwo);
+                .pushNamed(nestedRouter.NestedRoutes.nestedScreenTwo);
           },
         ),
       ],

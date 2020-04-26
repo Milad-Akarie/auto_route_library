@@ -10,7 +10,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/nested_screens/nested_screen.dart';
 import 'package:example/screens/nested_screens/nested_screen_two.dart';
 
-abstract class Routes {
+abstract class NestedRoutes {
   static const nestedScreen = '/';
   static const nestedScreenTwo = '/nested-screen-two';
 }
@@ -25,24 +25,19 @@ class NestedRouter extends RouterBase {
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
-      case Routes.nestedScreen:
-        if (hasInvalidArgs<NestedScreenArguments>(args)) {
-          return misTypedArgsRoute<NestedScreenArguments>(args);
-        }
-        final typedArgs =
-            args as NestedScreenArguments ?? NestedScreenArguments();
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => NestedScreen(typedArgs.x),
+      case NestedRoutes.nestedScreen:
+        return buildAdaptivePageRoute<dynamic>(
+          builder: (context) => NestedScreen(),
           settings: settings,
         );
-      case Routes.nestedScreenTwo:
+      case NestedRoutes.nestedScreenTwo:
         if (hasInvalidArgs<NestedScreenTwoArguments>(args)) {
           return misTypedArgsRoute<NestedScreenTwoArguments>(args);
         }
         final typedArgs =
             args as NestedScreenTwoArguments ?? NestedScreenTwoArguments();
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => NestedScreenTwo(
+        return buildAdaptivePageRoute<dynamic>(
+          builder: (context) => NestedScreenTwo(
               title: typedArgs.title, message: typedArgs.message),
           settings: settings,
         );
@@ -56,12 +51,6 @@ class NestedRouter extends RouterBase {
 // Arguments holder classes
 //***************************************************************************
 
-//NestedScreen arguments holder class
-class NestedScreenArguments {
-  final int x;
-  NestedScreenArguments({this.x});
-}
-
 //NestedScreenTwo arguments holder class
 class NestedScreenTwoArguments {
   final dynamic title;
@@ -74,14 +63,11 @@ class NestedScreenTwoArguments {
 //***************************************************************************
 
 extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
-  Future pushNestedScreen({
-    int x,
-  }) =>
-      pushNamed(Routes.nestedScreen, arguments: NestedScreenArguments(x: x));
+  Future pushNestedScreen() => pushNamed(NestedRoutes.nestedScreen);
   Future pushNestedScreenTwo({
     dynamic title,
     String message,
   }) =>
-      pushNamed(Routes.nestedScreenTwo,
+      pushNamed(NestedRoutes.nestedScreenTwo,
           arguments: NestedScreenTwoArguments(title: title, message: message));
 }

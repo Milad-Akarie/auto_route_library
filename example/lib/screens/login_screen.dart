@@ -20,9 +20,8 @@ class LoginScreen extends StatelessWidget {
           child: FlatButton(
             child: Text("Login"),
             onPressed: () async {
-
-              ExtendedNavigator.of(context)
-                  .pushReplacementNamed(Routes.homeScreen);
+              ExtendedNavigator.of(context).pop();
+              // .pushReplacementNamed(Routes.homeScreen);
               // ExtendedNavigator.rootNavigator.pop(true);
             },
           ),
