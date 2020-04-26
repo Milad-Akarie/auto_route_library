@@ -62,7 +62,7 @@ class RouteParameterResolver {
       return null;
     }
     //if element from a system library but not from dart:core
-    if(element.source.isInSystemLibrary){
+    if (element.source.isInSystemLibrary) {
       return getImport(element);
     }
     final assetId = await _resolver.assetIdForElement(element);

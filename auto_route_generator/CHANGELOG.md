@@ -1,4 +1,6 @@
 # ChangeLog
+## [0.4.7] 
+- Fix non-core dart types aren't imported
 
 ## [0.4.6] Breaking Change
 - Add AdaptiveAutoRouter and AdaptiveRoute for native platforms
