@@ -3,10 +3,6 @@ import 'package:example/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen(String name) {
-    print('constructing  Home screen $name');
-  }
-
   @override
   Widget build(BuildContext context) {
     print('building home scree');

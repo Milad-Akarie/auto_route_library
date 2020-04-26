@@ -97,7 +97,9 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
     router._onRePushInitialRoute = (RouteSettings settings) {
       pushReplacementNamed(settings.name, arguments: settings.arguments);
     };
+
     super.initState();
+    print("initiating state");
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -207,14 +209,13 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
     if (_willPopCallback != null) {
       ModalRoute.of(context).removeScopedWillPopCallback(_willPopCallback);
     }
-    _NavigationStatesContainer._instance.remove<T>();
     super.deactivate();
   }
 
   @override
   void dispose() {
-    super.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 }
 

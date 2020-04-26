@@ -8,20 +8,20 @@ class AutoRouter {
   // defaults to true
   final bool generateArgsHolderForSingleParameterRoutes;
 
-  // defualts to 'Routes'
+  // defaults to 'Routes'
   final String routesClassName;
 
   // This only effects non-initial routes
   // initial routes will always be named "/"
-  // defualts to true
-  final bool alwaysUseLeadingSlashes;
+  // defaults to true
+  final bool useLeadingSlashes;
 
   const AutoRouter._(
     this.generateRouteList,
     this.generateNavigationHelperExtension,
     this.generateArgsHolderForSingleParameterRoutes,
     this.routesClassName,
-    this.alwaysUseLeadingSlashes,
+    this.useLeadingSlashes,
   );
 }
 
@@ -33,13 +33,13 @@ class MaterialAutoRouter extends AutoRouter {
       bool generateNavigationHelperExtension,
       bool generateArgsHolderForSingleParameterRoutes,
       String routesClassName,
-      bool alwaysUseLeadingSlashes})
+      bool useLeadingSlashes})
       : super._(
             generateRouteList,
             generateNavigationHelperExtension,
             generateArgsHolderForSingleParameterRoutes,
             routesClassName,
-            alwaysUseLeadingSlashes);
+            useLeadingSlashes);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
@@ -50,13 +50,29 @@ class CupertinoAutoRouter extends AutoRouter {
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
     String routesClassName,
-    bool alwaysUseLeadingSlashes,
+    bool useLeadingSlashes,
   }) : super._(
           generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
           routesClassName,
-          alwaysUseLeadingSlashes,
+          useLeadingSlashes,
+        );
+}
+
+class AdaptiveAutoRouter extends AutoRouter {
+  const AdaptiveAutoRouter({
+    bool generateRouteList,
+    bool generateNavigationHelperExtension,
+    bool generateArgsHolderForSingleParameterRoutes,
+    String routesClassName,
+    bool useLeadingSlashes,
+  }) : super._(
+          generateRouteList,
+          generateNavigationHelperExtension,
+          generateArgsHolderForSingleParameterRoutes,
+          routesClassName,
+          useLeadingSlashes,
         );
 }
 
@@ -93,13 +109,13 @@ class CustomAutoRouter extends AutoRouter {
       bool generateNavigationHelperExtension,
       bool generateArgsHolderForSingleParameterRoutes,
       String routesClassName,
-      bool alwaysUseLeadingSlashes})
+      bool useLeadingSlashes})
       : super._(
           generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
           routesClassName,
-          alwaysUseLeadingSlashes,
+          useLeadingSlashes,
         );
 }
 
@@ -177,6 +193,28 @@ class CupertinoRoute extends AutoRoute {
 }
 
 const cupertinoRoute = const CupertinoRoute();
+
+class AdaptiveRoute extends AutoRoute {
+  const AdaptiveRoute({
+    bool initial,
+    bool fullscreenDialog,
+    bool maintainState,
+    String name,
+    Type returnType,
+    this.cupertinoPageTitle,
+  }) : super._(
+          initial: initial,
+          fullscreenDialog: fullscreenDialog,
+          maintainState: maintainState,
+          name: name,
+          returnType: returnType,
+        );
+
+  /// passed to the title property in [CupertinoPageRoute]
+  final String cupertinoPageTitle;
+}
+
+const adaptiveRoute = const AdaptiveRoute();
 
 class CustomRoute extends AutoRoute {
   /// this builder function is passed to the transition builder

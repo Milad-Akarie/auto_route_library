@@ -26,12 +26,8 @@ class NestedRouter extends RouterBase {
     final args = settings.arguments;
     switch (settings.name) {
       case NestedRoutes.nestedScreen:
-        if (hasInvalidArgs<NestedScreenArguments>(args, isRequired: true)) {
-          return misTypedArgsRoute<NestedScreenArguments>(args);
-        }
-        final typedArgs = args as NestedScreenArguments;
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => NestedScreen(typedArgs.x),
+        return buildAdaptivePageRoute<dynamic>(
+          builder: (context) => NestedScreen(),
           settings: settings,
         );
       case NestedRoutes.nestedScreenTwo:
@@ -40,8 +36,8 @@ class NestedRouter extends RouterBase {
         }
         final typedArgs =
             args as NestedScreenTwoArguments ?? NestedScreenTwoArguments();
-        return MaterialPageRoute<dynamic>(
-          builder: (_) => NestedScreenTwo(
+        return buildAdaptivePageRoute<dynamic>(
+          builder: (context) => NestedScreenTwo(
               title: typedArgs.title, message: typedArgs.message),
           settings: settings,
         );
@@ -55,12 +51,6 @@ class NestedRouter extends RouterBase {
 // Arguments holder classes
 //***************************************************************************
 
-//NestedScreen arguments holder class
-class NestedScreenArguments {
-  final int x;
-  NestedScreenArguments({@required this.x});
-}
-
 //NestedScreenTwo arguments holder class
 class NestedScreenTwoArguments {
   final dynamic title;
@@ -73,11 +63,7 @@ class NestedScreenTwoArguments {
 //***************************************************************************
 
 extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
-  Future pushNestedScreen({
-    @required int x,
-  }) =>
-      pushNamed(NestedRoutes.nestedScreen,
-          arguments: NestedScreenArguments(x: x));
+  Future pushNestedScreen() => pushNamed(NestedRoutes.nestedScreen);
   Future pushNestedScreenTwo({
     dynamic title,
     String message,

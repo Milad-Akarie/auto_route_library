@@ -113,6 +113,10 @@ class RouterConfigResolver {
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CupertinoRoute))) {
       _routeConfig.routeType = RouteType.cupertino;
       _routeConfig.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
+    } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(AdaptiveRoute))) {
+      _routeConfig.routeType = RouteType.adaptive;
+      _routeConfig.cupertinoNavTitle =
+          autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       _routeConfig.routeType = RouteType.custom;
       _routeConfig.durationInMilliseconds =

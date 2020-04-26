@@ -1,5 +1,13 @@
 # ChangeLog
 
+## [0.4.6] Breaking Change
+- Add AdaptiveAutoRouter and AdaptiveRoute for native platforms
+- Change using leading slashes is now options
+- Change wrappedRoute is now a function that takes in build context
+- Fix calling nested route returns null after popping parent route
+- Fix initial route ignore custom transitions
+- Add ability to name routes class
+
 ## [0.4.5]
 
 - Fix @unknownRoute generates error

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/router/router.gr.dart';
 import 'package:example/screens/nested_screens/nested_router.gr.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class NestedScreenTwo extends StatelessWidget {
         FlatButton(
           child: Text("Pop stack"),
           onPressed: () {
-            ExtendedNavigator.of(context).pop();
+            ExtendedNavigator.ofRouter<Router>().pushLoginScreen();
           },
         ),
       ],

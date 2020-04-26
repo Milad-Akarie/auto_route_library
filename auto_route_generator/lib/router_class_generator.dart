@@ -56,7 +56,7 @@ class RouterClassGenerator {
     _writeln('abstract class ${_routerConfig.routesClassName} {');
     _routes.where((r) => !r.isUnknownRoute).forEach((r) {
       final routeName = r.name;
-      final preFix = _routerConfig.alwaysUseLeadingSlashes ? "/" : "";
+      final preFix = _routerConfig.useLeadingSlashes ? "/" : "";
       final pathName = r.pathName ?? "$preFix${toKababCase(routeName)}";
       if (r.initial == true) {
         _writeln("static const $routeName = '/';");
@@ -165,7 +165,7 @@ class RouterClassGenerator {
     }
 
     final constructor =
-        "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute" : ""}";
+        "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute(context)" : ""}";
 
     _generateRouteBuilder(r, constructor);
   }
@@ -262,13 +262,19 @@ class RouterClassGenerator {
     final returnType = r.returnType ?? 'dynamic';
     if (r.routeType == RouteType.cupertino) {
       _write(
-          'return CupertinoPageRoute<$returnType>(builder: (_) => $constructor, settings: settings,');
+          'return CupertinoPageRoute<$returnType>(builder: (context) => $constructor, settings: settings,');
       if (r.cupertinoNavTitle != null) {
         _write("title:'${r.cupertinoNavTitle}',");
       }
     } else if (r.routeType == RouteType.material) {
       _write(
-          'return MaterialPageRoute<$returnType>(builder: (_) => $constructor, settings: settings,');
+          'return MaterialPageRoute<$returnType>(builder: (context) => $constructor, settings: settings,');
+    } else if (r.routeType == RouteType.adaptive) {
+      _write(
+          'return buildAdaptivePageRoute<$returnType>(builder: (context) => $constructor, settings: settings,');
+      if (r.cupertinoNavTitle != null) {
+        _write("cupertinoTitle:'${r.cupertinoNavTitle}',");
+      }
     } else {
       _write(
           'return PageRouteBuilder<$returnType>(pageBuilder: (ctx, animation, secondaryAnimation) => $constructor, settings: settings,');

@@ -35,5 +35,6 @@ class RouteConfig {
 class RouteType {
   static const int material = 0;
   static const int cupertino = 1;
-  static const int custom = 2;
+  static const int adaptive = 2;
+  static const int custom = 3;
 }

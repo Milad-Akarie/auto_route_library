@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'nested_router.gr.dart';
 
 class NestedScreen extends StatelessWidget {
-  NestedScreen(int x);
+  NestedScreen();
   @override
   Widget build(BuildContext context) {
     return Column(
