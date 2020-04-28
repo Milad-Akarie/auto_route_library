@@ -10,7 +10,6 @@ dependencies:
     sdk: flutter
   auto_route:
     path: ../auto_route/
-  device_preview: ^0.4.4
   # get_it:
   # provider:
   # shared_preferences: ^0.5.6+3

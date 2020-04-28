@@ -35,7 +35,7 @@ packages:
       path: "../auto_route"
       relative: true
     source: path
-    version: "0.4.1"
+    version: "0.4.5"
   build:
     dependency: "direct main"
     description:

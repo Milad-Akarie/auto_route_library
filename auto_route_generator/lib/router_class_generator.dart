@@ -3,11 +3,19 @@ import 'package:auto_route_generator/utils.dart';
 
 class RouterClassGenerator {
   final List<RouteConfig> _routes;
+  final List<RouteConfig> _allRoutes;
+  final RouteConfig _unknownRoute;
   final String _className;
   final RouterConfig _routerConfig;
   final StringBuffer _stringBuffer = StringBuffer();
 
-  RouterClassGenerator(this._className, this._routes, this._routerConfig);
+  RouterClassGenerator(this._className, this._allRoutes, this._routerConfig)
+      : _routes = _allRoutes.where((r) => !r.isUnknownRoute).toList(),
+        _unknownRoute = _allRoutes.firstWhere(
+          (r) => r.isUnknownRoute,
+          orElse: () => null,
+        );
+
   // helper functions
   void _write(Object obj) => _stringBuffer.write(obj);
 
@@ -33,14 +41,14 @@ class RouterClassGenerator {
       "'package:flutter/cupertino.dart'",
       "'package:auto_route/auto_route.dart'"
     };
-    _routes.forEach((r) {
+    _allRoutes.forEach((r) {
       imports.addAll(r.imports);
       if (r.transitionBuilder != null) {
         imports.add(r.transitionBuilder.import);
       }
       if (r.parameters != null) {
-        r.parameters.forEach((param) {
-          if (param.imports != null) imports.addAll(param.imports);
+        r.parameters.where((p) => p.imports != null).forEach((param) {
+          imports.addAll(param.imports);
         });
       }
       if (r.guards != null) {
@@ -54,7 +62,7 @@ class RouterClassGenerator {
 
   void _generateRoutesClass() {
     _writeln('abstract class ${_routerConfig.routesClassName} {');
-    _routes.where((r) => !r.isUnknownRoute).forEach((r) {
+    _routes.forEach((r) {
       final routeName = r.name;
       final preFix = _routerConfig.useLeadingSlashes ? "/" : "";
       final pathName = r.pathName ?? "$preFix${toKababCase(routeName)}";
@@ -67,9 +75,7 @@ class RouterClassGenerator {
 
     if (_routerConfig.generateRouteList) {
       _writeln("static const all = [");
-      _routes
-          .where((r) => !r.isUnknownRoute)
-          .forEach((r) => _write('${r.name},'));
+      _routes.forEach((r) => _write('${r.name},'));
       _write("];");
     }
     _writeln('}');
@@ -79,22 +85,23 @@ class RouterClassGenerator {
     _newLine();
     _writeln('@override');
     _writeln('Route<dynamic> onGenerateRoute(RouteSettings settings) {');
-    _writeln('final args = settings.arguments;');
+    if (routes.any((r) => r.parameters?.isNotEmpty == true)) {
+      _writeln('final args = settings.arguments;');
+    }
     _writeln('switch (settings.name) {');
 
-    routes.where((r) => !r.isUnknownRoute).forEach((r) {
+    routes.forEach((r) {
       _writeln('case ${_routerConfig.routesClassName}.${r.name}:');
 
       _generateRoute(r);
     });
 
     // build unknown route error page if route is not found
-    final unknowRoute =
-        routes.firstWhere((r) => r.isUnknownRoute == true, orElse: () => null);
-    if (unknowRoute != null) {
+
+    if (_unknownRoute != null) {
       _writeln('default: ');
       _generateRouteBuilder(
-          unknowRoute, '${unknowRoute.className}(settings.name)');
+          _unknownRoute, '${_unknownRoute.className}(settings.name)');
     } else {
       _writeln('default: return unknownRoutePage(settings.name);');
     }
@@ -178,8 +185,7 @@ class RouterClassGenerator {
     // also prevent duplicate class with the same name from being generated;
 
     _routes.where((r) {
-      return !r.isUnknownRoute &&
-          r.parameters?.isNotEmpty == true &&
+      return r.parameters?.isNotEmpty == true &&
           (r.parameters.length > 1 ||
               _routerConfig.generateArgsHolderForSingleParameterRoutes);
     }).forEach((r) => routesWithArgsHolders[r.className] = r);
@@ -277,7 +283,7 @@ class RouterClassGenerator {
       }
     } else {
       _write(
-          'return PageRouteBuilder<$returnType>(pageBuilder: (ctx, animation, secondaryAnimation) => $constructor, settings: settings,');
+          'return PageRouteBuilder<$returnType>(pageBuilder: (context, animation, secondaryAnimation) => $constructor, settings: settings,');
 
       if (r.customRouteOpaque != null) {
         _write('opaque:${r.customRouteOpaque.toString()},');
@@ -309,7 +315,7 @@ class RouterClassGenerator {
     _generateBoxed('Navigation helper methods extension');
     _writeln(
         'extension ${_className}NavigationHelperMethods on ExtendedNavigatorState {');
-    _routes.where((r) => !r.isUnknownRoute).forEach(_generateHelperMethod);
+    _routes.forEach(_generateHelperMethod);
     _writeln('}');
   }
 

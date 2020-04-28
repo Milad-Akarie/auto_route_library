@@ -1,4 +1,8 @@
 # ChangeLog
+## [0.4.8] 
+- Change PageRouteBuilder context arg name from ctx to context
+- Fix args declaration is generated even if there's no routes with args
+
 ## [0.4.7] 
 - Fix non-core dart types aren't imported
 
