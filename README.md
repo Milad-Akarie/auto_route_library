@@ -141,7 +141,7 @@ ExtendedNavigator.of(context).pushNamed(Routes.secondScreen)
 // without context
 ExtendedNavigator.ofRouter<Router>().pushNamed(Routes.secondScreen)
 // or if you're working with only one navigator
-ExtenedNavigator.rootNavigator.pushNamed(..)
+ExtendedNavigator.rootNavigator.pushNamed(..)
 ```
 
 ### Navigation helper methods extension
