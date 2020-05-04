@@ -372,7 +372,7 @@ The TransitionsBuilder function needs to be passed as a static/const reference t
 The included **TransitionsBuilders** Class contains a preset of common Transitions builders
 
 ```dart
-@CustomRoute(transitionsBuilder: TransitionBuilders.slideBottom,durationInMilliseconds: 400)
+@CustomRoute(transitionsBuilder: TransitionsBuilders.slideBottom,durationInMilliseconds: 400)
 LoginScreen loginScreenRoute;
 ```
 
