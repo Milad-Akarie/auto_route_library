@@ -11,7 +11,7 @@ class RouterConfig {
   bool generateRouteList;
   bool generateNavigationHelper;
   bool generateArgsHolderForSingleParameterRoutes;
-  bool useLeadingSlashes;
+  String routePrefix;
 
   final globalRouteConfig = RouteConfig();
   String routesClassName;
@@ -26,7 +26,7 @@ class RouterConfig {
             .peek('generateArgsHolderForSingleParameterRoutes')
             ?.boolValue ??
         true;
-    useLeadingSlashes = autoRouter.peek('useLeadingSlashes')?.boolValue ?? true;
+    routePrefix = autoRouter.peek('routePrefix')?.stringValue ?? '' ;
 
     routesClassName =
         autoRouter.peek('routesClassName')?.stringValue ?? 'Routes';

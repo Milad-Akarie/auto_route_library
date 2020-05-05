@@ -64,7 +64,7 @@ class RouterClassGenerator {
     _writeln('abstract class ${_routerConfig.routesClassName} {');
     _routes.forEach((r) {
       final routeName = r.name;
-      final preFix = _routerConfig.useLeadingSlashes ? "/" : "";
+      final preFix = _routerConfig.routePrefix;
       final pathName = r.pathName ?? "$preFix${toKababCase(routeName)}";
       if (r.initial == true) {
         _writeln("static const $routeName = '/';");

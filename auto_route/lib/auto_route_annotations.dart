@@ -11,17 +11,15 @@ class AutoRouter {
   // defaults to 'Routes'
   final String routesClassName;
 
-  // This only effects non-initial routes
-  // initial routes will always be named "/"
-  // defaults to true
-  final bool useLeadingSlashes;
+  //This is the prefix for each Route String that is generated
+  final String routePrefix ;
 
   const AutoRouter._(
     this.generateRouteList,
     this.generateNavigationHelperExtension,
     this.generateArgsHolderForSingleParameterRoutes,
     this.routesClassName,
-    this.useLeadingSlashes,
+    this.routePrefix,
   );
 }
 
@@ -33,13 +31,13 @@ class MaterialAutoRouter extends AutoRouter {
       bool generateNavigationHelperExtension,
       bool generateArgsHolderForSingleParameterRoutes,
       String routesClassName,
-      bool useLeadingSlashes})
+      String routePrefix})
       : super._(
             generateRouteList,
             generateNavigationHelperExtension,
             generateArgsHolderForSingleParameterRoutes,
             routesClassName,
-            useLeadingSlashes);
+            routePrefix);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
@@ -50,13 +48,13 @@ class CupertinoAutoRouter extends AutoRouter {
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
     String routesClassName,
-    bool useLeadingSlashes,
+    String routePrefix,
   }) : super._(
           generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
           routesClassName,
-          useLeadingSlashes,
+          routePrefix,
         );
 }
 
@@ -66,13 +64,13 @@ class AdaptiveAutoRouter extends AutoRouter {
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
     String routesClassName,
-    bool useLeadingSlashes,
+    String routePrefix,
   }) : super._(
           generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
           routesClassName,
-          useLeadingSlashes,
+          routePrefix,
         );
 }
 
@@ -109,13 +107,13 @@ class CustomAutoRouter extends AutoRouter {
       bool generateNavigationHelperExtension,
       bool generateArgsHolderForSingleParameterRoutes,
       String routesClassName,
-      bool useLeadingSlashes})
+      String routePrefix})
       : super._(
           generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
           routesClassName,
-          useLeadingSlashes,
+          routePrefix,
         );
 }
 
