@@ -2,6 +2,7 @@ part of 'extended_navigator.dart';
 
 abstract class RouterBase {
   Map<String, List<Type>> get guardedRoutes => null;
+  List<String> get allRoutes=>[];
   Route<dynamic> onGenerateRoute(RouteSettings settings);
 
   /// if initial route is guarded we push
