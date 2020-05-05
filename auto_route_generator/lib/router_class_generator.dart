@@ -83,6 +83,7 @@ class RouterClassGenerator {
 
   void _generateRoutesGetterFunction(List<RouteConfig> routes) {
     _newLine();
+    _newLine();
     _writeln('@override');
     _writeln("List<String> get allRoutes => const [");
     routes.forEach((r) => _write('${_routerConfig.routesClassName}.${r.name},'));
