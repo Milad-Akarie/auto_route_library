@@ -1,6 +1,4 @@
 class AutoRouter {
-  // if true a list of all routes will be generated
-  final bool generateRouteList;
   // if true a Navigator extension will be generated with
   // helper push methods of all routes
   final bool generateNavigationHelperExtension;
@@ -11,17 +9,14 @@ class AutoRouter {
   // defaults to 'Routes'
   final String routesClassName;
 
-  // This only effects non-initial routes
-  // initial routes will always be named "/"
-  // defaults to true
-  final bool useLeadingSlashes;
+  //This is the prefix for each Route String that is generated
+  final String routePrefix;
 
   const AutoRouter._(
-    this.generateRouteList,
     this.generateNavigationHelperExtension,
     this.generateArgsHolderForSingleParameterRoutes,
     this.routesClassName,
-    this.useLeadingSlashes,
+    this.routePrefix,
   );
 }
 
@@ -29,50 +24,44 @@ class AutoRouter {
 // overridden by AutoRoute annotation
 class MaterialAutoRouter extends AutoRouter {
   const MaterialAutoRouter(
-      {bool generateRouteList,
-      bool generateNavigationHelperExtension,
+      {bool generateNavigationHelperExtension,
       bool generateArgsHolderForSingleParameterRoutes,
       String routesClassName,
-      bool useLeadingSlashes})
+      String routePrefix})
       : super._(
-            generateRouteList,
             generateNavigationHelperExtension,
             generateArgsHolderForSingleParameterRoutes,
             routesClassName,
-            useLeadingSlashes);
+            routePrefix);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
 // overridden by AutoRoute annotation
 class CupertinoAutoRouter extends AutoRouter {
   const CupertinoAutoRouter({
-    bool generateRouteList,
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
     String routesClassName,
-    bool useLeadingSlashes,
+    String routePrefix,
   }) : super._(
-          generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
           routesClassName,
-          useLeadingSlashes,
+          routePrefix,
         );
 }
 
 class AdaptiveAutoRouter extends AutoRouter {
   const AdaptiveAutoRouter({
-    bool generateRouteList,
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
     String routesClassName,
-    bool useLeadingSlashes,
+    String routePrefix,
   }) : super._(
-          generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
           routesClassName,
-          useLeadingSlashes,
+          routePrefix,
         );
 }
 
@@ -100,22 +89,21 @@ class CustomAutoRouter extends AutoRouter {
 
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
+
   const CustomAutoRouter(
       {this.transitionsBuilder,
       this.barrierDismissible,
       this.durationInMilliseconds,
       this.opaque,
-      bool generateRouteList,
       bool generateNavigationHelperExtension,
       bool generateArgsHolderForSingleParameterRoutes,
       String routesClassName,
-      bool useLeadingSlashes})
+      String routePrefix})
       : super._(
-          generateRouteList,
           generateNavigationHelperExtension,
           generateArgsHolderForSingleParameterRoutes,
           routesClassName,
-          useLeadingSlashes,
+          routePrefix,
         );
 }
 

@@ -64,21 +64,31 @@ class RouterClassGenerator {
     _writeln('abstract class ${_routerConfig.routesClassName} {');
     _routes.forEach((r) {
       final routeName = r.name;
-      final preFix = _routerConfig.useLeadingSlashes ? "/" : "";
-      final pathName = r.pathName ?? "$preFix${toKababCase(routeName)}";
       if (r.initial == true) {
         _writeln("static const $routeName = '/';");
       } else {
-        return _writeln("static const $routeName = '$pathName';");
+        final preFix = _routerConfig.routePrefix;
+        final pathName = r.pathName ?? "$preFix${toKababCase(routeName)}";
+        _writeln("static const $routeName = '$pathName';");
       }
     });
+    _writeln("static const allRoutes = {");
+    _routes.forEach((r) => _write('${r.name},'));
+    _write("};");
 
-    if (_routerConfig.generateRouteList) {
-      _writeln("static const all = [");
-      _routes.forEach((r) => _write('${r.name},'));
-      _write("];");
-    }
     _writeln('}');
+  }
+
+  void _generateRoutesGetterFunction(List<RouteConfig> routes) {
+    _newLine();
+    _newLine();
+    _writeln('@override');
+    _writeln("Set<String> get allRoutes => const {");
+    routes
+        .forEach((r) => _write('${_routerConfig.routesClassName}.${r.name},'));
+    _write("};");
+    _newLine();
+    _newLine();
   }
 
   void _generateRouteGeneratorFunction(List<RouteConfig> routes) {
@@ -235,6 +245,7 @@ class RouterClassGenerator {
 
   void _generateRouterClass() {
     _writeln('\nclass $_className extends RouterBase {');
+    _generateRoutesGetterFunction(_routes);
     _generateHelperFunctions();
     _generateRouteGeneratorFunction(_routes);
 

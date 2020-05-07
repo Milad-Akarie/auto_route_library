@@ -58,7 +58,7 @@ class RouteParameterResolver {
   }
 
   Future<String> _resolveLibImport(Element element) async {
-    if (element.source == null || isCoreDartType(element.source)) {
+    if (element?.source == null || isCoreDartType(element.source)) {
       return null;
     }
     //if element from a system library but not from dart:core
