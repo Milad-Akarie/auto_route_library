@@ -8,7 +8,6 @@ import '../utils.dart';
 /// to be used in [RouterClassGenerator]
 
 class RouterConfig {
-  bool generateRouteList;
   bool generateNavigationHelper;
   bool generateArgsHolderForSingleParameterRoutes;
   String routePrefix;
@@ -17,8 +16,6 @@ class RouterConfig {
   String routesClassName;
 
   RouterConfig.fromAnnotation(ConstantReader autoRouter) {
-    generateRouteList =
-        autoRouter.peek('generateRouteList')?.boolValue ?? false;
     generateNavigationHelper =
         autoRouter.peek('generateNavigationHelperExtension')?.boolValue ??
             false;

@@ -176,7 +176,6 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 
 | Property                                 | Default value | Definition                                                                               |
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
-| generateRouteList [bool]                 | false         | if true a list of all routes will be generated                                           |
 | generateNavigationHelperExtension [bool] | false         | if true a Navigator extenstion will be generated with helper push methods of all routes |
 | generateArgsHolderForSingleParameterRoutes [bool] | true         | if true argument holder classes will always be generated for routes with parameters |
 | useLeadingSlashes [bool] | true         | if true route names will be prefixed with '/' |
