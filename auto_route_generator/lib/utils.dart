@@ -2,6 +2,7 @@
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/src/generated/source.dart';
+import 'package:source_gen/source_gen.dart';
 
 // Checks if source is from dart:core library
 bool isCoreDartType(Source source) {
@@ -37,6 +38,15 @@ String capitalize(String s) {
 }
 
 String toKababCase(String s) {
-  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'),
-      (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
+  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
+}
+
+void throwIf(bool condition, String message,{ Element element, String todo}) {
+  if (condition) {
+    throw InvalidGenerationSourceError(
+      message,
+      todo: todo,
+      element: element,
+    );
+  }
 }

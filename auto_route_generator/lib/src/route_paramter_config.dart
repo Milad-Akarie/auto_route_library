@@ -29,6 +29,7 @@ class RouteParameterResolver {
     paramConfig.defaultValueCode = parameterElement.defaultValueCode;
     paramConfig.isRequired = parameterElement.hasRequired;
 
+    print(paramType.runtimeType);
     // import type
     await _addImport(paramType.element);
 
@@ -58,7 +59,8 @@ class RouteParameterResolver {
   }
 
   Future<String> _resolveLibImport(Element element) async {
-    if (element.source == null || isCoreDartType(element.source)) {
+    print(element.name);
+    if (element?.source == null || isCoreDartType(element.source)) {
       return null;
     }
     //if element from a system library but not from dart:core

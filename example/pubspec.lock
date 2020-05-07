@@ -49,7 +49,7 @@ packages:
       path: "../auto_route_generator"
       relative: true
     source: path
-    version: "0.4.7"
+    version: "0.4.8"
   boolean_selector:
     dependency: transitive
     description:
