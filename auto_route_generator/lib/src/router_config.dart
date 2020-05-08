@@ -23,7 +23,7 @@ class RouterConfig {
             .peek('generateArgsHolderForSingleParameterRoutes')
             ?.boolValue ??
         true;
-    routePrefix = autoRouter.peek('routePrefix')?.stringValue ?? '' ;
+    routePrefix = autoRouter.peek('routePrefix')?.stringValue ?? '/';
 
     routesClassName =
         autoRouter.peek('routesClassName')?.stringValue ?? 'Routes';

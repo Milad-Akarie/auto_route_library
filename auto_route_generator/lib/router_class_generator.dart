@@ -72,23 +72,17 @@ class RouterClassGenerator {
         _writeln("static const $routeName = '$pathName';");
       }
     });
-    _writeln("static const allRoutes = {");
+    _writeln("static const all = {");
     _routes.forEach((r) => _write('${r.name},'));
     _write("};");
-
     _writeln('}');
   }
 
-  void _generateRoutesGetterFunction(List<RouteConfig> routes) {
-    _newLine();
+  void _generateRoutesGetterFunction() {
     _newLine();
     _writeln('@override');
-    _writeln("Set<String> get allRoutes => const {");
-    routes
-        .forEach((r) => _write('${_routerConfig.routesClassName}.${r.name},'));
-    _write("};");
-    _newLine();
-    _newLine();
+    _writeln(
+        "Set<String> get allRoutes => ${_routerConfig.routesClassName}.all;");
   }
 
   void _generateRouteGeneratorFunction(List<RouteConfig> routes) {
@@ -237,15 +231,15 @@ class RouterClassGenerator {
   }
 
   void _generateBoxed(String message) {
-    _writeln('\n//'.padRight(77, '*'));
+    _writeln('\n// '.padRight(77, '*'));
     _writeln('// $message');
-    _writeln('//'.padRight(77, '*'));
+    _writeln('// '.padRight(77, '*'));
     _newLine();
   }
 
   void _generateRouterClass() {
     _writeln('\nclass $_className extends RouterBase {');
-    _generateRoutesGetterFunction(_routes);
+    _generateRoutesGetterFunction();
     _generateHelperFunctions();
     _generateRouteGeneratorFunction(_routes);
 
@@ -267,8 +261,8 @@ class RouterClassGenerator {
       _write('};');
     }
 
-    _writeln('''\n\n\n //This will probably be removed in future versions
-  //you should call ExtendedNavigator.ofRouter<Router>() directly''');
+    _writeln(
+        "\n@Deprecated('call ExtendedNavigator.ofRouter<Router>() directly')");
     _writeln('''
     static ExtendedNavigatorState get navigator =>
       ExtendedNavigator.ofRouter<$_className>();
@@ -363,11 +357,11 @@ class RouterClassGenerator {
       } else {
         _write('${route.argumentsHolderClassName}(');
         _write(route.parameters.map((p) => '${p.name}: ${p.name}').join(','));
-        _write(')');
+        _write('),');
       }
 
       if (route.guards?.isNotEmpty == true) {
-        _write(',onReject:onReject');
+        _write('onReject:onReject,');
       }
     }
     _write(');');

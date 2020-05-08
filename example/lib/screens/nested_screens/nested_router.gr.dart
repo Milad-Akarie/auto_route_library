@@ -13,11 +13,17 @@ import 'package:example/screens/nested_screens/nested_screen_two.dart';
 abstract class NestedRoutes {
   static const nestedScreen = '/';
   static const nestedScreenTwo = '/nested-screen-two';
+  static const all = {
+    nestedScreen,
+    nestedScreenTwo,
+  };
 }
 
 class NestedRouter extends RouterBase {
-  //This will probably be removed in future versions
-  //you should call ExtendedNavigator.ofRouter<Router>() directly
+  @override
+  Set<String> get allRoutes => NestedRoutes.all;
+
+  @Deprecated('call ExtendedNavigator.ofRouter<Router>() directly')
   static ExtendedNavigatorState get navigator =>
       ExtendedNavigator.ofRouter<NestedRouter>();
 
@@ -47,9 +53,9 @@ class NestedRouter extends RouterBase {
   }
 }
 
-//**************************************************************************
+// *************************************************************************
 // Arguments holder classes
-//***************************************************************************
+// **************************************************************************
 
 //NestedScreenTwo arguments holder class
 class NestedScreenTwoArguments {
@@ -58,9 +64,9 @@ class NestedScreenTwoArguments {
   NestedScreenTwoArguments({this.title, this.message});
 }
 
-//**************************************************************************
+// *************************************************************************
 // Navigation helper methods extension
-//***************************************************************************
+// **************************************************************************
 
 extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
   Future pushNestedScreen() => pushNamed(NestedRoutes.nestedScreen);
@@ -68,6 +74,8 @@ extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
     dynamic title,
     String message,
   }) =>
-      pushNamed(NestedRoutes.nestedScreenTwo,
-          arguments: NestedScreenTwoArguments(title: title, message: message));
+      pushNamed(
+        NestedRoutes.nestedScreenTwo,
+        arguments: NestedScreenTwoArguments(title: title, message: message),
+      );
 }

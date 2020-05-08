@@ -1,4 +1,12 @@
 # ChangeLog
+
+## [0.4.9] Breaking Changes
+- Change generate routes list is no longer optional
+- Change Routes.all returns a set instead of List
+- Add allRoutes getter to RouterBase
+- Add Route prefix option to AutoRouter
+- remove useLeadingSlashes flag from AutoRouter
+
 ## [0.4.8] 
 - Change PageRouteBuilder context arg name from ctx to context
 - Fix args declaration is generated even if there's no routes with args

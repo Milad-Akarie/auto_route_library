@@ -10,6 +10,8 @@ class AutoRouter {
   final String routesClassName;
 
   //This is the prefix for each Route String that is generated
+  // initial routes will always be named '/'
+  // defaults to '/'
   final String routePrefix;
 
   const AutoRouter._(
@@ -24,15 +26,8 @@ class AutoRouter {
 // overridden by AutoRoute annotation
 class MaterialAutoRouter extends AutoRouter {
   const MaterialAutoRouter(
-      {bool generateNavigationHelperExtension,
-      bool generateArgsHolderForSingleParameterRoutes,
-      String routesClassName,
-      String routePrefix})
-      : super._(
-            generateNavigationHelperExtension,
-            generateArgsHolderForSingleParameterRoutes,
-            routesClassName,
-            routePrefix);
+      {bool generateNavigationHelperExtension, bool generateArgsHolderForSingleParameterRoutes, String routesClassName, String routePrefix})
+      : super._(generateNavigationHelperExtension, generateArgsHolderForSingleParameterRoutes, routesClassName, routePrefix);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
@@ -130,12 +125,7 @@ class AutoRoute {
   /// defaults to dynamic
   final Type returnType;
 
-  const AutoRoute._(
-      {this.initial,
-      this.fullscreenDialog,
-      this.maintainState,
-      this.name,
-      this.returnType});
+  const AutoRoute._({this.initial, this.fullscreenDialog, this.maintainState, this.name, this.returnType});
 }
 
 class MaterialRoute extends AutoRoute {

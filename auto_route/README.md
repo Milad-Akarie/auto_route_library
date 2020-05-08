@@ -87,15 +87,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    // Tell MaterialApp to use our ExtendedNavigator instead of
+    // Let MaterialApp use our ExtendedNavigator instead of
     // the native one by assigning it to it's builder
-    // instead of return the nativeNavigator we're returning our ExtendedNavigator
+    // instead of returning the native Navigator we're returning our ExtendedNavigator
      builder: ExtendedNavigator<Router>(router: Router()),
+     
      // ExtendedNavigator is just a widget so you can still wrap it with other widgets
+     // if you need to
      builder: (ctx, nativeNavigator) => Theme(data:...,
      child: ExtendedNavigator<Router>(router: Router())
      ,)
     );
+    
   }
 }
 ```
@@ -197,6 +200,7 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 | name [String]           |     null      | this will be assigned to the route variable name if provided (String homeScreen = [name]); |
 | fullscreenDialog [bool] |     false     | extension for the fullscreenDialog property in PageRoute                                   |
 | maintainState [bool]    |     true      | extension for the maintainState property in PageRoute                                      |
+| returnType [Type]    |     dynamic      | type of results which the route returns                                     |
 
 #### CupertinoRoute Specific => CupertinoPageRoute
 
@@ -324,8 +328,7 @@ class AuthGuard extends RouteGuard {
 }
 ```
 
-2.  Register your guards
-    pass your guards to the guards property inside of ExtendedNavigator
+2.  Register your guards by  passing them to the guards property inside of ExtendedNavigator
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -394,12 +397,6 @@ Now pass the reference of your function to @CustomRoute() annotation.
 @CustomRoute(transitionsBuilder: zoomInTransition)
 ZoomInScreen zoomInScreenRoute {}
 ```
-
-### Resources
-
----
-
-- [Lean how to setup and use auto_route with this well made tutorial by Reso Coder](https://www.youtube.com/watch?v=iVpVBmDhpJY&t=505s)
 
 ### Acknowledgements
 

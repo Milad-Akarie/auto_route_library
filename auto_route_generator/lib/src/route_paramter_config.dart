@@ -58,19 +58,19 @@ class RouteParameterResolver {
   }
 
   Future<String> _resolveLibImport(Element element) async {
-    if (element?.source == null || isCoreDartType(element.source)) {
+    if (element == null ||
+        element.source == null ||
+        isCoreDartType(element.source)) {
       return null;
     }
     //if element from a system library but not from dart:core
     if (element.source.isInSystemLibrary) {
       return getImport(element);
     }
+
     final assetId = await _resolver.assetIdForElement(element);
-    final lib = await _resolver.findLibraryByName(assetId.package);
-    if (lib != null) {
-      return getImport(lib);
-    } else {
-      return getImport(element);
-    }
+    final toBeImported =
+        await _resolver.findLibraryByName(assetId.package) ?? element;
+    return getImport(toBeImported);
   }
 }

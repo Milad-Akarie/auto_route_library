@@ -87,15 +87,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    // Tell MaterialApp to use our ExtendedNavigator instead of
+    // Let MaterialApp use our ExtendedNavigator instead of
     // the native one by assigning it to it's builder
-    // instead of return the nativeNavigator we're returning our ExtendedNavigator
+    // instead of returning the native Navigator we're returning our ExtendedNavigator
      builder: ExtendedNavigator<Router>(router: Router()),
+     
      // ExtendedNavigator is just a widget so you can still wrap it with other widgets
+     // if you need to
      builder: (ctx, nativeNavigator) => Theme(data:...,
      child: ExtendedNavigator<Router>(router: Router())
      ,)
     );
+    
   }
 }
 ```
@@ -141,7 +144,7 @@ ExtendedNavigator.of(context).pushNamed(Routes.secondScreen)
 // without context
 ExtendedNavigator.ofRouter<Router>().pushNamed(Routes.secondScreen)
 // or if you're working with only one navigator
-ExtendedNavigator.rootNavigator.pushNamed(..)
+ExtenedNavigator.rootNavigator.pushNamed(..)
 ```
 
 ### Navigation helper methods extension
@@ -178,7 +181,7 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
 | generateNavigationHelperExtension [bool] | false         | if true a Navigator extenstion will be generated with helper push methods of all routes |
 | generateArgsHolderForSingleParameterRoutes [bool] | true         | if true argument holder classes will always be generated for routes with parameters |
-| useLeadingSlashes [bool] | true         | if true route names will be prefixed with '/' |
+| routePrefix [String] |    ''     | all route paths will be prefixed with this routePrefix String |
 | routesClassName [string] | 'Routes'         | the name of the generated Routes class |
 #### CustomAutoRouter
 
@@ -197,6 +200,7 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 | name [String]           |     null      | this will be assigned to the route variable name if provided (String homeScreen = [name]); |
 | fullscreenDialog [bool] |     false     | extension for the fullscreenDialog property in PageRoute                                   |
 | maintainState [bool]    |     true      | extension for the maintainState property in PageRoute                                      |
+| returnType [Type]    |     dynamic      | type of results which the route returns                                     |
 
 #### CupertinoRoute Specific => CupertinoPageRoute
 
@@ -324,8 +328,7 @@ class AuthGuard extends RouteGuard {
 }
 ```
 
-2.  Register your guards
-    pass your guards to the guards property inside of ExtendedNavigator
+2.  Register your guards by  passing them to the guards property inside of ExtendedNavigator
 
 ```dart
 class MyApp extends StatelessWidget {
@@ -371,7 +374,7 @@ The TransitionsBuilder function needs to be passed as a static/const reference t
 The included **TransitionsBuilders** Class contains a preset of common Transitions builders
 
 ```dart
-@CustomRoute(transitionsBuilder: TransitionsBuilders.slideBottom,durationInMilliseconds: 400)
+@CustomRoute(transitionsBuilder: TransitionBuilders.slideBottom,durationInMilliseconds: 400)
 LoginScreen loginScreenRoute;
 ```
 
@@ -394,12 +397,6 @@ Now pass the reference of your function to @CustomRoute() annotation.
 @CustomRoute(transitionsBuilder: zoomInTransition)
 ZoomInScreen zoomInScreenRoute {}
 ```
-
-### Resources
-
----
-
-- [Lean how to setup and use auto_route with this well made tutorial by Reso Coder](https://www.youtube.com/watch?v=iVpVBmDhpJY&t=505s)
 
 ### Acknowledgements
 
