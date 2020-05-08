@@ -31,8 +31,6 @@ class RouteParameterResolver {
     paramConfig.defaultValueCode = parameterElement.defaultValueCode;
     paramConfig.isRequired = parameterElement.hasRequired;
 
-    print([paramType.runtimeType, parameterElement.type.getDisplayString()]);
-
     // import type
     await _addImport(paramType);
 
@@ -41,7 +39,6 @@ class RouteParameterResolver {
   }
 
   Future<void> _checkForParameterizedTypes(DartType paramType) async {
-    print('_checkForParameterizedtypes : param type = $paramType , param run time : ${paramType.runtimeType}');
     //handle Function< G extends TypeA >( G item ) , when type is G , import TypeA source
     if (paramType is TypeParameterType) {
       await _addImport(paramType.bound);
