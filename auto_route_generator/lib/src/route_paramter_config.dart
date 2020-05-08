@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route_generator/utils.dart';
@@ -29,8 +30,10 @@ class RouteParameterResolver {
     paramConfig.defaultValueCode = parameterElement.defaultValueCode;
     paramConfig.isRequired = parameterElement.hasRequired;
 
-    // import type
-    await _addImport(paramType.element);
+    print([paramType.runtimeType , parameterElement.type.getDisplayString()]);
+
+   // import type
+    await _addImport(paramType);
 
     // import generic types recursively
     await _checkForParameterizedTypes(paramType);
@@ -40,20 +43,33 @@ class RouteParameterResolver {
   }
 
   Future<void> _checkForParameterizedTypes(DartType paramType) async {
+    print('check for ParamTypes ${paramType}');
     if (paramType is ParameterizedType) {
       for (DartType type in paramType.typeArguments) {
         await _checkForParameterizedTypes(type);
         if (type.element.source != null) {
-          await _addImport(type.element);
+          await _addImport(type);
         }
       }
     }
   }
 
-  Future<void> _addImport(Element element) async {
-    final import = await _resolveLibImport(element);
-    if (import != null) {
-      imports.add(import);
+
+  Future<void> _addImport(DartType type) async {
+    //import types inside functionTypes recursively
+    if(type is FunctionType){
+      var allFunctionParamTypes = [...type.normalParameterTypes , ...type.optionalParameterTypes , ...type.namedParameterTypes.values , type.returnType];
+      for(DartType paramType in allFunctionParamTypes){
+        print(paramType);
+        await _addImport(paramType);
+        await _checkForParameterizedTypes(paramType);
+      }
+    }
+    else{
+      final import = await _resolveLibImport(type.element);
+      if (import != null) {
+        imports.add(import);
+      }
     }
   }
 
