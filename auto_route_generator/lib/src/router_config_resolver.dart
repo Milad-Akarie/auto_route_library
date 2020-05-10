@@ -70,7 +70,6 @@ class RouterConfigResolver {
             .add(await RouteParameterResolver(_resolver).resolve(p));
       }
     }
-
     return _routeConfig;
   }
 
