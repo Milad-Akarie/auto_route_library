@@ -50,20 +50,24 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
 
   ExtendedNavigator call(_, __) => this;
 
-  static ExtendedNavigatorState ofRouter<T extends RouterBase>() => _NavigationStatesContainer._instance.get<T>();
+  static ExtendedNavigatorState ofRouter<T extends RouterBase>() =>
+      _NavigationStatesContainer._instance.get<T>();
 
-  static ExtendedNavigatorState get rootNavigator => _NavigationStatesContainer._instance.getRootNavigator();
+  static ExtendedNavigatorState get rootNavigator =>
+      _NavigationStatesContainer._instance.getRootNavigator();
 
   static ExtendedNavigatorState of(
     BuildContext context, {
     bool rootNavigator = false,
     bool nullOk = false,
   }) {
-    final ExtendedNavigatorState navigator =
-        rootNavigator ? context.findRootAncestorStateOfType<ExtendedNavigatorState>() : context.findAncestorStateOfType<ExtendedNavigatorState>();
+    final ExtendedNavigatorState navigator = rootNavigator
+        ? context.findRootAncestorStateOfType<ExtendedNavigatorState>()
+        : context.findAncestorStateOfType<ExtendedNavigatorState>();
     assert(() {
       if (navigator == null && !nullOk) {
-        throw FlutterError('ExtendedNavigator operation requested with a context that does not include a ExtendedNavigator.\n'
+        throw FlutterError(
+            'ExtendedNavigator operation requested with a context that does not include a ExtendedNavigator.\n'
             'The context used to push or pop routes from the ExtendedNavigator must be that of a '
             'widget that is a descendant of a ExtendedNavigator widget.');
       }
@@ -73,7 +77,8 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
   }
 }
 
-class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with WidgetsBindingObserver {
+class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
+    with WidgetsBindingObserver {
   final Map<String, List<Type>> _guardedRoutes;
   final _registeredGuards = <Type, RouteGuard>{};
   final RouterBase _router;
@@ -87,7 +92,8 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
   T get router => _router;
 
-  ExtendedNavigatorState get parent => context.findAncestorStateOfType<ExtendedNavigatorState>();
+  ExtendedNavigatorState get parent =>
+      context.findAncestorStateOfType<ExtendedNavigatorState>();
 
   @override
   void initState() {
@@ -118,7 +124,8 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
   @override
   @optionalTypeArgs
-  Future<T> pushNamed<T extends Object>(String routeName, {Object arguments, OnNavigationRejected onReject}) async {
+  Future<T> pushNamed<T extends Object>(String routeName,
+      {Object arguments, OnNavigationRejected onReject}) async {
     return await _canNavigate(
       routeName,
       arguments: arguments,
@@ -139,8 +146,10 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
     Object arguments,
     OnNavigationRejected onReject,
   }) async {
-    return await _canNavigate(routeName, arguments: arguments, onReject: onReject)
-        ? super.pushReplacementNamed<T, TO>(routeName, arguments: arguments, result: result)
+    return await _canNavigate(routeName,
+            arguments: arguments, onReject: onReject)
+        ? super.pushReplacementNamed<T, TO>(routeName,
+            arguments: arguments, result: result)
         : null;
   }
 
@@ -152,7 +161,8 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
     Object arguments,
     OnNavigationRejected onReject,
   }) async {
-    return await _canNavigate(newRouteName, arguments: arguments, onReject: onReject)
+    return await _canNavigate(newRouteName,
+            arguments: arguments, onReject: onReject)
         ? super.pushNamedAndRemoveUntil<T>(
             newRouteName,
             predicate,
@@ -177,7 +187,8 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
   Future<bool> canNavigate(String routeName) => _canNavigate(routeName);
 
-  Future<bool> _canNavigate(String routeName, {Object arguments, OnNavigationRejected onReject}) async {
+  Future<bool> _canNavigate(String routeName,
+      {Object arguments, OnNavigationRejected onReject}) async {
     if (!_router._hasGuards(routeName)) {
       return true;
     }
@@ -217,7 +228,8 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
 class _NavigationStatesContainer {
   // ensure we only have one instance of the container
-  static final _NavigationStatesContainer _instance = _NavigationStatesContainer._();
+  static final _NavigationStatesContainer _instance =
+      _NavigationStatesContainer._();
   final Map<Type, ExtendedNavigatorState> _navigatorKeys = {};
 
   _NavigationStatesContainer._();

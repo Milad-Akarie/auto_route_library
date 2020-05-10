@@ -26,8 +26,15 @@ class AutoRouter {
 // overridden by AutoRoute annotation
 class MaterialAutoRouter extends AutoRouter {
   const MaterialAutoRouter(
-      {bool generateNavigationHelperExtension, bool generateArgsHolderForSingleParameterRoutes, String routesClassName, String routePrefix})
-      : super._(generateNavigationHelperExtension, generateArgsHolderForSingleParameterRoutes, routesClassName, routePrefix);
+      {bool generateNavigationHelperExtension,
+      bool generateArgsHolderForSingleParameterRoutes,
+      String routesClassName,
+      String routePrefix})
+      : super._(
+            generateNavigationHelperExtension,
+            generateArgsHolderForSingleParameterRoutes,
+            routesClassName,
+            routePrefix);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
@@ -125,7 +132,12 @@ class AutoRoute {
   /// defaults to dynamic
   final Type returnType;
 
-  const AutoRoute._({this.initial, this.fullscreenDialog, this.maintainState, this.name, this.returnType});
+  const AutoRoute._(
+      {this.initial,
+      this.fullscreenDialog,
+      this.maintainState,
+      this.name,
+      this.returnType});
 }
 
 class MaterialRoute extends AutoRoute {

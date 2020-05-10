@@ -1,12 +1,11 @@
 # ChangeLog
 
-## [0.4.10] Breaking Changes
+## [0.5.0] 
 - Add support for Complex function types & typeDef as Route parameters
-
+## [0.4.10] Skip
 ## [0.4.9] Breaking Changes
 - Change generate routes list is no longer optional
 - Change Routes.all returns a set instead of List
-- Add allRoutes getter to RouterBase
 - Add Route prefix option to AutoRouter
 - remove useLeadingSlashes flag from AutoRouter
 

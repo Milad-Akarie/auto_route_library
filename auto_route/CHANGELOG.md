@@ -1,5 +1,9 @@
 # ChangeLog
 
+## [0.5.0] 
+- Add allRoutes getter to RouterBase
+- minor fixes
+## [0.4.6] Skip
 ## [0.4.5] Breaking Change
 - Add AdaptiveAutoRouter and AdaptiveRoute for native platforms
 - Change using leading slashes is now options
