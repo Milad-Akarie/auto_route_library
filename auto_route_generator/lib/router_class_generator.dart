@@ -364,6 +364,6 @@ class RouterClassGenerator {
         _write('onReject:onReject,');
       }
     }
-    _write(');');
+    _writeln(');\n');
   }
 }

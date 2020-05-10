@@ -54,8 +54,7 @@ class RouteParameterResolver {
     }
     if (paramType is FunctionType) {
       for (TypeParameterElement type in paramType.typeFormals) {
-        if(type.bound!=null)
-        await _addImport(type.bound);
+        if (type.bound != null) await _addImport(type.bound);
       }
     }
   }

@@ -1,5 +1,8 @@
 # ChangeLog
 
+## [0.4.10] Breaking Changes
+- Add support for Complex function types & typeDef as Route parameters
+
 ## [0.4.9] Breaking Changes
 - Change generate routes list is no longer optional
 - Change Routes.all returns a set instead of List

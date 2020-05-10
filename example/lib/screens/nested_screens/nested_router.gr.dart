@@ -70,6 +70,7 @@ class NestedScreenTwoArguments {
 
 extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
   Future pushNestedScreen() => pushNamed(NestedRoutes.nestedScreen);
+
   Future pushNestedScreenTwo({
     dynamic title,
     String message,
