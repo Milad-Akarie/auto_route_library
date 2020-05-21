@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 // returns an error page routes with a helper message.
 PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
@@ -88,6 +89,15 @@ PageRoute<T> buildAdaptivePageRoute<T>({
   assert(builder != null);
   assert(maintainState != null);
   assert(fullscreenDialog != null);
+
+  if(kIsWeb){ // using Material as default in Web
+    return MaterialPageRoute<T>(
+      builder: builder,
+      settings: settings,
+      maintainState: maintainState,
+      fullscreenDialog: fullscreenDialog,
+    );
+  }
   if (Platform.isIOS) {
     return CupertinoPageRoute<T>(
       builder: builder,
