@@ -90,23 +90,18 @@ PageRoute<T> buildAdaptivePageRoute<T>({
   assert(maintainState != null);
   assert(fullscreenDialog != null);
 
-  if(kIsWeb){ // using Material as default in Web
-    return MaterialPageRoute<T>(
-      builder: builder,
-      settings: settings,
-      maintainState: maintainState,
-      fullscreenDialog: fullscreenDialog,
-    );
+  if(!kIsWeb){
+    if (Platform.isIOS || Platform.isMacOS) {
+      return CupertinoPageRoute<T>(
+        builder: builder,
+        settings: settings,
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        title: cupertinoTitle,
+      );
+    }
   }
-  if (Platform.isIOS) {
-    return CupertinoPageRoute<T>(
-      builder: builder,
-      settings: settings,
-      maintainState: maintainState,
-      fullscreenDialog: fullscreenDialog,
-      title: cupertinoTitle,
-    );
-  } else {
+   else {
     return MaterialPageRoute<T>(
       builder: builder,
       settings: settings,
