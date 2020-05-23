@@ -30,6 +30,13 @@ class RouteConfig {
   String get argumentsHolderClassName {
     return '${className}Arguments';
   }
+
+  @override
+  String toString() {
+    return 'RouteConfig{imports: $imports, name: $name, pathName: $pathName, initial: $initial, fullscreenDialog: $fullscreenDialog, customRouteOpaque: $customRouteOpaque, customRouteBarrierDismissible: $customRouteBarrierDismissible, maintainState: $maintainState, className: $className, returnType: $returnType, parameters: $parameters, transitionBuilder: $transitionBuilder, durationInMilliseconds: $durationInMilliseconds, routeType: $routeType, guards: $guards, cupertinoNavTitle: $cupertinoNavTitle, hasWrapper: $hasWrapper, isUnknownRoute: $isUnknownRoute}';
+  }
+
+
 }
 
 class RouteType {

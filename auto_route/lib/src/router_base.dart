@@ -5,6 +5,12 @@ abstract class RouterBase {
   Set<String> get allRoutes => {};
   Route<dynamic> onGenerateRoute(RouteSettings settings);
 
+  // a shorthand for calling the onGenerateRoute function
+  // when using Router directly in MaterialApp or such
+  // Router().onGenerateRoute becomes Router()
+  Route<dynamic> call(RouteSettings settings) => onGenerateRoute(settings);
+
+
   /// if initial route is guarded we push
   /// a placeholder route until next distention is
   /// decided by the route guard
