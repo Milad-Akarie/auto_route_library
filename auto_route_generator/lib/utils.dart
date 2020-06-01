@@ -41,12 +41,16 @@ String toKababCase(String s) {
   return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
 }
 
-void throwIf(bool condition, String message,{ Element element, String todo}) {
+void throwIf(bool condition, String message, {Element element, String todo}) {
   if (condition) {
-    throw InvalidGenerationSourceError(
-      message,
-      todo: todo,
-      element: element,
-    );
+    throwError(message, todo: todo, element: element);
   }
+}
+
+void throwError(String message, {Element element, String todo}) {
+  throw InvalidGenerationSourceError(
+    message,
+    todo: todo,
+    element: element,
+  );
 }

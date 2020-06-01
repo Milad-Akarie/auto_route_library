@@ -16,9 +16,25 @@ class RouterConfigResolver {
 
   RouterConfigResolver(this._globConfig, this._resolver);
 
-  Future<RouteConfig> resolve(FieldElement field) async {
+  Future<RouteConfig> resolve(ConstantReader autoRoute,[String pathPrefix]) async {
     final routeConfig = RouteConfig();
-    final type = field.type;
+    final type = autoRoute.read('page').typeValue;
+    final classElement = type.element as ClassElement;
+    final import = getImport(classElement);
+    if (import != null) {
+      routeConfig.imports.add(import);
+    }
+    routeConfig.className = type.getDisplayString();
+    var path = autoRoute.peek('path')?.stringValue;
+    if (path == null) {
+      if (autoRoute.peek('initial')?.boolValue == true) {
+        path = '/';
+      } else {
+        path = '/${toKababCase(routeConfig.className)}';
+      }
+    }
+    print(pathPrefix);
+    routeConfig.pathName = '${pathPrefix ?? ''}$path';
 
     throwIf(
       type.element is! ClassElement,
@@ -26,33 +42,9 @@ class RouterConfigResolver {
       element: type.element,
     );
 
-    final classElement = type.element as ClassElement;
+    _extractRouteMetaData(routeConfig, autoRoute);
 
-    routeConfig.isUnknownRoute = unknownRouteChecker.hasAnnotationOfExact(field);
-
-    if (routeConfig.isUnknownRoute) {
-      final params = classElement.unnamedConstructor.parameters ?? [];
-      throwIf(
-        params.isEmpty || params.length > 1 || params.first.type.getDisplayString() != 'String',
-        "UnknowRoute must have a defualt constructor with a positional String Parameter,"
-        " MyUnknownRoute(String routeName",
-        element: type.element,
-      );
-    }
-
-    _extractRouteMetaData(routeConfig, field);
-
-    guardsChecker.firstAnnotationOfExact(field)?.getField('guards')?.toListValue()?.map((g) => g.toTypeValue())?.forEach((guard) {
-      routeConfig.guards.add(RouteGuardConfig(type: guard.getDisplayString(), import: getImport(guard.element)));
-    });
-
-    final import = getImport(type.element);
-
-    if (import != null) {
-      routeConfig.imports.add(import);
-    }
-    routeConfig.name = field.name;
-    routeConfig.className = type.getDisplayString();
+    routeConfig.name = toLowerCamelCase(routeConfig.className);
 
     routeConfig.hasWrapper = classElement.allSupertypes.map<String>((el) => el.getDisplayString()).contains('AutoRouteWrapper');
 
@@ -65,19 +57,29 @@ class RouterConfigResolver {
         routeConfig.parameters.add(await paramResolver.resolve(p));
       }
     }
-
+    _validatePathParams(routeConfig, classElement);
     return routeConfig;
   }
 
-  void _extractRouteMetaData(RouteConfig routeConfig, FieldElement field) {
-    final routeAnnotation = autoRouteChecker.firstAnnotationOf(field);
+  void _extractRouteMetaData(RouteConfig routeConfig, ConstantReader autoRoute) {
+    routeConfig.fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
+    routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
 
-    ConstantReader autoRoute;
-    if (routeAnnotation != null) {
-      autoRoute = ConstantReader(routeAnnotation);
-      routeConfig.initial = autoRoute.peek('initial')?.boolValue;
+    autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue())?.forEach((guard) {
+      routeConfig.guards.add(RouteGuardConfig(type: guard.getDisplayString(), import: getImport(guard.element)));
+    });
+
+    final returnType = autoRoute.objectValue.type.typeArguments.first;
+    routeConfig.returnType = returnType.getDisplayString();
+
+    if (routeConfig.returnType != 'dynamic') {
+      final import = getImport(returnType.element);
+      if (import != null) {
+        routeConfig.imports.add(import);
+      }
     }
-    if (autoRoute == null || routeConfig.initial == true) {
+
+    if (autoRoute.instanceOf(TypeChecker.fromRuntime(AutoRoute))) {
       routeConfig.routeType = _globConfig.routeType;
       if (_globConfig.routeType == RouteType.custom) {
         routeConfig.transitionBuilder = _globConfig.transitionBuilder;
@@ -88,19 +90,9 @@ class RouterConfigResolver {
       return;
     }
 
-    routeConfig.fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
-    routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
-    routeConfig.pathName = autoRoute.peek('name')?.stringValue;
-    final returnType = autoRoute.peek('returnType')?.typeValue;
-    if (returnType != null) {
-      routeConfig.returnType = returnType.getDisplayString();
-      final import = getImport(returnType.element);
-      if (import != null) {
-        routeConfig.imports.add(import);
-      }
-    }
 
-    if ((autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute)))) {
+
+    if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
       routeConfig.routeType = RouteType.material;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CupertinoRoute))) {
       routeConfig.routeType = RouteType.cupertino;
@@ -128,6 +120,29 @@ class RouterConfigResolver {
       }
     } else {
       routeConfig.routeType = _globConfig.routeType;
+    }
+  }
+
+  void _validatePathParams(RouteConfig route, ClassElement element) {
+    var reg = RegExp(r'{(.*?)}');
+    var pathParams = route.parameters?.where((p) => p.isPathParameter)?.map((e) => e.name) ?? [];
+    if (reg.hasMatch(route.pathName)) {
+      var templateParams = reg.allMatches(route.pathName).map((e) => e.group(1));
+      templateParams.forEach((param) {
+        throwIf(
+          !pathParams.contains(param),
+          "${element.displayName} does not have a path-parameter named {$param}",
+          element: element,
+          todo: 'annotated your path-parameters with @PathParameter()',
+        );
+      });
+    } else {
+      throwIf(
+        pathParams.isNotEmpty,
+        "Path ${route.pathName} does not contain all path-parameters defined in "
+        "${element.displayName} ${pathParams.map((e) => '{$e}').toList()}",
+        element: element,
+      );
     }
   }
 }

@@ -11,72 +11,67 @@ import 'package:example/screens/nested_screens/nested_screen.dart';
 import 'package:example/screens/nested_screens/nested_screen_two.dart';
 
 abstract class NestedRoutes {
-  static const nestedScreen = '/';
-  static const nestedScreenTwo = '/nested-screen-two';
+  static const nestedScreen = '/second/{id}/';
+  static const nestedScreenTwo = '/second/{id}/nested';
   static const all = {
     nestedScreen,
     nestedScreenTwo,
   };
 }
 
-class NestedRouter extends RouterBase {
+class $NestedRouter extends RouterBase {
   @override
   Set<String> get allRoutes => NestedRoutes.all;
 
-  @Deprecated('call ExtendedNavigator.ofRouter<Router>() directly')
-  static ExtendedNavigatorState get navigator =>
-      ExtendedNavigator.ofRouter<NestedRouter>();
-
   @override
-  Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    final args = settings.arguments;
-    switch (settings.name) {
-      case NestedRoutes.nestedScreen:
-        return buildAdaptivePageRoute<dynamic>(
-          builder: (context) => NestedScreen(),
-          settings: settings,
-        );
-      case NestedRoutes.nestedScreenTwo:
-        if (hasInvalidArgs<NestedScreenTwoArguments>(args)) {
-          return misTypedArgsRoute<NestedScreenTwoArguments>(args);
-        }
-        final typedArgs =
-            args as NestedScreenTwoArguments ?? NestedScreenTwoArguments();
-        return buildAdaptivePageRoute<dynamic>(
-          builder: (context) => NestedScreenTwo(
-              title: typedArgs.title, message: typedArgs.message),
-          settings: settings,
-        );
-      default:
-        return unknownRoutePage(settings.name);
-    }
-  }
+  Map<String, RouteFactory> get routesMap => _routesMap;
+
+  final _routesMap = <String, RouteFactory>{
+    NestedRoutes.nestedScreen: (RouteSettings settings) {
+      final data = RouteData<NestedScreenArguments>(
+        settings,
+        NestedRoutes.nestedScreen,
+      );
+      NestedScreenArguments args =
+          data.args ?? NestedScreenArguments._fromParams(data.queryParams);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) =>
+            NestedScreen(key: args.key, id: data.pathParams['id'].stringValue),
+        settings: settings,
+      );
+    },
+    NestedRoutes.nestedScreenTwo: (RouteSettings settings) {
+      final data = RouteData<NestedScreenTwoArguments>(
+        settings,
+        NestedRoutes.nestedScreenTwo,
+      );
+      NestedScreenTwoArguments args =
+          data.args ?? NestedScreenTwoArguments._fromParams(data.queryParams);
+      return MaterialPageRoute<dynamic>(
+        builder: (context) => NestedScreenTwo(
+            title: args.title, id: data.pathParams['id'].stringValue),
+        settings: settings,
+      );
+    },
+  };
 }
 
 // *************************************************************************
 // Arguments holder classes
 // **************************************************************************
 
+//NestedScreen arguments holder class
+class NestedScreenArguments {
+  final Key key;
+  NestedScreenArguments({this.key});
+  NestedScreenArguments._fromParams(Parameters params)
+      : this.key = params['key'].value;
+}
+
 //NestedScreenTwo arguments holder class
 class NestedScreenTwoArguments {
   final dynamic title;
-  final String message;
-  NestedScreenTwoArguments({this.title, this.message});
-}
-
-// *************************************************************************
-// Navigation helper methods extension
-// **************************************************************************
-
-extension NestedRouterNavigationHelperMethods on ExtendedNavigatorState {
-  Future pushNestedScreen() => pushNamed(NestedRoutes.nestedScreen);
-
-  Future pushNestedScreenTwo({
-    dynamic title,
-    String message,
-  }) =>
-      pushNamed(
-        NestedRoutes.nestedScreenTwo,
-        arguments: NestedScreenTwoArguments(title: title, message: message),
-      );
+  NestedScreenTwoArguments({this.title});
+  NestedScreenTwoArguments._fromParams(Parameters params)
+      : this.title = params['title'].value;
 }

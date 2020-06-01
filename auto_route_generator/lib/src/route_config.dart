@@ -24,7 +24,7 @@ class RouteConfig {
   List<RouteGuardConfig> guards = [];
   String cupertinoNavTitle;
   bool hasWrapper;
-  bool isUnknownRoute;
+  bool isUnknownRoute = false;
   RouteConfig();
 
   String get argumentsHolderClassName {

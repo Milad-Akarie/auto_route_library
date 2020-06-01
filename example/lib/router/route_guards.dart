@@ -6,7 +6,7 @@ class AuthGuard extends RouteGuard {
     if (isLoggedIn) {
       return true;
     }
-    navigator.pushReplacementNamed(Routes.loginScreen);
+//    navigator.pushReplacementNamed(Routes.loginScreen);
     return true;
   }
 }

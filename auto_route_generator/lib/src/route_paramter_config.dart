@@ -1,7 +1,11 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:auto_route/auto_route_annotations.dart';
 import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
+import 'package:source_gen/source_gen.dart';
+
+final pathParamChecker = TypeChecker.fromRuntime(PathParam);
 
 // holds constructor parameter info to be used
 // in generating route parameters.
@@ -10,8 +14,26 @@ class RouteParamConfig {
   String name;
   bool isPositional;
   bool isRequired;
+  bool isPathParameter;
   String defaultValueCode;
   Set<String> imports = {};
+
+  String get getterName {
+    switch (type) {
+      case 'String':
+        return 'stringValue';
+      case 'int':
+        return 'intValue';
+      case 'double':
+        return 'doubleValue';
+      case 'num':
+        return 'numValue';
+      case 'bool':
+        return 'boolValue';
+      default:
+        return 'value';
+    }
+  }
 }
 
 class RouteParameterResolver {
@@ -28,8 +50,8 @@ class RouteParameterResolver {
     paramConfig.isPositional = parameterElement.isPositional;
     paramConfig.defaultValueCode = parameterElement.defaultValueCode;
     paramConfig.isRequired = parameterElement.hasRequired;
+    paramConfig.isPathParameter = pathParamChecker.hasAnnotationOfExact(parameterElement);
 
-    print(paramType.runtimeType);
     // import type
     await _addImport(paramType.element);
 

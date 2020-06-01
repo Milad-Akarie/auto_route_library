@@ -9,3 +9,4 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  uri: ^0.11.3+1

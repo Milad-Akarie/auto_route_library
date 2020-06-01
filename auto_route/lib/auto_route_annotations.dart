@@ -1,10 +1,9 @@
+import 'package:meta/meta.dart';
+
 class AutoRouter {
   // if true a Navigator extension will be generated with
   // helper push methods of all routes
   final bool generateNavigationHelperExtension;
-
-  // defaults to true
-  final bool generateArgsHolderForSingleParameterRoutes;
 
   // defaults to 'Routes'
   final String routesClassName;
@@ -16,7 +15,6 @@ class AutoRouter {
 
   const AutoRouter._(
     this.generateNavigationHelperExtension,
-    this.generateArgsHolderForSingleParameterRoutes,
     this.routesClassName,
     this.routePrefix,
   );
@@ -25,16 +23,12 @@ class AutoRouter {
 // Defaults created routes to MaterialPageRoute unless
 // overridden by AutoRoute annotation
 class MaterialAutoRouter extends AutoRouter {
-  const MaterialAutoRouter(
-      {bool generateNavigationHelperExtension,
-      bool generateArgsHolderForSingleParameterRoutes,
-      String routesClassName,
-      String routePrefix})
-      : super._(
-            generateNavigationHelperExtension,
-            generateArgsHolderForSingleParameterRoutes,
-            routesClassName,
-            routePrefix);
+  const MaterialAutoRouter({
+    bool generateNavigationHelperExtension,
+    bool generateArgsHolderForSingleParameterRoutes,
+    String routesClassName,
+    String routePrefix,
+  }) : super._(generateNavigationHelperExtension, routesClassName, routePrefix);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
@@ -47,7 +41,6 @@ class CupertinoAutoRouter extends AutoRouter {
     String routePrefix,
   }) : super._(
           generateNavigationHelperExtension,
-          generateArgsHolderForSingleParameterRoutes,
           routesClassName,
           routePrefix,
         );
@@ -61,7 +54,6 @@ class AdaptiveAutoRouter extends AutoRouter {
     String routePrefix,
   }) : super._(
           generateNavigationHelperExtension,
-          generateArgsHolderForSingleParameterRoutes,
           routesClassName,
           routePrefix,
         );
@@ -103,13 +95,12 @@ class CustomAutoRouter extends AutoRouter {
       String routePrefix})
       : super._(
           generateNavigationHelperExtension,
-          generateArgsHolderForSingleParameterRoutes,
           routesClassName,
           routePrefix,
         );
 }
 
-class AutoRoute {
+class AutoRoute<T> {
   // initial route will have an explicit name of "/"
   // there could be only one initial route per navigator.
   final bool initial;
@@ -119,47 +110,53 @@ class AutoRoute {
 
   /// passed to the maintainState property in [MaterialPageRoute]
   final bool maintainState;
+  final List<AutoRoute> children;
 
   /// route path name which will be assigned to the given variable name
-  /// const homeScreen = '[name]';
+  /// const homeScreen = '[path]';
   /// if null a kabab cased variable name
   /// prefixed with '/' will be used;
   /// homeScreen -> home-screen
-  final String name;
+
+  final String path;
+
+  final Type page;
+
+  final List<Type> guards;
 
   // the results type returned
   /// from this page route MaterialPageRoute<[returnType]>()
   /// defaults to dynamic
   final Type returnType;
 
-  const AutoRoute._(
-      {this.initial,
-      this.fullscreenDialog,
-      this.maintainState,
-      this.name,
-      this.returnType});
+  const AutoRoute({this.page, this.initial, this.guards, this.fullscreenDialog, this.maintainState, this.path, this.returnType, this.children});
 }
 
-class MaterialRoute extends AutoRoute {
-  const MaterialRoute({
-    bool initial,
-    bool fullscreenDialog,
-    bool maintainState,
-    String name,
-    Type returnType,
-  }) : super._(
+class MaterialRoute<T> extends AutoRoute {
+  const MaterialRoute(
+      {String path,
+      @required Type page,
+      bool initial,
+      bool fullscreenDialog,
+      bool maintainState,
+      Type returnType,
+      List<Type> guards,
+      List<AutoRoute> children})
+      : super(
+          page: page,
+          guards: guards,
           initial: initial,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
-          name: name,
+          path: path,
+          children: children,
           returnType: returnType,
         );
 }
 
-const materialRoute = const MaterialRoute();
 // initial route will have an explicit name of "/"
 // there could be only one initial route per navigator.
-const initial = const AutoRoute._(initial: true);
+const initial = const AutoRoute(initial: true);
 
 // forces usage of CupertinoPageRoute instead of MaterialPageRoute
 class CupertinoRoute extends AutoRoute {
@@ -170,14 +167,15 @@ class CupertinoRoute extends AutoRoute {
     bool initial,
     bool fullscreenDialog,
     bool maintainState,
-    String name,
+    @Deprecated('replaced with path') String name,
+    String path,
     this.title,
     Type returnType,
-  }) : super._(
+  }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
-          name: name,
+          path: path ?? name,
           returnType: returnType,
         );
 }
@@ -189,14 +187,15 @@ class AdaptiveRoute extends AutoRoute {
     bool initial,
     bool fullscreenDialog,
     bool maintainState,
-    String name,
+    @Deprecated('replaced with path') String name,
+    String path,
     Type returnType,
     this.cupertinoPageTitle,
-  }) : super._(
+  }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
-          name: name,
+          path: path ?? name,
           returnType: returnType,
         );
 
@@ -233,17 +232,18 @@ class CustomRoute extends AutoRoute {
     bool initial,
     bool fullscreenDialog,
     bool maintainState,
-    String name,
+    @Deprecated('replaced with path') String name,
+    String path,
     this.transitionsBuilder,
     this.durationInMilliseconds,
     this.opaque,
     this.barrierDismissible,
     Type returnType,
-  }) : super._(
+  }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
-          name: name,
+          path: path ?? name,
           returnType: returnType,
         );
 }
@@ -262,3 +262,17 @@ class GuardedBy {
 
   const GuardedBy(this.guards);
 }
+
+class RoutesList {
+  final String namePrefix;
+
+  const RoutesList({this.namePrefix});
+}
+
+class PathParam {
+  final String name;
+
+  const PathParam([this.name]);
+}
+
+const pathParam = PathParam();

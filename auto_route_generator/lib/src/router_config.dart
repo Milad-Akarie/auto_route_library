@@ -10,44 +10,26 @@ import '../utils.dart';
 class RouterConfig {
   bool generateNavigationHelper;
   bool generateArgsHolderForSingleParameterRoutes;
-  String routePrefix;
 
   final globalRouteConfig = RouteConfig();
-  String routesClassName;
 
   RouterConfig.fromAnnotation(ConstantReader autoRouter) {
-    generateNavigationHelper =
-        autoRouter.peek('generateNavigationHelperExtension')?.boolValue ??
-            false;
-    generateArgsHolderForSingleParameterRoutes = autoRouter
-            .peek('generateArgsHolderForSingleParameterRoutes')
-            ?.boolValue ??
-        true;
-    routePrefix = autoRouter.peek('routePrefix')?.stringValue ?? '/';
-
-    routesClassName =
-        autoRouter.peek('routesClassName')?.stringValue ?? 'Routes';
+    generateNavigationHelper = autoRouter.peek('generateNavigationHelperExtension')?.boolValue ?? false;
+    generateArgsHolderForSingleParameterRoutes = autoRouter.peek('generateArgsHolderForSingleParameterRoutes')?.boolValue ?? true;
 
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       globalRouteConfig.routeType = RouteType.cupertino;
-    } else if (autoRouter
-        .instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
+    } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
       globalRouteConfig.routeType = RouteType.adaptive;
-    } else if (autoRouter
-        .instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
+    } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
       globalRouteConfig.routeType = RouteType.custom;
-      globalRouteConfig.durationInMilliseconds =
-          autoRouter.peek('durationInMilliseconds')?.intValue;
-      globalRouteConfig.customRouteOpaque =
-          autoRouter.peek('opaque')?.boolValue;
-      globalRouteConfig.customRouteBarrierDismissible =
-          autoRouter.peek('barrierDismissible')?.boolValue;
-      final function =
-          autoRouter.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      globalRouteConfig.durationInMilliseconds = autoRouter.peek('durationInMilliseconds')?.intValue;
+      globalRouteConfig.customRouteOpaque = autoRouter.peek('opaque')?.boolValue;
+      globalRouteConfig.customRouteBarrierDismissible = autoRouter.peek('barrierDismissible')?.boolValue;
+      final function = autoRouter.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
       if (function != null) {
         final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
-        final functionName = (function.isStatic &&
-                function.enclosingElement?.displayName != null)
+        final functionName = (function.isStatic && function.enclosingElement?.displayName != null)
             ? '${function.enclosingElement.displayName}.$displayName'
             : displayName;
 
@@ -55,9 +37,17 @@ class RouterConfig {
         if (function.enclosingElement?.name != 'TransitionsBuilders') {
           import = getImport(function);
         }
-        globalRouteConfig.transitionBuilder =
-            CustomTransitionBuilder(functionName, import);
+        globalRouteConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
       }
     }
+  }
+}
+
+class RoutesConfig{
+  String routesClassName;
+  String routeNamePrefix;
+  RoutesConfig.fromAnnotatedElement(AnnotatedElement annotatedElement){
+    routesClassName = capitalize(annotatedElement.element.name);
+    routeNamePrefix = annotatedElement.annotation.peek('namePrefix')?.stringValue ?? '';
   }
 }

@@ -35,7 +35,7 @@ packages:
       path: "../auto_route"
       relative: true
     source: path
-    version: "0.4.5"
+    version: "0.5.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -86,7 +86,7 @@ packages:
     source: hosted
     version: "4.1.0"
   build_test:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: build_test
       url: "https://pub.dartlang.org"
@@ -133,7 +133,7 @@ packages:
       name: collection
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.14.11"
+    version: "1.14.12"
   convert:
     dependency: transitive
     description:
@@ -299,7 +299,7 @@ packages:
       name: node_preamble
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.8"
+    version: "1.4.9"
   package_config:
     dependency: transitive
     description:
@@ -315,7 +315,7 @@ packages:
     source: hosted
     version: "1.0.10"
   path:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: path
       url: "https://pub.dartlang.org"
@@ -465,21 +465,21 @@ packages:
       name: test
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.14.3"
+    version: "1.14.6"
   test_api:
     dependency: transitive
     description:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.15"
+    version: "0.2.16"
   test_core:
     dependency: transitive
     description:
       name: test_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.4"
+    version: "0.3.6"
   timing:
     dependency: transitive
     description:
@@ -494,6 +494,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
+  uri:
+    dependency: "direct main"
+    description:
+      name: uri
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.11.3+1"
+  utf:
+    dependency: transitive
+    description:
+      name: utf
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.9.0+5"
   vector_math:
     dependency: transitive
     description:
@@ -507,7 +521,7 @@ packages:
       name: vm_service
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.0.2"
+    version: "4.0.4"
   watcher:
     dependency: transitive
     description:
@@ -528,7 +542,7 @@ packages:
       name: webkit_inspection_protocol
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.2"
+    version: "0.7.3"
   yaml:
     dependency: transitive
     description:
