@@ -2,7 +2,7 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/auto_route_annotations.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
-import 'package:auto_route_generator/router_class_generator_web.dart';
+import 'package:auto_route_generator/router_class_generator.dart';
 import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
@@ -62,7 +62,7 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouter> {
       namePrefix: routesConfig.routeNamePrefix,
     );
 
-    return RouterClassGeneratorWeb(routerClassName, routeConfigs, routerConfig, routesConfig).generate();
+    return RouterClassGenerator(routerClassName, routeConfigs, routerConfig, routesConfig).generate();
   }
 
   Future<List<RouteConfig>> _resolveRoutes(
