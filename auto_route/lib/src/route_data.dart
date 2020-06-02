@@ -1,59 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:uri/uri.dart';
 
-class RouteData<T> {
-  final RouteSettings _routeSettings;
+@immutable
+class RouteData<T> extends RouteSettings {
   final Uri _uri;
   final String template;
   final bool nullOk;
-  T _args;
+  final Parameters _pathParams;
 
   RouteData(
-    this._routeSettings,
+    RouteSettings _settings,
     this.template, {
     this.nullOk = true,
-  }) : _uri = Uri.tryParse(_routeSettings.name) {
-    var parser = UriParser(UriTemplate(template));
-    _pathParams = Parameters(parser.parse(_uri));
-    if (hasInvalidArgs()) {
-      throw FlutterError('Expected ${T.toString()} got ${_routeSettings.arguments.runtimeType}');
+  })  : _uri = Uri.tryParse(_settings.name),
+        _pathParams = _parsePathParamters(template, _settings.name),
+        super(name: _settings.name, arguments: _settings.arguments) {
+    if (_hasInvalidArgs()) {
+      throw FlutterError(
+          'Expected ${T.toString()} got ${_settings.arguments.runtimeType}');
     }
-    _args = _routeSettings.arguments;
   }
 
-  String get name => _uri?.path ?? _routeSettings.name;
+  static Parameters _parsePathParamters(template, String path) {
+    var uri = Uri.tryParse(path);
+    if (uri == null) {
+      return Parameters({});
+    } else {
+      var parser = UriParser(UriTemplate(template));
+      return Parameters(parser.parse(uri));
+    }
+  }
+
+  @override
+  String get name => _uri?.path ?? super.name;
 
   Parameters get queryParams => Parameters(_uri?.queryParameters);
 
-  Parameters _pathParams;
-
   Parameters get pathParams => _pathParams;
 
-  T get args => _args;
+  T get args => arguments;
 
-  bool hasInvalidArgs() {
+  bool _hasInvalidArgs() {
     if (!nullOk) {
-      return (_routeSettings.arguments is! T);
+      return (arguments is! T);
     } else {
-      return (_routeSettings.arguments != null && _routeSettings.arguments is! T);
+      return (arguments != null && arguments is! T);
+    }
+  }
+
+  static RouteData of(BuildContext context) {
+    var modal = ModalRoute.of(context);
+    if (modal != null && modal.settings is RouteData) {
+      return modal.settings as RouteData;
+    } else {
+      return null;
     }
   }
 }
 
 class Parameters {
-  final Map<String, String> _pathParams;
+  final Map<String, String> _params;
 
-  Parameters(Map<String, String> params) : _pathParams = params ?? {};
+  Parameters(Map<String, String> params) : _params = params ?? {};
 
-  Map<String, String> get input => _pathParams;
+  Map<String, String> get input => _params;
 
-  _ParameterValue operator [](String key) => _ParameterValue(_pathParams[key]);
+  ParameterValue operator [](String key) => ParameterValue._(_params[key]);
 }
 
-class _ParameterValue {
+class ParameterValue {
   final dynamic _value;
 
-  const _ParameterValue(this._value);
+  const ParameterValue._(this._value);
 
   dynamic get value => _value;
 

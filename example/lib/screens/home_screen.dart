@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
-typedef TypedFunction = void Function(int);
 class HomeScreen extends StatelessWidget {
 //  final  TypedFunction onSelected;
 //  HomeScreen(this.onSelected);
@@ -16,10 +15,9 @@ class HomeScreen extends StatelessWidget {
           Container(
             child: Center(
               child: FlatButton(
-                child: Text("Second Screen"),
+                child: Text("Users Screen"),
                 onPressed: () async {
-
-                  ExtendedNavigator.of(context).pushDeepLink('/second/3/details/admin');
+                  ExtendedNavigator.of(context).pushNamed('/users');
 //                ExtendedNavigator.of(context).pushNamed(Routes.secondScreen);
 //                  ExtendedNavigator.ofRouter<Router>().pushNamed(
 //                    Routes.secondScreen,
