@@ -11,8 +11,8 @@ import 'package:example/screens/users/sub/user_details.dart';
 import 'package:example/screens/users/sub/profile_screen.dart';
 
 abstract class UserRoutes {
-  static const userDetails = '/users/';
-  static const profileScreen = '/users/profile-screen';
+  static const userDetails = '/';
+  static const profileScreen = '/profile';
   static const all = {
     userDetails,
     profileScreen,
@@ -24,25 +24,19 @@ class $UsersRouter extends RouterBase {
   Set<String> get allRoutes => UserRoutes.all;
 
   @override
-  Map<String, RouteFactory> get routesMap => _routesMap;
+  Map<String, AutoRouteFactory> get routesMap => _routesMap;
 
-  final _routesMap = <String, RouteFactory>{
-    UserRoutes.userDetails: (RouteSettings settings) {
+  final _routesMap = <String, AutoRouteFactory>{
+    UserRoutes.userDetails: (RouteData data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => UserDetails(),
-        settings: settings,
-      );
+        settings: data,);
     },
-    UserRoutes.profileScreen: (RouteSettings settings) {
-      final data = RouteData<ProfileScreenArguments>(
-        settings,
-        UserRoutes.profileScreen,
-      );
-      ProfileScreenArguments args =
-          data.args ?? ProfileScreenArguments._fromParams(data.queryParams);
+    UserRoutes.profileScreen: (RouteData data) {
+      ProfileScreenArguments args =  ProfileScreenArguments();
       return MaterialPageRoute<dynamic>(
         builder: (context) => ProfileScreen(title: args.title, id: args.id),
-        settings: settings,
+        settings: data,
       );
     },
   };
@@ -57,7 +51,4 @@ class ProfileScreenArguments {
   final dynamic title;
   final String id;
   ProfileScreenArguments({this.title, this.id});
-  ProfileScreenArguments._fromParams(Parameters params)
-      : this.title = params['title'].value,
-        this.id = params['id'].stringValue;
 }

@@ -274,5 +274,13 @@ class PathParam {
 
   const PathParam([this.name]);
 }
-
 const pathParam = PathParam();
+
+class QueryParam {
+  final String name;
+
+  const QueryParam([this.name]);
+}
+
+const queryParam = QueryParam();
+

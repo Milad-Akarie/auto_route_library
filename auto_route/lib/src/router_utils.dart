@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // returns an error page routes with a helper message.
-PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
+PageRoute defaultUnknownRoutePage(String routeName) => MaterialPageRoute(
       builder: (ctx) => Scaffold(
         body: Container(
           color: Colors.redAccent,

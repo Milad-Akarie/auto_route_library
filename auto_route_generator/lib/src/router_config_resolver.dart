@@ -16,7 +16,7 @@ class RouterConfigResolver {
 
   RouterConfigResolver(this._globConfig, this._resolver);
 
-  Future<RouteConfig> resolve(ConstantReader autoRoute,[String pathPrefix]) async {
+  Future<RouteConfig> resolve(ConstantReader autoRoute, [String pathPrefix]) async {
     final routeConfig = RouteConfig();
     final type = autoRoute.read('page').typeValue;
     final classElement = type.element as ClassElement;
@@ -57,7 +57,7 @@ class RouterConfigResolver {
         routeConfig.parameters.add(await paramResolver.resolve(p));
       }
     }
-    _validatePathParams(routeConfig, classElement);
+   // _validatePathParams(routeConfig, classElement);
     return routeConfig;
   }
 
@@ -89,8 +89,6 @@ class RouterConfigResolver {
       }
       return;
     }
-
-
 
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
       routeConfig.routeType = RouteType.material;
@@ -125,24 +123,32 @@ class RouterConfigResolver {
 
   void _validatePathParams(RouteConfig route, ClassElement element) {
     var reg = RegExp(r'{(.*?)}');
-    var pathParams = route.parameters?.where((p) => p.isPathParameter)?.map((e) => e.name) ?? [];
-    if (reg.hasMatch(route.pathName)) {
-      var templateParams = reg.allMatches(route.pathName).map((e) => e.group(1));
-      templateParams.forEach((param) {
-        throwIf(
-          !pathParams.contains(param),
-          "${element.displayName} does not have a path-parameter named {$param}",
-          element: element,
-          todo: 'annotated your path-parameters with @PathParameter()',
-        );
-      });
-    } else {
-      throwIf(
-        pathParams.isNotEmpty,
-        "Path ${route.pathName} does not contain all path-parameters defined in "
-        "${element.displayName} ${pathParams.map((e) => '{$e}').toList()}",
-        element: element,
-      );
-    }
+    var pathParams = route.parameters?.where((p) => p.isPathParameter)?.map((e) => e.paramName)?.toSet() ?? {};
+    var templateParams = reg.allMatches(route.pathName).map((e) => e.group(1)).toSet();
+    throwIf(
+      (!templateParams.containsAll(pathParams)),
+      "Path ${route.pathName} does not define all path-parameters defined in "
+      "${element.displayName} ${pathParams.map((e) => '{$e}').toList()}",
+      element: element,
+    );
+
+//    if (reg.hasMatch(route.pathName)) {
+//      var templateParams = reg.allMatches(route.pathName).map((e) => e.group(1));
+//      templateParams.forEach((param) {
+//        throwIf(
+//          !pathParams.contains(param),
+//          "${element.displayName} does not have a path-parameter named {$param}",
+//          element: element,
+//          todo: 'annotated your path-parameters with @PathParameter()',
+//        );
+//      });
+//    } else {
+//      throwIf(
+//        pathParams.isNotEmpty,
+//        "Path ${route.pathName} does not contain all path-parameters defined in "
+//        "${element.displayName} ${pathParams.map((e) => '{$e}').toList()}",
+//        element: element,
+//      );
+//    }
   }
 }

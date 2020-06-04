@@ -4,12 +4,11 @@
 // AutoRouteGenerator
 // **************************************************************************
 
-import 'package:example/screens/users/users_router.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:example/screens/home_screen.dart';
+import 'package:example/screens/users/users_router.dart';
 import 'package:example/screens/users/users_screen.dart';
+import 'package:flutter/material.dart';
 
 abstract class Routes {
   static const homeScreen = '/';
@@ -18,43 +17,37 @@ abstract class Routes {
     homeScreen,
     usersScreen,
   };
-  static get subRoutes => SubRoutes;
-}
-
-abstract class SubRoutes {
-  static const subHome = '/';
 }
 
 class $Router extends RouterBase {
   @override
   Set<String> get allRoutes => Routes.all;
 
-  Map<Type, Function> subRouters = {UsersRouter: () => UsersRouter()};
+  @override
+  Map<String, RouterBuilder> get subRouters => {
+        Routes.usersScreen: () => UsersRouter(),
+      };
 
   @override
-  Map<String, RouteFactory> get routesMap => _routesMap;
+  Map<String, AutoRouteFactory> get routesMap => _routesMap;
 
-  final _routesMap = <String, RouteFactory>{
-    Routes.homeScreen: (RouteSettings settings) {
+  final _routesMap = <String, AutoRouteFactory>{
+    Routes.homeScreen: (RouteData data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => HomeScreen(),
-        settings: settings,
+        settings: data,
       );
     },
-    Routes.usersScreen: (RouteSettings settings) {
-      final data = RouteData<UsersScreenArguments>(
-        settings,
-        Routes.usersScreen,
-      );
-      UsersScreenArguments args =
-          data.args ?? UsersScreenArguments._fromParams(data.queryParams);
-
+    Routes.usersScreen: (RouteData data) {
+      var args = data.getArgs<UsersScreenArguments>();
+      UsersScreenArguments typedArgs = args ?? UsersScreenArguments();
       return MaterialPageRoute<dynamic>(
-        settings: data,
         builder: (context) => UsersScreen(
-            id: data.pathParams['id'].stringValue,
-            score: args.score,
-            limit: args.limit),
+          id: data.pathParams['id'].stringValue,
+          score: typedArgs.score,
+          limit: typedArgs.limit,
+        ),
+        settings: data,
       );
     },
   };
@@ -68,8 +61,6 @@ class $Router extends RouterBase {
 class UsersScreenArguments {
   final int score;
   final double limit;
+
   UsersScreenArguments({this.score, this.limit = 0.0});
-  UsersScreenArguments._fromParams(Parameters params)
-      : this.score = params['score'].intValue,
-        this.limit = params['limit'].doubleValue ?? 0.0;
 }

@@ -8,7 +8,12 @@ class RouterClassGenerator {
   final RoutesConfig _routesConfig;
   final StringBuffer _stringBuffer = StringBuffer();
 
-  RouterClassGenerator(this._className, this._routes, this._routerConfig, this._routesConfig);
+  RouterClassGenerator(
+    this._className,
+    this._routes,
+    this._routerConfig,
+    this._routesConfig,
+  );
 
   // helper functions
   void _write(Object obj) => _stringBuffer.write(obj);
@@ -76,12 +81,12 @@ class RouterClassGenerator {
     _newLine();
     _writeln('''
       @override
-      Map<String, RouteFactory> get routesMap => _routesMap;
+      Map<String, AutoRouteFactory> get routesMap => _routesMap;
     ''');
 
-    _writeln('final _routesMap = <String, RouteFactory>{');
+    _writeln('final _routesMap = <String, AutoRouteFactory>{');
     routes.forEach((r) {
-      _writeln('${_routesConfig.routesClassName}.${r.name}: (RouteSettings settings) {');
+      _writeln('${_routesConfig.routesClassName}.${r.name}: (RouteData data) {');
       _generateRoute(r);
       _writeln('},');
     });
@@ -91,39 +96,44 @@ class RouterClassGenerator {
   }
 
   void _generateRoute(RouteConfig r) {
-    final constructorParams = StringBuffer('');
+    List constructorParams = [];
 
-    if (r.parameters != null && r.parameters.isNotEmpty) {
+    if (r.parameters?.isNotEmpty == true) {
       // if router has any required or positional params the argument class holder becomes required.
       final nullOk = !r.parameters.any((p) => p.isRequired || p.isPositional);
       // show an error page  if passed args are not the same as declared args
       final argsType = r.argumentsHolderClassName;
 
-      _writeln('''
-        final data = RouteData<$argsType>(
-        settings,
-        ${_routesConfig.routesClassName}.${r.name}, 
-      ''');
+      _writeln('var args = data.getArgs<$argsType>(');
       if (!nullOk) {
-        _write(' nullOk: false');
+        _write(', nullOk: false');
       }
       _write(");");
-      _writeln('$argsType args = data.args ?? $argsType._fromParams(data.queryParams);');
+      _writeln('$argsType typedArgs = args ?? $argsType();');
 
-      r.parameters.asMap().forEach((i, param) {
-        var getter = param.isPathParameter ? "data.pathParams['${param.name}'].${param.getterName}" : "args.${param.name}";
-        if (param.isPositional) {
-          constructorParams.write(getter);
+      constructorParams = r.parameters.map<String>((param) {
+        String getterName;
+        if (param.isPathParameter) {
+          getterName = "data.pathParams['${param.paramName}'].${param.getterName}";
+        } else if (param.isQueryParam) {
+          getterName = "data.queryParams['${param.paramName}'].${param.getterName}";
         } else {
-          constructorParams.write('${param.name}:$getter');
+          getterName = "typedArgs.${param.name}";
         }
-        if (i != r.parameters.length - 1) {
-          constructorParams.write(',');
+        if (param.isPositional) {
+          return getterName;
+        } else {
+          return '${param.name}:$getterName';
         }
-      });
+      }).toList();
     }
 
-    final constructor = "${r.className}(${constructorParams.toString()})${r.hasWrapper ? ".wrappedRoute(context)" : ""}";
+    // add any empty item to add a comma at end
+    // when join(',') is called
+    if (constructorParams.length > 2) {
+      constructorParams.add('');
+    }
+    final constructor = "${r.className}(${constructorParams.join(',')})${r.hasWrapper ? ".wrappedRoute(context)" : ""}";
 
     _generateRouteBuilder(r, constructor);
   }
@@ -171,15 +181,15 @@ class RouterClassGenerator {
     });
     _writeln('});');
 
-    _writeln('$argsClassName._fromParams(Parameters params):');
-    params.asMap().forEach((i, param) {
-      var defaultCode = param.defaultValueCode != null ? '?? ${param.defaultValueCode}' : '';
-      _write("this.${param.name} = params['${param.name}'].${param.getterName} $defaultCode");
-      if (i != params.length - 1) {
-        _write(',');
-      } else
-        _write(';');
-    });
+//    _writeln('$argsClassName._fromParams(Parameters params):');
+//    params.asMap().forEach((i, param) {
+//      var defaultCode = param.defaultValueCode != null ? '?? ${param.defaultValueCode}' : '';
+//      _write("this.${param.name} = params['${param.name}'].${param.getterName} $defaultCode");
+//      if (i != params.length - 1) {
+//        _write(',');
+//      } else
+//        _write(';');
+//    });
 
     // close class
     _writeln('}');
@@ -218,19 +228,19 @@ class RouterClassGenerator {
   void _generateRouteBuilder(RouteConfig r, String constructor) {
     final returnType = r.returnType ?? 'dynamic';
     if (r.routeType == RouteType.cupertino) {
-      _write('return CupertinoPageRoute<$returnType>(builder: (context) => $constructor, settings: settings,');
+      _write('return CupertinoPageRoute<$returnType>(builder: (context) => $constructor, settings: data,');
       if (r.cupertinoNavTitle != null) {
         _write("title:'${r.cupertinoNavTitle}',");
       }
     } else if (r.routeType == RouteType.material) {
-      _write('return MaterialPageRoute<$returnType>(builder: (context) => $constructor, settings: settings,');
+      _write('return MaterialPageRoute<$returnType>(builder: (context) => $constructor, settings: data,');
     } else if (r.routeType == RouteType.adaptive) {
-      _write('return buildAdaptivePageRoute<$returnType>(builder: (context) => $constructor, settings: settings,');
+      _write('return buildAdaptivePageRoute<$returnType>(builder: (context) => $constructor, settings: data,');
       if (r.cupertinoNavTitle != null) {
         _write("cupertinoTitle:'${r.cupertinoNavTitle}',");
       }
     } else {
-      _write('return PageRouteBuilder<$returnType>(pageBuilder: (context, animation, secondaryAnimation) => $constructor, settings: settings,');
+      _write('return PageRouteBuilder<$returnType>(pageBuilder: (context, animation, secondaryAnimation) => $constructor, settings: data,');
 
       if (r.customRouteOpaque != null) {
         _write('opaque:${r.customRouteOpaque.toString()},');

@@ -1,51 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:uri/uri.dart';
 
+import '../auto_route.dart';
+
 @immutable
-class RouteData<T> extends RouteSettings {
-  final Uri _uri;
-  final String template;
-  final bool nullOk;
+class RouteData extends RouteSettings {
+  RouteData(this._routeMatch)
+      : _pathParams = _parsePathParameters(_routeMatch),
+        _queryParams = Parameters(_routeMatch.uri.queryParameters),
+        super(name: _routeMatch.uri.path, arguments: _routeMatch.settings.arguments);
+
+  static Parameters _parsePathParameters(MatchResult result) {
+    var parser = UriParser(UriTemplate(result.template));
+    return Parameters(parser.parse(result.uri));
+  }
+
+  final MatchResult _routeMatch;
   final Parameters _pathParams;
+  final Parameters _queryParams;
 
-  RouteData(
-    RouteSettings _settings,
-    this.template, {
-    this.nullOk = true,
-  })  : _uri = Uri.tryParse(_settings.name),
-        _pathParams = _parsePathParamters(template, _settings.name),
-        super(name: _settings.name, arguments: _settings.arguments) {
-    if (_hasInvalidArgs()) {
-      throw FlutterError(
-          'Expected ${T.toString()} got ${_settings.arguments.runtimeType}');
-    }
-  }
+  String get template => _routeMatch.template;
 
-  static Parameters _parsePathParamters(template, String path) {
-    var uri = Uri.tryParse(path);
-    if (uri == null) {
-      return Parameters({});
-    } else {
-      var parser = UriParser(UriTemplate(template));
-      return Parameters(parser.parse(uri));
-    }
-  }
-
-  @override
-  String get name => _uri?.path ?? super.name;
-
-  Parameters get queryParams => Parameters(_uri?.queryParameters);
+  Parameters get queryParams => _queryParams;
 
   Parameters get pathParams => _pathParams;
 
-  T get args => arguments;
+  T getArgs<T>({bool nullOk = true}) {
+    if (_hasInvalidArgs<T>(nullOk)) {
+      throw FlutterError('Expected ${T.toString()} got ${arguments?.runtimeType ?? 'null'}');
+    }
+    return arguments as T;
+  }
 
-  bool _hasInvalidArgs() {
+  bool _hasInvalidArgs<T>(bool nullOk) {
     if (!nullOk) {
       return (arguments is! T);
     } else {
       return (arguments != null && arguments is! T);
     }
+  }
+
+  @override
+  String toString() {
+    return 'RouteData{template: ${_routeMatch.template}, path: ${_routeMatch.uri.path}, pathParams: $_pathParams, queryParams: $_queryParams}';
   }
 
   static RouteData of(BuildContext context) {
@@ -63,9 +60,14 @@ class Parameters {
 
   Parameters(Map<String, String> params) : _params = params ?? {};
 
-  Map<String, String> get input => _params;
+  Map<String, String> get rawMap => _params;
 
   ParameterValue operator [](String key) => ParameterValue._(_params[key]);
+
+  @override
+  String toString() {
+    return _params.toString();
+  }
 }
 
 class ParameterValue {
@@ -96,37 +98,63 @@ class ParameterValue {
 }
 
 class RouteMatcher {
-  final Uri _uri;
+  final Uri uri;
 
-  RouteMatcher(this._uri);
+  RouteMatcher(this.uri);
 
   bool hasFullMatch(String template) {
-    if (template == _uri.path) {
+    if (template == uri.path) {
       return true;
     }
-    final match = UriParser(UriTemplate(template)).match(_uri);
+    final match = UriParser(UriTemplate(template)).match(uri);
     return match != null && match.rest.pathSegments.isEmpty;
   }
 
-  bool iterateMatches(
-    Set<String> templates, {
-    @required Function(String match, String template) onMatch,
-  }) {
+  RouteSegments matchingSegments(Set<String> templates) {
     bool every = false;
+    var matches = <String, String>{};
     for (var template in templates) {
-      var match = UriParser(UriTemplate(template)).match(_uri);
+      var match = UriParser(UriTemplate(template)).match(uri);
       if (match != null) {
-        var segmentToPush = _uri.path;
+        var segmentToPush = uri.path;
         if (match.rest.pathSegments.isNotEmpty) {
-          segmentToPush = _uri.path.replaceFirst('${match.rest}', '');
+          segmentToPush = uri.path.replaceFirst('${match.rest}', '');
         } else {
           every = true;
         }
-        onMatch(segmentToPush, template);
+        matches[template] = segmentToPush;
       } else {
         break;
       }
     }
-    return every;
+    return RouteSegments(matches: matches, hasFullMatch: every);
   }
+}
+
+class RouteSegments {
+  final bool hasFullMatch;
+  final Map<String, String> matches;
+
+  RouteSegments({this.hasFullMatch, this.matches});
+}
+
+@immutable
+class MatchResult {
+  final Uri uri;
+  final String template;
+  final RouteSettings settings;
+
+  MatchResult(this.settings, {this.uri, this.template});
+}
+
+@immutable
+class NestedRouteData extends RouteData {
+  final String pendingSegments;
+  final RouterBase router;
+
+  NestedRouteData({
+    this.pendingSegments,
+    this.router,
+    MatchResult matchResult,
+  }) : super(matchResult);
 }

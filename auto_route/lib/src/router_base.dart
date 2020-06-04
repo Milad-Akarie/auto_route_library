@@ -1,23 +1,42 @@
 part of 'extended_navigator.dart';
 
+typedef AutoRouteFactory = Route<dynamic> Function(RouteData data);
+typedef RouterBuilder<T extends RouterBase> = T Function();
+
 abstract class RouterBase {
   Map<String, List<Type>> get guardedRoutes => null;
 
   Set<String> get allRoutes => {};
 
+  Map<String, RouterBuilder> get subRouters => {};
+
   Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    final match = findFullMatch(settings);
-    if (match != null) {
-      return routesMap[match](settings);
+    final matchResult = findFullMatch(settings);
+
+    if (matchResult != null) {
+      RouteData data;
+      if (hasNestedRouter(matchResult.template)) {
+        data = NestedRouteData(
+          matchResult: matchResult,
+          router: subRouters[matchResult.template](),
+        );
+      } else {
+        data = RouteData(matchResult);
+      }
+      return routesMap[matchResult.template](data);
     }
+
+
     return onRouteNotFound(settings);
   }
 
+  bool hasNestedRouter(String template) => subRouters[template] != null;
+
   Route<dynamic> onRouteNotFound(RouteSettings settings) {
-    return unknownRoutePage(settings.name);
+    return defaultUnknownRoutePage(settings.name);
   }
 
-  Map<String, RouteFactory> routesMap;
+  Map<String, AutoRouteFactory> routesMap;
 
   // a shorthand for calling the onGenerateRoute function
   // when using Router directly in MaterialApp or such
@@ -65,7 +84,7 @@ abstract class RouterBase {
 //    return null;
 //  }
 
-  String findFullMatch(RouteSettings settings) {
+  MatchResult findFullMatch(RouteSettings settings) {
     var uri = Uri.tryParse(settings.name);
     if (uri == null) {
       return null;
@@ -73,7 +92,7 @@ abstract class RouterBase {
     final matcher = RouteMatcher(uri);
     for (var route in allRoutes) {
       if (matcher.hasFullMatch(route)) {
-        return route;
+        return MatchResult(settings, template: route, uri: uri);
       }
     }
     return null;

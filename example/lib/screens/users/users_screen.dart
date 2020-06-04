@@ -1,15 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/auto_route_annotations.dart';
-import 'package:example/screens/users/users_router.dart';
-import 'package:example/screens/users/users_router.gr.dart';
 import 'package:flutter/material.dart';
 
 class UsersScreen extends StatelessWidget {
   final String id;
+  final int score;
 
   const UsersScreen({
-    @pathParam this.id,
-    int score,
+    @pathParam this.id, this.score,
     double limit = 0.0,
   });
 
@@ -17,16 +15,13 @@ class UsersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // var route = ModalRoute.of(context);
     // var settings = route.settings as ExtendedRouteSettings;
-    print(RouteData.of(context)?.pathParams?.input);
+//    print(RouteData.of(context));
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Users Details $id"),
+        title: Text("Users Details $id score:$score"),
       ),
-      body: ExtendedNavigator<UsersRouter>(
-        router: UsersRouter(),
-        initialRoute: UserRoutes.profileScreen,
-      ),
+      body: NestedNavigator()
     );
   }
 }

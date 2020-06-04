@@ -6,15 +6,18 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 final pathParamChecker = TypeChecker.fromRuntime(PathParam);
+final queryParamChecker = TypeChecker.fromRuntime(QueryParam);
 
 // holds constructor parameter info to be used
 // in generating route parameters.
 class RouteParamConfig {
   String type;
   String name;
+  String _paramName;
   bool isPositional;
   bool isRequired;
   bool isPathParameter;
+  bool isQueryParam;
   String defaultValueCode;
   Set<String> imports = {};
 
@@ -34,6 +37,8 @@ class RouteParamConfig {
         return 'value';
     }
   }
+
+  String get paramName => _paramName ?? name;
 }
 
 class RouteParameterResolver {
@@ -50,7 +55,16 @@ class RouteParameterResolver {
     paramConfig.isPositional = parameterElement.isPositional;
     paramConfig.defaultValueCode = parameterElement.defaultValueCode;
     paramConfig.isRequired = parameterElement.hasRequired;
+
     paramConfig.isPathParameter = pathParamChecker.hasAnnotationOfExact(parameterElement);
+    if (paramConfig.isPathParameter) {
+      paramConfig._paramName = pathParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
+    }
+
+    paramConfig.isQueryParam = queryParamChecker.hasAnnotationOfExact(parameterElement);
+    if (paramConfig.isQueryParam) {
+      paramConfig._paramName = queryParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
+    }
 
     // import type
     await _addImport(paramType.element);
@@ -81,7 +95,6 @@ class RouteParameterResolver {
   }
 
   Future<String> _resolveLibImport(Element element) async {
-    print(element.name);
     if (element?.source == null || isCoreDartType(element.source)) {
       return null;
     }
