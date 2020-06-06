@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,45 +62,58 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
     String initialRouteName,
     Object initialRouteArgs,
   ) {
-    final routes = <Route>[];
+    final initialRoutes = <Route>[];
     final router = navigator.router;
     assert(router != null);
-    if (initialRouteName != null) {
+    if (initialRouteName?.isNotEmpty == true) {
       var matcher = RouteMatcher(Uri.parse(initialRouteName));
       var matchingSegments = matcher.matchingSegments(router.allRoutes);
 
       matchingSegments.matches.forEach((template, segment) {
-        RouteData data;
-        final matchResults = MatchResult(
-          RouteSettings(name: segment),
-          uri: Uri.parse(segment),
-          template: template,
-        );
-        if (router.subRouters[template] != null) {
-          data = NestedRouteData(
-            matchResult: matchResults,
-            router: router.subRouters[template](),
-            pendingSegments: initialRouteName,
+        RouteSettings settings;
+        if (router.nestedRouters[template] != null) {
+          print(segment);
+          settings = ParentRouteSettings(
+            path: segment,
+            template: template,
+            initialRoute: initialRouteName.replaceFirst(segment, ''),
           );
         } else {
-          data = RouteData(matchResults);
+          settings = RouteSettings(name: segment);
         }
-        var route = router.routesMap[template](data);
-        routes.add(route);
+
+        var parentPath = '';
+        if (navigator.parent != null) {
+          parentPath = navigator.parent._stackObserver.current;
+        }
+        var route = router.onGenerateRoute(settings,parentPath);
+        if (route != null) {
+          initialRoutes.add(route);
+        }
       });
     }
 
-    if (routes.isEmpty) {
-      routes.add(router.onGenerateRoute(RouteSettings(name: '/')));
-    }
+    if (initialRoutes.isEmpty) {
+      final settings = RouteSettings(name: '/');
 
-    return routes;
+      var route = router.onGenerateRoute(settings);
+      if (route == null) {
+        route = router.onRouteNotFound(settings);
+      }
+      initialRoutes.add(route);
+    }
+    initialRoutes.removeWhere((r) => r == null);
+    navigator.initialRoutes.addAll(initialRoutes);
+
+//    initialRoutes.forEach((route) => navigator.push(route));
+
+//    print("initial routes $initialRoutes");
+    return initialRoutes;
   }
 
   ExtendedNavigator call(_, __) => this;
 
   static ExtendedNavigatorState ofRouter<T extends RouterBase>() => _NavigationStatesContainer._instance.get<T>();
-
 
   static ExtendedNavigatorState get root => _NavigationStatesContainer._instance.getRootNavigator();
 
@@ -144,6 +158,8 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
   T get router => _router;
 
+  List<Route> initialRoutes = [];
+
   ExtendedNavigatorState get parent => context.findAncestorStateOfType<ExtendedNavigatorState>();
 
   @override
@@ -160,7 +176,7 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
   }
 
   Future<dynamic> pushDeepLink(String url) async {
-    return _pushDeepLink(Uri.tryParse(url));
+    return _routeNavigator._pushDeepLink(Uri.tryParse(url));
   }
 
   Future<dynamic> _pushDeepLink(Uri uri) {
@@ -168,33 +184,30 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
     var matchResult = matcher.matchingSegments(_router.allRoutes);
 
     if (!matchResult.hasFullMatch) {
-      print(matchResult.matches);
+//      print(matchResult.matches);
 //      throw FlutterError("Failed to push deepLink $uri");
     }
 
     matchResult.matches.forEach((template, segment) {
-      RouteData data;
-      final matchResults = MatchResult(
-        RouteSettings(name: segment),
-        uri: Uri.parse(segment),
-        template: template,
-      );
-      if (_router.subRouters[template] != null) {
-        data = NestedRouteData(
-          matchResult: matchResults,
-          router: _router.subRouters[template](),
-          pendingSegments: uri.toString(),
+      RouteSettings settings;
+      if (router.nestedRouters[template] != null) {
+        settings = ParentRouteSettings(
+          path: segment,
+          template: template,
+          initialRoute: uri.path,
         );
       } else {
-        data = RouteData(matchResults);
+        settings = RouteSettings(name: segment);
       }
-      var route = _router.routesMap[template](data);
-      push(route);
+      var route = _router.onGenerateRoute(settings);
+      if (route != null) push(route);
     });
   }
 
   bool get isRoot => parent == null;
   WillPopCallback _willPopCallback;
+
+  ExtendedNavigatorState get _routeNavigator => context.findRootAncestorStateOfType<ExtendedNavigatorState>() ?? this;
 
   @override
   void didChangeDependencies() {
@@ -215,6 +228,13 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
   @override
   @optionalTypeArgs
   Future<T> pushNamed<T extends Object>(String routeName, {Object arguments, OnNavigationRejected onReject}) async {
+//    if (routeName.startsWith('/')) {
+//      return pushDeepLink(routeName);
+//    } else {
+//      var currentPath = RouteData.of(context)?.name ?? '';
+//      print("pushing deepLink: ${'$currentPath/$routeName'}");
+//      pushDeepLink('$currentPath/$routeName');
+//    }
     return await _canNavigate(
       routeName,
       arguments: arguments,
@@ -225,6 +245,30 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
             arguments: arguments,
           )
         : null;
+  }
+
+  pushRelativeRoute(String routeName) {
+//    var parentData = ParentRouteData.of(context);
+//
+//    if (parentData != null) {
+//      settings = RouteSettings(name: '${parentData.name}$routeName');
+//    } else {
+//      settings = RouteSettings(name: routeName);
+//    }
+    RouteSettings settings = RouteSettings(name: routeName);
+    var parentPath = '';
+    if (parent != null) {
+      print(parent._stackObserver.history);
+      parentPath =parent._stackObserver.current;
+    }
+//    print('relativeRoute $routeName');
+    var route = _router.onGenerateRoute(settings,parentPath);
+
+    if (route == null) {
+      route = _router.onRouteNotFound(settings);
+    }
+
+    return push(route);
   }
 
   @override
@@ -257,6 +301,21 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
         : null;
   }
 
+  @override
+  Future<T> push<T extends Object>(Route<T> route) {
+    var parentData = RouteData.of(context);
+//    print("pushing $route");
+//    if (parentData != null) {
+//      print('parent routeData = null');
+//      route.settings.copyWith(name: '/parent-data/${route.settings.name}');
+//    }
+//    print('pushing ${route.settings.runtimeType}');
+//      route.settings.copyWith(name: '/parent-data/${route.settings.name}');
+
+//    print(ModalRoute.of(context));
+    return super.push(route);
+  }
+
   // On soft back button pressed in Android
   @override
   Future<bool> didPopRoute() {
@@ -267,7 +326,8 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
   @override
   Future<bool> didPushRoute(String route) async {
     assert(mounted);
-    pushNamed(route);
+    print("did push $route");
+    pushDeepLink(route);
     return true;
   }
 
@@ -316,14 +376,14 @@ class _NavigationStatesContainer {
   static final _NavigationStatesContainer _instance = _NavigationStatesContainer._();
   final Map<Type, ExtendedNavigatorState> _navigatorKeys = {};
 
-  ExtendedNavigatorState operator  [](Type type) => _navigatorKeys[type];
+  ExtendedNavigatorState operator [](Type type) => _navigatorKeys[type];
+
   _NavigationStatesContainer._();
 
   ExtendedNavigatorState create<T extends RouterBase>(
     List<RouteGuard> guards,
     RouterBase router,
   ) {
-    print('creating navigation state for ${router.runtimeType}');
     return _navigatorKeys[router.runtimeType] = ExtendedNavigatorState<T>(
       router,
       guards: guards,
@@ -387,13 +447,19 @@ class NestedNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final routeData = RouteData.of(context);
-    if (routeData is! NestedRouteData) {
+    if (routeData is! ParentRouteData) {
       throw FlutterError("failed to hook nested navigator");
     }
-    var nestedRouteData = routeData as NestedRouteData;
+
+    var nestedRouteData = routeData as ParentRouteData;
+    var initial = initialRoute;
+    if (nestedRouteData.initialRoute?.isNotEmpty == true) {
+      initial = nestedRouteData.initialRoute;
+    }
+    print(initial);
     return ExtendedNavigator(
       router: nestedRouteData.router,
-      initialRoute: nestedRouteData.pendingSegments ?? initialRoute,
+      initialRoute: initial,
       key: key,
     );
   }

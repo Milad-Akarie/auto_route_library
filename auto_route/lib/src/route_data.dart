@@ -45,6 +45,11 @@ class RouteData extends RouteSettings {
     return 'RouteData{template: ${_routeMatch.template}, path: ${_routeMatch.uri.path}, pathParams: $_pathParams, queryParams: $_queryParams}';
   }
 
+  @override
+  RouteData copyWith({String name, Object arguments}) {
+    return RouteData(null);
+  }
+
   static RouteData of(BuildContext context) {
     var modal = ModalRoute.of(context);
     if (modal != null && modal.settings is RouteData) {
@@ -145,16 +150,53 @@ class MatchResult {
   final RouteSettings settings;
 
   MatchResult(this.settings, {this.uri, this.template});
+
+  MatchResult prefixPath(String parentPath) {
+    return MatchResult(this.settings, uri: this.uri.replace(path: '$parentPath${uri.path}'), template: this.template);
+  }
 }
 
 @immutable
-class NestedRouteData extends RouteData {
-  final String pendingSegments;
+class ParentRouteSettings extends RouteSettings {
+  final String initialRoute;
+  final String template;
+
+  ParentRouteSettings({
+    @required this.template,
+    @required String path,
+    this.initialRoute,
+    Object args,
+  }) : super(name: path, arguments: args);
+}
+
+@immutable
+class ChildRouteSettings extends RouteSettings {
+  final String parentPath;
+
+  ChildRouteSettings({
+    @required this.parentPath,
+    @required String path,
+    Object args,
+  }) : super(name: path, arguments: args);
+}
+
+@immutable
+class ParentRouteData extends RouteData {
+  final String initialRoute;
   final RouterBase router;
 
-  NestedRouteData({
-    this.pendingSegments,
+  ParentRouteData({
+    this.initialRoute,
     this.router,
     MatchResult matchResult,
   }) : super(matchResult);
+
+  static ParentRouteData of(BuildContext context) {
+    var modal = ModalRoute.of(context);
+    if (modal != null && modal?.settings is ParentRouteData) {
+      return modal.settings as ParentRouteData;
+    } else {
+      return null;
+    }
+  }
 }

@@ -8,32 +8,43 @@ abstract class RouterBase {
 
   Set<String> get allRoutes => {};
 
-  Map<String, RouterBuilder> get subRouters => {};
+  Map<String, RouterBuilder> get nestedRouters => {};
 
-  Route<dynamic> onGenerateRoute(RouteSettings settings) {
+  Route<dynamic> onGenerateRoute(RouteSettings settings, [String parentPath = '']) {
+    assert(settings != null);
+    assert(routesMap != null);
+
+    print("----------------------");
+    print("generating for $settings parentPath: $parentPath");
+
     final matchResult = findFullMatch(settings);
-
+    print(matchResult.uri.path);
     if (matchResult != null) {
       RouteData data;
-      if (hasNestedRouter(matchResult.template)) {
-        data = NestedRouteData(
-          matchResult: matchResult,
-          router: subRouters[matchResult.template](),
+      if (settings is ParentRouteSettings) {
+        data = ParentRouteData(
+          matchResult: matchResult.prefixPath(parentPath),
+          initialRoute: settings.initialRoute,
+          router: nestedRouters[matchResult.template](),
+        );
+      } else if (hasNestedRouter(matchResult.template)) {
+        data = ParentRouteData(
+          matchResult: matchResult.prefixPath(parentPath),
+          router: nestedRouters[matchResult.template](),
         );
       } else {
-        data = RouteData(matchResult);
+        data = RouteData(matchResult.prefixPath(parentPath));
       }
       return routesMap[matchResult.template](data);
     }
-
-
-    return onRouteNotFound(settings);
+    return null;
+//    return onRouteNotFound(settings);
   }
 
-  bool hasNestedRouter(String template) => subRouters[template] != null;
+  bool hasNestedRouter(String template) => nestedRouters != null && nestedRouters[template] != null;
 
   Route<dynamic> onRouteNotFound(RouteSettings settings) {
-    return defaultUnknownRoutePage(settings.name);
+    return defaultUnknownRoutePage(settings?.name);
   }
 
   Map<String, AutoRouteFactory> routesMap;

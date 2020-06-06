@@ -10,7 +10,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        ExtendedNavigator.rootNavigator.pop(false);
+        ExtendedNavigator.root.pop(false);
         return false;
       },
       child: Scaffold(

@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 
 abstract class Routes {
   static const homeScreen = '/';
-  static const usersScreen = '/users';
+  static const usersScreen = '/users/{id}';
   static const all = {
     homeScreen,
     usersScreen,
@@ -24,7 +24,7 @@ class $Router extends RouterBase {
   Set<String> get allRoutes => Routes.all;
 
   @override
-  Map<String, RouterBuilder> get subRouters => {
+  Map<String, RouterBuilder> get nestedRouters => {
         Routes.usersScreen: () => UsersRouter(),
       };
 
