@@ -4,15 +4,14 @@
 // AutoRouteGenerator
 // **************************************************************************
 
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:example/screens/users/sub/user_details.dart';
 import 'package:example/screens/users/sub/profile_screen.dart';
+import 'package:example/screens/users/sub/user_details.dart';
+import 'package:flutter/material.dart';
 
 abstract class UserRoutes {
   static const userDetails = '/';
-  static const profileScreen = '/profile';
+  static const profileScreen = '/profile/:id';
   static const all = {
     userDetails,
     profileScreen,
@@ -30,10 +29,11 @@ class $UsersRouter extends RouterBase {
     UserRoutes.userDetails: (RouteData data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => UserDetails(),
-        settings: data,);
+        settings: data,
+      );
     },
     UserRoutes.profileScreen: (RouteData data) {
-      ProfileScreenArguments args =  ProfileScreenArguments();
+      ProfileScreenArguments args = ProfileScreenArguments();
       return MaterialPageRoute<dynamic>(
         builder: (context) => ProfileScreen(title: args.title, id: args.id),
         settings: data,

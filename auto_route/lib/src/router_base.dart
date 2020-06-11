@@ -18,22 +18,21 @@ abstract class RouterBase {
     print("generating for $settings parentPath: $parentPath");
 
     final matchResult = findFullMatch(settings);
-    print(matchResult.uri.path);
     if (matchResult != null) {
       RouteData data;
       if (settings is ParentRouteSettings) {
         data = ParentRouteData(
-          matchResult: matchResult.prefixPath(parentPath),
+          matchResult: matchResult.prefixPathWith(parentPath),
           initialRoute: settings.initialRoute,
           router: nestedRouters[matchResult.template](),
         );
       } else if (hasNestedRouter(matchResult.template)) {
         data = ParentRouteData(
-          matchResult: matchResult.prefixPath(parentPath),
+          matchResult: matchResult.prefixPathWith(parentPath),
           router: nestedRouters[matchResult.template](),
         );
       } else {
-        data = RouteData(matchResult.prefixPath(parentPath));
+        data = RouteData(matchResult.prefixPathWith(parentPath));
       }
       return routesMap[matchResult.template](data);
     }
@@ -60,21 +59,21 @@ abstract class RouterBase {
   var _initialRouteHasNotBeenRedirected = true;
 
   Route<dynamic> _onGenerateRoute(RouteSettings settings, Object initialRouteArgs) {
-    final routeName = settings.name;
-    if (routeName == '/') {
-      settings = settings.copyWith(arguments: initialRouteArgs);
-      if (_hasGuards(routeName) && _initialRouteHasNotBeenRedirected) {
-        _initialRouteHasNotBeenRedirected = false;
-        assert(_onRePushInitialRoute != null);
-        _onRePushInitialRoute(settings);
-        return PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 0),
-          pageBuilder: (_, __, ___) => Container(
-            color: Colors.white,
-          ),
-        );
-      }
-    }
+//    final routeName = settings.name;
+//    if (routeName == '/') {
+//      settings = settings.copyWith(arguments: initialRouteArgs);
+//      if (_hasGuards(routeName) && _initialRouteHasNotBeenRedirected) {
+//        _initialRouteHasNotBeenRedirected = false;
+//        assert(_onRePushInitialRoute != null);
+//        _onRePushInitialRoute(settings);
+//        return PageRouteBuilder(
+//          transitionDuration: const Duration(milliseconds: 0),
+//          pageBuilder: (_, __, ___) => Container(
+//            color: Colors.white,
+//          ),
+//        );
+//      }
+//    }
 
     return onGenerateRoute(settings);
   }
@@ -96,14 +95,10 @@ abstract class RouterBase {
 //  }
 
   MatchResult findFullMatch(RouteSettings settings) {
-    var uri = Uri.tryParse(settings.name);
-    if (uri == null) {
-      return null;
-    }
-    final matcher = RouteMatcher(uri);
+    final matcher = RouteMatcher(settings);
     for (var route in allRoutes) {
       if (matcher.hasFullMatch(route)) {
-        return MatchResult(settings, template: route, uri: uri);
+        return matcher.match(route);
       }
     }
     return null;

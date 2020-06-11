@@ -14,11 +14,11 @@ class Router extends $Router {
     AutoRoute(
       path: '/users',
       page: UsersScreen,
-//      children: [
-//        AutoRoute(path: '/details/{user}', page: SecondNested),
-//      ],
+      children: subRoutes,
     ),
   ];
+
+  static const subRoutes = [
+    AutoRoute(path: '/details/:user', page: UsersScreen),
+  ];
 }
-
-

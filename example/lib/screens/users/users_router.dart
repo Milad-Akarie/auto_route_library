@@ -7,7 +7,7 @@ import 'package:example/screens/users/users_router.gr.dart';
 class UsersRouter extends $UsersRouter {
   @RoutesList()
   static const userRoutes = <AutoRoute>[
-    AutoRoute(page: UserDetails, initial: true),
-    AutoRoute(page: ProfileScreen),
+    MaterialRoute<String>(page: UserDetails, initial: true),
+    MaterialRoute(page: ProfileScreen),
   ];
 }

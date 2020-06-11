@@ -5,6 +5,7 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart';
+import 'package:example/router/route_guards.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/users/users_router.dart';
 import 'package:example/screens/users/users_screen.dart';
@@ -12,7 +13,7 @@ import 'package:flutter/material.dart';
 
 abstract class Routes {
   static const homeScreen = '/';
-  static const usersScreen = '/users/{id}';
+  static const usersScreen = '/users/:id';
   static const all = {
     homeScreen,
     usersScreen,
@@ -24,6 +25,10 @@ class $Router extends RouterBase {
   Set<String> get allRoutes => Routes.all;
 
   @override
+  Map<String, List<Type>> get guardedRoutes => {
+        Routes.homeScreen: [AuthGuard]
+      };
+  @override
   Map<String, RouterBuilder> get nestedRouters => {
         Routes.usersScreen: () => UsersRouter(),
       };
@@ -33,8 +38,9 @@ class $Router extends RouterBase {
 
   final _routesMap = <String, AutoRouteFactory>{
     Routes.homeScreen: (RouteData data) {
-      return MaterialPageRoute<dynamic>(
-        builder: (context) => HomeScreen(),
+      return PageRouteBuilder<dynamic>(
+        transitionDuration: Duration(seconds: 0),
+        pageBuilder: (_, __, context) => HomeScreen(),
         settings: data,
       );
     },

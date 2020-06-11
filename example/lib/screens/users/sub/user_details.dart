@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/screens/users/users_router.gr.dart';
 import 'package:flutter/material.dart';
 
 class UserDetails extends StatelessWidget {
@@ -9,7 +10,7 @@ class UserDetails extends StatelessWidget {
         FlatButton(
           child: Text("User Profile"),
           onPressed: () {
-            AutoRouter.of(context).push('/profile');
+            ExtendedNavigator.of(context).pushNamed(UserRoutes.profileScreen);
           },
         ),
       ],
