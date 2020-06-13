@@ -1,4 +1,4 @@
-export 'src/custom_transtion_builder.dart';
+export 'src/custom_transition_builder.dart';
 export 'src/route_config.dart';
 export 'src/router_config.dart';
 export 'src/route_paramter_config.dart';

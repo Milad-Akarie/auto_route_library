@@ -1,22 +1,78 @@
+import 'package:analyzer/dart/constant/value.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/auto_route_annotations.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
+import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../utils.dart';
+
+const routesMapChecker = TypeChecker.fromRuntime(RoutesList);
 
 /// Extracts and holds router configs
 /// to be used in [RouterClassGenerator]
 
 class RouterConfig {
-  bool generateNavigationHelper;
-  bool generateArgsHolderForSingleParameterRoutes;
+  final bool generateNavigationHelper;
+  final List<RouteConfig> routes;
+  final RouteConfig globalRouteConfig;
+  final String routesClassName;
+  final String routeNamePrefix;
+  final String routerClassName;
 
-  final globalRouteConfig = RouteConfig();
+  RouterConfig({
+    this.generateNavigationHelper,
+    this.routes,
+    this.globalRouteConfig,
+    this.routesClassName,
+    this.routeNamePrefix,
+    this.routerClassName,
+  });
 
-  RouterConfig.fromAnnotation(ConstantReader autoRouter) {
-    generateNavigationHelper = autoRouter.peek('generateNavigationHelperExtension')?.boolValue ?? false;
-    generateArgsHolderForSingleParameterRoutes = autoRouter.peek('generateArgsHolderForSingleParameterRoutes')?.boolValue ?? true;
+  RouterConfig copyWith({
+    bool generateNavigationHelper,
+    List<RouteConfig> routes,
+    RouteConfig globalRouteConfig,
+    String routesClassName,
+    String routeNamePrefix,
+    String routerClassName,
+  }) {
+    return RouterConfig(
+      generateNavigationHelper: generateNavigationHelper ?? this.generateNavigationHelper,
+      routes: routes ?? this.routes,
+      globalRouteConfig: globalRouteConfig ?? this.globalRouteConfig,
+      routesClassName: routesClassName ?? this.routesClassName,
+      routeNamePrefix: routeNamePrefix ?? this.routeNamePrefix,
+      routerClassName: routerClassName ?? this.routerClassName,
+    );
+  }
 
+  List<RouterConfig> get subRoutes => routes.where((e) => e.routerConfig != null).map((e) => e.routerConfig).toList();
+
+  List<RouterConfig> get collectAllRoutersIncludingParent =>
+      subRoutes.fold([this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
+
+  @override
+  String toString() {
+    return 'RouterConfig{routes: $routes, routesClassName: $routesClassName, routerClassName: $routerClassName}';
+  }
+}
+
+class RouterConfigResolver {
+  final Resolver _resolver;
+
+  RouterConfigResolver(this._resolver);
+
+  Future<RouterConfig> resolve(ConstantReader autoRouter, ClassElement clazz) async {
+    // ensure router config classes are prefixed with $
+    // to use the stripped name for the generated class
+    throwIf(
+      !clazz.displayName.startsWith(r'$'),
+      'Router class name must be prefixed with \$',
+      element: clazz,
+    );
+
+    var globalRouteConfig = RouteConfig();
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       globalRouteConfig.routeType = RouteType.cupertino;
     } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
@@ -40,14 +96,50 @@ class RouterConfig {
         globalRouteConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
       }
     }
-  }
-}
 
-class RoutesConfig{
-  String routesClassName;
-  String routeNamePrefix;
-  RoutesConfig.fromAnnotatedElement(AnnotatedElement annotatedElement){
-    routesClassName = capitalize(annotatedElement.element.name);
-    routeNamePrefix = annotatedElement.annotation.peek('namePrefix')?.stringValue ?? '';
+    var generateNavigationExt = autoRouter.peek('generateNavigationHelperExtension')?.boolValue ?? false;
+
+    final autoRoutes = clazz.fields.firstWhere((field) => routesMapChecker.hasAnnotationOfExact(field), orElse: () {
+      throwError('Can not find a routes list. Did you forget to annotate your routesList with @RoutesList()?', element: clazz);
+      return null;
+    });
+    final annotatedRoutesList = AnnotatedElement(ConstantReader(routesMapChecker.firstAnnotationOf(autoRoutes)), autoRoutes);
+
+    var routeNamePrefix = annotatedRoutesList.annotation.peek('prefixName')?.stringValue ?? '/';
+
+    final constantRoutesReader = ConstantReader(autoRoutes.computeConstantValue());
+
+    var routerConfig = RouterConfig(
+      globalRouteConfig: globalRouteConfig,
+      routerClassName: clazz.displayName.substring(1),
+      routesClassName: capitalize(autoRoutes.name),
+      routeNamePrefix: routeNamePrefix,
+      generateNavigationHelper: generateNavigationExt,
+    );
+
+    var routes = await _resolveRoutes(routerConfig, constantRoutesReader.listValue);
+    return routerConfig.copyWith(routes: routes);
+  }
+
+  Future<List<RouteConfig>> _resolveRoutes(RouterConfig routerConfig, List<DartObject> routesList) async {
+    var routeResolver = RouteConfigResolver(routerConfig, _resolver);
+    final routes = <RouteConfig>[];
+    for (var entry in routesList) {
+      var routeReader = ConstantReader(entry);
+      RouteConfig route;
+      route = await routeResolver.resolve(routeReader);
+      routes.add(route);
+
+      var children = routeReader.peek('children')?.listValue;
+      if (children != null) {
+        var subRouterConfig = routerConfig.copyWith(
+          routerClassName: "${route.className}Router",
+          routesClassName: "${route.className}Routes",
+        );
+        var routes = await _resolveRoutes(subRouterConfig, children);
+        route.routerConfig = subRouterConfig.copyWith(routes: routes);
+      }
+    }
+    return routes;
   }
 }

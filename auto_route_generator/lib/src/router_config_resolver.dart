@@ -10,13 +10,13 @@ const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
 const TypeChecker unknownRouteChecker = TypeChecker.fromRuntime(UnknownRoute);
 
 // extracts route configs from class fields
-class RouterConfigResolver {
-  final RouteConfig _globConfig;
+class RouteConfigResolver {
+  final RouterConfig _routerConfig;
   final Resolver _resolver;
 
-  RouterConfigResolver(this._globConfig, this._resolver);
+  RouteConfigResolver(this._routerConfig, this._resolver);
 
-  Future<RouteConfig> resolve(ConstantReader autoRoute, [String pathPrefix]) async {
+  Future<RouteConfig> resolve(ConstantReader autoRoute) async {
     final routeConfig = RouteConfig();
     final type = autoRoute.read('page').typeValue;
     final classElement = type.element as ClassElement;
@@ -30,11 +30,10 @@ class RouterConfigResolver {
       if (autoRoute.peek('initial')?.boolValue == true) {
         path = '/';
       } else {
-        path = '/${toKababCase(routeConfig.className)}';
+        path = '${_routerConfig.routeNamePrefix}${toKababCase(routeConfig.className)}';
       }
     }
-    print(pathPrefix);
-    routeConfig.pathName = '${pathPrefix ?? ''}$path';
+    routeConfig.pathName = path;
 
     throwIf(
       type.element is! ClassElement,
@@ -80,12 +79,13 @@ class RouterConfigResolver {
     }
 
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(AutoRoute))) {
-      routeConfig.routeType = _globConfig.routeType;
-      if (_globConfig.routeType == RouteType.custom) {
-        routeConfig.transitionBuilder = _globConfig.transitionBuilder;
-        routeConfig.durationInMilliseconds = _globConfig.durationInMilliseconds;
-        routeConfig.customRouteBarrierDismissible = _globConfig.customRouteBarrierDismissible;
-        routeConfig.customRouteOpaque = _globConfig.customRouteOpaque;
+       var globConfig = _routerConfig.globalRouteConfig;
+      routeConfig.routeType = globConfig.routeType;
+      if (globConfig.routeType == RouteType.custom) {
+        routeConfig.transitionBuilder = globConfig.transitionBuilder;
+        routeConfig.durationInMilliseconds = globConfig.durationInMilliseconds;
+        routeConfig.customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
+        routeConfig.customRouteOpaque = globConfig.customRouteOpaque;
       }
       return;
     }
@@ -117,7 +117,7 @@ class RouterConfigResolver {
         routeConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
       }
     } else {
-      routeConfig.routeType = _globConfig.routeType;
+      routeConfig.routeType = _routerConfig.globalRouteConfig.routeType;
     }
   }
 

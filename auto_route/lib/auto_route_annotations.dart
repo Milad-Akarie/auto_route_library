@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-class AutoRouter {
+class AutoRouterAnnotation {
   // if true a Navigator extension will be generated with
   // helper push methods of all routes
   final bool generateNavigationHelperExtension;
@@ -13,7 +13,7 @@ class AutoRouter {
   // defaults to '/'
   final String routePrefix;
 
-  const AutoRouter._(
+  const AutoRouterAnnotation._(
     this.generateNavigationHelperExtension,
     this.routesClassName,
     this.routePrefix,
@@ -22,7 +22,7 @@ class AutoRouter {
 
 // Defaults created routes to MaterialPageRoute unless
 // overridden by AutoRoute annotation
-class MaterialAutoRouter extends AutoRouter {
+class MaterialAutoRouter extends AutoRouterAnnotation {
   const MaterialAutoRouter({
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
@@ -33,7 +33,7 @@ class MaterialAutoRouter extends AutoRouter {
 
 // Defaults created routes to CupertinoPageRoute unless
 // overridden by AutoRoute annotation
-class CupertinoAutoRouter extends AutoRouter {
+class CupertinoAutoRouter extends AutoRouterAnnotation {
   const CupertinoAutoRouter({
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
@@ -46,7 +46,7 @@ class CupertinoAutoRouter extends AutoRouter {
         );
 }
 
-class AdaptiveAutoRouter extends AutoRouter {
+class AdaptiveAutoRouter extends AutoRouterAnnotation {
   const AdaptiveAutoRouter({
     bool generateNavigationHelperExtension,
     bool generateArgsHolderForSingleParameterRoutes,
@@ -61,7 +61,7 @@ class AdaptiveAutoRouter extends AutoRouter {
 
 // Defaults created routes to PageRouteBuilder unless
 // overridden by AutoRoute annotation
-class CustomAutoRouter extends AutoRouter {
+class CustomAutoRouter extends AutoRouterAnnotation {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
@@ -132,7 +132,7 @@ class AutoRoute<T> {
   const AutoRoute({this.page, this.initial, this.guards, this.fullscreenDialog, this.maintainState, this.path, this.returnType, this.children});
 }
 
-class MaterialRoute<T> extends AutoRoute {
+class MaterialRoute<T> extends AutoRoute<T> {
   const MaterialRoute(
       {String path,
       @required Type page,
@@ -264,6 +264,7 @@ class GuardedBy {
 }
 
 class RoutesList {
+  // this will be ignored if path is provided
   final String namePrefix;
 
   const RoutesList({this.namePrefix});

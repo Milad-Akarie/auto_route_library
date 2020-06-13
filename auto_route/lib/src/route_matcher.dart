@@ -7,9 +7,7 @@ class RouteMatcher {
 
   RouteMatcher(this._settings) : _uri = Uri.parse(_settings.name);
 
-  bool hasFullMatch(String template) {
-    return match(template, fullMatch: true) != null;
-  }
+  RouteMatcher.fromUri(this._uri);
 
   MatchResult match(String template, {bool fullMatch = false}) {
     var pathPattern = _buildPathPattern(template);
@@ -17,11 +15,13 @@ class RouteMatcher {
     var match = RegExp(finalPattern).stringMatch(_uri.path);
     MatchResult matchResult;
     if (match != null) {
-      matchResult = MatchResult(_settings.copyWith(name: match),
-          uri: _uri,
+      matchResult = MatchResult(
+          name: match,
+          arguments: _settings.arguments,
+          uri: _uri.replace(path: match),
           template: template,
           pattern: pathPattern,
-          rest: _uri.path.substring(match.length),
+          rest: _uri.replace(path: _uri.path.substring(match.length)),
           pathParamsMap: _extractPathParams(pathPattern, match));
     }
     return matchResult;
@@ -39,7 +39,10 @@ class RouteMatcher {
   }
 
   Pattern _buildPathPattern(String template) {
-    return '^${template.replaceAllMapped(RegExp(r':([^/]+)'), (m) => '(?<${m.group(1)}>[^/]+)')}';
+    return '^${template.replaceAllMapped(RegExp(r':([^/]+)'), (m) {
+//      print(m.group(0));
+      return '(?<${m.group(1)}>[^/]+)';
+    })}';
   }
 
   List<MatchResult> allMatches(Set<String> templates) {
@@ -52,38 +55,57 @@ class RouteMatcher {
     }
     return matches;
   }
+
+  Set<String> matchingSegments(Set<String> templates) {
+    var matches = <String>{};
+    for (var template in templates) {
+      var match = RegExp(_buildPathPattern(template)).stringMatch(_uri.path);
+      if (match != null) {
+        matches.add(match);
+      }
+    }
+    return matches;
+  }
 }
 
 @immutable
-class MatchResult {
+class MatchResult extends RouteSettings {
   final Uri uri;
   final String template;
   final Pattern pattern;
-  final String rest;
-  final RouteSettings settings;
+  final Uri rest;
   final Map<String, String> pathParamsMap;
+  final Object initialArgsToPass;
 
-  MatchResult(
-    this.settings, {
+  MatchResult({
     this.uri,
     this.template,
     this.pattern,
     this.rest,
     this.pathParamsMap,
-  });
+    this.initialArgsToPass,
+    String name,
+    Object arguments,
+  }) : super(name: name, arguments: arguments);
 
-  String get path => settings.name;
-
-  MatchResult prefixPathWith(String parentPath) {
+  @override
+  RouteSettings copyWith({
+    String name,
+    Object arguments,
+    Object initialArgsToPass,
+  }) {
     return MatchResult(
-      this.settings,
-      uri: this.uri.replace(path: '$parentPath${uri.path}'),
-      template: this.template,
-      pattern: this.pattern,
-      rest: this.rest,
-      pathParamsMap: this.pathParamsMap,
-    );
+        name: name ?? this.name,
+        arguments: arguments ?? this.arguments,
+        initialArgsToPass: initialArgsToPass ?? this.initialArgsToPass,
+        uri: this.uri,
+        template: this.template,
+        pattern: this.pattern,
+        rest: this.rest,
+        pathParamsMap: this.pathParamsMap);
   }
+
+  String get path => uri.path;
 
   Parameters get queryParams => Parameters(uri.queryParameters);
 

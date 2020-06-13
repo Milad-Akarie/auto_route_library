@@ -18,7 +18,7 @@ Future<void> main() async {
 
 testRouter(String fileName) async {
   final reader = await initializeLibraryReaderForDirectory(samplesDirectory, '$fileName');
-  testAnnotatedElements<AutoRouter>(
+  testAnnotatedElements<AutoRouterAnnotation>(
     reader,
     AutoRouteGeneratorMock(),
   );

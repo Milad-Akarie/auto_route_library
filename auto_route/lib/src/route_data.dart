@@ -10,7 +10,7 @@ class RouteData extends RouteSettings {
   RouteData(this._routeMatch)
       : _pathParams = _routeMatch.pathParams,
         _queryParams = _routeMatch.queryParams,
-        super(name: _routeMatch.uri.path, arguments: _routeMatch.settings.arguments);
+        super(name: _routeMatch.name, arguments: _routeMatch.arguments);
 
   final MatchResult _routeMatch;
   final Parameters _pathParams;
@@ -22,11 +22,16 @@ class RouteData extends RouteSettings {
 
   Parameters get pathParams => _pathParams;
 
-  T getArgs<T>({bool nullOk = true}) {
+  Object get initialArgsToPass => _routeMatch.initialArgsToPass;
+
+  T getArgs<T>({bool nullOk = true,T Function() orElse}) {
+    if(nullOk == true){
+      assert(orElse != null);
+    }
     if (_hasInvalidArgs<T>(nullOk)) {
       throw FlutterError('Expected ${T.toString()} got ${arguments?.runtimeType ?? 'null'}');
     }
-    return arguments as T;
+    return arguments as T ?? orElse();
   }
 
   bool _hasInvalidArgs<T>(bool nullOk) {
@@ -40,7 +45,7 @@ class RouteData extends RouteSettings {
   @override
   String toString() {
     return 'RouteData{template: ${_routeMatch.template}, '
-        'path: ${_routeMatch.uri.path}, pathParams: $_pathParams, queryParams: $_queryParams}';
+        'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, arguments: $arguments,  pathParams: $_pathParams, queryParams: $_queryParams}';
   }
 
   static RouteData of(BuildContext context) {
@@ -67,17 +72,6 @@ class ParentRouteSettings extends RouteSettings {
 }
 
 @immutable
-class ChildRouteSettings extends RouteSettings {
-  final String parentPath;
-
-  ChildRouteSettings({
-    @required this.parentPath,
-    @required String path,
-    Object args,
-  }) : super(name: path, arguments: args);
-}
-
-@immutable
 class ParentRouteData extends RouteData {
   final String initialRoute;
   final RouterBase router;
@@ -87,6 +81,12 @@ class ParentRouteData extends RouteData {
     this.router,
     MatchResult matchResult,
   }) : super(matchResult);
+
+  @override
+  String toString() {
+    return 'ParentRouteData{template: ${_routeMatch.template}, '
+        'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, arguments: $arguments,  pathParams: $_pathParams, queryParams: $_queryParams}, initialRoute: $initialRoute, router: $router';
+  }
 
   static ParentRouteData of(BuildContext context) {
     var modal = ModalRoute.of(context);

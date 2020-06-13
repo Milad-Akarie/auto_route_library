@@ -1,24 +1,31 @@
 import 'package:auto_route/auto_route_annotations.dart';
-import 'package:example/router/router.gr.dart';
 import 'package:example/screens/home_screen.dart';
+import 'package:example/screens/users/sub/profile_screen.dart';
+import 'package:example/screens/users/sub/user_details.dart';
 import 'package:example/screens/users/users_screen.dart';
 
-// export 'package:auto_route/auto_route.dart';
-// export 'router.gr.txt';
+export 'package:auto_route/auto_route.dart';
+
+export 'router.gr.dart';
 
 @MaterialAutoRouter()
-class Router extends $Router {
+class $Router {
   @RoutesList()
   static const routes = <AutoRoute>[
-    AutoRoute(page: HomeScreen, initial: true),
-    AutoRoute(
+    MaterialRoute<String>(page: HomeScreen, initial: true),
+    MaterialRoute(
       path: '/users',
       page: UsersScreen,
-      children: subRoutes,
+      children: [
+        MaterialRoute(path: '/', page: UserDetails),
+        MaterialRoute(
+          path: '/profile/:id',
+          page: ProfileScreen,
+          children: [
+            MaterialRoute(page: UserDetails),
+          ],
+        ),
+      ],
     ),
-  ];
-
-  static const subRoutes = [
-    AutoRoute(path: '/details/:user', page: UsersScreen),
   ];
 }

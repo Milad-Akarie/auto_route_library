@@ -11,15 +11,12 @@ import 'package:flutter/widgets.dart';
 void main() {
 //	var template = '/users/:id/role/:title';
 //	var url = '/users/4/role/admin';
-  var templates = {
-    '/',
-    '/users/:id',
-    '/users/:id/profile',
-  };
+   print(_buildPathPattern("/users/:id"));
+}
 
-  var matcher = RouteMatcher(RouteSettings(name: '/users/5/profile/extra'));
-
-  matcher.allMatches(templates).forEach((match) {
-    print(match.settings);
-  });
+Pattern _buildPathPattern(String template) {
+  return '^${template.replaceAllMapped(RegExp(r':([^/]+)|([*])'), (m) {
+    print(m.group(0));
+    return '(?<${m.group(1)}>[^/]+)';
+  })}';
 }

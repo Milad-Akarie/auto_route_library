@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/router/route_guards.dart';
-import 'package:example/router/router.dart';
+import 'package:example/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -13,8 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       onGenerateRoute: Router(),
-      builder: ExtendedNavigator(
-//        initialRoute: '/',
+      builder: AutoRouter(
+        initialRoute: '/',
         router: Router(),
         guards: [AuthGuard()],
       ),

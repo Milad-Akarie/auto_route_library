@@ -7,16 +7,16 @@ class UsersScreen extends StatelessWidget {
   final int score;
 
   const UsersScreen({
-    @pathParam this.id,
-    this.score,
-    double limit = 0.0,
+    @PathParam() this.id,
+    @required this.score,
+    @QueryParam() double limit = 0.0,
   });
 
   @override
   Widget build(BuildContext context) {
     // var route = ModalRoute.of(context);
     // var settings = route.settings as ExtendedRouteSettings;
-    print(RouteData.of(context));
+//    print(RouteData.of(context));
 
     return Scaffold(
         appBar: AppBar(

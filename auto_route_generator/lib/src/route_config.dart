@@ -1,7 +1,6 @@
 import 'package:auto_route_generator/route_config_resolver.dart';
-import 'package:auto_route_generator/utils.dart';
 
-import 'custom_transtion_builder.dart';
+import 'custom_transition_builder.dart';
 
 /// holds the extracted route configs
 /// to be used in [RouterClassGenerator]
@@ -24,19 +23,17 @@ class RouteConfig {
   List<RouteGuardConfig> guards = [];
   String cupertinoNavTitle;
   bool hasWrapper;
-  bool isUnknownRoute = false;
+  RouterConfig routerConfig;
+
   RouteConfig();
 
   String get argumentsHolderClassName {
     return '${className}Arguments';
   }
 
-  @override
-  String toString() {
-    return 'RouteConfig{imports: $imports, name: $name, pathName: $pathName, initial: $initial, fullscreenDialog: $fullscreenDialog, customRouteOpaque: $customRouteOpaque, customRouteBarrierDismissible: $customRouteBarrierDismissible, maintainState: $maintainState, className: $className, returnType: $returnType, parameters: $parameters, transitionBuilder: $transitionBuilder, durationInMilliseconds: $durationInMilliseconds, routeType: $routeType, guards: $guards, cupertinoNavTitle: $cupertinoNavTitle, hasWrapper: $hasWrapper, isUnknownRoute: $isUnknownRoute}';
+  String get templateName {
+    return pathName.contains(":") ? '_$name' : name;
   }
-
-
 }
 
 class RouteType {
