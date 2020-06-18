@@ -34,6 +34,10 @@ class RouteConfig {
   String get templateName {
     return pathName.contains(":") ? '_$name' : name;
   }
+
+  List<RouteParamConfig> get argParams {
+    return parameters?.where((p) => !p.isPathParameter && !p.isQueryParam)?.toList() ?? [];
+  }
 }
 
 class RouteType {

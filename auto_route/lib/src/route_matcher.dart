@@ -3,11 +3,11 @@ import 'package:flutter/widgets.dart';
 
 class RouteMatcher {
   final Uri _uri;
-  RouteSettings _settings;
+  final RouteSettings _settings;
 
   RouteMatcher(this._settings) : _uri = Uri.parse(_settings.name);
 
-  RouteMatcher.fromUri(this._uri);
+  RouteMatcher.fromUri(this._uri) : _settings = null;
 
   MatchResult match(String template, {bool fullMatch = false}) {
     var pathPattern = _buildPathPattern(template);
@@ -15,10 +15,11 @@ class RouteMatcher {
     var match = RegExp(finalPattern).stringMatch(_uri.path);
     MatchResult matchResult;
     if (match != null) {
+      var segmentUri = _uri.replace(path: match);
       matchResult = MatchResult(
-          name: match,
-          arguments: _settings.arguments,
-          uri: _uri.replace(path: match),
+          name: segmentUri.toString(),
+          arguments: _settings?.arguments,
+          uri: segmentUri,
           template: template,
           pattern: pathPattern,
           rest: _uri.replace(path: _uri.path.substring(match.length)),

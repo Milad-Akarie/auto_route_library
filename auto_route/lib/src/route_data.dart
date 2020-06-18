@@ -17,15 +17,16 @@ class RouteData extends RouteSettings {
   final Parameters _queryParams;
 
   String get template => _routeMatch.template;
-
   Parameters get queryParams => _queryParams;
 
   Parameters get pathParams => _pathParams;
 
+  String get path => _routeMatch.uri.path;
+
   Object get initialArgsToPass => _routeMatch.initialArgsToPass;
 
-  T getArgs<T>({bool nullOk = true,T Function() orElse}) {
-    if(nullOk == true){
+  T getArgs<T>({bool nullOk = true, T Function() orElse}) {
+    if (nullOk == true) {
       assert(orElse != null);
     }
     if (_hasInvalidArgs<T>(nullOk)) {
@@ -45,7 +46,7 @@ class RouteData extends RouteSettings {
   @override
   String toString() {
     return 'RouteData{template: ${_routeMatch.template}, '
-        'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, arguments: $arguments,  pathParams: $_pathParams, queryParams: $_queryParams}';
+        'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}';
   }
 
   static RouteData of(BuildContext context) {
@@ -58,18 +59,18 @@ class RouteData extends RouteSettings {
   }
 }
 
-@immutable
-class ParentRouteSettings extends RouteSettings {
-  final String initialRoute;
-  final String template;
-
-  ParentRouteSettings({
-    @required this.template,
-    @required String path,
-    this.initialRoute,
-    Object args,
-  }) : super(name: path, arguments: args);
-}
+//@immutable
+//class ParentRouteSettings extends RouteSettings {
+//  final String initialRoute;
+//  final String template;
+//
+//  ParentRouteSettings({
+//    @required this.template,
+//    @required String path,
+//    this.initialRoute,
+//    Object args,
+//  }) : super(name: path, arguments: args);
+//}
 
 @immutable
 class ParentRouteData extends RouteData {
@@ -85,7 +86,7 @@ class ParentRouteData extends RouteData {
   @override
   String toString() {
     return 'ParentRouteData{template: ${_routeMatch.template}, '
-        'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, arguments: $arguments,  pathParams: $_pathParams, queryParams: $_queryParams}, initialRoute: $initialRoute, router: $router';
+        'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}, initialRoute: $initialRoute';
   }
 
   static ParentRouteData of(BuildContext context) {

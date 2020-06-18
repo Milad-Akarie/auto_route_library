@@ -81,12 +81,6 @@ class RouterClassGenerator {
     _writeln('}');
   }
 
-  void _generateRoutesGetterFunction(RouterConfig routerConfig) {
-    _newLine();
-    _writeln('@override');
-    _writeln("Set<String> get allRoutes => ${routerConfig.routesClassName}.all;");
-  }
-
   void _generateRouteGeneratorFunction(RouterConfig routerConfig) {
     _newLine();
     _writeln('''
@@ -110,18 +104,19 @@ class RouterClassGenerator {
 
     if (r.parameters?.isNotEmpty == true) {
       // if router has any required or positional params the argument class holder becomes required.
-      final nullOk = !r.parameters.any((p) => p.isRequired || p.isPositional);
+      final nullOk = !r.argParams.any((p) => p.isRequired || p.isPositional);
       // show an error page  if passed args are not the same as declared args
-      final argsType = r.argumentsHolderClassName;
 
-      _writeln('var args = data.getArgs<$argsType>(');
-      if (!nullOk) {
-        _write('nullOk: false');
-      } else {
-        _write("orElse: ()=> $argsType()");
+      if (r.argParams.isNotEmpty) {
+        final argsType = r.argumentsHolderClassName;
+        _writeln('var args = data.getArgs<$argsType>(');
+        if (!nullOk) {
+          _write('nullOk: false');
+        } else {
+          _write("orElse: ()=> $argsType()");
+        }
+        _write(");");
       }
-      _write(");");
-
       constructorParams = r.parameters.map<String>((param) {
         String getterName;
         if (param.isPathParameter) {
@@ -156,7 +151,7 @@ class RouterClassGenerator {
     // routes with parameters
     // also prevent duplicate class with the same name from being generated;
 
-    routes.where((r) => r.parameters?.isNotEmpty == true).forEach((r) => routesWithArgsHolders[r.className] = r);
+    routes.where((r) => r.argParams.isNotEmpty).forEach((r) => routesWithArgsHolders[r.className] = r);
 
     if (routesWithArgsHolders.isNotEmpty) {
       _generateBoxed('Arguments holder classes');
@@ -170,7 +165,7 @@ class RouterClassGenerator {
 
     // generate fields
     _writeln('class $argsClassName{');
-    final params = r.parameters.where((p) => !p.isPathParameter).toList();
+    final params = r.argParams;
     params.forEach((param) {
       _writeln('final ${param.type} ${param.name};');
     });
@@ -203,7 +198,6 @@ class RouterClassGenerator {
 
   void _generateRouterClass(RouterConfig routerConfig) {
     _writeln('\nclass ${routerConfig.routerClassName} extends RouterBase {');
-    _generateRoutesGetterFunction(routerConfig);
     _generateOverrideFunctions(routerConfig);
     _generateRouteGeneratorFunction(routerConfig);
 
@@ -228,7 +222,8 @@ class RouterClassGenerator {
       _writeln('\n@override');
       _writeln('Map<String, RouterBuilder > get subRouters => {');
       parentRoutes.forEach((route) {
-        _writeln("${routerConfig.routesClassName}.${route.templateName}: () => ${route.routerConfig.routerClassName}(),");
+        _writeln(
+            "${routerConfig.routesClassName}.${route.templateName}: () => ${route.routerConfig.routerClassName}(),");
       });
       _writeln("};");
     }
@@ -249,7 +244,8 @@ class RouterClassGenerator {
         _write("cupertinoTitle:'${r.cupertinoNavTitle}',");
       }
     } else {
-      _write('return PageRouteBuilder<$returnType>(pageBuilder: (context, animation, secondaryAnimation) => $constructor, settings: data,');
+      _write(
+          'return PageRouteBuilder<$returnType>(pageBuilder: (context, animation, secondaryAnimation) => $constructor, settings: data,');
 
       if (r.customRouteOpaque != null) {
         _write('opaque:${r.customRouteOpaque.toString()},');

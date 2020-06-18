@@ -13,4 +13,4 @@ class AuthGuard extends RouteGuard {
   }
 }
 
-var isLoggedIn = false;
+var isLoggedIn = true;

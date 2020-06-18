@@ -17,8 +17,8 @@ class HomeScreen extends StatelessWidget {
               child: FlatButton(
                 child: Text("Users Screen"),
                 onPressed: () async {
-//                  ExtendedNavigator.of(context).pushNamed('/users/4');
-                  AutoRouter.of(context).push(Routes.usersScreen);
+                  ExtendedNavigator.of(context).pushNamed(Routes.users);
+//                  AutoRouter.of(context).push(Routes.initalRoute);
 //                ExtendedNavigator.of(context).pushNamed(Routes.secondScreen);
 //                  ExtendedNavigator.ofRouter<Router>().pushNamed(
 //                    Routes.secondScreen,

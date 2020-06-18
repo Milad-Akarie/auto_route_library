@@ -22,11 +22,6 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouterAnnotation> {
       element: element,
     );
 
-//    throwIf(
-//      autoRoutes.type.toString() != 'List<AutoRoute>' || !autoRoutes.isConst || !autoRoutes.isStatic,
-//      'Routes list must be a static const List<AutoRoute>',
-//      element: autoRoutes,
-//    );
     var routerResolver = RouterConfigResolver(getResolver(buildStep));
     final routerConfig = await routerResolver.resolve(annotation, element);
 

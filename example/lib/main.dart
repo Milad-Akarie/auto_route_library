@@ -13,8 +13,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       onGenerateRoute: Router(),
-      builder: AutoRouter(
-        initialRoute: '/',
+      builder: ExtendedNavigator(
+//        initialRoute: '/users',
         router: Router(),
         guards: [AuthGuard()],
       ),
