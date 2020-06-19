@@ -101,7 +101,7 @@ class AutoRouterState<T extends RouterBase> extends State<AutoRouter<T>> with Wi
 
   Future<bool> maybePop<T extends Object>([T result]) => _navigator.maybePop<T>(result);
 
-  void popRoot<T extends Object>([T result]) => _navigator.rootNavigator.pop<T>(result);
+  void popRoot<T extends Object>([T result]) => _navigator.root.pop<T>(result);
 
   AutoRouterState get parent => AutoRouter.of(context);
 

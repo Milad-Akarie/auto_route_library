@@ -5,19 +5,17 @@ typedef RouterBuilder<T extends RouterBase> = T Function();
 
 abstract class RouterBase {
   Map<String, List<Type>> get guardedRoutes => null;
+  Map<String, RouterBuilder> get subRouters => {};
+  Map<String, AutoRouteFactory> routesMap = {};
 
   Set<String> get allRoutes => routesMap.keys.toSet();
-
-  Map<String, RouterBuilder> get subRouters => {};
-
-  Map<String, AutoRouteFactory> routesMap = {};
 
   Route<dynamic> onGenerateRoute(RouteSettings settings, [String basePath]) {
     assert(settings != null);
     assert(routesMap != null);
 
-    var matchResult = findFullMatch(settings);
-    matchResult.copyWith(name: "${basePath ??= ''}${settings.name}");
+    var matchResult = findFullMatch(settings, basePath);
+    print(basePath);
     if (matchResult != null) {
       RouteData data;
       if (hasNestedRouter(matchResult.template)) {
@@ -37,28 +35,32 @@ abstract class RouterBase {
 
   bool hasNestedRouter(String template) => subRouters != null && subRouters[template] != null;
 
-  Route<dynamic> onRouteNotFound(RouteSettings settings) {
-    return defaultUnknownRoutePage(settings?.name);
-  }
 
   // a shorthand for calling the onGenerateRoute function
   // when using Router directly in MaterialApp or such
   // Router().onGenerateRoute becomes Router()
   Route<dynamic> call(RouteSettings settings) => onGenerateRoute(settings);
 
-  MatchResult findFullMatch(RouteSettings settings) {
+  MatchResult findFullMatch(RouteSettings settings, [String basePath]) {
     // deep links are  pre-matched
+    MatchResult matchResult;
     if (settings is MatchResult) {
-      return settings;
-    }
-    final matcher = RouteMatcher(settings);
-    for (var route in allRoutes) {
-      var match = matcher.match(route, fullMatch: true);
-      if (match != null) {
-        return match;
+      matchResult = settings;
+    } else {
+      final matcher = RouteMatcher(settings);
+      for (var route in allRoutes) {
+        var match = matcher.match(route, fullMatch: true);
+        if (match != null) {
+          matchResult = match;
+          break;
+        }
       }
     }
-    return null;
+    if (matchResult != null) {
+      return matchResult.copyWith(name: "${basePath ??= ''}${settings.name}");
+    } else {
+      return null;
+    }
   }
 
   MatchResult match(RouteSettings settings) {

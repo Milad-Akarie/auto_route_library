@@ -10,7 +10,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        ExtendedNavigator.root.pop(false);
+        ExtendedNavigator.root.pop<bool>(false);
         return false;
       },
       child: Scaffold(
@@ -19,7 +19,7 @@ class LoginScreen extends StatelessWidget {
           child: FlatButton(
             child: Text("Login"),
             onPressed: () async {
-              ExtendedNavigator.of(context).pop();
+              ExtendedNavigator.of(context).pop<bool>(true);
               // .pushReplacementNamed(Routes.homeScreen);
               // ExtendedNavigator.rootNavigator.pop(true);
             },

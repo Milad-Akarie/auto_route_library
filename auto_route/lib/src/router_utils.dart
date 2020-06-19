@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // returns an error page routes with a helper message.
-PageRoute defaultUnknownRoutePage(String routeName) => MaterialPageRoute(
+PageRoute defaultUnknownRoutePage(RouteSettings settings) => MaterialPageRoute(
       builder: (ctx) => Scaffold(
         body: Container(
           color: Colors.redAccent,
@@ -17,9 +17,9 @@ PageRoute defaultUnknownRoutePage(String routeName) => MaterialPageRoute(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                 child: Text(
-                  routeName == "/"
+                  settings.name == "/"
                       ? 'Initial route not found! \n did you forget to annotate your home page with @initial or @MaterialRoute(initial:true)?'
-                      : 'Route name $routeName is not found!',
+                      : 'Route name ${settings.name} is not found!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),

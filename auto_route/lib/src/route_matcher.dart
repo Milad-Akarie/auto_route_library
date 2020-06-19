@@ -89,6 +89,8 @@ class MatchResult extends RouteSettings {
     Object arguments,
   }) : super(name: name, arguments: arguments);
 
+  bool get hasRest => rest?.pathSegments?.isNotEmpty == true;
+
   @override
   RouteSettings copyWith({
     String name,

@@ -43,8 +43,7 @@ class RouteConfigResolver {
 
     routeConfig.name = autoRoute.peek('name')?.stringValue ?? toLowerCamelCase(routeConfig.className);
 
-    routeConfig.hasWrapper =
-        classElement.allSupertypes.map<String>((el) => el.getDisplayString()).contains('AutoRouteWrapper');
+    routeConfig.hasWrapper = classElement.allSupertypes.map<String>((el) => el.getDisplayString()).contains('AutoRouteWrapper');
 
     final constructor = classElement.unnamedConstructor;
 
@@ -77,18 +76,6 @@ class RouteConfigResolver {
       }
     }
 
-    if (autoRoute.instanceOf(TypeChecker.fromRuntime(AutoRoute))) {
-      var globConfig = _routerConfig.globalRouteConfig;
-      routeConfig.routeType = globConfig.routeType;
-      if (globConfig.routeType == RouteType.custom) {
-        routeConfig.transitionBuilder = globConfig.transitionBuilder;
-        routeConfig.durationInMilliseconds = globConfig.durationInMilliseconds;
-        routeConfig.customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
-        routeConfig.customRouteOpaque = globConfig.customRouteOpaque;
-      }
-      return;
-    }
-
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
       routeConfig.routeType = RouteType.material;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CupertinoRoute))) {
@@ -116,7 +103,14 @@ class RouteConfigResolver {
         routeConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
       }
     } else {
-      routeConfig.routeType = _routerConfig.globalRouteConfig.routeType;
+      var globConfig = _routerConfig.globalRouteConfig;
+      routeConfig.routeType = globConfig.routeType;
+      if (globConfig.routeType == RouteType.custom) {
+        routeConfig.transitionBuilder = globConfig.transitionBuilder;
+        routeConfig.durationInMilliseconds = globConfig.durationInMilliseconds;
+        routeConfig.customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
+        routeConfig.customRouteOpaque = globConfig.customRouteOpaque;
+      }
     }
   }
 

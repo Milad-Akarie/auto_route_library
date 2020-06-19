@@ -144,15 +144,7 @@ class AutoRoute<T> {
 
   final List<Type> guards;
 
-  const AutoRoute(
-      {this.page,
-      this.initial,
-      this.guards,
-      this.fullscreenDialog,
-      this.maintainState,
-      this.path,
-      this.name,
-      this.children});
+  const AutoRoute({this.page, this.initial, this.guards, this.fullscreenDialog, this.maintainState, this.path, this.name, this.children});
 }
 
 class MaterialRoute<T> extends AutoRoute<T> {
@@ -178,48 +170,58 @@ class MaterialRoute<T> extends AutoRoute<T> {
 }
 
 // forces usage of CupertinoPageRoute instead of MaterialPageRoute
-class CupertinoRoute extends AutoRoute {
+class CupertinoRoute<T> extends AutoRoute<T> {
   /// passed to the title property in [CupertinoPageRoute]
   final String title;
 
-  const CupertinoRoute({
-    bool initial,
-    bool fullscreenDialog,
-    bool maintainState,
-    String path,
-    this.title,
-    String name,
-  }) : super(
-          initial: initial,
-          fullscreenDialog: fullscreenDialog,
-          maintainState: maintainState,
-          path: path,
-          name: name,
-        );
+  const CupertinoRoute(
+      {bool initial,
+      bool fullscreenDialog,
+      bool maintainState,
+      String path,
+      this.title,
+      String name,
+      @required Type page,
+      List<Type> guards,
+      List<AutoRoute> children})
+      : super(
+            initial: initial,
+            fullscreenDialog: fullscreenDialog,
+            maintainState: maintainState,
+            path: path,
+            name: name,
+            page: page,
+            guards: guards,
+            children: children);
 }
 
-class AdaptiveRoute extends AutoRoute {
-  const AdaptiveRoute({
-    bool initial,
-    bool fullscreenDialog,
-    bool maintainState,
-    String name,
-    String path,
-    Type returnType,
-    this.cupertinoPageTitle,
-  }) : super(
-          initial: initial,
-          fullscreenDialog: fullscreenDialog,
-          maintainState: maintainState,
-          path: path ?? name,
-          name: name,
-        );
+class AdaptiveRoute<T> extends AutoRoute<T> {
+  const AdaptiveRoute(
+      {bool initial,
+      bool fullscreenDialog,
+      bool maintainState,
+      String name,
+      String path,
+      Type returnType,
+      this.cupertinoPageTitle,
+      @required Type page,
+      List<Type> guards,
+      List<AutoRoute> children})
+      : super(
+            initial: initial,
+            fullscreenDialog: fullscreenDialog,
+            maintainState: maintainState,
+            path: path,
+            name: name,
+            page: page,
+            guards: guards,
+            children: children);
 
   /// passed to the title property in [CupertinoPageRoute]
   final String cupertinoPageTitle;
 }
 
-class CustomRoute extends AutoRoute {
+class CustomRoute<T> extends AutoRoute<T> {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
@@ -248,17 +250,22 @@ class CustomRoute extends AutoRoute {
     bool maintainState,
     String name,
     String path,
+    @required Type page,
+    List<Type> guards,
+    List<AutoRoute> children,
     this.transitionsBuilder,
     this.durationInMilliseconds,
     this.opaque,
     this.barrierDismissible,
   }) : super(
-          initial: initial,
-          fullscreenDialog: fullscreenDialog,
-          maintainState: maintainState,
-          path: path,
-          name: name,
-        );
+            initial: initial,
+            fullscreenDialog: fullscreenDialog,
+            maintainState: maintainState,
+            path: path,
+            name: name,
+            page: page,
+            guards: guards,
+            children: children);
 }
 
 class PathParam {

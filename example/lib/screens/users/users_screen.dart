@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/auto_route_annotations.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class UsersScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("Users Details $id score:$score"),
       ),
-//        body: NestedNavigator()
+        body: NestedNavigator()
     );
   }
 }
