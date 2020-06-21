@@ -2,14 +2,14 @@ import 'package:auto_route/auto_route_annotations.dart';
 import 'package:source_gen_test/annotations.dart';
 
 //@ShouldGenerate(output)
-@ShouldThrow('Class name must be prefixed with \$')
-@MaterialAutoRouter()
-class Router {
-  @initial
-  HomeScreen homeScreen;
-}
-
-class HomeScreen{}
+//@ShouldThrow('Class name must be prefixed with \$')
+//@MaterialAutoRouter()
+//class Router {
+//  @initial
+//  HomeScreen homeScreen;
+//}
+//
+//class HomeScreen{}
 
 
 const output = '''

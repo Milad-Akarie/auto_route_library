@@ -1,0 +1,1 @@
+class GenericA<T>{}

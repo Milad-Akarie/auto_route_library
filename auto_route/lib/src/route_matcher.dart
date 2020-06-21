@@ -40,18 +40,24 @@ class RouteMatcher {
   }
 
   Pattern _buildPathPattern(String template) {
-    return '^${template.replaceAllMapped(RegExp(r':([^/]+)'), (m) {
-//      print(m.group(0));
-      return '(?<${m.group(1)}>[^/]+)';
+    return '^${template.replaceAllMapped(RegExp(r':([^/]+)|([*])'), (m) {
+      if (m[1] != null) {
+        return '(?<${m[1]}>[^/]+)';
+      } else {
+        return ".*";
+      }
     })}';
   }
 
-  List<MatchResult> allMatches(Set<String> templates) {
+  List<MatchResult> allMatches(Set<String> templates,[RouterBase router]) {
     var matches = <MatchResult>[];
     for (var template in templates) {
       var matchResult = match(template);
       if (matchResult != null) {
         matches.add(matchResult);
+        if (!matchResult.hasRest) {
+          break;
+        }
       }
     }
     return matches;

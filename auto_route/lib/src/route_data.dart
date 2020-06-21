@@ -1,9 +1,6 @@
-import 'package:auto_route/src/route_matcher.dart';
-import 'package:flutter/material.dart';
 
-import '../auto_route.dart';
 
-part 'parameters.dart';
+part of 'extended_navigator.dart';
 
 @immutable
 class RouteData extends RouteSettings {
@@ -17,20 +14,21 @@ class RouteData extends RouteSettings {
   final Parameters _queryParams;
 
   String get template => _routeMatch.template;
+  
   Parameters get queryParams => _queryParams;
 
   Parameters get pathParams => _pathParams;
 
   String get path => _routeMatch.uri.path;
 
-  Object get initialArgsToPass => _routeMatch.initialArgsToPass;
+  Object get _initialArgsToPass => _routeMatch.initialArgsToPass;
 
   T getArgs<T>({bool nullOk = true, T Function() orElse}) {
     if (nullOk == true) {
       assert(orElse != null);
     }
     if (_hasInvalidArgs<T>(nullOk)) {
-      throw FlutterError('Expected ${T.toString()} got ${arguments?.runtimeType ?? 'null'}');
+      throw FlutterError('Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
     }
     return arguments as T ?? orElse();
   }
@@ -59,25 +57,13 @@ class RouteData extends RouteSettings {
   }
 }
 
-//@immutable
-//class ParentRouteSettings extends RouteSettings {
-//  final String initialRoute;
-//  final String template;
-//
-//  ParentRouteSettings({
-//    @required this.template,
-//    @required String path,
-//    this.initialRoute,
-//    Object args,
-//  }) : super(name: path, arguments: args);
-//}
 
 @immutable
-class ParentRouteData extends RouteData {
+class _ParentRouteData extends RouteData {
   final String initialRoute;
   final RouterBase router;
 
-  ParentRouteData({
+  _ParentRouteData({
     this.initialRoute,
     this.router,
     MatchResult matchResult,
@@ -89,10 +75,10 @@ class ParentRouteData extends RouteData {
         'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}, initialRoute: $initialRoute';
   }
 
-  static ParentRouteData of(BuildContext context) {
+  static _ParentRouteData of(BuildContext context) {
     var modal = ModalRoute.of(context);
-    if (modal != null && modal?.settings is ParentRouteData) {
-      return modal.settings as ParentRouteData;
+    if (modal != null && modal?.settings is _ParentRouteData) {
+      return modal.settings as _ParentRouteData;
     } else {
       return null;
     }

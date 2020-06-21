@@ -5,6 +5,10 @@ import 'package:auto_route/src/route_matcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+part 'parameters.dart';
+
+part 'route_data.dart';
+
 part 'router_base.dart';
 
 RectTween _createRectTween(Rect begin, Rect end) {
@@ -72,7 +76,8 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
     assert(initialRouteName != null);
 
     var matcher = RouteMatcher.fromUri(Uri.parse(initialRouteName));
-    var matches = matcher.allMatches(router.allRoutes).toList();
+    var matches = router.allMatches(matcher);
+//    var matches = matcher.allMatches(router.allRoutes).toList();
     for (var i = 0; i < matches.length; i++) {
       var match = matches[i];
       if (i == matches.length - 1) {
@@ -152,17 +157,22 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
     widget.guards?.forEach(_registerGuard);
     super.initState();
     if (_guardedInitialRoutes.isNotEmpty) {
-      _pushGuardedInitialRoutes();
+      _pushAllGuarded(_guardedInitialRoutes);
     }
   }
 
-  Future<void> _pushGuardedInitialRoutes() async {
-    for (var match in _guardedInitialRoutes) {
+  Future<void> _pushAllGuarded(Iterable<MatchResult> matches) async {
+    for (var match in matches) {
+      print(match.template);
       if (await _canNavigate(match.template)) {
-        PageRoute route = widget.onGenerateRoute(match);
-        push(route);
-        if (match.template == Navigator.defaultRouteName) {
-          removeRouteBelow(route);
+        var route = widget.onGenerateRoute(match);
+        if (match.path == Navigator.defaultRouteName) {
+          pushAndRemoveUntil(route, (route) => false);
+        } else {
+          push(route);
+        }
+        if (route.settings is _ParentRouteData) {
+          break;
         }
       } else {
         break;
@@ -170,22 +180,14 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
     }
   }
 
-  void pushDeepLink(String url, {Map<String, String> queryParams}) async {
+  Future<void> pushDeepLink(String url, {Map<String, String> queryParams}) async {
     return root._pushDeepLink(Uri(path: url, queryParameters: queryParams));
   }
 
-  void _pushDeepLink(Uri uri) {
+  Future<void> _pushDeepLink(Uri uri) async {
     var matcher = RouteMatcher.fromUri(uri);
-    var matches = matcher.allMatches(router.allRoutes).toList();
-    for (var match in matches) {
-      var route = widget.onGenerateRoute(match);
-      if (route != null) {
-        push(route);
-        if (route != null && match.path == Navigator.defaultRouteName) {
-          removeRouteBelow(route);
-        }
-      }
-    }
+    var matches = matcher.allMatches(router.allRoutes);
+    return _pushAllGuarded(matches);
   }
 
   bool get isRoot => parent == null;
@@ -346,7 +348,7 @@ class NestedNavigator extends StatelessWidget {
   const NestedNavigator({
     Key key,
     this.initialRoute,
-    this.guards,
+    this.guards = const [],
     this.onUnknownRoute,
     this.observers = const <NavigatorObserver>[],
   }) : super(key: key);
@@ -354,12 +356,13 @@ class NestedNavigator extends StatelessWidget {
   final String initialRoute;
   final List<RouteGuard> guards;
   final List<NavigatorObserver> observers;
-  final  RouteFactory onUnknownRoute;
+  final RouteFactory onUnknownRoute;
+
   @override
   Widget build(BuildContext context) {
     var initial = initialRoute;
     var basePath = '';
-    var parentData = ParentRouteData.of(context);
+    var parentData = _ParentRouteData.of(context);
     if (parentData != null) {
       basePath = parentData.path;
       if (parentData.initialRoute?.isNotEmpty == true) {
@@ -379,10 +382,10 @@ class NestedNavigator extends StatelessWidget {
         ...parentNav.guards,
       ],
       observers: [
-        ...parentNav.observers,
+//        ...parentNav.observers,
         ...observers,
       ],
-      initialRouteArgs: parentData.initialArgsToPass,
+      initialRouteArgs: parentData._initialArgsToPass,
       key: key,
     );
   }

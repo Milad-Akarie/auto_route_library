@@ -11,15 +11,15 @@ abstract class RouterBase {
   Set<String> get allRoutes => routesMap.keys.toSet();
 
   Route<dynamic> onGenerateRoute(RouteSettings settings, [String basePath]) {
-    assert(settings != null);
     assert(routesMap != null);
+    assert(settings != null);
 
-    var matchResult = findFullMatch(settings, basePath);
-    print(basePath);
-    if (matchResult != null) {
+    var match = findFullMatch(settings);
+    if (match != null) {
+      var matchResult = match.copyWith(name: "${basePath ??= ''}${settings.name}") as MatchResult;
       RouteData data;
-      if (hasNestedRouter(matchResult.template)) {
-        data = ParentRouteData(
+      if (isParentRoute(matchResult.template)) {
+        data = _ParentRouteData(
           matchResult: matchResult,
           initialRoute: matchResult.rest.toString(),
           router: subRouters[matchResult.template](),
@@ -27,13 +27,12 @@ abstract class RouterBase {
       } else {
         data = RouteData(matchResult);
       }
-      print('pushing: $data');
       return routesMap[matchResult.template](data);
     }
     return null;
   }
 
-  bool hasNestedRouter(String template) => subRouters != null && subRouters[template] != null;
+  bool isParentRoute(String template) => subRouters != null && subRouters[template] != null;
 
 
   // a shorthand for calling the onGenerateRoute function
@@ -41,7 +40,7 @@ abstract class RouterBase {
   // Router().onGenerateRoute becomes Router()
   Route<dynamic> call(RouteSettings settings) => onGenerateRoute(settings);
 
-  MatchResult findFullMatch(RouteSettings settings, [String basePath]) {
+  MatchResult findFullMatch(RouteSettings settings) {
     // deep links are  pre-matched
     MatchResult matchResult;
     if (settings is MatchResult) {
@@ -56,11 +55,21 @@ abstract class RouterBase {
         }
       }
     }
-    if (matchResult != null) {
-      return matchResult.copyWith(name: "${basePath ??= ''}${settings.name}");
-    } else {
-      return null;
+     return matchResult;
+  }
+
+  List<MatchResult> allMatches(RouteMatcher matcher) {
+    var matches = <MatchResult>[];
+    for (var template in allRoutes) {
+      var matchResult = matcher.match(template);
+      if (matchResult != null) {
+        matches.add(matchResult);
+        if (isParentRoute(template) || !matchResult.hasRest) {
+          break;
+        }
+      }
     }
+    return matches;
   }
 
   MatchResult match(RouteSettings settings) {

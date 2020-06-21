@@ -1,4 +1,4 @@
-part of 'route_data.dart';
+part of 'extended_navigator.dart';
 
 class Parameters {
   final Map<String, String> _params;

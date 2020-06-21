@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/generic_a.dart';
+import 'package:example/generic_b.dart';
 import 'package:flutter/material.dart';
 
 class UserDetails extends StatelessWidget {

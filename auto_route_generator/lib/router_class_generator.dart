@@ -119,7 +119,7 @@ class RouterClassGenerator {
       }
       constructorParams = r.parameters.map<String>((param) {
         String getterName;
-        if (param.isPathParameter) {
+        if (param.isPathParam) {
           getterName = "data.pathParams['${param.paramName}'].${param.getterName}";
         } else if (param.isQueryParam) {
           getterName = "data.queryParams['${param.paramName}'].${param.getterName}";
@@ -210,9 +210,9 @@ class RouterClassGenerator {
 
     if (routesWithGuards.isNotEmpty) {
       _writeln('\n@override');
-      _writeln('Map<String, List<Type>> get guardedRoutes => {');
+      _writeln('Map<String, List<Type>> get guardedRoutes => const {');
       routesWithGuards.forEach((r) {
-        _write('${routerConfig.routesClassName}.${r.name}:${r.guards.map((g) => g.type).toSet().toList()},');
+        _write('${routerConfig.routesClassName}.${r.templateName}:${r.guards.map((g) => g.type).toSet().toList()},');
       });
       _write('};');
     }

@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:auto_route_generator/import_resolver.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
@@ -122,7 +123,7 @@ class RouterConfigResolver {
       routes.add(route);
 
       var children = routeReader.peek('children')?.listValue;
-      if (children != null) {
+      if (children?.isNotEmpty == true) {
         var name = capitalize(route.name);
         var subRouterConfig = routerConfig.copyWith(
           routerClassName: '${name}Router',

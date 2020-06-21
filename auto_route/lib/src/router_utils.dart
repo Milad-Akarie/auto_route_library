@@ -35,16 +35,6 @@ PageRoute defaultUnknownRoutePage(RouteSettings settings) => MaterialPageRoute(
       ),
     );
 
-// checks whether the passed args are valid
-// if isRequired is true the passed args can not be null.
-bool hasInvalidArgs<T>(Object args, {bool isRequired = false}) {
-  if (isRequired) {
-    return (args is! T);
-  } else {
-    return (args != null && args is! T);
-  }
-}
-
 PageRoute misTypedArgsRoute<T>(Object args) {
   return MaterialPageRoute(
     builder: (ctx) => Scaffold(

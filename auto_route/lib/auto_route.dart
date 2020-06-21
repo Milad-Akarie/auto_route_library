@@ -1,6 +1,5 @@
 export 'src/auto_route_wrapper.dart';
 export 'src/extended_navigator.dart';
-export 'src/route_data.dart';
 export 'src/route_guard.dart';
 export 'src/route_matcher.dart';
 export 'src/router_utils.dart';

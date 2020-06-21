@@ -3,11 +3,6 @@
 import 'package:flutter/material.dart';
 
 class TransitionsBuilders {
-  static const RouteTransitionsBuilder noTransition = _noTransition;
-
-  static Widget _noTransition(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-    return child;
-  }
 
   static const RouteTransitionsBuilder slideRight = _slideRight;
 

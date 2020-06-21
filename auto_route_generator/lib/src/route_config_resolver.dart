@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:auto_route_generator/import_resolver.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
@@ -39,7 +40,7 @@ class RouteConfigResolver {
       element: type.element,
     );
 
-    _extractRouteMetaData(routeConfig, autoRoute);
+    await _extractRouteMetaData(routeConfig, autoRoute);
 
     routeConfig.name = autoRoute.peek('name')?.stringValue ?? toLowerCamelCase(routeConfig.className);
 
@@ -58,7 +59,7 @@ class RouteConfigResolver {
     return routeConfig;
   }
 
-  void _extractRouteMetaData(RouteConfig routeConfig, ConstantReader autoRoute) {
+  Future<void> _extractRouteMetaData(RouteConfig routeConfig, ConstantReader autoRoute) async {
     routeConfig.fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
     routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
 
@@ -70,10 +71,7 @@ class RouteConfigResolver {
     routeConfig.returnType = returnType.getDisplayString();
 
     if (routeConfig.returnType != 'dynamic') {
-      final import = getImport(returnType.element);
-      if (import != null) {
-        routeConfig.imports.add(import);
-      }
+      routeConfig.imports.addAll(await resolveImports(_resolver, returnType));
     }
 
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
@@ -116,7 +114,7 @@ class RouteConfigResolver {
 
   void _validatePathParams(RouteConfig route, ClassElement element) {
     var reg = RegExp(r'{(.*?)}');
-    var pathParams = route.parameters?.where((p) => p.isPathParameter)?.map((e) => e.paramName)?.toSet() ?? {};
+    var pathParams = route.parameters?.where((p) => p.isPathParam)?.map((e) => e.paramName)?.toSet() ?? {};
     var templateParams = reg.allMatches(route.pathName).map((e) => e.group(1)).toSet();
     throwIf(
       (!templateParams.containsAll(pathParams)),
