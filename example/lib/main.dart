@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       onGenerateRoute: Router(),
       builder: ExtendedNavigator(
-        initialRoute: '/users/profile',
+        initialRoute: '/users/2/profile?score=10',
         router: Router(),
         guards: [AuthGuard()],
       ),

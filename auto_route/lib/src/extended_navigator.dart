@@ -6,9 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 part 'parameters.dart';
-
 part 'route_data.dart';
-
 part 'router_base.dart';
 
 RectTween _createRectTween(Rect begin, Rect end) {
@@ -87,9 +85,9 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
           match = match.copyWith(arguments: initialRouteArgs);
         }
       }
-      if (navigator._guardedInitialRoutes.isNotEmpty || router._hasGuards(match.template)) {
+      if (navigator._guardedInitialRoutes.isNotEmpty || match.hasGuards) {
         navigator._guardedInitialRoutes.add(match);
-        if (match.template == Navigator.defaultRouteName) {
+        if (match.routeDef.template == Navigator.defaultRouteName) {
           initialRoutes.add(_placeHolderRoute);
         }
       } else {
@@ -118,11 +116,13 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
     bool rootNavigator = false,
     bool nullOk = false,
   }) {
-    final ExtendedNavigatorState navigator =
-        rootNavigator ? context.findRootAncestorStateOfType<ExtendedNavigatorState>() : context.findAncestorStateOfType<ExtendedNavigatorState>();
+    final ExtendedNavigatorState navigator = rootNavigator
+        ? context.findRootAncestorStateOfType<ExtendedNavigatorState>()
+        : context.findAncestorStateOfType<ExtendedNavigatorState>();
     assert(() {
       if (navigator == null && !nullOk) {
-        throw FlutterError('ExtendedNavigator operation requested with a context that does not include an ExtendedNavigator.\n'
+        throw FlutterError(
+            'ExtendedNavigator operation requested with a context that does not include an ExtendedNavigator.\n'
             'The context used to push or pop routes from the ExtendedNavigator must be that of a '
             'widget that is a descendant of a ExtendedNavigator widget.');
       }
@@ -163,10 +163,9 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
   Future<void> _pushAllGuarded(Iterable<MatchResult> matches) async {
     for (var match in matches) {
-      print(match.template);
       if (await _canNavigate(match.template)) {
         var route = widget.onGenerateRoute(match);
-        if (match.path == Navigator.defaultRouteName) {
+        if (match.template == Navigator.defaultRouteName) {
           pushAndRemoveUntil(route, (route) => false);
         } else {
           push(route);
@@ -186,7 +185,7 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
   Future<void> _pushDeepLink(Uri uri) async {
     var matcher = RouteMatcher.fromUri(uri);
-    var matches = matcher.allMatches(router.allRoutes);
+    var matches = matcher.allMatches(router.routes);
     return _pushAllGuarded(matches);
   }
 
@@ -278,11 +277,11 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
   Future<bool> _canNavigate(String routeName, {Object arguments, OnNavigationRejected onReject}) async {
     var match = _router.findFullMatch(RouteSettings(name: routeName));
-    if (match == null || !_router._hasGuards(match.template)) {
+    if (match == null || !match.hasGuards) {
       return true;
     }
 
-    for (Type guardType in _router.guardedRoutes[match.template]) {
+    for (Type guardType in match.routeDef.guards) {
       if (!await _getGuard(guardType).canNavigate(this, routeName, arguments)) {
         if (onReject != null) {
           onReject(_getGuard(guardType));

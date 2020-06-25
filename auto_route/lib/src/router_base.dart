@@ -3,37 +3,34 @@ part of 'extended_navigator.dart';
 typedef AutoRouteFactory = Route<dynamic> Function(RouteData data);
 typedef RouterBuilder<T extends RouterBase> = T Function();
 
-abstract class RouterBase {
-  Map<String, List<Type>> get guardedRoutes => null;
-  Map<String, RouterBuilder> get subRouters => {};
-  Map<String, AutoRouteFactory> routesMap = {};
+class RouterBase {
+  RouterBase({this.routes});
+  final List<RouteDef> routes;
 
-  Set<String> get allRoutes => routesMap.keys.toSet();
+  Set<String> get allRoutes => routes.map((e) => e.template).toSet();
 
   Route<dynamic> onGenerateRoute(RouteSettings settings, [String basePath]) {
-    assert(routesMap != null);
+    assert(routes != null);
     assert(settings != null);
-
     var match = findFullMatch(settings);
     if (match != null) {
       var matchResult = match.copyWith(name: "${basePath ??= ''}${settings.name}") as MatchResult;
       RouteData data;
-      if (isParentRoute(matchResult.template)) {
+      if (matchResult.isParent) {
         data = _ParentRouteData(
           matchResult: matchResult,
           initialRoute: matchResult.rest.toString(),
-          router: subRouters[matchResult.template](),
+          router: matchResult.routeDef.router(),
         );
       } else {
         data = RouteData(matchResult);
       }
-      return routesMap[matchResult.template](data);
+      print("pushing: $data");
+
+      return matchResult.routeDef.builder(data);
     }
     return null;
   }
-
-  bool isParentRoute(String template) => subRouters != null && subRouters[template] != null;
-
 
   // a shorthand for calling the onGenerateRoute function
   // when using Router directly in MaterialApp or such
@@ -47,7 +44,7 @@ abstract class RouterBase {
       matchResult = settings;
     } else {
       final matcher = RouteMatcher(settings);
-      for (var route in allRoutes) {
+      for (var route in routes) {
         var match = matcher.match(route, fullMatch: true);
         if (match != null) {
           matchResult = match;
@@ -55,16 +52,16 @@ abstract class RouterBase {
         }
       }
     }
-     return matchResult;
+    return matchResult;
   }
 
   List<MatchResult> allMatches(RouteMatcher matcher) {
     var matches = <MatchResult>[];
-    for (var template in allRoutes) {
-      var matchResult = matcher.match(template);
+    for (var route in routes) {
+      var matchResult = matcher.match(route);
       if (matchResult != null) {
         matches.add(matchResult);
-        if (isParentRoute(template) || !matchResult.hasRest) {
+        if (matchResult.isParent || !matchResult.hasRest) {
           break;
         }
       }
@@ -74,7 +71,7 @@ abstract class RouterBase {
 
   MatchResult match(RouteSettings settings) {
     final matcher = RouteMatcher(settings);
-    for (var route in allRoutes) {
+    for (var route in routes) {
       var match = matcher.match(route);
       if (match != null) {
         return match;
@@ -82,6 +79,28 @@ abstract class RouterBase {
     }
     return null;
   }
+}
 
-  bool _hasGuards(String routeName) => routeName != null && guardedRoutes != null && guardedRoutes[routeName] != null;
+class RouteDef {
+  final String template;
+  final List<Type> guards;
+  final RouterBuilder router;
+  final AutoRouteFactory builder;
+  final Pattern pattern;
+
+  RouteDef(this.template, {this.guards, this.router, this.builder}) : pattern = _buildPathPattern(template);
+
+  static Pattern _buildPathPattern(String template) {
+    return '^${template.replaceAllMapped(RegExp(r':([^/]+)|([*])'), (m) {
+      if (m[1] != null) {
+        return '(?<${m[1]}>[^/]+)';
+      } else {
+        return ".*";
+      }
+    })}';
+  }
+
+//  bool get hasGuards => guards?.isNotEmpty == true;
+//
+//  bool get isParent => router != null;
 }

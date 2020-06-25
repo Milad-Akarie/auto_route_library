@@ -66,7 +66,7 @@ class RouterClassGenerator {
 
       if (path.contains(':')) {
         // handle template paths
-        _writeln("static const _$routeName = '$path';");
+        _writeln("static const String _$routeName = '$path';");
         allNames.add('_$routeName');
         var params = RegExp(r':([^/]+)').allMatches(path).map((m) => "@required ${m.group(1)}");
         _writeln("static $routeName({${params.join(',')}}) => '${path.replaceAll(':', '\$')}';");
@@ -75,7 +75,7 @@ class RouterClassGenerator {
         _writeln("static const $routeName = '$path';");
       }
     });
-    _writeln("static const all = {");
+    _writeln("static const all = <String>{");
     allNames.forEach((name) => _write('$name,'));
     _write("};");
     _writeln('}');
@@ -83,20 +83,21 @@ class RouterClassGenerator {
 
   void _generateRouteGeneratorFunction(RouterConfig routerConfig) {
     _newLine();
-    _writeln('''
-      @override
-      Map<String, AutoRouteFactory> get routesMap => _routesMap;
-    ''');
 
-    _writeln('final _routesMap = <String, AutoRouteFactory>{');
     routerConfig.routes.forEach((r) {
-      _writeln('${routerConfig.routesClassName}.${r.templateName}: (RouteData data) {');
+      _writeln("RouteDef(${routerConfig.routesClassName}.${r.templateName},");
+      _writeln('builder: (RouteData data) {');
       _generateRoute(r);
-      _writeln('},');
+      //close builder
+      _write("},");
+      if (r.guards?.isNotEmpty == true) {
+        _writeln("guards:${r.guards.toString()},");
+      }
+      if (r.routerConfig != null) {
+        _writeln("router: () => ${r.routerConfig.routerClassName}(),");
+      }
+      _writeln('),');
     });
-
-    // close _routes map
-    _writeln('};');
   }
 
   void _generateRoute(RouteConfig r) {
@@ -198,11 +199,15 @@ class RouterClassGenerator {
 
   void _generateRouterClass(RouterConfig routerConfig) {
     _writeln('\nclass ${routerConfig.routerClassName} extends RouterBase {');
-    _generateOverrideFunctions(routerConfig);
+
+    _writeln("${routerConfig.routerClassName}():super(routes:[");
+
+//    _generateOverrideFunctions(routerConfig);
+
     _generateRouteGeneratorFunction(routerConfig);
 
     // close router class
-    _writeln('}');
+    _writeln(']);}');
   }
 
   void _generateOverrideFunctions(RouterConfig routerConfig) {

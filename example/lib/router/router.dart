@@ -16,7 +16,7 @@ export 'router.gr.dart';
   routes: <AutoRoute>[
     CustomRoute(page: HomeScreen, initial: true),
     MaterialRoute<GenericA<GenericB<int>>>(
-      path: '/users',
+      path: '/users/:id',
       page: UsersScreen,
       children: [
         CustomRoute(path: '/', page: UserDetails),
@@ -28,11 +28,3 @@ export 'router.gr.dart';
   ],
 )
 class $Router {}
-
-class TemplateDef {
-  final name;
-
-  const TemplateDef(this.name);
-
-  String call() => name;
-}

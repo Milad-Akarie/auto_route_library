@@ -1,5 +1,3 @@
-
-
 part of 'extended_navigator.dart';
 
 @immutable
@@ -14,7 +12,7 @@ class RouteData extends RouteSettings {
   final Parameters _queryParams;
 
   String get template => _routeMatch.template;
-  
+
   Parameters get queryParams => _queryParams;
 
   Parameters get pathParams => _pathParams;
@@ -44,7 +42,7 @@ class RouteData extends RouteSettings {
   @override
   String toString() {
     return 'RouteData{template: ${_routeMatch.template}, '
-        'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}';
+        'path: ${_routeMatch.template}, fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}';
   }
 
   static RouteData of(BuildContext context) {
@@ -56,7 +54,6 @@ class RouteData extends RouteSettings {
     }
   }
 }
-
 
 @immutable
 class _ParentRouteData extends RouteData {
@@ -71,8 +68,8 @@ class _ParentRouteData extends RouteData {
 
   @override
   String toString() {
-    return 'ParentRouteData{template: ${_routeMatch.template}, '
-        'path: ${_routeMatch.path}, fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}, initialRoute: $initialRoute';
+    return '_ParentRouteData{template: ${_routeMatch.template}, '
+        'fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}, initialRoute: $initialRoute';
   }
 
   static _ParentRouteData of(BuildContext context) {
