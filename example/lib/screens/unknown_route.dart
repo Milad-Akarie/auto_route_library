@@ -1,15 +1,17 @@
+import 'package:example/router/router.dart';
 import 'package:flutter/material.dart';
 
 class UnknownRouteScreen extends StatelessWidget {
-  final String routeName;
-
-  const UnknownRouteScreen(this.routeName);
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('can not navigate to $routeName'),
+    return Scaffold(
+      appBar: AppBar(),
+      backgroundColor: Colors.grey,
+      body: Center(
+        child: Text(
+          'ERROR 404 \npage not found ${RouteData.of(context).name}',
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

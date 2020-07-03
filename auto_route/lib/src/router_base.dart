@@ -1,39 +1,71 @@
 part of 'extended_navigator.dart';
 
+typedef AutoRouteFactory = Route<dynamic> Function(RouteData data);
+typedef RouterBuilder<T extends RouterBase> = T Function();
+
 abstract class RouterBase {
-  Map<String, List<Type>> get guardedRoutes => null;
-  Set<String> get allRoutes => {};
-  Route<dynamic> onGenerateRoute(RouteSettings settings);
+  List<RouteDef> get routes;
 
-  /// if initial route is guarded we push
-  /// a placeholder route until next distention is
-  /// decided by the route guard
-  var _initialRouteHasNotBeenRedirected = true;
-  Route<dynamic> _onGenerateRoute(
-      RouteSettings settings, Object initialRouteArgs) {
-    final routeName = settings.name;
-    if (routeName == '/') {
-      settings = settings.copyWith(arguments: initialRouteArgs);
-      if (_hasGuards(routeName) && _initialRouteHasNotBeenRedirected) {
-        _initialRouteHasNotBeenRedirected = false;
-        assert(_onRePushInitialRoute != null);
-        _onRePushInitialRoute(settings);
-        return PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 0),
-          pageBuilder: (_, __, ___) => Container(
-            color: Colors.white,
-          ),
+  Map<Type, AutoRouteFactory> get pagesMap;
+
+  Set<String> get allRoutes => routes.map((e) => e.template).toSet();
+
+  Route<dynamic> onGenerateRoute(RouteSettings settings, [String basePath]) {
+    assert(routes != null);
+    assert(settings != null);
+    var match = findFullMatch(settings);
+    if (match != null) {
+      var namePrefix = basePath?.isNotEmpty == true ? "$basePath" : '';
+      var matchResult = match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
+      RouteData data;
+      if (matchResult.isParent) {
+        data = _ParentRouteData(
+          matchResult: matchResult,
+          initialRoute: matchResult.restAsString,
+          router: matchResult.routeDef.innerRouter(),
         );
+      } else {
+        data = RouteData(matchResult);
       }
+      return pagesMap[matchResult.routeDef.page](data);
     }
-
-    return onGenerateRoute(settings);
+    return null;
   }
 
-  Function(RouteSettings settings) _onRePushInitialRoute;
+  // a shorthand for calling the onGenerateRoute function
+  // when using Router directly in MaterialApp or such
+  // Router().onGenerateRoute becomes Router()
+  Route<dynamic> call(RouteSettings settings) => onGenerateRoute(settings);
 
-  bool _hasGuards(String routeName) =>
-      routeName != null &&
-      guardedRoutes != null &&
-      guardedRoutes[routeName] != null;
+  RouteMatch findFullMatch(RouteSettings settings) {
+    // deep links are  pre-matched
+    if (settings is RouteMatch) {
+      return settings;
+    } else {
+      var matcher = RouteMatcher(settings);
+      for (var route in routes) {
+        var match = matcher.match(route, fullMatch: true);
+        if (match != null) {
+          return  match;
+        }
+      }
+    }
+    return null;
+  }
+
+  List<RouteMatch> allMatches(RouteMatcher matcher) {
+    var matches = <RouteMatch>[];
+    for (var route in routes) {
+      var matchResult = matcher.match(route);
+      if (matchResult != null) {
+        matches.add(matchResult);
+        if (matchResult.isParent || !matchResult.hasRest) {
+          break;
+        }
+      }
+    }
+    return matches;
+  }
 }
+
+

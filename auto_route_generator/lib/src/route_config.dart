@@ -1,7 +1,6 @@
 import 'package:auto_route_generator/route_config_resolver.dart';
-import 'package:auto_route_generator/utils.dart';
 
-import 'custom_transtion_builder.dart';
+import 'custom_transition_builder.dart';
 
 /// holds the extracted route configs
 /// to be used in [RouterClassGenerator]
@@ -24,11 +23,20 @@ class RouteConfig {
   List<RouteGuardConfig> guards = [];
   String cupertinoNavTitle;
   bool hasWrapper;
-  bool isUnknownRoute;
+  RouterConfig routerConfig;
+
   RouteConfig();
 
   String get argumentsHolderClassName {
     return '${className}Arguments';
+  }
+
+  String get templateName {
+    return pathName.contains(":") ? '_$name' : name;
+  }
+
+  List<RouteParamConfig> get argParams {
+    return parameters?.where((p) => !p.isPathParam && !p.isQueryParam)?.toList() ?? [];
   }
 }
 

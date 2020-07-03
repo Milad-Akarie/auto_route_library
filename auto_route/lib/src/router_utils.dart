@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 // returns an error page routes with a helper message.
-PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
+PageRoute defaultUnknownRoutePage(RouteSettings settings) => MaterialPageRoute(
       builder: (ctx) => Scaffold(
         body: Container(
           color: Colors.redAccent,
@@ -14,12 +15,11 @@ PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                 child: Text(
-                  routeName == "/"
+                  settings.name == "/"
                       ? 'Initial route not found! \n did you forget to annotate your home page with @initial or @MaterialRoute(initial:true)?'
-                      : 'Route name $routeName is not found!',
+                      : 'Route name ${settings.name} is not found!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
@@ -34,16 +34,6 @@ PageRoute unknownRoutePage(String routeName) => MaterialPageRoute(
         ),
       ),
     );
-
-// checks whether the passed args are valid
-// if isRequired is true the passed args can not be null.
-bool hasInvalidArgs<T>(Object args, {bool isRequired = false}) {
-  if (isRequired) {
-    return (args is! T);
-  } else {
-    return (args != null && args is! T);
-  }
-}
 
 PageRoute misTypedArgsRoute<T>(Object args) {
   return MaterialPageRoute(
@@ -88,7 +78,15 @@ PageRoute<T> buildAdaptivePageRoute<T>({
   assert(builder != null);
   assert(maintainState != null);
   assert(fullscreenDialog != null);
-  if (Platform.isIOS) {
+  // no transitions for web
+  if (kIsWeb) {
+    return PageRouteBuilder(
+      pageBuilder: (ctx, _, __) => builder(ctx),
+      settings: settings,
+      maintainState: maintainState,
+      fullscreenDialog: fullscreenDialog,
+    );
+  } else if (Platform.isIOS || Platform.isMacOS) {
     return CupertinoPageRoute<T>(
       builder: builder,
       settings: settings,

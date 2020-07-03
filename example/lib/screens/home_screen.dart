@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/router/router.gr.dart';
+import 'package:example/router/router.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -13,20 +13,9 @@ class HomeScreen extends StatelessWidget {
           Container(
             child: Center(
               child: FlatButton(
-                child: Text("Second Screen"),
+                child: Text("Users Screen"),
                 onPressed: () async {
-                  ExtendedNavigator.ofRouter<Router>().pushNamed(
-                    Routes.secondScreen,
-                    arguments: SecondScreenArguments(title: 'title'),
-                    onReject: (guard) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text('You need to be logged in'),
-                        ),
-                      );
-                    },
-                  );
+                  ExtendedNavigator.root.pushNamed('/users/1?filter=active');
                 },
               ),
             ),

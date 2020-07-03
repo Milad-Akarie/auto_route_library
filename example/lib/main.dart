@@ -1,6 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:example/router/route_guards.dart';
-import 'package:example/router/router.gr.dart';
+import 'package:example/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      builder: (ctx, __) => ExtendedNavigator<Router>(
+      builder: ExtendedNavigator(
         router: Router(),
         guards: [AuthGuard()],
       ),
