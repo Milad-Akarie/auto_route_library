@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  meta: ^1.1.8
 dev_dependecies:
   flutter_test:
     sdk: flutter

@@ -36,7 +36,10 @@ class RouteConfig {
   }
 
   List<RouteParamConfig> get argParams {
-    return parameters?.where((p) => !p.isPathParam && !p.isQueryParam)?.toList() ?? [];
+    return parameters
+            ?.where((p) => !p.isPathParam && !p.isQueryParam)
+            ?.toList() ??
+        [];
   }
 }
 

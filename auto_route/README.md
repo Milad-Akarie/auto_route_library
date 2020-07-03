@@ -1,6 +1,6 @@
 # auto_route:
 
-AutoRoute is a declartive routing solution, where everything needed for navigation is automatically generated for you.
+AutoRoute is a declarative routing solution, where everything needed for navigation is automatically generated for you.
 
 
 ---
@@ -9,9 +9,9 @@ AutoRoute is a declartive routing solution, where everything needed for navigati
 - [Setup and Usage](#setup-and-usage)
 - [Customizing routes](#Customizing-routes)
 - [Passing arguments to routes](#passing-arguments-to-routes)
-- [Dynamic routing (path parameters)](#dynamic-routing-(path-parameters))
-- [Extracting route parameters](#dynamic-routing-(path-parameters))
-- [Hanlding unknown routes](#handling-unknown-routes)
+- [Dynamic routing aka path parameters](#dynamic-routing-aka-path-parameters)
+- [Extracting route parameters](#extracting-route-parameters)
+- [Handling unknown routes](#handling-unknown-routes)
 - [Nested routes](#nested-routes)
 - [Navigation](#navigation)
 - [Route guards](#route-guards)
@@ -34,7 +34,7 @@ dev_dependencies:
 
 ---
 
-First create a router class and annotate it with @MaterialAutoRouter, @CupertinoAutoRouter, @AdaptiveAutoRouteror @CustomAutoRoute. It's name must be prefixed with **\$** to get a generated class with the same name minus the $.
+First create a router class and annotate it with @MaterialAutoRouter, @CupertinoAutoRouter, @AdaptiveAutoRouter or @CustomAutoRoute. It's name must be prefixed with **\$** to get a generated class with the same name minus the $.
 $Router => Router
 
 ##### Note: using \$ prefix is mandatory.
@@ -49,7 +49,7 @@ class $Router {}
 ```dart
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    // intial route is named "/"
+    // initial route is named "/"
     MaterialRoute(page: HomeScreen, initial: true),
     MaterialRoute(page: UsersScreen, ..config),
   ],
@@ -92,7 +92,7 @@ after you run the generator your router class will be generated
 
 ```
 
-##### Using the native navigator
+### Using the native navigator
 **Note** Without ExtendedNavigator you will lose support for RouteGuards and auto-nested navigation handling.
 ```dart
      MaterialApp(
@@ -136,16 +136,16 @@ class Router extends RouterBase {
 
 ## Customizing routes
 ---
-There are several avalaible auto-route types which you can customize
+There are several available auto-route types which you can customize
 * MaterialRoute -> will generate a MaterialRoutePage
-* CupertinoRoute -> will generate a CupertionRoutePage
-* AdaptiveRoute -> will generate Cupertion or Material route page based on the Platform
+* CupertinoRoute -> will generate a CupertinoRoutePage
+* AdaptiveRoute -> will generate Cupertino or Material route page based on the Platform
 * CustomRoute -> will generate a PageRouteBuilder with the provided Customizations
 
 ```dart
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    MaterialRoute(page: HomeScreen, initial: true, name: "IntialRoute"),
+    MaterialRoute(page: HomeScreen, initial: true, name: "InitialRoute"),
     CupertinoRoute(page: UsersScreen, fullscreenDialog: true),
     //This route returns result of type [bool]
     CustomRoute<bool>(page: LoginScreen, transitionsBuilder: TransitionsBuilders.fadeIn),
@@ -155,7 +155,7 @@ class $Router {}
 ```
 
 #### Custom path names
-AutoRoute automatically generates paths based on page type, for example the generated path for HomeScreen is "/home-screen". You properlly won't need to customize your paths unless your're building a web application.
+AutoRoute automatically generates paths based on page type, for example the generated path for HomeScreen is "/home-screen". You probably won't need to customize your paths unless your are building a web application.
 To use a custom path name use the path property inside of AutoRoute
 ```dart
 MaterialRoute(path: "/users", page: UsersScreen)
@@ -167,7 +167,7 @@ MaterialRoute(path: "/users", page: UsersScreen)
 
 | Property                                 | Default value | Definition                                                                               |
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
-| generateNavigationHelperExtension [bool] | false         | if true a Navigator extenstion will be generated with helper push methods of all routes |
+| generateNavigationHelperExtension [bool] | false         | if true a Navigator extension will be generated with helper push methods of all routes |
 | routePrefix [String] |    ''     | all route paths will be prefixed with this routePrefix String |
 | routesClassName [string] | 'Routes'         | the name of the generated Routes class |
 #### CustomAutoRouter
@@ -205,7 +205,7 @@ MaterialRoute(path: "/users", page: UsersScreen)
 | barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |
 | durationInMilliseconds  |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |
 
-## Passing aurguments to routes
+## Passing arguments to routes
 
 ---
 
@@ -248,7 +248,7 @@ ExtendedNavigator.of(ctx).pushNamed(Router.welcomeScreenRoute,
     );
 ```
 
-## Dynamic routing (Path parameters)
+## Dynamic routing aka path parameters
 ---
 requires **AutoRoute: >= 0.6.0**
 Define a dynamic segment by prefixing it with a colon
@@ -259,7 +259,7 @@ Now pushing `users/1` will match `/users:id` and the path parameter `id` will be
 
 ##  Extracting route parameters
 ---
-Extracted path parameters & queryParameters are bundled inside of an object called **RouteData** wihch you can get by calling `RouteData.of(context)` inside of the current route page.
+Extracted path parameters & queryParameters are bundled inside of an object called **RouteData** which you can get by calling `RouteData.of(context)` inside of the current route page.
 
 ```dart
 class UsersScreen extends StatelessWidget {
@@ -293,13 +293,13 @@ class UsersScreen extends StatefulWidget {
        id: data.pathParams['id'].intValue,
        filterFromQuery: data.queryParams['filter'].stringValue)
 ```
-**Note** constructor paramters annoated with `@PathParam()` or `@QueryParam` will not be considered as argument paramters and will be excluded from the generated argument class holder
+**Note** constructor parameters annotated with `@PathParam()` or `@QueryParam` will not be considered as argument parameters and will be excluded from the generated argument class holder
 
-## Hanlding unknown routes
+## Handling unknown routes
 ---
 requires **AutoRoute: >= 0.6.0**
 #### Using a wildcard
-AutoRoute 0.6.0 supports wildcard matching, you can simpley declare a wildcard at the end of your routes list to catch any undefined routes.
+AutoRoute 0.6.0 supports wildcard matching, you can simply declare a wildcard at the end of your routes list to catch any undefined routes.
 ```dart
 @MaterialAutoRouter(
   routes: <AutoRoute>[
@@ -313,7 +313,7 @@ AutoRoute 0.6.0 supports wildcard matching, you can simpley declare a wildcard a
 class $Router {}
 ```
 #### Using the onUnknownRoute callback function in ExtendedNavigator
-This function is called when the matcher fails to find a route to return, a defualt error page is returned if onUnkownRoute is not provided
+This function is called when the matcher fails to find a route to return, a default error page is returned if onUnknownRoute is not provided
 ```dart
 ExtendedNavigator(
     router: Router(),
@@ -346,7 +346,7 @@ Declaring your nested routes inside of the parent route's children property will
 class $Router {}
 ```
 Now we need to render these nested routes inside of their parent **UsersScreen** and for that we use a `NestedNavigator()`, this widget will build an ExtendedNavigator and provide it with the right router.
-this's the same as using `<router-outlet>` in Angular or `<router-view>` in Vue.
+this is the same as using `<router-outlet>` in Angular or `<router-view>` in Vue.
 ```dart
 class UsersScreen extends StatelessWidget {
   ...
@@ -375,18 +375,18 @@ ExtendedNavigator.of(context).pushNamed(..)
 ```dart
 ExtendedNavigator.ofRouter<Router>().pushNamed(..)
 ```
- by Name -> this's useful when using nested Navigators
+ by Name -> requires **AutoRoute: >= 0.6.0**
 
 ```dart
 // give your navigator a name
 ExtendedNavigator(router: Router(), name: "root")
-NestedNavigaotr(name: "nestedNav")
+NestedNavigator(name: "nestedNav")
 //call it by it's name
 ExtendedNavigator.byName("nestedNav").pushNamed(..)
 ```
  if you're working with only one navigator
 ```dart
-ExtenedNavigator.root.pushNamed(..)
+ExtendedNavigator.root.pushNamed(..)
 ```
 
 ### Navigation helper methods extension
@@ -505,7 +505,7 @@ ZoomInScreen zoomInScreenRoute {}
 ```
 ## Migration guide
 ---
-I apologyize for the good 5 to 10 minutes you're gonna lose rewriting your router class but it's for the greater good ;).
+I apologize for the good 5 to 10 minutes you're gonna lose rewriting your router class but it's for the greater good ;).
 
 #### Migrating from auto_route <= 0.5.0
 Basically instead of declaring our routes as class fields we're going to use a more readable and scalable way (a static routes list).
@@ -537,7 +537,7 @@ class $Router{
     @CupertinoRoute(fullscreenDialog: true, returnType: bool)
     LoginScreen loginScreen;
 
-    @CustomRoute(transationsBuilder: TranstionsBuilders.fadeIn)
+    @CustomRoute(transitionBuilder: TransitionsBuilders.fadeIn)
     ProfileScreen profileScreen;
 }
 ```
@@ -546,7 +546,7 @@ new way `>= 0.6.0`
 @MaterialAutoRouter(
 routes:[
   CupertinoRoute<bool>(page: LoginScreen, fullscreenDialog: true),
-  CustomRoute(page: ProfileScreen, transationsBuilder: TranstionsBuilders.fadeIn)
+  CustomRoute(page: ProfileScreen, transitionBuilder: TransitionsBuilders.fadeIn)
  ],
 )
 class $Router{}
@@ -579,7 +579,7 @@ old way `<= 0.5.0`
 @MaterialAutoRouter()
 class $Router{
     @unknownRoute
-    UnknownRouteScreen unkownRoute;
+    UnknownRouteScreen unknownRoute;
 }
 ```
 new way `>= 0.6.0`
@@ -604,4 +604,4 @@ Make sure you always **Save** your files before running the generator, if that d
 flutter packages pub run build_runner clean
 ```
 ### Support auto_route
-You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can enhance a certain functinality or by reporting any problems you encounter
+You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can enhance a certain functionality or by reporting any problems you encounter

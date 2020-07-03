@@ -16,7 +16,8 @@ abstract class RouterBase {
     var match = findFullMatch(settings);
     if (match != null) {
       var namePrefix = basePath?.isNotEmpty == true ? "$basePath" : '';
-      var matchResult = match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
+      var matchResult =
+          match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
       RouteData data;
       if (matchResult.isParent) {
         data = _ParentRouteData(
@@ -46,7 +47,7 @@ abstract class RouterBase {
       for (var route in routes) {
         var match = matcher.match(route, fullMatch: true);
         if (match != null) {
-          return  match;
+          return match;
         }
       }
     }
@@ -67,5 +68,3 @@ abstract class RouterBase {
     return matches;
   }
 }
-
-

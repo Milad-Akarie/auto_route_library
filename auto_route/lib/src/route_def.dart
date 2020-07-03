@@ -1,4 +1,3 @@
-
 import 'package:auto_route/auto_route.dart';
 
 class RouteDef {
@@ -9,11 +8,11 @@ class RouteDef {
   final Type page;
 
   RouteDef(
-      this.template, {
-        this.page,
-        this.guards,
-        this.innerRouter,
-      }) : pattern = _buildPathPattern(template);
+    this.template, {
+    this.page,
+    this.guards,
+    this.innerRouter,
+  }) : pattern = _buildPathPattern(template);
 
   static Pattern _buildPathPattern(String template) {
     return '^${template.replaceAllMapped(RegExp(r':([^/]+)|([*])'), (m) {

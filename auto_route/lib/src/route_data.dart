@@ -26,7 +26,8 @@ class RouteData extends RouteSettings {
       assert(orElse != null);
     }
     if (_hasInvalidArgs<T>(nullOk)) {
-      throw FlutterError('Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
     }
     return arguments as T ?? orElse();
   }
@@ -65,7 +66,6 @@ class _ParentRouteData<T extends RouterBase> extends RouteData {
     this.router,
     RouteMatch matchResult,
   }) : super(matchResult);
-
 
   static _ParentRouteData of(BuildContext context) {
     var modal = ModalRoute.of(context);
