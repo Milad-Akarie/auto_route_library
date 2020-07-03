@@ -64,11 +64,17 @@ class RouteParameterResolver {
     var pathParam = pathParamChecker.hasAnnotationOfExact(parameterElement);
     var paramAlias;
     if (pathParam) {
-      paramAlias = pathParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
+      paramAlias = pathParamChecker
+          .firstAnnotationOf(parameterElement)
+          .getField('name')
+          ?.toStringValue();
     }
     var isQuery = queryParamChecker.hasAnnotationOfExact(parameterElement);
     if (isQuery) {
-      paramAlias = queryParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
+      paramAlias = queryParamChecker
+          .firstAnnotationOf(parameterElement)
+          .getField('name')
+          ?.toStringValue();
     }
 
     return RouteParamConfig(

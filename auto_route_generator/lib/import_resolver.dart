@@ -9,7 +9,8 @@ Future<Set<String>> resolveImports(Resolver resolver, DartType type) async {
   return imports..removeWhere((element) => element == null);
 }
 
-Future<Set<String>> _checkForParameterizedTypes(Resolver resolver, DartType typeToCheck) async {
+Future<Set<String>> _checkForParameterizedTypes(
+    Resolver resolver, DartType typeToCheck) async {
   final imports = <String>{};
   if (typeToCheck is ParameterizedType) {
     for (DartType type in typeToCheck.typeArguments) {
@@ -39,7 +40,8 @@ Future<String> _resolveLibImport(Resolver resolver, Element element) async {
 
 // Checks if source is from dart:core library
 bool isCoreDartType(Element element) {
-  return element.source.isInSystemLibrary && element.source.uri.path.startsWith('core/');
+  return element.source.isInSystemLibrary &&
+      element.source.uri.path.startsWith('core/');
 }
 
 String getImport(Element element) {

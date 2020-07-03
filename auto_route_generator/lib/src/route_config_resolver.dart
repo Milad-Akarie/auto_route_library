@@ -29,7 +29,8 @@ class RouteConfigResolver {
       if (autoRoute.peek('initial')?.boolValue == true) {
         path = '/';
       } else {
-        path = '${_routerConfig.routeNamePrefix}${toKababCase(routeConfig.className)}';
+        path =
+            '${_routerConfig.routeNamePrefix}${toKababCase(routeConfig.className)}';
       }
     }
     routeConfig.pathName = path;
@@ -42,9 +43,12 @@ class RouteConfigResolver {
 
     await _extractRouteMetaData(routeConfig, autoRoute);
 
-    routeConfig.name = autoRoute.peek('name')?.stringValue ?? toLowerCamelCase(routeConfig.className);
+    routeConfig.name = autoRoute.peek('name')?.stringValue ??
+        toLowerCamelCase(routeConfig.className);
 
-    routeConfig.hasWrapper = classElement.allSupertypes.map<String>((el) => el.getDisplayString()).contains('AutoRouteWrapper');
+    routeConfig.hasWrapper = classElement.allSupertypes
+        .map<String>((el) => el.getDisplayString())
+        .contains('AutoRouteWrapper');
 
     final constructor = classElement.unnamedConstructor;
 
@@ -59,12 +63,19 @@ class RouteConfigResolver {
     return routeConfig;
   }
 
-  Future<void> _extractRouteMetaData(RouteConfig routeConfig, ConstantReader autoRoute) async {
-    routeConfig.fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
+  Future<void> _extractRouteMetaData(
+      RouteConfig routeConfig, ConstantReader autoRoute) async {
+    routeConfig.fullscreenDialog =
+        autoRoute.peek('fullscreenDialog')?.boolValue;
     routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
 
-    autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue())?.forEach((guard) {
-      routeConfig.guards.add(RouteGuardConfig(type: guard.getDisplayString(), import: getImport(guard.element)));
+    autoRoute
+        .peek('guards')
+        ?.listValue
+        ?.map((g) => g.toTypeValue())
+        ?.forEach((guard) {
+      routeConfig.guards.add(RouteGuardConfig(
+          type: guard.getDisplayString(), import: getImport(guard.element)));
     });
 
     final returnType = autoRoute.objectValue.type.typeArguments.first;
@@ -81,16 +92,21 @@ class RouteConfigResolver {
       routeConfig.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(AdaptiveRoute))) {
       routeConfig.routeType = RouteType.adaptive;
-      routeConfig.cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
+      routeConfig.cupertinoNavTitle =
+          autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       routeConfig.routeType = RouteType.custom;
-      routeConfig.durationInMilliseconds = autoRoute.peek('durationInMilliseconds')?.intValue;
+      routeConfig.durationInMilliseconds =
+          autoRoute.peek('durationInMilliseconds')?.intValue;
       routeConfig.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      routeConfig.customRouteBarrierDismissible = autoRoute.peek('barrierDismissible')?.boolValue;
-      final function = autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      routeConfig.customRouteBarrierDismissible =
+          autoRoute.peek('barrierDismissible')?.boolValue;
+      final function =
+          autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
       if (function != null) {
         final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
-        final functionName = (function.isStatic && function.enclosingElement?.displayName != null)
+        final functionName = (function.isStatic &&
+                function.enclosingElement?.displayName != null)
             ? '${function.enclosingElement.displayName}.$displayName'
             : displayName;
 
@@ -98,7 +114,8 @@ class RouteConfigResolver {
         if (function.enclosingElement?.name != 'TransitionsBuilders') {
           import = getImport(function);
         }
-        routeConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
+        routeConfig.transitionBuilder =
+            CustomTransitionBuilder(functionName, import);
       }
     } else {
       var globConfig = _routerConfig.globalRouteConfig;
@@ -106,7 +123,8 @@ class RouteConfigResolver {
       if (globConfig.routeType == RouteType.custom) {
         routeConfig.transitionBuilder = globConfig.transitionBuilder;
         routeConfig.durationInMilliseconds = globConfig.durationInMilliseconds;
-        routeConfig.customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
+        routeConfig.customRouteBarrierDismissible =
+            globConfig.customRouteBarrierDismissible;
         routeConfig.customRouteOpaque = globConfig.customRouteOpaque;
       }
     }
@@ -114,8 +132,13 @@ class RouteConfigResolver {
 
   void _validatePathParams(RouteConfig route, ClassElement element) {
     var reg = RegExp(r'{(.*?)}');
-    var pathParams = route.parameters?.where((p) => p.isPathParam)?.map((e) => e.paramName)?.toSet() ?? {};
-    var templateParams = reg.allMatches(route.pathName).map((e) => e.group(1)).toSet();
+    var pathParams = route.parameters
+            ?.where((p) => p.isPathParam)
+            ?.map((e) => e.paramName)
+            ?.toSet() ??
+        {};
+    var templateParams =
+        reg.allMatches(route.pathName).map((e) => e.group(1)).toSet();
     throwIf(
       (!templateParams.containsAll(pathParams)),
       "Path ${route.pathName} does not define all path-parameters defined in "

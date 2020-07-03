@@ -31,7 +31,8 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     String routesClassName,
     String pathPrefix,
     @required List<AutoRoute> routes,
-  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix, routes);
+  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix,
+            routes);
 }
 
 class MaterialRouter extends AutoRouterAnnotation {
@@ -40,7 +41,8 @@ class MaterialRouter extends AutoRouterAnnotation {
     String routesClassName,
     String pathPrefix,
     @required List<AutoRoute> routes,
-  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix, routes);
+  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix,
+            routes);
 }
 
 // Defaults created routes to CupertinoPageRoute unless
@@ -144,7 +146,15 @@ class AutoRoute<T> {
 
   final List<Type> guards;
 
-  const AutoRoute({this.page, this.initial, this.guards, this.fullscreenDialog, this.maintainState, this.path, this.name, this.children});
+  const AutoRoute(
+      {@required this.page,
+      this.initial,
+      this.guards,
+      this.fullscreenDialog,
+      this.maintainState,
+      this.path,
+      this.name,
+      this.children});
 }
 
 class MaterialRoute<T> extends AutoRoute<T> {
