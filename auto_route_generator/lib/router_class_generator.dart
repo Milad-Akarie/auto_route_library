@@ -72,7 +72,7 @@ class RouterClassGenerator {
         _writeln("static $routeName({${params.join(',')}}) => '${path.replaceAll(':', '\$')}';");
       } else {
         allNames.add(routeName);
-        _writeln("static const $routeName = '$path';");
+        _writeln("static const String $routeName = '$path';");
       }
     });
     _writeln("static const all = <String>{");
@@ -81,22 +81,34 @@ class RouterClassGenerator {
     _writeln('}');
   }
 
+  void _generateRouteTemplates(RouterConfig routerConfig) {
+    _newLine();
+    routerConfig.routes.forEach((r) {
+      _writeln("RouteDef(${routerConfig.routesClassName}.${r.templateName}");
+      _writeln(",page: ${r.className}");
+      if (r.guards?.isNotEmpty == true) {
+        _writeln(",guards:${r.guards.map((e) => e.type).toList().toString()}");
+      }
+      if (r.routerConfig != null) {
+        _writeln(",innerRouter: () => ${r.routerConfig.routerClassName}(),");
+      }
+      _writeln('),');
+    });
+  }
+
   void _generateRouteGeneratorFunction(RouterConfig routerConfig) {
     _newLine();
 
-    routerConfig.routes.forEach((r) {
-      _writeln("RouteDef(${routerConfig.routesClassName}.${r.templateName},");
-      _writeln('builder: (RouteData data) {');
-      _generateRoute(r);
+    var routesMap = <String, RouteConfig>{};
+    routerConfig.routes.forEach((route) {
+      routesMap[route.className] = route;
+    });
+
+    routesMap.forEach((name, route) {
+      _writeln('$name: (RouteData data) {');
+      _generateRoute(route);
       //close builder
       _write("},");
-      if (r.guards?.isNotEmpty == true) {
-        _writeln("guards:${r.guards.toString()},");
-      }
-      if (r.routerConfig != null) {
-        _writeln("router: () => ${r.routerConfig.routerClassName}(),");
-      }
-      _writeln('),');
     });
   }
 
@@ -121,9 +133,11 @@ class RouterClassGenerator {
       constructorParams = r.parameters.map<String>((param) {
         String getterName;
         if (param.isPathParam) {
-          getterName = "data.pathParams['${param.paramName}'].${param.getterName}";
+          getterName =
+              "data.pathParams['${param.paramName}'].${param.getterName}${param.defaultValueCode != null ? '?? ${param.defaultValueCode}' : ''}";
         } else if (param.isQueryParam) {
-          getterName = "data.queryParams['${param.paramName}'].${param.getterName}";
+          getterName =
+              "data.queryParams['${param.paramName}'].${param.getterName}${param.defaultValueCode != null ? '?? ${param.defaultValueCode}' : ''}";
         } else {
           getterName = "args.${param.name}";
         }
@@ -200,14 +214,25 @@ class RouterClassGenerator {
   void _generateRouterClass(RouterConfig routerConfig) {
     _writeln('\nclass ${routerConfig.routerClassName} extends RouterBase {');
 
-    _writeln("${routerConfig.routerClassName}():super(routes:[");
-
 //    _generateOverrideFunctions(routerConfig);
+    _writeln('''
+     @override
+     List<RouteDef> get routes => _routes;
+     final _routes = <RouteDef>[
+     ''');
+    _generateRouteTemplates(routerConfig);
+    _write('];');
 
+    _writeln('''
+       @override
+       Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
+        final _pagesMap = <Type, AutoRouteFactory>{
+        ''');
     _generateRouteGeneratorFunction(routerConfig);
+    _write('};');
 
     // close router class
-    _writeln(']);}');
+    _writeln('}');
   }
 
   void _generateOverrideFunctions(RouterConfig routerConfig) {
@@ -227,8 +252,7 @@ class RouterClassGenerator {
       _writeln('\n@override');
       _writeln('Map<String, RouterBuilder > get subRouters => {');
       parentRoutes.forEach((route) {
-        _writeln(
-            "${routerConfig.routesClassName}.${route.templateName}: () => ${route.routerConfig.routerClassName}(),");
+        _writeln("${routerConfig.routesClassName}.${route.templateName}: () => ${route.routerConfig.routerClassName}(),");
       });
       _writeln("};");
     }
@@ -249,8 +273,7 @@ class RouterClassGenerator {
         _write("cupertinoTitle:'${r.cupertinoNavTitle}',");
       }
     } else {
-      _write(
-          'return PageRouteBuilder<$returnType>(pageBuilder: (context, animation, secondaryAnimation) => $constructor, settings: data,');
+      _write('return PageRouteBuilder<$returnType>(pageBuilder: (context, animation, secondaryAnimation) => $constructor, settings: data,');
 
       if (r.customRouteOpaque != null) {
         _write('opaque:${r.customRouteOpaque.toString()},');
@@ -279,7 +302,14 @@ class RouterClassGenerator {
   void _generateNavigationHelpers(RouterConfig routerConfig) {
     _generateBoxed('Navigation helper methods extension');
     _writeln('extension ${routerConfig.routerClassName}NavigationHelperMethods on ExtendedNavigatorState {');
-    routerConfig.routes.forEach((r) => _generateHelperMethod(r, routerConfig.routesClassName));
+    for (var route in routerConfig.routes) {
+      // skip routes that has path or query params until
+      // until there's a practical way to handle them
+      if (route.parameters?.any((param) => param.isPathParam || param.isQueryParam) == true) {
+        continue;
+      }
+      _generateHelperMethod(route, routerConfig.routesClassName);
+    }
     _writeln('}');
   }
 

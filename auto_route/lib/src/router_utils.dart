@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 // returns an error page routes with a helper message.
@@ -14,8 +15,7 @@ PageRoute defaultUnknownRoutePage(RouteSettings settings) => MaterialPageRoute(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                 child: Text(
                   settings.name == "/"
                       ? 'Initial route not found! \n did you forget to annotate your home page with @initial or @MaterialRoute(initial:true)?'
@@ -78,7 +78,15 @@ PageRoute<T> buildAdaptivePageRoute<T>({
   assert(builder != null);
   assert(maintainState != null);
   assert(fullscreenDialog != null);
-  if (Platform.isIOS) {
+  // no transitions for web
+  if (kIsWeb) {
+    return PageRouteBuilder(
+      pageBuilder: (ctx, _, __) => builder(ctx),
+      settings: settings,
+      maintainState: maintainState,
+      fullscreenDialog: fullscreenDialog,
+    );
+  } else if (Platform.isIOS || Platform.isMacOS) {
     return CupertinoPageRoute<T>(
       builder: builder,
       settings: settings,

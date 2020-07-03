@@ -7,7 +7,7 @@ class RouteData extends RouteSettings {
         _queryParams = _routeMatch.queryParams,
         super(name: _routeMatch.name, arguments: _routeMatch.arguments);
 
-  final MatchResult _routeMatch;
+  final RouteMatch _routeMatch;
   final Parameters _pathParams;
   final Parameters _queryParams;
 
@@ -56,21 +56,16 @@ class RouteData extends RouteSettings {
 }
 
 @immutable
-class _ParentRouteData extends RouteData {
+class _ParentRouteData<T extends RouterBase> extends RouteData {
   final String initialRoute;
-  final RouterBase router;
+  final T router;
 
   _ParentRouteData({
     this.initialRoute,
     this.router,
-    MatchResult matchResult,
+    RouteMatch matchResult,
   }) : super(matchResult);
 
-  @override
-  String toString() {
-    return '_ParentRouteData{template: ${_routeMatch.template}, '
-        'fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}, initialRoute: $initialRoute';
-  }
 
   static _ParentRouteData of(BuildContext context) {
     var modal = ModalRoute.of(context);

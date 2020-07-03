@@ -1,5 +1,14 @@
 # ChangeLog
-
+## [0.6.0] Breaking Change
+- Change the way routes are declared from class fields to a static list
+- Add support for path & query paramters
+- Add support for path wildcards
+- Add support for nested routes
+- Add support for generic result types
+- Add get ExtendedNavigator by name feature
+- Merge fix for adaptive route web support issue
+- Change generating arguments holder for single parameter routes is not optional anymore
+- Minor fixes and enhancments
 ## [0.5.0] 
 - Add support for Complex function types & typeDef as Route parameters
 ## [0.4.10] Skip

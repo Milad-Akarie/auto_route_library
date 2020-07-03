@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 part 'parameters.dart';
+
 part 'route_data.dart';
+
 part 'router_base.dart';
 
 RectTween _createRectTween(Rect begin, Rect end) {
@@ -20,6 +22,7 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
     @required this.router,
     this.guards,
     String initialRoute,
+    this.name,
     this.basePath,
     RouteFactory onUnknownRoute,
     Object initialRouteArgs,
@@ -52,14 +55,14 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
   final T router;
   final List<RouteGuard> guards;
   final String basePath;
+  final String name;
 
   @override
   ExtendedNavigatorState createState() {
-    return _NavigationStatesContainer._instance.create<T>();
+    return ExtendedNavigatorState<T>();
   }
 
   static get _placeHolderRoute => PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 0),
         pageBuilder: (_, __, ___) => Container(color: Colors.green),
       );
 
@@ -75,7 +78,6 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
 
     var matcher = RouteMatcher.fromUri(Uri.parse(initialRouteName));
     var matches = router.allMatches(matcher);
-//    var matches = matcher.allMatches(router.allRoutes).toList();
     for (var i = 0; i < matches.length; i++) {
       var match = matches[i];
       if (i == matches.length - 1) {
@@ -100,13 +102,19 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
     return initialRoutes;
   }
 
-  ExtendedNavigator call(_, __) => this;
+  ExtendedNavigator call(_, navigator) => this;
 
-  static ExtendedNavigatorState ofRouter<T extends RouterBase>() => _NavigationStatesContainer._instance.get<T>();
+  static ExtendedNavigatorState ofRouter<T extends RouterBase>() {
+    assert(T != null);
+    return _NavigationStatesContainer._instance.get<T>();
+  }
+
+  static ExtendedNavigatorState byName(String name) {
+    assert(name != null);
+    return _NavigationStatesContainer._instance.get(name);
+  }
 
   static ExtendedNavigatorState get root => _NavigationStatesContainer._instance.getRootNavigator();
-
-  static List<Type> get allKeys => _NavigationStatesContainer._instance._navigatorKeys.keys.toList();
 
   @Deprecated("renamed to root")
   static ExtendedNavigatorState get rootNavigator => root;
@@ -116,13 +124,11 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
     bool rootNavigator = false,
     bool nullOk = false,
   }) {
-    final ExtendedNavigatorState navigator = rootNavigator
-        ? context.findRootAncestorStateOfType<ExtendedNavigatorState>()
-        : context.findAncestorStateOfType<ExtendedNavigatorState>();
+    final ExtendedNavigatorState navigator =
+        rootNavigator ? context.findRootAncestorStateOfType<ExtendedNavigatorState>() : context.findAncestorStateOfType<ExtendedNavigatorState>();
     assert(() {
       if (navigator == null && !nullOk) {
-        throw FlutterError(
-            'ExtendedNavigator operation requested with a context that does not include an ExtendedNavigator.\n'
+        throw FlutterError('ExtendedNavigator operation requested with a context that does not include an ExtendedNavigator.\n'
             'The context used to push or pop routes from the ExtendedNavigator must be that of a '
             'widget that is a descendant of a ExtendedNavigator widget.');
       }
@@ -133,16 +139,12 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
 }
 
 class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with WidgetsBindingObserver {
-//  final Map<String, List<Type>> _guardedRoutes;
   final _registeredGuards = <Type, RouteGuard>{};
-
   RouterBase _router;
 
   T get router => _router;
 
-  String get basePath => widget.basePath ?? '';
-
-  List<MatchResult> _guardedInitialRoutes = [];
+  List<RouteMatch> _guardedInitialRoutes = [];
 
   ExtendedNavigatorState get parent => _parent;
   ExtendedNavigatorState _parent;
@@ -161,7 +163,7 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
     }
   }
 
-  Future<void> _pushAllGuarded(Iterable<MatchResult> matches) async {
+  Future<void> _pushAllGuarded(Iterable<RouteMatch> matches) async {
     for (var match in matches) {
       if (await _canNavigate(match.template)) {
         var route = widget.onGenerateRoute(match);
@@ -179,20 +181,28 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
     }
   }
 
+  // experimental
   Future<void> pushDeepLink(String url, {Map<String, String> queryParams}) async {
-    return root._pushDeepLink(Uri(path: url, queryParameters: queryParams));
+    var uri = Uri.parse(url);
+    Map<String, String> params = Map.fromEntries(uri.queryParameters.entries);
+    if (queryParams != null) {
+      params.addEntries(queryParams.entries);
+    }
+    return root._pushDeepLink(params.isNotEmpty ? uri.replace(queryParameters: params) : uri);
   }
+
 
   Future<void> _pushDeepLink(Uri uri) async {
     var matcher = RouteMatcher.fromUri(uri);
-    var matches = matcher.allMatches(router.routes);
-    return _pushAllGuarded(matches);
+    return _pushAllGuarded(router.allMatches(matcher));
   }
 
   bool get isRoot => parent == null;
+
   WillPopCallback _willPopCallback;
 
   ExtendedNavigatorState get root => context.findRootAncestorStateOfType<ExtendedNavigatorState>() ?? this;
+
 
   @override
   void didChangeDependencies() {
@@ -201,6 +211,7 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
     if (isRoot) {
       WidgetsBinding.instance.addObserver(this);
     }
+    _NavigationStatesContainer._instance.register(this, name: widget.name);
     final modelRoute = ModalRoute.of(context);
     if (modelRoute != null) {
       modelRoute.addScopedWillPopCallback(_willPopCallback = () async {
@@ -310,9 +321,7 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 
   @override
   void dispose() {
-    if (parent == null) {
-      WidgetsBinding.instance.removeObserver(this);
-    }
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }
@@ -320,26 +329,29 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState with W
 class _NavigationStatesContainer {
   // ensure we only have one instance of the container
   static final _NavigationStatesContainer _instance = _NavigationStatesContainer._();
-  final Map<Type, ExtendedNavigatorState> _navigatorKeys = {};
+  final Map<String, ExtendedNavigatorState> _navigators = {};
 
-  ExtendedNavigatorState operator [](Type type) => _navigatorKeys[type];
+  ExtendedNavigatorState operator [](Type type) => _navigators[type];
 
   _NavigationStatesContainer._();
 
-  ExtendedNavigatorState create<T extends RouterBase>() {
-    return _navigatorKeys[T] = ExtendedNavigatorState<T>();
+  void register(ExtendedNavigatorState navigatorState, {String name}) {
+    _navigators[name ?? navigatorState._router.runtimeType.toString()] = navigatorState;
   }
 
   ExtendedNavigatorState getRootNavigator() {
-    return _navigatorKeys.isNotEmpty ? _navigatorKeys.values.first : null;
+    if (_navigators.isNotEmpty) {
+      return _navigators.values.first.root;
+    }
+    return null;
   }
 
   ExtendedNavigatorState remove<T extends RouterBase>() {
-    return _navigatorKeys.remove(T);
+    return _navigators.remove(T.toString());
   }
 
-  ExtendedNavigatorState get<T extends RouterBase>() {
-    return _navigatorKeys[T];
+  ExtendedNavigatorState get<T extends RouterBase>([String name]) {
+    return _navigators[name ?? T.toString()];
   }
 }
 
@@ -349,6 +361,7 @@ class NestedNavigator extends StatelessWidget {
     this.initialRoute,
     this.guards = const [],
     this.onUnknownRoute,
+    this.name,
     this.observers = const <NavigatorObserver>[],
   }) : super(key: key);
 
@@ -356,6 +369,7 @@ class NestedNavigator extends StatelessWidget {
   final List<RouteGuard> guards;
   final List<NavigatorObserver> observers;
   final RouteFactory onUnknownRoute;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -373,6 +387,7 @@ class NestedNavigator extends StatelessWidget {
     var parentNav = ExtendedNavigator.of(context).widget;
     return ExtendedNavigator(
       router: parentData.router,
+      name: name,
       initialRoute: initial,
       basePath: basePath,
       onUnknownRoute: onUnknownRoute ?? parentNav.onUnknownRoute,
@@ -380,12 +395,10 @@ class NestedNavigator extends StatelessWidget {
         ...guards,
         ...parentNav.guards,
       ],
-      observers: [
-//        ...parentNav.observers,
-        ...observers,
-      ],
+      observers: observers,
       initialRouteArgs: parentData._initialArgsToPass,
       key: key,
     );
   }
 }
+

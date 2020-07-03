@@ -5,8 +5,6 @@ import 'package:source_gen/source_gen.dart';
 
 
 
-
-
 String toLowerCamelCase(String s) {
   if (s.length < 2) return s.toLowerCase();
   return s[0].toLowerCase() + s.substring(1);

@@ -9,18 +9,19 @@ class RouteMatcher {
 
   RouteMatcher.fromUri(this._uri) : _settings = null;
 
-  MatchResult match(RouteDef route, {bool fullMatch = false}) {
+  RouteMatch match(RouteDef route, {bool fullMatch = false}) {
     var pattern = fullMatch ? '${route.pattern}\$' : route.pattern;
     var match = RegExp(pattern).stringMatch(_uri.path);
-    MatchResult matchResult;
+    RouteMatch matchResult;
     if (match != null) {
       var segmentUri = _uri.replace(path: match);
-      matchResult = MatchResult(
-          name: segmentUri.toString(),
+      var rest = _uri.replace(path: _uri.path.substring(match.length));
+      matchResult = RouteMatch(
+          name: rest.pathSegments.isNotEmpty ? segmentUri.path : segmentUri.toString(),
           arguments: _settings?.arguments,
           uri: segmentUri,
           routeDef: route,
-          rest: _uri.replace(path: _uri.path.substring(match.length)),
+          rest: rest,
           pathParamsMap: _extractPathParams(route.pattern, match));
     }
     return matchResult;
@@ -36,42 +37,17 @@ class RouteMatcher {
     }
     return params;
   }
-
-  List<MatchResult> allMatches(List<RouteDef> routes, [RouterBase router]) {
-    var matches = <MatchResult>[];
-    for (var route in routes) {
-      var matchResult = match(route);
-      if (matchResult != null) {
-        matches.add(matchResult);
-        if (!matchResult.hasRest) {
-          break;
-        }
-      }
-    }
-    return matches;
-  }
-
-//  Set<String> matchingSegments(Set<String> templates) {
-//    var matches = <String>{};
-//    for (var template in templates) {
-//      var match = RegExp(_buildPathPattern(template)).stringMatch(_uri.path);
-//      if (match != null) {
-//        matches.add(match);
-//      }
-//    }
-//    return matches;
-//  }
 }
 
 @immutable
-class MatchResult extends RouteSettings {
+class RouteMatch extends RouteSettings {
   final Uri uri;
   final RouteDef routeDef;
   final Uri rest;
   final Map<String, String> pathParamsMap;
   final Object initialArgsToPass;
 
-  MatchResult({
+  RouteMatch({
     @required this.uri,
     @required this.routeDef,
     @required this.rest,
@@ -85,9 +61,17 @@ class MatchResult extends RouteSettings {
 
   bool get hasGuards => routeDef.guards?.isNotEmpty == true;
 
-  bool get isParent => routeDef.router != null;
+  bool get isParent => routeDef.innerRouter != null;
 
   String get template => routeDef.template;
+
+  String get restAsString => rest.pathSegments.isEmpty ? null : rest.toString();
+
+  String get path => uri.path;
+
+  Parameters get queryParams => Parameters(uri.queryParameters);
+
+  Parameters get pathParams => Parameters(pathParamsMap);
 
   @override
   RouteSettings copyWith({
@@ -95,7 +79,7 @@ class MatchResult extends RouteSettings {
     Object arguments,
     Object initialArgsToPass,
   }) {
-    return MatchResult(
+    return RouteMatch(
         name: name ?? this.name,
         arguments: arguments ?? this.arguments,
         initialArgsToPass: initialArgsToPass ?? this.initialArgsToPass,
@@ -104,10 +88,4 @@ class MatchResult extends RouteSettings {
         rest: this.rest,
         pathParamsMap: this.pathParamsMap);
   }
-
-  String get path => uri.path;
-
-  Parameters get queryParams => Parameters(uri.queryParameters);
-
-  Parameters get pathParams => Parameters(pathParamsMap);
 }
