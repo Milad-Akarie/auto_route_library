@@ -54,6 +54,15 @@ class RouteData extends RouteSettings {
       return null;
     }
   }
+
+  static RoutePredicate withPath(String path) {
+    return (Route<dynamic> route) {
+      return !route.willHandlePopInternally &&
+          route is ModalRoute &&
+          route.settings is RouteData &&
+          (route.settings as RouteData).template == path;
+    };
+  }
 }
 
 @immutable

@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
               child: FlatButton(
                 child: Text("Users Screen"),
                 onPressed: () async {
-                  ExtendedNavigator.root.pushNamed('/users/1?filter=active');
+                  ExtendedNavigator.root.pushNamed(Routes.usersScreen(id: 1));
                 },
               ),
             ),

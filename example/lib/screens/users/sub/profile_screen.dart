@@ -17,7 +17,7 @@ class ProfileScreen extends StatelessWidget {
           FlatButton(
             child: Text("User posts"),
             onPressed: () {
-              ExtendedNavigator.of(context).pushNamed(UsersScreenRoutes.postsScreen);
+              ExtendedNavigator.of(context).pushDeepLink('/users/1/posts');
               // or without Context
              // ExtendedNavigator.byName("usersRouter").pushNamed(UsersScreenRoutes.postsScreen);
             },

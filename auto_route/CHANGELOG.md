@@ -1,4 +1,9 @@
 # ChangeLog
+## [0.6.1]
+- Fix pop until name issue by implementing PopUntilPath and RouteData.withPath
+- Fix opening deep links in new tabs pushes initial route only
+## [0.6.0+1]
+- Fix README file linkes
 ## [0.6.0] Breaking Change
 - Change the way routes are declared from class fields to a static list
 - Add support for path & query parameters
