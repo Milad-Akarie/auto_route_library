@@ -28,7 +28,6 @@ abstract class RouterBase {
       } else {
         data = RouteData(matchResult);
       }
-      print("Pushing ${data.name}");
       return pagesMap[matchResult.routeDef.page](data);
     }
     return null;
