@@ -19,7 +19,7 @@ class PostsScreen extends StatelessWidget {
           FlatButton(
             child: Text("Go Back"),
             onPressed: () {
-              ExtendedNavigator.root.popUntilRoot();
+//              ExtendedNavigator.root.popUntilRoot();
             },
           ),
         ],
