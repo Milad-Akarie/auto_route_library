@@ -497,11 +497,10 @@ Widget zoomInTransition(BuildContext context, Animation<double> animation, Anima
   }
 ```
 
-Now pass the reference of your function to @CustomRoute() annotation.
+Now pass the reference of your function to CustomRoute() .
 
 ```dart
-@CustomRoute(transitionsBuilder: zoomInTransition)
-ZoomInScreen zoomInScreenRoute {}
+CustomRoute(page: ZoomInScreen, transitionsBuilder: zoomInTransition)
 ```
 ## Migration guide
 ---

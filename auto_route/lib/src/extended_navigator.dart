@@ -38,7 +38,11 @@ class ExtendedNavigator<T extends RouterBase> extends Navigator {
               );
             },
             onUnknownRoute: onUnknownRoute ?? defaultUnknownRoutePage,
-            initialRoute: initialRoute,
+            initialRoute: WidgetsBinding.instance.window.defaultRouteName !=
+                    Navigator.defaultRouteName
+                ? WidgetsBinding.instance.window.defaultRouteName
+                : initialRoute ??
+                    WidgetsBinding.instance.window.defaultRouteName,
             onGenerateInitialRoutes:
                 (NavigatorState navigator, String initialRoute) {
               return generateInitialRoutes(
@@ -152,7 +156,9 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
   List<RouteMatch> _guardedInitialRoutes = [];
 
   ExtendedNavigatorState get parent => _parent;
+
   ExtendedNavigatorState _parent;
+  final children = <ExtendedNavigatorState>[];
 
   @override
   ExtendedNavigator get widget => super.widget as ExtendedNavigator;
@@ -199,6 +205,16 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
   }
 
   Future<void> _pushDeepLink(Uri uri) async {
+    if (children.isNotEmpty) {
+      for (var nav in children) {
+        var basePath = nav.widget.basePath;
+        if (uri.path.startsWith(basePath)) {
+          var strippedUri =
+              uri.replace(path: uri.path.substring(basePath.length));
+          return nav._pushDeepLink(strippedUri);
+        }
+      }
+    }
     var matcher = RouteMatcher.fromUri(uri);
     return _pushAllGuarded(router.allMatches(matcher));
   }
@@ -214,9 +230,12 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
   void didChangeDependencies() {
     super.didChangeDependencies();
     _parent = context.findAncestorStateOfType<ExtendedNavigatorState>();
-    if (isRoot) {
+    if (_parent != null) {
+      _parent.children.add(this);
+    } else {
       WidgetsBinding.instance.addObserver(this);
     }
+
     _NavigationStatesContainer._instance.register(this, name: widget.name);
     final modelRoute = ModalRoute.of(context);
     if (modelRoute != null) {
@@ -280,6 +299,31 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
         : null;
   }
 
+  @optionalTypeArgs
+  Future<T> pushNamedAndRemoveUntilPath<T extends Object>(
+    String newRouteName,
+    String anchorPath, {
+    Object arguments,
+    OnNavigationRejected onReject,
+  }) async {
+    return await _canNavigate(newRouteName,
+            arguments: arguments, onReject: onReject)
+        ? super.pushNamedAndRemoveUntil<T>(
+            newRouteName,
+            RouteData.withPath(anchorPath),
+            arguments: arguments,
+          )
+        : null;
+  }
+
+  void popUntilPath(String path) {
+    popUntil(RouteData.withPath(path));
+  }
+
+  void popUntilRoot() {
+    popUntil((route) => route.isFirst);
+  }
+
 // On soft back button pressed in Android
   @override
   Future<bool> didPopRoute() {
@@ -290,6 +334,7 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
   @override
   Future<bool> didPushRoute(String route) async {
     assert(mounted);
+
     _pushDeepLink(Uri.parse(route));
     return true;
   }
@@ -333,6 +378,9 @@ class ExtendedNavigatorState<T extends RouterBase> extends NavigatorState
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    if (_parent != null) {
+      _parent.children.remove(this);
+    }
     super.dispose();
   }
 }

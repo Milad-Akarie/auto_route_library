@@ -35,14 +35,14 @@ packages:
       path: "../auto_route"
       relative: true
     source: path
-    version: "0.5.0"
+    version: "0.6.0+1"
   auto_route_generator:
     dependency: "direct dev"
     description:
       path: "../auto_route_generator"
       relative: true
     source: path
-    version: "0.5.0"
+    version: "0.6.0"
   boolean_selector:
     dependency: transitive
     description:
