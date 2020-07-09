@@ -13,7 +13,7 @@ abstract class RouterBase {
   Route<dynamic> onGenerateRoute(RouteSettings settings, [String basePath]) {
     assert(routes != null);
     assert(settings != null);
-    var match = findFullMatch(settings);
+    var match = findMatch(settings);
     if (match != null) {
       var namePrefix = '';
       if (basePath != null) {
@@ -24,6 +24,7 @@ abstract class RouterBase {
         }
       }
 
+      print("basePath: $basePath + ${settings.name}");
       var matchResult = match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
 
       RouteData data;
@@ -48,23 +49,20 @@ abstract class RouterBase {
   // Router().onGenerateRoute becomes Router()
   Route<dynamic> call(RouteSettings settings) => onGenerateRoute(settings);
 
-  RouteMatch findFullMatch(RouteSettings settings) {
-    // deep links are  pre-matched
-    if (settings is RouteMatch) {
-      return settings;
-    } else {
-      var matcher = RouteMatcher(settings);
-      for (var route in routes) {
-        var match = matcher.match(route, fullMatch: false);
-        if (match != null) {
-          // matching "/" must be exact
-          if (route.template == "/" && match.hasRest) {
-            continue;
-          }
-          return match;
+  RouteMatch findMatch(RouteSettings settings) {
+    var matcher = RouteMatcher(settings);
+    for (var route in routes) {
+      var match = matcher.match(route);
+      if (match != null) {
+        print("${settings.name} Found match ${match.template}");
+        // matching root "/" must be exact
+        if ((route.template == "/" || route.template.isEmpty) && match.hasRest) {
+          continue;
         }
+        return match;
       }
     }
+
     return null;
   }
 

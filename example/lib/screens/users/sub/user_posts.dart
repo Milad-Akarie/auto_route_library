@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/router/router.dart';
-import 'package:example/screens/users/users_screen.dart';
 import 'package:flutter/material.dart';
 
 class PostsScreen extends StatelessWidget {
@@ -19,7 +18,7 @@ class PostsScreen extends StatelessWidget {
           FlatButton(
             child: Text("Go Back"),
             onPressed: () {
-//              ExtendedNavigator.root.popUntilRoot();
+              ExtendedNavigator.root.popUntilRoot();
             },
           ),
         ],

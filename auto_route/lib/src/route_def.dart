@@ -23,6 +23,6 @@ class RouteDef {
       }
     });
     // include trailing slash
-    return '^[/]?$regEx';
+    return '$regEx';
   }
 }
