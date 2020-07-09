@@ -15,9 +15,17 @@ abstract class RouterBase {
     assert(settings != null);
     var match = findFullMatch(settings);
     if (match != null) {
-      var namePrefix = basePath?.isNotEmpty == true ? "$basePath" : '';
-      var matchResult =
-          match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
+      var namePrefix = '';
+      if (basePath != null) {
+        if (settings.name == "" || basePath.endsWith("/") || settings.name.startsWith("/")) {
+          namePrefix = basePath;
+        } else {
+          namePrefix = '$basePath/';
+        }
+      }
+
+      var matchResult = match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
+
       RouteData data;
       if (matchResult.isParent) {
         data = _ParentRouteData(
@@ -28,8 +36,9 @@ abstract class RouterBase {
       } else {
         data = RouteData(matchResult);
       }
-      print("Pushing ${data.name}");
-      return pagesMap[matchResult.routeDef.page](data);
+      var route = pagesMap[matchResult.routeDef.page](data);
+      print('pushing: ${data.template}');
+      return route;
     }
     return null;
   }
@@ -46,8 +55,12 @@ abstract class RouterBase {
     } else {
       var matcher = RouteMatcher(settings);
       for (var route in routes) {
-        var match = matcher.match(route, fullMatch: true);
+        var match = matcher.match(route, fullMatch: false);
         if (match != null) {
+          // matching "/" must be exact
+          if (route.template == "/" && match.hasRest) {
+            continue;
+          }
           return match;
         }
       }

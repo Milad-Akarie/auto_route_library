@@ -11,12 +11,12 @@ export 'router.gr.dart';
 
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    AdaptiveRoute(page: HomeScreen, initial: true),
-    AdaptiveRoute(path: '/users/:id', page: UsersScreen, children: [
-      AdaptiveRoute(path: "/", page: ProfileScreen),
-      AdaptiveRoute(path: "/posts", page: PostsScreen),
+    CustomRoute(page: HomeScreen, initial: true),
+    CustomRoute(path: '/users/:id', page: UsersScreen, children: [
+      CustomRoute(path: "", page: ProfileScreen),
+      CustomRoute(path: "posts", page: PostsScreen),
     ]),
-    AdaptiveRoute(path: '*', page: UnknownRouteScreen)
+    CustomRoute(path: '*', page: UnknownRouteScreen)
   ],
 )
 class $Router {}

@@ -3,7 +3,6 @@ import 'package:example/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
-
   const ProfileScreen();
 
   @override
@@ -17,9 +16,9 @@ class ProfileScreen extends StatelessWidget {
           FlatButton(
             child: Text("User posts"),
             onPressed: () {
-              ExtendedNavigator.of(context).pushDeepLink('/users/1/posts');
+              ExtendedNavigator.of(context).pushNamed(UsersScreenRoutes.postsScreen);
               // or without Context
-             // ExtendedNavigator.byName("usersRouter").pushNamed(UsersScreenRoutes.postsScreen);
+              // ExtendedNavigator.byName("usersRouter").pushNamed(UsersScreenRoutes.postsScreen);
             },
           ),
         ],

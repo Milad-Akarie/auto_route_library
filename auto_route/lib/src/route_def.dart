@@ -15,12 +15,14 @@ class RouteDef {
   }) : pattern = _buildPathPattern(template);
 
   static Pattern _buildPathPattern(String template) {
-    return '^${template.replaceAllMapped(RegExp(r':([^/]+)|([*])'), (m) {
+    var regEx = template.replaceAllMapped(RegExp(r':([^/]+)|([*])'), (m) {
       if (m[1] != null) {
         return '(?<${m[1]}>[^/]+)';
       } else {
         return ".*";
       }
-    })}';
+    });
+    // include trailing slash
+    return '^[/]?$regEx';
   }
 }

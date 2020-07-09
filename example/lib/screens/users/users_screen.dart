@@ -27,7 +27,10 @@ class UsersScreen extends StatelessWidget {
 //      ),
       // this navigator will obtain it's router
       // on it's own
-      body: NestedNavigator(name: 'usersRouter'),
+      body: NestedNavigator(
+        name: 'usersRouter',
+        initialRoute: UsersScreenRoutes.profileScreen,
+      ),
     );
   }
 }

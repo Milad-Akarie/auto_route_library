@@ -17,9 +17,7 @@ class RouteMatcher {
       var segmentUri = _uri.replace(path: match);
       var rest = _uri.replace(path: _uri.path.substring(match.length));
       matchResult = RouteMatch(
-          name: rest.pathSegments.isNotEmpty
-              ? segmentUri.path
-              : segmentUri.toString(),
+          name: rest.pathSegments.isNotEmpty ? segmentUri.path : segmentUri.toString(),
           arguments: _settings?.arguments,
           uri: segmentUri,
           routeDef: route,

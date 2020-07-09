@@ -11,10 +11,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      onGenerateRoute: Router(),
+//      onGenerateRoute: Router(),
       builder: (ctx, nav) {
         return ExtendedNavigator(
+          key: nav.key,
           router: Router(),
+          initialRoute: "/users/4/posts",
           guards: [AuthGuard()],
         );
       },
