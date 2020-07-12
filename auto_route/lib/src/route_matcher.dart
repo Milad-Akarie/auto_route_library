@@ -14,8 +14,13 @@ class RouteMatcher {
     var match = RegExp(pattern).stringMatch(_uri.path);
     RouteMatch matchResult;
     if (match != null) {
+      // strip trailing forward slash
+      if (match.endsWith("/") && match.length > 1) {
+        match = match.substring(0, match.length - 1);
+      }
       var segmentUri = _uri.replace(path: match);
       var rest = _uri.replace(path: _uri.path.substring(match.length));
+
       matchResult = RouteMatch(
           name: rest.pathSegments.isNotEmpty ? segmentUri.path : segmentUri.toString(),
           arguments: _settings?.arguments,

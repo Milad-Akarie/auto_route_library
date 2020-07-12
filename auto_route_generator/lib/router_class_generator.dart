@@ -71,7 +71,7 @@ class RouterClassGenerator {
         // handle template paths
         _writeln("static const String _$routeName = '$path';");
         allNames.add('_$routeName');
-        var params = RegExp(r':([^/]+)')
+        var params = RegExp(r':([^/|?]+)')
             .allMatches(path)
             .map((m) => "@required ${m.group(1)}");
         _writeln(
@@ -221,7 +221,7 @@ class RouterClassGenerator {
   }
 
   void _generateRouterClass(RouterConfig routerConfig) {
-    _writeln('\nclass ${routerConfig.routerClassName} extends RouterBase {');
+    _writeln('\nclass ${routerConfig.routerClassName} extends RouteGenerator {');
 
 //    _generateOverrideFunctions(routerConfig);
     _writeln('''

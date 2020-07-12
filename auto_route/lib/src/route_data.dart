@@ -2,24 +2,24 @@ part of 'extended_navigator.dart';
 
 @immutable
 class RouteData extends RouteSettings {
-  RouteData(this._routeMatch)
-      : _pathParams = _routeMatch.pathParams,
-        _queryParams = _routeMatch.queryParams,
-        super(name: _routeMatch.name, arguments: _routeMatch.arguments);
+  RouteData(this.routeMatch)
+      : _pathParams = routeMatch.pathParams,
+        _queryParams = routeMatch.queryParams,
+        super(name: routeMatch.name, arguments: routeMatch.arguments);
 
-  final RouteMatch _routeMatch;
+  final RouteMatch routeMatch;
   final Parameters _pathParams;
   final Parameters _queryParams;
 
-  String get template => _routeMatch.template;
+  String get template => routeMatch.template;
 
   Parameters get queryParams => _queryParams;
 
   Parameters get pathParams => _pathParams;
 
-  String get path => _routeMatch.uri.path;
+  String get path => routeMatch.uri.path;
 
-  Object get _initialArgsToPass => _routeMatch.initialArgsToPass;
+  Object get _initialArgsToPass => routeMatch.initialArgsToPass;
 
   T getArgs<T>({bool nullOk = true, T Function() orElse}) {
     if (nullOk == true) {
@@ -42,8 +42,8 @@ class RouteData extends RouteSettings {
 
   @override
   String toString() {
-    return 'RouteData{template: ${_routeMatch.template}, '
-        'path: ${_routeMatch.template}, fullName: ${_routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}';
+    return 'RouteData{template: ${routeMatch.template}, '
+        'path: ${routeMatch.path}, fullName: ${routeMatch.name}, args: $arguments,  params: $_pathParams, query: $_queryParams}';
   }
 
   static RouteData of(BuildContext context) {
@@ -66,20 +66,20 @@ class RouteData extends RouteSettings {
 }
 
 @immutable
-class _ParentRouteData<T extends RouterBase> extends RouteData {
+class ParentRouteData<T extends RouteGenerator> extends RouteData {
   final String initialRoute;
-  final T router;
+  final T routeGenerator;
 
-  _ParentRouteData({
+  ParentRouteData({
     this.initialRoute,
-    this.router,
+    this.routeGenerator,
     RouteMatch matchResult,
   }) : super(matchResult);
 
-  static _ParentRouteData of(BuildContext context) {
+  static ParentRouteData of(BuildContext context) {
     var modal = ModalRoute.of(context);
-    if (modal != null && modal?.settings is _ParentRouteData) {
-      return modal.settings as _ParentRouteData;
+    if (modal != null && modal?.settings is ParentRouteData) {
+      return modal.settings as ParentRouteData;
     } else {
       return null;
     }

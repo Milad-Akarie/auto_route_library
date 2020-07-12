@@ -1,9 +1,9 @@
 part of 'extended_navigator.dart';
 
 typedef AutoRouteFactory = Route<dynamic> Function(RouteData data);
-typedef RouterBuilder<T extends RouterBase> = T Function();
+typedef RouterBuilder<T extends RouteGenerator> = T Function();
 
-abstract class RouterBase {
+abstract class RouteGenerator {
   List<RouteDef> get routes;
 
   Map<Type, AutoRouteFactory> get pagesMap;
@@ -24,15 +24,14 @@ abstract class RouterBase {
         }
       }
 
-      print("basePath: $basePath + ${settings.name}");
       var matchResult = match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
 
       RouteData data;
       if (matchResult.isParent) {
-        data = _ParentRouteData(
+        data = ParentRouteData(
           matchResult: matchResult,
           initialRoute: matchResult.restAsString,
-          router: matchResult.routeDef.innerRouter(),
+          routeGenerator: matchResult.routeDef.innerRouter(),
         );
       } else {
         data = RouteData(matchResult);
@@ -54,7 +53,6 @@ abstract class RouterBase {
     for (var route in routes) {
       var match = matcher.match(route);
       if (match != null) {
-        print("${settings.name} Found match ${match.template}");
         // matching root "/" must be exact
         if ((route.template == "/" || route.template.isEmpty) && match.hasRest) {
           continue;

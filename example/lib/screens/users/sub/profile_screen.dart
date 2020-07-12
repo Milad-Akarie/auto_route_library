@@ -7,6 +7,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(RouteData.of(context));
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile Screen"),
@@ -15,8 +16,8 @@ class ProfileScreen extends StatelessWidget {
         children: <Widget>[
           FlatButton(
             child: Text("User posts"),
-            onPressed: () {
-              ExtendedNavigator.of(context).pushNamed(UsersScreenRoutes.postsScreen);
+            onPressed: () async {
+              AutoRouter.of(context).push(UsersScreenRoutes.postsScreen);
               // or without Context
               // ExtendedNavigator.byName("usersRouter").pushNamed(UsersScreenRoutes.postsScreen);
             },
