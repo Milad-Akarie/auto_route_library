@@ -1,15 +1,20 @@
-part of 'extended_navigator.dart';
+import 'package:auto_route/src/parameters.dart';
+import 'package:auto_route/src/route_matcher.dart';
+import 'package:auto_route/src/router_base.dart';
+import 'package:flutter/widgets.dart';
 
 @immutable
 class RouteData extends RouteSettings {
   RouteData(this.routeMatch)
       : _pathParams = routeMatch.pathParams,
         _queryParams = routeMatch.queryParams,
+        fragment = routeMatch.uri.fragment,
         super(name: routeMatch.name, arguments: routeMatch.arguments);
 
   final RouteMatch routeMatch;
   final Parameters _pathParams;
   final Parameters _queryParams;
+  final String fragment;
 
   String get template => routeMatch.template;
 
@@ -26,8 +31,7 @@ class RouteData extends RouteSettings {
       assert(orElse != null);
     }
     if (_hasInvalidArgs<T>(nullOk)) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
     }
     return arguments as T ?? orElse();
   }
@@ -66,16 +70,17 @@ class RouteData extends RouteSettings {
 }
 
 @immutable
-class ParentRouteData<T extends RouteGenerator> extends RouteData {
-  final String initialRoute;
-  final T routeGenerator;
+class ParentRouteData<T extends RouterBase> extends RouteData {
+  final Uri initialRoute;
+  final T router;
 
   ParentRouteData({
     this.initialRoute,
-    this.routeGenerator,
+    this.router,
     RouteMatch matchResult,
   }) : super(matchResult);
 
+  Object get initialRouteArgs => _initialArgsToPass;
   static ParentRouteData of(BuildContext context) {
     var modal = ModalRoute.of(context);
     if (modal != null && modal?.settings is ParentRouteData) {

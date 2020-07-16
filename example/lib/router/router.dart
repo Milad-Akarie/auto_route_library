@@ -1,28 +1,35 @@
 import 'package:auto_route/auto_route_annotations.dart';
-import 'package:example/router/route_guards.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/login_screen.dart';
-import 'package:example/screens/unknown_route.dart';
+import 'package:example/screens/users/sub/posts_screen.dart';
 import 'package:example/screens/users/sub/profile_screen.dart';
-import 'package:example/screens/users/sub/user_posts.dart';
+import 'package:example/screens/users/sub/sub/posts_details.dart';
+import 'package:example/screens/users/sub/sub/posts_home.dart';
 import 'package:example/screens/users/users_screen.dart';
 
 export 'package:auto_route/auto_route.dart';
 
-
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    MaterialRoute(page: HomeScreen, initial: true),
-    MaterialRoute(
-      path: '/users/:id?',
+    AdaptiveRoute(page: HomeScreen, initial: true),
+    AdaptiveRoute(
+      path: '/users',
       page: UsersScreen,
+      name: 'usersScreen',
       children: [
-        CustomRoute(path: "/", page: ProfileScreen),
-        MaterialRoute(path: "/posts", page: PostsScreen,guards: [AuthGuard]),
+        AdaptiveRoute(path: '/', page: ProfileScreen),
+        AdaptiveRoute(
+          path: '/posts',
+          page: PostsScreen,
+          children: [
+            AdaptiveRoute(path: '/', page: PostsHome),
+            AdaptiveRoute(path: '/details', page: PostDetails),
+          ],
+        ),
       ],
     ),
-    CustomRoute<bool>(path: "/login", page: LoginScreen,fullscreenDialog: true),
-    MaterialRoute(path: '*', page: UnknownRouteScreen)
+    AdaptiveRoute<bool>(path: "/login", page: LoginScreen),
+//    AdaptiveRoute(path: '*', page: UnknownRouteScreen)
   ],
 )
 class $Router {}

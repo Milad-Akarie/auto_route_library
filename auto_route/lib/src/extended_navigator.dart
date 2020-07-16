@@ -1,97 +1,73 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/route_matcher.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/scheduler.dart';
 
-part 'parameters.dart';
+import 'uri_extension.dart';
 
-part 'route_data.dart';
-
-part 'route_generator.dart';
-
-RectTween _createRectTween(Rect begin, Rect end) {
-  return MaterialRectArcTween(begin: begin, end: end);
-}
-
-
-
-class ExtendedNavigator<T extends RouteGenerator> extends Navigator {
+class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
   ExtendedNavigator({
-    @required this.router,
+    this.router,
     this.guards = const [],
-    String initialRoute,
     this.name,
-    this.basePath,
-    RouteFactory onUnknownRoute,
-    RouteListFactory onGenerateInitialRoutes,
-    Object initialRouteArgs,
-    List<NavigatorObserver> observers = const <NavigatorObserver>[],
+    this.initialRoute,
+    this.onUnknownRoute,
+    this.initialRouteArgs,
+    this.navigatorKey,
+    this.observers = const <NavigatorObserver>[],
     Key key,
-  })  : assert(router != null),
-        assert(observers != null),
-        super(
-            onGenerateRoute: (settings) {
-              return router.onGenerateRoute(
-                settings,
-                basePath,
-              );
-            },
-            onUnknownRoute: onUnknownRoute ?? defaultUnknownRoutePage,
-            initialRoute: initialRoute,
-            onGenerateInitialRoutes: onGenerateInitialRoutes,
-            observers: [
-              HeroController(createRectTween: _createRectTween),
-              ...observers,
-            ],
-            key: key);
+  }) : super(key: key);
 
+  final GlobalKey<NavigatorState> navigatorKey;
+  final List<NavigatorObserver> observers;
+  final RouteFactory onUnknownRoute;
+  final String initialRoute;
+  final Object initialRouteArgs;
   final T router;
   final List<RouteGuard> guards;
-  final String basePath;
   final String name;
 
   @override
-  ExtendedNavigatorState createState() {
-    return ExtendedNavigatorState<T>();
-  }
+  ExtendedNavigatorState createState() => ExtendedNavigatorState<T>();
 
   static get _placeHolderRoute => PageRouteBuilder(
-        pageBuilder: (_, __, ___) => Container(color: Colors.white),
+        pageBuilder: (context, __, ___) => Container(
+          color: Theme.of(context).backgroundColor,
+        ),
       );
 
-  static List<Route<dynamic>> generateInitialRoutes(
-    ExtendedNavigatorState navigator,
-    String initialRouteName,
+  static List<Route<dynamic>> _generateInitialRoutes(
+    ExtendedNavigatorState router,
+    Uri initialUri,
     Object initialRouteArgs,
   ) {
     var initialRoutes = <Route>[];
-    var router = navigator.router;
-    assert(router != null);
-    assert(initialRouteName != null);
+    var navigator = router._navigator;
 
+    var initialRouteName = initialUri.path;
     if (!kIsWeb && initialRouteName.startsWith('/') && initialRouteName.length > 1) {
-      var rootRoute = navigator.widget.onGenerateRoute(RouteSettings(name: '/'));
+      var root = initialUri.replace(path: "/").normalizedPath;
+      var rootRoute = navigator.widget.onGenerateRoute(RouteSettings(name: root));
       if (rootRoute != null) {
         if ((rootRoute.settings as RouteData).routeMatch.hasGuards) {
           initialRoutes.add(_placeHolderRoute);
-          navigator._guardedInitialRoutes.add(rootRoute);
+          router._guardedInitialRoutes.add(rootRoute);
         } else {
           initialRoutes.add(rootRoute);
         }
       }
     }
 
-    var settings = RouteSettings(name: initialRouteName, arguments: initialRouteArgs);
+    var settings = RouteSettings(name: initialUri.normalizedPath, arguments: initialRouteArgs);
     var route = navigator.widget.onGenerateRoute(settings);
 
     if (route != null) {
       var data = route.settings as RouteData;
-      if (navigator._guardedInitialRoutes.isNotEmpty || data.routeMatch.hasGuards) {
-        navigator._guardedInitialRoutes.add(route);
-        if (data.template == Navigator.defaultRouteName) {
+      if (router._guardedInitialRoutes.isNotEmpty || data.routeMatch.hasGuards) {
+        router._guardedInitialRoutes.add(route);
+        if (initialRoutes.isEmpty) {
           initialRoutes.add(_placeHolderRoute);
         }
       } else {
@@ -102,135 +78,51 @@ class ExtendedNavigator<T extends RouteGenerator> extends Navigator {
       initialRoutes.add(unknownRoute);
     }
 
-
-//    var matcher = RouteMatcher.fromUri(Uri.parse(initialRouteName));
-//    var matches = router.allMatches(matcher);
-//    for (var i = 0; i < matches.length; i++) {
-//      var match = matches[i];
-//      print(match.path);
-//      if (i == matches.length - 1) {
-//        if (match.hasRest) {
-//          match = match.copyWith(initialArgsToPass: initialRouteArgs);
-//        } else {
-//          match = match.copyWith(arguments: initialRouteArgs);
-//        }
-//      }
-//      if (navigator._guardedInitialRoutes.isNotEmpty || match.hasGuards) {
-//        navigator._guardedInitialRoutes.add(match);
-//        if (match.routeDef.template == Navigator.defaultRouteName) {
-//          initialRoutes.add(_placeHolderRoute);
-//        }
-//      } else {
-//        var route = navigator.widget.onGenerateRoute(match);
-//        initialRoutes.add(route);
-//      }
-//    }
-
-    print(initialRoutes);
     initialRoutes.removeWhere((route) => route == null);
     return initialRoutes;
   }
 
-  static TransitionBuilder builder({
-    @required RouteGenerator router,
-    String initialRoute,
-    List<RouteGuard> guards,
-  }) =>
-      (_, widget) {
-        assert(widget is Navigator);
-        var navigator = widget as Navigator;
-        return ExtendedNavigator(
-          key: navigator.key,
-          guards: guards,
-          onUnknownRoute: navigator.onUnknownRoute,
-          observers: navigator.observers,
-          initialRoute: WidgetsBinding.instance.window.defaultRouteName != Navigator.defaultRouteName
-              ? WidgetsBinding.instance.window.defaultRouteName
-              : initialRoute ?? WidgetsBinding.instance.window.defaultRouteName,
-          router: router,
-        );
-      };
+  ExtendedNavigator<T> call(_, navigator) => this;
 
-  ExtendedNavigator call(_, navigator) => this;
-
-  static ExtendedNavigatorState ofRouter<T extends RouteGenerator>() {
-    assert(T != null);
-    return _NavigationStatesContainer._instance.get<T>();
-  }
-
-  static ExtendedNavigatorState byName(String name) {
+  static ExtendedNavigatorState named(String name) {
     assert(name != null);
-    return _NavigationStatesContainer._instance.get(name);
+    return _NavigatorsContainer._instance.get(name);
   }
 
-  static ExtendedNavigatorState get root => _NavigationStatesContainer._instance.getRootNavigator();
-
-  @Deprecated("renamed to root")
-  static ExtendedNavigatorState get rootNavigator => root;
+  static ExtendedNavigatorState get root => _NavigatorsContainer._instance.getRootRouter();
 
   static ExtendedNavigatorState of(
     BuildContext context, {
-    bool rootNavigator = false,
+    bool rootRouter = false,
     bool nullOk = false,
   }) {
-    final ExtendedNavigatorState navigator =
-        rootNavigator ? context.findRootAncestorStateOfType<ExtendedNavigatorState>() : context.findAncestorStateOfType<ExtendedNavigatorState>();
+    final ExtendedNavigatorState router = rootRouter
+        ? context.findRootAncestorStateOfType<ExtendedNavigatorState>()
+        : context.findAncestorStateOfType<ExtendedNavigatorState>();
     assert(() {
-      if (navigator == null && !nullOk) {
-        throw FlutterError('ExtendedNavigator operation requested with a context that does not include an ExtendedNavigator.\n'
-            'The context used to push or pop routes from the ExtendedNavigator must be that of a '
-            'widget that is a descendant of a ExtendedNavigator widget.');
+      if (router == null && !nullOk) {
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+            'The context used to push or pop routes from the AutoRouter must be that of a '
+            'widget that is a descendant of a Router widget.');
       }
       return true;
     }());
-    return navigator;
+    return router;
   }
 }
 
-class ExtendedNavigatorState<T extends RouteGenerator> extends NavigatorState {
+class ExtendedNavigatorState<T extends RouterBase> extends State<ExtendedNavigator<T>> with WidgetsBindingObserver {
   final _registeredGuards = <Type, RouteGuard>{};
-  RouteGenerator _router;
-
-  T get router => _router;
-
+  T router;
   List<Route> _guardedInitialRoutes = [];
 
   ExtendedNavigatorState get parent => _parent;
 
   ExtendedNavigatorState _parent;
   final children = <ExtendedNavigatorState>[];
+  GlobalKey<NavigatorState> _navigatorKey;
 
-  @override
-  ExtendedNavigator get widget => super.widget as ExtendedNavigator;
-
-  @override
-  void initState() {
-    _router = widget.router;
-    assert(_router != null);
-    widget.guards?.forEach(_registerGuard);
-    super.initState();
-    if (_guardedInitialRoutes.isNotEmpty) {
-      _pushAllGuarded(_guardedInitialRoutes);
-    }
-  }
-
-  Future<void> _pushAllGuarded(Iterable<Route> routes) async {
-    for (var route in routes) {
-      var data = (route.settings as RouteData);
-      if (await _canNavigate(data.template)) {
-        if (data.template == Navigator.defaultRouteName) {
-          pushReplacement(route);
-        } else {
-          push(route);
-        }
-        if (route.settings is ParentRouteData) {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-  }
+  NavigatorState get _navigator => _navigatorKey.currentState;
 
   bool get isRoot => parent == null;
 
@@ -239,18 +131,125 @@ class ExtendedNavigatorState<T extends RouteGenerator> extends NavigatorState {
   ExtendedNavigatorState get root => context.findRootAncestorStateOfType<ExtendedNavigatorState>() ?? this;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _updateNavigator();
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (_guardedInitialRoutes.isNotEmpty) {
+        _pushAllGuarded(_guardedInitialRoutes);
+      }
+    });
+  }
+
+  Future<void> _pushAllGuarded(Iterable<Route> routes) async {
+    for (var route in routes) {
+      var data = (route.settings as RouteData);
+      if (await _canNavigate(data.template)) {
+        if (data.template == Navigator.defaultRouteName) {
+          _navigator.pushAndRemoveUntil(route, RouteData.withPath(data.template));
+        } else {
+          _navigator.push(route);
+        }
+      } else {
+        break;
+      }
+    }
+  }
+
+  // On Android: the user has pressed the back button.
+  @override
+  Future<bool> didPopRoute() async {
+    assert(mounted);
+    if (_navigator == null) return false;
+    return await _navigator.maybePop();
+  }
+
+  @override
+  Future<bool> didPushRoute(String route) async {
+    print("did push Route $route");
+    assert(mounted);
+    if (_navigator == null) return false;
+    push(route);
+    return true;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    router = widget.router;
+    var initial = widget.initialRoute;
+    var initialRouteArgs = widget.initialRouteArgs;
+    var basePath;
+    var parentData = ParentRouteData.of(context);
+    if (router == null && parentData != null) {
+      router = parentData.router;
+      basePath = parentData.name;
+      if (parentData.initialRouteArgs != null) {
+        initialRouteArgs = parentData.initialRouteArgs;
+      }
+    }
+
+    assert(router != null);
+    return Navigator(
+      key: _navigatorKey,
+      initialRoute: WidgetsBinding.instance.window.defaultRouteName != Navigator.defaultRouteName
+          ? WidgetsBinding.instance.window.defaultRouteName
+          : initial ?? WidgetsBinding.instance.window.defaultRouteName,
+      observers: widget.observers,
+      onGenerateRoute: (RouteSettings settings) {
+        return router.onGenerateRoute(settings, basePath);
+      },
+      onUnknownRoute: widget.onUnknownRoute ?? defaultUnknownRoutePage,
+      onGenerateInitialRoutes: (NavigatorState navigator, String initialRoute) {
+        var initialUri;
+        if (parentData != null) {
+          if (parentData.initialRoute.hasEmptyPath) {
+            initialUri = parentData.initialRoute.replace(path: initialRoute);
+          } else {
+            initialUri = parentData.initialRoute;
+          }
+        } else {
+          initialUri = Uri.parse(initialRoute);
+        }
+        return ExtendedNavigator._generateInitialRoutes(
+          this,
+          initialUri,
+          initialRouteArgs,
+        );
+      },
+    );
+  }
+
+  void _updateNavigator() {
+    _navigatorKey = widget.navigatorKey ?? GlobalObjectKey<NavigatorState>(this);
+  }
+
+  @override
+  void didUpdateWidget(ExtendedNavigator<T> oldWidget) {
+    _updateNavigator();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+
     _parent = context.findAncestorStateOfType<ExtendedNavigatorState>();
     if (_parent != null) {
       _parent.children.add(this);
+      if (_parent._registeredGuards != null) {
+        _registeredGuards.addAll(_parent._registeredGuards);
+      }
     }
+    widget.guards?.forEach(_registerGuard);
 
-    _NavigationStatesContainer._instance.register(this, name: widget.name);
+    if (routerName != null) {
+      _NavigatorsContainer._instance.register(this, name: routerName);
+    }
     final modelRoute = ModalRoute.of(context);
     if (modelRoute != null) {
       modelRoute.addScopedWillPopCallback(_willPopCallback = () async {
-        return !await maybePop();
+        return !await _navigator.maybePop();
       });
     }
   }
@@ -260,46 +259,91 @@ class ExtendedNavigatorState<T extends RouteGenerator> extends NavigatorState {
     _registeredGuards[guard.runtimeType] = guard;
   }
 
-  @override
+  @Deprecated("renamed to push")
   @optionalTypeArgs
   Future<T> pushNamed<T extends Object>(String routeName, {Object arguments, OnNavigationRejected onReject}) async {
-    print("pushing named");
-    return await _canNavigate(
-      routeName,
-      arguments: arguments,
-      onReject: onReject,
-    )
-        ? super.pushNamed<T>(
-            routeName,
-            arguments: arguments,
-          )
-        : null;
+    return push<T>(routeName, arguments: arguments, onReject: onReject);
   }
 
-  @override
+  @Deprecated("renamed to replace")
   @optionalTypeArgs
   Future<T> pushReplacementNamed<T extends Object, TO extends Object>(
     String routeName, {
     TO result,
     Object arguments,
+    Map<String, String> queryParams,
     OnNavigationRejected onReject,
-  }) async {
-    return await _canNavigate(routeName, arguments: arguments, onReject: onReject)
-        ? super.pushReplacementNamed<T, TO>(routeName, arguments: arguments, result: result)
-        : null;
-  }
+  }) =>
+      replace<T, TO>(routeName, result: result, arguments: arguments, onReject: onReject);
 
-  @override
+  @Deprecated("renamed to pushAndRemoveUntil")
   @optionalTypeArgs
   Future<T> pushNamedAndRemoveUntil<T extends Object>(
     String newRouteName,
     RoutePredicate predicate, {
     Object arguments,
+    Map<String, String> queryParams,
+    OnNavigationRejected onReject,
+  }) =>
+      pushAndRemoveUntil(newRouteName, predicate, arguments: arguments, onReject: onReject);
+
+  @Deprecated("renamed to popAndPush")
+  @optionalTypeArgs
+  Future<T> popAndPushNamed<T extends Object, TO extends Object>(
+    String routeName, {
+    TO result,
+    Object arguments,
+    OnNavigationRejected onReject,
+  }) =>
+      popAndPush(routeName, arguments: arguments, onReject: onReject);
+
+  @optionalTypeArgs
+  Future<T> push<T extends Object>(String routeName,
+      {Object arguments, Map<String, String> queryParams, OnNavigationRejected onReject}) async {
+    return await _canNavigate(
+      routeName,
+      arguments: arguments,
+      onReject: onReject,
+    )
+        ? _navigator.pushNamed<T>(_buildPath(routeName, queryParams), arguments: arguments)
+        : null;
+  }
+
+  String _buildPath(String routeName, Map<String, String> queryParams) {
+    var uri = Uri.parse(routeName);
+    var params = <String, String>{};
+    if (queryParams != null) {
+      params.addAll(queryParams);
+    }
+    params.addAll(uri.queryParameters);
+    return uri.replace(queryParameters: params).toString();
+  }
+
+  @optionalTypeArgs
+  Future<T> replace<T extends Object, TO extends Object>(
+    String routeName, {
+    TO result,
+    Object arguments,
+    Map<String, String> queryParams,
+    OnNavigationRejected onReject,
+  }) async {
+    return await _canNavigate(routeName, arguments: arguments, onReject: onReject)
+        ? _navigator.pushReplacementNamed<T, TO>(_buildPath(routeName, queryParams),
+            arguments: arguments, result: result)
+        : null;
+  }
+
+  @optionalTypeArgs
+  Future<T> pushAndRemoveUntil<T extends Object>(
+    String newRouteName,
+    RoutePredicate predicate, {
+    Object arguments,
+    Map<String, String> queryParams,
     OnNavigationRejected onReject,
   }) async {
     return await _canNavigate(newRouteName, arguments: arguments, onReject: onReject)
-        ? super.pushNamedAndRemoveUntil<T>(
-            newRouteName,
+        ? _navigator.pushNamedAndRemoveUntil<T>(
+            _buildPath(newRouteName, queryParams),
             predicate,
             arguments: arguments,
           )
@@ -307,45 +351,75 @@ class ExtendedNavigatorState<T extends RouteGenerator> extends NavigatorState {
   }
 
   @optionalTypeArgs
-  Future<T> pushNamedAndRemoveUntilPath<T extends Object>(
+  Future<T> pushAndRemoveUntilPath<T extends Object>(
     String newRouteName,
     String anchorPath, {
     Object arguments,
+    Map<String, String> queryParams,
     OnNavigationRejected onReject,
-  }) async {
-    return await _canNavigate(newRouteName, arguments: arguments, onReject: onReject)
-        ? super.pushNamedAndRemoveUntil<T>(
-            newRouteName,
-            RouteData.withPath(anchorPath),
-            arguments: arguments,
-          )
-        : null;
+  }) {
+    return pushAndRemoveUntil(
+      newRouteName,
+      RouteData.withPath(anchorPath),
+      arguments: arguments,
+      queryParams: queryParams,
+      onReject: onReject,
+    );
+  }
+
+  @optionalTypeArgs
+  Future<T> popAndPush<T extends Object, TO extends Object>(
+    String routeName, {
+    TO result,
+    Object arguments,
+    Map<String, String> queryParams,
+    OnNavigationRejected onReject,
+  }) {
+    pop<TO>(result);
+    return push<T>(routeName, arguments: arguments, queryParams: queryParams, onReject: onReject);
   }
 
   void popUntilPath(String path) {
     popUntil(RouteData.withPath(path));
   }
 
+  void popUntil(RoutePredicate predicate) {
+    _navigator.popUntil(predicate);
+  }
+
   void popUntilRoot() {
     popUntil((route) => route.isFirst);
+  }
+
+  @optionalTypeArgs
+  void pop<T extends Object>([T result]) {
+    _navigator.pop<T>(result);
+  }
+
+  Future<bool> maybePop<T extends Object>([T result]) async {
+    return _navigator.maybePop(result);
+  }
+
+  bool canPop() {
+    return _navigator.canPop();
   }
 
   Future<bool> canNavigate(String routeName) => _canNavigate(routeName);
 
   Future<bool> _canNavigate(String routeName, {Object arguments, OnNavigationRejected onReject}) async {
-    var match = _router.findMatch(RouteSettings(name: routeName));
+    var match = router.findMatch(RouteSettings(name: routeName));
     if (match == null || !match.hasGuards) {
       return true;
     }
 
-//    for (Type guardType in match.routeDef.guards) {
-//      if (!await _getGuard(guardType).canNavigate(this, routeName, arguments)) {
-//        if (onReject != null) {
-//          onReject(_getGuard(guardType));
-//        }
-//        return false;
-//      }
-//    }
+    for (Type guardType in match.routeDef.guards) {
+      if (!await _getGuard(guardType).canNavigate(this, routeName, arguments)) {
+        if (onReject != null) {
+          onReject(_getGuard(guardType));
+        }
+        return false;
+      }
+    }
     return true;
   }
 
@@ -370,82 +444,40 @@ class ExtendedNavigatorState<T extends RouteGenerator> extends NavigatorState {
     if (_parent != null) {
       _parent.children.remove(this);
     }
+    WidgetsBinding.instance.removeObserver(this);
+
+    if (routerName != null) {
+      _NavigatorsContainer._instance.remove(routerName);
+    }
     super.dispose();
   }
+
+  String get routerName => widget.name ?? widget.router?.runtimeType?.toString();
 }
 
-class _NavigationStatesContainer {
+class _NavigatorsContainer {
   // ensure we only have one instance of the container
-  static final _NavigationStatesContainer _instance = _NavigationStatesContainer._();
-  final Map<String, ExtendedNavigatorState> _navigators = {};
+  static final _NavigatorsContainer _instance = _NavigatorsContainer._();
+  final Map<String, ExtendedNavigatorState> _routers = {};
 
-  ExtendedNavigatorState operator [](Type type) => _navigators[type];
+  _NavigatorsContainer._();
 
-  _NavigationStatesContainer._();
-
-  void register(ExtendedNavigatorState navigatorState, {String name}) {
-    _navigators[name ?? navigatorState._router.runtimeType.toString()] = navigatorState;
+  void register(ExtendedNavigatorState router, {String name}) {
+    _routers[name] = router;
   }
 
-  ExtendedNavigatorState getRootNavigator() {
-    if (_navigators.isNotEmpty) {
-      return _navigators.values.first.root;
+  ExtendedNavigatorState getRootRouter() {
+    if (_routers.isNotEmpty) {
+      return _routers.values.first.root;
     }
     return null;
   }
 
-  ExtendedNavigatorState remove<T extends RouteGenerator>() {
-    return _navigators.remove(T.toString());
+  ExtendedNavigatorState remove(String name) {
+    return _routers.remove(name);
   }
 
-  ExtendedNavigatorState get<T extends RouteGenerator>([String name]) {
-    return _navigators[name ?? T.toString()];
-  }
-}
-
-class NestedNavigator extends StatelessWidget {
-  const NestedNavigator({
-    Key key,
-    this.initialRoute,
-    this.guards = const [],
-    this.onUnknownRoute,
-    this.name,
-    this.observers = const <NavigatorObserver>[],
-  }) : super(key: key);
-
-  final String initialRoute;
-  final List<RouteGuard> guards;
-  final List<NavigatorObserver> observers;
-  final RouteFactory onUnknownRoute;
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    var initial = initialRoute;
-    var basePath = '';
-    var parentData = ParentRouteData.of(context);
-    if (parentData != null) {
-      basePath = parentData.path;
-      if (parentData.initialRoute?.isNotEmpty == true) {
-        initial = parentData.initialRoute;
-      }
-    } else {
-      throw FlutterError('Router can not be null');
-    }
-    var parentNav = ExtendedNavigator.of(context).widget;
-    return ExtendedNavigator(
-      router: parentData.routeGenerator,
-      name: name,
-      initialRoute: initial,
-      basePath: basePath,
-      onUnknownRoute: onUnknownRoute ?? parentNav.onUnknownRoute,
-      guards: [
-        ...guards,
-        if (parentNav.guards != null) ...parentNav.guards,
-      ],
-      observers: observers,
-      initialRouteArgs: parentData._initialArgsToPass,
-      key: key,
-    );
+  ExtendedNavigatorState get<T extends RouterBase>([String name]) {
+    return _routers[name ?? T.toString()];
   }
 }

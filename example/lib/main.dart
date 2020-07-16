@@ -9,14 +9,18 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  final navigatorKey = GlobalKey<ExtendedNavigatorState>();
+  final router = Router();
+
   @override
   Widget build(BuildContext context) {
-    print("loading app");
     return MaterialApp(
-        builder: AutoRouter(
-          routeGenerator: Router(),
-          initialRoute: "/",
-          guards: [AuthGuard()],
-        ));
+        builder: ExtendedNavigator(
+      router: Router(),
+      initialRoute: "/",
+      guards: [AuthGuard()],
+    )
+//
+        );
   }
 }

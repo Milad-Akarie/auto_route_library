@@ -3,7 +3,7 @@ import 'package:auto_route/auto_route.dart';
 class RouteDef {
   final String template;
   final List<Type> guards;
-  final RouterBuilder innerRouter;
+  final RouterBase generator;
   final Pattern pattern;
   final Type page;
 
@@ -11,8 +11,10 @@ class RouteDef {
     this.template, {
     this.page,
     this.guards,
-    this.innerRouter,
+    this.generator,
   }) : pattern = _buildPathPattern(template);
+
+  bool get isParent => generator != null;
 
   static Pattern _buildPathPattern(String template) {
     var regEx = template.replaceAllMapped(RegExp(r':([^/|?]+)|([*])'), (m) {
@@ -22,7 +24,6 @@ class RouteDef {
         return ".*";
       }
     });
-    // include trailing slash
-    return '^$regEx';
+    return '^$regEx([/])?';
   }
 }

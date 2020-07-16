@@ -24,9 +24,11 @@ class UsersScreen extends StatelessWidget {
 //          ),
 //        ),
 //      ),
-      // this navigator will obtain it's router
+      // this router will obtain it's route generator
       // on it's own
-      body: AutoRouter(name: 'usersRouter'),
+      body: ExtendedNavigator(
+        name: 'usersRouter',
+      ),
     );
   }
 }

@@ -1,9 +1,12 @@
-part of 'extended_navigator.dart';
+import 'package:auto_route/src/route_data.dart';
+import 'package:auto_route/src/route_def.dart';
+import 'package:auto_route/src/route_matcher.dart';
+import 'package:flutter/widgets.dart';
 
 typedef AutoRouteFactory = Route<dynamic> Function(RouteData data);
-typedef RouterBuilder<T extends RouteGenerator> = T Function();
+typedef RouterBuilder<T extends RouterBase> = T Function();
 
-abstract class RouteGenerator {
+abstract class RouterBase {
   List<RouteDef> get routes;
 
   Map<Type, AutoRouteFactory> get pagesMap;
@@ -15,29 +18,29 @@ abstract class RouteGenerator {
     assert(settings != null);
     var match = findMatch(settings);
     if (match != null) {
-      var namePrefix = '';
+      var name = match.name;
       if (basePath != null) {
-        if (settings.name == "" || basePath.endsWith("/") || settings.name.startsWith("/")) {
-          namePrefix = basePath;
+        basePath = Uri.parse(basePath).path;
+        if (match.name == "" || basePath.endsWith("/") || match.name.startsWith("/")) {
+          name = "$basePath${match.name}";
         } else {
-          namePrefix = '$basePath/';
+          name = "$basePath/${match.name}";
         }
       }
-
-      var matchResult = match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
-
+      match = match.copyWith(name: name) as RouteMatch;
       RouteData data;
-      if (matchResult.isParent) {
+      if (match.isParent) {
         data = ParentRouteData(
-          matchResult: matchResult,
-          initialRoute: matchResult.restAsString,
-          routeGenerator: matchResult.routeDef.innerRouter(),
+          matchResult: match,
+          initialRoute: match.rest,
+          router: match.routeDef.generator,
         );
       } else {
-        data = RouteData(matchResult);
+        data = RouteData(match);
       }
-      var route = pagesMap[matchResult.routeDef.page](data);
-      print('pushing: ${data.template}');
+
+      print("Pushing: $data");
+      var route = pagesMap[match.routeDef.page](data);
       return route;
     }
     return null;
@@ -60,8 +63,11 @@ abstract class RouteGenerator {
         return match;
       }
     }
-
     return null;
+  }
+
+  bool hasMatch(String path) {
+    return findMatch(RouteSettings(name: path)) != null;
   }
 
   List<RouteMatch> allMatches(RouteMatcher matcher) {

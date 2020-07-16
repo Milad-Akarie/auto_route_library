@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/router/router.dart';
+import 'package:example/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -15,7 +16,7 @@ class HomeScreen extends StatelessWidget {
               child: FlatButton(
                 child: Text("Users Screen"),
                 onPressed: () async {
-                  AutoRouter.root.push("/users");
+                  context.navigator.push("/users/", arguments: PostsScreenArguments());
                 },
               ),
             ),

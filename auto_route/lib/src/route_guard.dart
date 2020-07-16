@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart';
-
-import 'auto_router.dart';
+import 'package:auto_route/src/extended_navigator.dart';
 
 abstract class RouteGuard {
   Future<bool> canNavigate(
-      AutoRouterState router, String routeName, Object arguments);
+    ExtendedNavigatorState navigator,
+    String routeName,
+    Object arguments,
+  );
 }

@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
+import 'uri_extension.dart';
+
 class RouteMatcher {
   final Uri _uri;
   final RouteSettings _settings;
@@ -18,13 +20,35 @@ class RouteMatcher {
       if (match.endsWith("/") && match.length > 1) {
         match = match.substring(0, match.length - 1);
       }
-      var segmentUri = _uri.replace(path: match);
+
+      var segment = _uri.replace(path: match);
       var rest = _uri.replace(path: _uri.path.substring(match.length));
+      // return null if the rest of the provided uri doesn't match
+      // any of the nested routes
+      if (!rest.hasEmptyPath) {
+        if (route.isParent) {
+          if (!route.generator.hasMatch(rest.path)) {
+            return null;
+          }
+        } else {
+          return null;
+        }
+      }
+
+      // passing args to the last destination
+      // when pushing deep links
+      var args = _settings?.arguments;
+      var argsToPass;
+      if (!rest.hasEmptyPath) {
+        argsToPass = args;
+        args = null;
+      }
 
       matchResult = RouteMatch(
-          name: rest.pathSegments.isNotEmpty ? segmentUri.path : segmentUri.toString(),
-          arguments: _settings?.arguments,
-          uri: segmentUri,
+          name: !rest.hasEmptyPath || !segment.hasQueryParams || route.isParent ? segment.path : segment.toString(),
+          arguments: args,
+          initialArgsToPass: argsToPass,
+          uri: segment,
           routeDef: route,
           rest: rest,
           pathParamsMap: _extractPathParams(route.pattern, match));
@@ -62,15 +86,13 @@ class RouteMatch extends RouteSettings {
     @required Object arguments,
   }) : super(name: name, arguments: arguments);
 
-  bool get hasRest => rest?.pathSegments?.isNotEmpty == true;
+  bool get hasRest => !rest.hasEmptyPath;
 
   bool get hasGuards => routeDef.guards?.isNotEmpty == true;
 
-  bool get isParent => routeDef.innerRouter != null;
+  bool get isParent => routeDef.generator != null;
 
   String get template => routeDef.template;
-
-  String get restAsString => rest.pathSegments.isEmpty ? null : rest.toString();
 
   String get path => uri.path;
 
@@ -82,12 +104,11 @@ class RouteMatch extends RouteSettings {
   RouteSettings copyWith({
     String name,
     Object arguments,
-    Object initialArgsToPass,
   }) {
     return RouteMatch(
         name: name ?? this.name,
         arguments: arguments ?? this.arguments,
-        initialArgsToPass: initialArgsToPass ?? this.initialArgsToPass,
+        initialArgsToPass: this.initialArgsToPass,
         uri: this.uri,
         routeDef: this.routeDef,
         rest: this.rest,

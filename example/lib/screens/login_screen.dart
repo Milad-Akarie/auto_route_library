@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/router/route_guards.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -11,7 +10,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        AutoRouter.of(context).pop(false);
+        ExtendedNavigator.of(context).pop(false);
         return false;
       },
       child: Scaffold(
@@ -20,7 +19,7 @@ class LoginScreen extends StatelessWidget {
           child: FlatButton(
             child: Text("Login"),
             onPressed: () async {
-              AutoRouter.of(context).pop<bool>(true);
+              ExtendedNavigator.of(context).pop<bool>(true);
             },
           ),
         ),

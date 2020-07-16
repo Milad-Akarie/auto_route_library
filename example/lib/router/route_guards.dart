@@ -3,13 +3,13 @@ import 'package:example/router/router.gr.dart';
 
 class AuthGuard extends RouteGuard {
   Future<bool> canNavigate(
-    AutoRouterState router,
+    ExtendedNavigatorState navigator,
     String routeName,
     Object arguments,
   ) async {
     print("guarding $routeName");
 
-    return  router.root.push<bool>(Routes.loginScreen);
+    return navigator.root.replace<bool, dynamic>(Routes.loginScreen);
   }
 }
 
