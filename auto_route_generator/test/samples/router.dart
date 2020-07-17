@@ -1,6 +1,3 @@
-import 'package:auto_route/auto_route_annotations.dart';
-import 'package:source_gen_test/annotations.dart';
-
 //@ShouldGenerate(output)
 //@ShouldThrow('Class name must be prefixed with \$')
 //@MaterialAutoRouter()
@@ -11,12 +8,11 @@ import 'package:source_gen_test/annotations.dart';
 //
 //class HomeScreen{}
 
-
 const output = '''
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
-import 'package:__test__/router.dart';
+import 'package:__test__/router_base.dart';
 
 abstract class Routes {
   static const homeScreen = '/';

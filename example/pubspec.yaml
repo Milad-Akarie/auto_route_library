@@ -19,6 +19,7 @@ dev_dependencies:
     sdk: flutter
   auto_route_generator:
     path: ../auto_route_generator
+  effective_dart: ^1.2.0
 
 flutter:
   uses-material-design: true

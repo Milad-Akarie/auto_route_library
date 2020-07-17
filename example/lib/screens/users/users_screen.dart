@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/auto_route_annotations.dart';
-import 'package:example/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class UsersScreen extends StatelessWidget {
@@ -8,6 +7,7 @@ class UsersScreen extends StatelessWidget {
     @PathParam() this.id,
     @QueryParam('filter') this.filterFromQuery = "none",
   });
+
 
   final int id;
   final String filterFromQuery;
@@ -25,9 +25,11 @@ class UsersScreen extends StatelessWidget {
 //          ),
 //        ),
 //      ),
-      // this navigator will obtain it's router
+      // this router will obtain it's route generator
       // on it's own
-      body: NestedNavigator(name: 'usersRouter'),
+      body: ExtendedNavigator(
+        name: 'usersRouter',
+      ),
     );
   }
 }

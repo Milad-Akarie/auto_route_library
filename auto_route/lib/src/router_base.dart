@@ -1,4 +1,7 @@
-part of 'extended_navigator.dart';
+import 'package:auto_route/src/route_data.dart';
+import 'package:auto_route/src/route_def.dart';
+import 'package:auto_route/src/route_matcher.dart';
+import 'package:flutter/widgets.dart';
 
 typedef AutoRouteFactory = Route<dynamic> Function(RouteData data);
 typedef RouterBuilder<T extends RouterBase> = T Function();
@@ -13,24 +16,38 @@ abstract class RouterBase {
   Route<dynamic> onGenerateRoute(RouteSettings settings, [String basePath]) {
     assert(routes != null);
     assert(settings != null);
-    var match = findFullMatch(settings);
+    var match = findMatch(settings);
     if (match != null) {
-      var namePrefix = basePath?.isNotEmpty == true ? "$basePath" : '';
-      var matchResult =
-          match.copyWith(name: "$namePrefix${settings.name}") as RouteMatch;
+      if (basePath != null) {
+        match = match.copyWith(name: _joinPath(basePath, match.name));
+      }
+
       RouteData data;
-      if (matchResult.isParent) {
-        data = _ParentRouteData(
-          matchResult: matchResult,
-          initialRoute: matchResult.restAsString,
-          router: matchResult.routeDef.innerRouter(),
+      if (match.isParent) {
+        data = ParentRouteData(
+          matchResult: match,
+          initialRoute: match.rest,
+          router: match.routeDef.generator,
         );
       } else {
-        data = RouteData(matchResult);
+        data = RouteData(match);
       }
-      return pagesMap[matchResult.routeDef.page](data);
+      return pagesMap[match.routeDef.page](data);
+=======
+
     }
     return null;
+  }
+
+  String _joinPath(String basePath, String part) {
+    var name;
+    var pathOnly = Uri.parse(basePath).path;
+    if (part == "" || pathOnly.endsWith("/") || part.startsWith("/")) {
+      name = "$pathOnly$part";
+    } else {
+      name = "$pathOnly/$part";
+    }
+    return name;
   }
 
   // a shorthand for calling the onGenerateRoute function
@@ -38,20 +55,24 @@ abstract class RouterBase {
   // Router().onGenerateRoute becomes Router()
   Route<dynamic> call(RouteSettings settings) => onGenerateRoute(settings);
 
-  RouteMatch findFullMatch(RouteSettings settings) {
-    // deep links are  pre-matched
-    if (settings is RouteMatch) {
-      return settings;
-    } else {
-      var matcher = RouteMatcher(settings);
-      for (var route in routes) {
-        var match = matcher.match(route, fullMatch: true);
-        if (match != null) {
-          return match;
+  RouteMatch findMatch(RouteSettings settings) {
+    var matcher = RouteMatcher(settings);
+    for (var route in routes) {
+      var match = matcher.match(route);
+      if (match != null) {
+        // matching root "/" must be exact
+        if ((route.template == "/" || route.template.isEmpty) &&
+            match.hasRest) {
+          continue;
         }
+        return match;
       }
     }
     return null;
+  }
+
+  bool hasMatch(String path) {
+    return findMatch(RouteSettings(name: path)) != null;
   }
 
   List<RouteMatch> allMatches(RouteMatcher matcher) {

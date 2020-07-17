@@ -1,4 +1,16 @@
 # ChangeLog
+
+## [0.6.2] Breaking Change
+- Fix deep linking issue for nested routes
+- Change ExtendedNavigator to wrap the native navigator instead of extending it
+- Change generated class applies to must of effective dart rules including prefering relative imports
+- Change inital route placeholder color to white
+- Add extenstion to BuildContext to easily access the navigator
+- Remove NestedNavigator, ExtendedNavigator can be used direclty as a nested navigator
+- Reneme some properties and deprecate their older names
+- Remove ExtendedNavigator.ofRouter method 
+- Minor fixes and enhancments
+
 ## [0.6.0] Breaking Change
 - Change the way routes are declared from class fields to a static list
 - Add support for path & query paramters

@@ -1,14 +1,13 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/auto_route_annotations.dart';
 import 'package:auto_route_generator/import_resolver.dart';
-import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 final pathParamChecker = TypeChecker.fromRuntime(PathParam);
 final queryParamChecker = TypeChecker.fromRuntime(QueryParam);
 
-// holds constructor parameter info to be used
-// in generating route parameters.
+/// holds constructor parameter info to be used
+/// in generating route parameters.
 class RouteParamConfig {
   final String type;
   final String name;
@@ -53,10 +52,10 @@ class RouteParamConfig {
 }
 
 class RouteParameterResolver {
-  final Resolver _resolver;
+  final ImportResolver _importResolver;
   final Set<String> imports = {};
 
-  RouteParameterResolver(this._resolver);
+  RouteParameterResolver(this._importResolver);
 
   Future<RouteParamConfig> resolve(ParameterElement parameterElement) async {
     final paramType = parameterElement.type;
@@ -86,6 +85,6 @@ class RouteParameterResolver {
         isPathParam: pathParam,
         isQueryParam: isQuery,
         defaultValueCode: parameterElement.defaultValueCode,
-        imports: await resolveImports(_resolver, paramType));
+        imports: _importResolver.resolveAll(paramType));
   }
 }

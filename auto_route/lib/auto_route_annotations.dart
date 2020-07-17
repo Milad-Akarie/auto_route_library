@@ -86,7 +86,7 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// Animation<double> secondaryAnimation, Widget child);
   ///
   /// you should only reference the function so
-  /// the generator can import it into router.dart
+  /// the generator can import it into router_base.dart
   final Function transitionsBuilder;
 
   /// route transition duration in milliseconds
@@ -240,7 +240,7 @@ class CustomRoute<T> extends AutoRoute<T> {
   /// Animation<double> secondaryAnimation, Widget child);
   ///
   /// you should only reference the function so
-  /// the generator can import it into router.dart
+  /// the generator can import it into router_base.dart
   final Function transitionsBuilder;
 
   /// route transition duration in milliseconds

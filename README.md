@@ -74,13 +74,18 @@ flutter packages pub run build_runner build
 #### Finalize the setup
 
 after you run the generator your router class will be generated
-
+Let MaterialApp use ExtendedNavigator instead of the native one by assigning it to it's builder.
 ```dart
 
     MaterialApp(
-    // Let MaterialApp use ExtendedNavigator instead of
-    // the native one by assigning it to it's builder
-     builder: ExtendedNavigator<Router>(router: Router()),
+    ...
+     builder: ExtendedNavigator<Router>(router: Router(),
+     // pass anything navigation related to ExtendedNav instead of MaterialApp
+         initialRoute: ...
+         observers:...
+         navigatorKey:...
+         onUnknownRoute:...
+     ),
 
      // ExtendedNavigator is just a widget so you can still wrap it
      // with other widgets if you need to
@@ -90,6 +95,21 @@ after you run the generator your router class will be generated
      ,)
     );
 
+```
+**Note:** To keep the navigator state when using Flutter Inspector create a global key inside of your App widget and assign it to `ExtendedNavigator`
+```dart
+class MyApp extends StatelessWidget {
+  final _exNavigatorKey = GlobalKey<ExtendedNavigatorState>();
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      builder: ExtendedNavigator(
+        key: _exNavigatorKey,
+        router: Router(),
+      ),
+    );
+  }
+}
 ```
 
 ### Using the native navigator
@@ -124,7 +144,7 @@ class Router extends RouterBase {
   @override
   Map<Type, AutoRouteFactory> get pagesMap => _pagesMap;
   final _pagesMap = <Type, AutoRouteFactory>{
-    HomeScreen: (RouteData data) {
+    HomeScreen: (data) {
       return MaterialPageRoute<dynamic>(
         builder: (context) => HomeScreen(),
         settings: data,
@@ -255,7 +275,15 @@ Define a dynamic segment by prefixing it with a colon
 ```dart
 MaterialRoute(path: "/users/:id", page: UsersScreen);
 ```
-Now pushing `users/1` will match `/users:id` and the path parameter `id` will be extracted and exposed in **RouteData**
+Now pushing `users/1` will match `/users:id` and the path parameter `id` will be extracted and exposed in
+
+**Tip:** add a question mark after a dynamic segment to make it optional
+```dart
+MaterialRoute(path: "/users/:id?", page: UsersScreen);
+```
+Now pushing `/users` or `/users/1` will navigate you to the `UsersScreen`
+
+**RouteData**
 
 ##  Extracting route parameters
 ---
@@ -345,7 +373,7 @@ Declaring your nested routes inside of the parent route's children property will
 )
 class $Router {}
 ```
-Now we need to render these nested routes inside of their parent **UsersScreen** and for that we use a `NestedNavigator()`, this widget will build an ExtendedNavigator and provide it with the right router.
+Now we need to render these nested routes inside of their parent **UsersScreen** and for that we use an `ExtendedNavigator()`, without providing a Router as it's automatically provided by the parent route.
 this is the same as using `<router-outlet>` in Angular or `<router-view>` in Vue.
 ```dart
 class UsersScreen extends StatelessWidget {
@@ -356,38 +384,42 @@ class UsersScreen extends StatelessWidget {
       appBar: AppBar(title: Text("Users Page")),
       // this navigator will obtain it's router
       // on it's own
-      body: NestedNavigator(),
+      body: ExtendedNavigator(),
     );
   }
 }
+```
+Now simply navigate to the nested route using the regular push method
+ ```dart
+ExtendedNavigator.of(context).push('/users/1/posts')
 ```
 
 ## Navigation
 ---
 You can either use context to look up your Navigator in your widgets tree or without context,
-by router or name.
+by name.
 
  with context
  ```dart
-ExtendedNavigator.of(context).pushNamed(..)
-```
- by Router
-```dart
-ExtendedNavigator.ofRouter<Router>().pushNamed(..)
+ExtendedNavigator.of(context).push(...)
+// or
+context.navigator.push(...)
+context.rootNavigator.push(...)
 ```
  by Name -> requires **AutoRoute: >= 0.6.0**
+ **Note:** if you don't provide a name the navigator will be named after it's router class's type name
 
 ```dart
 // give your navigator a name
-ExtendedNavigator(router: Router(), name: "root")
-NestedNavigator(name: "nestedNav")
+ExtendedNavigator(router: Router(), name: "nestedNav")
 //call it by it's name
-ExtendedNavigator.byName("nestedNav").pushNamed(..)
+ExtendedNavigator.named("nestedNav").push(...)
 ```
  if you're working with only one navigator
 ```dart
 ExtendedNavigator.root.pushNamed(..)
 ```
+
 
 ### Navigation helper methods extension
 

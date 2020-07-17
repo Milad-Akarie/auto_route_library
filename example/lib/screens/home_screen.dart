@@ -1,8 +1,11 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:example/router/router.dart';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../router/router.dart';
+
 class HomeScreen extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +18,8 @@ class HomeScreen extends StatelessWidget {
               child: FlatButton(
                 child: Text("Users Screen"),
                 onPressed: () async {
-                  ExtendedNavigator.root.pushNamed(Routes.usersScreen(id: 1));
+//                  context.navigator.router.findMatch(settings)
+                  context.navigator.push("/users/23/posts?foo=bar");
                 },
               ),
             ),

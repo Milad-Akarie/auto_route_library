@@ -3,7 +3,6 @@ import 'package:auto_route/auto_route_annotations.dart';
 import 'package:auto_route_generator/import_resolver.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
-import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
@@ -11,15 +10,16 @@ const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
 // extracts route configs from class fields
 class RouteConfigResolver {
   final RouterConfig _routerConfig;
-  final Resolver _resolver;
+  final ImportResolver _importResolver;
 
-  RouteConfigResolver(this._routerConfig, this._resolver);
+  RouteConfigResolver(this._routerConfig, this._importResolver);
 
   Future<RouteConfig> resolve(ConstantReader autoRoute) async {
     final routeConfig = RouteConfig();
     final type = autoRoute.read('page').typeValue;
     final classElement = type.element as ClassElement;
-    final import = getImport(classElement);
+
+    final import = _importResolver.resolve(classElement);
     if (import != null) {
       routeConfig.imports.add(import);
     }
@@ -53,7 +53,7 @@ class RouteConfigResolver {
     final constructor = classElement.unnamedConstructor;
 
     if (constructor != null && constructor.parameters.isNotEmpty) {
-      final paramResolver = RouteParameterResolver(_resolver);
+      final paramResolver = RouteParameterResolver(_importResolver);
       routeConfig.parameters = [];
       for (ParameterElement p in constructor.parameters) {
         routeConfig.parameters.add(await paramResolver.resolve(p));
@@ -75,14 +75,15 @@ class RouteConfigResolver {
         ?.map((g) => g.toTypeValue())
         ?.forEach((guard) {
       routeConfig.guards.add(RouteGuardConfig(
-          type: guard.getDisplayString(), import: getImport(guard.element)));
+          type: guard.getDisplayString(),
+          import: _importResolver.resolve(guard.element)));
     });
 
     final returnType = autoRoute.objectValue.type.typeArguments.first;
     routeConfig.returnType = returnType.getDisplayString();
 
     if (routeConfig.returnType != 'dynamic') {
-      routeConfig.imports.addAll(await resolveImports(_resolver, returnType));
+      routeConfig.imports.addAll(_importResolver.resolveAll(returnType));
     }
 
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
@@ -112,7 +113,7 @@ class RouteConfigResolver {
 
         var import;
         if (function.enclosingElement?.name != 'TransitionsBuilders') {
-          import = getImport(function);
+          import = _importResolver.resolve(function);
         }
         routeConfig.transitionBuilder =
             CustomTransitionBuilder(functionName, import);
@@ -128,41 +129,5 @@ class RouteConfigResolver {
         routeConfig.customRouteOpaque = globConfig.customRouteOpaque;
       }
     }
-  }
-
-  void _validatePathParams(RouteConfig route, ClassElement element) {
-    var reg = RegExp(r'{(.*?)}');
-    var pathParams = route.parameters
-            ?.where((p) => p.isPathParam)
-            ?.map((e) => e.paramName)
-            ?.toSet() ??
-        {};
-    var templateParams =
-        reg.allMatches(route.pathName).map((e) => e.group(1)).toSet();
-    throwIf(
-      (!templateParams.containsAll(pathParams)),
-      "Path ${route.pathName} does not define all path-parameters defined in "
-      "${element.displayName} ${pathParams.map((e) => '{$e}').toList()}",
-      element: element,
-    );
-
-//    if (reg.hasMatch(route.pathName)) {
-//      var templateParams = reg.allMatches(route.pathName).map((e) => e.group(1));
-//      templateParams.forEach((param) {
-//        throwIf(
-//          !pathParams.contains(param),
-//          "${element.displayName} does not have a path-parameter named {$param}",
-//          element: element,
-//          todo: 'annotated your path-parameters with @PathParameter()',
-//        );
-//      });
-//    } else {
-//      throwIf(
-//        pathParams.isNotEmpty,
-//        "Path ${route.pathName} does not contain all path-parameters defined in "
-//        "${element.displayName} ${pathParams.map((e) => '{$e}').toList()}",
-//        element: element,
-//      );
-//    }
   }
 }

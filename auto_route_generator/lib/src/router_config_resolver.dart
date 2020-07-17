@@ -3,7 +3,6 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/auto_route_annotations.dart';
 import 'package:auto_route_generator/import_resolver.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
-import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../utils.dart';
@@ -47,12 +46,12 @@ class RouterConfig {
     );
   }
 
-  List<RouterConfig> get subRoutes => routes
+  List<RouterConfig> get subRouters => routes
       .where((e) => e.routerConfig != null)
       .map((e) => e.routerConfig)
       .toList();
 
-  List<RouterConfig> get collectAllRoutersIncludingParent => subRoutes.fold(
+  List<RouterConfig> get collectAllRoutersIncludingParent => subRouters.fold(
       [this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
 
   @override
@@ -62,9 +61,9 @@ class RouterConfig {
 }
 
 class RouterConfigResolver {
-  final Resolver _resolver;
+  final ImportResolver _importResolver;
 
-  RouterConfigResolver(this._resolver);
+  RouterConfigResolver(this._importResolver);
 
   Future<RouterConfig> resolve(
       ConstantReader autoRouter, ClassElement clazz) async {
@@ -102,7 +101,7 @@ class RouterConfigResolver {
 
         var import;
         if (function.enclosingElement?.name != 'TransitionsBuilders') {
-          import = getImport(function);
+          import = _importResolver.resolve(function);
         }
         globalRouteConfig.transitionBuilder =
             CustomTransitionBuilder(functionName, import);
@@ -131,7 +130,7 @@ class RouterConfigResolver {
 
   Future<List<RouteConfig>> _resolveRoutes(
       RouterConfig routerConfig, List<DartObject> routesList) async {
-    var routeResolver = RouteConfigResolver(routerConfig, _resolver);
+    var routeResolver = RouteConfigResolver(routerConfig, _importResolver);
     final routes = <RouteConfig>[];
     for (var entry in routesList) {
       var routeReader = ConstantReader(entry);

@@ -18,18 +18,17 @@ PageRoute defaultUnknownRoutePage(RouteSettings settings) => MaterialPageRoute(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                 child: Text(
-                  settings.name == "/"
-                      ? 'Initial route not found! \n did you forget to annotate your home page with @initial or @MaterialRoute(initial:true)?'
-                      : 'Route name ${settings.name} is not found!',
+                  'Route name ${settings.name} is not found!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
               ),
-              OutlineButton.icon(
-                label: Text('Back'),
-                icon: Icon(Icons.arrow_back),
-                onPressed: () => Navigator.of(ctx).pop(),
-              )
+              if (!ModalRoute.of(ctx).isFirst)
+                OutlineButton.icon(
+                  label: Text('Back'),
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(ctx).pop(),
+                )
             ],
           ),
         ),
