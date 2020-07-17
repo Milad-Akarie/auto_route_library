@@ -8,6 +8,7 @@ class UsersScreen extends StatelessWidget {
     @QueryParam('filter') this.filterFromQuery = "none",
   });
 
+
   final int id;
   final String filterFromQuery;
 

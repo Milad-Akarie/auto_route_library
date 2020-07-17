@@ -14,7 +14,7 @@ class LoginScreen extends StatelessWidget {
         return false;
       },
       child: Scaffold(
-        appBar: AppBar(),
+        appBar: AppBar(automaticallyImplyLeading: false,),
         body: Center(
           child: FlatButton(
             child: Text("Login"),

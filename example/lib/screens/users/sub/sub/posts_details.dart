@@ -1,5 +1,6 @@
-import 'package:example/router/router.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../router/router.dart';
 
 class PostDetails extends StatelessWidget {
   @override
@@ -13,9 +14,7 @@ class PostDetails extends StatelessWidget {
           FlatButton(
             child: Text("Pop root"),
             onPressed: () async {
-              ExtendedNavigator.root.pop();
-              // or without Context
-              // ExtendedNavigator.byName("usersRouter").pushNamed(UsersScreenRoutes.postsScreen);
+              context.rootNavigator.pop();
             },
           ),
         ],

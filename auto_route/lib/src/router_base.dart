@@ -18,16 +18,10 @@ abstract class RouterBase {
     assert(settings != null);
     var match = findMatch(settings);
     if (match != null) {
-      var name = match.name;
       if (basePath != null) {
-        basePath = Uri.parse(basePath).path;
-        if (match.name == "" || basePath.endsWith("/") || match.name.startsWith("/")) {
-          name = "$basePath${match.name}";
-        } else {
-          name = "$basePath/${match.name}";
-        }
+        match = match.copyWith(name: _joinPath(basePath, match.name));
       }
-      match = match.copyWith(name: name) as RouteMatch;
+
       RouteData data;
       if (match.isParent) {
         data = ParentRouteData(
@@ -38,12 +32,20 @@ abstract class RouterBase {
       } else {
         data = RouteData(match);
       }
-
-      print("Pushing: $data");
-      var route = pagesMap[match.routeDef.page](data);
-      return route;
+      return pagesMap[match.routeDef.page](data);
     }
     return null;
+  }
+
+  String _joinPath(String basePath, String part) {
+    var name;
+    var pathOnly = Uri.parse(basePath).path;
+    if (part == "" || pathOnly.endsWith("/") || part.startsWith("/")) {
+      name = "$pathOnly$part";
+    } else {
+      name = "$pathOnly/$part";
+    }
+    return name;
   }
 
   // a shorthand for calling the onGenerateRoute function
@@ -57,7 +59,8 @@ abstract class RouterBase {
       var match = matcher.match(route);
       if (match != null) {
         // matching root "/" must be exact
-        if ((route.template == "/" || route.template.isEmpty) && match.hasRest) {
+        if ((route.template == "/" || route.template.isEmpty) &&
+            match.hasRest) {
           continue;
         }
         return match;

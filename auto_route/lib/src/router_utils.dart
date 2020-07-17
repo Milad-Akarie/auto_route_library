@@ -17,17 +17,18 @@ PageRoute defaultUnknownRoutePage(RouteSettings settings) => MaterialPageRoute(
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-                child: Text('Route name ${settings.name} is not found!',
+                child: Text(
+                  'Route name ${settings.name} is not found!',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16),
                 ),
               ),
-              if(!ModalRoute.of(ctx).isFirst)
-              OutlineButton.icon(
-                label: Text('Back'),
-                icon: Icon(Icons.arrow_back),
-                onPressed: () => Navigator.of(ctx).pop(),
-              )
+              if (!ModalRoute.of(ctx).isFirst)
+                OutlineButton.icon(
+                  label: Text('Back'),
+                  icon: Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(ctx).pop(),
+                )
             ],
           ),
         ),

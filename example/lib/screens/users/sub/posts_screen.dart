@@ -11,7 +11,6 @@ class PostsScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text("Users Posts Page"),
-//          actions: [FlatButton(onPressed: Text("post details"),onLongPress: {},)],
         ),
         body: ExtendedNavigator());
   }

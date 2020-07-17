@@ -45,7 +45,9 @@ class RouteMatcher {
       }
 
       matchResult = RouteMatch(
-          name: !rest.hasEmptyPath || !segment.hasQueryParams || route.isParent ? segment.path : segment.toString(),
+          name: !rest.hasEmptyPath || !segment.hasQueryParams || route.isParent
+              ? segment.path
+              : segment.toString(),
           arguments: args,
           initialArgsToPass: argsToPass,
           uri: segment,

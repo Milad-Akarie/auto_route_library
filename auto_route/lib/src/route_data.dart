@@ -31,7 +31,8 @@ class RouteData extends RouteSettings {
       assert(orElse != null);
     }
     if (_hasInvalidArgs<T>(nullOk)) {
-      throw FlutterError('Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
     }
     return arguments as T ?? orElse();
   }

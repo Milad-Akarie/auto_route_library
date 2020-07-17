@@ -1,26 +1,25 @@
-import 'package:example/router/route_guards.dart';
-import 'package:example/router/router.dart';
-import 'package:example/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'router/route_guards.dart';
+import 'router/router.dart';
+import 'router/router.gr.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final navigatorKey = GlobalKey<ExtendedNavigatorState>();
-  final router = Router();
-
+  final _exNavigatorKey = GlobalKey<ExtendedNavigatorState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        builder: ExtendedNavigator(
-      router: Router(),
-      initialRoute: "/",
-      guards: [AuthGuard()],
-    )
-//
-        );
+      builder: ExtendedNavigator(
+        key: _exNavigatorKey,
+        router: Router(),
+        initialRoute: "/",
+        guards: [AuthGuard()],
+      ),
+    );
   }
 }

@@ -1,4 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+
+import '../../../../router/router.gr.dart';
 
 class PostsHome extends StatelessWidget {
   @override
@@ -12,7 +15,7 @@ class PostsHome extends StatelessWidget {
           FlatButton(
             child: Text("Posts Details"),
             onPressed: () async {
-//              AutoRouter.of(context).push(PostsScreenRoutes.postDetails);
+              context.navigator.push(PostsScreenRoutes.postDetails);
             },
           ),
         ],

@@ -1,3 +1,5 @@
+library auto_route;
+
 import 'package:auto_route/src/extended_navigator.dart';
 import 'package:flutter/widgets.dart' show BuildContext;
 
@@ -16,6 +18,8 @@ export 'src/transitions_builders.dart';
 typedef OnNavigationRejected = void Function(RouteGuard guard);
 
 extension BuildContextX on BuildContext {
-  ExtendedNavigatorState get navigator => ExtendedNavigator.of(this, nullOk: true);
-  ExtendedNavigatorState get rootNavigator => ExtendedNavigator.of(this, rootRouter: true, nullOk: true);
+  ExtendedNavigatorState get navigator =>
+      ExtendedNavigator.of(this, nullOk: true);
+  ExtendedNavigatorState get rootNavigator =>
+      ExtendedNavigator.of(this, rootRouter: true, nullOk: true);
 }

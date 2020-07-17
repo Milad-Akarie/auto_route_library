@@ -35,7 +35,7 @@ packages:
       path: "../auto_route"
       relative: true
     source: path
-    version: "0.5.0"
+    version: "0.6.1"
   boolean_selector:
     dependency: transitive
     description:
@@ -315,12 +315,12 @@ packages:
     source: hosted
     version: "1.0.10"
   path:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.6.4"
+    version: "1.7.0"
   pedantic:
     dependency: transitive
     description:
@@ -341,7 +341,7 @@ packages:
       name: pub_semver
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.2"
+    version: "1.4.4"
   pubspec_parse:
     dependency: transitive
     description:
@@ -494,20 +494,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.6"
-  uri:
-    dependency: "direct main"
-    description:
-      name: uri
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.11.3+1"
-  utf:
-    dependency: transitive
-    description:
-      name: utf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.9.0+5"
   vector_math:
     dependency: transitive
     description:
