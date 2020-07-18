@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class UsersScreen extends StatelessWidget {
   const UsersScreen({
-    @PathParam() this.id,
+    this.id,
     @QueryParam('filter') this.filterFromQuery = "none",
   });
 

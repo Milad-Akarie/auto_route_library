@@ -25,6 +25,8 @@ class RouteConfig {
   bool hasWrapper;
   RouterConfig routerConfig;
 
+  bool hasConstConstructor;
+
   RouteConfig();
 
   String get argumentsHolderClassName {

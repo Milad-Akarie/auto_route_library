@@ -1,10 +1,10 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../router/router.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key key,String x}) :super(key: key);
 
   @override
   Widget build(BuildContext context) {

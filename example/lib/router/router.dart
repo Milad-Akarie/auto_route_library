@@ -8,15 +8,14 @@ import '../screens/users/sub/profile_screen.dart';
 import '../screens/users/sub/sub/posts_details.dart';
 import '../screens/users/sub/sub/posts_home.dart';
 import '../screens/users/users_screen.dart';
-import 'route_guards.dart';
 
 export 'package:auto_route/auto_route.dart';
-//import 'package:example/router/route_guards.dart';
+
 @MaterialAutoRouter(
   generateNavigationHelperExtension: true,
   routes: <AutoRoute>[
-    AdaptiveRoute(page: HomeScreen, initial: true),
-    AdaptiveRoute(
+    CupertinoRoute(page: HomeScreen, initial: true),
+    MaterialRoute(
       path: '/users/:id?',
       page: UsersScreen,
       name: 'usersScreen',

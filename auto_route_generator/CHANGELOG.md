@@ -1,15 +1,24 @@
 # ChangeLog
+## [0.6.4] 
+- Add usage of const constructors when possible
+- Fix material package is only imported if needed
+- Fix spelling mistakes in changeLog
+
+## [0.6.3] 
+- Fix relative imports issue on windows
+- Fix private screen parameters break generated file
 
 ## [0.6.2] Breaking Change
 - Fix deep linking issue for nested routes
 - Change ExtendedNavigator to wrap the native navigator instead of extending it
-- Change generated class applies to must of effective dart rules including prefering relative imports
-- Change inital route placeholder color to white
-- Add extenstion to BuildContext to easily access the navigator
-- Remove NestedNavigator, ExtendedNavigator can be used direclty as a nested navigator
-- Reneme some properties and deprecate their older names
+- Change generated class applies to most of effective dart rules including preferring relative imports
+- Change initial route placeholder color to white
+- Add extension to BuildContext to easily access the navigator
+- Remove NestedNavigator, ExtendedNavigator can be used directly as a nested navigator
+- Rename some properties and deprecate their older names
 - Remove ExtendedNavigator.ofRouter method 
-- Minor fixes and enhancments
+- Minor fixes and enhancements
+
 
 ## [0.6.0] Breaking Change
 - Change the way routes are declared from class fields to a static list

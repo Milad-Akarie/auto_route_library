@@ -52,11 +52,18 @@ class RouteConfigResolver {
 
     final constructor = classElement.unnamedConstructor;
 
-    if (constructor != null && constructor.parameters.isNotEmpty) {
-      final paramResolver = RouteParameterResolver(_importResolver);
-      routeConfig.parameters = [];
-      for (ParameterElement p in constructor.parameters) {
-        routeConfig.parameters.add(await paramResolver.resolve(p));
+    var params = constructor?.parameters;
+    if (params?.isNotEmpty == true) {
+      if (constructor.isConst &&
+          params.length == 1 &&
+          params.first.type.getDisplayString() == 'Key') {
+        routeConfig.hasConstConstructor = true;
+      } else {
+        final paramResolver = RouteParameterResolver(_importResolver);
+        routeConfig.parameters = [];
+        for (ParameterElement p in constructor.parameters) {
+          routeConfig.parameters.add(await paramResolver.resolve(p));
+        }
       }
     }
     // _validatePathParams(routeConfig, classElement);

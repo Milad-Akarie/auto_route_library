@@ -59,7 +59,7 @@ class $Router {}
 
 #### Now simply run the generator
 
-Use the [watch] flag to watch the files system for edits and rebuild as necessary.
+Use the [watch] flag to watch the files' system for edits and rebuild as necessary.
 
 ```terminal
 flutter packages pub run build_runner watch
@@ -74,7 +74,7 @@ flutter packages pub run build_runner build
 #### Finalize the setup
 
 after you run the generator your router class will be generated
-Let MaterialApp use ExtendedNavigator instead of the native one by assigning it to it's builder.
+Let MaterialApp use ExtendedNavigator instead of the native one by assigning it to its builder.
 ```dart
 
     MaterialApp(
@@ -176,7 +176,7 @@ class $Router {}
 
 #### Custom path names
 AutoRoute automatically generates paths based on page type, for example the generated path for HomeScreen is "/home-screen". You probably won't need to customize your paths unless your are building a web application.
-To use a custom path name use the path property inside of AutoRoute
+To use a custom path name use the path property inside of AutoRoute.
 ```dart
 MaterialRoute(path: "/users", page: UsersScreen)
 ```
@@ -276,6 +276,7 @@ Define a dynamic segment by prefixing it with a colon
 MaterialRoute(path: "/users/:id", page: UsersScreen);
 ```
 Now pushing `users/1` will match `/users:id` and the path parameter `id` will be extracted and exposed in
+**RouteData**
 
 **Tip:** add a question mark after a dynamic segment to make it optional
 ```dart
@@ -283,7 +284,6 @@ MaterialRoute(path: "/users/:id?", page: UsersScreen);
 ```
 Now pushing `/users` or `/users/1` will navigate you to the `UsersScreen`
 
-**RouteData**
 
 ##  Extracting route parameters
 ---
@@ -340,7 +340,7 @@ AutoRoute 0.6.0 supports wildcard matching, you can simply declare a wildcard at
 )
 class $Router {}
 ```
-#### Using the onUnknownRoute callback function in ExtendedNavigator
+#### Using the onUnknownRoute callback function
 This function is called when the matcher fails to find a route to return, a default error page is returned if onUnknownRoute is not provided
 ```dart
 ExtendedNavigator(
@@ -350,7 +350,16 @@ ExtendedNavigator(
     } ,
    ...
 ```
+If you're using auto_route with the native `Navigator` use the function inside of `MaterialApp`
 
+```dart
+ MaterialApp(
+    onGenerateRoute: Router(),
+    onUnknownRoute:(RouteSettings settings){
+        // return your Error page
+    } ,
+   ...
+```
 
 ### Nested Routes
 ---
@@ -450,7 +459,7 @@ ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
 
 ---
 
-Implementing route guards requires a little bit of setup:
+Implementing route guards requires a little of setup:
 
 1. Create your route guard by extending RouteGuard from the autoRoute package
 

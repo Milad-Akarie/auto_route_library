@@ -236,8 +236,7 @@ class ExtendedNavigatorState<T extends RouterBase>
   }
 
   void _updateNavigator() {
-    _navigatorKey =
-        widget.navigatorKey ?? GlobalObjectKey<NavigatorState>(this);
+    _navigatorKey = widget.navigatorKey ?? GlobalKey<NavigatorState>();
   }
 
   @override

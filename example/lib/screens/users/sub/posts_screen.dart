@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class PostsScreen extends StatelessWidget {
   final int userId;
 
-  const PostsScreen({Key key, this.userId}) : super(key: key);
+  const PostsScreen({this.userId});
 
   @override
   Widget build(BuildContext context) {
