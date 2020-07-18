@@ -1,28 +1,33 @@
 # ChangeLog
+## [0.6.4] Breaking Change
+- Add usage of const constructors when possible
+- Fix material package is only imported if needed
+- Fix spelling mistakes in changeLog
+
 ## [0.6.2] Breaking Change
 - Fix deep linking issue for nested routes
 - Change ExtendedNavigator to wrap the native navigator instead of extending it
-- Change generated class applies to must of effective dart rules including prefering relative imports
-- Change inital route placeholder color to white
-- Add extenstion to BuildContext to easily access the navigator
-- Remove NestedNavigator, ExtendedNavigator can be used direclty as a nested navigator
-- Reneme some properties and deprecate their older names
+- Change generated class applies to most of effective dart rules including preferring relative imports
+- Change initial route placeholder color to white
+- Add extension to BuildContext to easily access the navigator
+- Remove NestedNavigator, ExtendedNavigator can be used directly as a nested navigator
+- Rename some properties and deprecate their older names
 - Remove ExtendedNavigator.ofRouter method
-- Minor fixes and enhancments
+- Minor fixes and enhancements
 
 ## [0.6.1]
 - Fix pop until name issue by implementing PopUntilPath and RouteData.withPath
 - Fix opening deep links in new tabs pushes initial route only
 ## [0.6.0+1]
-- Fix README file linkes
+- Fix README file links
 ## [0.6.0] Breaking Change
 - Change the way routes are declared from class fields to a static list
 - Add support for path & query parameters
 - Add support for path wildcards
 - Add support for nested routes
 - Add support for generic result types
-- Add get ExtendedNavigator by name feature
-- Merge fix for adaptive route web support issue
+- Add a get ExtendedNavigator by name feature
+- Merge a fix for adaptive route web support issue
 - Change generating arguments holder for single parameter routes is not optional anymore
 - Minor fixes and enhancements
 
@@ -76,7 +81,7 @@
 ## [0.3.0] Breaking Changes!
 
 - Add global route customization
-  Use MaterialAutoRouter, CupertinoAutoRouter or CustomAutoRouter instead of AutoRouter
+- Use MaterialAutoRouter, CupertinoAutoRouter or CustomAutoRouter instead of AutoRouter
 - Navigator key is now accessed by calling Router.navigator.key instead of Router.navigatorKey.
 - Add Route guards
 - Add optional returnType param in all AutoRoute types.

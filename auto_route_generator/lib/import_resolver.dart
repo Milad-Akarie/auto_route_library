@@ -20,7 +20,7 @@ class ImportResolver {
           lib.exportNamespace.definedNames.keys.contains(element.name)) {
         var package = lib.source.uri.pathSegments.first;
         if (targetFilePath.startsWith(package)) {
-          return p
+          return p.posix
               .relative(lib.source.uri.path, from: targetFilePath)
               .replaceFirst('../', '');
         } else {

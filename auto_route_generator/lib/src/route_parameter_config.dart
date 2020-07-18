@@ -78,7 +78,7 @@ class RouteParameterResolver {
 
     return RouteParamConfig(
         type: paramType.getDisplayString(),
-        name: parameterElement.name,
+        name: parameterElement.name.replaceFirst("_", ''),
         alias: paramAlias,
         isPositional: parameterElement.isPositional,
         isRequired: parameterElement.hasRequired,

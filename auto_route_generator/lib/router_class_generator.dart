@@ -38,8 +38,12 @@ class RouterClassGenerator {
   void _generateImports(List<RouteConfig> routes) {
     // write route imports
     final imports = <String>{
-      "package:flutter/material.dart",
       "package:auto_route/auto_route.dart",
+      if (routes.any((e) =>
+          e.routeType == RouteType.material || e.routeType == RouteType.custom))
+        "package:flutter/material.dart",
+      if (routes.any((e) => e.routeType == RouteType.cupertino))
+        "package:flutter/cupertino.dart",
     };
     routes.forEach((r) {
       imports.addAll(r.imports);
@@ -188,7 +192,7 @@ class RouterClassGenerator {
       constructorParams.add('');
     }
     final constructor =
-        "${r.className}(${constructorParams.join(',')})${r.hasWrapper ? ".wrappedRoute(context)" : ""}";
+        "${r.hasConstConstructor == true ? 'const' : ''}  ${r.className}(${constructorParams.join(',')})${r.hasWrapper ? ".wrappedRoute(context)" : ""}";
 
     _generateRouteBuilder(r, constructor);
   }
