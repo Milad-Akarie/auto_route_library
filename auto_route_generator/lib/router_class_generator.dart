@@ -59,6 +59,7 @@ class RouterClassGenerator {
         r.guards.forEach((g) => imports.add(g.import));
       }
     });
+
     var validImports = imports.where((import) => import != null).toSet();
     var dartImports =
         validImports.where((element) => element.startsWith('dart')).toSet();

@@ -33,8 +33,6 @@ abstract class RouterBase {
         data = RouteData(match);
       }
       return pagesMap[match.routeDef.page](data);
-=======
-
     }
     return null;
   }
