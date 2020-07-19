@@ -7,6 +7,15 @@ import 'package:flutter/scheduler.dart';
 
 import 'uri_extension.dart';
 
+extension BuildContextX on BuildContext {
+  ExtendedNavigatorState get navigator =>
+      ExtendedNavigator.of(this, nullOk: true);
+  ExtendedNavigatorState get rootNavigator =>
+      ExtendedNavigator.of(this, rootRouter: true, nullOk: true);
+}
+
+typedef OnNavigationRejected = void Function(RouteGuard guard);
+
 class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
   ExtendedNavigator({
     this.router,

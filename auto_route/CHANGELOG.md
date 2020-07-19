@@ -1,5 +1,9 @@
 # ChangeLog
-## [0.6.4] Breaking Change
+## [0.6.5] 
+- Downgrade path package to >= 1.6.4 to solve conflict with flutter_test 
+- Clean up auto_route index file
+
+## [0.6.4] 
 - Add usage of const constructors when possible
 - Fix material package is only imported if needed
 - Fix spelling mistakes in changeLog
