@@ -9,12 +9,11 @@ import '../screens/users/sub/sub/posts_details.dart';
 import '../screens/users/sub/sub/posts_home.dart';
 import '../screens/users/users_screen.dart';
 
-
 @MaterialAutoRouter(
   generateNavigationHelperExtension: true,
   routes: <AutoRoute>[
     CupertinoRoute(page: HomeScreen, initial: true),
-    MaterialRoute(
+    MaterialRoute<void>(
       path: '/users/:id',
       page: UsersScreen,
       name: 'usersScreen',

@@ -79,7 +79,10 @@ Let MaterialApp use ExtendedNavigator instead of the native one by assigning it 
 
     MaterialApp(
     ...
-     builder: ExtendedNavigator<Router>(router: Router(),
+      // builder uses the native nav key to keep
+      // the state of ExtendedNavigator so it won't reload
+      // when using Flutter tools-> select widget mode
+     builder: ExtendedNavigator.builder<Router>(router: Router(),
      // pass anything navigation related to ExtendedNav instead of MaterialApp
          initialRoute: ...
          observers:...
@@ -87,29 +90,18 @@ Let MaterialApp use ExtendedNavigator instead of the native one by assigning it 
          onUnknownRoute:...
      ),
 
-     // ExtendedNavigator is just a widget so you can still wrap it
-     // with other widgets if you need to
-     builder: (ctx, nativeNavigator) => Theme(
-       data:...,
-       child: ExtendedNavigator<Router>(router: Router())
-     ,)
-    );
-
-```
-**Note:** To keep the navigator state when using Flutter Inspector create a global key inside of your App widget and assign it to `ExtendedNavigator`
-```dart
-class MyApp extends StatelessWidget {
-  final _exNavigatorKey = GlobalKey<ExtendedNavigatorState>();
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      builder: ExtendedNavigator(
-        key: _exNavigatorKey,
+   // use the passed builder within ExtendedNavigator
+   // instead of MaterialApp builder to wrap your navigator
+   // with other widgets
+    MaterialApp(
+      builder: ExtendedNavigator.builder(
         router: Router(),
+        builder: (context, extendedNav) => Theme(
+          data: ThemeData(brightness: Brightness.dark),
+          child: extendedNav,
+        ),
       ),
-    );
-  }
-}
+
 ```
 
 ### Using the native navigator
@@ -451,7 +443,7 @@ Then use it like follows
 ```dart
 ExtendedNavigator.of(context).pushSecondScreen(args...);
 //or
-ExtendedNavigator.ofRouter<Router>().pushSecondScreen(args...)
+ExtendedNavigator.named('nestedNav').pushSecondScreen(args...)
 ```
 
 

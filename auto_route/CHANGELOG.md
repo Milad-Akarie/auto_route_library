@@ -1,4 +1,10 @@
 # ChangeLog
+
+## [0.6.6] 
+- Fix hot reload issue #170
+- Fix Hero animations not working with the new ExtendedNavigator # 169 
+- Add static builder to ExtendedNavigator to use with MaterialApp's builder
+
 ## [0.6.5] 
 - Downgrade path package to >= 1.6.4 to solve conflict with flutter_test 
 - Clean up auto_route index file
