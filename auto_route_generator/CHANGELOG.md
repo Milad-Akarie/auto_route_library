@@ -1,4 +1,7 @@
 # ChangeLog
+## [0.6.6] 
+- Fix generator error when using 'void' as route return type #168
+
 ## [0.6.5] 
 - Downgrade path package to >= 1.6.4 to solve conflict with flutter_test 
 - Clean up auto_route index file

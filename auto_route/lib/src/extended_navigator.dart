@@ -7,9 +7,14 @@ import 'package:flutter/scheduler.dart';
 
 import 'uri_extension.dart';
 
+RectTween _createRectTween(Rect begin, Rect end) {
+  return MaterialRectArcTween(begin: begin, end: end);
+}
+
 extension BuildContextX on BuildContext {
   ExtendedNavigatorState get navigator =>
       ExtendedNavigator.of(this, nullOk: true);
+
   ExtendedNavigatorState get rootNavigator =>
       ExtendedNavigator.of(this, rootRouter: true, nullOk: true);
 }
@@ -17,6 +22,35 @@ extension BuildContextX on BuildContext {
 typedef OnNavigationRejected = void Function(RouteGuard guard);
 
 class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
+  static TransitionBuilder builder<T extends RouterBase>({
+    GlobalKey<NavigatorState> navigatorKey,
+    List<NavigatorObserver> observers = const [],
+    RouteFactory onUnknownRoute,
+    String initialRoute,
+    Object initialRouteArgs,
+    @required T router,
+    List<RouteGuard> guards = const [],
+    String name,
+    TransitionBuilder builder,
+  }) =>
+      (context, nav) {
+        var extendedNav = ExtendedNavigator<T>(
+          key: GlobalObjectKey(nav.key),
+          navigatorKey: navigatorKey,
+          observers: observers,
+          onUnknownRoute: onUnknownRoute,
+          initialRoute: initialRoute,
+          initialRouteArgs: initialRouteArgs,
+          router: router,
+          guards: guards,
+          name: name,
+        );
+        if (builder != null) {
+          return builder(context, extendedNav);
+        }
+        return extendedNav;
+      };
+
   ExtendedNavigator({
     this.router,
     this.guards = const [],
@@ -96,12 +130,8 @@ class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
     return initialRoutes;
   }
 
+  @Deprecated("use ExtendedNavigator.builder instead")
   ExtendedNavigator<T> call(_, navigator) => this;
-
-  @Deprecated("renamed to named")
-  static ExtendedNavigatorState byName(String name) {
-    return named(name);
-  }
 
   static ExtendedNavigatorState named(String name) {
     assert(name != null);
@@ -153,11 +183,14 @@ class ExtendedNavigatorState<T extends RouterBase>
   ExtendedNavigatorState get root =>
       context.findRootAncestorStateOfType<ExtendedNavigatorState>() ?? this;
 
+  HeroController _heroController;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _updateNavigator();
+    _navigatorKey = widget.navigatorKey ?? GlobalKey<NavigatorState>();
+    _heroController = HeroController(createRectTween: _createRectTween);
     if (_guardedInitialRoutes.isNotEmpty) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         _pushAllGuarded(_guardedInitialRoutes);
@@ -219,7 +252,7 @@ class ExtendedNavigatorState<T extends RouterBase>
               Navigator.defaultRouteName
           ? WidgetsBinding.instance.window.defaultRouteName
           : initial ?? WidgetsBinding.instance.window.defaultRouteName,
-      observers: widget.observers,
+      observers: List.from(widget.observers)..add(_heroController),
       onGenerateRoute: (RouteSettings settings) {
         return router.onGenerateRoute(settings, basePath);
       },
@@ -244,16 +277,6 @@ class ExtendedNavigatorState<T extends RouterBase>
     );
   }
 
-  void _updateNavigator() {
-    _navigatorKey = widget.navigatorKey ?? GlobalKey<NavigatorState>();
-  }
-
-  @override
-  void didUpdateWidget(ExtendedNavigator<T> oldWidget) {
-    _updateNavigator();
-    super.didUpdateWidget(oldWidget);
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -267,7 +290,6 @@ class ExtendedNavigatorState<T extends RouterBase>
     }
     widget.guards?.forEach(_registerGuard);
 
-//    var
     if (routerName != null) {
       _NavigatorsContainer._instance.register(this, name: routerName);
     }
@@ -283,47 +305,6 @@ class ExtendedNavigatorState<T extends RouterBase>
     assert(guard != null);
     _registeredGuards[guard.runtimeType] = guard;
   }
-
-  @Deprecated("renamed to push")
-  @optionalTypeArgs
-  Future<T> pushNamed<T extends Object>(String routeName,
-      {Object arguments, OnNavigationRejected onReject}) async {
-    return push<T>(routeName, arguments: arguments, onReject: onReject);
-  }
-
-  @Deprecated("renamed to replace")
-  @optionalTypeArgs
-  Future<T> pushReplacementNamed<T extends Object, TO extends Object>(
-    String routeName, {
-    TO result,
-    Object arguments,
-    Map<String, String> queryParams,
-    OnNavigationRejected onReject,
-  }) =>
-      replace<T, TO>(routeName,
-          result: result, arguments: arguments, onReject: onReject);
-
-  @Deprecated("renamed to pushAndRemoveUntil")
-  @optionalTypeArgs
-  Future<T> pushNamedAndRemoveUntil<T extends Object>(
-    String newRouteName,
-    RoutePredicate predicate, {
-    Object arguments,
-    Map<String, String> queryParams,
-    OnNavigationRejected onReject,
-  }) =>
-      pushAndRemoveUntil(newRouteName, predicate,
-          arguments: arguments, onReject: onReject);
-
-  @Deprecated("renamed to popAndPush")
-  @optionalTypeArgs
-  Future<T> popAndPushNamed<T extends Object, TO extends Object>(
-    String routeName, {
-    TO result,
-    Object arguments,
-    OnNavigationRejected onReject,
-  }) =>
-      popAndPush(routeName, arguments: arguments, onReject: onReject);
 
   @optionalTypeArgs
   Future<T> push<T extends Object>(String routeName,

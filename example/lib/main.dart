@@ -10,15 +10,20 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final _exNavigatorKey = GlobalKey<ExtendedNavigatorState>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      builder: ExtendedNavigator(
-        key: _exNavigatorKey,
+      // builder uses the native nav key to keep
+      // the state of ExtendedNavigator so it won't reload
+      // when using Flutter tools-> select widget mode
+      builder: ExtendedNavigator.builder(
         router: Router(),
         initialRoute: "/",
         guards: [AuthGuard()],
+        builder: (_, extendedNav) => Theme(
+          data: ThemeData(brightness: Brightness.dark),
+          child: extendedNav,
+        ),
       ),
     );
   }
