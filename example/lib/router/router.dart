@@ -11,6 +11,7 @@ import '../screens/users/users_screen.dart';
 
 @MaterialAutoRouter(
   generateNavigationHelperExtension: true,
+  preferRelativeImports: true,
   routes: <AutoRoute>[
     CupertinoRoute(page: HomeScreen, initial: true),
     MaterialRoute<void>(
@@ -34,3 +35,4 @@ import '../screens/users/users_screen.dart';
   ],
 )
 class $Router {}
+

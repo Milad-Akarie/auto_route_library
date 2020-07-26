@@ -19,7 +19,7 @@ abstract class RouterBase {
     var match = findMatch(settings);
     if (match != null) {
       if (basePath != null) {
-        match = match.copyWith(name: _joinPath(basePath, match.name));
+        match = match.replace(name: _joinPath(basePath, match.name));
       }
 
       RouteData data;
@@ -39,11 +39,11 @@ abstract class RouterBase {
 
   String _joinPath(String basePath, String part) {
     var name;
-    var pathOnly = Uri.parse(basePath).path;
-    if (part == "" || pathOnly.endsWith("/") || part.startsWith("/")) {
-      name = "$pathOnly$part";
+    var path = Uri.parse(basePath).path;
+    if (part == "" || path.endsWith("/") || part.startsWith("/")) {
+      name = "$path$part";
     } else {
-      name = "$pathOnly/$part";
+      name = "$path/$part";
     }
     return name;
   }

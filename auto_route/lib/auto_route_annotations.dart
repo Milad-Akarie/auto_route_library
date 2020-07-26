@@ -13,6 +13,11 @@ class AutoRouterAnnotation {
   // defaults to '/'
   final String routePrefix;
 
+  /// if true relative imports will be generated
+  /// when possible
+  /// defaults to true
+  final bool preferRelativeImports;
+
   final List<AutoRoute> routes;
 
   const AutoRouterAnnotation._(
@@ -20,6 +25,7 @@ class AutoRouterAnnotation {
     this.routesClassName,
     this.routePrefix,
     this.routes,
+    this.preferRelativeImports,
   ) : assert(routes != null);
 }
 
@@ -30,9 +36,15 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     bool generateNavigationHelperExtension,
     String routesClassName,
     String pathPrefix,
+    bool preferRelativeImports,
     @required List<AutoRoute> routes,
-  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix,
-            routes);
+  }) : super._(
+          generateNavigationHelperExtension,
+          routesClassName,
+          pathPrefix,
+          routes,
+          preferRelativeImports,
+        );
 }
 
 class MaterialRouter extends AutoRouterAnnotation {
@@ -41,8 +53,14 @@ class MaterialRouter extends AutoRouterAnnotation {
     String routesClassName,
     String pathPrefix,
     @required List<AutoRoute> routes,
-  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix,
-            routes);
+    bool preferRelativeImports,
+  }) : super._(
+          generateNavigationHelperExtension,
+          routesClassName,
+          pathPrefix,
+          routes,
+          preferRelativeImports,
+        );
 }
 
 // Defaults created routes to CupertinoPageRoute unless
@@ -52,12 +70,14 @@ class CupertinoAutoRouter extends AutoRouterAnnotation {
     bool generateNavigationHelperExtension,
     String routesClassName,
     String pathPrefix,
+    bool preferRelativeImports,
     @required List<AutoRoute> routes,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
+          preferRelativeImports,
         );
 }
 
@@ -66,12 +86,14 @@ class AdaptiveAutoRouter extends AutoRouterAnnotation {
     bool generateNavigationHelperExtension,
     String routesClassName,
     String pathPrefix,
+    bool preferRelativeImports,
     @required List<AutoRoute> routes,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
+          preferRelativeImports,
         );
 }
 
@@ -81,7 +103,7 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
-  /// I couldn't type this function from here but it should match
+  /// I couldn't type this function from here, but it should match
   /// typedef [RouteTransitionsBuilder] = Widget Function(BuildContext context, Animation<double> animation,
   /// Animation<double> secondaryAnimation, Widget child);
   ///
@@ -100,20 +122,22 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
-  const CustomAutoRouter(
-      {this.transitionsBuilder,
-      this.barrierDismissible,
-      this.durationInMilliseconds,
-      this.opaque,
-      bool generateNavigationHelperExtension,
-      String routesClassName,
-      String pathPrefix,
-      @required List<AutoRoute> routes})
-      : super._(
+  const CustomAutoRouter({
+    this.transitionsBuilder,
+    this.barrierDismissible,
+    this.durationInMilliseconds,
+    this.opaque,
+    bool generateNavigationHelperExtension,
+    String routesClassName,
+    String pathPrefix,
+    @required List<AutoRoute> routes,
+    bool preferRelativeImports,
+  }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
+          preferRelativeImports,
         );
 }
 
@@ -146,15 +170,7 @@ class AutoRoute<T> {
 
   final List<Type> guards;
 
-  const AutoRoute(
-      {@required this.page,
-      this.initial,
-      this.guards,
-      this.fullscreenDialog,
-      this.maintainState,
-      this.path,
-      this.name,
-      this.children});
+  const AutoRoute({@required this.page, this.initial, this.guards, this.fullscreenDialog, this.maintainState, this.path, this.name, this.children});
 }
 
 class MaterialRoute<T> extends AutoRoute<T> {
