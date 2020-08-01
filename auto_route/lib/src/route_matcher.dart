@@ -102,14 +102,12 @@ class RouteMatch extends RouteSettings {
 
   Parameters get pathParams => Parameters(pathParamsMap);
 
-  @override
-  RouteSettings copyWith({
+  RouteMatch replace({
     String name,
-    Object arguments,
   }) {
     return RouteMatch(
         name: name ?? this.name,
-        arguments: arguments ?? this.arguments,
+        arguments: arguments,
         initialArgsToPass: this.initialArgsToPass,
         uri: this.uri,
         routeDef: this.routeDef,

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:example/router/route_guards.dart';
 
 import '../screens/home_screen.dart';
 import '../screens/login_screen.dart';
@@ -12,8 +13,8 @@ import '../screens/users/users_screen.dart';
 @MaterialAutoRouter(
   generateNavigationHelperExtension: true,
   routes: <AutoRoute>[
-    CupertinoRoute(page: HomeScreen, initial: true),
-    MaterialRoute<void>(
+    AdaptiveRoute(page: HomeScreen, initial: true, guards: [AuthGuard]),
+    AdaptiveRoute<void>(
       path: '/users/:id',
       page: UsersScreen,
       name: 'usersScreen',
@@ -29,7 +30,7 @@ import '../screens/users/users_screen.dart';
         ),
       ],
     ),
-    AdaptiveRoute<bool>(path: "/login", page: LoginScreen),
+    AdaptiveRoute<bool>(path: '/login', page: LoginScreen),
     AdaptiveRoute(path: '*', page: UnknownRouteScreen)
   ],
 )

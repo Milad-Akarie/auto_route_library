@@ -252,7 +252,7 @@ class WelcomeScreenArguments {
 ##### Pass your typed args using the generated arguments holder class
 
 ```dart
-ExtendedNavigator.of(ctx).pushNamed(Router.welcomeScreenRoute,
+ExtendedNavigator.of(ctx).push(Router.welcomeScreenRoute,
     arguments: WelcomeScreenArguments(
         title: "Hello World!"
         message: "Let's AutoRoute!"
@@ -383,8 +383,8 @@ class UsersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Users Page")),
-      // this navigator will obtain it's router
-      // on it's own
+      // this navigator will obtain its router
+      // on its own
       body: ExtendedNavigator(),
     );
   }
@@ -413,12 +413,12 @@ context.rootNavigator.push(...)
 ```dart
 // give your navigator a name
 ExtendedNavigator(router: Router(), name: "nestedNav")
-//call it by it's name
+//call it by its name
 ExtendedNavigator.named("nestedNav").push(...)
 ```
  if you're working with only one navigator
 ```dart
-ExtendedNavigator.root.pushNamed(..)
+ExtendedNavigator.root.push(..)
 ```
 
 
@@ -430,10 +430,10 @@ This will generate
 
 ```dart
 extension RouterNavigationHelperMethods on ExtendedNavigatorState {
-  Future pushHomeScreen() => pushNamed(Routes.homeScreen);
+  Future pushHomeScreen() => push(Routes.homeScreen);
   Future<bool> pushSecondScreen(
           {@required String title, String message}) =>
-      pushNamed<bool>(Routes.secondScreen,
+      push<bool>(Routes.secondScreen,
           arguments: SecondScreenArguments(title: title, message: message));
 }
 ```

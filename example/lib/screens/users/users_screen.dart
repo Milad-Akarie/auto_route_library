@@ -7,6 +7,7 @@ class UsersScreen extends StatelessWidget {
   const UsersScreen({
     this.id,
     @QueryParam('filter') this.filterFromQuery = "none",
+    Container container,
   });
 
   final int id;
@@ -20,7 +21,8 @@ class UsersScreen extends StatelessWidget {
 //        tag: 'Hero',
 //        child: Center(
 //          child: FlatButton(
-//            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+//            shape: RoundedRectangleBorder(borderRadius:
+//            BorderRadius.circular(30)),
 //            color: Colors.red,
 //            child: Text("Users Posts"),
 //            onPressed: () async {},

@@ -7,8 +7,6 @@ import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-const autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
-
 class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouterAnnotation> {
   @override
   dynamic generateForAnnotatedElement(
@@ -24,7 +22,12 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouterAnnotation> {
     );
 
     var libs = await buildStep.resolver.libraries.toList();
-    var importResolver = ImportResolver(libs, element.source.uri.path);
+
+    var targetFileUri;
+    if (annotation.peek('preferRelativeImports')?.boolValue != false) {
+      targetFileUri = element.source.uri;
+    }
+    var importResolver = ImportResolver(libs, targetFileUri);
 
     var routerResolver = RouterConfigResolver(importResolver);
     final routerConfig = await routerResolver.resolve(annotation, element);

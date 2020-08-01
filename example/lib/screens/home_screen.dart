@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key key, String x}) : super(key: key);
+  const HomeScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +18,13 @@ class HomeScreen extends StatelessWidget {
                 tag: 'Hero',
                 child: FlatButton(
                   color: Colors.green,
-                  child: Text("Users Screen"),
+                  child: Text('Users Screen'),
                   onPressed: () async {
                     ExtendedNavigator.of(context);
 //                  context.navigator.router.findMatch(settings)
-                    context.navigator.push("/users/23");
+                    // ignore: unawaited_futures
+                    context.navigator.push('/users/23');
+//                   ExtendedNavigator.of(context);
                   },
                 ),
               ),

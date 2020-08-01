@@ -160,7 +160,7 @@ class RouterClassGenerator {
 
       if (r.argParams.isNotEmpty) {
         final argsType = r.argumentsHolderClassName;
-        _writeln('var args = data.getArgs<$argsType>(');
+        _writeln('final args = data.getArgs<$argsType>(');
         if (!nullOk) {
           _write('nullOk: false');
         } else {

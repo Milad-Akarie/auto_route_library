@@ -4,9 +4,9 @@ import 'package:path/path.dart' as p;
 
 class ImportResolver {
   final List<LibraryElement> libs;
-  final String targetFilePath;
+  final Uri targetFile;
 
-  ImportResolver(this.libs, this.targetFilePath);
+  ImportResolver(this.libs, this.targetFile);
 
   String resolve(Element element) {
     // return early if source is null or element is a core type
@@ -17,18 +17,31 @@ class ImportResolver {
     for (var lib in libs) {
       if (lib.source != null &&
           !_isCoreDartType(lib) &&
-          lib.exportNamespace.definedNames.keys.contains(element.name)) {
-        var package = lib.source.uri.pathSegments.first;
-        if (targetFilePath.startsWith(package)) {
-          return p.posix
-              .relative(lib.source.uri.path, from: targetFilePath)
-              .replaceFirst('../', '');
-        } else {
-          return lib.source.uri.toString();
-        }
+          lib.exportNamespace.definedNames.values.contains(element)) {
+        return targetFile == null
+            ? lib.source.uri.toString()
+            : _relative(lib.source.uri, targetFile);
       }
     }
     return null;
+  }
+
+  String _relative(Uri fileUri, Uri to) {
+    var libName = to.pathSegments.first;
+    if ((to.scheme == 'package' &&
+            fileUri.scheme == 'package' &&
+            fileUri.pathSegments.first == libName) ||
+        (to.scheme == 'asset' && fileUri.scheme != 'package')) {
+      if (fileUri.path == to.path) {
+        return fileUri.pathSegments.last;
+      } else {
+        return p.posix
+            .relative(fileUri.path, from: to.path)
+            .replaceFirst('../', '');
+      }
+    } else {
+      return fileUri.toString();
+    }
   }
 
   bool _isCoreDartType(Element element) {
