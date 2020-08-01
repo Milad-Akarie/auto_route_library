@@ -1,4 +1,8 @@
 # ChangeLog
+
+## [0.6.7] 
+- Fix linter warnings in generated file
+
 ## [0.6.6] 
 - Fix generator error when using 'void' as route return type #168
 

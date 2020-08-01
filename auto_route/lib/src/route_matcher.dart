@@ -102,7 +102,6 @@ class RouteMatch extends RouteSettings {
 
   Parameters get pathParams => Parameters(pathParamsMap);
 
-
   RouteMatch replace({
     String name,
   }) {

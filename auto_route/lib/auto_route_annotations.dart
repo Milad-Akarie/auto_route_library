@@ -170,7 +170,15 @@ class AutoRoute<T> {
 
   final List<Type> guards;
 
-  const AutoRoute({@required this.page, this.initial, this.guards, this.fullscreenDialog, this.maintainState, this.path, this.name, this.children});
+  const AutoRoute(
+      {@required this.page,
+      this.initial,
+      this.guards,
+      this.fullscreenDialog,
+      this.maintainState,
+      this.path,
+      this.name,
+      this.children});
 }
 
 class MaterialRoute<T> extends AutoRoute<T> {

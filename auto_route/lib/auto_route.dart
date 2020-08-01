@@ -1,6 +1,7 @@
 library auto_route;
 
 export 'package:meta/meta.dart' show required;
+
 export 'src/auto_route_wrapper.dart';
 export 'src/extended_navigator.dart';
 export 'src/parameters.dart';

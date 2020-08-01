@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 import 'uri_extension.dart';
 
@@ -11,7 +10,7 @@ RectTween _createRectTween(Rect begin, Rect end) {
   return MaterialRectArcTween(begin: begin, end: end);
 }
 
-extension BuildContextX on BuildContext {
+extension BuildContextNavX on BuildContext {
   ExtendedNavigatorState get navigator =>
       ExtendedNavigator.of(this, nullOk: true);
 
@@ -77,19 +76,19 @@ class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
 
   static get _placeHolderRoute => PageRouteBuilder(
         pageBuilder: (context, __, ___) => Container(
-          color: Theme.of(context).backgroundColor,
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
       );
 
   static List<Route<dynamic>> _generateInitialRoutes(
-    ExtendedNavigatorState router,
+    ExtendedNavigatorState extendedNav,
     Uri initialUri,
     Object initialRouteArgs,
   ) {
-    var initialRoutes = <Route>[];
-    var navigator = router._navigator;
-
-    var initialRouteName = initialUri.path;
+    final initialRoutes = <Route>[];
+    final guardedInitialRoutes = <Route>[];
+    final navigator = extendedNav._navigator;
+    final initialRouteName = initialUri.path;
     if (!kIsWeb &&
         initialRouteName.startsWith('/') &&
         initialRouteName.length > 1) {
@@ -99,7 +98,7 @@ class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
       if (rootRoute != null) {
         if ((rootRoute.settings as RouteData).routeMatch.hasGuards) {
           initialRoutes.add(_placeHolderRoute);
-          router._guardedInitialRoutes.add(rootRoute);
+          guardedInitialRoutes.add(rootRoute);
         } else {
           initialRoutes.add(rootRoute);
         }
@@ -112,9 +111,8 @@ class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
 
     if (route != null) {
       var data = route.settings as RouteData;
-      if (router._guardedInitialRoutes.isNotEmpty ||
-          data.routeMatch.hasGuards) {
-        router._guardedInitialRoutes.add(route);
+      if (guardedInitialRoutes.isNotEmpty || data.routeMatch.hasGuards) {
+        guardedInitialRoutes.add(route);
         if (initialRoutes.isEmpty) {
           initialRoutes.add(_placeHolderRoute);
         }
@@ -127,6 +125,10 @@ class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
     }
 
     initialRoutes.removeWhere((route) => route == null);
+
+    if (guardedInitialRoutes.isNotEmpty) {
+      extendedNav._pushAllGuarded(guardedInitialRoutes);
+    }
     return initialRoutes;
   }
 
@@ -166,7 +168,6 @@ class ExtendedNavigatorState<T extends RouterBase>
     extends State<ExtendedNavigator<T>> with WidgetsBindingObserver {
   final _registeredGuards = <Type, RouteGuard>{};
   T router;
-  List<Route> _guardedInitialRoutes = [];
 
   ExtendedNavigatorState get parent => _parent;
 
@@ -191,11 +192,6 @@ class ExtendedNavigatorState<T extends RouterBase>
     WidgetsBinding.instance.addObserver(this);
     _navigatorKey = widget.navigatorKey ?? GlobalKey<NavigatorState>();
     _heroController = HeroController(createRectTween: _createRectTween);
-    if (_guardedInitialRoutes.isNotEmpty) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        _pushAllGuarded(_guardedInitialRoutes);
-      });
-    }
   }
 
   Future<void> _pushAllGuarded(Iterable<Route> routes) async {
@@ -203,8 +199,7 @@ class ExtendedNavigatorState<T extends RouterBase>
       var data = (route.settings as RouteData);
       if (await _canNavigate(data.template)) {
         if (data.template == Navigator.defaultRouteName) {
-          _navigator.pushAndRemoveUntil(
-              route, RouteData.withPath(data.template));
+          _navigator.pushAndRemoveUntil(route, (route) => false);
         } else {
           _navigator.push(route);
         }
@@ -268,6 +263,7 @@ class ExtendedNavigatorState<T extends RouterBase>
         } else {
           initialUri = Uri.parse(initialRoute);
         }
+
         return ExtendedNavigator._generateInitialRoutes(
           this,
           initialUri,

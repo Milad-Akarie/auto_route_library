@@ -15,8 +15,12 @@ class ImportResolver {
     }
 
     for (var lib in libs) {
-      if (lib.source != null && !_isCoreDartType(lib) && lib.exportNamespace.definedNames.keys.contains(element.name)) {
-        return targetFile == null ? lib.source.uri.toString() : _relative(lib.source.uri, targetFile);
+      if (lib.source != null &&
+          !_isCoreDartType(lib) &&
+          lib.exportNamespace.definedNames.values.contains(element)) {
+        return targetFile == null
+            ? lib.source.uri.toString()
+            : _relative(lib.source.uri, targetFile);
       }
     }
     return null;
@@ -24,12 +28,16 @@ class ImportResolver {
 
   String _relative(Uri fileUri, Uri to) {
     var libName = to.pathSegments.first;
-    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.first == libName) ||
+    if ((to.scheme == 'package' &&
+            fileUri.scheme == 'package' &&
+            fileUri.pathSegments.first == libName) ||
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
         return fileUri.pathSegments.last;
       } else {
-        return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
+        return p.posix
+            .relative(fileUri.path, from: to.path)
+            .replaceFirst('../', '');
       }
     } else {
       return fileUri.toString();
