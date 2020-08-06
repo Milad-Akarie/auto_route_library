@@ -1,4 +1,7 @@
 # ChangeLog
+## [0.6.8] 
+- Restrict min analyzer version to 0.39.14
+- Restrict min build_runner version to 1.10.1
 
 ## [0.6.7] 
 - Fix linter warnings in generated file

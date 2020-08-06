@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
           builder: (ctx, extendedNav) => Theme(
                 data: ThemeData.dark(),
                 child: extendedNav,
-              )),
+              )
+              ),
     );
   }
 }

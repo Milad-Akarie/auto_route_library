@@ -9,8 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
   auto_route:
-    path: ../auto_route/
-
+    path: ../auto_route
 
 dev_dependencies:
   build_runner:
@@ -24,3 +23,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
