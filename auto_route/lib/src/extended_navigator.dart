@@ -252,6 +252,7 @@ class ExtendedNavigatorState<T extends RouterBase>
         return router.onGenerateRoute(settings, basePath);
       },
       onUnknownRoute: widget.onUnknownRoute ?? defaultUnknownRoutePage,
+      reportsRouteUpdateToEngine: true,
       onGenerateInitialRoutes: (NavigatorState navigator, String initialRoute) {
         var initialUri;
         if (parentData != null) {
