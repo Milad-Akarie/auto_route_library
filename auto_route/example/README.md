@@ -10,5 +10,5 @@ class LoginScreen extends StatelessWidget {}
     MaterialRoute( page: LoginScreen, fullscreenDialog: true),
   ],
 )
-class $Router {}
+class $AppRouter {}
 ```

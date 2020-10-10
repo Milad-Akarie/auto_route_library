@@ -1,4 +1,8 @@
 # ChangeLog
+## [0.6.9]
+- Fix generator error running flutter version 1.22
+- Fix bar-url not updated in flutter version 1.22 
+
 ## [0.6.8] 
 - Restrict min analyzer version to 0.39.14
 - Restrict min build_runner version to 1.10.1

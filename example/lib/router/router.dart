@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route_annotations.dart';
+import 'package:example/demo.dart';
 import 'package:example/router/route_guards.dart';
 
 import '../screens/home_screen.dart';
@@ -14,7 +15,8 @@ import '../screens/users/users_screen.dart';
   generateNavigationHelperExtension: true,
   routes: <AutoRoute>[
     AdaptiveRoute(page: HomeScreen, initial: true, guards: [AuthGuard]),
-    AdaptiveRoute<void>(
+    // AdaptiveRoute(page: TestPage),
+    AdaptiveRoute<String>(
       path: '/users/:id',
       page: UsersScreen,
       name: 'usersScreen',
@@ -34,4 +36,7 @@ import '../screens/users/users_screen.dart';
     AdaptiveRoute(path: '*', page: UnknownRouteScreen)
   ],
 )
-class $Router {}
+
+// use a different name from 'Router', because a class with the name "Router"
+// exists in the material package
+class $AppRouter {}
