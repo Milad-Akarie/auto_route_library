@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class UsersScreen extends StatelessWidget {
   const UsersScreen({
     this.id,
-    @QueryParam('filter') this.filterFromQuery = "none",
+    @QueryParam('filter') this.filterFromQuery = 'none',
     Container container,
   });
 
@@ -16,6 +16,7 @@ class UsersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // ignore: prefer_single_quotes
       appBar: AppBar(title: Text("Users id: $id, filter: $filterFromQuery")),
 //      body: Hero(
 //        tag: 'Hero',

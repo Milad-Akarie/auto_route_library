@@ -23,7 +23,8 @@ class RouteConfigResolver {
     if (import != null) {
       routeConfig.imports.add(import);
     }
-    routeConfig.className = type.getDisplayString();
+
+    routeConfig.className = type.getDisplayString(withNullability: false);
     var path = autoRoute.peek('path')?.stringValue;
     if (path == null) {
       if (autoRoute.peek('initial')?.boolValue == true) {
@@ -33,11 +34,12 @@ class RouteConfigResolver {
             '${_routerConfig.routeNamePrefix}${toKababCase(routeConfig.className)}';
       }
     }
+
     routeConfig.pathName = path;
 
     throwIf(
       type.element is! ClassElement,
-      '${type.getDisplayString()} is not a class element',
+      '${type.getDisplayString(withNullability: false)} is not a class element',
       element: type.element,
     );
 
@@ -47,7 +49,7 @@ class RouteConfigResolver {
         toLowerCamelCase(routeConfig.className);
 
     routeConfig.hasWrapper = classElement.allSupertypes
-        .map<String>((el) => el.getDisplayString())
+        .map<String>((el) => el.getDisplayString(withNullability: false))
         .contains('AutoRouteWrapper');
 
     final constructor = classElement.unnamedConstructor;
@@ -56,11 +58,12 @@ class RouteConfigResolver {
     if (params?.isNotEmpty == true) {
       if (constructor.isConst &&
           params.length == 1 &&
-          params.first.type.getDisplayString() == 'Key') {
+          params.first.type.getDisplayString(withNullability: false) == 'Key') {
         routeConfig.hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_importResolver);
         routeConfig.parameters = [];
+
         for (ParameterElement p in constructor.parameters) {
           routeConfig.parameters.add(await paramResolver.resolve(p));
         }
@@ -82,12 +85,13 @@ class RouteConfigResolver {
         ?.map((g) => g.toTypeValue())
         ?.forEach((guard) {
       routeConfig.guards.add(RouteGuardConfig(
-          type: guard.getDisplayString(),
+          type: guard.getDisplayString(withNullability: false),
           import: _importResolver.resolve(guard.element)));
     });
 
     final returnType = autoRoute.objectValue.type.typeArguments.first;
-    routeConfig.returnType = returnType.getDisplayString();
+    routeConfig.returnType =
+        returnType.getDisplayString(withNullability: false);
 
     if (routeConfig.returnType != 'dynamic') {
       routeConfig.imports.addAll(_importResolver.resolveAll(returnType));

@@ -87,9 +87,9 @@ class RouterConfigResolver {
       globalRouteConfig.durationInMilliseconds =
           autoRouter.peek('durationInMilliseconds')?.intValue;
       globalRouteConfig.customRouteOpaque =
-          autoRouter.peek('opaque')?.boolValue;
+          autoRouter.peek('opaque')?.boolValue ?? false;
       globalRouteConfig.customRouteBarrierDismissible =
-          autoRouter.peek('barrierDismissible')?.boolValue;
+          autoRouter.peek('barrierDismissible')?.boolValue ?? false;
       final function =
           autoRouter.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
       if (function != null) {
@@ -107,6 +107,7 @@ class RouterConfigResolver {
             CustomTransitionBuilder(functionName, import);
       }
     }
+
     var generateNavigationExt =
         autoRouter.peek('generateNavigationHelperExtension')?.boolValue ??
             false;
