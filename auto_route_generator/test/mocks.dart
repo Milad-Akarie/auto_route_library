@@ -1,4 +1,5 @@
 
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route_generator/auto_route_generator.dart';
 import 'package:build/build.dart';
@@ -32,7 +33,14 @@ class ResolverMock implements Resolver {
   Stream<LibraryElement> get libraries => null;
 
   @override
-  Future<LibraryElement> libraryFor(AssetId assetId) {
-    return null;
+  Future<LibraryElement> libraryFor(AssetId assetId, {bool allowSyntaxErrors = false}) {
+    throw UnimplementedError();
   }
+
+  @override
+  Future<CompilationUnit> compilationUnitFor(AssetId assetId, {bool allowSyntaxErrors = false}) {
+    // TODO: implement compilationUnitFor
+    throw UnimplementedError();
+  }
+
 }

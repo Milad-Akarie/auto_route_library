@@ -19,6 +19,7 @@ dev_dependencies:
   auto_route_generator:
     path: ../auto_route_generator
   effective_dart: ^1.2.0
+  hive_generator: ^0.8.1
   pedantic:
 
 flutter:
