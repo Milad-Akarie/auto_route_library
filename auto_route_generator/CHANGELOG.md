@@ -1,4 +1,7 @@
 # ChangeLog
+## [0.6.10]
+- Restrict analyzer version to ">=0.40.0 <2.0.0"
+
 ## [0.6.9]
 - Fix generator error running flutter version 1.22
 - Fix bar-url not updated in flutter version 1.22 
