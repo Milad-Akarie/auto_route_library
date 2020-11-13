@@ -34,7 +34,7 @@ class ExtendedNavigator<T extends RouterBase> extends StatefulWidget {
   }) =>
       (context, nav) {
         var extendedNav = ExtendedNavigator<T>(
-          key: GlobalObjectKey(nav.key),
+          key: (nav != null) ? GlobalObjectKey(nav.key) : null,
           navigatorKey: navigatorKey,
           observers: observers,
           onUnknownRoute: onUnknownRoute,
