@@ -19,6 +19,7 @@ class RouteConfig {
   List<RouteParamConfig> parameters;
   CustomTransitionBuilder transitionBuilder;
   int durationInMilliseconds;
+  int reverseDurationInMilliseconds;
   int routeType = RouteType.material;
   List<RouteGuardConfig> guards = [];
   String cupertinoNavTitle;

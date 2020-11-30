@@ -116,6 +116,11 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// this property is ignored unless a [transitionBuilder] is provided
   final int durationInMilliseconds;
 
+  /// route reverse transition duration in milliseconds
+  /// is passed to [PageRouteBuilder]
+  /// this property is ignored unless a [transitionBuilder] is provided
+  final int reverseDurationInMilliseconds;
+
   /// passed to the opaque property in [PageRouteBuilder]
   final bool opaque;
 
@@ -126,6 +131,7 @@ class CustomAutoRouter extends AutoRouterAnnotation {
     this.transitionsBuilder,
     this.barrierDismissible,
     this.durationInMilliseconds,
+    this.reverseDurationInMilliseconds,
     this.opaque,
     bool generateNavigationHelperExtension,
     String routesClassName,
@@ -272,6 +278,11 @@ class CustomRoute<T> extends AutoRoute<T> {
   /// this property is ignored unless a [transitionBuilder] is provided
   final int durationInMilliseconds;
 
+  /// route reverse transition duration in milliseconds
+  /// is passed to [PageRouteBuilder]
+  /// this property is ignored unless a [transitionBuilder] is provided
+  final int reverseDurationInMilliseconds;
+
   /// passed to the opaque property in [PageRouteBuilder]
   final bool opaque;
 
@@ -289,6 +300,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     List<AutoRoute> children,
     this.transitionsBuilder,
     this.durationInMilliseconds,
+    this.reverseDurationInMilliseconds,
     this.opaque,
     this.barrierDismissible,
   }) : super(

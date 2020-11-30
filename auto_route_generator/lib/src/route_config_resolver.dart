@@ -110,6 +110,8 @@ class RouteConfigResolver {
       routeConfig.routeType = RouteType.custom;
       routeConfig.durationInMilliseconds =
           autoRoute.peek('durationInMilliseconds')?.intValue;
+      routeConfig.reverseDurationInMilliseconds =
+          autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
       routeConfig.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
       routeConfig.customRouteBarrierDismissible =
           autoRoute.peek('barrierDismissible')?.boolValue;
@@ -135,6 +137,8 @@ class RouteConfigResolver {
       if (globConfig.routeType == RouteType.custom) {
         routeConfig.transitionBuilder = globConfig.transitionBuilder;
         routeConfig.durationInMilliseconds = globConfig.durationInMilliseconds;
+        routeConfig.reverseDurationInMilliseconds =
+            globConfig.reverseDurationInMilliseconds;
         routeConfig.customRouteBarrierDismissible =
             globConfig.customRouteBarrierDismissible;
         routeConfig.customRouteOpaque = globConfig.customRouteOpaque;

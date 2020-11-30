@@ -86,6 +86,8 @@ class RouterConfigResolver {
       globalRouteConfig.routeType = RouteType.custom;
       globalRouteConfig.durationInMilliseconds =
           autoRouter.peek('durationInMilliseconds')?.intValue;
+      globalRouteConfig.reverseDurationInMilliseconds =
+          autoRouter.peek('reverseDurationInMilliseconds')?.intValue;
       globalRouteConfig.customRouteOpaque =
           autoRouter.peek('opaque')?.boolValue ?? false;
       globalRouteConfig.customRouteBarrierDismissible =

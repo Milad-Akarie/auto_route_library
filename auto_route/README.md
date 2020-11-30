@@ -190,6 +190,7 @@ MaterialRoute(path: "/users", page: UsersScreen)
 | opaque                   |     true      | extension for the opaque property in PageRouteBuilder                            |
 | barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |
 | durationInMilliseconds  |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |
+| reverseDurationInMilliseconds  |     null      | extension for the reverseTransitionDuration(millieSeconds) property in PageRouteBuilder |
 
 #### MaterialRoute | CupertinoRoute | AdaptiveRoute | CustomRoute
 
@@ -216,6 +217,7 @@ MaterialRoute(path: "/users", page: UsersScreen)
 | opaque                  |     true      | extension for the opaque property in PageRouteBuilder                            |
 | barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |
 | durationInMilliseconds  |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |
+| reverseDurationInMilliseconds  |     null      | extension for the reverseTransitionDuration(millieSeconds) property in PageRouteBuilder |
 
 ## Passing arguments to routes
 

@@ -310,6 +310,10 @@ class RouterClassGenerator {
         _write(
             'transitionDuration: const Duration(milliseconds: ${r.durationInMilliseconds}),');
       }
+      if (r.reverseDurationInMilliseconds != null) {
+        _write(
+            'reverseTransitionDuration: const Duration(milliseconds: ${r.reverseDurationInMilliseconds}),');
+      }
     }
     // generated shared props
     if (r.fullscreenDialog != null) {
