@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'router_base.dart';
 
 class RouteDef {
   final String template;

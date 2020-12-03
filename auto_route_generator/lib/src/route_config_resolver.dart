@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:auto_route/auto_route_annotations.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/import_resolver.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
@@ -30,8 +30,7 @@ class RouteConfigResolver {
       if (autoRoute.peek('initial')?.boolValue == true) {
         path = '/';
       } else {
-        path =
-            '${_routerConfig.routeNamePrefix}${toKababCase(routeConfig.className)}';
+        path = '${_routerConfig.routeNamePrefix}${toKababCase(routeConfig.className)}';
       }
     }
 
@@ -45,8 +44,7 @@ class RouteConfigResolver {
 
     await _extractRouteMetaData(routeConfig, autoRoute);
 
-    routeConfig.name = autoRoute.peek('name')?.stringValue ??
-        toLowerCamelCase(routeConfig.className);
+    routeConfig.name = autoRoute.peek('name')?.stringValue ?? toLowerCamelCase(routeConfig.className);
 
     routeConfig.hasWrapper = classElement.allSupertypes
         .map<String>((el) => el.getDisplayString(withNullability: false))
@@ -73,25 +71,17 @@ class RouteConfigResolver {
     return routeConfig;
   }
 
-  Future<void> _extractRouteMetaData(
-      RouteConfig routeConfig, ConstantReader autoRoute) async {
-    routeConfig.fullscreenDialog =
-        autoRoute.peek('fullscreenDialog')?.boolValue;
+  Future<void> _extractRouteMetaData(RouteConfig routeConfig, ConstantReader autoRoute) async {
+    routeConfig.fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
     routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
 
-    autoRoute
-        .peek('guards')
-        ?.listValue
-        ?.map((g) => g.toTypeValue())
-        ?.forEach((guard) {
+    autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue())?.forEach((guard) {
       routeConfig.guards.add(RouteGuardConfig(
-          type: guard.getDisplayString(withNullability: false),
-          import: _importResolver.resolve(guard.element)));
+          type: guard.getDisplayString(withNullability: false), import: _importResolver.resolve(guard.element)));
     });
 
     final returnType = autoRoute.objectValue.type.typeArguments.first;
-    routeConfig.returnType =
-        returnType.getDisplayString(withNullability: false);
+    routeConfig.returnType = returnType.getDisplayString(withNullability: false);
 
     if (routeConfig.returnType != 'dynamic') {
       routeConfig.imports.addAll(_importResolver.resolveAll(returnType));
@@ -104,21 +94,16 @@ class RouteConfigResolver {
       routeConfig.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(AdaptiveRoute))) {
       routeConfig.routeType = RouteType.adaptive;
-      routeConfig.cupertinoNavTitle =
-          autoRoute.peek('cupertinoPageTitle')?.stringValue;
+      routeConfig.cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       routeConfig.routeType = RouteType.custom;
-      routeConfig.durationInMilliseconds =
-          autoRoute.peek('durationInMilliseconds')?.intValue;
+      routeConfig.durationInMilliseconds = autoRoute.peek('durationInMilliseconds')?.intValue;
       routeConfig.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      routeConfig.customRouteBarrierDismissible =
-          autoRoute.peek('barrierDismissible')?.boolValue;
-      final function =
-          autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      routeConfig.customRouteBarrierDismissible = autoRoute.peek('barrierDismissible')?.boolValue;
+      final function = autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
       if (function != null) {
         final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
-        final functionName = (function.isStatic &&
-                function.enclosingElement?.displayName != null)
+        final functionName = (function.isStatic && function.enclosingElement?.displayName != null)
             ? '${function.enclosingElement.displayName}.$displayName'
             : displayName;
 
@@ -126,8 +111,7 @@ class RouteConfigResolver {
         if (function.enclosingElement?.name != 'TransitionsBuilders') {
           import = _importResolver.resolve(function);
         }
-        routeConfig.transitionBuilder =
-            CustomTransitionBuilder(functionName, import);
+        routeConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
       }
     } else {
       var globConfig = _routerConfig.globalRouteConfig;
@@ -135,8 +119,7 @@ class RouteConfigResolver {
       if (globConfig.routeType == RouteType.custom) {
         routeConfig.transitionBuilder = globConfig.transitionBuilder;
         routeConfig.durationInMilliseconds = globConfig.durationInMilliseconds;
-        routeConfig.customRouteBarrierDismissible =
-            globConfig.customRouteBarrierDismissible;
+        routeConfig.customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
         routeConfig.customRouteOpaque = globConfig.customRouteOpaque;
       }
     }

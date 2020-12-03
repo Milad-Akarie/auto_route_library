@@ -141,7 +141,7 @@ class CustomAutoRouter extends AutoRouterAnnotation {
         );
 }
 
-// [T] is the results type returned
+/// [T] is the results type returned
 /// from this page route MaterialPageRoute<T>()
 /// defaults to dynamic
 

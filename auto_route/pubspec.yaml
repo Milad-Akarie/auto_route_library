@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   meta: ^1.1.8
+  path:
 dev_dependecies:
   flutter_test:
     sdk: flutter

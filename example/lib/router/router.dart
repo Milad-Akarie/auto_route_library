@@ -1,5 +1,4 @@
-import 'package:auto_route/auto_route_annotations.dart';
-import 'package:example/demo.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:example/router/route_guards.dart';
 
 import '../screens/home_screen.dart';
@@ -14,26 +13,26 @@ import '../screens/users/users_screen.dart';
 @MaterialAutoRouter(
   generateNavigationHelperExtension: true,
   routes: <AutoRoute>[
-    AdaptiveRoute(page: HomeScreen, initial: true, guards: [AuthGuard]),
-    // AdaptiveRoute(page: TestPage),
-    AdaptiveRoute<String>(
+    AutoRoute(page: HomeScreen, initial: true, guards: [AuthGuard]),
+    // AutoRoute(page: TestPage),
+    AutoRoute<String>(
       path: '/users/:id',
       page: UsersScreen,
       name: 'usersScreen',
       children: [
-        AdaptiveRoute(path: '/', page: ProfileScreen),
-        AdaptiveRoute(
+        AutoRoute(path: '/', page: ProfileScreen),
+        AutoRoute(
           path: '/posts',
           page: PostsScreen,
           children: [
-            AdaptiveRoute(path: '/', page: PostsHome),
-            AdaptiveRoute(path: '/details', page: PostDetails),
+            AutoRoute(path: '/', page: PostsHome),
+            AutoRoute(path: '/details', page: PostDetails),
           ],
         ),
       ],
     ),
-    AdaptiveRoute<bool>(path: '/login', page: LoginScreen),
-    AdaptiveRoute(path: '*', page: UnknownRouteScreen)
+    AutoRoute<bool>(path: '/login', page: LoginScreen),
+    AutoRoute(path: '*', page: UnknownRouteScreen)
   ],
 )
 

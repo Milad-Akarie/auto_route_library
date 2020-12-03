@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/legacy.dart';
 import 'package:flutter/material.dart';
 
 class UnknownRouteScreen extends StatelessWidget {

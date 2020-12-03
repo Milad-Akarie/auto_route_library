@@ -1,7 +1,8 @@
-import 'package:auto_route/src/parameters.dart';
-import 'package:auto_route/src/route_matcher.dart';
-import 'package:auto_route/src/router_base.dart';
 import 'package:flutter/widgets.dart';
+
+import '../common/common.dart';
+import 'route_matcher.dart';
+import 'router_base.dart';
 
 @immutable
 class RouteData extends RouteSettings {
@@ -31,8 +32,7 @@ class RouteData extends RouteSettings {
       assert(orElse != null);
     }
     if (_hasInvalidArgs<T>(nullOk)) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${arguments?.runtimeType}]');
     }
     return arguments as T ?? orElse();
   }

@@ -1,7 +1,8 @@
-import 'package:auto_route/src/route_data.dart';
-import 'package:auto_route/src/route_def.dart';
-import 'package:auto_route/src/route_matcher.dart';
 import 'package:flutter/widgets.dart';
+
+import 'route_data.dart';
+import 'route_def.dart';
+import 'route_matcher.dart';
 
 typedef AutoRouteFactory = Route<dynamic> Function(RouteData data);
 typedef RouterBuilder<T extends RouterBase> = T Function();
@@ -59,8 +60,7 @@ abstract class RouterBase {
       var match = matcher.match(route);
       if (match != null) {
         // matching root "/" must be exact
-        if ((route.template == "/" || route.template.isEmpty) &&
-            match.hasRest) {
+        if ((route.template == "/" || route.template.isEmpty) && match.hasRest) {
           continue;
         }
         return match;

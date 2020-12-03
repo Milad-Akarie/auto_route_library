@@ -12,8 +12,9 @@ dependencies:
   analyzer: ">=0.40.0 <2.0.0"
   path: ^1.6.4
   build_runner: ^1.10.1
-  auto_route: ^0.6.9
-#    path: ../auto_route
+  auto_route:
+#  ^0.6.9
+    path: ../auto_route
 
 dev_dependencies:
   source_gen_test:

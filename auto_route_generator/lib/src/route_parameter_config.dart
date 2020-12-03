@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:auto_route/auto_route_annotations.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/import_resolver.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -63,17 +63,11 @@ class RouteParameterResolver {
     var pathParam = pathParamChecker.hasAnnotationOfExact(parameterElement);
     var paramAlias;
     if (pathParam) {
-      paramAlias = pathParamChecker
-          .firstAnnotationOf(parameterElement)
-          .getField('name')
-          ?.toStringValue();
+      paramAlias = pathParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
     }
     var isQuery = queryParamChecker.hasAnnotationOfExact(parameterElement);
     if (isQuery) {
-      paramAlias = queryParamChecker
-          .firstAnnotationOf(parameterElement)
-          .getField('name')
-          ?.toStringValue();
+      paramAlias = queryParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
     }
 
     return RouteParamConfig(
