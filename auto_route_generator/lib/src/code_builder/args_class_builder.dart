@@ -14,6 +14,7 @@ Class buildArgsClass(RouteConfig r) => Class(
         ))
         ..constructors.add(
           Constructor((b) => b
+            ..constant = true
             ..optionalParameters.addAll(
               r.argParams.map(
                 (p) => Parameter((b) {

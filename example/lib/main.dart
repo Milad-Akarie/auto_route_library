@@ -11,21 +11,13 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  final routerConfig = MyRouterConfig(authRouteGuard: AuthRouteGuard());
+
   @override
   Widget build(BuildContext context) {
-
-    return MaterialApp(
-      // builder uses the native nav key to keep
-      // the state of ExtendedNavigator so it won't reload
-      // when using Flutter tools-> select widget mode
-      builder: ExtendedNavigator.builder<AppRouter>(
-          router: AppRouter(),
-          initialRoute: '/',
-          guards: [AuthGuard()],
-          builder: (ctx, extendedNav) => Theme(
-                data: ThemeData.dark(),
-                child: extendedNav,
-              )),
+    return MaterialApp.router(
+      routerDelegate: RootRouterDelegate(routerConfig),
+      routeInformationParser: routerConfig.nativeRouteParser,
     );
   }
 }

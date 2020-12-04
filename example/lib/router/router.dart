@@ -11,7 +11,7 @@ import '../demo.dart';
 import '../screens/users/users_screen.dart';
 
 @MaterialAutoRouter(
-  generateNavigationHelperExtension: true,
+  preferRelativeImports: true,
   routes: <AutoRoute>[
     AutoRoute(page: HomeScreen, initial: true, guards: [AuthRouteGuard]),
     AutoRoute(page: TestPage),
@@ -19,13 +19,13 @@ import '../screens/users/users_screen.dart';
       path: '/users/:id',
       page: UsersScreen,
       children: [
-        AutoRoute(path: '/', page: ProfileScreen),
+        AutoRoute(path: '', page: ProfileScreen),
         AutoRoute(
-          path: '/posts',
+          path: 'posts',
           page: PostsScreen,
           children: [
-            AutoRoute(path: '/', page: PostsHome),
-            AutoRoute(path: '/details', page: PostDetails),
+            AutoRoute(path: '', page: PostsHome),
+            AutoRoute(path: 'details', page: PostDetails),
           ],
         ),
       ],

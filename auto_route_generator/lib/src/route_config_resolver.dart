@@ -27,11 +27,16 @@ class RouteConfigResolver {
       if (autoRoute.peek('initial')?.boolValue == true) {
         path = '/';
       } else {
-        path = '${_routerConfig.routeNamePrefix}${toKababCase(config.className)}';
+        if (_routerConfig.usesLegacyNavigator) {
+          path = '${_routerConfig.routeNamePrefix}${toKababCase(config.className)}';
+        } else {
+          path = '${toKababCase(config.className)}';
+        }
       }
     }
 
     config.pathName = path;
+    config.pathParams = RouteParameterResolver.extractPathParams(path);
 
     throwIf(
       type.element is! ClassElement,

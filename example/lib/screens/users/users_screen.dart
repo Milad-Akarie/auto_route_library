@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/generic_model.dart';
 import 'package:example/model.dart';
-import 'package:example/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 typedef OnPopped<T> = GenericModel<T> Function(T result);
@@ -11,8 +10,9 @@ class UsersScreen extends StatelessWidget {
 
   const UsersScreen({
     this.id,
-    @required Function onDismiss,
+    Function onDismiss,
     Function(int index) onClicked,
+    int score = 1,
     @QueryParam('filter') this.filterFromQuery = 'none',
     this.onPopped,
   });
@@ -23,26 +23,17 @@ class UsersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ignore: prefer_single_quotes
-      appBar: AppBar(title: Text("Users id: $id, filter: $filterFromQuery")),
-//      body: Hero(
-//        tag: 'Hero',
-//        child: Center(
-//          child: FlatButton(
-//            shape: RoundedRectangleBorder(borderRadius:
-//            BorderRadius.circular(30)),
-//            color: Colors.red,
-//            child: Text("Users Posts"),
-//            onPressed: () async {},
-//          ),
-//        ),
-//      ),
-      // this router will obtain it's route generator
-      // on it's own
-      body: ExtendedNavigator(
-        initialRoute: UsersScreenRoutes.postsScreen,
-        name: 'usersRouter',
-      ),
-    );
+        appBar: AppBar(
+          title: Text('Users id: $id, filter: $filterFromQuery'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                context.router.pop();
+              },
+            )
+          ],
+        ),
+        body: AutoRouter());
   }
 }

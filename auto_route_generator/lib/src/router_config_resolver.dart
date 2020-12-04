@@ -16,6 +16,7 @@ class RouterConfig {
   final RouteConfig globalRouteConfig;
   final String routesClassName;
   final String routeNamePrefix;
+  final bool usesLegacyNavigator;
   final String routerClassName;
 
   RouterConfig({
@@ -23,6 +24,7 @@ class RouterConfig {
     this.routes,
     this.globalRouteConfig,
     this.routesClassName,
+    this.usesLegacyNavigator = false,
     this.routeNamePrefix,
     this.routerClassName,
   });

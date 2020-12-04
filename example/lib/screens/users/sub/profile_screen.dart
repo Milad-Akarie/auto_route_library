@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -8,14 +9,14 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile Screen"),
+        title: Text('Profile Screen'),
       ),
       body: Column(
         children: <Widget>[
           FlatButton(
-            child: Text("User posts"),
-            onPressed: () async {
-             context.navigator.push("/posts/");
+            child: Text('User posts'),
+            onPressed: () {
+              context.router.push(PostsScreenRoute());
             },
           ),
         ],

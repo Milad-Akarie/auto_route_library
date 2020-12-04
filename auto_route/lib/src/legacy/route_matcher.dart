@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/common/common.dart';
 import 'package:auto_route/src/legacy/route_def.dart';
 import 'package:flutter/widgets.dart';

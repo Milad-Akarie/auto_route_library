@@ -9,31 +9,9 @@ class PostsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Users Posts Page"),
-      ),
-      body: Hero(
-        tag: 'Hero',
-        child: Center(
-          child: SizedBox(
-            height: 100,
-            width: 300,
-            child: FlatButton(
-              textColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              color: Colors.red,
-              child: Text("Users Posts"),
-              onPressed: () {
-                context.rootNavigator.pop();
-              },
-            ),
-          ),
+        appBar: AppBar(
+          title: Text('Users Posts Page'),
         ),
-      ),
-    );
-
-//        body: ExtendedNavigator());
+        body: AutoRouter());
   }
 }

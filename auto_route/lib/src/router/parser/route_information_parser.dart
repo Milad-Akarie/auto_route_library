@@ -53,7 +53,7 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
 }
 
 String _getNormalizedPath(List<PageRouteInfo> routes) {
-  var fullPath = p.joinAll(routes.map((e) => e.path));
+  var fullPath = p.joinAll(routes.map((e) => e.pathName));
   var normalized = p.normalize(fullPath);
   var query = routes.last.queryParams;
   if (!mapNullOrEmpty(query)) {

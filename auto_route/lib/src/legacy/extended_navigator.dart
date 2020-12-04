@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
-import '../../auto_route.dart';
 import 'route_data.dart';
 import 'route_guard.dart';
 import 'router_base.dart';

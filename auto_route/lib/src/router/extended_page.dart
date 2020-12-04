@@ -14,7 +14,7 @@ abstract class ExtendedPage extends Page {
         assert(data != null),
         super(
           // key: ValueKey(data.key),
-          arguments: data.args,
+          // arguments: data._args,
           name: data.path,
         );
 

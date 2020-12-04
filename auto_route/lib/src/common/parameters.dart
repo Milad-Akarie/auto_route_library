@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 class Parameters {
   final Map<String, String> _params;
 
@@ -5,11 +7,44 @@ class Parameters {
 
   Map<String, String> get rawMap => _params;
 
+  @deprecated
   ParameterValue operator [](String key) => ParameterValue._(_params[key]);
 
   @override
   String toString() {
     return _params.toString();
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Parameters && runtimeType == other.runtimeType && MapEquality().equals(_params, other._params);
+
+  @override
+  int get hashCode => _params.hashCode;
+
+  String getString(String key, [String defaultValue]) => _params[key] ?? defaultValue;
+
+  Object get(String key) => _params[key];
+
+  int getInt(String key, [int defaultValue]) =>
+      _params[key] == null ? null : int.tryParse(_params[key]) ?? defaultValue;
+
+  double getDouble(String key, [double defaultValue]) =>
+      _params[key] == null ? null : double.tryParse(_params[key]) ?? defaultValue;
+
+  num getNum(String key, [num defaultValue]) =>
+      _params[key] == null ? null : num.tryParse(_params[key]) ?? defaultValue;
+
+  bool getBool(String key) {
+    switch (_params[key]?.toLowerCase()) {
+      case 'true':
+        return true;
+      case 'false':
+        return false;
+      default:
+        return null;
+    }
   }
 }
 

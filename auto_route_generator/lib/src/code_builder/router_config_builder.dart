@@ -97,13 +97,34 @@ Method buildMethod(RouteConfig r) {
       )
       ..body = Block(
         (b) => b.statements.addAll([
-          // refer('data.args').call([]).assignVar('args').code,
+          if (r.parameters?.isNotEmpty == true)
+            refer('data.getArgs')
+                .call([], {
+                  if (!r.argParams.any((p) => p.isRequired || p.isPositional))
+                    'orElse': Method(
+                      (b) => b.body = refer('${r.className}Args').constInstance([]).code,
+                    ).closure,
+                }, [
+                  refer('${r.className}Args')
+                ])
+                .assignVar('args')
+                .statement,
           refer(r.pageTypeName, autoRouteImport)
               .newInstance(
                 [],
                 {
                   'data': refer('data'),
-                  'child': r.pageType.refer.newInstance([]),
+                  'child': r.hasConstConstructor
+                      ? r.pageType.refer.constInstance([])
+                      : r.pageType.refer.newInstance(
+                          r.positionalParams.map(getParamAssignment),
+                          Map.fromEntries(r.optionalParams.map(
+                            (p) => MapEntry(
+                              p.name,
+                              getParamAssignment(p),
+                            ),
+                          )),
+                        ),
                 },
               )
               .returned
@@ -113,12 +134,33 @@ Method buildMethod(RouteConfig r) {
   );
 }
 
+Expression getParamAssignment(ParamConfig p) {
+  if (p.isPathParam) {
+    return refer('data').property('pathParams').property(p.methodName).call([
+      literalString(p.name),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode),
+    ]);
+  } else if (p.isQueryParam) {
+    return refer('data').property('queryParams').property(p.methodName).call([
+      literalString(p.name),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode),
+    ]);
+  } else {
+    var ref = refer('args').property(p.name);
+    if (p.defaultValueCode != null) {
+      return ref.ifNullThen(refer(p.defaultValueCode));
+    }
+    return ref;
+  }
+}
+
 Iterable<Object> buildRoutes(List<RouteConfig> routes) {
   return routes
       .map(
         (r) => _routeRefType.newInstance([
           refer(r.routeName).property('key'),
         ], {
+          'page': r.pageType.refer,
           if (r.guards?.isNotEmpty == true)
             'guards': literalList(r.guards
                 .map(

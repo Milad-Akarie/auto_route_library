@@ -20,6 +20,16 @@ Class buildRouteInfo(RouteConfig r) => Class(
             (b) => b
               ..optionalParameters.addAll([
                 ...buildArgParams(r.argParams),
+                if (r.pathParams?.isNotEmpty == true)
+                  ...r.pathParams.map(
+                    (p) => Parameter((b) {
+                      b.name = p.name;
+                      if (!p.isOptional) {
+                        b.annotations.add(requiredAnnotation);
+                      }
+                      return b;
+                    }),
+                  ),
                 if (r.isParent)
                   Parameter((b) => b
                     ..name = 'children'
@@ -38,11 +48,20 @@ Class buildRouteInfo(RouteConfig r) => Class(
               ..initializers.add(refer('super').call([
                 refer('key')
               ], {
+                if (r.pathParams?.isNotEmpty == true)
+                  'pathParams': literalMap(Map.fromEntries(
+                    r.pathParams.map(
+                      (p) => MapEntry(
+                        p.name,
+                        refer(p.name),
+                      ),
+                    ),
+                  )),
                 if (r.argParams?.isNotEmpty == true)
                   'args': refer('${r.className}Args').newInstance(
                     [],
                     {}..addEntries(
-                        r.argParams.map((p) => MapEntry(p.name, refer(p.name))),
+                        r.argParams.map((p) => MapEntry(p.name, refer("${p.name}Arg"))),
                       ),
                   ),
                 if (r.isParent) 'children': refer('children'),
@@ -58,7 +77,7 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> argParams) {
     (p) => Parameter(
       (b) {
         b
-          ..name = p.name
+          ..name = "${p.name}Arg"
           ..named = true
           ..defaultTo = p.defaultCode
           ..type = p is FunctionParamConfig ? p.funRefer : p.type.refer;

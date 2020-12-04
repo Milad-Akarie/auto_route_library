@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -19,12 +20,13 @@ class HomeScreen extends StatelessWidget {
                 child: FlatButton(
                   color: Colors.green,
                   child: Text('Users Screen'),
-                  onPressed: () async {
-                    ExtendedNavigator.of(context);
-//                  context.navigator.router.findMatch(settings)
-                    // ignore: unawaited_futures
-                    context.navigator.push('/users/23');
-//                   ExtendedNavigator.of(context);
+                  onPressed: () {
+                    context.router.push(UsersScreenRoute(
+                        id: '1',
+                        idArg: 1,
+                        onDismissArg: () {
+                          print('UsersScreenRoute dismissed');
+                        }));
                   },
                 ),
               ),

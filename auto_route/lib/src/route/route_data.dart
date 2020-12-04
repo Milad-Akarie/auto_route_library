@@ -1,22 +1,17 @@
-import 'package:auto_route/src/matcher/route_matcher.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/router/extended_page.dart';
-import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 @immutable
 class RouteData {
   final RouteData parent;
   final PageRouteInfo route;
-  final String path;
   final String key;
+  final String path;
   final String fragment;
-  final Map<String, dynamic> queryParams;
-  final Map<String, dynamic> pathParams;
-  final Object args;
-  final List<RouteMatch> initialSegments;
-  final String group;
+  final Parameters queryParams;
+  final Parameters pathParams;
+  final Object _args;
 
   const RouteData({
     @required this.path,
@@ -24,12 +19,10 @@ class RouteData {
     @required this.queryParams,
     @required this.pathParams,
     @required this.route,
-    this.group,
-    this.initialSegments,
     this.fragment,
-    this.args,
+    Object args,
     this.parent,
-  }) : assert(queryParams != null);
+  }) : _args = args;
 
   // String get fullPath => RouteUrl.fromRouteData(this).normalizedPath;
 
@@ -47,6 +40,19 @@ class RouteData {
     }
   }
 
+  T getArgs<T>({T Function() orElse}) {
+    if (_args == null) {
+      if (orElse == null) {
+        throw FlutterError('${T.toString()} can not be null because it has required parameters');
+      }
+      return orElse();
+    }
+    if (_args is! T) {
+      throw FlutterError('Expected [${T.toString()}],  found [${_args?.runtimeType}]');
+    }
+    return _args as T;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -54,7 +60,7 @@ class RouteData {
           runtimeType == other.runtimeType &&
           path == other.path &&
           key == other.key &&
-          MapEquality().equals(queryParams, other.queryParams);
+          queryParams == other.queryParams;
 
   @override
   int get hashCode => key.hashCode ^ queryParams.hashCode;

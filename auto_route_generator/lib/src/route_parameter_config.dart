@@ -52,6 +52,23 @@ class ParamConfig {
     }
   }
 
+  String get methodName {
+    switch (type.name) {
+      case 'String':
+        return 'getString';
+      case 'int':
+        return 'getInt';
+      case 'double':
+        return 'getDouble';
+      case 'num':
+        return 'getNum';
+      case 'bool':
+        return 'getBool';
+      default:
+        return 'get';
+    }
+  }
+
   String get paramName => alias ?? name;
 
   _code.Code get defaultCode => defaultValueCode == null ? null : _code.Code(defaultValueCode);
@@ -106,6 +123,21 @@ class RouteParameterResolver {
         isOptional: paramElement.isOptional,
         isNamed: paramElement.isNamed);
   }
+
+  static List<PathParamConfig> extractPathParams(String path) {
+    return RegExp(r':([^/]+)').allMatches(path).map((m) {
+      var paramName = m.group(1);
+      var isOptional = false;
+      if (paramName.endsWith('?')) {
+        isOptional = true;
+        paramName = paramName.substring(0, paramName.length - 1);
+      }
+      return PathParamConfig(
+        name: paramName,
+        isOptional: isOptional,
+      );
+    }).toList();
+  }
 }
 
 class FunctionParamConfig extends ParamConfig {
@@ -154,4 +186,11 @@ class FunctionParamConfig extends ParamConfig {
   @override
   Set<String> get imports =>
       {...returnType.imports, ...type.imports, ...params.map((e) => e.imports).reduce((acc, a) => acc..addAll(a))};
+}
+
+class PathParamConfig {
+  final String name;
+  final bool isOptional;
+
+  const PathParamConfig({this.name, this.isOptional});
 }

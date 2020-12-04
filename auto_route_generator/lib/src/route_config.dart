@@ -9,6 +9,7 @@ import '../utils.dart';
 class RouteConfig {
   String name;
   String pathName;
+  List<PathParamConfig> pathParams;
   bool initial;
   bool fullscreenDialog;
   bool customRouteOpaque;
@@ -26,7 +27,7 @@ class RouteConfig {
   bool hasWrapper;
   RouterConfig routerConfig;
 
-  bool hasConstConstructor;
+  bool hasConstConstructor = false;
 
   RouteConfig();
 
@@ -44,9 +45,11 @@ class RouteConfig {
     return parameters?.where((p) => !p.isPathParam && !p.isQueryParam)?.toList() ?? [];
   }
 
-  List<ParamConfig> get positionalParams => parameters.where((p) => p.isPositional).toList(growable: false);
+  Iterable<ParamConfig> get requiredParams => parameters?.where((p) => p.isPositional && !p.isOptional) ?? [];
 
-  List<ParamConfig> get namedParams => parameters.where((p) => !p.isPositional).toList(growable: false);
+  Iterable<ParamConfig> get positionalParams => parameters?.where((p) => p.isPositional) ?? [];
+
+  Iterable<ParamConfig> get optionalParams => parameters?.where((p) => p.isOptional) ?? [];
 
   String get routeName => capitalize(valueOr(name, '${className}Route'));
 

@@ -1,6 +1,7 @@
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../auto_route.dart';
 import '../matcher/route_matcher.dart';
 import '../route/page_route_info.dart';
 import '../route/route_data.dart';

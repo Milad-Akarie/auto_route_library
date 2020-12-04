@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/navigation_failure.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
@@ -128,6 +129,7 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
     return this;
   }
 
+  /// mayPop
   @override
   Future<bool> pop() {
     var didPop = false;
@@ -350,14 +352,13 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   RouteData _createRouteData(PageRouteInfo route, RouteDef routeDef) {
     return RouteData(
         route: route,
-        path: route.path,
         key: route.path,
-        queryParams: route.queryParams ?? {},
-        pathParams: route.pathParams,
+        path: route.pathName,
+        queryParams: Parameters(route.queryParams),
+        pathParams: Parameters(route.queryParams),
         parent: page?.data,
         fragment: route.fragment,
-        args: route.args,
-        group: routeDef.group);
+        args: route.args);
   }
 
   void _clearHistory() {
