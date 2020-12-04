@@ -8,7 +8,7 @@ import '../route/route_def.dart';
 import 'controller/routing_controller.dart';
 import 'extended_page.dart';
 
-typedef PageBuilder = ExtendedPage Function(RouteData data);
+typedef PageBuilder = ExtendedPage Function(RouteData data, RouteDef def);
 typedef RouteDataPredicate = bool Function(RouteData data);
 typedef PageFactory = Page<dynamic> Function(RouteData config);
 
@@ -30,7 +30,7 @@ abstract class AutoRouterConfig {
     );
   }
 
-  Map<String, PageFactory> get pagesMap;
+  Map<Type, PageFactory> get pagesMap;
 
   List<RouteDef> get routes;
 
@@ -46,8 +46,8 @@ abstract class AutoRouterConfig {
     );
   }
 
-  ExtendedPage _pageBuilder(RouteData data) {
-    var builder = pagesMap[data.key];
+  ExtendedPage _pageBuilder(RouteData data, RouteDef def) {
+    var builder = pagesMap[def.page];
     assert(builder != null);
     return builder(data);
   }

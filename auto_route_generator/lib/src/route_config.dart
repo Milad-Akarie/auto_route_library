@@ -1,12 +1,12 @@
+import 'package:auto_route_generator/import_resolver.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
 
-import 'custom_transition_builder.dart';
+import '../utils.dart';
 
 /// holds the extracted route configs
 /// to be used in [RouterClassGenerator]
 
 class RouteConfig {
-  List<String> imports = [];
   String name;
   String pathName;
   bool initial;
@@ -14,13 +14,14 @@ class RouteConfig {
   bool customRouteOpaque;
   bool customRouteBarrierDismissible;
   bool maintainState;
+  ImportableType pageType;
   String className;
-  String returnType;
-  List<RouteParamConfig> parameters;
-  CustomTransitionBuilder transitionBuilder;
+  ImportableType returnType;
+  List<ParamConfig> parameters;
+  ImportableType transitionBuilder;
   int durationInMilliseconds;
   int routeType = RouteType.material;
-  List<RouteGuardConfig> guards = [];
+  List<ImportableType> guards = [];
   String cupertinoNavTitle;
   bool hasWrapper;
   RouterConfig routerConfig;
@@ -37,11 +38,29 @@ class RouteConfig {
     return pathName.contains(":") ? '_$name' : name;
   }
 
-  List<RouteParamConfig> get argParams {
-    return parameters
-            ?.where((p) => !p.isPathParam && !p.isQueryParam)
-            ?.toList() ??
-        [];
+  bool get isParent => routerConfig != null;
+
+  List<ParamConfig> get argParams {
+    return parameters?.where((p) => !p.isPathParam && !p.isQueryParam)?.toList() ?? [];
+  }
+
+  List<ParamConfig> get positionalParams => parameters.where((p) => p.isPositional).toList(growable: false);
+
+  List<ParamConfig> get namedParams => parameters.where((p) => !p.isPositional).toList(growable: false);
+
+  String get routeName => capitalize(valueOr(name, '${className}Route'));
+
+  String get pageTypeName {
+    switch (routeType) {
+      case RouteType.cupertino:
+        return 'XCupertinoPage';
+      case RouteType.custom:
+        return 'CustomPage';
+      case RouteType.adaptive:
+        return 'AdaptivePage';
+      default:
+        return 'XMaterialPage';
+    }
   }
 }
 

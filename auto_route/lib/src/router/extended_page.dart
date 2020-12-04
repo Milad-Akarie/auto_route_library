@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 
 abstract class ExtendedPage extends Page {
   final RouteData data;
-  final WidgetBuilder builder;
   final Widget child;
 
   ExtendedPage({
-    this.builder,
     @required this.data,
     this.child,
   })  :
@@ -42,14 +40,14 @@ class XMaterialPage extends ExtendedPage {
 
   XMaterialPage({
     @required RouteData data,
-    @required Widget builder,
+    @required Widget child,
     this.fullscreenDialog = false,
     this.maintainState = true,
   })  : assert(fullscreenDialog != null),
         assert(maintainState != null),
         super(
           data: data,
-          child: builder,
+          child: child,
         );
 
   @override
@@ -70,7 +68,7 @@ class XCupertinoPage<T> extends ExtendedPage {
 
   XCupertinoPage({
     @required RouteData data,
-    @required WidgetBuilder builder,
+    @required Widget child,
     this.title,
     this.fullscreenDialog = false,
     this.maintainState = true,

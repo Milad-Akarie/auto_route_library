@@ -10,31 +10,28 @@ const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
 // extracts route configs from class fields
 class RouteConfigResolver {
   final RouterConfig _routerConfig;
-  final ImportResolver _importResolver;
+  final TypeResolver _typeResolver;
 
-  RouteConfigResolver(this._routerConfig, this._importResolver);
+  RouteConfigResolver(this._routerConfig, this._typeResolver);
 
   Future<RouteConfig> resolve(ConstantReader autoRoute) async {
-    final routeConfig = RouteConfig();
+    final config = RouteConfig();
     final type = autoRoute.read('page').typeValue;
     final classElement = type.element as ClassElement;
 
-    final import = _importResolver.resolve(classElement);
-    if (import != null) {
-      routeConfig.imports.add(import);
-    }
+    config.pageType = _typeResolver.resolveType(type);
 
-    routeConfig.className = type.getDisplayString(withNullability: false);
+    config.className = type.getDisplayString(withNullability: false);
     var path = autoRoute.peek('path')?.stringValue;
     if (path == null) {
       if (autoRoute.peek('initial')?.boolValue == true) {
         path = '/';
       } else {
-        path = '${_routerConfig.routeNamePrefix}${toKababCase(routeConfig.className)}';
+        path = '${_routerConfig.routeNamePrefix}${toKababCase(config.className)}';
       }
     }
 
-    routeConfig.pathName = path;
+    config.pathName = path;
 
     throwIf(
       type.element is! ClassElement,
@@ -42,11 +39,11 @@ class RouteConfigResolver {
       element: type.element,
     );
 
-    await _extractRouteMetaData(routeConfig, autoRoute);
+    await _extractRouteMetaData(config, autoRoute);
 
-    routeConfig.name = autoRoute.peek('name')?.stringValue ?? toLowerCamelCase(routeConfig.className);
+    config.name = autoRoute.peek('name')?.stringValue;
 
-    routeConfig.hasWrapper = classElement.allSupertypes
+    config.hasWrapper = classElement.allSupertypes
         .map<String>((el) => el.getDisplayString(withNullability: false))
         .contains('AutoRouteWrapper');
 
@@ -57,18 +54,18 @@ class RouteConfigResolver {
       if (constructor.isConst &&
           params.length == 1 &&
           params.first.type.getDisplayString(withNullability: false) == 'Key') {
-        routeConfig.hasConstConstructor = true;
+        config.hasConstConstructor = true;
       } else {
-        final paramResolver = RouteParameterResolver(_importResolver);
-        routeConfig.parameters = [];
+        final paramResolver = RouteParameterResolver(_typeResolver);
+        config.parameters = [];
 
         for (ParameterElement p in constructor.parameters) {
-          routeConfig.parameters.add(await paramResolver.resolve(p));
+          config.parameters.add(await paramResolver.resolve(p));
         }
       }
     }
     // _validatePathParams(routeConfig, classElement);
-    return routeConfig;
+    return config;
   }
 
   Future<void> _extractRouteMetaData(RouteConfig routeConfig, ConstantReader autoRoute) async {
@@ -76,16 +73,11 @@ class RouteConfigResolver {
     routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
 
     autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue())?.forEach((guard) {
-      routeConfig.guards.add(RouteGuardConfig(
-          type: guard.getDisplayString(withNullability: false), import: _importResolver.resolve(guard.element)));
+      routeConfig.guards.add(_typeResolver.resolveType(guard));
     });
 
     final returnType = autoRoute.objectValue.type.typeArguments.first;
-    routeConfig.returnType = returnType.getDisplayString(withNullability: false);
-
-    if (routeConfig.returnType != 'dynamic') {
-      routeConfig.imports.addAll(_importResolver.resolveAll(returnType));
-    }
+    routeConfig.returnType = _typeResolver.resolveType(returnType);
 
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
       routeConfig.routeType = RouteType.material;
@@ -109,9 +101,12 @@ class RouteConfigResolver {
 
         var import;
         if (function.enclosingElement?.name != 'TransitionsBuilders') {
-          import = _importResolver.resolve(function);
+          import = _typeResolver.resolveImport(function);
         }
-        routeConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
+        routeConfig.transitionBuilder = ImportableType(
+          name: functionName,
+          import: import,
+        );
       }
     } else {
       var globConfig = _routerConfig.globalRouteConfig;

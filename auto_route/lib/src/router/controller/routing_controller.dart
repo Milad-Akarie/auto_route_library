@@ -297,7 +297,7 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
 
   RouteNode _createRouteNode(PageRouteInfo route, {RouteDef routeDef}) {
     var routeData = _createRouteData(route, routeDef);
-    ExtendedPage page = pageBuilder(routeData);
+    ExtendedPage page = pageBuilder(routeData, routeDef);
     if (routeDef.hasChildren) {
       return RouterNode(
         parent: this,

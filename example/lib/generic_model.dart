@@ -1,0 +1,1 @@
+class GenericModel<T> {}

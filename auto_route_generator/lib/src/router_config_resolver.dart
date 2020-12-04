@@ -57,7 +57,7 @@ class RouterConfig {
 }
 
 class RouterConfigResolver {
-  final ImportResolver _importResolver;
+  final TypeResolver _importResolver;
 
   RouterConfigResolver(this._importResolver);
 
@@ -89,9 +89,9 @@ class RouterConfigResolver {
 
         var import;
         if (function.enclosingElement?.name != 'TransitionsBuilders') {
-          import = _importResolver.resolve(function);
+          import = _importResolver.resolveImport(function);
         }
-        globalRouteConfig.transitionBuilder = CustomTransitionBuilder(functionName, import);
+        globalRouteConfig.transitionBuilder = ImportableType(name: functionName, import: import);
       }
     }
 
@@ -124,7 +124,7 @@ class RouterConfigResolver {
 
       var children = routeReader.peek('children')?.listValue;
       if (children?.isNotEmpty == true) {
-        var name = capitalize(route.name);
+        var name = capitalize(valueOr(route.name, route.className));
         var subRouterConfig = routerConfig.copyWith(
           routerClassName: '${name}Router',
           routesClassName: '${name}Routes',

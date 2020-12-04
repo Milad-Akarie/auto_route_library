@@ -9,13 +9,14 @@ String toLowerCamelCase(String s) {
 }
 
 String capitalize(String s) {
+  assert(s != null);
   if (s.length < 2) return s.toUpperCase();
   return s[0].toUpperCase() + s.substring(1);
 }
 
 String toKababCase(String s) {
-  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'),
-      (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
+  assert(s != null);
+  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
 }
 
 void throwIf(bool condition, String message, {Element element, String todo}) {
@@ -30,4 +31,8 @@ void throwError(String message, {Element element, String todo}) {
     todo: todo,
     element: element,
   );
+}
+
+String valueOr(String value, String or) {
+  return value == null || value.isEmpty ? or : value;
 }
