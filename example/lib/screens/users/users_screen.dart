@@ -17,7 +17,7 @@ class UsersScreen extends StatelessWidget {
     this.onPopped,
   });
 
-  final int id;
+  final String id;
   final String filter;
 
   @override

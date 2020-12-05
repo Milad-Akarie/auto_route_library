@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
                   child: Text('Users Screen'),
                   onPressed: () {
                     context.router.push(UsersScreenRoute(
-                        id: 6,
+                        id: '2',
                         // ignore: missing_return
                         onPoppedArg: (model) {
                           print('UsersScreenRoute popped $model');

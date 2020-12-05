@@ -24,12 +24,12 @@ import '../demo.dart';
       path: '/users/:id',
       page: UsersScreen,
       children: [
-        AutoRoute(path: '', page: ProfileScreen),
+        AutoRoute(path: 'home', page: ProfileScreen),
         AutoRoute(
           path: 'posts',
           page: PostsScreen,
           children: [
-            AutoRoute(path: '', page: PostsHome),
+            AutoRoute(path: 'home', page: PostsHome),
             AutoRoute(path: 'details', page: PostDetails),
           ],
         ),
