@@ -125,6 +125,23 @@ Method buildMethod(RouteConfig r) {
                             ),
                           )),
                         ),
+                  if (r.maintainState != null) 'maintainState': literalBool(r.maintainState),
+                  if (r.fullscreenDialog != null) 'fullscreenDialog': literalBool(r.fullscreenDialog),
+                  if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) &&
+                      r.cupertinoNavTitle != null)
+                    'title': literalString(r.cupertinoNavTitle),
+                  if (r.routeType == RouteType.custom) ...{
+                    if (r.customRouteBuilder != null) 'customRouteBuilder': r.customRouteBuilder.refer,
+                    if (r.transitionBuilder != null) 'transitionsBuilder': r.transitionBuilder.refer,
+                    if (r.durationInMilliseconds != null)
+                      'durationInMilliseconds': literalNum(r.durationInMilliseconds),
+                    if (r.reverseDurationInMilliseconds != null)
+                      'reverseDurationInMilliseconds': literalNum(r.reverseDurationInMilliseconds),
+                    if (r.customRouteOpaque != null) 'opaque': literalBool(r.customRouteOpaque),
+                    if (r.customRouteBarrierDismissible != null)
+                      'barrierDismissible': literalBool(r.customRouteBarrierDismissible),
+                    if (r.customRouteBarrierLabel != null) 'barrierLabel': literalString(r.customRouteBarrierLabel),
+                  }
                 },
               )
               .returned
@@ -160,6 +177,7 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) {
         (r) => _routeRefType.newInstance([
           refer(r.routeName).property('key'),
         ], {
+          'path': literalString(r.pathName),
           'page': r.pageType.refer,
           if (r.guards?.isNotEmpty == true)
             'guards': literalList(r.guards

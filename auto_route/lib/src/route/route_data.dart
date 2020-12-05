@@ -8,6 +8,7 @@ class RouteData {
   final PageRouteInfo route;
   final String key;
   final String path;
+  final String pathName;
   final String fragment;
   final Parameters queryParams;
   final Parameters pathParams;
@@ -19,6 +20,7 @@ class RouteData {
     @required this.queryParams,
     @required this.pathParams,
     @required this.route,
+    @required this.pathName,
     this.fragment,
     Object args,
     this.parent,
@@ -33,7 +35,7 @@ class RouteData {
 
   static RouteData of(BuildContext context) {
     var settings = ModalRoute.of(context)?.settings;
-    if (settings != null && settings is ExtendedPage) {
+    if (settings != null && settings is AutoRoutePage) {
       return settings.data;
     } else {
       return null;
@@ -53,12 +55,15 @@ class RouteData {
     return _args as T;
   }
 
+  Object get args => _args;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is RouteData &&
           runtimeType == other.runtimeType &&
           path == other.path &&
+          pathName == other.pathName &&
           key == other.key &&
           queryParams == other.queryParams;
 

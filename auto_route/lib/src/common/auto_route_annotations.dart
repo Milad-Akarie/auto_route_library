@@ -1,17 +1,45 @@
-import 'package:meta/meta.dart';
+import 'package:meta/meta.dart' show required;
 
 class AutoRouterAnnotation {
-  // if true a Navigator extension will be generated with
-  // helper push methods of all routes
+  /// This has no effect if [usesLegacyGenerator] is true
+  ///
+  /// if true a Navigator extension will be generated with
+  /// helper push methods of all routes
+
   final bool generateNavigationHelperExtension;
 
-  // defaults to 'Routes'
+  /// This has no effect if [usesLegacyGenerator] is true
+  ///
+  /// defaults to 'Routes'
   final String routesClassName;
 
-  //This is the prefix for each Route String that is generated
-  // initial routes will always be named '/'
-  // defaults to '/'
+  /// This is the prefix for each Route String that is generated
+  /// initial routes will always be named '/'
+  /// defaults to '/'
+  /// it has no effect unless [usesLegacyGenerator] is true
   final String routePrefix;
+
+  /// if true legacy generator that
+  /// uses ExtendedNavigator will be used instead
+  final bool usesLegacyGenerator;
+
+  /// This has no effect if [usesLegacyGenerator] is true
+  ///
+  /// if true argument names will always be generated
+  /// with the Arg suffix in [PageRouteInfo]
+  final bool alwaysSuffixArgsWithArg;
+
+  /// This has no effect if [usesLegacyGenerator] is true
+  ///
+  /// if true [PageRouteInfo] will include  queryParam
+  /// property
+  final bool usesQueryParams;
+
+  /// This has no effect if [usesLegacyGenerator] is true
+  ///
+  /// if true [PageRouteInfo] will include fragment
+  /// property
+  final bool usesPathFragments;
 
   /// if true relative imports will be generated
   /// when possible
@@ -25,12 +53,16 @@ class AutoRouterAnnotation {
     this.routesClassName,
     this.routePrefix,
     this.routes,
-    this.preferRelativeImports,
-  ) : assert(routes != null);
+    this.preferRelativeImports, {
+    this.usesLegacyGenerator,
+    this.usesQueryParams,
+    this.usesPathFragments,
+    this.alwaysSuffixArgsWithArg,
+  }) : assert(routes != null);
 }
 
-// Defaults created routes to MaterialPageRoute unless
-// overridden by AutoRoute annotation
+/// Defaults created routes to MaterialPageRoute unless
+/// overridden by AutoRoute
 class MaterialAutoRouter extends AutoRouterAnnotation {
   const MaterialAutoRouter({
     bool generateNavigationHelperExtension,
@@ -38,33 +70,19 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     String pathPrefix,
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
-  }) : super._(
-          generateNavigationHelperExtension,
-          routesClassName,
-          pathPrefix,
-          routes,
-          preferRelativeImports,
-        );
+    bool usesLegacyGenerator,
+    bool alwaysSuffixArgsWithArg,
+    bool usesQueryParams,
+    bool usesPathFragments,
+  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix, routes, preferRelativeImports,
+            usesPathFragments: usesPathFragments,
+            usesQueryParams: usesQueryParams,
+            usesLegacyGenerator: usesLegacyGenerator,
+            alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg);
 }
 
-class MaterialRouter extends AutoRouterAnnotation {
-  const MaterialRouter({
-    bool generateNavigationHelperExtension,
-    String routesClassName,
-    String pathPrefix,
-    @required List<AutoRoute> routes,
-    bool preferRelativeImports,
-  }) : super._(
-          generateNavigationHelperExtension,
-          routesClassName,
-          pathPrefix,
-          routes,
-          preferRelativeImports,
-        );
-}
-
-// Defaults created routes to CupertinoPageRoute unless
-// overridden by AutoRoute annotation
+/// Defaults created routes to CupertinoPageRoute unless
+/// overridden by AutoRoute
 class CupertinoAutoRouter extends AutoRouterAnnotation {
   const CupertinoAutoRouter({
     bool generateNavigationHelperExtension,
@@ -72,12 +90,20 @@ class CupertinoAutoRouter extends AutoRouterAnnotation {
     String pathPrefix,
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
+    bool usesLegacyGenerator,
+    bool alwaysSuffixArgsWithArg,
+    bool usesQueryParams,
+    bool usesPathFragments,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
+          usesPathFragments: usesPathFragments,
+          usesQueryParams: usesQueryParams,
+          usesLegacyGenerator: usesLegacyGenerator,
+          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
         );
 }
 
@@ -88,17 +114,25 @@ class AdaptiveAutoRouter extends AutoRouterAnnotation {
     String pathPrefix,
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
+    bool usesLegacyGenerator,
+    bool alwaysSuffixArgsWithArg,
+    bool usesQueryParams,
+    bool usesPathFragments,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
+          usesPathFragments: usesPathFragments,
+          usesQueryParams: usesQueryParams,
+          usesLegacyGenerator: usesLegacyGenerator,
+          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
         );
 }
 
-// Defaults created routes to PageRouteBuilder unless
-// overridden by AutoRoute annotation
+/// Defaults created routes to PageRouteBuilder unless
+/// overridden by AutoRoute
 class CustomAutoRouter extends AutoRouterAnnotation {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
@@ -111,10 +145,28 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// the generator can import it into router_base.dart
   final Function transitionsBuilder;
 
+  /// This builder function is passed to customRouteBuilder property
+  /// in [CustomPage]
+  ///
+  /// I couldn't type this function from here but it should match
+  /// typedef [CustomRouteBuilder] = Route Function(BuildContext context, CustomPage page);
+  /// you should only reference the function when passing it so
+  /// the generator can import it into the generated file
+  ///
+  /// this builder function accepts a BuildContext and a CustomPage
+  /// that has all the other properties assigned to it
+  /// so using them then is totally up to you.
+  final Function customRouteBuilder;
+
   /// route transition duration in milliseconds
   /// is passed to [PageRouteBuilder]
   /// this property is ignored unless a [transitionBuilder] is provided
   final int durationInMilliseconds;
+
+  /// route reverse transition duration in milliseconds
+  /// is passed to [PageRouteBuilder]
+  /// this property is ignored unless a [transitionBuilder] is provided
+  final int reverseDurationInMilliseconds;
 
   /// passed to the opaque property in [PageRouteBuilder]
   final bool opaque;
@@ -126,18 +178,28 @@ class CustomAutoRouter extends AutoRouterAnnotation {
     this.transitionsBuilder,
     this.barrierDismissible,
     this.durationInMilliseconds,
+    this.reverseDurationInMilliseconds,
+    this.customRouteBuilder,
     this.opaque,
     bool generateNavigationHelperExtension,
     String routesClassName,
     String pathPrefix,
     @required List<AutoRoute> routes,
     bool preferRelativeImports,
+    bool usesLegacyGenerator,
+    bool alwaysSuffixArgsWithArg,
+    bool usesQueryParams,
+    bool usesPathFragments,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
+          usesPathFragments: usesPathFragments,
+          usesQueryParams: usesQueryParams,
+          usesLegacyGenerator: usesLegacyGenerator,
+          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
         );
 }
 
@@ -264,19 +326,40 @@ class CustomRoute<T> extends AutoRoute<T> {
   /// Animation<double> secondaryAnimation, Widget child);
   ///
   /// you should only reference the function so
-  /// the generator can import it into router_base.dart
+  /// the generator can import it into the generated file
   final Function transitionsBuilder;
+
+  /// this builder function is passed to customRouteBuilder property
+  /// in [CustomPage]
+  ///
+  /// I couldn't type this function from here but it should match
+  /// typedef [CustomRouteBuilder] = Route Function(BuildContext context, CustomPage page);
+  /// you should only reference the function when passing it so
+  /// the generator can import it into the generated file
+  ///
+  /// this builder function accepts a BuildContext and a CustomPage
+  /// that has all the other properties assigned to it
+  /// so using them then is totally up to you.
+  final Function customRouteBuilder;
 
   /// route transition duration in milliseconds
   /// is passed to [PageRouteBuilder]
   /// this property is ignored unless a [transitionBuilder] is provided
   final int durationInMilliseconds;
 
+  /// route reverse transition duration in milliseconds
+  /// is passed to [PageRouteBuilder]
+  /// this property is ignored unless a [transitionBuilder] is provided
+  final int reverseDurationInMilliseconds;
+
   /// passed to the opaque property in [PageRouteBuilder]
   final bool opaque;
 
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
+
+  /// passed to the barrierLabel property in [PageRouteBuilder]
+  final String barrierLabel;
 
   const CustomRoute({
     bool initial,
@@ -287,8 +370,11 @@ class CustomRoute<T> extends AutoRoute<T> {
     @required Type page,
     List<Type> guards,
     List<AutoRoute> children,
+    this.customRouteBuilder,
+    this.barrierLabel,
     this.transitionsBuilder,
     this.durationInMilliseconds,
+    this.reverseDurationInMilliseconds,
     this.opaque,
     this.barrierDismissible,
   }) : super(

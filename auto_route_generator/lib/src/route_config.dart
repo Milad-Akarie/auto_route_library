@@ -14,13 +14,17 @@ class RouteConfig {
   bool fullscreenDialog;
   bool customRouteOpaque;
   bool customRouteBarrierDismissible;
+  String customRouteBarrierLabel;
   bool maintainState;
   ImportableType pageType;
   String className;
   ImportableType returnType;
   List<ParamConfig> parameters;
   ImportableType transitionBuilder;
+  ImportableType customRouteBuilder;
+
   int durationInMilliseconds;
+  int reverseDurationInMilliseconds;
   int routeType = RouteType.material;
   List<ImportableType> guards = [];
   String cupertinoNavTitle;
@@ -56,13 +60,13 @@ class RouteConfig {
   String get pageTypeName {
     switch (routeType) {
       case RouteType.cupertino:
-        return 'XCupertinoPage';
+        return 'CupertinoPageX';
       case RouteType.custom:
         return 'CustomPage';
       case RouteType.adaptive:
         return 'AdaptivePage';
       default:
-        return 'XMaterialPage';
+        return 'MaterialPageX';
     }
   }
 }

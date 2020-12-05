@@ -39,7 +39,7 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
     var matches = RouteMatcher(_collection).match(routeInformation.location, returnOnFirstMatch: true);
     var routes;
     if (matches != null) {
-      routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList();
+      routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList(growable: false);
     }
     return SynchronousFuture<List<PageRouteInfo>>(routes);
   }

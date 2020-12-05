@@ -26,13 +26,12 @@ String generateLibrary(RouterConfig config) {
   final library = Library(
     (b) => b
       ..body.addAll([
-        ...allRoutes.map(buildRouteInfo),
-        ...allRoutes.map(buildArgsClass),
         buildRouterConfig(config, allGuards, allRoutes),
+        ...allRoutes.map((r) => buildRouteInfo(r, config)),
+        ...allRoutes.where((r) => r.parameters?.isNotEmpty == true).map(buildArgsClass),
       ]),
   );
 
   final emitter = DartEmitter(Allocator.simplePrefixing());
-  print('${library.accept(emitter)}');
-  return DartFormatter().format('${library.accept(emitter)}');
+  return DartFormatter().format(library.accept(emitter).toString());
 }

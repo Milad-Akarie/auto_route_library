@@ -17,7 +17,7 @@ class RoutesCollection {
   factory RoutesCollection.from(List<RouteDef> routes) {
     assert(routes != null);
     final routesMap = LinkedHashMap<String, RouteDef>();
-    routes.forEach((r) => routesMap[r.path] = r);
+    routes.forEach((r) => routesMap[r.key] = r);
     return RoutesCollection(routesMap);
   }
 
@@ -32,6 +32,10 @@ class RoutesCollection {
   RoutesCollection subCollectionOf(String key) {
     assert(this[key]?.children != null, "$key does not have children");
     return this[key].children;
+  }
+
+  RouteDef firstRouteWithPathORNull(String path) {
+    return routes.firstWhere((r) => r.path == path, orElse: () => null);
   }
 }
 
@@ -76,8 +80,9 @@ class RouteMatcher {
         children.addAll(subMatches);
       }
       matches.add(RouteMatch(
-        key: routeDef.path,
-        path: stringMatch,
+        key: routeDef.key,
+        path: routeDef.path,
+        pathName: stringMatch,
         children: children,
         pathParams: _extractPathParams(regex, stringMatch),
         queryParams: uri.queryParameters,
@@ -116,8 +121,8 @@ class RouteMatcher {
   }
 
   RouteDef _getRouteDef(PageRouteInfo route, RoutesCollection routes) {
-    var routeConfig = routes[route.path];
-    if (routeConfig == null || !RegExp(routeConfig.pattern).hasMatch(route.path)) {
+    var routeConfig = routes[route.routeKey];
+    if (routeConfig == null || !RegExp(routeConfig.pattern).hasMatch(route.pathName)) {
       return null;
     }
     if (route.hasChildren) {
@@ -134,6 +139,7 @@ class RouteMatcher {
 class RouteMatch {
   final String key;
   final String path;
+  final String pathName;
   final Map<String, dynamic> pathParams;
   final Map<String, dynamic> queryParams;
   final List<RouteMatch> children;
@@ -142,6 +148,7 @@ class RouteMatch {
   const RouteMatch({
     @required this.key,
     @required this.path,
+    this.pathName,
     this.children,
     this.pathParams,
     this.queryParams,

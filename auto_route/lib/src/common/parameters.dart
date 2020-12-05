@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 
 class Parameters {
-  final Map<String, String> _params;
+  final Map<String, dynamic> _params;
 
-  Parameters(Map<String, String> params) : _params = params ?? {};
+  Parameters(Map<String, dynamic> params) : _params = params ?? {};
 
-  Map<String, String> get rawMap => _params;
+  Map<String, dynamic> get rawMap => _params;
 
   @deprecated
   ParameterValue operator [](String key) => ParameterValue._(_params[key]);
@@ -48,6 +48,7 @@ class Parameters {
   }
 }
 
+@deprecated
 class ParameterValue {
   final dynamic _value;
 

@@ -6,6 +6,7 @@ import '../utils.dart';
 
 @immutable
 class RouteDef {
+  final String key;
   final String path;
   final Pattern _pattern;
   final bool fullMatch;
@@ -16,7 +17,8 @@ class RouteDef {
   final String group;
 
   RouteDef(
-    this.path, {
+    this.key, {
+    @required this.path,
     this.page,
     this.guards = const [],
     this.fullMatch = false,

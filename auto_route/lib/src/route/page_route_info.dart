@@ -6,6 +6,7 @@ import '../utils.dart';
 
 @immutable
 class PageRouteInfo {
+  final String _key;
   final String path;
   final String _rawPathName;
   final Map<String, dynamic> pathParams;
@@ -15,7 +16,8 @@ class PageRouteInfo {
   final Object args;
 
   const PageRouteInfo(
-    this.path, {
+    this._key, {
+    @required this.path,
     String pathName,
     this.children,
     this.queryParams,
@@ -23,6 +25,8 @@ class PageRouteInfo {
     this.fragment,
     this.args,
   }) : _rawPathName = pathName;
+
+  String get routeKey => _key;
 
   factory PageRouteInfo.fromMatch(RouteMatch match) {
     assert(match != null);
@@ -36,7 +40,8 @@ class PageRouteInfo {
     }
     return PageRouteInfo(
       match.key,
-      pathName: match.path,
+      path: match.path,
+      pathName: match.pathName,
       pathParams: match.pathParams,
       fragment: match.fragment,
       queryParams: match.queryParams,

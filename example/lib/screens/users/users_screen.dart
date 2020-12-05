@@ -9,26 +9,28 @@ class UsersScreen extends StatelessWidget {
   final OnPopped<Model> onPopped;
 
   const UsersScreen({
-    this.id,
+    @pathParam this.id,
     Function onDismiss,
     Function(int index) onClicked,
     int score = 1,
-    @QueryParam('filter') this.filterFromQuery = 'none',
+    @QueryParam('filter') this.filter = 'none',
     this.onPopped,
   });
 
   final int id;
-  final String filterFromQuery;
+  final String filter;
 
   @override
   Widget build(BuildContext context) {
+    print(context.route.pathParams);
     return Scaffold(
         appBar: AppBar(
-          title: Text('Users id: $id, filter: $filterFromQuery'),
+          title: Text('Users id: $id, filter: $filter'),
           actions: [
             IconButton(
               icon: Icon(Icons.close),
               onPressed: () {
+                onPopped?.call(Model());
                 context.router.pop();
               },
             )

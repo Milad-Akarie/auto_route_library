@@ -64,6 +64,21 @@ class TypeResolver {
     return importableTypes;
   }
 
+  ImportableType resolveImportableFunctionType(ExecutableElement function) {
+    assert(function != null);
+    final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
+    var functionName = displayName;
+    Element elementToImport = function;
+    if (function.enclosingElement is ClassElement) {
+      functionName = '${function.enclosingElement.displayName}.$displayName';
+      elementToImport = function.enclosingElement;
+    }
+    return ImportableType(
+      name: functionName,
+      import: resolveImport(elementToImport),
+    );
+  }
+
   // typedef OnPopped<T> = void Function(T result);
   ImportableType resolveType(DartType type) {
     return ImportableType(

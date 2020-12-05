@@ -6,8 +6,8 @@ import 'package:auto_route/src/navigation_failure.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/route/route_def.dart';
+import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/auto_router_config.dart';
-import 'package:auto_route/src/router/extended_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -24,13 +24,13 @@ abstract class RoutingController {
 
   Future<bool> pop();
 
-  List<ExtendedPage> get stack;
+  List<AutoRoutePage> get stack;
 
   RoutingController get parent;
 
   RoutingController get root;
 
-  RoutingController get bottomMost;
+  RoutingController get topMost;
 
   RouteData get currentRoute;
 
@@ -56,7 +56,7 @@ class RoutingControllerScope extends InheritedWidget {
 }
 
 class RouteNode {
-  final ExtendedPage page;
+  final AutoRoutePage page;
   final String key;
 
   const RouteNode(this.page, this.key);
@@ -66,7 +66,7 @@ class RouteNode {
 
 class RouterNode extends ChangeNotifier implements RouteNode, RoutingController {
   final RouterNode parent;
-  final ExtendedPage page;
+  final AutoRoutePage page;
   final String key;
   final RoutesCollection routeCollection;
   final PageBuilder pageBuilder;
@@ -119,11 +119,11 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   }
 
   @override
-  RoutingController get bottomMost {
+  RoutingController get topMost {
     if (children.isNotEmpty) {
       var topNode = children.values.last;
       if (topNode is RouterNode) {
-        return topNode.bottomMost;
+        return topNode.topMost;
       }
     }
     return this;
@@ -142,7 +142,7 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   }
 
   @override
-  List<ExtendedPage> get stack => List.unmodifiable(children.values.map((e) => e.page));
+  List<AutoRoutePage> get stack => List.unmodifiable(children.values.map((e) => e.page));
 
   @override
   Future<void> push(PageRouteInfo route, {OnNavigationFails onFail}) async {
@@ -299,12 +299,12 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
 
   RouteNode _createRouteNode(PageRouteInfo route, {RouteDef routeDef}) {
     var routeData = _createRouteData(route, routeDef);
-    ExtendedPage page = pageBuilder(routeData, routeDef);
+    AutoRoutePage page = pageBuilder(routeData, routeDef);
     if (routeDef.hasChildren) {
       return RouterNode(
         parent: this,
         key: routeDef.path,
-        routeCollection: routeCollection.subCollectionOf(routeDef.path),
+        routeCollection: routeCollection.subCollectionOf(routeDef.key),
         pageBuilder: pageBuilder,
         page: page,
         preMatchedRoutes: route?.children
@@ -352,10 +352,11 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   RouteData _createRouteData(PageRouteInfo route, RouteDef routeDef) {
     return RouteData(
         route: route,
-        key: route.path,
-        path: route.pathName,
+        key: route.routeKey,
+        path: route.path,
+        pathName: route.pathName,
+        pathParams: Parameters(route.pathParams),
         queryParams: Parameters(route.queryParams),
-        pathParams: Parameters(route.queryParams),
         parent: page?.data,
         fragment: route.fragment,
         args: route.args);

@@ -1,6 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
+import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/auto_router_config.dart';
-import 'package:auto_route/src/router/extended_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -21,24 +22,29 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   final GlobalKey<NavigatorState> navigatorKey;
   final RouterNode routerNode;
 
+  RouteData currentConfig;
+
   RootRouterDelegate(
     AutoRouterConfig routerConfig, {
     this.defaultHistory,
   })  : routerNode = routerConfig.root,
         assert(routerConfig != null),
         navigatorKey = GlobalKey<NavigatorState>() {
-    routerNode.addListener(notifyListeners);
+    routerNode.addListener(() {
+      currentConfig = routerNode.currentRoute;
+      notifyListeners();
+    });
   }
 
   @override
   List<PageRouteInfo> get currentConfiguration {
-    var route = routerNode.bottomMost.currentRoute;
+    var route = routerNode.topMost.currentRoute;
     if (route == null) {
       return null;
     }
     var list = route.breadcrumbs.map((d) => d.route).toList(growable: false);
     print("-------- currentConfig--------");
-    print(list.map((e) => e.path));
+    print(list.map((e) => e.pathName));
 
     return list;
   }
@@ -84,7 +90,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
                 if (!route.didPop(result)) {
                   return false;
                 }
-                var data = (route.settings as ExtendedPage).data;
+                var data = (route.settings as AutoRoutePage).data;
                 routerNode.removeStackEntry(ValueKey(data));
                 routerNode.notifyListeners();
                 return true;
@@ -107,6 +113,7 @@ class InnerRouterDelegate extends RouterDelegate
   })  : assert(routerNode != null),
         navigatorKey = GlobalKey<NavigatorState>() {
     routerNode.addListener(() {
+      rootDelegate.currentConfig = routerNode.currentRoute;
       notifyListeners();
       rootDelegate.notifyListeners();
     });
@@ -126,7 +133,7 @@ class InnerRouterDelegate extends RouterDelegate
                 if (!route.didPop(result)) {
                   return false;
                 }
-                var data = (route.settings as ExtendedPage).data;
+                var data = (route.settings as AutoRoutePage).data;
                 routerNode.removeStackEntry(ValueKey(data));
                 routerNode.notifyListeners();
                 return true;
@@ -144,10 +151,10 @@ class InnerRouterDelegate extends RouterDelegate
     } else if (!listNullOrEmpty(routes)) {
       routerNode.pushAll(routes);
     } else {
-      var defaultRouteDef = routerNode.routeCollection[''];
+      var defaultRouteDef = routerNode.routeCollection.firstRouteWithPathORNull('');
       if (defaultRouteDef != null) {
         routerNode.pushSilently(
-          PageRouteInfo(defaultRouteDef.path),
+          PageRouteInfo(defaultRouteDef.key, path: defaultRouteDef.path),
           routeDef: defaultRouteDef,
         );
       }
@@ -193,7 +200,7 @@ class DeclarativeRouterDelegate extends RouterDelegate
               if (!route.didPop(result)) {
                 return false;
               }
-              var data = (route.settings as ExtendedPage).data;
+              var data = (route.settings as AutoRoutePage).data;
               routerNode.removeStackEntry(ValueKey(data));
               routerNode.notifyListeners();
               onPopRoute?.call(data.route);
