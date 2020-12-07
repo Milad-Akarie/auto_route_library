@@ -80,15 +80,6 @@ Field buildPagesMap(List<RouteConfig> routes) {
     )).code);
 }
 
-// @override
-// final pagesMap = <String, PageFactory>{
-// HomePageRoute.key: (data) {
-// return XMaterialPage(
-// data: data,
-// builder: HomePage(),
-// );
-// },
-
 Method buildMethod(RouteConfig r) {
   return Method(
     (b) => b
@@ -172,6 +163,7 @@ Expression getParamAssignment(ParamConfig p) {
 }
 
 Iterable<Object> buildRoutes(List<RouteConfig> routes) {
+  print(routes.map((e) => e.fullMatch));
   return routes
       .map(
         (r) => _routeRefType.newInstance([
@@ -179,6 +171,7 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) {
         ], {
           'path': literalString(r.pathName),
           'page': r.pageType.refer,
+          if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
           if (r.guards?.isNotEmpty == true)
             'guards': literalList(r.guards
                 .map(

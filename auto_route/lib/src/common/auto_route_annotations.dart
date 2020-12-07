@@ -217,6 +217,7 @@ class AutoRoute<T> {
 
   /// passed to the maintainState property in [MaterialPageRoute]
   final bool maintainState;
+
   final List<AutoRoute> children;
 
   /// route path name which will be assigned to the given variable name
@@ -232,12 +233,15 @@ class AutoRoute<T> {
 
   final List<Type> guards;
 
+  final bool fullMatch;
+
   const AutoRoute(
       {@required this.page,
       this.initial,
       this.guards,
       this.fullscreenDialog,
       this.maintainState,
+      this.fullMatch,
       this.path,
       this.name,
       this.children});
@@ -250,12 +254,14 @@ class MaterialRoute<T> extends AutoRoute<T> {
       bool initial,
       bool fullscreenDialog,
       bool maintainState,
+      bool fullMatch,
       String name,
       List<Type> guards,
       List<AutoRoute> children})
       : super(
           page: page,
           guards: guards,
+          fullMatch: fullMatch,
           initial: initial,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
@@ -277,6 +283,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
       String path,
       this.title,
       String name,
+      bool fullMatch,
       @required Type page,
       List<Type> guards,
       List<AutoRoute> children})
@@ -286,6 +293,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
             maintainState: maintainState,
             path: path,
             name: name,
+            fullMatch: fullMatch,
             page: page,
             guards: guards,
             children: children);
@@ -298,6 +306,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
       bool maintainState,
       String name,
       String path,
+      bool fullMatch,
       Type returnType,
       this.cupertinoPageTitle,
       @required Type page,
@@ -309,6 +318,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
             maintainState: maintainState,
             path: path,
             name: name,
+            fullMatch: fullMatch,
             page: page,
             guards: guards,
             children: children);
@@ -367,6 +377,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     bool maintainState,
     String name,
     String path,
+    bool fullMatch,
     @required Type page,
     List<Type> guards,
     List<AutoRoute> children,
@@ -383,6 +394,7 @@ class CustomRoute<T> extends AutoRoute<T> {
             maintainState: maintainState,
             path: path,
             name: name,
+            fullMatch: fullMatch,
             page: page,
             guards: guards,
             children: children);

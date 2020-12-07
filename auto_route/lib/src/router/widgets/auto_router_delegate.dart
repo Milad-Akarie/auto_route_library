@@ -30,10 +30,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   })  : routerNode = routerConfig.root,
         assert(routerConfig != null),
         navigatorKey = GlobalKey<NavigatorState>() {
-    routerNode.addListener(() {
-      currentConfig = routerNode.currentRoute;
-      notifyListeners();
-    });
+    routerNode.addListener(notifyListeners);
   }
 
   @override
@@ -44,7 +41,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     }
     var list = route.breadcrumbs.map((d) => d.route).toList(growable: false);
     print("-------- currentConfig--------");
-    print(list.map((e) => e.pathName));
+    print(list.length);
 
     return list;
   }
@@ -68,6 +65,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
 
   @override
   Future<void> setNewRoutePath(List<PageRouteInfo> routes) {
+    print("setting new rot");
     if (!listNullOrEmpty(routes)) {
       return routerNode.updateOrReplaceRoutes(routes);
     }
@@ -90,8 +88,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
                 if (!route.didPop(result)) {
                   return false;
                 }
-                var data = (route.settings as AutoRoutePage).data;
-                routerNode.removeStackEntry(ValueKey(data));
+                routerNode.removeEntry((route.settings as AutoRoutePage));
                 routerNode.notifyListeners();
                 return true;
               },
@@ -113,7 +110,6 @@ class InnerRouterDelegate extends RouterDelegate
   })  : assert(routerNode != null),
         navigatorKey = GlobalKey<NavigatorState>() {
     routerNode.addListener(() {
-      rootDelegate.currentConfig = routerNode.currentRoute;
       notifyListeners();
       rootDelegate.notifyListeners();
     });
@@ -133,8 +129,7 @@ class InnerRouterDelegate extends RouterDelegate
                 if (!route.didPop(result)) {
                   return false;
                 }
-                var data = (route.settings as AutoRoutePage).data;
-                routerNode.removeStackEntry(ValueKey(data));
+                routerNode.removeTopMostEntry();
                 routerNode.notifyListeners();
                 return true;
               },
@@ -151,11 +146,13 @@ class InnerRouterDelegate extends RouterDelegate
     } else if (!listNullOrEmpty(routes)) {
       routerNode.pushAll(routes);
     } else {
-      var defaultRouteDef = routerNode.routeCollection.firstRouteWithPathORNull('');
-      if (defaultRouteDef != null) {
-        routerNode.pushSilently(
-          PageRouteInfo(defaultRouteDef.key, path: defaultRouteDef.path),
-          routeDef: defaultRouteDef,
+      var defaultRoute = routerNode.routeCollection.firstRouteWithPathORNull('');
+      if (defaultRoute != null) {
+        routerNode.push(
+          PageRouteInfo(
+            defaultRoute.key,
+            path: defaultRoute.path,
+          ),
         );
       }
     }
@@ -201,7 +198,7 @@ class DeclarativeRouterDelegate extends RouterDelegate
                 return false;
               }
               var data = (route.settings as AutoRoutePage).data;
-              routerNode.removeStackEntry(ValueKey(data));
+              routerNode.removeTopMostEntry();
               routerNode.notifyListeners();
               onPopRoute?.call(data.route);
               return true;

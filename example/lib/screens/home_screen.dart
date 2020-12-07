@@ -21,12 +21,11 @@ class HomeScreen extends StatelessWidget {
                   color: Colors.green,
                   child: Text('Users Screen'),
                   onPressed: () {
-                    context.router.push(UsersScreenRoute(
-                        id: '2',
-                        // ignore: missing_return
-                        onPoppedArg: (model) {
-                          print('UsersScreenRoute popped $model');
-                        }));
+                    context.router.push(
+                      UsersScreenRoute(id: '2', children: [
+                        // ProfileScreenRoute(),
+                      ]),
+                    );
                   },
                 ),
               ),

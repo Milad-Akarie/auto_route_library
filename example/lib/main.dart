@@ -4,8 +4,6 @@ import 'package:example/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// import 'router/router.gr.dart';
-
 void main() {
   runApp(MyApp());
 }
@@ -15,9 +13,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Building App');
     return MaterialApp.router(
       routerDelegate: RootRouterDelegate(routerConfig),
       routeInformationParser: routerConfig.nativeRouteParser,
+      routeInformationProvider: routerConfig.defaultProvider('/test'),
     );
   }
 }

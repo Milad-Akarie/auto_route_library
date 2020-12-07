@@ -11,25 +11,26 @@ import 'package:flutter/material.dart';
 
 import '../demo.dart';
 
-@MaterialAutoRouter(
+@CustomAutoRouter(
+  transitionsBuilder: TransitionsBuilders.slideRightWithFade,
   routes: <AutoRoute>[
     AutoRoute(
       page: HomeScreen,
       initial: true,
+      fullMatch: true,
       guards: [AuthRouteGuard],
-      // maintainState: true,
     ),
-    AutoRoute(page: TestPage),
+    AutoRoute(page: TestPage, path: '/test'),
     AutoRoute(
       path: '/users/:id',
       page: UsersScreen,
       children: [
-        AutoRoute(path: 'home', page: ProfileScreen),
+        AutoRoute(path: '', page: ProfileScreen),
         AutoRoute(
           path: 'posts',
           page: PostsScreen,
           children: [
-            AutoRoute(path: 'home', page: PostsHome),
+            AutoRoute(path: '', page: PostsHome),
             AutoRoute(path: 'details', page: PostDetails),
           ],
         ),

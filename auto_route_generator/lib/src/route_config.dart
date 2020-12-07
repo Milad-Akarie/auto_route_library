@@ -12,6 +12,7 @@ class RouteConfig {
   List<PathParamConfig> pathParams;
   bool initial;
   bool fullscreenDialog;
+  bool fullMatch;
   bool customRouteOpaque;
   bool customRouteBarrierDismissible;
   String customRouteBarrierLabel;

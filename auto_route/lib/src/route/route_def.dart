@@ -32,7 +32,7 @@ class RouteDef {
         _pattern = RegexUtils.compilePattern(path, fullMatch),
         _children = children != null ? RoutesCollection.from(children) : null;
 
-  bool get hasChildren => _children != null;
+  bool get isSubTree => _children != null;
 
   RoutesCollection get children => _children;
 

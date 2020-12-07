@@ -36,6 +36,7 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
 
   @override
   Future<List<PageRouteInfo>> parseRouteInformation(RouteInformation routeInformation) async {
+    print('parsing ${routeInformation.location}');
     var matches = RouteMatcher(_collection).match(routeInformation.location, returnOnFirstMatch: true);
     var routes;
     if (matches != null) {
@@ -47,7 +48,7 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
   @override
   RouteInformation restoreRouteInformation(List<PageRouteInfo> routes) {
     String location = _getNormalizedPath(routes);
-
+    print(location);
     return RouteInformation(location: location);
   }
 }

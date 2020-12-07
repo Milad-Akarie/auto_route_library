@@ -65,20 +65,24 @@ class RouteMatcher {
         continue;
       }
       var children = <RouteMatch>[];
-      var remainingSegments = path.substring(stringMatch.length);
-      if (remainingSegments.isNotEmpty && routeDef.hasChildren) {
+
+      if (routeDef.isSubTree) {
+        var remainingSegments = path.substring(stringMatch.length);
         var rest = uri.replace(path: remainingSegments).toString();
         var subMatches = _match(
           rest,
           routeDef.children,
           returnOnFirstMatch: returnOnFirstMatch,
         );
-        if (subMatches == null) {
+        if (remainingSegments.isNotEmpty && subMatches == null) {
           matches.clear();
           continue;
         }
-        children.addAll(subMatches);
+        if (subMatches != null) {
+          children.addAll(subMatches);
+        }
       }
+
       matches.add(RouteMatch(
         key: routeDef.key,
         path: routeDef.path,
@@ -89,12 +93,12 @@ class RouteMatcher {
         fragment: uri.fragment,
       ));
 
-      if (returnOnFirstMatch || remainingSegments.isEmpty || routeDef.hasChildren || stringMatch == path) {
+      if (returnOnFirstMatch || matches.last.fullPath == path) {
         break;
       }
     }
 
-    if (matches.isEmpty) {
+    if (matches.isEmpty || (!returnOnFirstMatch && matches.last.fullPath != path)) {
       return null;
     }
 
@@ -121,17 +125,17 @@ class RouteMatcher {
   }
 
   RouteDef _getRouteDef(PageRouteInfo route, RoutesCollection routes) {
-    var routeConfig = routes[route.routeKey];
-    if (routeConfig == null || !RegExp(routeConfig.pattern).hasMatch(route.pathName)) {
+    var def = routes[route.routeKey];
+    if (def == null || !RegExp(def.pattern).hasMatch(route.pathName)) {
       return null;
     }
     if (route.hasChildren) {
-      var childrenMatch = route.children.every((r) => _hasMatch(r, routeConfig.children));
+      var childrenMatch = route.children.every((r) => _hasMatch(r, def.children));
       if (!childrenMatch) {
         return null;
       }
     }
-    return routeConfig;
+    return def;
   }
 }
 
@@ -148,7 +152,7 @@ class RouteMatch {
   const RouteMatch({
     @required this.key,
     @required this.path,
-    this.pathName,
+    @required this.pathName,
     this.children,
     this.pathParams,
     this.queryParams,
