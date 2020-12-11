@@ -6,6 +6,7 @@ export 'legacy.dart' hide RouteData, RouteDef;
 export 'src/auto_route_guard.dart';
 export 'src/common/common.dart';
 export 'src/route/page_route_info.dart';
+export 'src/route/route_args.dart';
 export 'src/route/route_data.dart';
 export 'src/route/route_def.dart';
 export 'src/router/auto_route_page.dart';

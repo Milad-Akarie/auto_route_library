@@ -16,16 +16,25 @@ class RouteConfigResolver {
 
   RouteConfig resolve(ConstantReader autoRoute) {
     final config = RouteConfig();
-    final type = autoRoute.read('page').typeValue;
-    final classElement = type.element as ClassElement;
 
-    config.pageType = _typeResolver.resolveType(type);
-
-    config.className = type.getDisplayString(withNullability: false);
+    final page = autoRoute.peek('page')?.typeValue;
     var path = autoRoute.peek('path')?.stringValue;
+    if (page == null) {
+      var redirectTo = autoRoute.peek('redirectTo')?.stringValue;
+      throwIf(redirectTo == null, 'Route must have either a page or a redirect destination');
+      return config
+        ..pathName = path
+        ..redirectTo = redirectTo
+        ..routeType = RouteType.redirect;
+    }
+
+    final classElement = page.element as ClassElement;
+    config.pageType = _typeResolver.resolveType(page);
+    config.className = page.getDisplayString(withNullability: false);
+
     if (path == null) {
       if (autoRoute.peek('initial')?.boolValue == true) {
-        path = '/';
+        path = _routerConfig.parent != null ? '' : '/';
       } else {
         if (_routerConfig.usesLegacyGenerator) {
           path = '${_routerConfig.routeNamePrefix}${toKababCase(config.className)}';
@@ -33,15 +42,20 @@ class RouteConfigResolver {
           path = '${toKababCase(config.className)}';
         }
       }
+    } else if (!_routerConfig.usesLegacyGenerator) {
+      throwIf(
+        path.startsWith("/") && _routerConfig.parent != null,
+        'Child paths can not start with a forward slash [/]',
+      );
     }
 
     config.pathName = path;
     config.pathParams = RouteParameterResolver.extractPathParams(path);
 
     throwIf(
-      type.element is! ClassElement,
-      '${type.getDisplayString(withNullability: false)} is not a class element',
-      element: type.element,
+      page.element is! ClassElement,
+      '${page.getDisplayString(withNullability: false)} is not a class element',
+      element: page.element,
     );
 
     _extractRouteMetaDataInto(config, autoRoute);

@@ -23,6 +23,7 @@ class RouteConfig {
   List<ParamConfig> parameters;
   ImportableType transitionBuilder;
   ImportableType customRouteBuilder;
+  String redirectTo;
 
   int durationInMilliseconds;
   int reverseDurationInMilliseconds;
@@ -41,7 +42,8 @@ class RouteConfig {
   }
 
   String get templateName {
-    return pathName.contains(":") ? '_$name' : name;
+    final routeName = name ?? "${toLowerCamelCase(className)}Route";
+    return pathName.contains(":") ? '_$routeName' : routeName;
   }
 
   bool get isParent => routerConfig != null;
@@ -77,4 +79,5 @@ class RouteType {
   static const int cupertino = 1;
   static const int adaptive = 2;
   static const int custom = 3;
+  static const int redirect = 4;
 }

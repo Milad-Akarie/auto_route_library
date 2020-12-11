@@ -3,16 +3,20 @@
 import 'package:example/model.dart';
 import 'package:flutter/material.dart';
 
-class TestPage extends StatelessWidget{
+class TestPage extends StatelessWidget {
 //  final ui.Image image;
-   final Model model;
-  const TestPage({
-     this.model
+  final Model model;
+
+  const TestPage({this.model
 //    this.image,
-  });
+      });
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Test page"),
+      ),
+    );
   }
 }

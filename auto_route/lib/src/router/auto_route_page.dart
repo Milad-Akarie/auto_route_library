@@ -12,7 +12,7 @@ abstract class AutoRoutePage extends Page {
 
   AutoRoutePage({
     @required this.data,
-    this.child,
+    @required this.child,
     this.fullscreenDialog,
     this.maintainState,
   })  : assert(child != null),

@@ -20,7 +20,7 @@ class AutoRouter extends StatefulWidget {
 
   const AutoRouter.declarative({
     Key key,
-    this.onGenerateRoutes,
+    @required this.onGenerateRoutes,
     this.onPopRoute,
   })  : isDeclarative = true,
         super(key: key);
@@ -48,7 +48,7 @@ class AutoRouter extends StatefulWidget {
 }
 
 class _AutoRouterState extends State<AutoRouter> {
-  BackButtonDispatcher _backButtonDispatcher;
+  ChildBackButtonDispatcher _backButtonDispatcher;
   RouterDelegate _routerDelegate;
   List<PageRouteInfo> _routes;
 
@@ -57,18 +57,14 @@ class _AutoRouterState extends State<AutoRouter> {
     super.didChangeDependencies();
     var router = Router.of(context);
     assert(router != null);
-    _backButtonDispatcher = router.backButtonDispatcher
-      ..createChildBackButtonDispatcher()
-      ..takePriority();
+    _backButtonDispatcher = router.backButtonDispatcher.createChildBackButtonDispatcher();
 
     if (_routerDelegate == null) {
       assert(router.routerDelegate is AutoRouterDelegate);
-
-      var parentRouter = AutoRouter.of(context) as RouterNode;
-      assert(parentRouter != null);
+      var autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
       var parentData = RouteData.of(context);
       assert(parentData != null);
-      RouterNode routerNode = parentRouter.children[ValueKey(parentData)];
+      RouterNode routerNode = autoRouterDelegate.routerNode.routerOf(parentData);
       assert(routerNode != null);
       if (widget.isDeclarative) {
         _routes = routerNode.preMatchedRoutes;
@@ -76,13 +72,13 @@ class _AutoRouterState extends State<AutoRouter> {
           routerNode: routerNode,
           routes: widget.onGenerateRoutes(context, _routes),
           onPopRoute: widget.onPopRoute,
-          rootDelegate: (router.routerDelegate as AutoRouterDelegate).rootDelegate,
+          rootDelegate: autoRouterDelegate.rootDelegate,
         );
       } else {
         _routerDelegate = InnerRouterDelegate(
           routerNode: routerNode,
           defaultRoutes: routerNode.preMatchedRoutes,
-          rootDelegate: (router.routerDelegate as AutoRouterDelegate).rootDelegate,
+          rootDelegate: autoRouterDelegate.rootDelegate,
         );
       }
     }
@@ -90,9 +86,10 @@ class _AutoRouterState extends State<AutoRouter> {
 
   @override
   Widget build(BuildContext context) {
+    print(_backButtonDispatcher);
     return Router(
       routerDelegate: _routerDelegate,
-      backButtonDispatcher: _backButtonDispatcher,
+      backButtonDispatcher: _backButtonDispatcher..takePriority(),
     );
   }
 

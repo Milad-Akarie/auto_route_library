@@ -21,10 +21,12 @@ class RouterConfig {
   final bool alwaysSuffixArgsWithArg;
   final bool usesQueryParams;
   final bool usesPathFragments;
+  final RouterConfig parent;
 
   RouterConfig({
     this.generateNavigationHelper,
     this.routes,
+    this.parent,
     this.globalRouteConfig,
     this.routesClassName,
     this.alwaysSuffixArgsWithArg,
@@ -42,18 +44,21 @@ class RouterConfig {
     String routesClassName,
     String routeNamePrefix,
     String routerClassName,
+    RouterConfig parent,
   }) {
     return RouterConfig(
-        generateNavigationHelper: generateNavigationHelper ?? this.generateNavigationHelper,
-        routes: routes ?? this.routes,
-        globalRouteConfig: globalRouteConfig ?? this.globalRouteConfig,
-        routesClassName: routesClassName ?? this.routesClassName,
-        routeNamePrefix: routeNamePrefix ?? this.routeNamePrefix,
-        routerClassName: routerClassName ?? this.routerClassName,
-        usesQueryParams: this.usesQueryParams,
-        usesPathFragments: this.usesPathFragments,
-        usesLegacyGenerator: this.usesLegacyGenerator,
-        alwaysSuffixArgsWithArg: this.alwaysSuffixArgsWithArg);
+      generateNavigationHelper: generateNavigationHelper ?? this.generateNavigationHelper,
+      routes: routes ?? this.routes,
+      globalRouteConfig: globalRouteConfig ?? this.globalRouteConfig,
+      routesClassName: routesClassName ?? this.routesClassName,
+      routeNamePrefix: routeNamePrefix ?? this.routeNamePrefix,
+      routerClassName: routerClassName ?? this.routerClassName,
+      parent: parent ?? this.parent,
+      usesQueryParams: this.usesQueryParams,
+      usesPathFragments: this.usesPathFragments,
+      usesLegacyGenerator: this.usesLegacyGenerator,
+      alwaysSuffixArgsWithArg: this.alwaysSuffixArgsWithArg,
+    );
   }
 
   List<RouterConfig> get subRouters => routes.where((e) => e.routerConfig != null).map((e) => e.routerConfig).toList();
@@ -145,6 +150,7 @@ class RouterConfigResolver {
         var subRouterConfig = routerConfig.copyWith(
           routerClassName: '${name}Router',
           routesClassName: '${name}Routes',
+          parent: routerConfig,
         );
         var routes = _resolveRoutes(subRouterConfig, children);
         route.routerConfig = subRouterConfig.copyWith(routes: routes);

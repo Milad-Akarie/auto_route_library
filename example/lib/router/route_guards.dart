@@ -13,10 +13,16 @@ import 'package:auto_route/auto_route.dart';
 //     return navigator.root.push(Routes.loginScreen);
 //   }
 // }
+bool isAuthenticated = false;
 
 class AuthRouteGuard extends AutoRouteGuard {
   @override
-  Future<bool> canNavigate(PageRouteInfo route, RoutingController router) async {
+  Future<bool> canNavigate(List<PageRouteInfo> routes, RoutingController router) async {
+    if (!isAuthenticated) {
+      isAuthenticated = true;
+      router.pushAll(routes);
+      return false;
+    }
     return true;
   }
 }

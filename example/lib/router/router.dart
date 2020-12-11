@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/router/route_guards.dart';
 import 'package:example/screens/home_screen.dart';
 import 'package:example/screens/login_screen.dart';
 import 'package:example/screens/users/sub/posts_screen.dart';
@@ -9,18 +8,14 @@ import 'package:example/screens/users/sub/sub/posts_home.dart';
 import 'package:example/screens/users/users_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../demo.dart';
-
-@CustomAutoRouter(
-  transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+@MaterialAutoRouter(
   routes: <AutoRoute>[
     AutoRoute(
       page: HomeScreen,
       initial: true,
-      fullMatch: true,
-      guards: [AuthRouteGuard],
+      fullMatch: false,
+      // guards: [AuthRouteGuard],
     ),
-    AutoRoute(page: TestPage, path: '/test'),
     AutoRoute(
       path: '/users/:id',
       page: UsersScreen,
@@ -36,6 +31,8 @@ import '../demo.dart';
         ),
       ],
     ),
+    // RedirectRoute(path: '/users', redirectTo: '/users/redirect'),
+
     AutoRoute(path: '/login', page: LoginScreen),
     // AutoRoute(path: '*', page: UnknownRouteScreen)
   ],

@@ -2,13 +2,11 @@ import 'package:flutter/foundation.dart';
 
 import '../auto_route_guard.dart';
 import '../matcher/route_matcher.dart';
-import '../utils.dart';
 
 @immutable
-class RouteDef {
+class RouteConfig {
   final String key;
   final String path;
-  final Pattern _pattern;
   final bool fullMatch;
   final Type page;
   final RoutesCollection _children;
@@ -16,7 +14,7 @@ class RouteDef {
   final List<AutoRouteGuard> guards;
   final String group;
 
-  RouteDef(
+  RouteConfig(
     this.key, {
     @required this.path,
     this.page,
@@ -24,12 +22,11 @@ class RouteDef {
     this.fullMatch = false,
     this.redirectTo,
     this.group,
-    List<RouteDef> children,
+    List<RouteConfig> children,
   })  : assert(page == null || redirectTo == null),
         assert(fullMatch != null),
         assert(guards != null),
         assert(page == null || redirectTo == null),
-        _pattern = RegexUtils.compilePattern(path, fullMatch),
         _children = children != null ? RoutesCollection.from(children) : null;
 
   bool get isSubTree => _children != null;
@@ -37,6 +34,4 @@ class RouteDef {
   RoutesCollection get children => _children;
 
   bool get isRedirect => redirectTo != null;
-
-  Pattern get pattern => _pattern;
 }

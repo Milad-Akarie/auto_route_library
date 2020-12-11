@@ -8,11 +8,11 @@ class RouteData {
   final PageRouteInfo route;
   final String key;
   final String path;
-  final String pathName;
+  final String match;
   final String fragment;
   final Parameters queryParams;
   final Parameters pathParams;
-  final Object _args;
+  final RouteArgs _args;
 
   const RouteData({
     @required this.path,
@@ -20,7 +20,7 @@ class RouteData {
     @required this.queryParams,
     @required this.pathParams,
     @required this.route,
-    @required this.pathName,
+    @required this.match,
     this.fragment,
     Object args,
     this.parent,
@@ -42,7 +42,7 @@ class RouteData {
     }
   }
 
-  T getArgs<T>({T Function() orElse}) {
+  T getArgs<T extends RouteArgs>({T Function() orElse}) {
     if (_args == null) {
       if (orElse == null) {
         throw FlutterError('${T.toString()} can not be null because it has required parameters');
@@ -55,7 +55,7 @@ class RouteData {
     return _args as T;
   }
 
-  Object get args => _args;
+  RouteArgs get args => _args;
 
   @override
   bool operator ==(Object other) =>
@@ -63,15 +63,16 @@ class RouteData {
       other is RouteData &&
           runtimeType == other.runtimeType &&
           path == other.path &&
-          pathName == other.pathName &&
+          match == other.match &&
           key == other.key &&
-          queryParams == other.queryParams;
+          queryParams == other.queryParams &&
+          _args == other._args;
 
   @override
-  int get hashCode => key.hashCode ^ queryParams.hashCode;
+  int get hashCode => path.hashCode ^ match.hashCode ^ key.hashCode ^ queryParams.hashCode ^ _args.hashCode;
 
   @override
   String toString() {
-    return 'RouteData{pathName: $path, path: $key, queryParams: $queryParams}';
+    return 'RouteData{match: $match, key: $key, queryParams: $queryParams}';
   }
 }

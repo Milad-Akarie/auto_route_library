@@ -51,7 +51,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
-    if (routerNode.children.isNotEmpty) {
+    if (!routerNode.stackIsEmpty) {
       return SynchronousFuture(null);
     }
     if (!listNullOrEmpty(defaultHistory)) {
@@ -97,8 +97,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   }
 }
 
-class InnerRouterDelegate extends RouterDelegate
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin, AutoRouterDelegate {
+class InnerRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterDelegate {
   final RootRouterDelegate rootDelegate;
   final GlobalKey<NavigatorState> navigatorKey;
   final RouterNode routerNode;
@@ -117,6 +116,11 @@ class InnerRouterDelegate extends RouterDelegate
   }
 
   @override
+  Future<bool> popRoute() {
+    throw UnimplementedError();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return RoutingControllerScope(
       routerNode: routerNode,
@@ -129,8 +133,7 @@ class InnerRouterDelegate extends RouterDelegate
                 if (!route.didPop(result)) {
                   return false;
                 }
-                routerNode.removeTopMostEntry();
-                routerNode.notifyListeners();
+                routerNode.pop();
                 return true;
               },
             ),
@@ -138,7 +141,7 @@ class InnerRouterDelegate extends RouterDelegate
   }
 
   void pushInitialRoutes(List<PageRouteInfo> routes) {
-    if (routerNode.children.isNotEmpty) {
+    if (!routerNode.stackIsEmpty) {
       return;
     }
     if (!listNullOrEmpty(routerNode.preMatchedRoutes)) {
@@ -146,12 +149,12 @@ class InnerRouterDelegate extends RouterDelegate
     } else if (!listNullOrEmpty(routes)) {
       routerNode.pushAll(routes);
     } else {
-      var defaultRoute = routerNode.routeCollection.firstRouteWithPathORNull('');
-      if (defaultRoute != null) {
+      var defaultConfig = routerNode.routeCollection.configWithPath('');
+      if (defaultConfig != null) {
         routerNode.push(
           PageRouteInfo(
-            defaultRoute.key,
-            path: defaultRoute.path,
+            defaultConfig.key,
+            path: defaultConfig.path,
           ),
         );
       }

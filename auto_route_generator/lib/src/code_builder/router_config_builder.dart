@@ -5,7 +5,7 @@ import 'package:code_builder/code_builder.dart';
 
 import 'library_builder.dart';
 
-const _routeRefType = Reference("RouteDef", autoRouteImport);
+const _routeRefType = Reference("RouteConfig", autoRouteImport);
 
 Class buildRouterConfig(RouterConfig router, List<ImportableType> guards, List<RouteConfig> routes) => Class((b) => b
   ..name = router.routerClassName
@@ -74,9 +74,9 @@ Field buildPagesMap(List<RouteConfig> routes) {
         ]),
     )
     ..assignment = literalMap(Map.fromEntries(
-      routes.map(
-        (r) => MapEntry(r.pageType.refer, buildMethod(r)),
-      ),
+      routes.where((r) => r.routeType != RouteType.redirect).map(
+            (r) => MapEntry(r.pageType.refer, buildMethod(r)),
+          ),
     )).code);
 }
 
@@ -93,7 +93,7 @@ Method buildMethod(RouteConfig r) {
                 .call([], {
                   if (!r.argParams.any((p) => p.isRequired || p.isPositional))
                     'orElse': Method(
-                      (b) => b.body = refer('${r.className}Args').constInstance([]).code,
+                      (b) => b.body = refer('${r.className}Args').newInstance([]).code,
                     ).closure,
                 }, [
                   refer('${r.className}Args')
@@ -144,13 +144,13 @@ Method buildMethod(RouteConfig r) {
 
 Expression getParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
-    return refer('data').property('pathParams').property(p.methodName).call([
-      literalString(p.name),
+    return refer('data').property('pathParams').property(p.getterMethodName).call([
+      literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
   } else if (p.isQueryParam) {
-    return refer('data').property('queryParams').property(p.methodName).call([
-      literalString(p.name),
+    return refer('data').property('queryParams').property(p.getterMethodName).call([
+      literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
   } else {
@@ -162,26 +162,25 @@ Expression getParamAssignment(ParamConfig p) {
   }
 }
 
-Iterable<Object> buildRoutes(List<RouteConfig> routes) {
-  print(routes.map((e) => e.fullMatch));
-  return routes
-      .map(
-        (r) => _routeRefType.newInstance([
+Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
+      (r) => _routeRefType.newInstance([
+        if (r.routeType == RouteType.redirect)
+          literalString('${r.pathName}#redirect')
+        else
           refer(r.routeName).property('key'),
-        ], {
-          'path': literalString(r.pathName),
-          'page': r.pageType.refer,
-          if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
-          if (r.guards?.isNotEmpty == true)
-            'guards': literalList(r.guards
-                .map(
-                  (g) => refer(
-                    toLowerCamelCase(g.toString()),
-                  ),
-                )
-                .toList(growable: false)),
-          if (r.routerConfig != null) 'children': literalList(buildRoutes(r.routerConfig.routes))
-        }),
-      )
-      .toList(growable: false);
-}
+      ], {
+        'path': literalString(r.pathName),
+        if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo),
+        if (r.pageType != null) 'page': r.pageType.refer,
+        if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
+        if (r.guards?.isNotEmpty == true)
+          'guards': literalList(r.guards
+              .map(
+                (g) => refer(
+                  toLowerCamelCase(g.toString()),
+                ),
+              )
+              .toList(growable: false)),
+        if (r.routerConfig != null) 'children': literalList(buildRoutes(r.routerConfig.routes))
+      }),
+    );

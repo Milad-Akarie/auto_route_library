@@ -52,7 +52,7 @@ class ParamConfig {
     }
   }
 
-  String get methodName {
+  String get getterMethodName {
     switch (type.name) {
       case 'String':
         return 'getString';
@@ -77,9 +77,9 @@ class ParamConfig {
 }
 
 class RouteParameterResolver {
-  final TypeResolver _importResolver;
+  final TypeResolver _typeResolver;
 
-  RouteParameterResolver(this._importResolver);
+  RouteParameterResolver(this._typeResolver);
 
   ParamConfig resolve(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
@@ -98,7 +98,7 @@ class RouteParameterResolver {
     }
 
     return ParamConfig(
-      type: _importResolver.resolveType(paramType),
+      type: _typeResolver.resolveType(paramType),
       name: parameterElement.name.replaceFirst("_", ''),
       alias: paramAlias,
       isPositional: parameterElement.isPositional,
@@ -114,8 +114,8 @@ class RouteParameterResolver {
   ParamConfig _resolveFunctionType(ParameterElement paramElement) {
     var type = paramElement.type as FunctionType;
     return FunctionParamConfig(
-        returnType: _importResolver.resolveType(type.returnType),
-        type: _importResolver.resolveType(type),
+        returnType: _typeResolver.resolveType(type.returnType),
+        type: _typeResolver.resolveType(type),
         params: type.parameters.map(resolve).toList(),
         name: paramElement.name,
         isPositional: paramElement.isPositional,

@@ -236,7 +236,7 @@ class AutoRoute<T> {
   final bool fullMatch;
 
   const AutoRoute(
-      {@required this.page,
+      {this.page,
       this.initial,
       this.guards,
       this.fullscreenDialog,
@@ -245,6 +245,16 @@ class AutoRoute<T> {
       this.path,
       this.name,
       this.children});
+}
+
+class RedirectRoute extends AutoRoute {
+  final String redirectTo;
+
+  const RedirectRoute({
+    @required String path,
+    @required this.redirectTo,
+  })  : assert(redirectTo != null),
+        super(path: path, fullMatch: true);
 }
 
 class MaterialRoute<T> extends AutoRoute<T> {

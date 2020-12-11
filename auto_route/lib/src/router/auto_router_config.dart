@@ -9,8 +9,7 @@ import '../route/route_def.dart';
 import 'auto_route_page.dart';
 import 'controller/routing_controller.dart';
 
-typedef PageBuilder = AutoRoutePage Function(RouteData data, RouteDef def);
-typedef RouteDataPredicate = bool Function(RouteData data);
+typedef PageBuilder = AutoRoutePage Function(RouteData data, RouteConfig def);
 typedef PageFactory = Page<dynamic> Function(RouteData config);
 
 abstract class AutoRouterConfig {
@@ -33,7 +32,7 @@ abstract class AutoRouterConfig {
 
   Map<Type, PageFactory> get pagesMap;
 
-  List<RouteDef> get routes;
+  List<RouteConfig> get routes;
 
   NativeRouteInfoParser get nativeRouteParser => NativeRouteInfoParser(routeCollection);
 
@@ -47,7 +46,7 @@ abstract class AutoRouterConfig {
     );
   }
 
-  AutoRoutePage _pageBuilder(RouteData data, RouteDef def) {
+  AutoRoutePage _pageBuilder(RouteData data, RouteConfig def) {
     var builder = pagesMap[def.page];
     assert(builder != null);
     return builder(data);

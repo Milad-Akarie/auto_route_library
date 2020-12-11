@@ -15,18 +15,18 @@ class RouteNotFoundFailure extends NavigationFailure {
 
   @override
   String toString() {
-    return "Failed to navigate to ${route.fullPathName}";
+    return "Failed to navigate to ${route.fullPath}";
   }
 }
 
 class RejectedByGuardFailure extends NavigationFailure {
-  final PageRouteInfo route;
+  final List<PageRouteInfo> routes;
   final AutoRouteGuard guard;
 
-  const RejectedByGuardFailure(this.route, this.guard);
+  const RejectedByGuardFailure(this.routes, this.guard);
 
   @override
   String toString() {
-    return '${route.path} rejected by guard ${guard.runtimeType}';
+    return '${routes.map((e) => e.match)} rejected by guard ${guard.runtimeType}';
   }
 }

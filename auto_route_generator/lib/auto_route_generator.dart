@@ -31,10 +31,11 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouterAnnotation> {
     var importResolver = TypeResolver(libs, targetFileUri);
 
     var routerResolver = RouterConfigResolver(importResolver);
-    final routerConfig = await routerResolver.resolve(annotation, element);
-    return generateLibrary(routerConfig);
-    // print(routerConfig.routes);
-    // print(RouterClassGenerator(routerConfig).generate());
-    return RouterClassGenerator(routerConfig).generate();
+    final routerConfig = routerResolver.resolve(annotation, element);
+    if (routerConfig.usesLegacyGenerator) {
+      return RouterClassGenerator(routerConfig).generate();
+    } else {
+      return generateLibrary(routerConfig);
+    }
   }
 }

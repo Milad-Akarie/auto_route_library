@@ -1,30 +1,32 @@
-import 'package:auto_route/src/matcher/route_matcher.dart';
+import 'package:auto_route/src/matcher/route_match.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 
+import '../../auto_route.dart';
 import '../utils.dart';
 
 @immutable
 class PageRouteInfo {
   final String _key;
   final String path;
-  final String _rawPathName;
+  final String _rawMatch;
   final Map<String, dynamic> pathParams;
   final Map<String, dynamic> queryParams;
   final String fragment;
   final List<PageRouteInfo> children;
-  final Object args;
+  final RouteArgs args;
 
   const PageRouteInfo(
     this._key, {
     @required this.path,
-    String pathName,
+    String match,
     this.children,
     this.queryParams,
     this.pathParams,
     this.fragment,
     this.args,
-  }) : _rawPathName = pathName;
+  }) : _rawMatch = match;
 
   String get routeKey => _key;
 
@@ -32,16 +34,12 @@ class PageRouteInfo {
     assert(match != null);
     var children;
     if (match.hasChildren) {
-      children = match.children
-          .map(
-            (m) => PageRouteInfo.fromMatch(m),
-          )
-          .toList(growable: false);
+      children = match.children.map((m) => PageRouteInfo.fromMatch(m)).toList(growable: false);
     }
     return PageRouteInfo(
-      match.key,
-      path: match.path,
-      pathName: match.pathName,
+      match.config.key,
+      path: match.config.path,
+      match: p.joinAll(match.segments),
       pathParams: match.pathParams,
       fragment: match.fragment,
       queryParams: match.queryParams,
@@ -49,9 +47,9 @@ class PageRouteInfo {
     );
   }
 
-  String get pathName => p.normalize(_rawPathName ?? _expand(path, pathParams));
+  String get match => p.normalize(_rawMatch ?? _expand(path, pathParams));
 
-  String get fullPathName => p.joinAll([path, if (hasChildren) children.last.fullPathName]);
+  String get fullPath => p.joinAll([match, if (hasChildren) children.last.fullPath]);
 
   bool get hasChildren => !listNullOrEmpty(children);
 
@@ -59,7 +57,7 @@ class PageRouteInfo {
     if (mapNullOrEmpty(params)) {
       return template;
     }
-    var paramsRegex = RegExp(":(${params.keys.join('|')})[?]?");
+    var paramsRegex = RegExp(":(${params.keys.join('|')})");
     var path = template.replaceAllMapped(paramsRegex, (match) {
       return params[match.group(1)]?.toString() ?? '';
     });
@@ -76,7 +74,7 @@ class PageRouteInfo {
     Object args,
   }) {
     if ((key == null || identical(key, this.path)) &&
-        (path == null || identical(path, this._rawPathName)) &&
+        (path == null || identical(path, this._rawMatch)) &&
         (pathParams == null || identical(pathParams, this.pathParams)) &&
         (queryParams == null || identical(queryParams, this.queryParams)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
@@ -86,8 +84,9 @@ class PageRouteInfo {
     }
 
     return new PageRouteInfo(
-      key ?? this.path,
-      pathName: pathName ?? this.pathName,
+      key ?? this._key,
+      path: path ?? this.path,
+      match: match ?? this.match,
       pathParams: pathParams ?? this.pathParams,
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
@@ -98,13 +97,33 @@ class PageRouteInfo {
 
   @override
   String toString() {
-    return 'route{path: $path, template: $path, pathParams: $pathParams}';
+    return 'route{path: $path, pathName: $path, pathParams: $pathParams}';
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is PageRouteInfo && runtimeType == other.runtimeType && path == other.path;
+  bool operator ==(Object o) {
+    var mapEquality = MapEquality();
+    return identical(this, o) ||
+        o is PageRouteInfo &&
+            runtimeType == o.runtimeType &&
+            _key == o._key &&
+            path == o.path &&
+            _rawMatch == o._rawMatch &&
+            fragment == o.fragment &&
+            args == o.args &&
+            mapEquality.equals(pathParams, o.pathParams) &&
+            mapEquality.equals(queryParams, o.queryParams) &&
+            ListEquality().equals(children, o.children);
+  }
 
   @override
-  int get hashCode => path.hashCode;
+  int get hashCode =>
+      _key.hashCode ^
+      path.hashCode ^
+      _rawMatch.hashCode ^
+      pathParams.hashCode ^
+      queryParams.hashCode ^
+      fragment.hashCode ^
+      children.hashCode ^
+      args.hashCode;
 }
