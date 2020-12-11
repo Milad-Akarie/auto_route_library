@@ -27,14 +27,38 @@ class Parameters {
 
   Object get(String key) => _params[key];
 
-  int getInt(String key, [int defaultValue]) =>
-      _params[key] == null ? null : int.tryParse(_params[key]) ?? defaultValue;
+  int getInt(String key, [int defaultValue]) {
+    var param = _params[key];
+    if (param == null) {
+      return defaultValue;
+    } else if (param is int) {
+      return param;
+    } else {
+      return int.tryParse(param.toString()) ?? defaultValue;
+    }
+  }
 
-  double getDouble(String key, [double defaultValue]) =>
-      _params[key] == null ? null : double.tryParse(_params[key]) ?? defaultValue;
+  double getDouble(String key, [double defaultValue]) {
+    var param = _params[key];
+    if (param == null) {
+      return defaultValue;
+    } else if (param is double) {
+      return param;
+    } else {
+      return double.tryParse(param.toString()) ?? defaultValue;
+    }
+  }
 
-  num getNum(String key, [num defaultValue]) =>
-      _params[key] == null ? null : num.tryParse(_params[key]) ?? defaultValue;
+  num getNum(String key, [num defaultValue]) {
+    var param = _params[key];
+    if (param == null) {
+      return defaultValue;
+    } else if (param is num) {
+      return param;
+    } else {
+      return double.tryParse(param.toString()) ?? defaultValue;
+    }
+  }
 
   bool getBool(String key) {
     switch (_params[key]?.toLowerCase()) {

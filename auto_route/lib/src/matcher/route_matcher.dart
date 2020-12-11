@@ -47,13 +47,13 @@ class RouteMatcher {
   }
 
   List<RouteMatch> _match(Uri uri, RoutesCollection routesCollection, {bool returnOnFirstMatch = false}) {
-    var pathSegments = split(uri.path);
+    var pathSegments = _split(uri.path);
     var matches = <RouteMatch>[];
-    for (var def in routesCollection.routes) {
-      var match = matchRoute(uri, def);
+    for (var config in routesCollection.routes) {
+      var match = matchRoute(uri, config);
       if (match != null) {
-        if (def.isRedirect) {
-          var redirectMatches = _match(Uri.parse(def.redirectTo), routesCollection);
+        if (config.isRedirect) {
+          var redirectMatches = _match(uri.replace(path: Uri.parse(config.redirectTo).path), routesCollection);
           if (redirectMatches != null && redirectMatches.length == 1) {
             return [redirectMatches.first.copyWith(segments: match.segments)];
           }
@@ -71,23 +71,29 @@ class RouteMatcher {
           }
         } else {
           // has complete match
+          //
+          // if matches end with a wild card
+          // ignore all previous matches
+          if (match.config.path == '*') {
+            matches.clear();
+          }
           return matches..add(match);
         }
         matches.add(match);
       }
       if (returnOnFirstMatch) {
-        break;
+        return matches;
       }
     }
-    if (matches.isEmpty) {
+    if (matches.isEmpty || matches.last.segments.length != pathSegments.length) {
       return null;
     }
     return matches;
   }
 
   RouteMatch matchRoute(Uri url, RouteConfig routeDef) {
-    var parts = split(routeDef.path);
-    var segments = split(url.path);
+    var parts = _split(routeDef.path);
+    var segments = _split(url.path);
 
     if (parts.length > segments.length) {
       return null;
@@ -120,7 +126,8 @@ class RouteMatcher {
         fragment: url.fragment);
   }
 
-  List<String> split(String path) {
+  List<String> _split(String path) {
+    assert(path != null);
     var segments = path.split('/');
     if (segments.length > 1 && segments.last.isEmpty) {
       segments.removeLast();

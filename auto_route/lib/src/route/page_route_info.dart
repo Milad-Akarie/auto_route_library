@@ -116,6 +116,11 @@ class PageRouteInfo {
             ListEquality().equals(children, o.children);
   }
 
+// maybe?
+  Future<void> push(BuildContext context) {
+    return context.router.push(this);
+  }
+
   @override
   int get hashCode =>
       _key.hashCode ^

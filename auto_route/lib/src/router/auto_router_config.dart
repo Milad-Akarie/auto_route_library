@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 
 import '../../auto_route.dart';
 import '../matcher/route_matcher.dart';
-import '../route/page_route_info.dart';
 import '../route/route_data.dart';
 import '../route/route_def.dart';
 import 'auto_route_page.dart';
@@ -17,10 +16,7 @@ abstract class AutoRouterConfig {
   RoutingController root;
 
   @mustCallSuper
-  AutoRouterConfig({
-    String initialDeepLink,
-    List<PageRouteInfo> initialRoutes,
-  }) : assert(initialDeepLink == null || initialRoutes == null) {
+  AutoRouterConfig() {
     assert(routes != null);
     routeCollection = RoutesCollection.from(routes);
     root = RouterNode(

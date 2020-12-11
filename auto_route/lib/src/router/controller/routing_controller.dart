@@ -18,6 +18,8 @@ typedef RouteDataPredicate = bool Function(RouteData route);
 abstract class RoutingController {
   Future<void> push(PageRouteInfo route, {OnNavigationFailure onFailure});
 
+  Future<void> pushPath(String path, {bool preserveFullBackStack = false, OnNavigationFailure onFailure});
+
   Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure onFailure});
 
   Future<void> pushAndRemoveUntil(PageRouteInfo route,
@@ -447,5 +449,19 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   }) {
     _removeUntil(predicate, notify: false);
     return push(route, onFailure: onFailure);
+  }
+
+  @override
+  Future<void> pushPath(
+    String path, {
+    bool preserveFullBackStack = false,
+    OnNavigationFailure onFailure,
+  }) {
+    var matches = matcher.match(path, returnOnFirstMatch: !preserveFullBackStack);
+    if (matches != null) {
+      var routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList();
+      return _pushAll(routes, onFailure: onFailure, notify: true);
+    }
+    return SynchronousFuture(null);
   }
 }

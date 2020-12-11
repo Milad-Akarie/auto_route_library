@@ -1,59 +1,31 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/screens/home_screen.dart';
-import 'package:example/screens/login_screen.dart';
-import 'package:example/screens/users/sub/posts_screen.dart';
-import 'package:example/screens/users/sub/profile_screen.dart';
-import 'package:example/screens/users/sub/sub/posts_details.dart';
-import 'package:example/screens/users/sub/sub/posts_home.dart';
-import 'package:example/screens/users/users_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:example/screens/book_details_page.dart';
+import 'package:example/screens/book_list_page.dart';
+import 'package:example/screens/home_page.dart';
+import 'package:example/screens/unknown_route.dart';
 
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    AutoRoute(
-      page: HomeScreen,
-      initial: true,
-      fullMatch: false,
-      // guards: [AuthRouteGuard],
-    ),
-    AutoRoute(
-      path: '/users/:id',
-      page: UsersScreen,
-      children: [
-        AutoRoute(path: '', page: ProfileScreen),
-        AutoRoute(
-          path: 'posts',
-          page: PostsScreen,
-          children: [
-            AutoRoute(path: '', page: PostsHome),
-            AutoRoute(path: 'details', page: PostDetails),
-          ],
-        ),
-      ],
-    ),
-    // RedirectRoute(path: '/users', redirectTo: '/users/redirect'),
-
-    AutoRoute(path: '/login', page: LoginScreen),
-    // AutoRoute(path: '*', page: UnknownRouteScreen)
+    AutoRoute(path: '/', page: HomePage),
+    AutoRoute(path: '/books', page: BookListPage),
+    AutoRoute(path: '/books/:id', page: BookDetailsPage, name: 'BookDetails'),
+    AutoRoute(path: '*', page: UnknownRouteScreen),
   ],
 )
-// use a different name from 'Router', because a class with the name "Router"
-// exists in the material package
-class $MyRouterConfig {
-  static Widget customTrans(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return FadeTransition(opacity: animation, child: child);
-  }
+class $MyRouterConfig {}
 
-  static Route myRouteBuilder(BuildContext context, CustomPage page) {
-    print('My route builder ${page.durationInMilliseconds}');
-    return PageRouteBuilder(
-      pageBuilder: (_, __, ___) => page.child,
-      settings: page,
-    );
-  }
-}
+// Widget customTrans(
+//     BuildContext context,
+//     Animation<double> animation,
+//     Animation<double> secondaryAnimation,
+//     Widget child,
+//     ) {
+//   return FadeTransition(opacity: animation, child: child);
+// }
+//
+// Route myRouteBuilder(BuildContext context, CustomPage page) {
+//   return PageRouteBuilder(
+//     pageBuilder: (_, __, ___) => page.child,
+//     settings: page,
+//   );
+// }

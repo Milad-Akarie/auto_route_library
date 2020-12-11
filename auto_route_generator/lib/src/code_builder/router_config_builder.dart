@@ -37,25 +37,11 @@ Class buildRouterConfig(RouterConfig router, List<ImportableType> guards, List<R
             ..toThis = true
             ..annotations.add(requiredAnnotation)),
         ),
-        Parameter(
-          (b) => b
-            ..name = 'initialDeepLink'
-            ..type = refer("String"),
-        ),
-        Parameter(
-          (b) => b
-            ..name = 'initialRoutes'
-            ..type = listRefer(pageRouteType),
-        )
       ])
       ..initializers.addAll([
         ...guards.map((g) => refer('assert').call([
               refer(toLowerCamelCase(g.toString())).notEqualTo(refer('null')),
             ]).code),
-        refer('super').call([], {
-          'initialDeepLink': refer('initialDeepLink'),
-          'initialRoutes': refer('initialRoutes'),
-        }).code
       ])),
     // ),
   ));

@@ -21,14 +21,15 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   final List<PageRouteInfo> defaultHistory;
   final GlobalKey<NavigatorState> navigatorKey;
   final RouterNode routerNode;
-
-  RouteData currentConfig;
+  final String initialDeepLink;
 
   RootRouterDelegate(
     AutoRouterConfig routerConfig, {
     this.defaultHistory,
-  })  : routerNode = routerConfig.root,
+    this.initialDeepLink,
+  })  : assert(initialDeepLink == null || defaultHistory == null),
         assert(routerConfig != null),
+        routerNode = routerConfig.root,
         navigatorKey = GlobalKey<NavigatorState>() {
     routerNode.addListener(notifyListeners);
   }
@@ -41,7 +42,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     }
     var list = route.breadcrumbs.map((d) => d.route).toList(growable: false);
     print("-------- currentConfig--------");
-    print(list.length);
+    print(list.map((e) => e.queryParams));
 
     return list;
   }
@@ -54,8 +55,11 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     if (!routerNode.stackIsEmpty) {
       return SynchronousFuture(null);
     }
+
     if (!listNullOrEmpty(defaultHistory)) {
       return routerNode.pushAll(defaultHistory);
+    } else if (initialDeepLink != null) {
+      return routerNode.pushPath(initialDeepLink, preserveFullBackStack: true);
     } else if (!listNullOrEmpty(routes)) {
       return routerNode.pushAll(routes);
     } else {

@@ -25,6 +25,7 @@ class RouteConfigResolver {
       return config
         ..pathName = path
         ..redirectTo = redirectTo
+        ..fullMatch = autoRoute.peek('fullMatch')?.boolValue
         ..routeType = RouteType.redirect;
     }
 
@@ -45,7 +46,7 @@ class RouteConfigResolver {
     } else if (!_routerConfig.usesLegacyGenerator) {
       throwIf(
         path.startsWith("/") && _routerConfig.parent != null,
-        'Child paths can not start with a forward slash [/]',
+        'Child [$path] can not start with a forward slash',
       );
     }
 

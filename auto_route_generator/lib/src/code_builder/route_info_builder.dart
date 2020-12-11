@@ -33,7 +33,9 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                   if (r.pathParams?.isNotEmpty == true)
                     ...r.pathParams.map(
                       (p) => Parameter((b) {
-                        b.name = p.name;
+                        b
+                          ..named = true
+                          ..name = p.name;
                         if (!p.isOptional) {
                           b.annotations.add(requiredAnnotation);
                         }
