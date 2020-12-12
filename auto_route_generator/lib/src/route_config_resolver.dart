@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:auto_route/auto_route_annotations.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/import_resolver.dart';
 import 'package:auto_route_generator/route_config_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
@@ -7,48 +7,64 @@ import 'package:source_gen/source_gen.dart';
 
 const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
 
-// extracts route configs from class fields
+// extracts route configs from class fields and their meta data
 class RouteConfigResolver {
   final RouterConfig _routerConfig;
-  final ImportResolver _importResolver;
+  final TypeResolver _typeResolver;
 
-  RouteConfigResolver(this._routerConfig, this._importResolver);
+  RouteConfigResolver(this._routerConfig, this._typeResolver);
 
-  Future<RouteConfig> resolve(ConstantReader autoRoute) async {
-    final routeConfig = RouteConfig();
-    final type = autoRoute.read('page').typeValue;
-    final classElement = type.element as ClassElement;
+  RouteConfig resolve(ConstantReader autoRoute) {
+    final config = RouteConfig();
 
-    final import = _importResolver.resolve(classElement);
-    if (import != null) {
-      routeConfig.imports.add(import);
-    }
-
-    routeConfig.className = type.getDisplayString(withNullability: false);
+    final page = autoRoute.peek('page')?.typeValue;
     var path = autoRoute.peek('path')?.stringValue;
-    if (path == null) {
-      if (autoRoute.peek('initial')?.boolValue == true) {
-        path = '/';
-      } else {
-        path =
-            '${_routerConfig.routeNamePrefix}${toKababCase(routeConfig.className)}';
-      }
+    if (page == null) {
+      var redirectTo = autoRoute.peek('redirectTo')?.stringValue;
+      throwIf(redirectTo == null, 'Route must have either a page or a redirect destination');
+      return config
+        ..pathName = path
+        ..redirectTo = redirectTo
+        ..fullMatch = autoRoute.peek('fullMatch')?.boolValue
+        ..routeType = RouteType.redirect;
     }
 
-    routeConfig.pathName = path;
+    final classElement = page.element as ClassElement;
+    config.pageType = _typeResolver.resolveType(page);
+    config.className = page.getDisplayString(withNullability: false);
+
+    if (path == null) {
+      var prefix = _routerConfig.parent != null ? '' : '/';
+      if (autoRoute.peek('initial')?.boolValue == true) {
+        path = prefix;
+      } else {
+        if (_routerConfig.usesLegacyGenerator) {
+          path = '${_routerConfig.routeNamePrefix}${toKababCase(config.className)}';
+        } else {
+          path = '$prefix${toKababCase(config.className)}';
+        }
+      }
+    } else if (!_routerConfig.usesLegacyGenerator) {
+      throwIf(
+        path.startsWith("/") && _routerConfig.parent != null,
+        'Child [$path] can not start with a forward slash',
+      );
+    }
+
+    config.pathName = path;
+    config.pathParams = RouteParameterResolver.extractPathParams(path);
 
     throwIf(
-      type.element is! ClassElement,
-      '${type.getDisplayString(withNullability: false)} is not a class element',
-      element: type.element,
+      page.element is! ClassElement,
+      '${page.getDisplayString(withNullability: false)} is not a class element',
+      element: page.element,
     );
 
-    await _extractRouteMetaData(routeConfig, autoRoute);
+    _extractRouteMetaDataInto(config, autoRoute);
 
-    routeConfig.name = autoRoute.peek('name')?.stringValue ??
-        toLowerCamelCase(routeConfig.className);
+    config.name = autoRoute.peek('name')?.stringValue;
 
-    routeConfig.hasWrapper = classElement.allSupertypes
+    config.hasWrapper = classElement.allSupertypes
         .map<String>((el) => el.getDisplayString(withNullability: false))
         .contains('AutoRouteWrapper');
 
@@ -59,85 +75,67 @@ class RouteConfigResolver {
       if (constructor.isConst &&
           params.length == 1 &&
           params.first.type.getDisplayString(withNullability: false) == 'Key') {
-        routeConfig.hasConstConstructor = true;
+        config.hasConstConstructor = true;
       } else {
-        final paramResolver = RouteParameterResolver(_importResolver);
-        routeConfig.parameters = [];
+        final paramResolver = RouteParameterResolver(_typeResolver);
+        config.parameters = [];
 
         for (ParameterElement p in constructor.parameters) {
-          routeConfig.parameters.add(await paramResolver.resolve(p));
+          config.parameters.add(paramResolver.resolve(p));
         }
       }
     }
     // _validatePathParams(routeConfig, classElement);
-    return routeConfig;
+    return config;
   }
 
-  Future<void> _extractRouteMetaData(
-      RouteConfig routeConfig, ConstantReader autoRoute) async {
-    routeConfig.fullscreenDialog =
-        autoRoute.peek('fullscreenDialog')?.boolValue;
-    routeConfig.maintainState = autoRoute.peek('maintainState')?.boolValue;
+  void _extractRouteMetaDataInto(RouteConfig config, ConstantReader autoRoute) {
+    config.fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
+    config.maintainState = autoRoute.peek('maintainState')?.boolValue;
+    config.fullMatch = autoRoute.peek('fullMatch')?.boolValue;
 
-    autoRoute
-        .peek('guards')
-        ?.listValue
-        ?.map((g) => g.toTypeValue())
-        ?.forEach((guard) {
-      routeConfig.guards.add(RouteGuardConfig(
-          type: guard.getDisplayString(withNullability: false),
-          import: _importResolver.resolve(guard.element)));
+    autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue())?.forEach((guard) {
+      config.guards.add(_typeResolver.resolveType(guard));
     });
 
     final returnType = autoRoute.objectValue.type.typeArguments.first;
-    routeConfig.returnType =
-        returnType.getDisplayString(withNullability: false);
-
-    if (routeConfig.returnType != 'dynamic') {
-      routeConfig.imports.addAll(_importResolver.resolveAll(returnType));
-    }
+    config.returnType = _typeResolver.resolveType(returnType);
 
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
-      routeConfig.routeType = RouteType.material;
+      config.routeType = RouteType.material;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CupertinoRoute))) {
-      routeConfig.routeType = RouteType.cupertino;
-      routeConfig.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
+      config.routeType = RouteType.cupertino;
+      config.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(AdaptiveRoute))) {
-      routeConfig.routeType = RouteType.adaptive;
-      routeConfig.cupertinoNavTitle =
-          autoRoute.peek('cupertinoPageTitle')?.stringValue;
+      config.routeType = RouteType.adaptive;
+      config.cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
-      routeConfig.routeType = RouteType.custom;
-      routeConfig.durationInMilliseconds =
-          autoRoute.peek('durationInMilliseconds')?.intValue;
-      routeConfig.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      routeConfig.customRouteBarrierDismissible =
-          autoRoute.peek('barrierDismissible')?.boolValue;
-      final function =
-          autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
-      if (function != null) {
-        final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
-        final functionName = (function.isStatic &&
-                function.enclosingElement?.displayName != null)
-            ? '${function.enclosingElement.displayName}.$displayName'
-            : displayName;
+      config.routeType = RouteType.custom;
 
-        var import;
-        if (function.enclosingElement?.name != 'TransitionsBuilders') {
-          import = _importResolver.resolve(function);
-        }
-        routeConfig.transitionBuilder =
-            CustomTransitionBuilder(functionName, import);
+      config.durationInMilliseconds = autoRoute.peek('durationInMilliseconds')?.intValue;
+      config.reverseDurationInMilliseconds = autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
+      config.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
+      config.customRouteBarrierDismissible = autoRoute.peek('barrierDismissible')?.boolValue;
+      config.customRouteBarrierLabel = autoRoute.peek('barrierLabel')?.stringValue;
+
+      final function = autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      if (function != null) {
+        config.transitionBuilder = _typeResolver.resolveImportableFunctionType(function);
+      }
+      final builderFunction = autoRoute.peek('customRouteBuilder')?.objectValue?.toFunctionValue();
+      if (builderFunction != null) {
+        config.customRouteBuilder = _typeResolver.resolveImportableFunctionType(builderFunction);
       }
     } else {
       var globConfig = _routerConfig.globalRouteConfig;
-      routeConfig.routeType = globConfig.routeType;
+      config.routeType = globConfig.routeType;
       if (globConfig.routeType == RouteType.custom) {
-        routeConfig.transitionBuilder = globConfig.transitionBuilder;
-        routeConfig.durationInMilliseconds = globConfig.durationInMilliseconds;
-        routeConfig.customRouteBarrierDismissible =
-            globConfig.customRouteBarrierDismissible;
-        routeConfig.customRouteOpaque = globConfig.customRouteOpaque;
+        config.transitionBuilder = globConfig.transitionBuilder;
+        config.durationInMilliseconds = globConfig.durationInMilliseconds;
+        config.customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
+        config.customRouteOpaque = globConfig.customRouteOpaque;
+        config.reverseDurationInMilliseconds = globConfig.reverseDurationInMilliseconds;
+        config.customRouteBuilder = globConfig.customRouteBuilder;
       }
     }
   }

@@ -1,4 +1,8 @@
 # ChangeLog
+## [1.0.0-beta] Breaking Changes!
+- Rebuild auto_route to work with Navigator 2.0
+-----------------------------------------------
+
 ## [0.6.10]
 - Restrict analyzer version to ">=0.40.0 <2.0.0"
 

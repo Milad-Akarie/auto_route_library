@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:auto_route/auto_route_annotations.dart';
+import 'package:auto_route/auto_route.dart' show AutoRouterAnnotation;
 import 'package:source_gen_test/source_gen_test.dart';
 
 import 'mocks.dart';

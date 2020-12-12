@@ -1,38 +1,54 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:auto_route/auto_route_annotations.dart';
+import 'package:analyzer/dart/element/type.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/import_resolver.dart';
+import 'package:code_builder/code_builder.dart' as _code;
+import 'package:meta/meta.dart';
 import 'package:source_gen/source_gen.dart';
 
 final pathParamChecker = TypeChecker.fromRuntime(PathParam);
 final queryParamChecker = TypeChecker.fromRuntime(QueryParam);
 
+const reservedVarNames = ['key', 'children', 'queryParams', 'fragment'];
+
 /// holds constructor parameter info to be used
 /// in generating route parameters.
-class RouteParamConfig {
-  final String type;
+///
+
+class ParamConfig {
+  final ImportableType type;
   final String name;
   final String alias;
   final bool isPositional;
+  final bool isOptional;
   final bool isRequired;
+  final bool isNamed;
   final bool isPathParam;
   final bool isQueryParam;
   final String defaultValueCode;
-  final Set<String> imports;
 
-  RouteParamConfig({
-    this.type,
-    this.name,
-    this.alias,
-    this.isPositional,
-    this.isRequired,
-    this.isPathParam,
-    this.isQueryParam,
-    this.defaultValueCode,
-    this.imports,
-  });
+  ParamConfig(
+      {@required this.type,
+      @required this.name,
+      this.alias,
+      @required this.isNamed,
+      @required this.isPositional,
+      @required this.isRequired,
+      @required this.isOptional,
+      @required this.isPathParam,
+      @required this.isQueryParam,
+      this.defaultValueCode});
+
+  String getSafeName(String argSuffix) {
+    if (reservedVarNames.contains(name) && argSuffix.isEmpty) {
+      return name + "0";
+    } else {
+      return name + argSuffix;
+    }
+  }
 
   String get getterName {
-    switch (type) {
+    switch (type.name) {
       case 'String':
         return 'stringValue';
       case 'int':
@@ -48,43 +64,145 @@ class RouteParamConfig {
     }
   }
 
+  String get getterMethodName {
+    switch (type.name) {
+      case 'String':
+        return 'getString';
+      case 'int':
+        return 'getInt';
+      case 'double':
+        return 'getDouble';
+      case 'num':
+        return 'getNum';
+      case 'bool':
+        return 'getBool';
+      default:
+        return 'get';
+    }
+  }
+
   String get paramName => alias ?? name;
+
+  _code.Code get defaultCode => defaultValueCode == null ? null : _code.Code(defaultValueCode);
+
+  Set<String> get imports => type.imports;
 }
 
 class RouteParameterResolver {
-  final ImportResolver _importResolver;
-  final Set<String> imports = {};
+  final TypeResolver _typeResolver;
 
-  RouteParameterResolver(this._importResolver);
+  RouteParameterResolver(this._typeResolver);
 
-  Future<RouteParamConfig> resolve(ParameterElement parameterElement) async {
+  ParamConfig resolve(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
+    if (paramType is FunctionType) {
+      return _resolveFunctionType(parameterElement);
+    }
 
-    var pathParam = pathParamChecker.hasAnnotationOfExact(parameterElement);
+    var isPathParam = pathParamChecker.hasAnnotationOfExact(parameterElement);
     var paramAlias;
-    if (pathParam) {
-      paramAlias = pathParamChecker
-          .firstAnnotationOf(parameterElement)
-          .getField('name')
-          ?.toStringValue();
+    if (isPathParam) {
+      paramAlias = pathParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
     }
     var isQuery = queryParamChecker.hasAnnotationOfExact(parameterElement);
     if (isQuery) {
-      paramAlias = queryParamChecker
-          .firstAnnotationOf(parameterElement)
-          .getField('name')
-          ?.toStringValue();
+      paramAlias = queryParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
     }
 
-    return RouteParamConfig(
-        type: paramType.getDisplayString(withNullability: false),
-        name: parameterElement.name.replaceFirst("_", ''),
-        alias: paramAlias,
-        isPositional: parameterElement.isPositional,
-        isRequired: parameterElement.hasRequired,
-        isPathParam: pathParam,
-        isQueryParam: isQuery,
-        defaultValueCode: parameterElement.defaultValueCode,
-        imports: _importResolver.resolveAll(paramType));
+    return ParamConfig(
+      type: _typeResolver.resolveType(paramType),
+      name: parameterElement.name.replaceFirst("_", ''),
+      alias: paramAlias,
+      isPositional: parameterElement.isPositional,
+      isRequired: parameterElement.hasRequired,
+      isOptional: parameterElement.isOptional,
+      isNamed: parameterElement.isNamed,
+      isPathParam: isPathParam,
+      isQueryParam: isQuery,
+      defaultValueCode: parameterElement.defaultValueCode,
+    );
   }
+
+  ParamConfig _resolveFunctionType(ParameterElement paramElement) {
+    var type = paramElement.type as FunctionType;
+    return FunctionParamConfig(
+        returnType: _typeResolver.resolveType(type.returnType),
+        type: _typeResolver.resolveType(type),
+        params: type.parameters.map(resolve).toList(),
+        name: paramElement.name,
+        isPositional: paramElement.isPositional,
+        isRequired: paramElement.hasRequired,
+        isOptional: paramElement.isOptional,
+        isNamed: paramElement.isNamed);
+  }
+
+  static List<PathParamConfig> extractPathParams(String path) {
+    return RegExp(r':([^/]+)').allMatches(path).map((m) {
+      var paramName = m.group(1);
+      var isOptional = false;
+      if (paramName.endsWith('?')) {
+        isOptional = true;
+        paramName = paramName.substring(0, paramName.length - 1);
+      }
+      return PathParamConfig(
+        name: paramName,
+        isOptional: isOptional,
+      );
+    }).toList();
+  }
+}
+
+class FunctionParamConfig extends ParamConfig {
+  final ImportableType returnType;
+  final List<ParamConfig> params;
+
+  FunctionParamConfig({
+    @required this.returnType,
+    this.params,
+    @required ImportableType type,
+    @required String name,
+    String alias,
+    @required bool isPositional,
+    @required bool isRequired,
+    @required bool isOptional,
+    @required bool isNamed,
+    String defaultValueCode,
+  }) : super(
+          type: type,
+          name: name,
+          alias: alias,
+          isPathParam: false,
+          isQueryParam: false,
+          isNamed: isNamed,
+          isPositional: isPositional,
+          isRequired: isRequired,
+          isOptional: isOptional,
+        );
+
+  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList(growable: false);
+
+  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList(growable: false);
+
+  List<ParamConfig> get namedParams => params.where((p) => p.isNamed).toList(growable: false);
+
+  _code.FunctionType get funRefer => _code.FunctionType((b) => b
+    ..returnType = returnType.refer
+    ..requiredParameters.addAll(requiredParams.map((e) => e.type.refer))
+    ..optionalParameters.addAll(optionalParams.map((e) => e.type.refer))
+    ..namedParameters.addAll(
+      {}..addEntries(namedParams.map(
+          (e) => MapEntry(e.name, e.type.refer),
+        )),
+    ));
+
+  @override
+  Set<String> get imports =>
+      {...returnType.imports, ...type.imports, ...params.map((e) => e.imports).reduce((acc, a) => acc..addAll(a))};
+}
+
+class PathParamConfig {
+  final String name;
+  final bool isOptional;
+
+  const PathParamConfig({this.name, this.isOptional});
 }

@@ -5,5 +5,8 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-
-void main() {}
+void main() {
+  // var routerConfig = MyRouterConfig(authRouteGuard: AuthRouteGuard());
+  // var matcher = (routerConfig.root as RouterNode).matcher;
+  // print(matcher.match('/users/1/posts'));
+}
