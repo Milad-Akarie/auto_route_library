@@ -44,17 +44,20 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                     ),
                   if (r.isParent)
                     Parameter((b) => b
+                      ..named = true
                       ..name = 'children'
                       ..type = listRefer(pageRouteType)),
                   if (router.usesPathFragments)
                     Parameter(
                       (b) => b
+                        ..named = true
                         ..name = "fragment"
                         ..type = stringRefer,
                     ),
                   if (router.usesQueryParams)
                     Parameter(
                       (b) => b
+                        ..named = true
                         ..name = "queryParams"
                         ..type = refer('Map<String,dynamic>'),
                     )

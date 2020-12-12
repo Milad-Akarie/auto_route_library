@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/router/router.gr.dart';
+import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -20,16 +20,18 @@ class HomePage extends StatelessWidget {
                   // context.router.push
                 },
               ),
+              SizedBox(height: 32),
               RaisedButton(
                 child: Text('Navigate to Batman Book'),
                 onPressed: () {
-                  context.router.pushPath('/books', preserveFullBackStack: false, onFailure: (failure) {
-                    print(failure);
-                  });
-                  // context.router.pushAll([
-                  //   BookListPageRoute(),
-                  //   BookDetails(id: 4),
-                  // ]);
+                  // push too pages at once
+                  context.router.pushAll([
+                    BookListPageRoute(),
+                    BookDetails(id: 4),
+                  ]);
+
+                  // or
+                  // context.router.pushPath('/books/4', includePrefixMatches: true);
                 },
               )
             ],

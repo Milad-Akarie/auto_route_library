@@ -1,4 +1,4 @@
-import 'package:example/router/router.gr.dart';
+import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';

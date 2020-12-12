@@ -8,6 +8,7 @@ import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/route/route_def.dart';
 import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/auto_router_config.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -18,7 +19,7 @@ typedef RouteDataPredicate = bool Function(RouteData route);
 abstract class RoutingController {
   Future<void> push(PageRouteInfo route, {OnNavigationFailure onFailure});
 
-  Future<void> pushPath(String path, {bool preserveFullBackStack = false, OnNavigationFailure onFailure});
+  Future<void> pushPath(String path, {bool includePrefixMatches = false, OnNavigationFailure onFailure});
 
   Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure onFailure});
 
@@ -66,7 +67,7 @@ class RoutingControllerScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RoutingControllerScope oldWidget) {
-    return routerNode != routerNode;
+    return !MapEquality().equals(routerNode._children, oldWidget.routerNode._children);
   }
 }
 
@@ -454,13 +455,19 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   @override
   Future<void> pushPath(
     String path, {
-    bool preserveFullBackStack = false,
+    bool includePrefixMatches = false,
     OnNavigationFailure onFailure,
   }) {
-    var matches = matcher.match(path, returnOnFirstMatch: !preserveFullBackStack);
+    var matches = matcher.match(path, includePrefixMatches: includePrefixMatches);
     if (matches != null) {
       var routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList();
       return _pushAll(routes, onFailure: onFailure, notify: true);
+    } else if (onFailure != null) {
+      onFailure.call(
+        RouteNotFoundFailure(
+          PageRouteInfo(null, path: null, match: path),
+        ),
+      );
     }
     return SynchronousFuture(null);
   }

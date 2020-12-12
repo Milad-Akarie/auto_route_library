@@ -2,7 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:example/data/books_data.dart';
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import '../web_main.dart';
 
 class BookDetailsPage extends StatefulWidget {
   final int bookId;
@@ -19,16 +19,23 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   @override
   void initState() {
     super.initState();
-    book = booksDb.findBookById(widget.bookId);
+    try {
+      book = booksDb.findBookById(widget.bookId);
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(book.name)),
-      body: Center(
-        child: Text('Book Details/${book.id}'),
-      ),
-    );
+    return book == null
+        ? Container(
+            child: Text('Book null'),
+          )
+        : Scaffold(
+            appBar: AppBar(title: Text(book.name)),
+            body: Center(
+              child: Text('Book Details/${book.id}'),
+            ),
+          );
   }
 }

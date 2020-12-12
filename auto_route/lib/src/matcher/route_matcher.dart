@@ -41,30 +41,38 @@ class RouteMatcher {
 
   const RouteMatcher(this.collection) : assert(collection != null);
 
-  List<RouteMatch> match(String rawPath, {bool returnOnFirstMatch = false}) {
-    assert(returnOnFirstMatch != null);
-    return _match(Uri.parse(rawPath), collection, returnOnFirstMatch: returnOnFirstMatch);
+  List<RouteMatch> match(String rawPath, {bool includePrefixMatches = false}) {
+    assert(includePrefixMatches != null);
+    return _match(Uri.parse(rawPath), collection, includePrefixMatches: includePrefixMatches);
   }
 
-  List<RouteMatch> _match(Uri uri, RoutesCollection routesCollection, {bool returnOnFirstMatch = false}) {
+  List<RouteMatch> _match(Uri uri, RoutesCollection routesCollection, {bool includePrefixMatches = false}) {
     var pathSegments = _split(uri.path);
     var matches = <RouteMatch>[];
     for (var config in routesCollection.routes) {
       var match = matchRoute(uri, config);
       if (match != null) {
         if (config.isRedirect) {
-          var redirectMatches = _match(uri.replace(path: Uri.parse(config.redirectTo).path), routesCollection);
+          var redirectMatches = _match(
+            uri.replace(path: Uri.parse(config.redirectTo).path),
+            routesCollection,
+            includePrefixMatches: includePrefixMatches,
+          );
           if (redirectMatches != null && redirectMatches.length == 1) {
-            return [redirectMatches.first.copyWith(segments: match.segments)];
+            return [redirectMatches.first.copyWith(segments: _split(config.redirectTo))];
           }
           return redirectMatches;
         }
-        // has rest
+
         if (match.segments.length != pathSegments.length) {
+          // has rest
           if (match.config.isSubTree) {
             var rest = uri.replace(pathSegments: pathSegments.sublist(match.segments.length));
             var children = _match(rest, match.config.children);
             if (children != null) {
+              if (!includePrefixMatches) {
+                matches.clear();
+              }
               return matches..add(match.copyWith(children: children));
             } else
               continue;
@@ -72,17 +80,17 @@ class RouteMatcher {
         } else {
           // has complete match
           //
-          // if matches end with a wild card
-          // ignore all previous matches
-          if (match.config.path == '*') {
+          // if true ignore all previous matches
+          if (match.config.path == "*" || !includePrefixMatches) {
             matches.clear();
           }
+
           return matches..add(match);
         }
+        if (!includePrefixMatches) {
+          matches.clear();
+        }
         matches.add(match);
-      }
-      if (returnOnFirstMatch) {
-        return matches;
       }
     }
     if (matches.isEmpty || matches.last.segments.length != pathSegments.length) {
@@ -99,7 +107,7 @@ class RouteMatcher {
       return null;
     }
 
-    if (routeDef.fullMatch && segments.length > parts.length) {
+    if (routeDef.fullMatch && parts.last != "*" && segments.length > parts.length) {
       return null;
     }
 

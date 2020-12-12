@@ -13,7 +13,7 @@ class NativeRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> 
 
   @override
   Future<List<PageRouteInfo>> parseRouteInformation(RouteInformation routeInformation) async {
-    var matches = RouteMatcher(_collection).match(routeInformation.location);
+    var matches = RouteMatcher(_collection).match(routeInformation.location, includePrefixMatches: true);
     var routes;
     if (matches != null) {
       routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList(growable: false);
@@ -24,7 +24,6 @@ class NativeRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> 
   @override
   RouteInformation restoreRouteInformation(List<PageRouteInfo> routes) {
     String location = _getNormalizedPath(routes);
-    print(location);
     return RouteInformation(location: location);
   }
 }
@@ -36,8 +35,7 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
 
   @override
   Future<List<PageRouteInfo>> parseRouteInformation(RouteInformation routeInformation) async {
-    print('parsing ${routeInformation.location}');
-    var matches = RouteMatcher(_collection).match(routeInformation.location, returnOnFirstMatch: true);
+    var matches = RouteMatcher(_collection).match(routeInformation.location, includePrefixMatches: false);
     var routes;
     if (matches != null) {
       routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList(growable: false);
@@ -47,14 +45,16 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
 
   @override
   RouteInformation restoreRouteInformation(List<PageRouteInfo> routes) {
-    String location = _getNormalizedPath(routes);
-    print(location);
+    final location = _getNormalizedPath(routes);
     return RouteInformation(location: location);
   }
 }
 
 String _getNormalizedPath(List<PageRouteInfo> routes) {
-  var fullPath = p.joinAll(routes.map((e) => e.match));
+  var fullPath = p.joinAll([
+    '/',
+    ...routes.where((e) => e.match.isNotEmpty).map((e) => e.match),
+  ]);
   var normalized = p.normalize(fullPath);
   var query = routes.last.queryParams;
   if (!mapNullOrEmpty(query)) {

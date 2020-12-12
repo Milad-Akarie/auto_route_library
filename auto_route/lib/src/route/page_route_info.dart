@@ -47,7 +47,7 @@ class PageRouteInfo {
     );
   }
 
-  String get match => p.normalize(_rawMatch ?? _expand(path, pathParams));
+  String get match => _rawMatch ?? _expand(path, pathParams);
 
   String get fullPath => p.joinAll([match, if (hasChildren) children.last.fullPath]);
 

@@ -22,11 +22,13 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   final GlobalKey<NavigatorState> navigatorKey;
   final RouterNode routerNode;
   final String initialDeepLink;
+  final List<NavigatorObserver> navigatorObservers;
 
   RootRouterDelegate(
     AutoRouterConfig routerConfig, {
     this.defaultHistory,
     this.initialDeepLink,
+    this.navigatorObservers,
   })  : assert(initialDeepLink == null || defaultHistory == null),
         assert(routerConfig != null),
         routerNode = routerConfig.root,
@@ -40,11 +42,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     if (route == null) {
       return null;
     }
-    var list = route.breadcrumbs.map((d) => d.route).toList(growable: false);
-    print("-------- currentConfig--------");
-    print(list.map((e) => e.queryParams));
-
-    return list;
+    return route.breadcrumbs.map((d) => d.route).toList(growable: false);
   }
 
   @override
@@ -59,7 +57,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     if (!listNullOrEmpty(defaultHistory)) {
       return routerNode.pushAll(defaultHistory);
     } else if (initialDeepLink != null) {
-      return routerNode.pushPath(initialDeepLink, preserveFullBackStack: true);
+      return routerNode.pushPath(initialDeepLink, includePrefixMatches: true);
     } else if (!listNullOrEmpty(routes)) {
       return routerNode.pushAll(routes);
     } else {
@@ -69,7 +67,6 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
 
   @override
   Future<void> setNewRoutePath(List<PageRouteInfo> routes) {
-    print("setting new rot");
     if (!listNullOrEmpty(routes)) {
       return routerNode.updateOrReplaceRoutes(routes);
     }
@@ -88,12 +85,12 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
           : Navigator(
               key: navigatorKey,
               pages: routerNode.stack,
+              observers: navigatorObservers,
               onPopPage: (route, result) {
                 if (!route.didPop(result)) {
                   return false;
                 }
-                routerNode.removeEntry((route.settings as AutoRoutePage));
-                routerNode.notifyListeners();
+                routerNode.pop();
                 return true;
               },
             ),
@@ -101,14 +98,17 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   }
 }
 
-class InnerRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterDelegate {
+class InnerRouterDelegate extends RouterDelegate
+    with ChangeNotifier, PopNavigatorRouterDelegateMixin, AutoRouterDelegate {
   final RootRouterDelegate rootDelegate;
   final GlobalKey<NavigatorState> navigatorKey;
   final RouterNode routerNode;
+  final List<NavigatorObserver> navigatorObservers;
 
   InnerRouterDelegate({
     this.rootDelegate,
     this.routerNode,
+    this.navigatorObservers,
     List<PageRouteInfo> defaultRoutes,
   })  : assert(routerNode != null),
         navigatorKey = GlobalKey<NavigatorState>() {
@@ -120,11 +120,6 @@ class InnerRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouter
   }
 
   @override
-  Future<bool> popRoute() {
-    throw UnimplementedError();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return RoutingControllerScope(
       routerNode: routerNode,
@@ -133,6 +128,7 @@ class InnerRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouter
           : Navigator(
               key: navigatorKey,
               pages: routerNode.stack,
+              observers: navigatorObservers,
               onPopPage: (route, result) {
                 if (!route.didPop(result)) {
                   return false;
@@ -155,12 +151,16 @@ class InnerRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouter
     } else {
       var defaultConfig = routerNode.routeCollection.configWithPath('');
       if (defaultConfig != null) {
-        routerNode.push(
-          PageRouteInfo(
-            defaultConfig.key,
-            path: defaultConfig.path,
-          ),
-        );
+        if (defaultConfig.isRedirect) {
+          routerNode.pushPath(defaultConfig.redirectTo);
+        } else {
+          routerNode.push(
+            PageRouteInfo(
+              defaultConfig.key,
+              path: defaultConfig.path,
+            ),
+          );
+        }
       }
     }
   }
@@ -178,10 +178,12 @@ class DeclarativeRouterDelegate extends RouterDelegate
   final GlobalKey<NavigatorState> navigatorKey;
   final RouterNode routerNode;
   final Function(PageRouteInfo route) onPopRoute;
+  final List<NavigatorObserver> navigatorObservers;
 
   DeclarativeRouterDelegate({
     this.rootDelegate,
     this.routerNode,
+    this.navigatorObservers,
     @required this.onPopRoute,
     List<PageRouteInfo> routes,
   })  : assert(routerNode != null),
@@ -200,13 +202,13 @@ class DeclarativeRouterDelegate extends RouterDelegate
         : Navigator(
             key: navigatorKey,
             pages: routerNode.stack,
+            observers: navigatorObservers,
             onPopPage: (route, result) {
               if (!route.didPop(result)) {
                 return false;
               }
               var data = (route.settings as AutoRoutePage).data;
-              routerNode.removeTopMostEntry();
-              routerNode.notifyListeners();
+              routerNode.pop();
               onPopRoute?.call(data.route);
               return true;
             },
@@ -215,7 +217,6 @@ class DeclarativeRouterDelegate extends RouterDelegate
 
   void updateRoutes(List<PageRouteInfo> routes) {
     if (!listNullOrEmpty(routes)) {
-      print("updating routes ${routes?.map((e) => e.path)}");
       routerNode.updateDeclarativeRoutes(routes, notify: false);
     }
   }

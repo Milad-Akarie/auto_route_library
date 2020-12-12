@@ -74,7 +74,7 @@ Method buildMethod(RouteConfig r) {
       )
       ..body = Block(
         (b) => b.statements.addAll([
-          if (r.parameters?.isNotEmpty == true)
+          if (r.argParams?.isNotEmpty == true)
             refer('data.getArgs')
                 .call([], {
                   if (!r.argParams.any((p) => p.isRequired || p.isPositional))

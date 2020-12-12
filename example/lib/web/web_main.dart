@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/data/books_data.dart';
-import 'package:example/router/router.gr.dart';
+import 'package:example/web/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,22 +16,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final routerConfig = MyRouterConfig();
+  final routerConfig = WebRouterConfig();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: RootRouterDelegate(
-        routerConfig,
-        // initialDeepLink: '/books/5',
-        // same as
-        // defaultHistory: [
-        //   HomePageRoute(),
-        //   BookListPageRoute(),
-        //   BookDetails(id: 5),// ],
-      ),
-      routeInformationParser: routerConfig.nativeRouteParser,
+      routerDelegate: RootRouterDelegate(routerConfig),
+      routeInformationParser: routerConfig.webRouteParser,
     );
   }
 }
