@@ -1,4 +1,4 @@
-# auto_route:
+# auto_route
 
 AutoRoute is a declarative routing solution, where everything needed for navigation is automatically generated for you.
 
@@ -64,8 +64,7 @@ flutter packages pub run build_runner build
 
 #### Finalize the setup
 
-after you run the generator your router class will be generated
-Let MaterialApp use ExtendedNavigator instead of the native one by assigning it to its builder.
+after you run the generator your router config class will be generated, use it as follows:
 ```dart
    // in your app state
    final routerConfig = MyRouterConfig()
