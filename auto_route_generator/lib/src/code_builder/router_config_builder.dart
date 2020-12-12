@@ -7,7 +7,7 @@ import 'library_builder.dart';
 
 const _routeRefType = Reference("RouteConfig", autoRouteImport);
 
-Class buildRouterConfig(RouterConfig router, List<ImportableType> guards, List<RouteConfig> routes) => Class((b) => b
+Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards, List<RouteConfig> routes) => Class((b) => b
   ..name = router.routerClassName
   ..extend = refer('AutoRouterConfig', autoRouteImport)
   ..fields.addAll([

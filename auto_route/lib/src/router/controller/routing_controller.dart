@@ -30,11 +30,15 @@ abstract class RoutingController {
 
   Future<void> pushAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
 
+  Future<void> popAndPushAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
+
   Future<void> replaceAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
 
   bool removeUntilRoot();
 
   bool removeUntil(RouteDataPredicate predicate);
+
+  bool removeWhere(RouteDataPredicate predicate);
 
   bool pop();
 
@@ -205,6 +209,12 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   }
 
   @override
+  Future<void> popAndPushAll(List<PageRouteInfo> routes, {onFailure}) {
+    _pop(notify: false);
+    return _pushAll(routes, onFailure: onFailure);
+  }
+
+  @override
   Future<void> replaceAll(
     List<PageRouteInfo> routes, {
     OnNavigationFailure onFailure,
@@ -248,6 +258,19 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
     if (didPop && notify) {
       notifyListeners();
     }
+    return didPop;
+  }
+
+  @override
+  bool removeWhere(RouteDataPredicate predicate) {
+    var didPop = false;
+    for (var key in List.unmodifiable(_children.keys)) {
+      if (predicate(_children[key].routeData)) {
+        didPop = true;
+        _children.remove(key);
+      }
+    }
+    notifyListeners();
     return didPop;
   }
 

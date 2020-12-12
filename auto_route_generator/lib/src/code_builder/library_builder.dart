@@ -22,7 +22,7 @@ String generateLibrary(RouterConfig config) {
   var allRouters = config.collectAllRoutersIncludingParent;
   var allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
   var allGuards =
-      allRoutes.where((r) => r.guards?.isNotEmpty == true).fold(<ImportableType>[], (acc, a) => acc..addAll(a.guards));
+      allRoutes.where((r) => r.guards?.isNotEmpty == true).fold(<ImportableType>{}, (acc, a) => acc..addAll(a.guards));
 
   final library = Library(
     (b) => b

@@ -24,15 +24,9 @@ abstract class AutoRoutePage extends Page {
           arguments: data.args,
         );
 
-  factory AutoRoutePage.adaptive() {
-    return MaterialPageX(data: null, child: null);
-  }
-
   @override
   bool canUpdate(Page other) {
-    var canUpdate = other.runtimeType == runtimeType && (other as AutoRoutePage).data == this.data;
-    print("${data.key} can update : $canUpdate");
-    return canUpdate;
+    return other.runtimeType == runtimeType && (other as AutoRoutePage).data == this.data;
   }
 
   @protected

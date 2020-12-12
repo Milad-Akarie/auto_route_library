@@ -7,9 +7,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('Books App')),
-        body: Center(
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               RaisedButton(
@@ -20,14 +21,14 @@ class HomePage extends StatelessWidget {
                   // context.router.push
                 },
               ),
-              SizedBox(height: 32),
+              SizedBox(height: 16),
               RaisedButton(
                 child: Text('Navigate to Batman Book'),
                 onPressed: () {
                   // push too pages at once
                   context.router.pushAll([
                     BookListPageRoute(),
-                    BookDetails(id: 4),
+                    BookDetailsPageRoute(id: 4),
                   ]);
 
                   // or

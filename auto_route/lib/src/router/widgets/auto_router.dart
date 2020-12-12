@@ -13,15 +13,17 @@ class AutoRouter extends StatefulWidget {
   final Function(PageRouteInfo route) onPopRoute;
   final List<NavigatorObserver> navigatorObservers;
 
-  const AutoRouter({Key key, this.navigatorObservers})
-      : _isDeclarative = false,
+  const AutoRouter({
+    Key key,
+    this.navigatorObservers = const [],
+  })  : _isDeclarative = false,
         onGenerateRoutes = null,
         onPopRoute = null,
         super(key: key);
 
   const AutoRouter.declarative({
     Key key,
-    this.navigatorObservers,
+    this.navigatorObservers = const [],
     @required this.onGenerateRoutes,
     this.onPopRoute,
   })  : _isDeclarative = true,

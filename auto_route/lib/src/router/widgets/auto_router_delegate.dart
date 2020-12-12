@@ -28,7 +28,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     AutoRouterConfig routerConfig, {
     this.defaultHistory,
     this.initialDeepLink,
-    this.navigatorObservers,
+    this.navigatorObservers = const [],
   })  : assert(initialDeepLink == null || defaultHistory == null),
         assert(routerConfig != null),
         routerNode = routerConfig.root,
@@ -81,7 +81,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     return RoutingControllerScope(
       routerNode: routerNode,
       child: routerNode.stack.isEmpty
-          ? Container(color: Colors.white)
+          ? Container(color: Theme.of(context).scaffoldBackgroundColor)
           : Navigator(
               key: navigatorKey,
               pages: routerNode.stack,
@@ -124,7 +124,7 @@ class InnerRouterDelegate extends RouterDelegate
     return RoutingControllerScope(
       routerNode: routerNode,
       child: routerNode.stack.isEmpty
-          ? Container(color: Colors.white)
+          ? Container(color: Theme.of(context).scaffoldBackgroundColor)
           : Navigator(
               key: navigatorKey,
               pages: routerNode.stack,
@@ -198,7 +198,7 @@ class DeclarativeRouterDelegate extends RouterDelegate
   @override
   Widget build(BuildContext context) {
     return routerNode.stack.isEmpty
-        ? Container(color: Colors.white)
+        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
         : Navigator(
             key: navigatorKey,
             pages: routerNode.stack,

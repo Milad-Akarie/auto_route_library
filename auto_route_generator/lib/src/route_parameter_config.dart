@@ -9,8 +9,12 @@ import 'package:source_gen/source_gen.dart';
 final pathParamChecker = TypeChecker.fromRuntime(PathParam);
 final queryParamChecker = TypeChecker.fromRuntime(QueryParam);
 
+const reservedVarNames = ['key', 'children', 'queryParams', 'fragment'];
+
 /// holds constructor parameter info to be used
 /// in generating route parameters.
+///
+
 class ParamConfig {
   final ImportableType type;
   final String name;
@@ -34,6 +38,14 @@ class ParamConfig {
       @required this.isPathParam,
       @required this.isQueryParam,
       this.defaultValueCode});
+
+  String getSafeName(String argSuffix) {
+    if (reservedVarNames.contains(name) && argSuffix.isEmpty) {
+      return name + "0";
+    } else {
+      return name + argSuffix;
+    }
+  }
 
   String get getterName {
     switch (type.name) {
