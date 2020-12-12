@@ -19,7 +19,8 @@ typedef RouteDataPredicate = bool Function(RouteData route);
 abstract class RoutingController {
   Future<void> push(PageRouteInfo route, {OnNavigationFailure onFailure});
 
-  Future<void> pushPath(String path, {bool includePrefixMatches = false, OnNavigationFailure onFailure});
+  Future<void> pushPath(String path,
+      {bool includePrefixMatches = false, OnNavigationFailure onFailure});
 
   Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure onFailure});
 
@@ -28,11 +29,14 @@ abstract class RoutingController {
 
   Future<void> replace(PageRouteInfo route, {OnNavigationFailure onFailure});
 
-  Future<void> pushAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
+  Future<void> pushAll(List<PageRouteInfo> routes,
+      {OnNavigationFailure onFailure});
 
-  Future<void> popAndPushAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
+  Future<void> popAndPushAll(List<PageRouteInfo> routes,
+      {OnNavigationFailure onFailure});
 
-  Future<void> replaceAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
+  Future<void> replaceAll(List<PageRouteInfo> routes,
+      {OnNavigationFailure onFailure});
 
   bool removeUntilRoot();
 
@@ -71,7 +75,8 @@ class RoutingControllerScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RoutingControllerScope oldWidget) {
-    return !MapEquality().equals(routerNode._children, oldWidget.routerNode._children);
+    return !MapEquality()
+        .equals(routerNode._children, oldWidget.routerNode._children);
   }
 }
 
@@ -84,7 +89,8 @@ class RouteNode {
   RouteData get routeData => page.data;
 }
 
-class RouterNode extends ChangeNotifier implements RouteNode, RoutingController {
+class RouterNode extends ChangeNotifier
+    implements RouteNode, RoutingController {
   final RouterNode parent;
   final AutoRoutePage page;
   final String key;
@@ -168,24 +174,29 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   }
 
   @override
-  List<AutoRoutePage> get stack => List.unmodifiable(_children.values.map((e) => e.page));
+  List<AutoRoutePage> get stack =>
+      List.unmodifiable(_children.values.map((e) => e.page));
 
   @override
-  Future<void> push(PageRouteInfo route, {OnNavigationFailure onFailure}) async {
+  Future<void> push(PageRouteInfo route,
+      {OnNavigationFailure onFailure}) async {
     return _push(route, onFailure: onFailure, notify: true);
   }
 
-  Future<void> pushSilently(PageRouteInfo route, {OnNavigationFailure onFailure}) async {
+  Future<void> pushSilently(PageRouteInfo route,
+      {OnNavigationFailure onFailure}) async {
     return _push(route, onFailure: onFailure, notify: false);
   }
 
-  Future<void> _push(PageRouteInfo route, {OnNavigationFailure onFailure, bool notify = true}) async {
+  Future<void> _push(PageRouteInfo route,
+      {OnNavigationFailure onFailure, bool notify = true}) async {
     var config = _resolveConfigOrReportFailure(route, onFailure);
     if (config == null) {
       return null;
     }
     if (await _canNavigate([route], config, onFailure)) {
-      return _addStackEntry(route, config: config, onFailure: onFailure, notify: notify);
+      return _addStackEntry(route,
+          config: config, onFailure: onFailure, notify: notify);
     }
     return null;
   }
@@ -237,7 +248,8 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   }
 
   @override
-  Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure onFailure}) {
+  Future<void> popAndPush(PageRouteInfo route,
+      {OnNavigationFailure onFailure}) {
     _pop(notify: false);
     return push(route, onFailure: onFailure);
   }
@@ -333,7 +345,8 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
         onFailure(RouteNotFoundFailure(route));
         return null;
       } else {
-        throw FlutterError("[${toString()}] can not navigate to ${route.fullPath}");
+        throw FlutterError(
+            "[${toString()}] can not navigate to ${route.fullPath}");
       }
     }
   }
@@ -425,7 +438,8 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
         // this line should remove any routes below the updated one
         // not sure if this's the desired behaviour
         // List.unmodifiable(children.keys).sublist(0, stack.length - 1).forEach(_removeHistoryEntry);
-        (_children[lastKey] as RouterNode).updateOrReplaceRoutes(route.children);
+        (_children[lastKey] as RouterNode)
+            .updateOrReplaceRoutes(route.children);
       }
     } else {
       _replaceAll(routes, notify: true);
@@ -481,7 +495,8 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
     bool includePrefixMatches = false,
     OnNavigationFailure onFailure,
   }) {
-    var matches = matcher.match(path, includePrefixMatches: includePrefixMatches);
+    var matches =
+        matcher.match(path, includePrefixMatches: includePrefixMatches);
     if (matches != null) {
       var routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList();
       return _pushAll(routes, onFailure: onFailure, notify: true);

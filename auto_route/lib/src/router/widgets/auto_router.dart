@@ -8,7 +8,8 @@ import '../controller/routing_controller.dart';
 import 'auto_router_delegate.dart';
 
 class AutoRouter extends StatefulWidget {
-  final List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes) onGenerateRoutes;
+  final List<PageRouteInfo> Function(
+      BuildContext context, List<PageRouteInfo> routes) onGenerateRoutes;
   final bool _isDeclarative;
   final Function(PageRouteInfo route) onPopRoute;
   final List<NavigatorObserver> navigatorObservers;
@@ -36,7 +37,8 @@ class AutoRouter extends StatefulWidget {
     var scope = RoutingControllerScope.of(context);
     assert(() {
       if (scope == null) {
-        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError(
+            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -65,13 +67,15 @@ class AutoRouterState extends State<AutoRouter> {
     if (_routerDelegate == null) {
       final router = Router.of(context);
       assert(router != null);
-      _backButtonDispatcher = router.backButtonDispatcher.createChildBackButtonDispatcher();
+      _backButtonDispatcher =
+          router.backButtonDispatcher.createChildBackButtonDispatcher();
 
       assert(router.routerDelegate is AutoRouterDelegate);
       final autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
       final parentData = RouteData.of(context);
       assert(parentData != null);
-      RouterNode routerNode = autoRouterDelegate.routerNode.routerOf(parentData);
+      RouterNode routerNode =
+          autoRouterDelegate.routerNode.routerOf(parentData);
       assert(routerNode != null);
       if (widget._isDeclarative) {
         _routes = routerNode.preMatchedRoutes;

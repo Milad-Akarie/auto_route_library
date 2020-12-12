@@ -20,7 +20,7 @@ abstract class AutoRouterConfig {
     assert(routes != null);
     routeCollection = RoutesCollection.from(routes);
     root = RouterNode(
-      key: 'root',
+      key: 'ROOT',
       routeCollection: routeCollection,
       pageBuilder: _pageBuilder,
     );
@@ -30,20 +30,13 @@ abstract class AutoRouterConfig {
 
   List<RouteConfig> get routes;
 
-  NativeRouteInfoParser get nativeRouteParser => NativeRouteInfoParser(routeCollection);
+  NativeRouteInfoParser get nativeRouteParser =>
+      NativeRouteInfoParser(routeCollection);
 
   WebRouteInfoParser get webRouteParser => WebRouteInfoParser(routeCollection);
 
-  RouteInformationProvider defaultProvider(String initialPath) {
-    return PlatformRouteInformationProvider(
-      initialRouteInformation:
-          RouteInformation(location: initialPath ?? '/' // WidgetsBinding.instance.window.defaultRouteName,
-              ),
-    );
-  }
-
-  AutoRoutePage _pageBuilder(RouteData data, RouteConfig def) {
-    var builder = pagesMap[def.page];
+  AutoRoutePage _pageBuilder(RouteData data, RouteConfig config) {
+    var builder = pagesMap[config.page];
     assert(builder != null);
     return builder(data);
   }

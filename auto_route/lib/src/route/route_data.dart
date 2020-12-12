@@ -26,8 +26,6 @@ class RouteData {
     this.parent,
   }) : _args = args;
 
-  // String get fullPath => RouteUrl.fromRouteData(this).normalizedPath;
-
   List<RouteData> get breadcrumbs => List.unmodifiable([
         if (parent != null) ...parent.breadcrumbs,
         this,
@@ -45,12 +43,14 @@ class RouteData {
   T getArgs<T extends RouteArgs>({T Function() orElse}) {
     if (_args == null) {
       if (orElse == null) {
-        throw FlutterError('${T.toString()} can not be null because it has required parameters');
+        throw FlutterError(
+            '${T.toString()} can not be null because it has required parameters');
       }
       return orElse();
     }
     if (_args is! T) {
-      throw FlutterError('Expected [${T.toString()}],  found [${_args?.runtimeType}]');
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${_args?.runtimeType}]');
     }
     return _args as T;
   }
@@ -69,7 +69,12 @@ class RouteData {
           _args == other._args;
 
   @override
-  int get hashCode => path.hashCode ^ match.hashCode ^ key.hashCode ^ queryParams.hashCode ^ _args.hashCode;
+  int get hashCode =>
+      path.hashCode ^
+      match.hashCode ^
+      key.hashCode ^
+      queryParams.hashCode ^
+      _args.hashCode;
 
   @override
   String toString() {

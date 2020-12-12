@@ -17,7 +17,10 @@ mixin AutoRouterDelegate<T> on RouterDelegate<T> {
 }
 
 class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
-    with ChangeNotifier, AutoRouterDelegate<List<PageRouteInfo>>, PopNavigatorRouterDelegateMixin<List<PageRouteInfo>> {
+    with
+        ChangeNotifier,
+        AutoRouterDelegate<List<PageRouteInfo>>,
+        PopNavigatorRouterDelegateMixin<List<PageRouteInfo>> {
   final List<PageRouteInfo> defaultHistory;
   final GlobalKey<NavigatorState> navigatorKey;
   final RouterNode routerNode;

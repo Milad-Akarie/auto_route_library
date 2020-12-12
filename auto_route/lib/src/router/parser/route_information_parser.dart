@@ -1,22 +1,28 @@
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart'
+    show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
 import '../../utils.dart';
 
-class NativeRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
+class NativeRouteInfoParser
+    extends RouteInformationParser<List<PageRouteInfo>> {
   final RoutesCollection _collection;
 
   NativeRouteInfoParser(this._collection) : assert(_collection != null);
 
   @override
-  Future<List<PageRouteInfo>> parseRouteInformation(RouteInformation routeInformation) async {
-    var matches = RouteMatcher(_collection).match(routeInformation.location, includePrefixMatches: true);
+  Future<List<PageRouteInfo>> parseRouteInformation(
+      RouteInformation routeInformation) async {
+    var matches = RouteMatcher(_collection)
+        .match(routeInformation.location, includePrefixMatches: true);
     var routes;
     if (matches != null) {
-      routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList(growable: false);
+      routes = matches
+          .map((m) => PageRouteInfo.fromMatch(m))
+          .toList(growable: false);
     }
     return SynchronousFuture<List<PageRouteInfo>>(routes);
   }
@@ -34,11 +40,15 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
   WebRouteInfoParser(this._collection) : assert(_collection != null);
 
   @override
-  Future<List<PageRouteInfo>> parseRouteInformation(RouteInformation routeInformation) async {
-    var matches = RouteMatcher(_collection).match(routeInformation.location, includePrefixMatches: false);
+  Future<List<PageRouteInfo>> parseRouteInformation(
+      RouteInformation routeInformation) async {
+    var matches = RouteMatcher(_collection)
+        .match(routeInformation.location, includePrefixMatches: false);
     var routes;
     if (matches != null) {
-      routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList(growable: false);
+      routes = matches
+          .map((m) => PageRouteInfo.fromMatch(m))
+          .toList(growable: false);
     }
     return SynchronousFuture<List<PageRouteInfo>>(routes);
   }

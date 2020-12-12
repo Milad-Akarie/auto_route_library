@@ -6,9 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   @override
@@ -16,11 +14,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  // create an instance of the generated router config
   final routerConfig = MyRouterConfig(authGuard: AuthGuard());
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      title: 'Books App',
       theme: ThemeData.dark(),
       routerDelegate: RootRouterDelegate(
         routerConfig,

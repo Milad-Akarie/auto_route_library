@@ -7,7 +7,8 @@ import 'widgets/auto_router.dart';
 extension AutoRouterX on BuildContext {
   RoutingController get router => AutoRouter.of(this);
 
-  RoutingController findChildRouter(String routeKey) => AutoRouter.ofChildRoute(this, routeKey);
+  RoutingController findChildRouter(String routeKey) =>
+      AutoRouter.ofChildRoute(this, routeKey);
 
   RouteData get route => RouteData.of(this);
 }
