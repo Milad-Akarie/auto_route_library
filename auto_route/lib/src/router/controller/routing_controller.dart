@@ -8,16 +8,19 @@ import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/route/route_def.dart';
 import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/auto_router_config.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../utils.dart';
 
+part 'parallel_router_node.dart';
+
 typedef RouteDataPredicate = bool Function(RouteData route);
 
 abstract class RoutingController {
   Future<void> push(PageRouteInfo route, {OnNavigationFailure onFailure});
+
+  Future<void> navigate(PageRouteInfo route, {OnNavigationFailure onFailure});
 
   Future<void> pushPath(String path, {bool includePrefixMatches = false, OnNavigationFailure onFailure});
 
@@ -38,6 +41,8 @@ abstract class RoutingController {
 
   bool pop();
 
+  String get key;
+
   RouteMatcher get matcher;
 
   List<AutoRoutePage> get stack;
@@ -51,6 +56,8 @@ abstract class RoutingController {
   RouteData get currentRoute;
 
   RoutingController findRouterOf(String routeKey);
+
+  void setCurrentRoute(String routeKey);
 }
 
 class RoutingControllerScope extends InheritedWidget {
@@ -67,7 +74,7 @@ class RoutingControllerScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RoutingControllerScope oldWidget) {
-    return !MapEquality().equals(routerNode._children, oldWidget.routerNode._children);
+    return routerNode != oldWidget.routerNode;
   }
 }
 
@@ -87,8 +94,10 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   final RoutesCollection routeCollection;
   final PageBuilder pageBuilder;
   final RouteMatcher matcher;
-  final LinkedHashMap<LocalKey, RouteNode> _children = LinkedHashMap();
+  final LinkedHashMap<ValueKey<RouteData>, RouteNode> _children = LinkedHashMap();
   final List<PageRouteInfo> preMatchedRoutes;
+
+  RouteNode _activeNode;
 
   RouterNode({
     @required this.routeCollection,
@@ -129,22 +138,21 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   }
 
   @override
-  RouteData get currentRoute {
-    if (_children.isNotEmpty) {
-      return _children.values.last.routeData;
-    }
-    return null;
-  }
+  RouteData get currentRoute => _activeNode?.routeData;
 
   @override
   RoutingController get topMost {
-    if (_children.isNotEmpty) {
-      var topNode = _children.values.last;
-      if (topNode is RouterNode) {
-        return topNode.topMost;
-      }
+    if (_activeNode is RouterNode) {
+      return (_activeNode as RouterNode).topMost;
     }
     return this;
+    // if (_children.isNotEmpty) {
+    //   var topNode = _children.values.last;
+    //   if (topNode is RouterNode) {
+    //     return topNode.topMost;
+    //   }
+    // }
+    // return this;
   }
 
   /// mayPop
@@ -154,7 +162,7 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   bool _pop({bool notify = true}) {
     var didPop = false;
     if (_children.length > 1) {
-      _children.remove(_children.keys.last);
+      removeEntry(_children.values.last.page);
       if (notify) {
         notifyListeners();
       }
@@ -168,6 +176,15 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
 
   @override
   Future<void> push(PageRouteInfo route, {OnNavigationFailure onFailure}) async {
+    return _push(route, onFailure: onFailure, notify: true);
+  }
+
+  @override
+  Future<void> navigate(PageRouteInfo route, {OnNavigationFailure onFailure}) async {
+    var entry = _findLastEntryWithKey(route.routeKey);
+    if (entry != null) {
+      return _removeUntil((route) => route == entry.routeData);
+    }
     return _push(route, onFailure: onFailure, notify: true);
   }
 
@@ -191,8 +208,8 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
     PageRouteInfo route, {
     OnNavigationFailure onFailure,
   }) {
-    assert(_children.isNotEmpty);
-    _children.remove(_children.keys.last);
+    // assert(_children.isNotEmpty);
+    if (_children.isNotEmpty) _children.remove(_children.keys.last);
     return push(route, onFailure: onFailure);
   }
 
@@ -353,6 +370,7 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
 
   void _addNode(RouteNode node, {bool notify = true}) {
     _children[ValueKey(node.routeData)] = node;
+    _activeNode = node;
     if (notify) {
       notifyListeners();
     }
@@ -361,7 +379,21 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   RouteNode _createRouteNode(PageRouteInfo route, {RouteConfig config}) {
     var routeData = _createRouteData(route, config);
     AutoRoutePage page = pageBuilder(routeData, config);
-    if (config.isSubTree) {
+    if (config.hasParallelChildren) {
+      return ParallelRouterNode(
+        parent: this,
+        key: config.key,
+        routeCollection: routeCollection.subCollectionOf(config.key),
+        pageBuilder: pageBuilder,
+        page: page,
+        preMatchedRoutes: route?.children
+            ?.map((r) => r.copyWith(
+                  queryParams: route.queryParams,
+                  fragment: route.fragment,
+                ))
+            ?.toList(growable: false),
+      );
+    } else if (config.isSubTree) {
       return RouterNode(
         parent: this,
         key: config.key,
@@ -369,7 +401,7 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
         pageBuilder: pageBuilder,
         page: page,
         preMatchedRoutes: route?.children
-            ?.map((d) => d.copyWith(
+            ?.map((r) => r.copyWith(
                   queryParams: route.queryParams,
                   fragment: route.fragment,
                 ))
@@ -382,6 +414,9 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
 
   void removeEntry(AutoRoutePage page) {
     _children.remove(ValueKey(page.data));
+    if (_children.isNotEmpty) {
+      _activeNode = _children.values.last;
+    }
   }
 
   Future<void> _replaceAll(List<PageRouteInfo> routes, {bool notify = true}) {
@@ -433,11 +468,6 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
   @override
   RouteData get routeData => page?.data;
 
-  void removeTopMostEntry() {
-    assert(_children.isNotEmpty);
-    _children.remove(_children.keys.last);
-  }
-
   RouterNode routerOf(RouteData data) {
     return _children[ValueKey(data)];
   }
@@ -470,5 +500,24 @@ class RouterNode extends ChangeNotifier implements RouteNode, RoutingController 
       );
     }
     return SynchronousFuture(null);
+  }
+
+  RouteNode _findLastEntryWithKey(String key) {
+    if (_children.isEmpty) {
+      return null;
+    } else {
+      return _children.values.lastWhere((n) => n.key == key, orElse: () => null);
+    }
+  }
+
+  @override
+  void setCurrentRoute(String routeKey) {
+    var route = _findLastEntryWithKey(routeKey);
+    if (route != null) {
+      _activeNode = route;
+      notifyListeners();
+    } else {
+      throw ("Cant find route with key $routeKey  $stack");
+    }
   }
 }

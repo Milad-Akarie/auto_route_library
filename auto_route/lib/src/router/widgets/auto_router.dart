@@ -12,9 +12,13 @@ class AutoRouter extends StatefulWidget {
   final bool _isDeclarative;
   final Function(PageRouteInfo route) onPopRoute;
   final List<NavigatorObserver> navigatorObservers;
+  final Widget Function(BuildContext context, Widget widget) builder;
 
-  const AutoRouter({Key key, this.navigatorObservers})
-      : _isDeclarative = false,
+  const AutoRouter({
+    Key key,
+    this.navigatorObservers = const [],
+    this.builder,
+  })  : _isDeclarative = false,
         onGenerateRoutes = null,
         onPopRoute = null,
         super(key: key);
@@ -23,6 +27,7 @@ class AutoRouter extends StatefulWidget {
     Key key,
     this.navigatorObservers,
     @required this.onGenerateRoutes,
+    this.builder,
     this.onPopRoute,
   })  : _isDeclarative = true,
         super(key: key);
@@ -41,7 +46,7 @@ class AutoRouter extends StatefulWidget {
       return true;
     }());
 
-    return RoutingControllerScope.of(context).routerNode;
+    return scope.routerNode;
   }
 
   static RoutingController ofChildRoute(BuildContext context, String routeKey) {
@@ -67,9 +72,9 @@ class AutoRouterState extends State<AutoRouter> {
 
       assert(router.routerDelegate is AutoRouterDelegate);
       final autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
-      final parentData = RouteData.of(context);
-      assert(parentData != null);
-      RouterNode routerNode = autoRouterDelegate.routerNode.routerOf(parentData);
+      var parentRouteData = RouteData.of(context);
+      assert(parentRouteData != null);
+      RouterNode routerNode = autoRouterDelegate.routerNode.routerOf(parentRouteData);
       assert(routerNode != null);
       if (widget._isDeclarative) {
         _routes = routerNode.preMatchedRoutes;
@@ -83,6 +88,7 @@ class AutoRouterState extends State<AutoRouter> {
       } else {
         _routerDelegate = InnerRouterDelegate(
           routerNode: routerNode,
+          builder: widget.builder,
           navigatorObservers: widget.navigatorObservers,
           defaultRoutes: routerNode.preMatchedRoutes,
           rootDelegate: autoRouterDelegate.rootDelegate,

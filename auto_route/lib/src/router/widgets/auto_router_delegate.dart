@@ -28,7 +28,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     AutoRouterConfig routerConfig, {
     this.defaultHistory,
     this.initialDeepLink,
-    this.navigatorObservers,
+    this.navigatorObservers = const [],
   })  : assert(initialDeepLink == null || defaultHistory == null),
         assert(routerConfig != null),
         routerNode = routerConfig.root,
@@ -68,7 +68,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   @override
   Future<void> setNewRoutePath(List<PageRouteInfo> routes) {
     if (!listNullOrEmpty(routes)) {
-      return routerNode.updateOrReplaceRoutes(routes);
+      return routerNode.pushAll(routes);
     }
     return SynchronousFuture(null);
   }
@@ -103,11 +103,14 @@ class InnerRouterDelegate extends RouterDelegate
   final RootRouterDelegate rootDelegate;
   final GlobalKey<NavigatorState> navigatorKey;
   final RouterNode routerNode;
+  final Widget Function(BuildContext context, Widget widget) builder;
+
   final List<NavigatorObserver> navigatorObservers;
 
   InnerRouterDelegate({
     this.rootDelegate,
     this.routerNode,
+    this.builder,
     this.navigatorObservers,
     List<PageRouteInfo> defaultRoutes,
   })  : assert(routerNode != null),
@@ -121,22 +124,25 @@ class InnerRouterDelegate extends RouterDelegate
 
   @override
   Widget build(BuildContext context) {
+    var navigator = routerNode.stack.isEmpty
+        ? Container(color: Colors.white)
+        : Navigator(
+            key: navigatorKey,
+            pages: routerNode.stack,
+            observers: navigatorObservers,
+            // restorationScopeId: routerNode.key,
+            onPopPage: (route, result) {
+              if (!route.didPop(result)) {
+                return false;
+              }
+              routerNode.pop();
+              return true;
+            },
+          );
+
     return RoutingControllerScope(
       routerNode: routerNode,
-      child: routerNode.stack.isEmpty
-          ? Container(color: Colors.white)
-          : Navigator(
-              key: navigatorKey,
-              pages: routerNode.stack,
-              observers: navigatorObservers,
-              onPopPage: (route, result) {
-                if (!route.didPop(result)) {
-                  return false;
-                }
-                routerNode.pop();
-                return true;
-              },
-            ),
+      child: LayoutBuilder(builder: (ctx, _) => builder != null ? builder(ctx, navigator) : navigator),
     );
   }
 
@@ -228,113 +234,95 @@ class DeclarativeRouterDelegate extends RouterDelegate
   }
 }
 
-//
-//
-// class ParallelRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterDelegate {
-//   final RootRouterDelegate rootDelegate;
-//   List<PageRouteInfo> _parallelRoutes;
-//   final RouterNode routerNode;
-//   String _activeRouteKey;
-//   final Function(String activeRoute) onActiveRouteChanged;
-//
-//   ParallelRouterDelegate({
-//     @required this.rootDelegate,
-//     @required this.routerNode,
-//     @required List<PageRouteInfo> parallelRoutes,
-//     @required String activeRouteKey,
-//     this.onActiveRouteChanged,
-//   })  : assert(routerNode != null),
-//         assert(rootDelegate != null),
-//         assert(activeRouteKey != null),
-//         _activeRouteKey = activeRouteKey {
-//     routerNode.addListener(() {
-//       notifyListeners();
-//       rootDelegate.notifyListeners();
-//     });
-//
-//     setupRoutes(parallelRoutes);
-//   }
-//
-//   void setupRoutes(List<PageRouteInfo> routes) {
-//     List<PageRouteInfo> routesToPush = routes;
-//     if (!listNullOrEmpty(routerNode.preMatchedRoutes)) {
-//       for (var preMatchedRoute in routerNode.preMatchedRoutes) {
-//         var route = routes.firstWhere(
-//           (r) => r.path == preMatchedRoute.path,
-//           orElse: () {
-//             throw FlutterError('${preMatchedRoute.path} is not assign as a parallel route');
-//           },
-//         );
-//         routesToPush.remove(route);
-//       }
-//       routesToPush.addAll(routerNode.preMatchedRoutes);
-//       _activeRouteKey = routesToPush.last.path;
-//       onActiveRouteChanged?.call(_activeRouteKey);
-//     }
-//     if (!listNullOrEmpty(routesToPush)) {
-//       routerNode.replaceAll(routesToPush);
-//     }
-//     this._parallelRoutes = routesToPush;
-//   }
-//
-//   void setActiveRoute(String activeRoute) {
-//     _activeRouteKey = activeRoute;
-//     onActiveRouteChanged?.call(_activeRouteKey);
-//     // var data = parentNode.children.values
-//     // 		.firstWhere((e) => e.key == activeRoute)
-//     // 		.routeData;
-//     // var key = ValueKey(data);
-//     // var nodeToBringFront = parentNode.children[key];
-//     // parentNode.children.remove(key);
-//     // parentNode.children[key] = nodeToBringFront;
-//     // WidgetsBinding.instance.addPostFrameCallback((_) {
-//     //   rootDelegate.notifyListeners();
-//     // });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     var keysList = _parallelRoutes.map((r) => r.path).toList(growable: false);
-//     return routerNode.stack.isEmpty
-//         ? Container()
-//         : Stack(
-//             fit: StackFit.expand,
-//             children: List<Widget>.generate(keysList.length, (int index) {
-//               final bool active = keysList[index] == _activeRouteKey;
-//               var activePage = routerNode.stack.firstWhere((p) => p.data.key == keysList[index], orElse: () => null);
-//               print(activePage);
-//               return RouteDataProvider(
-//                 data: activePage?.data,
-//                 child: Offstage(
-//                   offstage: !active,
-//                   child: activePage?.child,
-//                 ),
-//               );
-//             }),
-//           );
-//   }
-//
-//   @override
-//   Future<bool> popRoute() {
-//     var innerRouter = routerNode.findRouterOf(_activeRouteKey);
-//     if (innerRouter == null) return SynchronousFuture<bool>(false);
-//     return innerRouter.pop();
-//   }
-//
-//   @override
-//   Future<void> setNewRoutePath(configuration) {
-//     assert(false);
-//     return SynchronousFuture(null);
-//   }
-// }
-//
-// class RouteDataProvider extends InheritedWidget {
-//   final RouteData data;
-//
-//   RouteDataProvider({this.data, Widget child}) : super(child: child);
-//
-//   @override
-//   bool updateShouldNotify(covariant RouteDataProvider oldWidget) {
-//     return data != oldWidget.data;
-//   }
-// }
+class ParallelRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterDelegate {
+  final RootRouterDelegate rootDelegate;
+  final List<PageRouteInfo> parallelRoutes;
+  final RouterNode routerNode;
+  final Widget Function(BuildContext context, Widget widget) builder;
+  final _bucket = PageStorageBucket();
+
+  ParallelRouterDelegate({
+    @required this.rootDelegate,
+    @required this.parallelRoutes,
+    @required this.routerNode,
+    this.builder,
+  })  : assert(routerNode != null),
+        assert(rootDelegate != null) {
+    routerNode.addListener(() {
+      notifyListeners();
+      rootDelegate.notifyListeners();
+    });
+
+    setupRoutes(parallelRoutes);
+  }
+
+  void setupRoutes(List<PageRouteInfo> routes) {
+    List<PageRouteInfo> routesToPush = routes;
+    if (!listNullOrEmpty(routerNode.preMatchedRoutes) && false) {
+      for (var preMatchedRoute in routerNode.preMatchedRoutes) {
+        var route = routes.firstWhere(
+          (r) => r.path == preMatchedRoute.path,
+          orElse: () {
+            throw FlutterError('${preMatchedRoute.path} is not assign as a parallel route');
+          },
+        );
+        routesToPush.remove(route);
+      }
+      routesToPush.addAll(routerNode.preMatchedRoutes);
+    }
+    if (!listNullOrEmpty(routesToPush)) {
+      routerNode.replaceAll(routesToPush);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("Bucket ${_bucket.hashCode}");
+    var stack = routerNode.stack;
+    // var activeIndex = 0;
+    final content = stack.isEmpty
+        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
+        // : PageStorage(
+        //     bucket: _bucket,
+        //     key: PageStorageKey(stack.last.data),
+        //     child: stack.last.wrappedChild(context),
+        //   );
+        : Stack(
+            fit: StackFit.expand,
+            children: List<Widget>.generate(stack.length, (int index) {
+              var keysList = stack.map((r) => r.data.key).toList(growable: false);
+
+              final bool active = keysList[index] == routerNode.currentRoute.key;
+              var page = routerNode.stack[index];
+              assert(page != null);
+              return Offstage(
+                offstage: !active,
+                key: page.key,
+                child: PageStorage(
+                  bucket: _bucket,
+                  key: PageStorageKey(page.data),
+                  child: page.wrappedChild(context),
+                ),
+              );
+            }),
+          );
+
+    return RoutingControllerScope(
+      routerNode: routerNode,
+      child: LayoutBuilder(builder: (ctx, _) => builder != null ? builder(ctx, content) : content),
+    );
+  }
+
+  @override
+  Future<bool> popRoute() async {
+    var activeRouter = routerNode.topMost;
+    if (activeRouter == null) return SynchronousFuture<bool>(false);
+    return activeRouter.pop();
+  }
+
+  @override
+  Future<void> setNewRoutePath(configuration) {
+    assert(false);
+    return SynchronousFuture(null);
+  }
+}

@@ -34,7 +34,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         : Scaffold(
             appBar: AppBar(title: Text(book.name)),
             body: Center(
-              child: Text('Book Details/${book.id}'),
+              child: TextField(),
             ),
           );
   }

@@ -34,12 +34,16 @@ class RouteData {
       ]);
 
   static RouteData of(BuildContext context) {
-    var settings = ModalRoute.of(context)?.settings;
-    if (settings != null && settings is AutoRoutePage) {
-      return settings.data;
-    } else {
-      return null;
-    }
+    var scope = context.dependOnInheritedWidgetOfExactType<RouteDataScope>();
+    assert(() {
+      if (scope == null) {
+        throw FlutterError('RouteData operation requested with a context that does not include an RouteData.\n'
+            'The context used to retrieve the RouteData must be that of a widget that '
+            'is a descendant of a AutoRoutePage.');
+      }
+      return true;
+    }());
+    return scope.data;
   }
 
   T getArgs<T extends RouteArgs>({T Function() orElse}) {
@@ -74,5 +78,16 @@ class RouteData {
   @override
   String toString() {
     return 'RouteData{match: $match, key: $key, queryParams: $queryParams}';
+  }
+}
+
+class RouteDataScope extends InheritedWidget {
+  final RouteData data;
+
+  RouteDataScope({this.data, Widget child}) : super(child: child);
+
+  @override
+  bool updateShouldNotify(covariant RouteDataScope oldWidget) {
+    return data != oldWidget.data;
   }
 }

@@ -24,6 +24,7 @@ class NativeRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> 
   @override
   RouteInformation restoreRouteInformation(List<PageRouteInfo> routes) {
     String location = _getNormalizedPath(routes);
+    print("++++ current Location $location");
     return RouteInformation(location: location);
   }
 }
@@ -46,6 +47,7 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
   @override
   RouteInformation restoreRouteInformation(List<PageRouteInfo> routes) {
     final location = _getNormalizedPath(routes);
+    print("++++ current Location $location");
     return RouteInformation(location: location);
   }
 }

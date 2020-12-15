@@ -20,16 +20,13 @@ abstract class AutoRoutePage extends Page {
         assert(fullscreenDialog != null),
         assert(maintainState != null),
         super(
-          // key: ValueKey(data.key),
+          // key: ValueKey(data),
           arguments: data.args,
         );
 
-  factory AutoRoutePage.adaptive() {
-    return MaterialPageX(data: null, child: null);
-  }
-
   @override
   bool canUpdate(Page other) {
+    // if (data.key == "DashboardPageRoute") return false;
     var canUpdate = other.runtimeType == runtimeType && (other as AutoRoutePage).data == this.data;
     print("${data.key} can update : $canUpdate");
     return canUpdate;
@@ -38,11 +35,15 @@ abstract class AutoRoutePage extends Page {
   @protected
   @override
   Route createRoute(BuildContext context) {
+    return onCreateRoute(context, wrappedChild(context));
+  }
+
+  Widget wrappedChild(BuildContext context) {
     var childToBuild = child;
     if (child is AutoRouteWrapper) {
       childToBuild = (child as AutoRouteWrapper).wrappedRoute(context);
     }
-    return onCreateRoute(context, childToBuild);
+    return RouteDataScope(child: childToBuild, data: data);
   }
 
   Route onCreateRoute(BuildContext context, Widget child);

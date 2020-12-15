@@ -12,16 +12,16 @@ class RouteConfig {
   final RoutesCollection _children;
   final String redirectTo;
   final List<AutoRouteGuard> guards;
-  final String group;
+  final bool hasParallelChildren;
 
   RouteConfig(
     this.key, {
     @required this.path,
     this.page,
+    this.hasParallelChildren = false,
     this.guards = const [],
     this.fullMatch = false,
     this.redirectTo,
-    this.group,
     List<RouteConfig> children,
   })  : assert(page == null || redirectTo == null),
         assert(fullMatch != null),

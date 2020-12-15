@@ -22,8 +22,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: RootRouterDelegate(routerConfig),
-      routeInformationParser: routerConfig.webRouteParser,
+      routerDelegate: RootRouterDelegate(
+        routerConfig,
+        initialDeepLink: '/settings',
+      ),
+      routeInformationParser: routerConfig.nativeRouteParser,
     );
   }
 }
