@@ -7,7 +7,7 @@ import '../../matcher/route_matcher.dart';
 import '../../utils.dart';
 
 class NativeRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
-  final RoutesCollection _collection;
+  final RouteCollection _collection;
 
   NativeRouteInfoParser(this._collection) : assert(_collection != null);
 
@@ -30,7 +30,7 @@ class NativeRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> 
 }
 
 class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
-  final RoutesCollection _collection;
+  final RouteCollection _collection;
 
   WebRouteInfoParser(this._collection) : assert(_collection != null);
 

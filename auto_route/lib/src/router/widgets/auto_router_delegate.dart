@@ -13,14 +13,14 @@ import '../controller/routing_controller.dart';
 mixin AutoRouterDelegate<T> on RouterDelegate<T> {
   RootRouterDelegate get rootDelegate;
 
-  RouterNode get routerNode;
+  RoutingController get controller;
 }
 
 class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     with ChangeNotifier, AutoRouterDelegate<List<PageRouteInfo>>, PopNavigatorRouterDelegateMixin<List<PageRouteInfo>> {
   final List<PageRouteInfo> defaultHistory;
   final GlobalKey<NavigatorState> navigatorKey;
-  final RouterNode routerNode;
+  final StackController controller;
   final String initialDeepLink;
   final List<NavigatorObserver> navigatorObservers;
 
@@ -31,14 +31,14 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     this.navigatorObservers = const [],
   })  : assert(initialDeepLink == null || defaultHistory == null),
         assert(routerConfig != null),
-        routerNode = routerConfig.root,
+        controller = routerConfig.root,
         navigatorKey = GlobalKey<NavigatorState>() {
-    routerNode.addListener(notifyListeners);
+    controller.addListener(notifyListeners);
   }
 
   @override
   List<PageRouteInfo> get currentConfiguration {
-    var route = routerNode.topMost.currentRoute;
+    var route = controller.topMost.currentRoute;
     if (route == null) {
       return null;
     }
@@ -50,16 +50,16 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
-    if (!routerNode.stackIsEmpty) {
+    if (controller.stack.isEmpty) {
       return SynchronousFuture(null);
     }
 
     if (!listNullOrEmpty(defaultHistory)) {
-      return routerNode.pushAll(defaultHistory);
+      return controller.pushAll(defaultHistory);
     } else if (initialDeepLink != null) {
-      return routerNode.pushPath(initialDeepLink, includePrefixMatches: true);
+      return controller.pushPath(initialDeepLink, includePrefixMatches: true);
     } else if (!listNullOrEmpty(routes)) {
-      return routerNode.pushAll(routes);
+      return controller.pushAll(routes);
     } else {
       throw FlutterError("Can not resolve initial route");
     }
@@ -68,7 +68,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   @override
   Future<void> setNewRoutePath(List<PageRouteInfo> routes) {
     if (!listNullOrEmpty(routes)) {
-      return routerNode.pushAll(routes);
+      return controller.pushAll(routes);
     }
     return SynchronousFuture(null);
   }
@@ -78,19 +78,19 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
 
   @override
   Widget build(BuildContext context) {
-    return RoutingControllerScope(
-      routerNode: routerNode,
-      child: routerNode.stack.isEmpty
+    return StackControllerScope(
+      controller: controller,
+      child: !controller.hasEntries
           ? Container(color: Colors.white)
           : Navigator(
               key: navigatorKey,
-              pages: routerNode.stack,
+              pages: controller.stack,
               observers: navigatorObservers,
               onPopPage: (route, result) {
                 if (!route.didPop(result)) {
                   return false;
                 }
-                routerNode.pop();
+                controller.pop();
                 return true;
               },
             ),
@@ -102,20 +102,20 @@ class InnerRouterDelegate extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin, AutoRouterDelegate {
   final RootRouterDelegate rootDelegate;
   final GlobalKey<NavigatorState> navigatorKey;
-  final RouterNode routerNode;
+  final StackController controller;
   final Widget Function(BuildContext context, Widget widget) builder;
 
   final List<NavigatorObserver> navigatorObservers;
 
   InnerRouterDelegate({
     this.rootDelegate,
-    this.routerNode,
+    this.controller,
     this.builder,
     this.navigatorObservers,
     List<PageRouteInfo> defaultRoutes,
-  })  : assert(routerNode != null),
+  })  : assert(controller != null),
         navigatorKey = GlobalKey<NavigatorState>() {
-    routerNode.addListener(() {
+    controller.addListener(() {
       notifyListeners();
       rootDelegate.notifyListeners();
     });
@@ -124,43 +124,46 @@ class InnerRouterDelegate extends RouterDelegate
 
   @override
   Widget build(BuildContext context) {
-    var navigator = routerNode.stack.isEmpty
-        ? Container(color: Colors.white)
+    var content = !controller.hasEntries
+        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
         : Navigator(
             key: navigatorKey,
-            pages: routerNode.stack,
+            pages: controller.stack,
             observers: navigatorObservers,
-            // restorationScopeId: routerNode.key,
             onPopPage: (route, result) {
               if (!route.didPop(result)) {
                 return false;
               }
-              routerNode.pop();
+              controller.pop();
               return true;
             },
           );
 
-    return RoutingControllerScope(
-      routerNode: routerNode,
-      child: LayoutBuilder(builder: (ctx, _) => builder != null ? builder(ctx, navigator) : navigator),
+    return StackControllerScope(
+      controller: controller,
+      child: builder == null
+          ? content
+          : LayoutBuilder(
+              builder: (ctx, _) => builder(ctx, content),
+            ),
     );
   }
 
   void pushInitialRoutes(List<PageRouteInfo> routes) {
-    if (!routerNode.stackIsEmpty) {
+    if (!controller.hasEntries) {
       return;
     }
-    if (!listNullOrEmpty(routerNode.preMatchedRoutes)) {
-      routerNode.pushAll(routerNode.preMatchedRoutes);
+    if (!listNullOrEmpty(controller.preMatchedRoutes)) {
+      controller.pushAll(controller.preMatchedRoutes);
     } else if (!listNullOrEmpty(routes)) {
-      routerNode.pushAll(routes);
+      controller.pushAll(routes);
     } else {
-      var defaultConfig = routerNode.routeCollection.configWithPath('');
+      var defaultConfig = controller.routeCollection.configWithPath('');
       if (defaultConfig != null) {
         if (defaultConfig.isRedirect) {
-          routerNode.pushPath(defaultConfig.redirectTo);
+          controller.pushPath(defaultConfig.redirectTo);
         } else {
-          routerNode.push(
+          controller.push(
             PageRouteInfo(
               defaultConfig.key,
               path: defaultConfig.path,
@@ -182,19 +185,19 @@ class DeclarativeRouterDelegate extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin, AutoRouterDelegate {
   final RootRouterDelegate rootDelegate;
   final GlobalKey<NavigatorState> navigatorKey;
-  final RouterNode routerNode;
+  final StackController controller;
   final Function(PageRouteInfo route) onPopRoute;
   final List<NavigatorObserver> navigatorObservers;
 
   DeclarativeRouterDelegate({
     this.rootDelegate,
-    this.routerNode,
+    this.controller,
     this.navigatorObservers,
     @required this.onPopRoute,
     List<PageRouteInfo> routes,
-  })  : assert(routerNode != null),
+  })  : assert(controller != null),
         navigatorKey = GlobalKey<NavigatorState>() {
-    routerNode.addListener(() {
+    controller.addListener(() {
       notifyListeners();
       rootDelegate.notifyListeners();
     });
@@ -203,18 +206,18 @@ class DeclarativeRouterDelegate extends RouterDelegate
 
   @override
   Widget build(BuildContext context) {
-    return routerNode.stack.isEmpty
+    return !controller.hasEntries
         ? Container(color: Colors.white)
         : Navigator(
             key: navigatorKey,
-            pages: routerNode.stack,
+            pages: controller.stack,
             observers: navigatorObservers,
             onPopPage: (route, result) {
               if (!route.didPop(result)) {
                 return false;
               }
               var data = (route.settings as AutoRoutePage).data;
-              routerNode.pop();
+              controller.pop();
               onPopRoute?.call(data.route);
               return true;
             },
@@ -223,7 +226,7 @@ class DeclarativeRouterDelegate extends RouterDelegate
 
   void updateRoutes(List<PageRouteInfo> routes) {
     if (!listNullOrEmpty(routes)) {
-      routerNode.updateDeclarativeRoutes(routes, notify: false);
+      // controller.updateDeclarativeRoutes(routes, notify: false);
     }
   }
 
@@ -234,90 +237,80 @@ class DeclarativeRouterDelegate extends RouterDelegate
   }
 }
 
-class ParallelRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterDelegate {
+class TabsRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterDelegate {
   final RootRouterDelegate rootDelegate;
-  final List<PageRouteInfo> parallelRoutes;
-  final RouterNode routerNode;
+  final List<PageRouteInfo> tabRoutes;
+  final TabsController controller;
   final Widget Function(BuildContext context, Widget widget) builder;
-  final _bucket = PageStorageBucket();
 
-  ParallelRouterDelegate({
+  TabsRouterDelegate({
     @required this.rootDelegate,
-    @required this.parallelRoutes,
-    @required this.routerNode,
+    @required this.tabRoutes,
+    @required this.controller,
     this.builder,
-  })  : assert(routerNode != null),
+  })  : assert(controller != null),
         assert(rootDelegate != null) {
-    routerNode.addListener(() {
+    controller.addListener(() {
       notifyListeners();
       rootDelegate.notifyListeners();
     });
 
-    setupRoutes(parallelRoutes);
+    setupRoutes(tabRoutes);
   }
 
   void setupRoutes(List<PageRouteInfo> routes) {
     List<PageRouteInfo> routesToPush = routes;
-    if (!listNullOrEmpty(routerNode.preMatchedRoutes) && false) {
-      for (var preMatchedRoute in routerNode.preMatchedRoutes) {
+    if (!listNullOrEmpty(controller.preMatchedRoutes)) {
+      for (var preMatchedRoute in controller.preMatchedRoutes) {
         var route = routes.firstWhere(
           (r) => r.path == preMatchedRoute.path,
           orElse: () {
-            throw FlutterError('${preMatchedRoute.path} is not assign as a parallel route');
+            throw FlutterError('${preMatchedRoute.path} is not assign as a tab route');
           },
         );
         routesToPush.remove(route);
       }
-      routesToPush.addAll(routerNode.preMatchedRoutes);
+      routesToPush.addAll(controller.preMatchedRoutes);
     }
     if (!listNullOrEmpty(routesToPush)) {
-      routerNode.replaceAll(routesToPush);
+      controller.setupRoutes(routesToPush);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Bucket ${_bucket.hashCode}");
-    var stack = routerNode.stack;
-    // var activeIndex = 0;
+    var stack = controller.stack;
+    var keysList = tabRoutes.map((e) => e.routeKey).toList(growable: false);
     final content = stack.isEmpty
         ? Container(color: Theme.of(context).scaffoldBackgroundColor)
-        // : PageStorage(
-        //     bucket: _bucket,
-        //     key: PageStorageKey(stack.last.data),
-        //     child: stack.last.wrappedChild(context),
-        //   );
         : Stack(
             fit: StackFit.expand,
-            children: List<Widget>.generate(stack.length, (int index) {
-              var keysList = stack.map((r) => r.data.key).toList(growable: false);
-
-              final bool active = keysList[index] == routerNode.currentRoute.key;
-              var page = routerNode.stack[index];
-              assert(page != null);
+            children: List<Widget>.generate(tabRoutes.length, (int index) {
+              final bool active = keysList[index] == controller.currentRoute.key;
+              var page = stack.firstWhere((p) => p.data.key == keysList[index]);
               return Offstage(
                 offstage: !active,
                 key: page.key,
-                child: PageStorage(
-                  bucket: _bucket,
-                  key: PageStorageKey(page.data),
-                  child: page.wrappedChild(context),
-                ),
+                child: page.wrappedChild(context),
               );
             }),
           );
 
-    return RoutingControllerScope(
-      routerNode: routerNode,
-      child: LayoutBuilder(builder: (ctx, _) => builder != null ? builder(ctx, content) : content),
+    return TabsRoutingControllerScope(
+      controller: controller,
+      child: builder == null
+          ? content
+          : LayoutBuilder(
+              builder: (ctx, _) => builder(ctx, content),
+            ),
     );
   }
 
   @override
   Future<bool> popRoute() async {
-    var activeRouter = routerNode.topMost;
-    if (activeRouter == null) return SynchronousFuture<bool>(false);
-    return activeRouter.pop();
+    var topMostRouter = controller.topMost;
+    if (topMostRouter == null) return SynchronousFuture<bool>(false);
+    return topMostRouter.pop();
   }
 
   @override

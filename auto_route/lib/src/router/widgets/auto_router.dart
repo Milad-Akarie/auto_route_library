@@ -15,13 +15,13 @@ class AutoRouter extends StatefulWidget {
   final Widget Function(BuildContext context, Widget widget) builder;
 
   const AutoRouter({
-    Key key,
+    Key key1,
     this.navigatorObservers = const [],
     this.builder,
   })  : _isDeclarative = false,
         onGenerateRoutes = null,
         onPopRoute = null,
-        super(key: key);
+        super(key: key1);
 
   const AutoRouter.declarative({
     Key key,
@@ -35,8 +35,8 @@ class AutoRouter extends StatefulWidget {
   @override
   AutoRouterState createState() => AutoRouterState();
 
-  static RoutingController of(BuildContext context) {
-    var scope = RoutingControllerScope.of(context);
+  static StackController of(BuildContext context) {
+    var scope = StackControllerScope.of(context);
     assert(() {
       if (scope == null) {
         throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
@@ -46,11 +46,11 @@ class AutoRouter extends StatefulWidget {
       return true;
     }());
 
-    return scope.routerNode;
+    return scope.controller;
   }
 
-  static RoutingController ofChildRoute(BuildContext context, String routeKey) {
-    return of(context)?.findRouterOf(routeKey);
+  static StackController childRouterOf(BuildContext context, String routeKey) {
+    return of(context)?.childRouterOf(routeKey);
   }
 }
 
@@ -59,7 +59,7 @@ class AutoRouterState extends State<AutoRouter> {
   AutoRouterDelegate _routerDelegate;
   List<PageRouteInfo> _routes;
 
-  RoutingController get controller => _routerDelegate?.routerNode;
+  StackController get controller => _routerDelegate?.controller;
 
   @override
   void didChangeDependencies() {
@@ -74,12 +74,12 @@ class AutoRouterState extends State<AutoRouter> {
       final autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
       var parentRouteData = RouteData.of(context);
       assert(parentRouteData != null);
-      RouterNode routerNode = autoRouterDelegate.routerNode.routerOf(parentRouteData);
-      assert(routerNode != null);
+      StackController controller = autoRouterDelegate.controller.routerOfRoute(parentRouteData);
+      assert(controller != null && controller is StackController);
       if (widget._isDeclarative) {
-        _routes = routerNode.preMatchedRoutes;
+        _routes = controller.preMatchedRoutes;
         _routerDelegate = DeclarativeRouterDelegate(
-          routerNode: routerNode,
+          controller: controller,
           navigatorObservers: widget.navigatorObservers,
           routes: widget.onGenerateRoutes(context, _routes),
           onPopRoute: widget.onPopRoute,
@@ -87,10 +87,10 @@ class AutoRouterState extends State<AutoRouter> {
         );
       } else {
         _routerDelegate = InnerRouterDelegate(
-          routerNode: routerNode,
+          controller: controller,
           builder: widget.builder,
           navigatorObservers: widget.navigatorObservers,
-          defaultRoutes: routerNode.preMatchedRoutes,
+          defaultRoutes: controller.preMatchedRoutes,
           rootDelegate: autoRouterDelegate.rootDelegate,
         );
       }

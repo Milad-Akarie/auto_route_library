@@ -4,16 +4,20 @@ import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {
   final routes = <PageRouteInfo>[
-    BookListPageRoute(),
-    SettingsPageRoute(),
+    BooksTabs(),
+    SettingsTab(),
   ];
 
   @override
-  Widget build(_) => AutoParallelRouter(builder: (context, content) {
-        final router = context.router;
-        print('+++ Building ${router.currentRoute?.key}');
-        var activeIndex = routes.indexWhere((r) => r.routeKey == router.currentRoute?.key);
-        if (activeIndex == -1) activeIndex = 0;
+  Widget build(_) => AutoTabsRouter(
+      routes: routes,
+      builder: (context, content) {
+        final tabsRouter = AutoTabsRouter.of(context);
+        print('+++ Building ${tabsRouter.currentRoute?.key}');
+        var activeIndex = 0;
+        if (tabsRouter.currentRoute?.key == SettingsTab.key) {
+          activeIndex = 1;
+        }
 
         return Row(
           children: [
@@ -21,19 +25,9 @@ class DashboardPage extends StatelessWidget {
               extended: false,
               selectedIndex: activeIndex,
               onDestinationSelected: (index) {
-                print(router.stack.map((e) => e.key));
-                // router.replace(routes[index]);
-                if (router.stack.map((e) => e.data.key).contains(routes[index].routeKey)) {
-                  router.setCurrentRoute(routes[index].routeKey);
-                } else {
-                  router.push(routes[index]);
-                }
+                AutoTabsRouter.of(context).setActiveIndex(index);
               },
               destinations: [
-                // NavigationRailDestination(
-                //   icon: Icon(Icons.account_tree_rounded),
-                //   label: Text('Genres'),
-                // ),
                 NavigationRailDestination(
                   icon: Icon(Icons.source),
                   label: Text('Books'),

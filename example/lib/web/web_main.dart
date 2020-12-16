@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.dark(),
       routerDelegate: RootRouterDelegate(
         routerConfig,
-        initialDeepLink: '/settings',
+        // initialDeepLink: '/books',
       ),
       routeInformationParser: routerConfig.nativeRouteParser,
     );

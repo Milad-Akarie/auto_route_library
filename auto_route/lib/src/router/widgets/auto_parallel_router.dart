@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import '../controller/routing_controller.dart';
 import 'auto_router_delegate.dart';
 
-class AutoParallelRouter extends StatefulWidget {
+class AutoTabsRouter extends StatefulWidget {
   final List<NavigatorObserver> navigatorObservers;
   final Widget Function(BuildContext context, Widget widget) builder;
   final List<PageRouteInfo> routes;
 
-  const AutoParallelRouter({
+  const AutoTabsRouter({
     Key key,
     this.routes,
     this.navigatorObservers = const [],
@@ -19,28 +19,27 @@ class AutoParallelRouter extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  AutoParallelRouterState createState() => AutoParallelRouterState();
-
-  static ParallelRouterNode of(BuildContext context) {
-    var scope = ParallelRoutingControllerScope.of(context);
+  AutoTabsRouterState createState() => AutoTabsRouterState();
+  static TabsController of(BuildContext context) {
+    var scope = TabsRoutingControllerScope.of(context);
     assert(() {
       if (scope == null) {
         throw FlutterError(
-            'AutoParallelRouter operation requested with a context that does not include an AutoParallelRouter.\n'
-            'The context used to retrieve the Router must be that of a widget that '
-            'is a descendant of an AutoParallelRouter widget.');
+            'AutoTabsRouter operation requested with a context that does not include an AutoTabsRouter.\n'
+            'The context used to retrieve the AutoTabsRouter must be that of a widget that '
+            'is a descendant of an AutoTabsRouter widget.');
       }
       return true;
     }());
-    return scope.routerNode;
+    return scope.controller;
   }
 }
 
-class AutoParallelRouterState extends State<AutoParallelRouter> {
+class AutoTabsRouterState extends State<AutoTabsRouter> {
   ChildBackButtonDispatcher _backButtonDispatcher;
   AutoRouterDelegate _routerDelegate;
 
-  RoutingController get controller => _routerDelegate?.routerNode;
+  TabsController get controller => _routerDelegate?.controller;
 
   @override
   void didChangeDependencies() {
@@ -54,14 +53,13 @@ class AutoParallelRouterState extends State<AutoParallelRouter> {
       final autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
       final parentData = RouteData.of(context);
       assert(parentData != null);
-      final routerNode = autoRouterDelegate.routerNode.routerOf(parentData);
-      assert(routerNode != null);
+      final routingController = autoRouterDelegate.controller.routerOfRoute(parentData);
+      assert(routingController != null);
 
-      _routerDelegate = ParallelRouterDelegate(
-        routerNode: routerNode,
+      _routerDelegate = TabsRouterDelegate(
+        controller: routingController,
         builder: widget.builder,
-        // navigatorObservers: widget.navigatorObservers,
-        // parallelRoutes: List.from(widget.routes),
+        tabRoutes: List.from(widget.routes),
         rootDelegate: autoRouterDelegate.rootDelegate,
       );
     }

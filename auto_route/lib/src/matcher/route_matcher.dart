@@ -4,18 +4,18 @@ import 'package:auto_route/src/matcher/route_match.dart';
 
 import '../../auto_route.dart';
 
-class RoutesCollection {
+class RouteCollection {
   final LinkedHashMap<String, RouteConfig> _routesMap;
 
-  RoutesCollection(this._routesMap)
+  RouteCollection(this._routesMap)
       : assert(_routesMap != null),
         assert(_routesMap.isNotEmpty);
 
-  factory RoutesCollection.from(List<RouteConfig> routes) {
+  factory RouteCollection.from(List<RouteConfig> routes) {
     assert(routes != null);
     final routesMap = LinkedHashMap<String, RouteConfig>();
     routes.forEach((r) => routesMap[r.key] = r);
-    return RoutesCollection(routesMap);
+    return RouteCollection(routesMap);
   }
 
   Iterable<RouteConfig> get routes => _routesMap.values;
@@ -26,7 +26,7 @@ class RoutesCollection {
 
   bool containsKey(String key) => _routesMap.containsKey(key);
 
-  RoutesCollection subCollectionOf(String key) {
+  RouteCollection subCollectionOf(String key) {
     assert(this[key]?.children != null, "$key does not have children");
     return this[key].children;
   }
@@ -37,7 +37,7 @@ class RoutesCollection {
 }
 
 class RouteMatcher {
-  final RoutesCollection collection;
+  final RouteCollection collection;
 
   const RouteMatcher(this.collection) : assert(collection != null);
 
@@ -46,7 +46,7 @@ class RouteMatcher {
     return _match(Uri.parse(rawPath), collection, includePrefixMatches: includePrefixMatches);
   }
 
-  List<RouteMatch> _match(Uri uri, RoutesCollection routesCollection, {bool includePrefixMatches = false}) {
+  List<RouteMatch> _match(Uri uri, RouteCollection routesCollection, {bool includePrefixMatches = false}) {
     var pathSegments = _split(uri.path);
     var matches = <RouteMatch>[];
     for (var config in routesCollection.routes) {
@@ -143,7 +143,7 @@ class RouteMatcher {
     return segments;
   }
 
-  bool _isValidRoute(PageRouteInfo route, RoutesCollection routes) {
+  bool _isValidRoute(PageRouteInfo route, RouteCollection routes) {
     return _resolveConfig(route, routes) != null;
   }
 
@@ -151,7 +151,7 @@ class RouteMatcher {
     return _resolveConfig(route, collection);
   }
 
-  RouteConfig _resolveConfig(PageRouteInfo route, RoutesCollection routes) {
+  RouteConfig _resolveConfig(PageRouteInfo route, RouteCollection routes) {
     var routeConfig = routes[route.routeKey];
     if (routeConfig == null) {
       return null;

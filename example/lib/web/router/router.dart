@@ -6,14 +6,27 @@ import 'package:example/web/screens/settings_page.dart';
 
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: DashboardPage, children: [
-      RedirectRoute(path: '', redirectTo: 'books'),
-      AutoRoute(path: 'books', page: BookListPage, children: [
-        RedirectRoute(path: '', redirectTo: '1'),
-        AutoRoute(path: ':id', page: BookDetailsPage),
-      ]),
-      AutoRoute(path: 'settings', page: SettingsPage),
-    ]),
+    AutoRoute(
+      path: '/',
+      page: DashboardPage,
+      children: [
+        AutoRoute(
+          path: 'books',
+          page: AutoRouter,
+          name: 'BooksTabs',
+          children: [
+            AutoRoute(path: '', page: BookListPage),
+            AutoRoute(path: ':id', page: BookDetailsPage),
+          ],
+        ),
+        AutoRoute(
+          path: 'settings',
+          page: AutoRouter,
+          name: 'SettingsTab',
+          children: [AutoRoute(path: '', page: SettingsPage)],
+        ),
+      ],
+    ),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )

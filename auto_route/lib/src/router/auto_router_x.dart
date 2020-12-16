@@ -5,9 +5,9 @@ import 'controller/routing_controller.dart';
 import 'widgets/auto_router.dart';
 
 extension AutoRouterX on BuildContext {
-  RoutingController get router => AutoRouter.of(this);
+  StackController get router => AutoRouter.of(this);
 
-  RoutingController findChildRouter(String routeKey) => AutoRouter.ofChildRoute(this, routeKey);
+  RoutingController childRouterOf(String routeKey) => AutoRouter.childRouterOf(this, routeKey);
 
   RouteData get route => RouteData.of(this);
 }

@@ -31,16 +31,16 @@ class _BookListPageState extends State<BookListPage> {
                           title: Text(book.name),
                           subtitle: Text(book.genre),
                           onTap: () {
-                            context.findChildRouter(BookListPageRoute.key).push(BookDetailsPageRoute(id: book.id));
+                            context.router.push(BookDetailsPageRoute(id: book.id));
                           },
                         ),
                       ))
                   .toList(),
             ),
           ),
-          Expanded(
-            child: AutoRouter(),
-          )
+          // Expanded(
+          //   child: AutoRouter(),
+          // )
         ],
       ),
     );
