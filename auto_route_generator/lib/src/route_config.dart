@@ -24,7 +24,7 @@ class RouteConfig {
   ImportableType transitionBuilder;
   ImportableType customRouteBuilder;
   String redirectTo;
-
+  bool usesTabsRouter = false;
   int durationInMilliseconds;
   int reverseDurationInMilliseconds;
   int routeType = RouteType.material;

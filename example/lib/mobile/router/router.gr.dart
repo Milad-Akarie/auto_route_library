@@ -5,88 +5,105 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:flutter/material.dart' as _i2;
-import 'auth_guard.dart' as _i3;
-import '../screens/home_page.dart' as _i4;
-import '../screens/book_list_page.dart' as _i5;
-import '../screens/book_details_page.dart' as _i6;
-import '../screens/login_page.dart' as _i7;
+import '../screens/home_page.dart' as _i2;
+import '../screens/book_list_page.dart' as _i3;
+import '../screens/book_details_page.dart' as _i4;
+import '../screens/settings_page.dart' as _i5;
+import 'package:flutter/material.dart' as _i6;
 
 class MyRouterConfig extends _i1.AutoRouterConfig {
-  MyRouterConfig({@_i2.required this.authGuard}) : assert(authGuard != null);
-
-  final _i3.AuthGuard authGuard;
+  MyRouterConfig();
 
   @override
   final Map<Type, _i1.PageFactory> pagesMap = {
-    _i4.HomePage: (data) {
-      return _i1.MaterialPageX(data: data, child: _i4.HomePage());
+    _i2.HomePage: (data) {
+      return _i1.MaterialPageX(data: data, child: _i2.HomePage());
     },
-    _i5.BookListPage: (data) {
-      return _i1.MaterialPageX(data: data, child: _i5.BookListPage());
+    _i1.TabRouterPage: (data) {
+      return _i1.MaterialPageX(data: data, child: const _i1.TabRouterPage());
     },
-    _i6.BookDetailsPage: (data) {
+    _i3.BookListPage: (data) {
+      return _i1.MaterialPageX(data: data, child: _i3.BookListPage());
+    },
+    _i4.BookDetailsPage: (data) {
       return _i1.MaterialPageX(
           data: data,
-          child: _i6.BookDetailsPage(bookId: data.pathParams.getInt('id')));
+          child: _i4.BookDetailsPage(bookId: data.pathParams.getInt('id')));
     },
-    _i7.LoginPage: (data) {
-      var args = data.getArgs<LoginPageArgs>(orElse: () => LoginPageArgs());
-      return _i1.MaterialPageX(
-          data: data,
-          child: _i7.LoginPage(key: args.key, onResult: args.onResult));
+    _i5.SettingsPage: (data) {
+      return _i1.MaterialPageX(data: data, child: _i5.SettingsPage());
     }
   };
 
   @override
   List<_i1.RouteConfig> get routes => [
-        _i1.RouteConfig(HomePageRoute.key, path: '/', page: _i4.HomePage),
-        _i1.RouteConfig(BookListPageRoute.key,
-            path: '/book-list-page', page: _i5.BookListPage),
-        _i1.RouteConfig(BookDetailsPageRoute.key,
-            path: '/books/:id', page: _i6.BookDetailsPage, guards: [authGuard]),
-        _i1.RouteConfig(LoginPageRoute.key,
-            path: '/login', page: _i7.LoginPage),
+        _i1.RouteConfig(HomePageRoute.key,
+            path: '/',
+            page: _i2.HomePage,
+            usesTabsRouter: true,
+            children: [
+              _i1.RouteConfig(BooksTab.key,
+                  path: 'books',
+                  page: _i1.TabRouterPage,
+                  children: [
+                    _i1.RouteConfig(BookListPageRoute.key,
+                        path: 'list', page: _i3.BookListPage),
+                    _i1.RouteConfig(BookDetailsPageRoute.key,
+                        path: 'list/:id', page: _i4.BookDetailsPage)
+                  ]),
+              _i1.RouteConfig(SettingsTab.key,
+                  path: 'settings',
+                  page: _i1.TabRouterPage,
+                  children: [
+                    _i1.RouteConfig(SettingsPageRoute.key,
+                        path: '', page: _i5.SettingsPage)
+                  ])
+            ]),
         _i1.RouteConfig('*#redirect',
-            path: '*', redirectTo: '/', fullMatch: true)
+            path: '*', redirectTo: '/', fullMatch: true, usesTabsRouter: false)
       ];
 }
 
 class HomePageRoute extends _i1.PageRouteInfo {
-  HomePageRoute() : super(key, path: '/');
+  HomePageRoute({List<_i1.PageRouteInfo> children})
+      : super(key, path: '/', children: children);
 
   static const String key = 'HomePageRoute';
 }
 
+class BooksTab extends _i1.PageRouteInfo {
+  BooksTab({List<_i1.PageRouteInfo> children})
+      : super(key, path: 'books', children: children);
+
+  static const String key = 'BooksTab';
+}
+
+class SettingsTab extends _i1.PageRouteInfo {
+  SettingsTab({List<_i1.PageRouteInfo> children})
+      : super(key, path: 'settings', children: children);
+
+  static const String key = 'SettingsTab';
+}
+
 class BookListPageRoute extends _i1.PageRouteInfo {
-  BookListPageRoute() : super(key, path: '/book-list-page');
+  BookListPageRoute() : super(key, path: 'list');
 
   static const String key = 'BookListPageRoute';
 }
 
 class BookDetailsPageRoute extends _i1.PageRouteInfo {
-  BookDetailsPageRoute({@_i2.required id})
-      : super(key, path: '/books/:id', pathParams: {'id': id});
+  BookDetailsPageRoute({@_i6.required id})
+      : super(key, path: 'list/:id', pathParams: {'id': id});
 
   static const String key = 'BookDetailsPageRoute';
 }
 
-class LoginPageRoute extends _i1.PageRouteInfo {
-  LoginPageRoute({_i2.Key key0, void Function(bool) onResult})
-      : super(key,
-            path: '/login', args: LoginPageArgs(key: key0, onResult: onResult));
+class SettingsPageRoute extends _i1.PageRouteInfo {
+  SettingsPageRoute() : super(key, path: '');
 
-  static const String key = 'LoginPageRoute';
+  static const String key = 'SettingsPageRoute';
 }
 
 class BookDetailsPageArgs extends _i1.RouteArgs {
   BookDetailsPageArgs() : super([]);
-}
-
-class LoginPageArgs extends _i1.RouteArgs {
-  LoginPageArgs({this.key, this.onResult}) : super([key, onResult]);
-
-  final _i2.Key key;
-
-  final void Function(bool) onResult;
 }

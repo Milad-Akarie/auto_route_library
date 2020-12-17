@@ -1,12 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/data/books_data.dart';
-import 'package:example/mobile/router/auth_guard.dart';
-import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/mobile/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+final booksDb = BooksDB();
+
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -14,26 +17,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // create an instance of the generated router config
-  final routerConfig = MyRouterConfig(authGuard: AuthGuard());
+  final routerConfig = MyRouterConfig();
 
   @override
   Widget build(BuildContext context) {
+    var matcher = routerConfig.root.matcher;
+    print(matcher.match('/books/list/4', includePrefixMatches: true));
     return MaterialApp.router(
-      title: 'Books App',
       theme: ThemeData.dark(),
       routerDelegate: RootRouterDelegate(
         routerConfig,
-        // initialDeepLink: '/books/5',
-        // same as
-        // defaultHistory: [
-        //   HomePageRoute(),
-        //   BookListPageRoute(),
-        //   BookDetails(id: 5),// ],
+        initialDeepLink: '/books/list/4',
       ),
       routeInformationParser: routerConfig.nativeRouteParser,
       builder: (_, router) {
-        return Provider<BooksDB>(
+        return Provider(
           create: (_) => BooksDB(),
           child: router,
         );

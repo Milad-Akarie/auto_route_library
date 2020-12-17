@@ -12,6 +12,7 @@ import '../controller/routing_controller.dart';
 
 mixin AutoRouterDelegate<T> on RouterDelegate<T> {
   RootRouterDelegate get rootDelegate;
+
   RoutingController get controller;
 
   @override
@@ -83,7 +84,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   @override
   Widget build(BuildContext context) {
     return StackRouterScope(
-      router: controller,
+      controller: controller,
       child: !controller.hasEntries
           ? Container(color: Colors.white)
           : Navigator(
@@ -142,14 +143,11 @@ class InnerRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouter
             },
           );
 
-    return StackRouterScope(
-      router: controller,
-      child: builder == null
-          ? content
-          : LayoutBuilder(
-              builder: (ctx, _) => builder(ctx, content),
-            ),
-    );
+    return builder == null
+        ? content
+        : LayoutBuilder(
+            builder: (ctx, _) => builder(ctx, content),
+          );
   }
 
   void pushInitialRoutes(List<PageRouteInfo> routes) {
@@ -282,25 +280,20 @@ class TabsRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterD
             }),
           );
 
-    return TabsRoutingControllerScope(
-      controller: controller,
-      child: builder == null
-          ? content
-          : LayoutBuilder(
-              builder: (ctx, _) => builder(ctx, content),
-            ),
-    );
+    return builder == null
+        ? content
+        : LayoutBuilder(
+            builder: (ctx, _) => builder(ctx, content),
+          );
   }
 
   @override
-  Future<bool> popRoute() async {
-    final topMostRouter = controller.topMost;
-    if (topMostRouter == null) return SynchronousFuture<bool>(false);
-    return topMostRouter.pop();
+  Future<bool> popRoute() {
+    return SynchronousFuture<bool>(controller.topMost.pop());
   }
 
   @override
-  Future<void> setNewRoutePath(configuration) {
+  Future<void> setNewRoutePath(_) {
     assert(false);
     return SynchronousFuture(null);
   }

@@ -8,15 +8,16 @@ import '../controller/routing_controller.dart';
 import 'auto_router_delegate.dart';
 
 class AutoRouter extends StatefulWidget {
-  final List<PageRouteInfo> Function(
-      BuildContext context, List<PageRouteInfo> routes) onGenerateRoutes;
+  final List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes) onGenerateRoutes;
   final bool _isDeclarative;
   final Function(PageRouteInfo route) onPopRoute;
   final List<NavigatorObserver> navigatorObservers;
+  final Widget Function(BuildContext context, Widget content) builder;
 
   const AutoRouter({
     Key key,
     this.navigatorObservers = const [],
+    this.builder,
   })  : _isDeclarative = false,
         onGenerateRoutes = null,
         onPopRoute = null,
@@ -28,6 +29,7 @@ class AutoRouter extends StatefulWidget {
     @required this.onGenerateRoutes,
     this.onPopRoute,
   })  : _isDeclarative = true,
+        builder = null,
         super(key: key);
 
   @override
@@ -44,7 +46,7 @@ class AutoRouter extends StatefulWidget {
       return true;
     }());
 
-    return scope.router;
+    return scope.controller;
   }
 
   static StackRouter childRouterOf(BuildContext context, String routeKey) {
@@ -57,7 +59,7 @@ class AutoRouterState extends State<AutoRouter> {
   AutoRouterDelegate _routerDelegate;
   List<PageRouteInfo> _routes;
 
-  StackRouter get controller => _routerDelegate?.controller;
+  // StackRouter get controller => _routerDelegate?.controller;
 
   @override
   void didChangeDependencies() {
@@ -72,8 +74,8 @@ class AutoRouterState extends State<AutoRouter> {
       final autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
       final parentData = RouteData.of(context);
       assert(parentData != null);
-      RouterNode routerNode = autoRouterDelegate.routerNode.routerOf(parentData);
-      assert(routerNode != null);
+      RoutingController controller = autoRouterDelegate.controller.routerOfRoute(parentData);
+      assert(controller != null);
       if (widget._isDeclarative) {
         _routes = controller.preMatchedRoutes;
         _routerDelegate = DeclarativeRouterDelegate(
@@ -97,10 +99,18 @@ class AutoRouterState extends State<AutoRouter> {
 
   @override
   Widget build(BuildContext context) {
-    return Router(
+    final router = Router(
       routerDelegate: _routerDelegate,
       backButtonDispatcher: _backButtonDispatcher..takePriority(),
     );
+    if (widget._isDeclarative) {
+      return router;
+    } else {
+      return StackRouterScope(
+        child: router,
+        controller: _routerDelegate.controller,
+      );
+    }
   }
 
   @override

@@ -93,6 +93,7 @@ class RouteConfigResolver {
     config.fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
     config.maintainState = autoRoute.peek('maintainState')?.boolValue;
     config.fullMatch = autoRoute.peek('fullMatch')?.boolValue;
+    config.usesTabsRouter = autoRoute.peek('usesTabsRouter')?.boolValue;
 
     autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue())?.forEach((guard) {
       config.guards.add(_typeResolver.resolveType(guard));

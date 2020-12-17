@@ -7,22 +7,19 @@ class BookListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var booksDb = Provider.of<BooksDB>(context);
-    return Scaffold(
-      appBar: AppBar(title: Text('Book List')),
-      body: ListView(
-        children: booksDb.books
-            .map((book) => Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: ListTile(
-                    title: Text(book.name),
-                    subtitle: Text(book.genre),
-                    onTap: () {
-                      BookDetailsPageRoute(id: book.id).push(context);
-                    },
-                  ),
-                ))
-            .toList(),
-      ),
+    return ListView(
+      children: booksDb.books
+          .map((book) => Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: ListTile(
+                  title: Text(book.name),
+                  subtitle: Text(book.genre),
+                  onTap: () {
+                    BookDetailsPageRoute(id: book.id).push(context);
+                  },
+                ),
+              ))
+          .toList(),
     );
   }
 }

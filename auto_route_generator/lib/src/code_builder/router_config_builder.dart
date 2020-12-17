@@ -159,6 +159,7 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
         if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo),
         if (r.pageType != null) 'page': r.pageType.refer,
         if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
+        if (r.usesTabsRouter != null) 'usesTabsRouter': literalBool(r.usesTabsRouter),
         if (r.guards?.isNotEmpty == true)
           'guards': literalList(r.guards
               .map(

@@ -74,8 +74,7 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     bool alwaysSuffixArgsWithArg,
     bool usesQueryParams,
     bool usesPathFragments,
-  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix,
-            routes, preferRelativeImports,
+  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix, routes, preferRelativeImports,
             usesPathFragments: usesPathFragments,
             usesQueryParams: usesQueryParams,
             usesLegacyGenerator: usesLegacyGenerator,
@@ -235,11 +234,13 @@ class AutoRoute<T> {
   final List<Type> guards;
 
   final bool fullMatch;
+  final bool usesTabsRouter;
 
   const AutoRoute(
       {this.page,
       this.initial,
       this.guards,
+      this.usesTabsRouter,
       this.fullscreenDialog,
       this.maintainState,
       this.fullMatch,
@@ -266,6 +267,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
       bool fullscreenDialog,
       bool maintainState,
       bool fullMatch,
+      bool usesTabsRouter,
       String name,
       List<Type> guards,
       List<AutoRoute> children})
@@ -279,6 +281,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
           path: path,
           children: children,
           name: name,
+          usesTabsRouter: usesTabsRouter,
         );
 }
 
@@ -296,18 +299,21 @@ class CupertinoRoute<T> extends AutoRoute<T> {
       String name,
       bool fullMatch,
       @required Type page,
+      bool usesTabsRouter,
       List<Type> guards,
       List<AutoRoute> children})
       : super(
-            initial: initial,
-            fullscreenDialog: fullscreenDialog,
-            maintainState: maintainState,
-            path: path,
-            name: name,
-            fullMatch: fullMatch,
-            page: page,
-            guards: guards,
-            children: children);
+          initial: initial,
+          fullscreenDialog: fullscreenDialog,
+          maintainState: maintainState,
+          path: path,
+          name: name,
+          fullMatch: fullMatch,
+          page: page,
+          guards: guards,
+          children: children,
+          usesTabsRouter: usesTabsRouter,
+        );
 }
 
 class AdaptiveRoute<T> extends AutoRoute<T> {
@@ -318,6 +324,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
       String name,
       String path,
       bool fullMatch,
+      bool usesTabsRouter,
       Type returnType,
       this.cupertinoPageTitle,
       @required Type page,
@@ -328,6 +335,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
             fullscreenDialog: fullscreenDialog,
             maintainState: maintainState,
             path: path,
+            usesTabsRouter: usesTabsRouter,
             name: name,
             fullMatch: fullMatch,
             page: page,
@@ -391,6 +399,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     bool fullMatch,
     @required Type page,
     List<Type> guards,
+    bool usesTabsRouter,
     List<AutoRoute> children,
     this.customRouteBuilder,
     this.barrierLabel,
@@ -405,6 +414,7 @@ class CustomRoute<T> extends AutoRoute<T> {
             maintainState: maintainState,
             path: path,
             name: name,
+            usesTabsRouter: usesTabsRouter,
             fullMatch: fullMatch,
             page: page,
             guards: guards,

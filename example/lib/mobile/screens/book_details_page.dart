@@ -1,7 +1,6 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:example/data/books_data.dart';
-import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,13 +23,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
         : Scaffold(
             appBar: AppBar(
               title: Text(book.name),
-              actions: [
-                FlatButton(
-                    child: Text('Remove list'),
-                    onPressed: () {
-                      context.router.removeWhere((route) => route.key == BookListPageRoute.key);
-                    })
-              ],
             ),
             body: Center(
               child: Text('Book Details/${book.id}'),

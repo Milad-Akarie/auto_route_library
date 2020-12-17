@@ -16,7 +16,4 @@ export 'src/router/auto_router_x.dart';
 export 'src/router/controller/routing_controller.dart';
 export 'src/router/widgets/auto_router.dart';
 export 'src/router/widgets/auto_router_delegate.dart';
-export 'src/router/widgets/auto_router_widget.dart';
-export 'src/router/widgets/auto_tabs_router.dart';
-
-// export 'auto_route_annotations.dart';
+export 'src/router/widgets/auto_tabs_router_widget.dart';

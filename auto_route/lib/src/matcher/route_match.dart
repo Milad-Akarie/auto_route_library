@@ -44,6 +44,6 @@ class RouteMatch {
   }
 
   toString() {
-    return 'RouteMatch{key: ${config.path}, segments: $segments, params: $pathParams children: $children}';
+    return 'RouteMatch{key: ${config.path}, children: $children}';
   }
 }

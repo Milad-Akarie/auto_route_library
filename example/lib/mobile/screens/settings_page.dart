@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web/router/router.gr.dart';
+import 'package:example/mobile/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -10,13 +10,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   String state = 'initial';
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    print('+++++++++ Setting page init $state');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   onPressed: () {
                     AutoTabsRouter.of(context)
                       ..setActiveIndex(0)
-                      ..childRouterOf<StackRouter>(BooksTabs.key).push(
+                      ..childRouterOf<StackRouter>(BooksTab.key).push(
                         BookDetailsPageRoute(id: 4),
                       );
                   },
