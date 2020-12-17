@@ -35,21 +35,21 @@ class AutoRouter extends StatefulWidget {
   @override
   AutoRouterState createState() => AutoRouterState();
 
-  static StackController of(BuildContext context) {
-    var scope = StackControllerScope.of(context);
+  static StackRouter of(BuildContext context) {
+    var scope = StackRouterScope.of(context);
     assert(() {
       if (scope == null) {
         throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
-            'The context used to retrieve the Router must be that of a widget that '
+            'The context used to retrieve the AutoRouter must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
       return true;
     }());
 
-    return scope.controller;
+    return scope.router;
   }
 
-  static StackController childRouterOf(BuildContext context, String routeKey) {
+  static StackRouter childRouterOf(BuildContext context, String routeKey) {
     return of(context)?.childRouterOf(routeKey);
   }
 }
@@ -59,7 +59,7 @@ class AutoRouterState extends State<AutoRouter> {
   AutoRouterDelegate _routerDelegate;
   List<PageRouteInfo> _routes;
 
-  StackController get controller => _routerDelegate?.controller;
+  StackRouter get controller => _routerDelegate?.controller;
 
   @override
   void didChangeDependencies() {
@@ -74,8 +74,8 @@ class AutoRouterState extends State<AutoRouter> {
       final autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
       var parentRouteData = RouteData.of(context);
       assert(parentRouteData != null);
-      StackController controller = autoRouterDelegate.controller.routerOfRoute(parentRouteData);
-      assert(controller != null && controller is StackController);
+      StackRouter controller = autoRouterDelegate.controller.routerOfRoute(parentRouteData);
+      assert(controller != null && controller is StackRouter);
       if (widget._isDeclarative) {
         _routes = controller.preMatchedRoutes;
         _routerDelegate = DeclarativeRouterDelegate(

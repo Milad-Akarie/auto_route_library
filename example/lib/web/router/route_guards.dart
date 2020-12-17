@@ -4,7 +4,7 @@ bool isAuthenticated = false;
 
 class AuthRouteGuard extends AutoRouteGuard {
   @override
-  Future<bool> canNavigate(List<PageRouteInfo> routes, StackController router) async {
+  Future<bool> canNavigate(List<PageRouteInfo> routes, StackRouter router) async {
     if (!isAuthenticated) {
       isAuthenticated = true;
       router.pushAll(routes);

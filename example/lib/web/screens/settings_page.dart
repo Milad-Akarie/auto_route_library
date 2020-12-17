@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:example/web/router/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -8,6 +10,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   String state = 'initial';
+
   @override
   void initState() {
     // TODO: implement initState
@@ -24,12 +27,26 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           Text(state),
           Container(
-            child: TextField(
-              onChanged: (t) {
-                setState(() {
-                  state = t;
-                });
-              },
+            child: Column(
+              children: [
+                TextField(
+                  onChanged: (t) {
+                    setState(() {
+                      state = t;
+                    });
+                  },
+                ),
+                FlatButton(
+                  child: Text('Go To Book 4'),
+                  onPressed: () {
+                    AutoTabsRouter.of(context)
+                      ..setActiveIndex(0)
+                      ..childRouterOf<StackRouter>(BooksTabs.key).push(
+                        BookDetailsPageRoute(id: 4),
+                      );
+                  },
+                )
+              ],
             ),
           ),
         ],

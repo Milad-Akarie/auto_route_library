@@ -1,4 +1,5 @@
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:example/data/books_data.dart';
 import 'package:flutter/material.dart';
 
@@ -28,13 +29,21 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return book == null
-        ? Container(
-            child: Text('Book null'),
-          )
+        ? Container(child: Text('Book null'))
         : Scaffold(
             appBar: AppBar(title: Text(book.name)),
             body: Center(
-              child: TextField(),
+              child: Column(
+                children: [
+                  TextField(),
+                  FlatButton(
+                    child: Text('Go To Settings'),
+                    onPressed: () {
+                      AutoTabsRouter.of(context).setActiveIndex(1);
+                    },
+                  )
+                ],
+              ),
             ),
           );
   }

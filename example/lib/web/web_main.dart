@@ -24,7 +24,17 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.dark(),
       routerDelegate: RootRouterDelegate(
         routerConfig,
-        // initialDeepLink: '/books',
+        initialDeepLink: '/bookshhgj/kjhkj3',
+        // defaultHistory: [
+        //   DashboardPageRoute(children: [
+        //     BooksTabs(
+        //       children: [
+        //         BookListPageRoute(),
+        //         BookDetailsPageRoute(id: 3),
+        //       ],
+        //     )
+        //   ])
+        // ],
       ),
       routeInformationParser: routerConfig.nativeRouteParser,
     );

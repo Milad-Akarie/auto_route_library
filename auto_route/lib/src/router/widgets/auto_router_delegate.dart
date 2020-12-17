@@ -12,15 +12,19 @@ import '../controller/routing_controller.dart';
 
 mixin AutoRouterDelegate<T> on RouterDelegate<T> {
   RootRouterDelegate get rootDelegate;
-
   RoutingController get controller;
+
+  @override
+  Future<bool> popRoute() {
+    return SynchronousFuture<bool>(controller.pop());
+  }
 }
 
 class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
-    with ChangeNotifier, AutoRouterDelegate<List<PageRouteInfo>>, PopNavigatorRouterDelegateMixin<List<PageRouteInfo>> {
+    with ChangeNotifier, AutoRouterDelegate<List<PageRouteInfo>> {
   final List<PageRouteInfo> defaultHistory;
   final GlobalKey<NavigatorState> navigatorKey;
-  final StackController controller;
+  final StackRouter controller;
   final String initialDeepLink;
   final List<NavigatorObserver> navigatorObservers;
 
@@ -50,7 +54,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
-    if (controller.stack.isEmpty) {
+    if (controller.hasEntries) {
       return SynchronousFuture(null);
     }
 
@@ -78,8 +82,8 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
 
   @override
   Widget build(BuildContext context) {
-    return StackControllerScope(
-      controller: controller,
+    return StackRouterScope(
+      router: controller,
       child: !controller.hasEntries
           ? Container(color: Colors.white)
           : Navigator(
@@ -98,11 +102,10 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   }
 }
 
-class InnerRouterDelegate extends RouterDelegate
-    with ChangeNotifier, PopNavigatorRouterDelegateMixin, AutoRouterDelegate {
+class InnerRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterDelegate {
   final RootRouterDelegate rootDelegate;
   final GlobalKey<NavigatorState> navigatorKey;
-  final StackController controller;
+  final StackRouter controller;
   final Widget Function(BuildContext context, Widget widget) builder;
 
   final List<NavigatorObserver> navigatorObservers;
@@ -139,8 +142,8 @@ class InnerRouterDelegate extends RouterDelegate
             },
           );
 
-    return StackControllerScope(
-      controller: controller,
+    return StackRouterScope(
+      router: controller,
       child: builder == null
           ? content
           : LayoutBuilder(
@@ -150,7 +153,7 @@ class InnerRouterDelegate extends RouterDelegate
   }
 
   void pushInitialRoutes(List<PageRouteInfo> routes) {
-    if (!controller.hasEntries) {
+    if (controller.hasEntries) {
       return;
     }
     if (!listNullOrEmpty(controller.preMatchedRoutes)) {
@@ -185,7 +188,7 @@ class DeclarativeRouterDelegate extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin, AutoRouterDelegate {
   final RootRouterDelegate rootDelegate;
   final GlobalKey<NavigatorState> navigatorKey;
-  final StackController controller;
+  final StackRouter controller;
   final Function(PageRouteInfo route) onPopRoute;
   final List<NavigatorObserver> navigatorObservers;
 
@@ -240,7 +243,7 @@ class DeclarativeRouterDelegate extends RouterDelegate
 class TabsRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterDelegate {
   final RootRouterDelegate rootDelegate;
   final List<PageRouteInfo> tabRoutes;
-  final TabsController controller;
+  final TabsRouter controller;
   final Widget Function(BuildContext context, Widget widget) builder;
 
   TabsRouterDelegate({
@@ -254,40 +257,23 @@ class TabsRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterD
       notifyListeners();
       rootDelegate.notifyListeners();
     });
-
     setupRoutes(tabRoutes);
   }
 
   void setupRoutes(List<PageRouteInfo> routes) {
-    List<PageRouteInfo> routesToPush = routes;
-    if (!listNullOrEmpty(controller.preMatchedRoutes)) {
-      for (var preMatchedRoute in controller.preMatchedRoutes) {
-        var route = routes.firstWhere(
-          (r) => r.path == preMatchedRoute.path,
-          orElse: () {
-            throw FlutterError('${preMatchedRoute.path} is not assign as a tab route');
-          },
-        );
-        routesToPush.remove(route);
-      }
-      routesToPush.addAll(controller.preMatchedRoutes);
-    }
-    if (!listNullOrEmpty(routesToPush)) {
-      controller.setupRoutes(routesToPush);
-    }
+    controller.setupRoutes(routes);
   }
 
   @override
   Widget build(BuildContext context) {
     var stack = controller.stack;
-    var keysList = tabRoutes.map((e) => e.routeKey).toList(growable: false);
     final content = stack.isEmpty
         ? Container(color: Theme.of(context).scaffoldBackgroundColor)
         : Stack(
             fit: StackFit.expand,
-            children: List<Widget>.generate(tabRoutes.length, (int index) {
-              final bool active = keysList[index] == controller.currentRoute.key;
-              var page = stack.firstWhere((p) => p.data.key == keysList[index]);
+            children: List<Widget>.generate(stack.length, (int index) {
+              final bool active = index == controller.activeIndex;
+              final page = stack[index];
               return Offstage(
                 offstage: !active,
                 key: page.key,
@@ -308,7 +294,7 @@ class TabsRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouterD
 
   @override
   Future<bool> popRoute() async {
-    var topMostRouter = controller.topMost;
+    final topMostRouter = controller.topMost;
     if (topMostRouter == null) return SynchronousFuture<bool>(false);
     return topMostRouter.pop();
   }

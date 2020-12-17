@@ -33,6 +33,19 @@ class RouteData {
         this,
       ]);
 
+  factory RouteData.from(PageRouteInfo route, RouteConfig config, {RouteData parentData}) {
+    return RouteData(
+        route: route,
+        key: route.routeKey,
+        path: route.path,
+        match: route.match,
+        pathParams: Parameters(route.pathParams),
+        queryParams: Parameters(route.queryParams),
+        parent: parentData,
+        fragment: route.fragment,
+        args: route.args);
+  }
+
   static RouteData of(BuildContext context) {
     var scope = context.dependOnInheritedWidgetOfExactType<RouteDataScope>();
     assert(() {

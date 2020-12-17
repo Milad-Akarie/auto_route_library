@@ -20,7 +20,7 @@ class AutoTabsRouter extends StatefulWidget {
 
   @override
   AutoTabsRouterState createState() => AutoTabsRouterState();
-  static TabsController of(BuildContext context) {
+  static TabsRouter of(BuildContext context) {
     var scope = TabsRoutingControllerScope.of(context);
     assert(() {
       if (scope == null) {
@@ -39,7 +39,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> {
   ChildBackButtonDispatcher _backButtonDispatcher;
   AutoRouterDelegate _routerDelegate;
 
-  TabsController get controller => _routerDelegate?.controller;
+  TabsRouter get controller => _routerDelegate?.controller;
 
   @override
   void didChangeDependencies() {

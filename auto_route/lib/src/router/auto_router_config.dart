@@ -13,14 +13,14 @@ typedef PageFactory = Page<dynamic> Function(RouteData config);
 
 abstract class AutoRouterConfig {
   RouteCollection routeCollection;
-  StackController root;
+  StackRouter root;
 
   @mustCallSuper
   AutoRouterConfig() {
     assert(routes != null);
     routeCollection = RouteCollection.from(routes);
-    root = SubTreeEntry(
-      key: 'root',
+    root = TreeEntry(
+      key: 'ROOT',
       routeCollection: routeCollection,
       pageBuilder: _pageBuilder,
     );
