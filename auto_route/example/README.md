@@ -6,8 +6,8 @@ class LoginScreen extends StatelessWidget {}
 
 @MaterialAutoRouter(
   routes: <AutoRoute>[
-    MaterialRoute(page: HomeScreen, initial: true),
-    MaterialRoute( page: LoginScreen, fullscreenDialog: true),
+    AutoRoute(page: HomeScreen, initial: true),
+    AutoRoute( page: LoginScreen, fullscreenDialog: true),
   ],
 )
 class $AppRouter {}

@@ -34,7 +34,9 @@ class PageRouteInfo {
     assert(match != null);
     var children;
     if (match.hasChildren) {
-      children = match.children.map((m) => PageRouteInfo.fromMatch(m)).toList(growable: false);
+      children = match.children
+          .map((m) => PageRouteInfo.fromMatch(m))
+          .toList(growable: false);
     }
     return PageRouteInfo(
       match.config.key,
@@ -49,7 +51,8 @@ class PageRouteInfo {
 
   String get match => _rawMatch ?? _expand(path, pathParams);
 
-  String get fullPath => p.joinAll([match, if (hasChildren) children.last.fullPath]);
+  String get fullPath =>
+      p.joinAll([match, if (hasChildren) children.last.fullPath]);
 
   bool get hasChildren => !listNullOrEmpty(children);
 

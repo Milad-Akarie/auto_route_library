@@ -61,8 +61,6 @@ abstract class TabsRouter extends RoutingController {
 abstract class StackRouter extends RoutingController {
   Future<void> push(PageRouteInfo route, {OnNavigationFailure onFailure});
 
-  Future<void> navigate(PageRouteInfo route, {OnNavigationFailure onFailure});
-
   Future<void> pushPath(String path, {bool includePrefixMatches = false, OnNavigationFailure onFailure});
 
   Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure onFailure});
@@ -74,11 +72,31 @@ abstract class StackRouter extends RoutingController {
 
   Future<void> pushAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
 
-  Future<void> replaceAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
+  Future<void> popAndPushAll(List<PageRouteInfo> routes,
+      {OnNavigationFailure onFailure});
+
+  Future<void> replaceAll(List<PageRouteInfo> routes,
+      {OnNavigationFailure onFailure});
 
   bool removeUntilRoot();
-
+  bool removeWhere(RouteDataPredicate predicate);
   bool removeUntil(RouteDataPredicate predicate);
+
+  bool pop();
+
+  RouteMatcher get matcher;
+
+  List<AutoRoutePage> get stack;
+
+  RoutingController get parent;
+
+  RoutingController get root;
+
+  RoutingController get topMost;
+
+  RouteData get currentRoute;
+
+  RoutingController findRouterOf(String routeKey);
 }
 
 class StackRouterScope extends InheritedWidget {
@@ -391,6 +409,12 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier implements S
   }
 
   @override
+  Future<void> popAndPushAll(List<PageRouteInfo> routes, {onFailure}) {
+    _pop(notify: false);
+    return _pushAll(routes, onFailure: onFailure);
+  }
+
+  @override
   Future<void> replaceAll(
     List<PageRouteInfo> routes, {
     OnNavigationFailure onFailure,
@@ -434,6 +458,19 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier implements S
     if (didPop && notify) {
       notifyListeners();
     }
+    return didPop;
+  }
+
+  @override
+  bool removeWhere(RouteDataPredicate predicate) {
+    var didPop = false;
+    for (var key in List.unmodifiable(_children.keys)) {
+      if (predicate(_children[key].routeData)) {
+        didPop = true;
+        _children.remove(key);
+      }
+    }
+    notifyListeners();
     return didPop;
   }
 
@@ -584,6 +621,19 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier implements S
     return SynchronousFuture(null);
   }
 
+  RouteData _createRouteData(PageRouteInfo route, RouteConfig config) {
+    return RouteData(
+        route: route,
+        key: route.routeKey,
+        path: route.path,
+        match: route.match,
+        pathParams: Parameters(route.pathParams),
+        queryParams: Parameters(route.queryParams),
+        parent: page?.data,
+        fragment: route.fragment,
+        args: route.args);
+  }
+
   void _clearHistory() {
     if (_children.isNotEmpty) {
       var keys = List.unmodifiable(_children.keys);
@@ -593,6 +643,15 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier implements S
 
   @override
   RouteData get routeData => page?.data;
+
+  void removeTopMostEntry() {
+    assert(_children.isNotEmpty);
+    _children.remove(_children.keys.last);
+  }
+
+  RouterNode routerOf(RouteData data) {
+    return _children[ValueKey(data)];
+  }
 
   @override
   Future<void> pushAndRemoveUntil(
@@ -622,54 +681,5 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier implements S
       );
     }
     return SynchronousFuture(null);
-  }
-
-  RouteEntry _findLastEntryWithKey(String key) {
-    if (_children.isEmpty) {
-      return null;
-    } else {
-      return _children.values.lastWhere((n) => n.key == key, orElse: () => null);
-    }
-  }
-
-  @override
-  T childRouterOf<T extends RoutingController>(String routeKey) {
-    if (_children.isEmpty) {
-      return null;
-    } else {
-      return _children.values.whereType<T>().lastWhere(
-            (n) => n.key == key,
-            orElse: () => null,
-          );
-    }
-  }
-
-  @override
-  RoutingController routerOfRoute(routeData) {
-    return _children.values.whereType<RoutingController>().lastWhere(
-          (c) => c.routeData == routeData,
-          orElse: () => null,
-        );
-  }
-
-  @override
-  bool get hasEntries => _children.isNotEmpty;
-}
-
-class TabsRoutingControllerScope extends InheritedWidget {
-  final TabsRouter controller;
-
-  const TabsRoutingControllerScope({
-    @required Widget child,
-    @required this.controller,
-  }) : super(child: child);
-
-  static TabsRoutingControllerScope of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<TabsRoutingControllerScope>();
-  }
-
-  @override
-  bool updateShouldNotify(covariant TabsRoutingControllerScope oldWidget) {
-    return controller != oldWidget.controller;
   }
 }

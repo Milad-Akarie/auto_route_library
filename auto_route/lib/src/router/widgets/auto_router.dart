@@ -8,26 +8,24 @@ import '../controller/routing_controller.dart';
 import 'auto_router_delegate.dart';
 
 class AutoRouter extends StatefulWidget {
-  final List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes) onGenerateRoutes;
+  final List<PageRouteInfo> Function(
+      BuildContext context, List<PageRouteInfo> routes) onGenerateRoutes;
   final bool _isDeclarative;
   final Function(PageRouteInfo route) onPopRoute;
   final List<NavigatorObserver> navigatorObservers;
-  final Widget Function(BuildContext context, Widget widget) builder;
 
   const AutoRouter({
-    Key key1,
+    Key key,
     this.navigatorObservers = const [],
-    this.builder,
   })  : _isDeclarative = false,
         onGenerateRoutes = null,
         onPopRoute = null,
-        super(key: key1);
+        super(key: key);
 
   const AutoRouter.declarative({
     Key key,
-    this.navigatorObservers,
+    this.navigatorObservers = const [],
     @required this.onGenerateRoutes,
-    this.builder,
     this.onPopRoute,
   })  : _isDeclarative = true,
         super(key: key);
@@ -40,7 +38,7 @@ class AutoRouter extends StatefulWidget {
     assert(() {
       if (scope == null) {
         throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
-            'The context used to retrieve the AutoRouter must be that of a widget that '
+            'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
       return true;
@@ -72,10 +70,10 @@ class AutoRouterState extends State<AutoRouter> {
 
       assert(router.routerDelegate is AutoRouterDelegate);
       final autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
-      var parentRouteData = RouteData.of(context);
-      assert(parentRouteData != null);
-      StackRouter controller = autoRouterDelegate.controller.routerOfRoute(parentRouteData);
-      assert(controller != null && controller is StackRouter);
+      final parentData = RouteData.of(context);
+      assert(parentData != null);
+      RouterNode routerNode = autoRouterDelegate.routerNode.routerOf(parentData);
+      assert(routerNode != null);
       if (widget._isDeclarative) {
         _routes = controller.preMatchedRoutes;
         _routerDelegate = DeclarativeRouterDelegate(

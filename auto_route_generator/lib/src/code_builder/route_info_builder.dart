@@ -79,7 +79,7 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                     'args': refer('${r.className}Args').newInstance(
                       [],
                       {}..addEntries(
-                          r.argParams.map((p) => MapEntry(p.name, refer("${p.name}$argSuffix"))),
+                          r.argParams.map((p) => MapEntry(p.name, refer(p.getSafeName(argSuffix)))),
                         ),
                     ),
                   if (r.isParent) 'children': refer('children'),
@@ -96,7 +96,7 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> argParams, String argSuffix
     (p) => Parameter(
       (b) {
         b
-          ..name = "${p.name}$argSuffix"
+          ..name = p.getSafeName(argSuffix)
           ..named = true
           ..defaultTo = p.defaultCode
           ..type = p is FunctionParamConfig ? p.funRefer : p.type.refer;

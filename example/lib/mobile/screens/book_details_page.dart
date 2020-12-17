@@ -1,9 +1,9 @@
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:example/data/books_data.dart';
+import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
-
-import '../web_main.dart';
+import 'package:provider/provider.dart';
 
 class BookDetailsPage extends StatefulWidget {
   final int bookId;
@@ -15,35 +15,25 @@ class BookDetailsPage extends StatefulWidget {
 }
 
 class _BookDetailsPageState extends State<BookDetailsPage> {
-  Book book;
-
-  @override
-  void initState() {
-    super.initState();
-    try {
-      book = booksDb.findBookById(widget.bookId);
-      // ignore: empty_catches
-    } catch (e) {}
-  }
-
   @override
   Widget build(BuildContext context) {
+    final booksDb = Provider.of<BooksDB>(context);
+    final book = booksDb.findBookById(widget.bookId);
     return book == null
         ? Container(child: Text('Book null'))
         : Scaffold(
-            appBar: AppBar(title: Text(book.name)),
-            body: Center(
-              child: Column(
-                children: [
-                  TextField(),
-                  FlatButton(
-                    child: Text('Go To Settings'),
+            appBar: AppBar(
+              title: Text(book.name),
+              actions: [
+                FlatButton(
+                    child: Text('Remove list'),
                     onPressed: () {
-                      AutoTabsRouter.of(context).setActiveIndex(1);
-                    },
-                  )
-                ],
-              ),
+                      context.router.removeWhere((route) => route.key == BookListPageRoute.key);
+                    })
+              ],
+            ),
+            body: Center(
+              child: Text('Book Details/${book.id}'),
             ),
           );
   }

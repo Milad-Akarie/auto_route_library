@@ -1,4 +1,7 @@
 # ChangeLog
+## [1.0.0-beta] Breaking Changes!
+- Rebuild auto_route to work with Navigator 2.0
+-----------------------------------------------
 ## [0.6.9]
 - Fix generator error running flutter version 1.22
 - Fix bar-url not updated in flutter version 1.22 

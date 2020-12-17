@@ -34,13 +34,14 @@ class RouteConfigResolver {
     config.className = page.getDisplayString(withNullability: false);
 
     if (path == null) {
+      var prefix = _routerConfig.parent != null ? '' : '/';
       if (autoRoute.peek('initial')?.boolValue == true) {
-        path = _routerConfig.parent != null ? '' : '/';
+        path = prefix;
       } else {
         if (_routerConfig.usesLegacyGenerator) {
           path = '${_routerConfig.routeNamePrefix}${toKababCase(config.className)}';
         } else {
-          path = '${toKababCase(config.className)}';
+          path = '$prefix${toKababCase(config.className)}';
         }
       }
     } else if (!_routerConfig.usesLegacyGenerator) {
