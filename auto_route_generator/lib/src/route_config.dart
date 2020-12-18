@@ -24,14 +24,15 @@ class RouteConfig {
   ImportableType transitionBuilder;
   ImportableType customRouteBuilder;
   String redirectTo;
-  bool usesTabsRouter = false;
+  bool usesTabsRouter;
   int durationInMilliseconds;
   int reverseDurationInMilliseconds;
   int routeType = RouteType.material;
   List<ImportableType> guards = [];
   String cupertinoNavTitle;
   bool hasWrapper;
-  RouterConfig routerConfig;
+  String replacementInRouteName;
+  RouterConfig childRouterConfig;
 
   bool hasConstConstructor = false;
 
@@ -46,7 +47,7 @@ class RouteConfig {
     return pathName.contains(":") ? '_$routeName' : routeName;
   }
 
-  bool get isParent => routerConfig != null;
+  bool get isParent => childRouterConfig != null;
 
   List<ParamConfig> get argParams {
     return parameters?.where((p) => !p.isPathParam && !p.isQueryParam)?.toList() ?? [];
@@ -58,7 +59,18 @@ class RouteConfig {
 
   Iterable<ParamConfig> get optionalParams => parameters?.where((p) => p.isOptional) ?? [];
 
-  String get routeName => capitalize(valueOr(name, '${className}Route'));
+  String get routeName {
+    var nameToUse;
+    if (name != null) {
+      nameToUse = name;
+    } else if (replacementInRouteName != null && replacementInRouteName.split(',').length == 2) {
+      var parts = replacementInRouteName.split(',');
+      nameToUse = className.replaceAll(parts[0], parts[1]);
+    } else {
+      nameToUse = "${className}Route";
+    }
+    return capitalize(nameToUse);
+  }
 
   String get pageTypeName {
     switch (routeType) {

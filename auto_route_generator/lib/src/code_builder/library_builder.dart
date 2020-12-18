@@ -5,7 +5,6 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 
 import '../../import_resolver.dart';
-import 'args_class_builder.dart';
 
 const autoRouteImport = 'package:auto_route/auto_route.dart';
 const materialImport = 'package:flutter/material.dart';
@@ -29,7 +28,7 @@ String generateLibrary(RouterConfig config) {
       ..body.addAll([
         buildRouterConfig(config, allGuards, allRoutes),
         ...allRoutes.where((r) => r.routeType != RouteType.redirect).map((r) => buildRouteInfo(r, config)),
-        ...allRoutes.where((r) => r.parameters?.isNotEmpty == true).map(buildArgsClass),
+        // ...allRoutes.where((r) => r.parameters?.isNotEmpty == true).map(buildArgsClass),
       ]),
   );
 

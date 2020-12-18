@@ -121,8 +121,8 @@ class RouterClassGenerator {
       if (r.guards?.isNotEmpty == true) {
         _writeln(",guards:${r.guards.map((guard) => guard.name).toList().toString()}");
       }
-      if (r.routerConfig != null) {
-        _writeln(",generator: ${r.routerConfig.routerClassName}(),");
+      if (r.childRouterConfig != null) {
+        _writeln(",generator: ${r.childRouterConfig.routerClassName}(),");
       }
       _writeln('),');
     });

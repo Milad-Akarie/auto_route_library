@@ -23,24 +23,6 @@ class AutoRouterAnnotation {
   /// uses ExtendedNavigator will be used instead
   final bool usesLegacyGenerator;
 
-  /// This has no effect if [usesLegacyGenerator] is true
-  ///
-  /// if true argument names will always be generated
-  /// with the Arg suffix in [PageRouteInfo]
-  final bool alwaysSuffixArgsWithArg;
-
-  /// This has no effect if [usesLegacyGenerator] is true
-  ///
-  /// if true [PageRouteInfo] will include  queryParam
-  /// property
-  final bool usesQueryParams;
-
-  /// This has no effect if [usesLegacyGenerator] is true
-  ///
-  /// if true [PageRouteInfo] will include fragment
-  /// property
-  final bool usesPathFragments;
-
   /// if true relative imports will be generated
   /// when possible
   /// defaults to true
@@ -48,16 +30,29 @@ class AutoRouterAnnotation {
 
   final List<AutoRoute> routes;
 
+  /// Auto generated route names can be a bit long with
+  /// the [Route] suffix
+  /// e.g ProductDetailsPage would be ProductDetailsPageRoute
+  ///
+  /// You can replace some relative parts in your route names
+  /// by providing a replacement in the follow pattern
+  /// [whatToReplace,replacement]
+  /// what to replace and the replacement should be
+  /// separated with a comma [,]
+  /// e.g 'Page,Route'
+  /// so ProductDetailsPage would be ProductDetailsRoute
+  ///
+  /// defaults no null, ignored if a route name is provided.
+  final String replaceInRouteName;
+
   const AutoRouterAnnotation._(
     this.generateNavigationHelperExtension,
     this.routesClassName,
     this.routePrefix,
     this.routes,
     this.preferRelativeImports, {
+    this.replaceInRouteName,
     this.usesLegacyGenerator,
-    this.usesQueryParams,
-    this.usesPathFragments,
-    this.alwaysSuffixArgsWithArg,
   }) : assert(routes != null);
 }
 
@@ -71,14 +66,16 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
     bool usesLegacyGenerator,
-    bool alwaysSuffixArgsWithArg,
-    bool usesQueryParams,
-    bool usesPathFragments,
-  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix, routes, preferRelativeImports,
-            usesPathFragments: usesPathFragments,
-            usesQueryParams: usesQueryParams,
-            usesLegacyGenerator: usesLegacyGenerator,
-            alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg);
+    String replaceInRouteName,
+  }) : super._(
+          generateNavigationHelperExtension,
+          routesClassName,
+          pathPrefix,
+          routes,
+          preferRelativeImports,
+          replaceInRouteName: replaceInRouteName,
+          usesLegacyGenerator: usesLegacyGenerator,
+        );
 }
 
 /// Defaults created routes to CupertinoPageRoute unless
@@ -91,19 +88,15 @@ class CupertinoAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
     bool usesLegacyGenerator,
-    bool alwaysSuffixArgsWithArg,
-    bool usesQueryParams,
-    bool usesPathFragments,
+    String replaceInRouteName,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
-          usesPathFragments: usesPathFragments,
-          usesQueryParams: usesQueryParams,
+          replaceInRouteName: replaceInRouteName,
           usesLegacyGenerator: usesLegacyGenerator,
-          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
         );
 }
 
@@ -115,19 +108,15 @@ class AdaptiveAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
     bool usesLegacyGenerator,
-    bool alwaysSuffixArgsWithArg,
-    bool usesQueryParams,
-    bool usesPathFragments,
+    String replaceInRouteName,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
-          usesPathFragments: usesPathFragments,
-          usesQueryParams: usesQueryParams,
           usesLegacyGenerator: usesLegacyGenerator,
-          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
+          replaceInRouteName: replaceInRouteName,
         );
 }
 
@@ -174,32 +163,28 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
-  const CustomAutoRouter({
-    this.transitionsBuilder,
-    this.barrierDismissible,
-    this.durationInMilliseconds,
-    this.reverseDurationInMilliseconds,
-    this.customRouteBuilder,
-    this.opaque,
-    bool generateNavigationHelperExtension,
-    String routesClassName,
-    String pathPrefix,
-    @required List<AutoRoute> routes,
-    bool preferRelativeImports,
-    bool usesLegacyGenerator,
-    bool alwaysSuffixArgsWithArg,
-    bool usesQueryParams,
-    bool usesPathFragments,
-  }) : super._(
+  const CustomAutoRouter(
+      {this.transitionsBuilder,
+      this.barrierDismissible,
+      this.durationInMilliseconds,
+      this.reverseDurationInMilliseconds,
+      this.customRouteBuilder,
+      this.opaque,
+      bool generateNavigationHelperExtension,
+      String routesClassName,
+      String pathPrefix,
+      @required List<AutoRoute> routes,
+      bool preferRelativeImports,
+      bool usesLegacyGenerator,
+      String replaceInRouteName})
+      : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
-          usesPathFragments: usesPathFragments,
-          usesQueryParams: usesQueryParams,
           usesLegacyGenerator: usesLegacyGenerator,
-          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
+          replaceInRouteName: replaceInRouteName,
         );
 }
 

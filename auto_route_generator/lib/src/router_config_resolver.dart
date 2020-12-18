@@ -18,10 +18,8 @@ class RouterConfig {
   final String routeNamePrefix;
   final bool usesLegacyGenerator;
   final String routerClassName;
-  final bool alwaysSuffixArgsWithArg;
-  final bool usesQueryParams;
-  final bool usesPathFragments;
   final RouterConfig parent;
+  final String replaceInRouteName;
 
   RouterConfig({
     this.generateNavigationHelper,
@@ -29,12 +27,10 @@ class RouterConfig {
     this.parent,
     this.globalRouteConfig,
     this.routesClassName,
-    this.alwaysSuffixArgsWithArg,
     this.usesLegacyGenerator,
-    this.usesQueryParams,
-    this.usesPathFragments,
     this.routeNamePrefix,
     this.routerClassName,
+    this.replaceInRouteName,
   });
 
   RouterConfig copyWith({
@@ -45,6 +41,7 @@ class RouterConfig {
     String routeNamePrefix,
     String routerClassName,
     RouterConfig parent,
+    String replaceInRouteName,
   }) {
     return RouterConfig(
       generateNavigationHelper: generateNavigationHelper ?? this.generateNavigationHelper,
@@ -53,15 +50,14 @@ class RouterConfig {
       routesClassName: routesClassName ?? this.routesClassName,
       routeNamePrefix: routeNamePrefix ?? this.routeNamePrefix,
       routerClassName: routerClassName ?? this.routerClassName,
+      replaceInRouteName: replaceInRouteName ?? this.replaceInRouteName,
       parent: parent ?? this.parent,
-      usesQueryParams: this.usesQueryParams,
-      usesPathFragments: this.usesPathFragments,
       usesLegacyGenerator: this.usesLegacyGenerator,
-      alwaysSuffixArgsWithArg: this.alwaysSuffixArgsWithArg,
     );
   }
 
-  List<RouterConfig> get subRouters => routes.where((e) => e.routerConfig != null).map((e) => e.routerConfig).toList();
+  List<RouterConfig> get subRouters =>
+      routes.where((e) => e.childRouterConfig != null).map((e) => e.childRouterConfig).toList();
 
   List<RouterConfig> get collectAllRoutersIncludingParent =>
       subRouters.fold([this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
@@ -114,9 +110,7 @@ class RouterConfigResolver {
     var routesClassName = autoRouter.peek('routesClassName')?.stringValue ?? 'Routes';
 
     var usesLegacyGenerator = autoRouter.peek('usesLegacyGenerator')?.boolValue ?? false;
-    var alwaysSuffixArgsWithArg = autoRouter.peek('alwaysSuffixArgsWithArg')?.boolValue ?? false;
-    var usesQueryParams = autoRouter.peek('usesQueryParams')?.boolValue ?? false;
-    var usesPathFragments = autoRouter.peek('usesPathFragments')?.boolValue ?? false;
+    var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
 
     final autoRoutes = autoRouter.read('routes').listValue;
 
@@ -127,9 +121,7 @@ class RouterConfigResolver {
         routeNamePrefix: routeNamePrefix,
         generateNavigationHelper: generateNavigationExt,
         usesLegacyGenerator: usesLegacyGenerator,
-        usesPathFragments: usesPathFragments,
-        usesQueryParams: usesQueryParams,
-        alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg);
+        replaceInRouteName: replaceInRouteName);
 
     var routes = _resolveRoutes(routerConfig, autoRoutes);
     return routerConfig.copyWith(routes: routes);
@@ -153,7 +145,7 @@ class RouterConfigResolver {
           parent: routerConfig,
         );
         var routes = _resolveRoutes(subRouterConfig, children);
-        route.routerConfig = subRouterConfig.copyWith(routes: routes);
+        route.childRouterConfig = subRouterConfig.copyWith(routes: routes);
       }
     }
     return routes;

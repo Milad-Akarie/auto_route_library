@@ -63,6 +63,7 @@ class RouteConfigResolver {
     _extractRouteMetaDataInto(config, autoRoute);
 
     config.name = autoRoute.peek('name')?.stringValue;
+    config.replacementInRouteName = _routerConfig.replaceInRouteName;
 
     config.hasWrapper = classElement.allSupertypes
         .map<String>((el) => el.getDisplayString(withNullability: false))
@@ -85,7 +86,20 @@ class RouteConfigResolver {
         }
       }
     }
-    // _validatePathParams(routeConfig, classElement);
+
+    ClassElement pageClass = page.element;
+    if (config.pathParams?.isNotEmpty == true) {
+      var pathParamCandidates = config.parameters?.where((p) => !p.isQueryParam)?.map((e) => e.paramName) ?? [];
+      for (var pParam in config.pathParams) {
+        throwIf(!pathParamCandidates.contains(pParam.name),
+            '${config.className} does not have a constructor parameter with an alias-name [${pParam.name}]',
+            element: pageClass.unnamedConstructor);
+        var param = config.parameters.firstWhere((e) => e.paramName == pParam.name);
+        throwIf(!validPathParamTypes.contains(param.type.name),
+            "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
+            element: param.element);
+      }
+    }
     return config;
   }
 

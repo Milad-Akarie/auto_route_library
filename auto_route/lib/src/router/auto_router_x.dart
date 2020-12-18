@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart' show BuildContext;
 
-import '../route/route_data.dart';
 import 'controller/routing_controller.dart';
 import 'widgets/auto_router.dart';
 

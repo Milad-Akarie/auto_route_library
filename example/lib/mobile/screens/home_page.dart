@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
           var tabsRouter = context.tabsRouter;
           return Scaffold(
             appBar: AppBar(
-              title: Text(tabsRouter.currentRoute?.key),
+              title: Text(tabsRouter.currentRoute?.name),
             ),
             body: content,
             bottomNavigationBar: BottomNavigationBar(

@@ -1,5 +1,4 @@
 import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +88,6 @@ class AutoTabsRouterState extends State<AutoTabsRouter> {
   }
 }
 
-class TabRouterPage extends AutoRouter {
-  const TabRouterPage({Key key}) : super(key: key);
+class EmptyRouterPage extends AutoRouter {
+  const EmptyRouterPage({Key key}) : super(key: key);
 }

@@ -14,7 +14,7 @@ class RouteCollection {
   factory RouteCollection.from(List<RouteConfig> routes) {
     assert(routes != null);
     final routesMap = LinkedHashMap<String, RouteConfig>();
-    routes.forEach((r) => routesMap[r.key] = r);
+    routes.forEach((r) => routesMap[r.name] = r);
     return RouteCollection(routesMap);
   }
 
@@ -68,7 +68,11 @@ class RouteMatcher {
           // has rest
           if (match.config.isSubTree) {
             var rest = uri.replace(pathSegments: pathSegments.sublist(match.segments.length));
-            var children = _match(rest, match.config.children);
+            var children = _match(
+              rest,
+              match.config.children,
+              includePrefixMatches: includePrefixMatches,
+            );
             if (children != null) {
               if (!includePrefixMatches) {
                 matches.clear();
@@ -129,8 +133,8 @@ class RouteMatcher {
     return RouteMatch(
         segments: segments.sublist(0, splitAt),
         config: routeDef,
-        pathParams: pathParams,
-        queryParams: url.queryParameters,
+        pathParams: Parameters(pathParams),
+        queryParams: Parameters(url.queryParameters),
         fragment: url.fragment);
   }
 
@@ -152,12 +156,12 @@ class RouteMatcher {
   }
 
   RouteConfig _resolveConfig(PageRouteInfo route, RouteCollection routes) {
-    var routeConfig = routes[route.routeKey];
+    var routeConfig = routes[route.routeName];
     if (routeConfig == null) {
       return null;
     }
     if (route.hasChildren) {
-      var childrenMatch = route.children.every((r) => _isValidRoute(r, routeConfig.children));
+      var childrenMatch = route.initialChildren.every((r) => _isValidRoute(r, routeConfig.children));
       if (!childrenMatch) {
         return null;
       }

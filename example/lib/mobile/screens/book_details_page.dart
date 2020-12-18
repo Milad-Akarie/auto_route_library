@@ -5,9 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BookDetailsPage extends StatefulWidget {
-  final int bookId;
+  final int id;
+  final String queryFilter;
 
-  const BookDetailsPage({@PathParam('id') this.bookId});
+  //
+  const BookDetailsPage({
+    @PathParam('id') @required this.id,
+    @queryParam this.queryFilter,
+  });
 
   @override
   _BookDetailsPageState createState() => _BookDetailsPageState();
@@ -16,8 +21,10 @@ class BookDetailsPage extends StatefulWidget {
 class _BookDetailsPageState extends State<BookDetailsPage> {
   @override
   Widget build(BuildContext context) {
+    print(context.route.queryParams);
+    context.router.parent().root;
     final booksDb = Provider.of<BooksDB>(context);
-    final book = booksDb.findBookById(widget.bookId);
+    final book = booksDb.findBookById(widget.id);
     return book == null
         ? Container(child: Text('Book null'))
         : Scaffold(

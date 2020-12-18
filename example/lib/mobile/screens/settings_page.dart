@@ -34,8 +34,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   onPressed: () {
                     AutoTabsRouter.of(context)
                       ..setActiveIndex(0)
-                      ..childRouterOf<StackRouter>(BooksTab.key).push(
-                        BookDetailsPageRoute(id: 4),
+                      ..childRouterOf<StackRouter>(BooksTab.name).push(
+                        BookDetailsRoute(id: 4),
                       );
                   },
                 )

@@ -22,14 +22,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     var matcher = routerConfig.root.matcher;
-    print(matcher.match('/books/list/4', includePrefixMatches: true));
+    // print(matcher.match('/books/list/4', includePrefixMatches: true));
     return MaterialApp.router(
       theme: ThemeData.dark(),
       routerDelegate: RootRouterDelegate(
         routerConfig,
-        initialDeepLink: '/books/list/4',
+        initialDeepLink: '/books/list/2?queryFilter=bar',
       ),
-      routeInformationParser: routerConfig.nativeRouteParser,
+      routeInformationParser: routerConfig.defaultRouteParser(),
       builder: (_, router) {
         return Provider(
           create: (_) => BooksDB(),

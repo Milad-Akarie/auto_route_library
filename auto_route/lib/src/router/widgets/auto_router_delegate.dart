@@ -47,7 +47,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     if (route == null) {
       return null;
     }
-    return route.breadcrumbs.map((d) => d.route).toList(growable: false);
+    return route.breadcrumbs.map((e) => e.route).toList(growable: false);
   }
 
   @override
@@ -166,7 +166,7 @@ class InnerRouterDelegate extends RouterDelegate with ChangeNotifier, AutoRouter
         } else {
           controller.push(
             PageRouteInfo(
-              defaultConfig.key,
+              defaultConfig.name,
               path: defaultConfig.path,
             ),
           );

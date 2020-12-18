@@ -8,100 +8,115 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
         ..name = r.routeName
         ..extend = pageRouteType
         ..fields.addAll([
+          if (r.parameters?.isNotEmpty == true)
+            ...r.parameters.map((param) => Field((b) => b
+              ..modifier = FieldModifier.final$
+              ..name = param.name
+              ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
           Field(
             (b) => b
               ..modifier = FieldModifier.constant
-              ..name = 'key'
+              ..name = 'name'
               ..static = true
               ..type = stringRefer
               ..assignment = literalString(r.routeName).code,
           )
         ])
-        ..constructors.add(
-          Constructor(
-            (b) {
-              var argSuffix = '';
-              if (router.alwaysSuffixArgsWithArg) {
-                argSuffix = 'Arg';
-              } else if (r.pathParams?.isNotEmpty == true) {
-                argSuffix = 'Arg';
-              }
-
-              return b
-                ..optionalParameters.addAll([
-                  ...buildArgParams(r.argParams, argSuffix),
-                  if (r.pathParams?.isNotEmpty == true)
-                    ...r.pathParams.map(
-                      (p) => Parameter((b) {
-                        b
-                          ..named = true
-                          ..name = p.name;
-                        if (!p.isOptional) {
-                          b.annotations.add(requiredAnnotation);
-                        }
-                        return b;
-                      }),
-                    ),
-                  if (r.isParent)
-                    Parameter((b) => b
-                      ..named = true
-                      ..name = 'children'
-                      ..type = listRefer(pageRouteType)),
-                  if (router.usesPathFragments)
-                    Parameter(
-                      (b) => b
+        ..constructors.addAll(
+          [
+            Constructor(
+              (b) {
+                return b
+                  ..constant = (r.parameters == null)
+                  ..optionalParameters.addAll([
+                    if (r.parameters?.isNotEmpty == true) ...buildArgParams(r.parameters),
+                    if (r.isParent)
+                      Parameter((b) => b
                         ..named = true
-                        ..name = "fragment"
-                        ..type = stringRefer,
-                    ),
-                  if (router.usesQueryParams)
-                    Parameter(
-                      (b) => b
-                        ..named = true
-                        ..name = "queryParams"
-                        ..type = refer('Map<String,dynamic>'),
-                    )
-                ])
-                ..initializers.add(refer('super').call([
-                  refer('key')
-                ], {
-                  'path': literalString(r.pathName),
-                  if (r.pathParams?.isNotEmpty == true)
-                    'pathParams': literalMap(Map.fromEntries(
-                      r.pathParams.map(
-                        (p) => MapEntry(
-                          p.name,
-                          refer(p.name),
+                        ..name = 'children'
+                        ..type = listRefer(pageRouteType)),
+                  ])
+                  ..initializers.add(refer('super').call([
+                    refer('name')
+                  ], {
+                    'path': literalString(r.pathName),
+                    if (r.pathParams?.isNotEmpty == true)
+                      'params': literalMap(
+                        Map.fromEntries(
+                          r.pathParams.map(
+                            (p) => MapEntry(
+                              p.name,
+                              refer(p.name),
+                            ),
+                          ),
                         ),
                       ),
-                    )),
-                  if (r.argParams?.isNotEmpty == true)
-                    'args': refer('${r.className}Args').newInstance(
-                      [],
-                      {}..addEntries(
-                          r.argParams.map((p) => MapEntry(p.name, refer(p.getSafeName(argSuffix)))),
-                        ),
+                    if (r.parameters?.isNotEmpty == true)
+                      'argProps': literalList(r.parameters.map((e) => refer(e.name))),
+                    if (r.isParent) 'initialChildren': refer('children'),
+                  }).code);
+              },
+            ),
+            if (r.isParent || r.parameters?.isNotEmpty == true)
+              Constructor(
+                (b) {
+                  b
+                    ..name = 'fromMatch'
+                    ..initializers.addAll([
+                      if (r.parameters?.isNotEmpty == true)
+                        ...r.parameters.map((p) => refer(p.name).assign(getParamAssignment(p)).code),
+                      refer('super').newInstanceNamed('fromMatch', [refer('match')]).code
+                    ]);
+                  b.requiredParameters.add(
+                    Parameter(
+                      (b) => b
+                        ..name = 'match'
+                        ..type = refer("RouteMatch", autoRouteImport),
                     ),
-                  if (r.isParent) 'children': refer('children'),
-                  if (router.usesQueryParams) 'queryParams': refer("queryParams"),
-                  if (router.usesPathFragments) 'fragment': refer('fragment')
-                }).code);
-            },
-          ),
+                  );
+                  return b;
+                },
+              )
+          ],
         ),
     );
 
-Iterable<Parameter> buildArgParams(List<ParamConfig> argParams, String argSuffix) {
-  return argParams.map(
+// BookDetailsRoute.fromMatch(_i1.RouteMatch match)
+// : id = match.pathParams.getInt('id'),
+// queryFilter = match.queryParams.getString('queryFilter'),
+// super.fromMatch(match);
+
+Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
+  return parameters.map(
     (p) => Parameter(
       (b) {
         b
-          ..name = p.getSafeName(argSuffix)
+          ..name = p.getSafeName()
           ..named = true
-          ..defaultTo = p.defaultCode
-          ..type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+          ..toThis = true
+          ..defaultTo = p.defaultCode;
         if (p.isRequired) b.annotations.add(requiredAnnotation);
+        return b;
       },
     ),
   );
+}
+
+Expression getParamAssignment(ParamConfig p) {
+  if (p.isPathParam) {
+    return refer('match').property('pathParams').property(p.getterMethodName).call([
+      literalString(p.paramName),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode),
+    ]);
+  } else if (p.isQueryParam) {
+    return refer('match').property('queryParams').property(p.getterMethodName).call([
+      literalString(p.paramName),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode),
+    ]);
+  } else {
+    return refer('match').property('params').property(p.getterMethodName).call([
+      literalString(p.paramName),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode),
+    ]);
+  }
 }

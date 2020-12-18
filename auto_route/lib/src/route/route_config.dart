@@ -1,11 +1,15 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/matcher/route_match.dart';
 import 'package:flutter/foundation.dart';
 
 import '../auto_route_guard.dart';
 import '../matcher/route_matcher.dart';
 
+typedef RouteBuilder<T extends PageRouteInfo> = T Function(RouteMatch match);
+
 @immutable
-class RouteConfig {
-  final String key;
+class RouteConfig<T extends PageRouteInfo> {
+  final String name;
   final String path;
   final bool fullMatch;
   final Type page;
@@ -13,15 +17,17 @@ class RouteConfig {
   final String redirectTo;
   final List<AutoRouteGuard> guards;
   final bool usesTabsRouter;
+  final RouteBuilder<T> routeBuilder;
 
   RouteConfig(
-    this.key, {
+    this.name, {
     @required this.path,
     this.page,
     this.usesTabsRouter = false,
     this.guards = const [],
     this.fullMatch = false,
     this.redirectTo,
+    this.routeBuilder,
     List<RouteConfig> children,
   })  : assert(page == null || redirectTo == null),
         assert(fullMatch != null),

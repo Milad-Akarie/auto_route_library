@@ -6,11 +6,12 @@ import '../utils.dart';
 @immutable
 class RouteMatch {
   final RouteConfig config;
-  final Map<String, dynamic> pathParams;
-  final Map<String, dynamic> queryParams;
+  final Parameters pathParams;
+  final Parameters queryParams;
   final List<RouteMatch> children;
   final String fragment;
   final List<String> segments;
+  final Parameters params;
 
   const RouteMatch({
     @required this.config,
@@ -19,16 +20,26 @@ class RouteMatch {
     this.pathParams,
     this.queryParams,
     this.fragment,
-  });
+  })  : assert(config != null),
+        assert(segments != null),
+        params = pathParams + queryParams;
 
   bool get hasChildren => !listNullOrEmpty(children);
+
+  PageRouteInfo get toRoute => config.routeBuilder(this);
+
+  String get path => config.path;
+
+  List<PageRouteInfo> buildChildren() {
+    return children?.map((m) => m.toRoute)?.toList(growable: false);
+  }
 
   RouteMatch copyWith({
     String key,
     String path,
     RouteConfig def,
-    Map<String, dynamic> pathParams,
-    Map<String, dynamic> queryParams,
+    Parameters pathParams,
+    Parameters queryParams,
     List<RouteMatch> children,
     String fragment,
     List<String> segments,

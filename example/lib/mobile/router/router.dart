@@ -7,6 +7,7 @@ import 'package:example/mobile/screens/settings_page.dart';
 export 'router.gr.dart';
 
 @MaterialAutoRouter(
+  replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     AutoRoute(
       path: '/',
@@ -15,16 +16,17 @@ export 'router.gr.dart';
       children: [
         AutoRoute(
           path: 'books',
-          page: TabRouterPage,
+          page: EmptyRouterPage,
           name: 'BooksTab',
           children: [
+            RedirectRoute(path: '', redirectTo: 'list'),
             AutoRoute(path: 'list', page: BookListPage),
             AutoRoute(path: 'list/:id', page: BookDetailsPage),
           ],
         ),
         AutoRoute(
           path: 'settings',
-          page: TabRouterPage,
+          page: EmptyRouterPage,
           name: 'SettingsTab',
           children: [AutoRoute(path: '', page: SettingsPage)],
         ),

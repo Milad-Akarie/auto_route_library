@@ -21,7 +21,7 @@ abstract class AutoRoutePage extends Page {
         assert(maintainState != null),
         super(
           // key: ValueKey(data.key),
-          arguments: data.args,
+          arguments: data,
         );
 
   @override

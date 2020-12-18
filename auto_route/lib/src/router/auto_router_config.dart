@@ -3,13 +3,12 @@ import 'package:flutter/widgets.dart';
 
 import '../../auto_route.dart';
 import '../matcher/route_matcher.dart';
-import '../route/route_data.dart';
-import '../route/route_def.dart';
+import '../route/route_config.dart';
 import 'auto_route_page.dart';
 import 'controller/routing_controller.dart';
 
-typedef PageBuilder = AutoRoutePage Function(RouteData data, RouteConfig def);
-typedef PageFactory = Page<dynamic> Function(RouteData config);
+typedef PageBuilder = AutoRoutePage Function(RouteData data);
+typedef PageFactory = Page<dynamic> Function(RouteData data);
 
 abstract class AutoRouterConfig {
   RouteCollection routeCollection;
@@ -30,20 +29,11 @@ abstract class AutoRouterConfig {
 
   List<RouteConfig> get routes;
 
-  NativeRouteInfoParser get nativeRouteParser => NativeRouteInfoParser(routeCollection);
+  DefaultRouteParser defaultRouteParser({bool includePrefixMatches = true}) =>
+      DefaultRouteParser(root.matcher, includePrefixMatches: includePrefixMatches);
 
-  WebRouteInfoParser get webRouteParser => WebRouteInfoParser(routeCollection);
-
-  RouteInformationProvider defaultProvider(String initialPath) {
-    return PlatformRouteInformationProvider(
-      initialRouteInformation:
-          RouteInformation(location: initialPath ?? '/' // WidgetsBinding.instance.window.defaultRouteName,
-              ),
-    );
-  }
-
-  AutoRoutePage _pageBuilder(RouteData data, RouteConfig def) {
-    var builder = pagesMap[def.page];
+  AutoRoutePage _pageBuilder(RouteData data) {
+    var builder = pagesMap[data.config.page];
     assert(builder != null);
     return builder(data);
   }
