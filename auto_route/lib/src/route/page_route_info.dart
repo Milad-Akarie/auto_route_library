@@ -1,5 +1,5 @@
 import 'package:auto_route/src/matcher/route_match.dart';
-import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 
@@ -7,54 +7,36 @@ import '../../auto_route.dart';
 import '../utils.dart';
 
 @immutable
-class PageRouteInfo {
-  final String _key;
+class PageRouteInfo extends Equatable {
+  final String _name;
   final String path;
-  final String _rawMatch;
-  final Map<String, dynamic> pathParams;
-  final Map<String, dynamic> queryParams;
-  final String fragment;
-  final List<PageRouteInfo> children;
-  final RouteArgs args;
+  final RouteMatch match;
+  final Map<String, dynamic> params;
+  final List<PageRouteInfo> initialChildren;
+  final List<Object> argProps;
 
   const PageRouteInfo(
-    this._key, {
+    this._name, {
     @required this.path,
-    String match,
-    this.children,
-    this.queryParams,
-    this.pathParams,
-    this.fragment,
-    this.args,
-  }) : _rawMatch = match;
+    this.initialChildren,
+    this.match,
+    this.params,
+    this.argProps,
+  });
 
-  String get routeKey => _key;
+  String get routeName => _name;
 
-  factory PageRouteInfo.fromMatch(RouteMatch match) {
-    assert(match != null);
-    var children;
-    if (match.hasChildren) {
-      children = match.children
-          .map((m) => PageRouteInfo.fromMatch(m))
-          .toList(growable: false);
+  String get stringMatch {
+    if (match != null) {
+      return p.joinAll(match.segments);
     }
-    return PageRouteInfo(
-      match.config.key,
-      path: match.config.path,
-      match: p.joinAll(match.segments),
-      pathParams: match.pathParams,
-      fragment: match.fragment,
-      queryParams: match.queryParams,
-      children: children,
-    );
+    return _expand(path, params);
   }
 
-  String get match => _rawMatch ?? _expand(path, pathParams);
-
   String get fullPath =>
-      p.joinAll([match, if (hasChildren) children.last.fullPath]);
+      p.joinAll([stringMatch, if (hasChildren) initialChildren.last.fullPath]);
 
-  bool get hasChildren => !listNullOrEmpty(children);
+  bool get hasChildren => !listNullOrEmpty(initialChildren);
 
   static String _expand(String template, Map<String, dynamic> params) {
     if (mapNullOrEmpty(params)) {
@@ -67,71 +49,81 @@ class PageRouteInfo {
     return path;
   }
 
-  PageRouteInfo copyWith({
-    String key,
-    String path,
-    Map<String, dynamic> pathParams,
-    Map<String, dynamic> queryParams,
-    String fragment,
-    List<PageRouteInfo> children,
-    Object args,
-  }) {
-    if ((key == null || identical(key, this.path)) &&
-        (path == null || identical(path, this._rawMatch)) &&
-        (pathParams == null || identical(pathParams, this.pathParams)) &&
-        (queryParams == null || identical(queryParams, this.queryParams)) &&
-        (fragment == null || identical(fragment, this.fragment)) &&
-        (children == null || identical(children, this.children)) &&
-        (args == null || identical(args, this.args))) {
-      return this;
-    }
-
-    return new PageRouteInfo(
-      key ?? this._key,
-      path: path ?? this.path,
-      match: match ?? this.match,
-      pathParams: pathParams ?? this.pathParams,
-      queryParams: queryParams ?? this.queryParams,
-      fragment: fragment ?? this.fragment,
-      children: children ?? this.children,
-      args: args ?? this.args,
-    );
-  }
-
   @override
   String toString() {
-    return 'route{path: $path, pathName: $path, pathParams: $pathParams}';
+    return 'Route{name: $_name, path: $path, params: $params}';
   }
 
-  @override
-  bool operator ==(Object o) {
-    var mapEquality = MapEquality();
-    return identical(this, o) ||
-        o is PageRouteInfo &&
-            runtimeType == o.runtimeType &&
-            _key == o._key &&
-            path == o.path &&
-            _rawMatch == o._rawMatch &&
-            fragment == o.fragment &&
-            args == o.args &&
-            mapEquality.equals(pathParams, o.pathParams) &&
-            mapEquality.equals(queryParams, o.queryParams) &&
-            ListEquality().equals(children, o.children);
-  }
+  PageRouteInfo.fromMatch(this.match)
+      : _name = match.config.name,
+        path = match.config.path,
+        params = match.params.rawMap,
+        argProps = const [],
+        initialChildren = match.buildChildren();
 
 // maybe?
-  Future<void> push(BuildContext context) {
+  Future<void> show(BuildContext context) {
     return context.router.push(this);
   }
 
   @override
-  int get hashCode =>
-      _key.hashCode ^
-      path.hashCode ^
-      _rawMatch.hashCode ^
-      pathParams.hashCode ^
-      queryParams.hashCode ^
-      fragment.hashCode ^
-      children.hashCode ^
-      args.hashCode;
+  List<Object> get props => [
+        _name,
+        path,
+        match,
+        params,
+        initialChildren,
+        if (argProps != null) ...argProps,
+      ];
+}
+
+class RouteData<T extends PageRouteInfo> {
+  final PageRouteInfo route;
+  final RouteData parent;
+  final RouteConfig config;
+
+  const RouteData({
+    this.route,
+    this.parent,
+    this.config,
+  });
+
+  List<RouteData> get breadcrumbs => List.unmodifiable([
+        if (parent != null) ...parent.breadcrumbs,
+        this,
+      ]);
+
+  static RouteData of(BuildContext context) {
+    var scope = context.dependOnInheritedWidgetOfExactType<RouteDataScope>();
+    assert(() {
+      if (scope == null) {
+        throw FlutterError(
+            'RouteData operation requested with a context that does not include an RouteData.\n'
+            'The context used to retrieve the RouteData must be that of a widget that '
+            'is a descendant of a AutoRoutePage.');
+      }
+      return true;
+    }());
+    return scope.data;
+  }
+
+  T as<T extends PageRouteInfo>() {
+    if (route is! T) {
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${route.runtimeType}]');
+    }
+    return route as T;
+  }
+
+  String get name => route._name;
+
+  String get path => route.path;
+
+  String get match => route.stringMatch;
+
+  Parameters get pathParams => route.match?.pathParams;
+
+  Parameters get queryParams => route.match?.queryParams;
+
+  String get fragment => route.match?.fragment;
 }

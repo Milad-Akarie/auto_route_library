@@ -45,7 +45,7 @@ class $MyRouterConfig {}
     AutoRoute(path: '/books/:id', page: BookDetailsPage),
   ],
 )
-class $MyRouterConfig {}
+class $AppRouter {}
 ```
 
 #### Now simply run the generator
@@ -66,14 +66,13 @@ flutter packages pub run build_runner build
 
 after you run the generator your router config class will be generated, use it as follows:
 ```dart
-   // in your app state
-   final routerConfig = MyRouterConfig()
+
+   final appRouter = AppRouter()
    ...
   Widget build(BuildContext context){
       return MaterialApp.router(
-             // RootRouterDelegate is from auto_route package
-             routerDelegate: RootRouterDelegate(routerConfig),
-             routeInformationParser: routerConfig.nativeRouteParser,
+             routerDelegate: appRouter.rootDelegate,
+             routeInformationParser: appRouter.defaultRouteParser(),
          ),
   }
 ```

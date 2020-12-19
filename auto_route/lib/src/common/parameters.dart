@@ -15,6 +15,9 @@ class Parameters {
     return _params.toString();
   }
 
+  Parameters operator +(Parameters other) =>
+      Parameters({..._params, ...other._params});
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -28,7 +31,7 @@ class Parameters {
   String getString(String key, [String defaultValue]) =>
       _params[key] ?? defaultValue;
 
-  Object get(String key) => _params[key];
+  Object get(String key, defaultValue) => _params[key] ?? defaultValue;
 
   int getInt(String key, [int defaultValue]) {
     var param = _params[key];

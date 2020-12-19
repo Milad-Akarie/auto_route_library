@@ -20,24 +20,28 @@ abstract class AutoRoutePage extends Page {
         assert(fullscreenDialog != null),
         assert(maintainState != null),
         super(
-          // key: ValueKey(data.key),
-          arguments: data.args,
+          // key: ValueKey(data.route),
+          arguments: data,
         );
 
   @override
   bool canUpdate(Page other) {
     return other.runtimeType == runtimeType &&
-        (other as AutoRoutePage).data == this.data;
+        (other as AutoRoutePage).data.route == this.data.route;
   }
 
   @protected
   @override
   Route createRoute(BuildContext context) {
+    return onCreateRoute(context, wrappedChild(context));
+  }
+
+  Widget wrappedChild(BuildContext context) {
     var childToBuild = child;
     if (child is AutoRouteWrapper) {
       childToBuild = (child as AutoRouteWrapper).wrappedRoute(context);
     }
-    return onCreateRoute(context, childToBuild);
+    return RouteDataScope(child: childToBuild, data: data);
   }
 
   Route onCreateRoute(BuildContext context, Widget child);

@@ -3,40 +3,41 @@ import 'package:flutter/widgets.dart';
 
 import '../../auto_route.dart';
 import '../matcher/route_matcher.dart';
-import '../route/route_data.dart';
-import '../route/route_def.dart';
+import '../route/route_config.dart';
 import 'auto_route_page.dart';
 import 'controller/routing_controller.dart';
 
-typedef PageBuilder = AutoRoutePage Function(RouteData data, RouteConfig def);
-typedef PageFactory = Page<dynamic> Function(RouteData config);
+typedef PageBuilder = AutoRoutePage Function(RouteData data);
+typedef PageFactory = Page<dynamic> Function(RouteData data);
 
 abstract class AutoRouterConfig {
-  RoutesCollection routeCollection;
-  RoutingController root;
+  StackRouter root;
+  RootRouterDelegate rootDelegate;
 
   @mustCallSuper
-  AutoRouterConfig() {
+  AutoRouterConfig(
+      {List<PageRouteInfo> initialRoutes, String initialDeepLink}) {
     assert(routes != null);
-    routeCollection = RoutesCollection.from(routes);
-    root = RouterNode(
-      key: 'ROOT',
-      routeCollection: routeCollection,
-      pageBuilder: _pageBuilder,
-    );
+    assert(_pageBuilder != null);
+    rootDelegate = RootRouterDelegate(
+        root = TreeEntry(
+          routeCollection: RouteCollection.from(routes),
+          pageBuilder: _pageBuilder,
+        ),
+        initialDeepLink: initialDeepLink,
+        initialRoutes: initialRoutes);
   }
 
   Map<Type, PageFactory> get pagesMap;
 
   List<RouteConfig> get routes;
 
-  NativeRouteInfoParser get nativeRouteParser =>
-      NativeRouteInfoParser(routeCollection);
+  DefaultRouteParser defaultRouteParser({bool includePrefixMatches = true}) =>
+      DefaultRouteParser(root.matcher,
+          includePrefixMatches: includePrefixMatches);
 
-  WebRouteInfoParser get webRouteParser => WebRouteInfoParser(routeCollection);
-
-  AutoRoutePage _pageBuilder(RouteData data, RouteConfig config) {
-    var builder = pagesMap[config.page];
+  AutoRoutePage _pageBuilder(RouteData data) {
+    var builder = pagesMap[data.config.page];
     assert(builder != null);
     return builder(data);
   }

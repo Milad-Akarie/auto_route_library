@@ -4,18 +4,18 @@ import 'package:auto_route/src/matcher/route_match.dart';
 
 import '../../auto_route.dart';
 
-class RoutesCollection {
+class RouteCollection {
   final LinkedHashMap<String, RouteConfig> _routesMap;
 
-  RoutesCollection(this._routesMap)
+  RouteCollection(this._routesMap)
       : assert(_routesMap != null),
         assert(_routesMap.isNotEmpty);
 
-  factory RoutesCollection.from(List<RouteConfig> routes) {
+  factory RouteCollection.from(List<RouteConfig> routes) {
     assert(routes != null);
     final routesMap = LinkedHashMap<String, RouteConfig>();
-    routes.forEach((r) => routesMap[r.key] = r);
-    return RoutesCollection(routesMap);
+    routes.forEach((r) => routesMap[r.name] = r);
+    return RouteCollection(routesMap);
   }
 
   Iterable<RouteConfig> get routes => _routesMap.values;
@@ -26,7 +26,7 @@ class RoutesCollection {
 
   bool containsKey(String key) => _routesMap.containsKey(key);
 
-  RoutesCollection subCollectionOf(String key) {
+  RouteCollection subCollectionOf(String key) {
     assert(this[key]?.children != null, "$key does not have children");
     return this[key].children;
   }
@@ -37,7 +37,7 @@ class RoutesCollection {
 }
 
 class RouteMatcher {
-  final RoutesCollection collection;
+  final RouteCollection collection;
 
   const RouteMatcher(this.collection) : assert(collection != null);
 
@@ -47,7 +47,7 @@ class RouteMatcher {
         includePrefixMatches: includePrefixMatches);
   }
 
-  List<RouteMatch> _match(Uri uri, RoutesCollection routesCollection,
+  List<RouteMatch> _match(Uri uri, RouteCollection routesCollection,
       {bool includePrefixMatches = false}) {
     var pathSegments = _split(uri.path);
     var matches = <RouteMatch>[];
@@ -74,7 +74,11 @@ class RouteMatcher {
           if (match.config.isSubTree) {
             var rest = uri.replace(
                 pathSegments: pathSegments.sublist(match.segments.length));
-            var children = _match(rest, match.config.children);
+            var children = _match(
+              rest,
+              match.config.children,
+              includePrefixMatches: includePrefixMatches,
+            );
             if (children != null) {
               if (!includePrefixMatches) {
                 matches.clear();
@@ -138,8 +142,8 @@ class RouteMatcher {
     return RouteMatch(
         segments: segments.sublist(0, splitAt),
         config: routeDef,
-        pathParams: pathParams,
-        queryParams: url.queryParameters,
+        pathParams: Parameters(pathParams),
+        queryParams: Parameters(url.queryParameters),
         fragment: url.fragment);
   }
 
@@ -152,7 +156,7 @@ class RouteMatcher {
     return segments;
   }
 
-  bool _isValidRoute(PageRouteInfo route, RoutesCollection routes) {
+  bool _isValidRoute(PageRouteInfo route, RouteCollection routes) {
     return _resolveConfig(route, routes) != null;
   }
 
@@ -160,14 +164,14 @@ class RouteMatcher {
     return _resolveConfig(route, collection);
   }
 
-  RouteConfig _resolveConfig(PageRouteInfo route, RoutesCollection routes) {
-    var routeConfig = routes[route.routeKey];
+  RouteConfig _resolveConfig(PageRouteInfo route, RouteCollection routes) {
+    var routeConfig = routes[route.routeName];
     if (routeConfig == null) {
       return null;
     }
     if (route.hasChildren) {
-      var childrenMatch =
-          route.children.every((r) => _isValidRoute(r, routeConfig.children));
+      var childrenMatch = route.initialChildren
+          .every((r) => _isValidRoute(r, routeConfig.children));
       if (!childrenMatch) {
         return null;
       }

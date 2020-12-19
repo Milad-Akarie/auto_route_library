@@ -4,7 +4,7 @@ import 'route/page_route_info.dart';
 
 abstract class AutoRouteGuard {
   Future<bool> canNavigate(
-    List<PageRouteInfo> routes,
-    RoutingController router,
+    List<PageRouteInfo> pendingRoutes,
+    StackRouter router,
   );
 }

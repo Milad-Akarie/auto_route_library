@@ -23,24 +23,6 @@ class AutoRouterAnnotation {
   /// uses ExtendedNavigator will be used instead
   final bool usesLegacyGenerator;
 
-  /// This has no effect if [usesLegacyGenerator] is true
-  ///
-  /// if true argument names will always be generated
-  /// with the Arg suffix in [PageRouteInfo]
-  final bool alwaysSuffixArgsWithArg;
-
-  /// This has no effect if [usesLegacyGenerator] is true
-  ///
-  /// if true [PageRouteInfo] will include  queryParam
-  /// property
-  final bool usesQueryParams;
-
-  /// This has no effect if [usesLegacyGenerator] is true
-  ///
-  /// if true [PageRouteInfo] will include fragment
-  /// property
-  final bool usesPathFragments;
-
   /// if true relative imports will be generated
   /// when possible
   /// defaults to true
@@ -48,16 +30,29 @@ class AutoRouterAnnotation {
 
   final List<AutoRoute> routes;
 
+  /// Auto generated route names can be a bit long with
+  /// the [Route] suffix
+  /// e.g ProductDetailsPage would be ProductDetailsPageRoute
+  ///
+  /// You can replace some relative parts in your route names
+  /// by providing a replacement in the follow pattern
+  /// [whatToReplace,replacement]
+  /// what to replace and the replacement should be
+  /// separated with a comma [,]
+  /// e.g 'Page,Route'
+  /// so ProductDetailsPage would be ProductDetailsRoute
+  ///
+  /// defaults no null, ignored if a route name is provided.
+  final String replaceInRouteName;
+
   const AutoRouterAnnotation._(
     this.generateNavigationHelperExtension,
     this.routesClassName,
     this.routePrefix,
     this.routes,
     this.preferRelativeImports, {
+    this.replaceInRouteName,
     this.usesLegacyGenerator,
-    this.usesQueryParams,
-    this.usesPathFragments,
-    this.alwaysSuffixArgsWithArg,
   }) : assert(routes != null);
 }
 
@@ -71,15 +66,16 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
     bool usesLegacyGenerator,
-    bool alwaysSuffixArgsWithArg,
-    bool usesQueryParams,
-    bool usesPathFragments,
-  }) : super._(generateNavigationHelperExtension, routesClassName, pathPrefix,
-            routes, preferRelativeImports,
-            usesPathFragments: usesPathFragments,
-            usesQueryParams: usesQueryParams,
-            usesLegacyGenerator: usesLegacyGenerator,
-            alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg);
+    String replaceInRouteName,
+  }) : super._(
+          generateNavigationHelperExtension,
+          routesClassName,
+          pathPrefix,
+          routes,
+          preferRelativeImports,
+          replaceInRouteName: replaceInRouteName,
+          usesLegacyGenerator: usesLegacyGenerator,
+        );
 }
 
 /// Defaults created routes to CupertinoPageRoute unless
@@ -92,19 +88,15 @@ class CupertinoAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
     bool usesLegacyGenerator,
-    bool alwaysSuffixArgsWithArg,
-    bool usesQueryParams,
-    bool usesPathFragments,
+    String replaceInRouteName,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
-          usesPathFragments: usesPathFragments,
-          usesQueryParams: usesQueryParams,
+          replaceInRouteName: replaceInRouteName,
           usesLegacyGenerator: usesLegacyGenerator,
-          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
         );
 }
 
@@ -116,19 +108,15 @@ class AdaptiveAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports,
     @required List<AutoRoute> routes,
     bool usesLegacyGenerator,
-    bool alwaysSuffixArgsWithArg,
-    bool usesQueryParams,
-    bool usesPathFragments,
+    String replaceInRouteName,
   }) : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
-          usesPathFragments: usesPathFragments,
-          usesQueryParams: usesQueryParams,
           usesLegacyGenerator: usesLegacyGenerator,
-          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
+          replaceInRouteName: replaceInRouteName,
         );
 }
 
@@ -175,32 +163,28 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
-  const CustomAutoRouter({
-    this.transitionsBuilder,
-    this.barrierDismissible,
-    this.durationInMilliseconds,
-    this.reverseDurationInMilliseconds,
-    this.customRouteBuilder,
-    this.opaque,
-    bool generateNavigationHelperExtension,
-    String routesClassName,
-    String pathPrefix,
-    @required List<AutoRoute> routes,
-    bool preferRelativeImports,
-    bool usesLegacyGenerator,
-    bool alwaysSuffixArgsWithArg,
-    bool usesQueryParams,
-    bool usesPathFragments,
-  }) : super._(
+  const CustomAutoRouter(
+      {this.transitionsBuilder,
+      this.barrierDismissible,
+      this.durationInMilliseconds,
+      this.reverseDurationInMilliseconds,
+      this.customRouteBuilder,
+      this.opaque,
+      bool generateNavigationHelperExtension,
+      String routesClassName,
+      String pathPrefix,
+      @required List<AutoRoute> routes,
+      bool preferRelativeImports,
+      bool usesLegacyGenerator,
+      String replaceInRouteName})
+      : super._(
           generateNavigationHelperExtension,
           routesClassName,
           pathPrefix,
           routes,
           preferRelativeImports,
-          usesPathFragments: usesPathFragments,
-          usesQueryParams: usesQueryParams,
           usesLegacyGenerator: usesLegacyGenerator,
-          alwaysSuffixArgsWithArg: alwaysSuffixArgsWithArg,
+          replaceInRouteName: replaceInRouteName,
         );
 }
 
@@ -235,11 +219,13 @@ class AutoRoute<T> {
   final List<Type> guards;
 
   final bool fullMatch;
+  final bool usesTabsRouter;
 
   const AutoRoute(
       {this.page,
       this.initial,
       this.guards,
+      this.usesTabsRouter,
       this.fullscreenDialog,
       this.maintainState,
       this.fullMatch,
@@ -266,6 +252,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
       bool fullscreenDialog,
       bool maintainState,
       bool fullMatch,
+      bool usesTabsRouter,
       String name,
       List<Type> guards,
       List<AutoRoute> children})
@@ -279,6 +266,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
           path: path,
           children: children,
           name: name,
+          usesTabsRouter: usesTabsRouter,
         );
 }
 
@@ -296,18 +284,21 @@ class CupertinoRoute<T> extends AutoRoute<T> {
       String name,
       bool fullMatch,
       @required Type page,
+      bool usesTabsRouter,
       List<Type> guards,
       List<AutoRoute> children})
       : super(
-            initial: initial,
-            fullscreenDialog: fullscreenDialog,
-            maintainState: maintainState,
-            path: path,
-            name: name,
-            fullMatch: fullMatch,
-            page: page,
-            guards: guards,
-            children: children);
+          initial: initial,
+          fullscreenDialog: fullscreenDialog,
+          maintainState: maintainState,
+          path: path,
+          name: name,
+          fullMatch: fullMatch,
+          page: page,
+          guards: guards,
+          children: children,
+          usesTabsRouter: usesTabsRouter,
+        );
 }
 
 class AdaptiveRoute<T> extends AutoRoute<T> {
@@ -318,6 +309,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
       String name,
       String path,
       bool fullMatch,
+      bool usesTabsRouter,
       Type returnType,
       this.cupertinoPageTitle,
       @required Type page,
@@ -328,6 +320,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
             fullscreenDialog: fullscreenDialog,
             maintainState: maintainState,
             path: path,
+            usesTabsRouter: usesTabsRouter,
             name: name,
             fullMatch: fullMatch,
             page: page,
@@ -391,6 +384,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     bool fullMatch,
     @required Type page,
     List<Type> guards,
+    bool usesTabsRouter,
     List<AutoRoute> children,
     this.customRouteBuilder,
     this.barrierLabel,
@@ -405,6 +399,7 @@ class CustomRoute<T> extends AutoRoute<T> {
             maintainState: maintainState,
             path: path,
             name: name,
+            usesTabsRouter: usesTabsRouter,
             fullMatch: fullMatch,
             page: page,
             guards: guards,

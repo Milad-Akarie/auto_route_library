@@ -1,17 +1,29 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/auth_guard.dart';
-import 'package:example/mobile/screens/book_details_page.dart';
-import 'package:example/mobile/screens/book_list_page.dart';
+import 'package:example/mobile/screens/books/routes.dart';
 import 'package:example/mobile/screens/home_page.dart';
 import 'package:example/mobile/screens/login_page.dart';
+import 'package:example/mobile/screens/profile/routes.dart';
+import 'package:example/mobile/screens/settings.dart';
+import 'package:example/mobile/screens/user-data/routes.dart';
+
+export 'router.gr.dart';
 
 @MaterialAutoRouter(
+  replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: HomePage),
-    AutoRoute(page: BookListPage),
-    AutoRoute(path: '/books/:id', page: BookDetailsPage, guards: [AuthGuard]),
-    AutoRoute(path: '/login', page: LoginPage),
+    AutoRoute(
+      path: '/',
+      page: HomePage,
+      usesTabsRouter: true,
+      children: [
+        booksTab,
+        profileTab,
+        AutoRoute(path: 'settings', page: SettingsPage, name: 'SettingsTab'),
+      ],
+    ),
+    userDataRoutes,
+    AutoRoute(path: '/login', page: LoginPage, fullscreenDialog: true),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )
-class $MyRouterConfig {}
+class $BookAppRouter {}

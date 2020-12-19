@@ -9,7 +9,16 @@ import 'package:source_gen/source_gen.dart';
 final pathParamChecker = TypeChecker.fromRuntime(PathParam);
 final queryParamChecker = TypeChecker.fromRuntime(QueryParam);
 
-const reservedVarNames = ['key', 'children', 'queryParams', 'fragment'];
+const reservedVarNames = ['name', 'children'];
+
+const validPathParamTypes = [
+  'String',
+  'int',
+  'double',
+  'num',
+  'bool',
+  'dynamic'
+];
 
 /// holds constructor parameter info to be used
 /// in generating route parameters.
@@ -26,11 +35,13 @@ class ParamConfig {
   final bool isPathParam;
   final bool isQueryParam;
   final String defaultValueCode;
+  final ParameterElement element;
 
   ParamConfig(
       {@required this.type,
       @required this.name,
       this.alias,
+      this.element,
       @required this.isNamed,
       @required this.isPositional,
       @required this.isRequired,
@@ -39,11 +50,11 @@ class ParamConfig {
       @required this.isQueryParam,
       this.defaultValueCode});
 
-  String getSafeName(String argSuffix) {
-    if (reservedVarNames.contains(name) && argSuffix.isEmpty) {
+  String getSafeName() {
+    if (reservedVarNames.contains(name)) {
       return name + "0";
     } else {
-      return name + argSuffix;
+      return name;
     }
   }
 
@@ -83,7 +94,8 @@ class ParamConfig {
 
   String get paramName => alias ?? name;
 
-  _code.Code get defaultCode => defaultValueCode == null ? null : _code.Code(defaultValueCode);
+  _code.Code get defaultCode =>
+      defaultValueCode == null ? null : _code.Code(defaultValueCode);
 
   Set<String> get imports => type.imports;
 }
@@ -102,15 +114,22 @@ class RouteParameterResolver {
     var isPathParam = pathParamChecker.hasAnnotationOfExact(parameterElement);
     var paramAlias;
     if (isPathParam) {
-      paramAlias = pathParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
+      paramAlias = pathParamChecker
+          .firstAnnotationOf(parameterElement)
+          .getField('name')
+          ?.toStringValue();
     }
     var isQuery = queryParamChecker.hasAnnotationOfExact(parameterElement);
     if (isQuery) {
-      paramAlias = queryParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
+      paramAlias = queryParamChecker
+          .firstAnnotationOf(parameterElement)
+          .getField('name')
+          ?.toStringValue();
     }
 
     return ParamConfig(
       type: _typeResolver.resolveType(paramType),
+      element: parameterElement,
       name: parameterElement.name.replaceFirst("_", ''),
       alias: paramAlias,
       isPositional: parameterElement.isPositional,
@@ -129,6 +148,7 @@ class RouteParameterResolver {
         returnType: _typeResolver.resolveType(type.returnType),
         type: _typeResolver.resolveType(type),
         params: type.parameters.map(resolve).toList(),
+        element: paramElement,
         name: paramElement.name,
         isPositional: paramElement.isPositional,
         isRequired: paramElement.hasRequired,
@@ -166,6 +186,7 @@ class FunctionParamConfig extends ParamConfig {
     @required bool isRequired,
     @required bool isOptional,
     @required bool isNamed,
+    ParameterElement element,
     String defaultValueCode,
   }) : super(
           type: type,
@@ -174,16 +195,22 @@ class FunctionParamConfig extends ParamConfig {
           isPathParam: false,
           isQueryParam: false,
           isNamed: isNamed,
+          element: element,
           isPositional: isPositional,
           isRequired: isRequired,
           isOptional: isOptional,
         );
 
-  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList(growable: false);
+  List<ParamConfig> get requiredParams => params
+      .where((p) => p.isPositional && !p.isOptional)
+      .toList(growable: false);
 
-  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList(growable: false);
+  List<ParamConfig> get optionalParams => params
+      .where((p) => p.isPositional && p.isOptional)
+      .toList(growable: false);
 
-  List<ParamConfig> get namedParams => params.where((p) => p.isNamed).toList(growable: false);
+  List<ParamConfig> get namedParams =>
+      params.where((p) => p.isNamed).toList(growable: false);
 
   _code.FunctionType get funRefer => _code.FunctionType((b) => b
     ..returnType = returnType.refer
@@ -196,8 +223,11 @@ class FunctionParamConfig extends ParamConfig {
     ));
 
   @override
-  Set<String> get imports =>
-      {...returnType.imports, ...type.imports, ...params.map((e) => e.imports).reduce((acc, a) => acc..addAll(a))};
+  Set<String> get imports => {
+        ...returnType.imports,
+        ...type.imports,
+        ...params.map((e) => e.imports).reduce((acc, a) => acc..addAll(a))
+      };
 }
 
 class PathParamConfig {

@@ -4,39 +4,41 @@ import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text('Books App')),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 48),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RaisedButton(
-                child: Text('Navigate to Book list'),
-                onPressed: () {
-                  AutoRouter.of(context).push(BookListPageRoute());
-                  // or
-                  // context.router.push
-                },
-              ),
-              SizedBox(height: 16),
-              RaisedButton(
-                child: Text('Navigate to Batman Book'),
-                onPressed: () {
-                  // push too pages at once
-                  context.router.pushAll([
-                    BookListPageRoute(),
-                    BookDetailsPageRoute(id: 4),
-                  ]);
+  Widget build(_) => AutoTabsRouter(
+        routes: [BooksTab(), ProfileTab(), SettingsTab()],
+        duration: Duration(milliseconds: 400),
+        builder: (context, child, animation) {
+          var tabsRouter = context.tabsRouter;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(tabsRouter.currentRoute?.name),
+            ),
+            body: FadeTransition(child: child, opacity: animation),
+            bottomNavigationBar: buildBottomNav(tabsRouter),
+          );
+        },
+      );
 
-                  // or
-                  // context.router.pushPath('/books/4', includePrefixMatches: true);
-                },
-              )
-            ],
-          ),
-        ));
+  BottomNavigationBar buildBottomNav(TabsRouter tabsRouter) {
+    return BottomNavigationBar(
+      currentIndex: tabsRouter.activeIndex,
+      onTap: (index) {
+        tabsRouter.setActiveIndex(index);
+      },
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.source),
+          label: 'Books',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'Profile',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings),
+          label: 'Settings',
+        ),
+      ],
+    );
   }
 }

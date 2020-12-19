@@ -7,48 +7,22 @@ import 'package:path/path.dart' as p;
 import '../../matcher/route_matcher.dart';
 import '../../utils.dart';
 
-class NativeRouteInfoParser
-    extends RouteInformationParser<List<PageRouteInfo>> {
-  final RoutesCollection _collection;
+class DefaultRouteParser extends RouteInformationParser<List<PageRouteInfo>> {
+  final RouteMatcher _matcher;
+  final bool includePrefixMatches;
 
-  NativeRouteInfoParser(this._collection) : assert(_collection != null);
-
-  @override
-  Future<List<PageRouteInfo>> parseRouteInformation(
-      RouteInformation routeInformation) async {
-    var matches = RouteMatcher(_collection)
-        .match(routeInformation.location, includePrefixMatches: true);
-    var routes;
-    if (matches != null) {
-      routes = matches
-          .map((m) => PageRouteInfo.fromMatch(m))
-          .toList(growable: false);
-    }
-    return SynchronousFuture<List<PageRouteInfo>>(routes);
-  }
-
-  @override
-  RouteInformation restoreRouteInformation(List<PageRouteInfo> routes) {
-    String location = _getNormalizedPath(routes);
-    return RouteInformation(location: location);
-  }
-}
-
-class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
-  final RoutesCollection _collection;
-
-  WebRouteInfoParser(this._collection) : assert(_collection != null);
+  DefaultRouteParser(this._matcher, {this.includePrefixMatches = false})
+      : assert(_matcher != null),
+        assert(includePrefixMatches != null);
 
   @override
   Future<List<PageRouteInfo>> parseRouteInformation(
       RouteInformation routeInformation) async {
-    var matches = RouteMatcher(_collection)
-        .match(routeInformation.location, includePrefixMatches: false);
+    var matches = _matcher.match(routeInformation.location,
+        includePrefixMatches: includePrefixMatches);
     var routes;
     if (matches != null) {
-      routes = matches
-          .map((m) => PageRouteInfo.fromMatch(m))
-          .toList(growable: false);
+      routes = matches.map((m) => m.toRoute).toList(growable: false);
     }
     return SynchronousFuture<List<PageRouteInfo>>(routes);
   }
@@ -63,14 +37,14 @@ class WebRouteInfoParser extends RouteInformationParser<List<PageRouteInfo>> {
 String _getNormalizedPath(List<PageRouteInfo> routes) {
   var fullPath = p.joinAll([
     '/',
-    ...routes.where((e) => e.match.isNotEmpty).map((e) => e.match),
+    ...routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch),
   ]);
   var normalized = p.normalize(fullPath);
-  var query = routes.last.queryParams;
+  var query = routes.last.match?.queryParams?.rawMap;
   if (!mapNullOrEmpty(query)) {
     normalized += "?${query.keys.map((k) => '$k=${query[k]}').join('&')}";
   }
-  var frag = routes.last.fragment;
+  var frag = routes.last?.match?.fragment;
   if (frag != null && frag.isNotEmpty) {
     normalized += "#$frag";
   }
