@@ -11,18 +11,21 @@ typedef PageBuilder = AutoRoutePage Function(RouteData data);
 typedef PageFactory = Page<dynamic> Function(RouteData data);
 
 abstract class AutoRouterConfig {
-  RouteCollection routeCollection;
   StackRouter root;
+  RootRouterDelegate rootDelegate;
 
   @mustCallSuper
-  AutoRouterConfig() {
+  AutoRouterConfig(
+      {List<PageRouteInfo> initialRoutes, String initialDeepLink}) {
     assert(routes != null);
-    routeCollection = RouteCollection.from(routes);
-    root = TreeEntry(
-      key: 'ROOT',
-      routeCollection: routeCollection,
-      pageBuilder: _pageBuilder,
-    );
+    assert(_pageBuilder != null);
+    rootDelegate = RootRouterDelegate(
+        root = TreeEntry(
+          routeCollection: RouteCollection.from(routes),
+          pageBuilder: _pageBuilder,
+        ),
+        initialDeepLink: initialDeepLink,
+        initialRoutes: initialRoutes);
   }
 
   Map<Type, PageFactory> get pagesMap;
@@ -30,7 +33,8 @@ abstract class AutoRouterConfig {
   List<RouteConfig> get routes;
 
   DefaultRouteParser defaultRouteParser({bool includePrefixMatches = true}) =>
-      DefaultRouteParser(root.matcher, includePrefixMatches: includePrefixMatches);
+      DefaultRouteParser(root.matcher,
+          includePrefixMatches: includePrefixMatches);
 
   AutoRoutePage _pageBuilder(RouteData data) {
     var builder = pagesMap[data.config.page];

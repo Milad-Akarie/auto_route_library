@@ -1,4 +1,7 @@
 # ChangeLog
+## [1.0.0-beta.1] Breaking Changes!
+- Add TabsAutoRouter
+- Refactor some code
 ## [1.0.0-beta] Breaking Changes!
 - Rebuild auto_route to work with Navigator 2.0
 -----------------------------------------------

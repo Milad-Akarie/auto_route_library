@@ -12,7 +12,9 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
             ...r.parameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
               ..name = param.name
-              ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
+              ..type = param is FunctionParamConfig
+                  ? param.funRefer
+                  : param.type.refer)),
           Field(
             (b) => b
               ..modifier = FieldModifier.constant
@@ -29,7 +31,8 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                 return b
                   ..constant = (r.parameters == null)
                   ..optionalParameters.addAll([
-                    if (r.parameters?.isNotEmpty == true) ...buildArgParams(r.parameters),
+                    if (r.parameters?.isNotEmpty == true)
+                      ...buildArgParams(r.parameters),
                     if (r.isParent)
                       Parameter((b) => b
                         ..named = true
@@ -52,7 +55,8 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                         ),
                       ),
                     if (r.parameters?.isNotEmpty == true)
-                      'argProps': literalList(r.parameters.map((e) => refer(e.name))),
+                      'argProps':
+                          literalList(r.parameters.map((e) => refer(e.name))),
                     if (r.isParent) 'initialChildren': refer('children'),
                   }).code);
               },
@@ -64,8 +68,10 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                     ..name = 'fromMatch'
                     ..initializers.addAll([
                       if (r.parameters?.isNotEmpty == true)
-                        ...r.parameters.map((p) => refer(p.name).assign(getParamAssignment(p)).code),
-                      refer('super').newInstanceNamed('fromMatch', [refer('match')]).code
+                        ...r.parameters.map((p) =>
+                            refer(p.name).assign(getParamAssignment(p)).code),
+                      refer('super')
+                          .newInstanceNamed('fromMatch', [refer('match')]).code
                     ]);
                   b.requiredParameters.add(
                     Parameter(
@@ -80,11 +86,6 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
           ],
         ),
     );
-
-// BookDetailsRoute.fromMatch(_i1.RouteMatch match)
-// : id = match.pathParams.getInt('id'),
-// queryFilter = match.queryParams.getString('queryFilter'),
-// super.fromMatch(match);
 
 Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
   return parameters.map(
@@ -104,19 +105,22 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
 
 Expression getParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
-    return refer('match').property('pathParams').property(p.getterMethodName).call([
+    return refer('match')
+        .property('pathParams')
+        .property(p.getterMethodName)
+        .call([
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
   } else if (p.isQueryParam) {
-    return refer('match').property('queryParams').property(p.getterMethodName).call([
+    return refer('match')
+        .property('queryParams')
+        .property(p.getterMethodName)
+        .call([
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
   } else {
-    return refer('match').property('params').property(p.getterMethodName).call([
-      literalString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode),
-    ]);
+    return refer('null');
   }
 }

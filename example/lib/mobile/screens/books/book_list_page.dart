@@ -15,6 +15,7 @@ class BookListPage extends StatelessWidget {
                   title: Text(book.name),
                   subtitle: Text(book.genre),
                   onTap: () {
+                    // context.router.push(ookDetailsRoute(id: book.id));
                     BookDetailsRoute(id: book.id).show(context);
                   },
                 ),

@@ -16,7 +16,8 @@ String capitalize(String s) {
 
 String toKababCase(String s) {
   assert(s != null);
-  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
+  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'),
+      (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
 }
 
 void throwIf(bool condition, String message, {Element element, String todo}) {

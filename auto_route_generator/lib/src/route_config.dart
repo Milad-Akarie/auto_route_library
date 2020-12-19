@@ -50,20 +50,34 @@ class RouteConfig {
   bool get isParent => childRouterConfig != null;
 
   List<ParamConfig> get argParams {
-    return parameters?.where((p) => !p.isPathParam && !p.isQueryParam)?.toList() ?? [];
+    return parameters
+            ?.where((p) => !p.isPathParam && !p.isQueryParam)
+            ?.toList() ??
+        [];
   }
 
-  Iterable<ParamConfig> get requiredParams => parameters?.where((p) => p.isPositional && !p.isOptional) ?? [];
+  List<ParamConfig> get pathQueryParams {
+    return parameters
+            ?.where((p) => p.isPathParam || p.isQueryParam)
+            ?.toList() ??
+        [];
+  }
 
-  Iterable<ParamConfig> get positionalParams => parameters?.where((p) => p.isPositional) ?? [];
+  Iterable<ParamConfig> get requiredParams =>
+      parameters?.where((p) => p.isPositional && !p.isOptional) ?? [];
 
-  Iterable<ParamConfig> get optionalParams => parameters?.where((p) => p.isOptional) ?? [];
+  Iterable<ParamConfig> get positionalParams =>
+      parameters?.where((p) => p.isPositional) ?? [];
+
+  Iterable<ParamConfig> get optionalParams =>
+      parameters?.where((p) => p.isOptional) ?? [];
 
   String get routeName {
     var nameToUse;
     if (name != null) {
       nameToUse = name;
-    } else if (replacementInRouteName != null && replacementInRouteName.split(',').length == 2) {
+    } else if (replacementInRouteName != null &&
+        replacementInRouteName.split(',').length == 2) {
       var parts = replacementInRouteName.split(',');
       nameToUse = className.replaceAll(parts[0], parts[1]);
     } else {

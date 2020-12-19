@@ -19,16 +19,19 @@ TypeReference listRefer(Reference reference) => TypeReference((b) => b
 
 String generateLibrary(RouterConfig config) {
   var allRouters = config.collectAllRoutersIncludingParent;
-  var allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
-  var allGuards =
-      allRoutes.where((r) => r.guards?.isNotEmpty == true).fold(<ImportableType>{}, (acc, a) => acc..addAll(a.guards));
+  var allRoutes =
+      allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+  var allGuards = allRoutes
+      .where((r) => r.guards?.isNotEmpty == true)
+      .fold(<ImportableType>{}, (acc, a) => acc..addAll(a.guards));
 
   final library = Library(
     (b) => b
       ..body.addAll([
         buildRouterConfig(config, allGuards, allRoutes),
-        ...allRoutes.where((r) => r.routeType != RouteType.redirect).map((r) => buildRouteInfo(r, config)),
-        // ...allRoutes.where((r) => r.parameters?.isNotEmpty == true).map(buildArgsClass),
+        ...allRoutes
+            .where((r) => r.routeType != RouteType.redirect)
+            .map((r) => buildRouteInfo(r, config)),
       ]),
   );
 

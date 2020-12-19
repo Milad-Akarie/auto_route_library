@@ -20,13 +20,14 @@ abstract class AutoRoutePage extends Page {
         assert(fullscreenDialog != null),
         assert(maintainState != null),
         super(
-          // key: ValueKey(data.key),
+          // key: ValueKey(data.route),
           arguments: data,
         );
 
   @override
   bool canUpdate(Page other) {
-    return other.runtimeType == runtimeType && (other as AutoRoutePage).data == this.data;
+    return other.runtimeType == runtimeType &&
+        (other as AutoRoutePage).data.route == this.data.route;
   }
 
   @protected
@@ -146,7 +147,8 @@ class AdaptivePage extends AutoRoutePage {
   }
 }
 
-typedef CustomRouteBuilder = Route Function(BuildContext context, CustomPage page);
+typedef CustomRouteBuilder = Route Function(
+    BuildContext context, CustomPage page);
 
 class CustomPage extends AutoRoutePage {
   final bool opaque;
@@ -191,7 +193,8 @@ class CustomPage extends AutoRoutePage {
       settings: this,
       opaque: opaque,
       transitionDuration: Duration(milliseconds: durationInMilliseconds),
-      reverseTransitionDuration: Duration(milliseconds: reverseDurationInMilliseconds),
+      reverseTransitionDuration:
+          Duration(milliseconds: reverseDurationInMilliseconds),
       barrierColor: barrierColor,
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel,
@@ -202,7 +205,10 @@ class CustomPage extends AutoRoutePage {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
     return child;
   }
 }

@@ -1,16 +1,12 @@
 import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
+import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
-import 'auto_router_delegate.dart';
 
 class AutoRouter extends StatefulWidget {
-  final List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes) onGenerateRoutes;
-  final bool _isDeclarative;
-  final Function(PageRouteInfo route) onPopRoute;
   final List<NavigatorObserver> navigatorObservers;
   final Widget Function(BuildContext context, Widget content) builder;
 
@@ -18,110 +14,175 @@ class AutoRouter extends StatefulWidget {
     Key key,
     this.navigatorObservers = const [],
     this.builder,
-  })  : _isDeclarative = false,
-        onGenerateRoutes = null,
-        onPopRoute = null,
-        super(key: key);
+  }) : super(key: key);
 
-  const AutoRouter.declarative({
-    Key key,
-    this.navigatorObservers = const [],
-    @required this.onGenerateRoutes,
-    this.onPopRoute,
-  })  : _isDeclarative = true,
-        builder = null,
-        super(key: key);
+  //
+  static Widget declarative(
+          {Key key,
+          @required RoutesGenerator onGenerateRoutes,
+          Function(PageRouteInfo route) onPopRoute,
+          List<NavigatorObserver> navigatorObservers = const []}) =>
+      _DeclarativeAutoRouter(
+        onGenerateRoutes: onGenerateRoutes,
+        onPopRoute: onPopRoute,
+        navigatorObservers: navigatorObservers,
+      );
 
   @override
   AutoRouterState createState() => AutoRouterState();
-
   static StackRouter of(BuildContext context) {
     var scope = StackRouterScope.of(context);
     assert(() {
       if (scope == null) {
-        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError(
+            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
       return true;
     }());
-
     return scope.controller;
   }
 
-  static StackRouter childRouterOf(BuildContext context, String routeKey) {
-    return of(context)?.childRouterOf(routeKey);
+  static StackRouter innerRouterOf(BuildContext context, String routeName) {
+    return of(context)?.innerRouterOf<StackRouter>(routeName);
   }
 }
 
 class AutoRouterState extends State<AutoRouter> {
-  ChildBackButtonDispatcher _backButtonDispatcher;
-  AutoRouterDelegate _routerDelegate;
-  List<PageRouteInfo> _routes;
+  StackRouter _controller;
 
-  // StackRouter get controller => _routerDelegate?.controller;
+  StackRouter get controller => _controller;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    if (_routerDelegate == null) {
-      final router = Router.of(context);
-      assert(router != null);
-      _backButtonDispatcher = router.backButtonDispatcher.createChildBackButtonDispatcher();
-
-      assert(router.routerDelegate is AutoRouterDelegate);
-      final autoRouterDelegate = (router.routerDelegate as AutoRouterDelegate);
+    if (_controller == null) {
+      final parentCtrl = RoutingControllerScope.of(context).controller;
+      assert(parentCtrl != null);
       final parentData = RouteData.of(context);
       assert(parentData != null);
-      RoutingController controller = autoRouterDelegate.controller.routerOfRoute(parentData);
-      assert(controller != null);
-      if (widget._isDeclarative) {
-        _routes = controller.preMatchedRoutes;
-        _routerDelegate = DeclarativeRouterDelegate(
-          controller: controller,
-          navigatorObservers: widget.navigatorObservers,
-          routes: widget.onGenerateRoutes(context, _routes),
-          onPopRoute: widget.onPopRoute,
-          rootDelegate: autoRouterDelegate.rootDelegate,
-        );
-      } else {
-        _routerDelegate = InnerRouterDelegate(
-          controller: controller,
-          builder: widget.builder,
-          navigatorObservers: widget.navigatorObservers,
-          defaultRoutes: controller.preMatchedRoutes,
-          rootDelegate: autoRouterDelegate.rootDelegate,
-        );
-      }
+      _controller = parentCtrl.innerRouterOfRoute(parentData.route);
+      assert(_controller != null);
+      var rootDelegate = RootRouterDelegate.of(context);
+      _controller.addListener(() {
+        rootDelegate.notify();
+        setState(() {});
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final router = Router(
-      routerDelegate: _routerDelegate,
-      backButtonDispatcher: _backButtonDispatcher..takePriority(),
+    assert(_controller != null);
+    var navigator = !_controller.hasEntries
+        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
+        : Navigator(
+            pages: _controller.stack,
+            observers: widget.navigatorObservers,
+            key: _controller.navigatorKey,
+            onPopPage: (route, result) {
+              if (!route.didPop(result)) {
+                return false;
+              }
+              _controller.removeLast();
+              return true;
+            },
+          );
+    return RoutingControllerScope(
+      controller: _controller,
+      child: StackRouterScope(
+        controller: _controller,
+        child: widget.builder == null
+            ? navigator
+            : LayoutBuilder(
+                builder: (ctx, _) => widget.builder(ctx, navigator),
+              ),
+      ),
     );
-    if (widget._isDeclarative) {
-      return router;
-    } else {
-      return StackRouterScope(
-        child: router,
-        controller: _routerDelegate.controller,
-      );
+  }
+}
+
+typedef RoutesGenerator = List<PageRouteInfo> Function(
+    BuildContext context, List<PageRouteInfo> routes);
+
+class _DeclarativeAutoRouter extends StatefulWidget {
+  final RoutesGenerator onGenerateRoutes;
+  final Function(PageRouteInfo route) onPopRoute;
+  final List<NavigatorObserver> navigatorObservers;
+
+  const _DeclarativeAutoRouter({
+    Key key,
+    @required this.onGenerateRoutes,
+    this.navigatorObservers = const [],
+    this.onPopRoute,
+  }) : super(key: key);
+
+  @override
+  _DeclarativeAutoRouterState createState() => _DeclarativeAutoRouterState();
+}
+
+class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
+  List<PageRouteInfo> _routes;
+  StackRouter _controller;
+
+  StackRouter get controller => _controller;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_controller == null) {
+      final parentCtrl = RoutingControllerScope.of(context).controller;
+      assert(parentCtrl != null);
+      final parentData = RouteData.of(context);
+      assert(parentData != null);
+
+      _controller = parentCtrl.innerRouterOfRoute(parentData.route);
+      assert(_controller != null);
+      _routes = widget.onGenerateRoutes(context, _controller.preMatchedRoutes);
+      (_controller as TreeEntry).updateDeclarativeRoutes(_routes);
+      var rootDelegate = RootRouterDelegate.of(context);
+      _controller.addListener(() {
+        rootDelegate.notify();
+        setState(() {});
+      });
     }
   }
 
   @override
-  void didUpdateWidget(covariant AutoRouter oldWidget) {
+  Widget build(BuildContext context) {
+    assert(_controller != null);
+    var navigator = !_controller.hasEntries
+        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
+        : Navigator(
+            pages: _controller.stack,
+            observers: widget.navigatorObservers,
+            key: _controller.navigatorKey,
+            onPopPage: (route, result) {
+              if (!route.didPop(result)) {
+                return false;
+              }
+              _controller.pop();
+              return true;
+            },
+          );
+    return RoutingControllerScope(
+      controller: _controller,
+      child: navigator,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _DeclarativeAutoRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget._isDeclarative) {
-      var newRoutes = widget.onGenerateRoutes(context, _routes);
-      if (!ListEquality().equals(newRoutes, _routes)) {
-        _routes = newRoutes;
-        (_routerDelegate as DeclarativeRouterDelegate).updateRoutes(newRoutes);
-      }
+    var newRoutes = widget.onGenerateRoutes(context, _routes);
+    if (!ListEquality().equals(newRoutes, _routes)) {
+      _routes = newRoutes;
+      (_controller as TreeEntry).updateDeclarativeRoutes(newRoutes);
     }
   }
+}
+
+class EmptyRouterPage extends AutoRouter {
+  const EmptyRouterPage({Key key}) : super(key: key);
 }

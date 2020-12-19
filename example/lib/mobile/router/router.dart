@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/screens/book_details_page.dart';
-import 'package:example/mobile/screens/book_list_page.dart';
+import 'package:example/mobile/screens/books/routes.dart';
 import 'package:example/mobile/screens/home_page.dart';
-import 'package:example/mobile/screens/settings_page.dart';
+import 'package:example/mobile/screens/login_page.dart';
+import 'package:example/mobile/screens/profile/routes.dart';
+import 'package:example/mobile/screens/settings.dart';
+import 'package:example/mobile/screens/user-data/routes.dart';
 
 export 'router.gr.dart';
 
@@ -14,25 +16,14 @@ export 'router.gr.dart';
       page: HomePage,
       usesTabsRouter: true,
       children: [
-        AutoRoute(
-          path: 'books',
-          page: EmptyRouterPage,
-          name: 'BooksTab',
-          children: [
-            RedirectRoute(path: '', redirectTo: 'list'),
-            AutoRoute(path: 'list', page: BookListPage),
-            AutoRoute(path: 'list/:id', page: BookDetailsPage),
-          ],
-        ),
-        AutoRoute(
-          path: 'settings',
-          page: EmptyRouterPage,
-          name: 'SettingsTab',
-          children: [AutoRoute(path: '', page: SettingsPage)],
-        ),
+        booksTab,
+        profileTab,
+        AutoRoute(path: 'settings', page: SettingsPage, name: 'SettingsTab'),
       ],
     ),
+    userDataRoutes,
+    AutoRoute(path: '/login', page: LoginPage, fullscreenDialog: true),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )
-class $MyRouterConfig {}
+class $BookAppRouter {}

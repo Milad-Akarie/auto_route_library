@@ -4,13 +4,16 @@ import 'package:example/data/books_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+class Model {
+  const Model();
+}
+
 class BookDetailsPage extends StatefulWidget {
   final int id;
   final String queryFilter;
 
-  //
   const BookDetailsPage({
-    @PathParam('id') @required this.id,
+    @PathParam('id') this.id = 1,
     @queryParam this.queryFilter,
   });
 
@@ -19,9 +22,10 @@ class BookDetailsPage extends StatefulWidget {
 }
 
 class _BookDetailsPageState extends State<BookDetailsPage> {
+  int counter = 0;
+
   @override
   Widget build(BuildContext context) {
-    print(context.route.queryParams);
     context.router.parent().root;
     final booksDb = Provider.of<BooksDB>(context);
     final book = booksDb.findBookById(widget.id);
@@ -32,7 +36,28 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
               title: Text(book.name),
             ),
             body: Center(
-              child: Text('Book Details/${book.id}'),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Book Details/${book.id}'),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24),
+                    child: Text(
+                      'Reads  $counter',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        counter++;
+                      });
+                    },
+                  )
+                ],
+              ),
             ),
           );
   }

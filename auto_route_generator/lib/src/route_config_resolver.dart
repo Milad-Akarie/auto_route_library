@@ -21,7 +21,8 @@ class RouteConfigResolver {
     var path = autoRoute.peek('path')?.stringValue;
     if (page == null) {
       var redirectTo = autoRoute.peek('redirectTo')?.stringValue;
-      throwIf(redirectTo == null, 'Route must have either a page or a redirect destination');
+      throwIf(redirectTo == null,
+          'Route must have either a page or a redirect destination');
       return config
         ..pathName = path
         ..redirectTo = redirectTo
@@ -39,7 +40,8 @@ class RouteConfigResolver {
         path = prefix;
       } else {
         if (_routerConfig.usesLegacyGenerator) {
-          path = '${_routerConfig.routeNamePrefix}${toKababCase(config.className)}';
+          path =
+              '${_routerConfig.routeNamePrefix}${toKababCase(config.className)}';
         } else {
           path = '$prefix${toKababCase(config.className)}';
         }
@@ -89,12 +91,16 @@ class RouteConfigResolver {
 
     ClassElement pageClass = page.element;
     if (config.pathParams?.isNotEmpty == true) {
-      var pathParamCandidates = config.parameters?.where((p) => !p.isQueryParam)?.map((e) => e.paramName) ?? [];
+      var pathParamCandidates = config.parameters
+              ?.where((p) => !p.isQueryParam)
+              ?.map((e) => e.paramName) ??
+          [];
       for (var pParam in config.pathParams) {
         throwIf(!pathParamCandidates.contains(pParam.name),
             '${config.className} does not have a constructor parameter with an alias-name [${pParam.name}]',
             element: pageClass.unnamedConstructor);
-        var param = config.parameters.firstWhere((e) => e.paramName == pParam.name);
+        var param =
+            config.parameters.firstWhere((e) => e.paramName == pParam.name);
         throwIf(!validPathParamTypes.contains(param.type.name),
             "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
             element: param.element);
@@ -109,7 +115,11 @@ class RouteConfigResolver {
     config.fullMatch = autoRoute.peek('fullMatch')?.boolValue;
     config.usesTabsRouter = autoRoute.peek('usesTabsRouter')?.boolValue;
 
-    autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue())?.forEach((guard) {
+    autoRoute
+        .peek('guards')
+        ?.listValue
+        ?.map((g) => g.toTypeValue())
+        ?.forEach((guard) {
       config.guards.add(_typeResolver.resolveType(guard));
     });
 
@@ -123,23 +133,32 @@ class RouteConfigResolver {
       config.cupertinoNavTitle = autoRoute.peek('title')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(AdaptiveRoute))) {
       config.routeType = RouteType.adaptive;
-      config.cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
+      config.cupertinoNavTitle =
+          autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       config.routeType = RouteType.custom;
 
-      config.durationInMilliseconds = autoRoute.peek('durationInMilliseconds')?.intValue;
-      config.reverseDurationInMilliseconds = autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
+      config.durationInMilliseconds =
+          autoRoute.peek('durationInMilliseconds')?.intValue;
+      config.reverseDurationInMilliseconds =
+          autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
       config.customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      config.customRouteBarrierDismissible = autoRoute.peek('barrierDismissible')?.boolValue;
-      config.customRouteBarrierLabel = autoRoute.peek('barrierLabel')?.stringValue;
+      config.customRouteBarrierDismissible =
+          autoRoute.peek('barrierDismissible')?.boolValue;
+      config.customRouteBarrierLabel =
+          autoRoute.peek('barrierLabel')?.stringValue;
 
-      final function = autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      final function =
+          autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
       if (function != null) {
-        config.transitionBuilder = _typeResolver.resolveImportableFunctionType(function);
+        config.transitionBuilder =
+            _typeResolver.resolveImportableFunctionType(function);
       }
-      final builderFunction = autoRoute.peek('customRouteBuilder')?.objectValue?.toFunctionValue();
+      final builderFunction =
+          autoRoute.peek('customRouteBuilder')?.objectValue?.toFunctionValue();
       if (builderFunction != null) {
-        config.customRouteBuilder = _typeResolver.resolveImportableFunctionType(builderFunction);
+        config.customRouteBuilder =
+            _typeResolver.resolveImportableFunctionType(builderFunction);
       }
     } else {
       var globConfig = _routerConfig.globalRouteConfig;
@@ -147,9 +166,11 @@ class RouteConfigResolver {
       if (globConfig.routeType == RouteType.custom) {
         config.transitionBuilder = globConfig.transitionBuilder;
         config.durationInMilliseconds = globConfig.durationInMilliseconds;
-        config.customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
+        config.customRouteBarrierDismissible =
+            globConfig.customRouteBarrierDismissible;
         config.customRouteOpaque = globConfig.customRouteOpaque;
-        config.reverseDurationInMilliseconds = globConfig.reverseDurationInMilliseconds;
+        config.reverseDurationInMilliseconds =
+            globConfig.reverseDurationInMilliseconds;
         config.customRouteBuilder = globConfig.customRouteBuilder;
       }
     }
