@@ -1,4 +1,8 @@
 # ChangeLog
+## [1.0.0-beta.2]
+- Add lazyLoad option to AutoTabsRouter
+- Replace AutoRouterConfig with an implementation of StackRouter
+- Root delegate is now lazyLoaded
 ## [1.0.0-beta.1] Breaking Changes!
 - Add TabsAutoRouter
 - Refactor some code

@@ -6,18 +6,19 @@ import 'package:flutter/material.dart';
 import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
 
-typedef AnimatedIndexedStackBuilder = Widget Function(
-    BuildContext context, Widget child, Animation<double> animation);
+typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child, Animation<double> animation);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder builder;
   final List<PageRouteInfo> routes;
   final Duration duration;
   final Curve curve;
+  final bool lazyLoad;
 
   const AutoTabsRouter({
     Key key,
     @required this.routes,
+    this.lazyLoad = true,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
@@ -41,8 +42,7 @@ class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter>
-    with SingleTickerProviderStateMixin {
+class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProviderStateMixin {
   TabsRouter _controller;
   AnimationController _animationController;
   Animation<double> _animation;
@@ -124,13 +124,13 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             builder: (context, child) => builder(context, child, _animation),
             child: stack.isEmpty
                 ? Container(color: Theme.of(context).scaffoldBackgroundColor)
-                : IndexedStack(
-                    index: _index,
-                    children: stack
-                        .map(
-                          (page) => page.wrappedChild(context),
-                        )
-                        .toList(growable: false),
+                : _IndexedStackBuilder(
+                    activeIndex: _index,
+                    lazyLoad: widget.lazyLoad,
+                    itemCount: stack.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return stack[index].wrappedChild(context);
+                    },
                   ),
           )),
     );
@@ -138,5 +138,62 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
 
   Widget _defaultBuilder(_, child, animation) {
     return FadeTransition(opacity: animation, child: child);
+  }
+}
+
+class _IndexedStackBuilder extends StatefulWidget {
+  final int activeIndex;
+  final int itemCount;
+  final IndexedWidgetBuilder itemBuilder;
+  final bool lazyLoad;
+
+  const _IndexedStackBuilder({
+    Key key,
+    this.activeIndex,
+    @required this.itemBuilder,
+    this.itemCount = 0,
+    this.lazyLoad,
+  })  : assert(lazyLoad != null),
+        super(key: key);
+
+  @override
+  _IndexedStackBuilderState createState() => _IndexedStackBuilderState();
+}
+
+class _DummyWidget extends SizedBox {
+  const _DummyWidget() : super(width: 0.0, height: 0.0);
+}
+
+class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
+  final _dummyWidget = const _DummyWidget();
+  final List _pages = <Widget>[];
+
+  @override
+  void initState() {
+    super.initState();
+    for (var i = 0; i < widget.itemCount; ++i) {
+      if (i == widget.activeIndex || !widget.lazyLoad) {
+        _pages.add(widget.itemBuilder(context, i));
+      } else {
+        _pages.add(_dummyWidget);
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(_IndexedStackBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
+      _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new IndexedStack(
+      index: widget.activeIndex,
+      sizing: StackFit.expand,
+      children: _pages,
+    );
   }
 }

@@ -16,7 +16,6 @@ class AutoRouter extends StatefulWidget {
     this.builder,
   }) : super(key: key);
 
-  //
   static Widget declarative(
           {Key key,
           @required RoutesGenerator onGenerateRoutes,

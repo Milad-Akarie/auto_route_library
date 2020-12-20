@@ -1,6 +1,6 @@
 import 'package:auto_route_generator/route_config_resolver.dart';
+import 'package:auto_route_generator/src/code_builder/root_router_builder.dart';
 import 'package:auto_route_generator/src/code_builder/route_info_builder.dart';
-import 'package:auto_route_generator/src/code_builder/router_config_builder.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 
