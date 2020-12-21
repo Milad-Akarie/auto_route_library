@@ -51,7 +51,7 @@ abstract class RootStackRouter extends TreeEntry {
     );
   }
 
-  DefaultRouteParser defaultRouteParser({bool includePrefixMatches = true}) =>
+  DefaultRouteParser defaultRouteParser({bool includePrefixMatches = false}) =>
       DefaultRouteParser(matcher, includePrefixMatches: includePrefixMatches);
 
   Map<Type, PageFactory> get pagesMap;

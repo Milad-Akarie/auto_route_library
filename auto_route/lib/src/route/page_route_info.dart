@@ -57,7 +57,7 @@ class PageRouteInfo extends Equatable {
   PageRouteInfo.fromMatch(this.match)
       : _name = match.config.name,
         path = match.config.path,
-        params = match.params.rawMap,
+        params = match.pathParams?.rawMap,
         argProps = const [],
         initialChildren = match.buildChildren();
 

@@ -11,7 +11,6 @@ class RouteMatch {
   final List<RouteMatch> children;
   final String fragment;
   final List<String> segments;
-  final Parameters params;
 
   const RouteMatch({
     @required this.config,
@@ -21,8 +20,7 @@ class RouteMatch {
     this.queryParams,
     this.fragment,
   })  : assert(config != null),
-        assert(segments != null),
-        params = pathParams + queryParams;
+        assert(segments != null);
 
   bool get hasChildren => !listNullOrEmpty(children);
 

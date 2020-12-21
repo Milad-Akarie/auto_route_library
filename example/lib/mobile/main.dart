@@ -16,9 +16,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark(),
       routerDelegate: booksRouter.delegate(
           // initialDeepLink: '/profile/me/books?filter=filterFromQuery#WhyNot',
-          ),
-      routeInformationParser:
-          booksRouter.defaultRouteParser(includePrefixMatches: false),
+          initialRoutes: [
+            HomeRoute(
+              children: [
+                ProfileTab(
+                  children: [
+                    ProfileRoute(),
+                    MyBooksRoute(filter: 'fromInitialRoutes'),
+                  ],
+                )
+              ],
+            )
+          ]),
+      routeInformationParser: booksRouter.defaultRouteParser(),
       builder: (_, router) {
         return Provider(
           create: (_) => BooksDB(),
