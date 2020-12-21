@@ -71,7 +71,7 @@ after you run the generator your router config class will be generated, use it a
    ...
   Widget build(BuildContext context){
       return MaterialApp.router(
-             routerDelegate: appRouter.rootDelegate,
+             routerDelegate: appRouter.delegate(...initialConfig),
              routeInformationParser: appRouter.defaultRouteParser(),
          ),
   }

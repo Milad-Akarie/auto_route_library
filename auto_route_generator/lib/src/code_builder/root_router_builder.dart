@@ -12,7 +12,7 @@ Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards,
         List<RouteConfig> routes) =>
     Class((b) => b
       ..name = router.routerClassName
-      ..extend = refer('AutoRouterConfig', autoRouteImport)
+      ..extend = refer('RootStackRouter', autoRouteImport)
       ..fields.addAll([
         ...guards.map((g) => Field((b) => b
           ..modifier = FieldModifier.final$

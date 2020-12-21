@@ -8,16 +8,15 @@ import 'package:provider/provider.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final booksRouter = BookAppRouter(
-    initialDeepLink: '/profile/me/books?filter=filterFromQuery#WhyNot',
-    authGuard: AuthGuard(),
-  );
+  final booksRouter = BookAppRouter(authGuard: AuthGuard());
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: booksRouter.rootDelegate,
+      routerDelegate: booksRouter.delegate(
+        initialDeepLink: '/profile/me/books?filter=filterFromQuery#WhyNot',
+      ),
       routeInformationParser: booksRouter.defaultRouteParser(),
       builder: (_, router) {
         return Provider(

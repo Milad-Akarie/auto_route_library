@@ -4,7 +4,7 @@ import 'package:auto_route/src/navigation_failure.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_config.dart';
 import 'package:auto_route/src/router/auto_route_page.dart';
-import 'package:auto_route/src/router/auto_router_config.dart';
+import 'package:auto_route/src/router/root_stack_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -312,10 +312,10 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier
   final ValueKey<PageRouteInfo> key;
   final RouteCollection routeCollection;
   final PageBuilder pageBuilder;
-  final RouteMatcher matcher;
   final GlobalKey<NavigatorState> navigatorKey;
   final List<StackEntryItem> _entries = [];
   final List<PageRouteInfo> preMatchedRoutes;
+  RouteMatcher _lazyMatcher;
 
   TreeEntry({
     @required this.routeCollection,
@@ -324,10 +324,11 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier
     this.key,
     this.parentController,
     this.preMatchedRoutes,
-  })  : matcher = RouteMatcher(routeCollection),
-        navigatorKey = GlobalKey<NavigatorState>() {
+  }) : navigatorKey = GlobalKey<NavigatorState>() {
     _pushInitialRoutes();
   }
+
+  RouteMatcher get matcher => _lazyMatcher ??= RouteMatcher(routeCollection);
 
   void _pushInitialRoutes() {
     if (!listNullOrEmpty(preMatchedRoutes)) {
