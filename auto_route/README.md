@@ -1,10 +1,6 @@
-# auto_route
 
-AutoRoute is a declarative routing solution, where everything needed for navigation is automatically generated for you.
 
----
-
-## The official docs will be added soon. [Legacy Docs](./README_LEGACY.md)
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
 
 - [Installation](#installation)
 - [Setup and Usage](#setup-and-usage)
