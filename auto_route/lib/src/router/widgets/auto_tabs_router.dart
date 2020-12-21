@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
 
-typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child, Animation<double> animation);
+typedef AnimatedIndexedStackBuilder = Widget Function(
+    BuildContext context, Widget child, Animation<double> animation);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder builder;
@@ -42,7 +43,8 @@ class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProviderStateMixin {
+class AutoTabsRouterState extends State<AutoTabsRouter>
+    with SingleTickerProviderStateMixin {
   TabsRouter _controller;
   AnimationController _animationController;
   Animation<double> _animation;
@@ -184,7 +186,8 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
-      _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
+      _pages[widget.activeIndex] =
+          widget.itemBuilder(context, widget.activeIndex);
     }
   }
 

@@ -6,21 +6,23 @@
 
 import 'package:auto_route/auto_route.dart' as _i1;
 import 'package:flutter/material.dart' as _i2;
-
-import '../screens/books/book_details_page.dart' as _i9;
-import '../screens/books/book_list_page.dart' as _i8;
+import 'auth_guard.dart' as _i3;
 import '../screens/home_page.dart' as _i4;
-import '../screens/login_page.dart' as _i6;
-import '../screens/profile/my_books_page.dart' as _i11;
-import '../screens/profile/profile_page.dart' as _i10;
-import '../screens/settings.dart' as _i7;
 import '../screens/user-data/data_collector.dart' as _i5;
+import '../screens/login_page.dart' as _i6;
+import '../screens/settings.dart' as _i7;
+import '../screens/books/book_list_page.dart' as _i8;
+import '../screens/books/book_details_page.dart' as _i9;
+import '../screens/profile/profile_page.dart' as _i10;
+import '../screens/profile/my_books_page.dart' as _i11;
 import '../screens/user-data/sinlge_field_page.dart' as _i12;
 import '../screens/user-data/user_data_page.dart' as _i13;
-import 'auth_guard.dart' as _i3;
 
 class BookAppRouter extends _i1.RootStackRouter {
-  BookAppRouter({@_i2.required this.authGuard, String initialDeepLink, List<_i1.PageRouteInfo> initialRoutes})
+  BookAppRouter(
+      {@_i2.required this.authGuard,
+      String initialDeepLink,
+      List<_i1.PageRouteInfo> initialRoutes})
       : assert(authGuard != null),
         super(initialDeepLink: initialDeepLink, initialRoutes: initialRoutes);
 
@@ -33,12 +35,18 @@ class BookAppRouter extends _i1.RootStackRouter {
     },
     _i5.UserDataCollectorPage: (args) {
       var data = args.as<UserDataCollectorRoute>();
-      return _i1.MaterialPageX(data: args, child: _i5.UserDataCollectorPage(key: data.key, onResult: data.onResult));
+      return _i1.MaterialPageX(
+          data: args,
+          child: _i5.UserDataCollectorPage(
+              key: data.key, onResult: data.onResult));
     },
     _i6.LoginPage: (args) {
       var data = args.as<LoginRoute>();
       return _i1.MaterialPageX(
-          data: args, child: _i6.LoginPage(key: data.key, onLoginResult: data.onLoginResult), fullscreenDialog: true);
+          data: args,
+          child:
+              _i6.LoginPage(key: data.key, onLoginResult: data.onLoginResult),
+          fullscreenDialog: true);
     },
     _i1.EmptyRouterPage: (args) {
       return _i1.MaterialPageX(data: args, child: const _i1.EmptyRouterPage());
@@ -53,7 +61,8 @@ class BookAppRouter extends _i1.RootStackRouter {
       var data = args.as<BookDetailsRoute>();
       return _i1.MaterialPageX(
           data: args,
-          child: _i9.BookDetailsPage(id: data.id ?? 1, queryFilter: data.queryFilter),
+          child: _i9.BookDetailsPage(
+              id: data.id ?? 1, queryFilter: data.queryFilter),
           fullscreenDialog: true);
     },
     _i10.ProfilePage: (args) {
@@ -61,14 +70,20 @@ class BookAppRouter extends _i1.RootStackRouter {
     },
     _i11.MyBooksPage: (args) {
       var data = args.as<MyBooksRoute>();
-      return _i1.MaterialPageX(data: args, child: _i11.MyBooksPage(key: data.key, filter: data.filter ?? 'none'));
+      return _i1.MaterialPageX(
+          data: args,
+          child:
+              _i11.MyBooksPage(key: data.key, filter: data.filter ?? 'none'));
     },
     _i12.SingleFieldPage: (args) {
       var data = args.as<SingleFieldRoute>();
       return _i1.CustomPage(
           data: args,
           child: _i12.SingleFieldPage(
-              key: data.key, message: data.message, willPopMessage: data.willPopMessage, onNext: data.onNext),
+              key: data.key,
+              message: data.message,
+              willPopMessage: data.willPopMessage,
+              onNext: data.onNext),
           transitionsBuilder: _i1.TransitionsBuilders.slideRightWithFade);
     },
     _i13.UserDataPage: (args) {
@@ -93,13 +108,17 @@ class BookAppRouter extends _i1.RootStackRouter {
                   page: _i1.EmptyRouterPage,
                   routeBuilder: (match) => BooksTab.fromMatch(match),
                   children: [
-                    _i1.RouteConfig('#redirect', path: '', redirectTo: 'list', fullMatch: true),
+                    _i1.RouteConfig('#redirect',
+                        path: '', redirectTo: 'list', fullMatch: true),
                     _i1.RouteConfig<BookListRoute>(BookListRoute.name,
-                        path: 'list', page: _i8.BookListPage, routeBuilder: (_) => const BookListRoute()),
+                        path: 'list',
+                        page: _i8.BookListPage,
+                        routeBuilder: (_) => const BookListRoute()),
                     _i1.RouteConfig<BookDetailsRoute>(BookDetailsRoute.name,
                         path: 'list/:id',
                         page: _i9.BookDetailsPage,
-                        routeBuilder: (match) => BookDetailsRoute.fromMatch(match),
+                        routeBuilder: (match) =>
+                            BookDetailsRoute.fromMatch(match),
                         guards: [authGuard])
                   ]),
               _i1.RouteConfig<ProfileTab>(ProfileTab.name,
@@ -107,16 +126,21 @@ class BookAppRouter extends _i1.RootStackRouter {
                   page: _i1.EmptyRouterPage,
                   routeBuilder: (match) => ProfileTab.fromMatch(match),
                   children: [
-                    _i1.RouteConfig('#redirect', path: '', redirectTo: 'me', fullMatch: true),
+                    _i1.RouteConfig('#redirect',
+                        path: '', redirectTo: 'me', fullMatch: true),
                     _i1.RouteConfig<ProfileRoute>(ProfileRoute.name,
-                        path: 'me', page: _i10.ProfilePage, routeBuilder: (_) => const ProfileRoute()),
+                        path: 'me',
+                        page: _i10.ProfilePage,
+                        routeBuilder: (_) => const ProfileRoute()),
                     _i1.RouteConfig<MyBooksRoute>(MyBooksRoute.name,
                         path: 'me/books',
                         page: _i11.MyBooksPage,
                         routeBuilder: (match) => MyBooksRoute.fromMatch(match))
                   ]),
               _i1.RouteConfig<SettingsTab>(SettingsTab.name,
-                  path: 'settings', page: _i7.SettingsPage, routeBuilder: (_) => const SettingsTab())
+                  path: 'settings',
+                  page: _i7.SettingsPage,
+                  routeBuilder: (_) => const SettingsTab())
             ]),
         _i1.RouteConfig<UserDataCollectorRoute>(UserDataCollectorRoute.name,
             path: '/user-data',
@@ -133,13 +157,17 @@ class BookAppRouter extends _i1.RootStackRouter {
                   routeBuilder: (match) => UserDataRoute.fromMatch(match))
             ]),
         _i1.RouteConfig<LoginRoute>(LoginRoute.name,
-            path: '/login', page: _i6.LoginPage, routeBuilder: (match) => LoginRoute.fromMatch(match)),
-        _i1.RouteConfig('*#redirect', path: '*', redirectTo: '/', fullMatch: true)
+            path: '/login',
+            page: _i6.LoginPage,
+            routeBuilder: (match) => LoginRoute.fromMatch(match)),
+        _i1.RouteConfig('*#redirect',
+            path: '*', redirectTo: '/', fullMatch: true)
       ];
 }
 
 class HomeRoute extends _i1.PageRouteInfo {
-  const HomeRoute({List<_i1.PageRouteInfo> children}) : super(name, path: '/', initialChildren: children);
+  const HomeRoute({List<_i1.PageRouteInfo> children})
+      : super(name, path: '/', initialChildren: children);
 
   HomeRoute.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
 
@@ -147,8 +175,12 @@ class HomeRoute extends _i1.PageRouteInfo {
 }
 
 class UserDataCollectorRoute extends _i1.PageRouteInfo {
-  UserDataCollectorRoute({this.key, this.onResult, List<_i1.PageRouteInfo> children})
-      : super(name, path: '/user-data', argProps: [key, onResult], initialChildren: children);
+  UserDataCollectorRoute(
+      {this.key, this.onResult, List<_i1.PageRouteInfo> children})
+      : super(name,
+            path: '/user-data',
+            argProps: [key, onResult],
+            initialChildren: children);
 
   UserDataCollectorRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
@@ -163,7 +195,8 @@ class UserDataCollectorRoute extends _i1.PageRouteInfo {
 }
 
 class LoginRoute extends _i1.PageRouteInfo {
-  LoginRoute({this.key, this.onLoginResult}) : super(name, path: '/login', argProps: [key, onLoginResult]);
+  LoginRoute({this.key, this.onLoginResult})
+      : super(name, path: '/login', argProps: [key, onLoginResult]);
 
   LoginRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
@@ -178,7 +211,8 @@ class LoginRoute extends _i1.PageRouteInfo {
 }
 
 class BooksTab extends _i1.PageRouteInfo {
-  const BooksTab({List<_i1.PageRouteInfo> children}) : super(name, path: 'books', initialChildren: children);
+  const BooksTab({List<_i1.PageRouteInfo> children})
+      : super(name, path: 'books', initialChildren: children);
 
   BooksTab.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
 
@@ -186,7 +220,8 @@ class BooksTab extends _i1.PageRouteInfo {
 }
 
 class ProfileTab extends _i1.PageRouteInfo {
-  const ProfileTab({List<_i1.PageRouteInfo> children}) : super(name, path: 'profile', initialChildren: children);
+  const ProfileTab({List<_i1.PageRouteInfo> children})
+      : super(name, path: 'profile', initialChildren: children);
 
   ProfileTab.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
 
@@ -207,7 +242,8 @@ class BookListRoute extends _i1.PageRouteInfo {
 
 class BookDetailsRoute extends _i1.PageRouteInfo {
   BookDetailsRoute({this.id = 1, this.queryFilter})
-      : super(name, path: 'list/:id', params: {'id': id}, argProps: [id, queryFilter]);
+      : super(name,
+            path: 'list/:id', params: {'id': id}, argProps: [id, queryFilter]);
 
   BookDetailsRoute.fromMatch(_i1.RouteMatch match)
       : id = match.pathParams.getInt('id', 1),
@@ -228,7 +264,8 @@ class ProfileRoute extends _i1.PageRouteInfo {
 }
 
 class MyBooksRoute extends _i1.PageRouteInfo {
-  MyBooksRoute({this.key, this.filter = 'none'}) : super(name, path: 'me/books', argProps: [key, filter]);
+  MyBooksRoute({this.key, this.filter = 'none'})
+      : super(name, path: 'me/books', argProps: [key, filter]);
 
   MyBooksRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
@@ -243,8 +280,14 @@ class MyBooksRoute extends _i1.PageRouteInfo {
 }
 
 class SingleFieldRoute extends _i1.PageRouteInfo {
-  SingleFieldRoute({this.key, @_i2.required this.message, @_i2.required this.willPopMessage, @_i2.required this.onNext})
-      : super(name, path: 'single-field-page', argProps: [key, message, willPopMessage, onNext]);
+  SingleFieldRoute(
+      {this.key,
+      @_i2.required this.message,
+      @_i2.required this.willPopMessage,
+      @_i2.required this.onNext})
+      : super(name,
+            path: 'single-field-page',
+            argProps: [key, message, willPopMessage, onNext]);
 
   SingleFieldRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
@@ -265,7 +308,8 @@ class SingleFieldRoute extends _i1.PageRouteInfo {
 }
 
 class UserDataRoute extends _i1.PageRouteInfo {
-  UserDataRoute({this.key, this.onResult}) : super(name, path: 'user-data-page', argProps: [key, onResult]);
+  UserDataRoute({this.key, this.onResult})
+      : super(name, path: 'user-data-page', argProps: [key, onResult]);
 
   UserDataRoute.fromMatch(_i1.RouteMatch match)
       : key = null,

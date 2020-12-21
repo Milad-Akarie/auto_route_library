@@ -256,7 +256,13 @@ class ParallelTreeEntry<T extends RoutingController> extends ChangeNotifier
   bool get hasEntries => _entries.isNotEmpty;
 
   @override
-  Future<bool> pop() => SynchronousFuture<bool>(true);
+  Future<bool> pop() {
+    if (parentController != null) {
+      return parentController.pop();
+    } else {
+      return SynchronousFuture<bool>(false);
+    }
+  }
 
   @override
   void setupRoutes(List<PageRouteInfo> routes) {
@@ -342,6 +348,8 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier
           push(RouteMatch(
             config: defaultConfig,
             segments: defaultConfig.path.split('/'),
+            pathParams: Parameters({}),
+            queryParams: Parameters({}),
           ).toRoute);
         }
       }
@@ -375,7 +383,13 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier
   Future<bool> pop() {
     final NavigatorState navigator = navigatorKey?.currentState;
     if (navigator == null) return SynchronousFuture<bool>(false);
-    return navigator.maybePop();
+    if (navigator.canPop()) {
+      return navigator.maybePop();
+    } else if (parentController != null) {
+      return parentController.pop();
+    } else {
+      return SynchronousFuture<bool>(false);
+    }
   }
 
   @override

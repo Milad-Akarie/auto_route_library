@@ -1,4 +1,9 @@
 # ChangeLog
+## [1.0.0-beta.3]
+- Fix crash on empty path deep-linking
+- Fix parent does not take priority when child can't pop
+- Change includePrefixMatches default value to false in DefaultRouteParser
+- Add some updates to Readme file
 ## [1.0.0-beta.2]
 - Add lazyLoad option to AutoTabsRouter
 - Replace AutoRouterConfig with an implementation of StackRouter
