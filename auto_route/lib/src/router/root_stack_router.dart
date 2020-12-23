@@ -54,12 +54,12 @@ abstract class RootStackRouter extends TreeEntry {
   DefaultRouteParser defaultRouteParser({bool includePrefixMatches = false}) =>
       DefaultRouteParser(matcher, includePrefixMatches: includePrefixMatches);
 
-  Map<Type, PageFactory> get pagesMap;
+  Map<String, PageFactory> get pagesMap;
 
   List<RouteConfig> get routes;
 
   AutoRoutePage _pageBuilder(RouteData data) {
-    var builder = pagesMap[data.config.page];
+    var builder = pagesMap[data.name];
     assert(builder != null);
     return builder(data);
   }

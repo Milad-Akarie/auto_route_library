@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BookListPage extends StatelessWidget {
+  BookListPage(final String id);
   @override
   Widget build(BuildContext context) {
     var booksDb = Provider.of<BooksDB>(context);
@@ -15,7 +16,7 @@ class BookListPage extends StatelessWidget {
                   title: Text(book.name),
                   subtitle: Text(book.genre),
                   onTap: () {
-                    // context.router.push(ookDetailsRoute(id: book.id));
+                    // context.router.push(BookDetailsRoute(id: book.id));
                     BookDetailsRoute(id: book.id).show(context);
                   },
                 ),

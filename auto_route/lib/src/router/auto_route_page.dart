@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/route_data.dart';
 import 'package:flutter/cupertino.dart';
@@ -128,8 +130,8 @@ class AdaptivePage extends AutoRoutePage {
         fullscreenDialog: fullscreenDialog,
       );
     }
-    var platform = Theme.of(context).platform;
-    if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {
+
+    if (Platform.isIOS || Platform.isMacOS) {
       return CupertinoPageRoute(
         builder: (_) => child,
         settings: this,

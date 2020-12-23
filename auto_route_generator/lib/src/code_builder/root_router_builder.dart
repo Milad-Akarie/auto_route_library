@@ -30,7 +30,6 @@ Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards,
             ..body = literalList(buildRoutes(router.routes)).code,
         ),
       )
-      // initialRoutes, String initialDeepLink
       ..constructors.add(
         Constructor((b) => b
           ..optionalParameters.addAll([
@@ -41,24 +40,12 @@ Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards,
                 ..toThis = true
                 ..annotations.add(requiredAnnotation)),
             ),
-            Parameter((b) => b
-              ..name = "initialDeepLink"
-              ..named = true
-              ..type = stringRefer),
-            Parameter((b) => b
-              ..name = "initialRoutes"
-              ..named = true
-              ..type = listRefer(pageRouteType))
           ])
           ..initializers.addAll([
             ...guards.map((g) => refer('assert').call([
                   refer(toLowerCamelCase(g.toString()))
                       .notEqualTo(refer('null')),
                 ]).code),
-            refer('super').call([], {
-              'initialDeepLink': refer('initialDeepLink'),
-              'initialRoutes': refer('initialRoutes'),
-            }).code
           ])),
         // ),
       ));
@@ -72,13 +59,14 @@ Field buildPagesMap(List<RouteConfig> routes) {
       (b) => b
         ..symbol = 'Map'
         ..types.addAll([
-          refer('Type'),
+          stringRefer,
           refer('PageFactory', autoRouteImport),
         ]),
     )
     ..assignment = literalMap(Map.fromEntries(
       routes.where((r) => r.routeType != RouteType.redirect).map(
-            (r) => MapEntry(r.pageType.refer, buildMethod(r)),
+            (r) =>
+                MapEntry(refer(r.routeName).property('name'), buildMethod(r)),
           ),
     )).code);
 }
@@ -87,23 +75,23 @@ Method buildMethod(RouteConfig r) {
   return Method(
     (b) => b
       ..requiredParameters.add(
-        Parameter((b) => b.name = 'args'),
+        Parameter((b) => b.name = 'data'),
       )
       ..body = Block(
         (b) => b.statements.addAll([
           if (r.parameters?.isNotEmpty == true)
-            refer('args')
+            refer('data')
                 .property('as')
                 .call([], {}, [
                   refer(r.routeName),
                 ])
-                .assignVar('data')
+                .assignVar('route')
                 .statement,
           refer(r.pageTypeName, autoRouteImport)
               .newInstance(
                 [],
                 {
-                  'data': refer('args'),
+                  'data': refer('data'),
                   'child': r.hasConstConstructor
                       ? r.pageType.refer.constInstance([])
                       : r.pageType.refer.newInstance(
@@ -152,7 +140,7 @@ Method buildMethod(RouteConfig r) {
 }
 
 Expression getParamAssignment(ParamConfig p) {
-  var ref = refer('data').property(p.name);
+  var ref = refer('route').property(p.name);
   if (p.defaultValueCode != null) {
     return ref.ifNullThen(refer(p.defaultValueCode));
   }
@@ -171,7 +159,6 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
         ], {
           'path': literalString(r.pathName),
           if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo),
-          if (r.pageType != null) 'page': r.pageType.refer,
           if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
           if (r.usesTabsRouter != null)
             'usesTabsRouter': literalBool(r.usesTabsRouter),
