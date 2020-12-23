@@ -1,4 +1,9 @@
 # ChangeLog
+## [1.0.0-beta.4]
+- Fix page can not be used for multiple routes
+- Add duplicate route-names check in generator.
+## [1.0.0-beta.3+1]
+- Fix badge alignment in readme file
 ## [1.0.0-beta.3]
 - Fix crash on empty path deep-linking
 - Fix parent does not take priority when child can't pop

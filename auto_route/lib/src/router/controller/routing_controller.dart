@@ -212,6 +212,8 @@ class ParallelTreeEntry<T extends RoutingController> extends ChangeNotifier
 
   @override
   void setActiveIndex(int index) {
+    assert(index != null);
+    assert(index >= 0 && index < _entries.length);
     if (_activeIndex != index) {
       _activeIndex = index;
       notifyListeners();
@@ -655,7 +657,7 @@ class TreeEntry<T extends RoutingController> extends ChangeNotifier
       if (route.hasChildren && _entries.last is RoutingController) {
         // this line should remove any routes below the updated one
         // not sure if this's the desired behaviour
-        // List.unmodifiable(children.keys).sublist(0, stack.length - 1).forEach(_removeHistoryEntry);
+        _entries.sublist(0, _entries.length - 2);
         (_entries.last as TreeEntry)
             .updateOrReplaceRoutes(route.initialChildren);
       }

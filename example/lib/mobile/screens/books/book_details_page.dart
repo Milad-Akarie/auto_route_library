@@ -4,10 +4,6 @@ import 'package:example/data/books_data.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Model {
-  const Model();
-}
-
 class BookDetailsPage extends StatefulWidget {
   final int id;
   final String queryFilter;

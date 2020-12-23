@@ -1,4 +1,7 @@
 # ChangeLog
+## [1.0.0-beta.4]
+- Fix page can not be used for multiple routes
+- Add duplicate route-names check in generator.
 ## [1.0.0-beta.2]
 - Add lazyLoad option to AutoTabsRouter
 - Replace AutoRouterConfig with an implementation of StackRouter

@@ -20,11 +20,13 @@ class RouterConfig {
   final String routerClassName;
   final RouterConfig parent;
   final String replaceInRouteName;
+  final ClassElement element;
 
   RouterConfig({
     this.generateNavigationHelper,
     this.routes,
     this.parent,
+    this.element,
     this.globalRouteConfig,
     this.routesClassName,
     this.usesLegacyGenerator,
@@ -42,6 +44,7 @@ class RouterConfig {
     String routerClassName,
     RouterConfig parent,
     String replaceInRouteName,
+    ClassElement element,
   }) {
     return RouterConfig(
       generateNavigationHelper:
@@ -53,6 +56,7 @@ class RouterConfig {
       routerClassName: routerClassName ?? this.routerClassName,
       replaceInRouteName: replaceInRouteName ?? this.replaceInRouteName,
       parent: parent ?? this.parent,
+      element: this.element,
       usesLegacyGenerator: this.usesLegacyGenerator,
     );
   }
@@ -133,6 +137,7 @@ class RouterConfigResolver {
     var routerConfig = RouterConfig(
         globalRouteConfig: globalRouteConfig,
         routerClassName: clazz.displayName.substring(1),
+        element: clazz,
         routesClassName: routesClassName,
         routeNamePrefix: routeNamePrefix,
         generateNavigationHelper: generateNavigationExt,

@@ -9,7 +9,6 @@
 <a href="https://pub.dev/packages/auto_route/versions/1.0.0-beta.3"><img src="https://img.shields.io/badge/pub-1.0.0.beta.3-orange" alt="pub version"></a>
 </p>
 
-
 - [Installation](#installation)
 - [Setup and Usage](#setup-and-usage)
 - [Generated routes](#generated-routes)

@@ -19,78 +19,77 @@ import '../screens/user-data/sinlge_field_page.dart' as _i12;
 import '../screens/user-data/user_data_page.dart' as _i13;
 
 class BookAppRouter extends _i1.RootStackRouter {
-  BookAppRouter(
-      {@_i2.required this.authGuard,
-      String initialDeepLink,
-      List<_i1.PageRouteInfo> initialRoutes})
-      : assert(authGuard != null),
-        super(initialDeepLink: initialDeepLink, initialRoutes: initialRoutes);
+  BookAppRouter({@_i2.required this.authGuard}) : assert(authGuard != null);
 
   final _i3.AuthGuard authGuard;
 
   @override
-  final Map<Type, _i1.PageFactory> pagesMap = {
-    _i4.HomePage: (args) {
-      return _i1.MaterialPageX(data: args, child: _i4.HomePage());
+  final Map<String, _i1.PageFactory> pagesMap = {
+    HomeRoute.name: (data) {
+      return _i1.AdaptivePage(data: data, child: _i4.HomePage());
     },
-    _i5.UserDataCollectorPage: (args) {
-      var data = args.as<UserDataCollectorRoute>();
-      return _i1.MaterialPageX(
-          data: args,
+    UserDataCollectorRoute.name: (data) {
+      var route = data.as<UserDataCollectorRoute>();
+      return _i1.AdaptivePage(
+          data: data,
           child: _i5.UserDataCollectorPage(
-              key: data.key, onResult: data.onResult));
+              key: route.key, onResult: route.onResult));
     },
-    _i6.LoginPage: (args) {
-      var data = args.as<LoginRoute>();
-      return _i1.MaterialPageX(
-          data: args,
+    LoginRoute.name: (data) {
+      var route = data.as<LoginRoute>();
+      return _i1.AdaptivePage(
+          data: data,
           child:
-              _i6.LoginPage(key: data.key, onLoginResult: data.onLoginResult),
+              _i6.LoginPage(key: route.key, onLoginResult: route.onLoginResult),
           fullscreenDialog: true);
     },
-    _i1.EmptyRouterPage: (args) {
-      return _i1.MaterialPageX(data: args, child: const _i1.EmptyRouterPage());
+    BooksTab.name: (data) {
+      return _i1.AdaptivePage(data: data, child: const _i1.EmptyRouterPage());
     },
-    _i7.SettingsPage: (args) {
-      return _i1.MaterialPageX(data: args, child: _i7.SettingsPage());
+    ProfileTab.name: (data) {
+      return _i1.AdaptivePage(data: data, child: const _i1.EmptyRouterPage());
     },
-    _i8.BookListPage: (args) {
-      return _i1.MaterialPageX(data: args, child: _i8.BookListPage());
+    SettingsTab.name: (data) {
+      return _i1.AdaptivePage(data: data, child: _i7.SettingsPage());
     },
-    _i9.BookDetailsPage: (args) {
-      var data = args.as<BookDetailsRoute>();
-      return _i1.MaterialPageX(
-          data: args,
+    BookListRoute.name: (data) {
+      var route = data.as<BookListRoute>();
+      return _i1.AdaptivePage(data: data, child: _i8.BookListPage(route.id));
+    },
+    BookDetailsRoute.name: (data) {
+      var route = data.as<BookDetailsRoute>();
+      return _i1.AdaptivePage(
+          data: data,
           child: _i9.BookDetailsPage(
-              id: data.id ?? 1, queryFilter: data.queryFilter),
+              id: route.id ?? 1, queryFilter: route.queryFilter),
           fullscreenDialog: true);
     },
-    _i10.ProfilePage: (args) {
-      return _i1.MaterialPageX(data: args, child: _i10.ProfilePage());
+    ProfileRoute.name: (data) {
+      return _i1.AdaptivePage(data: data, child: _i10.ProfilePage());
     },
-    _i11.MyBooksPage: (args) {
-      var data = args.as<MyBooksRoute>();
-      return _i1.MaterialPageX(
-          data: args,
+    MyBooksRoute.name: (data) {
+      var route = data.as<MyBooksRoute>();
+      return _i1.AdaptivePage(
+          data: data,
           child:
-              _i11.MyBooksPage(key: data.key, filter: data.filter ?? 'none'));
+              _i11.MyBooksPage(key: route.key, filter: route.filter ?? 'none'));
     },
-    _i12.SingleFieldPage: (args) {
-      var data = args.as<SingleFieldRoute>();
+    SingleFieldRoute.name: (data) {
+      var route = data.as<SingleFieldRoute>();
       return _i1.CustomPage(
-          data: args,
+          data: data,
           child: _i12.SingleFieldPage(
-              key: data.key,
-              message: data.message,
-              willPopMessage: data.willPopMessage,
-              onNext: data.onNext),
+              key: route.key,
+              message: route.message,
+              willPopMessage: route.willPopMessage,
+              onNext: route.onNext),
           transitionsBuilder: _i1.TransitionsBuilders.slideRightWithFade);
     },
-    _i13.UserDataPage: (args) {
-      var data = args.as<UserDataRoute>();
+    UserDataRoute.name: (data) {
+      var route = data.as<UserDataRoute>();
       return _i1.CustomPage(
-          data: args,
-          child: _i13.UserDataPage(key: data.key, onResult: data.onResult),
+          data: data,
+          child: _i13.UserDataPage(key: route.key, onResult: route.onResult),
           transitionsBuilder: _i1.TransitionsBuilders.slideRightWithFade);
     }
   };
@@ -99,66 +98,53 @@ class BookAppRouter extends _i1.RootStackRouter {
   List<_i1.RouteConfig> get routes => [
         _i1.RouteConfig<HomeRoute>(HomeRoute.name,
             path: '/',
-            page: _i4.HomePage,
             usesTabsRouter: true,
             routeBuilder: (match) => HomeRoute.fromMatch(match),
             children: [
               _i1.RouteConfig<BooksTab>(BooksTab.name,
                   path: 'books',
-                  page: _i1.EmptyRouterPage,
                   routeBuilder: (match) => BooksTab.fromMatch(match),
                   children: [
                     _i1.RouteConfig('#redirect',
                         path: '', redirectTo: 'list', fullMatch: true),
                     _i1.RouteConfig<BookListRoute>(BookListRoute.name,
                         path: 'list',
-                        page: _i8.BookListPage,
-                        routeBuilder: (_) => const BookListRoute()),
+                        routeBuilder: (match) =>
+                            BookListRoute.fromMatch(match)),
                     _i1.RouteConfig<BookDetailsRoute>(BookDetailsRoute.name,
                         path: 'list/:id',
-                        page: _i9.BookDetailsPage,
                         routeBuilder: (match) =>
                             BookDetailsRoute.fromMatch(match),
                         guards: [authGuard])
                   ]),
               _i1.RouteConfig<ProfileTab>(ProfileTab.name,
                   path: 'profile',
-                  page: _i1.EmptyRouterPage,
                   routeBuilder: (match) => ProfileTab.fromMatch(match),
                   children: [
                     _i1.RouteConfig('#redirect',
                         path: '', redirectTo: 'me', fullMatch: true),
                     _i1.RouteConfig<ProfileRoute>(ProfileRoute.name,
-                        path: 'me',
-                        page: _i10.ProfilePage,
-                        routeBuilder: (_) => const ProfileRoute()),
+                        path: 'me', routeBuilder: (_) => const ProfileRoute()),
                     _i1.RouteConfig<MyBooksRoute>(MyBooksRoute.name,
                         path: 'me/books',
-                        page: _i11.MyBooksPage,
                         routeBuilder: (match) => MyBooksRoute.fromMatch(match))
                   ]),
               _i1.RouteConfig<SettingsTab>(SettingsTab.name,
-                  path: 'settings',
-                  page: _i7.SettingsPage,
-                  routeBuilder: (_) => const SettingsTab())
+                  path: 'settings', routeBuilder: (_) => const SettingsTab())
             ]),
         _i1.RouteConfig<UserDataCollectorRoute>(UserDataCollectorRoute.name,
             path: '/user-data',
-            page: _i5.UserDataCollectorPage,
             routeBuilder: (match) => UserDataCollectorRoute.fromMatch(match),
             children: [
               _i1.RouteConfig<SingleFieldRoute>(SingleFieldRoute.name,
                   path: 'single-field-page',
-                  page: _i12.SingleFieldPage,
                   routeBuilder: (match) => SingleFieldRoute.fromMatch(match)),
               _i1.RouteConfig<UserDataRoute>(UserDataRoute.name,
                   path: 'user-data-page',
-                  page: _i13.UserDataPage,
                   routeBuilder: (match) => UserDataRoute.fromMatch(match))
             ]),
         _i1.RouteConfig<LoginRoute>(LoginRoute.name,
             path: '/login',
-            page: _i6.LoginPage,
             routeBuilder: (match) => LoginRoute.fromMatch(match)),
         _i1.RouteConfig('*#redirect',
             path: '*', redirectTo: '/', fullMatch: true)
@@ -235,7 +221,13 @@ class SettingsTab extends _i1.PageRouteInfo {
 }
 
 class BookListRoute extends _i1.PageRouteInfo {
-  const BookListRoute() : super(name, path: 'list');
+  BookListRoute({this.id}) : super(name, path: 'list', argProps: [id]);
+
+  BookListRoute.fromMatch(_i1.RouteMatch match)
+      : id = null,
+        super.fromMatch(match);
+
+  final String id;
 
   static const String name = 'BookListRoute';
 }

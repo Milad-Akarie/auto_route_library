@@ -8,7 +8,7 @@ import 'package:example/mobile/screens/user-data/routes.dart';
 
 export 'router.gr.dart';
 
-@MaterialAutoRouter(
+@AdaptiveAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     AutoRoute(
