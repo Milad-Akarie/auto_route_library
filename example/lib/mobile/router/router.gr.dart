@@ -18,66 +18,68 @@ import '../screens/profile/my_books_page.dart' as _i11;
 import '../screens/user-data/sinlge_field_page.dart' as _i12;
 import '../screens/user-data/user_data_page.dart' as _i13;
 
-class BookAppRouter extends _i1.RootStackRouter {
-  BookAppRouter({@_i2.required this.authGuard}) : assert(authGuard != null);
+class AppRouter extends _i1.RootStackRouter {
+  AppRouter({@_i2.required this.authGuard}) : assert(authGuard != null);
 
   final _i3.AuthGuard authGuard;
 
   @override
   final Map<String, _i1.PageFactory> pagesMap = {
-    HomeRoute.name: (data) {
-      return _i1.AdaptivePage(data: data, child: _i4.HomePage());
+    HomeRoute.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i4.HomePage());
     },
-    UserDataCollectorRoute.name: (data) {
-      var route = data.as<UserDataCollectorRoute>();
-      return _i1.AdaptivePage(
-          data: data,
+    UserDataCollectorRoute.name: (entry) {
+      var route = entry.routeData.as<UserDataCollectorRoute>();
+      return _i1.MaterialPageX(
+          entry: entry,
           child: _i5.UserDataCollectorPage(
               key: route.key, onResult: route.onResult));
     },
-    LoginRoute.name: (data) {
-      var route = data.as<LoginRoute>();
-      return _i1.AdaptivePage(
-          data: data,
+    LoginRoute.name: (entry) {
+      var route = entry.routeData.as<LoginRoute>();
+      return _i1.MaterialPageX(
+          entry: entry,
           child:
               _i6.LoginPage(key: route.key, onLoginResult: route.onLoginResult),
           fullscreenDialog: true);
     },
-    BooksTab.name: (data) {
-      return _i1.AdaptivePage(data: data, child: const _i1.EmptyRouterPage());
+    BooksTab.name: (entry) {
+      return _i1.MaterialPageX(
+          entry: entry, child: const _i1.EmptyRouterPage());
     },
-    ProfileTab.name: (data) {
-      return _i1.AdaptivePage(data: data, child: const _i1.EmptyRouterPage());
+    ProfileTab.name: (entry) {
+      return _i1.MaterialPageX(
+          entry: entry, child: const _i1.EmptyRouterPage());
     },
-    SettingsTab.name: (data) {
-      return _i1.AdaptivePage(data: data, child: _i7.SettingsPage());
+    SettingsTab.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i7.SettingsPage());
     },
-    BookListRoute.name: (data) {
-      var route = data.as<BookListRoute>();
-      return _i1.AdaptivePage(data: data, child: _i8.BookListPage(route.id));
+    BookListRoute.name: (entry) {
+      var route = entry.routeData.as<BookListRoute>();
+      return _i1.MaterialPageX(entry: entry, child: _i8.BookListPage(route.id));
     },
-    BookDetailsRoute.name: (data) {
-      var route = data.as<BookDetailsRoute>();
-      return _i1.AdaptivePage(
-          data: data,
+    BookDetailsRoute.name: (entry) {
+      var route = entry.routeData.as<BookDetailsRoute>();
+      return _i1.MaterialPageX(
+          entry: entry,
           child: _i9.BookDetailsPage(
               id: route.id ?? 1, queryFilter: route.queryFilter),
           fullscreenDialog: true);
     },
-    ProfileRoute.name: (data) {
-      return _i1.AdaptivePage(data: data, child: _i10.ProfilePage());
+    ProfileRoute.name: (entry) {
+      return _i1.MaterialPageX(entry: entry, child: _i10.ProfilePage());
     },
-    MyBooksRoute.name: (data) {
-      var route = data.as<MyBooksRoute>();
-      return _i1.AdaptivePage(
-          data: data,
+    MyBooksRoute.name: (entry) {
+      var route = entry.routeData.as<MyBooksRoute>();
+      return _i1.MaterialPageX(
+          entry: entry,
           child:
               _i11.MyBooksPage(key: route.key, filter: route.filter ?? 'none'));
     },
-    SingleFieldRoute.name: (data) {
-      var route = data.as<SingleFieldRoute>();
+    SingleFieldRoute.name: (entry) {
+      var route = entry.routeData.as<SingleFieldRoute>();
       return _i1.CustomPage(
-          data: data,
+          entry: entry,
           child: _i12.SingleFieldPage(
               key: route.key,
               message: route.message,
@@ -85,10 +87,10 @@ class BookAppRouter extends _i1.RootStackRouter {
               onNext: route.onNext),
           transitionsBuilder: _i1.TransitionsBuilders.slideRightWithFade);
     },
-    UserDataRoute.name: (data) {
-      var route = data.as<UserDataRoute>();
+    UserDataRoute.name: (entry) {
+      var route = entry.routeData.as<UserDataRoute>();
       return _i1.CustomPage(
-          data: data,
+          entry: entry,
           child: _i13.UserDataPage(key: route.key, onResult: route.onResult),
           transitionsBuilder: _i1.TransitionsBuilders.slideRightWithFade);
     }

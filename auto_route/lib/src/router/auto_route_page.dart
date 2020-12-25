@@ -7,29 +7,31 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 abstract class AutoRoutePage extends Page {
-  final RouteData data;
+  final StackEntryItem entry;
   final Widget child;
   final bool fullscreenDialog;
   final bool maintainState;
 
+  bool get hasInnerRouter => entry is RoutingController;
+
+  RouteData get routeData => entry?.routeData;
   AutoRoutePage({
-    @required this.data,
+    @required this.entry,
     @required this.child,
     this.fullscreenDialog,
     this.maintainState,
   })  : assert(child != null),
-        assert(data != null),
+        assert(entry != null),
         assert(fullscreenDialog != null),
         assert(maintainState != null),
         super(
-          // key: ValueKey(data.route),
-          arguments: data,
+          // key: entry.key,
+          arguments: entry,
         );
 
   @override
   bool canUpdate(Page other) {
-    return other.runtimeType == runtimeType &&
-        (other as AutoRoutePage).data.route == this.data.route;
+    return other.runtimeType == runtimeType && (other as AutoRoutePage).entry.key == this.entry.key;
   }
 
   @protected
@@ -43,7 +45,7 @@ abstract class AutoRoutePage extends Page {
     if (child is AutoRouteWrapper) {
       childToBuild = (child as AutoRouteWrapper).wrappedRoute(context);
     }
-    return RouteDataScope(child: childToBuild, data: data);
+    return StackEntryScope(child: childToBuild, entry: entry);
   }
 
   Route onCreateRoute(BuildContext context, Widget child);
@@ -51,12 +53,12 @@ abstract class AutoRoutePage extends Page {
 
 class MaterialPageX extends AutoRoutePage {
   MaterialPageX({
-    @required RouteData data,
+    @required StackEntryItem entry,
     @required Widget child,
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
-          data: data,
+          entry: entry,
           child: child,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
@@ -77,7 +79,7 @@ class CupertinoPageX extends AutoRoutePage {
   final String title;
 
   CupertinoPageX({
-    @required RouteData data,
+    @required StackEntryItem entry,
     @required Widget child,
     this.title,
     bool fullscreenDialog = false,
@@ -85,7 +87,7 @@ class CupertinoPageX extends AutoRoutePage {
   })  : assert(fullscreenDialog != null),
         assert(maintainState != null),
         super(
-          data: data,
+          entry: entry,
           child: child,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
@@ -108,13 +110,13 @@ class AdaptivePage extends AutoRoutePage {
   final String title;
 
   AdaptivePage({
-    @required RouteData data,
+    @required StackEntryItem entry,
     @required Widget child,
     this.title,
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
-          data: data,
+          entry: entry,
           child: child,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
@@ -149,8 +151,7 @@ class AdaptivePage extends AutoRoutePage {
   }
 }
 
-typedef CustomRouteBuilder = Route Function(
-    BuildContext context, CustomPage page);
+typedef CustomRouteBuilder = Route Function(BuildContext context, CustomPage page);
 
 class CustomPage extends AutoRoutePage {
   final bool opaque;
@@ -163,7 +164,7 @@ class CustomPage extends AutoRoutePage {
   final CustomRouteBuilder customRouteBuilder;
 
   CustomPage({
-    @required RouteData data,
+    @required StackEntryItem entry,
     @required Widget child,
     bool fullscreenDialog = false,
     bool maintainState = true,
@@ -179,7 +180,7 @@ class CustomPage extends AutoRoutePage {
         assert(durationInMilliseconds != null),
         assert(barrierDismissible != null),
         super(
-          data: data,
+          entry: entry,
           child: child,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
@@ -195,8 +196,7 @@ class CustomPage extends AutoRoutePage {
       settings: this,
       opaque: opaque,
       transitionDuration: Duration(milliseconds: durationInMilliseconds),
-      reverseTransitionDuration:
-          Duration(milliseconds: reverseDurationInMilliseconds),
+      reverseTransitionDuration: Duration(milliseconds: reverseDurationInMilliseconds),
       barrierColor: barrierColor,
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel,
@@ -207,10 +207,7 @@ class CustomPage extends AutoRoutePage {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return child;
   }
 }

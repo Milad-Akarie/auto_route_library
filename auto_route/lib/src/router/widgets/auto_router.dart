@@ -33,8 +33,7 @@ class AutoRouter extends StatefulWidget {
     var scope = StackRouterScope.of(context);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -57,11 +56,9 @@ class AutoRouterState extends State<AutoRouter> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller == null) {
-      final parentCtrl = RoutingControllerScope.of(context).controller;
-      assert(parentCtrl != null);
-      final parentData = RouteData.of(context);
-      assert(parentData != null);
-      _controller = parentCtrl.innerRouterOfRoute(parentData.route);
+      final entry = StackEntryScope.of(context);
+      assert(entry is RoutingController);
+      _controller = entry as RoutingController;
       assert(_controller != null);
       var rootDelegate = RootRouterDelegate.of(context);
       _controller.addListener(() {
@@ -102,8 +99,7 @@ class AutoRouterState extends State<AutoRouter> {
   }
 }
 
-typedef RoutesGenerator = List<PageRouteInfo> Function(
-    BuildContext context, List<PageRouteInfo> routes);
+typedef RoutesGenerator = List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes);
 
 class _DeclarativeAutoRouter extends StatefulWidget {
   final RoutesGenerator onGenerateRoutes;
@@ -131,15 +127,12 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller == null) {
-      final parentCtrl = RoutingControllerScope.of(context).controller;
-      assert(parentCtrl != null);
-      final parentData = RouteData.of(context);
-      assert(parentData != null);
-
-      _controller = parentCtrl.innerRouterOfRoute(parentData.route);
+      final entry = StackEntryScope.of(context);
+      assert(entry is StackRouter);
+      _controller = entry as StackRouter;
       assert(_controller != null);
       _routes = widget.onGenerateRoutes(context, _controller.preMatchedRoutes);
-      (_controller as TreeEntry).updateDeclarativeRoutes(_routes);
+      (_controller as BranchEntry).updateDeclarativeRoutes(_routes);
       var rootDelegate = RootRouterDelegate.of(context);
       _controller.addListener(() {
         rootDelegate.notify();
@@ -161,7 +154,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
               if (!route.didPop(result)) {
                 return false;
               }
-              _controller.pop();
+              _controller.removeLast();
               return true;
             },
           );
@@ -177,7 +170,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     var newRoutes = widget.onGenerateRoutes(context, _routes);
     if (!ListEquality().equals(newRoutes, _routes)) {
       _routes = newRoutes;
-      (_controller as TreeEntry).updateDeclarativeRoutes(newRoutes);
+      (_controller as BranchEntry).updateDeclarativeRoutes(newRoutes);
     }
   }
 }

@@ -7,35 +7,17 @@ import '../route/route_config.dart';
 import 'auto_route_page.dart';
 import 'controller/routing_controller.dart';
 
-typedef PageBuilder = AutoRoutePage Function(RouteData data);
-typedef PageFactory = Page<dynamic> Function(RouteData data);
+typedef PageBuilder = AutoRoutePage Function(StackEntryItem entry);
+typedef PageFactory = Page<dynamic> Function(StackEntryItem entry);
 
-abstract class RootStackRouter extends TreeEntry {
-  // this is root
-  @deprecated
-  StackRouter get root => this;
-
+abstract class RootStackRouter extends BranchEntry {
   @override
   RouteCollection get routeCollection => RouteCollection.from(routes);
 
   @override
   PageBuilder get pageBuilder => _pageBuilder;
 
-  @deprecated
-  final List<PageRouteInfo> initialRoutes;
-  @deprecated
-  final String initialDeepLink;
-
   RootRouterDelegate _lazyRootDelegate;
-
-  RootStackRouter(
-      {@deprecated this.initialRoutes, @deprecated this.initialDeepLink});
-
-  @Deprecated("use delegate() builder instead")
-  RootRouterDelegate get rootDelegate => delegate(
-        initialRoutes: initialRoutes,
-        initialDeepLink: initialDeepLink,
-      );
 
   // _lazyRootDelegate is only built one time
   RootRouterDelegate delegate({
@@ -58,9 +40,9 @@ abstract class RootStackRouter extends TreeEntry {
 
   List<RouteConfig> get routes;
 
-  AutoRoutePage _pageBuilder(RouteData data) {
-    var builder = pagesMap[data.name];
+  AutoRoutePage _pageBuilder(StackEntryItem entry) {
+    var builder = pagesMap[entry.routeData.name];
     assert(builder != null);
-    return builder(data);
+    return builder(entry);
   }
 }

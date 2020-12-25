@@ -8,7 +8,7 @@ import 'package:example/mobile/screens/user-data/routes.dart';
 
 export 'router.gr.dart';
 
-@AdaptiveAutoRouter(
+@MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     AutoRoute(
@@ -26,4 +26,4 @@ export 'router.gr.dart';
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )
-class $BookAppRouter {}
+class $AppRouter {}
