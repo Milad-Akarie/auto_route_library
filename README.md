@@ -1,6 +1,5 @@
-
 <p align="center">
-<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/nav2.0_support/art/auto_route_logo.svg" height="170">
+<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/auto_route_logo.svg" height="170">
 </p>
 
 <p align="center">
@@ -8,6 +7,7 @@
 <a href="https://github.com/Milad-Akarie/auto_route_library/stargazers"><img src="https://img.shields.io/github/stars/Milad-Akarie/auto_route_library?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>
 <a href="https://pub.dev/packages/auto_route/versions/1.0.0-beta.3"><img src="https://img.shields.io/badge/pub-1.0.0.beta.3-orange" alt="pub version"></a>
 </p>
+
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Setup and Usage](#setup-and-usage)
