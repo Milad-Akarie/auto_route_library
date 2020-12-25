@@ -1,4 +1,7 @@
 # ChangeLog
+## [1.0.0-beta.5]
+- Refactor some code
+- Update readme file
 ## [1.0.0-beta.4]
 - Fix page can not be used for multiple routes
 - Add duplicate route-names check in generator.

@@ -13,7 +13,7 @@ const booksTab = AutoRoute(
     AutoRoute(path: 'list', page: BookListPage),
     AutoRoute(
       path: 'list/:id',
-      fullscreenDialog: true,
+      fullscreenDialog: false,
       page: BookDetailsPage,
       guards: [AuthGuard],
     ),

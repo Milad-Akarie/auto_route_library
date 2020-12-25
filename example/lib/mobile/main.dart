@@ -9,11 +9,12 @@ void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   final appRouter = AppRouter(authGuard: AuthGuard());
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: appRouter.delegate(initialDeepLink: '/profile/me/books?filter=foo#frag'),
+      routerDelegate: appRouter.delegate(),
       routeInformationParser: appRouter.defaultRouteParser(),
       builder: (_, router) {
         return Provider(

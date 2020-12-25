@@ -26,52 +26,53 @@ class AppRouter extends _i1.RootStackRouter {
   @override
   final Map<String, _i1.PageFactory> pagesMap = {
     HomeRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i4.HomePage());
+      return _i1.CupertinoPageX(entry: entry, child: _i4.HomePage());
     },
     UserDataCollectorRoute.name: (entry) {
       var route = entry.routeData.as<UserDataCollectorRoute>();
-      return _i1.MaterialPageX(
+      return _i1.CupertinoPageX(
           entry: entry,
           child: _i5.UserDataCollectorPage(
               key: route.key, onResult: route.onResult));
     },
     LoginRoute.name: (entry) {
       var route = entry.routeData.as<LoginRoute>();
-      return _i1.MaterialPageX(
+      return _i1.CupertinoPageX(
           entry: entry,
           child:
               _i6.LoginPage(key: route.key, onLoginResult: route.onLoginResult),
-          fullscreenDialog: true);
+          fullscreenDialog: false);
     },
     BooksTab.name: (entry) {
-      return _i1.MaterialPageX(
+      return _i1.CupertinoPageX(
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     ProfileTab.name: (entry) {
-      return _i1.MaterialPageX(
+      return _i1.CupertinoPageX(
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     SettingsTab.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i7.SettingsPage());
+      return _i1.CupertinoPageX(entry: entry, child: _i7.SettingsPage());
     },
     BookListRoute.name: (entry) {
       var route = entry.routeData.as<BookListRoute>();
-      return _i1.MaterialPageX(entry: entry, child: _i8.BookListPage(route.id));
+      return _i1.CupertinoPageX(
+          entry: entry, child: _i8.BookListPage(route.id));
     },
     BookDetailsRoute.name: (entry) {
       var route = entry.routeData.as<BookDetailsRoute>();
-      return _i1.MaterialPageX(
+      return _i1.CupertinoPageX(
           entry: entry,
           child: _i9.BookDetailsPage(
               id: route.id ?? 1, queryFilter: route.queryFilter),
-          fullscreenDialog: true);
+          fullscreenDialog: false);
     },
     ProfileRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i10.ProfilePage());
+      return _i1.CupertinoPageX(entry: entry, child: _i10.ProfilePage());
     },
     MyBooksRoute.name: (entry) {
       var route = entry.routeData.as<MyBooksRoute>();
-      return _i1.MaterialPageX(
+      return _i1.CupertinoPageX(
           entry: entry,
           child:
               _i11.MyBooksPage(key: route.key, filter: route.filter ?? 'none'));

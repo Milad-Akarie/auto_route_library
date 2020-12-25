@@ -8,7 +8,7 @@ import 'package:example/mobile/screens/user-data/routes.dart';
 
 export 'router.gr.dart';
 
-@MaterialAutoRouter(
+@CupertinoAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     AutoRoute(
@@ -22,7 +22,7 @@ export 'router.gr.dart';
       ],
     ),
     userDataRoutes,
-    AutoRoute(path: '/login', page: LoginPage, fullscreenDialog: true),
+    AutoRoute(path: '/login', page: LoginPage, fullscreenDialog: false),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )

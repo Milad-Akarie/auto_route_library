@@ -9,11 +9,11 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        onLoginResult?.call(false);
-        return SynchronousFuture(true);
-      },
+    return Container(
+      // onWillPop: () {
+      //   onLoginResult?.call(false);
+      //   return SynchronousFuture(true);
+      // },
       child: Scaffold(
         appBar: AppBar(
           title: Text('Login to continue'),
