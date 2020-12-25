@@ -8,27 +8,13 @@ import 'package:provider/provider.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final booksRouter = BookAppRouter(authGuard: AuthGuard());
-
+  final appRouter = AppRouter(authGuard: AuthGuard());
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: booksRouter.delegate(
-          // initialDeepLink: '/profile/me/books?filter=filterFromQuery#WhyNot',
-          initialRoutes: [
-            HomeRoute(
-              children: [
-                ProfileTab(
-                  children: [
-                    ProfileRoute(),
-                    MyBooksRoute(filter: 'fromInitialRoutes'),
-                  ],
-                )
-              ],
-            )
-          ]),
-      routeInformationParser: booksRouter.defaultRouteParser(),
+      routerDelegate: appRouter.delegate(initialDeepLink: '/profile/me/books?filter=foo#frag'),
+      routeInformationParser: appRouter.defaultRouteParser(),
       builder: (_, router) {
         return Provider(
           create: (_) => BooksDB(),
