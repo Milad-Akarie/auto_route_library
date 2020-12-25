@@ -1,13 +1,15 @@
-
 <p align="center">
-<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/nav2.0_support/art/auto_route_logo.svg" height="170">
+<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/auto_route_logo.svg" height="170">
 </p>
 
 <p align="center">
 <a href="https://img.shields.io/badge/License-MIT-green"><img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>
 <a href="https://github.com/Milad-Akarie/auto_route_library/stargazers"><img src="https://img.shields.io/github/stars/Milad-Akarie/auto_route_library?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>
-<a href="https://pub.dev/packages/auto_route/versions/1.0.0-beta.3"><img src="https://img.shields.io/badge/pub-1.0.0.beta.3-orange" alt="pub version"></a>
+<a href="https://pub.dev/packages/auto_route/versions/1.0.0-beta.3"><img src="https://img.shields.io/badge/pub-1.0.0.beta.5-orange" alt="pub version"></a>
 </p>
+
+---
+
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Setup and Usage](#setup-and-usage)
@@ -81,7 +83,7 @@ after you run the generator your router class will be generated, hook it up with
 ```
 ## Generated Routes
 ---
- A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page argumented which are extrectd from the page's default constructor.
+ A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor.
 ```dart
 class BookListRoute extends PageRouteInfo {
   const BookListRoute() : super(name, path: '/books');
@@ -149,7 +151,7 @@ context.router.pop();
 ## Working with Paths
 Working with paths in **AutoRoute** is optional because `PageRouteInfo` objects are matched by name unless pushed as a string using the `initialDeepLink` property in root delegate or `pushPath` method in StackRouter.
 
-When developing a web Application or a native App that requires deep-linking you'd propaply need to define paths with clear names for your routes, if you don’t specify a path it’s going to be generated from the page name e.g. `BookListPage` will have ‘book-list-page’ as a path, if initial arg is set to true the path will be `/` unless it's relative then it will be an empty string `''`.
+When developing a web Application or a native App that requires deep-linking you'd probably need to define paths with clear names for your routes, if you don’t specify a path it’s going to be generated from the page name e.g. `BookListPage` will have ‘book-list-page’ as a path, if initial arg is set to true the path will be `/` unless it's relative then it will be an empty string `''`.
 
 ```dart
  AutoRoute(path: '/books', page: BookListPage),
@@ -158,7 +160,7 @@ You can also define a path with a dynamic segment by prefixing it with a colon
 ```dart
  AutoRoute(path: '/books/:id', page: BookDetailsPage),
 ```
-if you define a path with a dynamic segment the corresponding page's constructor must have a parameter thats annotated with `@PathParam('optional-alias')` with the same alias/name of the segment.
+if you define a path with a dynamic segment the corresponding page's constructor must have a parameter that is annotated with `@PathParam('optional-alias')` with the same alias/name of the segment.
 
 ```dart
 class BookDetailsPage extends StatelessWidget {
