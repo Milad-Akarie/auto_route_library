@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-abstract class AutoRoutePage extends Page {
+abstract class AutoRoutePage extends Page<dynamic> {
   final StackEntryItem entry;
   final Widget child;
   final bool fullscreenDialog;
@@ -15,7 +15,8 @@ abstract class AutoRoutePage extends Page {
   bool get hasInnerRouter => entry is RoutingController;
 
   RouteData get routeData => entry?.routeData;
-  AutoRoutePage({
+
+  const AutoRoutePage({
     @required this.entry,
     @required this.child,
     this.fullscreenDialog,
@@ -31,13 +32,8 @@ abstract class AutoRoutePage extends Page {
 
   @override
   bool canUpdate(Page other) {
-    return other.runtimeType == runtimeType && (other as AutoRoutePage).entry.key == this.entry.key;
-  }
-
-  @protected
-  @override
-  Route createRoute(BuildContext context) {
-    return onCreateRoute(context, wrappedChild(context));
+    return other.runtimeType == runtimeType &&
+        (other as AutoRoutePage).entry.key == this.entry.key;
   }
 
   Widget wrappedChild(BuildContext context) {
@@ -47,12 +43,10 @@ abstract class AutoRoutePage extends Page {
     }
     return StackEntryScope(child: childToBuild, entry: entry);
   }
-
-  Route onCreateRoute(BuildContext context, Widget child);
 }
 
 class MaterialPageX extends AutoRoutePage {
-  MaterialPageX({
+  const MaterialPageX({
     @required StackEntryItem entry,
     @required Widget child,
     bool fullscreenDialog = false,
@@ -65,68 +59,119 @@ class MaterialPageX extends AutoRoutePage {
         );
 
   @override
-  Route onCreateRoute(BuildContext context, Widget child) {
-    return MaterialPageRoute(
-      builder: (_) => child,
-      settings: this,
-      fullscreenDialog: fullscreenDialog,
-      maintainState: maintainState,
-    );
+  Route createRoute(BuildContext context) {
+    return _PageBasedMaterialPageRoute(page: this);
   }
 }
 
-class CupertinoPageX extends AutoRoutePage {
+class _PageBasedMaterialPageRoute extends PageRoute<dynamic>
+    with MaterialRouteTransitionMixin {
+  _PageBasedMaterialPageRoute({
+    @required AutoRoutePage page,
+  })  : assert(page != null),
+        assert(opaque),
+        super(settings: page);
+
+  AutoRoutePage get _page => settings as AutoRoutePage;
+
+  @override
+  Widget buildContent(BuildContext context) => _page.wrappedChild(context);
+
+  @override
+  bool get maintainState => _page.maintainState;
+
+  @override
+  bool get fullscreenDialog => _page.fullscreenDialog;
+
+  @override
+  String get debugLabel => '${super.debugLabel}(${_page.name})';
+}
+
+abstract class TitledAutoRoutePage extends AutoRoutePage {
   final String title;
 
-  CupertinoPageX({
+  const TitledAutoRoutePage({
     @required StackEntryItem entry,
     @required Widget child,
     this.title,
+    bool fullscreenDialog = false,
+    bool maintainState = true,
+  }) : super(
+          entry: entry,
+          child: child,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+        );
+}
+
+class CupertinoPageX extends TitledAutoRoutePage {
+  const CupertinoPageX({
+    @required StackEntryItem entry,
+    @required Widget child,
+    String title,
     bool fullscreenDialog = false,
     bool maintainState = true,
   })  : assert(fullscreenDialog != null),
         assert(maintainState != null),
         super(
-          entry: entry,
-          child: child,
-          maintainState: maintainState,
-          fullscreenDialog: fullscreenDialog,
-        );
+            entry: entry,
+            child: child,
+            maintainState: maintainState,
+            fullscreenDialog: fullscreenDialog,
+            title: title);
 
   @override
-  Route onCreateRoute(BuildContext context, Widget child) {
-    return CupertinoPageRoute(
-      builder: (_) => child,
-      settings: this,
-      title: title,
-      fullscreenDialog: fullscreenDialog,
-      maintainState: maintainState,
-    );
+  Route createRoute(BuildContext context) {
+    return _PageBasedCupertinoPageRoute(page: this);
   }
 }
 
-class AdaptivePage extends AutoRoutePage {
-  // cupertino page title
-  final String title;
+class _PageBasedCupertinoPageRoute extends PageRoute<dynamic>
+    with CupertinoRouteTransitionMixin {
+  _PageBasedCupertinoPageRoute({
+    @required TitledAutoRoutePage page,
+  })  : assert(page != null),
+        assert(opaque),
+        super(settings: page);
 
-  AdaptivePage({
+  TitledAutoRoutePage get _page => settings as TitledAutoRoutePage;
+
+  @override
+  Widget buildContent(BuildContext context) => _page.wrappedChild(context);
+
+  @override
+  String get title => _page.title;
+
+  @override
+  bool get maintainState => _page.maintainState;
+
+  @override
+  bool get fullscreenDialog => _page.fullscreenDialog;
+
+  @override
+  String get debugLabel => '${super.debugLabel}(${_page.name})';
+}
+
+class AdaptivePage extends TitledAutoRoutePage {
+  const AdaptivePage({
     @required StackEntryItem entry,
     @required Widget child,
-    this.title,
+    String title,
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
           entry: entry,
           child: child,
+          title: title,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
         );
 
   @override
-  Route onCreateRoute(BuildContext context, Widget child) {
+  Route createRoute(BuildContext context) {
     if (kIsWeb) {
       return PageRouteBuilder(
-        pageBuilder: (_, __, ___) => child,
+        pageBuilder: (_, __, ___) => wrappedChild(context),
         settings: this,
         maintainState: maintainState,
         fullscreenDialog: fullscreenDialog,
@@ -134,24 +179,14 @@ class AdaptivePage extends AutoRoutePage {
     }
 
     if (Platform.isIOS || Platform.isMacOS) {
-      return CupertinoPageRoute(
-        builder: (_) => child,
-        settings: this,
-        maintainState: maintainState,
-        fullscreenDialog: fullscreenDialog,
-        title: title,
-      );
+      return _PageBasedCupertinoPageRoute(page: this);
     }
-    return MaterialPageRoute(
-      builder: (_) => child,
-      settings: this,
-      maintainState: maintainState,
-      fullscreenDialog: fullscreenDialog,
-    );
+    return _PageBasedMaterialPageRoute(page: this);
   }
 }
 
-typedef CustomRouteBuilder = Route Function(BuildContext context, CustomPage page);
+typedef CustomRouteBuilder = Route Function(
+    BuildContext context, Widget child, CustomPage page);
 
 class CustomPage extends AutoRoutePage {
   final bool opaque;
@@ -163,7 +198,7 @@ class CustomPage extends AutoRoutePage {
   final RouteTransitionsBuilder transitionsBuilder;
   final CustomRouteBuilder customRouteBuilder;
 
-  CustomPage({
+  const CustomPage({
     @required StackEntryItem entry,
     @required Widget child,
     bool fullscreenDialog = false,
@@ -187,16 +222,17 @@ class CustomPage extends AutoRoutePage {
         );
 
   @override
-  Route onCreateRoute(BuildContext context, Widget child) {
+  Route createRoute(BuildContext context) {
     if (customRouteBuilder != null) {
-      return customRouteBuilder(context, this);
+      return customRouteBuilder(context, wrappedChild(context), this);
     }
     return PageRouteBuilder(
-      pageBuilder: (_, __, ___) => child,
+      pageBuilder: (_, __, ___) => wrappedChild(context),
       settings: this,
       opaque: opaque,
       transitionDuration: Duration(milliseconds: durationInMilliseconds),
-      reverseTransitionDuration: Duration(milliseconds: reverseDurationInMilliseconds),
+      reverseTransitionDuration:
+          Duration(milliseconds: reverseDurationInMilliseconds),
       barrierColor: barrierColor,
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel,
@@ -207,7 +243,10 @@ class CustomPage extends AutoRoutePage {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
     return child;
   }
 }

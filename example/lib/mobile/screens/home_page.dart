@@ -8,7 +8,6 @@ class HomePage extends StatelessWidget {
         routes: [BooksTab(), ProfileTab(), SettingsTab()],
         duration: Duration(milliseconds: 400),
         builder: (context, child, animation) {
-          print('Tabs rebuidling');
           var tabsRouter = context.tabsRouter;
           return Scaffold(
             appBar: AppBar(
