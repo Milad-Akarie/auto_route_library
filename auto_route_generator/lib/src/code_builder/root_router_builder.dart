@@ -150,8 +150,6 @@ Expression getParamAssignment(ParamConfig p) {
 
 Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
       (r) {
-        var shouldBuildFromMatch =
-            (r.isParent || r.parameters?.isNotEmpty == true);
         return _routeConfigType.newInstance([
           if (r.routeType == RouteType.redirect)
             literalString('${r.pathName}#redirect')
@@ -166,14 +164,12 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
           if (r.routeType != RouteType.redirect)
             'routeBuilder': Method((b) => b
               ..requiredParameters.add(
-                Parameter((b) => b.name = shouldBuildFromMatch ? 'match' : '_'),
+                Parameter((b) => b.name = 'match'),
               )
-              ..body = shouldBuildFromMatch
-                  ? refer(r.routeName).newInstanceNamed(
-                      'fromMatch',
-                      [refer('match')],
-                    ).code
-                  : refer(r.routeName).constInstance([]).code).closure,
+              ..body = refer(r.routeName).newInstanceNamed(
+                'fromMatch',
+                [refer('match')],
+              ).code).closure,
           if (r.guards?.isNotEmpty == true)
             'guards': literalList(r.guards
                 .map(

@@ -156,6 +156,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
               if (!route.didPop(result)) {
                 return false;
               }
+              widget.onPopRoute?.call(_controller.current?.route);
               _controller.removeLast();
               return true;
             },

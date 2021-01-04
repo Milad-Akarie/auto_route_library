@@ -1,5 +1,4 @@
 import 'package:auto_route/src/matcher/route_match.dart';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 
@@ -7,13 +6,13 @@ import '../../auto_route.dart';
 import '../utils.dart';
 
 @immutable
-class PageRouteInfo extends Equatable {
+class PageRouteInfo {
   final String _name;
   final String path;
   final RouteMatch match;
   final Map<String, dynamic> params;
+  final Map<String, dynamic> queryParams;
   final List<PageRouteInfo> initialChildren;
-  final List<Object> argProps;
 
   const PageRouteInfo(
     this._name, {
@@ -21,7 +20,7 @@ class PageRouteInfo extends Equatable {
     this.initialChildren,
     this.match,
     this.params,
-    this.argProps,
+    this.queryParams,
   });
 
   String get routeName => _name;
@@ -58,26 +57,16 @@ class PageRouteInfo extends Equatable {
       : _name = match.config.name,
         path = match.config.path,
         params = match.pathParams?.rawMap,
-        argProps = const [],
+        queryParams = match.queryParams?.rawMap,
         initialChildren = match.buildChildren();
 
 // maybe?
   Future<void> show(BuildContext context) {
     return context.router.push(this);
   }
-
-  @override
-  List<Object> get props => [
-        _name,
-        path,
-        match,
-        params,
-        initialChildren,
-        if (argProps != null) ...argProps,
-      ];
 }
 
-class RouteData<T extends PageRouteInfo> {
+class RouteData {
   final PageRouteInfo route;
   final RouteData parent;
   final RouteConfig config;

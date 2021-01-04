@@ -13,7 +13,7 @@ import '../../utils.dart';
 typedef RouteDataPredicate = bool Function(RouteData route);
 
 abstract class RoutingController implements ChangeNotifier {
-  ValueKey<PageRouteInfo> get key;
+  ValueKey<String> get key;
 
   RouteMatcher get matcher;
 
@@ -25,6 +25,9 @@ abstract class RoutingController implements ChangeNotifier {
 
   RoutingController get topMost;
 
+  RouteData get current;
+
+  @Deprecated('Renamed to just current')
   RouteData get currentRoute;
 
   RouteData get routeData;
@@ -128,7 +131,7 @@ class StackRouterScope extends InheritedWidget {
 }
 
 abstract class StackEntryItem {
-  ValueKey<PageRouteInfo> get key;
+  ValueKey<String> get key;
 
   RouteData get routeData;
 
@@ -142,27 +145,27 @@ abstract class StackEntryItem {
             parentController: parent,
             pageBuilder: parent.pageBuilder,
             routeCollection: parent.routeCollection.subCollectionOf(data.name),
-            key: ValueKey(data.route),
+            key: ValueKey(data.route.stringMatch),
             routeData: data,
             preMatchedRoutes: data.route.initialChildren);
       } else {
         return BranchEntry(
             parentController: parent,
-            key: ValueKey(data.route),
+            key: ValueKey(data.route.stringMatch),
             routeData: data,
             routeCollection: parent.routeCollection.subCollectionOf(data.name),
             pageBuilder: parent.pageBuilder,
             preMatchedRoutes: data.route.initialChildren);
       }
     } else {
-      return LeafEntry(data, ValueKey(data.route));
+      return LeafEntry(data, ValueKey(data.route.stringMatch));
     }
   }
 }
 
 class LeafEntry implements StackEntryItem {
   final RouteData routeData;
-  final ValueKey<PageRouteInfo> key;
+  final ValueKey<String> key;
 
   const LeafEntry(this.routeData, this.key);
 }
@@ -170,7 +173,7 @@ class LeafEntry implements StackEntryItem {
 class ParallelBranchEntry extends ChangeNotifier
     implements StackEntryItem, TabsRouter {
   final RoutingController parentController;
-  final ValueKey<PageRouteInfo> key;
+  final ValueKey<String> key;
   final RouteCollection routeCollection;
   final PageBuilder pageBuilder;
   final RouteMatcher matcher;
@@ -190,8 +193,12 @@ class ParallelBranchEntry extends ChangeNotifier
 
   T parent<T extends RoutingController>() => parent as T;
 
+  @Deprecated('Renamed to just current')
   @override
-  RouteData get currentRoute => _pages[_activeIndex]?.routeData;
+  RouteData get currentRoute => current;
+
+  @override
+  RouteData get current => _pages[_activeIndex]?.routeData;
 
   @override
   int get activeIndex => _activeIndex;
@@ -291,7 +298,7 @@ class ParallelBranchEntry extends ChangeNotifier
 class BranchEntry extends ChangeNotifier
     implements StackEntryItem, StackRouter {
   final RoutingController parentController;
-  final ValueKey<PageRouteInfo> key;
+  final ValueKey<String> key;
   final RouteCollection routeCollection;
   final PageBuilder pageBuilder;
   final RouteData routeData;
@@ -317,18 +324,10 @@ class BranchEntry extends ChangeNotifier
     if (!listNullOrEmpty(preMatchedRoutes)) {
       pushAll(preMatchedRoutes);
     } else {
-      var defaultConfig = routeCollection.configWithPath('');
-      if (defaultConfig != null) {
-        if (defaultConfig.isRedirect) {
-          pushPath(defaultConfig.redirectTo);
-        } else {
-          push(RouteMatch(
-            config: defaultConfig,
-            segments: defaultConfig.path.split('/'),
-            pathParams: Parameters({}),
-            queryParams: Parameters({}),
-          ).toRoute);
-        }
+      // push default route if exist
+      var matches = matcher.match('');
+      if (matches != null) {
+        pushAll(matches.map((m) => m.toRoute).toList());
       }
     }
   }
@@ -337,10 +336,21 @@ class BranchEntry extends ChangeNotifier
 
   T parent<T extends RoutingController>() => parentController as T;
 
+  @Deprecated('Renamed to just current')
   @override
-  RouteData get currentRoute {
+  RouteData get currentRoute => current;
+
+  @override
+  RouteData get current {
     if (_pages.isNotEmpty) {
       return _pages.last.routeData;
+    }
+    return null;
+  }
+
+  StackEntryItem get _lastEntry {
+    if (_pages.isNotEmpty) {
+      return _pages.last.entry;
     }
     return null;
   }
@@ -396,10 +406,19 @@ class BranchEntry extends ChangeNotifier
   @override
   Future<void> navigate(PageRouteInfo route,
       {OnNavigationFailure onFailure}) async {
-    var entry =
-        _pages.lastWhere((e) => e.key == ValueKey(route), orElse: () => null);
-    if (entry != null) {
-      removeUntil((d) => d.route == route);
+    var page = _pages.lastWhere(
+      (p) => p.entry.key == ValueKey(route.stringMatch),
+      orElse: () => null,
+    );
+    if (page != null) {
+      for (var candidate in List<AutoRoutePage>.unmodifiable(_pages).reversed) {
+        if (candidate == page) {
+          break;
+        } else {
+          _removeLast(notify: false);
+        }
+      }
+      notifyListeners();
     } else {
       return push(route, onFailure: onFailure);
     }
@@ -622,21 +641,23 @@ class BranchEntry extends ChangeNotifier
 
   Future<void> updateOrReplaceRoutes(List<PageRouteInfo> routes) {
     assert(routes != null);
+    assert(routes.isNotEmpty);
+
     var route = routes.last;
-    var newKey = ValueKey(route);
-    var lastKey = _pages.last.key;
+    var newKey = ValueKey<String>(route.stringMatch);
+    var lastKey = _lastEntry?.key;
     if (lastKey != null && lastKey == newKey) {
-      if (route.hasChildren && _pages.last.entry is BranchEntry) {
+      if (route.hasChildren && _lastEntry is BranchEntry) {
         // this line should remove any routes below the updated one
-        // not sure if this's the desired behaviour
-        _pages.sublist(0, _pages.length - 2);
-        (_pages.last as BranchEntry)
-            .updateOrReplaceRoutes(route.initialChildren);
+        // not sure if this is the desired behaviour
+        _pages.removeWhere((p) => p.entry.key != newKey);
+        if (route.hasChildren) {
+          return (_pages.last.entry as BranchEntry)
+              .updateOrReplaceRoutes(route.initialChildren);
+        }
       }
-    } else {
-      return _replaceAll(routes, notify: true);
     }
-    return SynchronousFuture(null);
+    return _replaceAll(routes, notify: true);
   }
 
   void _clearHistory() {

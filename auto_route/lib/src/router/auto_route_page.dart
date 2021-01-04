@@ -26,8 +26,7 @@ abstract class AutoRoutePage extends Page<dynamic> {
         assert(fullscreenDialog != null),
         assert(maintainState != null),
         super(
-          // key: entry.key,
-          arguments: entry,
+        // key: entry.key,
         );
 
   @override
@@ -69,7 +68,6 @@ class _PageBasedMaterialPageRoute extends PageRoute<dynamic>
   _PageBasedMaterialPageRoute({
     @required AutoRoutePage page,
   })  : assert(page != null),
-        assert(opaque),
         super(settings: page);
 
   AutoRoutePage get _page => settings as AutoRoutePage;
@@ -87,10 +85,10 @@ class _PageBasedMaterialPageRoute extends PageRoute<dynamic>
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
-abstract class TitledAutoRoutePage extends AutoRoutePage {
+abstract class _TitledAutoRoutePage extends AutoRoutePage {
   final String title;
 
-  const TitledAutoRoutePage({
+  const _TitledAutoRoutePage({
     @required StackEntryItem entry,
     @required Widget child,
     this.title,
@@ -104,7 +102,7 @@ abstract class TitledAutoRoutePage extends AutoRoutePage {
         );
 }
 
-class CupertinoPageX extends TitledAutoRoutePage {
+class CupertinoPageX extends _TitledAutoRoutePage {
   const CupertinoPageX({
     @required StackEntryItem entry,
     @required Widget child,
@@ -129,12 +127,11 @@ class CupertinoPageX extends TitledAutoRoutePage {
 class _PageBasedCupertinoPageRoute extends PageRoute<dynamic>
     with CupertinoRouteTransitionMixin {
   _PageBasedCupertinoPageRoute({
-    @required TitledAutoRoutePage page,
+    @required _TitledAutoRoutePage page,
   })  : assert(page != null),
-        assert(opaque),
         super(settings: page);
 
-  TitledAutoRoutePage get _page => settings as TitledAutoRoutePage;
+  _TitledAutoRoutePage get _page => settings as _TitledAutoRoutePage;
 
   @override
   Widget buildContent(BuildContext context) => _page.wrappedChild(context);
@@ -152,7 +149,7 @@ class _PageBasedCupertinoPageRoute extends PageRoute<dynamic>
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
-class AdaptivePage extends TitledAutoRoutePage {
+class AdaptivePage extends _TitledAutoRoutePage {
   const AdaptivePage({
     @required StackEntryItem entry,
     @required Widget child,
@@ -198,7 +195,7 @@ class CustomPage extends AutoRoutePage {
   final RouteTransitionsBuilder transitionsBuilder;
   final CustomRouteBuilder customRouteBuilder;
 
-  const CustomPage({
+  CustomPage({
     @required StackEntryItem entry,
     @required Widget child,
     bool fullscreenDialog = false,
@@ -219,7 +216,7 @@ class CustomPage extends AutoRoutePage {
           child: child,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
-        );
+        ) {}
 
   @override
   Route createRoute(BuildContext context) {

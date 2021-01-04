@@ -6,12 +6,8 @@ import 'package:provider/provider.dart';
 
 class BookDetailsPage extends StatefulWidget {
   final int id;
-  final String queryFilter;
 
-  const BookDetailsPage({
-    @PathParam('id') this.id = 1,
-    @queryParam this.queryFilter,
-  });
+  const BookDetailsPage({@pathParam this.id});
 
   @override
   _BookDetailsPageState createState() => _BookDetailsPageState();
@@ -27,15 +23,15 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     final book = booksDb.findBookById(widget.id);
     return book == null
         ? Container(child: Text('Book null'))
-        : Scaffold(
-            appBar: AppBar(
-              title: Text(book.name),
-            ),
-            body: Center(
+        : Material(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Book Details/${book.id}'),
+                  Text(
+                    book.name,
+                    style: TextStyle(fontSize: 22),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 24),
                     child: Text(
@@ -51,7 +47,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                         counter++;
                       });
                     },
-                  )
+                  ),
                 ],
               ),
             ),

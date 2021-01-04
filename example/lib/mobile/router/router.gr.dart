@@ -33,7 +33,7 @@ class AppRouter extends _i1.RootStackRouter {
       return _i1.CupertinoPageX(
           entry: entry,
           child: _i5.UserDataCollectorPage(
-              key: route.key, onResult: route.onResult));
+              key: route.key, onResult: route.onResult, id: route.id));
     },
     LoginRoute.name: (entry) {
       var route = entry.routeData.as<LoginRoute>();
@@ -127,16 +127,18 @@ class AppRouter extends _i1.RootStackRouter {
                     _i1.RouteConfig('#redirect',
                         path: '', redirectTo: 'me', fullMatch: true),
                     _i1.RouteConfig<ProfileRoute>(ProfileRoute.name,
-                        path: 'me', routeBuilder: (_) => const ProfileRoute()),
+                        path: 'me',
+                        routeBuilder: (match) => ProfileRoute.fromMatch(match)),
                     _i1.RouteConfig<MyBooksRoute>(MyBooksRoute.name,
                         path: 'me/books',
                         routeBuilder: (match) => MyBooksRoute.fromMatch(match))
                   ]),
               _i1.RouteConfig<SettingsTab>(SettingsTab.name,
-                  path: 'settings', routeBuilder: (_) => const SettingsTab())
+                  path: 'settings',
+                  routeBuilder: (match) => SettingsTab.fromMatch(match))
             ]),
         _i1.RouteConfig<UserDataCollectorRoute>(UserDataCollectorRoute.name,
-            path: '/user-data',
+            path: '/user-data/:id',
             routeBuilder: (match) => UserDataCollectorRoute.fromMatch(match),
             children: [
               _i1.RouteConfig<SingleFieldRoute>(SingleFieldRoute.name,
@@ -165,27 +167,29 @@ class HomeRoute extends _i1.PageRouteInfo {
 
 class UserDataCollectorRoute extends _i1.PageRouteInfo {
   UserDataCollectorRoute(
-      {this.key, this.onResult, List<_i1.PageRouteInfo> children})
+      {this.key, this.onResult, this.id, List<_i1.PageRouteInfo> children})
       : super(name,
-            path: '/user-data',
-            argProps: [key, onResult],
+            path: '/user-data/:id',
+            params: {'id': id},
             initialChildren: children);
 
   UserDataCollectorRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
         onResult = null,
+        id = match.pathParams.getInt('id'),
         super.fromMatch(match);
 
   final _i2.Key key;
 
   final dynamic Function(_i5.UserData) onResult;
 
+  final int id;
+
   static const String name = 'UserDataCollectorRoute';
 }
 
 class LoginRoute extends _i1.PageRouteInfo {
-  LoginRoute({this.key, this.onLoginResult})
-      : super(name, path: '/login', argProps: [key, onLoginResult]);
+  LoginRoute({this.key, this.onLoginResult}) : super(name, path: '/login');
 
   LoginRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
@@ -220,11 +224,13 @@ class ProfileTab extends _i1.PageRouteInfo {
 class SettingsTab extends _i1.PageRouteInfo {
   const SettingsTab() : super(name, path: 'settings');
 
+  SettingsTab.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
+
   static const String name = 'SettingsTab';
 }
 
 class BookListRoute extends _i1.PageRouteInfo {
-  BookListRoute({this.id}) : super(name, path: 'list', argProps: [id]);
+  BookListRoute({this.id}) : super(name, path: 'list');
 
   BookListRoute.fromMatch(_i1.RouteMatch match)
       : id = null,
@@ -238,7 +244,9 @@ class BookListRoute extends _i1.PageRouteInfo {
 class BookDetailsRoute extends _i1.PageRouteInfo {
   BookDetailsRoute({this.id = 1, this.queryFilter})
       : super(name,
-            path: 'list/:id', params: {'id': id}, argProps: [id, queryFilter]);
+            path: 'list/:id',
+            params: {'id': id},
+            queryParams: {'queryFilter': queryFilter});
 
   BookDetailsRoute.fromMatch(_i1.RouteMatch match)
       : id = match.pathParams.getInt('id', 1),
@@ -255,12 +263,14 @@ class BookDetailsRoute extends _i1.PageRouteInfo {
 class ProfileRoute extends _i1.PageRouteInfo {
   const ProfileRoute() : super(name, path: 'me');
 
+  ProfileRoute.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
+
   static const String name = 'ProfileRoute';
 }
 
 class MyBooksRoute extends _i1.PageRouteInfo {
   MyBooksRoute({this.key, this.filter = 'none'})
-      : super(name, path: 'me/books', argProps: [key, filter]);
+      : super(name, path: 'me/books', queryParams: {'filter': filter});
 
   MyBooksRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
@@ -280,9 +290,7 @@ class SingleFieldRoute extends _i1.PageRouteInfo {
       @_i2.required this.message,
       @_i2.required this.willPopMessage,
       @_i2.required this.onNext})
-      : super(name,
-            path: 'single-field-page',
-            argProps: [key, message, willPopMessage, onNext]);
+      : super(name, path: 'single-field-page');
 
   SingleFieldRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
@@ -304,7 +312,7 @@ class SingleFieldRoute extends _i1.PageRouteInfo {
 
 class UserDataRoute extends _i1.PageRouteInfo {
   UserDataRoute({this.key, this.onResult})
-      : super(name, path: 'user-data-page', argProps: [key, onResult]);
+      : super(name, path: 'user-data-page');
 
   UserDataRoute.fromMatch(_i1.RouteMatch match)
       : key = null,

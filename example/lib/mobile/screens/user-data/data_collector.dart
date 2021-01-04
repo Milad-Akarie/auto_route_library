@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
   final Function(UserData data) onResult;
 
-  const UserDataCollectorPage({Key key, this.onResult}) : super(key: key);
+  const UserDataCollectorPage({Key key, this.onResult, @pathParam int id}) : super(key: key);
 
   @override
   _UserDataCollectorPageState createState() => _UserDataCollectorPageState();
@@ -44,6 +44,8 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
               },
             ),
         ];
+      }, onPopRoute: (PageRouteInfo route) {
+        // reset the state based on popped route
       });
 }
 

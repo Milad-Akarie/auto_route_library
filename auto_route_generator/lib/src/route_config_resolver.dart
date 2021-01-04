@@ -92,12 +92,12 @@ class RouteConfigResolver {
     ClassElement pageClass = page.element;
     if (config.pathParams?.isNotEmpty == true) {
       var pathParamCandidates = config.parameters
-              ?.where((p) => !p.isQueryParam)
+              ?.where((p) => p.isPathParam)
               ?.map((e) => e.paramName) ??
           [];
       for (var pParam in config.pathParams) {
         throwIf(!pathParamCandidates.contains(pParam.name),
-            '${config.className} does not have a constructor parameter with an alias-name [${pParam.name}]',
+            '${config.className} does not have a constructor parameter (annotated with @PathParam()) with an alias/name [${pParam.name}]',
             element: pageClass.unnamedConstructor);
         var param =
             config.parameters.firstWhere((e) => e.paramName == pParam.name);
