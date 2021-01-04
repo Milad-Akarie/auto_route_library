@@ -16,7 +16,8 @@
 - [Generated routes](#generated-routes)
 - [Navigation](#navigation)
 - [Passing Arguments](#passing-arguments)
-- [Working with paths](#working-with-paths)
+- [Working with Paths](#working-with-paths)
+- [Nested Routes](#nested-routes)
 
 ### Introduction
 ##### What is AutoRoute?
@@ -151,12 +152,15 @@ context.router.pop();
 ## Working with Paths
 Working with paths in **AutoRoute** is optional because `PageRouteInfo` objects are matched by name unless pushed as a string using the `initialDeepLink` property in root delegate or `pushPath` method in StackRouter.
 
-When developing a web Application or a native App that requires deep-linking you'd probably need to define paths with clear names for your routes, if you don’t specify a path it’s going to be generated from the page name e.g. `BookListPage` will have ‘book-list-page’ as a path, if initial arg is set to true the path will be `/` unless it's relative then it will be an empty string `''`.
+if you don’t specify a path it’s going to be generated from the page name e.g. `BookListPage` will have ‘book-list-page’ as a path, if initial arg is set to true the path will be `/` unless it's relative then it will be an empty string `''`.
+
+When developing a web Application or a native App that requires deep-linking you'd probably need to define paths with clear memorable names, and that's done using the `path` argument in `AutoRoute`.
 
 ```dart
  AutoRoute(path: '/books', page: BookListPage),
 ```
-You can also define a path with a dynamic segment by prefixing it with a colon
+#### Path Parameters (dynamic segments)
+You can define a dynamic segment by prefixing it with a colon
 ```dart
  AutoRoute(path: '/books/:id', page: BookDetailsPage),
 ```
@@ -170,8 +174,17 @@ class BookDetailsPage extends StatelessWidget {
   ...
 ```
 Now writing `/books/1` in the browser will navigate you to `BookDetailsPage` and automatically extract the `bookId` argument from the path.
+#### Query Parameters
+Query parameters are accessed the same way, simply annotate the constructor parameter to hold the value of the query param with `@QueryParam('optional-alias')` and let AutoRoute do the rest.
 
-Paths can be redirected by using the `RedirectRoute`. The following setup will navigate us to `/books` when `/` is matched.
+you could also access path/query parameters using the scoped `RouteData` object.
+```dart
+ RouteData.of(context).pathParams;
+ // or using the extension
+ context.route.queryParams
+```
+#### Redirecting Paths
+Paths can be redirected using `RedirectRoute`. The following setup will navigate us to `/books` when `/` is matched.
 
 ```dart
 <AutoRoute> [
@@ -179,7 +192,17 @@ Paths can be redirected by using the `RedirectRoute`. The following setup will n
      AutoRoute(path: '/books', page: BookListPage),
  ]
 ```
-Note:  `RedirectRoutes` are fullMatched.
+Note:  `RedirectRoutes` are fully matched.
+#### Wildcards
+AutoRoute supports wildcard matching to handle invalid or undefined paths.
+```dart
+AutoRoute(path: '*', page: UnknownRoutePage)
+// it could be used with defined prefixes
+AutoRoute(path: '/profile/*', page: ProfilePage)
+// or it could be used with RedirectRoute
+RedirectRoute(path: '*', redirectTo: '/')
+```
+**Note:** be sure to always add your wildcards at the end of your route list because routes are matched in order.
 
 ## More docs are coming soon
 

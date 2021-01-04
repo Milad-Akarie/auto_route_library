@@ -54,35 +54,42 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                           ),
                         ),
                       ),
-                    if (r.parameters?.isNotEmpty == true)
-                      'argProps':
-                          literalList(r.parameters.map((e) => refer(e.name))),
+                    if (r.parameters?.any((p) => p.isQueryParam) == true)
+                      'queryParams': literalMap(
+                        Map.fromEntries(
+                          r.parameters.where((p) => p.isQueryParam).map(
+                                (p) => MapEntry(
+                                  p.paramName,
+                                  refer(p.name),
+                                ),
+                              ),
+                        ),
+                      ),
                     if (r.isParent) 'initialChildren': refer('children'),
                   }).code);
               },
             ),
-            if (r.isParent || r.parameters?.isNotEmpty == true)
-              Constructor(
-                (b) {
-                  b
-                    ..name = 'fromMatch'
-                    ..initializers.addAll([
-                      if (r.parameters?.isNotEmpty == true)
-                        ...r.parameters.map((p) =>
-                            refer(p.name).assign(getParamAssignment(p)).code),
-                      refer('super')
-                          .newInstanceNamed('fromMatch', [refer('match')]).code
-                    ]);
-                  b.requiredParameters.add(
-                    Parameter(
-                      (b) => b
-                        ..name = 'match'
-                        ..type = refer("RouteMatch", autoRouteImport),
-                    ),
-                  );
-                  return b;
-                },
-              )
+            Constructor(
+              (b) {
+                b
+                  ..name = 'fromMatch'
+                  ..initializers.addAll([
+                    if (r.parameters?.isNotEmpty == true)
+                      ...r.parameters.map((p) =>
+                          refer(p.name).assign(getParamAssignment(p)).code),
+                    refer('super')
+                        .newInstanceNamed('fromMatch', [refer('match')]).code
+                  ]);
+                b.requiredParameters.add(
+                  Parameter(
+                    (b) => b
+                      ..name = 'match'
+                      ..type = refer("RouteMatch", autoRouteImport),
+                  ),
+                );
+                return b;
+              },
+            )
           ],
         ),
     );

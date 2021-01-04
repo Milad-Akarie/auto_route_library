@@ -5,7 +5,7 @@ import 'package:example/mobile/screens/user-data/user_data_page.dart';
 import 'data_collector.dart';
 
 const userDataRoutes = AutoRoute(
-  path: '/user-data',
+  path: '/user-data/:id',
   page: UserDataCollectorPage,
   children: [
     CustomRoute(

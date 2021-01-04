@@ -72,7 +72,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   @override
   Future<void> setNewRoutePath(List<PageRouteInfo> routes) {
     if (!listNullOrEmpty(routes)) {
-      return controller.pushAll(routes);
+      return (controller as BranchEntry).updateOrReplaceRoutes(routes);
     }
     return SynchronousFuture(null);
   }

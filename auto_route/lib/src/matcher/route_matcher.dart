@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:auto_route/src/matcher/route_match.dart';
+import 'package:path/path.dart' as p;
 
 import '../../auto_route.dart';
 
@@ -49,7 +50,7 @@ class RouteMatcher {
 
   List<RouteMatch> _match(Uri uri, RouteCollection routesCollection,
       {bool includePrefixMatches = false}) {
-    var pathSegments = _split(uri.path);
+    var pathSegments = p.split(uri.path);
     var matches = <RouteMatch>[];
     for (var config in routesCollection.routes) {
       var match = matchRoute(uri, config);
@@ -63,7 +64,7 @@ class RouteMatcher {
           if (redirectMatches != null && redirectMatches.length == 1) {
             return [
               redirectMatches.first
-                  .copyWith(segments: _split(config.redirectTo))
+                  .copyWith(segments: p.split(config.redirectTo))
             ];
           }
           return redirectMatches;
@@ -90,6 +91,12 @@ class RouteMatcher {
         } else {
           // has complete match
           //
+          // include empty route if exists
+          if (config.isSubTree && !match.hasChildren) {
+            match = match.copyWith(
+                children: _match(uri.replace(path: ''), config.children));
+          }
+
           // if true ignore all previous matches
           if (match.config.path == "*" || !includePrefixMatches) {
             matches.clear();
@@ -110,17 +117,17 @@ class RouteMatcher {
     return matches;
   }
 
-  RouteMatch matchRoute(Uri url, RouteConfig routeDef) {
-    var parts = _split(routeDef.path);
-    var segments = _split(url.path);
+  RouteMatch matchRoute(Uri url, RouteConfig config) {
+    var parts = p.split(config.path);
+    var segments = p.split(url.path);
 
     if (parts.length > segments.length) {
       return null;
     }
 
-    if (routeDef.fullMatch &&
-        parts.last != "*" &&
-        segments.length > parts.length) {
+    if (config.fullMatch &&
+        segments.length > parts.length &&
+        (parts.isEmpty || parts.last != '*')) {
       return null;
     }
 
@@ -136,24 +143,15 @@ class RouteMatcher {
     }
 
     var splitAt = parts.length;
-    if (parts.last == "*") {
+    if (parts.isNotEmpty && parts.last == "*") {
       splitAt = segments.length;
     }
     return RouteMatch(
         segments: segments.sublist(0, splitAt),
-        config: routeDef,
+        config: config,
         pathParams: Parameters(pathParams),
         queryParams: Parameters(url.queryParameters),
         fragment: url.fragment);
-  }
-
-  List<String> _split(String path) {
-    assert(path != null);
-    var segments = path.split('/');
-    if (segments.length > 1 && segments.last.isEmpty) {
-      segments.removeLast();
-    }
-    return segments;
   }
 
   bool _isValidRoute(PageRouteInfo route, RouteCollection routes) {

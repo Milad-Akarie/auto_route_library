@@ -28,7 +28,7 @@ class _SingleFieldPageState extends State<SingleFieldPage> {
         _scaffoldKey.currentState.showSnackBar(
           SnackBar(content: Text(widget.willPopMessage)),
         );
-        return false;
+        return true;
       },
       child: Scaffold(
         key: _scaffoldKey,

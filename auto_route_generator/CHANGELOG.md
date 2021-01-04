@@ -1,4 +1,10 @@
 # ChangeLog
+## [1.0.0-beta.6]
+- Fix reload issue when pressing the browser's back button #309
+- Fix onPopRoute is not called in declarative Router #310
+- Include empty paths as prefix-matched paths when deep-linking.
+- Remove unnecessary dependencies
+- Some minor improvements and code refactor
 ## [1.0.0-beta.5]
 - Refactor some code
 - Update readme file
