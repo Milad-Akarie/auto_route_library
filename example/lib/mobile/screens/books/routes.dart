@@ -5,17 +5,16 @@ import 'book_details_page.dart';
 import 'book_list_page.dart';
 
 const booksTab = AutoRoute(
-  path: 'books',
+  path: '',
   page: EmptyRouterPage,
   name: 'BooksTab',
   children: [
-    RedirectRoute(path: '', redirectTo: 'list'),
-    AutoRoute(path: 'list', page: BookListPage),
+    RedirectRoute(path: '', redirectTo: 'books'),
+    AutoRoute(path: 'books', page: BookListPage),
     AutoRoute(
-      path: 'list/:id',
-      fullscreenDialog: false,
+      path: 'books/:id',
       page: BookDetailsPage,
-      guards: [AuthGuard],
+      // guards: [AuthGuard],
     ),
   ],
 );

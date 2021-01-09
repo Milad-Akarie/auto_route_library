@@ -6,19 +6,16 @@ import 'package:flutter/material.dart';
 import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
 
-typedef AnimatedIndexedStackBuilder = Widget Function(
-    BuildContext context, Widget child, Animation<double> animation);
+typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child, Animation<double> animation);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder builder;
-  final List<PageRouteInfo> routes;
   final Duration duration;
   final Curve curve;
   final bool lazyLoad;
 
   const AutoTabsRouter({
     Key key,
-    @required this.routes,
     this.lazyLoad = true,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
@@ -43,8 +40,7 @@ class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter>
-    with SingleTickerProviderStateMixin {
+class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProviderStateMixin {
   TabsRouter _controller;
   AnimationController _animationController;
   Animation<double> _animation;
@@ -81,7 +77,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
 
   void _resetController() {
     assert(_controller != null);
-    _controller.setupRoutes(widget.routes);
+    // _controller.setupRoutes(widget.routes);
     _index = _controller.activeIndex;
     _animationController.value = 1.0;
     var rootDelegate = RootRouterDelegate.of(context);
@@ -101,14 +97,6 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
     _animationController.dispose();
     _controller.dispose();
     super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
-      // _resetController();
-    }
   }
 
   @override
@@ -185,8 +173,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
-      _pages[widget.activeIndex] =
-          widget.itemBuilder(context, widget.activeIndex);
+      _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
     }
   }
 

@@ -15,7 +15,7 @@ export 'web_router.gr.dart';
       path: '/',
       page: DashboardPage,
       children: [
-        RedirectRoute(path: '', redirectTo: 'books'),
+        // RedirectRoute(path: 'books', redirectTo: 'books'),
         booksRoute,
         usersRoute,
         AutoRoute(path: 'settings', page: SettingsPage),

@@ -1,5 +1,4 @@
 import 'package:example/data/db.dart';
-import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +7,7 @@ import 'package:provider/provider.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final appRouter = AppRouter(authGuard: AuthGuard());
+  final appRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,8 @@ import 'package:meta/meta.dart';
 import '../../auto_route.dart';
 import '../utils.dart';
 
+import 'package:collection/collection.dart';
+
 @immutable
 class RouteMatch {
   final RouteConfig config;
@@ -16,9 +18,9 @@ class RouteMatch {
     @required this.config,
     @required this.segments,
     this.children,
-    this.pathParams,
-    this.queryParams,
-    this.fragment,
+    this.pathParams = const Parameters({}),
+    this.queryParams = const Parameters({}),
+    this.fragment = '',
   })  : assert(config != null),
         assert(segments != null);
 
@@ -27,6 +29,8 @@ class RouteMatch {
   PageRouteInfo get toRoute => config.routeBuilder(this);
 
   String get path => config.path;
+
+  List<String> get url => [...segments, if (hasChildren) ...children.last.url];
 
   List<PageRouteInfo> buildChildren() {
     return children?.map((m) => m.toRoute)?.toList(growable: false);
@@ -52,7 +56,29 @@ class RouteMatch {
     );
   }
 
-  toString() {
-    return 'RouteMatch{key: ${config.path}, children: $children}';
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RouteMatch &&
+          runtimeType == other.runtimeType &&
+          config == other.config &&
+          pathParams == other.pathParams &&
+          queryParams == other.queryParams &&
+          ListEquality().equals(children, other.children) &&
+          fragment == other.fragment &&
+          ListEquality().equals(segments, other.segments);
+
+  @override
+  int get hashCode =>
+      config.hashCode ^
+      pathParams.hashCode ^
+      queryParams.hashCode ^
+      children.hashCode ^
+      fragment.hashCode ^
+      segments.hashCode;
+
+  @override
+  String toString() {
+    return 'RouteMatch{config: $config, pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments}';
   }
 }

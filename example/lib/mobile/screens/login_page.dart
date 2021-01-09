@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
   final void Function(bool isLoggedIn) onLoginResult;
-
-  const LoginPage({Key key, this.onLoginResult}) : super(key: key);
+  final bool showBackButton;
+  const LoginPage({Key key, this.onLoginResult, this.showBackButton = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +16,7 @@ class LoginPage extends StatelessWidget {
       // },
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: showBackButton,
           title: Text('Login to continue'),
         ),
         body: Center(

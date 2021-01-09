@@ -36,4 +36,17 @@ class RouteConfig<T extends PageRouteInfo> {
   RouteCollection get children => _children;
 
   bool get isRedirect => redirectTo != null;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RouteConfig && runtimeType == other.runtimeType && name == other.name && path == other.path;
+
+  @override
+  int get hashCode => name.hashCode ^ path.hashCode ^ fullMatch.hashCode;
+
+  @override
+  String toString() {
+    return 'RouteConfig{name: $name}';
+  }
 }

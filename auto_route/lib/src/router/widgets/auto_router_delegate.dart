@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import '../../utils.dart';
 import '../controller/routing_controller.dart';
 
-class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
-    with ChangeNotifier {
+class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with ChangeNotifier {
   final List<PageRouteInfo> initialRoutes;
   final GlobalKey<NavigatorState> navigatorKey;
   final StackRouter controller;
@@ -42,7 +41,8 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
 
   @override
   List<PageRouteInfo> get currentConfiguration {
-    var route = controller.topMost.currentRoute;
+    print('top most controller ${controller.topMost} #${controller.topMost.hashCode}');
+    var route = controller.topMost.current;
     if (route == null) {
       return null;
     }
@@ -82,22 +82,111 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     return RoutingControllerScope(
       controller: controller,
       child: StackRouterScope(
-        controller: controller,
-        child: !controller.hasEntries
-            ? Container(color: Colors.white)
-            : Navigator(
-                key: controller.navigatorKey,
-                pages: controller.stack,
-                observers: navigatorObservers,
-                onPopPage: (route, result) {
-                  if (!route.didPop(result)) {
-                    return false;
-                  }
-                  controller.removeLast();
-                  return true;
-                },
-              ),
-      ),
+          controller: controller,
+          child: AutoRouteNavigator(
+            router: controller,
+            navigatorObservers: navigatorObservers,
+          )),
     );
+  }
+}
+
+class AutoRouteNavigator extends StatelessWidget {
+  final StackRouter router;
+  final List<NavigatorObserver> navigatorObservers;
+  final void Function(Route route) didPop;
+
+  const AutoRouteNavigator({
+    @required this.router,
+    @required this.navigatorObservers,
+    this.didPop,
+  });
+
+  @override
+  Widget build(BuildContext context) => Navigator(
+        key: router.navigatorKey,
+        observers: navigatorObservers,
+        pages: router.hasEntries ? router.stack : const [_PlaceHolderPage()],
+        transitionDelegate: _CustomTransitionDelegate(),
+        onPopPage: (route, result) {
+          if (!route.didPop(result)) {
+            return false;
+          }
+          router.removeLast();
+          didPop?.call(route);
+          return true;
+        },
+      );
+}
+
+class _PlaceHolderPage extends Page {
+  const _PlaceHolderPage() : super(key: const ValueKey('_placeHolder_'));
+
+  @override
+  Route createRoute(BuildContext context) {
+    return PageRouteBuilder(
+        settings: this,
+        pageBuilder: (context, __, ___) => Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ));
+  }
+}
+
+class _CustomTransitionDelegate extends TransitionDelegate {
+  @override
+  Iterable<RouteTransitionRecord> resolve(
+      {List<RouteTransitionRecord> newPageRouteHistory,
+      Map<RouteTransitionRecord, RouteTransitionRecord> locationToExitingPageRoute,
+      Map<RouteTransitionRecord, List<RouteTransitionRecord>> pageRouteToPagelessRoutes}) {
+    final List<RouteTransitionRecord> results = <RouteTransitionRecord>[];
+    // This method will handle the exiting route and its corresponding pageless
+    // route at this location. It will also recursively check if there is any
+    // other exiting routes above it and handle them accordingly.
+    void handleExitingRoute(RouteTransitionRecord location, bool isLast) {
+      final RouteTransitionRecord exitingPageRoute = locationToExitingPageRoute[location];
+      if (exitingPageRoute == null) return;
+      if (exitingPageRoute.isWaitingForExitingDecision) {
+        final bool hasPagelessRoute = pageRouteToPagelessRoutes.containsKey(exitingPageRoute);
+        final bool isLastExitingPageRoute = isLast && !locationToExitingPageRoute.containsKey(exitingPageRoute);
+        if (isLastExitingPageRoute && !hasPagelessRoute) {
+          exitingPageRoute.markForPop(exitingPageRoute.route.currentResult);
+        } else {
+          exitingPageRoute.markForComplete(exitingPageRoute.route.currentResult);
+        }
+        if (hasPagelessRoute) {
+          final List<RouteTransitionRecord> pagelessRoutes = pageRouteToPagelessRoutes[exitingPageRoute];
+          for (final RouteTransitionRecord pagelessRoute in pagelessRoutes) {
+            assert(pagelessRoute.isWaitingForExitingDecision);
+            if (isLastExitingPageRoute && pagelessRoute == pagelessRoutes.last) {
+              pagelessRoute.markForPop(pagelessRoute.route.currentResult);
+            } else {
+              pagelessRoute.markForComplete(pagelessRoute.route.currentResult);
+            }
+          }
+        }
+      }
+      results.add(exitingPageRoute);
+
+      // It is possible there is another exiting route above this exitingPageRoute.
+      handleExitingRoute(exitingPageRoute, isLast);
+    }
+
+    // Handles exiting route in the beginning of list.
+    handleExitingRoute(null, newPageRouteHistory.isEmpty);
+
+    for (final RouteTransitionRecord pageRoute in newPageRouteHistory) {
+      final bool isLastIteration = newPageRouteHistory.last == pageRoute;
+      final firstPageIsPlaceHolder = results.isNotEmpty && results.first.route.settings is _PlaceHolderPage;
+      if (pageRoute.isWaitingForEnteringDecision) {
+        if (!locationToExitingPageRoute.containsKey(pageRoute) && isLastIteration && !firstPageIsPlaceHolder) {
+          pageRoute.markForPush();
+        } else {
+          pageRoute.markForAdd();
+        }
+      }
+      results.add(pageRoute);
+      handleExitingRoute(pageRoute, isLastIteration);
+    }
+    return results;
   }
 }
