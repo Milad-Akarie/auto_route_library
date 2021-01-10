@@ -57,7 +57,8 @@ class RouteMatcher {
     );
   }
 
-  List<RouteMatch> _match(Uri uri, RouteCollection collection, {bool includePrefixMatches = false, bool root = false}) {
+  List<RouteMatch> _match(Uri uri, RouteCollection collection,
+      {bool includePrefixMatches = false, bool root = false}) {
     final pathSegments = p.split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
@@ -79,8 +80,10 @@ class RouteMatcher {
         if (match.segments.length != pathSegments.length) {
           // has rest
           if (config.isSubTree) {
-            final rest = uri.replace(pathSegments: pathSegments.sublist(match.segments.length));
-            final children = _match(rest, config.children, includePrefixMatches: includePrefixMatches);
+            final rest = uri.replace(
+                pathSegments: pathSegments.sublist(match.segments.length));
+            final children = _match(rest, config.children,
+                includePrefixMatches: includePrefixMatches);
             match = match.copyWith(children: children);
           }
           matches.add(match);
@@ -92,7 +95,8 @@ class RouteMatcher {
           //
           // include empty route if exists
           if (config.isSubTree && !match.hasChildren) {
-            match = match.copyWith(children: _match(uri.replace(path: ''), config.children));
+            match = match.copyWith(
+                children: _match(uri.replace(path: ''), config.children));
           }
 
           matches.add(match);
@@ -101,7 +105,8 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty || (root && matches.last.url.length != pathSegments.length)) {
+    if (matches.isEmpty ||
+        (root && matches.last.url.length != pathSegments.length)) {
       return null;
     }
     return matches;
@@ -132,7 +137,9 @@ class RouteMatcher {
       return null;
     }
 
-    if (config.fullMatch && segments.length > parts.length && (parts.isEmpty || parts.last != '*')) {
+    if (config.fullMatch &&
+        segments.length > parts.length &&
+        (parts.isEmpty || parts.last != '*')) {
       return null;
     }
 
@@ -173,7 +180,8 @@ class RouteMatcher {
       return null;
     }
     if (route.hasInitialChildren) {
-      var childrenMatch = route.initialChildren.every((r) => _isValidRoute(r, routeConfig.children));
+      var childrenMatch = route.initialChildren
+          .every((r) => _isValidRoute(r, routeConfig.children));
       if (!childrenMatch) {
         return null;
       }

@@ -1,4 +1,12 @@
 # ChangeLog
+## [1.0.0-beta.7]
+- Fix onRoutePop not called in declarative router #310
+- Fix App reloads after pressing browser's back button #309
+- Fix TabsRouter not displaying current route when pressing the browser's back button
+- Add pop until method to StackRouter
+- Prefix parent routes are now included if includePrefixMatches is true
+- Add RouteMatcher tests
+- Minor improvements
 ## [1.0.0-beta.6]
 - Fix reload issue when pressing the browser's back button #309
 - Fix onPopRoute is not called in declarative Router #310

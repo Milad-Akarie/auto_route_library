@@ -12,17 +12,21 @@ class Parameters {
     return _params.toString();
   }
 
-  Parameters operator +(Parameters other) => Parameters({..._params, ...other._params});
+  Parameters operator +(Parameters other) =>
+      Parameters({..._params, ...other._params});
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Parameters && runtimeType == other.runtimeType && MapEquality().equals(_params, other._params);
+      other is Parameters &&
+          runtimeType == other.runtimeType &&
+          MapEquality().equals(_params, other._params);
 
   @override
   int get hashCode => _params.hashCode;
 
-  String getString(String key, [String defaultValue]) => _params[key] ?? defaultValue;
+  String getString(String key, [String defaultValue]) =>
+      _params[key] ?? defaultValue;
 
   Object get(String key, defaultValue) => _params[key] ?? defaultValue;
 
