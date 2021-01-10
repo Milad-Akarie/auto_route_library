@@ -49,10 +49,15 @@ class RouteMatcher {
 
   List<RouteMatch> match(String rawPath, {bool includePrefixMatches = false}) {
     assert(includePrefixMatches != null);
-    return _match(Uri.parse(rawPath), collection, includePrefixMatches: includePrefixMatches);
+    return _match(
+      Uri.parse(rawPath),
+      collection,
+      includePrefixMatches: includePrefixMatches,
+      root: true,
+    );
   }
 
-  List<RouteMatch> _match(Uri uri, RouteCollection collection, {bool includePrefixMatches = false}) {
+  List<RouteMatch> _match(Uri uri, RouteCollection collection, {bool includePrefixMatches = false, bool root = false}) {
     final pathSegments = p.split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
@@ -96,8 +101,7 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty ||
-        (pathSegments.isNotEmpty && pathSegments.first == '/' && matches.last.url.length != pathSegments.length)) {
+    if (matches.isEmpty || (root && matches.last.url.length != pathSegments.length)) {
       return null;
     }
     return matches;

@@ -31,9 +31,7 @@ abstract class AutoRoutePage extends Page<dynamic> {
 
   @override
   bool canUpdate(Page other) {
-    var canUpdate = other.runtimeType == runtimeType && (other as AutoRoutePage).entry.key == this.entry.key;
-    print('${entry.routeData.name} canUpdate: $canUpdate');
-    return canUpdate;
+    return other.runtimeType == runtimeType && (other as AutoRoutePage).entry.key == this.entry.key;
   }
 
   Widget wrappedChild(BuildContext context) {

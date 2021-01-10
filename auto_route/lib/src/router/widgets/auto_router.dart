@@ -82,8 +82,8 @@ class AutoRouterState extends State<AutoRouter> {
         controller: _controller,
         child: widget.builder == null
             ? navigator
-            : LayoutBuilder(
-                builder: (ctx, _) => widget.builder(ctx, navigator),
+            : Builder(
+                builder: (ctx) => widget.builder(ctx, navigator),
               ),
       ),
     );

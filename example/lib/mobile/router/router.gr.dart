@@ -7,16 +7,15 @@
 import 'package:auto_route/auto_route.dart' as _i1;
 import '../screens/home_page.dart' as _i2;
 import '../screens/user-data/data_collector.dart' as _i3;
-import '../screens/settings.dart' as _i4;
-import '../screens/login_page.dart' as _i5;
-import '../screens/settings_tab_page.dart' as _i6;
-import '../screens/books/book_list_page.dart' as _i7;
-import '../screens/books/book_details_page.dart' as _i8;
-import '../screens/profile/profile_page.dart' as _i9;
-import '../screens/profile/my_books_page.dart' as _i10;
-import '../screens/user-data/sinlge_field_page.dart' as _i11;
-import '../screens/user-data/user_data_page.dart' as _i12;
-import 'package:flutter/material.dart' as _i13;
+import '../screens/login_page.dart' as _i4;
+import '../screens/settings.dart' as _i5;
+import '../screens/books/book_list_page.dart' as _i6;
+import '../screens/books/book_details_page.dart' as _i7;
+import '../screens/profile/profile_page.dart' as _i8;
+import '../screens/profile/my_books_page.dart' as _i9;
+import '../screens/user-data/sinlge_field_page.dart' as _i10;
+import '../screens/user-data/user_data_page.dart' as _i11;
+import 'package:flutter/material.dart' as _i12;
 
 class AppRouter extends _i1.RootStackRouter {
   AppRouter();
@@ -33,14 +32,11 @@ class AppRouter extends _i1.RootStackRouter {
           child: _i3.UserDataCollectorPage(
               key: route.key, onResult: route.onResult, id: route.id));
     },
-    SettingsRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i4.SettingsPage());
-    },
     LoginRoute.name: (entry) {
       var route = entry.routeData.as<LoginRoute>();
       return _i1.MaterialPageX(
           entry: entry,
-          child: _i5.LoginPage(
+          child: _i4.LoginPage(
               key: route.key,
               onLoginResult: route.onLoginResult,
               showBackButton: route.showBackButton ?? true),
@@ -55,39 +51,32 @@ class AppRouter extends _i1.RootStackRouter {
           entry: entry, child: const _i1.EmptyRouterPage());
     },
     SettingsTab.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i6.SettingsTabPage());
+      return _i1.MaterialPageX(entry: entry, child: _i5.SettingsPage());
     },
     BookListRoute.name: (entry) {
       var route = entry.routeData.as<BookListRoute>();
-      return _i1.MaterialPageX(entry: entry, child: _i7.BookListPage(route.id));
+      return _i1.MaterialPageX(entry: entry, child: _i6.BookListPage(route.id));
     },
     BookDetailsRoute.name: (entry) {
       var route = entry.routeData.as<BookDetailsRoute>();
       return _i1.MaterialPageX(
-          entry: entry, child: _i8.BookDetailsPage(id: route.id ?? 1));
+          entry: entry, child: _i7.BookDetailsPage(id: route.id ?? 1));
     },
     ProfileRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i9.ProfilePage());
+      return _i1.MaterialPageX(entry: entry, child: _i8.ProfilePage());
     },
     MyBooksRoute.name: (entry) {
       var route = entry.routeData.as<MyBooksRoute>();
       return _i1.MaterialPageX(
           entry: entry,
           child:
-              _i10.MyBooksPage(key: route.key, filter: route.filter ?? 'none'));
-    },
-    BookSettingsTab.name: (entry) {
-      var route = entry.routeData.as<BookSettingsTab>();
-      return _i1.MaterialPageX(entry: entry, child: _i7.BookListPage(route.id));
-    },
-    ProfileSettingsTab.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i9.ProfilePage());
+              _i9.MyBooksPage(key: route.key, filter: route.filter ?? 'none'));
     },
     SingleFieldRoute.name: (entry) {
       var route = entry.routeData.as<SingleFieldRoute>();
       return _i1.CustomPage(
           entry: entry,
-          child: _i11.SingleFieldPage(
+          child: _i10.SingleFieldPage(
               key: route.key,
               message: route.message,
               willPopMessage: route.willPopMessage,
@@ -98,7 +87,7 @@ class AppRouter extends _i1.RootStackRouter {
       var route = entry.routeData.as<UserDataRoute>();
       return _i1.CustomPage(
           entry: entry,
-          child: _i12.UserDataPage(key: route.key, onResult: route.onResult),
+          child: _i11.UserDataPage(key: route.key, onResult: route.onResult),
           transitionsBuilder: _i1.TransitionsBuilders.slideRightWithFade);
     }
   };
@@ -138,18 +127,7 @@ class AppRouter extends _i1.RootStackRouter {
                   ]),
               _i1.RouteConfig<SettingsTab>(SettingsTab.name,
                   path: 'settings',
-                  usesTabsRouter: true,
-                  routeBuilder: (match) => SettingsTab.fromMatch(match),
-                  children: [
-                    _i1.RouteConfig<BookSettingsTab>(BookSettingsTab.name,
-                        path: '',
-                        routeBuilder: (match) =>
-                            BookSettingsTab.fromMatch(match)),
-                    _i1.RouteConfig<ProfileSettingsTab>(ProfileSettingsTab.name,
-                        path: 'profile',
-                        routeBuilder: (match) =>
-                            ProfileSettingsTab.fromMatch(match))
-                  ])
+                  routeBuilder: (match) => SettingsTab.fromMatch(match))
             ]),
         _i1.RouteConfig<UserDataCollectorRoute>(UserDataCollectorRoute.name,
             path: '/user-data/:id',
@@ -162,9 +140,6 @@ class AppRouter extends _i1.RootStackRouter {
                   path: 'user-data-page',
                   routeBuilder: (match) => UserDataRoute.fromMatch(match))
             ]),
-        _i1.RouteConfig<SettingsRoute>(SettingsRoute.name,
-            path: '/profile/books/details',
-            routeBuilder: (match) => SettingsRoute.fromMatch(match)),
         _i1.RouteConfig<LoginRoute>(LoginRoute.name,
             path: '/login',
             routeBuilder: (match) => LoginRoute.fromMatch(match)),
@@ -196,21 +171,13 @@ class UserDataCollectorRoute extends _i1.PageRouteInfo {
         id = match.pathParams.getInt('id'),
         super.fromMatch(match);
 
-  final _i13.Key key;
+  final _i12.Key key;
 
   final dynamic Function(_i3.UserData) onResult;
 
   final int id;
 
   static const String name = 'UserDataCollectorRoute';
-}
-
-class SettingsRoute extends _i1.PageRouteInfo {
-  const SettingsRoute() : super(name, path: '/profile/books/details');
-
-  SettingsRoute.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
-
-  static const String name = 'SettingsRoute';
 }
 
 class LoginRoute extends _i1.PageRouteInfo {
@@ -223,7 +190,7 @@ class LoginRoute extends _i1.PageRouteInfo {
         showBackButton = null,
         super.fromMatch(match);
 
-  final _i13.Key key;
+  final _i12.Key key;
 
   final void Function(bool) onLoginResult;
 
@@ -251,8 +218,7 @@ class ProfileTab extends _i1.PageRouteInfo {
 }
 
 class SettingsTab extends _i1.PageRouteInfo {
-  const SettingsTab({List<_i1.PageRouteInfo> children})
-      : super(name, path: 'settings', initialChildren: children);
+  const SettingsTab() : super(name, path: 'settings');
 
   SettingsTab.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
 
@@ -301,39 +267,19 @@ class MyBooksRoute extends _i1.PageRouteInfo {
         filter = match.queryParams.getString('filter', 'none'),
         super.fromMatch(match);
 
-  final _i13.Key key;
+  final _i12.Key key;
 
   final String filter;
 
   static const String name = 'MyBooksRoute';
 }
 
-class BookSettingsTab extends _i1.PageRouteInfo {
-  BookSettingsTab({this.id}) : super(name, path: '');
-
-  BookSettingsTab.fromMatch(_i1.RouteMatch match)
-      : id = null,
-        super.fromMatch(match);
-
-  final String id;
-
-  static const String name = 'BookSettingsTab';
-}
-
-class ProfileSettingsTab extends _i1.PageRouteInfo {
-  const ProfileSettingsTab() : super(name, path: 'profile');
-
-  ProfileSettingsTab.fromMatch(_i1.RouteMatch match) : super.fromMatch(match);
-
-  static const String name = 'ProfileSettingsTab';
-}
-
 class SingleFieldRoute extends _i1.PageRouteInfo {
   SingleFieldRoute(
       {this.key,
-      @_i13.required this.message,
-      @_i13.required this.willPopMessage,
-      @_i13.required this.onNext})
+      @_i12.required this.message,
+      @_i12.required this.willPopMessage,
+      @_i12.required this.onNext})
       : super(name, path: 'single-field-page');
 
   SingleFieldRoute.fromMatch(_i1.RouteMatch match)
@@ -343,7 +289,7 @@ class SingleFieldRoute extends _i1.PageRouteInfo {
         onNext = null,
         super.fromMatch(match);
 
-  final _i13.Key key;
+  final _i12.Key key;
 
   final String message;
 
@@ -363,7 +309,7 @@ class UserDataRoute extends _i1.PageRouteInfo {
         onResult = null,
         super.fromMatch(match);
 
-  final _i13.Key key;
+  final _i12.Key key;
 
   final dynamic Function(_i3.UserData) onResult;
 

@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/router.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(_) => AutoTabsRouter(
+        routes: [BooksTab(), ProfileTab(), SettingsTab()],
         duration: Duration(milliseconds: 400),
         builder: (context, child, animation) {
           var tabsRouter = context.tabsRouter;

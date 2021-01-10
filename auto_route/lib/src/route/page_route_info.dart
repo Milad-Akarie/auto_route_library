@@ -63,6 +63,9 @@ class PageRouteInfo {
   Future<void> show(BuildContext context) {
     return context.router.push(this);
   }
+
+  @override
+  int get hashCode => _name.hashCode ^ path.hashCode;
 }
 
 class RouteData {

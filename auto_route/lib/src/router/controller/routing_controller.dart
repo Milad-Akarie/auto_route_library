@@ -186,18 +186,18 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
     this.parentController,
     this.preMatchedRoutes,
   }) : matcher = RouteMatcher(routeCollection) {
-    _setupInitialRoutes();
+    // _setupInitialRoutes();
   }
 
-  void _setupInitialRoutes() {
-    _pages.clear();
-    final routes = <PageRouteInfo>[];
-    for (var config in routeCollection.routes.where((c) => !c.isRedirect)) {
-      var match = RouteMatch(config: config, segments: p.split(config.path));
-      routes.add(config.routeBuilder(match));
-    }
-    setupRoutes(routes);
-  }
+  // void _setupInitialRoutes() {
+  //   _pages.clear();
+  //   final routes = <PageRouteInfo>[];
+  //   for (var config in routeCollection.routes.where((c) => !c.isRedirect)) {
+  //     var match = RouteMatch(config: config, segments: p.split(config.path));
+  //     routes.add(config.routeBuilder(match));
+  //   }
+  //   setupRoutes(routes);
+  // }
 
   T parent<T extends RoutingController>() => parent as T;
 

@@ -27,7 +27,6 @@ class DefaultRouteParser extends RouteInformationParser<List<PageRouteInfo>> {
   @override
   RouteInformation restoreRouteInformation(List<PageRouteInfo> routes) {
     final location = _getNormalizedPath(routes);
-    print(location);
     return RouteInformation(location: location);
   }
 }

@@ -41,7 +41,6 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
 
   @override
   List<PageRouteInfo> get currentConfiguration {
-    print('top most controller ${controller.topMost} #${controller.topMost.hashCode}');
     var route = controller.topMost.current;
     if (route == null) {
       return null;

@@ -21,31 +21,16 @@ export 'router.gr.dart';
       // guards: [AuthGuard],
       usesTabsRouter: true,
       children: [
-        // RedirectRoute(path: '', redirectTo: 'books'),
         booksTab,
         profileTab,
         AutoRoute(
           path: 'settings',
-          page: SettingsTabPage,
+          page: SettingsPage,
           name: 'SettingsTab',
-          usesTabsRouter: true,
-          children: [
-            AutoRoute(
-              name: 'BookSettingsTab',
-              path: '',
-              page: BookListPage,
-            ),
-            AutoRoute(
-              name: 'ProfileSettingsTab',
-              path: 'profile',
-              page: ProfilePage,
-            ),
-          ],
         ),
       ],
     ),
     userDataRoutes,
-    AutoRoute(path: '/profile/books/details', page: SettingsPage),
     AutoRoute(path: '/login', page: LoginPage, fullscreenDialog: false),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],

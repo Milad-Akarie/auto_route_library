@@ -1,6 +1,5 @@
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
@@ -10,12 +9,14 @@ typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widg
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder builder;
+  final List<PageRouteInfo> routes;
   final Duration duration;
   final Curve curve;
   final bool lazyLoad;
 
   const AutoTabsRouter({
     Key key,
+    @required this.routes,
     this.lazyLoad = true,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
@@ -77,7 +78,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
 
   void _resetController() {
     assert(_controller != null);
-    // _controller.setupRoutes(widget.routes);
+    _controller.setupRoutes(widget.routes);
     _index = _controller.activeIndex;
     _animationController.value = 1.0;
     var rootDelegate = RootRouterDelegate.of(context);
@@ -97,6 +98,12 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
     _animationController.dispose();
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _controller.setupRoutes(widget.routes);
   }
 
   @override
@@ -178,11 +185,9 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return new IndexedStack(
-      index: widget.activeIndex,
-      sizing: StackFit.expand,
-      children: _pages,
-    );
-  }
+  Widget build(BuildContext context) => IndexedStack(
+        index: widget.activeIndex,
+        sizing: StackFit.expand,
+        children: _pages,
+      );
 }
