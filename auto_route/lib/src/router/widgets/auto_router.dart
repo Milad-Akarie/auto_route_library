@@ -29,12 +29,12 @@ class AutoRouter extends StatefulWidget {
 
   @override
   AutoRouterState createState() => AutoRouterState();
+
   static StackRouter of(BuildContext context) {
     var scope = StackRouterScope.of(context);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -72,36 +72,25 @@ class AutoRouterState extends State<AutoRouter> {
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    var navigator = !_controller.hasEntries
-        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
-        : Navigator(
-            pages: _controller.stack,
-            observers: widget.navigatorObservers,
-            key: _controller.navigatorKey,
-            onPopPage: (route, result) {
-              if (!route.didPop(result)) {
-                return false;
-              }
-              _controller.removeLast();
-              return true;
-            },
-          );
+    var navigator = AutoRouteNavigator(
+      router: _controller,
+      navigatorObservers: widget.navigatorObservers,
+    );
     return RoutingControllerScope(
       controller: _controller,
       child: StackRouterScope(
         controller: _controller,
         child: widget.builder == null
             ? navigator
-            : LayoutBuilder(
-                builder: (ctx, _) => widget.builder(ctx, navigator),
+            : Builder(
+                builder: (ctx) => widget.builder(ctx, navigator),
               ),
       ),
     );
   }
 }
 
-typedef RoutesGenerator = List<PageRouteInfo> Function(
-    BuildContext context, List<PageRouteInfo> routes);
+typedef RoutesGenerator = List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes);
 
 class _DeclarativeAutoRouter extends StatefulWidget {
   final RoutesGenerator onGenerateRoutes;
@@ -146,21 +135,14 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    var navigator = !_controller.hasEntries
-        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
-        : Navigator(
-            pages: _controller.stack,
-            observers: widget.navigatorObservers,
-            key: _controller.navigatorKey,
-            onPopPage: (route, result) {
-              if (!route.didPop(result)) {
-                return false;
-              }
-              widget.onPopRoute?.call(_controller.current?.route);
-              _controller.removeLast();
-              return true;
-            },
-          );
+
+    var navigator = AutoRouteNavigator(
+      router: _controller,
+      navigatorObservers: widget.navigatorObservers,
+      didPop: (route) {
+        widget.onPopRoute?.call((route.settings as AutoRoutePage).routeData.route);
+      },
+    );
     return RoutingControllerScope(
       controller: _controller,
       child: navigator,
@@ -170,8 +152,10 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   void didUpdateWidget(covariant _DeclarativeAutoRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
+    print("did update widget");
     var newRoutes = widget.onGenerateRoutes(context, _routes);
     if (!ListEquality().equals(newRoutes, _routes)) {
+      print('will update');
       _routes = newRoutes;
       (_controller as BranchEntry).updateDeclarativeRoutes(newRoutes);
     }

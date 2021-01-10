@@ -6,11 +6,11 @@ import 'package:provider/provider.dart';
 
 class BookDetailsPage extends StatefulWidget {
   final int id;
-  final String queryFilter;
+  // final String queryFilter;
 
   const BookDetailsPage({
     @PathParam('id') this.id = 1,
-    @queryParam this.queryFilter,
+    // @queryParam this.queryFilter,
   });
 
   @override

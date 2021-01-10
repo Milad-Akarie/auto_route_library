@@ -7,6 +7,7 @@ import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/root_stack_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path/path.dart' as p;
 
 import '../../utils.dart';
 
@@ -61,8 +62,7 @@ abstract class StackRouter extends RoutingController {
 
   Future<void> navigate(PageRouteInfo route, {OnNavigationFailure onFailure});
 
-  Future<void> pushPath(String path,
-      {bool includePrefixMatches = false, OnNavigationFailure onFailure});
+  Future<void> pushPath(String path, {bool includePrefixMatches = false, OnNavigationFailure onFailure});
 
   Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure onFailure});
 
@@ -71,20 +71,19 @@ abstract class StackRouter extends RoutingController {
 
   Future<void> replace(PageRouteInfo route, {OnNavigationFailure onFailure});
 
-  Future<void> pushAll(List<PageRouteInfo> routes,
-      {OnNavigationFailure onFailure});
+  Future<void> pushAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
 
-  Future<void> popAndPushAll(List<PageRouteInfo> routes,
-      {OnNavigationFailure onFailure});
+  Future<void> popAndPushAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
 
-  Future<void> replaceAll(List<PageRouteInfo> routes,
-      {OnNavigationFailure onFailure});
+  Future<void> replaceAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
 
   bool removeUntilRoot();
 
   bool removeWhere(RouteDataPredicate predicate);
 
   bool removeUntil(RouteDataPredicate predicate);
+
+  void popUntil(RoutePredicate predicate);
 
   GlobalKey<NavigatorState> get navigatorKey;
 
@@ -101,9 +100,7 @@ class RoutingControllerScope extends InheritedWidget {
   }) : super(child: child);
 
   static RoutingController of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<RoutingControllerScope>()
-        .controller;
+    return context.dependOnInheritedWidgetOfExactType<RoutingControllerScope>().controller;
   }
 
   @override
@@ -170,8 +167,7 @@ class LeafEntry implements StackEntryItem {
   const LeafEntry(this.routeData, this.key);
 }
 
-class ParallelBranchEntry extends ChangeNotifier
-    implements StackEntryItem, TabsRouter {
+class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, TabsRouter {
   final RoutingController parentController;
   final ValueKey<String> key;
   final RouteCollection routeCollection;
@@ -189,7 +185,19 @@ class ParallelBranchEntry extends ChangeNotifier
     this.routeData,
     this.parentController,
     this.preMatchedRoutes,
-  }) : matcher = RouteMatcher(routeCollection);
+  }) : matcher = RouteMatcher(routeCollection) {
+    // _setupInitialRoutes();
+  }
+
+  // void _setupInitialRoutes() {
+  //   _pages.clear();
+  //   final routes = <PageRouteInfo>[];
+  //   for (var config in routeCollection.routes.where((c) => !c.isRedirect)) {
+  //     var match = RouteMatch(config: config, segments: p.split(config.path));
+  //     routes.add(config.routeBuilder(match));
+  //   }
+  //   setupRoutes(routes);
+  // }
 
   T parent<T extends RoutingController>() => parent as T;
 
@@ -198,7 +206,13 @@ class ParallelBranchEntry extends ChangeNotifier
   RouteData get currentRoute => current;
 
   @override
-  RouteData get current => _pages[_activeIndex]?.routeData;
+  RouteData get current {
+    if (_activeIndex < _pages.length) {
+      return _pages[_activeIndex]?.routeData;
+    } else {
+      return null;
+    }
+  }
 
   @override
   int get activeIndex => _activeIndex;
@@ -219,15 +233,21 @@ class ParallelBranchEntry extends ChangeNotifier
   @override
   List<AutoRoutePage> get stack => List.unmodifiable(_pages);
 
-  AutoRoutePage get _activePage => _pages[_activeIndex];
+  AutoRoutePage get _activePage {
+    return _pages.isEmpty ? null : _pages[_activeIndex];
+  }
 
   @override
   RoutingController get topMost {
-    var activePage = _activePage;
-    if (activePage.hasInnerRouter) {
-      return (activePage.entry as RoutingController).topMost;
+    if (_activePage != null && _activePage.hasInnerRouter) {
+      return (_activePage.entry as RoutingController).topMost;
     }
     return this;
+  }
+
+  @override
+  String toString() {
+    return routeData?.name;
   }
 
   @override
@@ -285,7 +305,7 @@ class ParallelBranchEntry extends ChangeNotifier
         }
         final data = RouteData(
           route: route,
-          parent: routeData,
+          parent: this.routeData,
           config: config,
         );
         final entry = StackEntryItem.create(parent: this, data: data);
@@ -293,10 +313,30 @@ class ParallelBranchEntry extends ChangeNotifier
       }
     }
   }
+
+  Future<void> updateRoutes(List<PageRouteInfo> routes) {
+    assert(routes != null && routes.isNotEmpty);
+    final preMatchedRoute = routes.last;
+    final newKey = ValueKey<String>(preMatchedRoute.stringMatch);
+    final pageToUpdateIndex = _pages.indexWhere(
+      (p) => p.entry.key == newKey,
+    );
+    if (pageToUpdateIndex != -1) {
+      setActiveIndex(pageToUpdateIndex);
+      var entryToUpdate = _pages[pageToUpdateIndex].entry;
+      if (preMatchedRoute.hasInitialChildren) {
+        if (entryToUpdate is BranchEntry) {
+          return entryToUpdate.updateOrReplaceRoutes(preMatchedRoute.initialChildren);
+        } else if (entryToUpdate is ParallelBranchEntry) {
+          return entryToUpdate.updateRoutes(preMatchedRoute.initialChildren);
+        }
+      }
+    }
+    return SynchronousFuture(null);
+  }
 }
 
-class BranchEntry extends ChangeNotifier
-    implements StackEntryItem, StackRouter {
+class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter {
   final RoutingController parentController;
   final ValueKey<String> key;
   final RouteCollection routeCollection;
@@ -348,13 +388,6 @@ class BranchEntry extends ChangeNotifier
     return null;
   }
 
-  StackEntryItem get _lastEntry {
-    if (_pages.isNotEmpty) {
-      return _pages.last.entry;
-    }
-    return null;
-  }
-
   @override
   RoutingController get topMost {
     if (_pages.isNotEmpty) {
@@ -398,14 +431,12 @@ class BranchEntry extends ChangeNotifier
   List<AutoRoutePage> get stack => List.unmodifiable(_pages);
 
   @override
-  Future<void> push(PageRouteInfo route,
-      {OnNavigationFailure onFailure}) async {
+  Future<void> push(PageRouteInfo route, {OnNavigationFailure onFailure}) async {
     return _push(route, onFailure: onFailure, notify: true);
   }
 
   @override
-  Future<void> navigate(PageRouteInfo route,
-      {OnNavigationFailure onFailure}) async {
+  Future<void> navigate(PageRouteInfo route, {OnNavigationFailure onFailure}) async {
     var page = _pages.lastWhere(
       (p) => p.entry.key == ValueKey(route.stringMatch),
       orElse: () => null,
@@ -424,15 +455,13 @@ class BranchEntry extends ChangeNotifier
     }
   }
 
-  Future<void> _push(PageRouteInfo route,
-      {OnNavigationFailure onFailure, bool notify = true}) async {
+  Future<void> _push(PageRouteInfo route, {OnNavigationFailure onFailure, bool notify = true}) async {
     var config = _resolveConfigOrReportFailure(route, onFailure);
     if (config == null) {
       return null;
     }
     if (await _canNavigate([route], config, onFailure)) {
-      return _addStackEntry(route,
-          config: config, onFailure: onFailure, notify: notify);
+      return _addStackEntry(route, config: config, onFailure: onFailure, notify: notify);
     }
     return null;
   }
@@ -472,18 +501,17 @@ class BranchEntry extends ChangeNotifier
 
   @override
   bool removeUntilRoot() {
-    var didPop = false;
+    var didRemove = false;
     if (_pages.length > 1) {
       _pages.removeRange(1, _pages.length);
       notifyListeners();
-      didPop = true;
+      didRemove = true;
     }
-    return didPop;
+    return didRemove;
   }
 
   @override
-  Future<void> popAndPush(PageRouteInfo route,
-      {OnNavigationFailure onFailure}) {
+  Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure onFailure}) {
     pop();
     return push(route, onFailure: onFailure);
   }
@@ -491,20 +519,26 @@ class BranchEntry extends ChangeNotifier
   @override
   bool removeUntil(RouteDataPredicate predicate) => _removeUntil(predicate);
 
+  @override
+  void popUntil(RoutePredicate predicate) {
+    assert(navigatorKey != null);
+    navigatorKey.currentState.popUntil(predicate);
+  }
+
   bool _removeUntil(RouteDataPredicate predicate, {bool notify = true}) {
-    var didPop = false;
+    var didRemove = false;
     for (var candidate in List.unmodifiable(_pages).reversed) {
       if (predicate(candidate.routeData)) {
         break;
       } else {
         _removeLast(notify: false);
-        didPop = true;
+        didRemove = true;
       }
     }
-    if (didPop && notify) {
+    if (didRemove && notify) {
       notifyListeners();
     }
-    return didPop;
+    return didRemove;
   }
 
   @override
@@ -579,8 +613,7 @@ class BranchEntry extends ChangeNotifier
         onFailure(RouteNotFoundFailure(route));
         return null;
       } else {
-        throw FlutterError(
-            "[${toString()}] Router can not navigate to ${route.fullPath}");
+        throw FlutterError("[${toString()}] Router can not navigate to ${route.fullPath}");
       }
     }
   }
@@ -640,21 +673,21 @@ class BranchEntry extends ChangeNotifier
   }
 
   Future<void> updateOrReplaceRoutes(List<PageRouteInfo> routes) {
-    assert(routes != null);
-    assert(routes.isNotEmpty);
+    assert(routes != null && routes.isNotEmpty);
+    final mayUpdateRoute = routes.last;
+    final updatableEntry = _pages
+        .lastWhere(
+          (e) => e.entry.key == ValueKey<String>(mayUpdateRoute.stringMatch),
+          orElse: () => null,
+        )
+        ?.entry;
 
-    var route = routes.last;
-    var newKey = ValueKey<String>(route.stringMatch);
-    var lastKey = _lastEntry?.key;
-    if (lastKey != null && lastKey == newKey) {
-      if (route.hasChildren && _lastEntry is BranchEntry) {
-        // this line should remove any routes below the updated one
-        // not sure if this is the desired behaviour
-        _pages.removeWhere((p) => p.entry.key != newKey);
-        if (route.hasChildren) {
-          return (_pages.last.entry as BranchEntry)
-              .updateOrReplaceRoutes(route.initialChildren);
-        }
+    if (updatableEntry != null && mayUpdateRoute.hasInitialChildren) {
+      _removeUntil((route) => ValueKey(route.match) == updatableEntry.key);
+      if (updatableEntry is BranchEntry) {
+        return updatableEntry.updateOrReplaceRoutes(mayUpdateRoute.initialChildren);
+      } else if (updatableEntry is ParallelBranchEntry) {
+        return updatableEntry.updateRoutes(mayUpdateRoute.initialChildren);
       }
     }
     return _replaceAll(routes, notify: true);
@@ -680,8 +713,7 @@ class BranchEntry extends ChangeNotifier
     bool includePrefixMatches = false,
     OnNavigationFailure onFailure,
   }) {
-    var matches =
-        matcher.match(path, includePrefixMatches: includePrefixMatches);
+    var matches = matcher.match(path, includePrefixMatches: includePrefixMatches);
     if (matches != null) {
       var routes = matches.map((m) => m.toRoute).toList();
       return _pushAll(routes, onFailure: onFailure, notify: true);

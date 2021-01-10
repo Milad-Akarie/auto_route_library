@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:auto_route/src/matcher/route_match.dart';
+import 'package:collection/collection.dart';
 import 'package:path/path.dart' as p;
 
 import '../../auto_route.dart';
@@ -21,8 +22,6 @@ class RouteCollection {
 
   Iterable<RouteConfig> get routes => _routesMap.values;
 
-  Iterable<String> get keys => _routesMap.keys;
-
   RouteConfig operator [](String key) => _routesMap[key];
 
   bool containsKey(String key) => _routesMap.containsKey(key);
@@ -32,9 +31,15 @@ class RouteCollection {
     return this[key].children;
   }
 
-  RouteConfig configWithPath(String path) {
-    return routes.firstWhere((c) => c.path == path, orElse: () => null);
-  }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RouteCollection &&
+          runtimeType == other.runtimeType &&
+          MapEquality().equals(_routesMap, other._routesMap);
+
+  @override
+  int get hashCode => _routesMap.hashCode;
 }
 
 class RouteMatcher {
@@ -44,77 +49,79 @@ class RouteMatcher {
 
   List<RouteMatch> match(String rawPath, {bool includePrefixMatches = false}) {
     assert(includePrefixMatches != null);
-    return _match(Uri.parse(rawPath), collection,
-        includePrefixMatches: includePrefixMatches);
+    return _match(
+      Uri.parse(rawPath),
+      collection,
+      includePrefixMatches: includePrefixMatches,
+      root: true,
+    );
   }
 
-  List<RouteMatch> _match(Uri uri, RouteCollection routesCollection,
-      {bool includePrefixMatches = false}) {
-    var pathSegments = p.split(uri.path);
-    var matches = <RouteMatch>[];
-    for (var config in routesCollection.routes) {
+  List<RouteMatch> _match(Uri uri, RouteCollection collection, {bool includePrefixMatches = false, bool root = false}) {
+    final pathSegments = p.split(uri.path);
+    final matches = <RouteMatch>[];
+    for (var config in collection.routes) {
       var match = matchRoute(uri, config);
       if (match != null) {
+        if (!includePrefixMatches || config.path == '*') {
+          matches.clear();
+        }
+        // handle redirects
         if (config.isRedirect) {
-          var redirectMatches = _match(
-            uri.replace(path: Uri.parse(config.redirectTo).path),
-            routesCollection,
-            includePrefixMatches: includePrefixMatches,
+          return _handleRedirect(
+            uri,
+            collection,
+            includePrefixMatches,
+            match,
           );
-          if (redirectMatches != null && redirectMatches.length == 1) {
-            return [
-              redirectMatches.first
-                  .copyWith(segments: p.split(config.redirectTo))
-            ];
-          }
-          return redirectMatches;
         }
 
         if (match.segments.length != pathSegments.length) {
           // has rest
-          if (match.config.isSubTree) {
-            var rest = uri.replace(
-                pathSegments: pathSegments.sublist(match.segments.length));
-            var children = _match(
-              rest,
-              match.config.children,
-              includePrefixMatches: includePrefixMatches,
-            );
-            if (children != null) {
-              if (!includePrefixMatches) {
-                matches.clear();
-              }
-              return matches..add(match.copyWith(children: children));
-            } else
-              continue;
+          if (config.isSubTree) {
+            final rest = uri.replace(pathSegments: pathSegments.sublist(match.segments.length));
+            final children = _match(rest, config.children, includePrefixMatches: includePrefixMatches);
+            match = match.copyWith(children: children);
+          }
+          matches.add(match);
+          if (match.url.length == pathSegments.length) {
+            break;
           }
         } else {
           // has complete match
           //
           // include empty route if exists
           if (config.isSubTree && !match.hasChildren) {
-            match = match.copyWith(
-                children: _match(uri.replace(path: ''), config.children));
+            match = match.copyWith(children: _match(uri.replace(path: ''), config.children));
           }
 
-          // if true ignore all previous matches
-          if (match.config.path == "*" || !includePrefixMatches) {
-            matches.clear();
-          }
-
-          return matches..add(match);
+          matches.add(match);
+          break;
         }
-        if (!includePrefixMatches) {
-          matches.clear();
-        }
-        matches.add(match);
       }
     }
-    if (matches.isEmpty ||
-        matches.last.segments.length != pathSegments.length) {
+
+    if (matches.isEmpty || (root && matches.last.url.length != pathSegments.length)) {
       return null;
     }
     return matches;
+  }
+
+  List<RouteMatch> _handleRedirect(
+    Uri uri,
+    RouteCollection routesCollection,
+    bool includePrefixMatches,
+    RouteMatch match,
+  ) {
+    var redirectMatches = _match(
+      uri.replace(path: Uri.parse(match.config.redirectTo).path),
+      routesCollection,
+      includePrefixMatches: includePrefixMatches,
+    );
+    if (redirectMatches != null && redirectMatches.length == 1) {
+      return [redirectMatches.first.copyWith(segments: match.segments)];
+    }
+    return redirectMatches;
   }
 
   RouteMatch matchRoute(Uri url, RouteConfig config) {
@@ -125,9 +132,7 @@ class RouteMatcher {
       return null;
     }
 
-    if (config.fullMatch &&
-        segments.length > parts.length &&
-        (parts.isEmpty || parts.last != '*')) {
+    if (config.fullMatch && segments.length > parts.length && (parts.isEmpty || parts.last != '*')) {
       return null;
     }
 
@@ -167,9 +172,8 @@ class RouteMatcher {
     if (routeConfig == null) {
       return null;
     }
-    if (route.hasChildren) {
-      var childrenMatch = route.initialChildren
-          .every((r) => _isValidRoute(r, routeConfig.children));
+    if (route.hasInitialChildren) {
+      var childrenMatch = route.initialChildren.every((r) => _isValidRoute(r, routeConfig.children));
       if (!childrenMatch) {
         return null;
       }
