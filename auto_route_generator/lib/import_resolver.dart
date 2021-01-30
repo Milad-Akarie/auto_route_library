@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:code_builder/code_builder.dart' hide FunctionType;
 import 'package:path/path.dart' as p;
@@ -16,9 +17,7 @@ class TypeResolver {
     }
 
     for (var lib in libs) {
-      if (lib.source != null &&
-          !_isCoreDartType(lib) &&
-          lib.exportNamespace.definedNames.values.contains(element)) {
+      if (lib.source != null && !_isCoreDartType(lib) && lib.exportNamespace.definedNames.values.contains(element)) {
         return targetFile == null
             ? lib.identifier
             : _relative(
@@ -32,16 +31,12 @@ class TypeResolver {
 
   String _relative(Uri fileUri, Uri to) {
     var libName = to.pathSegments.first;
-    if ((to.scheme == 'package' &&
-            fileUri.scheme == 'package' &&
-            fileUri.pathSegments.first == libName) ||
+    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.first == libName) ||
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
         return fileUri.pathSegments.last;
       } else {
-        return p.posix
-            .relative(fileUri.path, from: to.path)
-            .replaceFirst('../', '');
+        return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
       }
     } else {
       return fileUri.toString();
@@ -85,10 +80,9 @@ class TypeResolver {
     );
   }
 
-  // typedef OnPopped<T> = void Function(T result);
   ImportableType resolveType(DartType type) {
     return ImportableType(
-      name: type.element?.name ?? type.getDisplayString(withNullability: false),
+      name: type.getDisplayString(withNullability: type.nullabilitySuffix != NullabilitySuffix.star),
       import: resolveImport(type.element),
       typeArguments: _resolveTypeArguments(type),
     );
@@ -115,16 +109,13 @@ class ImportableType {
   String get identity => "$import#$name";
 
   String fullName({bool withTypeArgs = true}) {
-    var typeArgs = withTypeArgs && (typeArguments?.isNotEmpty == true)
-        ? "<${typeArguments.map((e) => e.name).join(',')}>"
-        : '';
+    var typeArgs =
+        withTypeArgs && (typeArguments?.isNotEmpty == true) ? "<${typeArguments.map((e) => e.name).join(',')}>" : '';
     return "$name$typeArgs";
   }
 
-  String getDisplayName(Set<ImportableType> prefixedTypes,
-      {bool withTypeArgs = true}) {
-    return prefixedTypes?.lookup(this)?.fullName(withTypeArgs: withTypeArgs) ??
-        fullName(withTypeArgs: withTypeArgs);
+  String getDisplayName(Set<ImportableType> prefixedTypes, {bool withTypeArgs = true}) {
+    return prefixedTypes?.lookup(this)?.fullName(withTypeArgs: withTypeArgs) ?? fullName(withTypeArgs: withTypeArgs);
   }
 
   Reference get simpleRefer => Reference(name, import);
@@ -150,9 +141,7 @@ class ImportableType {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ImportableType &&
-          runtimeType == other.runtimeType &&
-          identity == other.identity;
+      other is ImportableType && runtimeType == other.runtimeType && identity == other.identity;
 
   @override
   int get hashCode => import.hashCode ^ name.hashCode;

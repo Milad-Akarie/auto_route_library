@@ -9,14 +9,14 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  final appRouter = WebAppRouter();
+  final _appRouter = WebAppRouter();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: appRouter.delegate(),
-      routeInformationParser: appRouter.defaultRouteParser(),
+      routerDelegate: _appRouter.delegate(),
+      routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {
         return BooksDBProvider(
           child: router,

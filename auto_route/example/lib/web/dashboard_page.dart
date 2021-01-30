@@ -70,7 +70,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       leading: Icon(item.iconData),
                       selected: item.destination.routeName == router.current?.name,
                       title: Text(item.label),
-                      onTap: () => router.navigate(item.destination),
+                      onTap: () => router.replace(item.destination),
                     ))
                 .toList(),
           ),

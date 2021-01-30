@@ -21,12 +21,9 @@ TypeReference listRefer(Reference reference) => TypeReference((b) => b
 String generateLibrary(RouterConfig config) {
   var allRouters = config.collectAllRoutersIncludingParent;
 
-  List<RouteConfig> allRoutes =
-      allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+  List<RouteConfig> allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
 
-  var routeNames = allRoutes
-      .where((r) => r.routeType != RouteType.redirect)
-      .map((r) => r.routeName);
+  var routeNames = allRoutes.where((r) => r.routeType != RouteType.redirect).map((r) => r.routeName);
   var checkedNames = <String>[];
   routeNames.forEach((name) {
     throwIf(
@@ -37,20 +34,17 @@ String generateLibrary(RouterConfig config) {
     checkedNames.add(name);
   });
 
-  var allGuards = allRoutes
-      .where((r) => r.guards?.isNotEmpty == true)
-      .fold(<ImportableType>{}, (acc, a) => acc..addAll(a.guards));
+  var allGuards =
+      allRoutes.where((r) => r.guards?.isNotEmpty == true).fold(<ImportableType>{}, (acc, a) => acc..addAll(a.guards));
 
   final library = Library(
     (b) => b
       ..body.addAll([
         buildRouterConfig(config, allGuards, allRoutes),
-        ...allRoutes
-            .where((r) => r.routeType != RouteType.redirect)
-            .map((r) => buildRouteInfo(r, config)),
+        ...allRoutes.where((r) => r.routeType != RouteType.redirect).map((r) => buildRouteInfo(r, config)),
       ]),
   );
 
-  final emitter = DartEmitter(Allocator.simplePrefixing());
+  final emitter = DartEmitter(Allocator.simplePrefixing(), true, true);
   return DartFormatter().format(library.accept(emitter).toString());
 }

@@ -8,13 +8,13 @@ const userDataRoutes = AutoRoute(
   path: '/user-data/:id',
   page: UserDataCollectorPage,
   children: [
-    CustomRoute(
-      page: SingleFieldPage,
-      transitionsBuilder: TransitionsBuilders.slideRightWithFade,
-    ),
-    CustomRoute(
-      page: UserDataPage,
-      transitionsBuilder: TransitionsBuilders.slideRightWithFade,
-    ),
+    // CustomRoute(
+    //   page: SingleFieldPage,
+    //   transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+    // ),
+    // CustomRoute(
+    //   page: UserDataPage,
+    //   transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+    // ),
   ],
 );

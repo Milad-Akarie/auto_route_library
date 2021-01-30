@@ -4,14 +4,13 @@ import 'book_details_page.dart';
 import 'book_list_page.dart';
 
 const booksRoute = AutoRoute(
-  path: '',
+  path: 'books',
   page: EmptyRouterPage,
   name: 'BooksRoute',
   children: [
-    RedirectRoute(path: '', redirectTo: 'books'),
-    AutoRoute(path: 'books', page: BookListPage),
+    AutoRoute(path: '', page: BookListPage),
     AutoRoute(
-      path: 'books/:id',
+      path: ':id',
       fullscreenDialog: false,
       page: BookDetailsPage,
     ),

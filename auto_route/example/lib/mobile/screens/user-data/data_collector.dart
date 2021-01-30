@@ -22,31 +22,33 @@ class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
 
 class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
-  Widget build(context) => AutoRouter.declarative(onGenerateRoutes: (_, __) {
-        var settingsState = Provider.of<SettingsState>(context);
-        var user = settingsState.userData;
-        return [
-          if (user.isDone) UserDataRoute(onResult: widget.onResult),
-          if (user.favoriteBook == null)
-            SingleFieldRoute(
-              message: 'What is your favorite book?',
-              willPopMessage: 'Please enter a book name!',
-              onNext: (text) {
-                settingsState.userData = user.copyWith(favoriteBook: text);
-              },
-            ),
-          if (user.name == null)
-            SingleFieldRoute(
-              message: 'What is your name?',
-              willPopMessage: 'Please enter a name!',
-              onNext: (text) {
-                settingsState.userData = user.copyWith(name: text);
-              },
-            ),
-        ];
-      }, onPopRoute: (PageRouteInfo route) {
-        // reset the state based on popped route
-      });
+  Widget build(context) {
+    var settingsState = Provider.of<SettingsState>(context);
+    return AutoRouter.declarative(onGenerateRoutes: (_, __) {
+      var user = settingsState.userData;
+      return [
+        if (user.isDone) UserDataRoute(onResult: widget.onResult),
+        if (user.favoriteBook == null)
+          SingleFieldRoute(
+            message: 'What is your favorite book?',
+            willPopMessage: 'Please enter a book name!',
+            onNext: (text) {
+              settingsState.userData = user.copyWith(favoriteBook: text);
+            },
+          ),
+        if (user.name == null)
+          SingleFieldRoute(
+            message: 'What is your name?',
+            willPopMessage: 'Please enter a name!',
+            onNext: (text) {
+              settingsState.userData = user.copyWith(name: text);
+            },
+          ),
+      ];
+    }, onPopRoute: (PageRouteInfo route) {
+      // reset the state based on popped route
+    });
+  }
 }
 
 class SettingsState extends ChangeNotifier {

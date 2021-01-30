@@ -17,6 +17,7 @@ export 'router.gr.dart';
       // guards: [AuthGuard],
       usesTabsRouter: true,
       children: [
+        RedirectRoute(path: '', redirectTo: 'books'),
         booksTab,
         profileTab,
         AutoRoute(
@@ -26,7 +27,7 @@ export 'router.gr.dart';
         ),
       ],
     ),
-    userDataRoutes,
+    // userDataRoutes,
     AutoRoute(path: '/login', page: LoginPage, fullscreenDialog: false),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],

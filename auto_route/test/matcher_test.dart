@@ -283,7 +283,8 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           config: routeA,
-          segments: ['/'],
+          segments: ['/', 'a'],
+          fromRedirect: true,
         )
       ];
       expect(match('/'), expectedMatches);
@@ -297,7 +298,8 @@ void main() {
           children: [
             RouteMatch(
               config: subRouteC1,
-              segments: [],
+              segments: ['c1'],
+              fromRedirect: true,
             )
           ],
         ),
@@ -309,7 +311,8 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           config: routeA,
-          segments: ['/', 'x', 'y'],
+          segments: ['/', 'a'],
+          fromRedirect: true,
         )
       ];
       expect(match('/x/y'), expectedMatches);
