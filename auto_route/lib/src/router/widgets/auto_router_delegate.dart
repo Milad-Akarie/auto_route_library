@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import '../../utils.dart';
 import '../controller/routing_controller.dart';
 
-class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with ChangeNotifier {
+class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
+    with ChangeNotifier {
   final List<PageRouteInfo> initialRoutes;
   final GlobalKey<NavigatorState> navigatorKey;
   final StackRouter controller;
@@ -86,7 +87,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
           controller: controller,
           child: AutoRouteNavigator(
             router: controller,
-            navRestorationScopeId: navRestorationScopeId,
+            // navRestorationScopeId: navRestorationScopeId,
             navigatorObservers: navigatorObservers,
           )),
     );
@@ -95,14 +96,14 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
 
 class AutoRouteNavigator extends StatelessWidget {
   final StackRouter router;
-  final String navRestorationScopeId;
+  // final String navRestorationScopeId;
   final List<NavigatorObserver> navigatorObservers;
   final void Function(Route route) didPop;
 
   const AutoRouteNavigator({
     @required this.router,
     @required this.navigatorObservers,
-    this.navRestorationScopeId,
+    // this.navRestorationScopeId,
     this.didPop,
   });
 
@@ -110,7 +111,7 @@ class AutoRouteNavigator extends StatelessWidget {
   Widget build(BuildContext context) => Navigator(
         key: router.navigatorKey,
         observers: navigatorObservers,
-        restorationScopeId: navRestorationScopeId,
+        // restorationScopeId: navRestorationScopeId,
         pages: router.hasEntries ? router.stack : const [_PlaceHolderPage()],
         transitionDelegate: _CustomTransitionDelegate(),
         onPopPage: (route, result) {
@@ -142,28 +143,36 @@ class _CustomTransitionDelegate extends TransitionDelegate {
   @override
   Iterable<RouteTransitionRecord> resolve(
       {List<RouteTransitionRecord> newPageRouteHistory,
-      Map<RouteTransitionRecord, RouteTransitionRecord> locationToExitingPageRoute,
-      Map<RouteTransitionRecord, List<RouteTransitionRecord>> pageRouteToPagelessRoutes}) {
+      Map<RouteTransitionRecord, RouteTransitionRecord>
+          locationToExitingPageRoute,
+      Map<RouteTransitionRecord, List<RouteTransitionRecord>>
+          pageRouteToPagelessRoutes}) {
     final List<RouteTransitionRecord> results = <RouteTransitionRecord>[];
     // This method will handle the exiting route and its corresponding pageless
     // route at this location. It will also recursively check if there is any
     // other exiting routes above it and handle them accordingly.
     void handleExitingRoute(RouteTransitionRecord location, bool isLast) {
-      final RouteTransitionRecord exitingPageRoute = locationToExitingPageRoute[location];
+      final RouteTransitionRecord exitingPageRoute =
+          locationToExitingPageRoute[location];
       if (exitingPageRoute == null) return;
       if (exitingPageRoute.isWaitingForExitingDecision) {
-        final bool hasPagelessRoute = pageRouteToPagelessRoutes.containsKey(exitingPageRoute);
-        final bool isLastExitingPageRoute = isLast && !locationToExitingPageRoute.containsKey(exitingPageRoute);
+        final bool hasPagelessRoute =
+            pageRouteToPagelessRoutes.containsKey(exitingPageRoute);
+        final bool isLastExitingPageRoute =
+            isLast && !locationToExitingPageRoute.containsKey(exitingPageRoute);
         if (isLastExitingPageRoute && !hasPagelessRoute) {
           exitingPageRoute.markForPop(exitingPageRoute.route.currentResult);
         } else {
-          exitingPageRoute.markForComplete(exitingPageRoute.route.currentResult);
+          exitingPageRoute
+              .markForComplete(exitingPageRoute.route.currentResult);
         }
         if (hasPagelessRoute) {
-          final List<RouteTransitionRecord> pagelessRoutes = pageRouteToPagelessRoutes[exitingPageRoute];
+          final List<RouteTransitionRecord> pagelessRoutes =
+              pageRouteToPagelessRoutes[exitingPageRoute];
           for (final RouteTransitionRecord pagelessRoute in pagelessRoutes) {
             assert(pagelessRoute.isWaitingForExitingDecision);
-            if (isLastExitingPageRoute && pagelessRoute == pagelessRoutes.last) {
+            if (isLastExitingPageRoute &&
+                pagelessRoute == pagelessRoutes.last) {
               pagelessRoute.markForPop(pagelessRoute.route.currentResult);
             } else {
               pagelessRoute.markForComplete(pagelessRoute.route.currentResult);
@@ -182,9 +191,12 @@ class _CustomTransitionDelegate extends TransitionDelegate {
 
     for (final RouteTransitionRecord pageRoute in newPageRouteHistory) {
       final bool isLastIteration = newPageRouteHistory.last == pageRoute;
-      final firstPageIsPlaceHolder = results.isNotEmpty && results.first.route.settings is _PlaceHolderPage;
+      final firstPageIsPlaceHolder = results.isNotEmpty &&
+          results.first.route.settings is _PlaceHolderPage;
       if (pageRoute.isWaitingForEnteringDecision) {
-        if (!locationToExitingPageRoute.containsKey(pageRoute) && isLastIteration && !firstPageIsPlaceHolder) {
+        if (!locationToExitingPageRoute.containsKey(pageRoute) &&
+            isLastIteration &&
+            !firstPageIsPlaceHolder) {
           pageRoute.markForPush();
         } else {
           pageRoute.markForAdd();

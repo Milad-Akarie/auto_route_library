@@ -1,6 +1,7 @@
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart'
+    show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
@@ -15,8 +16,10 @@ class DefaultRouteParser extends RouteInformationParser<List<PageRouteInfo>> {
         assert(includePrefixMatches != null);
 
   @override
-  Future<List<PageRouteInfo>> parseRouteInformation(RouteInformation routeInformation) async {
-    var matches = _matcher.match(routeInformation.location, includePrefixMatches: includePrefixMatches);
+  Future<List<PageRouteInfo>> parseRouteInformation(
+      RouteInformation routeInformation) async {
+    var matches = _matcher.match(routeInformation.location,
+        includePrefixMatches: includePrefixMatches);
     var routes;
     if (matches != null) {
       routes = matches.map((m) => m.toRoute).toList(growable: false);

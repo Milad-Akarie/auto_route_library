@@ -12,7 +12,9 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
             ...r.parameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
               ..name = param.name
-              ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
+              ..type = param is FunctionParamConfig
+                  ? param.funRefer
+                  : param.type.refer)),
           Field(
             (b) => b
               ..modifier = FieldModifier.constant
@@ -29,7 +31,8 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                 return b
                   ..constant = (r.parameters == null)
                   ..optionalParameters.addAll([
-                    if (r.parameters?.isNotEmpty == true) ...buildArgParams(r.parameters),
+                    if (r.parameters?.isNotEmpty == true)
+                      ...buildArgParams(r.parameters),
                     if (r.isParent)
                       Parameter((b) => b
                         ..named = true
@@ -72,8 +75,10 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                   ..name = 'fromMatch'
                   ..initializers.addAll([
                     if (r.parameters?.isNotEmpty == true)
-                      ...r.parameters.map((p) => refer(p.name).assign(getParamAssignment(p)).code),
-                    refer('super').newInstanceNamed('fromMatch', [refer('match')]).code
+                      ...r.parameters.map((p) =>
+                          refer(p.name).assign(getParamAssignment(p)).code),
+                    refer('super')
+                        .newInstanceNamed('fromMatch', [refer('match')]).code
                   ]);
                 b.requiredParameters.add(
                   Parameter(
@@ -99,7 +104,8 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
           ..toThis = true
           ..required = p.isRequired
           ..defaultTo = p.defaultCode;
-        if (p.hasRequired && !p.isRequired) b.annotations.add(requiredAnnotation);
+        if (p.hasRequired && !p.isRequired)
+          b.annotations.add(requiredAnnotation);
         return b;
       },
     ),
@@ -108,12 +114,18 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
 
 Expression getParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
-    return refer('match').property('pathParams').property(p.getterMethodName).call([
+    return refer('match')
+        .property('pathParams')
+        .property(p.getterMethodName)
+        .call([
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
   } else if (p.isQueryParam) {
-    return refer('match').property('queryParams').property(p.getterMethodName).call([
+    return refer('match')
+        .property('queryParams')
+        .property(p.getterMethodName)
+        .call([
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);

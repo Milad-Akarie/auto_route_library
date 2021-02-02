@@ -27,7 +27,7 @@ export 'router.gr.dart';
         ),
       ],
     ),
-    // userDataRoutes,
+    userDataRoutes,
     AutoRoute(path: '/login', page: LoginPage, fullscreenDialog: false),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],

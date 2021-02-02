@@ -1,4 +1,10 @@
 # ChangeLog
+## [1.0.0-beta.8]
+- Add support for null-Safety to generated code.
+- Fix pop issues
+- Add popUntil, popUntilRoot and popUntilRouteWithName helper functions to StackRouter
+- Minor fixes
+Edit [BC] pushAndPopUntil uses the native predicate now.
 ## [1.0.0-beta.7]
 - Fix onRoutePop not called in declarative router #310
 - Fix App reloads after pressing browser's back button #309
