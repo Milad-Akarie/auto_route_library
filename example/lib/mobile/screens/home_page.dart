@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   @override
-  Widget build(_) => AutoTabsRouter(
+  Widget build(_) => AutoTabsRouter.indexedStack(
         routes: [BooksTab(), ProfileTab(), SettingsTab()],
         duration: Duration(milliseconds: 400),
         builder: (context, child, animation) {
