@@ -16,7 +16,7 @@ class AutoTabsRouter extends StatefulWidget {
 
   factory AutoTabsRouter.indexedStack({
     Key key,
-    @required List<PageRouteInfo> routes,
+    List<PageRouteInfo> routes,
     @required AnimatedIndexedStackBuilder builder,
     bool lazyLoad,
     Duration duration,
@@ -64,7 +64,7 @@ class _IndexedStackRouter extends AutoTabsRouter {
 
   const _IndexedStackRouter({
     Key key,
-    @required this.routes,
+    this.routes = const [],
     this.lazyLoad = true,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
