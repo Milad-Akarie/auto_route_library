@@ -97,7 +97,7 @@ Method buildMethod(RouteConfig r) {
                       ? r.pageType.refer.constInstance([])
                       : r.pageType.refer.newInstance(
                           r.positionalParams.map(getParamAssignment),
-                          Map.fromEntries(r.optionalParams.map(
+                          Map.fromEntries(r.namedParams.map(
                             (p) => MapEntry(
                               p.name,
                               getParamAssignment(p),

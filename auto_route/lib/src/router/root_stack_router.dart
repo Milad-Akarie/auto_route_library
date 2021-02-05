@@ -23,12 +23,14 @@ abstract class RootStackRouter extends BranchEntry {
   RootRouterDelegate delegate({
     List<PageRouteInfo> initialRoutes,
     String initialDeepLink,
+    String navRestorationScopeId,
     List<NavigatorObserver> navigatorObservers = const [],
   }) {
     return _lazyRootDelegate ??= RootRouterDelegate(
       this,
       initialDeepLink: initialDeepLink,
       initialRoutes: initialRoutes,
+      navRestorationScopeId: navRestorationScopeId,
       navigatorObservers: navigatorObservers,
     );
   }

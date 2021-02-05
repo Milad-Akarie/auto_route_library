@@ -1,0 +1,26 @@
+name: example
+description: A new Flutter application.
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.10.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider:
+
+
+dev_dependencies:
+  build_runner:
+
+  flutter_test:
+    sdk: flutter
+  auto_route_generator:
+    path: ../../auto_route_generator
+  effective_dart: ^1.2.0
+
+
+flutter:
+  uses-material-design: true
+

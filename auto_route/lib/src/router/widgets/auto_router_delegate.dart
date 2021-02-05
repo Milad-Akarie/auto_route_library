@@ -11,6 +11,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
   final GlobalKey<NavigatorState> navigatorKey;
   final StackRouter controller;
   final String initialDeepLink;
+  final String navRestorationScopeId;
   final List<NavigatorObserver> navigatorObservers;
 
   static RootRouterDelegate of(BuildContext context) {
@@ -31,6 +32,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
   RootRouterDelegate(
     this.controller, {
     this.initialRoutes,
+    this.navRestorationScopeId,
     this.initialDeepLink,
     this.navigatorObservers = const [],
   })  : assert(initialDeepLink == null || initialRoutes == null),
@@ -84,6 +86,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
           controller: controller,
           child: AutoRouteNavigator(
             router: controller,
+            // navRestorationScopeId: navRestorationScopeId,
             navigatorObservers: navigatorObservers,
           )),
     );
@@ -92,19 +95,23 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
 
 class AutoRouteNavigator extends StatelessWidget {
   final StackRouter router;
+  // final String navRestorationScopeId;
   final List<NavigatorObserver> navigatorObservers;
   final void Function(Route route) didPop;
 
   const AutoRouteNavigator({
     @required this.router,
     @required this.navigatorObservers,
+    // this.navRestorationScopeId,
     this.didPop,
-  });
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Navigator(
         key: router.navigatorKey,
         observers: navigatorObservers,
+        // restorationScopeId: navRestorationScopeId,
         pages: router.hasEntries ? router.stack : const [_PlaceHolderPage()],
         transitionDelegate: _CustomTransitionDelegate(),
         onPopPage: (route, result) {
@@ -124,10 +131,11 @@ class _PlaceHolderPage extends Page {
   @override
   Route createRoute(BuildContext context) {
     return PageRouteBuilder(
-        settings: this,
-        pageBuilder: (context, __, ___) => Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
-            ));
+      settings: this,
+      pageBuilder: (context, __, ___) => Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+      ),
+    );
   }
 }
 

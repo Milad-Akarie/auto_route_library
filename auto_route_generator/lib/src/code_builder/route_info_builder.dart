@@ -102,8 +102,10 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
           ..name = p.getSafeName()
           ..named = true
           ..toThis = true
+          ..required = p.isRequired
           ..defaultTo = p.defaultCode;
-        if (p.isRequired) b.annotations.add(requiredAnnotation);
+        if (p.hasRequired && !p.isRequired)
+          b.annotations.add(requiredAnnotation);
         return b;
       },
     ),

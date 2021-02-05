@@ -30,6 +30,7 @@ class ParamConfig {
   final String alias;
   final bool isPositional;
   final bool isOptional;
+  final bool hasRequired;
   final bool isRequired;
   final bool isNamed;
   final bool isPathParam;
@@ -44,8 +45,9 @@ class ParamConfig {
       this.element,
       @required this.isNamed,
       @required this.isPositional,
-      @required this.isRequired,
+      @required this.hasRequired,
       @required this.isOptional,
+      @required this.isRequired,
       @required this.isPathParam,
       @required this.isQueryParam,
       this.defaultValueCode});
@@ -133,7 +135,8 @@ class RouteParameterResolver {
       name: parameterElement.name.replaceFirst("_", ''),
       alias: paramAlias,
       isPositional: parameterElement.isPositional,
-      isRequired: parameterElement.hasRequired,
+      hasRequired: parameterElement.hasRequired,
+      isRequired: parameterElement.isRequiredNamed,
       isOptional: parameterElement.isOptional,
       isNamed: parameterElement.isNamed,
       isPathParam: isPathParam,
@@ -150,8 +153,9 @@ class RouteParameterResolver {
         params: type.parameters.map(resolve).toList(),
         element: paramElement,
         name: paramElement.name,
+        isRequired: paramElement.isRequiredNamed,
         isPositional: paramElement.isPositional,
-        isRequired: paramElement.hasRequired,
+        hasRequired: paramElement.hasRequired,
         isOptional: paramElement.isOptional,
         isNamed: paramElement.isNamed);
   }
@@ -183,10 +187,11 @@ class FunctionParamConfig extends ParamConfig {
     @required String name,
     String alias,
     @required bool isPositional,
-    @required bool isRequired,
+    @required bool hasRequired,
     @required bool isOptional,
     @required bool isNamed,
     ParameterElement element,
+    @required bool isRequired,
     String defaultValueCode,
   }) : super(
           type: type,
@@ -197,6 +202,7 @@ class FunctionParamConfig extends ParamConfig {
           isNamed: isNamed,
           element: element,
           isPositional: isPositional,
+          hasRequired: hasRequired,
           isRequired: isRequired,
           isOptional: isOptional,
         );

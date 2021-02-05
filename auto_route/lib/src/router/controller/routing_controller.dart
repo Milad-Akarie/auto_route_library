@@ -7,7 +7,6 @@ import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/root_stack_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path/path.dart' as p;
 
 import '../../utils.dart';
 
@@ -27,9 +26,6 @@ abstract class RoutingController implements ChangeNotifier {
   RoutingController get topMost;
 
   RouteData get current;
-
-  @Deprecated('Renamed to just current')
-  RouteData get currentRoute;
 
   RouteData get routeData;
 
@@ -52,6 +48,8 @@ abstract class RoutingController implements ChangeNotifier {
 abstract class TabsRouter extends RoutingController {
   void setActiveIndex(int index);
 
+  StackRouter stackRouterOfIndex(int index);
+
   int get activeIndex;
 
   void setupRoutes(List<PageRouteInfo> routes);
@@ -67,7 +65,7 @@ abstract class StackRouter extends RoutingController {
   Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure onFailure});
 
   Future<void> pushAndRemoveUntil(PageRouteInfo route,
-      {@required RouteDataPredicate predicate, OnNavigationFailure onFailure});
+      {@required RoutePredicate predicate, OnNavigationFailure onFailure});
 
   Future<void> replace(PageRouteInfo route, {OnNavigationFailure onFailure});
 
@@ -77,13 +75,17 @@ abstract class StackRouter extends RoutingController {
 
   Future<void> replaceAll(List<PageRouteInfo> routes, {OnNavigationFailure onFailure});
 
-  bool removeUntilRoot();
+  @Deprecated('Renamed to popUntilRoot')
+  void removeUntilRoot();
+
+  void popUntilRoot();
 
   bool removeWhere(RouteDataPredicate predicate);
 
   bool removeUntil(RouteDataPredicate predicate);
 
   void popUntil(RoutePredicate predicate);
+  void popUntilRouteWithName(String name);
 
   GlobalKey<NavigatorState> get navigatorKey;
 
@@ -200,10 +202,6 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
   // }
 
   T parent<T extends RoutingController>() => parent as T;
-
-  @Deprecated('Renamed to just current')
-  @override
-  RouteData get currentRoute => current;
 
   @override
   RouteData get current {
@@ -334,6 +332,18 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
     }
     return SynchronousFuture(null);
   }
+
+  @override
+  StackRouter stackRouterOfIndex(int index) {
+    if (_pages.isEmpty) {
+      return null;
+    }
+    if (_pages[index].entry is StackRouter) {
+      return _pages[index].entry as StackRouter;
+    } else {
+      return null;
+    }
+  }
 }
 
 class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter {
@@ -376,10 +386,6 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
 
   T parent<T extends RoutingController>() => parentController as T;
 
-  @Deprecated('Renamed to just current')
-  @override
-  RouteData get currentRoute => current;
-
   @override
   RouteData get current {
     if (_pages.isNotEmpty) {
@@ -400,15 +406,15 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   }
 
   @override
-  Future<bool> pop() {
+  Future<bool> pop() async {
     final NavigatorState navigator = navigatorKey?.currentState;
     if (navigator == null) return SynchronousFuture<bool>(false);
-    if (navigator.canPop()) {
-      return navigator.maybePop();
+    if (await navigator.maybePop()) {
+      return true;
     } else if (parentController != null) {
       return parentController.pop();
     } else {
-      return SynchronousFuture<bool>(false);
+      return false;
     }
   }
 
@@ -417,7 +423,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
 
   bool _removeLast({bool notify = true}) {
     var didRemove = false;
-    if (_pages.length > 1) {
+    if (_pages.isNotEmpty) {
       _pages.removeLast();
       if (notify) {
         notifyListeners();
@@ -500,14 +506,12 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   }
 
   @override
-  bool removeUntilRoot() {
-    var didRemove = false;
-    if (_pages.length > 1) {
-      _pages.removeRange(1, _pages.length);
-      notifyListeners();
-      didRemove = true;
-    }
-    return didRemove;
+  void removeUntilRoot() => popUntilRoot();
+
+  @override
+  void popUntilRoot() {
+    assert(navigatorKey?.currentState != null);
+    navigatorKey.currentState.popUntil((route) => route.isFirst);
   }
 
   @override
@@ -674,6 +678,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
 
   Future<void> updateOrReplaceRoutes(List<PageRouteInfo> routes) {
     assert(routes != null && routes.isNotEmpty);
+
     final mayUpdateRoute = routes.last;
     final updatableEntry = _pages
         .lastWhere(
@@ -700,10 +705,10 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   @override
   Future<void> pushAndRemoveUntil(
     PageRouteInfo route, {
-    @required RouteDataPredicate predicate,
+    @required RoutePredicate predicate,
     onFailure,
   }) {
-    _removeUntil(predicate, notify: false);
+    popUntil(predicate);
     return push(route, onFailure: onFailure);
   }
 
@@ -744,6 +749,11 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   @override
   String toString() {
     return routeData?.name ?? 'Root';
+  }
+
+  @override
+  void popUntilRouteWithName(String name) {
+    popUntil(ModalRoute.withName(name));
   }
 }
 

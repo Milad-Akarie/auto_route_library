@@ -51,6 +51,6 @@ String generateLibrary(RouterConfig config) {
       ]),
   );
 
-  final emitter = DartEmitter(Allocator.simplePrefixing());
+  final emitter = DartEmitter(Allocator.simplePrefixing(), true, true);
   return DartFormatter().format(library.accept(emitter).toString());
 }

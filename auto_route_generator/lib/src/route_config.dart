@@ -69,8 +69,8 @@ class RouteConfig {
   Iterable<ParamConfig> get positionalParams =>
       parameters?.where((p) => p.isPositional) ?? [];
 
-  Iterable<ParamConfig> get optionalParams =>
-      parameters?.where((p) => p.isOptional) ?? [];
+  Iterable<ParamConfig> get namedParams =>
+      parameters?.where((p) => p.isNamed) ?? [];
 
   String get routeName {
     var nameToUse;

@@ -1,4 +1,5 @@
 import 'package:auto_route/src/matcher/route_match.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 
@@ -19,8 +20,8 @@ class PageRouteInfo {
     @required this.path,
     this.initialChildren,
     this.match,
-    this.params,
-    this.queryParams,
+    this.params = const {},
+    this.queryParams = const {},
   });
 
   String get routeName => _name;
@@ -35,6 +36,8 @@ class PageRouteInfo {
   String get fullPath => p.joinAll([stringMatch, if (hasInitialChildren) initialChildren.last.fullPath]);
 
   bool get hasInitialChildren => !listNullOrEmpty(initialChildren);
+
+  bool get fromRedirect => match?.fromRedirect == true;
 
   static String _expand(String template, Map<String, dynamic> params) {
     if (mapNullOrEmpty(params)) {
@@ -65,7 +68,17 @@ class PageRouteInfo {
   }
 
   @override
-  int get hashCode => _name.hashCode ^ path.hashCode;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PageRouteInfo &&
+          runtimeType == other.runtimeType &&
+          _name == other._name &&
+          path == other.path &&
+          MapEquality().equals(params, other.params) &&
+          MapEquality().equals(queryParams, other.queryParams);
+
+  @override
+  int get hashCode => _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
 }
 
 class RouteData {

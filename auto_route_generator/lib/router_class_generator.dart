@@ -156,7 +156,7 @@ class RouterClassGenerator {
 
     if (r.parameters?.isNotEmpty == true) {
       // if router has any required or positional params the argument class holder becomes required.
-      final nullOk = !r.argParams.any((p) => p.isRequired || p.isPositional);
+      final nullOk = !r.argParams.any((p) => p.hasRequired || p.isPositional);
       // show an error page  if passed args are not the same as declared args
 
       if (r.argParams.isNotEmpty) {
@@ -231,7 +231,7 @@ class RouterClassGenerator {
     // generate constructor
     _writeln('$argsClassName({');
     params.asMap().forEach((i, param) {
-      if (param.isRequired || param.isPositional) {
+      if (param.hasRequired || param.isPositional) {
         _write('@required ');
       }
 
@@ -346,7 +346,7 @@ class RouterClassGenerator {
     if (route.parameters != null) {
       _write('{');
       route.parameters.forEach((param) {
-        if (param.isRequired || param.isPositional) {
+        if (param.hasRequired || param.isPositional) {
           _write('@required ');
         }
 

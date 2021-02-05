@@ -1,9 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
 import '../../auto_route.dart';
 import '../utils.dart';
-
-import 'package:collection/collection.dart';
 
 @immutable
 class RouteMatch {
@@ -13,15 +12,18 @@ class RouteMatch {
   final List<RouteMatch> children;
   final String fragment;
   final List<String> segments;
+  final bool fromRedirect;
 
   const RouteMatch({
     @required this.config,
     @required this.segments,
     this.children,
+    this.fromRedirect = false,
     this.pathParams = const Parameters({}),
     this.queryParams = const Parameters({}),
     this.fragment = '',
   })  : assert(config != null),
+        assert(fromRedirect != null),
         assert(segments != null);
 
   bool get hasChildren => !listNullOrEmpty(children);
@@ -45,6 +47,7 @@ class RouteMatch {
     List<RouteMatch> children,
     String fragment,
     List<String> segments,
+    bool fromRedirect,
   }) {
     return RouteMatch(
       config: def ?? this.config,
@@ -53,6 +56,7 @@ class RouteMatch {
       pathParams: pathParams ?? this.pathParams,
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
+      fromRedirect: fromRedirect ?? this.fromRedirect,
     );
   }
 
@@ -66,6 +70,7 @@ class RouteMatch {
           queryParams == other.queryParams &&
           ListEquality().equals(children, other.children) &&
           fragment == other.fragment &&
+          fromRedirect == other.fromRedirect &&
           ListEquality().equals(segments, other.segments);
 
   @override
@@ -75,10 +80,11 @@ class RouteMatch {
       queryParams.hashCode ^
       children.hashCode ^
       fragment.hashCode ^
+      fromRedirect.hashCode ^
       segments.hashCode;
 
   @override
   String toString() {
-    return 'RouteMatch{config: $config, pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments}';
+    return 'RouteMatch{config: $config, pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, fromRedirect: $fromRedirect}';
   }
 }

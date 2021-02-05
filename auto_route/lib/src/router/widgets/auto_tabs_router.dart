@@ -1,5 +1,6 @@
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
@@ -21,7 +22,11 @@ class AutoTabsRouter extends StatefulWidget {
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
-  }) : super(key: key);
+  })  : assert(lazyLoad != null),
+        assert(duration != null),
+        assert(curve != null),
+        assert(routes != null),
+        super(key: key);
 
   @override
   AutoTabsRouterState createState() => AutoTabsRouterState();
@@ -103,7 +108,10 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
   @override
   void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _controller.setupRoutes(widget.routes);
+    if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
+      _controller.setupRoutes(widget.routes);
+      _resetController();
+    }
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:code_builder/code_builder.dart' hide FunctionType;
 import 'package:path/path.dart' as p;
@@ -85,10 +86,10 @@ class TypeResolver {
     );
   }
 
-  // typedef OnPopped<T> = void Function(T result);
   ImportableType resolveType(DartType type) {
     return ImportableType(
-      name: type.element?.name ?? type.getDisplayString(withNullability: false),
+      name: type.getDisplayString(
+          withNullability: type.nullabilitySuffix != NullabilitySuffix.star),
       import: resolveImport(type.element),
       typeArguments: _resolveTypeArguments(type),
     );
