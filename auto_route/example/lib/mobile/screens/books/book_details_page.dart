@@ -45,6 +45,8 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   FloatingActionButton(
                     child: Icon(Icons.add),
                     onPressed: () {
+                      print(context.router.navigatorKey);
+                      print(context.router);
                       setState(() {
                         counter++;
                       });

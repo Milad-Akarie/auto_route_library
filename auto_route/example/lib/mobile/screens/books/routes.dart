@@ -8,7 +8,6 @@ const booksTab = AutoRoute(
   page: EmptyRouterPage,
   name: 'BooksTab',
   children: [
-    // RedirectRoute(path: '', redirectTo: 'books'),
     AutoRoute(path: '', page: BookListPage),
     AutoRoute(
       path: ':id',

@@ -1,4 +1,5 @@
 import 'package:auto_route/src/matcher/route_match.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 
@@ -19,8 +20,8 @@ class PageRouteInfo {
     @required this.path,
     this.initialChildren,
     this.match,
-    this.params,
-    this.queryParams,
+    this.params = const {},
+    this.queryParams = const {},
   });
 
   String get routeName => _name;
@@ -32,8 +33,7 @@ class PageRouteInfo {
     return _expand(path, params);
   }
 
-  String get fullPath => p.joinAll(
-      [stringMatch, if (hasInitialChildren) initialChildren.last.fullPath]);
+  String get fullPath => p.joinAll([stringMatch, if (hasInitialChildren) initialChildren.last.fullPath]);
 
   bool get hasInitialChildren => !listNullOrEmpty(initialChildren);
 
@@ -68,7 +68,17 @@ class PageRouteInfo {
   }
 
   @override
-  int get hashCode => _name.hashCode ^ path.hashCode;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PageRouteInfo &&
+          runtimeType == other.runtimeType &&
+          _name == other._name &&
+          path == other.path &&
+          MapEquality().equals(params, other.params) &&
+          MapEquality().equals(queryParams, other.queryParams);
+
+  @override
+  int get hashCode => _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
 }
 
 class RouteData {
@@ -91,8 +101,7 @@ class RouteData {
     var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'RouteData operation requested with a context that does not include an RouteData.\n'
+        throw FlutterError('RouteData operation requested with a context that does not include an RouteData.\n'
             'The context used to retrieve the RouteData must be that of a widget that '
             'is a descendant of a AutoRoutePage.');
       }
@@ -103,8 +112,7 @@ class RouteData {
 
   T as<T extends PageRouteInfo>() {
     if (route is! T) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${route.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${route.runtimeType}]');
     }
     return route as T;
   }

@@ -1,12 +1,12 @@
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
 
-typedef AnimatedIndexedStackBuilder = Widget Function(
-    BuildContext context, Widget child, Animation<double> animation);
+typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child, Animation<double> animation);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder builder;
@@ -22,7 +22,11 @@ class AutoTabsRouter extends StatefulWidget {
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
-  }) : super(key: key);
+  })  : assert(lazyLoad != null),
+        assert(duration != null),
+        assert(curve != null),
+        assert(routes != null),
+        super(key: key);
 
   @override
   AutoTabsRouterState createState() => AutoTabsRouterState();
@@ -42,8 +46,7 @@ class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter>
-    with SingleTickerProviderStateMixin {
+class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProviderStateMixin {
   TabsRouter _controller;
   AnimationController _animationController;
   Animation<double> _animation;
@@ -105,7 +108,10 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   @override
   void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _controller.setupRoutes(widget.routes);
+    if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
+      _controller.setupRoutes(widget.routes);
+      _resetController();
+    }
   }
 
   @override
@@ -182,8 +188,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
-      _pages[widget.activeIndex] =
-          widget.itemBuilder(context, widget.activeIndex);
+      _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
     }
   }
 

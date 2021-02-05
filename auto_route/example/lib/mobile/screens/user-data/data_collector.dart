@@ -26,8 +26,8 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
     var settingsState = Provider.of<SettingsState>(context);
     return AutoRouter.declarative(onGenerateRoutes: (_, __) {
       var user = settingsState.userData;
+      print(user.favoriteBook);
       return [
-        if (user.isDone) UserDataRoute(onResult: widget.onResult),
         if (user.favoriteBook == null)
           SingleFieldRoute(
             message: 'What is your favorite book?',
@@ -44,6 +44,7 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
               settingsState.userData = user.copyWith(name: text);
             },
           ),
+        if (user.isDone) UserDataRoute(onResult: widget.onResult),
       ];
     }, onPopRoute: (PageRouteInfo route) {
       // reset the state based on popped route
