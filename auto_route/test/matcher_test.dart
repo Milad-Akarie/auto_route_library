@@ -438,5 +438,18 @@ void main() {
       ];
       expect(match('/c/c1?foo=bar'), expectedMatches);
     });
+
+    test('Should match route [A] and extract query param {foo:[bar,baz]}', () {
+      final expectedMatches = [
+        RouteMatch(
+          config: routeA,
+          segments: ['/', 'a'],
+          queryParams: Parameters({
+            'foo': ['bar', 'baz']
+          }),
+        )
+      ];
+      expect(match('/a?foo=bar&foo=baz'), expectedMatches);
+    });
   });
 }

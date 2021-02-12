@@ -88,8 +88,8 @@ class TypeResolver {
 
   ImportableType resolveType(DartType type) {
     return ImportableType(
-      name: type.getDisplayString(
-          withNullability: type.nullabilitySuffix != NullabilitySuffix.star),
+      name: type.element?.name ?? type.getDisplayString(withNullability: false),
+      isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
       import: resolveImport(type.element),
       typeArguments: _resolveTypeArguments(type),
     );
@@ -99,9 +99,11 @@ class TypeResolver {
 class ImportableType {
   String import;
   String name;
+  bool isNullable;
   List<ImportableType> typeArguments;
 
-  ImportableType({this.name, this.import, this.typeArguments});
+  ImportableType(
+      {this.name, this.import, this.typeArguments, this.isNullable = false});
 
   Set<String> get imports => fold.map((e) => e.import).toSet();
 
@@ -131,13 +133,14 @@ class ImportableType {
   Reference get simpleRefer => Reference(name, import);
 
   Reference get refer {
-    if (typeArguments == null || typeArguments.isEmpty) {
-      return Reference(name, import);
-    } else {
+    if (isParametrized) {
       return TypeReference((b) => b
         ..symbol = name
         ..url = import
+        ..isNullable = isNullable
         ..types.addAll(typeArguments.map((e) => e.refer)));
+    } else {
+      return Reference("$name${(isNullable ? '?' : '')}", import);
     }
   }
 
@@ -166,6 +169,7 @@ class ImportableType {
     return new ImportableType(
       import: import ?? this.import,
       name: name ?? this.name,
+      isNullable: isNullable ?? this.isNullable,
       typeArguments: typeArguments ?? this.typeArguments,
     );
   }

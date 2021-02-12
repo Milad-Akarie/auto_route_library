@@ -33,7 +33,8 @@ class PageRouteInfo {
     return _expand(path, params);
   }
 
-  String get fullPath => p.joinAll([stringMatch, if (hasInitialChildren) initialChildren.last.fullPath]);
+  String get fullPath => p.joinAll(
+      [stringMatch, if (hasInitialChildren) initialChildren.last.fullPath]);
 
   bool get hasInitialChildren => !listNullOrEmpty(initialChildren);
 
@@ -78,7 +79,8 @@ class PageRouteInfo {
           MapEquality().equals(queryParams, other.queryParams);
 
   @override
-  int get hashCode => _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
+  int get hashCode =>
+      _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
 }
 
 class RouteData {
@@ -101,7 +103,8 @@ class RouteData {
     var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
     assert(() {
       if (scope == null) {
-        throw FlutterError('RouteData operation requested with a context that does not include an RouteData.\n'
+        throw FlutterError(
+            'RouteData operation requested with a context that does not include an RouteData.\n'
             'The context used to retrieve the RouteData must be that of a widget that '
             'is a descendant of a AutoRoutePage.');
       }
@@ -112,7 +115,8 @@ class RouteData {
 
   T as<T extends PageRouteInfo>() {
     if (route is! T) {
-      throw FlutterError('Expected [${T.toString()}],  found [${route.runtimeType}]');
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${route.runtimeType}]');
     }
     return route as T;
   }
@@ -123,9 +127,9 @@ class RouteData {
 
   String get match => route.stringMatch;
 
-  Parameters get pathParams => route.match?.pathParams;
+  Parameters get pathParams => Parameters(route.params);
 
-  Parameters get queryParams => route.match?.queryParams;
+  Parameters get queryParams => Parameters(route.queryParams);
 
   String get fragment => route.match?.fragment;
 }

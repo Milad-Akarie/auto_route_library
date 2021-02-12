@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       routerDelegate: _appRouter.delegate(
-        initialDeepLink: '/second/1/third',
+        initialDeepLink: '/books/3?pages=1&pages=2&foo=bar',
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {

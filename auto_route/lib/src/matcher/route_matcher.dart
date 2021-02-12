@@ -171,7 +171,7 @@ class RouteMatcher {
         config: config,
         fromRedirect: fromRedirect,
         pathParams: Parameters(pathParams),
-        queryParams: Parameters(url.queryParameters),
+        queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
         fragment: url.fragment);
   }
 
@@ -196,5 +196,21 @@ class RouteMatcher {
       }
     }
     return routeConfig;
+  }
+
+  Map<String, dynamic> _normalizeSingleValues(
+      Map<String, List<String>> queryParametersAll) {
+    final queryMap = <String, dynamic>{};
+    for (var key in queryParametersAll.keys) {
+      var list = queryParametersAll[key];
+      if (list.length > 1) {
+        queryMap[key] = list;
+      } else if (list.isNotEmpty) {
+        queryMap[key] = list.first;
+      } else {
+        queryMap[key] = null;
+      }
+    }
+    return queryMap;
   }
 }

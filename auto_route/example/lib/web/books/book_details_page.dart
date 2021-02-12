@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 
 import '../../data/db.dart';
 
+typedef GenericFunc<T> = T Function(T x);
+
 class BookDetailsPage extends StatefulWidget {
   final int id;
+  final List<int> pages;
 
-  const BookDetailsPage({@pathParam this.id});
+  const BookDetailsPage({@pathParam this.id, this.pages, GenericFunc<int> cb});
 
   @override
   _BookDetailsPageState createState() => _BookDetailsPageState();
