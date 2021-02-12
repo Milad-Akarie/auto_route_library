@@ -280,7 +280,7 @@ class ParallelBranchEntry extends ChangeNotifier
 
   @override
   void setupRoutes(List<PageRouteInfo> routes) {
-    List<PageRouteInfo> routesToPush = routes;
+    final routesToPush = List.of(routes);
     if (preMatchedRoutes?.isNotEmpty == true) {
       final preMatchedRoute = preMatchedRoutes.last;
       final correspondingRouteIndex = routes.indexWhere(
