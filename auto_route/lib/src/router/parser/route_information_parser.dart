@@ -41,7 +41,13 @@ String _getNormalizedPath(List<PageRouteInfo> routes) {
   var normalized = p.normalize(fullPath);
   var query = routes.last.queryParams;
   if (!mapNullOrEmpty(query)) {
-    normalized += "?${query.keys.map((k) => '$k=${query[k]}').join('&')}";
+    normalized += "?${query.keys.map((k) {
+      var value = query[k];
+      if (value is List) {
+        value = (value as List).map((v) => '$k=$v').join('&');
+      }
+      return '$k=$value';
+    }).join('&')}";
   }
   var frag = routes.last?.match?.fragment;
   if (frag != null && frag.isNotEmpty) {

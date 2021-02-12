@@ -7,9 +7,7 @@ import '../../../data/db.dart';
 class BookDetailsPage extends StatefulWidget {
   final int id;
 
-  const BookDetailsPage({
-    @PathParam('id') this.id = 1,
-  });
+  const BookDetailsPage({@PathParam('id') this.id = 1});
 
   @override
   _BookDetailsPageState createState() => _BookDetailsPageState();
@@ -20,7 +18,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    context.router.parent().root;
     final booksDb = BooksDBProvider.of(context);
     final book = booksDb.findBookById(widget.id);
     return book == null

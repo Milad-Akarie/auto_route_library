@@ -1,4 +1,7 @@
 # ChangeLog
+## [1.0.0-beta.10]
+- Fix generic parameters crash the generator
+- Add support for array type query params
 ## [1.0.0-beta.8]
 - Add support for null-Safety to generated code.
 - Fix pop issues

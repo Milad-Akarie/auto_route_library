@@ -10,6 +10,7 @@ class HomePage extends StatelessWidget {
         duration: Duration(milliseconds: 400),
         builder: (context, child, animation) {
           var tabsRouter = context.tabsRouter;
+
           return Scaffold(
             appBar: AppBar(
               title: Text(tabsRouter.current?.name),

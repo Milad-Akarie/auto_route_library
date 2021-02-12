@@ -127,9 +127,9 @@ class RouteData {
 
   String get match => route.stringMatch;
 
-  Parameters get pathParams => route.match?.pathParams;
+  Parameters get pathParams => Parameters(route.params);
 
-  Parameters get queryParams => route.match?.queryParams;
+  Parameters get queryParams => Parameters(route.queryParams);
 
   String get fragment => route.match?.fragment;
 }

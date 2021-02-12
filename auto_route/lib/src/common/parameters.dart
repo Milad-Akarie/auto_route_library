@@ -20,7 +20,9 @@ class Parameters {
       identical(this, other) ||
       other is Parameters &&
           runtimeType == other.runtimeType &&
-          MapEquality().equals(_params, other._params);
+          MapEquality(
+            values: DeepCollectionEquality(),
+          ).equals(_params, other._params);
 
   @override
   int get hashCode => _params.hashCode;
@@ -28,7 +30,9 @@ class Parameters {
   String getString(String key, [String defaultValue]) =>
       _params[key] ?? defaultValue;
 
-  Object get(String key, defaultValue) => _params[key] ?? defaultValue;
+  dynamic get(String key, [defaultValue]) {
+    return _params[key] ?? defaultValue;
+  }
 
   int getInt(String key, [int defaultValue]) {
     var param = _params[key];

@@ -14,7 +14,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: _appRouter.delegate(),
+      routerDelegate: _appRouter.delegate(
+        initialDeepLink: '/books/3?pages=1&pages=2&foo=bar',
+      ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {
         return BooksDBProvider(
