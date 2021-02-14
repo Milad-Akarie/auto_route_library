@@ -1,4 +1,6 @@
 # ChangeLog
+## [1.0.0-beta.11]
+- Fix building PageRouteInfo from match does not respect default values
 ## [1.0.0-beta.10]
 - Fix generic parameters crash the generator
 - Add support for array type query params

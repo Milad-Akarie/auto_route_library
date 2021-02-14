@@ -188,7 +188,7 @@ class LoginRoute extends _i1.PageRouteInfo {
   LoginRoute.fromMatch(_i1.RouteMatch match)
       : key = null,
         onLoginResult = null,
-        showBackButton = null,
+        showBackButton = true,
         super.fromMatch(match);
 
   final _i12.Key key;
