@@ -76,7 +76,7 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                   ..initializers.addAll([
                     if (r.parameters?.isNotEmpty == true)
                       ...r.parameters.map((p) =>
-                          refer(p.name).assign(getParamAssignment(p)).code),
+                          refer(p.name).assign(_getParamAssignment(p)).code),
                     refer('super')
                         .newInstanceNamed('fromMatch', [refer('match')]).code
                   ]);
@@ -112,7 +112,7 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
   );
 }
 
-Expression getParamAssignment(ParamConfig p) {
+Expression _getParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
     return refer('match')
         .property('pathParams')
@@ -130,6 +130,6 @@ Expression getParamAssignment(ParamConfig p) {
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
   } else {
-    return refer('null');
+    return refer(p.defaultValueCode != null ? p.defaultValueCode : 'null');
   }
 }
