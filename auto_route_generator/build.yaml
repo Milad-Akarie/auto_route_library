@@ -2,6 +2,7 @@ builders:
   autoRouteGenerator:
     import: "package:auto_route_generator/builder.dart"
     builder_factories: ["autoRouteGenerator"]
-    build_extensions: {'.dart': ['.gr.dart']}
+    build_extensions: {'.dart': ['.auto_route.g.dart']}
     auto_apply: dependents
-    build_to: source
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]

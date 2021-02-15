@@ -83,11 +83,11 @@ class RouterConfigResolver {
   RouterConfig resolve(ConstantReader autoRouter, ClassElement clazz) {
     /// ensure router config classes are prefixed with $
     /// to use the stripped name for the generated class
-    throwIf(
-      !clazz.displayName.startsWith(r'$'),
-      'Router class name must be prefixed with \$',
-      element: clazz,
-    );
+    // throwIf(
+    //   !clazz.displayName.startsWith(r'$'),
+    //   'Router class name must be prefixed with \$',
+    //   element: clazz,
+    // );
 
     var globalRouteConfig = RouteConfig();
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
@@ -136,7 +136,7 @@ class RouterConfigResolver {
 
     var routerConfig = RouterConfig(
         globalRouteConfig: globalRouteConfig,
-        routerClassName: clazz.displayName.substring(1),
+        routerClassName: '_\$${clazz.displayName}',
         element: clazz,
         routesClassName: routesClassName,
         routeNamePrefix: routeNamePrefix,
