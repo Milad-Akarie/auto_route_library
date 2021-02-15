@@ -14,6 +14,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   final String initialDeepLink;
   final String navRestorationScopeId;
   final List<NavigatorObserver> navigatorObservers;
+  final WidgetBuilder placeholder;
 
   static RootRouterDelegate of(BuildContext context) {
     final delegate = Router.of(context).routerDelegate;
@@ -35,6 +36,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     this.initialRoutes,
     this.navRestorationScopeId,
     this.initialDeepLink,
+    this.placeholder,
     this.navigatorObservers = const [],
   })  : assert(initialDeepLink == null || initialRoutes == null),
         assert(controller != null),
@@ -87,6 +89,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
           controller: controller,
           child: AutoRouteNavigator(
             router: controller,
+            placeholder: placeholder,
             // navRestorationScopeId: navRestorationScopeId,
             navigatorObservers: navigatorObservers,
           )),
@@ -99,12 +102,14 @@ class AutoRouteNavigator extends StatelessWidget {
   // final String navRestorationScopeId;
   final List<NavigatorObserver> navigatorObservers;
   final void Function(Route route) didPop;
+  final WidgetBuilder placeholder;
 
-  const AutoRouteNavigator({
+  AutoRouteNavigator({
     @required this.router,
     @required this.navigatorObservers,
     // this.navRestorationScopeId,
     this.didPop,
+    this.placeholder,
     Key key,
   }) : super(key: key);
 
@@ -113,7 +118,8 @@ class AutoRouteNavigator extends StatelessWidget {
         key: router.navigatorKey,
         observers: navigatorObservers,
         // restorationScopeId: navRestorationScopeId,
-        pages: router.hasEntries ? router.stack : const [_PlaceHolderPage()],
+        pages:
+            router.hasEntries ? router.stack : [_PlaceHolderPage(placeholder)],
         transitionDelegate: _CustomTransitionDelegate(),
         onPopPage: (route, result) {
           if (!route.didPop(result)) {
@@ -127,15 +133,23 @@ class AutoRouteNavigator extends StatelessWidget {
 }
 
 class _PlaceHolderPage extends Page {
-  const _PlaceHolderPage() : super(key: const ValueKey('_placeHolder_'));
+  final WidgetBuilder placeholder;
+
+  const _PlaceHolderPage(this.placeholder)
+      : super(key: const ValueKey('_placeHolder_'));
 
   @override
   Route createRoute(BuildContext context) {
     return PageRouteBuilder(
       settings: this,
-      pageBuilder: (context, __, ___) => Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-      ),
+      pageBuilder: (context, __, ___) {
+        if (placeholder != null) {
+          return placeholder(context);
+        }
+        return Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+        );
+      },
     );
   }
 }

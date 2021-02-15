@@ -21,6 +21,10 @@ abstract class RootStackRouter extends BranchEntry {
 
   // _lazyRootDelegate is only built one time
   RootRouterDelegate delegate({
+    /// A builder for the placeholder page that is shown
+    /// before the first route can be rendered. Defaults to
+    /// an empty page with [Theme.scaffoldBackgroundColor].
+    WidgetBuilder placeholder,
     List<PageRouteInfo> initialRoutes,
     String initialDeepLink,
     String navRestorationScopeId,
@@ -28,6 +32,7 @@ abstract class RootStackRouter extends BranchEntry {
   }) {
     return _lazyRootDelegate ??= RootRouterDelegate(
       this,
+      placeholder: placeholder,
       initialDeepLink: initialDeepLink,
       initialRoutes: initialRoutes,
       navRestorationScopeId: navRestorationScopeId,
