@@ -38,14 +38,8 @@ Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards,
                 ..name = toLowerCamelCase(g.name)
                 ..named = true
                 ..toThis = true
-                ..annotations.add(requiredAnnotation)),
+                ..required = true),
             ),
-          ])
-          ..initializers.addAll([
-            ...guards.map((g) => refer('assert').call([
-                  refer(toLowerCamelCase(g.toString()))
-                      .notEqualTo(refer('null')),
-                ]).code),
           ])),
         // ),
       ));
