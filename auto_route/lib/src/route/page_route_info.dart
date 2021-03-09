@@ -10,14 +10,14 @@ import '../utils.dart';
 class PageRouteInfo {
   final String _name;
   final String path;
-  final RouteMatch match;
+  final RouteMatch? match;
   final Map<String, dynamic> params;
   final Map<String, dynamic> queryParams;
-  final List<PageRouteInfo> initialChildren;
+  final List<PageRouteInfo>? initialChildren;
 
   const PageRouteInfo(
     this._name, {
-    @required this.path,
+    required this.path,
     this.initialChildren,
     this.match,
     this.params = const {},
@@ -28,15 +28,14 @@ class PageRouteInfo {
 
   String get stringMatch {
     if (match != null) {
-      return p.joinAll(match.segments);
+      return p.joinAll(match!.segments);
     }
     return _expand(path, params);
   }
 
-  String get fullPath => p.joinAll(
-      [stringMatch, if (hasInitialChildren) initialChildren.last.fullPath]);
+  String get fullPath => p.joinAll([stringMatch, if (hasInitialChildren) initialChildren!.last.fullPath]);
 
-  bool get hasInitialChildren => !listNullOrEmpty(initialChildren);
+  bool get hasInitialChildren => initialChildren?.isNotEmpty == true;
 
   bool get fromRedirect => match?.fromRedirect == true;
 
@@ -56,11 +55,12 @@ class PageRouteInfo {
     return 'Route{name: $_name, path: $path, params: $params}';
   }
 
-  PageRouteInfo.fromMatch(this.match)
-      : _name = match.config.name,
+  PageRouteInfo.fromMatch(RouteMatch match)
+      : this.match = match,
+        _name = match.config.name,
         path = match.config.path,
-        params = match.pathParams?.rawMap,
-        queryParams = match.queryParams?.rawMap,
+        params = match.pathParams.rawMap,
+        queryParams = match.queryParams.rawMap,
         initialChildren = match.buildChildren();
 
 // maybe?
@@ -79,44 +79,41 @@ class PageRouteInfo {
           MapEquality().equals(queryParams, other.queryParams);
 
   @override
-  int get hashCode =>
-      _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
+  int get hashCode => _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
 }
 
 class RouteData {
   final PageRouteInfo route;
-  final RouteData parent;
+  final RouteData? parent;
   final RouteConfig config;
 
   const RouteData({
-    this.route,
+    required this.route,
     this.parent,
-    this.config,
+    required this.config,
   });
 
   List<RouteData> get breadcrumbs => List.unmodifiable([
-        if (parent != null) ...parent.breadcrumbs,
+        if (parent != null) ...parent!.breadcrumbs,
         this,
       ]);
 
-  static RouteData of(BuildContext context) {
+  static RouteData? of(BuildContext context) {
     var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'RouteData operation requested with a context that does not include an RouteData.\n'
+        throw FlutterError('RouteData operation requested with a context that does not include an RouteData.\n'
             'The context used to retrieve the RouteData must be that of a widget that '
             'is a descendant of a AutoRoutePage.');
       }
       return true;
     }());
-    return scope.entry?.routeData;
+    return scope?.entry.routeData;
   }
 
   T as<T extends PageRouteInfo>() {
     if (route is! T) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${route.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${route.runtimeType}]');
     }
     return route as T;
   }
@@ -131,5 +128,5 @@ class RouteData {
 
   Parameters get queryParams => Parameters(route.queryParams);
 
-  String get fragment => route.match?.fragment;
+  String? get fragment => route.match?.fragment;
 }

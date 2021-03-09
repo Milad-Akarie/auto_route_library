@@ -4,12 +4,12 @@ import 'package:flutter/widgets.dart';
 class StackEntryScope extends InheritedWidget {
   final StackEntryItem entry;
 
-  StackEntryScope({this.entry, Widget child}) : super(child: child);
+  StackEntryScope({required this.entry, required Widget child}) : super(child: child);
 
-  static StackEntryItem of(BuildContext context) {
+  static StackEntryItem? of(BuildContext context) {
     var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
     assert(scope != null);
-    return scope.entry;
+    return scope?.entry;
   }
 
   @override

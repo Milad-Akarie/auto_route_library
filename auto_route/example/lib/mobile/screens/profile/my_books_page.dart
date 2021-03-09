@@ -25,20 +25,20 @@ class MyBooksPage extends StatelessWidget {
             RaisedButton(
                 child: Text('Show alert'),
                 onPressed: () {
-                  showDialog(
-                      context: context,
-                      useRootNavigator: false,
-                      child: AlertDialog(
-                        title: Text('Dialog'),
-                        actions: [
-                          RaisedButton(
-                              child: Text('Go Back'),
-                              onPressed: () {
-                                context.router.pop();
-                                // context.router.pop();
-                              })
-                        ],
-                      ));
+                  // showDialog(
+                  //     context: context,
+                  //     useRootNavigator: false,
+                  //     child: AlertDialog(
+                  //       title: Text('Dialog'),
+                  //       actions: [
+                  //         RaisedButton(
+                  //             child: Text('Go Back'),
+                  //             onPressed: () {
+                  //               context.router.pop();
+                  //               // context.router.pop();
+                  //             })
+                  //       ],
+                  //     ));
                   // context.router.pop();
                 }),
             RaisedButton(

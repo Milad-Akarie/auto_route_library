@@ -14,13 +14,11 @@ abstract class RouterBase {
 
   Set<String> get allRoutes => routes.map((e) => e.template).toSet();
 
-  Route<dynamic> onGenerateRoute(RouteSettings settings, [String basePath]) {
-    assert(routes != null);
-    assert(settings != null);
+  Route<dynamic>? onGenerateRoute(RouteSettings settings, [String? basePath]) {
     var match = findMatch(settings);
     if (match != null) {
       if (basePath != null) {
-        match = match.replace(name: _joinPath(basePath, match.name));
+        match = match.replace(name: _joinPath(basePath, match.name!));
       }
 
       RouteData data;
@@ -28,12 +26,12 @@ abstract class RouterBase {
         data = ParentRouteData(
           matchResult: match,
           initialRoute: match.rest,
-          router: match.routeDef.generator,
+          router: match.routeDef.generator!,
         );
       } else {
         data = RouteData(match);
       }
-      return pagesMap[match.routeDef.page](data);
+      return pagesMap[match.routeDef.page]!(data);
     }
     return null;
   }
@@ -52,16 +50,15 @@ abstract class RouterBase {
   // a shorthand for calling the onGenerateRoute function
   // when using Router directly in MaterialApp or such
   // Router().onGenerateRoute becomes Router()
-  Route<dynamic> call(RouteSettings settings) => onGenerateRoute(settings);
+  Route<dynamic>? call(RouteSettings settings) => onGenerateRoute(settings);
 
-  RouteMatch findMatch(RouteSettings settings) {
+  RouteMatch? findMatch(RouteSettings settings) {
     var matcher = RouteMatcher(settings);
     for (var route in routes) {
       var match = matcher.match(route);
       if (match != null) {
         // matching root "/" must be exact
-        if ((route.template == "/" || route.template.isEmpty) &&
-            match.hasRest) {
+        if ((route.template == "/" || route.template.isEmpty) && match.hasRest) {
           continue;
         }
         return match;

@@ -8,14 +8,14 @@ class RouteMatcher {
   final Uri _uri;
   final RouteSettings _settings;
 
-  RouteMatcher(this._settings) : _uri = Uri.parse(_settings.name);
+  RouteMatcher(this._settings) : _uri = Uri.parse(_settings.name ?? '');
 
-  RouteMatcher.fromUri(this._uri) : _settings = null;
+  RouteMatcher.fromUri(this._uri) : _settings = RouteSettings(name: _uri.path);
 
-  RouteMatch match(RouteDef route, {bool fullMatch = false}) {
+  RouteMatch? match(RouteDef route, {bool fullMatch = false}) {
     var pattern = fullMatch ? '${route.pattern}\$' : route.pattern;
     var match = RegExp(pattern).stringMatch(_uri.path);
-    RouteMatch matchResult;
+    RouteMatch? matchResult;
     if (match != null) {
       // strip trailing forward slash
       if (match.endsWith("/") && match.length > 1) {
@@ -28,7 +28,7 @@ class RouteMatcher {
       // any of the nested routes
       if (!rest.hasEmptyPath) {
         if (route.isParent) {
-          if (!route.generator.hasMatch(rest.path)) {
+          if (!route.generator!.hasMatch(rest.path)) {
             return null;
           }
         } else {
@@ -38,7 +38,7 @@ class RouteMatcher {
 
       // passing args to the last destination
       // when pushing deep links
-      var args = _settings?.arguments;
+      var args = _settings.arguments;
       var argsToPass;
       if (!rest.hasEmptyPath) {
         argsToPass = args;
@@ -46,9 +46,7 @@ class RouteMatcher {
       }
 
       matchResult = RouteMatch(
-          name: !rest.hasEmptyPath || !segment.hasQueryParams || route.isParent
-              ? segment.path
-              : segment.toString(),
+          name: !rest.hasEmptyPath || !segment.hasQueryParams || route.isParent ? segment.path : segment.toString(),
           arguments: args,
           initialArgsToPass: argsToPass,
           uri: segment,
@@ -64,7 +62,7 @@ class RouteMatcher {
     var params = <String, String>{};
     if (pathMatch != null) {
       for (var name in pathMatch.groupNames) {
-        params[name] = pathMatch.namedGroup(name);
+        params[name] = pathMatch.namedGroup(name) ?? '';
       }
     }
     return params;
@@ -77,16 +75,16 @@ class RouteMatch extends RouteSettings {
   final RouteDef routeDef;
   final Uri rest;
   final Map<String, String> pathParamsMap;
-  final Object initialArgsToPass;
+  final Object? initialArgsToPass;
 
   RouteMatch({
-    @required this.uri,
-    @required this.routeDef,
-    @required this.rest,
-    @required this.pathParamsMap,
+    required this.uri,
+    required this.routeDef,
+    required this.rest,
+    required this.pathParamsMap,
     this.initialArgsToPass,
-    @required String name,
-    @required Object arguments,
+    String? name,
+    Object? arguments,
   }) : super(name: name, arguments: arguments);
 
   bool get hasRest => !rest.hasEmptyPath;
@@ -104,7 +102,7 @@ class RouteMatch extends RouteSettings {
   Parameters get pathParams => Parameters(pathParamsMap);
 
   RouteMatch replace({
-    String name,
+    String? name,
   }) {
     return RouteMatch(
         name: name ?? this.name,

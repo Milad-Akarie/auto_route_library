@@ -6,6 +6,6 @@ abstract class RouteGuard {
   Future<bool> canNavigate(
     ExtendedNavigatorState navigator,
     String routeName,
-    Object arguments,
+    Object? arguments,
   );
 }

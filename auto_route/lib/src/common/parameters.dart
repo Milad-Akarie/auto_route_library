@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 class Parameters {
   final Map<String, dynamic> _params;
 
-  const Parameters(Map<String, dynamic> params) : _params = params ?? const {};
+  const Parameters(Map<String, dynamic>? params) : _params = params ?? const {};
 
   Map<String, dynamic> get rawMap => _params;
 
@@ -12,8 +12,7 @@ class Parameters {
     return _params.toString();
   }
 
-  Parameters operator +(Parameters other) =>
-      Parameters({..._params, ...other._params});
+  Parameters operator +(Parameters other) => Parameters({..._params, ...other._params});
 
   @override
   bool operator ==(Object other) =>
@@ -27,14 +26,13 @@ class Parameters {
   @override
   int get hashCode => _params.hashCode;
 
-  String getString(String key, [String defaultValue]) =>
-      _params[key] ?? defaultValue;
+  String? getString(String key, [String? defaultValue]) => _params[key] ?? defaultValue;
 
   dynamic get(String key, [defaultValue]) {
     return _params[key] ?? defaultValue;
   }
 
-  int getInt(String key, [int defaultValue]) {
+  int? getInt(String key, [int? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -45,7 +43,7 @@ class Parameters {
     }
   }
 
-  double getDouble(String key, [double defaultValue]) {
+  double? getDouble(String key, [double? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -56,7 +54,7 @@ class Parameters {
     }
   }
 
-  num getNum(String key, [num defaultValue]) {
+  num? getNum(String key, [num? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -67,7 +65,7 @@ class Parameters {
     }
   }
 
-  bool getBool(String key) {
+  bool? getBool(String key) {
     switch (_params[key]?.toLowerCase()) {
       case 'true':
         return true;

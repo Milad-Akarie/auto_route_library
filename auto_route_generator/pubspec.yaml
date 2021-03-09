@@ -4,7 +4,7 @@ version: 1.0.0-beta.11
 homepage: https://github.com/Milad-Akarie/auto_route_library
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   build: ^1.0.0

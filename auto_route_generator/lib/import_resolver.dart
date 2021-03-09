@@ -6,25 +6,23 @@ import 'package:path/path.dart' as p;
 
 class TypeResolver {
   final List<LibraryElement> libs;
-  final Uri targetFile;
+  final Uri? targetFile;
 
   TypeResolver(this.libs, this.targetFile);
 
-  String resolveImport(Element element) {
+  String? resolveImport(Element element) {
     // return early if source is null or element is a core type
-    if (element?.source == null || _isCoreDartType(element)) {
+    if (element.source == null || _isCoreDartType(element)) {
       return null;
     }
 
     for (var lib in libs) {
-      if (lib.source != null &&
-          !_isCoreDartType(lib) &&
-          lib.exportNamespace.definedNames.values.contains(element)) {
+      if (lib.source != null && !_isCoreDartType(lib) && lib.exportNamespace.definedNames.values.contains(element)) {
         return targetFile == null
             ? lib.identifier
             : _relative(
                 lib.source.uri,
-                targetFile,
+                targetFile!,
               );
       }
     }
@@ -33,16 +31,12 @@ class TypeResolver {
 
   String _relative(Uri fileUri, Uri to) {
     var libName = to.pathSegments.first;
-    if ((to.scheme == 'package' &&
-            fileUri.scheme == 'package' &&
-            fileUri.pathSegments.first == libName) ||
+    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.first == libName) ||
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
         return fileUri.pathSegments.last;
       } else {
-        return p.posix
-            .relative(fileUri.path, from: to.path)
-            .replaceFirst('../', '');
+        return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
       }
     } else {
       return fileUri.toString();
@@ -53,7 +47,7 @@ class TypeResolver {
     return element.source.fullName == 'dart:core';
   }
 
-  Iterable<ImportableType> _resolveTypeArguments(DartType typeToCheck) {
+  List<ImportableType> _resolveTypeArguments(DartType typeToCheck) {
     final importableTypes = <ImportableType>[];
     if (typeToCheck is ParameterizedType) {
       for (DartType type in typeToCheck.typeArguments) {
@@ -97,19 +91,29 @@ class TypeResolver {
 }
 
 class ImportableType {
-  String import;
+  String? import;
   String name;
   bool isNullable;
   List<ImportableType> typeArguments;
 
-  ImportableType(
-      {this.name, this.import, this.typeArguments, this.isNullable = false});
+  ImportableType({
+    required this.name,
+    this.import,
+    this.typeArguments = const [],
+    this.isNullable = false,
+  });
 
-  Set<String> get imports => fold.map((e) => e.import).toSet();
+  Set<String> get imports {
+    var allImports = <String>{};
+    fold.forEach((element) {
+      if (element.import != null) allImports.add(element.import!);
+    });
+    return allImports;
+  }
 
   List<ImportableType> get fold {
     var list = [this];
-    typeArguments?.forEach((iType) {
+    typeArguments.forEach((iType) {
       list.addAll(iType.fold);
     });
     return list;
@@ -118,16 +122,13 @@ class ImportableType {
   String get identity => "$import#$name";
 
   String fullName({bool withTypeArgs = true}) {
-    var typeArgs = withTypeArgs && (typeArguments?.isNotEmpty == true)
-        ? "<${typeArguments.map((e) => e.name).join(',')}>"
-        : '';
+    var typeArgs =
+        withTypeArgs && (typeArguments.isNotEmpty == true) ? "<${typeArguments.map((e) => e.name).join(',')}>" : '';
     return "$name$typeArgs";
   }
 
-  String getDisplayName(Set<ImportableType> prefixedTypes,
-      {bool withTypeArgs = true}) {
-    return prefixedTypes?.lookup(this)?.fullName(withTypeArgs: withTypeArgs) ??
-        fullName(withTypeArgs: withTypeArgs);
+  String getDisplayName(Set<ImportableType> prefixedTypes, {bool withTypeArgs = true}) {
+    return prefixedTypes.lookup(this)?.fullName(withTypeArgs: withTypeArgs) ?? fullName(withTypeArgs: withTypeArgs);
   }
 
   Reference get simpleRefer => Reference(name, import);
@@ -144,7 +145,7 @@ class ImportableType {
     }
   }
 
-  bool get isParametrized => typeArguments?.isNotEmpty == true;
+  bool get isParametrized => typeArguments.isNotEmpty;
 
   @override
   String toString() {
@@ -154,17 +155,16 @@ class ImportableType {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ImportableType &&
-          runtimeType == other.runtimeType &&
-          identity == other.identity;
+      other is ImportableType && runtimeType == other.runtimeType && identity == other.identity;
 
   @override
   int get hashCode => import.hashCode ^ name.hashCode;
 
   ImportableType copyWith({
-    String import,
-    String name,
-    List<ImportableType> typeArguments,
+    String? import,
+    String? name,
+    List<ImportableType>? typeArguments,
+    bool? isNullable,
   }) {
     return new ImportableType(
       import: import ?? this.import,
