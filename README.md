@@ -8,7 +8,7 @@
 <a href="https://pub.dev/packages/auto_route/versions/1.0.0-beta.9"><img src="https://img.shields.io/badge/pub-1.0.0.beta.9-orange" alt="pub version"></a>
 </p>
 
-**Check out the docs!** https://autoroute.vercel.app
+**Check out the new docs!** https://autoroute.vercel.app
 
 ---
 
