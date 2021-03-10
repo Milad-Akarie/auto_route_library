@@ -1,13 +1,14 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/auto_route.dart' show AutoRoute, MaterialRoute, CupertinoRoute, CustomRoute, AdaptiveRoute;
-import 'package:auto_route_generator/import_resolver.dart';
-import 'package:auto_route_generator/src/models/route_parameter_config.dart';
-import 'package:auto_route_generator/src/resolvers/route_paramter_resolver.dart';
-import 'package:auto_route_generator/src/resolvers/router_config_resolver.dart';
-import 'package:auto_route_generator/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
+import '../../utils.dart';
+import '../models/importable_type.dart';
 import '../models/route_config.dart';
+import '../models/route_parameter_config.dart';
+import '../models/router_config.dart';
+import '../resolvers/route_parameter_resolver.dart';
+import '../resolvers/type_resolver.dart';
 
 const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
 
@@ -27,6 +28,7 @@ class RouteConfigResolver {
       return RouteConfig(
         pathName: path!,
         redirectTo: redirectTo,
+        className: '',
         fullMatch: autoRoute.peek('fullMatch')?.boolValue ?? true,
         routeType: RouteType.redirect,
       );
@@ -68,10 +70,10 @@ class RouteConfigResolver {
     var usesTabsRouter = autoRoute.peek('usesTabsRouter')?.boolValue ?? false;
     var guards = <ImportableType>[];
     autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue()).forEach((guard) {
-      guards.add(_typeResolver.resolveType(guard));
+      guards.add(_typeResolver.resolveType(guard!));
     });
 
-    var returnType = _typeResolver.resolveType(autoRoute.objectValue.type.typeArguments.first);
+    var returnType = _typeResolver.resolveType(autoRoute.objectValue.type!.typeArguments.first);
 
     int routeType = RouteType.material;
     String? cupertinoNavTitle;
@@ -127,7 +129,7 @@ class RouteConfigResolver {
 
     final constructor = classElement.unnamedConstructor;
     var hasConstConstructor = false;
-    var params = constructor.parameters;
+    var params = constructor!.parameters;
     var parameters = <ParamConfig>[];
     if (params.isNotEmpty == true) {
       if (constructor.isConst &&
@@ -144,7 +146,7 @@ class RouteConfigResolver {
 
     ClassElement pageClass = page.element as ClassElement;
     if (pathParams.isNotEmpty == true) {
-      var pathParamCandidates = parameters.where((p) => p.isPathParam).map((e) => e.paramName) ?? [];
+      var pathParamCandidates = parameters.where((p) => p.isPathParam).map((e) => e.paramName);
       for (var pParam in pathParams) {
         throwIf(!pathParamCandidates.contains(pParam.name),
             '$className does not have a constructor parameter (annotated with @PathParam()) with an alias/name [${pParam.name}]',
@@ -159,6 +161,9 @@ class RouteConfigResolver {
     return RouteConfig(
       className: className,
       name: name,
+      usesTabsRouter: usesTabsRouter,
+      routeType: routeType,
+      transitionBuilder: transitionBuilder,
       customRouteBuilder: customRouteBuilder,
       customRouteBarrierDismissible: customRouteBarrierDismissible,
       customRouteOpaque: customRouteOpaque,

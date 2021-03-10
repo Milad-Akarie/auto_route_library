@@ -4,7 +4,6 @@ import '../common/common.dart';
 import 'route_matcher.dart';
 import 'router_base.dart';
 
-@immutable
 class RouteData extends RouteSettings {
   RouteData(this.routeMatch)
       : _pathParams = routeMatch.pathParams,

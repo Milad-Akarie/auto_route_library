@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {
         return BooksDBProvider(
-          child: router,
+          child: router!,
         );
       },
     );

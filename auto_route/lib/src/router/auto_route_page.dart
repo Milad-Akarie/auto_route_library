@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/route/entry_scope.dart';
 import 'package:auto_route/src/route/route_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';

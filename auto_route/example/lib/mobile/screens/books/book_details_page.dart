@@ -19,7 +19,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final booksDb = BooksDBProvider.of(context);
-    final book = booksDb.findBookById(widget.id);
+    final book = booksDb?.findBookById(widget.id);
     return book == null
         ? Container(child: Text('Book null'))
         : Scaffold(

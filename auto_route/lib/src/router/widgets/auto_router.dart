@@ -1,3 +1,4 @@
+import 'package:auto_route/src/route/entry_scope.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';

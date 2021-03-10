@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text(tabsRouter.current?.name),
+              title: Text(tabsRouter.current?.name ?? ''),
             ),
             body: FadeTransition(child: child, opacity: animation),
             bottomNavigationBar: buildBottomNav(tabsRouter),

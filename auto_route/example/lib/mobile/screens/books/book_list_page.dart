@@ -9,19 +9,20 @@ class BookListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     var booksDb = BooksDBProvider.of(context);
     return ListView(
-      children: booksDb.books
-          .map((book) => Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: ListTile(
-                  title: Text(book.name),
-                  subtitle: Text(book.genre),
-                  onTap: () {
-                    // context.router.push(BookDetailsRoute(id: book.id));
-                    BookDetailsRoute(id: book.id).show(context);
-                  },
-                ),
-              ))
-          .toList(),
+      children: booksDb?.books
+              .map((book) => Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: ListTile(
+                      title: Text(book.name),
+                      subtitle: Text(book.genre),
+                      onTap: () {
+                        // context.router.push(BookDetailsRoute(id: book.id));
+                        BookDetailsRoute(id: book.id).show(context);
+                      },
+                    ),
+                  ))
+              .toList() ??
+          const [],
     );
   }
 }

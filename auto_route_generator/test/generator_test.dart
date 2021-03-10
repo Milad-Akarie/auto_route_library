@@ -10,16 +10,16 @@ const samplesDirectory = 'test/samples';
 Future<void> main() async {
   initializeBuildLogTracking();
 
-  final samples = Directory(samplesDirectory).listSync().map((f) => f.uri.pathSegments.last);
-  for (var sampleName in samples) {
-    await testRouter(sampleName);
-  }
+  // final samples = Directory(samplesDirectory).listSync().map((f) => f.uri.pathSegments.last);
+  // for (var sampleName in samples) {
+  //   await testRouter(sampleName);
+  // }
 }
 
-testRouter(String fileName) async {
-  final reader = await initializeLibraryReaderForDirectory(samplesDirectory, '$fileName');
-  testAnnotatedElements<AutoRouterAnnotation>(
-    reader,
-    AutoRouteGeneratorMock(),
-  );
-}
+// testRouter(String fileName) async {
+//   final reader = await initializeLibraryReaderForDirectory(samplesDirectory, '$fileName');
+//   testAnnotatedElements<AutoRouterAnnotation>(
+//     reader,
+//     // AutoRouteGeneratorMock(),
+//   );
+// }

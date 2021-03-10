@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import 'data_collector.dart';
 
 class UserDataPage extends StatelessWidget {
-  final Function(UserData data) onResult;
+  final Function(UserData data)? onResult;
 
-  const UserDataPage({Key key, this.onResult}) : super(key: key);
+  const UserDataPage({Key? key, this.onResult}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class UserDataPage extends StatelessWidget {
             const SizedBox(height: 24),
             Text('Favorite book: ${userData.favoriteBook}'),
             const SizedBox(height: 24),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Done'),
                 onPressed: () {
                   onResult?.call(userData);

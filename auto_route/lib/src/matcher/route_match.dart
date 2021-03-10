@@ -1,10 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:meta/meta.dart';
 
 import '../../auto_route.dart';
-import '../utils.dart';
 
-@immutable
 class RouteMatch {
   final RouteConfig config;
   final Parameters pathParams;
@@ -26,7 +23,7 @@ class RouteMatch {
 
   bool get hasChildren => children?.isNotEmpty == true;
 
-  PageRouteInfo get toRoute => config.routeBuilder(this);
+  PageRouteInfo get toRoute => config.routeBuilder!(this);
 
   String get path => config.path;
 

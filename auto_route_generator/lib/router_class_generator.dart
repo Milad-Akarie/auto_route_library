@@ -1,6 +1,8 @@
 import 'package:auto_route_generator/src/models/route_config.dart';
-import 'package:auto_route_generator/src/resolvers/router_config_resolver.dart';
+import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/utils.dart';
+
+import 'src/models/router_config.dart';
 
 class RouterClassGenerator {
   final RouterConfig _rootRouterConfig;
@@ -148,7 +150,7 @@ class RouterClassGenerator {
   void _generateRoute(RouteConfig r) {
     List constructorParams = [];
 
-    if (r.parameters?.isNotEmpty == true) {
+    if (r.parameters.isNotEmpty) {
       // if router has any required or positional params the argument class holder becomes required.
       final nullOk = !r.argParams.any((p) => p.hasRequired || p.isPositional);
       // show an error page  if passed args are not the same as declared args
@@ -326,9 +328,9 @@ class RouterClassGenerator {
 
   void _generateHelperMethod(RouteConfig route, String routesClassName) {
     final genericType = route.returnType == null ? '' : '<${route.returnType}>';
-    _write('Future$genericType push${capitalize(route.name)}(');
+    _write('Future$genericType push${capitalize(route.routeName)}(');
     // generate constructor
-    if (route.parameters != null) {
+    if (route.parameters.isNotEmpty) {
       _write('{');
       route.parameters.forEach((param) {
         if (param.hasRequired || param.isPositional) {
@@ -341,20 +343,20 @@ class RouterClassGenerator {
         }
         _write(',');
       });
-      if (route.guards?.isNotEmpty == true) {
+      if (route.guards.isNotEmpty) {
         _write('OnNavigationRejected onReject');
       }
       _write('}');
     }
     _writeln(')');
     _write(' => push$genericType($routesClassName.${route.name}');
-    if (route.parameters != null) {
+    if (route.parameters.isNotEmpty) {
       _write(',arguments: ');
       _write('${route.argumentsHolderClassName}(');
       _write(route.parameters.map((p) => '${p.name}: ${p.name}').join(','));
       _write('),');
 
-      if (route.guards?.isNotEmpty == true) {
+      if (route.guards.isNotEmpty) {
         _write('onReject:onReject,');
       }
     }

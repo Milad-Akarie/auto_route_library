@@ -7,7 +7,6 @@ import '../matcher/route_matcher.dart';
 
 typedef RouteBuilder<T extends PageRouteInfo> = T Function(RouteMatch match);
 
-@immutable
 class RouteConfig<T extends PageRouteInfo> {
   final String name;
   final String path;
@@ -16,7 +15,7 @@ class RouteConfig<T extends PageRouteInfo> {
   final String? redirectTo;
   final List<AutoRouteGuard> guards;
   final bool usesTabsRouter;
-  final RouteBuilder<T> routeBuilder;
+  final RouteBuilder<T>? routeBuilder;
 
   RouteConfig(
     this.name, {
@@ -25,7 +24,7 @@ class RouteConfig<T extends PageRouteInfo> {
     this.guards = const [],
     this.fullMatch = false,
     this.redirectTo,
-    required this.routeBuilder,
+    this.routeBuilder,
     List<RouteConfig>? children,
   }) : _children = children != null ? RouteCollection.from(children) : null;
 

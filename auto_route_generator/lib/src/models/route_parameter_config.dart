@@ -1,10 +1,7 @@
-import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
-import 'package:auto_route/annotations.dart';
-import 'package:auto_route_generator/import_resolver.dart';
+import 'package:analyzer/dart/element/element.dart' show ParameterElement;
 import 'package:code_builder/code_builder.dart' as _code;
-import 'package:meta/meta.dart';
-import 'package:source_gen/source_gen.dart';
+
+import 'importable_type.dart';
 
 const reservedVarNames = ['name', 'children'];
 
@@ -122,9 +119,9 @@ class FunctionParamConfig extends ParamConfig {
           isOptional: isOptional,
         );
 
-  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList(growable: false);
+  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList();
 
-  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList(growable: false);
+  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList();
 
   List<ParamConfig> get namedParams => params.where((p) => p.isNamed).toList(growable: false);
 
@@ -132,6 +129,7 @@ class FunctionParamConfig extends ParamConfig {
     ..returnType = returnType.refer
     ..requiredParameters.addAll(requiredParams.map((e) => e.type.refer))
     ..optionalParameters.addAll(optionalParams.map((e) => e.type.refer))
+    ..isNullable = type.isNullable
     ..namedParameters.addAll(
       {}..addEntries(namedParams.map(
           (e) => MapEntry(e.name, e.type.refer),

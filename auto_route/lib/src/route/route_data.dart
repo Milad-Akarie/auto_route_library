@@ -1,19 +1,53 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
-class StackEntryScope extends InheritedWidget {
-  final StackEntryItem entry;
+import 'entry_scope.dart';
 
-  StackEntryScope({required this.entry, required Widget child}) : super(child: child);
+class RouteData {
+  final PageRouteInfo route;
+  final RouteData? parent;
+  final RouteConfig config;
 
-  static StackEntryItem? of(BuildContext context) {
+  const RouteData({
+    required this.route,
+    this.parent,
+    required this.config,
+  });
+
+  List<RouteData> get breadcrumbs => List.unmodifiable([
+        if (parent != null) ...parent!.breadcrumbs,
+        this,
+      ]);
+
+  static RouteData? of(BuildContext context) {
     var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
-    assert(scope != null);
-    return scope?.entry;
+    assert(() {
+      if (scope == null) {
+        throw FlutterError('RouteData operation requested with a context that does not include an RouteData.\n'
+            'The context used to retrieve the RouteData must be that of a widget that '
+            'is a descendant of a AutoRoutePage.');
+      }
+      return true;
+    }());
+    return scope?.entry.routeData;
   }
 
-  @override
-  bool updateShouldNotify(covariant StackEntryScope oldWidget) {
-    return entry != oldWidget.entry;
+  T as<T extends PageRouteInfo>() {
+    if (route is! T) {
+      throw FlutterError('Expected [${T.toString()}],  found [${route.runtimeType}]');
+    }
+    return route as T;
   }
+
+  String get name => route.routeName;
+
+  String get path => route.path;
+
+  String get match => route.stringMatch;
+
+  Parameters get pathParams => Parameters(route.params);
+
+  Parameters get queryParams => Parameters(route.queryParams);
+
+  String? get fragment => route.match?.fragment;
 }

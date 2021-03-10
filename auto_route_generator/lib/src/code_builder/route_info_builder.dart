@@ -1,4 +1,7 @@
-import 'package:auto_route_generator/route_config_resolver.dart';
+import '../models/route_parameter_config.dart';
+
+import '../models/route_config.dart';
+import '../models/router_config.dart';
 import 'package:code_builder/code_builder.dart';
 
 import 'library_builder.dart';
@@ -8,13 +11,10 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
         ..name = r.routeName
         ..extend = pageRouteType
         ..fields.addAll([
-          if (r.parameters?.isNotEmpty == true)
-            ...r.parameters.map((param) => Field((b) => b
-              ..modifier = FieldModifier.final$
-              ..name = param.name
-              ..type = param is FunctionParamConfig
-                  ? param.funRefer
-                  : param.type.refer)),
+          ...r.parameters.map((param) => Field((b) => b
+            ..modifier = FieldModifier.final$
+            ..name = param.name
+            ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
           Field(
             (b) => b
               ..modifier = FieldModifier.constant
@@ -28,11 +28,10 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
           [
             Constructor(
               (b) {
-                return b
-                  ..constant = (r.parameters == null)
+                b
+                  ..constant = (r.parameters.isNotEmpty)
                   ..optionalParameters.addAll([
-                    if (r.parameters?.isNotEmpty == true)
-                      ...buildArgParams(r.parameters),
+                    if (r.parameters.isNotEmpty == true) ...buildArgParams(r.parameters),
                     if (r.isParent)
                       Parameter((b) => b
                         ..named = true
@@ -43,7 +42,7 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                     refer('name')
                   ], {
                     'path': literalString(r.pathName),
-                    if (r.pathParams?.isNotEmpty == true)
+                    if (r.pathParams.isNotEmpty == true)
                       'params': literalMap(
                         Map.fromEntries(
                           r.pathParams.map(
@@ -54,7 +53,7 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                           ),
                         ),
                       ),
-                    if (r.parameters?.any((p) => p.isQueryParam) == true)
+                    if (r.parameters.any((p) => p.isQueryParam))
                       'queryParams': literalMap(
                         Map.fromEntries(
                           r.parameters.where((p) => p.isQueryParam).map(
@@ -74,11 +73,9 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                 b
                   ..name = 'fromMatch'
                   ..initializers.addAll([
-                    if (r.parameters?.isNotEmpty == true)
-                      ...r.parameters.map((p) =>
-                          refer(p.name).assign(_getParamAssignment(p)).code),
-                    refer('super')
-                        .newInstanceNamed('fromMatch', [refer('match')]).code
+                    if (r.parameters.isNotEmpty)
+                      ...r.parameters.map((p) => refer(p.name).assign(_getParamAssignment(p)).code),
+                    refer('super').newInstanceNamed('fromMatch', [refer('match')]).code
                   ]);
                 b.requiredParameters.add(
                   Parameter(
@@ -87,7 +84,6 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
                       ..type = refer("RouteMatch", autoRouteImport),
                   ),
                 );
-                return b;
               },
             )
           ],
@@ -104,9 +100,7 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
           ..toThis = true
           ..required = p.isRequired
           ..defaultTo = p.defaultCode;
-        if (p.hasRequired && !p.isRequired)
-          b.annotations.add(requiredAnnotation);
-        return b;
+        if (p.hasRequired && !p.isRequired) b.annotations.add(requiredAnnotation);
       },
     ),
   );
@@ -114,18 +108,12 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
 
 Expression _getParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
-    return refer('match')
-        .property('pathParams')
-        .property(p.getterMethodName)
-        .call([
+    return refer('match').property('pathParams').property(p.getterMethodName).call([
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
   } else if (p.isQueryParam) {
-    return refer('match')
-        .property('queryParams')
-        .property(p.getterMethodName)
-        .call([
+    return refer('match').property('queryParams').property(p.getterMethodName).call([
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);

@@ -1,8 +1,8 @@
-import 'package:auto_route_generator/import_resolver.dart';
-import 'package:auto_route_generator/src/models/route_parameter_config.dart';
-import 'package:auto_route_generator/src/resolvers/router_config_resolver.dart';
+import 'route_parameter_config.dart';
 
 import '../../utils.dart';
+import 'importable_type.dart';
+import 'router_config.dart';
 
 /// holds the extracted route configs
 /// to be used in [RouterClassGenerator]
@@ -13,19 +13,19 @@ class RouteConfig {
   final List<PathParamConfig> pathParams;
   final bool initial;
   final bool? fullscreenDialog;
-  final bool fullMatch;
+  final bool? fullMatch;
   final bool? customRouteOpaque;
   final bool? customRouteBarrierDismissible;
   final String? customRouteBarrierLabel;
   final bool? maintainState;
   final ImportableType? pageType;
-  final String? className;
+  final String className;
   final ImportableType? returnType;
   final List<ParamConfig> parameters;
   final ImportableType? transitionBuilder;
   final ImportableType? customRouteBuilder;
   final String? redirectTo;
-  final bool usesTabsRouter;
+  final bool? usesTabsRouter;
   final int? reverseDurationInMilliseconds;
   final int? durationInMilliseconds;
   final int routeType;
@@ -42,18 +42,18 @@ class RouteConfig {
     this.pathParams = const [],
     this.initial = false,
     this.fullscreenDialog,
-    required this.fullMatch,
+    this.fullMatch,
     this.customRouteOpaque,
     this.customRouteBarrierDismissible,
     this.customRouteBarrierLabel,
     this.maintainState,
     this.pageType,
-    this.className,
+    required this.className,
     this.parameters = const [],
     this.transitionBuilder,
     this.customRouteBuilder,
     this.redirectTo,
-    this.usesTabsRouter = false,
+    this.usesTabsRouter,
     this.durationInMilliseconds,
     this.reverseDurationInMilliseconds,
     this.returnType,
@@ -158,7 +158,7 @@ class RouteConfig {
     );
   }
 
-  String get argumentsHolderCRouteConfigClassName {
+  String get argumentsHolderClassName {
     return '${className}Arguments';
   }
 

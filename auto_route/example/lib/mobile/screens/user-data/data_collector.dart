@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
-  final Function(UserData data) onResult;
+  final Function(UserData data)? onResult;
 
-  const UserDataCollectorPage({Key key, this.onResult, @pathParam int id}) : super(key: key);
+  const UserDataCollectorPage({Key? key, this.onResult, @pathParam required int id}) : super(key: key);
 
   @override
   _UserDataCollectorPageState createState() => _UserDataCollectorPageState();
@@ -64,8 +64,8 @@ class SettingsState extends ChangeNotifier {
 }
 
 class UserData {
-  final String name;
-  final String favoriteBook;
+  final String? name;
+  final String? favoriteBook;
 
   const UserData({
     this.name,
@@ -75,8 +75,8 @@ class UserData {
   bool get isDone => name != null && favoriteBook != null;
 
   UserData copyWith({
-    String name,
-    String favoriteBook,
+    String? name,
+    String? favoriteBook,
   }) {
     return UserData(
       name: name ?? this.name,

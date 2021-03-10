@@ -1,89 +1,22 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/annotations.dart';
-import 'package:auto_route_generator/import_resolver.dart';
-import 'package:auto_route_generator/src/models/route_config.dart';
-import 'package:auto_route_generator/src/resolvers/route_config_resolver.dart';
+import '../models/importable_type.dart';
+import '../models/route_config.dart';
+import '../models/router_config.dart';
+import 'route_config_resolver.dart';
+import 'type_resolver.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
-import '../models/route_config.dart';
 
 /// Extracts and holds router configs
 /// to be used in [RouterClassGenerator]
 
-class RouterConfig {
-  final bool generateNavigationHelper;
-  final List<RouteConfig> routes;
-  final RouteConfig globalRouteConfig;
-  final String? routesClassName;
-  final String? routeNamePrefix;
-  final bool usesLegacyGenerator;
-  final String routerClassName;
-  final RouterConfig? parent;
-  final String? replaceInRouteName;
-  final ClassElement element;
-
-  RouterConfig({
-    required this.generateNavigationHelper,
-    required this.routes,
-    required this.element,
-    required this.globalRouteConfig,
-    required this.usesLegacyGenerator,
-    required this.routerClassName,
-    this.routesClassName,
-    this.parent,
-    this.routeNamePrefix,
-    this.replaceInRouteName,
-  });
-
-  RouterConfig copyWith({
-    bool? generateNavigationHelper,
-    List<RouteConfig>? routes,
-    RouteConfig? globalRouteConfig,
-    String? routesClassName,
-    String? routeNamePrefix,
-    String? routerClassName,
-    RouterConfig? parent,
-    String? replaceInRouteName,
-    ClassElement? element,
-  }) {
-    return RouterConfig(
-      generateNavigationHelper: generateNavigationHelper ?? this.generateNavigationHelper,
-      routes: routes ?? this.routes,
-      globalRouteConfig: globalRouteConfig ?? this.globalRouteConfig,
-      routesClassName: routesClassName ?? this.routesClassName,
-      routeNamePrefix: routeNamePrefix ?? this.routeNamePrefix,
-      routerClassName: routerClassName ?? this.routerClassName,
-      replaceInRouteName: replaceInRouteName ?? this.replaceInRouteName,
-      parent: parent ?? this.parent,
-      element: this.element,
-      usesLegacyGenerator: this.usesLegacyGenerator,
-    );
-  }
-
-  List<RouterConfig> get subRouters {
-    final routers = <RouterConfig>[];
-    routes.forEach((route) {
-      if (route.childRouterConfig != null) {
-        routers.addAll(route.childRouterConfig!.subRouters);
-      }
-    });
-    return routers;
-  }
-
-  List<RouterConfig> get collectAllRoutersIncludingParent =>
-      subRouters.fold([this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
-
-  @override
-  String toString() {
-    return 'RouterConfig{routes: $routes, routesClassName: $routesClassName, routerClassName: $routerClassName}';
-  }
-}
-
 class RouterConfigResolver {
   final TypeResolver _typeResolver;
   late RouteConfig globalRouteConfig;
+
   RouterConfigResolver(this._typeResolver);
 
   RouterConfig resolve(ConstantReader autoRouter, ClassElement clazz) {
@@ -121,7 +54,6 @@ class RouterConfigResolver {
       }
 
       globalRouteConfig = RouteConfig(
-        fullMatch: false,
         routeType: routeType,
         fullscreenDialog: false,
         reverseDurationInMilliseconds: null,
@@ -137,7 +69,6 @@ class RouterConfigResolver {
         hasConstConstructor: false,
         pathParams: const [],
         parameters: const [],
-        usesTabsRouter: false,
       );
     }
 
@@ -177,14 +108,14 @@ class RouterConfigResolver {
 
       var children = routeReader.peek('children')?.listValue;
       if (children?.isNotEmpty == true) {
-        var name = capitalize(valueOr(route.name, route.className!));
+        var name = capitalize(valueOr(route.name, route.className));
         var subRouterConfig = routerConfig.copyWith(
           routerClassName: '${name}Router',
           routesClassName: '${name}Routes',
           parent: routerConfig,
         );
         var routes = _resolveRoutes(subRouterConfig, children!);
-        route.childRouterConfig = subRouterConfig.copyWith(routes: routes);
+        route = route.copyWith(childRouterConfig: subRouterConfig.copyWith(routes: routes));
       }
     }
     return routes;
