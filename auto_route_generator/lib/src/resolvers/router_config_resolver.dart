@@ -1,21 +1,20 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:source_gen/source_gen.dart';
+
+import '../../utils.dart';
 import '../models/importable_type.dart';
 import '../models/route_config.dart';
 import '../models/router_config.dart';
 import 'route_config_resolver.dart';
 import 'type_resolver.dart';
-import 'package:source_gen/source_gen.dart';
-
-import '../../utils.dart';
 
 /// Extracts and holds router configs
-/// to be used in [RouterClassGenerator]
 
 class RouterConfigResolver {
   final TypeResolver _typeResolver;
-  late RouteConfig globalRouteConfig;
+  late RouteConfig _globalRouteConfig;
 
   RouterConfigResolver(this._typeResolver);
 
@@ -29,6 +28,11 @@ class RouterConfigResolver {
     );
 
     int routeType = RouteType.material;
+    int? durationInMilliseconds;
+    bool? customRouteOpaque;
+    bool? customRouteBarrierDismissible;
+    ImportableType? transitionBuilder;
+    ImportableType? customRouteBuilder;
 
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       routeType = RouteType.cupertino;
@@ -36,41 +40,32 @@ class RouterConfigResolver {
       routeType = RouteType.adaptive;
     } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
       routeType = RouteType.custom;
-      var durationInMilliseconds = autoRouter.peek('durationInMilliseconds')?.intValue;
-      var customRouteOpaque = autoRouter.peek('opaque')?.boolValue;
-      var customRouteBarrierDismissible = autoRouter.peek('barrierDismissible')?.boolValue;
-      final function = autoRouter.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
 
-      ImportableType? transitionBuilder;
+      durationInMilliseconds = autoRouter.peek('durationInMilliseconds')?.intValue;
+      customRouteOpaque = autoRouter.peek('opaque')?.boolValue;
+      customRouteBarrierDismissible = autoRouter.peek('barrierDismissible')?.boolValue;
+      final function = autoRouter.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
       if (function != null) {
         transitionBuilder = _typeResolver.resolveImportableFunctionType(function);
       }
-
       final customRouteBuilderValue = autoRouter.peek('customRouteBuilder')?.objectValue?.toFunctionValue();
-
-      ImportableType? customRouteBuilder;
       if (customRouteBuilderValue != null) {
         customRouteBuilder = _typeResolver.resolveImportableFunctionType(customRouteBuilderValue);
       }
-
-      globalRouteConfig = RouteConfig(
-        routeType: routeType,
-        fullscreenDialog: false,
-        reverseDurationInMilliseconds: null,
-        durationInMilliseconds: durationInMilliseconds,
-        customRouteOpaque: customRouteOpaque,
-        customRouteBarrierDismissible: customRouteBarrierDismissible,
-        transitionBuilder: transitionBuilder,
-        customRouteBuilder: customRouteBuilder,
-        initial: false,
-        className: '',
-        hasWrapper: false,
-        pathName: '',
-        hasConstConstructor: false,
-        pathParams: const [],
-        parameters: const [],
-      );
     }
+
+    _globalRouteConfig = RouteConfig(
+      routeType: routeType,
+      fullscreenDialog: false,
+      reverseDurationInMilliseconds: null,
+      durationInMilliseconds: durationInMilliseconds,
+      customRouteOpaque: customRouteOpaque,
+      customRouteBarrierDismissible: customRouteBarrierDismissible,
+      transitionBuilder: transitionBuilder,
+      customRouteBuilder: customRouteBuilder,
+      className: '',
+      pathName: '',
+    );
 
     var generateNavigationExt = autoRouter.peek('generateNavigationHelperExtension')?.boolValue ?? false;
     var routeNamePrefix = autoRouter.peek('routePrefix')?.stringValue ?? '/';
@@ -82,7 +77,7 @@ class RouterConfigResolver {
     final autoRoutes = autoRouter.read('routes').listValue;
 
     var routerConfig = RouterConfig(
-      globalRouteConfig: globalRouteConfig,
+      globalRouteConfig: _globalRouteConfig,
       routerClassName: clazz.displayName.substring(1),
       element: clazz,
       routesClassName: routesClassName,

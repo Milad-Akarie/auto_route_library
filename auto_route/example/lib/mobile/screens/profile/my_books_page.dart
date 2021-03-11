@@ -18,11 +18,11 @@ class MyBooksPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Fragment Support? ${context.route.fragment}',
+              'Fragment Support? ${context.route?.fragment}',
               style: Theme.of(context).textTheme.bodyText1,
             ),
             const SizedBox(height: 32),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Show alert'),
                 onPressed: () {
                   // showDialog(
@@ -31,7 +31,7 @@ class MyBooksPage extends StatelessWidget {
                   //     child: AlertDialog(
                   //       title: Text('Dialog'),
                   //       actions: [
-                  //         RaisedButton(
+                  //         ElevatedButton(onPressed: onPressed, child: child)(
                   //             child: Text('Go Back'),
                   //             onPressed: () {
                   //               context.router.pop();
@@ -41,7 +41,7 @@ class MyBooksPage extends StatelessWidget {
                   //     ));
                   // context.router.pop();
                 }),
-            RaisedButton(
+            ElevatedButton(
                 child: Text('Go Back'),
                 onPressed: () {
                   // context.router.popUntil(ModalRoute.withName(ProfileRoute.name));

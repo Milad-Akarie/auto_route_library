@@ -1,5 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:auto_route/auto_route.dart' show AutoRoute, MaterialRoute, CupertinoRoute, CustomRoute, AdaptiveRoute;
+import 'package:auto_route/annotations.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';

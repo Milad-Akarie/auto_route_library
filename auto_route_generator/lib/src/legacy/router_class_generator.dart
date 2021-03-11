@@ -1,8 +1,7 @@
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:auto_route_generator/utils.dart';
-
-import 'src/models/router_config.dart';
 
 class RouterClassGenerator {
   final RouterConfig _rootRouterConfig;

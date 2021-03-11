@@ -93,7 +93,7 @@ abstract class StackRouter extends RoutingController {
 abstract class StackEntryItem {
   ValueKey<String> get key;
 
-  RouteData? get routeData;
+  RouteData get routeData;
 
   factory StackEntryItem.create({
     required RoutingController parent,
@@ -136,7 +136,7 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
   final RouteCollection routeCollection;
   final PageBuilder pageBuilder;
   final RouteMatcher matcher;
-  final RouteData? routeData;
+  final RouteData routeData;
   final List<PageRouteInfo>? preMatchedRoutes;
   int _activeIndex = 0;
   final List<AutoRoutePage> _pages = [];
@@ -145,7 +145,7 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
     required this.routeCollection,
     required this.pageBuilder,
     required this.key,
-    this.routeData,
+    required this.routeData,
     this.parentController,
     this.preMatchedRoutes,
   }) : matcher = RouteMatcher(routeCollection) {
@@ -205,7 +205,7 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
 
   @override
   String toString() {
-    return routeData?.name ?? '';
+    return routeData.name;
   }
 
   @override
@@ -310,7 +310,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   final ValueKey<String> key;
   final RouteCollection routeCollection;
   final PageBuilder pageBuilder;
-  final RouteData? routeData;
+  final RouteData routeData;
   final GlobalKey<NavigatorState> navigatorKey;
   final List<AutoRoutePage> _pages = [];
   final List<PageRouteInfo>? preMatchedRoutes;
@@ -698,7 +698,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
 
   @override
   String toString() {
-    return routeData?.name ?? 'Root';
+    return routeData.name;
   }
 
   @override

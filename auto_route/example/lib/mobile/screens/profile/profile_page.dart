@@ -24,22 +24,24 @@ class _ProfilePageState extends State<ProfilePage> {
               style: Theme.of(context).textTheme.headline5,
             ),
             const SizedBox(height: 32),
-            RaisedButton(
-                child: Text('My Books'),
-                onPressed: () {
-                  context.router.push(MyBooksRoute(filter: 'FromRoute'));
-                }),
+            ElevatedButton(
+              onPressed: () {
+                context.router.push(MyBooksRoute(filter: 'FromRoute'));
+              },
+              child: Text('My Books'),
+            ),
             const SizedBox(height: 32),
             userData == null
                 ? ElevatedButton(
-                    child: Text('Collect user data'),
                     onPressed: () {
                       context.router.root.push(UserDataCollectorRoute(onResult: (data) {
                         setState(() {
                           userData = data;
                         });
                       }));
-                    })
+                    },
+                    child: Text('Collect user data'),
+                  )
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
