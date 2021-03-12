@@ -29,20 +29,20 @@ Class buildRouteInfo(RouteConfig r, RouterConfig router) => Class(
             Constructor(
               (b) {
                 b
-                  ..constant = (r.parameters.isNotEmpty)
+                  ..constant = r.parameters.isEmpty
                   ..optionalParameters.addAll([
-                    if (r.parameters.isNotEmpty == true) ...buildArgParams(r.parameters),
+                    if (r.parameters.isNotEmpty) ...buildArgParams(r.parameters),
                     if (r.isParent)
                       Parameter((b) => b
                         ..named = true
                         ..name = 'children'
-                        ..type = listRefer(pageRouteType)),
+                        ..type = listRefer(pageRouteType, nullable: true)),
                   ])
                   ..initializers.add(refer('super').call([
                     refer('name')
                   ], {
                     'path': literalString(r.pathName),
-                    if (r.pathParams.isNotEmpty == true)
+                    if (r.pathParams.isNotEmpty)
                       'params': literalMap(
                         Map.fromEntries(
                           r.pathParams.map(

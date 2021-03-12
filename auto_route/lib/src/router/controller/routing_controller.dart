@@ -88,6 +88,8 @@ abstract class StackRouter extends RoutingController {
   GlobalKey<NavigatorState> get navigatorKey;
 
   bool removeLast();
+
+  Future<void> rebuildRoutesFromUrl(List<PageRouteInfo> routes);
 }
 
 abstract class StackEntryItem {
@@ -283,7 +285,7 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
       var entryToUpdate = _pages[pageToUpdateIndex].entry;
       if (preMatchedRoute.hasInitialChildren) {
         if (entryToUpdate is BranchEntry) {
-          return entryToUpdate.updateOrReplaceRoutes(preMatchedRoute.initialChildren!);
+          return entryToUpdate.rebuildRoutesFromUrl(preMatchedRoute.initialChildren!);
         } else if (entryToUpdate is ParallelBranchEntry) {
           return entryToUpdate.updateRoutes(preMatchedRoute.initialChildren!);
         }
@@ -312,9 +314,9 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   final PageBuilder pageBuilder;
   final RouteData routeData;
   final GlobalKey<NavigatorState> navigatorKey;
-  final List<AutoRoutePage> _pages = [];
   final List<PageRouteInfo>? preMatchedRoutes;
-  late RouteMatcher matcher;
+  final List<AutoRoutePage> _pages = [];
+  final RouteMatcher matcher;
 
   BranchEntry({
     required this.routeCollection,
@@ -323,17 +325,16 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
     required this.routeData,
     this.parentController,
     this.preMatchedRoutes,
-  }) : navigatorKey = GlobalKey<NavigatorState>() {
+  })  : navigatorKey = GlobalKey<NavigatorState>(),
+        matcher = RouteMatcher(routeCollection) {
     _pushInitialRoutes();
-
-    matcher = RouteMatcher(routeCollection);
   }
 
   void _pushInitialRoutes() {
     if (preMatchedRoutes?.isNotEmpty == true) {
       pushAll(preMatchedRoutes!);
     } else {
-      // push default route if exist
+      // push default route if exists
       var matches = matcher.match('');
       if (matches != null) {
         pushAll(matches.map((m) => m.toRoute).toList());
@@ -343,7 +344,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
 
   StackRouter get root => parentController?.root ?? this;
 
-  T parent<T extends RoutingController>() => parentController as T;
+  T? parent<T extends RoutingController>() => parentController as T;
 
   @override
   RouteData? get current {
@@ -628,9 +629,9 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
     return _pushAll(routes, notify: notify);
   }
 
-  Future<void> updateOrReplaceRoutes(List<PageRouteInfo> routes) {
+  @override
+  Future<void> rebuildRoutesFromUrl(List<PageRouteInfo> routes) {
     assert(routes.isNotEmpty);
-
     final mayUpdateRoute = routes.last;
     final updatableEntry = _pages
         .lastOrNull(
@@ -641,7 +642,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
     if (updatableEntry != null && mayUpdateRoute.hasInitialChildren) {
       _removeUntil((route) => ValueKey(route.match) == updatableEntry.key);
       if (updatableEntry is BranchEntry) {
-        return updatableEntry.updateOrReplaceRoutes(mayUpdateRoute.initialChildren!);
+        return updatableEntry.rebuildRoutesFromUrl(mayUpdateRoute.initialChildren!);
       } else if (updatableEntry is ParallelBranchEntry) {
         return updatableEntry.updateRoutes(mayUpdateRoute.initialChildren!);
       }
@@ -684,6 +685,11 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   }
 
   @override
+  void popUntilRouteWithName(String name) {
+    popUntil(ModalRoute.withName(name));
+  }
+
+  @override
   T? innerRouterOf<T extends RoutingController>(String routeName) {
     if (_pages.isEmpty) {
       return null;
@@ -699,10 +705,5 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   @override
   String toString() {
     return routeData.name;
-  }
-
-  @override
-  void popUntilRouteWithName(String name) {
-    popUntil(ModalRoute.withName(name));
   }
 }

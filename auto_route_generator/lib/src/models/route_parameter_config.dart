@@ -67,15 +67,15 @@ class ParamConfig {
   String get getterMethodName {
     switch (type.name) {
       case 'String':
-        return 'getString';
+        return type.isNullable ? 'getStringOrNull' : 'getString';
       case 'int':
-        return 'getInt';
+        return type.isNullable ? 'getIntOrNull' : 'getInt';
       case 'double':
-        return 'getDouble';
+        return type.isNullable ? 'getDoubleOrNull' : 'getDouble';
       case 'num':
-        return 'getNum';
+        return type.isNullable ? 'getNumOrNull' : 'getNum';
       case 'bool':
-        return 'getBool';
+        return type.isNullable ? 'getBoolOrNull' : 'getBool';
       default:
         return 'get';
     }

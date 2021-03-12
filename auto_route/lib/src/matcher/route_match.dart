@@ -30,7 +30,7 @@ class RouteMatch {
   List<String> get url => [...segments, if (hasChildren) ...children!.last.url];
 
   List<PageRouteInfo> buildChildren() {
-    return children!.map((m) => m.toRoute).toList(growable: false);
+    return children?.map((m) => m.toRoute).toList() ?? const [];
   }
 
   RouteMatch copyWith({

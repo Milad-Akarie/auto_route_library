@@ -99,8 +99,6 @@ class RouterConfigResolver {
       var routeReader = ConstantReader(entry);
       RouteConfig route;
       route = routeResolver.resolve(routeReader);
-      routes.add(route);
-
       var children = routeReader.peek('children')?.listValue;
       if (children?.isNotEmpty == true) {
         var name = capitalize(valueOr(route.name, route.className));
@@ -109,9 +107,10 @@ class RouterConfigResolver {
           routesClassName: '${name}Routes',
           parent: routerConfig,
         );
-        var routes = _resolveRoutes(subRouterConfig, children!);
-        route = route.copyWith(childRouterConfig: subRouterConfig.copyWith(routes: routes));
+        var nestedRoutes = _resolveRoutes(subRouterConfig, children!);
+        route = route.copyWith(childRouterConfig: subRouterConfig.copyWith(routes: nestedRoutes));
       }
+      routes.add(route);
     }
     return routes;
   }

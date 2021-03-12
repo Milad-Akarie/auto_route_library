@@ -55,7 +55,7 @@ class RouterConfig {
     final routers = <RouterConfig>[];
     routes.forEach((route) {
       if (route.childRouterConfig != null) {
-        routers.addAll(route.childRouterConfig!.subRouters);
+        routers.add(route.childRouterConfig!);
       }
     });
     return routers;

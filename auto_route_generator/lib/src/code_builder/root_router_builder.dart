@@ -128,11 +128,7 @@ Method buildMethod(RouteConfig r) {
 }
 
 Expression getParamAssignment(ParamConfig p) {
-  var ref = refer('route').property(p.name);
-  if (p.defaultValueCode != null) {
-    return ref.ifNullThen(refer(p.defaultValueCode));
-  }
-  return ref;
+  return refer('route').property(p.name);
 }
 
 Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(

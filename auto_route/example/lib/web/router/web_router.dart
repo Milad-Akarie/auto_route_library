@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web/router/web_router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -65,7 +64,7 @@ class UserPostsPage extends StatelessWidget {
 class UserPage extends StatelessWidget {
   final int? id;
 
-  const UserPage({Key? key, @pathParam this.id}) : super(key: key);
+  const UserPage({Key? key, @pathParam this.id, @pathParam int? x}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +75,7 @@ class UserPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.account_box),
             onPressed: () {
-              AutoRouter.innerRouterOf(context, UserRoute.name)?.push(UserPostsRoute());
+              // AutoRouter.innerRouterOf(context, UserRoute.name)?.push(UserPostsRoute());
             },
           ),
         ],
