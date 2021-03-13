@@ -28,7 +28,7 @@ abstract class AutoRoutePage extends Page<dynamic> {
   String? get name => routeData?.name;
 
   @override
-  Object? get arguments => routeData?.route;
+  Object? get arguments => routeData?.route.args;
 
   @override
   bool canUpdate(Page other) {

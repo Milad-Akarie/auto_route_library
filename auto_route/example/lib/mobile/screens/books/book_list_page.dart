@@ -4,7 +4,6 @@ import '../../../data/db.dart';
 import '../../router/router.gr.dart';
 
 class BookListPage extends StatelessWidget {
-  BookListPage(final String id);
   @override
   Widget build(BuildContext context) {
     var booksDb = BooksDBProvider.of(context);

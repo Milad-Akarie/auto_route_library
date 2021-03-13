@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import '../../auto_route.dart';
 import '../utils.dart';
 
+@optionalTypeArgs
 class PageRouteInfo<T> {
   final String _name;
   final String path;
@@ -57,12 +58,13 @@ class PageRouteInfo<T> {
   }
 
   PageRouteInfo.fromMatch(RouteMatch match)
-      : this.match = match,
+      : args = null,
+        this.match = match,
         _name = match.config.name,
         path = match.config.path,
         params = match.pathParams.rawMap,
         queryParams = match.queryParams.rawMap,
-        initialChildren = match.buildChildren();
+        initialChildren = match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList();
 
 // maybe?
   Future<void> show(BuildContext context) {

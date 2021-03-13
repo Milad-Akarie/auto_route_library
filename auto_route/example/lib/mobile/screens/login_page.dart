@@ -21,10 +21,10 @@ class LoginPage extends StatelessWidget {
         ),
         body: Center(
           child: ElevatedButton(
-            child: Text('Login'),
             onPressed: () {
               onLoginResult?.call(true);
             },
+            child: Text('Login'),
           ),
         ),
       ),

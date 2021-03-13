@@ -32,11 +32,19 @@ class RouteData {
     return scope!.entry.routeData;
   }
 
-  T as<T extends PageRouteInfo>() {
-    if (route is! T) {
-      throw FlutterError('Expected [${T.toString()}],  found [${route.runtimeType}]');
+  T argsAs<T>({T Function()? orElse}) {
+    final args = route.args;
+    if (args == null) {
+      if (orElse == null) {
+        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
+      } else {
+        return orElse();
+      }
+    } else if (args is! T) {
+      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
+    } else {
+      return args;
     }
-    return route as T;
   }
 
   String get name => route.routeName;

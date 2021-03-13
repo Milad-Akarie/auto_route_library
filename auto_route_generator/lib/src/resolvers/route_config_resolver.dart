@@ -66,8 +66,8 @@ class RouteConfigResolver {
 
     var fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
     var maintainState = autoRoute.peek('maintainState')?.boolValue;
-    var fullMatch = autoRoute.peek('fullMatch')?.boolValue ?? false;
-    var usesTabsRouter = autoRoute.peek('usesTabsRouter')?.boolValue ?? false;
+    var fullMatch = autoRoute.peek('fullMatch')?.boolValue;
+    var usesTabsRouter = autoRoute.peek('usesTabsRouter')?.boolValue;
     var guards = <ImportableType>[];
     autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue()).forEach((guard) {
       guards.add(_typeResolver.resolveType(guard!));

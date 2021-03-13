@@ -44,7 +44,10 @@ String generateLibrary(RouterConfig config) {
     (b) => b
       ..body.addAll([
         buildRouterConfig(config, allGuards, allRoutes),
-        ...allRoutes.where((r) => r.routeType != RouteType.redirect).map((r) => buildRouteInfo(r, config)),
+        ...allRoutes
+            .where((r) => r.routeType != RouteType.redirect)
+            .map((r) => buildRouteInfoAndArgs(r, config))
+            .reduce((acc, a) => acc..addAll(a)),
       ]),
   );
 

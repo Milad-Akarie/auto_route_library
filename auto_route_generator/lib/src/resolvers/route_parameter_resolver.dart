@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
+import 'package:auto_route_generator/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
 final _pathParamChecker = TypeChecker.fromRuntime(PathParam);
@@ -18,19 +19,27 @@ class RouteParameterResolver {
     if (paramType is FunctionType) {
       return _resolveFunctionType(parameterElement);
     }
-
+    var type = _typeResolver.resolveType(paramType);
     var isPathParam = _pathParamChecker.hasAnnotationOfExact(parameterElement);
     var paramAlias;
     if (isPathParam) {
       paramAlias = _pathParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
     }
-    var isQuery = _queryParamChecker.hasAnnotationOfExact(parameterElement);
-    if (isQuery) {
+    var isQueryParam = _queryParamChecker.hasAnnotationOfExact(parameterElement);
+    if (isQueryParam) {
       paramAlias = _queryParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
     }
 
+    if (isPathParam || isQueryParam) {
+      throwIf(
+        ((!type.isNullable && parameterElement.defaultValueCode == null)),
+        'Path/Query parameters must be nullable or have a default value',
+        element: parameterElement,
+      );
+    }
+
     return ParamConfig(
-      type: _typeResolver.resolveType(paramType),
+      type: type,
       element: parameterElement,
       name: parameterElement.name.replaceFirst("_", ''),
       alias: paramAlias,
@@ -40,7 +49,7 @@ class RouteParameterResolver {
       isOptional: parameterElement.isOptional,
       isNamed: parameterElement.isNamed,
       isPathParam: isPathParam,
-      isQueryParam: isQuery,
+      isQueryParam: isQueryParam,
       defaultValueCode: parameterElement.defaultValueCode,
     );
   }

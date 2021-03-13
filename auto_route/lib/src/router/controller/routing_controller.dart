@@ -337,7 +337,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
       // push default route if exists
       var matches = matcher.match('');
       if (matches != null) {
-        pushAll(matches.map((m) => m.toRoute).toList());
+        pushAll(matches.map((m) => PageRouteInfo.fromMatch(m)).toList());
       }
     }
   }
@@ -552,6 +552,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
         break;
       }
     }
+    print(notify);
     if (notify) {
       notifyListeners();
     }
@@ -672,7 +673,7 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   }) {
     var matches = matcher.match(path, includePrefixMatches: includePrefixMatches);
     if (matches != null) {
-      var routes = matches.map((m) => m.toRoute).toList();
+      var routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList();
       return _pushAll(routes, onFailure: onFailure, notify: true);
     } else if (onFailure != null) {
       onFailure.call(

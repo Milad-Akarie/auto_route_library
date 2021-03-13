@@ -10,7 +10,7 @@ import 'controller/routing_controller.dart';
 typedef PageBuilder = AutoRoutePage Function(StackEntryItem entry);
 typedef PageFactory = Page<dynamic> Function(StackEntryItem entry);
 
-abstract class RootStackRouter with ChangeNotifier implements StackRouter {
+abstract class RootStackRouter implements StackRouter, ChangeNotifier {
   late BranchEntry _router;
 
   RootStackRouter() {
@@ -176,4 +176,15 @@ abstract class RootStackRouter with ChangeNotifier implements StackRouter {
 
   @override
   RoutingController get topMost => _router.topMost;
+
+  @override
+  void addListener(listener) => _router.addListener(listener);
+  @override
+  void removeListener(listener) => _router.removeListener(listener);
+  @override
+  void dispose() => _router.dispose();
+  @override
+  bool get hasListeners => _router.hasListeners;
+  @override
+  void notifyListeners() => _router.notifyListeners();
 }

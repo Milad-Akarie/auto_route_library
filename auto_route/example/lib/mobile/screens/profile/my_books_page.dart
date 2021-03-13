@@ -5,6 +5,7 @@ class MyBooksPage extends StatelessWidget {
   final String filter;
 
   const MyBooksPage({Key? key, @queryParam this.filter = 'none'}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,34 +24,9 @@ class MyBooksPage extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-                child: Text('Show alert'),
-                onPressed: () {
-                  // showDialog(
-                  //     context: context,
-                  //     useRootNavigator: false,
-                  //     child: AlertDialog(
-                  //       title: Text('Dialog'),
-                  //       actions: [
-                  //         ElevatedButton(onPressed: onPressed, child: child)(
-                  //             child: Text('Go Back'),
-                  //             onPressed: () {
-                  //               context.router.pop();
-                  //               // context.router.pop();
-                  //             })
-                  //       ],
-                  //     ));
-                  // context.router.pop();
-                }),
-            ElevatedButton(
-                child: Text('Go Back'),
-                onPressed: () {
-                  // context.router.popUntil(ModalRoute.withName(ProfileRoute.name));
-                  context.router.popUntil((route) {
-                    print(route);
-                    return true;
-                  });
-                  // context.router.pop();
-                })
+              onPressed: context.router.pop,
+              child: Text('Go Back'),
+            )
           ],
         ),
       ),

@@ -17,7 +17,7 @@ class DefaultRouteParser extends RouteInformationParser<List<PageRouteInfo>> {
     var matches = _matcher.match(routeInformation.location ?? '', includePrefixMatches: includePrefixMatches);
     var routes = <PageRouteInfo>[];
     if (matches != null) {
-      routes.addAll(matches.map((m) => m.toRoute));
+      routes.addAll(matches.map((m) => PageRouteInfo.fromMatch(m)));
     }
     return SynchronousFuture<List<PageRouteInfo>>(routes);
   }

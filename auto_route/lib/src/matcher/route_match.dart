@@ -23,15 +23,8 @@ class RouteMatch {
 
   bool get hasChildren => children?.isNotEmpty == true;
 
-  PageRouteInfo get toRoute => config.routeBuilder!(this);
-
   String get path => config.path;
-
   List<String> get url => [...segments, if (hasChildren) ...children!.last.url];
-
-  List<PageRouteInfo> buildChildren() {
-    return children?.map((m) => m.toRoute).toList() ?? const [];
-  }
 
   RouteMatch copyWith({
     String? key,

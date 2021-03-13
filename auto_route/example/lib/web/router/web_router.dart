@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 @CustomAutoRouter(
   replaceInRouteName: 'Page,Route',
+  usesLegacyGenerator: true,
   routes: <AutoRoute>[
     AutoRoute(path: '/', page: HomePage),
     AutoRoute(
@@ -64,7 +65,11 @@ class UserPostsPage extends StatelessWidget {
 class UserPage extends StatelessWidget {
   final int? id;
 
-  const UserPage({Key? key, @pathParam this.id, int? x}) : super(key: key);
+  const UserPage(
+    @queryParam int? x, {
+    Key? key,
+    @pathParam this.id = 1,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -7,7 +7,7 @@ import '../../../data/db.dart';
 class BookDetailsPage extends StatefulWidget {
   final int id;
 
-  const BookDetailsPage({@PathParam('id') this.id = 1});
+  const BookDetailsPage({@PathParam('id') this.id = -1});
 
   @override
   _BookDetailsPageState createState() => _BookDetailsPageState();

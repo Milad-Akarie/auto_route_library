@@ -30,11 +30,11 @@ class Parameters {
     return _params[key] ?? defaultValue;
   }
 
-  String? getStringOrNull(String key, [String? defaultValue]) => _params[key] ?? defaultValue;
+  String? optString(String key, [String? defaultValue]) => _params[key] ?? defaultValue;
 
-  String getString(String key, [String defaultValue = '']) => _params[key] ?? defaultValue;
+  String getString(String key, [String? defaultValue]) => _params[key] ?? defaultValue;
 
-  int? getIntOrNull(String key, [int? defaultValue]) {
+  int? optInt(String key, [int? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -45,9 +45,9 @@ class Parameters {
     }
   }
 
-  int getInt(String key, [int? defaultValue]) => getIntOrNull(key, defaultValue)!;
+  int getInt(String key, [int? defaultValue]) => optInt(key, defaultValue)!;
 
-  double? getDoubleOrNull(String key, [double? defaultValue]) {
+  double? optDouble(String key, [double? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -58,9 +58,9 @@ class Parameters {
     }
   }
 
-  double getDouble(String key, [double? defaultValue]) => getDoubleOrNull(key, defaultValue)!;
+  double getDouble(String key, [double? defaultValue]) => optDouble(key, defaultValue)!;
 
-  num? getNumOrNull(String key, [num? defaultValue]) {
+  num? optNum(String key, [num? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -71,9 +71,9 @@ class Parameters {
     }
   }
 
-  num getNum(String key, [num? defaultValue]) => getNumOrNull(key, defaultValue)!;
+  num getNum(String key, [num? defaultValue]) => optNum(key, defaultValue)!;
 
-  bool? getBoolOrNull(String key, [bool? defaultValue]) {
+  bool? optBool(String key, [bool? defaultValue]) {
     switch (_params[key]?.toLowerCase()) {
       case 'true':
         return true;
@@ -84,5 +84,5 @@ class Parameters {
     }
   }
 
-  bool getBool(String key, [bool? defaultValue]) => getBoolOrNull(key, defaultValue)!;
+  bool getBool(String key, [bool? defaultValue]) => optBool(key, defaultValue)!;
 }

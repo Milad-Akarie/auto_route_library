@@ -131,7 +131,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
       assert(entry is StackRouter);
       _controller = entry as StackRouter;
       assert(_controller != null);
-      _routes = widget.onGenerateRoutes(context, _controller!.preMatchedRoutes!);
+      _routes = widget.onGenerateRoutes(context, _controller!.preMatchedRoutes ?? const []);
       (_controller as BranchEntry).updateDeclarativeRoutes(_routes);
       var rootDelegate = RootRouterDelegate.of(context);
 

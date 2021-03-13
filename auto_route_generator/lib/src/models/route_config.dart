@@ -1,7 +1,6 @@
-import 'route_parameter_config.dart';
-
 import '../../utils.dart';
 import 'importable_type.dart';
+import 'route_parameter_config.dart';
 import 'router_config.dart';
 
 /// holds the extracted route configs
@@ -208,6 +207,9 @@ class RouteConfig {
         return 'MaterialPageX';
     }
   }
+
+  bool get hasRequiredArgs =>
+      parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
 }
 
 class RouteType {
