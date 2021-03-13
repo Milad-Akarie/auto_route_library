@@ -6,9 +6,10 @@ import 'package:path/path.dart' as p;
 import '../../auto_route.dart';
 import '../utils.dart';
 
-class PageRouteInfo {
+class PageRouteInfo<T> {
   final String _name;
   final String path;
+  final T? args;
   final RouteMatch? match;
   final Map<String, dynamic> params;
   final Map<String, dynamic> queryParams;
@@ -19,6 +20,7 @@ class PageRouteInfo {
     required this.path,
     this.initialChildren,
     this.match,
+    this.args,
     this.params = const {},
     this.queryParams = const {},
   });

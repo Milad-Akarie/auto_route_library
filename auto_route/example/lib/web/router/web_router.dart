@@ -64,7 +64,7 @@ class UserPostsPage extends StatelessWidget {
 class UserPage extends StatelessWidget {
   final int? id;
 
-  const UserPage({Key? key, @pathParam this.id, @pathParam int? x}) : super(key: key);
+  const UserPage({Key? key, @pathParam this.id, int? x}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

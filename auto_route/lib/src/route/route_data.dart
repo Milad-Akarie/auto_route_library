@@ -19,7 +19,7 @@ class RouteData {
         this,
       ]);
 
-  static RouteData? of(BuildContext context) {
+  static RouteData of(BuildContext context) {
     var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
     assert(() {
       if (scope == null) {
@@ -29,7 +29,7 @@ class RouteData {
       }
       return true;
     }());
-    return scope?.entry.routeData;
+    return scope!.entry.routeData;
   }
 
   T as<T extends PageRouteInfo>() {
