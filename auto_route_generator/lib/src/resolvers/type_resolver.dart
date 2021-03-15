@@ -66,7 +66,6 @@ class TypeResolver {
   }
 
   ImportableType resolveImportableFunctionType(ExecutableElement function) {
-    assert(function != null);
     final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
     var functionName = displayName;
     Element elementToImport = function;

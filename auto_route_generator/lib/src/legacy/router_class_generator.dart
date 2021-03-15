@@ -92,7 +92,7 @@ class RouterClassGenerator {
           if (match!.endsWith('?')) {
             return "dynamic  ${match.substring(0, match.length - 1)} = ''";
           } else {
-            return "@required  dynamic $match";
+            return "required  dynamic $match";
           }
         });
         _writeln(
@@ -134,7 +134,7 @@ class RouterClassGenerator {
     _newLine();
 
     var routesMap = <String, RouteConfig>{};
-    routerConfig.routes.forEach((route) {
+    routerConfig.routes.where((element) => element.routeType != RouteType.redirect).forEach((route) {
       routesMap[route.className] = route;
     });
 
@@ -151,7 +151,7 @@ class RouterClassGenerator {
 
     if (r.parameters.isNotEmpty) {
       // if router has any required or positional params the argument class holder becomes required.
-      final nullOk = !r.argParams.any((p) => p.hasRequired || p.isPositional);
+      final nullOk = !r.argParams.any((p) => p.isRequired || p.isPositional);
       // show an error page  if passed args are not the same as declared args
 
       if (r.argParams.isNotEmpty) {
@@ -168,10 +168,10 @@ class RouterClassGenerator {
         String getterName;
         if (param.isPathParam) {
           getterName =
-              "data.pathParams['${param.paramName}'].${param.getterName}${param.defaultValueCode != null ? '?? ${param.defaultValueCode}' : ''}";
+              "data.pathParams.${param.getterMethodName}('${param.paramName}'${param.defaultValueCode != null ? ', ${param.defaultValueCode}' : ''}) ";
         } else if (param.isQueryParam) {
           getterName =
-              "data.queryParams['${param.paramName}'].${param.getterName}${param.defaultValueCode != null ? '?? ${param.defaultValueCode}' : ''}";
+              "data.queryParams.${param.getterMethodName}('${param.paramName}'${param.defaultValueCode != null ? ', ${param.defaultValueCode}' : ''}) ";
         } else {
           getterName = "args.${param.name}";
         }
@@ -223,8 +223,8 @@ class RouterClassGenerator {
     // generate constructor
     _writeln('$argsClassName({');
     params.asMap().forEach((i, param) {
-      if (param.hasRequired || param.isPositional) {
-        _write('@required ');
+      if (param.isRequired || param.isPositional) {
+        _write('required ');
       }
 
       _write('this.${param.name}');
@@ -332,8 +332,8 @@ class RouterClassGenerator {
     if (route.parameters.isNotEmpty) {
       _write('{');
       route.parameters.forEach((param) {
-        if (param.hasRequired || param.isPositional) {
-          _write('@required ');
+        if (param.isRequired || param.isPositional) {
+          _write('required ');
         }
 
         _write('${param.type} ${param.name}');

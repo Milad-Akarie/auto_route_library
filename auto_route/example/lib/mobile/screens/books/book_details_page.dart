@@ -40,14 +40,12 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                   ),
                   const SizedBox(height: 32),
                   FloatingActionButton(
-                    child: Icon(Icons.add),
                     onPressed: () {
-                      print(context.router.navigatorKey);
-                      print(context.router);
                       setState(() {
                         counter++;
                       });
                     },
+                    child: Icon(Icons.add),
                   )
                 ],
               ),

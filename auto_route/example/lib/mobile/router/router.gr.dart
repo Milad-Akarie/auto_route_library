@@ -285,7 +285,10 @@ class BookListRoute extends _i1.PageRouteInfo {
 
 class BookDetailsRoute extends _i1.PageRouteInfo<BookDetailsRouteArgs> {
   BookDetailsRoute({this.id = -1})
-      : super(name, path: ':id', args: BookDetailsRouteArgs(id: id));
+      : super(name,
+            path: ':id',
+            args: BookDetailsRouteArgs(id: id),
+            params: {'id': id});
 
   final int id;
 

@@ -11,5 +11,8 @@ extension AutoRouterX on BuildContext {
 
   RoutingController? innerRouterOf(String routeKey) => AutoRouter.innerRouterOf(this, routeKey);
 
+  @Deprecated('Use routeData instead')
   RouteData? get route => RouteData.of(this);
+
+  RouteData get routeData => RouteData.of(this);
 }

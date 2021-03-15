@@ -34,7 +34,7 @@ class ImportableType {
   String fullName({bool withTypeArgs = true}) {
     var typeArgs =
         withTypeArgs && (typeArguments.isNotEmpty == true) ? "<${typeArguments.map((e) => e.name).join(',')}>" : '';
-    return "$name$typeArgs";
+    return "$name$typeArgs${isNullable ? '?' : ''}";
   }
 
   String getDisplayName(Set<ImportableType> prefixedTypes, {bool withTypeArgs = true}) {

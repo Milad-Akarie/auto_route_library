@@ -24,7 +24,15 @@ class RouteConfigResolver {
     var path = autoRoute.peek('path')?.stringValue;
     if (page == null) {
       var redirectTo = autoRoute.peek('redirectTo')?.stringValue;
-      throwIf(redirectTo == null, 'Route must have either a page or a redirect destination');
+      throwIf(
+        redirectTo == null,
+        'Route must have either a page or a redirect destination',
+      );
+      throwIf(
+        _routerConfig.usesLegacyGenerator,
+        'Redirect routes are not supported in legacy mode.',
+        element: _routerConfig.element,
+      );
       return RouteConfig(
         pathName: path!,
         redirectTo: redirectTo,
@@ -161,6 +169,7 @@ class RouteConfigResolver {
     return RouteConfig(
       className: className,
       name: name,
+      pathParams: pathParams,
       usesTabsRouter: usesTabsRouter,
       routeType: routeType,
       transitionBuilder: transitionBuilder,
