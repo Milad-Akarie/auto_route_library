@@ -11,7 +11,9 @@ class RoutingControllerScope extends InheritedWidget {
   }) : super(child: child);
 
   static RoutingController? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<RoutingControllerScope>()?.controller;
+    return context
+        .dependOnInheritedWidgetOfExactType<RoutingControllerScope>()
+        ?.controller;
   }
 
   @override

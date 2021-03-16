@@ -12,7 +12,8 @@ class Parameters {
     return _params.toString();
   }
 
-  Parameters operator +(Parameters other) => Parameters({..._params, ...other._params});
+  Parameters operator +(Parameters other) =>
+      Parameters({..._params, ...other._params});
 
   @override
   bool operator ==(Object other) =>
@@ -30,9 +31,11 @@ class Parameters {
     return _params[key] ?? defaultValue;
   }
 
-  String? optString(String key, [String? defaultValue]) => _params[key] ?? defaultValue;
+  String? optString(String key, [String? defaultValue]) =>
+      _params[key] ?? defaultValue;
 
-  String getString(String key, [String? defaultValue]) => _params[key] ?? defaultValue;
+  String getString(String key, [String? defaultValue]) =>
+      _params[key] ?? defaultValue;
 
   int? optInt(String key, [int? defaultValue]) {
     var param = _params[key];
@@ -58,7 +61,8 @@ class Parameters {
     }
   }
 
-  double getDouble(String key, [double? defaultValue]) => optDouble(key, defaultValue)!;
+  double getDouble(String key, [double? defaultValue]) =>
+      optDouble(key, defaultValue)!;
 
   num? optNum(String key, [num? defaultValue]) {
     var param = _params[key];

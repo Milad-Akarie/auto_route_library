@@ -39,7 +39,7 @@ abstract class RootStackRouter implements StackRouter, ChangeNotifier {
     List<PageRouteInfo>? initialRoutes,
     String? initialDeepLink,
     String? navRestorationScopeId,
-    Color? backgroundColor,
+    WidgetBuilder? placeholder,
     GlobalKey<NavigatorState>? navigatorKey,
     List<NavigatorObserver> navigatorObservers = const [],
   }) {
@@ -50,7 +50,7 @@ abstract class RootStackRouter implements StackRouter, ChangeNotifier {
       navRestorationScopeId: navRestorationScopeId,
       navigatorObservers: navigatorObservers,
       navigatorKey: navigatorKey,
-      backgroundColor: backgroundColor,
+      placeholder: placeholder,
     );
   }
 
@@ -129,12 +129,15 @@ abstract class RootStackRouter implements StackRouter, ChangeNotifier {
   }
 
   @override
-  Future<void> pushAndRemoveUntil(PageRouteInfo route, {required predicate, onFailure}) {
-    return _router.pushAndRemoveUntil(route, predicate: predicate, onFailure: onFailure);
+  Future<void> pushAndRemoveUntil(PageRouteInfo route,
+      {required predicate, onFailure}) {
+    return _router.pushAndRemoveUntil(route,
+        predicate: predicate, onFailure: onFailure);
   }
 
   @override
-  Future<void> pushPath(String path, {bool includePrefixMatches = false, onFailure}) {
+  Future<void> pushPath(String path,
+      {bool includePrefixMatches = false, onFailure}) {
     return _router.pushPath(path, onFailure: onFailure);
   }
 

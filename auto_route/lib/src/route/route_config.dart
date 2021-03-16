@@ -31,7 +31,10 @@ class RouteConfig {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is RouteConfig && runtimeType == other.runtimeType && name == other.name && path == other.path;
+      other is RouteConfig &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          path == other.path;
 
   @override
   int get hashCode => name.hashCode ^ path.hashCode ^ fullMatch.hashCode;

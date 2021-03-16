@@ -5,7 +5,8 @@ import '../../auto_route.dart';
 class StackEntryScope extends InheritedWidget {
   final StackEntryItem entry;
 
-  StackEntryScope({required this.entry, required Widget child}) : super(child: child);
+  StackEntryScope({required this.entry, required Widget child})
+      : super(child: child);
 
   static StackEntryItem? of(BuildContext context) {
     var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();

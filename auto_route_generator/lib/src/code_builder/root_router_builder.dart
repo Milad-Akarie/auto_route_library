@@ -9,39 +9,41 @@ import 'library_builder.dart';
 
 const _routeConfigType = Reference("RouteConfig", autoRouteImport);
 
-Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards, List<RouteConfig> routes) => Class((b) => b
-  ..name = router.routerClassName
-  ..extend = refer('RootStackRouter', autoRouteImport)
-  ..fields.addAll([
-    ...guards.map((g) => Field((b) => b
-      ..modifier = FieldModifier.final$
-      ..name = toLowerCamelCase(g.name)
-      ..type = g.refer)),
-    buildPagesMap(routes)
-  ])
-  ..methods.add(
-    Method(
-      (b) => b
-        ..type = MethodType.getter
-        ..name = 'routes'
-        ..annotations.add(refer('override'))
-        ..returns = listRefer(_routeConfigType)
-        ..body = literalList(buildRoutes(router.routes)).code,
-    ),
-  )
-  ..constructors.add(
-    Constructor((b) => b
-      ..optionalParameters.addAll([
-        ...guards.map(
-          (g) => Parameter((b) => b
-            ..name = toLowerCamelCase(g.name)
-            ..named = true
-            ..required = true
-            ..toThis = true),
+Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards,
+        List<RouteConfig> routes) =>
+    Class((b) => b
+      ..name = router.routerClassName
+      ..extend = refer('RootStackRouter', autoRouteImport)
+      ..fields.addAll([
+        ...guards.map((g) => Field((b) => b
+          ..modifier = FieldModifier.final$
+          ..name = toLowerCamelCase(g.name)
+          ..type = g.refer)),
+        buildPagesMap(routes)
+      ])
+      ..methods.add(
+        Method(
+          (b) => b
+            ..type = MethodType.getter
+            ..name = 'routes'
+            ..annotations.add(refer('override'))
+            ..returns = listRefer(_routeConfigType)
+            ..body = literalList(buildRoutes(router.routes)).code,
         ),
-      ])),
-    // ),
-  ));
+      )
+      ..constructors.add(
+        Constructor((b) => b
+          ..optionalParameters.addAll([
+            ...guards.map(
+              (g) => Parameter((b) => b
+                ..name = toLowerCamelCase(g.name)
+                ..named = true
+                ..required = true
+                ..toThis = true),
+            ),
+          ])),
+        // ),
+      ));
 
 Field buildPagesMap(List<RouteConfig> routes) {
   return Field((b) => b
@@ -58,7 +60,8 @@ Field buildPagesMap(List<RouteConfig> routes) {
     )
     ..assignment = literalMap(Map.fromEntries(
       routes.where((r) => r.routeType != RouteType.redirect).map(
-            (r) => MapEntry(refer(r.routeName).property('name'), buildMethod(r)),
+            (r) =>
+                MapEntry(refer(r.routeName).property('name'), buildMethod(r)),
           ),
     )).code);
 }
@@ -80,7 +83,9 @@ Method buildMethod(RouteConfig r) {
                     'orElse': Method(
                       (b) => b.body = refer('${r.routeName}Args').newInstance(
                         [],
-                        Map.fromEntries(r.parameters.where((p) => p.isRequired || p.isPositional).map(
+                        Map.fromEntries(r.parameters
+                            .where((p) => p.isRequired || p.isPositional)
+                            .map(
                               (p) => MapEntry(
                                 p.name,
                                 refer('null'),
@@ -94,9 +99,17 @@ Method buildMethod(RouteConfig r) {
                 .assignVar('args')
                 .statement,
           if (r.parameters.any((p) => p.isPathParam))
-            refer('entry').property('routeData').property('pathParams').assignVar('pathParams').statement,
+            refer('entry')
+                .property('routeData')
+                .property('pathParams')
+                .assignVar('pathParams')
+                .statement,
           if (r.parameters.any((p) => p.isQueryParam))
-            refer('entry').property('routeData').property('queryParams').assignVar('queryParams').statement,
+            refer('entry')
+                .property('routeData')
+                .property('queryParams')
+                .assignVar('queryParams')
+                .statement,
           refer(r.pageTypeName, autoRouteImport)
               .newInstance(
                 [],
@@ -113,22 +126,32 @@ Method buildMethod(RouteConfig r) {
                             ),
                           )),
                         ),
-                  if (r.maintainState != null) 'maintainState': literalBool(r.maintainState),
-                  if (r.fullscreenDialog != null) 'fullscreenDialog': literalBool(r.fullscreenDialog),
-                  if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) &&
+                  if (r.maintainState != null)
+                    'maintainState': literalBool(r.maintainState),
+                  if (r.fullscreenDialog != null)
+                    'fullscreenDialog': literalBool(r.fullscreenDialog),
+                  if ((r.routeType == RouteType.cupertino ||
+                          r.routeType == RouteType.adaptive) &&
                       r.cupertinoNavTitle != null)
                     'title': literalString(r.cupertinoNavTitle),
                   if (r.routeType == RouteType.custom) ...{
-                    if (r.customRouteBuilder != null) 'customRouteBuilder': r.customRouteBuilder!.refer,
-                    if (r.transitionBuilder != null) 'transitionsBuilder': r.transitionBuilder!.refer,
+                    if (r.customRouteBuilder != null)
+                      'customRouteBuilder': r.customRouteBuilder!.refer,
+                    if (r.transitionBuilder != null)
+                      'transitionsBuilder': r.transitionBuilder!.refer,
                     if (r.durationInMilliseconds != null)
-                      'durationInMilliseconds': literalNum(r.durationInMilliseconds),
+                      'durationInMilliseconds':
+                          literalNum(r.durationInMilliseconds),
                     if (r.reverseDurationInMilliseconds != null)
-                      'reverseDurationInMilliseconds': literalNum(r.reverseDurationInMilliseconds),
-                    if (r.customRouteOpaque != null) 'opaque': literalBool(r.customRouteOpaque),
+                      'reverseDurationInMilliseconds':
+                          literalNum(r.reverseDurationInMilliseconds),
+                    if (r.customRouteOpaque != null)
+                      'opaque': literalBool(r.customRouteOpaque),
                     if (r.customRouteBarrierDismissible != null)
-                      'barrierDismissible': literalBool(r.customRouteBarrierDismissible),
-                    if (r.customRouteBarrierLabel != null) 'barrierLabel': literalString(r.customRouteBarrierLabel),
+                      'barrierDismissible':
+                          literalBool(r.customRouteBarrierDismissible),
+                    if (r.customRouteBarrierLabel != null)
+                      'barrierLabel': literalString(r.customRouteBarrierLabel),
                   }
                 },
               )
@@ -168,7 +191,8 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
             'path': literalString(r.pathName),
             if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo),
             if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
-            if (r.usesTabsRouter != null) 'usesTabsRouter': literalBool(r.usesTabsRouter),
+            if (r.usesTabsRouter != null)
+              'usesTabsRouter': literalBool(r.usesTabsRouter),
             if (r.guards.isNotEmpty)
               'guards': literalList(r.guards
                   .map(
@@ -177,7 +201,8 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
                     ),
                   )
                   .toList(growable: false)),
-            if (r.childRouterConfig != null) 'children': literalList(buildRoutes(r.childRouterConfig!.routes))
+            if (r.childRouterConfig != null)
+              'children': literalList(buildRoutes(r.childRouterConfig!.routes))
           },
         );
       },

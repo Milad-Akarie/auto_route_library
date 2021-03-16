@@ -60,20 +60,25 @@ abstract class StackRouter extends RoutingController {
 
   Future<void> navigate(PageRouteInfo route, {OnNavigationFailure? onFailure});
 
-  Future<void> pushPath(String path, {bool includePrefixMatches = false, OnNavigationFailure? onFailure});
+  Future<void> pushPath(String path,
+      {bool includePrefixMatches = false, OnNavigationFailure? onFailure});
 
-  Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure? onFailure});
+  Future<void> popAndPush(PageRouteInfo route,
+      {OnNavigationFailure? onFailure});
 
   Future<void> pushAndRemoveUntil(PageRouteInfo route,
       {required RoutePredicate predicate, OnNavigationFailure? onFailure});
 
   Future<void> replace(PageRouteInfo route, {OnNavigationFailure? onFailure});
 
-  Future<void> pushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure});
+  Future<void> pushAll(List<PageRouteInfo> routes,
+      {OnNavigationFailure? onFailure});
 
-  Future<void> popAndPushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure});
+  Future<void> popAndPushAll(List<PageRouteInfo> routes,
+      {OnNavigationFailure? onFailure});
 
-  Future<void> replaceAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure});
+  Future<void> replaceAll(List<PageRouteInfo> routes,
+      {OnNavigationFailure? onFailure});
 
   void popUntilRoot();
 
@@ -132,7 +137,8 @@ class LeafEntry implements StackEntryItem {
   const LeafEntry(this.routeData, this.key);
 }
 
-class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, TabsRouter {
+class ParallelBranchEntry extends ChangeNotifier
+    implements StackEntryItem, TabsRouter {
   final RoutingController? parentController;
   final ValueKey<String> key;
   final RouteCollection routeCollection;
@@ -285,7 +291,8 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
       var entryToUpdate = _pages[pageToUpdateIndex].entry;
       if (preMatchedRoute.hasInitialChildren) {
         if (entryToUpdate is BranchEntry) {
-          return entryToUpdate.rebuildRoutesFromUrl(preMatchedRoute.initialChildren!);
+          return entryToUpdate
+              .rebuildRoutesFromUrl(preMatchedRoute.initialChildren!);
         } else if (entryToUpdate is ParallelBranchEntry) {
           return entryToUpdate.updateRoutes(preMatchedRoute.initialChildren!);
         }
@@ -307,7 +314,8 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
   }
 }
 
-class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter {
+class BranchEntry extends ChangeNotifier
+    implements StackEntryItem, StackRouter {
   final RoutingController? parentController;
   final ValueKey<String> key;
   final RouteCollection routeCollection;
@@ -397,13 +405,16 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   List<AutoRoutePage> get stack => List.unmodifiable(_pages);
 
   @override
-  Future<void> push(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+  Future<void> push(PageRouteInfo route,
+      {OnNavigationFailure? onFailure}) async {
     return _push(route, onFailure: onFailure, notify: true);
   }
 
   @override
-  Future<void> navigate(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
-    var page = _pages.lastOrNull((p) => p.entry.key == ValueKey(route.stringMatch));
+  Future<void> navigate(PageRouteInfo route,
+      {OnNavigationFailure? onFailure}) async {
+    var page =
+        _pages.lastOrNull((p) => p.entry.key == ValueKey(route.stringMatch));
     if (page != null) {
       for (var candidate in List<AutoRoutePage>.unmodifiable(_pages).reversed) {
         if (candidate == page) {
@@ -418,13 +429,15 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
     }
   }
 
-  Future<void> _push(PageRouteInfo route, {OnNavigationFailure? onFailure, bool notify = true}) async {
+  Future<void> _push(PageRouteInfo route,
+      {OnNavigationFailure? onFailure, bool notify = true}) async {
     var config = _resolveConfigOrReportFailure(route, onFailure);
     if (config == null) {
       return null;
     }
     if (await _canNavigate([route], config, onFailure)) {
-      return _addStackEntry(route, config: config, onFailure: onFailure, notify: notify);
+      return _addStackEntry(route,
+          config: config, onFailure: onFailure, notify: notify);
     }
     return null;
   }
@@ -469,7 +482,8 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
   }
 
   @override
-  Future<void> popAndPush(PageRouteInfo route, {OnNavigationFailure? onFailure}) {
+  Future<void> popAndPush(PageRouteInfo route,
+      {OnNavigationFailure? onFailure}) {
     pop();
     return push(route, onFailure: onFailure);
   }
@@ -552,7 +566,6 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
         break;
       }
     }
-    print(notify);
     if (notify) {
       notifyListeners();
     }
@@ -571,7 +584,8 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
         onFailure(RouteNotFoundFailure(route));
         return null;
       } else {
-        throw FlutterError("[${toString()}] Router can not navigate to ${route.fullPath}");
+        throw FlutterError(
+            "[${toString()}] Router can not navigate to ${route.fullPath}");
       }
     }
   }
@@ -612,7 +626,8 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
     }
   }
 
-  StackEntryItem _createEntry(PageRouteInfo route, {required RouteConfig config}) {
+  StackEntryItem _createEntry(PageRouteInfo route,
+      {required RouteConfig config}) {
     final data = RouteData(
       route: route,
       parent: routeData,
@@ -643,7 +658,8 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
     if (updatableEntry != null && mayUpdateRoute.hasInitialChildren) {
       _removeUntil((route) => ValueKey(route.match) == updatableEntry.key);
       if (updatableEntry is BranchEntry) {
-        return updatableEntry.rebuildRoutesFromUrl(mayUpdateRoute.initialChildren!);
+        return updatableEntry
+            .rebuildRoutesFromUrl(mayUpdateRoute.initialChildren!);
       } else if (updatableEntry is ParallelBranchEntry) {
         return updatableEntry.updateRoutes(mayUpdateRoute.initialChildren!);
       }
@@ -671,7 +687,8 @@ class BranchEntry extends ChangeNotifier implements StackEntryItem, StackRouter 
     bool includePrefixMatches = false,
     OnNavigationFailure? onFailure,
   }) {
-    var matches = matcher.match(path, includePrefixMatches: includePrefixMatches);
+    var matches =
+        matcher.match(path, includePrefixMatches: includePrefixMatches);
     if (matches != null) {
       var routes = matches.map((m) => PageRouteInfo.fromMatch(m)).toList();
       return _pushAll(routes, onFailure: onFailure, notify: true);

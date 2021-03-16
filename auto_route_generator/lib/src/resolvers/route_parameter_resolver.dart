@@ -23,11 +23,18 @@ class RouteParameterResolver {
     var isPathParam = _pathParamChecker.hasAnnotationOfExact(parameterElement);
     var paramAlias;
     if (isPathParam) {
-      paramAlias = _pathParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
+      paramAlias = _pathParamChecker
+          .firstAnnotationOf(parameterElement)
+          .getField('name')
+          ?.toStringValue();
     }
-    var isQueryParam = _queryParamChecker.hasAnnotationOfExact(parameterElement);
+    var isQueryParam =
+        _queryParamChecker.hasAnnotationOfExact(parameterElement);
     if (isQueryParam) {
-      paramAlias = _queryParamChecker.firstAnnotationOf(parameterElement).getField('name')?.toStringValue();
+      paramAlias = _queryParamChecker
+          .firstAnnotationOf(parameterElement)
+          .getField('name')
+          ?.toStringValue();
     }
 
     if (isPathParam || isQueryParam) {

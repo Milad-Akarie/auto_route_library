@@ -38,7 +38,8 @@ class RouterConfig {
     ClassElement? element,
   }) {
     return RouterConfig(
-      generateNavigationHelper: generateNavigationHelper ?? this.generateNavigationHelper,
+      generateNavigationHelper:
+          generateNavigationHelper ?? this.generateNavigationHelper,
       routes: routes ?? this.routes,
       globalRouteConfig: globalRouteConfig ?? this.globalRouteConfig,
       routesClassName: routesClassName ?? this.routesClassName,
@@ -61,8 +62,8 @@ class RouterConfig {
     return routers;
   }
 
-  List<RouterConfig> get collectAllRoutersIncludingParent =>
-      subRouters.fold([this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
+  List<RouterConfig> get collectAllRoutersIncludingParent => subRouters.fold(
+      [this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
 
   @override
   String toString() {

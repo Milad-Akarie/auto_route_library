@@ -15,7 +15,8 @@ PageRoute defaultUnknownRoutePage(RouteSettings settings) => MaterialPageRoute(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
                 child: Text(
                   'Route name ${settings.name} is not found!',
                   textAlign: TextAlign.center,

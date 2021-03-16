@@ -58,7 +58,8 @@ abstract class RouterBase {
       var match = matcher.match(route);
       if (match != null) {
         // matching root "/" must be exact
-        if ((route.template == "/" || route.template.isEmpty) && match.hasRest) {
+        if ((route.template == "/" || route.template.isEmpty) &&
+            match.hasRest) {
           continue;
         }
         return match;

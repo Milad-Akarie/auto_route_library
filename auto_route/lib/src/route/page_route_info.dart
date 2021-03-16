@@ -35,7 +35,8 @@ class PageRouteInfo<T> {
     return _expand(path, params);
   }
 
-  String get fullPath => p.joinAll([stringMatch, if (hasInitialChildren) initialChildren!.last.fullPath]);
+  String get fullPath => p.joinAll(
+      [stringMatch, if (hasInitialChildren) initialChildren!.last.fullPath]);
 
   bool get hasInitialChildren => initialChildren?.isNotEmpty == true;
 
@@ -64,7 +65,8 @@ class PageRouteInfo<T> {
         path = match.config.path,
         params = match.pathParams.rawMap,
         queryParams = match.queryParams.rawMap,
-        initialChildren = match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList();
+        initialChildren =
+            match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList();
 
 // maybe?
   Future<void> show(BuildContext context) {
@@ -82,5 +84,6 @@ class PageRouteInfo<T> {
           MapEquality().equals(queryParams, other.queryParams);
 
   @override
-  int get hashCode => _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
+  int get hashCode =>
+      _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
 }

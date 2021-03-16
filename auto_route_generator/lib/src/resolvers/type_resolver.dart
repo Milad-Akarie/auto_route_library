@@ -1,6 +1,8 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
-import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType;
+import 'package:analyzer/dart/element/nullability_suffix.dart'
+    show NullabilitySuffix;
+import 'package:analyzer/dart/element/type.dart'
+    show DartType, ParameterizedType;
 import 'package:auto_route_generator/src/models/importable_type.dart';
 import 'package:path/path.dart' as p;
 
@@ -17,7 +19,8 @@ class TypeResolver {
     }
 
     for (var lib in libs) {
-      if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames.values.contains(element)) {
+      if (!_isCoreDartType(lib) &&
+          lib.exportNamespace.definedNames.values.contains(element)) {
         return targetFile == null
             ? lib.identifier
             : _relative(
@@ -31,12 +34,16 @@ class TypeResolver {
 
   String _relative(Uri fileUri, Uri to) {
     var libName = to.pathSegments.first;
-    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.first == libName) ||
+    if ((to.scheme == 'package' &&
+            fileUri.scheme == 'package' &&
+            fileUri.pathSegments.first == libName) ||
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
         return fileUri.pathSegments.last;
       } else {
-        return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
+        return p.posix
+            .relative(fileUri.path, from: to.path)
+            .replaceFirst('../', '');
       }
     } else {
       return fileUri.toString();

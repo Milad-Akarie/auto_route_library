@@ -1,4 +1,8 @@
 # ChangeLog
+## [1.0.0]
+- Migrate to null-safety
+- Add option to pass restoration id
+- Add option to specify the root navigator background color
 ## [1.0.0-beta.10]
 - Fix generic parameters crash the generator
 - Add support for array type query params

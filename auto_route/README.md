@@ -6,11 +6,12 @@
 <p align="center">
 <a href="https://img.shields.io/badge/License-MIT-green"><img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>
 <a href="https://github.com/Milad-Akarie/auto_route_library/stargazers"><img src="https://img.shields.io/github/stars/Milad-Akarie/auto_route_library?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>
-<a href="https://pub.dev/packages/auto_route/versions/1.0.0-beta.10"><img src="https://img.shields.io/badge/pub-1.0.0.beta.10-orange" alt="pub version"></a>
+<a href="https://pub.dev/packages/auto_route/versions/1.0.0"><img src="https://img.shields.io/badge/pub-1.0.0-orange" alt="pub version"></a>
 </p>
 
 ---
-
+**Check out the new docs!** https://autoroute.vercel.app
+---
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Setup and Usage](#setup-and-usage)
@@ -104,7 +105,7 @@ if the declared route has children AutoRoute will add a children parameter to it
 class UserRoute extends PageRouteInfo {
    UserRoute({List<PagerouteInfo> children}) :
     super(
-		   name,
+		   name, 
 		   path: '/user/:id',
 		   initialChildren: children);
   static const String name = 'UserRoute';
@@ -239,7 +240,7 @@ Nesting routes with AutoRoute is as easy as populating the children field of the
 )
 class $AppRouter {}
 ```
-The parent page `UserPage` will be rendered inside of root router widget provided by `MaterialApp.router` but not its children, that's why we need to place an AutoRouter widget inside of `UserPage` where we need the nested routes to be rendered.
+The parent page `UserPage` will be rendered inside of root router widget provided by `MaterialApp.router` but not its children, that's why we need to place an AutoRouter widget inside of `UserPage` where we need the nested routes to be rendered. 
 
 ```dart
 class UserPage extends StatelessWidget {
@@ -248,7 +249,7 @@ class UserPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('User $id')),
+      appBar: AppBar(title: Text('User $id')), 
       body: AutoRouter() // nested routes will be rendered here
     );
   }
@@ -284,11 +285,11 @@ or by using `RedirectRoute`
 in both cases whenever we navigate to `/user/1` we will be presented with the `UserProfilePage`.
 
 ## Finding The Right Router
-Every nested AutoRouter has its own routing controller to manage the stack inside of it and the easiest way to obtain a scoped controller is by using context.
+Every nested AutoRouter has its own routing controller to manage the stack inside of it and the easiest way to obtain a scoped controller is by using context. 
 
 In the previous example `UserPage` is a root level stack entry so calling `AutoRouter.of(context)` anywhere inside of it will get us the root routing controller.
 
-`AutoRouter` widgets that are used to render nested routes insert a new router scope into the widgets tree, so when a nested route calls for the scoped controller they will get the closest parent controller in the widgets tree not the root controller.
+`AutoRouter` widgets that are used to render nested routes insert a new router scope into the widgets tree, so when a nested route calls for the scoped controller they will get the closest parent controller in the widgets tree not the root controller. 
 
 ```dart
 class UserPage extends StatelessWidget {
@@ -299,9 +300,9 @@ class UserPage extends StatelessWidget {
   // this will get us the root routing controller
     AutoRouter.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text('User $id')),
+      appBar: AppBar(title: Text('User $id')), 
       // this inserts a new router scope into the widgets tree
-      body: AutoRouter()
+      body: AutoRouter() 
     );
   }
 }
@@ -312,7 +313,7 @@ Here's a simple diagram to help visualize this
 <img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">
 </p>
 
-As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we too different routing controllers  `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type.
+As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we too different routing controllers  `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type. 
 ```dart
 router.parent<StackRouter>() // this returns a the parent router as a Stack Routing controller
 router.parent<TabsRouter>() // this returns a the parent router as a Tabs Routing controller
@@ -326,40 +327,41 @@ You could also obtain inner-routers from outside their scope as long as you have
 ```dart
 // assuming this's the root router
 AutoRouter.of(context).innerRouterOf<StackRouter>(UserRoute.name)
-// or use the short version
+// or use the short version 
 AutoRouter.innerRouterOf(context, UserRoute.name);
 ```
 Accessing the `UserPage` inner router from the previous example.
 
 ```dart
-class UserPage extends StatelessWidget {
-  final int id;
-
-  const UserPage({Key key, @pathParam this.id}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-	  return Scaffold(
-		  appBar: AppBar(
-		  title: Text('User $id'),
-			  actions: [
-				  IconButton(
-					  icon: Icon(Icons.account_box),
-					  onPressed: () {
-					  // accessing the inner router from
-					  // ouside the scope
+class UserPage extends StatelessWidget {  
+  final int id;  
+  
+  const UserPage({Key key, @pathParam this.id}) : super(key: key);  
+  
+  @override  
+  Widget build(BuildContext context) {  
+	  return Scaffold(  
+		  appBar: AppBar(  
+		  title: Text('User $id'),  
+			  actions: [  
+				  IconButton(  
+					  icon: Icon(Icons.account_box),  
+					  onPressed: () {  
+					  // accessing the inner router from 
+					  // outside the scope
 					  AutoRouter.innerRouterOf(context, UserRoute.name)
-					  .push(UserPostsRoute());
+					  .push(UserPostsRoute());  
 					 },
 				  ),
-				],
-			 ),
+				], 
+			 ), 
 			  body: AutoRouter(), // we're trying to get access to this
-		 );
+		 ); 
 	 }
  }
 ```
 **Note**: nested routing controllers are created along with the parent route so accessing them without context is safe as long as it's somewhere beneath the parent route ( The host page ).
+
 ## More docs are coming soon
 
 ### Support auto_route

@@ -23,7 +23,8 @@ class RouteData {
     var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
     assert(() {
       if (scope == null) {
-        throw FlutterError('RouteData operation requested with a context that does not include an RouteData.\n'
+        throw FlutterError(
+            'RouteData operation requested with a context that does not include an RouteData.\n'
             'The context used to retrieve the RouteData must be that of a widget that '
             'is a descendant of a AutoRoutePage.');
       }
@@ -36,12 +37,14 @@ class RouteData {
     final args = route.args;
     if (args == null) {
       if (orElse == null) {
-        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
+        throw FlutterError(
+            '${T.toString()} can not be null because it has a required parameter');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }
