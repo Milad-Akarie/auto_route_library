@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/route/entry_scope.dart';
 import 'package:auto_route/src/route/route_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -14,24 +15,20 @@ abstract class AutoRoutePage extends Page<dynamic> {
 
   bool get hasInnerRouter => entry is RoutingController;
 
-  RouteData get routeData => entry?.routeData;
+  RouteData? get routeData => entry.routeData;
 
   const AutoRoutePage({
-    @required this.entry,
-    @required this.child,
-    this.fullscreenDialog,
-    this.maintainState,
-  })  : assert(child != null),
-        assert(entry != null),
-        assert(fullscreenDialog != null),
-        assert(maintainState != null),
-        super();
+    required this.entry,
+    required this.child,
+    this.fullscreenDialog = false,
+    this.maintainState = true,
+  });
 
   @override
-  String get name => routeData?.name;
+  String? get name => routeData?.name;
 
   @override
-  Object get arguments => routeData?.route;
+  Object? get arguments => routeData?.route.args;
 
   @override
   bool canUpdate(Page other) {
@@ -50,8 +47,8 @@ abstract class AutoRoutePage extends Page<dynamic> {
 
 class MaterialPageX extends AutoRoutePage {
   const MaterialPageX({
-    @required StackEntryItem entry,
-    @required Widget child,
+    required StackEntryItem entry,
+    required Widget child,
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
@@ -70,9 +67,8 @@ class MaterialPageX extends AutoRoutePage {
 class _PageBasedMaterialPageRoute extends PageRoute<dynamic>
     with MaterialRouteTransitionMixin {
   _PageBasedMaterialPageRoute({
-    @required AutoRoutePage page,
-  })  : assert(page != null),
-        super(settings: page);
+    required AutoRoutePage page,
+  }) : super(settings: page);
 
   AutoRoutePage get _page => settings as AutoRoutePage;
 
@@ -90,11 +86,11 @@ class _PageBasedMaterialPageRoute extends PageRoute<dynamic>
 }
 
 abstract class _TitledAutoRoutePage extends AutoRoutePage {
-  final String title;
+  final String? title;
 
   const _TitledAutoRoutePage({
-    @required StackEntryItem entry,
-    @required Widget child,
+    required StackEntryItem entry,
+    required Widget child,
     this.title,
     bool fullscreenDialog = false,
     bool maintainState = true,
@@ -108,14 +104,12 @@ abstract class _TitledAutoRoutePage extends AutoRoutePage {
 
 class CupertinoPageX extends _TitledAutoRoutePage {
   const CupertinoPageX({
-    @required StackEntryItem entry,
-    @required Widget child,
-    String title,
+    required StackEntryItem entry,
+    required Widget child,
+    String? title,
     bool fullscreenDialog = false,
     bool maintainState = true,
-  })  : assert(fullscreenDialog != null),
-        assert(maintainState != null),
-        super(
+  }) : super(
             entry: entry,
             child: child,
             maintainState: maintainState,
@@ -131,9 +125,8 @@ class CupertinoPageX extends _TitledAutoRoutePage {
 class _PageBasedCupertinoPageRoute extends PageRoute<dynamic>
     with CupertinoRouteTransitionMixin {
   _PageBasedCupertinoPageRoute({
-    @required _TitledAutoRoutePage page,
-  })  : assert(page != null),
-        super(settings: page);
+    required _TitledAutoRoutePage page,
+  }) : super(settings: page);
 
   _TitledAutoRoutePage get _page => settings as _TitledAutoRoutePage;
 
@@ -141,7 +134,7 @@ class _PageBasedCupertinoPageRoute extends PageRoute<dynamic>
   Widget buildContent(BuildContext context) => _page.wrappedChild(context);
 
   @override
-  String get title => _page.title;
+  String? get title => _page.title;
 
   @override
   bool get maintainState => _page.maintainState;
@@ -155,9 +148,9 @@ class _PageBasedCupertinoPageRoute extends PageRoute<dynamic>
 
 class AdaptivePage extends _TitledAutoRoutePage {
   const AdaptivePage({
-    @required StackEntryItem entry,
-    @required Widget child,
-    String title,
+    required StackEntryItem entry,
+    required Widget child,
+    String? title,
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
@@ -193,15 +186,15 @@ class CustomPage extends AutoRoutePage {
   final bool opaque;
   final int durationInMilliseconds;
   final int reverseDurationInMilliseconds;
-  final Color barrierColor;
+  final Color? barrierColor;
   final bool barrierDismissible;
-  final String barrierLabel;
-  final RouteTransitionsBuilder transitionsBuilder;
-  final CustomRouteBuilder customRouteBuilder;
+  final String? barrierLabel;
+  final RouteTransitionsBuilder? transitionsBuilder;
+  final CustomRouteBuilder? customRouteBuilder;
 
   CustomPage({
-    @required StackEntryItem entry,
-    @required Widget child,
+    required StackEntryItem entry,
+    required Widget child,
     bool fullscreenDialog = false,
     bool maintainState = true,
     this.opaque = true,
@@ -212,20 +205,17 @@ class CustomPage extends AutoRoutePage {
     this.barrierLabel,
     this.transitionsBuilder,
     this.customRouteBuilder,
-  })  : assert(opaque != null),
-        assert(durationInMilliseconds != null),
-        assert(barrierDismissible != null),
-        super(
+  }) : super(
           entry: entry,
           child: child,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
-        ) {}
+        );
 
   @override
   Route createRoute(BuildContext context) {
     if (customRouteBuilder != null) {
-      return customRouteBuilder(context, wrappedChild(context), this);
+      return customRouteBuilder!(context, wrappedChild(context), this);
     }
     return PageRouteBuilder(
       pageBuilder: (_, __, ___) => wrappedChild(context),

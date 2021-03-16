@@ -11,18 +11,16 @@ class DefaultRouteParser extends RouteInformationParser<List<PageRouteInfo>> {
   final RouteMatcher _matcher;
   final bool includePrefixMatches;
 
-  DefaultRouteParser(this._matcher, {this.includePrefixMatches = false})
-      : assert(_matcher != null),
-        assert(includePrefixMatches != null);
+  DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
 
   @override
   Future<List<PageRouteInfo>> parseRouteInformation(
       RouteInformation routeInformation) async {
-    var matches = _matcher.match(routeInformation.location,
+    var matches = _matcher.match(routeInformation.location ?? '',
         includePrefixMatches: includePrefixMatches);
-    var routes;
+    var routes = <PageRouteInfo>[];
     if (matches != null) {
-      routes = matches.map((m) => m.toRoute).toList(growable: false);
+      routes.addAll(matches.map((m) => PageRouteInfo.fromMatch(m)));
     }
     return SynchronousFuture<List<PageRouteInfo>>(routes);
   }
@@ -44,13 +42,13 @@ String _getNormalizedPath(List<PageRouteInfo> routes) {
     normalized += "?${query.keys.map((k) {
       var value = query[k];
       if (value is List) {
-        value = (value as List).map((v) => '$k=$v').join('&');
+        value = value.map((v) => '$k=$v').join('&');
       }
       return '$k=$value';
     }).join('&')}";
   }
-  var frag = routes.last?.match?.fragment;
-  if (frag != null && frag.isNotEmpty) {
+  var frag = routes.last.match?.fragment;
+  if (frag?.isNotEmpty == true) {
     normalized += "#$frag";
   }
   return normalized;

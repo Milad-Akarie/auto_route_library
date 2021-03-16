@@ -10,7 +10,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  UserData userData;
+  UserData? userData;
 
   @override
   Widget build(BuildContext context) {
@@ -24,30 +24,32 @@ class _ProfilePageState extends State<ProfilePage> {
               style: Theme.of(context).textTheme.headline5,
             ),
             const SizedBox(height: 32),
-            RaisedButton(
-                child: Text('My Books'),
-                onPressed: () {
-                  context.router.push(MyBooksRoute(filter: 'FromRoute'));
-                }),
+            ElevatedButton(
+              onPressed: () {
+                context.router.push(MyBooksRoute(filter: 'FromRoute'));
+              },
+              child: Text('My Books'),
+            ),
             const SizedBox(height: 32),
             userData == null
-                ? RaisedButton(
-                    child: Text('Collect user data'),
+                ? ElevatedButton(
                     onPressed: () {
                       context.router.root.push(UserDataCollectorRoute(onResult: (data) {
                         setState(() {
                           userData = data;
                         });
                       }));
-                    })
+                    },
+                    child: Text('Collect user data'),
+                  )
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('Your Data is complete'),
                       const SizedBox(height: 24),
-                      Text('Name: ${userData.name}'),
+                      Text('Name: ${userData!.name}'),
                       const SizedBox(height: 24),
-                      Text('Favorite book: ${userData.favoriteBook}'),
+                      Text('Favorite book: ${userData!.favoriteBook}'),
                     ],
                   )
           ],

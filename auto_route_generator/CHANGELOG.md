@@ -1,4 +1,8 @@
 # ChangeLog
+## [1.0.0]
+- Migrate to null-safety
+- Add option to pass restoration id
+- Add option to specify the root navigator background color
 ## [1.0.0-beta.11]
 - Fix building PageRouteInfo from match does not respect default values
 ## [1.0.0-beta.10]

@@ -7,10 +7,10 @@ class SingleFieldPage extends StatefulWidget {
   final void Function(String) onNext;
 
   const SingleFieldPage({
-    Key key,
-    @required this.message,
-    @required this.willPopMessage,
-    @required this.onNext,
+    Key? key,
+    required this.message,
+    required this.willPopMessage,
+    required this.onNext,
   }) : super(key: key);
 
   @override
@@ -25,7 +25,7 @@ class _SingleFieldPageState extends State<SingleFieldPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _scaffoldKey.currentState.showSnackBar(
+        _scaffoldKey.currentState?.showSnackBar(
           SnackBar(content: Text(widget.willPopMessage)),
         );
         return true;

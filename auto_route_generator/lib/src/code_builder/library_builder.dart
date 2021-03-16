@@ -1,11 +1,12 @@
-import 'package:auto_route_generator/route_config_resolver.dart';
-import 'package:auto_route_generator/src/code_builder/root_router_builder.dart';
-import 'package:auto_route_generator/src/code_builder/route_info_builder.dart';
-import 'package:auto_route_generator/utils.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 
-import '../../import_resolver.dart';
+import '../../utils.dart';
+import '../models/importable_type.dart';
+import '../models/route_config.dart';
+import '../models/router_config.dart';
+import 'root_router_builder.dart';
+import 'route_info_builder.dart';
 
 const autoRouteImport = 'package:auto_route/auto_route.dart';
 const materialImport = 'package:flutter/material.dart';
@@ -14,13 +15,14 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 const Reference requiredAnnotation = Reference('required', materialImport);
 
-TypeReference listRefer(Reference reference) => TypeReference((b) => b
-  ..symbol = "List"
-  ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) =>
+    TypeReference((b) => b
+      ..symbol = "List"
+      ..isNullable = nullable
+      ..types.add(reference));
 
 String generateLibrary(RouterConfig config) {
   var allRouters = config.collectAllRoutersIncludingParent;
-
   List<RouteConfig> allRoutes =
       allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
 
@@ -37,9 +39,10 @@ String generateLibrary(RouterConfig config) {
     checkedNames.add(name);
   });
 
-  var allGuards = allRoutes
-      .where((r) => r.guards?.isNotEmpty == true)
-      .fold(<ImportableType>{}, (acc, a) => acc..addAll(a.guards));
+  var allGuards = allRoutes.fold<Set<ImportableType>>(
+    {},
+    (acc, a) => acc..addAll(a.guards),
+  );
 
   final library = Library(
     (b) => b
@@ -47,7 +50,8 @@ String generateLibrary(RouterConfig config) {
         buildRouterConfig(config, allGuards, allRoutes),
         ...allRoutes
             .where((r) => r.routeType != RouteType.redirect)
-            .map((r) => buildRouteInfo(r, config)),
+            .map((r) => buildRouteInfoAndArgs(r, config))
+            .reduce((acc, a) => acc..addAll(a)),
       ]),
   );
 

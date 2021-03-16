@@ -3,7 +3,7 @@ import 'package:collection/collection.dart';
 class Parameters {
   final Map<String, dynamic> _params;
 
-  const Parameters(Map<String, dynamic> params) : _params = params ?? const {};
+  const Parameters(Map<String, dynamic>? params) : _params = params ?? const {};
 
   Map<String, dynamic> get rawMap => _params;
 
@@ -27,14 +27,17 @@ class Parameters {
   @override
   int get hashCode => _params.hashCode;
 
-  String getString(String key, [String defaultValue]) =>
-      _params[key] ?? defaultValue;
-
   dynamic get(String key, [defaultValue]) {
     return _params[key] ?? defaultValue;
   }
 
-  int getInt(String key, [int defaultValue]) {
+  String? optString(String key, [String? defaultValue]) =>
+      _params[key] ?? defaultValue;
+
+  String getString(String key, [String? defaultValue]) =>
+      _params[key] ?? defaultValue;
+
+  int? optInt(String key, [int? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -45,7 +48,9 @@ class Parameters {
     }
   }
 
-  double getDouble(String key, [double defaultValue]) {
+  int getInt(String key, [int? defaultValue]) => optInt(key, defaultValue)!;
+
+  double? optDouble(String key, [double? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -56,7 +61,10 @@ class Parameters {
     }
   }
 
-  num getNum(String key, [num defaultValue]) {
+  double getDouble(String key, [double? defaultValue]) =>
+      optDouble(key, defaultValue)!;
+
+  num? optNum(String key, [num? defaultValue]) {
     var param = _params[key];
     if (param == null) {
       return defaultValue;
@@ -67,14 +75,18 @@ class Parameters {
     }
   }
 
-  bool getBool(String key) {
+  num getNum(String key, [num? defaultValue]) => optNum(key, defaultValue)!;
+
+  bool? optBool(String key, [bool? defaultValue]) {
     switch (_params[key]?.toLowerCase()) {
       case 'true':
         return true;
       case 'false':
         return false;
       default:
-        return null;
+        return defaultValue;
     }
   }
+
+  bool getBool(String key, [bool? defaultValue]) => optBool(key, defaultValue)!;
 }

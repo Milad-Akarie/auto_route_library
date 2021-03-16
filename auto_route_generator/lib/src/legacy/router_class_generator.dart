@@ -1,4 +1,6 @@
-import 'package:auto_route_generator/route_config_resolver.dart';
+import 'package:auto_route_generator/src/models/route_config.dart';
+import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:auto_route_generator/utils.dart';
 
 class RouterClassGenerator {
@@ -10,7 +12,7 @@ class RouterClassGenerator {
   // helper functions
   void _write(Object obj) => _stringBuffer.write(obj);
 
-  void _writeln([Object obj]) => _stringBuffer.writeln(obj);
+  void _writeln([Object? obj]) => _stringBuffer.writeln(obj);
 
   void _newLine() => _stringBuffer.writeln();
 
@@ -46,18 +48,18 @@ class RouterClassGenerator {
     };
     routes.forEach((r) {
       if (r.transitionBuilder != null &&
-          !r.transitionBuilder.import.endsWith("auto_route.dart")) {
-        imports.add(r.transitionBuilder.import);
+          !r.transitionBuilder!.import!.endsWith("auto_route.dart")) {
+        imports.add(r.transitionBuilder!.import!);
       }
       if (r.pageType != null) {
-        imports.add(r.pageType.import);
+        imports.add(r.pageType!.import!);
       }
 
-      r.parameters?.forEach((param) {
+      r.parameters.forEach((param) {
         imports.addAll(param.imports);
       });
 
-      r.guards?.forEach((g) => imports.add(g.import));
+      r.guards.forEach((g) => imports.add(g.import!));
     });
 
     var validImports = imports.where((import) => import != null).toSet();
@@ -93,10 +95,10 @@ class RouterClassGenerator {
         allNames.add('_$routeName');
         var params = RegExp(r':([^/]+)').allMatches(path).map((m) {
           var match = m.group(1);
-          if (match.endsWith('?')) {
+          if (match!.endsWith('?')) {
             return "dynamic  ${match.substring(0, match.length - 1)} = ''";
           } else {
-            return "@required  dynamic $match";
+            return "required  dynamic $match";
           }
         });
         _writeln(
@@ -124,12 +126,12 @@ class RouterClassGenerator {
     routerConfig.routes.forEach((r) {
       _writeln("RouteDef(${routerConfig.routesClassName}.${r.templateName}");
       _writeln(",page: ${r.className}");
-      if (r.guards?.isNotEmpty == true) {
+      if (r.guards.isNotEmpty == true) {
         _writeln(
             ",guards:${r.guards.map((guard) => guard.name).toList().toString()}");
       }
       if (r.childRouterConfig != null) {
-        _writeln(",generator: ${r.childRouterConfig.routerClassName}(),");
+        _writeln(",generator: ${r.childRouterConfig!.routerClassName}(),");
       }
       _writeln('),');
     });
@@ -139,7 +141,9 @@ class RouterClassGenerator {
     _newLine();
 
     var routesMap = <String, RouteConfig>{};
-    routerConfig.routes.forEach((route) {
+    routerConfig.routes
+        .where((element) => element.routeType != RouteType.redirect)
+        .forEach((route) {
       routesMap[route.className] = route;
     });
 
@@ -154,9 +158,9 @@ class RouterClassGenerator {
   void _generateRoute(RouteConfig r) {
     List constructorParams = [];
 
-    if (r.parameters?.isNotEmpty == true) {
+    if (r.parameters.isNotEmpty) {
       // if router has any required or positional params the argument class holder becomes required.
-      final nullOk = !r.argParams.any((p) => p.hasRequired || p.isPositional);
+      final nullOk = !r.argParams.any((p) => p.isRequired || p.isPositional);
       // show an error page  if passed args are not the same as declared args
 
       if (r.argParams.isNotEmpty) {
@@ -173,10 +177,10 @@ class RouterClassGenerator {
         String getterName;
         if (param.isPathParam) {
           getterName =
-              "data.pathParams['${param.paramName}'].${param.getterName}${param.defaultValueCode != null ? '?? ${param.defaultValueCode}' : ''}";
+              "data.pathParams.${param.getterMethodName}('${param.paramName}'${param.defaultValueCode != null ? ', ${param.defaultValueCode}' : ''}) ";
         } else if (param.isQueryParam) {
           getterName =
-              "data.queryParams['${param.paramName}'].${param.getterName}${param.defaultValueCode != null ? '?? ${param.defaultValueCode}' : ''}";
+              "data.queryParams.${param.getterMethodName}('${param.paramName}'${param.defaultValueCode != null ? ', ${param.defaultValueCode}' : ''}) ";
         } else {
           getterName = "args.${param.name}";
         }
@@ -231,8 +235,8 @@ class RouterClassGenerator {
     // generate constructor
     _writeln('$argsClassName({');
     params.asMap().forEach((i, param) {
-      if (param.hasRequired || param.isPositional) {
-        _write('@required ');
+      if (param.isRequired || param.isPositional) {
+        _write('required ');
       }
 
       _write('this.${param.name}');
@@ -306,7 +310,7 @@ class RouterClassGenerator {
             'barrierDismissible:${r.customRouteBarrierDismissible.toString()},');
       }
       if (r.transitionBuilder != null) {
-        _write('transitionsBuilder: ${r.transitionBuilder.name},');
+        _write('transitionsBuilder: ${r.transitionBuilder!.name},');
       }
       if (r.durationInMilliseconds != null) {
         _write(
@@ -334,20 +338,20 @@ class RouterClassGenerator {
       if (RegExp(r':([^/]+)').hasMatch(route.pathName)) {
         continue;
       }
-      _generateHelperMethod(route, routerConfig.routesClassName);
+      _generateHelperMethod(route, routerConfig.routesClassName!);
     }
     _writeln('}');
   }
 
   void _generateHelperMethod(RouteConfig route, String routesClassName) {
     final genericType = route.returnType == null ? '' : '<${route.returnType}>';
-    _write('Future$genericType push${capitalize(route.name)}(');
+    _write('Future$genericType push${capitalize(route.routeName)}(');
     // generate constructor
-    if (route.parameters != null) {
+    if (route.parameters.isNotEmpty) {
       _write('{');
       route.parameters.forEach((param) {
-        if (param.hasRequired || param.isPositional) {
-          _write('@required ');
+        if (param.isRequired || param.isPositional) {
+          _write('required ');
         }
 
         _write('${param.type} ${param.name}');
@@ -356,20 +360,20 @@ class RouterClassGenerator {
         }
         _write(',');
       });
-      if (route.guards?.isNotEmpty == true) {
+      if (route.guards.isNotEmpty) {
         _write('OnNavigationRejected onReject');
       }
       _write('}');
     }
     _writeln(')');
     _write(' => push$genericType($routesClassName.${route.name}');
-    if (route.parameters != null) {
+    if (route.parameters.isNotEmpty) {
       _write(',arguments: ');
       _write('${route.argumentsHolderClassName}(');
       _write(route.parameters.map((p) => '${p.name}: ${p.name}').join(','));
       _write('),');
 
-      if (route.guards?.isNotEmpty == true) {
+      if (route.guards.isNotEmpty) {
         _write('onReject:onReject,');
       }
     }

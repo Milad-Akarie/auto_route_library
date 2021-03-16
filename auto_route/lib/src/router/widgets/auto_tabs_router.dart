@@ -1,4 +1,6 @@
+import 'package:auto_route/src/route/entry_scope.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
+import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -10,24 +12,20 @@ typedef AnimatedIndexedStackBuilder = Widget Function(
     BuildContext context, Widget child, Animation<double> animation);
 
 class AutoTabsRouter extends StatefulWidget {
-  final AnimatedIndexedStackBuilder builder;
+  final AnimatedIndexedStackBuilder? builder;
   final List<PageRouteInfo> routes;
   final Duration duration;
   final Curve curve;
   final bool lazyLoad;
 
   const AutoTabsRouter({
-    Key key,
-    @required this.routes,
+    Key? key,
+    required this.routes,
     this.lazyLoad = true,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
-  })  : assert(lazyLoad != null),
-        assert(duration != null),
-        assert(curve != null),
-        assert(routes != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   AutoTabsRouterState createState() => AutoTabsRouterState();
@@ -43,18 +41,18 @@ class AutoTabsRouter extends StatefulWidget {
       }
       return true;
     }());
-    return scope.controller;
+    return scope!.controller;
   }
 }
 
 class AutoTabsRouterState extends State<AutoTabsRouter>
     with SingleTickerProviderStateMixin {
-  TabsRouter _controller;
-  AnimationController _animationController;
-  Animation<double> _animation;
+  TabsRouter? _controller;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
   int _index = 0;
 
-  TabsRouter get controller => _controller;
+  TabsRouter? get controller => _controller;
 
   @override
   void initState() {
@@ -78,21 +76,21 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
       var entry = StackEntryScope.of(context);
 
       assert(entry is RoutingController);
-      _controller = entry as RoutingController;
+      _controller = entry as TabsRouter;
       _resetController();
     }
   }
 
   void _resetController() {
     assert(_controller != null);
-    _controller.setupRoutes(widget.routes);
-    _index = _controller.activeIndex;
+    _controller!.setupRoutes(widget.routes);
+    _index = _controller!.activeIndex;
     _animationController.value = 1.0;
     var rootDelegate = RootRouterDelegate.of(context);
-    _controller.addListener(() {
-      if (_controller.activeIndex != _index) {
+    _controller!.addListener(() {
+      if (_controller!.activeIndex != _index) {
         setState(() {
-          _index = _controller.activeIndex;
+          _index = _controller!.activeIndex;
         });
         rootDelegate.notify();
         _animationController.forward(from: 0.0);
@@ -103,7 +101,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   @override
   void dispose() {
     _animationController.dispose();
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -111,7 +109,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller.setupRoutes(widget.routes);
+      _controller?.setupRoutes(widget.routes);
       _resetController();
     }
   }
@@ -119,25 +117,29 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    final stack = _controller.stack;
+    final stack = _controller!.stack;
     final builder = widget.builder ?? _defaultBuilder;
+
+    final builderChild = stack.isEmpty
+        ? Container(color: Theme.of(context).scaffoldBackgroundColor)
+        : _IndexedStackBuilder(
+            activeIndex: _index,
+            lazyLoad: widget.lazyLoad,
+            itemCount: stack.length,
+            itemBuilder: (BuildContext context, int index) {
+              return stack[index].wrappedChild(context);
+            },
+          );
+
     return RoutingControllerScope(
-      controller: _controller,
+      controller: _controller!,
       child: TabsRouterScope(
-          controller: _controller,
+          controller: _controller!,
           child: AnimatedBuilder(
             animation: _animation,
-            builder: (context, child) => builder(context, child, _animation),
-            child: stack.isEmpty
-                ? Container(color: Theme.of(context).scaffoldBackgroundColor)
-                : _IndexedStackBuilder(
-                    activeIndex: _index,
-                    lazyLoad: widget.lazyLoad,
-                    itemCount: stack.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return stack[index].wrappedChild(context);
-                    },
-                  ),
+            builder: (context, child) =>
+                builder(context, child ?? builderChild, _animation),
+            child: builderChild,
           )),
     );
   }
@@ -154,13 +156,12 @@ class _IndexedStackBuilder extends StatefulWidget {
   final bool lazyLoad;
 
   const _IndexedStackBuilder({
-    Key key,
-    this.activeIndex,
-    @required this.itemBuilder,
+    Key? key,
+    required this.activeIndex,
+    required this.itemBuilder,
     this.itemCount = 0,
-    this.lazyLoad,
-  })  : assert(lazyLoad != null),
-        super(key: key);
+    required this.lazyLoad,
+  }) : super(key: key);
 
   @override
   _IndexedStackBuilderState createState() => _IndexedStackBuilderState();
@@ -172,7 +173,7 @@ class _DummyWidget extends SizedBox {
 
 class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   final _dummyWidget = const _DummyWidget();
-  final List _pages = <Widget>[];
+  final _pages = <Widget>[];
 
   @override
   void initState() {

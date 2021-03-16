@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
-
-import '../router/router.gr.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -13,7 +12,7 @@ class HomePage extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
-              title: Text(tabsRouter.current?.name),
+              title: Text(tabsRouter.current?.name ?? ''),
             ),
             body: FadeTransition(child: child, opacity: animation),
             bottomNavigationBar: buildBottomNav(tabsRouter),

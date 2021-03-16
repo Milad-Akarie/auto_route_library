@@ -1,9 +1,10 @@
-import 'package:auto_route_generator/import_resolver.dart';
-import 'package:auto_route_generator/route_config_resolver.dart';
-import 'package:auto_route_generator/src/route_config.dart';
-import 'package:auto_route_generator/utils.dart';
 import 'package:code_builder/code_builder.dart';
 
+import '../../utils.dart';
+import '../models/importable_type.dart';
+import '../models/route_config.dart';
+import '../models/route_parameter_config.dart';
+import '../models/router_config.dart';
 import 'library_builder.dart';
 
 const _routeConfigType = Reference("RouteConfig", autoRouteImport);
@@ -37,15 +38,9 @@ Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards,
               (g) => Parameter((b) => b
                 ..name = toLowerCamelCase(g.name)
                 ..named = true
-                ..toThis = true
-                ..annotations.add(requiredAnnotation)),
+                ..required = true
+                ..toThis = true),
             ),
-          ])
-          ..initializers.addAll([
-            ...guards.map((g) => refer('assert').call([
-                  refer(toLowerCamelCase(g.toString()))
-                      .notEqualTo(refer('null')),
-                ]).code),
           ])),
         // ),
       ));
@@ -79,14 +74,41 @@ Method buildMethod(RouteConfig r) {
       )
       ..body = Block(
         (b) => b.statements.addAll([
-          if (r.parameters?.isNotEmpty == true)
+          if (r.parameters.isNotEmpty)
             refer('entry')
                 .property('routeData')
-                .property('as')
-                .call([], {}, [
-                  refer(r.routeName),
+                .property('argsAs')
+                .call([], {
+                  if (!r.hasRequiredArgs)
+                    'orElse': Method(
+                      (b) => b.body = refer('${r.routeName}Args').newInstance(
+                        [],
+                        Map.fromEntries(r.parameters
+                            .where((p) => p.isRequired || p.isPositional)
+                            .map(
+                              (p) => MapEntry(
+                                p.name,
+                                refer('null'),
+                              ),
+                            )),
+                      ).code,
+                    ).closure
+                }, [
+                  refer('${r.routeName}Args'),
                 ])
-                .assignVar('route')
+                .assignVar('args')
+                .statement,
+          if (r.parameters.any((p) => p.isPathParam))
+            refer('entry')
+                .property('routeData')
+                .property('pathParams')
+                .assignVar('pathParams')
+                .statement,
+          if (r.parameters.any((p) => p.isQueryParam))
+            refer('entry')
+                .property('routeData')
+                .property('queryParams')
+                .assignVar('queryParams')
                 .statement,
           refer(r.pageTypeName, autoRouteImport)
               .newInstance(
@@ -94,8 +116,8 @@ Method buildMethod(RouteConfig r) {
                 {
                   'entry': refer('entry'),
                   'child': r.hasConstConstructor
-                      ? r.pageType.refer.constInstance([])
-                      : r.pageType.refer.newInstance(
+                      ? r.pageType!.refer.constInstance([])
+                      : r.pageType!.refer.newInstance(
                           r.positionalParams.map(getParamAssignment),
                           Map.fromEntries(r.namedParams.map(
                             (p) => MapEntry(
@@ -114,9 +136,9 @@ Method buildMethod(RouteConfig r) {
                     'title': literalString(r.cupertinoNavTitle),
                   if (r.routeType == RouteType.custom) ...{
                     if (r.customRouteBuilder != null)
-                      'customRouteBuilder': r.customRouteBuilder.refer,
+                      'customRouteBuilder': r.customRouteBuilder!.refer,
                     if (r.transitionBuilder != null)
-                      'transitionsBuilder': r.transitionBuilder.refer,
+                      'transitionsBuilder': r.transitionBuilder!.refer,
                     if (r.durationInMilliseconds != null)
                       'durationInMilliseconds':
                           literalNum(r.durationInMilliseconds),
@@ -141,47 +163,47 @@ Method buildMethod(RouteConfig r) {
 }
 
 Expression getParamAssignment(ParamConfig p) {
-  var ref = refer('route').property(p.name);
-  if (p.defaultValueCode != null) {
-    return ref.ifNullThen(refer(p.defaultValueCode));
+  var getter = refer('args').property(p.name);
+  if (p.isPathParam) {
+    return refer('pathParams').property(p.getterMethodName).call([
+      literalString(p.paramName),
+      getter,
+    ]);
+  } else if (p.isQueryParam) {
+    return refer('queryParams').property(p.getterMethodName).call([
+      literalString(p.paramName),
+      getter,
+    ]);
   }
-  return ref;
+  return getter;
 }
 
 Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
       (r) {
-        return _routeConfigType.newInstance([
-          if (r.routeType == RouteType.redirect)
-            literalString('${r.pathName}#redirect')
-          else
-            refer(r.routeName).property('name'),
-        ], {
-          'path': literalString(r.pathName),
-          if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo),
-          if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
-          if (r.usesTabsRouter != null)
-            'usesTabsRouter': literalBool(r.usesTabsRouter),
-          if (r.routeType != RouteType.redirect)
-            'routeBuilder': Method((b) => b
-              ..requiredParameters.add(
-                Parameter((b) => b.name = 'match'),
-              )
-              ..body = refer(r.routeName).newInstanceNamed(
-                'fromMatch',
-                [refer('match')],
-              ).code).closure,
-          if (r.guards?.isNotEmpty == true)
-            'guards': literalList(r.guards
-                .map(
-                  (g) => refer(
-                    toLowerCamelCase(g.toString()),
-                  ),
-                )
-                .toList(growable: false)),
-          if (r.childRouterConfig != null)
-            'children': literalList(buildRoutes(r.childRouterConfig.routes))
-        }, [
-          if (r.routeType != RouteType.redirect) refer(r.routeName)
-        ]);
+        return _routeConfigType.newInstance(
+          [
+            if (r.routeType == RouteType.redirect)
+              literalString('${r.pathName}#redirect')
+            else
+              refer(r.routeName).property('name'),
+          ],
+          {
+            'path': literalString(r.pathName),
+            if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo),
+            if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
+            if (r.usesTabsRouter != null)
+              'usesTabsRouter': literalBool(r.usesTabsRouter),
+            if (r.guards.isNotEmpty)
+              'guards': literalList(r.guards
+                  .map(
+                    (g) => refer(
+                      toLowerCamelCase(g.toString()),
+                    ),
+                  )
+                  .toList(growable: false)),
+            if (r.childRouterConfig != null)
+              'children': literalList(buildRoutes(r.childRouterConfig!.routes))
+          },
+        );
       },
     );

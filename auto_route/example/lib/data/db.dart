@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 
 class Book {
   final int id;
@@ -7,9 +6,9 @@ class Book {
   final String genre;
 
   const Book({
-    @required this.id,
-    @required this.name,
-    @required this.genre,
+    required this.id,
+    required this.name,
+    required this.genre,
   });
 }
 
@@ -33,17 +32,17 @@ class BooksDB {
 }
 
 class BooksDBProvider extends InheritedWidget {
-  final Widget child;
   final booksDb = BooksDB();
 
-  BooksDBProvider({this.child}) : super(child: child);
+  BooksDBProvider({required Widget child}) : super(child: child);
+
   @override
   bool updateShouldNotify(_) {
     return false;
   }
 
-  static BooksDB of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<BooksDBProvider>().booksDb;
+  static BooksDB? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<BooksDBProvider>()?.booksDb;
   }
 }
 
@@ -75,20 +74,25 @@ class User {
   final String email;
   final List<Book> books;
 
-  User({this.id, this.name, this.email, this.books});
+  User({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.books,
+  });
 }
 
 class UsersDBProvider extends InheritedWidget {
-  final Widget child;
   final usersDB = UsersDB();
 
-  UsersDBProvider({this.child}) : super(child: child);
+  UsersDBProvider({required Widget child}) : super(child: child);
+
   @override
   bool updateShouldNotify(_) {
     return false;
   }
 
-  static UsersDB of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<UsersDBProvider>().usersDB;
+  static UsersDB? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<UsersDBProvider>()?.usersDB;
   }
 }

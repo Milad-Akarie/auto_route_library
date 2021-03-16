@@ -23,8 +23,8 @@ PageRoute defaultUnknownRoutePage(RouteSettings settings) => MaterialPageRoute(
                   style: TextStyle(fontSize: 16),
                 ),
               ),
-              if (!ModalRoute.of(ctx).isFirst)
-                OutlineButton.icon(
+              if (ModalRoute.of(ctx)?.isFirst == false)
+                ElevatedButton.icon(
                   label: Text('Back'),
                   icon: Icon(Icons.arrow_back),
                   onPressed: () => Navigator.of(ctx).pop(),
@@ -69,15 +69,12 @@ PageRoute misTypedArgsRoute<T>(Object args) {
 }
 
 PageRoute<T> buildAdaptivePageRoute<T>({
-  @required WidgetBuilder builder,
-  RouteSettings settings,
+  required WidgetBuilder builder,
+  required RouteSettings settings,
   bool maintainState = true,
   bool fullscreenDialog = false,
-  String cupertinoTitle,
+  String? cupertinoTitle,
 }) {
-  assert(builder != null);
-  assert(maintainState != null);
-  assert(fullscreenDialog != null);
   // no transitions for web
   if (kIsWeb) {
     return PageRouteBuilder(

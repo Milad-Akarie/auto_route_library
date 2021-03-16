@@ -1,53 +1,41 @@
 import 'package:collection/collection.dart';
-import 'package:meta/meta.dart';
 
 import '../../auto_route.dart';
-import '../utils.dart';
 
-@immutable
 class RouteMatch {
   final RouteConfig config;
   final Parameters pathParams;
   final Parameters queryParams;
-  final List<RouteMatch> children;
+  final List<RouteMatch>? children;
   final String fragment;
   final List<String> segments;
   final bool fromRedirect;
 
   const RouteMatch({
-    @required this.config,
-    @required this.segments,
+    required this.config,
+    required this.segments,
     this.children,
     this.fromRedirect = false,
     this.pathParams = const Parameters({}),
     this.queryParams = const Parameters({}),
     this.fragment = '',
-  })  : assert(config != null),
-        assert(fromRedirect != null),
-        assert(segments != null);
+  });
 
-  bool get hasChildren => !listNullOrEmpty(children);
-
-  PageRouteInfo get toRoute => config.routeBuilder(this);
+  bool get hasChildren => children?.isNotEmpty == true;
 
   String get path => config.path;
-
-  List<String> get url => [...segments, if (hasChildren) ...children.last.url];
-
-  List<PageRouteInfo> buildChildren() {
-    return children?.map((m) => m.toRoute)?.toList(growable: false);
-  }
+  List<String> get url => [...segments, if (hasChildren) ...children!.last.url];
 
   RouteMatch copyWith({
-    String key,
-    String path,
-    RouteConfig def,
-    Parameters pathParams,
-    Parameters queryParams,
-    List<RouteMatch> children,
-    String fragment,
-    List<String> segments,
-    bool fromRedirect,
+    String? key,
+    String? path,
+    RouteConfig? def,
+    Parameters? pathParams,
+    Parameters? queryParams,
+    List<RouteMatch>? children,
+    String? fragment,
+    List<String>? segments,
+    bool? fromRedirect,
   }) {
     return RouteMatch(
       config: def ?? this.config,

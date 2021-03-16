@@ -9,8 +9,11 @@ extension AutoRouterX on BuildContext {
 
   TabsRouter get tabsRouter => AutoTabsRouter.of(this);
 
-  RoutingController innerRouterOf(String routeKey) =>
+  RoutingController? innerRouterOf(String routeKey) =>
       AutoRouter.innerRouterOf(this, routeKey);
 
-  RouteData get route => RouteData.of(this);
+  @Deprecated('Use routeData instead')
+  RouteData? get route => RouteData.of(this);
+
+  RouteData get routeData => RouteData.of(this);
 }

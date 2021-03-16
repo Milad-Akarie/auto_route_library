@@ -12,13 +12,14 @@ class SettingsPage extends StatelessWidget {
         children: [
           Text('Settings'),
           const SizedBox(height: 24),
-          RaisedButton(
-              child: Text('Navigate to Book/4'),
-              onPressed: () {
-                context.tabsRouter
-                  ..setActiveIndex(0)
-                  ..innerRouterOf<StackRouter>(BooksTab.name).push(BookDetailsRoute(id: 4));
-              })
+          ElevatedButton(
+            onPressed: () {
+              context.tabsRouter
+                ..setActiveIndex(0)
+                ..innerRouterOf<StackRouter>(BooksTab.name)?.push(BookDetailsRoute(id: 4));
+            },
+            child: Text('Navigate to Book/4'),
+          )
         ],
       ),
     );

@@ -5,6 +5,7 @@ import '../screens/login_page.dart';
 import '../screens/profile/routes.dart';
 import '../screens/settings.dart';
 import '../screens/user-data/routes.dart';
+import 'auth_guard.dart';
 
 export 'router.gr.dart';
 
@@ -14,7 +15,7 @@ export 'router.gr.dart';
     AutoRoute(
       path: '/',
       page: HomePage,
-      // guards: [AuthGuard],
+      guards: [AuthGuard],
       usesTabsRouter: true,
       children: [
         RedirectRoute(path: '', redirectTo: 'books'),

@@ -6,16 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Testing RouteCollection', () {
-    test('Building default constructor with null map should throw in assertion error', () {
-      expect(() => RouteCollection(null), throwsAssertionError);
-    });
-
     test('Building default constructor with empty map should throw in assertion error', () {
       expect(() => RouteCollection(LinkedHashMap()), throwsAssertionError);
-    });
-
-    test('Building named constructor [from] with empty list should throw in assertion error', () {
-      expect(() => RouteCollection.from(null), throwsAssertionError);
     });
 
     final routeA = RouteConfig('A', path: '/');
