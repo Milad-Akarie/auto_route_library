@@ -6,6 +6,7 @@
 <a href="https://img.shields.io/badge/License-MIT-green"><img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>
 <a href="https://github.com/Milad-Akarie/auto_route_library/stargazers"><img src="https://img.shields.io/github/stars/Milad-Akarie/auto_route_library?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>
 <a href="https://pub.dev/packages/auto_route/versions/1.0.0-beta.9"><img src="https://img.shields.io/badge/pub-1.0.0.beta.9-orange" alt="pub version"></a>
+[![Support Server](https://img.shields.io/discord/821043906703523850.svg?color=7289da&label=Discord&logo=discord&style=flat-square)](https://discord.gg/x3SBU4WRRd) 
 </p>
 
 **Check out the new docs!** https://autoroute.vercel.app
