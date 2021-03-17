@@ -20,9 +20,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
           ...r.parameters.map((param) => Field((b) => b
             ..modifier = FieldModifier.final$
             ..name = param.name
-            ..type = param is FunctionParamConfig
-                ? param.funRefer
-                : param.type.refer)),
+            ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
           Field(
             (b) => b
               ..modifier = FieldModifier.constant
@@ -61,15 +59,15 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
                         ),
                       ),
                     ),
-                  if (r.pathParams.isNotEmpty)
+                  if (r.parameters.any((p) => p.isPathParam))
                     'params': literalMap(
                       Map.fromEntries(
-                        r.pathParams.map(
-                          (p) => MapEntry(
-                            p.name,
-                            refer(p.name),
-                          ),
-                        ),
+                        r.parameters.where((p) => p.isPathParam).map(
+                              (p) => MapEntry(
+                                p.paramName,
+                                refer(p.name),
+                              ),
+                            ),
                       ),
                     ),
                   if (r.parameters.any((p) => p.isQueryParam))
@@ -97,9 +95,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
             ...r.parameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
               ..name = param.name
-              ..type = param is FunctionParamConfig
-                  ? param.funRefer
-                  : param.type.refer)),
+              ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
           ])
           ..constructors.add(
             Constructor((b) => b
@@ -122,8 +118,7 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
           ..toThis = true
           ..required = p.isRequired || p.isPositional
           ..defaultTo = p.defaultCode;
-        if (p.hasRequired && !p.isRequired)
-          b.annotations.add(requiredAnnotation);
+        if (p.hasRequired && !p.isRequired) b.annotations.add(requiredAnnotation);
       },
     ),
   );
