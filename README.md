@@ -14,8 +14,6 @@
 **Check out the new docs!** https://autoroute.vercel.app
 
 ---
-**Check out the new docs!** https://autoroute.vercel.app
----
 - [Introduction](#introduction)
 - [Installation](#installation)
 - [Setup and Usage](#setup-and-usage)
