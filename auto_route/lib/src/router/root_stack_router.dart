@@ -113,7 +113,8 @@ abstract class RootStackRouter implements StackRouter, ChangeNotifier {
   void popUntilRoot() => _router.popUntilRoot();
 
   @override
-  void popUntilRouteWithName(String name) => _router.popUntilRouteWithName(name);
+  void popUntilRouteWithName(String name) =>
+      _router.popUntilRouteWithName(name);
 
   @override
   List<PageRouteInfo>? get preMatchedRoutes => null;
@@ -129,12 +130,15 @@ abstract class RootStackRouter implements StackRouter, ChangeNotifier {
   }
 
   @override
-  Future<void> pushAndRemoveUntil(PageRouteInfo route, {required predicate, onFailure}) {
-    return _router.pushAndRemoveUntil(route, predicate: predicate, onFailure: onFailure);
+  Future<void> pushAndRemoveUntil(PageRouteInfo route,
+      {required predicate, onFailure}) {
+    return _router.pushAndRemoveUntil(route,
+        predicate: predicate, onFailure: onFailure);
   }
 
   @override
-  Future<void> pushPath(String path, {bool includePrefixMatches = false, onFailure}) {
+  Future<void> pushPath(String path,
+      {bool includePrefixMatches = false, onFailure}) {
     return _router.pushPath(path, onFailure: onFailure);
   }
 
