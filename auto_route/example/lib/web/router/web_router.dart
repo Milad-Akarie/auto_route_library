@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
   routes: <AutoRoute>[
     AutoRoute(path: '/', page: HomePage),
     AutoRoute(
-      path: '/user/:id',
+      path: '/user/:userID',
       page: UserPage,
       children: [
         RedirectRoute(path: '', redirectTo: 'profile'),
@@ -66,7 +66,7 @@ class UserPage extends StatelessWidget {
 
   const UserPage({
     Key? key,
-    @pathParam this.id = 1,
+    @PathParam('userID') this.id = 1,
   }) : super(key: key);
 
   @override

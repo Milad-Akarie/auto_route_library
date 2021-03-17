@@ -61,15 +61,15 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
                         ),
                       ),
                     ),
-                  if (r.pathParams.isNotEmpty)
+                  if (r.parameters.any((p) => p.isPathParam))
                     'params': literalMap(
                       Map.fromEntries(
-                        r.pathParams.map(
-                          (p) => MapEntry(
-                            p.name,
-                            refer(p.name),
-                          ),
-                        ),
+                        r.parameters.where((p) => p.isPathParam).map(
+                              (p) => MapEntry(
+                                p.paramName,
+                                refer(p.name),
+                              ),
+                            ),
                       ),
                     ),
                   if (r.parameters.any((p) => p.isQueryParam))

@@ -1,4 +1,7 @@
 # ChangeLog
+## [1.0.1]
+- Fix Stack overflow in RootStackRouter popUntilRoot() #401
+- Fix path parameters are assigned an undefined var when alias is different than param name.
 ## [1.0.0]
 - Migrate to null-safety
 - Add option to pass restoration id
