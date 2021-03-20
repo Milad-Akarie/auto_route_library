@@ -6,11 +6,13 @@
 <p align="center">
 <a href="https://img.shields.io/badge/License-MIT-green"><img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>
 <a href="https://github.com/Milad-Akarie/auto_route_library/stargazers"><img src="https://img.shields.io/github/stars/Milad-Akarie/auto_route_library?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>
-<a href="https://pub.dev/packages/auto_route/versions/1.0.0"><img src="https://img.shields.io/badge/pub-1.0.0-orange" alt="pub version"></a>
+<a href="https://pub.dev/packages/auto_route/versions/1.0.2"><img src="https://img.shields.io/badge/pub-1.0.2-orange" alt="pub version"></a>
+<a href="https://discord.gg/x3SBU4WRRd">
+ <img src="https://img.shields.io/discord/821043906703523850.svg?color=7289da&label=Discord&logo=discord&style=flat-square" alt="Discord Badge"></a>
 </p>
 
----
 **Check out the new docs!** https://autoroute.vercel.app
+
 ---
 - [Introduction](#introduction)
 - [Installation](#installation)
@@ -333,32 +335,31 @@ AutoRouter.innerRouterOf(context, UserRoute.name);
 Accessing the `UserPage` inner router from the previous example.
 
 ```dart
-class UserPage extends StatelessWidget {  
-  final int id;  
-  
-  const UserPage({Key key, @pathParam this.id}) : super(key: key);  
-  
-  @override  
-  Widget build(BuildContext context) {  
-	  return Scaffold(  
-		  appBar: AppBar(  
-		  title: Text('User $id'),  
-			  actions: [  
-				  IconButton(  
-					  icon: Icon(Icons.account_box),  
-					  onPressed: () {  
-					  // accessing the inner router from 
-					  // outside the scope
-					  AutoRouter.innerRouterOf(context, UserRoute.name)
-					  .push(UserPostsRoute());  
-					 },
-				  ),
-				], 
-			 ), 
-			  body: AutoRouter(), // we're trying to get access to this
-		 ); 
-	 }
- }
+class UserPage extends StatelessWidget {
+  final int id;
+
+  const UserPage({Key key, @pathParam this.id}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('User $id'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.account_box),
+            onPressed: () {
+              // accessing the inner router from
+              // outside the scope
+              AutoRouter.innerRouterOf(context, UserRoute.name).push(UserPostsRoute());
+            },
+          ),
+        ],
+      ),
+      body: AutoRouter(), // we're trying to get access to this
+    );
+  }
+}
 ```
 **Note**: nested routing controllers are created along with the parent route so accessing them without context is safe as long as it's somewhere beneath the parent route ( The host page ).
 

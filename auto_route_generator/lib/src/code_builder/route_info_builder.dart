@@ -16,29 +16,21 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
             ..url = autoRouteImport;
           if (r.parameters.isNotEmpty) b.types.add(refer('${r.routeName}Args'));
         })
-        ..fields.addAll([
-          ...r.parameters.map((param) => Field((b) => b
-            ..modifier = FieldModifier.final$
-            ..name = param.name
-            ..type = param is FunctionParamConfig
-                ? param.funRefer
-                : param.type.refer)),
-          Field(
-            (b) => b
-              ..modifier = FieldModifier.constant
-              ..name = 'name'
-              ..static = true
-              ..type = stringRefer
-              ..assignment = literalString(r.routeName).code,
-          )
-        ])
+        ..fields.add(Field(
+          (b) => b
+            ..modifier = FieldModifier.constant
+            ..name = 'name'
+            ..static = true
+            ..type = stringRefer
+            ..assignment = literalString(r.routeName).code,
+        ))
         ..constructors.add(
           Constructor(
             (b) {
               b
                 ..constant = r.parameters.isEmpty
                 ..optionalParameters.addAll([
-                  ...buildArgParams(r.parameters),
+                  ...buildArgParams(r.parameters, toThis: false),
                   if (r.isParent)
                     Parameter((b) => b
                       ..named = true
@@ -112,18 +104,19 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
   ];
 }
 
-Iterable<Parameter> buildArgParams(List<ParamConfig> parameters) {
+Iterable<Parameter> buildArgParams(List<ParamConfig> parameters,
+    {bool toThis = true}) {
   return parameters.map(
     (p) => Parameter(
       (b) {
         b
           ..name = p.getSafeName()
           ..named = true
-          ..toThis = true
+          ..toThis = toThis
           ..required = p.isRequired || p.isPositional
           ..defaultTo = p.defaultCode;
-        if (p.hasRequired && !p.isRequired)
-          b.annotations.add(requiredAnnotation);
+        if (!toThis)
+          b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
       },
     ),
   );

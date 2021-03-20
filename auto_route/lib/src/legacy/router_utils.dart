@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 // returns an error page routes with a helper message.
@@ -68,35 +65,35 @@ PageRoute misTypedArgsRoute<T>(Object args) {
   );
 }
 
-PageRoute<T> buildAdaptivePageRoute<T>({
-  required WidgetBuilder builder,
-  required RouteSettings settings,
-  bool maintainState = true,
-  bool fullscreenDialog = false,
-  String? cupertinoTitle,
-}) {
-  // no transitions for web
-  if (kIsWeb) {
-    return PageRouteBuilder(
-      pageBuilder: (ctx, _, __) => builder(ctx),
-      settings: settings,
-      maintainState: maintainState,
-      fullscreenDialog: fullscreenDialog,
-    );
-  } else if (Platform.isIOS || Platform.isMacOS) {
-    return CupertinoPageRoute<T>(
-      builder: builder,
-      settings: settings,
-      maintainState: maintainState,
-      fullscreenDialog: fullscreenDialog,
-      title: cupertinoTitle,
-    );
-  } else {
-    return MaterialPageRoute<T>(
-      builder: builder,
-      settings: settings,
-      maintainState: maintainState,
-      fullscreenDialog: fullscreenDialog,
-    );
-  }
-}
+// PageRoute<T> buildAdaptivePageRoute<T>({
+//   required WidgetBuilder builder,
+//   required RouteSettings settings,
+//   bool maintainState = true,
+//   bool fullscreenDialog = false,
+//   String? cupertinoTitle,
+// }) {
+//   // no transitions for web
+//   if (kIsWeb) {
+//     return PageRouteBuilder(
+//       pageBuilder: (ctx, _, __) => builder(ctx),
+//       settings: settings,
+//       maintainState: maintainState,
+//       fullscreenDialog: fullscreenDialog,
+//     );
+//   } else if (Platform.isIOS || Platform.isMacOS) {
+//     return CupertinoPageRoute<T>(
+//       builder: builder,
+//       settings: settings,
+//       maintainState: maintainState,
+//       fullscreenDialog: fullscreenDialog,
+//       title: cupertinoTitle,
+//     );
+//   } else {
+//     return MaterialPageRoute<T>(
+//       builder: builder,
+//       settings: settings,
+//       maintainState: maintainState,
+//       fullscreenDialog: fullscreenDialog,
+//     );
+//   }
+// }
