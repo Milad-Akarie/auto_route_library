@@ -120,6 +120,7 @@ class FunctionParamConfig extends ParamConfig {
           isPathParam: false,
           isQueryParam: false,
           isNamed: isNamed,
+          defaultValueCode: defaultValueCode,
           element: element,
           isPositional: isPositional,
           hasRequired: hasRequired,

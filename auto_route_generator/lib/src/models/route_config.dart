@@ -230,7 +230,7 @@ class RouteConfig {
     }
   }
 
-  bool get hasRequiredArgs => parameters.any((p) =>
+  bool get hasUnparsableRequiredArags => parameters.any((p) =>
       (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
 }
 

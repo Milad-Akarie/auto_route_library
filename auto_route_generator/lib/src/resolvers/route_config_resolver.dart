@@ -166,20 +166,32 @@ class RouteConfigResolver {
       }
     }
 
-    ClassElement pageClass = page.element as ClassElement;
-    if (pathParams.isNotEmpty == true) {
-      var pathParamCandidates =
-          parameters.where((p) => p.isPathParam).map((e) => e.paramName);
-      for (var pParam in pathParams) {
-        throwIf(!pathParamCandidates.contains(pParam.name),
-            '$className does not have a constructor parameter (annotated with @PathParam()) with an alias/name [${pParam.name}]',
-            element: pageClass.unnamedConstructor);
-        var param = parameters.firstWhere((e) => e.paramName == pParam.name);
-        throwIf(!validPathParamTypes.contains(param.type.name),
-            "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
-            element: param.element);
+    var pathParameters = parameters.where((element) => element.isPathParam);
+
+    if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
+      var unParsableRequiredArgs = parameters.where((p) =>
+          (p.isRequired || p.isPositional) &&
+          !p.isPathParam &&
+          !p.isQueryParam);
+      if (unParsableRequiredArgs.isNotEmpty) {
+        print(
+            '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
+            'that can not be parsed from path,\n@PathParam() and @QueryParam() annotations will be ignored.\n');
       }
     }
+
+    if (pathParameters.isNotEmpty) {
+      for (var pParam in pathParameters) {
+        throwIf(!validPathParamTypes.contains(pParam.type.name),
+            "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
+            element: pParam.element);
+      }
+    }
+
+    throwIf(
+      routeType == RouteType.adaptive && _routerConfig.usesLegacyGenerator,
+      'AdaptiveRoute is not longer supported in legacy mode',
+    );
 
     return RouteConfig(
       className: className,

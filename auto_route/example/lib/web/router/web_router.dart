@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/web/router/web_router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-@CustomAutoRouter(
+@MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     AutoRoute(path: '/', page: HomePage),
@@ -24,9 +25,20 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          'HomePage',
-          style: TextStyle(fontSize: 30),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'HomePage',
+              style: TextStyle(fontSize: 30),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.router.push(UserRoute(id: 1));
+              },
+              child: Text('Navigate to user/1'),
+            )
+          ],
         ),
       ),
     );
@@ -36,10 +48,12 @@ class HomePage extends StatelessWidget {
 class UserProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final pathParams = context.routeData.parent?.pathParams;
+
     return Scaffold(
       body: Center(
         child: Text(
-          'User Profile',
+          'User Profile : ${pathParams?.optInt('userID')}',
           style: TextStyle(fontSize: 30),
         ),
       ),
@@ -64,9 +78,9 @@ class UserPostsPage extends StatelessWidget {
 class UserPage extends StatelessWidget {
   final int id;
 
-  const UserPage({
+  UserPage({
     Key? key,
-    @PathParam('userID') this.id = 1,
+    @PathParam('userID') this.id = -1,
   }) : super(key: key);
 
   @override

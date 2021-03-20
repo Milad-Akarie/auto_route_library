@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 
 class Parameters {
   final Map<String, dynamic> _params;
@@ -34,8 +35,14 @@ class Parameters {
   String? optString(String key, [String? defaultValue]) =>
       _params[key] ?? defaultValue;
 
-  String getString(String key, [String? defaultValue]) =>
-      _params[key] ?? defaultValue;
+  String getString(String key, [String? defaultValue]) {
+    var val = _params[key] ?? defaultValue;
+    if (val == null) {
+      throw FlutterError(
+          'Failed to parse [String] $key value from ${_params[key]}');
+    }
+    return val;
+  }
 
   int? optInt(String key, [int? defaultValue]) {
     var param = _params[key];
@@ -48,7 +55,14 @@ class Parameters {
     }
   }
 
-  int getInt(String key, [int? defaultValue]) => optInt(key, defaultValue)!;
+  int getInt(String key, [int? defaultValue]) {
+    var val = optInt(key, defaultValue);
+    if (val == null) {
+      throw FlutterError(
+          'Failed to parse [int] $key value from ${_params[key]}');
+    }
+    return val;
+  }
 
   double? optDouble(String key, [double? defaultValue]) {
     var param = _params[key];
@@ -61,8 +75,14 @@ class Parameters {
     }
   }
 
-  double getDouble(String key, [double? defaultValue]) =>
-      optDouble(key, defaultValue)!;
+  double getDouble(String key, [double? defaultValue]) {
+    var val = optDouble(key, defaultValue);
+    if (val == null) {
+      throw FlutterError(
+          'Failed to parse [double] $key value from ${_params[key]}');
+    }
+    return val;
+  }
 
   num? optNum(String key, [num? defaultValue]) {
     var param = _params[key];
@@ -75,7 +95,14 @@ class Parameters {
     }
   }
 
-  num getNum(String key, [num? defaultValue]) => optNum(key, defaultValue)!;
+  num getNum(String key, [num? defaultValue]) {
+    var val = optNum(key, defaultValue);
+    if (val == null) {
+      throw FlutterError(
+          'Failed to parse [num] $key value from ${_params[key]}');
+    }
+    return val;
+  }
 
   bool? optBool(String key, [bool? defaultValue]) {
     switch (_params[key]?.toLowerCase()) {
@@ -88,5 +115,12 @@ class Parameters {
     }
   }
 
-  bool getBool(String key, [bool? defaultValue]) => optBool(key, defaultValue)!;
+  bool getBool(String key, [bool? defaultValue]) {
+    var val = optBool(key, defaultValue);
+    if (val == null) {
+      throw FlutterError(
+          'Failed to parse [bool] $key value from ${_params[key]}');
+    }
+    return val;
+  }
 }

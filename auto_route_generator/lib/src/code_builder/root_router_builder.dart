@@ -74,21 +74,35 @@ Method buildMethod(RouteConfig r) {
       )
       ..body = Block(
         (b) => b.statements.addAll([
+          if (!r.hasUnparsableRequiredArags &&
+              r.parameters.any((p) => p.isPathParam))
+            refer('entry')
+                .property('routeData')
+                .property('pathParams')
+                .assignVar('pathParams')
+                .statement,
+          if (!r.hasUnparsableRequiredArags &&
+              r.parameters.any((p) => p.isQueryParam))
+            refer('entry')
+                .property('routeData')
+                .property('queryParams')
+                .assignVar('queryParams')
+                .statement,
           if (r.parameters.isNotEmpty)
             refer('entry')
                 .property('routeData')
                 .property('argsAs')
                 .call([], {
-                  if (!r.hasRequiredArgs)
+                  if (!r.hasUnparsableRequiredArags)
                     'orElse': Method(
                       (b) => b.body = refer('${r.routeName}Args').newInstance(
                         [],
                         Map.fromEntries(r.parameters
-                            .where((p) => p.isRequired || p.isPositional)
+                            .where((p) => p.isPathParam || p.isQueryParam)
                             .map(
                               (p) => MapEntry(
                                 p.name,
-                                refer('null'),
+                                getUrlParamAssignment(p),
                               ),
                             )),
                       ).code,
@@ -98,18 +112,6 @@ Method buildMethod(RouteConfig r) {
                 ])
                 .assignVar('args')
                 .statement,
-          if (r.parameters.any((p) => p.isPathParam))
-            refer('entry')
-                .property('routeData')
-                .property('pathParams')
-                .assignVar('pathParams')
-                .statement,
-          if (r.parameters.any((p) => p.isQueryParam))
-            refer('entry')
-                .property('routeData')
-                .property('queryParams')
-                .assignVar('queryParams')
-                .statement,
           refer(r.pageTypeName, autoRouteImport)
               .newInstance(
                 [],
@@ -118,18 +120,19 @@ Method buildMethod(RouteConfig r) {
                   'child': r.hasConstConstructor
                       ? r.pageType!.refer.constInstance([])
                       : r.pageType!.refer.newInstance(
-                          r.positionalParams.map(getParamAssignment),
+                          r.positionalParams
+                              .map((p) => refer('args').property(p.name)),
                           Map.fromEntries(r.namedParams.map(
                             (p) => MapEntry(
                               p.name,
-                              getParamAssignment(p),
+                              refer('args').property(p.name),
                             ),
                           )),
                         ),
-                  if (r.maintainState != null)
-                    'maintainState': literalBool(r.maintainState),
-                  if (r.fullscreenDialog != null)
-                    'fullscreenDialog': literalBool(r.fullscreenDialog),
+                  if (r.maintainState == false)
+                    'maintainState': literalBool(false),
+                  if (r.fullscreenDialog == true)
+                    'fullscreenDialog': literalBool(true),
                   if ((r.routeType == RouteType.cupertino ||
                           r.routeType == RouteType.adaptive) &&
                       r.cupertinoNavTitle != null)
@@ -162,20 +165,18 @@ Method buildMethod(RouteConfig r) {
   );
 }
 
-Expression getParamAssignment(ParamConfig p) {
-  var getter = refer('args').property(p.name);
+Expression getUrlParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
     return refer('pathParams').property(p.getterMethodName).call([
       literalString(p.paramName),
-      getter,
+      if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
-  } else if (p.isQueryParam) {
+  } else {
     return refer('queryParams').property(p.getterMethodName).call([
       literalString(p.paramName),
-      getter,
+      if (p.defaultValueCode != null) refer(p.defaultValueCode),
     ]);
   }
-  return getter;
 }
 
 Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
@@ -190,9 +191,8 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
           {
             'path': literalString(r.pathName),
             if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo),
-            if (r.fullMatch != null) 'fullMatch': literalBool(r.fullMatch),
-            if (r.usesTabsRouter != null)
-              'usesTabsRouter': literalBool(r.usesTabsRouter),
+            if (r.fullMatch == true) 'fullMatch': literalBool(true),
+            if (r.usesTabsRouter == true) 'usesTabsRouter': literalBool(true),
             if (r.guards.isNotEmpty)
               'guards': literalList(r.guards
                   .map(

@@ -12,7 +12,7 @@ import '../../utils.dart';
 
 typedef RouteDataPredicate = bool Function(RouteData route);
 
-abstract class RoutingController implements ChangeNotifier {
+abstract class RoutingController {
   ValueKey<String> get key;
 
   RouteMatcher get matcher;
@@ -45,7 +45,7 @@ abstract class RoutingController implements ChangeNotifier {
   Future<bool> pop();
 }
 
-abstract class TabsRouter extends RoutingController {
+abstract class TabsRouter extends RoutingController with ChangeNotifier {
   void setActiveIndex(int index);
 
   StackRouter? stackRouterOfIndex(int index);
@@ -55,7 +55,7 @@ abstract class TabsRouter extends RoutingController {
   void setupRoutes(List<PageRouteInfo> routes);
 }
 
-abstract class StackRouter extends RoutingController {
+abstract class StackRouter extends RoutingController with ChangeNotifier {
   Future<void> push(PageRouteInfo route, {OnNavigationFailure? onFailure});
 
   Future<void> navigate(PageRouteInfo route, {OnNavigationFailure? onFailure});
@@ -170,7 +170,9 @@ class ParallelBranchEntry extends ChangeNotifier
   //   setupRoutes(routes);
   // }
 
-  T parent<T extends RoutingController>() => parent as T;
+  T? parent<T extends RoutingController>() {
+    return parentController == null ? null : parentController as T;
+  }
 
   @override
   RouteData? get current {
@@ -352,12 +354,16 @@ class BranchEntry extends ChangeNotifier
 
   StackRouter get root => parentController?.root ?? this;
 
-  T? parent<T extends RoutingController>() => parentController as T;
+  T? parent<T extends RoutingController>() {
+    return parentController == null ? null : parentController as T;
+  }
 
   @override
   RouteData? get current {
     if (_pages.isNotEmpty) {
       return _pages.last.routeData;
+    } else if (parentController != null) {
+      return parentController?.current;
     }
     return null;
   }

@@ -1,4 +1,9 @@
 # ChangeLog
+## [1.0.2]
+- Pomp up versions of build, build_runner, dart_style and source_gen
+- Using pathParam annotation is not more flexible and has less constrains
+- Remove dart:io import to include (web) as a supported platform
+- other fixes
 ## [1.0.1]
 - Fix Stack overflow in RootStackRouter popUntilRoot() #401
 - Fix path parameters are assigned an undefined var when alias is different than param name.

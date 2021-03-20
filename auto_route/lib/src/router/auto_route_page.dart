@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/entry_scope.dart';
 import 'package:auto_route/src/route/route_data.dart';
@@ -172,7 +170,8 @@ class AdaptivePage extends _TitledAutoRoutePage {
       );
     }
 
-    if (Platform.isIOS || Platform.isMacOS) {
+    final platform = Theme.of(context).platform;
+    if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {
       return _PageBasedCupertinoPageRoute(page: this);
     }
     return _PageBasedMaterialPageRoute(page: this);

@@ -25,7 +25,7 @@ class RouteParameterResolver {
     if (isPathParam) {
       paramAlias = _pathParamChecker
           .firstAnnotationOf(parameterElement)
-          .getField('name')
+          ?.getField('name')
           ?.toStringValue();
     }
     var isQueryParam =
@@ -33,17 +33,17 @@ class RouteParameterResolver {
     if (isQueryParam) {
       paramAlias = _queryParamChecker
           .firstAnnotationOf(parameterElement)
-          .getField('name')
+          ?.getField('name')
           ?.toStringValue();
     }
 
-    if (isPathParam || isQueryParam) {
-      throwIf(
-        ((!type.isNullable && parameterElement.defaultValueCode == null)),
-        'Path/Query parameters must be nullable or have a default value',
-        element: parameterElement,
-      );
-    }
+    // if (isPathParam || isQueryParam) {
+    //   throwIf(
+    //     ((!type.isNullable && parameterElement.defaultValueCode == null)),
+    //     'Path/Query parameters must be nullable or have a default value',
+    //     element: parameterElement,
+    //   );
+    // }
 
     return ParamConfig(
       type: type,
@@ -69,6 +69,7 @@ class RouteParameterResolver {
         params: type.parameters.map(resolve).toList(),
         element: paramElement,
         name: paramElement.name,
+        defaultValueCode: paramElement.defaultValueCode,
         isRequired: paramElement.isRequiredNamed,
         isPositional: paramElement.isPositional,
         hasRequired: paramElement.hasRequired,

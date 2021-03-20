@@ -28,13 +28,9 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   }
 
   @override
-  Future<bool> popRoute() {
-    return controller.topMost.pop();
-  }
+  Future<bool> popRoute() => controller.topMost.pop();
 
-  void notify() {
-    notifyListeners();
-  }
+  void notify() => notifyListeners();
 
   RootRouterDelegate(
     this.controller, {
@@ -55,6 +51,7 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     if (route == null) {
       return null;
     }
+
     return route.breadcrumbs.map((e) => e.route).toList(growable: false);
   }
 
@@ -123,13 +120,8 @@ class AutoRouteNavigator extends StatelessWidget {
         key: router.navigatorKey,
         observers: navigatorObservers,
         restorationScopeId: navRestorationScopeId,
-        pages: router.hasEntries
-            ? router.stack
-            : [
-                _PlaceHolderPage(
-                  placeholder,
-                )
-              ],
+        pages:
+            router.hasEntries ? router.stack : [_PlaceHolderPage(placeholder)],
         transitionDelegate: _CustomTransitionDelegate(),
         onPopPage: (route, result) {
           if (!route.didPop(result)) {
