@@ -249,9 +249,10 @@ class ParallelBranchEntry extends ChangeNotifier
         (r) => r.routeName == preMatchedRoute.routeName,
       );
       if (correspondingRouteIndex != -1) {
+        final currentRoute = routes[correspondingRouteIndex];
         routesToPush
           ..removeAt(correspondingRouteIndex)
-          ..insert(correspondingRouteIndex, preMatchedRoute);
+          ..insert(correspondingRouteIndex, preMatchedRoute.copy(args: currentRoute.args));
         _activeIndex = correspondingRouteIndex;
       }
     }

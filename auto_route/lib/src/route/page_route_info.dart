@@ -66,7 +66,24 @@ class PageRouteInfo<T> {
         params = match.pathParams.rawMap,
         queryParams = match.queryParams.rawMap,
         initialChildren =
-            match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList();
+        match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList();
+
+  PageRouteInfo copy({
+    String? name,
+    String? path,
+    T? args,
+    RouteMatch? match,
+    Map<String, dynamic>? params,
+    Map<String, dynamic>? queryParams,
+    List<PageRouteInfo>? initialChildren}) =>
+      PageRouteInfo(
+          name ?? this._name,
+          path: path ?? this.path,
+          args: args ?? this.args,
+          match: match ?? this.match,
+          params: params ?? this.params,
+          queryParams: queryParams ?? this.queryParams
+      );
 
 // maybe?
   Future<void> show(BuildContext context) {
