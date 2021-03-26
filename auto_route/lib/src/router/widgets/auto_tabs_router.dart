@@ -11,24 +11,28 @@ import '../controller/routing_controller.dart';
 typedef AnimatedIndexedStackBuilder = Widget Function(
     BuildContext context, Widget child, Animation<double> animation);
 
-class AutoTabsRouter extends StatefulWidget {
-  final AnimatedIndexedStackBuilder? builder;
-  final List<PageRouteInfo> routes;
-  final Duration duration;
-  final Curve curve;
-  final bool lazyLoad;
+typedef PageViewBuilder = Widget Function(
+    BuildContext context, List<Widget> children, TabsRouter controller);
 
-  const AutoTabsRouter({
+abstract class AutoTabsRouter extends Widget {
+  List<PageRouteInfo> get routes;
+
+  factory AutoTabsRouter({
     Key? key,
-    required this.routes,
-    this.lazyLoad = true,
-    this.duration = const Duration(milliseconds: 300),
-    this.curve = Curves.ease,
-    this.builder,
-  }) : super(key: key);
+    required List<PageRouteInfo> routes,
+    bool lazyLoad,
+    Duration duration,
+    Curve curve,
+    AnimatedIndexedStackBuilder? builder,
+  }) = _AutoTabsRouterStack;
 
-  @override
-  AutoTabsRouterState createState() => AutoTabsRouterState();
+  factory AutoTabsRouter.pageView({
+    Key? key,
+    required List<PageRouteInfo> routes,
+    required PageController pageController,
+    PageViewBuilder builder,
+    int initialIndex,
+  }) = _AutoTabsRouterPageView;
 
   static TabsRouter of(BuildContext context) {
     var scope = TabsRouterScope.of(context);
@@ -45,7 +49,123 @@ class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter>
+class _AutoTabsRouterStack extends StatefulWidget implements AutoTabsRouter {
+  final AnimatedIndexedStackBuilder? builder;
+  final List<PageRouteInfo> routes;
+  final Duration duration;
+  final Curve curve;
+  final bool lazyLoad;
+
+  const _AutoTabsRouterStack({
+    Key? key,
+    required this.routes,
+    this.lazyLoad = true,
+    this.duration = const Duration(milliseconds: 300),
+    this.curve = Curves.ease,
+    this.builder,
+  }) : super(key: key);
+
+  @override
+  _AutoTabsRouterStackState createState() => _AutoTabsRouterStackState();
+}
+
+class _AutoTabsRouterPageView extends StatefulWidget implements AutoTabsRouter {
+  final List<PageRouteInfo> routes;
+  final PageViewBuilder builder;
+  final PageController pageController;
+  final int initialIndex;
+
+  _AutoTabsRouterPageView({
+    Key? key,
+    required this.routes,
+    required this.pageController,
+    this.builder = _defaultBuilder,
+    this.initialIndex = 0,
+  }) : super(key: key);
+
+  static Widget _defaultBuilder(_, child, animation) {
+    return FadeTransition(opacity: animation, child: child);
+  }
+
+  @override
+  _AutoTabsRouterPageViewState createState() => _AutoTabsRouterPageViewState();
+}
+
+class _AutoTabsRouterPageViewState extends State<_AutoTabsRouterPageView> {
+  late TabsRouter _controller;
+  late int _index;
+
+  TabsRouter get controller => _controller;
+
+  @override
+  void initState() {
+    _index = widget.initialIndex;
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final entry = StackEntryScope.of(context);
+
+    _controller = entry as TabsRouter;
+    _index = _controller.activeIndex;
+    _resetController();
+  }
+
+  void _resetController() {
+    _controller.setupRoutes(widget.routes);
+
+    final rootDelegate = RootRouterDelegate.of(context);
+
+    _controller.addListener(() {
+      if (_controller.activeIndex != _index) {
+        widget.pageController.jumpToPage(_controller.activeIndex);
+
+        setState(() {
+          _index = _controller.activeIndex;
+        });
+
+        rootDelegate.notify();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _controller.setupRoutes(widget.routes);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final stack = _controller.stack;
+
+    return RoutingControllerScope(
+      controller: _controller,
+      child: TabsRouterScope(
+        controller: _controller,
+        child: Builder(
+          builder: (context) {
+            return widget.builder(
+              context,
+              stack.map((item) => item.wrappedChild(context)).toList(),
+              _controller,
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _AutoTabsRouterStackState extends State<_AutoTabsRouterStack>
     with SingleTickerProviderStateMixin {
   TabsRouter? _controller;
   late AnimationController _animationController;
@@ -106,7 +226,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   }
 
   @override
-  void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
+  void didUpdateWidget(covariant _AutoTabsRouterStack oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller?.setupRoutes(widget.routes);
