@@ -1,4 +1,7 @@
 # ChangeLog
+## [1.0.3]
+- Added a `pageView` builder to `AutoTabsRouter` that allows the user to use a `PageView` with tabs for traditional sliding tabs.
+- Default example now uses `pageView` factory consturctor. Old example is commented out.
 ## [1.0.2]
 - Pomp up versions of build, build_runner, dart_style and source_gen
 - Using pathParam annotation is not more flexible and has less constrains
