@@ -24,7 +24,7 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
   Widget build(context) {
     var settingsState = context.watch<SettingsState>();
-    return AutoRouter.declarative(onGenerateRoutes: (_, __) {
+    return AutoRouter.declarative(routes: (_) {
       return [
         if (settingsState.userData.favoriteBook == null)
           SingleFieldRoute(

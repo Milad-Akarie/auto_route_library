@@ -13,7 +13,13 @@ import 'package:flutter/material.dart';
       children: [
         RedirectRoute(path: '', redirectTo: 'profile'),
         AutoRoute(path: 'profile', page: UserProfilePage),
-        AutoRoute(path: 'posts', page: UserPostsPage),
+        AutoRoute(path: 'posts', page: UserPostsPage, children: [
+          AutoRoute(
+            path: 'post-profile',
+            name: 'PostsProfilePage',
+            page: UserProfilePage,
+          ),
+        ]),
       ],
     ),
   ],
@@ -34,7 +40,7 @@ class HomePage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                context.router.push(UserRoute(id: 1));
+                context.pushRoute(UserRoute(id: 1));
               },
               child: Text('Navigate to user/1'),
             )

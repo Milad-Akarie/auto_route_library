@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
 
-typedef AnimatedIndexedStackBuilder = Widget Function(
-    BuildContext context, Widget child, Animation<double> animation);
+typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child, Animation<double> animation);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder? builder;
@@ -17,11 +16,13 @@ class AutoTabsRouter extends StatefulWidget {
   final Duration duration;
   final Curve curve;
   final bool lazyLoad;
+  final int initialIndex;
 
   const AutoTabsRouter({
     Key? key,
     required this.routes,
     this.lazyLoad = true,
+    this.initialIndex = -1,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
@@ -45,8 +46,7 @@ class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter>
-    with SingleTickerProviderStateMixin {
+class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProviderStateMixin {
   TabsRouter? _controller;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -75,7 +75,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
     if (_controller == null) {
       var entry = StackEntryScope.of(context);
 
-      assert(entry is RoutingController);
+      assert(entry is TabsRouter);
       _controller = entry as TabsRouter;
       _resetController();
     }
@@ -83,16 +83,17 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
 
   void _resetController() {
     assert(_controller != null);
-    _controller!.setupRoutes(widget.routes);
+    _controller!.setupRoutes(widget.routes, initialIndex: widget.initialIndex);
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
-    var rootDelegate = RootRouterDelegate.of(context);
+    var rootDelegate = AutoRouterDelegate.of(context);
     _controller!.addListener(() {
+      print("notifying listener $_controller");
       if (_controller!.activeIndex != _index) {
         setState(() {
           _index = _controller!.activeIndex;
         });
-        rootDelegate.notify();
+        rootDelegate.notify(_controller!);
         _animationController.forward(from: 0.0);
       }
     });
@@ -109,7 +110,6 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller?.setupRoutes(widget.routes);
       _resetController();
     }
   }
@@ -137,8 +137,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
           controller: _controller!,
           child: AnimatedBuilder(
             animation: _animation,
-            builder: (context, child) =>
-                builder(context, child ?? builderChild, _animation),
+            builder: (context, child) => builder(context, child ?? builderChild, _animation),
             child: builderChild,
           )),
     );
@@ -191,8 +190,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
-      _pages[widget.activeIndex] =
-          widget.itemBuilder(context, widget.activeIndex);
+      _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
     }
   }
 

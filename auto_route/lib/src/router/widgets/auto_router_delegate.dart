@@ -6,9 +6,13 @@ import 'package:flutter/material.dart';
 
 import '../../utils.dart';
 import '../controller/routing_controller.dart';
+import 'auto_route_navigator.dart';
 
-class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
-    with ChangeNotifier {
+typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
+typedef RoutePopCallBack = void Function(PageRouteInfo route);
+typedef PreMatchedRoutesCallBack = void Function(List<PageRouteInfo> routes);
+
+class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with ChangeNotifier {
   final List<PageRouteInfo>? initialRoutes;
   final GlobalKey<NavigatorState> navigatorKey;
   final StackRouter controller;
@@ -21,18 +25,33 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
   /// an empty page with [Theme.scaffoldBackgroundColor].
   WidgetBuilder? placeholder;
 
-  static RootRouterDelegate of(BuildContext context) {
+  static AutoRouterDelegate of(BuildContext context) {
     final delegate = Router.of(context).routerDelegate;
-    assert(delegate is RootRouterDelegate);
-    return delegate as RootRouterDelegate;
+    assert(delegate is AutoRouterDelegate);
+    return delegate as AutoRouterDelegate;
   }
 
   @override
   Future<bool> popRoute() => controller.topMost.pop();
 
-  void notify() => notifyListeners();
+  void notify(RoutingController notifier) {
+    notifyListeners();
+    _notifyTree(controller, notifier);
+  }
 
-  RootRouterDelegate(
+  void _notifyTree(RoutingController controller, RoutingController notifier) {
+    for (var page in controller.stack) {
+      if (page.hasInnerRouter) {
+        var innerController = (page.entry as RoutingController);
+        if (innerController != notifier) {
+          innerController.notifyListeners();
+          _notifyTree(innerController, notifier);
+        }
+      }
+    }
+  }
+
+  AutoRouterDelegate(
     this.controller, {
     this.initialRoutes,
     this.placeholder,
@@ -45,13 +64,25 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     controller.addListener(notifyListeners);
   }
 
+  factory AutoRouterDelegate.declarative(
+    StackRouter controller, {
+    GlobalKey<NavigatorState>? navigatorKey,
+    required RoutesBuilder routes,
+    String? navRestorationScopeId,
+    RoutePopCallBack? onPopRoute,
+    PreMatchedRoutesCallBack? onInitialRoutes,
+    List<NavigatorObserver>? navigatorObservers,
+  }) = _DeclarativeAutoRouterDelegate;
+
   @override
   List<PageRouteInfo>? get currentConfiguration {
+    print('getting current config');
     var route = controller.topMost.current;
     if (route == null) {
       return null;
     }
-
+    // print(controller.currentConfig.map((e) => e.routeName));
+    // return controller.currentConfig;
     return route.breadcrumbs.map((e) => e.route).toList(growable: false);
   }
 
@@ -88,147 +119,55 @@ class RootRouterDelegate extends RouterDelegate<List<PageRouteInfo>>
     return RoutingControllerScope(
       controller: controller,
       child: StackRouterScope(
-          controller: controller,
-          child: AutoRouteNavigator(
-            router: controller,
-            placeholder: placeholder,
-            navRestorationScopeId: navRestorationScopeId,
-            navigatorObservers: navigatorObservers,
-          )),
+        controller: controller,
+        child: AutoRouteNavigator(
+          router: controller,
+          placeholder: placeholder,
+          navRestorationScopeId: navRestorationScopeId,
+          navigatorObservers: navigatorObservers,
+        ),
+      ),
     );
   }
 }
 
-class AutoRouteNavigator extends StatelessWidget {
-  final StackRouter router;
-  final String? navRestorationScopeId;
-  final WidgetBuilder? placeholder;
-  final List<NavigatorObserver> navigatorObservers;
-  final void Function(Route route)? didPop;
+class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
+  final RoutesBuilder routes;
+  final RoutePopCallBack? onPopRoute;
+  final PreMatchedRoutesCallBack? onInitialRoutes;
 
-  const AutoRouteNavigator({
-    required this.router,
-    required this.navigatorObservers,
-    this.navRestorationScopeId,
-    this.didPop,
-    this.placeholder,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => Navigator(
-        key: router.navigatorKey,
-        observers: navigatorObservers,
-        restorationScopeId: navRestorationScopeId,
-        pages:
-            router.hasEntries ? router.stack : [_PlaceHolderPage(placeholder)],
-        transitionDelegate: _CustomTransitionDelegate(),
-        onPopPage: (route, result) {
-          if (!route.didPop(result)) {
-            return false;
-          }
-          router.removeLast();
-          didPop?.call(route);
-          return true;
-        },
-      );
-}
-
-class _PlaceHolderPage extends Page {
-  final WidgetBuilder? placeholder;
-
-  const _PlaceHolderPage(this.placeholder)
-      : super(key: const ValueKey('_placeHolder_'));
+  _DeclarativeAutoRouterDelegate(
+    StackRouter controller, {
+    GlobalKey<NavigatorState>? navigatorKey,
+    required this.routes,
+    String? navRestorationScopeId,
+    this.onPopRoute,
+    this.onInitialRoutes,
+    List<NavigatorObserver>? navigatorObservers,
+  }) : super(
+          controller,
+          navigatorKey: navigatorKey,
+          navRestorationScopeId: navRestorationScopeId,
+          navigatorObservers: navigatorObservers ?? const [],
+        );
 
   @override
-  Route createRoute(BuildContext context) {
-    return PageRouteBuilder(
-      settings: this,
-      pageBuilder: (context, __, ___) {
-        return placeholder != null
-            ? placeholder!(context)
-            : Container(
-                color: Theme.of(context).scaffoldBackgroundColor,
-              );
-      },
-    );
+  Future<void> setInitialRoutePath(List<PageRouteInfo> routes) {
+    onInitialRoutes?.call(routes);
+    return SynchronousFuture(null);
   }
-}
-
-class _CustomTransitionDelegate<T> extends TransitionDelegate<T> {
-  const _CustomTransitionDelegate() : super();
 
   @override
-  Iterable<RouteTransitionRecord> resolve({
-    required List<RouteTransitionRecord> newPageRouteHistory,
-    required Map<RouteTransitionRecord?, RouteTransitionRecord>
-        locationToExitingPageRoute,
-    required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
-        pageRouteToPagelessRoutes,
-  }) {
-    final List<RouteTransitionRecord> results = <RouteTransitionRecord>[];
-    // This method will handle the exiting route and its corresponding pageless
-    // route at this location. It will also recursively check if there is any
-    // other exiting routes above it and handle them accordingly.
-    void handleExitingRoute(RouteTransitionRecord? location, bool isLast) {
-      final RouteTransitionRecord? exitingPageRoute =
-          locationToExitingPageRoute[location];
-      if (exitingPageRoute == null) return;
-      if (exitingPageRoute.isWaitingForExitingDecision) {
-        final bool hasPagelessRoute =
-            pageRouteToPagelessRoutes.containsKey(exitingPageRoute);
-        final bool isLastExitingPageRoute =
-            isLast && !locationToExitingPageRoute.containsKey(exitingPageRoute);
-        if (isLastExitingPageRoute && !hasPagelessRoute) {
-          exitingPageRoute.markForPop(exitingPageRoute.route.currentResult);
-        } else {
-          exitingPageRoute
-              .markForComplete(exitingPageRoute.route.currentResult);
-        }
-        if (hasPagelessRoute) {
-          final List<RouteTransitionRecord> pagelessRoutes =
-              pageRouteToPagelessRoutes[exitingPageRoute]!;
-          for (final RouteTransitionRecord pagelessRoute in pagelessRoutes) {
-            // It is possible that a pageless route that belongs to an exiting
-            // page-based route does not require exiting decision. This can
-            // happen if the page list is updated right after a Navigator.pop.
-            if (pagelessRoute.isWaitingForExitingDecision) {
-              if (isLastExitingPageRoute &&
-                  pagelessRoute == pagelessRoutes.last) {
-                pagelessRoute.markForPop(pagelessRoute.route.currentResult);
-              } else {
-                pagelessRoute
-                    .markForComplete(pagelessRoute.route.currentResult);
-              }
-            }
-          }
-        }
-      }
-      results.add(exitingPageRoute);
-
-      // It is possible there is another exiting route above this exitingPageRoute.
-      handleExitingRoute(exitingPageRoute, isLast);
-    }
-
-    // Handles exiting route in the beginning of list.
-    handleExitingRoute(null, newPageRouteHistory.isEmpty);
-
-    for (final RouteTransitionRecord pageRoute in newPageRouteHistory) {
-      final bool isLastIteration = newPageRouteHistory.last == pageRoute;
-      final bool firstPageIsPlaceHolder = results.isNotEmpty &&
-          results.first.route.settings is _PlaceHolderPage;
-      if (pageRoute.isWaitingForEnteringDecision) {
-        if (!locationToExitingPageRoute.containsKey(pageRoute) &&
-            isLastIteration &&
-            !firstPageIsPlaceHolder) {
-          pageRoute.markForPush();
-        } else {
-          pageRoute.markForAdd();
-        }
-      }
-      results.add(pageRoute);
-      handleExitingRoute(pageRoute, isLastIteration);
-    }
-    return results;
+  Widget build(BuildContext context) {
+    controller.updateDeclarativeRoutes(routes(context));
+    return RoutingControllerScope(
+      controller: controller,
+      child: AutoRouteNavigator(
+        router: controller,
+        navRestorationScopeId: navRestorationScopeId,
+        navigatorObservers: navigatorObservers,
+        didPop: onPopRoute,
+      ),
+    );
   }
 }

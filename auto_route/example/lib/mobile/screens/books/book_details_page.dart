@@ -26,28 +26,36 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
             appBar: AppBar(
               title: Text(book.name),
             ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Book Details/${book.id}'),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 24),
-                    child: Text(
-                      'Reads  $counter',
-                      style: TextStyle(fontSize: 20),
-                    ),
+            body: Container(
+              width: double.infinity,
+              child: Hero(
+                tag: 'Hero${book.id}',
+                child: Card(
+                  margin: const EdgeInsets.all(48),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Book Details/${book.id}'),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 24),
+                        child: Text(
+                          'Reads  $counter',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      FloatingActionButton(
+                        heroTag: null,
+                        onPressed: () {
+                          setState(() {
+                            counter++;
+                          });
+                        },
+                        child: Icon(Icons.add),
+                      )
+                    ],
                   ),
-                  const SizedBox(height: 32),
-                  FloatingActionButton(
-                    onPressed: () {
-                      setState(() {
-                        counter++;
-                      });
-                    },
-                    child: Icon(Icons.add),
-                  )
-                ],
+                ),
               ),
             ),
           );

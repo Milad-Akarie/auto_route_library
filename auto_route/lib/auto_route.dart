@@ -16,3 +16,4 @@ export 'src/router/widgets/auto_router.dart';
 export 'src/router/widgets/auto_router_delegate.dart';
 export 'src/router/widgets/auto_tabs_router.dart';
 export 'src/router/widgets/auto_tabs_router.dart';
+export 'src/router/widgets/navigation_change_builder.dart';

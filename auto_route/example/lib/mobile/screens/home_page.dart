@@ -5,16 +5,34 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(_) => AutoTabsRouter(
-        routes: [BooksTab(), ProfileTab(), SettingsTab()],
-        duration: Duration(milliseconds: 400),
+        // initialIndex: 1,
+        routes: [
+          BooksTab(),
+          ProfileTab(),
+          SettingsTab(),
+        ],
         builder: (context, child, animation) {
           var tabsRouter = context.tabsRouter;
-
           return Scaffold(
-            appBar: AppBar(
-              title: Text(tabsRouter.current?.name ?? ''),
-            ),
-            body: FadeTransition(child: child, opacity: animation),
+            // appBar: PreferredSize(
+            //   preferredSize: const Size.fromHeight(kToolbarHeight),
+            //   child: NavigationChangeBuilder(
+            //       scope: tabsRouter,
+            //       // buildWhen: (router) => router == tabsRouter,
+            //       builder: (context, router) {
+            //         print('$router -> ${router.current?.name}');
+            //         return AppBar(
+            //           title: Text(router.current?.name ?? ''),
+            //           leading: router.canPop
+            //               ? IconButton(
+            //                   icon: BackButtonIcon(),
+            //                   onPressed: router.pop,
+            //                 )
+            //               : null,
+            //         );
+            //       }),
+            // ),
+            body: FadeTransition(opacity: animation, child: child),
             bottomNavigationBar: buildBottomNav(tabsRouter),
           );
         },
@@ -40,6 +58,22 @@ class HomePage extends StatelessWidget {
           label: 'Settings',
         ),
       ],
+    );
+  }
+}
+
+class WelcomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ElevatedButton(
+        onPressed: () {
+          context.pushRoute(HomeRoute(children: [
+            BooksTab(children: [BookDetailsRoute(id: 1)])
+          ]));
+        },
+        child: Text('Launch Home'),
+      ),
     );
   }
 }
