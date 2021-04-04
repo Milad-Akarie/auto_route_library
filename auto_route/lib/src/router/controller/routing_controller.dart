@@ -41,14 +41,15 @@ abstract class RoutingController with ChangeNotifier {
 
   PageBuilder get pageBuilder;
 
-  @override
-  String toString() => '${routeData?.name} Router';
-
   Future<bool> pop();
 
   bool get canPop;
 
   List<PageRouteInfo> get currentConfig;
+
+  void attachSubController(RoutingController controller);
+
+  void deAttachSubController(RoutingController controller);
 }
 
 abstract class TabsRouter extends RoutingController {
@@ -58,7 +59,7 @@ abstract class TabsRouter extends RoutingController {
 
   int get activeIndex;
 
-  void setupRoutes(List<PageRouteInfo> routes, {int initialIndex = -1});
+  void setupRoutes(List<PageRouteInfo> routes);
 
   @override
   bool operator ==(Object other) =>
@@ -167,6 +168,7 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
   final List<PageRouteInfo>? preMatchedRoutes;
   int _activeIndex = 0;
   final List<AutoRoutePage> _pages = [];
+  final List<RoutingController> _subControllers = [];
 
   ParallelBranchEntry({
     required this.routeCollection,
@@ -176,9 +178,9 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
     this.parentController,
     this.preMatchedRoutes,
   }) : matcher = RouteMatcher(routeCollection) {
-    // if (parentController != null) {
-    //   addListener(parentController!.notifyListeners);
-    // }
+    if (parentController != null) {
+      addListener(parentController!.notifyListeners);
+    }
   }
 
   @override
@@ -194,7 +196,7 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
     if (_activeIndex < _pages.length) {
       return _pages[_activeIndex].routeData;
     } else {
-      return null;
+      return routeData;
     }
   }
 
@@ -254,7 +256,7 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
   }
 
   @override
-  void setupRoutes(List<PageRouteInfo> routes, {int initialIndex = -1}) {
+  void setupRoutes(List<PageRouteInfo> routes) {
     final routesToPush = List.of(routes);
     if (preMatchedRoutes?.isNotEmpty == true) {
       final preMatchedRoute = preMatchedRoutes!.last;
@@ -267,9 +269,6 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
           ..insert(correspondingRouteIndex, preMatchedRoute);
         _activeIndex = correspondingRouteIndex;
       }
-    }
-    if (initialIndex != -1) {
-      _activeIndex = initialIndex;
     }
     if (routesToPush.isNotEmpty) {
       _pushAll(routesToPush);
@@ -346,12 +345,23 @@ class ParallelBranchEntry extends ChangeNotifier implements StackEntryItem, Tabs
     }
     return routes;
   }
+
+  @override
+  void attachSubController(RoutingController controller) {
+    _subControllers.add(controller);
+  }
+
+  @override
+  void deAttachSubController(RoutingController controller) {
+    _subControllers.remove(controller);
+  }
 }
 
 class SubBranchEntry extends BranchEntry {
   final RouteMatcher matcher;
   final RouteCollection routeCollection;
   final PageBuilder pageBuilder;
+
   SubBranchEntry({
     required this.routeCollection,
     required this.pageBuilder,
@@ -378,6 +388,7 @@ abstract class BranchEntry extends ChangeNotifier implements StackEntryItem, Sta
   final GlobalKey<NavigatorState> navigatorKey;
   final List<PageRouteInfo>? preMatchedRoutes;
   final List<AutoRoutePage> _pages = [];
+  final List<RoutingController> _subControllers = [];
 
   BranchEntry({
     required this.key,
@@ -385,9 +396,19 @@ abstract class BranchEntry extends ChangeNotifier implements StackEntryItem, Sta
     this.parentController,
     this.preMatchedRoutes,
   }) : navigatorKey = GlobalKey<NavigatorState>() {
-    // if (parentController != null) {
-    //   addListener(parentController!.notifyListeners);
-    // }
+    if (parentController != null) {
+      addListener(parentController!.notifyListeners);
+    }
+  }
+
+  @override
+  void attachSubController(RoutingController controller) {
+    _subControllers.add(controller);
+  }
+
+  @override
+  void deAttachSubController(RoutingController controller) {
+    _subControllers.remove(controller);
   }
 
   RouteCollection get routeCollection;
@@ -437,10 +458,11 @@ abstract class BranchEntry extends ChangeNotifier implements StackEntryItem, Sta
   RouteData? get current {
     if (_pages.isNotEmpty) {
       return _pages.last.routeData;
-    } else if (parentController != null) {
-      return parentController?.current;
     }
-    return null;
+    // if (parentController is TabsRouter) {
+    //   return null;
+    // }
+    return routeData;
   }
 
   @override
@@ -533,7 +555,7 @@ abstract class BranchEntry extends ChangeNotifier implements StackEntryItem, Sta
     List<PageRouteInfo> routes, {
     OnNavigationFailure? onFailure,
   }) {
-    return _pushAll(routes, onFailure: onFailure);
+    return _pushAll(routes, onFailure: onFailure, notify: true);
   }
 
   @override

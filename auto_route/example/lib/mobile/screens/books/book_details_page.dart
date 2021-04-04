@@ -23,9 +23,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     return book == null
         ? Container(child: Text('Book null'))
         : Scaffold(
-            appBar: AppBar(
-              title: Text(book.name),
-            ),
             body: Container(
               width: double.infinity,
               child: Hero(

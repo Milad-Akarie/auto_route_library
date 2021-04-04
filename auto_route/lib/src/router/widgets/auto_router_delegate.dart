@@ -35,20 +35,10 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
   Future<bool> popRoute() => controller.topMost.pop();
 
   void notify(RoutingController notifier) {
-    notifyListeners();
-    _notifyTree(controller, notifier);
-  }
-
-  void _notifyTree(RoutingController controller, RoutingController notifier) {
-    for (var page in controller.stack) {
-      if (page.hasInnerRouter) {
-        var innerController = (page.entry as RoutingController);
-        if (innerController != notifier) {
-          innerController.notifyListeners();
-          _notifyTree(innerController, notifier);
-        }
-      }
-    }
+    // print('notified by $notifier  ${notifier.topMost}');
+    // if (notifier == notifier.topMost) {
+    //   notifyListeners();
+    // }
   }
 
   AutoRouterDelegate(
@@ -76,7 +66,7 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
 
   @override
   List<PageRouteInfo>? get currentConfiguration {
-    print('getting current config');
+    print('getting current config ${controller.topMost}');
     var route = controller.topMost.current;
     if (route == null) {
       return null;

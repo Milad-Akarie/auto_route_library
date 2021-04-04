@@ -12,9 +12,9 @@ export 'router.gr.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: WelcomePage),
+    // AutoRoute(path: '/', page: WelcomePage),
     AutoRoute(
-      path: '/home',
+      path: '/',
       page: HomePage,
       // guards: [AuthGuard],
       usesTabsRouter: true,

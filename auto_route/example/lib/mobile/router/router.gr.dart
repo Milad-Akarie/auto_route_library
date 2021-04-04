@@ -23,9 +23,6 @@ class AppRouter extends _i1.RootStackRouter {
 
   @override
   final Map<String, _i1.PageFactory> pagesMap = {
-    WelcomeRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i2.WelcomePage());
-    },
     HomeRoute.name: (entry) {
       return _i1.MaterialPageX(entry: entry, child: _i2.HomePage());
     },
@@ -107,9 +104,8 @@ class AppRouter extends _i1.RootStackRouter {
 
   @override
   List<_i1.RouteConfig> get routes => [
-        _i1.RouteConfig(WelcomeRoute.name, path: '/'),
         _i1.RouteConfig(HomeRoute.name,
-            path: '/home',
+            path: '/',
             usesTabsRouter: true,
             children: [
               _i1.RouteConfig('#redirect',
@@ -136,15 +132,9 @@ class AppRouter extends _i1.RootStackRouter {
       ];
 }
 
-class WelcomeRoute extends _i1.PageRouteInfo {
-  const WelcomeRoute() : super(name, path: '/');
-
-  static const String name = 'WelcomeRoute';
-}
-
 class HomeRoute extends _i1.PageRouteInfo {
   const HomeRoute({List<_i1.PageRouteInfo>? children})
-      : super(name, path: '/home', initialChildren: children);
+      : super(name, path: '/', initialChildren: children);
 
   static const String name = 'HomeRoute';
 }

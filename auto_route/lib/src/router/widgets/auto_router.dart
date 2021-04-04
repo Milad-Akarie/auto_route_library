@@ -67,11 +67,10 @@ class AutoRouterState extends State<AutoRouter> {
     super.didChangeDependencies();
     if (_controller == null) {
       final entry = StackEntryScope.of(context);
-      assert(entry is RoutingController);
+      assert(entry is StackRouter);
       _controller = entry as StackRouter?;
-      assert(_controller != null);
       var rootDelegate = AutoRouterDelegate.of(context);
-      _controller?.addListener(() {
+      _controller!.addListener(() {
         rootDelegate.notify(_controller!);
         setState(() {});
       });
@@ -148,7 +147,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
       _controller!.updateDeclarativeRoutes(_routes);
       var rootDelegate = AutoRouterDelegate.of(context);
       _controller!.addListener(() {
-        // rootDelegate.notify();
+        rootDelegate.notify(_controller!);
         setState(() {});
       });
     }

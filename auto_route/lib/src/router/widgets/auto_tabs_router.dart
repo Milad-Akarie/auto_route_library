@@ -16,13 +16,11 @@ class AutoTabsRouter extends StatefulWidget {
   final Duration duration;
   final Curve curve;
   final bool lazyLoad;
-  final int initialIndex;
 
   const AutoTabsRouter({
     Key? key,
     required this.routes,
     this.lazyLoad = true,
-    this.initialIndex = -1,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
@@ -83,17 +81,16 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
 
   void _resetController() {
     assert(_controller != null);
-    _controller!.setupRoutes(widget.routes, initialIndex: widget.initialIndex);
+    _controller!.setupRoutes(widget.routes);
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
     var rootDelegate = AutoRouterDelegate.of(context);
     _controller!.addListener(() {
-      print("notifying listener $_controller");
       if (_controller!.activeIndex != _index) {
+        rootDelegate.notify(_controller!);
         setState(() {
           _index = _controller!.activeIndex;
         });
-        rootDelegate.notify(_controller!);
         _animationController.forward(from: 0.0);
       }
     });
@@ -102,7 +99,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
   @override
   void dispose() {
     _animationController.dispose();
-    _controller?.dispose();
+    // _controller?.dispose();
     super.dispose();
   }
 
