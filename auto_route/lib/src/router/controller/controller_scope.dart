@@ -10,10 +10,8 @@ class RoutingControllerScope extends InheritedWidget {
     required this.controller,
   }) : super(child: child);
 
-  static RoutingController? of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<RoutingControllerScope>()
-        ?.controller;
+  static RoutingController of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<RoutingControllerScope>()!.controller;
   }
 
   @override

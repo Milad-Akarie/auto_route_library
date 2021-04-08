@@ -23,64 +23,64 @@ class AppRouter extends _i1.RootStackRouter {
 
   @override
   final Map<String, _i1.PageFactory> pagesMap = {
-    HomeRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i2.HomePage());
+    HomeRoute.name: (routeData) {
+      return _i1.MaterialPageX(routeData: routeData, child: _i2.HomePage());
     },
-    UserDataCollectorRoute.name: (entry) {
-      var args = entry.routeData.argsAs<UserDataCollectorRouteArgs>(
+    UserDataCollectorRoute.name: (routeData) {
+      var args = routeData.argsAs<UserDataCollectorRouteArgs>(
           orElse: () => UserDataCollectorRouteArgs());
       return _i1.MaterialPageX(
-          entry: entry,
+          routeData: routeData,
           child: _i3.UserDataCollectorPage(
               key: args.key, onResult: args.onResult));
     },
-    LoginRoute.name: (entry) {
-      var args = entry.routeData
-          .argsAs<LoginRouteArgs>(orElse: () => LoginRouteArgs());
+    LoginRoute.name: (routeData) {
+      var args =
+          routeData.argsAs<LoginRouteArgs>(orElse: () => LoginRouteArgs());
       return _i1.MaterialPageX(
-          entry: entry,
+          routeData: routeData,
           child: _i4.LoginPage(
               key: args.key,
               onLoginResult: args.onLoginResult,
               showBackButton: args.showBackButton));
     },
-    BooksTab.name: (entry) {
+    BooksTab.name: (routeData) {
       return _i1.MaterialPageX(
-          entry: entry, child: const _i1.EmptyRouterPage());
+          routeData: routeData, child: const _i1.EmptyRouterPage());
     },
-    ProfileTab.name: (entry) {
+    ProfileTab.name: (routeData) {
       return _i1.MaterialPageX(
-          entry: entry, child: const _i1.EmptyRouterPage());
+          routeData: routeData, child: const _i1.EmptyRouterPage());
     },
-    SettingsTab.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i5.SettingsPage());
+    SettingsTab.name: (routeData) {
+      return _i1.MaterialPageX(routeData: routeData, child: _i5.SettingsPage());
     },
-    BookListRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i6.BookListPage());
+    BookListRoute.name: (routeData) {
+      return _i1.MaterialPageX(routeData: routeData, child: _i6.BookListPage());
     },
-    BookDetailsRoute.name: (entry) {
-      var pathParams = entry.routeData.pathParams;
-      var args = entry.routeData.argsAs<BookDetailsRouteArgs>(
+    BookDetailsRoute.name: (routeData) {
+      var pathParams = routeData.pathParams;
+      var args = routeData.argsAs<BookDetailsRouteArgs>(
           orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -1)));
       return _i1.MaterialPageX(
-          entry: entry, child: _i7.BookDetailsPage(id: args.id));
+          routeData: routeData, child: _i7.BookDetailsPage(id: args.id));
     },
-    ProfileRoute.name: (entry) {
-      return _i1.MaterialPageX(entry: entry, child: _i8.ProfilePage());
+    ProfileRoute.name: (routeData) {
+      return _i1.MaterialPageX(routeData: routeData, child: _i8.ProfilePage());
     },
-    MyBooksRoute.name: (entry) {
-      var queryParams = entry.routeData.queryParams;
-      var args = entry.routeData.argsAs<MyBooksRouteArgs>(
+    MyBooksRoute.name: (routeData) {
+      var queryParams = routeData.queryParams;
+      var args = routeData.argsAs<MyBooksRouteArgs>(
           orElse: () => MyBooksRouteArgs(
               filter: queryParams.getString('filter', 'none')));
       return _i1.MaterialPageX(
-          entry: entry,
+          routeData: routeData,
           child: _i9.MyBooksPage(key: args.key, filter: args.filter));
     },
-    SingleFieldRoute.name: (entry) {
-      var args = entry.routeData.argsAs<SingleFieldRouteArgs>();
+    SingleFieldRoute.name: (routeData) {
+      var args = routeData.argsAs<SingleFieldRouteArgs>();
       return _i1.CustomPage(
-          entry: entry,
+          routeData: routeData,
           child: _i10.SingleFieldPage(
               key: args.key,
               message: args.message,
@@ -90,11 +90,11 @@ class AppRouter extends _i1.RootStackRouter {
           opaque: true,
           barrierDismissible: false);
     },
-    UserDataRoute.name: (entry) {
-      var args = entry.routeData
-          .argsAs<UserDataRouteArgs>(orElse: () => UserDataRouteArgs());
+    UserDataRoute.name: (routeData) {
+      var args = routeData.argsAs<UserDataRouteArgs>(
+          orElse: () => UserDataRouteArgs());
       return _i1.CustomPage(
-          entry: entry,
+          routeData: routeData,
           child: _i11.UserDataPage(key: args.key, onResult: args.onResult),
           transitionsBuilder: _i1.TransitionsBuilders.slideRightWithFade,
           opaque: true,

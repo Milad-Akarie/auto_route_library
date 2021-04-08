@@ -14,23 +14,27 @@ class HomePage extends StatelessWidget {
       ],
       builder: (context, child, animation) {
         var tabsRouter = context.tabsRouter;
+
         return Scaffold(
           // appBar: AppBar(
           //   title: Text(tabsRouter.current?.name ?? ''),
           // ),
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: NavigationChangeBuilder(builder: (context, router) {
-              return AppBar(
-                title: Text(router.current?.name ?? ''),
-                leading: (router.canPop)
-                    ? IconButton(
-                        icon: BackButtonIcon(),
-                        onPressed: router.pop,
-                      )
-                    : null,
-              );
-            }),
+            child: NavigationChangeBuilder(
+                scope: tabsRouter,
+                builder: (context, router) {
+                  print(router);
+                  return AppBar(
+                    title: Text(router.current?.name ?? ''),
+                    leading: (router.canPop)
+                        ? IconButton(
+                            icon: BackButtonIcon(),
+                            onPressed: router.pop,
+                          )
+                        : null,
+                  );
+                }),
           ),
           body: FadeTransition(opacity: animation, child: child),
           bottomNavigationBar: buildBottomNav(tabsRouter),

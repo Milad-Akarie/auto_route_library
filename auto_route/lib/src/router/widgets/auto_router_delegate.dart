@@ -12,6 +12,10 @@ typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
 typedef RoutePopCallBack = void Function(PageRouteInfo route);
 typedef PreMatchedRoutesCallBack = void Function(List<PageRouteInfo> routes);
 
+class CurrentConfigNotifier extends ValueNotifier<PageRouteInfo?> {
+  CurrentConfigNotifier() : super(null);
+}
+
 class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with ChangeNotifier {
   final List<PageRouteInfo>? initialRoutes;
   final GlobalKey<NavigatorState> navigatorKey;
@@ -51,7 +55,8 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
     this.navigatorObservers = const [],
   })  : assert(initialDeepLink == null || initialRoutes == null),
         this.navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
-    controller.addListener(notifyListeners);
+    // controller.addListener(notifyListeners);
+    controller.configNotifier.addListener(notifyListeners);
   }
 
   factory AutoRouterDelegate.declarative(
@@ -66,7 +71,10 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
 
   @override
   List<PageRouteInfo>? get currentConfiguration {
+    return [controller.configNotifier.value!];
+    print("Current route -----> ${controller.current?.route.fullPath}");
     print('getting current config ${controller.topMost}');
+
     var route = controller.topMost.current;
     if (route == null) {
       return null;
@@ -86,10 +94,12 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
     }
 
     if (initialRoutes?.isNotEmpty == true) {
+      controller.configNotifier.value = initialRoutes!.last;
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
       return controller.pushPath(initialDeepLink!, includePrefixMatches: true);
     } else if (!listNullOrEmpty(routes)) {
+      controller.configNotifier.value = routes.last;
       return controller.pushAll(routes);
     } else {
       throw FlutterError("Can not resolve initial route");
@@ -101,6 +111,7 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
     if (routes.isNotEmpty) {
       return controller.rebuildRoutesFromUrl(routes);
     }
+    controller.configNotifier.value = routes.last;
     return SynchronousFuture(null);
   }
 

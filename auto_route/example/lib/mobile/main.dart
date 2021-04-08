@@ -9,6 +9,7 @@ import 'router/router.gr.dart';
 
 void main() {
   runApp(MyApp());
+
   // var root = Notifier('root');
   // root.addListener(() {
   //   print('notifying root ${root.segments}');
@@ -73,31 +74,31 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: AutoRouterDelegate.declarative(
+      routerDelegate: AutoRouterDelegate(
         _appRouter,
         // initialDeepLink: '/home/books/2'
         // initialRoutes: [
         //   HomeRoute(),
         // ],
-        routes: (context) {
-          return [
-            if (showHome)
-              HomeRoute()
-            else
-              LoginRoute(
-                onLoginResult: (loggedIn) {
-                  setState(() {
-                    showHome = loggedIn;
-                  });
-                },
-              ),
-          ];
-        },
-        onPopRoute: (route) {
-          if (route.routeName == HomeRoute.name) {
-            showHome = false;
-          }
-        },
+        // routes: (context) {
+        //   return [
+        //     if (showHome)
+        //       HomeRoute()
+        //     else
+        //       LoginRoute(
+        //         onLoginResult: (loggedIn) {
+        //           setState(() {
+        //             showHome = loggedIn;
+        //           });
+        //         },
+        //       ),
+        //   ];
+        // },
+        // onPopRoute: (route) {
+        //   if (route.routeName == HomeRoute.name) {
+        //     showHome = false;
+        //   }
+        // },
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {

@@ -1,4 +1,4 @@
-import 'package:auto_route/src/route/entry_scope.dart';
+import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
@@ -71,10 +71,14 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller == null) {
-      var entry = StackEntryScope.of(context);
+      // var entry = StackEntryScope.of(context);
+      // assert(entry is TabsRouter);
+      // _controller = entry as TabsRouter;
 
-      assert(entry is TabsRouter);
-      _controller = entry as TabsRouter;
+      final parent = RoutingControllerScope.of(context);
+      final parentRoute = RouteDataScope.of(context);
+      _controller = parent.findOrCreateChildController<TabsRouter>(parentRoute) as TabsRouter;
+
       _resetController();
     }
   }

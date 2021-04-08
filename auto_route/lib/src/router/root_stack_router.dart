@@ -7,22 +7,25 @@ import '../route/route_config.dart';
 import 'auto_route_page.dart';
 import 'controller/routing_controller.dart';
 
-typedef PageBuilder = AutoRoutePage Function(StackEntryItem entry);
-typedef PageFactory = Page<dynamic> Function(StackEntryItem entry);
+typedef PageBuilder = AutoRoutePage Function(RouteData data);
+typedef PageFactory = Page<dynamic> Function(RouteData data);
 
 abstract class RootStackRouter extends BranchEntry {
   RootStackRouter()
       : super(
           key: const ValueKey('Root'),
           routeData: RouteData(
-            route: const PageRouteInfo('Root', path: ''),
-            config: RouteConfig('Root', path: ''),
-          ),
+              route: const PageRouteInfo('Root', path: ''),
+              config: RouteConfig('Root', path: ''),
+              key: const ValueKey('Root')),
         );
 
   Map<String, PageFactory> get pagesMap;
 
   List<RouteConfig> get routes;
+
+  @override
+  final CurrentConfigNotifier configNotifier = CurrentConfigNotifier();
 
   @override
   PageBuilder get pageBuilder => _pageBuilder;
@@ -52,10 +55,10 @@ abstract class RootStackRouter extends BranchEntry {
   DefaultRouteParser defaultRouteParser({bool includePrefixMatches = false}) =>
       DefaultRouteParser(matcher, includePrefixMatches: includePrefixMatches);
 
-  AutoRoutePage _pageBuilder(StackEntryItem entry) {
-    var builder = pagesMap[entry.routeData.name];
+  AutoRoutePage _pageBuilder(RouteData data) {
+    var builder = pagesMap[data.name];
     assert(builder != null);
-    return builder!(entry) as AutoRoutePage;
+    return builder!(data) as AutoRoutePage;
   }
 
   @override

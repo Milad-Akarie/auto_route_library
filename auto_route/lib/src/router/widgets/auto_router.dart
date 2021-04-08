@@ -1,4 +1,4 @@
-import 'package:auto_route/src/route/entry_scope.dart';
+import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
@@ -66,14 +66,17 @@ class AutoRouterState extends State<AutoRouter> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller == null) {
-      final entry = StackEntryScope.of(context);
-      assert(entry is StackRouter);
-      _controller = entry as StackRouter?;
-      var rootDelegate = AutoRouterDelegate.of(context);
-      _controller!.addListener(() {
-        rootDelegate.notify(_controller!);
-        setState(() {});
-      });
+      final parent = RoutingControllerScope.of(context);
+      final parentRoute = RouteDataScope.of(context);
+      _controller = parent.findOrCreateChildController<StackRouter>(parentRoute) as StackRouter;
+      // var rootDelegate = AutoRouterDelegate.of(context);
+      _controller!.addListener(_rebuildListener);
+    }
+  }
+
+  void _rebuildListener() {
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -96,6 +99,14 @@ class AutoRouterState extends State<AutoRouter> {
               ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // _controller?.removeListener(_rebuildListener);
+    // _controller?.dispose();
+    // _controller = null;
   }
 }
 
@@ -138,9 +149,9 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller == null) {
-      final entry = StackEntryScope.of(context);
-      assert(entry is StackRouter);
-      _controller = entry as StackRouter;
+      final parent = RoutingControllerScope.of(context);
+      final parentRoute = RouteDataScope.of(context);
+      _controller = parent.findOrCreateChildController<StackRouter>(parentRoute) as StackRouter;
       assert(_controller != null);
       widget.onInitialRoutes?.call(_controller!.preMatchedRoutes ?? const []);
       _routes = widget.routes(context);
@@ -151,6 +162,13 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         setState(() {});
       });
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller?.dispose();
+    _controller = null;
   }
 
   @override

@@ -1,17 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
-import 'entry_scope.dart';
+import 'route_data_scope.dart';
 
 class RouteData {
-  final PageRouteInfo route;
+  PageRouteInfo route;
   final RouteData? parent;
   final RouteConfig config;
+  final ValueKey<String> key;
 
-  const RouteData({
+  RouteData({
     required this.route,
     this.parent,
     required this.config,
+    required this.key,
   });
 
   List<RouteData> get breadcrumbs => List.unmodifiable([
@@ -20,31 +22,19 @@ class RouteData {
       ]);
 
   static RouteData of(BuildContext context) {
-    var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
-    assert(() {
-      if (scope == null) {
-        throw FlutterError(
-            'RouteData operation requested with a context that does not include an RouteData.\n'
-            'The context used to retrieve the RouteData must be that of a widget that '
-            'is a descendant of a AutoRoutePage.');
-      }
-      return true;
-    }());
-    return scope!.entry.routeData;
+    return RouteDataScope.of(context);
   }
 
   T argsAs<T>({T Function()? orElse}) {
     final args = route.args;
     if (args == null) {
       if (orElse == null) {
-        throw FlutterError(
-            '${T.toString()} can not be null because it has a required parameter');
+        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }
@@ -61,4 +51,8 @@ class RouteData {
   Parameters get queryParams => Parameters(route.queryParams);
 
   String? get fragment => route.match?.fragment;
+
+  void updateActiveChild(RouteData child) {
+    route = route.updateChildren(children: [child.route]);
+  }
 }

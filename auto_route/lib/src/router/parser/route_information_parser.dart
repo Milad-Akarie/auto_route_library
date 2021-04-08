@@ -31,10 +31,17 @@ class DefaultRouteParser extends RouteInformationParser<List<PageRouteInfo>> {
 }
 
 String _getNormalizedPath(List<PageRouteInfo> routes) {
-  var fullPath = p.joinAll([
-    ...routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch),
-  ]);
-  var normalized = p.normalize(fullPath);
+  var fullPath = '/';
+  //
+  if (routes.isEmpty || routes.last.fullPath.isEmpty) {
+    return fullPath;
+  }
+  //
+  // fullPath = p.joinAll([
+  //   ...routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch),
+  // ]);
+
+  var normalized = p.normalize(routes.last.path);
   var query = routes.last.queryParams;
   if (!mapNullOrEmpty(query)) {
     normalized += "?${query.keys.map((k) {

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
         RedirectRoute(path: '', redirectTo: 'profile'),
         AutoRoute(path: 'profile', page: UserProfilePage),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
+          // RedirectRoute(path: '', redirectTo: 'post-profile'),
           AutoRoute(
             path: 'post-profile',
             name: 'PostsProfilePage',
@@ -58,9 +59,21 @@ class UserProfilePage extends StatelessWidget {
 
     return Scaffold(
       body: Center(
-        child: Text(
-          'User Profile : ${pathParams?.optInt('userID')}',
-          style: TextStyle(fontSize: 30),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'User Profile : ${pathParams?.optInt('userID')}',
+              style: TextStyle(fontSize: 30),
+            ),
+            MaterialButton(
+              color: Colors.red,
+              onPressed: () {
+                context.router.push(UserPostsRoute());
+              },
+              child: Text('Posts'),
+            )
+          ],
         ),
       ),
     );
@@ -72,37 +85,36 @@ class UserPostsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(
-          'User Posts',
-          style: TextStyle(fontSize: 30),
+        child: Column(
+          children: [
+            Text(
+              'User Posts',
+              style: TextStyle(fontSize: 30),
+            ),
+            Expanded(child: AutoRouter())
+          ],
         ),
       ),
     );
   }
 }
 
-class UserPage extends StatelessWidget {
+class UserPage extends StatefulWidget {
   final int id;
-
   UserPage({
     Key? key,
     @PathParam('userID') this.id = -1,
   }) : super(key: key);
 
   @override
+  _UserPageState createState() => _UserPageState();
+}
+
+class _UserPageState extends State<UserPage> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('User $id'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.account_box),
-            onPressed: () {
-              // AutoRouter.innerRouterOf(context, UserRoute.name)?.push(UserPostsRoute());
-            },
-          ),
-        ],
-      ),
+      appBar: AppBar(title: Text('User ${widget.id}')),
       body: AutoRouter(),
     );
   }

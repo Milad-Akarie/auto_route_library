@@ -29,9 +29,10 @@ class AutoRouteNavigator extends StatelessWidget {
           if (!route.didPop(result)) {
             return false;
           }
-          router.removeLast();
           if (route.settings is AutoRoutePage) {
-            didPop?.call((route.settings as AutoRoutePage).routeData.route);
+            var routeData = (route.settings as AutoRoutePage).routeData;
+            router.removeRoute(routeData);
+            didPop?.call(routeData.route);
           }
           return true;
         },
