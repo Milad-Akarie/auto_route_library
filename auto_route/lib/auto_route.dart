@@ -9,6 +9,7 @@ export 'src/route/route_config.dart';
 export 'src/route/route_data.dart';
 export 'src/router/auto_route_page.dart';
 export 'src/router/auto_router_x.dart';
+export 'src/router/controller/controller_scope.dart';
 export 'src/router/controller/routing_controller.dart';
 export 'src/router/root_stack_router.dart';
 export 'src/router/widgets/auto_router.dart';
