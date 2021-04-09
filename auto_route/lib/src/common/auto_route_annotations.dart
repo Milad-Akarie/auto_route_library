@@ -1,26 +1,4 @@
 class AutoRouterAnnotation {
-  /// This has no effect if [usesLegacyGenerator] is true
-  ///
-  /// if true a Navigator extension will be generated with
-  /// helper push methods of all routes
-
-  final bool generateNavigationHelperExtension;
-
-  /// This has no effect if [usesLegacyGenerator] is true
-  ///
-  /// defaults to 'Routes'
-  final String? routesClassName;
-
-  /// This is the prefix for each Route String that is generated
-  /// initial routes will always be named '/'
-  /// defaults to '/'
-  /// it has no effect unless [usesLegacyGenerator] is true
-  final String? routePrefix;
-
-  /// if true legacy generator that
-  /// uses ExtendedNavigator will be used instead
-  final bool usesLegacyGenerator;
-
   /// if true relative imports will be generated
   /// when possible
   /// defaults to true
@@ -44,13 +22,9 @@ class AutoRouterAnnotation {
   final String? replaceInRouteName;
 
   const AutoRouterAnnotation._(
-    this.generateNavigationHelperExtension,
-    this.routesClassName,
-    this.routePrefix,
     this.routes,
     this.preferRelativeImports, {
     this.replaceInRouteName,
-    this.usesLegacyGenerator = false,
   });
 }
 
@@ -58,21 +32,13 @@ class AutoRouterAnnotation {
 /// overridden by AutoRoute
 class MaterialAutoRouter extends AutoRouterAnnotation {
   const MaterialAutoRouter({
-    bool generateNavigationHelperExtension = false,
-    String? routesClassName,
-    String? pathPrefix,
     bool preferRelativeImports = true,
     required List<AutoRoute> routes,
-    bool usesLegacyGenerator = false,
     String? replaceInRouteName,
   }) : super._(
-          generateNavigationHelperExtension,
-          routesClassName,
-          pathPrefix,
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
-          usesLegacyGenerator: usesLegacyGenerator,
         );
 }
 
@@ -80,40 +46,24 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
 /// overridden by AutoRoute
 class CupertinoAutoRouter extends AutoRouterAnnotation {
   const CupertinoAutoRouter({
-    bool generateNavigationHelperExtension = false,
-    String? routesClassName,
-    String? pathPrefix,
     bool preferRelativeImports = true,
     required List<AutoRoute> routes,
-    bool usesLegacyGenerator = false,
     String? replaceInRouteName,
   }) : super._(
-          generateNavigationHelperExtension,
-          routesClassName,
-          pathPrefix,
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
-          usesLegacyGenerator: usesLegacyGenerator,
         );
 }
 
 class AdaptiveAutoRouter extends AutoRouterAnnotation {
   const AdaptiveAutoRouter({
-    bool generateNavigationHelperExtension = false,
-    String? routesClassName,
-    String? pathPrefix,
     bool preferRelativeImports = false,
     required List<AutoRoute> routes,
-    bool usesLegacyGenerator = false,
     String? replaceInRouteName,
   }) : super._(
-          generateNavigationHelperExtension,
-          routesClassName,
-          pathPrefix,
           routes,
           preferRelativeImports,
-          usesLegacyGenerator: usesLegacyGenerator,
           replaceInRouteName: replaceInRouteName,
         );
 }
@@ -168,20 +118,12 @@ class CustomAutoRouter extends AutoRouterAnnotation {
       this.reverseDurationInMilliseconds,
       this.customRouteBuilder,
       this.opaque = true,
-      bool generateNavigationHelperExtension = false,
-      String? routesClassName,
-      String? pathPrefix,
       required List<AutoRoute> routes,
       bool preferRelativeImports = true,
-      bool usesLegacyGenerator = false,
       String? replaceInRouteName})
       : super._(
-          generateNavigationHelperExtension,
-          routesClassName,
-          pathPrefix,
           routes,
           preferRelativeImports,
-          usesLegacyGenerator: usesLegacyGenerator,
           replaceInRouteName: replaceInRouteName,
         );
 }

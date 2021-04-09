@@ -36,29 +36,21 @@ class RouterConfigResolver {
 
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       routeType = RouteType.cupertino;
-    } else if (autoRouter
-        .instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
+    } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
       routeType = RouteType.adaptive;
-    } else if (autoRouter
-        .instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
+    } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
       routeType = RouteType.custom;
 
-      durationInMilliseconds =
-          autoRouter.peek('durationInMilliseconds')?.intValue;
+      durationInMilliseconds = autoRouter.peek('durationInMilliseconds')?.intValue;
       customRouteOpaque = autoRouter.peek('opaque')?.boolValue;
-      customRouteBarrierDismissible =
-          autoRouter.peek('barrierDismissible')?.boolValue;
-      final function =
-          autoRouter.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      customRouteBarrierDismissible = autoRouter.peek('barrierDismissible')?.boolValue;
+      final function = autoRouter.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
       if (function != null) {
-        transitionBuilder =
-            _typeResolver.resolveImportableFunctionType(function);
+        transitionBuilder = _typeResolver.resolveImportableFunctionType(function);
       }
-      final customRouteBuilderValue =
-          autoRouter.peek('customRouteBuilder')?.objectValue?.toFunctionValue();
+      final customRouteBuilderValue = autoRouter.peek('customRouteBuilder')?.objectValue?.toFunctionValue();
       if (customRouteBuilderValue != null) {
-        customRouteBuilder = _typeResolver
-            .resolveImportableFunctionType(customRouteBuilderValue);
+        customRouteBuilder = _typeResolver.resolveImportableFunctionType(customRouteBuilderValue);
       }
     }
 
@@ -75,15 +67,6 @@ class RouterConfigResolver {
       pathName: '',
     );
 
-    var generateNavigationExt =
-        autoRouter.peek('generateNavigationHelperExtension')?.boolValue ??
-            false;
-    var routeNamePrefix = autoRouter.peek('routePrefix')?.stringValue ?? '/';
-    var routesClassName =
-        autoRouter.peek('routesClassName')?.stringValue ?? 'Routes';
-
-    var usesLegacyGenerator =
-        autoRouter.peek('usesLegacyGenerator')?.boolValue ?? false;
     var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
 
     final autoRoutes = autoRouter.read('routes').listValue;
@@ -92,10 +75,6 @@ class RouterConfigResolver {
       globalRouteConfig: _globalRouteConfig,
       routerClassName: clazz.displayName.substring(1),
       element: clazz,
-      routesClassName: routesClassName,
-      routeNamePrefix: routeNamePrefix,
-      generateNavigationHelper: generateNavigationExt,
-      usesLegacyGenerator: usesLegacyGenerator,
       replaceInRouteName: replaceInRouteName,
       routes: const [],
     );
@@ -104,8 +83,7 @@ class RouterConfigResolver {
     return routerConfig.copyWith(routes: routes);
   }
 
-  List<RouteConfig> _resolveRoutes(
-      RouterConfig routerConfig, List<DartObject> routesList) {
+  List<RouteConfig> _resolveRoutes(RouterConfig routerConfig, List<DartObject> routesList) {
     var routeResolver = RouteConfigResolver(routerConfig, _typeResolver);
     final routes = <RouteConfig>[];
     for (var entry in routesList) {
@@ -121,8 +99,7 @@ class RouterConfigResolver {
           parent: routerConfig,
         );
         var nestedRoutes = _resolveRoutes(subRouterConfig, children!);
-        route = route.copyWith(
-            childRouterConfig: subRouterConfig.copyWith(routes: nestedRoutes));
+        route = route.copyWith(childRouterConfig: subRouterConfig.copyWith(routes: nestedRoutes));
       }
       routes.add(route);
     }

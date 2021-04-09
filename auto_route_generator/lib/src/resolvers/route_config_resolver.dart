@@ -28,11 +28,7 @@ class RouteConfigResolver {
         redirectTo == null,
         'Route must have either a page or a redirect destination',
       );
-      throwIf(
-        _routerConfig.usesLegacyGenerator,
-        'Redirect routes are not supported in legacy mode.',
-        element: _routerConfig.element,
-      );
+
       return RouteConfig(
         pathName: path!,
         redirectTo: redirectTo,
@@ -50,18 +46,13 @@ class RouteConfigResolver {
       if (autoRoute.peek('initial')?.boolValue == true) {
         path = prefix;
       } else {
-        if (_routerConfig.usesLegacyGenerator) {
-          path = '${_routerConfig.routeNamePrefix}${toKababCase(className)}';
-        } else {
-          path = '$prefix${toKababCase(className)}';
-        }
+        path = '$prefix${toKababCase(className)}';
       }
-    } else if (!_routerConfig.usesLegacyGenerator) {
-      throwIf(
-        path.startsWith("/") && _routerConfig.parent != null,
-        'Child [$path] can not start with a forward slash',
-      );
     }
+    throwIf(
+      path.startsWith("/") && _routerConfig.parent != null,
+      'Child [$path] can not start with a forward slash',
+    );
 
     var pathName = path;
     var pathParams = RouteParameterResolver.extractPathParams(path);
@@ -77,16 +68,11 @@ class RouteConfigResolver {
     var fullMatch = autoRoute.peek('fullMatch')?.boolValue;
     var usesTabsRouter = autoRoute.peek('usesTabsRouter')?.boolValue;
     var guards = <ImportableType>[];
-    autoRoute
-        .peek('guards')
-        ?.listValue
-        ?.map((g) => g.toTypeValue())
-        .forEach((guard) {
+    autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue()).forEach((guard) {
       guards.add(_typeResolver.resolveType(guard!));
     });
 
-    var returnType = _typeResolver
-        .resolveType(autoRoute.objectValue.type!.typeArguments.first);
+    var returnType = _typeResolver.resolveType(autoRoute.objectValue.type!.typeArguments.first);
 
     int routeType = RouteType.material;
     String? cupertinoNavTitle;
@@ -107,25 +93,18 @@ class RouteConfigResolver {
       cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       routeType = RouteType.custom;
-      durationInMilliseconds =
-          autoRoute.peek('durationInMilliseconds')?.intValue;
-      reverseDurationInMilliseconds =
-          autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
+      durationInMilliseconds = autoRoute.peek('durationInMilliseconds')?.intValue;
+      reverseDurationInMilliseconds = autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
       customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      customRouteBarrierDismissible =
-          autoRoute.peek('barrierDismissible')?.boolValue;
+      customRouteBarrierDismissible = autoRoute.peek('barrierDismissible')?.boolValue;
       customRouteBarrierLabel = autoRoute.peek('barrierLabel')?.stringValue;
-      final function =
-          autoRoute.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      final function = autoRoute.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
-        transitionBuilder =
-            _typeResolver.resolveImportableFunctionType(function);
+        transitionBuilder = _typeResolver.resolveImportableFunctionType(function);
       }
-      final builderFunction =
-          autoRoute.peek('customRouteBuilder')?.objectValue?.toFunctionValue();
+      final builderFunction = autoRoute.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (builderFunction != null) {
-        customRouteBuilder =
-            _typeResolver.resolveImportableFunctionType(builderFunction);
+        customRouteBuilder = _typeResolver.resolveImportableFunctionType(builderFunction);
       }
     } else {
       var globConfig = _routerConfig.globalRouteConfig;
@@ -133,11 +112,9 @@ class RouteConfigResolver {
       if (globConfig.routeType == RouteType.custom) {
         transitionBuilder = globConfig.transitionBuilder;
         durationInMilliseconds = globConfig.durationInMilliseconds;
-        customRouteBarrierDismissible =
-            globConfig.customRouteBarrierDismissible;
+        customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
         customRouteOpaque = globConfig.customRouteOpaque;
-        reverseDurationInMilliseconds =
-            globConfig.reverseDurationInMilliseconds;
+        reverseDurationInMilliseconds = globConfig.reverseDurationInMilliseconds;
         customRouteBuilder = globConfig.customRouteBuilder;
       }
     }
@@ -169,10 +146,8 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs = parameters.where((p) =>
-          (p.isRequired || p.isPositional) &&
-          !p.isPathParam &&
-          !p.isQueryParam);
+      var unParsableRequiredArgs =
+          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
         print(
             '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
@@ -187,11 +162,6 @@ class RouteConfigResolver {
             element: pParam.element);
       }
     }
-
-    throwIf(
-      routeType == RouteType.adaptive && _routerConfig.usesLegacyGenerator,
-      'AdaptiveRoute is not longer supported in legacy mode',
-    );
 
     return RouteConfig(
       className: className,

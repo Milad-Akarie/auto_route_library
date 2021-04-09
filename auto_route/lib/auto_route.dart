@@ -1,6 +1,5 @@
 library auto_route;
 
-export 'legacy.dart' hide RouteData, RouteDef;
 export 'src/auto_route_guard.dart';
 export 'src/common/common.dart';
 export 'src/matcher/route_match.dart';
