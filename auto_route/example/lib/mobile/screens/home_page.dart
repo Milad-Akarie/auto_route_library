@@ -24,9 +24,9 @@ class HomePage extends StatelessWidget {
             child: NavigationChangeBuilder(
                 scope: tabsRouter,
                 builder: (context, router) {
-                  print(router);
+                  // print(router);
                   return AppBar(
-                    title: Text(router.current?.name ?? ''),
+                    title: Text(router.current.name),
                     leading: (router.canPop)
                         ? IconButton(
                             icon: BackButtonIcon(),
@@ -70,17 +70,21 @@ class HomePage extends StatelessWidget {
 class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ElevatedButton(
-        onPressed: () {
-          context.pushRoute(HomeRoute(children: [
-            BooksTab(children: [
-              BookListRoute(),
-              BookDetailsRoute(id: 1),
-            ])
-          ]));
-        },
-        child: Text('Launch Home'),
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            context.pushRoute(HomeRoute(
+              children: [
+                ProfileTab(children: [
+                  ProfileRoute(),
+                  MyBooksRoute(),
+                ])
+              ],
+            ));
+          },
+          child: Text('Launch Home'),
+        ),
       ),
     );
   }

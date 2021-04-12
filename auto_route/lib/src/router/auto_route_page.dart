@@ -13,19 +13,17 @@ abstract class AutoRoutePage extends Page<dynamic> {
 
   bool get hasInnerRouter => routeData is RoutingController;
 
-  const AutoRoutePage({
+  AutoRoutePage({
     required this.routeData,
     required this.child,
     this.fullscreenDialog = false,
     this.maintainState = true,
     LocalKey? key,
-  }) : super(key: key);
-
-  @override
-  String? get name => routeData.name;
-
-  @override
-  Object? get arguments => routeData.route.args;
+  }) : super(
+          key: routeData.key,
+          name: routeData.name,
+          arguments: routeData.route.args,
+        );
 
   @override
   bool canUpdate(Page other) {
@@ -42,7 +40,7 @@ abstract class AutoRoutePage extends Page<dynamic> {
 }
 
 class MaterialPageX extends AutoRoutePage {
-  const MaterialPageX({
+  MaterialPageX({
     required RouteData routeData,
     required Widget child,
     bool fullscreenDialog = false,
@@ -85,7 +83,7 @@ class _PageBasedMaterialPageRoute extends PageRoute<dynamic> with MaterialRouteT
 abstract class _TitledAutoRoutePage extends AutoRoutePage {
   final String? title;
 
-  const _TitledAutoRoutePage({
+  _TitledAutoRoutePage({
     required RouteData routeData,
     required Widget child,
     this.title,
@@ -100,7 +98,7 @@ abstract class _TitledAutoRoutePage extends AutoRoutePage {
 }
 
 class CupertinoPageX extends _TitledAutoRoutePage {
-  const CupertinoPageX({
+  CupertinoPageX({
     required RouteData routeData,
     required Widget child,
     String? title,
@@ -143,7 +141,7 @@ class _PageBasedCupertinoPageRoute extends PageRoute<dynamic> with CupertinoRout
 }
 
 class AdaptivePage extends _TitledAutoRoutePage {
-  const AdaptivePage({
+  AdaptivePage({
     required RouteData routeData,
     required Widget child,
     String? title,

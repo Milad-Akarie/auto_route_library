@@ -4,19 +4,20 @@ import 'package:flutter/widgets.dart';
 @protected
 class RoutingControllerScope extends InheritedWidget {
   final RoutingController controller;
-
+  final NavigatorObserversBuilder navigatorObservers;
   const RoutingControllerScope({
     required Widget child,
     required this.controller,
+    required this.navigatorObservers,
   }) : super(child: child);
 
-  static RoutingController of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<RoutingControllerScope>()!.controller;
+  static RoutingControllerScope? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<RoutingControllerScope>();
   }
 
   @override
   bool updateShouldNotify(covariant RoutingControllerScope oldWidget) {
-    return controller != oldWidget.controller;
+    return false;
   }
 }
 

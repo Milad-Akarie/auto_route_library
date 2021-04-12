@@ -4,22 +4,39 @@ import 'package:flutter/widgets.dart';
 import 'route_data_scope.dart';
 
 class RouteData {
-  PageRouteInfo route;
+  final PageRouteInfo route;
   final RouteData? parent;
-  final RouteConfig config;
+  final RouteConfig? config;
   final ValueKey<String> key;
+
+  RouteData? activeChild;
 
   RouteData({
     required this.route,
     this.parent,
-    required this.config,
+    this.config,
     required this.key,
-  });
+  }) {
+    if (route.hasInitialChildren) {
+      activeChild = RouteData(
+        route: route.initialChildren!.last,
+        parent: this,
+        key: ValueKey(route.initialChildren!.last.stringMatch),
+      );
+    }
+  }
 
-  List<RouteData> get breadcrumbs => List.unmodifiable([
+  List<PageRouteInfo> get breadcrumbs => List.unmodifiable([
         if (parent != null) ...parent!.breadcrumbs,
-        this,
+        route,
       ]);
+
+  List<PageRouteInfo> get routeSegments => List.unmodifiable([
+        route,
+        if (activeChild != null) ...activeChild!.routeSegments,
+      ]);
+
+  List<String> get segments => [route.stringMatch, if (activeChild != null) ...activeChild!.segments];
 
   static RouteData of(BuildContext context) {
     return RouteDataScope.of(context);
@@ -52,7 +69,7 @@ class RouteData {
 
   String? get fragment => route.match?.fragment;
 
-  void updateActiveChild(RouteData child) {
-    route = route.updateChildren(children: [child.route]);
+  void updateChildren(PageRouteInfo route) {
+    route = route;
   }
 }

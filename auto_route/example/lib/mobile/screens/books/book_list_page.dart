@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../data/db.dart';
 import '../../router/router.gr.dart';
+import 'package:auto_route/auto_route.dart';
 
 class BookListPage extends StatelessWidget {
   @override
@@ -19,7 +20,7 @@ class BookListPage extends StatelessWidget {
                             title: Text(book.name),
                             subtitle: Text(book.genre),
                             onTap: () {
-                              // context.router.push(BookDetailsRoute(id: book.id));
+                              // context.pushRoute(UserDataCollectorRoute());
                               BookDetailsRoute(id: book.id).show(context);
                             },
                           ),

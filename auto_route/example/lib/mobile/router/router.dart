@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/auth_guard.dart';
 
 import '../screens/books/routes.dart';
 import '../screens/home_page.dart';
@@ -12,7 +13,7 @@ export 'router.gr.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
-    // AutoRoute(path: '/', page: WelcomePage),
+    // AutoRoute(path: '/', page: WelcomePage, guards: [AuthGuard]),
     AutoRoute(
       path: '/',
       page: HomePage,

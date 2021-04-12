@@ -22,7 +22,7 @@ class AutoRouteNavigator extends StatelessWidget {
   Widget build(BuildContext context) => Navigator(
         key: router.navigatorKey,
         observers: navigatorObservers,
-        restorationScopeId: navRestorationScopeId,
+        restorationScopeId: navRestorationScopeId ?? router.routeData.name,
         pages: router.hasEntries ? router.stack : [_PlaceHolderPage(placeholder)],
         transitionDelegate: _CustomTransitionDelegate(),
         onPopPage: (route, result) {
@@ -42,7 +42,11 @@ class AutoRouteNavigator extends StatelessWidget {
 class _PlaceHolderPage extends Page {
   final WidgetBuilder? placeholder;
 
-  const _PlaceHolderPage(this.placeholder) : super(key: const ValueKey('_placeHolder_'));
+  const _PlaceHolderPage(this.placeholder)
+      : super(
+          key: const ValueKey('_placeHolder_'),
+          name: '_placeHolder_',
+        );
 
   @override
   Route createRoute(BuildContext context) {

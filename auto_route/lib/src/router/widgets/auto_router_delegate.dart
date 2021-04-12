@@ -11,6 +11,7 @@ import 'auto_route_navigator.dart';
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
 typedef RoutePopCallBack = void Function(PageRouteInfo route);
 typedef PreMatchedRoutesCallBack = void Function(List<PageRouteInfo> routes);
+typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 class CurrentConfigNotifier extends ValueNotifier<PageRouteInfo?> {
   CurrentConfigNotifier() : super(null);
@@ -22,12 +23,14 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
   final StackRouter controller;
   final String? initialDeepLink;
   final String? navRestorationScopeId;
-  final List<NavigatorObserver> navigatorObservers;
+  final NavigatorObserversBuilder navigatorObservers;
 
   /// A builder for the placeholder page that is shown
   /// before the first route can be rendered. Defaults to
   /// an empty page with [Theme.scaffoldBackgroundColor].
   WidgetBuilder? placeholder;
+
+  static List<NavigatorObserver> defaultNavigatorObserversBuilder() => const [];
 
   static AutoRouterDelegate of(BuildContext context) {
     final delegate = Router.of(context).routerDelegate;
@@ -38,13 +41,7 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
   @override
   Future<bool> popRoute() => controller.topMost.pop();
 
-  void notify(RoutingController notifier) {
-    // print('notified by $notifier  ${notifier.topMost}');
-    // if (notifier == notifier.topMost) {
-    //   notifyListeners();
-    // }
-  }
-
+  late List<NavigatorObserver> _navigatorObservers;
   AutoRouterDelegate(
     this.controller, {
     this.initialRoutes,
@@ -52,11 +49,11 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
     GlobalKey<NavigatorState>? navigatorKey,
     this.navRestorationScopeId,
     this.initialDeepLink,
-    this.navigatorObservers = const [],
+    this.navigatorObservers = defaultNavigatorObserversBuilder,
   })  : assert(initialDeepLink == null || initialRoutes == null),
         this.navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
-    // controller.addListener(notifyListeners);
-    controller.configNotifier.addListener(notifyListeners);
+    _navigatorObservers = navigatorObservers();
+    controller.addListener(notifyListeners);
   }
 
   factory AutoRouterDelegate.declarative(
@@ -66,22 +63,26 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
     PreMatchedRoutesCallBack? onInitialRoutes,
-    List<NavigatorObserver>? navigatorObservers,
+    NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
   @override
   List<PageRouteInfo>? get currentConfiguration {
-    return [controller.configNotifier.value!];
-    print("Current route -----> ${controller.current?.route.fullPath}");
-    print('getting current config ${controller.topMost}');
+    // print("Current -----> ${controller.current.hashCode}");
+    // print(controller.topMost.routeData.breadcrumbs.map((e) => e.routeName));
 
-    var route = controller.topMost.current;
-    if (route == null) {
-      return null;
-    }
-    // print(controller.currentConfig.map((e) => e.routeName));
-    // return controller.currentConfig;
-    return route.breadcrumbs.map((e) => e.route).toList(growable: false);
+    print(controller.currentConfig.map((e) => e.routeName));
+    return controller.currentConfig;
+    // print("Current route -----> ${controller.current.route.fullPath}");
+    // print('getting current config ${controller.topMost}');
+    //
+    // var route = controller.topMost.current;
+    // if (route == null) {
+    //   return null;
+    // }
+    // // print(controller.currentConfig.map((e) => e.routeName));
+    // // return controller.currentConfig;
+    // return route.breadcrumbs.map((e) => e.route).toList(growable: false);
   }
 
   @override
@@ -119,13 +120,14 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
   Widget build(BuildContext context) {
     return RoutingControllerScope(
       controller: controller,
+      navigatorObservers: navigatorObservers,
       child: StackRouterScope(
         controller: controller,
         child: AutoRouteNavigator(
           router: controller,
           placeholder: placeholder,
           navRestorationScopeId: navRestorationScopeId,
-          navigatorObservers: navigatorObservers,
+          navigatorObservers: _navigatorObservers,
         ),
       ),
     );
@@ -144,12 +146,12 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     String? navRestorationScopeId,
     this.onPopRoute,
     this.onInitialRoutes,
-    List<NavigatorObserver>? navigatorObservers,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           controller,
           navigatorKey: navigatorKey,
           navRestorationScopeId: navRestorationScopeId,
-          navigatorObservers: navigatorObservers ?? const [],
+          navigatorObservers: navigatorObservers,
         );
 
   @override
@@ -161,12 +163,14 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   @override
   Widget build(BuildContext context) {
     controller.updateDeclarativeRoutes(routes(context));
+
     return RoutingControllerScope(
       controller: controller,
+      navigatorObservers: navigatorObservers,
       child: AutoRouteNavigator(
         router: controller,
         navRestorationScopeId: navRestorationScopeId,
-        navigatorObservers: navigatorObservers,
+        navigatorObservers: _navigatorObservers,
         didPop: onPopRoute,
       ),
     );

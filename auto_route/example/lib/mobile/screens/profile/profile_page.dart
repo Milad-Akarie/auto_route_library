@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
             userData == null
                 ? ElevatedButton(
                     onPressed: () {
-                      context.router.root.push(UserDataCollectorRoute(onResult: (data) {
+                      context.router.rootAsStackRouter.push(UserDataCollectorRoute(onResult: (data) {
                         setState(() {
                           userData = data;
                         });

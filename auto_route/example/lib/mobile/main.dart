@@ -1,11 +1,29 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/screens/login_page.dart';
+import 'package:example/mobile/router/auth_guard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 import '../data/db.dart';
 import 'router/router.gr.dart';
+
+class MyObserver extends AutoRouterObserver {
+  @override
+  void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
+    print('Did init tab route: ${route.name}  previous: ${previousRoute?.name}');
+  }
+
+  @override
+  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
+    print('Did change tab route: ${route.name}  previous: ${previousRoute.name}');
+  }
+
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    print('Did push route ${route.settings.name}');
+  }
+}
 
 void main() {
   runApp(MyApp());
@@ -27,39 +45,6 @@ void main() {
   // child.notifyRoot();
 }
 
-class Notifier with ChangeNotifier {
-  final String name;
-  final Notifier? parent;
-  final List<Notifier> children = [];
-
-  Notifier(this.name, [this.parent]) {
-    if (parent != null) {
-      parent!.attachChild(this);
-    }
-  }
-  void attachChild(Notifier notifer) {
-    children.add(notifer);
-  }
-
-  List<String> get segments {
-    return [name, if (children.isNotEmpty) ...children.first.segments];
-  }
-
-  void notifyAll() {
-    notifyListeners();
-    children.forEach((i) => i.notifyAll());
-  }
-
-  void notifyRoot() => root.notifyAll();
-
-  Notifier get root => parent?.root ?? this;
-
-  void addChildrenAwareListener(VoidCallback cb) {
-    addListener(cb);
-    children.forEach((notifier) => notifier.addChildrenAwareListener(cb));
-  }
-}
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -74,36 +59,40 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: AutoRouterDelegate(
-        _appRouter,
-        // initialDeepLink: '/home/books/2'
-        // initialRoutes: [
-        //   HomeRoute(),
-        // ],
-        // routes: (context) {
-        //   return [
-        //     if (showHome)
-        //       HomeRoute()
-        //     else
-        //       LoginRoute(
-        //         onLoginResult: (loggedIn) {
-        //           setState(() {
-        //             showHome = loggedIn;
-        //           });
-        //         },
-        //       ),
-        //   ];
-        // },
-        // onPopRoute: (route) {
-        //   if (route.routeName == HomeRoute.name) {
-        //     showHome = false;
-        //   }
-        // },
-      ),
+      routerDelegate: _appRouter.delegate(
+          // _appRouter,
+          // navigatorObservers: () => [MyObserver()],
+          // initialDeepLink: '/home/books/2'
+          // initialRoutes: [
+          //   HomeRoute(),
+          // ],
+          // routes: (context) {
+          //   return [
+          //     if (showHome)
+          //       HomeRoute()
+          //     else
+          //       LoginRoute(
+          //         onLoginResult: (loggedIn) {
+          //           setState(() {
+          //             showHome = loggedIn;
+          //           });
+          //         },
+          //       ),
+          //   ];
+          // },
+          // onPopRoute: (route) {
+          //   if (route.routeName == HomeRoute.name) {
+          //     showHome = false;
+          //   }
+          // },
+          ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {
-        return BooksDBProvider(
-          child: router!,
+        return ChangeNotifierProvider<AuthService>(
+          create: (_) => AuthService(),
+          child: BooksDBProvider(
+            child: router!,
+          ),
         );
       },
     );

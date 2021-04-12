@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
         RedirectRoute(path: '', redirectTo: 'profile'),
         AutoRoute(path: 'profile', page: UserProfilePage),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
-          // RedirectRoute(path: '', redirectTo: 'post-profile'),
+          RedirectRoute(path: '', redirectTo: 'post-profile'),
           AutoRoute(
             path: 'post-profile',
             name: 'PostsProfilePage',
@@ -52,7 +52,13 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends StatefulWidget {
+  @override
+  _UserProfilePageState createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  int _count = 0;
   @override
   Widget build(BuildContext context) {
     final pathParams = context.routeData.parent?.pathParams;
@@ -72,7 +78,19 @@ class UserProfilePage extends StatelessWidget {
                 context.router.push(UserPostsRoute());
               },
               child: Text('Posts'),
-            )
+            ),
+            const SizedBox(
+              height: 32,
+            ),
+            MaterialButton(
+              color: Colors.blue,
+              onPressed: () {
+                setState(() {
+                  _count++;
+                });
+              },
+              child: Text('Count $_count'),
+            ),
           ],
         ),
       ),
@@ -113,6 +131,7 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
+    print('Active user child ----> ${context.routeData.activeChild?.name}');
     return Scaffold(
       appBar: AppBar(title: Text('User ${widget.id}')),
       body: AutoRouter(),

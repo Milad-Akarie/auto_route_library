@@ -1,5 +1,5 @@
-import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
+import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:collection/collection.dart';
@@ -16,6 +16,8 @@ class AutoTabsRouter extends StatefulWidget {
   final Duration duration;
   final Curve curve;
   final bool lazyLoad;
+  final NavigatorObserversBuilder navigatorObservers;
+  final bool inheritNavigatorObservers;
 
   const AutoTabsRouter({
     Key? key,
@@ -24,6 +26,8 @@ class AutoTabsRouter extends StatefulWidget {
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
+    this.inheritNavigatorObservers = true,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(key: key);
 
   @override
@@ -67,18 +71,26 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
     super.initState();
   }
 
+  late List<NavigatorObserver> _navigatorObservers;
+  late NavigatorObserversBuilder _inheritableObserversBuilder;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_controller == null) {
-      // var entry = StackEntryScope.of(context);
-      // assert(entry is TabsRouter);
-      // _controller = entry as TabsRouter;
-
-      final parent = RoutingControllerScope.of(context);
+      final parentScope = RoutingControllerScope.of(context);
+      assert(parentScope != null);
+      _inheritableObserversBuilder = () {
+        var observers = widget.navigatorObservers();
+        if (!widget.inheritNavigatorObservers) {
+          return observers;
+        }
+        var inheritedObservers = parentScope!.navigatorObservers();
+        return inheritedObservers + observers;
+      };
+      _navigatorObservers = _inheritableObserversBuilder();
       final parentRoute = RouteDataScope.of(context);
-      _controller = parent.findOrCreateChildController<TabsRouter>(parentRoute) as TabsRouter;
-
+      _controller = parentScope!.controller.findOrCreateChildController<TabsRouter>(parentRoute) as TabsRouter;
       _resetController();
     }
   }
@@ -88,10 +100,8 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
     _controller!.setupRoutes(widget.routes);
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
-    var rootDelegate = AutoRouterDelegate.of(context);
     _controller!.addListener(() {
       if (_controller!.activeIndex != _index) {
-        rootDelegate.notify(_controller!);
         setState(() {
           _index = _controller!.activeIndex;
         });
@@ -103,7 +113,8 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
   @override
   void dispose() {
     _animationController.dispose();
-    // _controller?.dispose();
+    _controller?.dispose();
+    _controller = null;
     super.dispose();
   }
 
@@ -126,14 +137,16 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
         : _IndexedStackBuilder(
             activeIndex: _index,
             lazyLoad: widget.lazyLoad,
-            itemCount: stack.length,
+            navigatorObservers: _navigatorObservers,
             itemBuilder: (BuildContext context, int index) {
               return stack[index].wrappedChild(context);
             },
+            stack: stack,
           );
 
     return RoutingControllerScope(
       controller: _controller!,
+      navigatorObservers: _inheritableObserversBuilder,
       child: TabsRouterScope(
           controller: _controller!,
           child: AnimatedBuilder(
@@ -151,15 +164,17 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
 
 class _IndexedStackBuilder extends StatefulWidget {
   final int activeIndex;
-  final int itemCount;
   final IndexedWidgetBuilder itemBuilder;
   final bool lazyLoad;
+  final List<AutoRoutePage> stack;
+  final List<NavigatorObserver> navigatorObservers;
 
   const _IndexedStackBuilder({
     Key? key,
     required this.activeIndex,
     required this.itemBuilder,
-    this.itemCount = 0,
+    required this.navigatorObservers,
+    required this.stack,
     required this.lazyLoad,
   }) : super(key: key);
 
@@ -175,12 +190,37 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   final _dummyWidget = const _DummyWidget();
   final _pages = <Widget>[];
 
+  void _didInitTabRoute(int index, [int previous = -1]) {
+    widget.navigatorObservers.whereType<AutoRouterObserver>().forEach((observer) {
+      final routes = widget.stack.map((e) => e.routeData.route).toList();
+      var previousRoute;
+      if (previous != -1) {
+        previousRoute = TabPageRoute(routeInfo: routes[previous], index: previous);
+      }
+      observer.didInitTabRoute(
+        TabPageRoute(routeInfo: routes[index], index: index),
+        previousRoute,
+      );
+    });
+  }
+
+  void _didChangeTabRoute(int index, int previous) {
+    widget.navigatorObservers.whereType<AutoRouterObserver>().forEach((observer) {
+      final routes = widget.stack.map((e) => e.routeData.route).toList();
+      observer.didChangeTabRoute(
+        TabPageRoute(routeInfo: routes[index], index: index),
+        TabPageRoute(routeInfo: routes[previous], index: previous),
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < widget.itemCount; ++i) {
+    for (var i = 0; i < widget.stack.length; ++i) {
       if (i == widget.activeIndex || !widget.lazyLoad) {
         _pages.add(widget.itemBuilder(context, i));
+        _didInitTabRoute(i);
       } else {
         _pages.add(_dummyWidget);
       }
@@ -191,7 +231,10 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
+      _didInitTabRoute(widget.activeIndex, oldWidget.activeIndex);
       _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
+    } else if (widget.activeIndex != oldWidget.activeIndex) {
+      _didChangeTabRoute(widget.activeIndex, oldWidget.activeIndex);
     }
   }
 

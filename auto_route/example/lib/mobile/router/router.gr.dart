@@ -5,7 +5,7 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:flutter/material.dart' as _i12;
+import 'package:flutter/cupertino.dart' as _i12;
 
 import '../screens/books/book_details_page.dart' as _i7;
 import '../screens/books/book_list_page.dart' as _i6;
