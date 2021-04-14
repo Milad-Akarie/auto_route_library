@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
+import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class CurrentConfigNotifier extends ValueNotifier<PageRouteInfo?> {
   CurrentConfigNotifier() : super(null);
 }
 
-class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with ChangeNotifier {
+class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
   final List<PageRouteInfo>? initialRoutes;
   final GlobalKey<NavigatorState> navigatorKey;
   final StackRouter controller;
@@ -36,6 +37,14 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
     final delegate = Router.of(context).routerDelegate;
     assert(delegate is AutoRouterDelegate);
     return delegate as AutoRouterDelegate;
+  }
+
+  static reportUrlChanged(BuildContext context, String url) {
+    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
+          RouteInformation(
+            location: url,
+          ),
+        );
   }
 
   @override
@@ -67,12 +76,12 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
   }) = _DeclarativeAutoRouterDelegate;
 
   @override
-  List<PageRouteInfo>? get currentConfiguration {
+  UrlTree get currentConfiguration {
     // print("Current -----> ${controller.current.hashCode}");
     // print(controller.topMost.routeData.breadcrumbs.map((e) => e.routeName));
 
     print(controller.currentConfig.map((e) => e.routeName));
-    return controller.currentConfig;
+    return UrlTree(controller.currentConfig);
     // print("Current route -----> ${controller.current.route.fullPath}");
     // print('getting current config ${controller.topMost}');
     //
@@ -86,7 +95,7 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
   }
 
   @override
-  Future<void> setInitialRoutePath(List<PageRouteInfo> routes) {
+  Future<void> setInitialRoutePath(UrlTree tree) {
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
@@ -99,20 +108,20 @@ class AutoRouterDelegate extends RouterDelegate<List<PageRouteInfo>> with Change
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
       return controller.pushPath(initialDeepLink!, includePrefixMatches: true);
-    } else if (!listNullOrEmpty(routes)) {
-      controller.configNotifier.value = routes.last;
-      return controller.pushAll(routes);
+    } else if (!listNullOrEmpty(tree.routes)) {
+      controller.configNotifier.value = tree.routes.last;
+      return controller.pushAll(tree.routes);
     } else {
       throw FlutterError("Can not resolve initial route");
     }
   }
 
   @override
-  Future<void> setNewRoutePath(List<PageRouteInfo> routes) {
-    if (routes.isNotEmpty) {
-      return controller.rebuildRoutesFromUrl(routes);
+  Future<void> setNewRoutePath(UrlTree tree) {
+    if (tree.routes.isNotEmpty) {
+      return controller.rebuildRoutesFromUrl(tree.routes);
     }
-    controller.configNotifier.value = routes.last;
+    controller.configNotifier.value = tree.routes.last;
     return SynchronousFuture(null);
   }
 
@@ -155,15 +164,21 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
         );
 
   @override
-  Future<void> setInitialRoutePath(List<PageRouteInfo> routes) {
-    onInitialRoutes?.call(routes);
+  Future<void> setInitialRoutePath(UrlTree tree) {
+    onInitialRoutes?.call(tree.routes);
     return SynchronousFuture(null);
   }
 
   @override
   Widget build(BuildContext context) {
+    var current = controller.current;
     controller.updateDeclarativeRoutes(routes(context));
-
+    if (current.key != controller.current.key) {
+      AutoRouterDelegate.reportUrlChanged(
+        context,
+        currentConfiguration.url,
+      );
+    }
     return RoutingControllerScope(
       controller: controller,
       navigatorObservers: navigatorObservers,

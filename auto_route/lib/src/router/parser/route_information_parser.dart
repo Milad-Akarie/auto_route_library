@@ -6,27 +6,25 @@ import 'package:path/path.dart' as p;
 import '../../matcher/route_matcher.dart';
 import '../../utils.dart';
 
-class DefaultRouteParser extends RouteInformationParser<List<PageRouteInfo>> {
+class DefaultRouteParser extends RouteInformationParser<UrlTree> {
   final RouteMatcher _matcher;
   final bool includePrefixMatches;
 
   DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
 
   @override
-  Future<List<PageRouteInfo>> parseRouteInformation(RouteInformation routeInformation) async {
+  Future<UrlTree> parseRouteInformation(RouteInformation routeInformation) async {
     var matches = _matcher.match(routeInformation.location ?? '', includePrefixMatches: includePrefixMatches);
     var routes = <PageRouteInfo>[];
     if (matches != null) {
       routes.addAll(matches.map((m) => PageRouteInfo.fromMatch(m)));
     }
-    return SynchronousFuture<List<PageRouteInfo>>(routes);
+    return SynchronousFuture<UrlTree>(UrlTree(routes));
   }
 
   @override
-  RouteInformation restoreRouteInformation(List<PageRouteInfo> routes) {
-    final location = _getNormalizedPath(routes);
-    print(location);
-    return RouteInformation(location: location);
+  RouteInformation restoreRouteInformation(UrlTree tree) {
+    return RouteInformation(location: tree.url);
   }
 }
 
@@ -57,4 +55,40 @@ String _getNormalizedPath(List<PageRouteInfo> routes) {
     normalized += "#$frag";
   }
   return normalized;
+}
+
+class UrlTree {
+  final List<PageRouteInfo> routes;
+
+  UrlTree(this.routes);
+
+  String get url => uri.toString();
+  String get path => uri.path;
+  Uri get uri {
+    var fullPath = '/';
+    if (routes.isEmpty) {
+      return Uri(path: fullPath);
+    }
+    fullPath = p.joinAll(
+      routes.where((e) => e.stringMatch.isNotEmpty).map(
+            (e) => e.stringMatch,
+          ),
+    );
+    final normalized = p.normalize(fullPath);
+    final lastSegment = routes.last;
+    var queryParams;
+    if (lastSegment.queryParams.isNotEmpty) {
+      queryParams = lastSegment.queryParams;
+    }
+
+    var fragment;
+    if (lastSegment.match?.fragment.isNotEmpty == true) {
+      fragment = lastSegment.match!.fragment;
+    }
+    return Uri(
+      path: normalized,
+      queryParameters: queryParams,
+      fragment: fragment,
+    );
+  }
 }

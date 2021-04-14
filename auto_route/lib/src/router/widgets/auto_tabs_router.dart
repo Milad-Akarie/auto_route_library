@@ -112,10 +112,10 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
 
   @override
   void dispose() {
+    super.dispose();
     _animationController.dispose();
     _controller?.dispose();
     _controller = null;
-    super.dispose();
   }
 
   @override

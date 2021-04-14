@@ -7,6 +7,7 @@ import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/root_stack_router.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:treeify/treeify.dart';
 
 import '../../utils.dart';
 
@@ -313,12 +314,14 @@ abstract class StackRouter extends RoutingController {
 
   RouteMatcher get matcher;
 
+  var _historyManagedByWidget = false;
+
   @override
   RoutingController findOrCreateChildController<T extends RoutingController>(RouteData parentRoute) {
-    var existingController = _subControllers[parentRoute.key];
-    if (existingController != null) {
-      return existingController as T;
-    }
+    // var existingController = _subControllers[parentRoute.key];
+    // if (existingController != null) {
+    //   return existingController as T;
+    // }
     print("Creating controller for  ----> ${parentRoute.name}");
 
     if (T == TabsRouter) {
@@ -432,6 +435,8 @@ abstract class StackRouter extends RoutingController {
   Future<void> push(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
     // return _push(route, onFailure: onFailure, notify: true);
     // print(_findHandler(route));
+
+    // print(Treeify.asTree(Map.fromEntries(routeCollection.routes.map((e) => MapEntry(e.name, ''))), true));
     return _findHandler(route)._push(route, onFailure: onFailure);
   }
 
@@ -681,6 +686,7 @@ abstract class StackRouter extends RoutingController {
     _pages.clear();
   }
 
+  @Deprecated('Use pushAndPopUntil')
   Future<void> pushAndRemoveUntil(
     PageRouteInfo route, {
     required RoutePredicate predicate,

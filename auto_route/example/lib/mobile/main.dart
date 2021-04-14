@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../data/db.dart';
 import 'router/router.gr.dart';
+import 'package:path/path.dart' as path;
 
 class MyObserver extends AutoRouterObserver {
   @override
@@ -27,22 +28,6 @@ class MyObserver extends AutoRouterObserver {
 
 void main() {
   runApp(MyApp());
-
-  // var root = Notifier('root');
-  // root.addListener(() {
-  //   print('notifying root ${root.segments}');
-  // });
-  // var parent = Notifier('parent', root);
-  // parent.addListener(() {
-  //   print('notifying parent');
-  // });
-  //
-  // parent.notifyRoot();
-  // var child = Notifier('child', parent);
-  // child.addListener(() {
-  //   print('notifying child');
-  // });
-  // child.notifyRoot();
 }
 
 class MyApp extends StatefulWidget {
@@ -59,33 +44,33 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: _appRouter.delegate(
-          // _appRouter,
-          // navigatorObservers: () => [MyObserver()],
-          // initialDeepLink: '/home/books/2'
-          // initialRoutes: [
-          //   HomeRoute(),
-          // ],
-          // routes: (context) {
-          //   return [
-          //     if (showHome)
-          //       HomeRoute()
-          //     else
-          //       LoginRoute(
-          //         onLoginResult: (loggedIn) {
-          //           setState(() {
-          //             showHome = loggedIn;
-          //           });
-          //         },
-          //       ),
-          //   ];
-          // },
-          // onPopRoute: (route) {
-          //   if (route.routeName == HomeRoute.name) {
-          //     showHome = false;
-          //   }
-          // },
-          ),
+      routerDelegate: AutoRouterDelegate.declarative(
+        _appRouter,
+        // navigatorObservers: () => [MyObserver()],
+        // initialDeepLink: '/home/books/2'
+        // initialRoutes: [
+        //   HomeRoute(),
+        // ],
+        routes: (context) {
+          return [
+            if (context.watch<AuthService>().isAuthenticated)
+              HomeRoute()
+            else
+              LoginRoute(
+                onLoginResult: (loggedIn) {
+                  setState(() {
+                    showHome = loggedIn;
+                  });
+                },
+              ),
+          ];
+        },
+        // onPopRoute: (route) {
+        //   if (route.routeName == HomeRoute.name) {
+        //     showHome = false;
+        //   }
+        // },
+      ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(

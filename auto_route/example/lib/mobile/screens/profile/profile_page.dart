@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/auth_guard.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../../router/router.gr.dart';
 import '../user-data/data_collector.dart';
 
@@ -29,6 +30,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 context.router.push(MyBooksRoute(filter: 'FromRoute'));
               },
               child: Text('My Books'),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                context.read<AuthService>().isAuthenticated = false;
+              },
+              child: Text('Logout'),
             ),
             const SizedBox(height: 32),
             userData == null
