@@ -86,22 +86,26 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
     _controller!.setupRoutes(widget.routes);
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
-    var rootDelegate = RootRouterDelegate.of(context);
-    _controller!.addListener(() {
-      if (_controller!.activeIndex != _index) {
-        setState(() {
-          _index = _controller!.activeIndex;
-        });
-        rootDelegate.notify();
-        _animationController.forward(from: 0.0);
-      }
-    });
+    _controller!.addListener(_delegateListener);
+  }
+
+  void _delegateListener() {
+    if (_controller!.activeIndex != _index) {
+      var rootDelegate = RootRouterDelegate.of(context);
+      setState(() {
+        _index = _controller!.activeIndex;
+      });
+      rootDelegate.notify();
+      _animationController.forward(from: 0.0);
+    }
+
   }
 
   @override
   void dispose() {
     _animationController.dispose();
-    _controller?.dispose();
+    // _controller?.dispose();
+    _controller?.removeListener(_delegateListener);
     super.dispose();
   }
 
