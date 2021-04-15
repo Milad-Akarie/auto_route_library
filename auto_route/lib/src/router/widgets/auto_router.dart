@@ -68,12 +68,14 @@ class AutoRouterState extends State<AutoRouter> {
       assert(entry is RoutingController);
       _controller = entry as StackRouter?;
       assert(_controller != null);
-      var rootDelegate = RootRouterDelegate.of(context);
-      _controller?.addListener(() {
-        rootDelegate.notify();
-        setState(() {});
-      });
+      _controller?.addListener(_delegateListener);
     }
+  }
+
+  _delegateListener() {
+    var rootDelegate = RootRouterDelegate.of(context);
+    rootDelegate.notify();
+    setState(() {});
   }
 
   @override
@@ -95,6 +97,12 @@ class AutoRouterState extends State<AutoRouter> {
               ),
       ),
     );
+  }
+
+  @override
+  dispose() {
+    _controller?.removeListener(_delegateListener);
+    super.dispose();
   }
 }
 
