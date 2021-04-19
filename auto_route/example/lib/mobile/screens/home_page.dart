@@ -2,43 +2,34 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
+import 'user-data/data_collector.dart';
+
+enum ConstEnum { value1 }
+
 class HomePage extends StatelessWidget {
+  final UserData userData;
+
+  const HomePage({
+    Key? key,
+    ConstEnum enumValue = ConstEnum.value1,
+    this.userData = const UserData(),
+  }) : super(key: key);
   @override
   Widget build(context) {
-    return AutoTabsRouter(
-      // initialIndex: 1,
-      routes: [
+    return AutoTabsScaffold(
+      appBarBuilder: (context, router) {
+        return AppBar(
+          title: Text(router.current.name),
+          leading: AutoBackButton(),
+        );
+      },
+      routes: const [
         BooksTab(),
         ProfileTab(),
         SettingsTab(),
       ],
-      builder: (context, child, animation) {
-        var tabsRouter = context.tabsRouter;
-
-        return Scaffold(
-          // appBar: AppBar(
-          //   title: Text(tabsRouter.current?.name ?? ''),
-          // ),
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: NavigationChangeBuilder(
-                scope: tabsRouter,
-                builder: (context, router) {
-                  // print(router);
-                  return AppBar(
-                    title: Text(router.current.name),
-                    leading: (router.canPop)
-                        ? IconButton(
-                            icon: BackButtonIcon(),
-                            onPressed: router.pop,
-                          )
-                        : null,
-                  );
-                }),
-          ),
-          body: FadeTransition(opacity: animation, child: child),
-          bottomNavigationBar: buildBottomNav(tabsRouter),
-        );
+      bottomNavigationBuilder: (context, tabsRouter) {
+        return buildBottomNav(tabsRouter);
       },
     );
   }

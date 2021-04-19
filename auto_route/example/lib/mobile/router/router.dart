@@ -17,7 +17,7 @@ export 'router.gr.dart';
     AutoRoute(
       path: '/',
       page: HomePage,
-      // guards: [AuthGuard],
+      guards: [AuthGuard],
       usesTabsRouter: true,
       children: [
         RedirectRoute(path: '', redirectTo: 'books'),
@@ -31,8 +31,10 @@ export 'router.gr.dart';
       ],
     ),
     userDataRoutes,
+    RedirectRoute(path: '/user-data/*', redirectTo: '/user-data'),
+
     AutoRoute(path: '/login', page: LoginPage, fullscreenDialog: false),
-    RedirectRoute(path: '*', redirectTo: '/'),
+    // RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )
 class $AppRouter {}

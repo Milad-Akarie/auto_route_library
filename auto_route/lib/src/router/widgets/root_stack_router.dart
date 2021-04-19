@@ -1,12 +1,4 @@
-import 'package:auto_route/src/matcher/route_matcher.dart';
-import 'package:auto_route/src/router/parser/route_information_parser.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
-
-import '../../auto_route.dart';
-import '../route/route_config.dart';
-import 'auto_route_page.dart';
-import 'controller/routing_controller.dart';
+part of 'auto_router_delegate.dart';
 
 typedef PageBuilder = AutoRoutePage Function(RouteData data);
 typedef PageFactory = Page<dynamic> Function(RouteData data);
@@ -25,8 +17,10 @@ abstract class RootStackRouter extends StackRouter {
 
   List<RouteConfig> get routes;
 
+  bool _stackManagedByWidget = false;
+
   @override
-  final CurrentConfigNotifier configNotifier = CurrentConfigNotifier();
+  bool get stackManagedByWidget => _stackManagedByWidget;
 
   @override
   PageBuilder get pageBuilder => _pageBuilder;

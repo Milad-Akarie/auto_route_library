@@ -36,7 +36,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _appRouter = AppRouter();
+  final _appRouter = AppRouter(authGuard: AuthGuard());
 
   var showHome = false;
 
@@ -44,27 +44,27 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: AutoRouterDelegate.declarative(
+      routerDelegate: AutoRouterDelegate(
         _appRouter,
         // navigatorObservers: () => [MyObserver()],
         // initialDeepLink: '/home/books/2'
         // initialRoutes: [
         //   HomeRoute(),
         // ],
-        routes: (context) {
-          return [
-            if (context.watch<AuthService>().isAuthenticated)
-              HomeRoute()
-            else
-              LoginRoute(
-                onLoginResult: (loggedIn) {
-                  setState(() {
-                    showHome = loggedIn;
-                  });
-                },
-              ),
-          ];
-        },
+        // routes: (context) {
+        //   return [
+        //     if (context.watch<AuthService>().isAuthenticated)
+        //       HomeRoute()
+        //     else
+        //       LoginRoute(
+        //         onLoginResult: (loggedIn) {
+        //           setState(() {
+        //             showHome = loggedIn;
+        //           });
+        //         },
+        //       ),
+        //   ];
+        // },
         // onPopRoute: (route) {
         //   if (route.routeName == HomeRoute.name) {
         //     showHome = false;

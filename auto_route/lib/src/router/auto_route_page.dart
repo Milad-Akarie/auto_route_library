@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
@@ -5,13 +7,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-abstract class AutoRoutePage extends Page<dynamic> {
+abstract class AutoRoutePage<T> extends Page<T> {
   final RouteData routeData;
   final Widget child;
   final bool fullscreenDialog;
   final bool maintainState;
 
   bool get hasInnerRouter => routeData is RoutingController;
+  final _popCompleter = Completer<T?>();
+  Future<T?> get popped => _popCompleter.future;
 
   AutoRoutePage({
     required this.routeData,
@@ -35,11 +39,24 @@ abstract class AutoRoutePage extends Page<dynamic> {
     if (child is AutoRouteWrapper) {
       childToBuild = (child as AutoRouteWrapper).wrappedRoute(context);
     }
-    return RouteDataScope(child: childToBuild, routeData: routeData);
+    return RouteDataScope(
+      child: childToBuild,
+      routeData: routeData,
+    );
+  }
+
+  Route<T> onCreateRoute(BuildContext context);
+
+  @override
+  Route<T> createRoute(BuildContext context) {
+    return onCreateRoute(context)
+      ..popped.then(
+        _popCompleter.complete,
+      );
   }
 }
 
-class MaterialPageX extends AutoRoutePage {
+class MaterialPageX<T> extends AutoRoutePage<T> {
   MaterialPageX({
     required RouteData routeData,
     required Widget child,
@@ -55,12 +72,12 @@ class MaterialPageX extends AutoRoutePage {
         );
 
   @override
-  Route createRoute(BuildContext context) {
-    return _PageBasedMaterialPageRoute(page: this);
+  Route<T> onCreateRoute(BuildContext context) {
+    return _PageBasedMaterialPageRoute<T>(page: this);
   }
 }
 
-class _PageBasedMaterialPageRoute extends PageRoute<dynamic> with MaterialRouteTransitionMixin {
+class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixin<T> {
   _PageBasedMaterialPageRoute({
     required AutoRoutePage page,
   }) : super(settings: page);
@@ -80,7 +97,7 @@ class _PageBasedMaterialPageRoute extends PageRoute<dynamic> with MaterialRouteT
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
-abstract class _TitledAutoRoutePage extends AutoRoutePage {
+abstract class _TitledAutoRoutePage<T> extends AutoRoutePage<T> {
   final String? title;
 
   _TitledAutoRoutePage({
@@ -97,7 +114,7 @@ abstract class _TitledAutoRoutePage extends AutoRoutePage {
         );
 }
 
-class CupertinoPageX extends _TitledAutoRoutePage {
+class CupertinoPageX<T> extends _TitledAutoRoutePage<T> {
   CupertinoPageX({
     required RouteData routeData,
     required Widget child,
@@ -112,12 +129,12 @@ class CupertinoPageX extends _TitledAutoRoutePage {
             title: title);
 
   @override
-  Route createRoute(BuildContext context) {
-    return _PageBasedCupertinoPageRoute(page: this);
+  Route<T> onCreateRoute(BuildContext context) {
+    return _PageBasedCupertinoPageRoute<T>(page: this);
   }
 }
 
-class _PageBasedCupertinoPageRoute extends PageRoute<dynamic> with CupertinoRouteTransitionMixin {
+class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMixin<T> {
   _PageBasedCupertinoPageRoute({
     required _TitledAutoRoutePage page,
   }) : super(settings: page);
@@ -140,7 +157,7 @@ class _PageBasedCupertinoPageRoute extends PageRoute<dynamic> with CupertinoRout
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
-class AdaptivePage extends _TitledAutoRoutePage {
+class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   AdaptivePage({
     required RouteData routeData,
     required Widget child,
@@ -156,9 +173,9 @@ class AdaptivePage extends _TitledAutoRoutePage {
         );
 
   @override
-  Route createRoute(BuildContext context) {
+  Route<T> onCreateRoute(BuildContext context) {
     if (kIsWeb) {
-      return PageRouteBuilder(
+      return PageRouteBuilder<T>(
         pageBuilder: (_, __, ___) => wrappedChild(context),
         settings: this,
         maintainState: maintainState,
@@ -168,15 +185,15 @@ class AdaptivePage extends _TitledAutoRoutePage {
 
     final platform = Theme.of(context).platform;
     if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {
-      return _PageBasedCupertinoPageRoute(page: this);
+      return _PageBasedCupertinoPageRoute<T>(page: this);
     }
-    return _PageBasedMaterialPageRoute(page: this);
+    return _PageBasedMaterialPageRoute<T>(page: this);
   }
 }
 
-typedef CustomRouteBuilder = Route Function(BuildContext context, Widget child, CustomPage page);
+typedef CustomRouteBuilder<T> = Route<T> Function<T>(BuildContext context, Widget child, CustomPage page);
 
-class CustomPage extends AutoRoutePage {
+class CustomPage<T> extends AutoRoutePage<T> {
   final bool opaque;
   final int durationInMilliseconds;
   final int reverseDurationInMilliseconds;
@@ -209,11 +226,11 @@ class CustomPage extends AutoRoutePage {
         );
 
   @override
-  Route createRoute(BuildContext context) {
+  Route<T> onCreateRoute(BuildContext context) {
     if (customRouteBuilder != null) {
-      return customRouteBuilder!(context, wrappedChild(context), this);
+      return customRouteBuilder!<T>(context, wrappedChild(context), this);
     }
-    return PageRouteBuilder(
+    return PageRouteBuilder<T>(
       pageBuilder: (_, __, ___) => wrappedChild(context),
       settings: this,
       opaque: opaque,

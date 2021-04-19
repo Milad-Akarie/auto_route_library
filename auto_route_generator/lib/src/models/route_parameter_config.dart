@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/element/element.dart' show ParameterElement;
 import 'package:code_builder/code_builder.dart' as _code;
+import 'package:code_builder/code_builder.dart';
 
 import 'importable_type.dart';
 
@@ -47,23 +48,6 @@ class ParamConfig {
     }
   }
 
-  String get getterName {
-    switch (type.name) {
-      case 'String':
-        return 'stringValue';
-      case 'int':
-        return 'intValue';
-      case 'double':
-        return 'doubleValue';
-      case 'num':
-        return 'numValue';
-      case 'bool':
-        return 'boolValue';
-      default:
-        return 'value';
-    }
-  }
-
   String get getterMethodName {
     switch (type.name) {
       case 'String':
@@ -82,8 +66,6 @@ class ParamConfig {
   }
 
   String get paramName => alias ?? name;
-
-  _code.Code? get defaultCode => defaultValueCode == null ? null : _code.Code(defaultValueCode);
 }
 
 class FunctionParamConfig extends ParamConfig {

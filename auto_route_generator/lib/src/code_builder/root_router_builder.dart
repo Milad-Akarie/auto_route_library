@@ -71,32 +71,40 @@ Method buildMethod(RouteConfig r) {
       )
       ..body = Block(
         (b) => b.statements.addAll([
-          if (!r.hasUnparsableRequiredArags && r.parameters.any((p) => p.isPathParam))
+          if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isPathParam))
             refer('routeData').property('pathParams').assignVar('pathParams').statement,
-          if (!r.hasUnparsableRequiredArags && r.parameters.any((p) => p.isQueryParam))
+          if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
             refer('routeData').property('queryParams').assignVar('queryParams').statement,
           if (r.parameters.isNotEmpty)
             refer('routeData')
                 .property('argsAs')
                 .call([], {
-                  if (!r.hasUnparsableRequiredArags)
+                  if (!r.hasUnparsableRequiredArgs)
                     'orElse': Method(
-                      (b) => b.body = refer('${r.routeName}Args').newInstance(
-                        [],
-                        Map.fromEntries(r.parameters.where((p) => p.isPathParam || p.isQueryParam).map(
-                              (p) => MapEntry(
-                                p.name,
-                                getUrlParamAssignment(p),
-                              ),
-                            )),
-                      ).code,
+                      (b) => b
+                        ..body = r.pathQueryParams.isEmpty
+                            ? refer('${r.routeName}Args').constInstance([]).code
+                            : refer('${r.routeName}Args').newInstance(
+                                [],
+                                Map.fromEntries(r.parameters.where((p) => p.isPathParam || p.isQueryParam).map(
+                                      (p) => MapEntry(
+                                        p.name,
+                                        getUrlParamAssignment(p),
+                                      ),
+                                    )),
+                              ).code,
                     ).closure
                 }, [
                   refer('${r.routeName}Args'),
                 ])
-                .assignVar('args')
+                .assignFinal('args')
                 .statement,
-          refer(r.pageTypeName, autoRouteImport)
+          TypeReference(
+            (b) => b
+              ..symbol = r.pageTypeName
+              ..url = autoRouteImport
+              ..types.add(r.returnType?.refer ?? refer('dynamic')),
+          )
               .newInstance(
                 [],
                 {

@@ -2,6 +2,7 @@ import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
+import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
@@ -83,8 +84,17 @@ class AutoRouterState extends State<AutoRouter> {
       };
       _navigatorObservers = _inheritableObserversBuilder();
       final parentRoute = RouteDataScope.of(context);
-      _controller = parentScope!.controller.findOrCreateChildController<StackRouter>(parentRoute) as StackRouter;
-      // var rootDelegate = AutoRouterDelegate.of(context);
+      final parent = parentScope!.controller;
+      _controller = NestedStackRouter(
+          parent: parent,
+          key: parentRoute.key,
+          routeData: parentRoute,
+          routeCollection: parent.routeCollection.subCollectionOf(
+            parentRoute.name,
+          ),
+          pageBuilder: parent.pageBuilder,
+          preMatchedRoutes: parentRoute.route.initialChildren);
+      parent.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
     }
   }
@@ -118,9 +128,20 @@ class AutoRouterState extends State<AutoRouter> {
   }
 
   @override
+  void deactivate() {
+    super.deactivate();
+    if (_controller != null) {
+      final parent = RoutingControllerScope.of(context)?.controller;
+      parent?.removeChildController(_controller!);
+    }
+  }
+
+  @override
   void dispose() {
     super.dispose();
-    // _controller?.dispose();
+    _controller?.removeListener(_rebuildListener);
+    _controller?.dispose();
+    _controller = null;
   }
 }
 
@@ -161,7 +182,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_controller == null || true) {
+    if (_controller == null) {
       _heroController = HeroController();
       final parentScope = RoutingControllerScope.of(context);
       assert(parentScope != null);
@@ -174,22 +195,53 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-
       final parentRoute = RouteDataScope.of(context);
-      _controller = parentScope!.controller.findOrCreateChildController<StackRouter>(parentRoute) as StackRouter;
-      assert(_controller != null);
+      final parent = parentScope!.controller;
+      _controller = NestedStackRouter(
+          parent: parent,
+          key: parentRoute.key,
+          routeData: parentRoute,
+          stackManagedByWidget: true,
+          routeCollection: parent.routeCollection.subCollectionOf(
+            parentRoute.name,
+          ),
+          pageBuilder: parent.pageBuilder,
+          preMatchedRoutes: parentRoute.route.initialChildren);
+      parent.attachChildController(_controller!);
       widget.onInitialRoutes?.call(_controller!.preMatchedRoutes ?? const []);
-      _routes = widget.routes(context);
-      _controller!.updateDeclarativeRoutes(_routes);
-      _controller!.addListener(() {
-        setState(() {});
-      });
+      _controller!.addListener(_rebuildListener);
+      _updateRoutes(widget.routes(context));
+    }
+  }
+
+  void _updateRoutes(List<PageRouteInfo> routes) {
+    _routes = routes;
+    _controller!.updateDeclarativeRoutes(routes);
+    // AutoRouterDelegate.reportUrlChanged(
+    //   context,
+    //   UrlTree(_controller!.root.currentSegments).url,
+    // );
+  }
+
+  void _rebuildListener() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    if (_controller != null) {
+      final parent = RoutingControllerScope.of(context)?.controller;
+      // parent?.removeChildController(_controller!);
     }
   }
 
   @override
   void dispose() {
     super.dispose();
+    _controller?.removeListener(_rebuildListener);
     _controller?.dispose();
     _controller = null;
   }
@@ -220,8 +272,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     super.didUpdateWidget(oldWidget);
     var newRoutes = widget.routes(context);
     if (!ListEquality().equals(newRoutes, _routes)) {
-      _routes = newRoutes;
-      (_controller as StackRouter).updateDeclarativeRoutes(newRoutes);
+      _updateRoutes(newRoutes);
     }
   }
 }

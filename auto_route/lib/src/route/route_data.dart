@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'route_data_scope.dart';
 
 class RouteData {
-  final PageRouteInfo route;
+  PageRouteInfo _route;
   final RouteData? parent;
   final RouteConfig? config;
   final ValueKey<String> key;
@@ -12,11 +12,11 @@ class RouteData {
   RouteData? activeChild;
 
   RouteData({
-    required this.route,
+    required PageRouteInfo route,
     this.parent,
     this.config,
     required this.key,
-  }) {
+  }) : _route = route {
     if (route.hasInitialChildren) {
       activeChild = RouteData(
         route: route.initialChildren!.last,
@@ -28,22 +28,23 @@ class RouteData {
 
   List<PageRouteInfo> get breadcrumbs => List.unmodifiable([
         if (parent != null) ...parent!.breadcrumbs,
-        route,
+        _route,
       ]);
 
-  List<PageRouteInfo> get routeSegments => List.unmodifiable([
-        route,
-        if (activeChild != null) ...activeChild!.routeSegments,
-      ]);
-
-  List<String> get segments => [route.stringMatch, if (activeChild != null) ...activeChild!.segments];
+  List<PageRouteInfo> get segments {
+    print("Getting segments [$name]  active child ${activeChild?.name}");
+    return List.unmodifiable([
+      _route,
+      if (activeChild != null) ...activeChild!.segments,
+    ]);
+  }
 
   static RouteData of(BuildContext context) {
     return RouteDataScope.of(context);
   }
 
   T argsAs<T>({T Function()? orElse}) {
-    final args = route.args;
+    final args = _route.args;
     if (args == null) {
       if (orElse == null) {
         throw FlutterError('${T.toString()} can not be null because it has a required parameter');
@@ -57,19 +58,21 @@ class RouteData {
     }
   }
 
-  String get name => route.routeName;
+  PageRouteInfo get route => _route;
 
-  String get path => route.path;
+  String get name => _route.routeName;
 
-  String get match => route.stringMatch;
+  String get path => _route.path;
 
-  Parameters get pathParams => Parameters(route.params);
+  String get match => _route.stringMatch;
 
-  Parameters get queryParams => Parameters(route.queryParams);
+  Parameters get pathParams => Parameters(_route.params);
 
-  String? get fragment => route.match?.fragment;
+  Parameters get queryParams => Parameters(_route.queryParams);
 
-  void updateChildren(PageRouteInfo route) {
-    route = route;
+  String? get fragment => _route.match?.fragment;
+
+  void updateRoute(PageRouteInfo route) {
+    _route = route;
   }
 }

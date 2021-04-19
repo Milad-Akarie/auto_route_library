@@ -28,39 +28,9 @@ class DefaultRouteParser extends RouteInformationParser<UrlTree> {
   }
 }
 
-String _getNormalizedPath(List<PageRouteInfo> routes) {
-  var fullPath = '/';
-  //
-  if (routes.isEmpty) {
-    return fullPath;
-  }
-  //
-  fullPath = p.joinAll([
-    ...routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch),
-  ]);
-
-  var normalized = p.normalize(fullPath);
-  var query = routes.last.queryParams;
-  if (!mapNullOrEmpty(query)) {
-    normalized += "?${query.keys.map((k) {
-      var value = query[k];
-      if (value is List) {
-        value = value.map((v) => '$k=$v').join('&');
-      }
-      return '$k=$value';
-    }).join('&')}";
-  }
-  var frag = routes.last.match?.fragment;
-  if (frag?.isNotEmpty == true) {
-    normalized += "#$frag";
-  }
-  return normalized;
-}
-
 class UrlTree {
   final List<PageRouteInfo> routes;
-
-  UrlTree(this.routes);
+  const UrlTree(this.routes);
 
   String get url => uri.toString();
   String get path => uri.path;

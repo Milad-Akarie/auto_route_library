@@ -90,7 +90,18 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
       };
       _navigatorObservers = _inheritableObserversBuilder();
       final parentRoute = RouteDataScope.of(context);
-      _controller = parentScope!.controller.findOrCreateChildController<TabsRouter>(parentRoute) as TabsRouter;
+      final parent = parentScope!.controller;
+      _controller = TabsRouter(
+          parent: parent,
+          key: parentRoute.key,
+          routeData: parentRoute,
+          routeCollection: parent.routeCollection.subCollectionOf(
+            parentRoute.name,
+          ),
+          pageBuilder: parent.pageBuilder,
+          preMatchedRoutes: parentRoute.route.initialChildren);
+      parent.attachChildController(_controller!);
+
       _resetController();
     }
   }
@@ -108,6 +119,15 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
         _animationController.forward(from: 0.0);
       }
     });
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    if (_controller != null) {
+      final parent = RoutingControllerScope.of(context)?.controller;
+      parent?.removeChildController(_controller!);
+    }
   }
 
   @override

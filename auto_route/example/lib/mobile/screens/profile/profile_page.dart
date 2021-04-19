@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/data/db.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../router/router.gr.dart';
 import '../user-data/data_collector.dart';
 
@@ -42,11 +44,15 @@ class _ProfilePageState extends State<ProfilePage> {
             userData == null
                 ? ElevatedButton(
                     onPressed: () {
-                      context.router.rootAsStackRouter.push(UserDataCollectorRoute(onResult: (data) {
-                        setState(() {
-                          userData = data;
-                        });
-                      }));
+                      // context.pushRoute(
+                      //   UserDataCollectorRoute(onResult: (data) {
+                      //     // setState(() {
+                      //     //   userData = data;
+                      //     // });
+                      //   }),
+                      // )
+
+                      context.router.pushPath<UserData>('/user-data').then((value) => print('Popped Value ${value}'));
                     },
                     child: Text('Collect user data'),
                   )

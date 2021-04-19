@@ -15,20 +15,18 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 const Reference requiredAnnotation = Reference('required', materialImport);
 
-TypeReference listRefer(Reference reference, {bool nullable = false}) =>
-    TypeReference((b) => b
-      ..symbol = "List"
-      ..isNullable = nullable
-      ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
+  ..symbol = "List"
+  ..isNullable = nullable
+  ..types.add(reference));
 
 String generateLibrary(RouterConfig config) {
-  var allRouters = config.collectAllRoutersIncludingParent;
-  List<RouteConfig> allRoutes =
-      allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+  final emitter = DartEmitter(Allocator.simplePrefixing(), true, true);
 
-  var routeNames = allRoutes
-      .where((r) => r.routeType != RouteType.redirect)
-      .map((r) => r.routeName);
+  var allRouters = config.collectAllRoutersIncludingParent;
+  List<RouteConfig> allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+
+  var routeNames = allRoutes.where((r) => r.routeType != RouteType.redirect).map((r) => r.routeName);
   var checkedNames = <String>[];
   routeNames.forEach((name) {
     throwIf(
@@ -50,11 +48,10 @@ String generateLibrary(RouterConfig config) {
         buildRouterConfig(config, allGuards, allRoutes),
         ...allRoutes
             .where((r) => r.routeType != RouteType.redirect)
-            .map((r) => buildRouteInfoAndArgs(r, config))
+            .map((r) => buildRouteInfoAndArgs(r, config, emitter))
             .reduce((acc, a) => acc..addAll(a)),
       ]),
   );
 
-  final emitter = DartEmitter(Allocator.simplePrefixing(), true, true);
   return DartFormatter().format(library.accept(emitter).toString());
 }

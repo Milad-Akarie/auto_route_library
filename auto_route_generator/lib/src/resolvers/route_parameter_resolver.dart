@@ -29,14 +29,6 @@ class RouteParameterResolver {
       paramAlias = _queryParamChecker.firstAnnotationOf(parameterElement)?.getField('name')?.toStringValue();
     }
 
-    // if (isPathParam || isQueryParam) {
-    //   throwIf(
-    //     ((!type.isNullable && parameterElement.defaultValueCode == null)),
-    //     'Path/Query parameters must be nullable or have a default value',
-    //     element: parameterElement,
-    //   );
-    // }
-
     return ParamConfig(
       type: type,
       element: parameterElement,

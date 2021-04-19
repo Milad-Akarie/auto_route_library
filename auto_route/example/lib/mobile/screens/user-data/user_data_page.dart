@@ -27,11 +27,11 @@ class UserDataPage extends StatelessWidget {
             Text('Favorite book: ${userData.favoriteBook}'),
             const SizedBox(height: 24),
             ElevatedButton(
-                child: Text('Done'),
-                onPressed: () {
-                  onResult?.call(userData);
-                  context.router.root.pop();
-                })
+              onPressed: () {
+                context.router.root.pop(userData);
+              },
+              child: Text('Done'),
+            )
           ],
         ),
       ),
