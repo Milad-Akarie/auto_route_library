@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/auth_guard.dart';
+import 'package:example/mobile/screens/books/book_details_page.dart';
+import 'package:example/mobile/screens/books/book_list_page.dart';
 
 import '../screens/books/routes.dart';
 import '../screens/home_page.dart';
@@ -14,10 +16,16 @@ export 'router.gr.dart';
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     // AutoRoute(path: '/', page: WelcomePage, guards: [AuthGuard]),
+    AutoRoute(path: '/books', page: BookListPage),
+    AutoRoute(
+      path: '/books/:id',
+      page: BookDetailsPage,
+      // guards: [AuthGuard],
+    ),
     AutoRoute(
       path: '/',
       page: HomePage,
-      guards: [AuthGuard],
+      // guards: [AuthGuard],
       usesTabsRouter: true,
       children: [
         RedirectRoute(path: '', redirectTo: 'books'),

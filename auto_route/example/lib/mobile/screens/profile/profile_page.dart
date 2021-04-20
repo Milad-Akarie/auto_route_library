@@ -51,8 +51,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       //     // });
                       //   }),
                       // )
-
-                      context.router.pushPath<UserData>('/user-data').then((value) => print('Popped Value ${value}'));
                     },
                     child: Text('Collect user data'),
                   )

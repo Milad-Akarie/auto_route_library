@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/router.dart';
 import 'package:flutter/material.dart';
 
 class MyBooksPage extends StatelessWidget {
@@ -25,9 +24,12 @@ class MyBooksPage extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () => context.router.navigate(
-                BooksTab(),
-              ),
+              onPressed: () {
+                context.router.navigateNamed('/settings');
+                //   return context.router.navigate(
+                //   BooksTab(),
+                // );
+              },
               child: Text('Go Back'),
             )
           ],

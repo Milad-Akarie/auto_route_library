@@ -17,3 +17,4 @@ export 'src/router/widgets/auto_tabs_router.dart';
 export 'src/router/widgets/auto_tabs_scaffold.dart';
 export 'src/router/widgets/auto_appbar_wrapper.dart';
 export 'src/router/widgets/navigation_change_builder.dart';
+export 'src/router/parser/route_information_parser.dart';

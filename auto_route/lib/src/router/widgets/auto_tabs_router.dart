@@ -99,7 +99,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
             parentRoute.name,
           ),
           pageBuilder: parent.pageBuilder,
-          preMatchedRoutes: parentRoute.route.initialChildren);
+          preMatchedRoutes: parentRoute.route.children);
       parent.attachChildController(_controller!);
 
       _resetController();

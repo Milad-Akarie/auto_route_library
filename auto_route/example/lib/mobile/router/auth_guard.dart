@@ -12,13 +12,13 @@ class AuthGuard extends AutoRouteGuard {
 
     if (!context!.read<AuthService>().isAuthenticated) {
       // ignore: unawaited_futures
-      router.push(LoginRoute(
-          showBackButton: pendingRoutes.first is! HomeRoute,
-          onLoginResult: (success) {
-            if (success) {
-              router.replaceAll(pendingRoutes);
-            }
-          }));
+      // router.push(LoginRoute(
+      //     showBackButton: pendingRoutes.first is! HomeRoute,
+      //     onLoginResult: (success) {
+      //       if (success) {
+      //         router.replaceAll(pendingRoutes);
+      //       }
+      //     }));
       return false;
     }
     return true;

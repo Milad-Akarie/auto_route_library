@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import '../data/db.dart';
 import 'router/router.gr.dart';
-import 'package:path/path.dart' as path;
 
 class MyObserver extends AutoRouterObserver {
   @override
@@ -36,40 +35,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _appRouter = AppRouter(authGuard: AuthGuard());
-
-  var showHome = false;
-
+  final _appRouter = AppRouter();
+  PageRouteInfo? _bookDetailsRoute;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      theme: ThemeData.dark(),
       routerDelegate: AutoRouterDelegate(
         _appRouter,
-        // navigatorObservers: () => [MyObserver()],
-        // initialDeepLink: '/home/books/2'
-        // initialRoutes: [
-        //   HomeRoute(),
-        // ],
-        // routes: (context) {
-        //   return [
-        //     if (context.watch<AuthService>().isAuthenticated)
-        //       HomeRoute()
-        //     else
-        //       LoginRoute(
-        //         onLoginResult: (loggedIn) {
-        //           setState(() {
-        //             showHome = loggedIn;
-        //           });
-        //         },
-        //       ),
-        //   ];
-        // },
-        // onPopRoute: (route) {
-        //   if (route.routeName == HomeRoute.name) {
-        //     showHome = false;
-        //   }
-        // },
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {

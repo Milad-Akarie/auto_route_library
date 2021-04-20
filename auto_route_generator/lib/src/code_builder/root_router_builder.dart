@@ -32,6 +32,19 @@ Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards, List<Ro
   ..constructors.add(
     Constructor((b) => b
       ..optionalParameters.addAll([
+        Parameter(
+          (b) => b
+            ..name = 'navigatorKey'
+            ..type = TypeReference(
+              (b) => b
+                ..url = materialImport
+                ..symbol = 'GlobalKey'
+                ..isNullable = true
+                ..types.add(
+                  refer('NavigatorState', materialImport),
+                ),
+            ),
+        ),
         ...guards.map(
           (g) => Parameter((b) => b
             ..name = toLowerCamelCase(g.name)
@@ -39,7 +52,10 @@ Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards, List<Ro
             ..required = true
             ..toThis = true),
         ),
-      ])),
+      ])
+      ..initializers.add(refer('super').call([
+        refer('navigatorKey'),
+      ]).code)),
     // ),
   ));
 

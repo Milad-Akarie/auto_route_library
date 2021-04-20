@@ -14,12 +14,12 @@ class PageRouteInfo<T> {
   final RouteMatch? match;
   final Map<String, dynamic> params;
   final Map<String, dynamic> queryParams;
-  final List<PageRouteInfo>? initialChildren;
+  final List<PageRouteInfo>? children;
 
   const PageRouteInfo(
     this._name, {
     required this.path,
-    this.initialChildren,
+    this.children,
     this.match,
     this.args,
     this.params = const {},
@@ -35,9 +35,9 @@ class PageRouteInfo<T> {
     return _expand(path, params);
   }
 
-  String get fullPath => p.joinAll([stringMatch, if (hasInitialChildren) initialChildren!.last.fullPath]);
+  String get fullPath => p.joinAll([stringMatch, if (hasChildren) children!.last.fullPath]);
 
-  bool get hasInitialChildren => initialChildren?.isNotEmpty == true;
+  bool get hasChildren => children?.isNotEmpty == true;
 
   bool get fromRedirect => match?.fromRedirect == true;
 
@@ -52,22 +52,38 @@ class PageRouteInfo<T> {
     return path;
   }
 
-  PageRouteInfo updateChildren({
-    List<PageRouteInfo>? children,
+  PageRouteInfo copyWith({
+    String? name,
+    String? path,
+    T? args,
+    RouteMatch? match,
+    Map<String, dynamic>? params,
+    Map<String, dynamic>? queryParams,
+    List<PageRouteInfo>? initialChildren,
   }) {
+    if ((name == null || identical(name, this._name)) &&
+        (path == null || identical(path, this.path)) &&
+        (args == null || identical(args, this.args)) &&
+        (match == null || identical(match, this.match)) &&
+        (params == null || identical(params, this.params)) &&
+        (queryParams == null || identical(queryParams, this.queryParams)) &&
+        (initialChildren == null || identical(initialChildren, this.children))) {
+      return this;
+    }
+
     return PageRouteInfo(
-      this._name,
-      path: path,
-      args: args,
-      match: match,
-      params: params,
-      queryParams: queryParams,
-      initialChildren: children,
+      name ?? this._name,
+      path: path ?? this.path,
+      args: args ?? this.args,
+      match: match ?? this.match,
+      params: params ?? this.params,
+      queryParams: queryParams ?? this.queryParams,
+      children: initialChildren ?? this.children,
     );
   }
 
   String toString() {
-    return 'Route{name: $_name, path: $path, params: $params}';
+    return 'Route{name: $_name, path: $path, params: $params}, children: ${children?.map((e) => e.routeName)}';
   }
 
   PageRouteInfo.fromMatch(RouteMatch match)
@@ -77,7 +93,7 @@ class PageRouteInfo<T> {
         path = match.config.path,
         params = match.pathParams.rawMap,
         queryParams = match.queryParams.rawMap,
-        initialChildren = match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList();
+        children = match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList();
 
 // maybe?
   Future<void> show(BuildContext context) {
@@ -91,9 +107,15 @@ class PageRouteInfo<T> {
           runtimeType == other.runtimeType &&
           _name == other._name &&
           path == other.path &&
+          ListEquality().equals(children, other.children) &&
           MapEquality().equals(params, other.params) &&
           MapEquality().equals(queryParams, other.queryParams);
 
   @override
-  int get hashCode => _name.hashCode ^ path.hashCode ^ params.hashCode ^ queryParams.hashCode;
+  int get hashCode =>
+      _name.hashCode ^
+      path.hashCode ^
+      MapEquality().hash(params) ^
+      MapEquality().hash(queryParams) ^
+      ListEquality().hash(children);
 }

@@ -8,11 +8,11 @@ const booksTab = AutoRoute(
   page: EmptyRouterPage,
   name: 'BooksTab',
   children: [
-    AutoRoute(path: '', page: BookListPage),
-    AutoRoute(
-      path: ':id',
-      page: BookDetailsPage,
-      // guards: [AuthGuard],
-    ),
+    // AutoRoute(path: '', page: BookListPage),
+    // AutoRoute(
+    //   path: ':id',
+    //   page: BookDetailsPage,
+    //   // guards: [AuthGuard],
+    // ),
   ],
 );

@@ -6,32 +6,42 @@
 
 import 'package:auto_route/auto_route.dart' as _i2;
 import 'package:flutter/cupertino.dart' as _i13;
+import 'package:flutter/material.dart' as _i3;
 
-import '../screens/books/book_details_page.dart' as _i8;
-import '../screens/books/book_list_page.dart' as _i7;
-import '../screens/home_page.dart' as _i4;
-import '../screens/login_page.dart' as _i5;
+import '../screens/books/book_details_page.dart' as _i5;
+import '../screens/books/book_list_page.dart' as _i4;
+import '../screens/home_page.dart' as _i6;
+import '../screens/login_page.dart' as _i7;
 import '../screens/profile/my_books_page.dart' as _i10;
 import '../screens/profile/profile_page.dart' as _i9;
-import '../screens/settings.dart' as _i6;
+import '../screens/settings.dart' as _i8;
 import '../screens/user-data/data_collector.dart' as _i1;
 import '../screens/user-data/sinlge_field_page.dart' as _i11;
 import '../screens/user-data/user_data_page.dart' as _i12;
-import 'auth_guard.dart' as _i3;
 
 class AppRouter extends _i2.RootStackRouter {
-  AppRouter({required this.authGuard});
-
-  final _i3.AuthGuard authGuard;
+  AppRouter([_i3.GlobalKey<_i3.NavigatorState>? navigatorKey])
+      : super(navigatorKey);
 
   @override
   final Map<String, _i2.PageFactory> pagesMap = {
+    BookListRoute.name: (routeData) {
+      return _i2.MaterialPageX<dynamic>(
+          routeData: routeData, child: _i4.BookListPage());
+    },
+    BookDetailsRoute.name: (routeData) {
+      var pathParams = routeData.pathParams;
+      final args = routeData.argsAs<BookDetailsRouteArgs>(
+          orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -1)));
+      return _i2.MaterialPageX<dynamic>(
+          routeData: routeData, child: _i5.BookDetailsPage(id: args.id));
+    },
     HomeRoute.name: (routeData) {
       final args =
           routeData.argsAs<HomeRouteArgs>(orElse: () => const HomeRouteArgs());
       return _i2.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i4.HomePage(
+          child: _i6.HomePage(
               key: args.key,
               enumValue: args.enumValue,
               userData: args.userData));
@@ -49,7 +59,7 @@ class AppRouter extends _i2.RootStackRouter {
           orElse: () => const LoginRouteArgs());
       return _i2.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i5.LoginPage(
+          child: _i7.LoginPage(
               key: args.key,
               onLoginResult: args.onLoginResult,
               showBackButton: args.showBackButton));
@@ -64,18 +74,7 @@ class AppRouter extends _i2.RootStackRouter {
     },
     SettingsTab.name: (routeData) {
       return _i2.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i6.SettingsPage());
-    },
-    BookListRoute.name: (routeData) {
-      return _i2.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i7.BookListPage());
-    },
-    BookDetailsRoute.name: (routeData) {
-      var pathParams = routeData.pathParams;
-      final args = routeData.argsAs<BookDetailsRouteArgs>(
-          orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -1)));
-      return _i2.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i8.BookDetailsPage(id: args.id));
+          routeData: routeData, child: _i8.SettingsPage());
     },
     ProfileRoute.name: (routeData) {
       return _i2.MaterialPageX<dynamic>(
@@ -132,19 +131,15 @@ class AppRouter extends _i2.RootStackRouter {
 
   @override
   List<_i2.RouteConfig> get routes => [
+        _i2.RouteConfig(BookListRoute.name, path: '/books'),
+        _i2.RouteConfig(BookDetailsRoute.name, path: '/books/:id'),
         _i2.RouteConfig(HomeRoute.name,
             path: '/',
             usesTabsRouter: true,
-            guards: [
-              authGuard
-            ],
             children: [
               _i2.RouteConfig('#redirect',
                   path: '', redirectTo: 'books', fullMatch: true),
-              _i2.RouteConfig(BooksTab.name, path: 'books', children: [
-                _i2.RouteConfig(BookListRoute.name, path: ''),
-                _i2.RouteConfig(BookDetailsRoute.name, path: ':id')
-              ]),
+              _i2.RouteConfig(BooksTab.name, path: 'books'),
               _i2.RouteConfig(ProfileTab.name, path: 'profile', children: [
                 _i2.RouteConfig(ProfileRoute.name, path: ''),
                 _i2.RouteConfig(MyBooksRoute.name, path: 'books')
@@ -165,17 +160,39 @@ class AppRouter extends _i2.RootStackRouter {
       ];
 }
 
+class BookListRoute extends _i2.PageRouteInfo {
+  const BookListRoute() : super(name, path: '/books');
+
+  static const String name = 'BookListRoute';
+}
+
+class BookDetailsRoute extends _i2.PageRouteInfo<BookDetailsRouteArgs> {
+  BookDetailsRoute({int id = -1})
+      : super(name,
+            path: '/books/:id',
+            args: BookDetailsRouteArgs(id: id),
+            params: {'id': id});
+
+  static const String name = 'BookDetailsRoute';
+}
+
+class BookDetailsRouteArgs {
+  const BookDetailsRouteArgs({this.id = -1});
+
+  final int id;
+}
+
 class HomeRoute extends _i2.PageRouteInfo<HomeRouteArgs> {
   HomeRoute(
       {_i13.Key? key,
-      _i4.ConstEnum enumValue = _i4.ConstEnum.value1,
+      _i6.ConstEnum enumValue = _i6.ConstEnum.value1,
       _i1.UserData userData = const _i1.UserData(),
       List<_i2.PageRouteInfo>? children})
       : super(name,
             path: '/',
             args: HomeRouteArgs(
                 key: key, enumValue: enumValue, userData: userData),
-            initialChildren: children);
+            children: children);
 
   static const String name = 'HomeRoute';
 }
@@ -183,12 +200,12 @@ class HomeRoute extends _i2.PageRouteInfo<HomeRouteArgs> {
 class HomeRouteArgs {
   const HomeRouteArgs(
       {this.key,
-      this.enumValue = _i4.ConstEnum.value1,
+      this.enumValue = _i6.ConstEnum.value1,
       this.userData = const _i1.UserData()});
 
   final _i13.Key? key;
 
-  final _i4.ConstEnum enumValue;
+  final _i6.ConstEnum enumValue;
 
   final _i1.UserData userData;
 }
@@ -202,7 +219,7 @@ class UserDataCollectorRoute
       : super(name,
             path: '/user-data',
             args: UserDataCollectorRouteArgs(key: key, onResult: onResult),
-            initialChildren: children);
+            children: children);
 
   static const String name = 'UserDataCollectorRoute';
 }
@@ -242,15 +259,14 @@ class LoginRouteArgs {
 }
 
 class BooksTab extends _i2.PageRouteInfo {
-  const BooksTab({List<_i2.PageRouteInfo>? children})
-      : super(name, path: 'books', initialChildren: children);
+  const BooksTab() : super(name, path: 'books');
 
   static const String name = 'BooksTab';
 }
 
 class ProfileTab extends _i2.PageRouteInfo {
   const ProfileTab({List<_i2.PageRouteInfo>? children})
-      : super(name, path: 'profile', initialChildren: children);
+      : super(name, path: 'profile', children: children);
 
   static const String name = 'ProfileTab';
 }
@@ -259,28 +275,6 @@ class SettingsTab extends _i2.PageRouteInfo {
   const SettingsTab() : super(name, path: 'settings');
 
   static const String name = 'SettingsTab';
-}
-
-class BookListRoute extends _i2.PageRouteInfo {
-  const BookListRoute() : super(name, path: '');
-
-  static const String name = 'BookListRoute';
-}
-
-class BookDetailsRoute extends _i2.PageRouteInfo<BookDetailsRouteArgs> {
-  BookDetailsRoute({int id = -1})
-      : super(name,
-            path: ':id',
-            args: BookDetailsRouteArgs(id: id),
-            params: {'id': id});
-
-  static const String name = 'BookDetailsRoute';
-}
-
-class BookDetailsRouteArgs {
-  const BookDetailsRouteArgs({this.id = -1});
-
-  final int id;
 }
 
 class ProfileRoute extends _i2.PageRouteInfo {

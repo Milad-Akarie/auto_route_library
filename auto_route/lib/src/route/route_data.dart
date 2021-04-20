@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'route_data_scope.dart';
 
 class RouteData {
-  PageRouteInfo _route;
+  final PageRouteInfo route;
   final RouteData? parent;
   final RouteConfig? config;
   final ValueKey<String> key;
@@ -12,29 +12,29 @@ class RouteData {
   RouteData? activeChild;
 
   RouteData({
-    required PageRouteInfo route,
+    required this.route,
     this.parent,
     this.config,
     required this.key,
-  }) : _route = route {
-    if (route.hasInitialChildren) {
+  }) {
+    if (route.hasChildren) {
       activeChild = RouteData(
-        route: route.initialChildren!.last,
+        route: route.children!.last,
         parent: this,
-        key: ValueKey(route.initialChildren!.last.stringMatch),
+        key: ValueKey(route.children!.last.stringMatch),
       );
     }
   }
 
   List<PageRouteInfo> get breadcrumbs => List.unmodifiable([
         if (parent != null) ...parent!.breadcrumbs,
-        _route,
+        route,
       ]);
 
   List<PageRouteInfo> get segments {
     print("Getting segments [$name]  active child ${activeChild?.name}");
     return List.unmodifiable([
-      _route,
+      route,
       if (activeChild != null) ...activeChild!.segments,
     ]);
   }
@@ -44,7 +44,7 @@ class RouteData {
   }
 
   T argsAs<T>({T Function()? orElse}) {
-    final args = _route.args;
+    final args = route.args;
     if (args == null) {
       if (orElse == null) {
         throw FlutterError('${T.toString()} can not be null because it has a required parameter');
@@ -58,21 +58,22 @@ class RouteData {
     }
   }
 
-  PageRouteInfo get route => _route;
+  String get name => route.routeName;
 
-  String get name => _route.routeName;
+  String get path => route.path;
 
-  String get path => _route.path;
+  String get match => route.stringMatch;
 
-  String get match => _route.stringMatch;
+  Parameters get pathParams => Parameters(route.params);
 
-  Parameters get pathParams => Parameters(_route.params);
+  Parameters get queryParams => Parameters(route.queryParams);
 
-  Parameters get queryParams => Parameters(_route.queryParams);
+  String? get fragment => route.match?.fragment;
 
-  String? get fragment => _route.match?.fragment;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is RouteData && runtimeType == other.runtimeType && route == other.route;
 
-  void updateRoute(PageRouteInfo route) {
-    _route = route;
-  }
+  @override
+  int get hashCode => key.hashCode;
 }

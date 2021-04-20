@@ -3,7 +3,6 @@ import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -17,12 +16,11 @@ part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
 typedef RoutePopCallBack = void Function(PageRouteInfo route);
-typedef PreMatchedRoutesCallBack = void Function(List<PageRouteInfo> routes);
+typedef InitialRoutesCallBack = void Function(UrlTree tree);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
   final List<PageRouteInfo>? initialRoutes;
-  final GlobalKey<NavigatorState> navigatorKey;
   final StackRouter controller;
   final String? initialDeepLink;
   final String? navRestorationScopeId;
@@ -57,32 +55,35 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
     this.controller, {
     this.initialRoutes,
     this.placeholder,
-    GlobalKey<NavigatorState>? navigatorKey,
     this.navRestorationScopeId,
     this.initialDeepLink,
     this.navigatorObservers = defaultNavigatorObserversBuilder,
-  })  : assert(initialDeepLink == null || initialRoutes == null),
-        this.navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
+  }) : assert(initialDeepLink == null || initialRoutes == null) {
     _navigatorObservers = navigatorObservers();
     controller.addListener(_rebuildListener);
   }
 
   factory AutoRouterDelegate.declarative(
     RootStackRouter controller, {
-    GlobalKey<NavigatorState>? navigatorKey,
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
-    PreMatchedRoutesCallBack? onInitialRoutes,
+    InitialRoutesCallBack? onInitialRoutes,
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
-  List<PageRouteInfo> _currentSegments = const [];
+  UrlTree urlState = UrlTree.fromRoutes(const []);
 
   @override
-  UrlTree get currentConfiguration {
+  UrlTree? get currentConfiguration {
+    print('-------------------- current segments ---------------');
     print(controller.currentSegments.map((e) => e.routeName));
-    return UrlTree(_currentSegments);
+    final newState = UrlTree.fromRoutes(controller.currentSegments);
+    if (urlState != newState) {
+      urlState = newState;
+      return newState;
+    }
+    return null;
   }
 
   @override
@@ -97,7 +98,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
     if (initialRoutes?.isNotEmpty == true) {
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
-      return controller.pushPath(initialDeepLink!, includePrefixMatches: true);
+      return controller.pushNamed(initialDeepLink!, includePrefixMatches: true);
     } else if (!listNullOrEmpty(tree.routes)) {
       return controller.pushAll(tree.routes);
     } else {
@@ -107,7 +108,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(UrlTree tree) {
-    if (tree.routes.isNotEmpty) {
+    if (tree.hasRoutes) {
       return controller.navigateAll(tree.routes);
     }
     return SynchronousFuture(null);
@@ -131,11 +132,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
   }
 
   void _rebuildListener() {
-    final segments = controller.currentSegments;
-    if (!ListEquality().equals(segments, _currentSegments)) {
-      _currentSegments = segments;
-      notifyListeners();
-    }
+    // final segments = controller.currentSegments;
+    // if (!ListEquality().equals(segments, _currentSegments)) {
+    //   _currentSegments = segments;
+    //
+    // }
+    notifyListeners();
   }
 
   @override
@@ -143,16 +145,19 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
     super.dispose();
     removeListener(_rebuildListener);
   }
+
+  void notifyUrlChanged() {
+    notifyListeners();
+  }
 }
 
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final PreMatchedRoutesCallBack? onInitialRoutes;
+  final InitialRoutesCallBack? onInitialRoutes;
 
   _DeclarativeAutoRouterDelegate(
     RootStackRouter controller, {
-    GlobalKey<NavigatorState>? navigatorKey,
     required this.routes,
     String? navRestorationScopeId,
     this.onPopRoute,
@@ -160,7 +165,6 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           controller,
-          navigatorKey: navigatorKey,
           navRestorationScopeId: navRestorationScopeId,
           navigatorObservers: navigatorObservers,
         ) {
@@ -169,20 +173,18 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
 
   @override
   Future<void> setInitialRoutePath(UrlTree tree) {
-    onInitialRoutes?.call(tree.routes);
+    return setNewRoutePath(tree);
+  }
+
+  @override
+  Future<void> setNewRoutePath(UrlTree tree) {
+    onInitialRoutes?.call(tree);
     return SynchronousFuture(null);
   }
 
   @override
   Widget build(BuildContext context) {
-    var current = controller.current;
     controller.updateDeclarativeRoutes(routes(context));
-    if (current.key != controller.current.key) {
-      AutoRouterDelegate.reportUrlChanged(
-        context,
-        UrlTree(controller.currentSegments).url,
-      );
-    }
     return RoutingControllerScope(
       controller: controller,
       navigatorObservers: navigatorObservers,

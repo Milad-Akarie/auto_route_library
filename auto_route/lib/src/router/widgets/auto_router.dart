@@ -15,12 +15,14 @@ class AutoRouter extends StatefulWidget {
   final Widget Function(BuildContext context, Widget content)? builder;
   final String? navRestorationScopeId;
   final bool inheritNavigatorObservers;
+  final GlobalKey<NavigatorState>? navigatorKey;
 
   const AutoRouter({
     Key? key,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
+    this.navigatorKey,
     this.inheritNavigatorObservers = true,
   }) : super(key: key);
 
@@ -29,12 +31,15 @@ class AutoRouter extends StatefulWidget {
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
-    PreMatchedRoutesCallBack? onInitialRoutes,
+    InitialRoutesCallBack? onInitialRoutes,
     String? navRestorationScopeId,
     bool inheritNavigatorObservers = true,
+    GlobalKey<NavigatorState>? navigatorKey,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
+        onInitialRoutes: onInitialRoutes,
+        navigatorKey: navigatorKey,
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
         routes: routes,
@@ -89,11 +94,12 @@ class AutoRouterState extends State<AutoRouter> {
           parent: parent,
           key: parentRoute.key,
           routeData: parentRoute,
+          navigatorKey: widget.navigatorKey,
           routeCollection: parent.routeCollection.subCollectionOf(
             parentRoute.name,
           ),
           pageBuilder: parent.pageBuilder,
-          preMatchedRoutes: parentRoute.route.initialChildren);
+          preMatchedRoutes: parentRoute.route.children);
       parent.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
     }
@@ -150,10 +156,11 @@ typedef RoutesGenerator = List<PageRouteInfo> Function(BuildContext context, Lis
 class _DeclarativeAutoRouter extends StatefulWidget {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final PreMatchedRoutesCallBack? onInitialRoutes;
+  final InitialRoutesCallBack? onInitialRoutes;
   final NavigatorObserversBuilder navigatorObservers;
   final String? navRestorationScopeId;
   final bool inheritNavigatorObservers;
+  final GlobalKey<NavigatorState>? navigatorKey;
 
   const _DeclarativeAutoRouter({
     Key? key,
@@ -161,6 +168,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.onInitialRoutes,
+    this.navigatorKey,
     this.navRestorationScopeId,
     this.inheritNavigatorObservers = true,
   }) : super(key: key);
@@ -182,6 +190,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final parentRoute = RouteDataScope.of(context);
     if (_controller == null) {
       _heroController = HeroController();
       final parentScope = RoutingControllerScope.of(context);
@@ -195,32 +204,27 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-      final parentRoute = RouteDataScope.of(context);
+
       final parent = parentScope!.controller;
       _controller = NestedStackRouter(
           parent: parent,
           key: parentRoute.key,
           routeData: parentRoute,
           stackManagedByWidget: true,
+          navigatorKey: widget.navigatorKey,
           routeCollection: parent.routeCollection.subCollectionOf(
             parentRoute.name,
           ),
-          pageBuilder: parent.pageBuilder,
-          preMatchedRoutes: parentRoute.route.initialChildren);
+          pageBuilder: parent.pageBuilder);
       parent.attachChildController(_controller!);
-      widget.onInitialRoutes?.call(_controller!.preMatchedRoutes ?? const []);
-      _controller!.addListener(_rebuildListener);
-      _updateRoutes(widget.routes(context));
     }
+    widget.onInitialRoutes?.call(UrlTree.fromRoutes(parentRoute.route.children ?? const []));
+    _updateRoutes(widget.routes(context));
   }
 
   void _updateRoutes(List<PageRouteInfo> routes) {
     _routes = routes;
     _controller!.updateDeclarativeRoutes(routes);
-    // AutoRouterDelegate.reportUrlChanged(
-    //   context,
-    //   UrlTree(_controller!.root.currentSegments).url,
-    // );
   }
 
   void _rebuildListener() {
@@ -249,7 +253,6 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-
     return RoutingControllerScope(
       controller: _controller!,
       navigatorObservers: _inheritableObserversBuilder,
@@ -259,9 +262,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           router: _controller!,
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: _navigatorObservers,
-          didPop: (route) {
-            widget.onPopRoute?.call(route);
-          },
+          didPop: widget.onPopRoute,
         ),
       ),
     );
@@ -273,6 +274,9 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     var newRoutes = widget.routes(context);
     if (!ListEquality().equals(newRoutes, _routes)) {
       _updateRoutes(newRoutes);
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        AutoRouterDelegate.of(context).notifyUrlChanged();
+      });
     }
   }
 }

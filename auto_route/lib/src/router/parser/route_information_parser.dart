@@ -1,10 +1,10 @@
 import 'package:auto_route/src/route/page_route_info.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
-import '../../utils.dart';
 
 class DefaultRouteParser extends RouteInformationParser<UrlTree> {
   final RouteMatcher _matcher;
@@ -14,12 +14,13 @@ class DefaultRouteParser extends RouteInformationParser<UrlTree> {
 
   @override
   Future<UrlTree> parseRouteInformation(RouteInformation routeInformation) async {
-    var matches = _matcher.match(routeInformation.location ?? '', includePrefixMatches: includePrefixMatches);
     var routes = <PageRouteInfo>[];
+    final uri = Uri.parse(routeInformation.location ?? '');
+    var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     if (matches != null) {
       routes.addAll(matches.map((m) => PageRouteInfo.fromMatch(m)));
     }
-    return SynchronousFuture<UrlTree>(UrlTree(routes));
+    return SynchronousFuture<UrlTree>(UrlTree(uri, routes));
   }
 
   @override
@@ -30,11 +31,23 @@ class DefaultRouteParser extends RouteInformationParser<UrlTree> {
 
 class UrlTree {
   final List<PageRouteInfo> routes;
-  const UrlTree(this.routes);
+  final Uri uri;
+
+  const UrlTree(this.uri, this.routes);
 
   String get url => uri.toString();
+
   String get path => uri.path;
-  Uri get uri {
+
+  factory UrlTree.fromRoutes(List<PageRouteInfo> routes) {
+    return UrlTree(_buildUri(routes), routes);
+  }
+
+  bool get hasRoutes => routes.isNotEmpty;
+
+  PageRouteInfo? get topRoute => hasRoutes ? routes.last : null;
+
+  static Uri _buildUri(List<PageRouteInfo> routes) {
     var fullPath = '/';
     if (routes.isEmpty) {
       return Uri(path: fullPath);
@@ -61,4 +74,12 @@ class UrlTree {
       fragment: fragment,
     );
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UrlTree && runtimeType == other.runtimeType && ListEquality().equals(routes, other.routes);
+
+  @override
+  int get hashCode => ListEquality().hash(routes);
 }

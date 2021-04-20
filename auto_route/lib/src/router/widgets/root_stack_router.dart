@@ -4,9 +4,10 @@ typedef PageBuilder = AutoRoutePage Function(RouteData data);
 typedef PageFactory = Page<dynamic> Function(RouteData data);
 
 abstract class RootStackRouter extends StackRouter {
-  RootStackRouter()
+  RootStackRouter([GlobalKey<NavigatorState>? navigatorKey])
       : super(
           key: const ValueKey('Root'),
+          navigatorKey: navigatorKey,
           routeData: RouteData(
               route: const PageRouteInfo('Root', path: ''),
               config: RouteConfig('Root', path: ''),
@@ -33,7 +34,6 @@ abstract class RootStackRouter extends StackRouter {
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    GlobalKey<NavigatorState>? navigatorKey,
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
@@ -42,7 +42,6 @@ abstract class RootStackRouter extends StackRouter {
       initialRoutes: initialRoutes,
       navRestorationScopeId: navRestorationScopeId,
       navigatorObservers: navigatorObservers,
-      navigatorKey: navigatorKey,
       placeholder: placeholder,
     );
   }

@@ -22,6 +22,6 @@ class RouteDataScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RouteDataScope oldWidget) {
-    return routeData != oldWidget.routeData;
+    return oldWidget.routeData != routeData;
   }
 }
