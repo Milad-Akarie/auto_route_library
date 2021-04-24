@@ -15,14 +15,18 @@ class SettingsPage extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // context.tabsRouter.pushChild(BookDetailsRoute(id: 4));
-
-              // context.router.navigate(
+              //
+              // context.navigateTo(
               //   HomeRoute(
-              //     children: [BooksTab(children:[BookDetailsRoute(id:4)])],
+              //     children: [
+              //       ProfileTab(children: [
+              //         MyBooksRoute(),
+              //       ]),
+              //     ],
               //   ),
               // );
 
-              context.router.navigateNamed('/books/4');
+              context.router.navigateNamed('profile/books', includePrefixMatches: true);
             },
             child: Text('Navigate to Book/4'),
           )

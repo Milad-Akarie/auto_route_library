@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web/router/web_router.gr.dart';
+import 'package:example/web/web_main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -7,12 +8,15 @@ import 'package:flutter/material.dart';
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     AutoRoute(path: '/', page: HomePage),
+    AutoRoute(path: '/login', page: LoginPage),
     AutoRoute(
       path: '/user/:userID',
       page: UserPage,
       children: [
+        RedirectRoute(path: '', redirectTo: 'profile'),
         AutoRoute(path: 'profile', page: UserProfilePage),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
+          RedirectRoute(path: '', redirectTo: 'all'),
           AutoRoute(
             path: 'all',
             page: UserAllPostsPage,
@@ -24,7 +28,7 @@ import 'package:flutter/material.dart';
         ]),
       ],
     ),
-    AutoRoute(path: '*', page: NotFoundPage),
+    AutoRoute(path: '/404', page: NotFoundPage),
   ],
 )
 class $WebAppRouter {}
@@ -32,11 +36,15 @@ class $WebAppRouter {}
 class HomePage extends StatelessWidget {
   final VoidCallback? navigate;
 
-  const HomePage({Key? key, this.navigate}) : super(key: key);
+  const HomePage({
+    Key? key,
+    this.navigate,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -48,7 +56,21 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.pushRoute(UserRoute(id: 1));
+                    context
+                        .pushRoute(
+                          UserRoute(
+                            id: 1,
+                            children: [
+                              UserProfileRoute()
+                              // UserPostsRoute(children: [
+                              //   UserAllPostsRoute(),
+                              // ])
+                            ],
+                          ),
+                        )
+                        .then(
+                          (value) => print('UserPopped $value'),
+                        );
                   },
               child: Text('Navigate to user/1'),
             )
@@ -60,9 +82,9 @@ class HomePage extends StatelessWidget {
 }
 
 class UserProfilePage extends StatefulWidget {
-  final VoidCallback navigate;
+  final VoidCallback? navigate;
 
-  const UserProfilePage({Key? key, required this.navigate}) : super(key: key);
+  const UserProfilePage({Key? key, this.navigate}) : super(key: key);
 
   @override
   _UserProfilePageState createState() => _UserProfilePageState();
@@ -86,7 +108,10 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             MaterialButton(
               color: Colors.red,
-              onPressed: widget.navigate,
+              onPressed: widget.navigate ??
+                  () {
+                    context.navigateTo(UserPostsRoute());
+                  },
               child: Text('Posts'),
             ),
             const SizedBox(
@@ -114,8 +139,6 @@ class UserPostsPage extends StatefulWidget {
 }
 
 class _UserPostsPageState extends State<UserPostsPage> {
-  PageRouteInfo? _favoritePosts;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -126,23 +149,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
               'User Posts',
               style: TextStyle(fontSize: 30),
             ),
-            Expanded(
-                child: AutoRouter.declarative(
-              onInitialRoutes: (tree) {
-                _favoritePosts = null;
-                if (tree.topRoute?.routeName == UserFavoritePostsRoute.name) {
-                  _favoritePosts = tree.topRoute;
-                }
-              },
-              routes: (context) => [
-                UserAllPostsRoute(navigate: () {
-                  setState(() {
-                    _favoritePosts = UserFavoritePostsRoute();
-                  });
-                }),
-                if (_favoritePosts != null) _favoritePosts!,
-              ],
-            ))
+            Expanded(child: AutoRouter())
           ],
         ),
       ),
@@ -163,30 +170,14 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  PageRouteInfo? _postsRoute;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('User ${widget.id} ${context.routeData.queryParams.toString()}')),
-      body: AutoRouter.declarative(
-        onInitialRoutes: (UrlTree tree) {
-          if (tree.topRoute?.routeName == UserPostsRoute.name) {
-            _postsRoute = tree.topRoute;
-          } else {
-            _postsRoute = null;
-          }
-        },
-        routes: (context) => [
-          UserProfileRoute(navigate: () {
-            setState(() {
-              _postsRoute = const UserPostsRoute();
-            });
-          }),
-          if (_postsRoute != null) _postsRoute!,
-        ],
-      ),
-    );
+        appBar: AppBar(
+          title: Text(context.router.topRoute.name),
+          leading: AutoBackButton(),
+        ),
+        body: AutoRouter());
   }
 }
 
@@ -205,8 +196,9 @@ class NotFoundPage extends StatelessWidget {
 }
 
 class UserAllPostsPage extends StatelessWidget {
-  final VoidCallback navigate;
-  const UserAllPostsPage({Key? key, required this.navigate}) : super(key: key);
+  final VoidCallback? navigate;
+
+  const UserAllPostsPage({Key? key, this.navigate}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -220,7 +212,10 @@ class UserAllPostsPage extends StatelessWidget {
             ),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate,
+              onPressed: navigate ??
+                  () {
+                    context.pushRoute(UserFavoritePostsRoute());
+                  },
               child: Text('Favorite'),
             ),
           ],

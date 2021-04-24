@@ -11,26 +11,30 @@ class PageRouteInfo<T> {
   final String _name;
   final String path;
   final T? args;
-  final RouteMatch? match;
   final Map<String, dynamic> params;
   final Map<String, dynamic> queryParams;
   final List<PageRouteInfo>? children;
+  final String fragment;
+  final String? _stringMatch;
+  final String? redirectedFrom;
 
   const PageRouteInfo(
     this._name, {
     required this.path,
     this.children,
-    this.match,
     this.args,
     this.params = const {},
     this.queryParams = const {},
-  });
+    this.fragment = '',
+    String? stringMatch,
+    this.redirectedFrom,
+  }) : _stringMatch = stringMatch;
 
   String get routeName => _name;
 
   String get stringMatch {
-    if (match != null) {
-      return p.joinAll(match!.segments);
+    if (_stringMatch != null) {
+      return _stringMatch!;
     }
     return _expand(path, params);
   }
@@ -39,7 +43,7 @@ class PageRouteInfo<T> {
 
   bool get hasChildren => children?.isNotEmpty == true;
 
-  bool get fromRedirect => match?.fromRedirect == true;
+  bool get fromRedirect => redirectedFrom != null;
 
   static String _expand(String template, Map<String, dynamic> params) {
     if (mapNullOrEmpty(params)) {
@@ -52,6 +56,10 @@ class PageRouteInfo<T> {
     return path;
   }
 
+  List<PageRouteInfo> get flattened {
+    return [this, if (hasChildren) ...children!.last.flattened];
+  }
+
   PageRouteInfo copyWith({
     String? name,
     String? path,
@@ -59,15 +67,16 @@ class PageRouteInfo<T> {
     RouteMatch? match,
     Map<String, dynamic>? params,
     Map<String, dynamic>? queryParams,
-    List<PageRouteInfo>? initialChildren,
+    List<PageRouteInfo>? children,
+    String? fragment,
   }) {
     if ((name == null || identical(name, this._name)) &&
         (path == null || identical(path, this.path)) &&
+        (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
-        (match == null || identical(match, this.match)) &&
         (params == null || identical(params, this.params)) &&
         (queryParams == null || identical(queryParams, this.queryParams)) &&
-        (initialChildren == null || identical(initialChildren, this.children))) {
+        (children == null || identical(children, this.children))) {
       return this;
     }
 
@@ -75,10 +84,9 @@ class PageRouteInfo<T> {
       name ?? this._name,
       path: path ?? this.path,
       args: args ?? this.args,
-      match: match ?? this.match,
       params: params ?? this.params,
       queryParams: queryParams ?? this.queryParams,
-      children: initialChildren ?? this.children,
+      children: children ?? this.children,
     );
   }
 
@@ -86,14 +94,18 @@ class PageRouteInfo<T> {
     return 'Route{name: $_name, path: $path, params: $params}, children: ${children?.map((e) => e.routeName)}';
   }
 
-  PageRouteInfo.fromMatch(RouteMatch match)
-      : args = null,
-        this.match = match,
-        _name = match.config.name,
-        path = match.config.path,
-        params = match.pathParams.rawMap,
-        queryParams = match.queryParams.rawMap,
-        children = match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList();
+  factory PageRouteInfo.fromMatch(RouteMatch match) {
+    return PageRouteInfo(
+      match.routeName,
+      path: match.path,
+      params: match.pathParams.rawMap,
+      queryParams: match.queryParams.rawMap,
+      fragment: match.fragment,
+      redirectedFrom: match.redirectedFrom,
+      stringMatch: p.joinAll(match.segments),
+      children: match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList(),
+    );
+  }
 
 // maybe?
   Future<void> show(BuildContext context) {
@@ -104,9 +116,9 @@ class PageRouteInfo<T> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is PageRouteInfo &&
-          runtimeType == other.runtimeType &&
           _name == other._name &&
           path == other.path &&
+          fragment == other.fragment &&
           ListEquality().equals(children, other.children) &&
           MapEquality().equals(params, other.params) &&
           MapEquality().equals(queryParams, other.queryParams);
@@ -115,6 +127,7 @@ class PageRouteInfo<T> {
   int get hashCode =>
       _name.hashCode ^
       path.hashCode ^
+      fragment.hashCode ^
       MapEquality().hash(params) ^
       MapEquality().hash(queryParams) ^
       ListEquality().hash(children);

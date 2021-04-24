@@ -26,15 +26,15 @@ String generateLibrary(RouterConfig config) {
   var allRouters = config.collectAllRoutersIncludingParent;
   List<RouteConfig> allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
 
-  var routeNames = allRoutes.where((r) => r.routeType != RouteType.redirect).map((r) => r.routeName);
-  var checkedNames = <String>[];
-  routeNames.forEach((name) {
+  final nonRedirectRoutes = allRoutes.where((r) => r.routeType != RouteType.redirect);
+  final checkedRoutes = <RouteConfig>[];
+  nonRedirectRoutes.forEach((route) {
     throwIf(
-      checkedNames.contains(name),
-      'There are more than one rout with the name [$name], route names must be unique!\nNote: Unless specified, route name is generated from page name.',
+      (checkedRoutes.any((r) => r.routeName == route.routeName && r.pathName != route.pathName)),
+      'Duplicate route names must have the same path! [${route.name}]\nNote: Unless specified, route name is generated from page name.',
       element: config.element,
     );
-    checkedNames.add(name);
+    checkedRoutes.add(route);
   });
 
   var allGuards = allRoutes.fold<Set<ImportableType>>(
@@ -48,6 +48,7 @@ String generateLibrary(RouterConfig config) {
         buildRouterConfig(config, allGuards, allRoutes),
         ...allRoutes
             .where((r) => r.routeType != RouteType.redirect)
+            .distinctBy((e) => e.routeName)
             .map((r) => buildRouteInfoAndArgs(r, config, emitter))
             .reduce((acc, a) => acc..addAll(a)),
       ]),

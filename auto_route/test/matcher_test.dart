@@ -70,8 +70,10 @@ void main() {
     test('Should return one match [B]', () {
       final expectedMatches = [
         RouteMatch(
-          config: routeB,
-          segments: ['/', 'b'],
+
+          routeName: 'B',
+          path: '/b',
+          segments: ['/', 'b'], 
         )
       ];
       expect(match('/b'), expectedMatches);
@@ -130,7 +132,8 @@ void main() {
       final expectedMatches = [
         RouteMatch(config: routeA, segments: ['/']),
         RouteMatch(
-          config: routeB,
+             routeName: 'B',
+          path: '/b',,
           segments: ['/', 'b'],
         )
       ];
@@ -199,7 +202,8 @@ void main() {
     test('Should return two prefix matches and one full match [A, B, B/B1]', () {
       final expectedMatches = [
         RouteMatch(config: routeA, segments: ['/']),
-        RouteMatch(config: routeB, segments: ['/', 'b']),
+        RouteMatch(   routeName: 'B',
+          path: '/b',, segments: ['/', 'b']),
         RouteMatch(config: routeB1, segments: ['/', 'b', 'b1'])
       ];
       expect(match('/b/b1', includePrefixMatches: true), expectedMatches);
@@ -341,7 +345,8 @@ void main() {
     test('Should match route [B] and extract path params {id:1, type:none}', () {
       final expectedMatches = [
         RouteMatch(
-          config: routeB,
+             routeName: 'B',
+          path: '/b',,
           segments: ['/', 'b', '1', 'n', 'none'],
           pathParams: Parameters({
             'id': '1',
@@ -400,7 +405,8 @@ void main() {
     test('Should match routes [B,B1] and extract query params {foo:bar, bar:baz} for both', () {
       final expectedMatches = [
         RouteMatch(
-          config: routeB,
+             routeName: 'B',
+          path: '/b',,
           segments: ['/', 'b'],
           queryParams: Parameters({'foo': 'bar', 'bar': 'baz'}),
         ),

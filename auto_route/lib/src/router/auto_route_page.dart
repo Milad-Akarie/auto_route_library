@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
+import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,8 @@ abstract class AutoRoutePage<T> extends Page<T> {
   final bool fullscreenDialog;
   final bool maintainState;
 
-  bool get hasInnerRouter => routeData is RoutingController;
   final _popCompleter = Completer<T?>();
+
   Future<T?> get popped => _popCompleter.future;
 
   AutoRoutePage({
@@ -34,11 +35,12 @@ abstract class AutoRoutePage<T> extends Page<T> {
     return other.runtimeType == runtimeType && (other as AutoRoutePage).routeData.key == this.routeData.key;
   }
 
-  Widget wrappedChild(BuildContext context) {
+  Widget buildChild(BuildContext context) {
     var childToBuild = child;
     if (child is AutoRouteWrapper) {
       childToBuild = (child as AutoRouteWrapper).wrappedRoute(context);
     }
+
     return RouteDataScope(
       child: childToBuild,
       routeData: routeData,
@@ -85,7 +87,7 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTran
   AutoRoutePage get _page => settings as AutoRoutePage;
 
   @override
-  Widget buildContent(BuildContext context) => _page.wrappedChild(context);
+  Widget buildContent(BuildContext context) => _page.buildChild(context);
 
   @override
   bool get maintainState => _page.maintainState;
@@ -142,7 +144,7 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTr
   _TitledAutoRoutePage get _page => settings as _TitledAutoRoutePage;
 
   @override
-  Widget buildContent(BuildContext context) => _page.wrappedChild(context);
+  Widget buildContent(BuildContext context) => _page.buildChild(context);
 
   @override
   String? get title => _page.title;
@@ -176,7 +178,7 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   Route<T> onCreateRoute(BuildContext context) {
     if (kIsWeb) {
       return PageRouteBuilder<T>(
-        pageBuilder: (_, __, ___) => wrappedChild(context),
+        pageBuilder: (_, __, ___) => buildChild(context),
         settings: this,
         maintainState: maintainState,
         fullscreenDialog: fullscreenDialog,
@@ -228,10 +230,10 @@ class CustomPage<T> extends AutoRoutePage<T> {
   @override
   Route<T> onCreateRoute(BuildContext context) {
     if (customRouteBuilder != null) {
-      return customRouteBuilder!<T>(context, wrappedChild(context), this);
+      return customRouteBuilder!<T>(context, buildChild(context), this);
     }
     return PageRouteBuilder<T>(
-      pageBuilder: (_, __, ___) => wrappedChild(context),
+      pageBuilder: (_, __, ___) => buildChild(context),
       settings: this,
       opaque: opaque,
       transitionDuration: Duration(milliseconds: durationInMilliseconds),

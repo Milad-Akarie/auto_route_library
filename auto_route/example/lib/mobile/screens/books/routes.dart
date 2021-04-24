@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/screens/profile/my_books_page.dart';
 
 import 'book_details_page.dart';
 import 'book_list_page.dart';
@@ -8,11 +9,12 @@ const booksTab = AutoRoute(
   page: EmptyRouterPage,
   name: 'BooksTab',
   children: [
-    // AutoRoute(path: '', page: BookListPage),
-    // AutoRoute(
-    //   path: ':id',
-    //   page: BookDetailsPage,
-    //   // guards: [AuthGuard],
-    // ),
+    AutoRoute(path: '', page: BookListPage),
+    AutoRoute(
+      path: ':id',
+      page: BookDetailsPage,
+      // guards: [AuthGuard],
+    ),
+    AutoRoute(path: 'my-books', page: MyBooksPage),
   ],
 );

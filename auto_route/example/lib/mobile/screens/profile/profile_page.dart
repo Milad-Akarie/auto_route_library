@@ -44,13 +44,13 @@ class _ProfilePageState extends State<ProfilePage> {
             userData == null
                 ? ElevatedButton(
                     onPressed: () {
-                      // context.pushRoute(
-                      //   UserDataCollectorRoute(onResult: (data) {
-                      //     // setState(() {
-                      //     //   userData = data;
-                      //     // });
-                      //   }),
-                      // )
+                      context.pushRoute(
+                        UserDataCollectorRoute(onResult: (data) {
+                          setState(() {
+                            userData = data;
+                          });
+                        }),
+                      ).then((value) => print('result $value'));
                     },
                     child: Text('Collect user data'),
                   )

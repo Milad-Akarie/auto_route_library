@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../auto_route.dart';
@@ -5,7 +6,10 @@ import '../../auto_route.dart';
 class RouteDataScope extends InheritedWidget {
   final RouteData routeData;
 
-  RouteDataScope({required this.routeData, required Widget child}) : super(child: child);
+  const RouteDataScope({
+    required this.routeData,
+    required Widget child,
+  }) : super(child: child);
 
   static RouteData of(BuildContext context) {
     var scope = context.dependOnInheritedWidgetOfExactType<RouteDataScope>();
@@ -22,6 +26,6 @@ class RouteDataScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RouteDataScope oldWidget) {
-    return oldWidget.routeData != routeData;
+    return routeData != oldWidget.routeData;
   }
 }

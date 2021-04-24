@@ -18,9 +18,9 @@ class LoginPage extends StatelessWidget {
       // },
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: showBackButton,
-          title: Text('Login to continue'),
-        ),
+            // automaticallyImplyLeading: showBackButton,
+            // title: Text('Login to continue'),
+            ),
         body: Center(
           child: ElevatedButton(
             onPressed: () {

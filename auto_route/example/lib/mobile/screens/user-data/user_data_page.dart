@@ -28,7 +28,7 @@ class UserDataPage extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
-                context.router.root.pop(userData);
+                context.router.popTop(userData);
               },
               child: Text('Done'),
             )

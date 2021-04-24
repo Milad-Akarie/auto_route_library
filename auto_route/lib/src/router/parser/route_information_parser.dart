@@ -6,49 +6,74 @@ import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
 
-class DefaultRouteParser extends RouteInformationParser<UrlTree> {
+class DefaultRouteParser extends RouteInformationParser<UrlState> {
   final RouteMatcher _matcher;
   final bool includePrefixMatches;
 
   DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
 
   @override
-  Future<UrlTree> parseRouteInformation(RouteInformation routeInformation) async {
+  Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
     var routes = <PageRouteInfo>[];
     final uri = Uri.parse(routeInformation.location ?? '');
     var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     if (matches != null) {
       routes.addAll(matches.map((m) => PageRouteInfo.fromMatch(m)));
     }
-    return SynchronousFuture<UrlTree>(UrlTree(uri, routes));
+    return SynchronousFuture<UrlState>(UrlState(uri, routes));
   }
 
   @override
-  RouteInformation restoreRouteInformation(UrlTree tree) {
-    return RouteInformation(location: tree.url);
+  RouteInformation restoreRouteInformation(UrlState tree) {
+    return RouteInformation(location: tree.url.isEmpty ? '/' : tree.url);
   }
 }
 
-class UrlTree {
-  final List<PageRouteInfo> routes;
+@immutable
+class UrlState {
+  final List<PageRouteInfo> segments;
   final Uri uri;
 
-  const UrlTree(this.uri, this.routes);
+  const UrlState(this.uri, this.segments);
 
   String get url => uri.toString();
 
   String get path => uri.path;
 
-  factory UrlTree.fromRoutes(List<PageRouteInfo> routes) {
-    return UrlTree(_buildUri(routes), routes);
+  factory UrlState.fromRoutes(List<PageRouteInfo> routes) {
+    return UrlState(_buildUri(routes), routes);
   }
 
-  bool get hasRoutes => routes.isNotEmpty;
+  bool get hasSegments => segments.isNotEmpty;
 
-  PageRouteInfo? get topRoute => hasRoutes ? routes.last : null;
+  PageRouteInfo? get topRoute => hasSegments ? segments.last : null;
+
+  List<PageRouteInfo> childrenOfSegment(String path) {
+    return _findSegment(segments, (route) => route.stringMatch == path)?.children ?? const [];
+  }
+
+  PageRouteInfo? _findSegment(
+    List<PageRouteInfo> segments,
+    bool Function(PageRouteInfo segment) predicate,
+  ) {
+    for (var segment in segments) {
+      if (predicate(segment)) {
+        return segment;
+      } else if (segment.hasChildren) {
+        var subSegment = _findSegment(segment.children!, predicate);
+        if (subSegment != null) {
+          return subSegment;
+        }
+      }
+    }
+  }
+
+  List<PageRouteInfo> childrenOfSegmentNamed(String routeName) {
+    return _findSegment(segments, (route) => route.routeName == routeName)?.children ?? const [];
+  }
 
   static Uri _buildUri(List<PageRouteInfo> routes) {
-    var fullPath = '/';
+    var fullPath = '';
     if (routes.isEmpty) {
       return Uri(path: fullPath);
     }
@@ -65,8 +90,8 @@ class UrlTree {
     }
 
     var fragment;
-    if (lastSegment.match?.fragment.isNotEmpty == true) {
-      fragment = lastSegment.match!.fragment;
+    if (lastSegment.fragment.isNotEmpty == true) {
+      fragment = lastSegment.fragment;
     }
     return Uri(
       path: normalized,
@@ -78,8 +103,8 @@ class UrlTree {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UrlTree && runtimeType == other.runtimeType && ListEquality().equals(routes, other.routes);
+      other is UrlState && runtimeType == other.runtimeType && ListEquality().equals(segments, other.segments);
 
   @override
-  int get hashCode => ListEquality().hash(routes);
+  int get hashCode => ListEquality().hash(segments);
 }

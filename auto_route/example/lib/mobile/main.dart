@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/auth_guard.dart';
+import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 import '../data/db.dart';
-import 'router/router.gr.dart';
 
 class MyObserver extends AutoRouterObserver {
   @override
@@ -35,15 +35,22 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _appRouter = AppRouter();
-  PageRouteInfo? _bookDetailsRoute;
+  final _rootRouter = RootRouter();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerDelegate: AutoRouterDelegate(
-        _appRouter,
+      theme: ThemeData.dark(),
+      routerDelegate: AutoRouterDelegate.declarative(
+        _rootRouter,
+        routes: (context) {
+          var authenticated = context.watch<AuthService>().isAuthenticated;
+          return [
+            if (authenticated) AppRouter() else LoginRoute(),
+          ];
+        },
       ),
-      routeInformationParser: _appRouter.defaultRouteParser(),
+      routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => AuthService(),

@@ -73,8 +73,11 @@ Field buildPagesMap(List<RouteConfig> routes) {
         ]),
     )
     ..assignment = literalMap(Map.fromEntries(
-      routes.where((r) => r.routeType != RouteType.redirect).map(
-            (r) => MapEntry(refer(r.routeName).property('name'), buildMethod(r)),
+      routes.where((r) => r.routeType != RouteType.redirect).distinctBy((e) => e.routeName).map(
+            (r) => MapEntry(
+              refer(r.routeName).property('name'),
+              buildMethod(r),
+            ),
           ),
     )).code);
 }

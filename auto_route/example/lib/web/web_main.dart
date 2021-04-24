@@ -4,20 +4,37 @@ import 'package:flutter/material.dart';
 
 import '../data/db.dart';
 import 'router/web_router.gr.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(App());
+  // var route1 = UserRoute(id: 1, children: [
+  //   UserProfileRoute(),
+  //   UserPostsRoute(),
+  // ]);
+  // var route2 = UserRoute(
+  //   id: 1,
+  //   children: [
+  //     UserProfileRoute(),
+  //     UserPostsRoute(),
+  //   ],
+  // );
+  // print(route1 == route2);
 }
 
-class MyApp extends StatefulWidget {
+class App extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  AppState createState() => AppState();
+
+  static AppState of(BuildContext context) {
+    return context.findAncestorStateOfType<AppState>()!;
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class AppState extends State<App> {
   final _appRouter = WebAppRouter();
-
-  PageRouteInfo? _usersRoute;
+  UrlState? urlState;
+  final rootRoutes = <PageRouteInfo>[];
   PageRouteInfo? _notFoundRoute;
 
   @override
@@ -27,30 +44,27 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       routerDelegate: AutoRouterDelegate(
         _appRouter,
-        // onInitialRoutes: (tree) {
-        //   _notFoundRoute = null;
-        //   _usersRoute = null;
-        //
-        //   if (tree.topRoute?.routeName == UserRoute.name) {
-        //     _usersRoute = tree.topRoute;
-        //   } else if (tree.topRoute?.routeName == NotFoundRoute.name) {
-        //     _notFoundRoute = tree.topRoute;
+        // onInitialRoutes: (urlState) {
+        //   this.urlState = urlState;
+        //   if (urlState.hasSegments) {
+        //     rootRoutes.clear();
+        //     rootRoutes.addAll(urlState.segments);
         //   }
         // },
         // routes: (context) => [
-        //       HomeRoute(navigate: () {
-        //         setState(() {
-        //           _usersRoute = UserRoute(id: 4);
-        //         });
-        //       }),
-        //       if (_usersRoute != null) _usersRoute!,
-        //       if (_notFoundRoute != null) _notFoundRoute!,
+        //       if (rootRoutes.isEmpty)
+        //         HomeRoute(navigate: () {
+        //           setState(() {
+        //             rootRoutes.add(UserRoute(id: 4));
+        //           });
+        //         }),
+        //       ...rootRoutes,
         //     ],
         // onPopRoute: (route) {
         //   if (route.routeName == UserRoute.name) {
-        //     _usersRoute = null;
+        //     rootRoutes.remove(route);
         //   }
-        // }
+        // },
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {
@@ -58,6 +72,36 @@ class _MyAppState extends State<MyApp> {
           child: router!,
         );
       },
+    );
+  }
+}
+
+class LoginPage extends StatelessWidget {
+  final void Function(bool isLoggedIn)? onLoginResult;
+
+  const LoginPage({Key? key, this.onLoginResult}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // onWillPop: () {
+      //   onLoginResult?.call(false);
+      //   return SynchronousFuture(true);
+      // },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Login to continue'),
+        ),
+        body: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              // context.read<AuthService>().isAuthenticated = true;
+              onLoginResult?.call(true);
+            },
+            child: Text('Login'),
+          ),
+        ),
+      ),
     );
   }
 }

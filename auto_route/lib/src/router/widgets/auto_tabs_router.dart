@@ -99,9 +99,8 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
             parentRoute.name,
           ),
           pageBuilder: parent.pageBuilder,
-          preMatchedRoutes: parentRoute.route.children);
+          preMatchedRoutes: parentRoute.preMatchedPendingRoutes);
       parent.attachChildController(_controller!);
-
       _resetController();
     }
   }
@@ -119,15 +118,6 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
         _animationController.forward(from: 0.0);
       }
     });
-  }
-
-  @override
-  void deactivate() {
-    super.deactivate();
-    if (_controller != null) {
-      final parent = RoutingControllerScope.of(context)?.controller;
-      parent?.removeChildController(_controller!);
-    }
   }
 
   @override
@@ -159,16 +149,18 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
             lazyLoad: widget.lazyLoad,
             navigatorObservers: _navigatorObservers,
             itemBuilder: (BuildContext context, int index) {
-              return stack[index].wrappedChild(context);
+              return stack[index].buildChild(context);
             },
             stack: stack,
           );
-
+    var stackHash = controller!.currentStackHash;
     return RoutingControllerScope(
       controller: _controller!,
       navigatorObservers: _inheritableObserversBuilder,
+      stackHash: stackHash,
       child: TabsRouterScope(
           controller: _controller!,
+          stackHash: stackHash,
           child: AnimatedBuilder(
             animation: _animation,
             builder: (context, child) => builder(context, child ?? builderChild, _animation),

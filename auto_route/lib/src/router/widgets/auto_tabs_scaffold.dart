@@ -1,10 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/router/widgets/auto_appbar_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-typedef BottomNavigationBuilder = Widget Function(BuildContext context, TabsRouter tabsRouter);
+typedef AutoTabsBuilder = Widget Function(BuildContext context, TabsRouter tabsRouter);
 
 class AutoTabsScaffold extends StatelessWidget {
   final AnimatedIndexedStackBuilder? builder;
@@ -12,7 +11,7 @@ class AutoTabsScaffold extends StatelessWidget {
   final Duration animationDuration;
   final Curve animationCurve;
   final bool lazyLoad;
-  final BottomNavigationBuilder? bottomNavigationBuilder;
+  final AutoTabsBuilder? bottomNavigationBuilder;
   final NavigatorObserversBuilder navigatorObservers;
   final bool inheritNavigatorObservers;
   final Widget? floatingActionButton;
@@ -35,8 +34,9 @@ class AutoTabsScaffold extends StatelessWidget {
   final String? restorationId;
   final bool extendBody;
   final bool extendBodyBehindAppBar;
-  final OnNavigationChangeBuilder? appBarBuilder;
+  final AutoTabsBuilder? appBarBuilder;
   final GlobalKey<ScaffoldState>? scaffoldKey;
+
   const AutoTabsScaffold({
     Key? key,
     required this.routes,
@@ -106,8 +106,12 @@ class AutoTabsScaffold extends StatelessWidget {
           primary: primary,
           appBar: appBarBuilder == null
               ? null
-              : AutoAppBarWrapper(
-                  builder: appBarBuilder!,
+              : PreferredSize(
+                  child: appBarBuilder!(
+                    context,
+                    tabsRouter,
+                  ),
+                  preferredSize: Size.fromHeight(kToolbarHeight),
                 ),
           body: builder == null
               ? FadeTransition(opacity: animation, child: child)

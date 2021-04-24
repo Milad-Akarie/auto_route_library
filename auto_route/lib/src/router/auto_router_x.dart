@@ -19,6 +19,11 @@ extension AutoRouterX on BuildContext {
   @optionalTypeArgs
   Future<bool> popRoute<T extends Object?>([T? result]) => router.pop<T>(result);
 
+  Future<void> navigateTo(PageRouteInfo route, {OnNavigationFailure? onFailure}) => router.navigate(
+        route,
+        onFailure: onFailure,
+      );
+
   TabsRouter get tabsRouter => AutoTabsRouter.of(this);
 
   RoutingController? innerRouterOf(String routeKey) => AutoRouter.innerRouterOf(this, routeKey);

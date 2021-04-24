@@ -5,10 +5,13 @@ import 'package:flutter/widgets.dart';
 class RoutingControllerScope extends InheritedWidget {
   final RoutingController controller;
   final NavigatorObserversBuilder navigatorObservers;
+  final int stackHash;
+
   const RoutingControllerScope({
     required Widget child,
     required this.controller,
     required this.navigatorObservers,
+    required this.stackHash,
   }) : super(child: child);
 
   static RoutingControllerScope? of(BuildContext context) {
@@ -17,16 +20,18 @@ class RoutingControllerScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RoutingControllerScope oldWidget) {
-    return false;
+    return stackHash != oldWidget.stackHash;
   }
 }
 
 class StackRouterScope extends InheritedWidget {
   final StackRouter controller;
+  final int stackHash;
 
   const StackRouterScope({
     required Widget child,
     required this.controller,
+    required this.stackHash,
   }) : super(child: child);
 
   static StackRouterScope? of(BuildContext context) {
@@ -35,15 +40,16 @@ class StackRouterScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant StackRouterScope oldWidget) {
-    return controller != oldWidget.controller;
+    return stackHash != oldWidget.stackHash;
   }
 }
 
 class TabsRouterScope extends InheritedWidget {
   final TabsRouter controller;
-
+  final int stackHash;
   const TabsRouterScope({
     required Widget child,
+    required this.stackHash,
     required this.controller,
   }) : super(child: child);
 
@@ -53,6 +59,6 @@ class TabsRouterScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant TabsRouterScope oldWidget) {
-    return controller != oldWidget.controller;
+    return stackHash != oldWidget.stackHash;
   }
 }

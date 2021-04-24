@@ -4,9 +4,10 @@ import 'package:auto_route/src/navigation_failure.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_config.dart';
 import 'package:auto_route/src/router/auto_route_page.dart';
-import 'package:auto_route/src/router/parser/route_information_parser.dart';
+import 'package:collection/collection.dart' show ListEquality;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:path/path.dart' as p;
 
 import '../../utils.dart';
 
@@ -14,6 +15,7 @@ typedef RouteDataPredicate = bool Function(RouteData route);
 
 abstract class RoutingController with ChangeNotifier {
   final Map<ValueKey<String>, RoutingController> _childControllers = {};
+  final List<AutoRoutePage> _pages = [];
 
   void attachChildController(RoutingController childController) {
     _childControllers[childController.key] = childController;
@@ -22,6 +24,12 @@ abstract class RoutingController with ChangeNotifier {
   void removeChildController(RoutingController childController) {
     _childControllers.remove(childController.key);
   }
+
+  RoutingController? getChildRouter(ValueKey<String> key) {
+    return _childControllers[key];
+  }
+
+  List<RouteData> get stackData => List.unmodifiable(_pages.map((e) => e.routeData));
 
   bool isRouteActive(String routeName) {
     return root._isRouteActive(routeName);
@@ -38,7 +46,7 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   bool _isPathActive(String pattern) {
-    return RegExp(pattern).hasMatch(UrlTree.fromRoutes(currentSegments).path);
+    return RegExp(pattern).hasMatch(p.joinAll(currentSegments.map((e) => e.stringMatch)));
   }
 
   bool _canHandleNavigation(PageRouteInfo route) {
@@ -60,6 +68,8 @@ abstract class RoutingController with ChangeNotifier {
     return routers;
   }
 
+  int get currentStackHash => const ListEquality().hash(currentSegments);
+
   ValueKey<String> get key;
 
   RouteMatcher get matcher;
@@ -80,7 +90,11 @@ abstract class RoutingController with ChangeNotifier {
 
   RoutingController get topMost;
 
+  RouteData? get currentChild;
+
   RouteData get current;
+
+  RouteData get topRoute => topMost.current;
 
   RouteData get routeData;
 
@@ -104,7 +118,10 @@ abstract class RoutingController with ChangeNotifier {
   @optionalTypeArgs
   Future<bool> pop<T extends Object?>([T? result]);
 
-  bool get canPopPage;
+  @optionalTypeArgs
+  Future<bool> popTop<T extends Object?>([T? result]) => topMost.pop<T>(result);
+
+  bool get canPopSelfOrChildren;
 
   List<PageRouteInfo> get currentSegments;
 
@@ -123,7 +140,6 @@ class TabsRouter extends RoutingController {
   final RouteData routeData;
   final List<PageRouteInfo>? preMatchedRoutes;
   int _activeIndex = 0;
-  final List<AutoRoutePage> _pages = [];
 
   TabsRouter({
     required this.routeCollection,
@@ -135,18 +151,19 @@ class TabsRouter extends RoutingController {
   })  : matcher = RouteMatcher(routeCollection),
         _parent = parent {
     if (parent != null) {
-      addListener(() {
-        routeData.activeChild = _pages[_activeIndex].routeData;
-        parent.notifyListeners();
-      });
+      addListener(root.notifyChange);
     }
   }
 
   RouteData get current {
+    return currentChild ?? routeData;
+  }
+
+  RouteData? get currentChild {
     if (_activeIndex < _pages.length) {
       return _pages[_activeIndex].routeData;
     } else {
-      return routeData;
+      return null;
     }
   }
 
@@ -237,17 +254,21 @@ class TabsRouter extends RoutingController {
   void _pushAll(List<PageRouteInfo> routes) {
     _pages.clear();
     for (var route in routes) {
-      final config = matcher.resolveConfigOrNull(route);
-      if (config == null) {
-        throw FlutterError("$this can not navigate to ${route.routeName}");
-      } else {
-        if (config.guards.isNotEmpty == true) {
-          throw FlutterError("Tab routes can not have guards");
-        }
-        final data = _createRouteData(route, config, routeData);
-        pageBuilder(data);
-        _pages.add(pageBuilder(data));
+      var data = _getRouteData(route);
+      _pages.add(pageBuilder(data));
+    }
+  }
+
+  RouteData _getRouteData(PageRouteInfo route) {
+    final config = matcher.resolveConfigOrNull(route);
+    if (config == null) {
+      throw FlutterError("$this can not navigate to ${route.routeName}");
+    } else {
+      if (config.guards.isNotEmpty == true) {
+        throw FlutterError("Tab routes can not have guards");
       }
+      final data = _createRouteData(route, config, routeData);
+      return data;
     }
   }
 
@@ -267,11 +288,10 @@ class TabsRouter extends RoutingController {
           if (mayUpdateController != null) {
             await mayUpdateController.navigateAll(preMatchedRoute.children!, onFailure: onFailure);
           } else {
-            routeData.activeChild = RouteData(
-              route: preMatchedRoute,
-              parent: routeData,
-              key: ValueKey(preMatchedRoute.stringMatch),
-            );
+            final data = _getRouteData(preMatchedRoute);
+            _pages
+              ..removeAt(pageToUpdateIndex)
+              ..insert(pageToUpdateIndex, pageBuilder(data));
           }
         }
       }
@@ -292,49 +312,61 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  bool get canPopPage => false;
+  bool get canPopSelfOrChildren {
+    if (_childControllers[_pages[_activeIndex].key] != null) {
+      return _childControllers[_pages[_activeIndex].key]!.canPopSelfOrChildren;
+    }
+    return false;
+  }
 
   @override
   List<PageRouteInfo> get currentSegments {
-    final routes = <PageRouteInfo>[];
-    var currentData = _activePage?.routeData;
+    var currentData = currentChild;
+    final segments = <PageRouteInfo>[];
     if (currentData != null) {
-      routes.add(currentData.route);
+      segments.add(currentData.route);
       if (_childControllers.containsKey(currentData.key)) {
-        routes.addAll(_childControllers[currentData.key]!.currentSegments);
+        segments.addAll(
+          _childControllers[currentData.key]!.currentSegments,
+        );
       }
-      if (routes.length == 1 && currentData.activeChild != null) {
-        routes.addAll(currentData.activeChild!.segments);
-      }
+    } else if (routeData.route.hasChildren) {
+      segments.addAll(
+        routeData.route.children!.last.flattened,
+      );
     }
-    return routes;
+    return segments;
   }
 }
 
 abstract class StackRouter extends RoutingController {
   final RoutingController? _parent;
   final ValueKey<String> key;
-
-  final RouteData routeData;
   final GlobalKey<NavigatorState> _navigatorKey;
   final List<PageRouteInfo>? preMatchedRoutes;
-  final List<AutoRoutePage> _pages = [];
+  RouteData _routeData;
 
   StackRouter({
     required this.key,
-    required this.routeData,
     RoutingController? parent,
     GlobalKey<NavigatorState>? navigatorKey,
+    required RouteData initialRouteData,
     this.preMatchedRoutes,
-  })  : _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
+  })  : _routeData = initialRouteData,
+        _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         _parent = parent {
     if (parent != null) {
-      addListener(() {
-        routeData.activeChild = _pages.isEmpty ? null : _pages.last.routeData;
-        parent.notifyListeners();
-      });
+      addListener(root.notifyListeners);
     }
   }
+
+  void notifyChange() {
+    _routeData = _routeData.copyWith(activeSegments: currentSegments);
+    notifyListeners();
+  }
+
+  @override
+  RouteData get routeData => _routeData;
 
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
@@ -354,31 +386,44 @@ abstract class StackRouter extends RoutingController {
 
   @override
   List<PageRouteInfo> get currentSegments {
+    var currentData = currentChild;
     final segments = <PageRouteInfo>[];
-    var currentData = _pages.isEmpty ? null : _pages.last.routeData;
     if (currentData != null) {
       segments.add(currentData.route);
       if (_childControllers.containsKey(currentData.key)) {
-        segments.addAll(_childControllers[currentData.key]!.currentSegments);
+        segments.addAll(
+          _childControllers[currentData.key]!.currentSegments,
+        );
       }
-      if (segments.length == 1 && currentData.activeChild != null) {
-        segments.addAll(currentData.activeChild!.segments);
-      }
+    } else if (routeData.route.hasChildren) {
+      segments.addAll(
+        routeData.route.children!.last.flattened,
+      );
     }
     return segments;
   }
 
   @override
-  bool get canPopPage {
-    return _pages.length > 1;
+  bool get canPopSelfOrChildren {
+    if (_pages.length > 1) {
+      return true;
+    } else if (_pages.isNotEmpty && _childControllers[_pages.last.key] != null) {
+      return _childControllers[_pages.last.key]!.canPopSelfOrChildren;
+    }
+    return false;
   }
 
   @override
   RouteData get current {
+    return currentChild ?? routeData;
+  }
+
+  @override
+  RouteData? get currentChild {
     if (_pages.isNotEmpty) {
       return _pages.last.routeData;
     }
-    return routeData;
+    return null;
   }
 
   @override
@@ -414,7 +459,7 @@ abstract class StackRouter extends RoutingController {
       _childControllers.remove(route.key);
     }
     if (notify) {
-      notifyListeners();
+      notifyChange();
     }
   }
 
@@ -423,7 +468,7 @@ abstract class StackRouter extends RoutingController {
     if (_pages.isNotEmpty) {
       removeRoute(_pages.last.routeData);
       if (notify) {
-        notifyListeners();
+        notifyChange();
       }
       didRemove = true;
     }
@@ -486,11 +531,16 @@ abstract class StackRouter extends RoutingController {
     if (anchorPage != null) {
       for (var candidate in List.unmodifiable(_pages).reversed) {
         _pages.removeLast();
-        if (candidate == anchorPage) {
+        if (candidate.key == anchorPage.key) {
           break;
+        } else {
+          if (_childControllers.containsKey(candidate.key)) {
+            _childControllers.remove(candidate.key);
+          }
         }
       }
     }
+
     return _pushAll(routes, onFailure: onFailure, notify: true);
   }
 
@@ -581,7 +631,7 @@ abstract class StackRouter extends RoutingController {
       }
     }
     if (didRemove && notify) {
-      notifyListeners();
+      notifyChange();
     }
     return didRemove;
   }
@@ -594,7 +644,7 @@ abstract class StackRouter extends RoutingController {
         _pages.remove(entry);
       }
     }
-    notifyListeners();
+    notifyChange();
     return didRemove;
   }
 
@@ -613,12 +663,9 @@ abstract class StackRouter extends RoutingController {
       }
       final data = _createRouteData(route, config, routeData);
       _pages.add(pageBuilder(data));
-      if (route == routes.last) {
-        routeData.activeChild = data;
-      }
     }
     if (notify) {
-      notifyListeners();
+      notifyChange();
     }
   }
 
@@ -658,7 +705,7 @@ abstract class StackRouter extends RoutingController {
       }
     }
     if (notify) {
-      notifyListeners();
+      notifyChange();
     }
     return SynchronousFuture(null);
   }
@@ -689,7 +736,7 @@ abstract class StackRouter extends RoutingController {
     final page = pageBuilder(data);
     _pages.add(page);
     if (notify) {
-      notifyListeners();
+      notifyChange();
     }
     return (page as AutoRoutePage<T>).popped;
   }
@@ -723,14 +770,17 @@ abstract class StackRouter extends RoutingController {
         if (!(mayUpdateController is StackRouter && mayUpdateController.stackManagedByWidget)) {
           await mayUpdateController.navigateAll(
             mayUpdateRoute.children ?? const <PageRouteInfo>[],
+            onFailure: onFailure,
           );
         }
       }
+      return _navigateAll(
+        routes.map((e) => e.copyWith()).toList(),
+        onFailure: onFailure,
+      );
     }
-    return _navigateAll(
-      routes.map((e) => e.copyWith(initialChildren: const [])).toList(),
-      onFailure: onFailure,
-    );
+    _clearHistory();
+    return SynchronousFuture(null);
   }
 
   void _clearHistory() {
@@ -786,7 +836,9 @@ abstract class StackRouter extends RoutingController {
     );
     if (scope != null) {
       return scope.router.navigateAll(
-        scope.matches.map((e) => PageRouteInfo.fromMatch(e)).toList(),
+        List.unmodifiable(
+          scope.matches.map((e) => PageRouteInfo.fromMatch(e)),
+        ),
       );
     }
     return SynchronousFuture(null);
@@ -840,16 +892,32 @@ RouteData _createRouteData(PageRouteInfo route, RouteConfig config, RouteData pa
     var matches = RouteMatcher(config.children!).match('');
     if (matches != null) {
       routeToPush = route.copyWith(
-        initialChildren: matches.map((m) => PageRouteInfo.fromMatch(m)).toList(),
+        children: matches.map((m) => PageRouteInfo.fromMatch(m)).toList(),
       );
     }
+  }
+  var activeSegments = <PageRouteInfo>[];
+  if (routeToPush.children?.isNotEmpty == true) {
+    activeSegments.add(routeToPush.children!.last);
   }
   final data = RouteData(
     route: routeToPush,
     parent: parent,
     config: config,
     key: ValueKey(routeToPush.stringMatch),
+    preMatchedPendingRoutes: routeToPush.children,
+    activeSegments: activeSegments,
   );
+// todo remove this
+  if (routeToPush.hasChildren) {
+    var topRoute = routeToPush.children!.last;
+    data.activeChild = RouteData(
+      route: topRoute,
+      parent: data,
+      key: ValueKey(topRoute.stringMatch),
+    );
+  }
+
   return data;
 }
 
@@ -871,7 +939,7 @@ class NestedStackRouter extends StackRouter {
   })  : matcher = RouteMatcher(routeCollection),
         super(
           key: key,
-          routeData: routeData,
+          initialRouteData: routeData,
           preMatchedRoutes: preMatchedRoutes,
           parent: parent,
           navigatorKey: navigatorKey,

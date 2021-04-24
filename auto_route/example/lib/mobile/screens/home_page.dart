@@ -2,44 +2,35 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
-import 'user-data/data_collector.dart';
-
-enum ConstEnum { value1 }
-
 class HomePage extends StatelessWidget {
-  final UserData userData;
-
   const HomePage({
     Key? key,
-    ConstEnum enumValue = ConstEnum.value1,
-    this.userData = const UserData(),
   }) : super(key: key);
+
   @override
   Widget build(context) {
-    return AutoTabsScaffold(
-      appBarBuilder: (context, router) {
-        return AppBar(
-          title: Text(router.current.name),
-          leading: AutoBackButton(),
-        );
-      },
-      routes: const [
-        BooksTab(),
-        ProfileTab(),
-        SettingsTab(),
-      ],
-      bottomNavigationBuilder: (context, tabsRouter) {
-        return buildBottomNav(tabsRouter);
-      },
-    );
+    return AutoTabsRouter(
+        routes: const [
+          BooksTab(),
+          ProfileTab(),
+          SettingsTab(),
+        ],
+        builder: (context, child, animation) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(context.tabsRouter.topRoute.name),
+              leading: AutoBackButton(),
+            ),
+            body: FadeTransition(opacity: animation, child: child),
+            bottomNavigationBar: buildBottomNav(context.tabsRouter),
+          );
+        });
   }
 
   BottomNavigationBar buildBottomNav(TabsRouter tabsRouter) {
     return BottomNavigationBar(
       currentIndex: tabsRouter.activeIndex,
-      onTap: (index) {
-        tabsRouter.setActiveIndex(index);
-      },
+      onTap: (index) => tabsRouter.setActiveIndex(index),
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.source),

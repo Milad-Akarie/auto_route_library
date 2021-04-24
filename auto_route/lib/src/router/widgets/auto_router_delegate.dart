@@ -3,23 +3,23 @@ import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../utils.dart';
 import '../controller/routing_controller.dart';
 import 'auto_route_navigator.dart';
 
-import 'package:flutter/widgets.dart';
-
 part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
 typedef RoutePopCallBack = void Function(PageRouteInfo route);
-typedef InitialRoutesCallBack = void Function(UrlTree tree);
+typedef InitialRoutesCallBack = void Function(UrlState tree);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
-class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
+class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   final List<PageRouteInfo>? initialRoutes;
   final StackRouter controller;
   final String? initialDeepLink;
@@ -51,6 +51,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
   Future<bool> popRoute() => controller.topMost.pop();
 
   late List<NavigatorObserver> _navigatorObservers;
+
   AutoRouterDelegate(
     this.controller, {
     this.initialRoutes,
@@ -72,22 +73,21 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
-  UrlTree urlState = UrlTree.fromRoutes(const []);
+  UrlState urlState = UrlState.fromRoutes(const []);
 
   @override
-  UrlTree? get currentConfiguration {
-    print('-------------------- current segments ---------------');
-    print(controller.currentSegments.map((e) => e.routeName));
-    final newState = UrlTree.fromRoutes(controller.currentSegments);
+  UrlState? get currentConfiguration {
+    final newState = UrlState.fromRoutes(controller.currentSegments);
     if (urlState != newState) {
       urlState = newState;
+      print(urlState.url);
       return newState;
     }
     return null;
   }
 
   @override
-  Future<void> setInitialRoutePath(UrlTree tree) {
+  Future<void> setInitialRoutePath(UrlState tree) {
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
@@ -99,27 +99,30 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
       return controller.pushNamed(initialDeepLink!, includePrefixMatches: true);
-    } else if (!listNullOrEmpty(tree.routes)) {
-      return controller.pushAll(tree.routes);
+    } else if (!listNullOrEmpty(tree.segments)) {
+      return controller.pushAll(tree.segments);
     } else {
       throw FlutterError("Can not resolve initial route");
     }
   }
 
   @override
-  Future<void> setNewRoutePath(UrlTree tree) {
-    if (tree.hasRoutes) {
-      return controller.navigateAll(tree.routes);
+  Future<void> setNewRoutePath(UrlState tree) {
+    if (tree.hasSegments) {
+      return controller.navigateAll(tree.segments);
     }
     return SynchronousFuture(null);
   }
 
   @override
   Widget build(BuildContext context) {
+    var stackHash = controller.currentStackHash;
     return RoutingControllerScope(
       controller: controller,
       navigatorObservers: navigatorObservers,
+      stackHash: stackHash,
       child: StackRouterScope(
+        stackHash: stackHash,
         controller: controller,
         child: AutoRouteNavigator(
           router: controller,
@@ -132,11 +135,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlTree> with ChangeNotifier {
   }
 
   void _rebuildListener() {
-    // final segments = controller.currentSegments;
-    // if (!ListEquality().equals(segments, _currentSegments)) {
-    //   _currentSegments = segments;
-    //
-    // }
     notifyListeners();
   }
 
@@ -172,12 +170,12 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   }
 
   @override
-  Future<void> setInitialRoutePath(UrlTree tree) {
+  Future<void> setInitialRoutePath(UrlState tree) {
     return setNewRoutePath(tree);
   }
 
   @override
-  Future<void> setNewRoutePath(UrlTree tree) {
+  Future<void> setNewRoutePath(UrlState tree) {
     onInitialRoutes?.call(tree);
     return SynchronousFuture(null);
   }
@@ -185,14 +183,20 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   @override
   Widget build(BuildContext context) {
     controller.updateDeclarativeRoutes(routes(context));
+    var stackHash = controller.currentStackHash;
     return RoutingControllerScope(
       controller: controller,
       navigatorObservers: navigatorObservers,
-      child: AutoRouteNavigator(
-        router: controller,
-        navRestorationScopeId: navRestorationScopeId,
-        navigatorObservers: _navigatorObservers,
-        didPop: onPopRoute,
+      stackHash: stackHash,
+      child: StackRouterScope(
+        controller: controller,
+        stackHash: stackHash,
+        child: AutoRouteNavigator(
+          router: controller,
+          navRestorationScopeId: navRestorationScopeId,
+          navigatorObservers: _navigatorObservers,
+          didPop: onPopRoute,
+        ),
       ),
     );
   }

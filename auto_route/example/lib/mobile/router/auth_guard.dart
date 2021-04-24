@@ -1,24 +1,22 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'router.gr.dart';
 
 // mock auth state
 
+var isAuthenticated = false;
+
 class AuthGuard extends AutoRouteGuard {
   @override
   Future<bool> canNavigate(List<PageRouteInfo> pendingRoutes, StackRouter router) async {
-    var context = router.navigatorKey.currentContext;
-
-    if (!context!.read<AuthService>().isAuthenticated) {
+    if (!isAuthenticated) {
       // ignore: unawaited_futures
-      // router.push(LoginRoute(
-      //     showBackButton: pendingRoutes.first is! HomeRoute,
-      //     onLoginResult: (success) {
-      //       if (success) {
-      //         router.replaceAll(pendingRoutes);
-      //       }
-      //     }));
+      router.push(LoginRoute(onLoginResult: (success) {
+        if (success) {
+          isAuthenticated = success;
+          router.replaceAll(pendingRoutes);
+        }
+      }));
       return false;
     }
     return true;
