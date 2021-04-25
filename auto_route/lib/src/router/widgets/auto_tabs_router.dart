@@ -18,11 +18,12 @@ class AutoTabsRouter extends StatefulWidget {
   final bool lazyLoad;
   final NavigatorObserversBuilder navigatorObservers;
   final bool inheritNavigatorObservers;
-
+  final int? activeIndex;
   const AutoTabsRouter({
     Key? key,
     required this.routes,
     this.lazyLoad = true,
+    this.activeIndex,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
@@ -77,6 +78,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final parentRoute = RouteDataScope.of(context);
     if (_controller == null) {
       final parentScope = RoutingControllerScope.of(context);
       assert(parentScope != null);
@@ -89,11 +91,11 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-      final parentRoute = RouteDataScope.of(context);
       final parent = parentScope!.controller;
       _controller = TabsRouter(
           parent: parent,
           key: parentRoute.key,
+          initialIndex: widget.activeIndex,
           routeData: parentRoute,
           routeCollection: parent.routeCollection.subCollectionOf(
             parentRoute.name,
@@ -111,7 +113,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
     _controller!.addListener(() {
-      if (_controller!.activeIndex != _index) {
+      if (widget.activeIndex == null && _controller!.activeIndex != _index) {
         setState(() {
           _index = _controller!.activeIndex;
         });
@@ -134,6 +136,15 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
       _resetController();
     }
+    if (widget.activeIndex != null && widget.activeIndex != oldWidget.activeIndex) {
+      _animationController.value = 1.0;
+      _index = widget.activeIndex!;
+      _animationController.forward(from: 0.0);
+      _controller!.setActiveIndex(_index, notify: false);
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        AutoRouterDelegate.of(context).notifyUrlChanged();
+      });
+    }
   }
 
   @override
@@ -153,14 +164,14 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
             },
             stack: stack,
           );
-    var stackHash = controller!.currentStackHash;
+    var segmentsHash = controller!.currentSegmentsHash;
     return RoutingControllerScope(
       controller: _controller!,
       navigatorObservers: _inheritableObserversBuilder,
-      stackHash: stackHash,
+      segmentsHash: segmentsHash,
       child: TabsRouterScope(
           controller: _controller!,
-          stackHash: stackHash,
+          segmentsHash: segmentsHash,
           child: AnimatedBuilder(
             animation: _animation,
             builder: (context, child) => builder(context, child ?? builderChild, _animation),

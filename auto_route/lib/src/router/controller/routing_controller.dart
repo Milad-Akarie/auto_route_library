@@ -68,7 +68,7 @@ abstract class RoutingController with ChangeNotifier {
     return routers;
   }
 
-  int get currentStackHash => const ListEquality().hash(currentSegments);
+  int get currentSegmentsHash => const ListEquality().hash(currentSegments);
 
   ValueKey<String> get key;
 
@@ -141,14 +141,16 @@ class TabsRouter extends RoutingController {
   final List<PageRouteInfo>? preMatchedRoutes;
   int _activeIndex = 0;
 
-  TabsRouter({
-    required this.routeCollection,
-    required this.pageBuilder,
-    required this.key,
-    required this.routeData,
-    RoutingController? parent,
-    this.preMatchedRoutes,
-  })  : matcher = RouteMatcher(routeCollection),
+  TabsRouter(
+      {required this.routeCollection,
+      required this.pageBuilder,
+      required this.key,
+      required this.routeData,
+      RoutingController? parent,
+      this.preMatchedRoutes,
+      int? initialIndex})
+      : matcher = RouteMatcher(routeCollection),
+        _activeIndex = initialIndex ?? 0,
         _parent = parent {
     if (parent != null) {
       addListener(root.notifyChange);
@@ -169,11 +171,15 @@ class TabsRouter extends RoutingController {
 
   int get activeIndex => _activeIndex;
 
-  void setActiveIndex(int index) {
+  void setActiveIndex(int index, {bool notify = true}) {
     assert(index >= 0 && index < _pages.length);
     if (_activeIndex != index) {
       _activeIndex = index;
-      notifyListeners();
+      routeData.updateActiveSegments(currentSegments);
+
+      if (notify) {
+        notifyListeners();
+      }
     }
   }
 
@@ -206,7 +212,7 @@ class TabsRouter extends RoutingController {
     }
   }
 
-  int _findStackRouterFor(PageRouteInfo route) {
+  int _findStackRouterIndexFor(PageRouteInfo route) {
     for (var i = 0; i < _pages.length; i++) {
       var childController = _childControllers[_pages[i].routeData.key];
       if (childController is StackRouter && childController._canHandleNavigation(route)) {
@@ -217,22 +223,18 @@ class TabsRouter extends RoutingController {
   }
 
   Future<void> pushChild(PageRouteInfo route, {OnNavigationFailure? onFailure}) {
-    var scopeIndex = _findStackRouterFor(route);
+    var scopeIndex = _findStackRouterIndexFor(route);
     setActiveIndex(scopeIndex);
     return stackRouterOfIndex(scopeIndex)!.push(route, onFailure: onFailure);
   }
 
   Future<void> replaceChild(PageRouteInfo route, {OnNavigationFailure? onFailure}) {
-    var scopeIndex = _findStackRouterFor(route);
+    var scopeIndex = _findStackRouterIndexFor(route);
     setActiveIndex(scopeIndex);
     return stackRouterOfIndex(scopeIndex)!.replace(route, onFailure: onFailure);
   }
 
   void setupRoutes(List<PageRouteInfo> routes) {
-    _setupRoutes(routes, preMatchedRoutes);
-  }
-
-  void _setupRoutes(List<PageRouteInfo> routes, List<PageRouteInfo>? preMatchedRoutes) {
     final routesToPush = List.of(routes);
     if (preMatchedRoutes?.isNotEmpty == true) {
       final preMatchedRoute = preMatchedRoutes!.last;
@@ -361,7 +363,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   void notifyChange() {
-    _routeData = _routeData.copyWith(activeSegments: currentSegments);
+    _routeData.updateActiveSegments(currentSegments);
     notifyListeners();
   }
 
@@ -648,10 +650,7 @@ abstract class StackRouter extends RoutingController {
     return didRemove;
   }
 
-  void updateDeclarativeRoutes(
-    List<PageRouteInfo> routes, {
-    bool notify = false,
-  }) {
+  void updateDeclarativeRoutes(List<PageRouteInfo> routes) {
     _clearHistory();
     for (var route in routes) {
       var config = _resolveConfigOrReportFailure(route);
@@ -663,9 +662,6 @@ abstract class StackRouter extends RoutingController {
       }
       final data = _createRouteData(route, config, routeData);
       _pages.add(pageBuilder(data));
-    }
-    if (notify) {
-      notifyChange();
     }
   }
 
@@ -901,22 +897,12 @@ RouteData _createRouteData(PageRouteInfo route, RouteConfig config, RouteData pa
     activeSegments.add(routeToPush.children!.last);
   }
   final data = RouteData(
-    route: routeToPush,
-    parent: parent,
-    config: config,
-    key: ValueKey(routeToPush.stringMatch),
-    preMatchedPendingRoutes: routeToPush.children,
-    activeSegments: activeSegments,
-  );
-// todo remove this
-  if (routeToPush.hasChildren) {
-    var topRoute = routeToPush.children!.last;
-    data.activeChild = RouteData(
-      route: topRoute,
-      parent: data,
-      key: ValueKey(topRoute.stringMatch),
-    );
-  }
+      route: routeToPush,
+      parent: parent,
+      config: config,
+      key: ValueKey(routeToPush.stringMatch),
+      preMatchedPendingRoutes: routeToPush.children,
+      initialSegments: routeToPush.flattened);
 
   return data;
 }

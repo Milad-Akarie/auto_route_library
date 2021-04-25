@@ -11,8 +11,8 @@ import '../screens/books/book_details_page.dart' as _i8;
 import '../screens/books/book_list_page.dart' as _i7;
 import '../screens/home_page.dart' as _i4;
 import '../screens/login_page.dart' as _i3;
-import '../screens/profile/my_books_page.dart' as _i9;
-import '../screens/profile/profile_page.dart' as _i10;
+import '../screens/profile/my_books_page.dart' as _i10;
+import '../screens/profile/profile_page.dart' as _i9;
 import '../screens/settings.dart' as _i6;
 import '../screens/user-data/data_collector.dart' as _i5;
 import '../screens/user-data/sinlge_field_page.dart' as _i11;
@@ -77,6 +77,10 @@ class RootRouter extends _i1.RootStackRouter {
       return _i1.MaterialPageX<dynamic>(
           routeData: routeData, child: _i8.BookDetailsPage(id: args.id));
     },
+    ProfileRoute.name: (routeData) {
+      return _i1.MaterialPageX<dynamic>(
+          routeData: routeData, child: _i9.ProfilePage());
+    },
     MyBooksRoute.name: (routeData) {
       var queryParams = routeData.queryParams;
       final args = routeData.argsAs<MyBooksRouteArgs>(
@@ -84,11 +88,7 @@ class RootRouter extends _i1.RootStackRouter {
               filter: queryParams.getString('filter', 'none')));
       return _i1.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i9.MyBooksPage(key: args.key, filter: args.filter));
-    },
-    ProfileRoute.name: (routeData) {
-      return _i1.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i10.ProfilePage());
+          child: _i10.MyBooksPage(key: args.key, filter: args.filter));
     },
     NameFieldRoute.name: (routeData) {
       final args = routeData.argsAs<NameFieldRouteArgs>(
@@ -134,12 +134,9 @@ class RootRouter extends _i1.RootStackRouter {
   List<_i1.RouteConfig> get routes => [
         _i1.RouteConfig(AppRouter.name, path: '/', children: [
           _i1.RouteConfig(HomeRoute.name, path: '', children: [
-            _i1.RouteConfig('#redirect',
-                path: '', redirectTo: 'home', fullMatch: true),
             _i1.RouteConfig(BooksTab.name, path: 'books', children: [
               _i1.RouteConfig(BookListRoute.name, path: ''),
-              _i1.RouteConfig(BookDetailsRoute.name, path: ':id'),
-              _i1.RouteConfig(MyBooksRoute.name, path: 'my-books')
+              _i1.RouteConfig(BookDetailsRoute.name, path: ':id')
             ]),
             _i1.RouteConfig(ProfileTab.name, path: 'profile', children: [
               _i1.RouteConfig(ProfileRoute.name, path: ''),
@@ -266,6 +263,12 @@ class BookDetailsRouteArgs {
   final int id;
 }
 
+class ProfileRoute extends _i1.PageRouteInfo {
+  const ProfileRoute() : super(name, path: '');
+
+  static const String name = 'ProfileRoute';
+}
+
 class MyBooksRoute extends _i1.PageRouteInfo<MyBooksRouteArgs> {
   MyBooksRoute({_i2.Key? key, String filter = 'none'})
       : super(name,
@@ -282,12 +285,6 @@ class MyBooksRouteArgs {
   final _i2.Key? key;
 
   final String filter;
-}
-
-class ProfileRoute extends _i1.PageRouteInfo {
-  const ProfileRoute() : super(name, path: '');
-
-  static const String name = 'ProfileRoute';
 }
 
 class NameFieldRoute extends _i1.PageRouteInfo<NameFieldRouteArgs> {

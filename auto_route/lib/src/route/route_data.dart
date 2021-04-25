@@ -8,18 +8,19 @@ class RouteData {
   final RouteData? parent;
   final RouteConfig? config;
   final ValueKey<String> key;
-  final List<PageRouteInfo> activeSegments;
-  RouteData? activeChild;
+  final List<PageRouteInfo<dynamic>> activeSegments;
+  final RoutingController? router;
 
   RouteData({
     required this.route,
     this.parent,
     this.config,
+    this.router,
     required this.key,
-    this.activeChild,
-    this.activeSegments = const [],
+    List<PageRouteInfo>? initialSegments,
     List<PageRouteInfo<dynamic>>? preMatchedPendingRoutes,
-  }) : _preMatchedPendingRoutes = preMatchedPendingRoutes;
+  })  : _preMatchedPendingRoutes = preMatchedPendingRoutes,
+        activeSegments = initialSegments ?? <PageRouteInfo<dynamic>>[];
 
   List<PageRouteInfo> get breadcrumbs => List.unmodifiable([
         if (parent != null) ...parent!.breadcrumbs,
@@ -69,31 +70,29 @@ class RouteData {
 
   String? get fragment => route.fragment;
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RouteData && runtimeType == other.runtimeType && activeChild == other.activeChild;
-
-  @override
-  int get hashCode => activeChild.hashCode;
-
   RouteData copyWith({
     PageRouteInfo? route,
     RouteData? parent,
     RouteConfig? config,
     ValueKey<String>? key,
     RouteData? activeChild,
+    RoutingController? router,
     List<PageRouteInfo<dynamic>>? preMatchedPendingRoutes,
     List<PageRouteInfo<dynamic>>? activeSegments,
   }) {
     return RouteData(
       route: route ?? this.route,
       parent: parent ?? this.parent,
+      router: router ?? this.router,
       config: config ?? this.config,
       key: key ?? this.key,
-      activeChild: activeChild,
-      activeSegments: activeSegments ?? this.activeSegments,
+      initialSegments: activeSegments ?? this.activeSegments,
       preMatchedPendingRoutes: preMatchedPendingRoutes ?? this._preMatchedPendingRoutes,
     );
+  }
+
+  void updateActiveSegments(List<PageRouteInfo<dynamic>> currentSegments) {
+    activeSegments.clear();
+    activeSegments.addAll(currentSegments);
   }
 }

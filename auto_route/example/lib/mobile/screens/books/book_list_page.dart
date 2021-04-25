@@ -20,8 +20,7 @@ class BookListPage extends StatelessWidget {
                             title: Text(book.name),
                             subtitle: Text(book.genre),
                             onTap: () {
-                              // BookDetailsRoute(id: book.id).show(context);
-                              MyBooksRoute().show(context);
+                              BookDetailsRoute(id: book.id).show(context);
                             },
                           ),
                         ),

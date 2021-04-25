@@ -15,7 +15,6 @@ export 'router.gr.dart';
     // app stack
     CustomRoute(
       transitionsBuilder: TransitionsBuilders.fadeIn,
-
       path: '/',
       page: EmptyRouterPage,
       name: 'AppRouter',
@@ -25,7 +24,6 @@ export 'router.gr.dart';
           path: '',
           page: HomePage,
           children: [
-            RedirectRoute(path: '', redirectTo: 'home'),
             booksTab,
             profileTab,
             AutoRoute(

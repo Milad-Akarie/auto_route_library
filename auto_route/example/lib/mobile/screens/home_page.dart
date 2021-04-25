@@ -2,35 +2,55 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
   }) : super(key: key);
 
   @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int activeIndex = 0;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // setting the right index when an outer navigation happens
+    // var tabsRouter = context.innerRouterOf<TabsRouter>(HomeRoute.name);
+    // if (tabsRouter != null) {
+    //   activeIndex = tabsRouter.activeIndex;
+    // }
+  }
+
+  @override
   Widget build(context) {
-    return AutoTabsRouter(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: AutoBackButton(),
+      ),
+      body: AutoTabsRouter(
+        activeIndex: activeIndex,
         routes: const [
           BooksTab(),
           ProfileTab(),
           SettingsTab(),
         ],
-        builder: (context, child, animation) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(context.tabsRouter.topRoute.name),
-              leading: AutoBackButton(),
-            ),
-            body: FadeTransition(opacity: animation, child: child),
-            bottomNavigationBar: buildBottomNav(context.tabsRouter),
-          );
-        });
+      ),
+      bottomNavigationBar: buildBottomNav(),
+    );
   }
 
-  BottomNavigationBar buildBottomNav(TabsRouter tabsRouter) {
+  BottomNavigationBar buildBottomNav() {
     return BottomNavigationBar(
-      currentIndex: tabsRouter.activeIndex,
-      onTap: (index) => tabsRouter.setActiveIndex(index),
+      currentIndex: activeIndex,
+      onTap: (index) {
+        setState(() {
+          activeIndex = index;
+        });
+      },
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.source),
@@ -45,29 +65,6 @@ class HomePage extends StatelessWidget {
           label: 'Settings',
         ),
       ],
-    );
-  }
-}
-
-class WelcomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            context.pushRoute(HomeRoute(
-              children: [
-                ProfileTab(children: [
-                  ProfileRoute(),
-                  MyBooksRoute(),
-                ])
-              ],
-            ));
-          },
-          child: Text('Launch Home'),
-        ),
-      ),
     );
   }
 }

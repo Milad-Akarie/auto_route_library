@@ -96,7 +96,7 @@ class AutoRouterState extends State<AutoRouter> {
           parentData.name,
         ),
         pageBuilder: parent.pageBuilder,
-        preMatchedRoutes: parentData.route.children,
+        preMatchedRoutes: parentData.preMatchedPendingRoutes,
       );
       parent.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
@@ -117,14 +117,14 @@ class AutoRouterState extends State<AutoRouter> {
       navRestorationScopeId: widget.navRestorationScopeId,
       navigatorObservers: _navigatorObservers,
     );
-    final stackHash = controller!.currentStackHash;
+    final segmentsHash = controller!.currentSegmentsHash;
     return RoutingControllerScope(
       controller: _controller!,
       navigatorObservers: _inheritableObserversBuilder,
-      stackHash: stackHash,
+      segmentsHash: segmentsHash,
       child: StackRouterScope(
         controller: _controller!,
-        stackHash: stackHash,
+        segmentsHash: segmentsHash,
         child: widget.builder == null
             ? navigator
             : Builder(
@@ -234,11 +234,11 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    final stackHash = controller!.currentStackHash;
+    final segmentsHash = controller!.currentSegmentsHash;
     return RoutingControllerScope(
       controller: _controller!,
       navigatorObservers: _inheritableObserversBuilder,
-      stackHash: stackHash,
+      segmentsHash: segmentsHash,
       child: HeroControllerScope(
         controller: _heroController,
         child: AutoRouteNavigator(

@@ -25,8 +25,10 @@ extension AutoRouterX on BuildContext {
       );
 
   TabsRouter get tabsRouter => AutoTabsRouter.of(this);
+  RouteData get topRoute => router.topRoute;
 
-  RoutingController? innerRouterOf(String routeKey) => AutoRouter.innerRouterOf(this, routeKey);
+  T? innerRouterOf<T extends RoutingController>(String routeKey) =>
+      RoutingControllerScope.of(this)!.controller.innerRouterOf<T>(routeKey);
 
   RouteData get routeData => RouteData.of(this);
 }

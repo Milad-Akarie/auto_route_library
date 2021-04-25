@@ -8,26 +8,7 @@ import 'package:provider/provider.dart';
 
 import '../data/db.dart';
 
-class MyObserver extends AutoRouterObserver {
-  @override
-  void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
-    print('Did init tab route: ${route.name}  previous: ${previousRoute?.name}');
-  }
-
-  @override
-  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
-    print('Did change tab route: ${route.name}  previous: ${previousRoute.name}');
-  }
-
-  @override
-  void didPush(Route route, Route? previousRoute) {
-    print('Did push route ${route.settings.name}');
-  }
-}
-
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
   @override
@@ -36,6 +17,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _rootRouter = RootRouter();
+  PageRouteInfo _initialLocation = AppRouter(
+    children: [
+      HomeRoute(children: [ProfileTab()])
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -43,10 +29,15 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.dark(),
       routerDelegate: AutoRouterDelegate.declarative(
         _rootRouter,
+        onInitialRoutes: (tree) {
+          // if (tree.topRoute != null) {
+          //   _initialLocation = tree.topRoute!;
+          // }
+        },
         routes: (context) {
           var authenticated = context.watch<AuthService>().isAuthenticated;
           return [
-            if (authenticated) AppRouter() else LoginRoute(),
+            if (authenticated) _initialLocation else LoginRoute(),
           ];
         },
       ),

@@ -80,7 +80,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     final newState = UrlState.fromRoutes(controller.currentSegments);
     if (urlState != newState) {
       urlState = newState;
-      print(urlState.url);
       return newState;
     }
     return null;
@@ -116,13 +115,13 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   Widget build(BuildContext context) {
-    var stackHash = controller.currentStackHash;
+    final segmentsHash = controller.currentSegmentsHash;
     return RoutingControllerScope(
       controller: controller,
       navigatorObservers: navigatorObservers,
-      stackHash: stackHash,
+      segmentsHash: segmentsHash,
       child: StackRouterScope(
-        stackHash: stackHash,
+        segmentsHash: segmentsHash,
         controller: controller,
         child: AutoRouteNavigator(
           router: controller,
@@ -183,14 +182,14 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   @override
   Widget build(BuildContext context) {
     controller.updateDeclarativeRoutes(routes(context));
-    var stackHash = controller.currentStackHash;
+    final segmentsHash = controller.currentSegmentsHash;
     return RoutingControllerScope(
       controller: controller,
       navigatorObservers: navigatorObservers,
-      stackHash: stackHash,
+      segmentsHash: segmentsHash,
       child: StackRouterScope(
         controller: controller,
-        stackHash: stackHash,
+        segmentsHash: segmentsHash,
         child: AutoRouteNavigator(
           router: controller,
           navRestorationScopeId: navRestorationScopeId,

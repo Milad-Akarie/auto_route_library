@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../data/db.dart';
 import 'router/web_router.gr.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   runApp(App());

@@ -15,6 +15,5 @@ const booksTab = AutoRoute(
       page: BookDetailsPage,
       // guards: [AuthGuard],
     ),
-    AutoRoute(path: 'my-books', page: MyBooksPage),
   ],
 );

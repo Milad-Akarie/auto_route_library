@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
-import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -29,11 +28,6 @@ abstract class AutoRoutePage<T> extends Page<T> {
           name: routeData.name,
           arguments: routeData.route.args,
         );
-
-  @override
-  bool canUpdate(Page other) {
-    return other.runtimeType == runtimeType && (other as AutoRoutePage).routeData.key == this.routeData.key;
-  }
 
   Widget buildChild(BuildContext context) {
     var childToBuild = child;
