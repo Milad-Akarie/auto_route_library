@@ -112,7 +112,7 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emi
             defaultCode = Code(
                 'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.type.import).accept(emitter).toString()}');
           } else {
-            defaultCode = refer(p.defaultValueCode, p.type.import).code;
+            defaultCode = refer(p.defaultValueCode!, p.type.import).code;
           }
         }
         b

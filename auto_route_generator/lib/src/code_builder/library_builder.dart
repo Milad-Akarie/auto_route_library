@@ -21,7 +21,11 @@ TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeRef
   ..types.add(reference));
 
 String generateLibrary(RouterConfig config) {
-  final emitter = DartEmitter(Allocator.simplePrefixing(), true, true);
+  final emitter = DartEmitter(
+    allocator: Allocator.simplePrefixing(),
+    orderDirectives: true,
+    useNullSafetySyntax: true,
+  );
 
   var allRouters = config.collectAllRoutersIncludingParent;
   List<RouteConfig> allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));

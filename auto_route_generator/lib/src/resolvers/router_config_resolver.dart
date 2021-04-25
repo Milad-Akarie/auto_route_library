@@ -44,11 +44,11 @@ class RouterConfigResolver {
       durationInMilliseconds = autoRouter.peek('durationInMilliseconds')?.intValue;
       customRouteOpaque = autoRouter.peek('opaque')?.boolValue;
       customRouteBarrierDismissible = autoRouter.peek('barrierDismissible')?.boolValue;
-      final function = autoRouter.peek('transitionsBuilder')?.objectValue?.toFunctionValue();
+      final function = autoRouter.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
         transitionBuilder = _typeResolver.resolveImportableFunctionType(function);
       }
-      final customRouteBuilderValue = autoRouter.peek('customRouteBuilder')?.objectValue?.toFunctionValue();
+      final customRouteBuilderValue = autoRouter.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (customRouteBuilderValue != null) {
         customRouteBuilder = _typeResolver.resolveImportableFunctionType(customRouteBuilderValue);
       }
@@ -92,10 +92,7 @@ class RouterConfigResolver {
       route = routeResolver.resolve(routeReader);
       var children = routeReader.peek('children')?.listValue;
       if (children?.isNotEmpty == true) {
-        var name = capitalize(valueOr(route.name, route.className));
         var subRouterConfig = routerConfig.copyWith(
-          routerClassName: '${name}Router',
-          routesClassName: '${name}Routes',
           parent: routerConfig,
         );
         var nestedRoutes = _resolveRoutes(subRouterConfig, children!);
@@ -103,6 +100,22 @@ class RouterConfigResolver {
       }
       routes.add(route);
     }
+
+    // to generate auto redirect for initial routes
+    final initialPath = routerConfig.parent == null ? '/' : '';
+    var initialRoute = routes.firstOrNull((r) => r.initial);
+    if (initialRoute != null && !routes.any((r) => r.pathName == initialPath)) {
+      routes.insert(
+          0,
+          RouteConfig(
+            pathName: initialPath,
+            redirectTo: initialRoute.pathName,
+            className: '',
+            fullMatch: true,
+            routeType: RouteType.redirect,
+          ));
+    }
+
     return routes;
   }
 }

@@ -66,9 +66,9 @@ class RouteConfigResolver {
     var fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
     var maintainState = autoRoute.peek('maintainState')?.boolValue;
     var fullMatch = autoRoute.peek('fullMatch')?.boolValue;
-    var usesTabsRouter = autoRoute.peek('usesTabsRouter')?.boolValue;
+    var initial = autoRoute.peek('initial')?.boolValue ?? false;
     var guards = <ImportableType>[];
-    autoRoute.peek('guards')?.listValue?.map((g) => g.toTypeValue()).forEach((guard) {
+    autoRoute.peek('guards')?.listValue.map((g) => g.toTypeValue()).forEach((guard) {
       guards.add(_typeResolver.resolveType(guard!));
     });
 
@@ -122,10 +122,6 @@ class RouteConfigResolver {
     var name = autoRoute.peek('name')?.stringValue;
     var replacementInRouteName = _routerConfig.replaceInRouteName;
 
-    var hasWrapper = classElement.allSupertypes
-        .map<String>((el) => el.getDisplayString(withNullability: false))
-        .contains('AutoRouteWrapper');
-
     final constructor = classElement.unnamedConstructor;
     var hasConstConstructor = false;
     var params = constructor!.parameters;
@@ -166,8 +162,8 @@ class RouteConfigResolver {
     return RouteConfig(
       className: className,
       name: name,
+      initial: initial,
       pathParams: pathParams,
-      usesTabsRouter: usesTabsRouter,
       routeType: routeType,
       transitionBuilder: transitionBuilder,
       customRouteBuilder: customRouteBuilder,
@@ -177,7 +173,6 @@ class RouteConfigResolver {
       fullscreenDialog: fullscreenDialog,
       maintainState: maintainState,
       parameters: parameters,
-      hasWrapper: hasWrapper,
       hasConstConstructor: hasConstConstructor,
       durationInMilliseconds: durationInMilliseconds,
       reverseDurationInMilliseconds: reverseDurationInMilliseconds,

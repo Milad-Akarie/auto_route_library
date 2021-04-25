@@ -30,7 +30,6 @@ class RouteConfig {
   final int routeType;
   final List<ImportableType> guards;
   final String? cupertinoNavTitle;
-  final bool hasWrapper;
   final String? replacementInRouteName;
   final RouterConfig? childRouterConfig;
   final bool hasConstConstructor;
@@ -59,7 +58,6 @@ class RouteConfig {
     this.routeType = RouteType.material,
     this.guards = const [],
     this.cupertinoNavTitle,
-    this.hasWrapper = false,
     this.replacementInRouteName,
     this.childRouterConfig,
     this.hasConstConstructor = false,
@@ -89,7 +87,6 @@ class RouteConfig {
     int? routeType,
     List<ImportableType>? guards,
     String? cupertinoNavTitle,
-    bool? hasWrapper,
     String? replacementInRouteName,
     RouterConfig? childRouterConfig,
     bool? hasConstConstructor,
@@ -119,7 +116,6 @@ class RouteConfig {
         (routeType == null || identical(routeType, this.routeType)) &&
         (guards == null || identical(guards, this.guards)) &&
         (cupertinoNavTitle == null || identical(cupertinoNavTitle, this.cupertinoNavTitle)) &&
-        (hasWrapper == null || identical(hasWrapper, this.hasWrapper)) &&
         (replacementInRouteName == null || identical(replacementInRouteName, this.replacementInRouteName)) &&
         (childRouterConfig == null || identical(childRouterConfig, this.childRouterConfig)) &&
         (hasConstConstructor == null || identical(hasConstConstructor, this.hasConstConstructor))) {
@@ -150,7 +146,6 @@ class RouteConfig {
       routeType: routeType ?? this.routeType,
       guards: guards ?? this.guards,
       cupertinoNavTitle: cupertinoNavTitle ?? this.cupertinoNavTitle,
-      hasWrapper: hasWrapper ?? this.hasWrapper,
       replacementInRouteName: replacementInRouteName ?? this.replacementInRouteName,
       childRouterConfig: childRouterConfig ?? this.childRouterConfig,
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
@@ -188,7 +183,7 @@ class RouteConfig {
       nameToUse = name;
     } else if (replacementInRouteName != null && replacementInRouteName!.split(',').length == 2) {
       var parts = replacementInRouteName!.split(',');
-      nameToUse = className.replaceAll(parts[0], parts[1]);
+      nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
     } else {
       nameToUse = "${className}Route";
     }

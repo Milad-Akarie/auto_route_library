@@ -143,18 +143,18 @@ Method buildMethod(RouteConfig r) {
                   if (r.fullscreenDialog == true) 'fullscreenDialog': literalBool(true),
                   if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) &&
                       r.cupertinoNavTitle != null)
-                    'title': literalString(r.cupertinoNavTitle),
+                    'title': literalString(r.cupertinoNavTitle!),
                   if (r.routeType == RouteType.custom) ...{
                     if (r.customRouteBuilder != null) 'customRouteBuilder': r.customRouteBuilder!.refer,
                     if (r.transitionBuilder != null) 'transitionsBuilder': r.transitionBuilder!.refer,
                     if (r.durationInMilliseconds != null)
-                      'durationInMilliseconds': literalNum(r.durationInMilliseconds),
+                      'durationInMilliseconds': literalNum(r.durationInMilliseconds!),
                     if (r.reverseDurationInMilliseconds != null)
-                      'reverseDurationInMilliseconds': literalNum(r.reverseDurationInMilliseconds),
-                    if (r.customRouteOpaque != null) 'opaque': literalBool(r.customRouteOpaque),
+                      'reverseDurationInMilliseconds': literalNum(r.reverseDurationInMilliseconds!),
+                    if (r.customRouteOpaque != null) 'opaque': literalBool(r.customRouteOpaque!),
                     if (r.customRouteBarrierDismissible != null)
-                      'barrierDismissible': literalBool(r.customRouteBarrierDismissible),
-                    if (r.customRouteBarrierLabel != null) 'barrierLabel': literalString(r.customRouteBarrierLabel),
+                      'barrierDismissible': literalBool(r.customRouteBarrierDismissible!),
+                    if (r.customRouteBarrierLabel != null) 'barrierLabel': literalString(r.customRouteBarrierLabel!),
                   }
                 },
               )
@@ -169,12 +169,12 @@ Expression getUrlParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
     return refer('pathParams').property(p.getterMethodName).call([
       literalString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode!),
     ]);
   } else {
     return refer('queryParams').property(p.getterMethodName).call([
       literalString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode!),
     ]);
   }
 }
@@ -190,7 +190,7 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
           ],
           {
             'path': literalString(r.pathName),
-            if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo),
+            if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo!),
             if (r.fullMatch == true) 'fullMatch': literalBool(true),
             if (r.usesTabsRouter == true) 'usesTabsRouter': literalBool(true),
             if (r.guards.isNotEmpty)

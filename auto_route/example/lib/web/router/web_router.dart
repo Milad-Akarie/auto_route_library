@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 @MaterialAutoRouter(
-  replaceInRouteName: 'Page,Route',
+  replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
     AutoRoute(path: '/', page: HomePage),
     AutoRoute(path: '/login', page: LoginPage),
@@ -13,14 +13,9 @@ import 'package:flutter/material.dart';
       path: '/user/:userID',
       page: UserPage,
       children: [
-        RedirectRoute(path: '', redirectTo: 'profile'),
-        AutoRoute(path: 'profile', page: UserProfilePage),
+        AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
-          RedirectRoute(path: '', redirectTo: 'all'),
-          AutoRoute(
-            path: 'all',
-            page: UserAllPostsPage,
-          ),
+          AutoRoute(path: 'all', page: UserAllPostsPage, initial: true),
           AutoRoute(
             path: 'favorite',
             page: UserFavoritePostsPage,
@@ -28,7 +23,7 @@ import 'package:flutter/material.dart';
         ]),
       ],
     ),
-    AutoRoute(path: '/404', page: NotFoundPage),
+    AutoRoute(path: '/404', page: NotFoundScreen),
   ],
 )
 class $WebAppRouter {}
@@ -181,7 +176,7 @@ class _UserPageState extends State<UserPage> {
   }
 }
 
-class NotFoundPage extends StatelessWidget {
+class NotFoundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
