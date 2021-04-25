@@ -1,18 +1,12 @@
 import 'package:analyzer/dart/element/element.dart' show ParameterElement;
 import 'package:code_builder/code_builder.dart' as _code;
+import 'package:code_builder/code_builder.dart';
 
 import 'importable_type.dart';
 
 const reservedVarNames = ['name', 'children'];
 
-const validPathParamTypes = [
-  'String',
-  'int',
-  'double',
-  'num',
-  'bool',
-  'dynamic'
-];
+const validPathParamTypes = ['String', 'int', 'double', 'num', 'bool', 'dynamic'];
 
 /// holds constructor parameter info to be used
 /// in generating route parameters.
@@ -54,23 +48,6 @@ class ParamConfig {
     }
   }
 
-  String get getterName {
-    switch (type.name) {
-      case 'String':
-        return 'stringValue';
-      case 'int':
-        return 'intValue';
-      case 'double':
-        return 'doubleValue';
-      case 'num':
-        return 'numValue';
-      case 'bool':
-        return 'boolValue';
-      default:
-        return 'value';
-    }
-  }
-
   String get getterMethodName {
     switch (type.name) {
       case 'String':
@@ -89,11 +66,6 @@ class ParamConfig {
   }
 
   String get paramName => alias ?? name;
-
-  _code.Code? get defaultCode =>
-      defaultValueCode == null ? null : _code.Code(defaultValueCode);
-
-  Set<String> get imports => type.imports;
 }
 
 class FunctionParamConfig extends ParamConfig {
@@ -128,14 +100,11 @@ class FunctionParamConfig extends ParamConfig {
           isOptional: isOptional,
         );
 
-  List<ParamConfig> get requiredParams =>
-      params.where((p) => p.isPositional && !p.isOptional).toList();
+  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList();
 
-  List<ParamConfig> get optionalParams =>
-      params.where((p) => p.isPositional && p.isOptional).toList();
+  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList();
 
-  List<ParamConfig> get namedParams =>
-      params.where((p) => p.isNamed).toList(growable: false);
+  List<ParamConfig> get namedParams => params.where((p) => p.isNamed).toList(growable: false);
 
   _code.FunctionType get funRefer => _code.FunctionType((b) => b
     ..returnType = returnType.refer
@@ -147,21 +116,6 @@ class FunctionParamConfig extends ParamConfig {
           (e) => MapEntry(e.name, e.type.refer),
         )),
     ));
-
-  @override
-  Set<String> get imports {
-    var allImports = <String>{};
-    allImports.addAll(returnType.imports);
-    allImports.addAll(type.imports);
-    params.forEach((param) {
-      allImports.addAll(param.imports);
-    });
-    return {
-      ...returnType.imports,
-      ...type.imports,
-      ...params.map((e) => e.imports).reduce((acc, a) => acc..addAll(a))
-    };
-  }
 }
 
 class PathParamConfig {

@@ -15,28 +15,30 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 const Reference requiredAnnotation = Reference('required', materialImport);
 
-TypeReference listRefer(Reference reference, {bool nullable = false}) =>
-    TypeReference((b) => b
-      ..symbol = "List"
-      ..isNullable = nullable
-      ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
+  ..symbol = "List"
+  ..isNullable = nullable
+  ..types.add(reference));
 
 String generateLibrary(RouterConfig config) {
-  var allRouters = config.collectAllRoutersIncludingParent;
-  List<RouteConfig> allRoutes =
-      allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+  final emitter = DartEmitter(
+    allocator: Allocator.simplePrefixing(),
+    orderDirectives: true,
+    useNullSafetySyntax: true,
+  );
 
-  var routeNames = allRoutes
-      .where((r) => r.routeType != RouteType.redirect)
-      .map((r) => r.routeName);
-  var checkedNames = <String>[];
-  routeNames.forEach((name) {
+  var allRouters = config.collectAllRoutersIncludingParent;
+  List<RouteConfig> allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+
+  final nonRedirectRoutes = allRoutes.where((r) => r.routeType != RouteType.redirect);
+  final checkedRoutes = <RouteConfig>[];
+  nonRedirectRoutes.forEach((route) {
     throwIf(
-      checkedNames.contains(name),
-      'There are more than one rout with the name [$name], route names must be unique!\nNote: Unless specified, route name is generated from page name.',
+      (checkedRoutes.any((r) => r.routeName == route.routeName && r.pathName != route.pathName)),
+      'Duplicate route names must have the same path! [${route.name}]\nNote: Unless specified, route name is generated from page name.',
       element: config.element,
     );
-    checkedNames.add(name);
+    checkedRoutes.add(route);
   });
 
   var allGuards = allRoutes.fold<Set<ImportableType>>(
@@ -50,11 +52,11 @@ String generateLibrary(RouterConfig config) {
         buildRouterConfig(config, allGuards, allRoutes),
         ...allRoutes
             .where((r) => r.routeType != RouteType.redirect)
-            .map((r) => buildRouteInfoAndArgs(r, config))
+            .distinctBy((e) => e.routeName)
+            .map((r) => buildRouteInfoAndArgs(r, config, emitter))
             .reduce((acc, a) => acc..addAll(a)),
       ]),
   );
 
-  final emitter = DartEmitter(Allocator.simplePrefixing(), true, true);
   return DartFormatter().format(library.accept(emitter).toString());
 }

@@ -1,40 +1,41 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:flutter/widgets.dart';
-
-import 'entry_scope.dart';
+part of '../router/controller/routing_controller.dart';
 
 class RouteData {
-  final PageRouteInfo route;
+  PageRouteInfo _route;
   final RouteData? parent;
-  final RouteConfig config;
+  final RouteConfig? config;
+  final ValueKey<String> key;
 
-  const RouteData({
-    required this.route,
+  RouteData({
+    required PageRouteInfo route,
     this.parent,
-    required this.config,
-  });
+    this.config,
+    required this.key,
+    List<PageRouteInfo<dynamic>>? preMatchedPendingRoutes,
+  })  : _route = route,
+        _preMatchedPendingRoutes = preMatchedPendingRoutes;
 
-  List<RouteData> get breadcrumbs => List.unmodifiable([
+  List<PageRouteInfo> get breadcrumbs => List.unmodifiable([
         if (parent != null) ...parent!.breadcrumbs,
-        this,
+        _route,
       ]);
 
+  List<PageRouteInfo<dynamic>>? _preMatchedPendingRoutes;
+
+  List<PageRouteInfo<dynamic>>? get preMatchedPendingRoutes {
+    var pending = _preMatchedPendingRoutes;
+    _preMatchedPendingRoutes = null;
+    return pending;
+  }
+
+  bool get hasPendingRoutes => _preMatchedPendingRoutes != null;
+
   static RouteData of(BuildContext context) {
-    var scope = context.dependOnInheritedWidgetOfExactType<StackEntryScope>();
-    assert(() {
-      if (scope == null) {
-        throw FlutterError(
-            'RouteData operation requested with a context that does not include an RouteData.\n'
-            'The context used to retrieve the RouteData must be that of a widget that '
-            'is a descendant of a AutoRoutePage.');
-      }
-      return true;
-    }());
-    return scope!.entry.routeData;
+    return RouteDataScope.of(context);
   }
 
   T argsAs<T>({T Function()? orElse}) {
-    final args = route.args;
+    final args = _route.args;
     if (args == null) {
       if (orElse == null) {
         throw FlutterError(
@@ -50,15 +51,46 @@ class RouteData {
     }
   }
 
-  String get name => route.routeName;
+  PageRouteInfo get route => _route;
+  String get name => _route.routeName;
 
-  String get path => route.path;
+  String get path => _route.path;
 
-  String get match => route.stringMatch;
+  String get match => _route.stringMatch;
 
-  Parameters get pathParams => Parameters(route.params);
+  Parameters get pathParams => Parameters(_route.params);
 
-  Parameters get queryParams => Parameters(route.queryParams);
+  Parameters get queryParams => Parameters(_route.queryParams);
 
-  String? get fragment => route.match?.fragment;
+  String? get fragment => _route.fragment;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RouteData &&
+          runtimeType == other.runtimeType &&
+          route == other.route;
+
+  @override
+  int get hashCode => route.hashCode;
+
+  RouteData copyWith({
+    PageRouteInfo? route,
+    RouteData? parent,
+    RouteConfig? config,
+    ValueKey<String>? key,
+    RouteData? activeChild,
+    RoutingController? router,
+    List<PageRouteInfo<dynamic>>? preMatchedPendingRoutes,
+    List<PageRouteInfo<dynamic>>? activeSegments,
+  }) {
+    return RouteData(
+      route: route ?? this.route,
+      parent: parent ?? this.parent,
+      config: config ?? this.config,
+      key: key ?? this.key,
+      preMatchedPendingRoutes:
+          preMatchedPendingRoutes ?? this._preMatchedPendingRoutes,
+    );
+  }
 }

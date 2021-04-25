@@ -27,6 +27,6 @@ class RejectedByGuardFailure extends NavigationFailure {
 
   @override
   String toString() {
-    return '${routes.map((e) => e.match)} rejected by guard ${guard.runtimeType}';
+    return '${routes.map((e) => e.stringMatch)} rejected by guard ${guard.runtimeType}';
   }
 }

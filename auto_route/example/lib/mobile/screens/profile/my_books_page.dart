@@ -19,12 +19,17 @@ class MyBooksPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Fragment Support? ${context.route?.fragment}',
+              'Fragment Support? ${context.routeData.fragment}',
               style: Theme.of(context).textTheme.bodyText1,
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: context.router.pop,
+              onPressed: () {
+                context.router.navigateNamed('settings');
+                //   return context.router.navigate(
+                //   BooksTab(),
+                // );
+              },
               child: Text('Go Back'),
             )
           ],

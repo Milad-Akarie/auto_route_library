@@ -14,9 +14,19 @@ class SettingsPage extends StatelessWidget {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              context.tabsRouter
-                ..setActiveIndex(0)
-                ..innerRouterOf<StackRouter>(BooksTab.name)?.push(BookDetailsRoute(id: 4));
+              // context.tabsRouter.pushChild(BookDetailsRoute(id: 4));
+              //
+              // context.navigateTo(
+              //   HomeRoute(
+              //     children: [
+              //       ProfileTab(children: [
+              //         MyBooksRoute(),
+              //       ]),
+              //     ],
+              //   ),
+              // );
+
+              context.router.navigateNamed('profile/my-books', includePrefixMatches: true);
             },
             child: Text('Navigate to Book/4'),
           )

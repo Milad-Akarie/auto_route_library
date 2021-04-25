@@ -24,29 +24,32 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
   Widget build(context) {
     var settingsState = context.watch<SettingsState>();
-    return AutoRouter.declarative(onGenerateRoutes: (_, __) {
-      return [
-        if (settingsState.userData.favoriteBook == null)
-          SingleFieldRoute(
-            message: 'What is your favorite book?',
-            willPopMessage: 'Please enter a book name!',
-            onNext: (text) {
-              settingsState.userData = settingsState.userData.copyWith(favoriteBook: text);
-            },
-          ),
-        if (settingsState.userData.name == null)
-          SingleFieldRoute(
-            message: 'What is your name?',
-            willPopMessage: 'Please enter a name!',
-            onNext: (text) {
-              settingsState.userData = settingsState.userData.copyWith(name: text);
-            },
-          ),
-        if (settingsState.userData.isDone) UserDataRoute(onResult: widget.onResult),
-      ];
-    }, onPopRoute: (PageRouteInfo route) {
-      // reset the state based on popped route
-    });
+
+    return Scaffold(
+      body: AutoRouter.declarative(routes: (context) {
+        return [
+          if (settingsState.userData.favoriteBook == null)
+            FavoriteBookFieldRoute(
+              message: 'What is your favorite book?',
+              willPopMessage: 'Please enter a book name!',
+              onNext: (text) {
+                settingsState.userData = settingsState.userData.copyWith(favoriteBook: text);
+              },
+            ),
+          if (settingsState.userData.name == null)
+            NameFieldRoute(
+              message: 'What is your name?',
+              willPopMessage: 'Please enter a name!',
+              onNext: (text) {
+                settingsState.userData = settingsState.userData.copyWith(name: text);
+              },
+            ),
+          if (settingsState.userData.isDone) UserDataRoute(onResult: widget.onResult),
+        ];
+      }, onPopRoute: (PageRouteInfo route) {
+        // reset the state based on popped route
+      }),
+    );
   }
 }
 

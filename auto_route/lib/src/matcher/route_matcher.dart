@@ -53,14 +53,23 @@ class RouteMatcher {
     );
   }
 
+  List<RouteMatch>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
+    return _match(
+      uri,
+      collection,
+      includePrefixMatches: includePrefixMatches,
+      root: true,
+    );
+  }
+
   List<RouteMatch>? _match(Uri uri, RouteCollection collection,
       {bool includePrefixMatches = false,
       bool root = false,
-      bool fromRedirect = false}) {
+      String? redirectedFrom}) {
     final pathSegments = p.split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
-      var match = matchRoute(uri, config, fromRedirect: fromRedirect);
+      var match = matchRoute(uri, config, redirectedFrom: redirectedFrom);
       if (match != null) {
         if (!includePrefixMatches || config.path == '*') {
           matches.clear();
@@ -68,10 +77,10 @@ class RouteMatcher {
         // handle redirects
         if (config.isRedirect) {
           return _handleRedirect(
-            uri,
-            collection,
-            includePrefixMatches,
-            match,
+            routesCollection: collection,
+            includePrefixMatches: includePrefixMatches,
+            redirectTo: uri.replace(path: Uri.parse(config.redirectTo!).path),
+            redirectedFrom: config.path,
           );
         }
 
@@ -85,7 +94,7 @@ class RouteMatcher {
             match = match.copyWith(children: children);
           }
           matches.add(match);
-          if (match.url.length == pathSegments.length) {
+          if (match.allSegments.length == pathSegments.length) {
             break;
           }
         } else {
@@ -104,36 +113,29 @@ class RouteMatcher {
     }
 
     if (matches.isEmpty ||
-        (root && matches.last.url.length < pathSegments.length)) {
+        (root && matches.last.allSegments.length < pathSegments.length)) {
       return null;
     }
     return matches;
   }
 
-  List<RouteMatch>? _handleRedirect(
-    Uri uri,
-    RouteCollection routesCollection,
-    bool includePrefixMatches,
-    RouteMatch match,
-  ) {
+  List<RouteMatch>? _handleRedirect({
+    required RouteCollection routesCollection,
+    required bool includePrefixMatches,
+    required Uri redirectTo,
+    required String redirectedFrom,
+  }) {
     var redirectMatches = _match(
-      uri.replace(path: Uri.parse(match.config.redirectTo!).path),
+      redirectTo,
       routesCollection,
       includePrefixMatches: includePrefixMatches,
-      fromRedirect: true,
+      redirectedFrom: redirectedFrom,
     );
-    // if (redirectMatches != null && redirectMatches.length == 1) {
-    //   return [
-    //     redirectMatches.first.copyWith(
-    //       segments: match.segments,
-    //     )
-    //   ];
-    // }
     return redirectMatches;
   }
 
   RouteMatch? matchRoute(Uri url, RouteConfig config,
-      {bool fromRedirect = false}) {
+      {String? redirectedFrom}) {
     var parts = p.split(config.path);
     var segments = p.split(url.path);
 
@@ -163,12 +165,14 @@ class RouteMatcher {
       extractedSegments = segments;
     }
     return RouteMatch(
-        segments: extractedSegments,
-        config: config,
-        fromRedirect: fromRedirect,
-        pathParams: Parameters(pathParams),
-        queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
-        fragment: url.fragment);
+      path: config.path,
+      routeName: config.name,
+      segments: extractedSegments,
+      redirectedFrom: redirectedFrom,
+      pathParams: Parameters(pathParams),
+      queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
+      fragment: url.fragment,
+    );
   }
 
   bool _isValidRoute(PageRouteInfo route, RouteCollection routes) {
@@ -184,9 +188,9 @@ class RouteMatcher {
     if (routeConfig == null) {
       return null;
     }
-    if (route.hasInitialChildren) {
-      var childrenMatch = route.initialChildren!
-          .every((r) => _isValidRoute(r, routeConfig.children!));
+    if (route.hasChildren) {
+      var childrenMatch =
+          route.children!.every((r) => _isValidRoute(r, routeConfig.children!));
       if (!childrenMatch) {
         return null;
       }

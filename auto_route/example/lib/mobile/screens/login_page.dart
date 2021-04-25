@@ -1,6 +1,8 @@
+import 'package:example/mobile/router/auth_guard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   final void Function(bool isLoggedIn)? onLoginResult;
@@ -16,12 +18,13 @@ class LoginPage extends StatelessWidget {
       // },
       child: Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: showBackButton,
-          title: Text('Login to continue'),
-        ),
+            // automaticallyImplyLeading: showBackButton,
+            // title: Text('Login to continue'),
+            ),
         body: Center(
           child: ElevatedButton(
             onPressed: () {
+              context.read<AuthService>().isAuthenticated = true;
               onLoginResult?.call(true);
             },
             child: Text('Login'),

@@ -5,7 +5,7 @@ import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
-List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
+List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
   return [
     Class(
       (b) => b
@@ -30,7 +30,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
               b
                 ..constant = r.parameters.isEmpty
                 ..optionalParameters.addAll([
-                  ...buildArgParams(r.parameters, toThis: false),
+                  ...buildArgParams(r.parameters, emitter, toThis: false),
                   if (r.isParent)
                     Parameter((b) => b
                       ..named = true
@@ -75,7 +75,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
                             ),
                       ),
                     ),
-                  if (r.isParent) 'initialChildren': refer('children'),
+                  if (r.isParent) 'children': refer('children'),
                 }).code);
             },
           ),
@@ -89,34 +89,39 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router) {
             ...r.parameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
               ..name = param.name
-              ..type = param is FunctionParamConfig
-                  ? param.funRefer
-                  : param.type.refer)),
+              ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
           ])
           ..constructors.add(
             Constructor((b) => b
               ..constant = true
               ..optionalParameters.addAll(
-                buildArgParams(r.parameters),
+                buildArgParams(r.parameters, emitter),
               )),
           ),
       )
   ];
 }
 
-Iterable<Parameter> buildArgParams(List<ParamConfig> parameters,
-    {bool toThis = true}) {
+Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter, {bool toThis = true}) {
   return parameters.map(
     (p) => Parameter(
       (b) {
+        var defaultCode;
+        if (p.defaultValueCode != null) {
+          if (p.defaultValueCode!.contains('const')) {
+            defaultCode = Code(
+                'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.type.import).accept(emitter).toString()}');
+          } else {
+            defaultCode = refer(p.defaultValueCode!, p.type.import).code;
+          }
+        }
         b
           ..name = p.getSafeName()
           ..named = true
           ..toThis = toThis
           ..required = p.isRequired || p.isPositional
-          ..defaultTo = p.defaultCode;
-        if (!toThis)
-          b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+          ..defaultTo = defaultCode;
+        if (!toThis) b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
       },
     ),
   );

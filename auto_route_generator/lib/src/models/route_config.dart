@@ -30,7 +30,6 @@ class RouteConfig {
   final int routeType;
   final List<ImportableType> guards;
   final String? cupertinoNavTitle;
-  final bool hasWrapper;
   final String? replacementInRouteName;
   final RouterConfig? childRouterConfig;
   final bool hasConstConstructor;
@@ -59,7 +58,6 @@ class RouteConfig {
     this.routeType = RouteType.material,
     this.guards = const [],
     this.cupertinoNavTitle,
-    this.hasWrapper = false,
     this.replacementInRouteName,
     this.childRouterConfig,
     this.hasConstConstructor = false,
@@ -89,7 +87,6 @@ class RouteConfig {
     int? routeType,
     List<ImportableType>? guards,
     String? cupertinoNavTitle,
-    bool? hasWrapper,
     String? replacementInRouteName,
     RouterConfig? childRouterConfig,
     bool? hasConstConstructor,
@@ -98,45 +95,30 @@ class RouteConfig {
         (pathName == null || identical(pathName, this.pathName)) &&
         (pathParams == null || identical(pathParams, this.pathParams)) &&
         (initial == null || identical(initial, this.initial)) &&
-        (fullscreenDialog == null ||
-            identical(fullscreenDialog, this.fullscreenDialog)) &&
+        (fullscreenDialog == null || identical(fullscreenDialog, this.fullscreenDialog)) &&
         (fullMatch == null || identical(fullMatch, this.fullMatch)) &&
-        (customRouteOpaque == null ||
-            identical(customRouteOpaque, this.customRouteOpaque)) &&
+        (customRouteOpaque == null || identical(customRouteOpaque, this.customRouteOpaque)) &&
         (customRouteBarrierDismissible == null ||
-            identical(customRouteBarrierDismissible,
-                this.customRouteBarrierDismissible)) &&
-        (customRouteBarrierLabel == null ||
-            identical(customRouteBarrierLabel, this.customRouteBarrierLabel)) &&
-        (maintainState == null ||
-            identical(maintainState, this.maintainState)) &&
+            identical(customRouteBarrierDismissible, this.customRouteBarrierDismissible)) &&
+        (customRouteBarrierLabel == null || identical(customRouteBarrierLabel, this.customRouteBarrierLabel)) &&
+        (maintainState == null || identical(maintainState, this.maintainState)) &&
         (pageType == null || identical(pageType, this.pageType)) &&
         (className == null || identical(className, this.className)) &&
         (returnType == null || identical(returnType, this.returnType)) &&
         (parameters == null || identical(parameters, this.parameters)) &&
-        (transitionBuilder == null ||
-            identical(transitionBuilder, this.transitionBuilder)) &&
-        (customRouteBuilder == null ||
-            identical(customRouteBuilder, this.customRouteBuilder)) &&
+        (transitionBuilder == null || identical(transitionBuilder, this.transitionBuilder)) &&
+        (customRouteBuilder == null || identical(customRouteBuilder, this.customRouteBuilder)) &&
         (redirectTo == null || identical(redirectTo, this.redirectTo)) &&
-        (usesTabsRouter == null ||
-            identical(usesTabsRouter, this.usesTabsRouter)) &&
+        (usesTabsRouter == null || identical(usesTabsRouter, this.usesTabsRouter)) &&
         (reverseDurationInMilliseconds == null ||
-            identical(reverseDurationInMilliseconds,
-                this.reverseDurationInMilliseconds)) &&
-        (durationInMilliseconds == null ||
-            identical(durationInMilliseconds, this.durationInMilliseconds)) &&
+            identical(reverseDurationInMilliseconds, this.reverseDurationInMilliseconds)) &&
+        (durationInMilliseconds == null || identical(durationInMilliseconds, this.durationInMilliseconds)) &&
         (routeType == null || identical(routeType, this.routeType)) &&
         (guards == null || identical(guards, this.guards)) &&
-        (cupertinoNavTitle == null ||
-            identical(cupertinoNavTitle, this.cupertinoNavTitle)) &&
-        (hasWrapper == null || identical(hasWrapper, this.hasWrapper)) &&
-        (replacementInRouteName == null ||
-            identical(replacementInRouteName, this.replacementInRouteName)) &&
-        (childRouterConfig == null ||
-            identical(childRouterConfig, this.childRouterConfig)) &&
-        (hasConstConstructor == null ||
-            identical(hasConstConstructor, this.hasConstConstructor))) {
+        (cupertinoNavTitle == null || identical(cupertinoNavTitle, this.cupertinoNavTitle)) &&
+        (replacementInRouteName == null || identical(replacementInRouteName, this.replacementInRouteName)) &&
+        (childRouterConfig == null || identical(childRouterConfig, this.childRouterConfig)) &&
+        (hasConstConstructor == null || identical(hasConstConstructor, this.hasConstConstructor))) {
       return this;
     }
 
@@ -148,10 +130,8 @@ class RouteConfig {
       fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
       fullMatch: fullMatch ?? this.fullMatch,
       customRouteOpaque: customRouteOpaque ?? this.customRouteOpaque,
-      customRouteBarrierDismissible:
-          customRouteBarrierDismissible ?? this.customRouteBarrierDismissible,
-      customRouteBarrierLabel:
-          customRouteBarrierLabel ?? this.customRouteBarrierLabel,
+      customRouteBarrierDismissible: customRouteBarrierDismissible ?? this.customRouteBarrierDismissible,
+      customRouteBarrierLabel: customRouteBarrierLabel ?? this.customRouteBarrierLabel,
       maintainState: maintainState ?? this.maintainState,
       pageType: pageType ?? this.pageType,
       className: className ?? this.className,
@@ -161,16 +141,12 @@ class RouteConfig {
       customRouteBuilder: customRouteBuilder ?? this.customRouteBuilder,
       redirectTo: redirectTo ?? this.redirectTo,
       usesTabsRouter: usesTabsRouter ?? this.usesTabsRouter,
-      reverseDurationInMilliseconds:
-          reverseDurationInMilliseconds ?? this.reverseDurationInMilliseconds,
-      durationInMilliseconds:
-          durationInMilliseconds ?? this.durationInMilliseconds,
+      reverseDurationInMilliseconds: reverseDurationInMilliseconds ?? this.reverseDurationInMilliseconds,
+      durationInMilliseconds: durationInMilliseconds ?? this.durationInMilliseconds,
       routeType: routeType ?? this.routeType,
       guards: guards ?? this.guards,
       cupertinoNavTitle: cupertinoNavTitle ?? this.cupertinoNavTitle,
-      hasWrapper: hasWrapper ?? this.hasWrapper,
-      replacementInRouteName:
-          replacementInRouteName ?? this.replacementInRouteName,
+      replacementInRouteName: replacementInRouteName ?? this.replacementInRouteName,
       childRouterConfig: childRouterConfig ?? this.childRouterConfig,
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
     );
@@ -195,11 +171,9 @@ class RouteConfig {
     return parameters.where((p) => p.isPathParam || p.isQueryParam).toList();
   }
 
-  Iterable<ParamConfig> get requiredParams =>
-      parameters.where((p) => p.isPositional && !p.isOptional);
+  Iterable<ParamConfig> get requiredParams => parameters.where((p) => p.isPositional && !p.isOptional);
 
-  Iterable<ParamConfig> get positionalParams =>
-      parameters.where((p) => p.isPositional);
+  Iterable<ParamConfig> get positionalParams => parameters.where((p) => p.isPositional);
 
   Iterable<ParamConfig> get namedParams => parameters.where((p) => p.isNamed);
 
@@ -207,10 +181,9 @@ class RouteConfig {
     var nameToUse;
     if (name != null) {
       nameToUse = name;
-    } else if (replacementInRouteName != null &&
-        replacementInRouteName!.split(',').length == 2) {
+    } else if (replacementInRouteName != null && replacementInRouteName!.split(',').length == 2) {
       var parts = replacementInRouteName!.split(',');
-      nameToUse = className.replaceAll(parts[0], parts[1]);
+      nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
     } else {
       nameToUse = "${className}Route";
     }
@@ -230,8 +203,8 @@ class RouteConfig {
     }
   }
 
-  bool get hasUnparsableRequiredArags => parameters.any((p) =>
-      (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+  bool get hasUnparsableRequiredArgs =>
+      parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
 }
 
 class RouteType {

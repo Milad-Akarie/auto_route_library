@@ -2,30 +2,40 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(_) => AutoTabsRouter(
-        routes: [BooksTab(), ProfileTab(), SettingsTab()],
-        duration: Duration(milliseconds: 400),
-        builder: (context, child, animation) {
-          var tabsRouter = context.tabsRouter;
+class HomePage extends StatefulWidget {
+  const HomePage({
+    Key? key,
+  }) : super(key: key);
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(tabsRouter.current?.name ?? ''),
-            ),
-            body: FadeTransition(child: child, opacity: animation),
-            bottomNavigationBar: buildBottomNav(tabsRouter),
-          );
-        },
-      );
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  // int activeIndex = 0;
+
+  @override
+  Widget build(context) {
+    return AutoTabsScaffold(
+      appBarBuilder: (_, tabsRouter) => AppBar(
+        title: Text(tabsRouter.topRoute.name),
+        leading: AutoBackButton(),
+      ),
+      routes: const [
+        BooksTab(),
+        ProfileTab(),
+        SettingsTab(),
+      ],
+      bottomNavigationBuilder: (_, tabsRouter) {
+        return buildBottomNav(tabsRouter);
+      },
+    );
+  }
 
   BottomNavigationBar buildBottomNav(TabsRouter tabsRouter) {
     return BottomNavigationBar(
       currentIndex: tabsRouter.activeIndex,
-      onTap: (index) {
-        tabsRouter.setActiveIndex(index);
-      },
+      onTap: tabsRouter.setActiveIndex,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.source),

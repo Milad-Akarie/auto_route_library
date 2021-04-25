@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/screens/profile/my_books_page.dart';
 
 import 'book_details_page.dart';
 import 'book_list_page.dart';

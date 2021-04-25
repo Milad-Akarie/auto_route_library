@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 class SingleFieldPage extends StatefulWidget {
   final String message;
   final String willPopMessage;
-  final void Function(String) onNext;
+  final void Function(String)? onNext;
 
   const SingleFieldPage({
     Key? key,
-    required this.message,
-    required this.willPopMessage,
-    required this.onNext,
+    this.message = '',
+    this.willPopMessage = '',
+    this.onNext,
   }) : super(key: key);
 
   @override
@@ -52,7 +52,7 @@ class _SingleFieldPageState extends State<SingleFieldPage> {
                 onPressed: _text.isEmpty
                     ? null
                     : () {
-                        widget.onNext(_text);
+                        widget.onNext?.call(_text);
                       })
           ],
         ),

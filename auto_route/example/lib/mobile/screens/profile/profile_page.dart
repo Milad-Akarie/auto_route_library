@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/data/db.dart';
+import 'package:example/mobile/router/auth_guard.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../router/router.gr.dart';
 import '../user-data/data_collector.dart';
@@ -31,14 +34,23 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text('My Books'),
             ),
             const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                context.read<AuthService>().isAuthenticated = false;
+              },
+              child: Text('Logout'),
+            ),
+            const SizedBox(height: 32),
             userData == null
                 ? ElevatedButton(
                     onPressed: () {
-                      context.router.root.push(UserDataCollectorRoute(onResult: (data) {
-                        setState(() {
-                          userData = data;
-                        });
-                      }));
+                      context.pushRoute(
+                        UserDataCollectorRoute(onResult: (data) {
+                          setState(() {
+                            userData = data;
+                          });
+                        }),
+                      ).then((value) => print('result $value'));
                     },
                     child: Text('Collect user data'),
                   )
