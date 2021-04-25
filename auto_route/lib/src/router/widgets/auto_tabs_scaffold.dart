@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-typedef AutoTabsBuilder = Widget Function(BuildContext context, TabsRouter tabsRouter);
+typedef AutoTabsBuilder = Widget Function(
+    BuildContext context, TabsRouter tabsRouter);
 
 class AutoTabsScaffold extends StatelessWidget {
   final AnimatedIndexedStackBuilder? builder;
@@ -46,7 +47,8 @@ class AutoTabsScaffold extends StatelessWidget {
     this.builder,
     this.bottomNavigationBuilder,
     this.inheritNavigatorObservers = true,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
     this.floatingActionButtonAnimator,

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/route/route_data.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -29,14 +28,14 @@ abstract class AutoRoutePage<T> extends Page<T> {
           arguments: routeData.route.args,
         );
 
-  Widget buildChild(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     var childToBuild = child;
     if (child is AutoRouteWrapper) {
       childToBuild = (child as AutoRouteWrapper).wrappedRoute(context);
     }
-
     return RouteDataScope(
       child: childToBuild,
+      routeHash: routeData.route.hashCode,
       routeData: routeData,
     );
   }
@@ -73,7 +72,8 @@ class MaterialPageX<T> extends AutoRoutePage<T> {
   }
 }
 
-class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixin<T> {
+class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
+    with MaterialRouteTransitionMixin<T> {
   _PageBasedMaterialPageRoute({
     required AutoRoutePage page,
   }) : super(settings: page);
@@ -81,7 +81,7 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTran
   AutoRoutePage get _page => settings as AutoRoutePage;
 
   @override
-  Widget buildContent(BuildContext context) => _page.buildChild(context);
+  Widget buildContent(BuildContext context) => _page.buildPage(context);
 
   @override
   bool get maintainState => _page.maintainState;
@@ -130,7 +130,8 @@ class CupertinoPageX<T> extends _TitledAutoRoutePage<T> {
   }
 }
 
-class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMixin<T> {
+class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
+    with CupertinoRouteTransitionMixin<T> {
   _PageBasedCupertinoPageRoute({
     required _TitledAutoRoutePage page,
   }) : super(settings: page);
@@ -138,7 +139,7 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTr
   _TitledAutoRoutePage get _page => settings as _TitledAutoRoutePage;
 
   @override
-  Widget buildContent(BuildContext context) => _page.buildChild(context);
+  Widget buildContent(BuildContext context) => _page.buildPage(context);
 
   @override
   String? get title => _page.title;
@@ -172,7 +173,7 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   Route<T> onCreateRoute(BuildContext context) {
     if (kIsWeb) {
       return PageRouteBuilder<T>(
-        pageBuilder: (_, __, ___) => buildChild(context),
+        pageBuilder: (_, __, ___) => buildPage(context),
         settings: this,
         maintainState: maintainState,
         fullscreenDialog: fullscreenDialog,
@@ -187,7 +188,8 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   }
 }
 
-typedef CustomRouteBuilder<T> = Route<T> Function<T>(BuildContext context, Widget child, CustomPage page);
+typedef CustomRouteBuilder<T> = Route<T> Function<T>(
+    BuildContext context, Widget child, CustomPage page);
 
 class CustomPage<T> extends AutoRoutePage<T> {
   final bool opaque;
@@ -224,14 +226,15 @@ class CustomPage<T> extends AutoRoutePage<T> {
   @override
   Route<T> onCreateRoute(BuildContext context) {
     if (customRouteBuilder != null) {
-      return customRouteBuilder!<T>(context, buildChild(context), this);
+      return customRouteBuilder!<T>(context, buildPage(context), this);
     }
     return PageRouteBuilder<T>(
-      pageBuilder: (_, __, ___) => buildChild(context),
+      pageBuilder: (_, __, ___) => buildPage(context),
       settings: this,
       opaque: opaque,
       transitionDuration: Duration(milliseconds: durationInMilliseconds),
-      reverseTransitionDuration: Duration(milliseconds: reverseDurationInMilliseconds),
+      reverseTransitionDuration:
+          Duration(milliseconds: reverseDurationInMilliseconds),
       barrierColor: barrierColor,
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel,
@@ -242,7 +245,10 @@ class CustomPage<T> extends AutoRoutePage<T> {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
     return child;
   }
 }

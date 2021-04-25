@@ -1,7 +1,8 @@
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart'
+    show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
@@ -13,10 +14,12 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
 
   @override
-  Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
+  Future<UrlState> parseRouteInformation(
+      RouteInformation routeInformation) async {
     var routes = <PageRouteInfo>[];
     final uri = Uri.parse(routeInformation.location ?? '');
-    var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
+    var matches =
+        _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     if (matches != null) {
       routes.addAll(matches.map((m) => PageRouteInfo.fromMatch(m)));
     }
@@ -49,7 +52,9 @@ class UrlState {
   PageRouteInfo? get topRoute => hasSegments ? segments.last : null;
 
   List<PageRouteInfo> childrenOfSegment(String path) {
-    return _findSegment(segments, (route) => route.stringMatch == path)?.children ?? const [];
+    return _findSegment(segments, (route) => route.stringMatch == path)
+            ?.children ??
+        const [];
   }
 
   PageRouteInfo? _findSegment(
@@ -69,7 +74,9 @@ class UrlState {
   }
 
   List<PageRouteInfo> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (route) => route.routeName == routeName)?.children ?? const [];
+    return _findSegment(segments, (route) => route.routeName == routeName)
+            ?.children ??
+        const [];
   }
 
   static Uri _buildUri(List<PageRouteInfo> routes) {
@@ -103,7 +110,9 @@ class UrlState {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UrlState && runtimeType == other.runtimeType && ListEquality().equals(segments, other.segments);
+      other is UrlState &&
+          runtimeType == other.runtimeType &&
+          ListEquality().equals(segments, other.segments);
 
   @override
   int get hashCode => ListEquality().hash(segments);

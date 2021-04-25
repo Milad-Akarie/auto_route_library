@@ -63,7 +63,9 @@ class RouteMatcher {
   }
 
   List<RouteMatch>? _match(Uri uri, RouteCollection collection,
-      {bool includePrefixMatches = false, bool root = false, String? redirectedFrom}) {
+      {bool includePrefixMatches = false,
+      bool root = false,
+      String? redirectedFrom}) {
     final pathSegments = p.split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
@@ -85,8 +87,10 @@ class RouteMatcher {
         if (match.segments.length != pathSegments.length) {
           // has rest
           if (config.isSubTree) {
-            final rest = uri.replace(pathSegments: pathSegments.sublist(match.segments.length));
-            final children = _match(rest, config.children!, includePrefixMatches: includePrefixMatches);
+            final rest = uri.replace(
+                pathSegments: pathSegments.sublist(match.segments.length));
+            final children = _match(rest, config.children!,
+                includePrefixMatches: includePrefixMatches);
             match = match.copyWith(children: children);
           }
           matches.add(match);
@@ -98,7 +102,8 @@ class RouteMatcher {
           //
           // include empty route if exists
           if (config.isSubTree && !match.hasChildren) {
-            match = match.copyWith(children: _match(uri.replace(path: ''), config.children!));
+            match = match.copyWith(
+                children: _match(uri.replace(path: ''), config.children!));
           }
 
           matches.add(match);
@@ -107,7 +112,8 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty || (root && matches.last.allSegments.length < pathSegments.length)) {
+    if (matches.isEmpty ||
+        (root && matches.last.allSegments.length < pathSegments.length)) {
       return null;
     }
     return matches;
@@ -128,7 +134,8 @@ class RouteMatcher {
     return redirectMatches;
   }
 
-  RouteMatch? matchRoute(Uri url, RouteConfig config, {String? redirectedFrom}) {
+  RouteMatch? matchRoute(Uri url, RouteConfig config,
+      {String? redirectedFrom}) {
     var parts = p.split(config.path);
     var segments = p.split(url.path);
 
@@ -136,7 +143,9 @@ class RouteMatcher {
       return null;
     }
 
-    if (config.fullMatch && segments.length > parts.length && (parts.isEmpty || parts.last != '*')) {
+    if (config.fullMatch &&
+        segments.length > parts.length &&
+        (parts.isEmpty || parts.last != '*')) {
       return null;
     }
 
@@ -180,7 +189,8 @@ class RouteMatcher {
       return null;
     }
     if (route.hasChildren) {
-      var childrenMatch = route.children!.every((r) => _isValidRoute(r, routeConfig.children!));
+      var childrenMatch =
+          route.children!.every((r) => _isValidRoute(r, routeConfig.children!));
       if (!childrenMatch) {
         return null;
       }
@@ -188,7 +198,8 @@ class RouteMatcher {
     return routeConfig;
   }
 
-  Map<String, dynamic> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {
+  Map<String, dynamic> _normalizeSingleValues(
+      Map<String, List<String>> queryParametersAll) {
     final queryMap = <String, dynamic>{};
     for (var key in queryParametersAll.keys) {
       var list = queryParametersAll[key];

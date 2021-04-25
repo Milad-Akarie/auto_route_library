@@ -8,10 +8,10 @@ abstract class RootStackRouter extends StackRouter {
       : super(
           key: const ValueKey('Root'),
           navigatorKey: navigatorKey,
-          initialRouteData: RouteData(
-              route: const PageRouteInfo('Root', path: ''),
-              config: RouteConfig('Root', path: ''),
-              key: const ValueKey('Root')),
+          routeData: RouteData(
+            route: const PageRouteInfo('Root', path: ''),
+            key: const ValueKey('Root'),
+          ),
         );
 
   Map<String, PageFactory> get pagesMap;
@@ -34,7 +34,8 @@ abstract class RootStackRouter extends StackRouter {
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,

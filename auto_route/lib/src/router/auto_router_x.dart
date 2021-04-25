@@ -9,17 +9,22 @@ extension AutoRouterX on BuildContext {
   StackRouter get router => AutoRouter.of(this);
 
   @optionalTypeArgs
-  Future<T?> pushRoute<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
+  Future<T?> pushRoute<T extends Object?>(PageRouteInfo route,
+          {OnNavigationFailure? onFailure}) =>
       router.push<T>(route, onFailure: onFailure);
 
   @optionalTypeArgs
-  Future<T?> replaceRoute<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
+  Future<T?> replaceRoute<T extends Object?>(PageRouteInfo route,
+          {OnNavigationFailure? onFailure}) =>
       router.replace<T>(route, onFailure: onFailure);
 
   @optionalTypeArgs
-  Future<bool> popRoute<T extends Object?>([T? result]) => router.pop<T>(result);
+  Future<bool> popRoute<T extends Object?>([T? result]) =>
+      router.pop<T>(result);
 
-  Future<void> navigateTo(PageRouteInfo route, {OnNavigationFailure? onFailure}) => router.navigate(
+  Future<void> navigateTo(PageRouteInfo route,
+          {OnNavigationFailure? onFailure}) =>
+      router.navigate(
         route,
         onFailure: onFailure,
       );

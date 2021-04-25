@@ -12,45 +12,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int activeIndex = 0;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // setting the right index when an outer navigation happens
-    // var tabsRouter = context.innerRouterOf<TabsRouter>(HomeRoute.name);
-    // if (tabsRouter != null) {
-    //   activeIndex = tabsRouter.activeIndex;
-    // }
-  }
+  // int activeIndex = 0;
 
   @override
   Widget build(context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.topRoute.name),
+    return AutoTabsScaffold(
+      appBarBuilder: (_, tabsRouter) => AppBar(
+        title: Text(tabsRouter.topRoute.name),
         leading: AutoBackButton(),
       ),
-      body: AutoTabsRouter(
-        activeIndex: activeIndex,
-        routes: const [
-          BooksTab(),
-          ProfileTab(),
-          SettingsTab(),
-        ],
-      ),
-      bottomNavigationBar: buildBottomNav(),
+      routes: const [
+        BooksTab(),
+        ProfileTab(),
+        SettingsTab(),
+      ],
+      bottomNavigationBuilder: (_, tabsRouter) {
+        return buildBottomNav(tabsRouter);
+      },
     );
   }
 
-  BottomNavigationBar buildBottomNav() {
+  BottomNavigationBar buildBottomNav(TabsRouter tabsRouter) {
     return BottomNavigationBar(
-      currentIndex: activeIndex,
-      onTap: (index) {
-        setState(() {
-          activeIndex = index;
-        });
-      },
+      currentIndex: tabsRouter.activeIndex,
+      onTap: tabsRouter.setActiveIndex,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.source),

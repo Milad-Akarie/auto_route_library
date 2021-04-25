@@ -17,11 +17,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _rootRouter = RootRouter();
-  PageRouteInfo _initialLocation = AppRouter(
-    children: [
-      HomeRoute(children: [ProfileTab()])
-    ],
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +24,10 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.dark(),
       routerDelegate: AutoRouterDelegate.declarative(
         _rootRouter,
-        onInitialRoutes: (tree) {
-          // if (tree.topRoute != null) {
-          //   _initialLocation = tree.topRoute!;
-          // }
-        },
         routes: (context) {
           var authenticated = context.watch<AuthService>().isAuthenticated;
           return [
-            if (authenticated) _initialLocation else LoginRoute(),
+            if (authenticated) AppRoute() else LoginRoute(),
           ];
         },
       ),

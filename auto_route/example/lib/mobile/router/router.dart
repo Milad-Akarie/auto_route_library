@@ -17,7 +17,7 @@ export 'router.gr.dart';
       transitionsBuilder: TransitionsBuilders.fadeIn,
       path: '/',
       page: EmptyRouterPage,
-      name: 'AppRouter',
+      name: 'AppRoute',
       // guards: [AuthGuard],
       children: [
         AutoRoute(

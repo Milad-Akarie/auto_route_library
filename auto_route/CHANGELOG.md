@@ -1,4 +1,26 @@
 # ChangeLog
+## [2.0.0] Breaking changes!
+##### breaking changes
+- Remove usesTabsRouter property from AutoRoute as it's no longer needed.
+- onGenerateRoutes is now shortened to just routes and initial routes are no longer pass
+- Legacy generator is completely dropped now.
+##### enhancements
+- Bring back the good old await for pop results feature.
+- The root AutoRouterDelegate can now be declarative.
+- Push, replace and navigate will now bubble up if they can't be handled by the router they're called from.
+- Enhance the navigate function to behave like navigating from the browser's bar.
+- Add new methods to navigate by path pushNamed, replaceNamed and navigateNamed.
+- Add AutoBackButton to handle nested routers popping with ease.
+- Add some helper/shortcut methods to context extension, pushRoute, replaceRoute, navigateTo and popRoute.
+- Add some helper methods to the RoutingController like popTop, topRoute and more.
+- Pages will rebuild when an ancestor router updates if you depend on it.
+- Add Auto RedirectRoute generation for Routes with none initial paths that's marked as initial.
+- Add AutoRouteObserver to add tabs observing to the native observer.
+- NavigatorObservers are now passed through a builder so nested navigators can inherit them.
+- Add HeroControllerScope to nested AutoRouters
+- Pomp up code_builder version to 4.0.0 and build_runner to 2.0.1
+- Fix #458, #456 #421 and #453
+- Minor fixes and enhancements
 ## [1.0.2]
 - Pomp up versions of build, build_runner, dart_style and source_gen
 - Using pathParam annotation is not more flexible and has less constrains

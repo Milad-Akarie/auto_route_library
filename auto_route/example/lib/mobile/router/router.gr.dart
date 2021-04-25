@@ -24,7 +24,7 @@ class RootRouter extends _i1.RootStackRouter {
 
   @override
   final Map<String, _i1.PageFactory> pagesMap = {
-    AppRouter.name: (routeData) {
+    AppRoute.name: (routeData) {
       return _i1.CustomPage<dynamic>(
           routeData: routeData,
           child: const _i1.EmptyRouterPage(),
@@ -132,7 +132,7 @@ class RootRouter extends _i1.RootStackRouter {
 
   @override
   List<_i1.RouteConfig> get routes => [
-        _i1.RouteConfig(AppRouter.name, path: '/', children: [
+        _i1.RouteConfig(AppRoute.name, path: '/', children: [
           _i1.RouteConfig(HomeRoute.name, path: '', children: [
             _i1.RouteConfig(BooksTab.name, path: 'books', children: [
               _i1.RouteConfig(BookListRoute.name, path: ''),
@@ -159,11 +159,11 @@ class RootRouter extends _i1.RootStackRouter {
       ];
 }
 
-class AppRouter extends _i1.PageRouteInfo {
-  const AppRouter({List<_i1.PageRouteInfo>? children})
+class AppRoute extends _i1.PageRouteInfo {
+  const AppRoute({List<_i1.PageRouteInfo>? children})
       : super(name, path: '/', children: children);
 
-  static const String name = 'AppRouter';
+  static const String name = 'AppRoute';
 }
 
 class LoginRoute extends _i1.PageRouteInfo<LoginRouteArgs> {

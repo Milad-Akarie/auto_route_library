@@ -1,30 +1,23 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:flutter/widgets.dart';
-
-import 'route_data_scope.dart';
+part of '../router/controller/routing_controller.dart';
 
 class RouteData {
-  final PageRouteInfo route;
+  PageRouteInfo _route;
   final RouteData? parent;
   final RouteConfig? config;
   final ValueKey<String> key;
-  final List<PageRouteInfo<dynamic>> activeSegments;
-  final RoutingController? router;
 
   RouteData({
-    required this.route,
+    required PageRouteInfo route,
     this.parent,
     this.config,
-    this.router,
     required this.key,
-    List<PageRouteInfo>? initialSegments,
     List<PageRouteInfo<dynamic>>? preMatchedPendingRoutes,
-  })  : _preMatchedPendingRoutes = preMatchedPendingRoutes,
-        activeSegments = initialSegments ?? <PageRouteInfo<dynamic>>[];
+  })  : _route = route,
+        _preMatchedPendingRoutes = preMatchedPendingRoutes;
 
   List<PageRouteInfo> get breadcrumbs => List.unmodifiable([
         if (parent != null) ...parent!.breadcrumbs,
-        route,
+        _route,
       ]);
 
   List<PageRouteInfo<dynamic>>? _preMatchedPendingRoutes;
@@ -42,33 +35,44 @@ class RouteData {
   }
 
   T argsAs<T>({T Function()? orElse}) {
-    final args = route.args;
+    final args = _route.args;
     if (args == null) {
       if (orElse == null) {
-        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
+        throw FlutterError(
+            '${T.toString()} can not be null because it has a required parameter');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }
   }
 
-  String get name => route.routeName;
+  PageRouteInfo get route => _route;
+  String get name => _route.routeName;
 
-  String get path => route.path;
+  String get path => _route.path;
 
-  String get match => route.stringMatch;
+  String get match => _route.stringMatch;
 
-  String get fullSegment => [route, ...activeSegments].map((e) => e.stringMatch).join('/');
+  Parameters get pathParams => Parameters(_route.params);
 
-  Parameters get pathParams => Parameters(route.params);
+  Parameters get queryParams => Parameters(_route.queryParams);
 
-  Parameters get queryParams => Parameters(route.queryParams);
+  String? get fragment => _route.fragment;
 
-  String? get fragment => route.fragment;
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RouteData &&
+          runtimeType == other.runtimeType &&
+          route == other.route;
+
+  @override
+  int get hashCode => route.hashCode;
 
   RouteData copyWith({
     PageRouteInfo? route,
@@ -83,16 +87,10 @@ class RouteData {
     return RouteData(
       route: route ?? this.route,
       parent: parent ?? this.parent,
-      router: router ?? this.router,
       config: config ?? this.config,
       key: key ?? this.key,
-      initialSegments: activeSegments ?? this.activeSegments,
-      preMatchedPendingRoutes: preMatchedPendingRoutes ?? this._preMatchedPendingRoutes,
+      preMatchedPendingRoutes:
+          preMatchedPendingRoutes ?? this._preMatchedPendingRoutes,
     );
-  }
-
-  void updateActiveSegments(List<PageRouteInfo<dynamic>> currentSegments) {
-    activeSegments.clear();
-    activeSegments.addAll(currentSegments);
   }
 }

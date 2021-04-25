@@ -39,7 +39,8 @@ class PageRouteInfo<T> {
     return _expand(path, params);
   }
 
-  String get fullPath => p.joinAll([stringMatch, if (hasChildren) children!.last.fullPath]);
+  String get fullPath =>
+      p.joinAll([stringMatch, if (hasChildren) children!.last.fullPath]);
 
   bool get hasChildren => children?.isNotEmpty == true;
 

@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
 
-typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child, Animation<double> animation);
+typedef AnimatedIndexedStackBuilder = Widget Function(
+    BuildContext context, Widget child, Animation<double> animation);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder? builder;
@@ -28,7 +29,8 @@ class AutoTabsRouter extends StatefulWidget {
     this.curve = Curves.ease,
     this.builder,
     this.inheritNavigatorObservers = true,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(key: key);
 
   @override
@@ -49,7 +51,8 @@ class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProviderStateMixin {
+class AutoTabsRouterState extends State<AutoTabsRouter>
+    with SingleTickerProviderStateMixin {
   TabsRouter? _controller;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -136,7 +139,8 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
       _resetController();
     }
-    if (widget.activeIndex != null && widget.activeIndex != oldWidget.activeIndex) {
+    if (widget.activeIndex != null &&
+        widget.activeIndex != oldWidget.activeIndex) {
       _animationController.value = 1.0;
       _index = widget.activeIndex!;
       _animationController.forward(from: 0.0);
@@ -160,7 +164,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
             lazyLoad: widget.lazyLoad,
             navigatorObservers: _navigatorObservers,
             itemBuilder: (BuildContext context, int index) {
-              return stack[index].buildChild(context);
+              return stack[index].buildPage(context);
             },
             stack: stack,
           );
@@ -174,7 +178,8 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
           segmentsHash: segmentsHash,
           child: AnimatedBuilder(
             animation: _animation,
-            builder: (context, child) => builder(context, child ?? builderChild, _animation),
+            builder: (context, child) =>
+                builder(context, child ?? builderChild, _animation),
             child: builderChild,
           )),
     );
@@ -214,11 +219,14 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   final _pages = <Widget>[];
 
   void _didInitTabRoute(int index, [int previous = -1]) {
-    widget.navigatorObservers.whereType<AutoRouterObserver>().forEach((observer) {
+    widget.navigatorObservers
+        .whereType<AutoRouterObserver>()
+        .forEach((observer) {
       final routes = widget.stack.map((e) => e.routeData.route).toList();
       var previousRoute;
       if (previous != -1) {
-        previousRoute = TabPageRoute(routeInfo: routes[previous], index: previous);
+        previousRoute =
+            TabPageRoute(routeInfo: routes[previous], index: previous);
       }
       observer.didInitTabRoute(
         TabPageRoute(routeInfo: routes[index], index: index),
@@ -228,7 +236,9 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   }
 
   void _didChangeTabRoute(int index, int previous) {
-    widget.navigatorObservers.whereType<AutoRouterObserver>().forEach((observer) {
+    widget.navigatorObservers
+        .whereType<AutoRouterObserver>()
+        .forEach((observer) {
       final routes = widget.stack.map((e) => e.routeData.route).toList();
       observer.didChangeTabRoute(
         TabPageRoute(routeInfo: routes[index], index: index),
@@ -255,7 +265,8 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
     super.didUpdateWidget(oldWidget);
     if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
       _didInitTabRoute(widget.activeIndex, oldWidget.activeIndex);
-      _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
+      _pages[widget.activeIndex] =
+          widget.itemBuilder(context, widget.activeIndex);
     } else if (widget.activeIndex != oldWidget.activeIndex) {
       _didChangeTabRoute(widget.activeIndex, oldWidget.activeIndex);
     }
