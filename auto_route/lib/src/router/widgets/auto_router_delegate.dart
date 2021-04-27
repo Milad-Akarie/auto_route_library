@@ -15,7 +15,7 @@ part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
 typedef RoutePopCallBack = void Function(PageRouteInfo route, dynamic results);
-typedef InitialRoutesCallBack = void Function(UrlState tree);
+typedef InitialRoutesCallBack = Future<void> Function(UrlState tree);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
@@ -174,7 +174,9 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
 
   @override
   Future<void> setNewRoutePath(UrlState tree) {
-    onInitialRoutes?.call(tree);
+    if (onInitialRoutes != null) {
+      return onInitialRoutes!(tree);
+    }
     return SynchronousFuture(null);
   }
 
