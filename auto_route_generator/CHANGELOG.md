@@ -1,10 +1,14 @@
 # ChangeLog
+## [2.0.1] Breaking changes!
+- OnPopRoute includes a results object now. [Breaking]
+- Required queryParams to either be nullable or have a default value
 ## [2.0.0] Breaking changes!
 ##### breaking changes
 - Remove usesTabsRouter property from AutoRoute as it's no longer needed.
 - onGenerateRoutes is now shortened to just routes and initial routes are no longer pass
 - Legacy generator is completely dropped now.
 - Remove all legacy generator related flags.
+- navigatorObservers is not a callback function that returns a list of observers
 ##### enhancements
 - Bring back the good old await for pop results feature.
 - The root AutoRouterDelegate can now be declarative.
