@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
 
               context.router.navigateNamed('profile/my-books', includePrefixMatches: true);
             },
-            child: Text('Navigate to Book/4'),
+            child: Text('navigateNamed to profile/my-books'),
           )
         ],
       ),

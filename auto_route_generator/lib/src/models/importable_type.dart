@@ -31,7 +31,9 @@ class ImportableType {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ImportableType && runtimeType == other.runtimeType && identity == other.identity;
+      other is ImportableType &&
+          runtimeType == other.runtimeType &&
+          identity == other.identity;
 
   @override
   int get hashCode => import.hashCode ^ name.hashCode;

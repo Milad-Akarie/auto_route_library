@@ -17,6 +17,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _rootRouter = RootRouter();
+  final _authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _authService.addListener(() => setState(() {}));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,19 +32,21 @@ class _MyAppState extends State<MyApp> {
       routerDelegate: AutoRouterDelegate.declarative(
         _rootRouter,
         routes: (context) {
-          var authenticated = context.watch<AuthService>().isAuthenticated;
+          var authenticated = _authService.isAuthenticated;
           return [
-            if (authenticated) AppRoute() else LoginRoute(),
+            if (authenticated)
+              AppRoute()
+            else
+              LoginRoute(onLoginResult: (success) {
+                _authService.isAuthenticated = success;
+              }),
           ];
         },
       ),
       routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {
-        return ChangeNotifierProvider<AuthService>(
-          create: (_) => AuthService(),
-          child: BooksDBProvider(
-            child: router!,
-          ),
+        return BooksDBProvider(
+          child: router!,
         );
       },
     );

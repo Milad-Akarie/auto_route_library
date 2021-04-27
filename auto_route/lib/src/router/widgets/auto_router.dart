@@ -18,8 +18,7 @@ class AutoRouter extends StatefulWidget {
 
   const AutoRouter({
     Key? key,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
     this.navigatorKey,
@@ -28,8 +27,7 @@ class AutoRouter extends StatefulWidget {
 
   static Widget declarative({
     Key? key,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
@@ -51,8 +49,7 @@ class AutoRouter extends StatefulWidget {
     var scope = StackRouterScope.of(context);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -146,8 +143,7 @@ class AutoRouterState extends State<AutoRouter> {
   }
 }
 
-typedef RoutesGenerator = List<PageRouteInfo> Function(
-    BuildContext context, List<PageRouteInfo> routes);
+typedef RoutesGenerator = List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes);
 
 class _DeclarativeAutoRouter extends StatefulWidget {
   final RoutesBuilder routes;
@@ -161,8 +157,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   const _DeclarativeAutoRouter({
     Key? key,
     required this.routes,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.onInitialRoutes,
     this.navigatorKey,
@@ -175,7 +170,6 @@ class _DeclarativeAutoRouter extends StatefulWidget {
 }
 
 class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
-  late List<PageRouteInfo> _routes;
   StackRouter? _controller;
   late HeroController _heroController;
 
@@ -213,13 +207,8 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           ),
           pageBuilder: parent.pageBuilder);
       parent.attachChildController(_controller!);
+      _controller!.updateDeclarativeRoutes(widget.routes(context));
     }
-    _updateRoutes(widget.routes(context));
-  }
-
-  void _updateRoutes(List<PageRouteInfo> routes) {
-    _routes = routes;
-    _controller!.updateDeclarativeRoutes(routes);
   }
 
   void _rebuildListener() {
@@ -248,24 +237,13 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         controller: _heroController,
         child: AutoRouteNavigator(
           router: _controller!,
+          declarativeRoutesBuilder: widget.routes,
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: _navigatorObservers,
           didPop: widget.onPopRoute,
         ),
       ),
     );
-  }
-
-  @override
-  void didUpdateWidget(covariant _DeclarativeAutoRouter oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    var newRoutes = widget.routes(context);
-    if (!ListEquality().equals(newRoutes, _routes)) {
-      _updateRoutes(newRoutes);
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
-        AutoRouterDelegate.of(context).notifyUrlChanged();
-      });
-    }
   }
 }
 

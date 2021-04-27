@@ -31,7 +31,8 @@ class AutoRouteGenerator extends GeneratorForAnnotation<AutoRouterAnnotation> {
     var importResolver = TypeResolver(libs, targetFileUri);
 
     var routerResolver = RouterConfigResolver(importResolver);
-    final routerConfig = routerResolver.resolve(annotation, element as ClassElement);
+    final routerConfig =
+        routerResolver.resolve(annotation, element as ClassElement);
 
     return generateLibrary(routerConfig);
   }

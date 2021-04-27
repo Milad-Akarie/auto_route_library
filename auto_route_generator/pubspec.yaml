@@ -15,7 +15,7 @@ dependencies:
   code_builder: ^4.0.0
   dart_style: ^2.0.0
   auto_route:
-#    ^1.0.2
+#    ^2.0.0
     path: ../auto_route
 
 

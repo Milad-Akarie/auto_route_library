@@ -168,11 +168,12 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(context.router.topRoute.name),
-          leading: AutoBackButton(),
-        ),
-        body: AutoRouter());
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: AutoBackButton(),
+      ),
+      // body: AutoRouter(),
+    );
   }
 }
 
