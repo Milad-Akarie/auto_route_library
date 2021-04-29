@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/web/router/web_router.gr.dart';
 import 'package:example/web/web_main.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 @MaterialAutoRouter(
@@ -23,17 +24,18 @@ import 'package:flutter/material.dart';
         ]),
       ],
     ),
-    AutoRoute(path: '/404', page: NotFoundScreen),
+    AutoRoute(path: '*', page: NotFoundScreen),
   ],
 )
 class $WebAppRouter {}
 
 class HomePage extends StatelessWidget {
-  final VoidCallback? navigate;
+  final VoidCallback? navigate, showUserPosts;
 
   const HomePage({
     Key? key,
     this.navigate,
+    this.showUserPosts,
   }) : super(key: key);
 
   @override
@@ -68,6 +70,10 @@ class HomePage extends StatelessWidget {
                         );
                   },
               child: Text('Navigate to user/1'),
+            ),
+            ElevatedButton(
+              onPressed: showUserPosts,
+              child: Text('Show user posts'),
             )
           ],
         ),
@@ -144,7 +150,15 @@ class _UserPostsPageState extends State<UserPostsPage> {
               'User Posts',
               style: TextStyle(fontSize: 30),
             ),
-            Expanded(child: AutoRouter())
+            Expanded(
+              child: AutoRouter(
+                  // onNewRoutes: (routes) {
+                  //   print('OnNew nested routes ${routes.map((e) => e.routeName)}');
+                  //   return SynchronousFuture(null);
+                  // },
+                  // routes: (context) => []
+                  ),
+            )
           ],
         ),
       ),
@@ -165,6 +179,8 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  bool showPosts = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,7 +188,26 @@ class _UserPageState extends State<UserPage> {
         title: Text(context.topRoute.name),
         leading: AutoBackButton(),
       ),
-      // body: AutoRouter(),
+      body: AutoRouter.declarative(
+          onNewRoutes: (routes) async {
+            print(routes.map((e) => e.routeName));
+            showPosts = false;
+            if (routes.isNotEmpty && routes.last.routeName == UserPostsRoute.name) {
+              showPosts = true;
+            }
+            return null;
+          },
+          routes: (context) => [
+                UserProfileRoute(navigate: () {
+                  setState(() {
+                    showPosts = true;
+                  });
+                }),
+                if (showPosts) UserPostsRoute()
+              ],
+          onPopRoute: (route, _) {
+            showPosts = false;
+          }),
     );
   }
 }

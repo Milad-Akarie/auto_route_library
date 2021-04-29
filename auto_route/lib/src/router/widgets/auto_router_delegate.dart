@@ -15,7 +15,7 @@ part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
 typedef RoutePopCallBack = void Function(PageRouteInfo route, dynamic results);
-typedef InitialRoutesCallBack = Future<void> Function(UrlState tree);
+typedef OnRoutesCallBack = Future<void> Function(UrlState tree);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
@@ -68,7 +68,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
-    InitialRoutesCallBack? onInitialRoutes,
+    OnRoutesCallBack? onInitialRoutes,
+    OnRoutesCallBack? onNewRoutes,
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
@@ -150,7 +151,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final InitialRoutesCallBack? onInitialRoutes;
+  final OnRoutesCallBack? onInitialRoutes;
+  final OnRoutesCallBack? onNewRoutes;
 
   _DeclarativeAutoRouterDelegate(
     RootStackRouter controller, {
@@ -158,6 +160,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     String? navRestorationScopeId,
     this.onPopRoute,
     this.onInitialRoutes,
+    this.onNewRoutes,
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           controller,
@@ -169,13 +172,20 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
 
   @override
   Future<void> setInitialRoutePath(UrlState tree) {
+    if (onInitialRoutes != null) {
+      return onInitialRoutes!(tree);
+    }
     return setNewRoutePath(tree);
   }
 
   @override
-  Future<void> setNewRoutePath(UrlState tree) {
-    if (onInitialRoutes != null) {
-      return onInitialRoutes!(tree);
+  Future<void> setNewRoutePath(UrlState tree) async {
+    if (onNewRoutes != null) {
+      final routes = tree.segments;
+      if (routes.isNotEmpty) {
+        controller.navigateAll(routes, ignoreRoot: true);
+      }
+      return onNewRoutes!(tree);
     }
     return SynchronousFuture(null);
   }

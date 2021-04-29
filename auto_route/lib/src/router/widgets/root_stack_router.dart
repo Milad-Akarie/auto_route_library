@@ -21,7 +21,7 @@ abstract class RootStackRouter extends StackRouter {
   bool _stackManagedByWidget = false;
 
   @override
-  bool get stackManagedByWidget => _stackManagedByWidget;
+  bool get managedByWidget => _stackManagedByWidget;
 
   @override
   PageBuilder get pageBuilder => _pageBuilder;
@@ -34,8 +34,7 @@ abstract class RootStackRouter extends StackRouter {
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,

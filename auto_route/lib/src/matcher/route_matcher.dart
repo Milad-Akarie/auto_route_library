@@ -131,6 +131,9 @@ class RouteMatcher {
       includePrefixMatches: includePrefixMatches,
       redirectedFrom: redirectedFrom,
     );
+    // if(redirectMatches != null && redirectMatches.length == 1){
+    //   redirectMatches = redirectMatches.map((e) => e.copyWith(segments: p.split(redirectTo.path)),).toList();
+    // }
     return redirectMatches;
   }
 

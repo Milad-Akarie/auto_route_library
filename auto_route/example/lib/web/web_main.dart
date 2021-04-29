@@ -33,10 +33,11 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   final _appRouter = WebAppRouter();
-  UrlState? urlState;
-  final rootRoutes = <PageRouteInfo>[];
+  PageRouteInfo? _userRoute;
   PageRouteInfo? _notFoundRoute;
   final authService = AuthService();
+  bool showPosts = false;
+
   @override
   void initState() {
     super.initState();
@@ -52,13 +53,14 @@ class AppState extends State<App> {
       debugShowCheckedModeBanner: false,
       routerDelegate: AutoRouterDelegate.declarative(
         _appRouter,
-        // onInitialRoutes: (urlState) {
-        //   this.urlState = urlState;
-        //   if (urlState.hasSegments) {
-        //     rootRoutes.clear();
-        //     rootRoutes.addAll(urlState.segments);
-        //   }
-        // },
+        onNewRoutes: (urlState) async {
+          _userRoute = null;
+          if (urlState.topRoute?.routeName == UserRoute.name) {
+            _userRoute = urlState.topRoute;
+          }
+
+          return null;
+        },
         routes: (context) {
           return [
             if (!authService.isAuthenticated)
@@ -66,19 +68,20 @@ class AppState extends State<App> {
                 authService.isAuthenticated = true;
               })
             else ...[
-              if (rootRoutes.isEmpty)
-                HomeRoute(navigate: () {
-                  setState(() {
-                    rootRoutes.add(UserRoute(id: 4));
-                  });
-                }),
-              ...rootRoutes,
+              HomeRoute(
+                  navigate: () {
+                    setState(() {
+                      _userRoute = UserRoute(id: 1);
+                    });
+                  },
+                  showUserPosts: () {}),
+              if (_userRoute != null) _userRoute!,
             ],
           ];
         },
         onPopRoute: (route, _) {
           if (route.routeName == UserRoute.name) {
-            rootRoutes.remove(route);
+            _userRoute = null;
           }
         },
       ),
@@ -112,7 +115,7 @@ class LoginPage extends StatelessWidget {
         body: Center(
           child: ElevatedButton(
             onPressed: () {
-              context.read<AuthService>().isAuthenticated = true;
+              // context.read<AuthService>().isAuthenticated = true;
               onLoginResult?.call(true);
             },
             child: Text('Login'),

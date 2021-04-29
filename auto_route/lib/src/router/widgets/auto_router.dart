@@ -2,7 +2,6 @@ import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
@@ -18,8 +17,7 @@ class AutoRouter extends StatefulWidget {
 
   const AutoRouter({
     Key? key,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
     this.navigatorKey,
@@ -28,19 +26,22 @@ class AutoRouter extends StatefulWidget {
 
   static Widget declarative({
     Key? key,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
     bool inheritNavigatorObservers = true,
     GlobalKey<NavigatorState>? navigatorKey,
+    OnNestedRoutesCallBack? onInitialRoutes,
+    OnNestedRoutesCallBack? onNewRoutes,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
         navigatorKey: navigatorKey,
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
+        onNewRoutes: onNewRoutes,
+        onInitialRoutes: onInitialRoutes,
         routes: routes,
       );
 
@@ -51,8 +52,7 @@ class AutoRouter extends StatefulWidget {
     var scope = StackRouterScope.of(context);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -72,12 +72,14 @@ class AutoRouterState extends State<AutoRouter> {
   StackRouter? get controller => _controller;
   late List<NavigatorObserver> _navigatorObservers;
   late NavigatorObserversBuilder _inheritableObserversBuilder;
+  late RoutingController _parentController;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final parentData = RouteDataScope.of(context);
     final parentScope = RoutingControllerScope.of(context);
+
     if (_controller == null) {
       assert(parentScope != null);
       _inheritableObserversBuilder = () {
@@ -89,19 +91,20 @@ class AutoRouterState extends State<AutoRouter> {
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-      final parent = parentScope!.controller;
+
+      _parentController = parentScope!.controller;
       _controller = NestedStackRouter(
-        parent: parent,
+        parent: _parentController,
         key: parentData.key,
         routeData: parentData,
         navigatorKey: widget.navigatorKey,
-        routeCollection: parent.routeCollection.subCollectionOf(
+        routeCollection: _parentController.routeCollection.subCollectionOf(
           parentData.name,
         ),
-        pageBuilder: parent.pageBuilder,
+        pageBuilder: _parentController.pageBuilder,
         preMatchedRoutes: parentData.preMatchedPendingRoutes,
       );
-      parent.attachChildController(_controller!);
+      _parentController.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
     }
   }
@@ -140,34 +143,37 @@ class AutoRouterState extends State<AutoRouter> {
   @override
   void dispose() {
     super.dispose();
-    _controller?.removeListener(_rebuildListener);
-    _controller?.dispose();
-    _controller = null;
+    if (_controller != null) {
+      _controller!.removeListener(_rebuildListener);
+      _controller!.dispose();
+      _parentController.removeChildController(_controller!);
+      _controller = null;
+    }
   }
 }
 
-typedef RoutesGenerator = List<PageRouteInfo> Function(
-    BuildContext context, List<PageRouteInfo> routes);
+typedef RoutesGenerator = List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes);
 
 class _DeclarativeAutoRouter extends StatefulWidget {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final InitialRoutesCallBack? onInitialRoutes;
   final NavigatorObserversBuilder navigatorObservers;
   final String? navRestorationScopeId;
   final bool inheritNavigatorObservers;
   final GlobalKey<NavigatorState>? navigatorKey;
+  final OnNestedRoutesCallBack? onInitialRoutes;
+  final OnNestedRoutesCallBack? onNewRoutes;
 
   const _DeclarativeAutoRouter({
     Key? key,
     required this.routes,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.onInitialRoutes,
     this.navigatorKey,
     this.navRestorationScopeId,
     this.inheritNavigatorObservers = true,
+    this.onNewRoutes,
   }) : super(key: key);
 
   @override
@@ -181,7 +187,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   StackRouter? get controller => _controller;
   late List<NavigatorObserver> _navigatorObservers;
   late NavigatorObserversBuilder _inheritableObserversBuilder;
-
+  late RoutingController _parentController;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -199,20 +205,21 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-
-      final parent = parentScope!.controller;
+      _parentController = parentScope!.controller;
       _controller = NestedStackRouter(
-          parent: parent,
+          parent: _parentController,
           key: parentData.key,
           routeData: parentData,
-          stackManagedByWidget: true,
+          managedByWidget: true,
+          onNewRoutes: widget.onNewRoutes,
+          onInitialRoutes: widget.onInitialRoutes,
           navigatorKey: widget.navigatorKey,
-          routeCollection: parent.routeCollection.subCollectionOf(
+          preMatchedRoutes: parentData.preMatchedPendingRoutes,
+          routeCollection: _parentController.routeCollection.subCollectionOf(
             parentData.name,
           ),
-          pageBuilder: parent.pageBuilder);
-      parent.attachChildController(_controller!);
-      _controller!.updateDeclarativeRoutes(widget.routes(context));
+          pageBuilder: _parentController.pageBuilder);
+      _parentController.attachChildController(_controller!);
     }
   }
 
@@ -225,9 +232,12 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   void dispose() {
     super.dispose();
-    _controller?.removeListener(_rebuildListener);
-    _controller?.dispose();
-    _controller = null;
+    if (_controller != null) {
+      _controller!.removeListener(_rebuildListener);
+      _controller!.dispose();
+      _parentController.removeChildController(_controller!);
+      _controller = null;
+    }
   }
 
   @override
