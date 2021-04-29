@@ -159,13 +159,11 @@ class AutoRoute<T> {
   final List<Type>? guards;
 
   final bool fullMatch;
-  final bool usesTabsRouter;
 
   const AutoRoute(
       {this.page,
       this.initial = false,
       this.guards,
-      this.usesTabsRouter = false,
       this.fullscreenDialog = false,
       this.maintainState = true,
       this.fullMatch = false,
@@ -191,7 +189,6 @@ class MaterialRoute<T> extends AutoRoute<T> {
       bool fullscreenDialog = false,
       bool maintainState = true,
       bool fullMatch = false,
-      bool usesTabsRouter = false,
       String? name,
       List<Type>? guards,
       List<AutoRoute>? children})
@@ -205,7 +202,6 @@ class MaterialRoute<T> extends AutoRoute<T> {
           path: path,
           children: children,
           name: name,
-          usesTabsRouter: usesTabsRouter,
         );
 }
 
@@ -223,7 +219,6 @@ class CupertinoRoute<T> extends AutoRoute<T> {
       String? name,
       bool fullMatch = false,
       required Type page,
-      bool usesTabsRouter = false,
       List<Type>? guards,
       List<AutoRoute>? children})
       : super(
@@ -236,7 +231,6 @@ class CupertinoRoute<T> extends AutoRoute<T> {
           page: page,
           guards: guards,
           children: children,
-          usesTabsRouter: usesTabsRouter,
         );
 }
 
@@ -248,7 +242,6 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
       String? name,
       String? path,
       bool fullMatch = false,
-      bool usesTabsRouter = false,
       this.cupertinoPageTitle,
       required Type page,
       List<Type>? guards,
@@ -258,7 +251,6 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
             fullscreenDialog: fullscreenDialog,
             maintainState: maintainState,
             path: path,
-            usesTabsRouter: usesTabsRouter,
             name: name,
             fullMatch: fullMatch,
             page: page,
@@ -322,7 +314,6 @@ class CustomRoute<T> extends AutoRoute<T> {
     bool fullMatch = false,
     required Type page,
     List<Type>? guards,
-    bool usesTabsRouter = false,
     List<AutoRoute>? children,
     this.customRouteBuilder,
     this.barrierLabel,
@@ -337,7 +328,6 @@ class CustomRoute<T> extends AutoRoute<T> {
             maintainState: maintainState,
             path: path,
             name: name,
-            usesTabsRouter: usesTabsRouter,
             fullMatch: fullMatch,
             page: page,
             guards: guards,

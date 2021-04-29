@@ -559,6 +559,8 @@ abstract class StackRouter extends RoutingController {
           }
         }
       }
+    } else {
+      _reset();
     }
     _pushAllGuarded(
       routes,
@@ -625,7 +627,7 @@ abstract class StackRouter extends RoutingController {
     List<PageRouteInfo> routes, {
     OnNavigationFailure? onFailure,
   }) {
-    _clearHistory();
+    _pages.clear();
     return _pushAll(routes, onFailure: onFailure);
   }
 
@@ -679,7 +681,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   void updateDeclarativeRoutes(List<PageRouteInfo> routes) {
-    _clearHistory();
+    _pages.clear();
     for (var route in routes) {
       var config = _resolveConfigOrReportFailure(route);
       if (config == null) {
@@ -805,12 +807,13 @@ abstract class StackRouter extends RoutingController {
       }
       return _navigateAll(routes, onFailure: onFailure);
     }
-    _clearHistory();
+    _reset();
     return SynchronousFuture(null);
   }
 
-  void _clearHistory() {
+  void _reset() {
     _pages.clear();
+    _childControllers.clear();
   }
 
   @Deprecated('Use pushAndPopUntil')

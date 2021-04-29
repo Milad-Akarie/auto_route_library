@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
+import 'package:auto_route_generator/utils.dart';
 import 'package:source_gen/source_gen.dart';
 
 final _pathParamChecker = TypeChecker.fromRuntime(PathParam);
@@ -19,15 +20,27 @@ class RouteParameterResolver {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
-    var isPathParam = _pathParamChecker.hasAnnotationOfExact(parameterElement);
+    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
     var paramAlias;
-    if (isPathParam) {
-      paramAlias = _pathParamChecker.firstAnnotationOf(parameterElement)?.getField('name')?.toStringValue();
+    if (pathParamAnnotation != null) {
+      paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
     }
-    var isQueryParam = _queryParamChecker.hasAnnotationOfExact(parameterElement);
-    if (isQueryParam) {
-      paramAlias = _queryParamChecker.firstAnnotationOf(parameterElement)?.getField('name')?.toStringValue();
+    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
+    if (queryParamAnnotation != null) {
+      paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
+
+      throwIf(
+        !type.isNullable && !parameterElement.hasDefaultValue,
+        'QueryParams must be nullable or have default value',
+        element: parameterElement,
+      );
     }
+
+    throwIf(
+      pathParamAnnotation != null && queryParamAnnotation != null,
+      '${parameterElement.name} can not be both a pathParam and a queryParam!',
+      element: parameterElement,
+    );
 
     return ParamConfig(
       type: type,
@@ -39,8 +52,8 @@ class RouteParameterResolver {
       isRequired: parameterElement.isRequiredNamed,
       isOptional: parameterElement.isOptional,
       isNamed: parameterElement.isNamed,
-      isPathParam: isPathParam,
-      isQueryParam: isQueryParam,
+      isPathParam: pathParamAnnotation != null,
+      isQueryParam: queryParamAnnotation != null,
       defaultValueCode: parameterElement.defaultValueCode,
     );
   }
