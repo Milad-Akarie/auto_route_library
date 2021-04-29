@@ -46,7 +46,7 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
             ),
           if (settingsState.userData.isDone) UserDataRoute(onResult: widget.onResult),
         ];
-      }, onPopRoute: (PageRouteInfo route) {
+      }, onPopRoute: (PageRouteInfo route, result) {
         // reset the state based on popped route
       }),
     );

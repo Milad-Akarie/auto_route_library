@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(context) {
     return AutoTabsScaffold(
       appBarBuilder: (_, tabsRouter) => AppBar(
-        title: Text(tabsRouter.topRoute.name),
+        title: Text(context.topRoute.name),
         leading: AutoBackButton(),
       ),
       routes: const [

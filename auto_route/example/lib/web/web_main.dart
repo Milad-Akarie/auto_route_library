@@ -34,7 +34,6 @@ class AppState extends State<App> {
   final _appRouter = WebAppRouter();
   UrlState? urlState;
   final rootRoutes = <PageRouteInfo>[];
-  PageRouteInfo? _notFoundRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -43,27 +42,6 @@ class AppState extends State<App> {
       debugShowCheckedModeBanner: false,
       routerDelegate: AutoRouterDelegate(
         _appRouter,
-        // onInitialRoutes: (urlState) {
-        //   this.urlState = urlState;
-        //   if (urlState.hasSegments) {
-        //     rootRoutes.clear();
-        //     rootRoutes.addAll(urlState.segments);
-        //   }
-        // },
-        // routes: (context) => [
-        //       if (rootRoutes.isEmpty)
-        //         HomeRoute(navigate: () {
-        //           setState(() {
-        //             rootRoutes.add(UserRoute(id: 4));
-        //           });
-        //         }),
-        //       ...rootRoutes,
-        //     ],
-        // onPopRoute: (route) {
-        //   if (route.routeName == UserRoute.name) {
-        //     rootRoutes.remove(route);
-        //   }
-        // },
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {

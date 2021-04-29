@@ -38,14 +38,12 @@ class RouteData {
     final args = _route.args;
     if (args == null) {
       if (orElse == null) {
-        throw FlutterError(
-            '${T.toString()} can not be null because it has a required parameter');
+        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }
@@ -66,10 +64,7 @@ class RouteData {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RouteData &&
-          runtimeType == other.runtimeType &&
-          route == other.route;
+      identical(this, other) || other is RouteData && runtimeType == other.runtimeType && route == other.route;
 
   @override
   int get hashCode => route.hashCode;
@@ -89,8 +84,7 @@ class RouteData {
       parent: parent ?? this.parent,
       config: config ?? this.config,
       key: key ?? this.key,
-      preMatchedPendingRoutes:
-          preMatchedPendingRoutes ?? this._preMatchedPendingRoutes,
+      preMatchedPendingRoutes: preMatchedPendingRoutes ?? this._preMatchedPendingRoutes,
     );
   }
 }

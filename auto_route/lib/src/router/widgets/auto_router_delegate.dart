@@ -15,8 +15,8 @@ import 'auto_route_navigator.dart';
 part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
-typedef RoutePopCallBack = void Function(PageRouteInfo route);
-typedef InitialRoutesCallBack = void Function(UrlState tree);
+typedef RoutePopCallBack = void Function(PageRouteInfo route, dynamic results);
+typedef OnRoutesCallBack = Future<void> Function(UrlState tree);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
@@ -40,9 +40,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   static reportUrlChanged(BuildContext context, String url) {
-    Router.of(context)
-        .routeInformationProvider
-        ?.routerReportsNewRouteInformation(
+    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
           RouteInformation(
             location: url,
           ),
@@ -71,7 +69,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
-    InitialRoutesCallBack? onInitialRoutes,
+    OnRoutesCallBack? onInitialRoutes,
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
@@ -153,7 +151,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final InitialRoutesCallBack? onInitialRoutes;
+  final OnRoutesCallBack? onInitialRoutes;
 
   _DeclarativeAutoRouterDelegate(
     RootStackRouter controller, {
@@ -161,8 +159,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     String? navRestorationScopeId,
     this.onPopRoute,
     this.onInitialRoutes,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           controller,
           navRestorationScopeId: navRestorationScopeId,
