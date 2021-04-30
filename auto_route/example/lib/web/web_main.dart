@@ -34,9 +34,7 @@ class App extends StatefulWidget {
 class AppState extends State<App> {
   final _appRouter = WebAppRouter();
   PageRouteInfo? _userRoute;
-  PageRouteInfo? _notFoundRoute;
   final authService = AuthService();
-  bool showPosts = false;
 
   @override
   void initState() {
@@ -53,7 +51,8 @@ class AppState extends State<App> {
       debugShowCheckedModeBanner: false,
       routerDelegate: AutoRouterDelegate.declarative(
         _appRouter,
-        onNewRoutes: (urlState) async {
+        onRoutes: (urlState, initial) async {
+          print(urlState.path);
           _userRoute = null;
           if (urlState.topRoute?.routeName == UserRoute.name) {
             _userRoute = urlState.topRoute;
@@ -61,24 +60,22 @@ class AppState extends State<App> {
 
           return null;
         },
-        routes: (context) {
-          return [
-            if (!authService.isAuthenticated)
-              LoginRoute(onLoginResult: (_) {
-                authService.isAuthenticated = true;
-              })
-            else ...[
-              HomeRoute(
-                  navigate: () {
-                    setState(() {
-                      _userRoute = UserRoute(id: 1);
-                    });
-                  },
-                  showUserPosts: () {}),
-              if (_userRoute != null) _userRoute!,
-            ],
-          ];
-        },
+        routes: (_) => [
+          if (!authService.isAuthenticated)
+            LoginRoute(onLoginResult: (_) {
+              authService.isAuthenticated = true;
+            })
+          else ...[
+            HomeRoute(
+              navigate: () {
+                setState(() {
+                  _userRoute = UserRoute(id: 1);
+                });
+              },
+            ),
+            if (_userRoute != null) UserRoute(id: 3),
+          ],
+        ],
         onPopRoute: (route, _) {
           if (route.routeName == UserRoute.name) {
             _userRoute = null;

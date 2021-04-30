@@ -32,16 +32,14 @@ class AutoRouter extends StatefulWidget {
     String? navRestorationScopeId,
     bool inheritNavigatorObservers = true,
     GlobalKey<NavigatorState>? navigatorKey,
-    OnNestedRoutesCallBack? onInitialRoutes,
-    OnNestedRoutesCallBack? onNewRoutes,
+    OnNestedRoutesCallBack? onRoutes,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
         navigatorKey: navigatorKey,
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
-        onNewRoutes: onNewRoutes,
-        onInitialRoutes: onInitialRoutes,
+        onRoutes: onRoutes,
         routes: routes,
       );
 
@@ -161,19 +159,17 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final String? navRestorationScopeId;
   final bool inheritNavigatorObservers;
   final GlobalKey<NavigatorState>? navigatorKey;
-  final OnNestedRoutesCallBack? onInitialRoutes;
-  final OnNestedRoutesCallBack? onNewRoutes;
+  final OnNestedRoutesCallBack? onRoutes;
 
   const _DeclarativeAutoRouter({
     Key? key,
     required this.routes,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
-    this.onInitialRoutes,
     this.navigatorKey,
     this.navRestorationScopeId,
     this.inheritNavigatorObservers = true,
-    this.onNewRoutes,
+    this.onRoutes,
   }) : super(key: key);
 
   @override
@@ -188,6 +184,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   late List<NavigatorObserver> _navigatorObservers;
   late NavigatorObserversBuilder _inheritableObserversBuilder;
   late RoutingController _parentController;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -211,8 +208,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           key: parentData.key,
           routeData: parentData,
           managedByWidget: true,
-          onNewRoutes: widget.onNewRoutes,
-          onInitialRoutes: widget.onInitialRoutes,
+          onRoutes: widget.onRoutes,
           navigatorKey: widget.navigatorKey,
           preMatchedRoutes: parentData.preMatchedPendingRoutes,
           routeCollection: _parentController.routeCollection.subCollectionOf(
@@ -223,17 +219,10 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     }
   }
 
-  void _rebuildListener() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
   @override
   void dispose() {
     super.dispose();
     if (_controller != null) {
-      _controller!.removeListener(_rebuildListener);
       _controller!.dispose();
       _parentController.removeChildController(_controller!);
       _controller = null;

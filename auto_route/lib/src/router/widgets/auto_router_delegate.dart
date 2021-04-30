@@ -15,7 +15,7 @@ part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
 typedef RoutePopCallBack = void Function(PageRouteInfo route, dynamic results);
-typedef OnRoutesCallBack = Future<void> Function(UrlState tree);
+typedef OnRoutesCallBack = Future<void> Function(UrlState tree, bool initial);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
@@ -68,18 +68,18 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
-    OnRoutesCallBack? onInitialRoutes,
-    OnRoutesCallBack? onNewRoutes,
+    OnRoutesCallBack? onRoutes,
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
-  UrlState urlState = UrlState.fromRoutes(const []);
+  UrlState _urlState = UrlState.fromRoutes(const []);
+  UrlState get urlState => _urlState;
 
   @override
   UrlState? get currentConfiguration {
     final newState = UrlState.fromRoutes(controller.currentSegments);
-    if (urlState != newState) {
-      urlState = newState;
+    if (_urlState != newState) {
+      _urlState = newState;
       return newState;
     }
     return null;
@@ -151,16 +151,14 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final OnRoutesCallBack? onInitialRoutes;
-  final OnRoutesCallBack? onNewRoutes;
+  final OnRoutesCallBack? onRoutes;
 
   _DeclarativeAutoRouterDelegate(
     RootStackRouter controller, {
     required this.routes,
     String? navRestorationScopeId,
     this.onPopRoute,
-    this.onInitialRoutes,
-    this.onNewRoutes,
+    this.onRoutes,
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           controller,
@@ -172,20 +170,22 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
 
   @override
   Future<void> setInitialRoutePath(UrlState tree) {
-    if (onInitialRoutes != null) {
-      return onInitialRoutes!(tree);
-    }
-    return setNewRoutePath(tree);
+    return _onRoutes(tree, true);
   }
 
   @override
   Future<void> setNewRoutePath(UrlState tree) async {
-    if (onNewRoutes != null) {
+    return _onRoutes(tree);
+  }
+
+  Future<void> _onRoutes(UrlState tree, [bool initial = false]) {
+    if (onRoutes != null) {
+      _urlState = tree;
       final routes = tree.segments;
       if (routes.isNotEmpty) {
         controller.navigateAll(routes, ignoreRoot: true);
       }
-      return onNewRoutes!(tree);
+      return onRoutes!(tree, true);
     }
     return SynchronousFuture(null);
   }

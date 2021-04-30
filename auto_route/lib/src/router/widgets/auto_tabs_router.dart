@@ -21,7 +21,7 @@ class AutoTabsRouter extends StatefulWidget {
   final int? _activeIndex;
   final bool declarative;
   final OnTabRouteCallBack? onInitialRoute;
-  final OnTabRouteCallBack? onNewRoute;
+  final OnTabRouteCallBack? onRoute;
 
   const AutoTabsRouter({
     Key? key,
@@ -35,7 +35,7 @@ class AutoTabsRouter extends StatefulWidget {
   })  : declarative = false,
         _activeIndex = null,
         onInitialRoute = null,
-        onNewRoute = null,
+        onRoute = null,
         super(key: key);
 
   const AutoTabsRouter.declarative({
@@ -47,7 +47,7 @@ class AutoTabsRouter extends StatefulWidget {
     this.curve = Curves.ease,
     this.builder,
     this.onInitialRoute,
-    this.onNewRoute,
+    this.onRoute,
     this.inheritNavigatorObservers = true,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   })  : declarative = true,
@@ -122,6 +122,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
           managedByWidget: widget.declarative,
           initialIndex: widget._activeIndex,
           routeData: parentRoute,
+          onRoute: widget.onRoute,
           routeCollection: _parentController.routeCollection.subCollectionOf(
             parentRoute.name,
           ),

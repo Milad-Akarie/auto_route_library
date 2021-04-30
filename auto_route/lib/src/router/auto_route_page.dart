@@ -23,10 +23,16 @@ abstract class AutoRoutePage<T> extends Page<T> {
     this.maintainState = true,
     LocalKey? key,
   }) : super(
-          key: routeData.key,
           name: routeData.name,
           arguments: routeData.route.args,
         );
+
+  @override
+  bool canUpdate(Page<dynamic> other) {
+    return other.runtimeType == runtimeType && (other as AutoRoutePage).routeKey == routeKey;
+  }
+
+  ValueKey get routeKey => routeData.key;
 
   Widget buildPage(BuildContext context) {
     var childToBuild = child;
@@ -72,8 +78,7 @@ class MaterialPageX<T> extends AutoRoutePage<T> {
   }
 }
 
-class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
-    with MaterialRouteTransitionMixin<T> {
+class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixin<T> {
   _PageBasedMaterialPageRoute({
     required AutoRoutePage page,
   }) : super(settings: page);
@@ -130,8 +135,7 @@ class CupertinoPageX<T> extends _TitledAutoRoutePage<T> {
   }
 }
 
-class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
-    with CupertinoRouteTransitionMixin<T> {
+class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMixin<T> {
   _PageBasedCupertinoPageRoute({
     required _TitledAutoRoutePage page,
   }) : super(settings: page);
@@ -188,8 +192,7 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   }
 }
 
-typedef CustomRouteBuilder<T> = Route<T> Function<T>(
-    BuildContext context, Widget child, CustomPage page);
+typedef CustomRouteBuilder<T> = Route<T> Function<T>(BuildContext context, Widget child, CustomPage page);
 
 class CustomPage<T> extends AutoRoutePage<T> {
   final bool opaque;
@@ -233,8 +236,7 @@ class CustomPage<T> extends AutoRoutePage<T> {
       settings: this,
       opaque: opaque,
       transitionDuration: Duration(milliseconds: durationInMilliseconds),
-      reverseTransitionDuration:
-          Duration(milliseconds: reverseDurationInMilliseconds),
+      reverseTransitionDuration: Duration(milliseconds: reverseDurationInMilliseconds),
       barrierColor: barrierColor,
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel,
@@ -245,10 +247,7 @@ class CustomPage<T> extends AutoRoutePage<T> {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return child;
   }
 }

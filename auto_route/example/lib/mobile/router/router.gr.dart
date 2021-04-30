@@ -5,6 +5,7 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
+import 'package:flutter/foundation.dart' as _i13;
 import 'package:flutter/material.dart' as _i2;
 
 import '../screens/books/book_details_page.dart' as _i8;
@@ -168,7 +169,7 @@ class AppRoute extends _i1.PageRouteInfo {
 
 class LoginRoute extends _i1.PageRouteInfo<LoginRouteArgs> {
   LoginRoute(
-      {_i2.Key? key,
+      {_i13.Key? key,
       void Function(bool)? onLoginResult,
       bool showBackButton = true})
       : super(name,
@@ -185,7 +186,7 @@ class LoginRouteArgs {
   const LoginRouteArgs(
       {this.key, this.onLoginResult, this.showBackButton = true});
 
-  final _i2.Key? key;
+  final _i13.Key? key;
 
   final void Function(bool)? onLoginResult;
 
@@ -202,7 +203,7 @@ class HomeRoute extends _i1.PageRouteInfo {
 class UserDataCollectorRoute
     extends _i1.PageRouteInfo<UserDataCollectorRouteArgs> {
   UserDataCollectorRoute(
-      {_i2.Key? key,
+      {_i13.Key? key,
       dynamic Function(_i5.UserData)? onResult,
       List<_i1.PageRouteInfo>? children})
       : super(name,
@@ -216,7 +217,7 @@ class UserDataCollectorRoute
 class UserDataCollectorRouteArgs {
   const UserDataCollectorRouteArgs({this.key, this.onResult});
 
-  final _i2.Key? key;
+  final _i13.Key? key;
 
   final dynamic Function(_i5.UserData)? onResult;
 }
@@ -270,7 +271,7 @@ class ProfileRoute extends _i1.PageRouteInfo {
 }
 
 class MyBooksRoute extends _i1.PageRouteInfo<MyBooksRouteArgs> {
-  MyBooksRoute({_i2.Key? key, String filter = 'none'})
+  MyBooksRoute({_i13.Key? key, String filter = 'none'})
       : super(name,
             path: 'my-books',
             args: MyBooksRouteArgs(key: key, filter: filter),
@@ -282,14 +283,14 @@ class MyBooksRoute extends _i1.PageRouteInfo<MyBooksRouteArgs> {
 class MyBooksRouteArgs {
   const MyBooksRouteArgs({this.key, this.filter = 'none'});
 
-  final _i2.Key? key;
+  final _i13.Key? key;
 
   final String filter;
 }
 
 class NameFieldRoute extends _i1.PageRouteInfo<NameFieldRouteArgs> {
   NameFieldRoute(
-      {_i2.Key? key,
+      {_i13.Key? key,
       String message = '',
       String willPopMessage = '',
       void Function(String)? onNext})
@@ -308,7 +309,7 @@ class NameFieldRouteArgs {
   const NameFieldRouteArgs(
       {this.key, this.message = '', this.willPopMessage = '', this.onNext});
 
-  final _i2.Key? key;
+  final _i13.Key? key;
 
   final String message;
 
@@ -320,7 +321,7 @@ class NameFieldRouteArgs {
 class FavoriteBookFieldRoute
     extends _i1.PageRouteInfo<FavoriteBookFieldRouteArgs> {
   FavoriteBookFieldRoute(
-      {_i2.Key? key,
+      {_i13.Key? key,
       String message = '',
       String willPopMessage = '',
       void Function(String)? onNext})
@@ -339,7 +340,7 @@ class FavoriteBookFieldRouteArgs {
   const FavoriteBookFieldRouteArgs(
       {this.key, this.message = '', this.willPopMessage = '', this.onNext});
 
-  final _i2.Key? key;
+  final _i13.Key? key;
 
   final String message;
 
@@ -349,7 +350,7 @@ class FavoriteBookFieldRouteArgs {
 }
 
 class UserDataRoute extends _i1.PageRouteInfo<UserDataRouteArgs> {
-  UserDataRoute({_i2.Key? key, dynamic Function(_i5.UserData)? onResult})
+  UserDataRoute({_i13.Key? key, dynamic Function(_i5.UserData)? onResult})
       : super(name,
             path: 'results',
             args: UserDataRouteArgs(key: key, onResult: onResult));
@@ -360,7 +361,7 @@ class UserDataRoute extends _i1.PageRouteInfo<UserDataRouteArgs> {
 class UserDataRouteArgs {
   const UserDataRouteArgs({this.key, this.onResult});
 
-  final _i2.Key? key;
+  final _i13.Key? key;
 
   final dynamic Function(_i5.UserData)? onResult;
 }

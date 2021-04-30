@@ -16,11 +16,11 @@ import 'package:flutter/material.dart';
       children: [
         AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
-          AutoRoute(path: 'all', page: UserAllPostsPage, initial: true),
-          AutoRoute(
-            path: 'favorite',
-            page: UserFavoritePostsPage,
-          ),
+          // AutoRoute(path: 'all', page: UserAllPostsPage, initial: true),
+          // AutoRoute(
+          //   path: 'favorite',
+          //   page: UserFavoritePostsPage,
+          // ),
         ]),
       ],
     ),
@@ -150,15 +150,14 @@ class _UserPostsPageState extends State<UserPostsPage> {
               'User Posts',
               style: TextStyle(fontSize: 30),
             ),
-            Expanded(
-              child: AutoRouter(
-                  // onNewRoutes: (routes) {
-                  //   print('OnNew nested routes ${routes.map((e) => e.routeName)}');
-                  //   return SynchronousFuture(null);
-                  // },
-                  // routes: (context) => []
-                  ),
-            )
+            // Expanded(
+            //   child: AutoRouter.declarative(
+            //       onNewRoutes: (routes) {
+            //         print('OnNew UserPsot routes ${routes.map((e) => e.routeName)}');
+            //         return SynchronousFuture(null);
+            //       },
+            //       routes: (context) => []),
+            // )
           ],
         ),
       ),
@@ -183,21 +182,26 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('building parent user widget');
     return Scaffold(
       appBar: AppBar(
         title: Text(context.topRoute.name),
         leading: AutoBackButton(),
       ),
       body: AutoRouter.declarative(
-          onNewRoutes: (routes) async {
-            print(routes.map((e) => e.routeName));
+          onRoutes: (routes, initial) async {
+            print('onNew routes ${routes.last.routeName}');
             showPosts = false;
             if (routes.isNotEmpty && routes.last.routeName == UserPostsRoute.name) {
               showPosts = true;
             }
+            if (!initial) {
+              setState(() {});
+            }
+
             return null;
           },
-          routes: (context) => [
+          routes: (_) => [
                 UserProfileRoute(navigate: () {
                   setState(() {
                     showPosts = true;
@@ -245,7 +249,7 @@ class UserAllPostsPage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.pushRoute(UserFavoritePostsRoute());
+                    // context.pushRoute(UserFavoritePostsRoute());
                   },
               child: Text('Favorite'),
             ),
