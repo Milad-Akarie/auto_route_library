@@ -18,7 +18,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final _rootRouter = RootRouter();
   final _authService = AuthService();
-  PageRouteInfo _appLocation = const AppRoute();
 
   @override
   void initState() {
@@ -29,22 +28,19 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     var authenticated = _authService.isAuthenticated;
-
     return MaterialApp.router(
       theme: ThemeData.dark(),
       routerDelegate: AutoRouterDelegate.declarative(
         _rootRouter,
-        onRoutes: (tree, initial) async {
-          _appLocation = tree.topRoute ?? const AppRoute();
-          return null;
-        },
         routes: (_) => [
           if (authenticated)
-            _appLocation
+            const AppRoute()
           else
-            LoginRoute(onLoginResult: (success) {
-              _authService.isAuthenticated = success;
-            }),
+            LoginRoute(
+              onLoginResult: (success) {
+                _authService.isAuthenticated = success;
+              },
+            ),
         ],
       ),
       routeInformationParser: _rootRouter.defaultRouteParser(),

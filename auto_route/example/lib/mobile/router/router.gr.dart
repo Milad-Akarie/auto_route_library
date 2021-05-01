@@ -64,8 +64,12 @@ class RootRouter extends _i1.RootStackRouter {
           routeData: routeData, child: const _i1.EmptyRouterPage());
     },
     SettingsTab.name: (routeData) {
+      var pathParams = routeData.pathParams;
+      final args = routeData.argsAs<SettingsTabArgs>(
+          orElse: () => SettingsTabArgs(tab: pathParams.getString('tab')));
       return _i1.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i6.SettingsPage());
+          routeData: routeData,
+          child: _i6.SettingsPage(key: args.key, tab: args.tab));
     },
     BookListRoute.name: (routeData) {
       return _i1.MaterialPageX<dynamic>(
@@ -143,7 +147,7 @@ class RootRouter extends _i1.RootStackRouter {
               _i1.RouteConfig(ProfileRoute.name, path: ''),
               _i1.RouteConfig(MyBooksRoute.name, path: 'my-books')
             ]),
-            _i1.RouteConfig(SettingsTab.name, path: 'settings')
+            _i1.RouteConfig(SettingsTab.name, path: 'settings/:tab')
           ]),
           _i1.RouteConfig(UserDataCollectorRoute.name,
               path: 'user-data',
@@ -236,10 +240,22 @@ class ProfileTab extends _i1.PageRouteInfo {
   static const String name = 'ProfileTab';
 }
 
-class SettingsTab extends _i1.PageRouteInfo {
-  const SettingsTab() : super(name, path: 'settings');
+class SettingsTab extends _i1.PageRouteInfo<SettingsTabArgs> {
+  SettingsTab({_i13.Key? key, required String tab})
+      : super(name,
+            path: 'settings/:tab',
+            args: SettingsTabArgs(key: key, tab: tab),
+            rawPathParams: {'tab': tab});
 
   static const String name = 'SettingsTab';
+}
+
+class SettingsTabArgs {
+  const SettingsTabArgs({this.key, required this.tab});
+
+  final _i13.Key? key;
+
+  final String tab;
 }
 
 class BookListRoute extends _i1.PageRouteInfo {
@@ -253,7 +269,7 @@ class BookDetailsRoute extends _i1.PageRouteInfo<BookDetailsRouteArgs> {
       : super(name,
             path: ':id',
             args: BookDetailsRouteArgs(id: id),
-            params: {'id': id});
+            rawPathParams: {'id': id});
 
   static const String name = 'BookDetailsRoute';
 }
@@ -275,7 +291,7 @@ class MyBooksRoute extends _i1.PageRouteInfo<MyBooksRouteArgs> {
       : super(name,
             path: 'my-books',
             args: MyBooksRouteArgs(key: key, filter: filter),
-            queryParams: {'filter': filter});
+            rawQueryParams: {'filter': filter});
 
   static const String name = 'MyBooksRoute';
 }

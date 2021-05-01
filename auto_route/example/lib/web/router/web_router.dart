@@ -82,17 +82,29 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class UserProfilePage extends StatefulWidget {
+class UserProfilePage extends StatelessWidget {
   final VoidCallback? navigate;
 
   const UserProfilePage({Key? key, this.navigate}) : super(key: key);
+//
+//   @override
+//   _UserProfilePageState createState() => _UserProfilePageState();
+// }
+//
+// class _UserProfilePageState extends State<UserProfilePage> {
+//   int _count = 0;
 
-  @override
-  _UserProfilePageState createState() => _UserProfilePageState();
-}
-
-class _UserProfilePageState extends State<UserProfilePage> {
-  int _count = 0;
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //
+  //   var parentRoute = context.routeData.parent;
+  //   print(parentRoute);
+  //   parentRoute?.addListener(() {
+  //     print('------- parent path parasm');
+  //     print(parentRoute.pathParams);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +121,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             MaterialButton(
               color: Colors.red,
-              onPressed: widget.navigate ??
+              onPressed: navigate ??
                   () {
                     context.navigateTo(UserPostsRoute());
                   },
@@ -118,15 +130,15 @@ class _UserProfilePageState extends State<UserProfilePage> {
             const SizedBox(
               height: 32,
             ),
-            MaterialButton(
-              color: Colors.blue,
-              onPressed: () {
-                setState(() {
-                  _count++;
-                });
-              },
-              child: Text('Count $_count'),
-            ),
+            // MaterialButton(
+            //   color: Colors.blue,
+            //   onPressed: () {
+            //     setState(() {
+            //       _count++;
+            //     });
+            //   },
+            //   child: Text('Count $_count'),
+            // ),
           ],
         ),
       ),
@@ -181,16 +193,24 @@ class _UserPageState extends State<UserPage> {
   bool showPosts = false;
 
   @override
+  void didUpdateWidget(covariant UserPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.id != oldWidget.id) {
+      print('user id updated ${widget.id}');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print('building parent user widget');
     return Scaffold(
       appBar: AppBar(
         title: Text(context.topRoute.name),
         leading: AutoBackButton(),
       ),
       body: AutoRouter.declarative(
-          onRoutes: (routes, initial) async {
-            print('onNew routes ${routes.last.routeName}');
+          onNavigate: (routes, initial) async {
+            // print('onNew routes ${routes.last.routeName}');
             showPosts = false;
             if (routes.isNotEmpty && routes.last.routeName == UserPostsRoute.name) {
               showPosts = true;

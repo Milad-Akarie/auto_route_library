@@ -32,14 +32,14 @@ class AutoRouter extends StatefulWidget {
     String? navRestorationScopeId,
     bool inheritNavigatorObservers = true,
     GlobalKey<NavigatorState>? navigatorKey,
-    OnNestedRoutesCallBack? onRoutes,
+    OnNestedRoutesCallBack? onNavigate,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
         navigatorKey: navigatorKey,
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
-        onRoutes: onRoutes,
+        onNavigate: onNavigate,
         routes: routes,
       );
 
@@ -159,7 +159,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final String? navRestorationScopeId;
   final bool inheritNavigatorObservers;
   final GlobalKey<NavigatorState>? navigatorKey;
-  final OnNestedRoutesCallBack? onRoutes;
+  final OnNestedRoutesCallBack? onNavigate;
 
   const _DeclarativeAutoRouter({
     Key? key,
@@ -169,7 +169,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
     this.navigatorKey,
     this.navRestorationScopeId,
     this.inheritNavigatorObservers = true,
-    this.onRoutes,
+    this.onNavigate,
   }) : super(key: key);
 
   @override
@@ -208,7 +208,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           key: parentData.key,
           routeData: parentData,
           managedByWidget: true,
-          onRoutes: widget.onRoutes,
+          onRoutes: widget.onNavigate,
           navigatorKey: widget.navigatorKey,
           preMatchedRoutes: parentData.preMatchedPendingRoutes,
           routeCollection: _parentController.routeCollection.subCollectionOf(

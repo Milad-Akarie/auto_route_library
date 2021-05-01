@@ -27,8 +27,7 @@ class RouteMatch {
 
   bool get fromRedirect => redirectedFrom != null;
 
-  List<String> get allSegments =>
-      [...segments, if (hasChildren) ...children!.last.allSegments];
+  List<String> get allSegments => [...segments, if (hasChildren) ...children!.last.allSegments];
 
   RouteMatch copyWith({
     String? key,
@@ -96,8 +95,8 @@ class RouteMatch {
       fragment: route.fragment,
       redirectedFrom: route.redirectedFrom,
       children: children,
-      pathParams: Parameters(route.params),
-      queryParams: Parameters(route.queryParams),
+      pathParams: Parameters(route.rawPathParams),
+      queryParams: Parameters(route.rawQueryParams),
     );
   }
 }

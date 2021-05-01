@@ -33,7 +33,7 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   final _appRouter = WebAppRouter();
-  PageRouteInfo? _userRoute;
+  int _userId = -1;
   final authService = AuthService();
 
   @override
@@ -51,13 +51,11 @@ class AppState extends State<App> {
       debugShowCheckedModeBanner: false,
       routerDelegate: AutoRouterDelegate.declarative(
         _appRouter,
-        onRoutes: (urlState, initial) async {
-          print(urlState.path);
-          _userRoute = null;
+        onNavigate: (urlState, initial) async {
+          _userId = -1;
           if (urlState.topRoute?.routeName == UserRoute.name) {
-            _userRoute = urlState.topRoute;
+            _userId = urlState.topRoute!.pathParams.getInt('userID');
           }
-
           return null;
         },
         routes: (_) => [
@@ -69,16 +67,16 @@ class AppState extends State<App> {
             HomeRoute(
               navigate: () {
                 setState(() {
-                  _userRoute = UserRoute(id: 1);
+                  _userId = 1;
                 });
               },
             ),
-            if (_userRoute != null) UserRoute(id: 3),
+            if (_userId != -1) UserRoute(id: _userId),
           ],
         ],
         onPopRoute: (route, _) {
           if (route.routeName == UserRoute.name) {
-            _userRoute = null;
+            _userId = -1;
           }
         },
       ),

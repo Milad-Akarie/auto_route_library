@@ -27,7 +27,7 @@ export 'router.gr.dart';
             booksTab,
             profileTab,
             AutoRoute(
-              path: 'settings',
+              path: 'settings/:tab',
               page: SettingsPage,
               name: 'SettingsTab',
             ),

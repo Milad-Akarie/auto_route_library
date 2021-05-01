@@ -15,14 +15,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int activeIndex = 0;
 
-  final _tabRoutes = const [
+  final _tabRoutes = [
     BooksTab(),
     ProfileTab(),
-    SettingsTab(),
+    SettingsTab(tab: 'default'),
   ];
 
   @override
   Widget build(context) {
+    print('Building home');
     return Scaffold(
         appBar: AppBar(
           title: Text(context.topRoute.name),
@@ -30,14 +31,15 @@ class _HomePageState extends State<HomePage> {
         ),
         body: AutoTabsRouter.declarative(
           activeIndex: activeIndex,
-          onRoute: (route, initial) {
+          onNavigate: (route, initial) async {
             var tabIndex = _tabRoutes.indexWhere((r) => r.routeName == route.routeName);
             if (tabIndex != -1) {
               activeIndex = tabIndex;
+              // if (!initial) ;
+              setState(() {});
             }
-            return SynchronousFuture(null);
           },
-          routes: _tabRoutes,
+          routes: List.unmodifiable(_tabRoutes),
         ),
         bottomNavigationBar: buildBottomNav());
   }

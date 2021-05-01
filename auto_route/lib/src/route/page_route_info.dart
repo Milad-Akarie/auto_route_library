@@ -11,8 +11,8 @@ class PageRouteInfo<T> {
   final String _name;
   final String path;
   final T? args;
-  final Map<String, dynamic> params;
-  final Map<String, dynamic> queryParams;
+  final Map<String, dynamic> rawPathParams;
+  final Map<String, dynamic> rawQueryParams;
   final List<PageRouteInfo>? children;
   final String fragment;
   final String? _stringMatch;
@@ -23,8 +23,8 @@ class PageRouteInfo<T> {
     required this.path,
     this.children,
     this.args,
-    this.params = const {},
-    this.queryParams = const {},
+    this.rawPathParams = const {},
+    this.rawQueryParams = const {},
     this.fragment = '',
     String? stringMatch,
     this.redirectedFrom,
@@ -36,15 +36,18 @@ class PageRouteInfo<T> {
     if (_stringMatch != null) {
       return _stringMatch!;
     }
-    return _expand(path, params);
+    return _expand(path, rawPathParams);
   }
 
-  String get fullPath =>
-      p.joinAll([stringMatch, if (hasChildren) children!.last.fullPath]);
+  String get fullPath => p.joinAll([stringMatch, if (hasChildren) children!.last.fullPath]);
 
   bool get hasChildren => children?.isNotEmpty == true;
 
   bool get fromRedirect => redirectedFrom != null;
+
+  Parameters get pathParams => Parameters(rawPathParams);
+
+  Parameters get queryParams => Parameters(rawQueryParams);
 
   static String _expand(String template, Map<String, dynamic> params) {
     if (mapNullOrEmpty(params)) {
@@ -75,8 +78,8 @@ class PageRouteInfo<T> {
         (path == null || identical(path, this.path)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
-        (params == null || identical(params, this.params)) &&
-        (queryParams == null || identical(queryParams, this.queryParams)) &&
+        (params == null || identical(params, this.rawPathParams)) &&
+        (queryParams == null || identical(queryParams, this.rawQueryParams)) &&
         (children == null || identical(children, this.children))) {
       return this;
     }
@@ -85,22 +88,22 @@ class PageRouteInfo<T> {
       name ?? this._name,
       path: path ?? this.path,
       args: args ?? this.args,
-      params: params ?? this.params,
-      queryParams: queryParams ?? this.queryParams,
+      rawPathParams: params ?? this.rawPathParams,
+      rawQueryParams: queryParams ?? this.rawQueryParams,
       children: children ?? this.children,
     );
   }
 
   String toString() {
-    return 'Route{name: $_name, path: $path, params: $params}, children: ${children?.map((e) => e.routeName)}';
+    return 'Route{name: $_name, path: $path, params: $rawPathParams}, children: ${children?.map((e) => e.routeName)}';
   }
 
   factory PageRouteInfo.fromMatch(RouteMatch match) {
     return PageRouteInfo(
       match.routeName,
       path: match.path,
-      params: match.pathParams.rawMap,
-      queryParams: match.queryParams.rawMap,
+      rawPathParams: match.pathParams.rawMap,
+      rawQueryParams: match.queryParams.rawMap,
       fragment: match.fragment,
       redirectedFrom: match.redirectedFrom,
       stringMatch: p.joinAll(match.segments),
@@ -121,15 +124,15 @@ class PageRouteInfo<T> {
           path == other.path &&
           fragment == other.fragment &&
           ListEquality().equals(children, other.children) &&
-          MapEquality().equals(params, other.params) &&
-          MapEquality().equals(queryParams, other.queryParams);
+          MapEquality().equals(rawPathParams, other.rawPathParams) &&
+          MapEquality().equals(rawQueryParams, other.rawQueryParams);
 
   @override
   int get hashCode =>
       _name.hashCode ^
       path.hashCode ^
       fragment.hashCode ^
-      MapEquality().hash(params) ^
-      MapEquality().hash(queryParams) ^
+      MapEquality().hash(rawPathParams) ^
+      MapEquality().hash(rawQueryParams) ^
       ListEquality().hash(children);
 }

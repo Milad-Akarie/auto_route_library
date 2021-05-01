@@ -20,8 +20,7 @@ class AutoTabsRouter extends StatefulWidget {
   final bool inheritNavigatorObservers;
   final int? _activeIndex;
   final bool declarative;
-  final OnTabRouteCallBack? onInitialRoute;
-  final OnTabRouteCallBack? onRoute;
+  final OnTabRouteCallBack? onNavigate;
 
   const AutoTabsRouter({
     Key? key,
@@ -34,8 +33,7 @@ class AutoTabsRouter extends StatefulWidget {
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   })  : declarative = false,
         _activeIndex = null,
-        onInitialRoute = null,
-        onRoute = null,
+        onNavigate = null,
         super(key: key);
 
   const AutoTabsRouter.declarative({
@@ -46,8 +44,7 @@ class AutoTabsRouter extends StatefulWidget {
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
-    this.onInitialRoute,
-    this.onRoute,
+    this.onNavigate,
     this.inheritNavigatorObservers = true,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   })  : declarative = true,
@@ -122,18 +119,18 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
           managedByWidget: widget.declarative,
           initialIndex: widget._activeIndex,
           routeData: parentRoute,
-          onRoute: widget.onRoute,
+          onNavigate: widget.onNavigate,
           routeCollection: _parentController.routeCollection.subCollectionOf(
             parentRoute.name,
           ),
           pageBuilder: _parentController.pageBuilder,
           preMatchedRoutes: parentRoute.preMatchedPendingRoutes);
       _parentController.attachChildController(_controller!);
-      _resetController();
+      _setupController();
     }
   }
 
-  void _resetController() {
+  void _setupController() {
     assert(_controller != null);
     _controller!.setupRoutes(widget.routes);
     _index = _controller!.activeIndex;
@@ -162,7 +159,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
   void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _resetController();
+      _controller!.replaceAll(widget.routes);
     }
     if (widget.declarative && widget._activeIndex != oldWidget._activeIndex) {
       _animationController.value = 1.0;
@@ -188,6 +185,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
             lazyLoad: widget.lazyLoad,
             navigatorObservers: _navigatorObservers,
             itemBuilder: (BuildContext context, int index) {
+              // _controller!.updateStackEntryAt(index);
               return stack[index].buildPage(context);
             },
             stack: stack,
@@ -284,9 +282,11 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
     if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
       _didInitTabRoute(widget.activeIndex, oldWidget.activeIndex);
       _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
+      return;
     } else if (widget.activeIndex != oldWidget.activeIndex) {
       _didChangeTabRoute(widget.activeIndex, oldWidget.activeIndex);
     }
+    _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
   }
 
   @override

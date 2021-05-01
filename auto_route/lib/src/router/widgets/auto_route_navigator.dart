@@ -39,12 +39,13 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         shouldNotify = true;
         _routesSnapshot = newRoutes;
         widget.router.updateDeclarativeRoutes(newRoutes);
-      } else if (!ListEquality().equals(
-        delegate.urlState.segments,
-        delegate.controller.currentSegments,
-      )) {
-        shouldNotify = true;
       }
+      // else if (!ListEquality().equals(
+      //   delegate.urlState.segments,
+      //   delegate.controller.currentSegments,
+      // )) {
+      //   shouldNotify = true;
+      // }
       if (shouldNotify) {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           delegate.notifyUrlChanged();

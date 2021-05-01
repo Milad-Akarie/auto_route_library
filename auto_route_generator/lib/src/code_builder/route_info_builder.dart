@@ -5,8 +5,7 @@ import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
-List<Class> buildRouteInfoAndArgs(
-    RouteConfig r, RouterConfig router, DartEmitter emitter) {
+List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
   return [
     Class(
       (b) => b
@@ -55,7 +54,7 @@ List<Class> buildRouteInfoAndArgs(
                       ),
                     ),
                   if (r.parameters.any((p) => p.isPathParam))
-                    'params': literalMap(
+                    'rawPathParams': literalMap(
                       Map.fromEntries(
                         r.parameters.where((p) => p.isPathParam).map(
                               (p) => MapEntry(
@@ -66,7 +65,7 @@ List<Class> buildRouteInfoAndArgs(
                       ),
                     ),
                   if (r.parameters.any((p) => p.isQueryParam))
-                    'queryParams': literalMap(
+                    'rawQueryParams': literalMap(
                       Map.fromEntries(
                         r.parameters.where((p) => p.isQueryParam).map(
                               (p) => MapEntry(
@@ -90,9 +89,7 @@ List<Class> buildRouteInfoAndArgs(
             ...r.parameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
               ..name = param.name
-              ..type = param is FunctionParamConfig
-                  ? param.funRefer
-                  : param.type.refer)),
+              ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
           ])
           ..constructors.add(
             Constructor((b) => b
@@ -105,9 +102,7 @@ List<Class> buildRouteInfoAndArgs(
   ];
 }
 
-Iterable<Parameter> buildArgParams(
-    List<ParamConfig> parameters, DartEmitter emitter,
-    {bool toThis = true}) {
+Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter, {bool toThis = true}) {
   return parameters.map(
     (p) => Parameter(
       (b) {
@@ -126,8 +121,7 @@ Iterable<Parameter> buildArgParams(
           ..toThis = toThis
           ..required = p.isRequired || p.isPositional
           ..defaultTo = defaultCode;
-        if (!toThis)
-          b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+        if (!toThis) b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
       },
     ),
   );

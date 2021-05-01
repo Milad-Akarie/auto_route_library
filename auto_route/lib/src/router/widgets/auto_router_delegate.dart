@@ -68,17 +68,19 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
-    OnRoutesCallBack? onRoutes,
+    OnRoutesCallBack? onNavigate,
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
   UrlState _urlState = UrlState.fromRoutes(const []);
+
   UrlState get urlState => _urlState;
 
   @override
   UrlState? get currentConfiguration {
     final newState = UrlState.fromRoutes(controller.currentSegments);
     if (_urlState != newState) {
+      print(newState.path);
       _urlState = newState;
       return newState;
     }
@@ -151,14 +153,14 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final OnRoutesCallBack? onRoutes;
+  final OnRoutesCallBack? onNavigate;
 
   _DeclarativeAutoRouterDelegate(
     RootStackRouter controller, {
     required this.routes,
     String? navRestorationScopeId,
     this.onPopRoute,
-    this.onRoutes,
+    this.onNavigate,
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           controller,
@@ -179,14 +181,15 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   }
 
   Future<void> _onRoutes(UrlState tree, [bool initial = false]) {
-    if (onRoutes != null) {
-      _urlState = tree;
-      final routes = tree.segments;
-      if (routes.isNotEmpty) {
-        controller.navigateAll(routes, ignoreRoot: true);
-      }
-      return onRoutes!(tree, true);
+    _urlState = tree;
+    final routes = tree.segments;
+    if (routes.isNotEmpty) {
+      controller.navigateAll(routes, ignoreRoot: true);
     }
+    if (onNavigate != null) {
+      return onNavigate!(tree, true);
+    }
+
     return SynchronousFuture(null);
   }
 
