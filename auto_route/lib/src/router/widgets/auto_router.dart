@@ -32,7 +32,7 @@ class AutoRouter extends StatefulWidget {
     String? navRestorationScopeId,
     bool inheritNavigatorObservers = true,
     GlobalKey<NavigatorState>? navigatorKey,
-    OnNestedRoutesCallBack? onNavigate,
+    OnNestedNavigateCallBack? onNavigate,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
@@ -159,7 +159,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final String? navRestorationScopeId;
   final bool inheritNavigatorObservers;
   final GlobalKey<NavigatorState>? navigatorKey;
-  final OnNestedRoutesCallBack? onNavigate;
+  final OnNestedNavigateCallBack? onNavigate;
 
   const _DeclarativeAutoRouter({
     Key? key,

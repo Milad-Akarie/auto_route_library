@@ -166,7 +166,7 @@ class RootRouter extends _i1.RootStackRouter {
 
 class AppRoute extends _i1.PageRouteInfo {
   const AppRoute({List<_i1.PageRouteInfo>? children})
-      : super(name, path: '/', children: children);
+      : super(name, path: '/', initialChildren: children);
 
   static const String name = 'AppRoute';
 }
@@ -199,7 +199,7 @@ class LoginRouteArgs {
 
 class HomeRoute extends _i1.PageRouteInfo {
   const HomeRoute({List<_i1.PageRouteInfo>? children})
-      : super(name, path: '', children: children);
+      : super(name, path: '', initialChildren: children);
 
   static const String name = 'HomeRoute';
 }
@@ -213,7 +213,7 @@ class UserDataCollectorRoute
       : super(name,
             path: 'user-data',
             args: UserDataCollectorRouteArgs(key: key, onResult: onResult),
-            children: children);
+            initialChildren: children);
 
   static const String name = 'UserDataCollectorRoute';
 }
@@ -228,14 +228,14 @@ class UserDataCollectorRouteArgs {
 
 class BooksTab extends _i1.PageRouteInfo {
   const BooksTab({List<_i1.PageRouteInfo>? children})
-      : super(name, path: 'books', children: children);
+      : super(name, path: 'books', initialChildren: children);
 
   static const String name = 'BooksTab';
 }
 
 class ProfileTab extends _i1.PageRouteInfo {
   const ProfileTab({List<_i1.PageRouteInfo>? children})
-      : super(name, path: 'profile', children: children);
+      : super(name, path: 'profile', initialChildren: children);
 
   static const String name = 'ProfileTab';
 }

@@ -23,7 +23,7 @@ abstract class AutoRoutePage<T> extends Page<T> {
     this.maintainState = true,
     LocalKey? key,
   }) : super(
-          key: routeData.key,
+          // key: routeData.key,
           name: routeData.name,
           arguments: routeData.route.args,
         );
@@ -42,7 +42,7 @@ abstract class AutoRoutePage<T> extends Page<T> {
     }
     return RouteDataScope(
       child: childToBuild,
-      segmentsHash: routeData.segmentsHash,
+      segmentsHash: routeData.hashCode,
       routeData: routeData,
     );
   }

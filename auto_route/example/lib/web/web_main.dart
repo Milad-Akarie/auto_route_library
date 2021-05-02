@@ -53,8 +53,8 @@ class AppState extends State<App> {
         _appRouter,
         onNavigate: (urlState, initial) async {
           _userId = -1;
-          if (urlState.topRoute?.routeName == UserRoute.name) {
-            _userId = urlState.topRoute!.pathParams.getInt('userID');
+          if (urlState.topMatch?.routeName == UserRoute.name) {
+            _userId = urlState.topMatch!.pathParams.getInt('userID');
           }
           return null;
         },

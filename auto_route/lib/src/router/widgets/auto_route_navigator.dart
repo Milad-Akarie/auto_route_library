@@ -29,6 +29,16 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   List<PageRouteInfo>? _routesSnapshot;
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.declarativeRoutesBuilder != null && _routesSnapshot == null) {
+      var routes = widget.declarativeRoutesBuilder!(context);
+      _routesSnapshot = routes;
+      widget.router.updateDeclarativeRoutes(routes);
+    }
+  }
+
+  @override
   void didUpdateWidget(covariant AutoRouteNavigator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.declarativeRoutesBuilder != null) {
@@ -39,13 +49,12 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         shouldNotify = true;
         _routesSnapshot = newRoutes;
         widget.router.updateDeclarativeRoutes(newRoutes);
+      } else if (!ListEquality().equals(
+        delegate.urlState.segments,
+        delegate.controller.currentSegments,
+      )) {
+        shouldNotify = true;
       }
-      // else if (!ListEquality().equals(
-      //   delegate.urlState.segments,
-      //   delegate.controller.currentSegments,
-      // )) {
-      //   shouldNotify = true;
-      // }
       if (shouldNotify) {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           delegate.notifyUrlChanged();

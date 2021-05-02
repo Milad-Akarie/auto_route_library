@@ -27,6 +27,9 @@ class RouteDataScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RouteDataScope oldWidget) {
+    if (routeData.name == 'MyBooksRoute') {
+      print('MyBooksRoute should notify ${segmentsHash != oldWidget.segmentsHash}');
+    }
     return segmentsHash != oldWidget.segmentsHash;
   }
 }

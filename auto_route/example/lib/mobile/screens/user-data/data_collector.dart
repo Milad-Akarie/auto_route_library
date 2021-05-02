@@ -24,7 +24,7 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
   Widget build(context) {
     var settingsState = context.watch<SettingsState>();
-
+    print('building settingState ${settingsState.userData}');
     return Scaffold(
       body: AutoRouter.declarative(
           routes: (_) => [

@@ -75,7 +75,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                             ),
                       ),
                     ),
-                  if (r.isParent) 'children': refer('children'),
+                  if (r.isParent) 'initialChildren': refer('children'),
                 }).code);
             },
           ),

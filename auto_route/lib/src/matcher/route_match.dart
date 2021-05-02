@@ -11,11 +11,13 @@ class RouteMatch {
   final String? redirectedFrom;
   final String routeName;
   final String path;
+  final String stringMatch;
 
   const RouteMatch({
     required this.routeName,
     required this.segments,
     required this.path,
+    required this.stringMatch,
     this.children,
     this.pathParams = const Parameters({}),
     this.queryParams = const Parameters({}),
@@ -32,7 +34,7 @@ class RouteMatch {
   RouteMatch copyWith({
     String? key,
     String? path,
-    RouteConfig? def,
+    String? stringMatch,
     Parameters? pathParams,
     Parameters? queryParams,
     List<RouteMatch>? children,
@@ -43,6 +45,7 @@ class RouteMatch {
   }) {
     return RouteMatch(
       path: path ?? this.path,
+      stringMatch: stringMatch ?? this.stringMatch,
       routeName: routeName ?? this.routeName,
       segments: segments ?? this.segments,
       children: children ?? this.children,
@@ -60,6 +63,7 @@ class RouteMatch {
           runtimeType == other.runtimeType &&
           path == other.path &&
           routeName == other.routeName &&
+          stringMatch == other.stringMatch &&
           pathParams == other.pathParams &&
           queryParams == other.queryParams &&
           ListEquality().equals(children, other.children) &&
@@ -71,12 +75,13 @@ class RouteMatch {
   int get hashCode =>
       pathParams.hashCode ^
       queryParams.hashCode ^
-      children.hashCode ^
+      ListEquality().hash(children) ^
       fragment.hashCode ^
       redirectedFrom.hashCode ^
       path.hashCode ^
+      stringMatch.hashCode ^
       routeName.hashCode ^
-      segments.hashCode;
+      ListEquality().hash(segments);
 
   @override
   String toString() {
@@ -86,12 +91,13 @@ class RouteMatch {
   factory RouteMatch.fromRoute(PageRouteInfo route) {
     final children = <RouteMatch>[];
     if (route.hasChildren) {
-      children.addAll(route.children!.map((e) => RouteMatch.fromRoute(e)));
+      children.addAll(route.initialChildren!.map((e) => RouteMatch.fromRoute(e)));
     }
     return RouteMatch(
       routeName: route.routeName,
       segments: route.stringMatch.split('/'),
       path: route.path,
+      stringMatch: route.stringMatch,
       fragment: route.fragment,
       redirectedFrom: route.redirectedFrom,
       children: children,

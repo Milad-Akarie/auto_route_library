@@ -52,7 +52,6 @@ class RouteData extends ChangeNotifier {
   void _updateRoute(PageRouteInfo value) {
     if (_route != value) {
       _route = value;
-      print('routeUpdated ${value.routeName} : params: ${value.rawPathParams}');
       notifyListeners();
     }
   }
@@ -67,20 +66,18 @@ class RouteData extends ChangeNotifier {
 
   String get match => _route.stringMatch;
 
-  Parameters get pathParams => Parameters(_route.rawPathParams);
+  Parameters get pathParams => _route.pathParams;
 
-  Parameters get queryParams => Parameters(_route.rawQueryParams);
+  Parameters get queryParams => _route.queryParams;
 
-  String? get fragment => _route.fragment;
+  String get fragment => _route.fragment;
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) || other is RouteData && runtimeType == other.runtimeType && route == other.route;
 
   @override
-  int get hashCode => route.hashCode;
-
-  int get segmentsHash => hashCode ^ parent.hashCode;
+  int get hashCode => route.hashCode ^ parent.hashCode;
 
   RouteData copyWith({
     PageRouteInfo? route,

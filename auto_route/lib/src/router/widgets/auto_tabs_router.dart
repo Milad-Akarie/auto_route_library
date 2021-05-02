@@ -20,7 +20,7 @@ class AutoTabsRouter extends StatefulWidget {
   final bool inheritNavigatorObservers;
   final int? _activeIndex;
   final bool declarative;
-  final OnTabRouteCallBack? onNavigate;
+  final OnTabNavigateCallBack? onNavigate;
 
   const AutoTabsRouter({
     Key? key,

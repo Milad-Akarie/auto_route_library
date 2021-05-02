@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../utils.dart';
 import '../controller/routing_controller.dart';
 import 'auto_route_navigator.dart';
 
@@ -15,7 +14,7 @@ part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
 typedef RoutePopCallBack = void Function(PageRouteInfo route, dynamic results);
-typedef OnRoutesCallBack = Future<void> Function(UrlState tree, bool initial);
+typedef OnNavigateCallBack = void Function(UrlState tree, bool initial);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
@@ -68,17 +67,18 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
-    OnRoutesCallBack? onNavigate,
+    OnNavigateCallBack? onNavigate,
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
-  UrlState _urlState = UrlState.fromRoutes(const []);
+  UrlState _urlState = UrlState.fromMatches(const []);
 
   UrlState get urlState => _urlState;
 
   @override
   UrlState? get currentConfiguration {
-    final newState = UrlState.fromRoutes(controller.currentSegments);
+    final matches = controller.currentSegments.map((route) => RouteMatch.fromRoute(route));
+    final newState = UrlState.fromMatches(List.unmodifiable(matches));
     if (_urlState != newState) {
       print(newState.path);
       _urlState = newState;
@@ -100,8 +100,11 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
       return controller.pushNamed(initialDeepLink!, includePrefixMatches: true);
-    } else if (!listNullOrEmpty(tree.segments)) {
-      return controller.pushAll(tree.segments);
+    } else if (tree.hasSegments) {
+      final routes = List<PageRouteInfo>.unmodifiable(
+        tree.segments.map((m) => PageRouteInfo.fromMatch(m)),
+      );
+      return controller.pushAll(routes);
     } else {
       throw FlutterError("Can not resolve initial route");
     }
@@ -110,7 +113,10 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   @override
   Future<void> setNewRoutePath(UrlState tree) {
     if (tree.hasSegments) {
-      return controller.navigateAll(tree.segments);
+      final routes = List<PageRouteInfo>.unmodifiable(
+        tree.segments.map((m) => PageRouteInfo.fromMatch(m)),
+      );
+      return controller.navigateAll(routes);
     }
     return SynchronousFuture(null);
   }
@@ -153,7 +159,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final OnRoutesCallBack? onNavigate;
+  final OnNavigateCallBack? onNavigate;
 
   _DeclarativeAutoRouterDelegate(
     RootStackRouter controller, {
@@ -172,22 +178,24 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
 
   @override
   Future<void> setInitialRoutePath(UrlState tree) {
-    return _onRoutes(tree, true);
+    return _onNavigate(tree, true);
   }
 
   @override
   Future<void> setNewRoutePath(UrlState tree) async {
-    return _onRoutes(tree);
+    return _onNavigate(tree);
   }
 
-  Future<void> _onRoutes(UrlState tree, [bool initial = false]) {
+  Future<void> _onNavigate(UrlState tree, [bool initial = false]) {
     _urlState = tree;
-    final routes = tree.segments;
-    if (routes.isNotEmpty) {
-      controller.navigateAll(routes, ignoreRoot: true);
+    if (tree.hasSegments) {
+      final routes = List<PageRouteInfo>.unmodifiable(
+        tree.segments.map((m) => PageRouteInfo.fromMatch(m)),
+      );
+      controller.navigateAll(routes);
     }
     if (onNavigate != null) {
-      return onNavigate!(tree, true);
+      onNavigate!(tree, true);
     }
 
     return SynchronousFuture(null);

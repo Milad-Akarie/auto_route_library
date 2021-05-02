@@ -31,12 +31,11 @@ class _HomePageState extends State<HomePage> {
         ),
         body: AutoTabsRouter.declarative(
           activeIndex: activeIndex,
-          onNavigate: (route, initial) async {
+          onNavigate: (route, initial) {
             var tabIndex = _tabRoutes.indexWhere((r) => r.routeName == route.routeName);
             if (tabIndex != -1) {
               activeIndex = tabIndex;
-              // if (!initial) ;
-              setState(() {});
+              if (!initial) setState(() {});
             }
           },
           routes: List.unmodifiable(_tabRoutes),

@@ -13,8 +13,7 @@ class Parameters {
     return _params.toString();
   }
 
-  Parameters operator +(Parameters other) =>
-      Parameters({..._params, ...other._params});
+  Parameters operator +(Parameters other) => Parameters({..._params, ...other._params});
 
   @override
   bool operator ==(Object other) =>
@@ -28,18 +27,19 @@ class Parameters {
   @override
   int get hashCode => _params.hashCode;
 
+  bool get isNotEmpty => _params.isNotEmpty;
+  bool get isEmpty => _params.isEmpty;
+
   dynamic get(String key, [defaultValue]) {
     return _params[key] ?? defaultValue;
   }
 
-  String? optString(String key, [String? defaultValue]) =>
-      _params[key] ?? defaultValue;
+  String? optString(String key, [String? defaultValue]) => _params[key] ?? defaultValue;
 
   String getString(String key, [String? defaultValue]) {
     var val = _params[key] ?? defaultValue;
     if (val == null) {
-      throw FlutterError(
-          'Failed to parse [String] $key value from ${_params[key]}');
+      throw FlutterError('Failed to parse [String] $key value from ${_params[key]}');
     }
     return val;
   }
@@ -58,8 +58,7 @@ class Parameters {
   int getInt(String key, [int? defaultValue]) {
     var val = optInt(key, defaultValue);
     if (val == null) {
-      throw FlutterError(
-          'Failed to parse [int] $key value from ${_params[key]}');
+      throw FlutterError('Failed to parse [int] $key value from ${_params[key]}');
     }
     return val;
   }
@@ -78,8 +77,7 @@ class Parameters {
   double getDouble(String key, [double? defaultValue]) {
     var val = optDouble(key, defaultValue);
     if (val == null) {
-      throw FlutterError(
-          'Failed to parse [double] $key value from ${_params[key]}');
+      throw FlutterError('Failed to parse [double] $key value from ${_params[key]}');
     }
     return val;
   }
@@ -98,8 +96,7 @@ class Parameters {
   num getNum(String key, [num? defaultValue]) {
     var val = optNum(key, defaultValue);
     if (val == null) {
-      throw FlutterError(
-          'Failed to parse [num] $key value from ${_params[key]}');
+      throw FlutterError('Failed to parse [num] $key value from ${_params[key]}');
     }
     return val;
   }
@@ -118,8 +115,7 @@ class Parameters {
   bool getBool(String key, [bool? defaultValue]) {
     var val = optBool(key, defaultValue);
     if (val == null) {
-      throw FlutterError(
-          'Failed to parse [bool] $key value from ${_params[key]}');
+      throw FlutterError('Failed to parse [bool] $key value from ${_params[key]}');
     }
     return val;
   }

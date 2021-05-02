@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -14,13 +15,9 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
-    var routes = <PageRouteInfo>[];
     final uri = Uri.parse(routeInformation.location ?? '');
     var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
-    if (matches != null) {
-      routes.addAll(matches.map((m) => PageRouteInfo.fromMatch(m)));
-    }
-    return SynchronousFuture<UrlState>(UrlState(uri, routes));
+    return SynchronousFuture<UrlState>(UrlState(uri, matches ?? const []));
   }
 
   @override
@@ -31,7 +28,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
 @immutable
 class UrlState {
-  final List<PageRouteInfo> segments;
+  final List<RouteMatch> segments;
   final Uri uri;
 
   const UrlState(this.uri, this.segments);
@@ -40,21 +37,21 @@ class UrlState {
 
   String get path => uri.path;
 
-  factory UrlState.fromRoutes(List<PageRouteInfo> routes) {
+  factory UrlState.fromMatches(List<RouteMatch> routes) {
     return UrlState(_buildUri(routes), routes);
   }
 
   bool get hasSegments => segments.isNotEmpty;
 
-  PageRouteInfo? get topRoute => hasSegments ? segments.last : null;
+  RouteMatch? get topMatch => hasSegments ? segments.last : null;
 
-  List<PageRouteInfo> childrenOfSegment(String path) {
-    return _findSegment(segments, (route) => route.stringMatch == path)?.children ?? const [];
-  }
+  // List<PageRouteInfo> childrenOfSegment(String path) {
+  //   return _findSegment(segments, (route) => route.stringMatch == path)?.children ?? const [];
+  // }
 
-  PageRouteInfo? _findSegment(
-    List<PageRouteInfo> segments,
-    bool Function(PageRouteInfo segment) predicate,
+  RouteMatch? _findSegment(
+    List<RouteMatch> segments,
+    bool Function(RouteMatch segment) predicate,
   ) {
     for (var segment in segments) {
       if (predicate(segment)) {
@@ -68,25 +65,25 @@ class UrlState {
     }
   }
 
-  List<PageRouteInfo> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (route) => route.routeName == routeName)?.children ?? const [];
+  List<RouteMatch> childrenOfSegmentNamed(String routeName) {
+    return _findSegment(segments, (match) => match.routeName == routeName)?.children ?? const [];
   }
 
-  static Uri _buildUri(List<PageRouteInfo> routes) {
+  static Uri _buildUri(List<RouteMatch> routes) {
     var fullPath = '';
     if (routes.isEmpty) {
       return Uri(path: fullPath);
     }
     fullPath = p.joinAll(
-      routes.where((e) => e.stringMatch.isNotEmpty).map(
-            (e) => e.stringMatch,
+      routes.map((e) => e.segments).reduce(
+            (all, e) => all..addAll(e),
           ),
     );
     final normalized = p.normalize(fullPath);
     final lastSegment = routes.last;
     var queryParams;
-    if (lastSegment.rawQueryParams.isNotEmpty) {
-      queryParams = lastSegment.rawQueryParams;
+    if (lastSegment.queryParams.isNotEmpty) {
+      queryParams = lastSegment.queryParams.rawMap;
     }
 
     var fragment;
