@@ -1,7 +1,9 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../auto_route.dart';
 
+@immutable
 class RouteMatch {
   final Parameters pathParams;
   final Parameters queryParams;
@@ -12,6 +14,8 @@ class RouteMatch {
   final String routeName;
   final String path;
   final String stringMatch;
+  final Object? args;
+  final List<AutoRouteGuard> guards;
 
   const RouteMatch({
     required this.routeName,
@@ -19,6 +23,8 @@ class RouteMatch {
     required this.path,
     required this.stringMatch,
     this.children,
+    this.args,
+    this.guards = const [],
     this.pathParams = const Parameters({}),
     this.queryParams = const Parameters({}),
     this.fragment = '',
@@ -31,6 +37,10 @@ class RouteMatch {
 
   List<String> get allSegments => [...segments, if (hasChildren) ...children!.last.allSegments];
 
+  List<RouteMatch> get flattened {
+    return [this, if (hasChildren) ...children!.last.flattened];
+  }
+
   RouteMatch copyWith({
     String? key,
     String? path,
@@ -42,6 +52,8 @@ class RouteMatch {
     List<String>? segments,
     String? redirectedFrom,
     String? routeName,
+    Object? args,
+    List<AutoRouteGuard>? guards,
   }) {
     return RouteMatch(
       path: path ?? this.path,
@@ -52,6 +64,8 @@ class RouteMatch {
       pathParams: pathParams ?? this.pathParams,
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
+      args: args ?? this.args,
+      guards: guards ?? this.guards,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
     );
   }
@@ -65,6 +79,7 @@ class RouteMatch {
           routeName == other.routeName &&
           stringMatch == other.stringMatch &&
           pathParams == other.pathParams &&
+          ListEquality().equals(guards, other.guards) &&
           queryParams == other.queryParams &&
           ListEquality().equals(children, other.children) &&
           fragment == other.fragment &&
@@ -76,6 +91,7 @@ class RouteMatch {
       pathParams.hashCode ^
       queryParams.hashCode ^
       ListEquality().hash(children) ^
+      ListEquality().hash(guards) ^
       fragment.hashCode ^
       redirectedFrom.hashCode ^
       path.hashCode ^
@@ -88,21 +104,5 @@ class RouteMatch {
     return 'RouteMatch{routeName: $routeName pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom}';
   }
 
-  factory RouteMatch.fromRoute(PageRouteInfo route) {
-    final children = <RouteMatch>[];
-    if (route.hasChildren) {
-      children.addAll(route.initialChildren!.map((e) => RouteMatch.fromRoute(e)));
-    }
-    return RouteMatch(
-      routeName: route.routeName,
-      segments: route.stringMatch.split('/'),
-      path: route.path,
-      stringMatch: route.stringMatch,
-      fragment: route.fragment,
-      redirectedFrom: route.redirectedFrom,
-      children: children,
-      pathParams: Parameters(route.rawPathParams),
-      queryParams: Parameters(route.rawQueryParams),
-    );
-  }
+  PageRouteInfo toRoute() => PageRouteInfo.fromMatch(this);
 }

@@ -67,7 +67,7 @@ class RouteMatcher {
     final pathSegments = p.split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
-      var match = matchRoute(uri, config, redirectedFrom: redirectedFrom);
+      var match = matchByPath(uri, config, redirectedFrom: redirectedFrom);
       if (match != null) {
         if (!includePrefixMatches || config.path == '*') {
           matches.clear();
@@ -135,7 +135,7 @@ class RouteMatcher {
     return redirectMatches;
   }
 
-  RouteMatch? matchRoute(Uri url, RouteConfig config, {String? redirectedFrom}) {
+  RouteMatch? matchByPath(Uri url, RouteConfig config, {String? redirectedFrom}) {
     var parts = p.split(config.path);
     var segments = p.split(url.path);
 
@@ -168,32 +168,57 @@ class RouteMatcher {
       stringMatch: p.joinAll(segments),
       segments: extractedSegments,
       redirectedFrom: redirectedFrom,
+      guards: config.guards,
       pathParams: Parameters(pathParams),
       queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
       fragment: url.fragment,
     );
   }
 
-  bool _isValidRoute(PageRouteInfo route, RouteCollection routes) {
-    return _resolveConfig(route, routes) != null;
+  RouteMatch? matchByRoute(PageRouteInfo route) {
+    return _matchByRoute(route, collection);
   }
 
-  RouteConfig? resolveConfigOrNull(PageRouteInfo route) {
-    return _resolveConfig(route, collection);
-  }
-
-  RouteConfig? _resolveConfig(PageRouteInfo route, RouteCollection routes) {
+  RouteMatch? _matchByRoute(PageRouteInfo route, RouteCollection routes) {
     var routeConfig = routes[route.routeName];
     if (routeConfig == null) {
       return null;
     }
-    if (route.hasChildren) {
-      var childrenMatch = route.initialChildren!.every((r) => _isValidRoute(r, routeConfig.children!));
-      if (!childrenMatch) {
-        return null;
+    var childMatches = <RouteMatch>[];
+    if (routeConfig.isSubTree) {
+      final subRoutes = routes.subCollectionOf(route.routeName);
+      if (route.hasChildren) {
+        for (var childRoute in route.initialChildren!) {
+          var match = _matchByRoute(childRoute, subRoutes);
+          if (match == null) {
+            return null;
+          } else {
+            childMatches.add(match);
+          }
+        }
+      } else {
+        // include default matches if exist
+        final defaultMatches = _match(Uri(path: ''), subRoutes);
+        if (defaultMatches != null) {
+          childMatches.addAll(defaultMatches);
+        }
       }
+    } else if (route.hasChildren) {
+      return null;
     }
-    return routeConfig;
+    return RouteMatch(
+      routeName: route.routeName,
+      segments: p.split(route.stringMatch),
+      path: route.path,
+      args: route.args,
+      guards: routeConfig.guards,
+      stringMatch: route.stringMatch,
+      fragment: route.fragment,
+      redirectedFrom: route.redirectedFrom,
+      children: childMatches,
+      pathParams: Parameters(route.rawPathParams),
+      queryParams: Parameters(route.rawQueryParams),
+    );
   }
 
   Map<String, dynamic> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {

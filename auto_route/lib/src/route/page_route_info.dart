@@ -7,6 +7,7 @@ import '../../auto_route.dart';
 import '../utils.dart';
 
 @optionalTypeArgs
+@immutable
 class PageRouteInfo<T> {
   final String _name;
   final String path;

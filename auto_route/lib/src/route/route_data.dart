@@ -1,28 +1,26 @@
 part of '../router/controller/routing_controller.dart';
 
 class RouteData extends ChangeNotifier {
-  PageRouteInfo _route;
+  RouteMatch _route;
   final RouteData? parent;
-  final RouteConfig? config;
   final ValueKey<String> key;
 
   RouteData({
-    required PageRouteInfo route,
+    required RouteMatch route,
     this.parent,
-    this.config,
     required this.key,
-    List<PageRouteInfo<dynamic>>? preMatchedPendingRoutes,
+    List<RouteMatch>? preMatchedPendingRoutes,
   })  : _route = route,
         _preMatchedPendingRoutes = preMatchedPendingRoutes;
 
-  List<PageRouteInfo> get breadcrumbs => List.unmodifiable([
+  List<RouteMatch> get breadcrumbs => List.unmodifiable([
         if (parent != null) ...parent!.breadcrumbs,
         _route,
       ]);
 
-  List<PageRouteInfo<dynamic>>? _preMatchedPendingRoutes;
+  List<RouteMatch>? _preMatchedPendingRoutes;
 
-  List<PageRouteInfo<dynamic>>? get preMatchedPendingRoutes {
+  List<RouteMatch>? get preMatchedPendingRoutes {
     final pending = _preMatchedPendingRoutes;
     _preMatchedPendingRoutes = null;
     return pending;
@@ -45,18 +43,18 @@ class RouteData extends ChangeNotifier {
     } else if (args is! T) {
       throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
-      return args;
+      return args as T;
     }
   }
 
-  void _updateRoute(PageRouteInfo value) {
+  void _updateRoute(RouteMatch value) {
     if (_route != value) {
       _route = value;
       notifyListeners();
     }
   }
 
-  PageRouteInfo get route => _route;
+  RouteMatch get route => _route;
 
   String get name => _route.routeName;
 
@@ -78,23 +76,4 @@ class RouteData extends ChangeNotifier {
 
   @override
   int get hashCode => route.hashCode ^ parent.hashCode;
-
-  RouteData copyWith({
-    PageRouteInfo? route,
-    RouteData? parent,
-    RouteConfig? config,
-    ValueKey<String>? key,
-    RouteData? activeChild,
-    RoutingController? router,
-    List<PageRouteInfo<dynamic>>? preMatchedPendingRoutes,
-    List<PageRouteInfo<dynamic>>? activeSegments,
-  }) {
-    return RouteData(
-      route: route ?? this.route,
-      parent: parent ?? this.parent,
-      config: config ?? this.config,
-      key: key ?? this.key,
-      preMatchedPendingRoutes: preMatchedPendingRoutes ?? this._preMatchedPendingRoutes,
-    );
-  }
 }

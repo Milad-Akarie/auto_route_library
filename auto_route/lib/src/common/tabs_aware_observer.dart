@@ -7,7 +7,7 @@ class AutoRouterObserver extends NavigatorObserver {
 }
 
 class TabPageRoute {
-  final PageRouteInfo routeInfo;
+  final RouteMatch routeInfo;
 
   final int index;
   const TabPageRoute({

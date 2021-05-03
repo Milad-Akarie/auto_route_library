@@ -9,7 +9,12 @@ abstract class RootStackRouter extends StackRouter {
           key: const ValueKey('Root'),
           navigatorKey: navigatorKey,
           routeData: RouteData(
-            route: const PageRouteInfo('Root', path: ''),
+            route: const RouteMatch(
+              routeName: 'Root',
+              segments: const [''],
+              path: '',
+              stringMatch: '',
+            ),
             key: const ValueKey('Root'),
           ),
         );

@@ -13,7 +13,7 @@ import 'auto_route_navigator.dart';
 part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
-typedef RoutePopCallBack = void Function(PageRouteInfo route, dynamic results);
+typedef RoutePopCallBack = void Function(RouteMatch route, dynamic results);
 typedef OnNavigateCallBack = void Function(UrlState tree, bool initial);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
@@ -77,8 +77,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   UrlState? get currentConfiguration {
-    final matches = controller.currentSegments.map((route) => RouteMatch.fromRoute(route));
-    final newState = UrlState.fromMatches(List.unmodifiable(matches));
+    final newState = UrlState.fromMatches(controller.currentSegments);
     if (_urlState != newState) {
       print(newState.path);
       _urlState = newState;
@@ -113,10 +112,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   @override
   Future<void> setNewRoutePath(UrlState tree) {
     if (tree.hasSegments) {
-      final routes = List<PageRouteInfo>.unmodifiable(
-        tree.segments.map((m) => PageRouteInfo.fromMatch(m)),
-      );
-      return controller.navigateAll(routes);
+      return controller.navigateAll(tree.segments);
     }
     return SynchronousFuture(null);
   }
@@ -189,10 +185,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   Future<void> _onNavigate(UrlState tree, [bool initial = false]) {
     _urlState = tree;
     if (tree.hasSegments) {
-      final routes = List<PageRouteInfo>.unmodifiable(
-        tree.segments.map((m) => PageRouteInfo.fromMatch(m)),
-      );
-      controller.navigateAll(routes);
+      controller.navigateAll(tree.segments);
     }
     if (onNavigate != null) {
       onNavigate!(tree, true);

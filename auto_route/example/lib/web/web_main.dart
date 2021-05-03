@@ -52,6 +52,7 @@ class AppState extends State<App> {
       routerDelegate: AutoRouterDelegate.declarative(
         _appRouter,
         onNavigate: (urlState, initial) async {
+          print(urlState.path);
           _userId = -1;
           if (urlState.topMatch?.routeName == UserRoute.name) {
             _userId = urlState.topMatch!.pathParams.getInt('userID');
@@ -61,6 +62,7 @@ class AppState extends State<App> {
         routes: (_) => [
           if (!authService.isAuthenticated)
             LoginRoute(onLoginResult: (_) {
+              print('onLogin');
               authService.isAuthenticated = true;
             })
           else ...[
