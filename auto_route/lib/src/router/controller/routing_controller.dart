@@ -931,27 +931,15 @@ abstract class StackRouter extends RoutingController {
     _childControllers.clear();
   }
 
-  @Deprecated('Use pushAndPopUntil')
-  Future<T?> pushAndRemoveUntil<T extends Object?>(
-    PageRouteInfo route, {
-    required RoutePredicate predicate,
-    OnNavigationFailure? onFailure,
-  }) {
-    return pushAndPopUntil<T>(
-      route,
-      predicate: predicate,
-      onFailure: onFailure,
-    );
-  }
-
   @optionalTypeArgs
   Future<T?> pushAndPopUntil<T extends Object?>(
     PageRouteInfo route, {
     required RoutePredicate predicate,
     OnNavigationFailure? onFailure,
   }) {
-    popUntil(predicate);
-    return push<T>(route, onFailure: onFailure);
+    final scope = _findStackScope(route);
+    scope.popUntil(predicate);
+    return scope._push<T>(route, onFailure: onFailure);
   }
 
   @optionalTypeArgs
@@ -960,12 +948,19 @@ abstract class StackRouter extends RoutingController {
     bool includePrefixMatches = false,
     OnNavigationFailure? onFailure,
   }) {
-    removeLast();
-    return pushNamed<T>(
+    final scope = _findPathScopeOrReportFailure(
       path,
       includePrefixMatches: includePrefixMatches,
       onFailure: onFailure,
     );
+    if (scope != null) {
+      scope.router.removeLast();
+      return scope.router._pushAllGuarded(
+        scope.matches,
+        onFailure: onFailure,
+      );
+    }
+    return SynchronousFuture(null);
   }
 
   Future<void> navigateNamed(
@@ -980,9 +975,7 @@ abstract class StackRouter extends RoutingController {
     );
     if (scope != null) {
       return scope.router._navigateAll(
-        List.unmodifiable(
-          scope.matches.map((e) => PageRouteInfo.fromMatch(e)),
-        ),
+        scope.matches,
       );
     }
     return SynchronousFuture(null);
