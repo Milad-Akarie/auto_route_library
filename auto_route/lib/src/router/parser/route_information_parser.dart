@@ -74,7 +74,7 @@ class UrlState {
       return Uri(path: fullPath);
     }
     fullPath = p.joinAll(
-      routes.map((e) => e.stringMatch),
+      routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch),
     );
     final normalized = p.normalize(fullPath);
     final lastSegment = routes.last;

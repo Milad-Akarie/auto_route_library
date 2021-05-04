@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int activeIndex = 0;
+  final GlobalKey<AutoTabsRouterState> _tabsRouterKey = GlobalKey();
 
   final _tabRoutes = [
     BooksTab(),
@@ -23,33 +24,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(context) {
-    print('Building home');
     return Scaffold(
-        appBar: AppBar(
-          title: Text(context.topRoute.name),
-          leading: AutoBackButton(),
-        ),
-        body: AutoTabsRouter.declarative(
-          activeIndex: activeIndex,
-          onNavigate: (route, initial) {
-            var tabIndex = _tabRoutes.indexWhere((r) => r.routeName == route.routeName);
-            if (tabIndex != -1) {
-              activeIndex = tabIndex;
-              if (!initial) setState(() {});
-            }
-          },
-          routes: List.unmodifiable(_tabRoutes),
-        ),
-        bottomNavigationBar: buildBottomNav());
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: AutoBackButton(),
+      ),
+      body: AutoTabsRouter(
+        key: _tabsRouterKey,
+        // activeIndex: activeIndex,
+        // onNavigate: (route, initial) {
+        //   var tabIndex = _tabRoutes.indexWhere((r) => r.routeName == route.routeName);
+        //   if (tabIndex != -1) {
+        //     activeIndex = tabIndex;
+        //     if (!initial) setState(() {});
+        //   }
+        // },
+        routes: List.unmodifiable(_tabRoutes),
+      ),
+      bottomNavigationBar: buildBottomNav(),
+    );
   }
 
   BottomNavigationBar buildBottomNav() {
+    final tabsController = _tabsRouterKey.currentState?.controller;
     return BottomNavigationBar(
-      currentIndex: activeIndex,
+      currentIndex: tabsController?.activeIndex ?? 0,
       onTap: (index) {
-        setState(() {
-          activeIndex = index;
-        });
+        tabsController?.setActiveIndex(index);
+        // setState(() {
+        //   activeIndex = index;
+        // });
       },
       items: [
         BottomNavigationBarItem(

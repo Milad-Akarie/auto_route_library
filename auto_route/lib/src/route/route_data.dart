@@ -3,12 +3,11 @@ part of '../router/controller/routing_controller.dart';
 class RouteData extends ChangeNotifier {
   RouteMatch _route;
   final RouteData? parent;
-  final ValueKey<String> key;
+  LocalKey get key => _route.key;
 
   RouteData({
     required RouteMatch route,
     this.parent,
-    required this.key,
     List<RouteMatch>? preMatchedPendingRoutes,
   })  : _route = route,
         _preMatchedPendingRoutes = preMatchedPendingRoutes;

@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:auto_route/src/matcher/route_match.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
 
 import '../../auto_route.dart';
@@ -84,7 +85,7 @@ class RouteMatcher {
 
         if (match.segments.length != pathSegments.length) {
           // has rest
-          if (config.isSubTree) {
+          if (config.hasSubTree) {
             final rest = uri.replace(pathSegments: pathSegments.sublist(match.segments.length));
             final children = _match(rest, config.children!, includePrefixMatches: includePrefixMatches);
             match = match.copyWith(children: children);
@@ -97,7 +98,7 @@ class RouteMatcher {
           // has complete match
           //
           // include empty route if exists
-          if (config.isSubTree && !match.hasChildren) {
+          if (config.hasSubTree && !match.hasChildren) {
             match = match.copyWith(children: _match(uri.replace(path: ''), config.children!));
           }
 
@@ -162,10 +163,12 @@ class RouteMatcher {
     if (parts.isNotEmpty && parts.last == "*") {
       extractedSegments = segments;
     }
+    final stringMatch = p.joinAll(extractedSegments);
     return RouteMatch(
       path: config.path,
       routeName: config.name,
-      stringMatch: p.joinAll(segments),
+      key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
+      stringMatch: stringMatch,
       segments: extractedSegments,
       redirectedFrom: redirectedFrom,
       guards: config.guards,
@@ -180,12 +183,12 @@ class RouteMatcher {
   }
 
   RouteMatch? _matchByRoute(PageRouteInfo route, RouteCollection routes) {
-    var routeConfig = routes[route.routeName];
-    if (routeConfig == null) {
+    var config = routes[route.routeName];
+    if (config == null) {
       return null;
     }
     var childMatches = <RouteMatch>[];
-    if (routeConfig.isSubTree) {
+    if (config.hasSubTree) {
       final subRoutes = routes.subCollectionOf(route.routeName);
       if (route.hasChildren) {
         for (var childRoute in route.initialChildren!) {
@@ -211,7 +214,10 @@ class RouteMatcher {
       segments: p.split(route.stringMatch),
       path: route.path,
       args: route.args,
-      guards: routeConfig.guards,
+      key: ValueKey(
+        config.usesPathAsKey ? route.stringMatch : route.routeName,
+      ),
+      guards: config.guards,
       stringMatch: route.stringMatch,
       fragment: route.fragment,
       redirectedFrom: route.redirectedFrom,

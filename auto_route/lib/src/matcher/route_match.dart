@@ -16,12 +16,14 @@ class RouteMatch {
   final String stringMatch;
   final Object? args;
   final List<AutoRouteGuard> guards;
+  final LocalKey key;
 
   const RouteMatch({
     required this.routeName,
     required this.segments,
     required this.path,
     required this.stringMatch,
+    required this.key,
     this.children,
     this.args,
     this.guards = const [],
@@ -42,7 +44,6 @@ class RouteMatch {
   }
 
   RouteMatch copyWith({
-    String? key,
     String? path,
     String? stringMatch,
     Parameters? pathParams,
@@ -53,6 +54,7 @@ class RouteMatch {
     String? redirectedFrom,
     String? routeName,
     Object? args,
+    LocalKey? key,
     List<AutoRouteGuard>? guards,
   }) {
     return RouteMatch(
@@ -65,6 +67,7 @@ class RouteMatch {
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
       args: args ?? this.args,
+      key: key ?? this.key,
       guards: guards ?? this.guards,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
     );
@@ -79,6 +82,7 @@ class RouteMatch {
           routeName == other.routeName &&
           stringMatch == other.stringMatch &&
           pathParams == other.pathParams &&
+          key == other.key &&
           ListEquality().equals(guards, other.guards) &&
           queryParams == other.queryParams &&
           ListEquality().equals(children, other.children) &&
@@ -97,6 +101,7 @@ class RouteMatch {
       path.hashCode ^
       stringMatch.hashCode ^
       routeName.hashCode ^
+      key.hashCode ^
       ListEquality().hash(segments);
 
   @override

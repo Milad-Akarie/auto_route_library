@@ -160,6 +160,9 @@ class AutoRoute<T> {
 
   final bool fullMatch;
 
+  /// if true path is used as page key instead of name
+  final bool usesPathAsKey;
+
   const AutoRoute(
       {this.page,
       this.initial = false,
@@ -169,6 +172,7 @@ class AutoRoute<T> {
       this.fullMatch = false,
       this.path,
       this.name,
+      this.usesPathAsKey = false,
       this.children});
 }
 
@@ -191,12 +195,14 @@ class MaterialRoute<T> extends AutoRoute<T> {
       bool fullMatch = false,
       String? name,
       List<Type>? guards,
+      bool usesPathAsKey = false,
       List<AutoRoute>? children})
       : super(
           page: page,
           guards: guards,
           fullMatch: fullMatch,
           initial: initial,
+          usesPathAsKey: usesPathAsKey,
           fullscreenDialog: fullscreenDialog,
           maintainState: maintainState,
           path: path,
@@ -220,6 +226,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
       bool fullMatch = false,
       required Type page,
       List<Type>? guards,
+      bool usesPathAsKey = false,
       List<AutoRoute>? children})
       : super(
           initial: initial,
@@ -227,6 +234,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
           maintainState: maintainState,
           path: path,
           name: name,
+          usesPathAsKey: usesPathAsKey,
           fullMatch: fullMatch,
           page: page,
           guards: guards,
@@ -241,6 +249,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
       bool maintainState = true,
       String? name,
       String? path,
+      bool usesPathAsKey = false,
       bool fullMatch = false,
       this.cupertinoPageTitle,
       required Type page,
@@ -251,6 +260,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
             fullscreenDialog: fullscreenDialog,
             maintainState: maintainState,
             path: path,
+            usesPathAsKey: usesPathAsKey,
             name: name,
             fullMatch: fullMatch,
             page: page,
@@ -314,6 +324,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     bool fullMatch = false,
     required Type page,
     List<Type>? guards,
+    bool usesPathAsKey = false,
     List<AutoRoute>? children,
     this.customRouteBuilder,
     this.barrierLabel,
@@ -326,6 +337,7 @@ class CustomRoute<T> extends AutoRoute<T> {
             initial: initial,
             fullscreenDialog: fullscreenDialog,
             maintainState: maintainState,
+            usesPathAsKey: usesPathAsKey,
             path: path,
             name: name,
             fullMatch: fullMatch,

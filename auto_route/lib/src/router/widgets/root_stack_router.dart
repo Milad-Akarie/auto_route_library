@@ -14,8 +14,8 @@ abstract class RootStackRouter extends StackRouter {
               segments: const [''],
               path: '',
               stringMatch: '',
+              key: ValueKey(const ValueKey('Root')),
             ),
-            key: const ValueKey('Root'),
           ),
         );
 

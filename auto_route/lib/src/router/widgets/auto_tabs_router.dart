@@ -124,7 +124,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProvide
             parentRoute.name,
           ),
           pageBuilder: _parentController.pageBuilder,
-          preMatchedRoutes: parentRoute.preMatchedPendingRoutes);
+          initialPreMatchedRoutes: parentRoute.preMatchedPendingRoutes);
       _parentController.attachChildController(_controller!);
       _setupController();
     }
@@ -231,13 +231,9 @@ class _IndexedStackBuilder extends StatefulWidget {
   _IndexedStackBuilderState createState() => _IndexedStackBuilderState();
 }
 
-class _DummyWidget extends SizedBox {
-  const _DummyWidget() : super(width: 0.0, height: 0.0);
-}
-
 class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
-  final _dummyWidget = const _DummyWidget();
-  final _pages = <Widget>[];
+  final _dummyWidget = const SizedBox.shrink();
+  final _initializedPagesTracker = <int, bool>{};
 
   void _didInitTabRoute(int index, [int previous = -1]) {
     widget.navigatorObservers.whereType<AutoRouterObserver>().forEach((observer) {
@@ -268,10 +264,10 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
     super.initState();
     for (var i = 0; i < widget.stack.length; ++i) {
       if (i == widget.activeIndex || !widget.lazyLoad) {
-        _pages.add(widget.itemBuilder(context, i));
+        _initializedPagesTracker[i] = true;
         _didInitTabRoute(i);
       } else {
-        _pages.add(_dummyWidget);
+        _initializedPagesTracker[i] = false;
       }
     }
   }
@@ -279,20 +275,23 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   @override
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.lazyLoad && _pages[widget.activeIndex] is _DummyWidget) {
+    if (widget.lazyLoad && _initializedPagesTracker[widget.activeIndex] == false) {
+      _initializedPagesTracker[widget.activeIndex] = true;
       _didInitTabRoute(widget.activeIndex, oldWidget.activeIndex);
-      _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
-      return;
     } else if (widget.activeIndex != oldWidget.activeIndex) {
       _didChangeTabRoute(widget.activeIndex, oldWidget.activeIndex);
     }
-    _pages[widget.activeIndex] = widget.itemBuilder(context, widget.activeIndex);
   }
 
   @override
   Widget build(BuildContext context) => IndexedStack(
         index: widget.activeIndex,
         sizing: StackFit.expand,
-        children: _pages,
+        children: List.generate(
+          widget.stack.length,
+          (index) {
+            return _initializedPagesTracker[index] == true ? widget.itemBuilder(context, index) : _dummyWidget;
+          },
+        ),
       );
 }

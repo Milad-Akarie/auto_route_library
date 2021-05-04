@@ -31,7 +31,7 @@ class SettingsPage extends StatelessWidget {
               //   ),
               // );
 
-              context.router.navigateNamed('profile/my-books', includePrefixMatches: true);
+              context.router.navigateNamed('/profile/my-books?filter=changed', includePrefixMatches: true);
             },
             child: Text('navigateNamed to profile/my-books'),
           )
