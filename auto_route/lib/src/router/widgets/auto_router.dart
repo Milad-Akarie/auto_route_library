@@ -17,8 +17,7 @@ class AutoRouter extends StatefulWidget {
 
   const AutoRouter({
     Key? key,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
     this.navigatorKey,
@@ -27,8 +26,7 @@ class AutoRouter extends StatefulWidget {
 
   static Widget declarative({
     Key? key,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
@@ -52,8 +50,7 @@ class AutoRouter extends StatefulWidget {
     var scope = StackRouterScope.of(context);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -154,8 +151,7 @@ class AutoRouterState extends State<AutoRouter> {
   }
 }
 
-typedef RoutesGenerator = List<PageRouteInfo> Function(
-    BuildContext context, List<PageRouteInfo> routes);
+typedef RoutesGenerator = List<PageRouteInfo> Function(BuildContext context, List<PageRouteInfo> routes);
 
 class _DeclarativeAutoRouter extends StatefulWidget {
   final RoutesBuilder routes;
@@ -169,8 +165,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   const _DeclarativeAutoRouter({
     Key? key,
     required this.routes,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.navigatorKey,
     this.navRestorationScopeId,
@@ -260,4 +255,8 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
 
 class EmptyRouterPage extends AutoRouter {
   const EmptyRouterPage({Key? key}) : super(key: key);
+}
+
+class EmptyRouterScreen extends AutoRouter {
+  const EmptyRouterScreen({Key? key}) : super(key: key);
 }
