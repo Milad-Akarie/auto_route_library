@@ -1,4 +1,7 @@
 # ChangeLog
+## [2.1.1] Breaking changes!
+- AutoRouteGuard's canNavigate method is now called onNavigation. [Breaking]
+- Add AutoRouteObserver to add support tab route observing.
 ## [2.1.0] Breaking changes!
 - AutoRouteGuard no longer returns a future<bool> and passes in a resolver. [Breaking]
 - Remove onInitialRoutes from AutoRouterDelegate. [Breaking]
