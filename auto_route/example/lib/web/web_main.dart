@@ -8,18 +8,6 @@ import 'router/web_router.gr.dart';
 
 void main() {
   runApp(App());
-  // var route1 = UserRoute(id: 1, children: [
-  //   UserProfileRoute(),
-  //   UserPostsRoute(),
-  // ]);
-  // var route2 = UserRoute(
-  //   id: 1,
-  //   children: [
-  //     UserProfileRoute(),
-  //     UserPostsRoute(),
-  //   ],
-  // );
-  // print(route1 == route2);
 }
 
 class App extends StatefulWidget {
@@ -32,8 +20,7 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  final _appRouter = WebAppRouter();
-  int _userId = -1;
+  final _appRouter = WebAppRouter(authGuard: AuthGuard());
   final authService = AuthService();
 
   @override
@@ -49,38 +36,38 @@ class AppState extends State<App> {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      routerDelegate: AutoRouterDelegate.declarative(
-        _appRouter,
-        onNavigate: (urlState, initial) async {
-          print(urlState.path);
-          _userId = -1;
-          if (urlState.topMatch?.routeName == UserRoute.name) {
-            _userId = urlState.topMatch!.pathParams.getInt('userID');
-          }
-          return null;
-        },
-        routes: (_) => [
-          if (!authService.isAuthenticated)
-            LoginRoute(onLoginResult: (_) {
-              print('onLogin');
-              authService.isAuthenticated = true;
-            })
-          else ...[
-            HomeRoute(
-              navigate: () {
-                setState(() {
-                  _userId = 1;
-                });
-              },
-            ),
-            if (_userId != -1) UserRoute(id: _userId),
-          ],
-        ],
-        onPopRoute: (route, _) {
-          if (route.routeName == UserRoute.name) {
-            _userId = -1;
-          }
-        },
+      routerDelegate: AutoRouterDelegate(
+        _appRouter, initialDeepLink: '/user/5',
+        // onNavigate: (urlState, initial) async {
+        //   print(urlState.path);
+        //   _userId = -1;
+        //   if (urlState.topMatch?.routeName == UserRoute.name) {
+        //     _userId = urlState.topMatch!.pathParams.getInt('userID');
+        //   }
+        //   return null;
+        // },
+        // routes: (_) => [
+        //   if (!authService.isAuthenticated)
+        //     LoginRoute(onLoginResult: (_) {
+        //       print('onLogin');
+        //       authService.isAuthenticated = true;
+        //     })
+        //   else ...[
+        //     HomeRoute(
+        //       navigate: () {
+        //         setState(() {
+        //           _userId = 1;
+        //         });
+        //       },
+        //     ),
+        //     if (_userId != -1) UserRoute(id: _userId),
+        //   ],
+        // ],
+        // onPopRoute: (route, _) {
+        //   if (route.routeName == UserRoute.name) {
+        //     _userId = -1;
+        //   }
+        // },
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),
       builder: (_, router) {

@@ -33,7 +33,7 @@ extension AutoRouterX on BuildContext {
   RouteData get topRoute => router.topRoute;
 
   T? innerRouterOf<T extends RoutingController>(String routeKey) =>
-      RoutingControllerScope.of(this)!.controller.innerRouterOf<T>(routeKey);
+      RouterScope.of(this)!.controller.innerRouterOf<T>(routeKey);
 
   RouteData get routeData => RouteData.of(this);
 }

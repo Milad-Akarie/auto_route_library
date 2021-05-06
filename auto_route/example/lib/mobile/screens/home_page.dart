@@ -13,48 +13,26 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int activeIndex = 0;
-  final GlobalKey<AutoTabsRouterState> _tabsRouterKey = GlobalKey();
-
-  final _tabRoutes = [
-    BooksTab(),
-    ProfileTab(),
-    SettingsTab(tab: 'default'),
-  ];
-
   @override
   Widget build(context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.topRoute.name),
+    return AutoTabsScaffold(
+      appBarBuilder: (_, tabsRouter) => AppBar(
+        title: Text(tabsRouter.topRoute.name),
         leading: AutoBackButton(),
       ),
-      body: AutoTabsRouter(
-        key: _tabsRouterKey,
-        // activeIndex: activeIndex,
-        // onNavigate: (route, initial) {
-        //   var tabIndex = _tabRoutes.indexWhere((r) => r.routeName == route.routeName);
-        //   if (tabIndex != -1) {
-        //     activeIndex = tabIndex;
-        //     if (!initial) setState(() {});
-        //   }
-        // },
-        routes: List.unmodifiable(_tabRoutes),
-      ),
-      bottomNavigationBar: buildBottomNav(),
+      routes: [
+        BooksTab(),
+        ProfileTab(),
+        SettingsTab(tab: 'default'),
+      ],
+      bottomNavigationBuilder: buildBottomNav,
     );
   }
 
-  BottomNavigationBar buildBottomNav() {
-    final tabsController = _tabsRouterKey.currentState?.controller;
+  BottomNavigationBar buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
     return BottomNavigationBar(
-      currentIndex: tabsController?.activeIndex ?? 0,
-      onTap: (index) {
-        tabsController?.setActiveIndex(index);
-        // setState(() {
-        //   activeIndex = index;
-        // });
-      },
+      currentIndex: tabsRouter.activeIndex,
+      onTap: tabsRouter.setActiveIndex,
       items: [
         BottomNavigationBarItem(
           icon: Icon(Icons.source),

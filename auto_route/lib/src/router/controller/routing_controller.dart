@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/navigation_failure.dart';
@@ -658,6 +660,7 @@ abstract class StackRouter extends RoutingController {
       if (routes.length > 1) {
         routesToPush = routes.sublist(1);
       } else {
+        notifyListeners();
         return SynchronousFuture(null);
       }
     }
@@ -818,8 +821,12 @@ abstract class StackRouter extends RoutingController {
   }
 
   @optionalTypeArgs
-  Future<T?> _pushAllGuarded<T extends Object?>(List<RouteMatch> routes,
-      {OnNavigationFailure? onFailure, bool notify = true, bool updateAncestorsPathData = true}) async {
+  Future<T?> _pushAllGuarded<T extends Object?>(
+    List<RouteMatch> routes, {
+    OnNavigationFailure? onFailure,
+    bool notify = true,
+    bool updateAncestorsPathData = true,
+  }) async {
     assert(
       !managedByWidget,
       'Pages stack can be managed by either the Widget (AutoRouter.declarative) or Router',
@@ -827,7 +834,11 @@ abstract class StackRouter extends RoutingController {
 
     for (var i = 0; i < routes.length; i++) {
       var route = routes[i];
-      if (await _canNavigate(route, onFailure)) {
+      if (await _canNavigate(
+        route,
+        onFailure,
+        pendingRoutes: routes.toList()..removeAt(i),
+      )) {
         if (i != routes.length - 1) {
           _addEntry(route, notify: false);
         } else {
@@ -838,6 +849,8 @@ abstract class StackRouter extends RoutingController {
           );
           return _addEntry<T>(route, notify: true);
         }
+      } else {
+        break;
       }
     }
     if (notify) {
@@ -861,13 +874,22 @@ abstract class StackRouter extends RoutingController {
 
   Future<bool> _canNavigate(
     RouteMatch route,
-    OnNavigationFailure? onFailure,
-  ) async {
+    OnNavigationFailure? onFailure, {
+    List<RouteMatch> pendingRoutes = const [],
+  }) async {
     if (route.guards.isEmpty) {
       return true;
     }
     for (var guard in route.guards) {
-      if (!await guard.canNavigate(route, this)) {
+      final completer = Completer<bool>();
+      guard.onNavigation(
+          NavigationResolver(
+            completer,
+            route,
+            pendingRoutes: pendingRoutes,
+          ),
+          this);
+      if (!await completer.future) {
         if (onFailure != null) {
           onFailure(RejectedByGuardFailure(route, guard));
         }
@@ -901,7 +923,7 @@ abstract class StackRouter extends RoutingController {
             mayUpdateController.onNavigate?.call(newRoutes.last, false);
           }
         }
-        return mayUpdateController._navigateAll(
+        await mayUpdateController._navigateAll(
           newRoutes,
           onFailure: onFailure,
         );

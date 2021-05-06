@@ -27,21 +27,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var authenticated = _authService.isAuthenticated;
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: AutoRouterDelegate.declarative(
+      routerDelegate: AutoRouterDelegate(
         _rootRouter,
-        routes: (_) => [
-          if (authenticated)
-            const AppRoute()
-          else
-            LoginRoute(
-              onLoginResult: (success) {
-                _authService.isAuthenticated = success;
-              },
-            ),
-        ],
+        navigatorObservers: () => [AutoRouteObserver()],
       ),
       routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {

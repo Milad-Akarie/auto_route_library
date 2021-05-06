@@ -14,7 +14,7 @@ class AutoBackButton extends StatefulWidget {
 class _AutoBackButtonState extends State<AutoBackButton> {
   @override
   Widget build(BuildContext context) {
-    final scope = RoutingControllerScope.of(context);
+    final scope = RouterScope.of(context);
     assert(scope != null);
     if (scope!.controller.canPopSelfOrChildren) {
       return BackButton(

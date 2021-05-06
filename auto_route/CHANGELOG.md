@@ -1,4 +1,13 @@
 # ChangeLog
+## [2.1.0] Breaking changes!
+- AutoRouteGuard no longer returns a future<bool> and passes in a resolver. [Breaking]
+- Remove onInitialRoutes from AutoRouterDelegate. [Breaking]
+- Rename RoutingControllerScope to RouterScope. [Breaking]
+- Expose provided navigatorObservers in RouterScope
+- Route name is now default page key with option to use path as key.
+- Add onNavigate callback function to AutoRouterDelegate
+- Add onNavigate all back to AutoRouter.declarative 
+- Add declarative option to AutoTabsRouter
 ## [2.0.1] Breaking changes!
 - OnPopRoute includes a results object now. [Breaking]
 - Remove usesTabsRouter property from AutoRoute as it's no longer needed.

@@ -40,7 +40,8 @@ class PageRouteInfo<T> {
     return _expand(path, rawPathParams);
   }
 
-  String get fullPath => p.joinAll([stringMatch, if (hasChildren) initialChildren!.last.fullPath]);
+  String get fullPath =>
+      p.joinAll([stringMatch, if (hasChildren) initialChildren!.last.fullPath]);
 
   bool get hasChildren => initialChildren?.isNotEmpty == true;
 
@@ -111,7 +112,8 @@ class PageRouteInfo<T> {
       fragment: match.fragment,
       redirectedFrom: match.redirectedFrom,
       stringMatch: match.stringMatch,
-      initialChildren: match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList(),
+      initialChildren:
+          match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList(),
     );
   }
 

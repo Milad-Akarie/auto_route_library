@@ -39,7 +39,8 @@ abstract class RootStackRouter extends StackRouter {
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,

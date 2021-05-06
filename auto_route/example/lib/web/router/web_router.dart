@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/web/router/web_router.gr.dart';
 import 'package:example/web/web_main.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: HomePage),
+    AutoRoute(path: '/', page: HomePage, guards: [AuthGuard]),
     AutoRoute(path: '/login', page: LoginPage),
     AutoRoute(
       path: '/user/:userID',
@@ -16,15 +17,15 @@ import 'package:flutter/material.dart';
       children: [
         AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
-          // AutoRoute(path: 'all', page: UserAllPostsPage, initial: true),
-          // AutoRoute(
-          //   path: 'favorite',
-          //   page: UserFavoritePostsPage,
-          // ),
+          AutoRoute(path: 'all', page: UserAllPostsPage, initial: true),
+          AutoRoute(
+            path: 'favorite',
+            page: UserFavoritePostsPage,
+          ),
         ]),
       ],
     ),
-    AutoRoute(path: '*', page: NotFoundScreen),
+    AutoRoute(path: '/404', page: NotFoundScreen),
   ],
 )
 class $WebAppRouter {}
@@ -84,8 +85,11 @@ class HomePage extends StatelessWidget {
 
 class UserProfilePage extends StatelessWidget {
   final VoidCallback? navigate;
+  const UserProfilePage({
+    Key? key,
+    this.navigate,
+  }) : super(key: key);
 
-  const UserProfilePage({Key? key, this.navigate}) : super(key: key);
 //
 //   @override
 //   _UserProfilePageState createState() => _UserProfilePageState();
@@ -108,22 +112,21 @@ class UserProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final pathParams = context.routeData.parent?.pathParams;
-
+    var userId = context.routeData.inheritedPathParams.getInt('userID');
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'User Profile : ${pathParams?.optInt('userID')}',
+              'User Profile : $userId',
               style: TextStyle(fontSize: 30),
             ),
             MaterialButton(
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.navigateTo(UserPostsRoute());
+                    context.router.navigateNamed('posts');
                   },
               child: Text('Posts'),
             ),
@@ -162,14 +165,15 @@ class _UserPostsPageState extends State<UserPostsPage> {
               'User Posts',
               style: TextStyle(fontSize: 30),
             ),
-            // Expanded(
-            //   child: AutoRouter.declarative(
-            //       onNewRoutes: (routes) {
-            //         print('OnNew UserPsot routes ${routes.map((e) => e.routeName)}');
-            //         return SynchronousFuture(null);
-            //       },
-            //       routes: (context) => []),
-            // )
+            Expanded(
+              child: AutoRouter(
+                  // onNewRoutes: (routes) {
+                  //   print('OnNew UserPsot routes ${routes.map((e) => e.routeName)}');
+                  //   return SynchronousFuture(null);
+                  // },
+                  // routes: (context) => [],
+                  ),
+            )
           ],
         ),
       ),
@@ -208,30 +212,32 @@ class _UserPageState extends State<UserPage> {
         title: Text(context.topRoute.name),
         leading: AutoBackButton(),
       ),
-      body: AutoRouter.declarative(
-          onNavigate: (routes, initial) async {
-            // print('onNew routes ${routes.last.routeName}');
-            showPosts = false;
-            if (routes.isNotEmpty && routes.last.routeName == UserPostsRoute.name) {
-              showPosts = true;
-            }
-            if (!initial) {
-              setState(() {});
-            }
+      body: AutoRouter(
 
-            return null;
-          },
-          routes: (_) => [
-                UserProfileRoute(navigate: () {
-                  setState(() {
-                    showPosts = true;
-                  });
-                }),
-                if (showPosts) UserPostsRoute()
-              ],
-          onPopRoute: (route, _) {
-            showPosts = false;
-          }),
+          // onNavigate: (routes, initial) async {
+          //   // print('onNew routes ${routes.last.routeName}');
+          //   showPosts = false;
+          //   if (routes.isNotEmpty && routes.last.routeName == UserPostsRoute.name) {
+          //     showPosts = true;
+          //   }
+          //   if (!initial) {
+          //     setState(() {});
+          //   }
+          //
+          //   return null;
+          // },
+          // routes: (_) => [
+          //       UserProfileRoute(navigate: () {
+          //         setState(() {
+          //           showPosts = true;
+          //         });
+          //       }),
+          //       if (showPosts) UserPostsRoute()
+          //     ],
+          // onPopRoute: (route, _) {
+          //   showPosts = false;
+          // }
+          ),
     );
   }
 }
@@ -269,7 +275,7 @@ class UserAllPostsPage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    // context.pushRoute(UserFavoritePostsRoute());
+                    context.router.push(UserFavoritePostsRoute());
                   },
               child: Text('Favorite'),
             ),

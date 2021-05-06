@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../data/db.dart';
 import '../../router/router.gr.dart';
 
-class BookListPage extends StatelessWidget {
+class BookListPage extends StatefulWidget {
+  @override
+  _BookListPageState createState() => _BookListPageState();
+}
+
+class _BookListPageState extends State<BookListPage> with RouteAware {
   @override
   Widget build(BuildContext context) {
     var booksDb = BooksDBProvider.of(context);
@@ -29,5 +34,17 @@ class BookListPage extends StatelessWidget {
               .toList() ??
           const [],
     );
+  }
+
+  @override
+  void didPopNext() {
+    print('Route aware did pop next ----->');
+    super.didPopNext();
+  }
+
+  @override
+  void didPush() {
+    print('Route aware did push ----->');
+    super.didPush();
   }
 }

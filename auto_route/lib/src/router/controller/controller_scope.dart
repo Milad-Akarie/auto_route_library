@@ -2,24 +2,35 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
 @protected
-class RoutingControllerScope extends InheritedWidget {
+class RouterScope extends InheritedWidget {
   final RoutingController controller;
-  final NavigatorObserversBuilder navigatorObservers;
+  final NavigatorObserversBuilder inheritableObserversBuilder;
   final int segmentsHash;
+  final List<NavigatorObserver> navigatorObservers;
 
-  const RoutingControllerScope({
+  const RouterScope({
     required Widget child,
     required this.controller,
     required this.navigatorObservers,
+    required this.inheritableObserversBuilder,
     required this.segmentsHash,
   }) : super(child: child);
 
-  static RoutingControllerScope? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<RoutingControllerScope>();
+  static RouterScope? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<RouterScope>();
+  }
+
+  T? firstObserverOfType<T extends NavigatorObserver>() {
+    final typedObservers = navigatorObservers.whereType<T>();
+    if (typedObservers.isNotEmpty) {
+      return typedObservers.first;
+    } else {
+      return null;
+    }
   }
 
   @override
-  bool updateShouldNotify(covariant RoutingControllerScope oldWidget) {
+  bool updateShouldNotify(covariant RouterScope oldWidget) {
     return segmentsHash != oldWidget.segmentsHash;
   }
 }

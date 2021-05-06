@@ -38,7 +38,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   static reportUrlChanged(BuildContext context, String url) {
-    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
+    Router.of(context)
+        .routeInformationProvider
+        ?.routerReportsNewRouteInformation(
           RouteInformation(
             location: url,
           ),
@@ -71,15 +73,14 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
-  UrlState _urlState = UrlState.fromMatches(const []);
+  UrlState _urlState = UrlState.fromSegments(const []);
 
   UrlState get urlState => _urlState;
 
   @override
   UrlState? get currentConfiguration {
-    final newState = UrlState.fromMatches(controller.currentSegments);
+    final newState = UrlState.fromSegments(controller.currentSegments);
     if (_urlState != newState) {
-      print(newState.path);
       _urlState = newState;
       return newState;
     }
@@ -120,9 +121,10 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   @override
   Widget build(BuildContext context) {
     final segmentsHash = controller.currentSegmentsHash;
-    return RoutingControllerScope(
+    return RouterScope(
       controller: controller,
-      navigatorObservers: navigatorObservers,
+      navigatorObservers: _navigatorObservers,
+      inheritableObserversBuilder: navigatorObservers,
       segmentsHash: segmentsHash,
       child: StackRouterScope(
         segmentsHash: segmentsHash,
@@ -163,7 +165,8 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     String? navRestorationScopeId,
     this.onPopRoute,
     this.onNavigate,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           controller,
           navRestorationScopeId: navRestorationScopeId,
@@ -197,10 +200,11 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   @override
   Widget build(BuildContext context) {
     final segmentsHash = controller.currentSegmentsHash;
-    return RoutingControllerScope(
+    return RouterScope(
       controller: controller,
-      navigatorObservers: navigatorObservers,
+      inheritableObserversBuilder: navigatorObservers,
       segmentsHash: segmentsHash,
+      navigatorObservers: _navigatorObservers,
       child: StackRouterScope(
         controller: controller,
         segmentsHash: segmentsHash,

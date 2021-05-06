@@ -1,7 +1,8 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
 
-import 'router.gr.dart';
+import 'package:auto_route/auto_route.dart';
+import 'package:example/web/router/web_router.gr.dart';
+import 'package:flutter/cupertino.dart';
 
 // mock auth state
 
@@ -9,20 +10,19 @@ var isAuthenticated = false;
 
 class AuthGuard extends AutoRouteGuard {
   @override
-  Future<bool> canNavigate(RouteMatch routeMatch, StackRouter router) async {
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (!isAuthenticated) {
-      print('gurading ${routeMatch.routeName}');
       // ignore: unawaited_futures
-      router.push(LoginRoute(onLoginResult: (success) {
-        if (success) {
-          print(success);
-          isAuthenticated = success;
-          router.replace(routeMatch.toRoute());
-        }
-      }));
-      return false;
+      router.push(
+        LoginRoute(onLoginResult: (_) {
+          isAuthenticated = true;
+          router.removeLast();
+          resolver.next();
+        }),
+      );
+    } else {
+      resolver.next();
     }
-    return true;
   }
 }
 

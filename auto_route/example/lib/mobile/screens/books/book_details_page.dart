@@ -16,13 +16,33 @@ class BookDetailsPage extends StatefulWidget {
   _BookDetailsPageState createState() => _BookDetailsPageState();
 }
 
-class _BookDetailsPageState extends State<BookDetailsPage> {
+class _BookDetailsPageState extends State<BookDetailsPage> with AutoRouteAware {
   int counter = 0;
+
+  @override
+  void didPush() {
+    print('books details did push ');
+  }
+
+  @override
+  void didPop() {
+    print('books details did pop');
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final observer = RouterScope.of(context)?.firstObserverOfType<AutoRouteObserver>();
+    if (observer != null) {
+      observer.subscribe(this, context.routeData);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final booksDb = BooksDBProvider.of(context);
     final book = booksDb?.findBookById(widget.id);
+
     return book == null
         ? Container(child: Text('Book null'))
         : Scaffold(

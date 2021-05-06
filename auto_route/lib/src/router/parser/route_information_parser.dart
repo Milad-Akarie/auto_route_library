@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart'
+    show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
@@ -13,9 +14,11 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
 
   @override
-  Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
+  Future<UrlState> parseRouteInformation(
+      RouteInformation routeInformation) async {
     final uri = Uri.parse(routeInformation.location ?? '');
-    var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
+    var matches =
+        _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(UrlState(uri, matches ?? const []));
   }
 
@@ -36,17 +39,13 @@ class UrlState {
 
   String get path => uri.path;
 
-  factory UrlState.fromMatches(List<RouteMatch> routes) {
+  factory UrlState.fromSegments(List<RouteMatch> routes) {
     return UrlState(_buildUri(routes), routes);
   }
 
   bool get hasSegments => segments.isNotEmpty;
 
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
-
-  // List<PageRouteInfo> childrenOfSegment(String path) {
-  //   return _findSegment(segments, (route) => route.stringMatch == path)?.children ?? const [];
-  // }
 
   RouteMatch? _findSegment(
     List<RouteMatch> segments,
@@ -65,11 +64,13 @@ class UrlState {
   }
 
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (match) => match.routeName == routeName)?.children ?? const [];
+    return _findSegment(segments, (match) => match.routeName == routeName)
+            ?.children ??
+        const [];
   }
 
   static Uri _buildUri(List<RouteMatch> routes) {
-    var fullPath = '';
+    var fullPath = '/';
     if (routes.isEmpty) {
       return Uri(path: fullPath);
     }
@@ -97,7 +98,9 @@ class UrlState {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UrlState && runtimeType == other.runtimeType && ListEquality().equals(segments, other.segments);
+      other is UrlState &&
+          runtimeType == other.runtimeType &&
+          ListEquality().equals(segments, other.segments);
 
   @override
   int get hashCode => ListEquality().hash(segments);

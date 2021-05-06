@@ -1,8 +1,9 @@
 part of '../router/controller/routing_controller.dart';
 
-class RouteData extends ChangeNotifier {
+class RouteData {
   RouteMatch _route;
   final RouteData? parent;
+
   LocalKey get key => _route.key;
 
   RouteData({
@@ -19,6 +20,7 @@ class RouteData extends ChangeNotifier {
 
   List<RouteMatch>? _preMatchedPendingRoutes;
 
+  // one time read only
   List<RouteMatch>? get preMatchedPendingRoutes {
     final pending = _preMatchedPendingRoutes;
     _preMatchedPendingRoutes = null;
@@ -35,12 +37,14 @@ class RouteData extends ChangeNotifier {
     final args = _route.args;
     if (args == null) {
       if (orElse == null) {
-        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
+        throw FlutterError(
+            '${T.toString()} can not be null because it has a required parameter');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args as T;
     }
@@ -49,7 +53,6 @@ class RouteData extends ChangeNotifier {
   void _updateRoute(RouteMatch value) {
     if (_route != value) {
       _route = value;
-      notifyListeners();
     }
   }
 
@@ -63,6 +66,15 @@ class RouteData extends ChangeNotifier {
 
   String get match => _route.stringMatch;
 
+  Parameters get inheritedPathParams {
+    if (parent == null) {
+      return const Parameters(const {});
+    }
+    return parent!.breadcrumbs.map((e) => e.pathParams).reduce(
+          (value, element) => value + element,
+        );
+  }
+
   Parameters get pathParams => _route.pathParams;
 
   Parameters get queryParams => _route.queryParams;
@@ -71,7 +83,10 @@ class RouteData extends ChangeNotifier {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is RouteData && runtimeType == other.runtimeType && route == other.route;
+      identical(this, other) ||
+      other is RouteData &&
+          runtimeType == other.runtimeType &&
+          route == other.route;
 
   @override
   int get hashCode => route.hashCode ^ parent.hashCode;
