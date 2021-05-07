@@ -15,8 +15,7 @@ class _AutoBackButtonState extends State<AutoBackButton> {
   @override
   Widget build(BuildContext context) {
     final scope = RouterScope.of(context);
-    assert(scope != null);
-    if (scope!.controller.canPopSelfOrChildren) {
+    if (scope.controller.canPopSelfOrChildren) {
       return BackButton(
         color: widget.color,
         onPressed: scope.controller.popTop,

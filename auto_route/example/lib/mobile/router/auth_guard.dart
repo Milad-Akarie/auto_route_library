@@ -14,12 +14,14 @@ class AuthGuard extends AutoRouteGuard {
       router.push(
         LoginRoute(onLoginResult: (_) {
           isAuthenticated = true;
+          // we can't pop the bottom page in the navigator's stack
+          // so we just remove it from our local stack
           router.removeLast();
           resolver.next();
         }),
       );
     } else {
-      resolver.next();
+      resolver.next(true);
     }
   }
 }

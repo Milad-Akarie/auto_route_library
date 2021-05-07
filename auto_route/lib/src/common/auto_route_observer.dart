@@ -6,6 +6,8 @@ class AutoRouterObserver extends NavigatorObserver {
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {}
 }
 
+final observer = RouteObserver();
+
 abstract class AutoRouteAware {
   /// Called when the top route has been popped off, and the current route
   /// shows up.
@@ -40,8 +42,11 @@ class AutoRouteObserver extends AutoRouterObserver {
     final Set<AutoRouteAware> subscribers =
         _listeners.putIfAbsent(route.key, () => <AutoRouteAware>{});
     if (subscribers.add(routeAware)) {
-      routeAware.didPush();
-      routeAware.didInitTabRoute(null);
+      if (route.router is TabsRouter) {
+        routeAware.didInitTabRoute(null);
+      } else {
+        routeAware.didPush();
+      }
     }
   }
 
@@ -59,10 +64,10 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
-    final List<AutoRouteAware>? previousSubscribers =
+    final List<AutoRouteAware>? subscribers =
         _listeners[route.routeInfo.key]?.toList();
-    if (previousSubscribers != null) {
-      for (final AutoRouteAware routeAware in previousSubscribers) {
+    if (subscribers != null) {
+      for (final AutoRouteAware routeAware in subscribers) {
         routeAware.didInitTabRoute(previousRoute);
       }
     }
@@ -70,10 +75,10 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
-    final List<AutoRouteAware>? previousSubscribers =
+    final List<AutoRouteAware>? subscribers =
         _listeners[route.routeInfo.key]?.toList();
-    if (previousSubscribers != null) {
-      for (final AutoRouteAware routeAware in previousSubscribers) {
+    if (subscribers != null) {
+      for (final AutoRouteAware routeAware in subscribers) {
         routeAware.didChangeTabRoute(previousRoute);
       }
     }

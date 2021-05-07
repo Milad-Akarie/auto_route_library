@@ -3,11 +3,13 @@ part of '../router/controller/routing_controller.dart';
 class RouteData {
   RouteMatch _route;
   final RouteData? parent;
+  final RoutingController router;
 
   LocalKey get key => _route.key;
 
   RouteData({
     required RouteMatch route,
+    required this.router,
     this.parent,
     List<RouteMatch>? preMatchedPendingRoutes,
   })  : _route = route,
@@ -26,6 +28,8 @@ class RouteData {
     _preMatchedPendingRoutes = null;
     return pending;
   }
+
+  bool get isActive => router.isRouteActive(name);
 
   bool get hasPendingRoutes => _preMatchedPendingRoutes != null;
 

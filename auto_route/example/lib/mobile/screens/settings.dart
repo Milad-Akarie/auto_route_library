@@ -17,22 +17,31 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
   @override
   void didInitTabRoute(TabPageRoute? previousRoute) {
-    print('settings tab inited');
+    print('did init settings tab');
+  }
+
+  @override
+  void didPush() {
+    print('did push settings tab');
   }
 
   @override
   void didChangeTabRoute(TabPageRoute previousRoute) {
-    super.didChangeTabRoute(previousRoute);
     print('Changed to settings tab from ${previousRoute.name}');
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final observer = RouterScope.of(context)?.firstObserverOfType<AutoRouteObserver>();
+    final observer = RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
     if (observer != null) {
       observer.subscribe(this, context.routeData);
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -57,7 +66,9 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
               //   ),
               // );
 
-              context.router.navigateNamed('/profile/my-books?filter=changed', includePrefixMatches: true);
+              // context.tabsRouter.navigateNamed(route)
+              // context.tabsRouter.navigate(const ProfileTab());
+              context.navigateNamedTo('profile/my-books?filter=changed', includePrefixMatches: true);
             },
             child: Text('navigateNamed to profile/my-books'),
           )

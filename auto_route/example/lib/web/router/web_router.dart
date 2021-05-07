@@ -9,11 +9,12 @@ import 'package:flutter/material.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: HomePage, guards: [AuthGuard]),
+    AutoRoute(path: '/', page: HomePage),
     AutoRoute(path: '/login', page: LoginPage),
     AutoRoute(
       path: '/user/:userID',
       page: UserPage,
+      guards: [AuthGuard],
       children: [
         AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
@@ -85,6 +86,7 @@ class HomePage extends StatelessWidget {
 
 class UserProfilePage extends StatelessWidget {
   final VoidCallback? navigate;
+
   const UserProfilePage({
     Key? key,
     this.navigate,

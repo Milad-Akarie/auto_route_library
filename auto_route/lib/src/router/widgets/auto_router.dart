@@ -82,18 +82,17 @@ class AutoRouterState extends State<AutoRouter> {
     final parentScope = RouterScope.of(context);
 
     if (_controller == null) {
-      assert(parentScope != null);
       _inheritableObserversBuilder = () {
         var observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
           return observers;
         }
-        var inheritedObservers = parentScope!.inheritableObserversBuilder();
+        var inheritedObservers = parentScope.inheritableObserversBuilder();
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
 
-      _parentController = parentScope!.controller;
+      _parentController = parentScope.controller;
       _controller = NestedStackRouter(
         parent: _parentController,
         key: parentData.key,
@@ -198,17 +197,16 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     if (_controller == null) {
       _heroController = HeroController();
       final parentScope = RouterScope.of(context);
-      assert(parentScope != null);
       _inheritableObserversBuilder = () {
         var observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
           return observers;
         }
-        var inheritedObservers = parentScope!.inheritableObserversBuilder();
+        var inheritedObservers = parentScope.inheritableObserversBuilder();
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-      _parentController = parentScope!.controller;
+      _parentController = parentScope.controller;
       _controller = NestedStackRouter(
           parent: _parentController,
           key: parentData.key,

@@ -106,17 +106,16 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
     final parentRoute = RouteDataScope.of(context);
     if (_controller == null) {
       final parentScope = RouterScope.of(context);
-      assert(parentScope != null);
       _inheritableObserversBuilder = () {
         var observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
           return observers;
         }
-        var inheritedObservers = parentScope!.inheritableObserversBuilder();
+        var inheritedObservers = parentScope.inheritableObserversBuilder();
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-      _parentController = parentScope!.controller;
+      _parentController = parentScope.controller;
       _controller = TabsRouter(
           parent: _parentController,
           key: parentRoute.key,

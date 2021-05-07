@@ -172,7 +172,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
           navRestorationScopeId: navRestorationScopeId,
           navigatorObservers: navigatorObservers,
         ) {
-    controller._stackManagedByWidget = true;
+    controller._managedByWidget = true;
   }
 
   @override

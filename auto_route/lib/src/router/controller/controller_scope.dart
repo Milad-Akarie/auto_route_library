@@ -16,8 +16,18 @@ class RouterScope extends InheritedWidget {
     required this.segmentsHash,
   }) : super(child: child);
 
-  static RouterScope? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<RouterScope>();
+  static RouterScope of(BuildContext context) {
+    var scope = context.dependOnInheritedWidgetOfExactType<RouterScope>();
+    assert(() {
+      if (scope == null) {
+        throw FlutterError(
+            'RouterScope operation requested with a context that does not include a RouterScope.\n'
+            'The context used to retrieve the Router must be that of a widget that '
+            'is a descendant of a RouterScope widget.');
+      }
+      return true;
+    }());
+    return scope!;
   }
 
   T? firstObserverOfType<T extends NavigatorObserver>() {

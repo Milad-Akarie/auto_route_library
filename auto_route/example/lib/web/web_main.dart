@@ -37,7 +37,8 @@ class AppState extends State<App> {
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       routerDelegate: AutoRouterDelegate(
-        _appRouter, initialDeepLink: '/user/5',
+        _appRouter,
+        // initialDeepLink: '/user/5',
         // onNavigate: (urlState, initial) async {
         //   print(urlState.path);
         //   _userId = -1;
