@@ -1,8 +1,24 @@
 # ChangeLog
-## [2.0.2]
-- Fix duplicate key issue when pushing a page that already exist in stack
-- Minor fixes
-
+## [2.2.0] Breaking changes!
+- Remove helper methods pushToChild and replaceInChild from TabsRouter [Bad idea]. [Breaking]
+- Add navigate and navigateNamed methods to TabsRouter
+- Add navigateNamedTo method to context extension
+- Change context.navigateTo and context.navigateNamedTo will be fired 
+  by nearest RouterScope weather it's a StackRouter or a TabsRouter
+- Fix AutoRouteGuard is not fired when route is updating #517
+- Fix DidInitTabRoute method is fired when a route is pushed in AutoRouteAware widgets #518
+## [2.1.1] Breaking changes!
+- AutoRouteGuard's canNavigate method is now called onNavigation. [Breaking]
+- Add AutoRouteObserver to add support tab route observing.
+## [2.1.0] Breaking changes!
+- AutoRouteGuard no longer returns a future<bool> and passes in a resolver. [Breaking]
+- Remove onInitialRoutes from AutoRouterDelegate. [Breaking]
+- Rename RoutingControllerScope to RouterScope. [Breaking]
+- Expose provided navigatorObservers in RouterScope
+- Route name is now default page key with option to use path as key.
+- Add onNavigate callback function to AutoRouterDelegate
+- Add onNavigate all back to AutoRouter.declarative 
+- Add declarative option to AutoTabsRouter
 ## [2.0.1] Breaking changes!
 - OnPopRoute includes a results object now. [Breaking]
 - Remove usesTabsRouter property from AutoRoute as it's no longer needed.

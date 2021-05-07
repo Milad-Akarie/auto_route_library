@@ -10,34 +10,23 @@ class RouteConfig {
   final RouteCollection? _children;
   final String? redirectTo;
   final List<AutoRouteGuard> guards;
-  final bool usesTabsRouter;
+  final bool usesPathAsKey;
 
   RouteConfig(
     this.name, {
     required this.path,
-    this.usesTabsRouter = false,
+    this.usesPathAsKey = false,
     this.guards = const [],
     this.fullMatch = false,
     this.redirectTo,
     List<RouteConfig>? children,
   }) : _children = children != null ? RouteCollection.from(children) : null;
 
-  bool get isSubTree => _children != null;
+  bool get hasSubTree => _children != null;
 
   RouteCollection? get children => _children;
 
   bool get isRedirect => redirectTo != null;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RouteConfig &&
-          runtimeType == other.runtimeType &&
-          name == other.name &&
-          path == other.path;
-
-  @override
-  int get hashCode => name.hashCode ^ path.hashCode ^ fullMatch.hashCode;
 
   @override
   String toString() {

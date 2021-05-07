@@ -6,7 +6,14 @@ import 'importable_type.dart';
 
 const reservedVarNames = ['name', 'children'];
 
-const validPathParamTypes = ['String', 'int', 'double', 'num', 'bool', 'dynamic'];
+const validPathParamTypes = [
+  'String',
+  'int',
+  'double',
+  'num',
+  'bool',
+  'dynamic'
+];
 
 /// holds constructor parameter info to be used
 /// in generating route parameters.
@@ -100,11 +107,14 @@ class FunctionParamConfig extends ParamConfig {
           isOptional: isOptional,
         );
 
-  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList();
+  List<ParamConfig> get requiredParams =>
+      params.where((p) => p.isPositional && !p.isOptional).toList();
 
-  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList();
+  List<ParamConfig> get optionalParams =>
+      params.where((p) => p.isPositional && p.isOptional).toList();
 
-  List<ParamConfig> get namedParams => params.where((p) => p.isNamed).toList(growable: false);
+  List<ParamConfig> get namedParams =>
+      params.where((p) => p.isNamed).toList(growable: false);
 
   _code.FunctionType get funRefer => _code.FunctionType((b) => b
     ..returnType = returnType.refer

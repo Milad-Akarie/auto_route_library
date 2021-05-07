@@ -17,24 +17,26 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _rootRouter = RootRouter();
+  final _authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _authService.addListener(() => setState(() {}));
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: AutoRouterDelegate.declarative(
+      routerDelegate: AutoRouterDelegate(
         _rootRouter,
-        routes: (context) {
-          var authenticated = context.watch<AuthService>().isAuthenticated;
-          return [
-            if (authenticated) AppRoute() else LoginRoute(),
-          ];
-        },
+        navigatorObservers: () => [AutoRouteObserver()],
       ),
       routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {
-        return ChangeNotifierProvider<AuthService>(
-          create: (_) => AuthService(),
+        return ChangeNotifierProvider<AuthService>.value(
+          value: _authService,
           child: BooksDBProvider(
             child: router!,
           ),

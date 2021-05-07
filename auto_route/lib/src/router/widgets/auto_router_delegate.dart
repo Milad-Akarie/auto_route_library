@@ -3,20 +3,18 @@ import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import '../../utils.dart';
 import '../controller/routing_controller.dart';
 import 'auto_route_navigator.dart';
 
 part 'root_stack_router.dart';
 
 typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
-typedef RoutePopCallBack = void Function(PageRouteInfo route, dynamic results);
-typedef OnRoutesCallBack = Future<void> Function(UrlState tree);
+typedef RoutePopCallBack = void Function(RouteMatch route, dynamic results);
+typedef OnNavigateCallBack = void Function(UrlState tree, bool initial);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
@@ -40,7 +38,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   static reportUrlChanged(BuildContext context, String url) {
-    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
+    Router.of(context)
+        .routeInformationProvider
+        ?.routerReportsNewRouteInformation(
           RouteInformation(
             location: url,
           ),
@@ -69,17 +69,19 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
-    OnRoutesCallBack? onInitialRoutes,
+    OnNavigateCallBack? onNavigate,
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
-  UrlState urlState = UrlState.fromRoutes(const []);
+  UrlState _urlState = UrlState.fromSegments(const []);
+
+  UrlState get urlState => _urlState;
 
   @override
   UrlState? get currentConfiguration {
-    final newState = UrlState.fromRoutes(controller.currentSegments);
-    if (urlState != newState) {
-      urlState = newState;
+    final newState = UrlState.fromSegments(controller.currentSegments);
+    if (_urlState != newState) {
+      _urlState = newState;
       return newState;
     }
     return null;
@@ -98,8 +100,11 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
       return controller.pushNamed(initialDeepLink!, includePrefixMatches: true);
-    } else if (!listNullOrEmpty(tree.segments)) {
-      return controller.pushAll(tree.segments);
+    } else if (tree.hasSegments) {
+      final routes = List<PageRouteInfo>.unmodifiable(
+        tree.segments.map((m) => PageRouteInfo.fromMatch(m)),
+      );
+      return controller.pushAll(routes);
     } else {
       throw FlutterError("Can not resolve initial route");
     }
@@ -116,9 +121,10 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   @override
   Widget build(BuildContext context) {
     final segmentsHash = controller.currentSegmentsHash;
-    return RoutingControllerScope(
+    return RouterScope(
       controller: controller,
-      navigatorObservers: navigatorObservers,
+      navigatorObservers: _navigatorObservers,
+      inheritableObserversBuilder: navigatorObservers,
       segmentsHash: segmentsHash,
       child: StackRouterScope(
         segmentsHash: segmentsHash,
@@ -151,47 +157,60 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
-  final OnRoutesCallBack? onInitialRoutes;
+  final OnNavigateCallBack? onNavigate;
 
   _DeclarativeAutoRouterDelegate(
     RootStackRouter controller, {
     required this.routes,
     String? navRestorationScopeId,
     this.onPopRoute,
-    this.onInitialRoutes,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.onNavigate,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           controller,
           navRestorationScopeId: navRestorationScopeId,
           navigatorObservers: navigatorObservers,
         ) {
-    controller._stackManagedByWidget = true;
+    controller._managedByWidget = true;
   }
 
   @override
   Future<void> setInitialRoutePath(UrlState tree) {
-    return setNewRoutePath(tree);
+    return _onNavigate(tree, true);
   }
 
   @override
-  Future<void> setNewRoutePath(UrlState tree) {
-    onInitialRoutes?.call(tree);
+  Future<void> setNewRoutePath(UrlState tree) async {
+    return _onNavigate(tree);
+  }
+
+  Future<void> _onNavigate(UrlState tree, [bool initial = false]) {
+    _urlState = tree;
+    if (tree.hasSegments) {
+      controller.navigateAll(tree.segments);
+    }
+    if (onNavigate != null) {
+      onNavigate!(tree, true);
+    }
+
     return SynchronousFuture(null);
   }
 
   @override
   Widget build(BuildContext context) {
-    controller.updateDeclarativeRoutes(routes(context));
     final segmentsHash = controller.currentSegmentsHash;
-    return RoutingControllerScope(
+    return RouterScope(
       controller: controller,
-      navigatorObservers: navigatorObservers,
+      inheritableObserversBuilder: navigatorObservers,
       segmentsHash: segmentsHash,
+      navigatorObservers: _navigatorObservers,
       child: StackRouterScope(
         controller: controller,
         segmentsHash: segmentsHash,
         child: AutoRouteNavigator(
           router: controller,
+          declarativeRoutesBuilder: routes,
           navRestorationScopeId: navRestorationScopeId,
           navigatorObservers: _navigatorObservers,
           didPop: onPopRoute,

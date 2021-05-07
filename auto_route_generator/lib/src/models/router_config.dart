@@ -49,6 +49,6 @@ class RouterConfig {
     return routers;
   }
 
-  List<RouterConfig> get collectAllRoutersIncludingParent =>
-      subRouters.fold([this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
+  List<RouterConfig> get collectAllRoutersIncludingParent => subRouters.fold(
+      [this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
 }

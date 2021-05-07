@@ -28,6 +28,9 @@ class Parameters {
   @override
   int get hashCode => _params.hashCode;
 
+  bool get isNotEmpty => _params.isNotEmpty;
+  bool get isEmpty => _params.isEmpty;
+
   dynamic get(String key, [defaultValue]) {
     return _params[key] ?? defaultValue;
   }

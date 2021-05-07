@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 
 import 'auto_route_guard.dart';
@@ -20,13 +21,13 @@ class RouteNotFoundFailure extends NavigationFailure {
 }
 
 class RejectedByGuardFailure extends NavigationFailure {
-  final List<PageRouteInfo> routes;
+  final RouteMatch route;
   final AutoRouteGuard guard;
 
-  const RejectedByGuardFailure(this.routes, this.guard);
+  const RejectedByGuardFailure(this.route, this.guard);
 
   @override
   String toString() {
-    return '${routes.map((e) => e.stringMatch)} rejected by guard ${guard.runtimeType}';
+    return '${route.stringMatch} rejected by guard ${guard.runtimeType}';
   }
 }

@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/web/router/web_router.gr.dart';
 import 'package:example/web/web_main.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 @MaterialAutoRouter(
@@ -12,6 +14,7 @@ import 'package:flutter/material.dart';
     AutoRoute(
       path: '/user/:userID',
       page: UserPage,
+      guards: [AuthGuard],
       children: [
         AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
@@ -29,11 +32,12 @@ import 'package:flutter/material.dart';
 class $WebAppRouter {}
 
 class HomePage extends StatelessWidget {
-  final VoidCallback? navigate;
+  final VoidCallback? navigate, showUserPosts;
 
   const HomePage({
     Key? key,
     this.navigate,
+    this.showUserPosts,
   }) : super(key: key);
 
   @override
@@ -68,6 +72,10 @@ class HomePage extends StatelessWidget {
                         );
                   },
               child: Text('Navigate to user/1'),
+            ),
+            ElevatedButton(
+              onPressed: showUserPosts,
+              child: Text('Show user posts'),
             )
           ],
         ),
@@ -76,51 +84,66 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class UserProfilePage extends StatefulWidget {
+class UserProfilePage extends StatelessWidget {
   final VoidCallback? navigate;
 
-  const UserProfilePage({Key? key, this.navigate}) : super(key: key);
+  const UserProfilePage({
+    Key? key,
+    this.navigate,
+  }) : super(key: key);
 
-  @override
-  _UserProfilePageState createState() => _UserProfilePageState();
-}
+//
+//   @override
+//   _UserProfilePageState createState() => _UserProfilePageState();
+// }
+//
+// class _UserProfilePageState extends State<UserProfilePage> {
+//   int _count = 0;
 
-class _UserProfilePageState extends State<UserProfilePage> {
-  int _count = 0;
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //
+  //   var parentRoute = context.routeData.parent;
+  //   print(parentRoute);
+  //   parentRoute?.addListener(() {
+  //     print('------- parent path parasm');
+  //     print(parentRoute.pathParams);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final pathParams = context.routeData.parent?.pathParams;
-
+    var userId = context.routeData.inheritedPathParams.getInt('userID');
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'User Profile : ${pathParams?.optInt('userID')}',
+              'User Profile : $userId',
               style: TextStyle(fontSize: 30),
             ),
             MaterialButton(
               color: Colors.red,
-              onPressed: widget.navigate ??
+              onPressed: navigate ??
                   () {
-                    context.navigateTo(UserPostsRoute());
+                    context.router.navigateNamed('posts');
                   },
               child: Text('Posts'),
             ),
             const SizedBox(
               height: 32,
             ),
-            MaterialButton(
-              color: Colors.blue,
-              onPressed: () {
-                setState(() {
-                  _count++;
-                });
-              },
-              child: Text('Count $_count'),
-            ),
+            // MaterialButton(
+            //   color: Colors.blue,
+            //   onPressed: () {
+            //     setState(() {
+            //       _count++;
+            //     });
+            //   },
+            //   child: Text('Count $_count'),
+            // ),
           ],
         ),
       ),
@@ -144,7 +167,15 @@ class _UserPostsPageState extends State<UserPostsPage> {
               'User Posts',
               style: TextStyle(fontSize: 30),
             ),
-            Expanded(child: AutoRouter())
+            Expanded(
+              child: AutoRouter(
+                  // onNewRoutes: (routes) {
+                  //   print('OnNew UserPsot routes ${routes.map((e) => e.routeName)}');
+                  //   return SynchronousFuture(null);
+                  // },
+                  // routes: (context) => [],
+                  ),
+            )
           ],
         ),
       ),
@@ -165,14 +196,51 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
+  bool showPosts = false;
+
+  @override
+  void didUpdateWidget(covariant UserPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.id != oldWidget.id) {
+      print('user id updated ${widget.id}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(context.router.topRoute.name),
-          leading: AutoBackButton(),
-        ),
-        body: AutoRouter());
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: AutoBackButton(),
+      ),
+      body: AutoRouter(
+
+          // onNavigate: (routes, initial) async {
+          //   // print('onNew routes ${routes.last.routeName}');
+          //   showPosts = false;
+          //   if (routes.isNotEmpty && routes.last.routeName == UserPostsRoute.name) {
+          //     showPosts = true;
+          //   }
+          //   if (!initial) {
+          //     setState(() {});
+          //   }
+          //
+          //   return null;
+          // },
+          // routes: (_) => [
+          //       UserProfileRoute(navigate: () {
+          //         setState(() {
+          //           showPosts = true;
+          //         });
+          //       }),
+          //       if (showPosts) UserPostsRoute()
+          //     ],
+          // onPopRoute: (route, _) {
+          //   showPosts = false;
+          // }
+          ),
+    );
   }
 }
 
@@ -209,7 +277,7 @@ class UserAllPostsPage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.pushRoute(UserFavoritePostsRoute());
+                    context.router.push(UserFavoritePostsRoute());
                   },
               child: Text('Favorite'),
             ),

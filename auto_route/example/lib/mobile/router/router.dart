@@ -1,4 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/screens/books/book_details_page.dart';
+import 'package:example/mobile/screens/books/book_list_page.dart';
 
 import '../screens/books/routes.dart';
 import '../screens/home_page.dart';
@@ -13,30 +15,33 @@ export 'router.gr.dart';
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     // app stack
-    CustomRoute(
-      transitionsBuilder: TransitionsBuilders.fadeIn,
+    AutoRoute(
       path: '/',
-      page: EmptyRouterPage,
-      name: 'AppRoute',
-      // guards: [AuthGuard],
+      page: HomePage,
       children: [
         AutoRoute(
-          path: '',
-          page: HomePage,
+          path: 'books',
+          page: EmptyRouterPage,
+          name: 'BooksTab',
           children: [
-            booksTab,
-            profileTab,
+            AutoRoute(path: '', page: BookListPage),
             AutoRoute(
-              path: 'settings',
-              page: SettingsPage,
-              name: 'SettingsTab',
+              path: ':id',
+              usesPathAsKey: true,
+              page: BookDetailsPage,
+              // guards: [AuthGuard],
             ),
           ],
         ),
-        userDataRoutes,
+        profileTab,
+        AutoRoute(
+          path: 'settings/:tab',
+          page: SettingsPage,
+          name: 'SettingsTab',
+        ),
       ],
     ),
-
+    userDataRoutes,
     // auth
     AutoRoute(
       path: '/login',

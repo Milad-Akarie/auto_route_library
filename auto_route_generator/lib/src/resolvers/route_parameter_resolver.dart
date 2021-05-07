@@ -20,12 +20,14 @@ class RouteParameterResolver {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
-    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
+    var pathParamAnnotation =
+        _pathParamChecker.firstAnnotationOfExact(parameterElement);
     var paramAlias;
     if (pathParamAnnotation != null) {
       paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
     }
-    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
+    var queryParamAnnotation =
+        _queryParamChecker.firstAnnotationOfExact(parameterElement);
     if (queryParamAnnotation != null) {
       paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
 

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,8 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // int activeIndex = 0;
-
   @override
   Widget build(context) {
     return AutoTabsScaffold(
@@ -21,18 +20,16 @@ class _HomePageState extends State<HomePage> {
         title: Text(context.topRoute.name),
         leading: AutoBackButton(),
       ),
-      routes: const [
+      routes: [
         BooksTab(),
         ProfileTab(),
-        SettingsTab(),
+        SettingsTab(tab: 'default'),
       ],
-      bottomNavigationBuilder: (_, tabsRouter) {
-        return buildBottomNav(tabsRouter);
-      },
+      bottomNavigationBuilder: buildBottomNav,
     );
   }
 
-  BottomNavigationBar buildBottomNav(TabsRouter tabsRouter) {
+  BottomNavigationBar buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
     return BottomNavigationBar(
       currentIndex: tabsRouter.activeIndex,
       onTap: tabsRouter.setActiveIndex,

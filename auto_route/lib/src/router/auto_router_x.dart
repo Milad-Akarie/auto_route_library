@@ -24,16 +24,24 @@ extension AutoRouterX on BuildContext {
 
   Future<void> navigateTo(PageRouteInfo route,
           {OnNavigationFailure? onFailure}) =>
-      router.navigate(
-        route,
-        onFailure: onFailure,
-      );
+      RouterScope.of(this).controller.navigate(
+            route,
+            onFailure: onFailure,
+          );
+  Future<void> navigateNamedTo(String path,
+          {bool includePrefixMatches = false,
+          OnNavigationFailure? onFailure}) =>
+      RouterScope.of(this).controller.navigateNamed(
+            path,
+            includePrefixMatches: includePrefixMatches,
+            onFailure: onFailure,
+          );
 
   TabsRouter get tabsRouter => AutoTabsRouter.of(this);
   RouteData get topRoute => router.topRoute;
 
   T? innerRouterOf<T extends RoutingController>(String routeKey) =>
-      RoutingControllerScope.of(this)!.controller.innerRouterOf<T>(routeKey);
+      RouterScope.of(this).controller.innerRouterOf<T>(routeKey);
 
   RouteData get routeData => RouteData.of(this);
 }

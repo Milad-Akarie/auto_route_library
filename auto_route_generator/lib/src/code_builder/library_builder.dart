@@ -15,10 +15,11 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 const Reference requiredAnnotation = Reference('required', materialImport);
 
-TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
-  ..symbol = "List"
-  ..isNullable = nullable
-  ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) =>
+    TypeReference((b) => b
+      ..symbol = "List"
+      ..isNullable = nullable
+      ..types.add(reference));
 
 String generateLibrary(RouterConfig config) {
   final emitter = DartEmitter(
@@ -28,13 +29,16 @@ String generateLibrary(RouterConfig config) {
   );
 
   var allRouters = config.collectAllRoutersIncludingParent;
-  List<RouteConfig> allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+  List<RouteConfig> allRoutes =
+      allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
 
-  final nonRedirectRoutes = allRoutes.where((r) => r.routeType != RouteType.redirect);
+  final nonRedirectRoutes =
+      allRoutes.where((r) => r.routeType != RouteType.redirect);
   final checkedRoutes = <RouteConfig>[];
   nonRedirectRoutes.forEach((route) {
     throwIf(
-      (checkedRoutes.any((r) => r.routeName == route.routeName && r.pathName != route.pathName)),
+      (checkedRoutes.any((r) =>
+          r.routeName == route.routeName && r.pathName != route.pathName)),
       'Duplicate route names must have the same path! [${route.name}]\nNote: Unless specified, route name is generated from page name.',
       element: config.element,
     );

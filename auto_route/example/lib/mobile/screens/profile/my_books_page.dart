@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 class MyBooksPage extends StatelessWidget {
   final String filter;
 
-  const MyBooksPage({Key? key, @queryParam this.filter = 'none'}) : super(key: key);
+  MyBooksPage({Key? key, @queryParam this.filter = 'none'}) : super(key: key) {
+    print('constructing myBooksPage');
+  }
 
   @override
   Widget build(BuildContext context) {
+    print('building myBooksPage');
+    print(context.routeData.queryParams);
     return Container(
       child: Center(
         child: Column(
@@ -25,12 +29,12 @@ class MyBooksPage extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.router.navigateNamed('settings');
+                context.router.navigateNamed('/settings/newSegment');
                 //   return context.router.navigate(
                 //   BooksTab(),
                 // );
               },
-              child: Text('Go Back'),
+              child: Text('navigate to /settings/newSegment'),
             )
           ],
         ),

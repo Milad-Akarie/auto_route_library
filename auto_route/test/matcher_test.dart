@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -72,7 +73,9 @@ void main() {
         RouteMatch(
           routeName: 'B',
           path: '/b',
+          stringMatch: '/b',
           segments: ['/', 'b'],
+          key: ValueKey('B'),
         )
       ];
       expect(match('/b'), expectedMatches);
@@ -415,8 +418,10 @@ void main() {
     test('Should match route [A] and extract query param {foo:bar}', () {
       final expectedMatches = [
         RouteMatch(
+          key: ValueKey('A'),
+          stringMatch: '/',
           routeName: 'A',
-          path: '/',
+          path: '/a',
           segments: ['/', 'a'],
           queryParams: Parameters({'foo': 'bar'}),
         )
@@ -427,12 +432,16 @@ void main() {
     test('Should match routes [B,B1] and extract query params {foo:bar, bar:baz} for both', () {
       final expectedMatches = [
         RouteMatch(
+          key: ValueKey('B'),
+          stringMatch: '/b',
           routeName: 'B',
           path: '/b',
           segments: ['/', 'b'],
           queryParams: Parameters({'foo': 'bar', 'bar': 'baz'}),
         ),
         RouteMatch(
+          key: ValueKey('B1'),
+          stringMatch: '/b/b1',
           routeName: 'B1',
           path: '/b/b1',
           segments: ['/', 'b', 'b1'],
@@ -447,12 +456,16 @@ void main() {
         RouteMatch(
           routeName: 'C',
           path: '/c',
+          stringMatch: '/c',
+          key: ValueKey('C'),
           segments: ['/', 'c'],
           queryParams: Parameters({'foo': 'bar'}),
           children: [
             RouteMatch(
+              key: ValueKey('C1'),
               routeName: 'C1',
               path: '/c1',
+              stringMatch: '/c1',
               segments: ['c1'],
               queryParams: Parameters({'foo': 'bar'}),
             )
@@ -465,6 +478,8 @@ void main() {
     test('Should match route [A] and extract query param {foo:[bar,baz]}', () {
       final expectedMatches = [
         RouteMatch(
+          key: ValueKey('A'),
+          stringMatch: '/a',
           routeName: 'A',
           path: '/',
           segments: ['/', 'a'],

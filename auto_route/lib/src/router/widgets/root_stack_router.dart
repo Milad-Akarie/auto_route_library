@@ -8,20 +8,28 @@ abstract class RootStackRouter extends StackRouter {
       : super(
           key: const ValueKey('Root'),
           navigatorKey: navigatorKey,
-          routeData: RouteData(
-            route: const PageRouteInfo('Root', path: ''),
-            key: const ValueKey('Root'),
-          ),
         );
+
+  @override
+  RouteData get routeData => RouteData(
+        router: this,
+        route: const RouteMatch(
+          routeName: 'Root',
+          segments: const [''],
+          path: '',
+          stringMatch: '',
+          key: const ValueKey('Root'),
+        ),
+      );
 
   Map<String, PageFactory> get pagesMap;
 
   List<RouteConfig> get routes;
 
-  bool _stackManagedByWidget = false;
+  bool _managedByWidget = false;
 
   @override
-  bool get stackManagedByWidget => _stackManagedByWidget;
+  bool get managedByWidget => _managedByWidget;
 
   @override
   PageBuilder get pageBuilder => _pageBuilder;

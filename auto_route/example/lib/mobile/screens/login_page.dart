@@ -24,7 +24,6 @@ class LoginPage extends StatelessWidget {
         body: Center(
           child: ElevatedButton(
             onPressed: () {
-              context.read<AuthService>().isAuthenticated = true;
               onLoginResult?.call(true);
             },
             child: Text('Login'),

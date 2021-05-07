@@ -6,9 +6,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+typedef AutoRouteWidgetBuilder = Widget Function(RouteData data);
+
 abstract class AutoRoutePage<T> extends Page<T> {
   final RouteData routeData;
-  final Widget child;
+  final AutoRouteWidgetBuilder builder;
   final bool fullscreenDialog;
   final bool maintainState;
 
@@ -18,7 +20,7 @@ abstract class AutoRoutePage<T> extends Page<T> {
 
   AutoRoutePage({
     required this.routeData,
-    required this.child,
+    required this.builder,
     this.fullscreenDialog = false,
     this.maintainState = true,
     LocalKey? key,
@@ -29,19 +31,20 @@ abstract class AutoRoutePage<T> extends Page<T> {
 
   @override
   bool canUpdate(Page<dynamic> other) {
-    return other.runtimeType == runtimeType && (other as AutoRoutePage).routeKey == routeKey;
+    return other.runtimeType == runtimeType &&
+        (other as AutoRoutePage).routeKey == routeKey;
   }
 
-  ValueKey get routeKey => routeData.key;
+  LocalKey get routeKey => routeData.key;
 
   Widget buildPage(BuildContext context) {
-    var childToBuild = child;
-    if (child is AutoRouteWrapper) {
-      childToBuild = (child as AutoRouteWrapper).wrappedRoute(context);
+    var childToBuild = builder(routeData);
+    if (childToBuild is AutoRouteWrapper) {
+      childToBuild = (childToBuild as AutoRouteWrapper).wrappedRoute(context);
     }
     return RouteDataScope(
       child: childToBuild,
-      routeHash: routeData.route.hashCode,
+      segmentsHash: routeData.hashCode,
       routeData: routeData,
     );
   }
@@ -60,13 +63,13 @@ abstract class AutoRoutePage<T> extends Page<T> {
 class MaterialPageX<T> extends AutoRoutePage<T> {
   MaterialPageX({
     required RouteData routeData,
-    required Widget child,
+    required AutoRouteWidgetBuilder builder,
     bool fullscreenDialog = false,
     bool maintainState = true,
     LocalKey? key,
   }) : super(
           routeData: routeData,
-          child: child,
+          builder: builder,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
           key: key,
@@ -78,7 +81,8 @@ class MaterialPageX<T> extends AutoRoutePage<T> {
   }
 }
 
-class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixin<T> {
+class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
+    with MaterialRouteTransitionMixin<T> {
   _PageBasedMaterialPageRoute({
     required AutoRoutePage page,
   }) : super(settings: page);
@@ -103,13 +107,13 @@ abstract class _TitledAutoRoutePage<T> extends AutoRoutePage<T> {
 
   _TitledAutoRoutePage({
     required RouteData routeData,
-    required Widget child,
+    required AutoRouteWidgetBuilder builder,
     this.title,
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
           routeData: routeData,
-          child: child,
+          builder: builder,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
         );
@@ -118,13 +122,13 @@ abstract class _TitledAutoRoutePage<T> extends AutoRoutePage<T> {
 class CupertinoPageX<T> extends _TitledAutoRoutePage<T> {
   CupertinoPageX({
     required RouteData routeData,
-    required Widget child,
+    required AutoRouteWidgetBuilder builder,
     String? title,
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
             routeData: routeData,
-            child: child,
+            builder: builder,
             maintainState: maintainState,
             fullscreenDialog: fullscreenDialog,
             title: title);
@@ -135,7 +139,8 @@ class CupertinoPageX<T> extends _TitledAutoRoutePage<T> {
   }
 }
 
-class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTransitionMixin<T> {
+class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
+    with CupertinoRouteTransitionMixin<T> {
   _PageBasedCupertinoPageRoute({
     required _TitledAutoRoutePage page,
   }) : super(settings: page);
@@ -161,13 +166,13 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CupertinoRouteTr
 class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   AdaptivePage({
     required RouteData routeData,
-    required Widget child,
+    required AutoRouteWidgetBuilder builder,
     String? title,
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
           routeData: routeData,
-          child: child,
+          builder: builder,
           title: title,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
@@ -192,7 +197,8 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   }
 }
 
-typedef CustomRouteBuilder<T> = Route<T> Function<T>(BuildContext context, Widget child, CustomPage page);
+typedef CustomRouteBuilder<T> = Route<T> Function<T>(
+    BuildContext context, Widget child, CustomPage page);
 
 class CustomPage<T> extends AutoRoutePage<T> {
   final bool opaque;
@@ -206,7 +212,7 @@ class CustomPage<T> extends AutoRoutePage<T> {
 
   CustomPage({
     required RouteData routeData,
-    required Widget child,
+    required AutoRouteWidgetBuilder builder,
     bool fullscreenDialog = false,
     bool maintainState = true,
     this.opaque = true,
@@ -221,7 +227,7 @@ class CustomPage<T> extends AutoRoutePage<T> {
   }) : super(
           routeData: routeData,
           key: key,
-          child: child,
+          builder: builder,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
         );
@@ -236,7 +242,8 @@ class CustomPage<T> extends AutoRoutePage<T> {
       settings: this,
       opaque: opaque,
       transitionDuration: Duration(milliseconds: durationInMilliseconds),
-      reverseTransitionDuration: Duration(milliseconds: reverseDurationInMilliseconds),
+      reverseTransitionDuration:
+          Duration(milliseconds: reverseDurationInMilliseconds),
       barrierColor: barrierColor,
       barrierDismissible: barrierDismissible,
       barrierLabel: barrierLabel,
@@ -247,7 +254,10 @@ class CustomPage<T> extends AutoRoutePage<T> {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
     return child;
   }
 }
