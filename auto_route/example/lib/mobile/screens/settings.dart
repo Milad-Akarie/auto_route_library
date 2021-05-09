@@ -6,7 +6,7 @@ import '../router/router.gr.dart';
 class SettingsPage extends StatefulWidget {
   final String tab;
 
-  SettingsPage({Key? key, @pathParam required this.tab}) : super(key: key) {
+  SettingsPage({Key? key, @pathParam required this.tab}) : super(key: UniqueKey()) {
     print('constrocitng settings page');
   }
 
@@ -15,6 +15,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
+  var _count = 0;
   @override
   void didInitTabRoute(TabPageRoute? previousRoute) {
     print('did init settings tab');
@@ -50,10 +51,13 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Settings/${widget.tab}'),
+          Text('Settings/${widget.tab} $_count'),
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
+              setState(() {
+                _count++;
+              });
               // context.tabsRouter.pushChild(BookDetailsRoute(id: 4));
               //
               // context.navigateTo(
@@ -68,7 +72,7 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
 
               // context.tabsRouter.navigateNamed(route)
               // context.tabsRouter.navigate(const ProfileTab());
-              context.navigateNamedTo('profile/my-books?filter=changed', includePrefixMatches: true);
+              // context.navigateNamedTo('profile/my-books?filter=changed', includePrefixMatches: true);
             },
             child: Text('navigateNamed to profile/my-books'),
           )

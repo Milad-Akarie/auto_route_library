@@ -3,5 +3,6 @@ builders:
     import: "package:auto_route_generator/builder.dart"
     builder_factories: ["autoRouteGenerator"]
     build_extensions: {'.dart': ['.gr.dart']}
+    required_inputs: [".g.dart"]
     auto_apply: dependents
     build_to: source

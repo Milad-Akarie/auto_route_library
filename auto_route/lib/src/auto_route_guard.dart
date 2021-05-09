@@ -33,8 +33,10 @@ class NavigationResolver {
     this.pendingRoutes = const [],
   });
 
-  void next([bool continueNavigation = true]) =>
-      _completer.complete(continueNavigation);
+  void next([bool continueNavigation = true]) {
+    assert(!isResolved, '`next()` should only be called once.');
+    _completer.complete(continueNavigation);
+  }
 
   bool get isResolved => _completer.isCompleted;
 }
