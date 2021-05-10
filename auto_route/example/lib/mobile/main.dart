@@ -45,3 +45,10 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+class MyObserver extends AutoRouterObserver {
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    print('New route pushed: ${route.settings.name}');
+  }
+}

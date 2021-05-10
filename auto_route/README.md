@@ -26,14 +26,18 @@
   - [Navigating Between Screens](#navigating-between-screens)
   - [Passing Arguments](#passing-arguments) 
   - [Returning Results](#returning-results)
-  - [Nested navigation](#nested-navigation)     
+  - [Nested navigation](#nested-navigation)  
+  - [Tab Navigation](#tab-navigation)  
+  - [Finding The Right Router](#finding-the-right-router) 
+  - [Navigating Without Context](#navigation-without-context) 
 - [Working with Paths](#working-with-paths)    
-- [Finding The Right Router](#finding-the-right-router) 
 - [Route guards](#route-guards)
 - [Wrapping routes](#wrapping-routes)
+- [Navigation Observers](#navigation-observers)
 - [Customization](#customization)
   - [Custom Route Transitions](#custom-route-transitions)   
   - [Custom Route Builder](#custom-route-builder)
+ - [Examples](#examples)
   
     
 ## Introduction 
@@ -253,13 +257,344 @@ context.router.push(
           }),    
     );    
 ```    
-if you're finishing with the results make sure you call the callback function as you pop the page    
+if you're finishing with results make sure you call the callback function as you pop the page    
 ```dart    
 onRateBook(RESULT);    
 context.router.pop();    
 ```
  **Note:** Default values are respected. Required fields are also respected and handled properly.       
 
+
+## Nested Navigation
+Nested navigation means building an inner router inside of a page of another router, for example in the below diagram users page is built inside of dashboard page.
+
+<p align="center">    
+<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/dev/art/nested_router_demo.png" height="370">    
+</p> 
+
+ defining nested routes is as easy as populating the children field of the parent route. In the following example  `UsersPage` ,  `PostsPage` and `SettingsPage` are nested children of `DashboardPage`.    
+```dart    
+@MaterialAutoRouter(    
+  replaceInRouteName: 'Page,Route',    
+  routes: <AutoRoute>[    
+    AutoRoute(    
+      path: '/dashboard',    
+      page: DashboardPage,    
+      children: [    
+        AutoRoute(path: 'users', page: UsersPage),    
+        AutoRoute(path: 'posts', page: PostsPage),
+        AutoRoute(path: 'settings', page: SettingsPage),      
+      ],    
+    ),
+    AutoRoute(path: '/login', page: LoginPage)
+  ],    
+)    
+class $AppRouter {}    
+```   
+
+
+To render/build nested routes we need an `AutoRouter` widget that works as an outlet or a nested router-view inside of our dashboard page. 
+
+```dart    
+class DashboardPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Column(
+          children: [
+            NavLink(label: 'Users', destination: const UsersRoute()),
+            NavLink(label: 'Posts', destination: const PostsRoute()),
+            NavLink(label: 'Settings', destination: const SettingsRoute()),
+          ],
+        ),
+        Expanded(
+          // nested routes will be rendered here
+          child: AutoRouter(),
+        )
+      ],
+    );
+  }
+}
+```    
+    
+Now if we navigate to `/dashboard/users` we will be taken to the `DashboardPage` and the `UsersPage` will be shown inside of it. 
+
+What if want to show one of the child pages at `/dashboard`? we can simply do that by giving the child routes an empty path `''` or set it as initial.    
+    
+```dart    
+   AutoRoute(    
+      path: '/dashboard',    
+      page: UserPage,    
+      children: [    
+        AutoRoute(path: '', page: UsersPage),
+        //The same thing can be done using the initial flag
+        //AutoRoute(page: UsersPage,initial: true),    
+        AutoRoute(path: 'posts', page: PostsPage),    
+      ],    
+    ),    
+```    
+or by using a `RedirectRoute` 
+```dart    
+   AutoRoute(    
+      path: '/dashboard',    
+      page: UserPage,    
+      children: [    
+        RedirectRoute(path: '', redirectTo: 'users'),    
+        AutoRoute(path: 'users', page: UsersPage),    
+        AutoRoute(path: 'posts', page: PostsPage),     
+      ],    
+    ),    
+```    
+which can be simplified to the following where auto_route generates the redirect code for you.
+```dart    
+   AutoRoute(    
+      path: '/dashboard',    
+      page: UserPage,    
+      children: [    
+        // RedirectRoute(path: '', redirectTo: 'users'),    
+        AutoRoute(path: 'users', page: UsersPage, initial: true),    
+        AutoRoute(path: 'posts', page: PostsPage),     
+      ],    
+    ),    
+```   
+### Things to keep in mind when implementing nested navigation
+1- Each router manages it's own pages stack.
+2- Navigation actions like push, pop and friends are handled by the current router and bubble up if it couldn't be handled.
+
+
+## Tab Navigation
+If you're working with flutter mobile you're most likely to implement tabs navigation, that's why auto_route makes tabs navigation as easy and straightforward as possible. 
+
+in the previous example we used an `AutoRouter` widget to render nested child routes, `AutoRouter` is just a shortcut for `AutoStackRouter`, `StackRouters` manage a stack of pages inside of them where the active/visible page is always the one on top and you'd need to pop it to see the page beneath it.
+
+Now we can try to implement our tabs using an `AutoRouter` (StackRouter) by pushing or replacing a nested route every-time the tab changes and that might work but our tabs state will be lost, not to mention the transition between tabs issues, luckily auto_route comes equipped with an `AutoTabsRouter` which's especially made to handle tab navigation.
+
+`AutoTabsRouter`  lets you switch between different routes while preserving offstage-routes state, tab routes are lazily loaded by default ( can be disabled ) and finally it allows to create whatever transition animation you want.
+
+Let's change the previous example to use tab navigation.
+
+Notice that we're not going to change  anything in our routes declaration map, we still have a dashboard page that has tree nested children, users, posts and settings. 
+```dart    
+class DashboardPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AutoTabsRouter(
+    // list of your tab routes
+    // routes used here must be declaraed as children
+    // routes of /dashboard 
+      routes: const [
+        UsersRoute(),
+        PostsRoute(),
+        SettingsRoute(),
+      ],
+      builder: (context, child, animation) {
+        // obtain the scoped TabsRouter controller using context
+        final tabsRouter = AutoTabsRouter.of(context);
+        // Here we're building our Scaffold inside of AutoTabsRouter
+        // to access the tabsRouter controller provided in this context
+        // 
+        //alterntivly you could use a global key
+        return Scaffold(
+            body: FadeTransition(
+              opacity: animation,
+              // the passed child is techinaclly our animated selected-tab page
+              child: child,
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: tabsRouter.activeIndex,
+              onTap: (index) {
+                // here we switch between tabs
+                tabsRouter.setActiveIndex(index);
+              },
+              items: [
+                BottomNavigationBarItem(label: 'Users',...),
+                BottomNavigationBarItem(label: 'Posts',...),
+                BottomNavigationBarItem(label: 'Settings',...),
+              ],
+            ));
+      },
+    );
+  }
+}
+```    
+if you think the above setup is a bit messy you could use the shipped-in `AutoTabsScaffold` that makes things much cleaner.
+```dart    
+class DashboardPage extends StatelessWidget {
+
+ @override  
+Widget build(context) {  
+ @override
+  Widget build(context) {
+    return AutoTabsScaffold(
+       routes: const [
+        UsersRoute(),
+        PostsRoute(),
+        SettingsRoute(),
+      ],
+      bottomNavigationBuilder: (_,tabsRouter) {
+          return BottomNavigationBar(
+              currentIndex: tabsRouter.activeIndex,
+              onTap: tabsRouter.setActiveIndex
+              items: [
+                BottomNavigationBarItem(label: 'Users',...),
+                BottomNavigationBarItem(label: 'Posts',...),
+                BottomNavigationBarItem(label: 'Settings',...),
+              ],
+            )),       
+       }
+    );
+}
+```  
+    
+## Finding The Right Router 
+Every nested `AutoRouter` has its own routing controller to manage the stack inside of it and the easiest way to obtain a scoped controller is by using context.     
+    
+In the previous example `DashboardPage` is a root level stack entry so calling `AutoRouter.of(context)` anywhere inside of it will get us the root routing controller.    
+    
+`AutoRouter` widgets that are used to render nested routes, insert a new router scope into the widgets tree, so when a nested route calls for the scoped controller they will get the closest parent controller in the widgets tree not the root controller.     
+    
+```dart    
+class Dashboard extends StatelessWidget {    
+   
+  @override    
+  Widget build(BuildContext context) {    
+  // this will get us the root routing controller    
+    AutoRouter.of(context);    
+    return Scaffold(    
+      appBar: AppBar(title: Text('Dashboard page')),     
+      // this inserts a new router scope into the widgets tree    
+      body: AutoRouter()     
+    );    
+  }    
+}    
+```    
+Here's a simple diagram to help visualize this    
+    
+<p align="center">    
+<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">    
+</p>    
+    
+As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we have too different routing controllers  `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type.     
+```dart    
+router.parent<StackRouter>() // this returns  the parent router as a Stack Routing controller    
+router.parent<TabsRouter>() // this returns athe parent router as a Tabs Routing controller    
+```    
+on the other hand obtaining the root controller does not require type casting because it's always a `StackRouter`.    
+```dart    
+router.root // this returns the root router as a Stack Routing controller    
+```    
+    
+You can obtain access to inner-routers from outside their scope using a global key
+```dart    
+class DashboardPage extends StatefulWidget {
+  @override
+  _DashboardPageState createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  final _innerRouterKey = GlobalKey<AutoRouterState>();
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Column(
+          children: [
+            NavLink(label: 'Users',
+            onTap:(){
+               final router = _innerRouterKey.currentState?.controller;
+               router?.push(const UsersRoute());
+             }
+            ),
+            ...
+          ],
+        ),
+        Expanded(
+          child: AutoRouter(key: _innerRouterKey),
+        )
+      ],
+    );
+  }
+}
+```   
+
+You could also obtain access to inner-routers from outside their scope without a global key as long as they're initiated.
+```dart    
+// assuming this's the root router    
+context.innerRouterOf<StackRouter>(UserRoute.name)     
+// or if we're usign an AutoTabsRouter inside of DashboardPage
+context.innerRouterOf<TabsRouter>(UserRoute.name)  
+```    
+Accessing the `DashboardPage` inner router from the previous example.    
+    
+```dart    
+class Dashboard extends StatelessWidget {    
+  
+  @override    
+  Widget build(BuildContext context) {    
+    return Scaffold(    
+      appBar: AppBar(    
+        title: Text('Dashboard'),    
+        actions: [    
+          IconButton(    
+            icon: Icon(Icons.person),    
+            onPressed: () {    
+              // accessing the inner router from    
+              // outside the scope    
+              final router = context.innerRouterOf<StackRouter>(DashboardRoute.name)
+              router?.push(const UsersRoute());    
+            },    
+          ),    
+        ],    
+      ),    
+      body: AutoRouter(), // we're trying to get access to this    
+    );    
+  }    
+}    
+```    
+## Navigating Without Context
+To navigate without context you can simply assign your generated router to a global variable 
+```dart    
+// declerate your route as a global vairable
+final appRouter = AppRouter();  
+
+class MyApp extends StatefulWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerDelegate: AutoRouterDelegate(appRouter),
+      routeInformationParser: appRouter.defaultRouteParser(),
+      );
+    }
+```
+but using global variable is not recommended and is considered a bad practice and most of the times you should use dependency injection instead.
+
+Here's an example using `get_it` which is just a personal favorite, you can use any dependency injection package you like.
+
+```dart    
+void main(){
+// make sure you register it as a Singleton or a lazySingleton
+  getIt.registerSingleton<AppRouter>(AppRouter());
+  runApp(MyApp());
+ }
+
+class MyApp extends StatefulWidget {
+  @override
+  Widget build(BuildContext context) {
+    final router = getIt<AppRouter>();
+    return MaterialApp.router(
+      routerDelegate: AutoRouterDelegate(router),
+      routeInformationParser: router.defaultRouteParser(),
+      );
+    }
+```
+now you can gain access to your router anywhere inside of your App without using context.
+```dart 
+getIt<AppRouter>().push(...);
+```
+**Note:** navigating without context is not recommended in nested navigation. 
+   
 ## Working with Paths
  Working with paths in **AutoRoute** is optional because `PageRouteInfo` objects are matched by name unless pushed as a string using the `initialDeepLink` property in root delegate or `pushNamed`, `replaceNamed` `navigateNamed` methods.    
     
@@ -333,146 +668,6 @@ RedirectRoute(path: '*', redirectTo: '/')
 ```    
 **Note:** be sure to always add your wildcards at the end of your route list because routes are matched in order.    
     
-    
-## Nested Routes
- Nesting routes with AutoRoute is as easy as populating the children field of the parent route. In the following example both `UserProfilePage` and `UserPostsPage` are nested children of `UserPage`.    
-```dart    
-@MaterialAutoRouter(    
-  replaceInRouteName: 'Page,Route',    
-  routes: <AutoRoute>[    
-    AutoRoute(    
-      path: '/user/:id',    
-      page: UserPage,    
-      children: [    
-        AutoRoute(path: 'profile', page: UserProfilePage),    
-        AutoRoute(path: 'posts', page: UserPostsPage),    
-      ],    
-    ),    
-  ],    
-)    
-class $AppRouter {}    
-```    
-The parent page `UserPage` will be rendered inside of root router widget provided by `MaterialApp.router` but not its children, that's why we need to place an AutoRouter widget inside of `UserPage` where we need the nested routes to be rendered.     
-    
-```dart    
-class UserPage extends StatelessWidget {    
-  const UserPage({Key key, @pathParam this.id}) : super(key: key);    
-  final int id;    
-  @override    
-  Widget build(BuildContext context) {    
-    return Scaffold(    
-      appBar: AppBar(title: Text('User $id')),     
-      body: AutoRouter() // nested routes will be rendered here    
-    );    
-  }    
-}    
-```    
-    
-Now if we navigate to `/user/1` we will be presented with a page that has an appBar title that says `User 1` and an empty  body, why? because we haven't pushed any routes to our nested AutoRouter, but if we navigate to `user/1/profile` the `UserProfilePage` will be pushed to the nested router and that's what we will see.    
-    
-What if want to show one of the child pages at `/users/1`? we can simply do that by giving the child page an empty path `''`.    
-    
-```dart    
-   AutoRoute(    
-      path: '/user/:id',    
-      page: UserPage,    
-      children: [    
-        AutoRoute(path: '', page: UserProfilePage),    
-        AutoRoute(path: 'posts', page: UserPostsPage),    
-      ],    
-    ),    
-```    
-or by using `RedirectRoute` 
-```dart    
-   AutoRoute(    
-      path: '/user/:id',    
-      page: UserPage,    
-      children: [    
-        RedirectRoute(path: '', redirectTo: 'profile'),    
-        AutoRoute(path: 'profile', page: UserProfilePage),    
-        AutoRoute(path: 'posts', page: UserPostsPage),    
-      ],    
-    ),    
-```    
-in both cases whenever we navigate to `/user/1` we will be presented with the `UserProfilePage`.    
-    
-## Finding The Right Router 
-Every nested AutoRouter has its own routing controller to manage the stack inside of it and the easiest way to obtain a scoped controller is by using context.     
-    
-In the previous example `UserPage` is a root level stack entry so calling `AutoRouter.of(context)` anywhere inside of it will get us the root routing controller.    
-    
-`AutoRouter` widgets that are used to render nested routes insert a new router scope into the widgets tree, so when a nested route calls for the scoped controller they will get the closest parent controller in the widgets tree not the root controller.     
-    
-```dart    
-class UserPage extends StatelessWidget {    
-  const UserPage({Key key, @pathParam this.id}) : super(key: key);    
-  final int id;    
-  @override    
-  Widget build(BuildContext context) {    
-  // this will get us the root routing controller    
-    AutoRouter.of(context);    
-    return Scaffold(    
-      appBar: AppBar(title: Text('User $id')),     
-      // this inserts a new router scope into the widgets tree    
-      body: AutoRouter()     
-    );    
-  }    
-}    
-```    
-Here's a simple diagram to help visualize this    
-    
-<p align="center">    
-<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">    
-</p>    
-    
-As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we too different routing controllers  `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type.     
-```dart    
-router.parent<StackRouter>() // this returns a the parent router as a Stack Routing controller    
-router.parent<TabsRouter>() // this returns a the parent router as a Tabs Routing controller    
-```    
-on the other hand obtaining the root controller does not require type casting because it's always a `StackRouter`.    
-```dart    
-router.root // this returns the root router as a Stack Routing controller    
-```    
-    
-You could also obtain inner-routers from outside their scope as long as you have access to the parent router.    
-```dart    
-// assuming this's the root router    
-AutoRouter.of(context).innerRouterOf<StackRouter>(UserRoute.name)    
-// or use the short version     
-AutoRouter.innerRouterOf(context, UserRoute.name);    
-```    
-Accessing the `UserPage` inner router from the previous example.    
-    
-```dart    
-class UserPage extends StatelessWidget {    
-  final int id;    
-    
-  const UserPage({Key key, @pathParam this.id}) : super(key: key);    
-    
-  @override    
-  Widget build(BuildContext context) {    
-    return Scaffold(    
-      appBar: AppBar(    
-        title: Text('User $id'),    
-        actions: [    
-          IconButton(    
-            icon: Icon(Icons.account_box),    
-            onPressed: () {    
-              // accessing the inner router from    
-              // outside the scope    
-              AutoRouter.innerRouterOf(context, UserRoute.name).push(UserPostsRoute());    
-            },    
-          ),    
-        ],    
-      ),    
-      body: AutoRouter(), // we're trying to get access to this    
-    );    
-  }    
-}    
-```    
-**Note**: nested routing controllers are created along with the parent route so accessing them without context is safe as long as it's somewhere beneath the parent route ( The host page ).    
-    
 ## Route Guards
 Think of route guards as middleware or interceptors, routes can not be added to the stack without going through their assigned guards, Guards are useful for restricting access to certain routes.
 
@@ -514,6 +709,76 @@ After we run code generation, our router will have a required named argument cal
 final _appRouter = AppRouter(authGuard: AuthGuard());
 ```
 
+
+## Wrapping Routes
+
+In some cases we want to wrap our screen with a parent widget usually to provide some values through context, e.g wrapping your route with a custom `Theme` or a `Provider`, to do that simply implement `AutoRouteWrapper`, and let wrappedRoute(context) method return (this) as the child of your wrapper widget.
+
+```dart
+class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
+  @override
+  Widget wrappedRoute(BuildContext context) {
+  return Provider(create: (ctx) => ProductsBloc(), child: this);
+  ...
+```
+## Navigation Observers
+Navigation observers  are used to observe when routes are pushed ,replaced or popped ..etc.
+ 
+We implement an AutoRouter observer we extend `AutoRouterObserver` which's just a `NavigatorObserver` with tab route support. 
+
+```dart
+class MyObserver extends AutoRouterObserver {
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    print('New route pushed: ${route.settings.name}');
+  }
+ ...
+ // only override to observer tab routes
+ @override
+  void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
+    print('Tab route visited: ${route.name}');
+  }
+  @override
+  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
+    print('Tab route re-visited: ${route.name}');
+  }
+  ...
+}
+```
+Then we pass our observer to the root delegate `AutoRouterDelegate`.
+**Important** notice that `navigatorObservers` property is a builder function that returns a list of observes and the reason for that is a navigator observer instance can only be used by a single router, so unless you're using a one single router or you don't want your nested routers to inherit the observers make sure navigatorObservers builder always returns  fresh observer instances. 
+```dart
+   return MaterialApp.router(
+      routerDelegate: AutoRouterDelegate(
+        _appRouter,
+        navigatorObservers: () => [MyObserver()],
+      ),
+      routeInformationParser: _appRouter.defaultRouteParser(),
+    );
+```
+ the following approach **won't** work if you have nested routers unless they don't inherit the observers.
+```dart
+   final _observer = MyObserver();
+   return MaterialApp.router(
+      routerDelegate: AutoRouterDelegate(
+        _appRouter,
+        // this should always return new instances
+        navigatorObservers: () => [_observer],
+      ),
+      routeInformationParser: _appRouter.defaultRouteParser(),
+    );
+```
+
+Every nested router can have it's own observers and inherit it's parents's. 
+```dart
+ AutoRouter(
+    inheritNavigatorObservers: true, // true by defualt
+    navgiatorObservers:()=> [list of observers]);
+    
+ AutoTabsRouter(
+    inheritNavigatorObservers: true, // true by defualt
+    navgiatorObservers:()=> [list of observers]);
+```
 
 ## Customizations
 
@@ -619,7 +884,8 @@ We finish by passing a reference of our custom function to our CustomRoute.
 ```dart
 CustomRoute(page: CustomPage, customRouteBuilder: myCustomRouteBuilder)
 ```
+## Examples
+coming soon    
 
-## More docs are coming soon    
 ### Support auto_route
   You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can enhance a certain functionality or by reporting any problems you encounter and of course buying a couple coffees will help speed up the development process.
