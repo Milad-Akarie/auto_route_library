@@ -29,7 +29,8 @@
   - [Nested navigation](#nested-navigation)  
   - [Tab Navigation](#tab-navigation)  
   - [Finding The Right Router](#finding-the-right-router) 
-  - [Navigating Without Context](#navigation-without-context) 
+  - [Navigating Without Context](#navigation-without-context)
+- [Declarative Navigation](#declarative-navigation) 
 - [Working with Paths](#working-with-paths)    
 - [Route guards](#route-guards)
 - [Wrapping routes](#wrapping-routes)
@@ -568,7 +569,7 @@ class MyApp extends StatefulWidget {
       );
     }
 ```
-but using global variable is not recommended and is considered a bad practice and most of the times you should use dependency injection instead.
+**Note:** using global variable is not recommended and is considered a bad practice and most of the times you should use dependency injection instead.
 
 Here's an example using `get_it` which is just a personal favorite, you can use any dependency injection package you like.
 
@@ -589,7 +590,7 @@ class MyApp extends StatefulWidget {
       );
     }
 ```
-now you can gain access to your router anywhere inside of your App without using context.
+now you can access to your router anywhere inside of your App without using context.
 ```dart 
 getIt<AppRouter>().push(...);
 ```
@@ -605,12 +606,12 @@ When developing a web Application or a native App that requires deep-linking you
 ```dart    
  AutoRoute(path: '/books', page: BookListPage),    
 ```    
-#### Path Parameters (dynamic segments)
+### Path Parameters (dynamic segments)
  You can define a dynamic segment by prefixing it with a colon    
 ```dart    
  AutoRoute(path: '/books/:id', page: BookDetailsPage),    
 ```    
-The simplest way to extract path parameters from path and gain access to them is by annotating constructor param with `@PathParam('optional-alias')` with the same alias/name of the segment.    
+The simplest way to extract path parameters from path and gain access to them is by annotating constructor params with `@PathParam('optional-alias')` with the same alias/name of the segment.    
     
 ```dart    
 class BookDetailsPage extends StatelessWidget {    
@@ -621,14 +622,14 @@ class BookDetailsPage extends StatelessWidget {
 ```    
 Now writing `/books/1` in the browser will navigate you to `BookDetailsPage` and automatically extract the `bookId` argument from path and inject it to your widget.
     
-#### Query Parameters 
+### Query Parameters 
 Query parameters are accessed the same way, simply annotate the constructor parameter to hold the value of the query param with `@QueryParam('optional-alias')` and let AutoRoute do the rest.    
     
 you could also access path/query parameters using the scoped `RouteData` object.    
 ```dart    
  RouteData.of(context).pathParams;    
  // or using the extension    
- context.route.queryParams    
+ context.routeData.queryParams    
 ```    
 `Tip`: if your parameter name is the same as the path/query parameter, you could use the const @pathParam or @queryParam and not pass a slug/alias.
 
@@ -640,7 +641,7 @@ class BookDetailsPage extends StatelessWidget {
   ...    
 ```  
 
-#### Redirecting Paths 
+### Redirecting Paths 
 Paths can be redirected using `RedirectRoute`. The following setup will navigate us to `/books` when `/` is matched.    
     
 ```dart    
@@ -655,9 +656,9 @@ When redirecting initial routes the above setup can be simplified by setting the
      AutoRoute(path: '/books', page: BookListPage, initial: true),    
  ]    
 ```  
-Note:  `RedirectRoutes` are fully matched.    
+**Note**:  `RedirectRoutes` are fully matched.    
 
-#### Wildcards 
+### Wildcards 
 auto_route supports wildcard matching to handle invalid or undefined paths.    
 ```dart    
 AutoRoute(path: '*', page: UnknownRoutePage)    
@@ -669,7 +670,7 @@ RedirectRoute(path: '*', redirectTo: '/')
 **Note:** be sure to always add your wildcards at the end of your route list because routes are matched in order.    
     
 ## Route Guards
-Think of route guards as middleware or interceptors, routes can not be added to the stack without going through their assigned guards, Guards are useful for restricting access to certain routes.
+Think of route guards as middleware or interceptors, routes can not be added to the stack without going through their assigned guards, guards are useful for restricting access to certain routes.
 
 We create a route guard by extending `AutoRouteGuard` from the auto_route package
 and implementing our logic inside of the onNavigation method.
@@ -712,7 +713,7 @@ final _appRouter = AppRouter(authGuard: AuthGuard());
 
 ## Wrapping Routes
 
-In some cases we want to wrap our screen with a parent widget usually to provide some values through context, e.g wrapping your route with a custom `Theme` or a `Provider`, to do that simply implement `AutoRouteWrapper`, and let wrappedRoute(context) method return (this) as the child of your wrapper widget.
+In some cases we want to wrap our screen with a parent widget usually to provide some values through context, e.g wrapping your route with a custom `Theme` or a `Provider`, to do that simply implement `AutoRouteWrapper`, and have wrappedRoute(context) method return (this) as the child of your wrapper widget.
 
 ```dart
 class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
@@ -724,7 +725,7 @@ class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
 ## Navigation Observers
 Navigation observers  are used to observe when routes are pushed ,replaced or popped ..etc.
  
-We implement an AutoRouter observer we extend `AutoRouterObserver` which's just a `NavigatorObserver` with tab route support. 
+We implement an AutoRouter observer by extending an `AutoRouterObserver` which's just a `NavigatorObserver` with tab route support. 
 
 ```dart
 class MyObserver extends AutoRouterObserver {
@@ -746,7 +747,7 @@ class MyObserver extends AutoRouterObserver {
 }
 ```
 Then we pass our observer to the root delegate `AutoRouterDelegate`.
-**Important** notice that `navigatorObservers` property is a builder function that returns a list of observes and the reason for that is a navigator observer instance can only be used by a single router, so unless you're using a one single router or you don't want your nested routers to inherit the observers make sure navigatorObservers builder always returns  fresh observer instances. 
+**Important** notice that `navigatorObservers` property is a builder function that returns a list of observes and the reason for that is a navigator observer instance can only be used by a single router, so unless you're using a one single router or you don't want your nested routers to inherit observers make sure navigatorObservers builder always returns fresh observer instances. 
 ```dart
    return MaterialApp.router(
       routerDelegate: AutoRouterDelegate(
@@ -779,6 +780,68 @@ Every nested router can have it's own observers and inherit it's parents's.
     inheritNavigatorObservers: true, // true by defualt
     navgiatorObservers:()=> [list of observers]);
 ```
+We can also make a certain screen route aware by subscribing to an `AutoRouteObserver` ( Route not Router).
+
+First we provide our `AutoRouteObserver` instance
+```dart
+   return MaterialApp.router(
+      routerDelegate: AutoRouterDelegate(
+        _appRouter,
+       // Provide an AutoRouteOBserver instance
+        navigatorObservers: () => [AutoRouteObserver()],
+      ),
+      routeInformationParser: _appRouter.defaultRouteParser(),
+    );
+```
+
+Next we use an `AutoRouteAware` mixin which's is a  `RouteAware` mixin with tab support to provided the needed listeners then subscribe to our `AutoRouteObserver`.
+```dart
+class BooksListPage extends State<BookListPage> with AutoRouteAware {
+   AutoRouteObserver? _observer;
+   
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // RouterScope exposes the list of provided observers
+    // including inherited observers
+   _observer = RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    if (_observer != null) {
+      // we subscibe to the observer by passing our
+      // AutoRouteAware state and the scoped routeData
+      _observer.subscribe(this, context.routeData);
+    }
+  }
+  
+ @override
+  void dispose() {
+    super.dispose();
+    // don't forget to unsubscribe from the
+    // oberver on dispose
+    _observer.unsubscribe(this);
+  }
+
+ // only overide if this is a tab page
+   @override
+   void didInitTabRoute(TabPageRoute? previousRoute) {}
+
+ // only overide if this is a tab page
+   @override
+   void didChangeTabRoute(TabPageRoute previousRoute) {}
+
+   @override
+   void didPopNext() {}
+
+   @override
+   void didPushNext() {}
+
+   @override
+   void didPush() {}
+
+   @override
+   void didPop() {}
+}
+```
+
 
 ## Customizations
 
