@@ -25,9 +25,7 @@ class _BookListPageState extends State<BookListPage> with AutoRouteAware {
                             title: Text(book.name),
                             subtitle: Text(book.genre),
                             onTap: () {
-                              // BookDetailsRoute(id: book.id).show(context);
                               context.router.pushAll([
-                                BookDetailsRoute(id: book.id),
                                 BookDetailsRoute(id: book.id),
                               ]);
                             },
