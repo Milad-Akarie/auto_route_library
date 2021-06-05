@@ -133,8 +133,8 @@ class _AutoTabsRouterPageViewState extends State<_AutoTabsRouterPageView> {
 
   @override
   void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
-    super.didUpdateWidget(oldWidget);
     _controller.setupRoutes(widget.routes);
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

@@ -7,6 +7,8 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  flutter:
+    sdk: flutter
   build: ^2.0.0
   source_gen: ^1.0.0
   analyzer: ">=0.40.0 <2.0.0"
@@ -15,8 +17,8 @@ dependencies:
   code_builder: ^3.7.0
   dart_style: ^2.0.0
   auto_route:
-    ^1.0.2
-#    path: ../auto_route
+    # ^1.0.2
+    path: ../auto_route
 
 
 dev_dependencies:
