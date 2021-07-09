@@ -16,6 +16,8 @@ List<Class> buildRouteInfoAndArgs(
             ..symbol = 'PageRouteInfo'
             ..url = autoRouteImport;
           if (r.parameters.isNotEmpty) b.types.add(refer('${r.routeName}Args'));
+          // adds `void` type to be `strong-mode` compliant
+          if (r.parameters.isEmpty) b.types.add(refer('void'));
         })
         ..fields.add(Field(
           (b) => b
