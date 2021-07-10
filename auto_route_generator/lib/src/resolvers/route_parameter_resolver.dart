@@ -1,10 +1,11 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
 import 'package:source_gen/source_gen.dart';
+
+import '../../annotation.dart';
 
 final _pathParamChecker = TypeChecker.fromRuntime(PathParam);
 final _queryParamChecker = TypeChecker.fromRuntime(QueryParam);

@@ -1,8 +1,8 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:auto_route/annotations.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
+import 'annotation.dart';
 import 'src/code_builder/library_builder.dart';
 import 'src/resolvers/router_config_resolver.dart';
 import 'src/resolvers/type_resolver.dart';

@@ -7,18 +7,14 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
-  build: ^2.0.1
-  source_gen: ^1.0.0
-  analyzer: ">=0.40.0 <2.0.0"
+  build: ^2.0.3
+  source_gen: ^1.0.2
   path: ^1.8.0
-  build_runner: ^2.0.2
+  build_runner: ^2.0.6
   code_builder: ^4.0.0
   dart_style: ^2.0.1
-  auto_route:
-#    ^2.1.0
-    path: ../auto_route
-
 
 dev_dependencies:
-  source_gen_test:
-  test:
+  build_test: ^2.1.1
+  test: ^1.17.9
+  logging: ^1.0.1
