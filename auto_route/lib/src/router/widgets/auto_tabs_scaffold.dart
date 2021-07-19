@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-typedef AutoTabsBuilder = Widget Function(
+typedef AutoTabsBuilder = PreferredSizeWidget Function(
     BuildContext context, TabsRouter tabsRouter);
 
 class AutoTabsScaffold extends StatelessWidget {
@@ -108,12 +108,9 @@ class AutoTabsScaffold extends StatelessWidget {
           primary: primary,
           appBar: appBarBuilder == null
               ? null
-              : PreferredSize(
-                  child: appBarBuilder!(
-                    context,
-                    tabsRouter,
-                  ),
-                  preferredSize: Size.fromHeight(kToolbarHeight),
+              : appBarBuilder!(
+                  context,
+                  tabsRouter,
                 ),
           body: builder == null
               ? FadeTransition(opacity: animation, child: child)
