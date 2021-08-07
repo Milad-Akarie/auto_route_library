@@ -73,3 +73,6 @@
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+auto_route/pubspec.lock
+auto_route/example/pubspec.lock
+auto_route_generator/pubspec.lock
