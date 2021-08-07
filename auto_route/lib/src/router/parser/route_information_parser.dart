@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart'
-    show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
@@ -14,11 +13,9 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
 
   @override
-  Future<UrlState> parseRouteInformation(
-      RouteInformation routeInformation) async {
+  Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
     final uri = Uri.parse(routeInformation.location ?? '');
-    var matches =
-        _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
+    var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(UrlState(uri, matches ?? const []));
   }
 
@@ -64,9 +61,7 @@ class UrlState {
   }
 
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (match) => match.routeName == routeName)
-            ?.children ??
-        const [];
+    return _findSegment(segments, (match) => match.routeName == routeName)?.children ?? const [];
   }
 
   static Uri _buildUri(List<RouteMatch> routes) {
@@ -75,13 +70,21 @@ class UrlState {
       return Uri(path: fullPath);
     }
     fullPath = p.joinAll(
-      routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch),
+      routes.where((e) => e.stringMatch.isNotEmpty).map(
+            (e) => e.stringMatch,
+          ),
     );
     final normalized = p.normalize(fullPath);
     final lastSegment = routes.last;
-    var queryParams;
+    Map<String, dynamic> queryParams = {};
     if (lastSegment.queryParams.isNotEmpty) {
-      queryParams = lastSegment.queryParams.rawMap;
+      var queries = lastSegment.queryParams.rawMap;
+      for (var key in queries.keys) {
+        var value = queries[key]?.toString() ?? '';
+        if (value.isNotEmpty) {
+          queryParams[key] = value.toString();
+        }
+      }
     }
 
     var fragment;
@@ -90,7 +93,7 @@ class UrlState {
     }
     return Uri(
       path: normalized,
-      queryParameters: queryParams,
+      queryParameters: queryParams.isNotEmpty ? queryParams : null,
       fragment: fragment,
     );
   }
@@ -98,9 +101,7 @@ class UrlState {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UrlState &&
-          runtimeType == other.runtimeType &&
-          ListEquality().equals(segments, other.segments);
+      other is UrlState && runtimeType == other.runtimeType && ListEquality().equals(segments, other.segments);
 
   @override
   int get hashCode => ListEquality().hash(segments);

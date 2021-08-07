@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/screens/books/book_details_page.dart';
 import 'package:example/mobile/screens/books/book_list_page.dart';
+import 'package:flutter/cupertino.dart';
 
-import '../screens/books/routes.dart';
 import '../screens/home_page.dart';
 import '../screens/login_page.dart';
 import '../screens/profile/routes.dart';
@@ -15,7 +15,7 @@ export 'router.gr.dart';
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
     // app stack
-    AutoRoute(
+    AutoRoute<String>(
       path: '/',
       page: HomePage,
       children: [
@@ -43,11 +43,22 @@ export 'router.gr.dart';
     ),
     userDataRoutes,
     // auth
-    AutoRoute(
+    CustomRoute(
       path: '/login',
       page: LoginPage,
+      customRouteBuilder: myCustomRouteBuilder,
     ),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )
 class $RootRouter {}
+
+// typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget child, CustomPage page);
+
+Route<T> myCustomRouteBuilder<T>(BuildContext context, Widget child, CustomPage<T> page) {
+  return PageRouteBuilder(
+      fullscreenDialog: page.fullscreenDialog,
+      // this's important
+      settings: page,
+      pageBuilder: (_, __, ___) => child);
+}

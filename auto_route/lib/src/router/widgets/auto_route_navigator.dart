@@ -32,9 +32,28 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (widget.declarativeRoutesBuilder != null && _routesSnapshot == null) {
-      var routes = widget.declarativeRoutesBuilder!(context);
-      _routesSnapshot = routes;
-      widget.router.updateDeclarativeRoutes(routes);
+      _updateDeclarativeRoutes();
+    }
+  }
+
+  void _updateDeclarativeRoutes() {
+    var shouldNotify = false;
+    final delegate = AutoRouterDelegate.of(context);
+    var newRoutes = widget.declarativeRoutesBuilder!(context);
+    if (!ListEquality().equals(newRoutes, _routesSnapshot)) {
+      shouldNotify = true;
+      _routesSnapshot = newRoutes;
+      widget.router.updateDeclarativeRoutes(newRoutes);
+    } else if (!ListEquality().equals(
+      delegate.urlState.segments,
+      delegate.controller.currentSegments,
+    )) {
+      shouldNotify = true;
+    }
+    if (shouldNotify) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        delegate.notifyUrlChanged();
+      });
     }
   }
 
@@ -42,24 +61,7 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   void didUpdateWidget(covariant AutoRouteNavigator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.declarativeRoutesBuilder != null) {
-      var shouldNotify = false;
-      final delegate = AutoRouterDelegate.of(context);
-      var newRoutes = widget.declarativeRoutesBuilder!(context);
-      if (!ListEquality().equals(newRoutes, _routesSnapshot)) {
-        shouldNotify = true;
-        _routesSnapshot = newRoutes;
-        widget.router.updateDeclarativeRoutes(newRoutes);
-      } else if (!ListEquality().equals(
-        delegate.urlState.segments,
-        delegate.controller.currentSegments,
-      )) {
-        shouldNotify = true;
-      }
-      if (shouldNotify) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
-          delegate.notifyUrlChanged();
-        });
-      }
+      _updateDeclarativeRoutes();
     }
   }
 

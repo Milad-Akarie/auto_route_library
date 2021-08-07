@@ -17,13 +17,15 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _rootRouter = RootRouter();
-  final _authService = AuthService();
+  late final DefaultRouteParser _routeParser = _rootRouter.defaultRouteParser();
 
-  @override
-  void initState() {
-    super.initState();
-    _authService.addListener(() => setState(() {}));
-  }
+  // final _authService = AuthService();
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _authService.addListener(() => setState(() {}));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +33,13 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData.dark(),
       routerDelegate: AutoRouterDelegate(
         _rootRouter,
-        navigatorObservers: () => [AutoRouteObserver()],
       ),
-      routeInformationParser: _rootRouter.defaultRouteParser(),
+      routeInformationParser: _rootRouter.defaultRouteParser(
+        includePrefixMatches: true,
+      ),
       builder: (_, router) {
-        return ChangeNotifierProvider<AuthService>.value(
-          value: _authService,
+        return ChangeNotifierProvider<AuthService>(
+          create: (_) => AuthService(),
           child: BooksDBProvider(
             child: router!,
           ),
@@ -44,4 +47,9 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
+}
+
+class MyObserver extends AutoRouterObserver {
+  @override
+  void didPush(Route route, Route? previousRoute) {}
 }
