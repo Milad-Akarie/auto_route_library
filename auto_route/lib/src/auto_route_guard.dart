@@ -34,7 +34,7 @@ class NavigationResolver {
   });
 
   void next([bool continueNavigation = true]) {
-    assert(!isResolved, '`next()` should only be called once.');
+    assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
     _completer.complete(continueNavigation);
   }
 

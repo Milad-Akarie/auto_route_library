@@ -1,14 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
-
-import '../router/router.gr.dart';
 
 class SettingsPage extends StatefulWidget {
   final String tab;
 
-  SettingsPage({Key? key, @pathParam required this.tab}) : super(key: UniqueKey()) {
-    print('constrocitng settings page');
-  }
+  SettingsPage({Key? key, @pathParam required this.tab}) : super(key: key);
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -16,10 +13,9 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
   var _count = 0;
+
   @override
-  void didInitTabRoute(TabPageRoute? previousRoute) {
-    print('did init settings tab');
-  }
+  void didInitTabRoute(TabPageRoute? previousRoute) {}
 
   @override
   void didPush() {
@@ -55,24 +51,16 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                _count++;
-              });
-              // context.tabsRouter.pushChild(BookDetailsRoute(id: 4));
-              //
-              // context.navigateTo(
-              //   HomeRoute(
-              //     children: [
-              //       ProfileTab(children: [
-              //         MyBooksRoute(),
-              //       ]),
-              //     ],
-              //   ),
-              // );
+              // setState(() {
+              //   _count++;
+              // });
 
-              // context.tabsRouter.navigateNamed(route)
-              // context.tabsRouter.navigate(const ProfileTab());
-              // context.navigateNamedTo('profile/my-books?filter=changed', includePrefixMatches: true);
+              // context.navigateNamedTo('profile/my-books?filter=yedds', includePrefixMatches: true);
+              context.navigateTo(
+                ProfileTab(children: [
+                  MyBooksRoute(),
+                ]),
+              );
             },
             child: Text('navigateNamed to profile/my-books'),
           )

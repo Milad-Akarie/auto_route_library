@@ -25,6 +25,7 @@ abstract class AutoRoutePage<T> extends Page<T> {
     this.maintainState = true,
     LocalKey? key,
   }) : super(
+          restorationId: 'simple_page',
           name: routeData.name,
           arguments: routeData.route.args,
         );
@@ -194,7 +195,7 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   }
 }
 
-typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget child, CustomPage page);
+typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget child, CustomPage<T> page);
 
 class CustomPage<T> extends AutoRoutePage<T> {
   final bool opaque;

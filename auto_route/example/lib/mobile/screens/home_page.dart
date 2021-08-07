@@ -13,19 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  RoutingController? _router;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_router == null) {
-      _router = context.router;
-      _router!.addListener(() {
-        print(_router!.topMost); // topMost Router
-        print(_router!.topRoute.name); // the top most visible route
-      });
-    }
-  }
-
   @override
   Widget build(context) {
     return AutoTabsScaffold(

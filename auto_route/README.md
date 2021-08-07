@@ -19,8 +19,8 @@
 **for more docs with examples** https://autoroute.vercel.app    
   
 - [Introduction](#introduction)    
-- [Installation](#installation)    
-- [Setup and Usage](#setup-and-usage)    
+  - [Installation](#installation)    
+  - [Setup and Usage](#setup-and-usage)    
 - [Generated routes](#generated-routes)    
 - [Navigation](#navigating-between-screens)
   - [Navigating Between Screens](#navigating-between-screens)
@@ -29,13 +29,13 @@
   - [Nested navigation](#nested-navigation)  
   - [Tab Navigation](#tab-navigation)  
   - [Finding The Right Router](#finding-the-right-router) 
-  - [Navigating Without Context](#navigation-without-context)
+  - [Navigating Without Context](#navigating-without-context)
 - [Declarative Navigation](#declarative-navigation) 
 - [Working with Paths](#working-with-paths)    
 - [Route guards](#route-guards)
 - [Wrapping routes](#wrapping-routes)
 - [Navigation Observers](#navigation-observers)
-- [Customization](#customization)
+- [Customization](#customizations)
   - [Custom Route Transitions](#custom-route-transitions)   
   - [Custom Route Builder](#custom-route-builder)
  - [Examples](#examples)
@@ -46,7 +46,7 @@
 It’s a Flutter navigation package, it allows for strongly-typed arguments passing, effortless deep-linking and it uses code generation to simplify routes setup, with that being said it requires a minimal amount of code to generate everything needed for navigation inside of your App.    
 #### Why AutoRoute?
  If your App requires deep-linking or guarded routes or just a clean routing setup you'll need to use named/generated routes and you’ll end up writing a lot of boilerplate code for mediator argument classes, checking for required arguments, extracting arguments and a bunch of other stuff. AutoRoute does all that for you and much more.    
-### Installation    
+## Installation    
  ```yaml    
 dependencies:    
   auto_route: [latest-version]    
@@ -56,8 +56,7 @@ dev_dependencies:
   build_runner:    
 ```    
     
-### Setup and Usage    
- ---    
+## Setup And Usage
  Create a placeholder class and annotate it with `@MaterialAutoRouter` which takes a list of routes as a required argument.    
 **Note**: The name of the router must be prefixed with **\$** so we have a  generated class with the same name minus the **$**.    
     
@@ -223,7 +222,7 @@ then inside of your `LoginPage` pop with results
 ```dart  
 router.pop(true);   
 ```  
-as you'd notice we didn't specify the result type,  we're playing with dynamic values here, which can be risky and I personally don't recommend it.  
+as you'd notice we did not specify the result type,  we're playing with dynamic values here, which can be risky and I personally don't recommend it.  
 
 To avoid working with dynamic values we specify what type of results we expect our page to return, which is a `bool` value.
 ```dart   
@@ -369,7 +368,7 @@ If you're working with flutter mobile you're most likely to implement tabs navig
 
 in the previous example we used an `AutoRouter` widget to render nested child routes, `AutoRouter` is just a shortcut for `AutoStackRouter`, `StackRouters` manage a stack of pages inside of them where the active/visible page is always the one on top and you'd need to pop it to see the page beneath it.
 
-Now we can try to implement our tabs using an `AutoRouter` (StackRouter) by pushing or replacing a nested route every-time the tab changes and that might work but our tabs state will be lost, not to mention the transition between tabs issues, luckily auto_route comes equipped with an `AutoTabsRouter` which's especially made to handle tab navigation.
+Now we can try to implement our tabs using an `AutoRouter` (StackRouter) by pushing or replacing a nested route every-time the tab changes and that might work but our tabs state will be lost, not to mention the transition between tabs issues, luckily auto_route comes equipped with an `AutoTabsRouter` which is especially made to handle tab navigation.
 
 `AutoTabsRouter`  lets you switch between different routes while preserving offstage-routes state, tab routes are lazily loaded by default ( can be disabled ) and finally it allows to create whatever transition animation you want.
 
@@ -681,7 +680,7 @@ class AuthGuard extends AutoRouteGuard {
  // the navigation is paused until resolver.next() is called with either 
  // true to resume/continue navigation or false to abort navigation
      if(authenitcated){
-       // if user is autenticated we continue
+       // if user is authenticated we continue
         resolver.next(true);
       }else{
          // we redirect the user to our login page
@@ -689,7 +688,7 @@ class AuthGuard extends AutoRouteGuard {
                 // if success == true the navigation will be resumed
                 // else it will be aborted
                resolver.next(success);
-          });
+          }));
          }    
      }
 }
@@ -706,7 +705,7 @@ Now we assign our guard to the routes we want to protect.
 ```
 After we run code generation, our router will have a required named argument called authGuard or whatever your guard name is
 ```dart
-// we pass our AuthGaurd to the generated router.
+// we pass our AuthGuard to the generated router.
 final _appRouter = AppRouter(authGuard: AuthGuard());
 ```
 
@@ -720,12 +719,14 @@ class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
   @override
   Widget wrappedRoute(BuildContext context) {
   return Provider(create: (ctx) => ProductsBloc(), child: this);
+  }
   ...
 ```
 ## Navigation Observers
 Navigation observers  are used to observe when routes are pushed ,replaced or popped ..etc.
  
-We implement an AutoRouter observer by extending an `AutoRouterObserver` which's just a `NavigatorObserver` with tab route support. 
+We implement an AutoRouter observer by extending an `AutoRouterObserver` which is just a `NavigatorObserver` with tab route support. 
+
 
 ```dart
 class MyObserver extends AutoRouterObserver {
@@ -770,14 +771,14 @@ Then we pass our observer to the root delegate `AutoRouterDelegate`.
     );
 ```
 
-Every nested router can have it's own observers and inherit it's parents's. 
+Every nested router can have it's own observers and inherit it's parent's. 
 ```dart
  AutoRouter(
-    inheritNavigatorObservers: true, // true by defualt
+    inheritNavigatorObservers: true, // true by default
     navgiatorObservers:()=> [list of observers]);
     
  AutoTabsRouter(
-    inheritNavigatorObservers: true, // true by defualt
+    inheritNavigatorObservers: true, // true by default
     navgiatorObservers:()=> [list of observers]);
 ```
 We can also make a certain screen route aware by subscribing to an `AutoRouteObserver` ( Route not Router).
@@ -787,14 +788,14 @@ First we provide our `AutoRouteObserver` instance
    return MaterialApp.router(
       routerDelegate: AutoRouterDelegate(
         _appRouter,
-       // Provide an AutoRouteOBserver instance
+       // Provide an AutoRouteObserver instance
         navigatorObservers: () => [AutoRouteObserver()],
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),
     );
 ```
 
-Next we use an `AutoRouteAware` mixin which's is a  `RouteAware` mixin with tab support to provided the needed listeners then subscribe to our `AutoRouteObserver`.
+Next we use an `AutoRouteAware` mixin which is a  `RouteAware` mixin with tab support to provided the needed listeners then subscribe to our `AutoRouteObserver`.
 ```dart
 class BooksListPage extends State<BookListPage> with AutoRouteAware {
    AutoRouteObserver? _observer;
@@ -806,7 +807,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
     // including inherited observers
    _observer = RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
     if (_observer != null) {
-      // we subscibe to the observer by passing our
+      // we subscribe to the observer by passing our
       // AutoRouteAware state and the scoped routeData
       _observer.subscribe(this, context.routeData);
     }
@@ -816,15 +817,15 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
   void dispose() {
     super.dispose();
     // don't forget to unsubscribe from the
-    // oberver on dispose
+    // observer on dispose
     _observer.unsubscribe(this);
   }
 
- // only overide if this is a tab page
+ // only override if this is a tab page
    @override
    void didInitTabRoute(TabPageRoute? previousRoute) {}
 
- // only overide if this is a tab page
+ // only override if this is a tab page
    @override
    void didChangeTabRoute(TabPageRoute previousRoute) {}
 
@@ -844,13 +845,12 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 
 
 ## Customizations
-
 ##### MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter
 
 | Property                                 | Default value | Definition                                                                               |
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
 | preferRelativeImports [bool] | true         | if true relative imports will be used when possible |
-| replaceInRouteName [String] |    ''     | used to replace conventional words in generated route name (whatToReplacePattern,replacment) |
+| replaceInRouteName [String] |    ''     | used to replace conventional words in generated route name (whatToReplacePattern,replacement) |
 
 #### CustomAutoRouter
 
@@ -940,7 +940,7 @@ Route<T> myCustomRouteBuilder<T>(BuildContext context, Widget child, CustomPage<
   fullscreenDialog: page.fullscreenDialog,  
   // this is important  
   settings: page,  
-  pageBuilder: (,__,___)=> child);  
+  pageBuilder: (,__,___) => child);  
 }
 ```
 We finish by passing a reference of our custom function to our CustomRoute.
