@@ -1,7 +1,7 @@
-## [2.2.1]
+# ChangeLog
+## [2.2.2]
 - Added a `pageView` builder to `AutoTabsRouter` that allows the user to use a `PageView` with tabs for traditional sliding tabs.
 - Default example now uses `pageView` factory consturctor. Old example is commented out.
-# ChangeLog
 ## [2.2.1] 
 - Fix crash when passing non-string values as query params #606
 - Update analyzer version to 2.0.0
