@@ -12,8 +12,3 @@ export 'src/router/widgets/auto_router.dart';
 export 'src/router/widgets/auto_router.dart';
 export 'src/router/widgets/auto_router_delegate.dart';
 export 'src/router/widgets/auto_tabs_router.dart';
-export 'src/router/widgets/auto_tabs_router.dart';
-export 'src/router/widgets/auto_tabs_scaffold.dart';
-export 'src/router/widgets/auto_back_button.dart';
-export 'src/router/parser/route_information_parser.dart';
-export 'src/router/controller/controller_scope.dart';

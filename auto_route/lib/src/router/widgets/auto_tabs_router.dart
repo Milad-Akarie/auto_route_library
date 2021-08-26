@@ -11,7 +11,45 @@ import '../controller/routing_controller.dart';
 typedef AnimatedIndexedStackBuilder = Widget Function(
     BuildContext context, Widget child, Animation<double> animation);
 
-class AutoTabsRouter extends StatefulWidget {
+typedef PageViewBuilder = Widget Function(
+    BuildContext context, List<Widget> children, TabsRouter controller);
+
+abstract class AutoTabsRouter extends Widget {
+  List<PageRouteInfo> get routes;
+
+  factory AutoTabsRouter({
+    Key? key,
+    required List<PageRouteInfo> routes,
+    bool lazyLoad,
+    Duration duration,
+    Curve curve,
+    AnimatedIndexedStackBuilder? builder,
+  }) = _AutoTabsRouterStack;
+
+  factory AutoTabsRouter.pageView({
+    Key? key,
+    required List<PageRouteInfo> routes,
+    required PageController pageController,
+    PageViewBuilder builder,
+    int initialIndex,
+  }) = _AutoTabsRouterPageView;
+
+  static TabsRouter of(BuildContext context) {
+    var scope = TabsRouterScope.of(context);
+    assert(() {
+      if (scope == null) {
+        throw FlutterError(
+            'AutoTabsRouter operation requested with a context that does not include an AutoTabsRouter.\n'
+            'The context used to retrieve the AutoTabsRouter must be that of a widget that '
+            'is a descendant of an AutoTabsRouter widget.');
+      }
+      return true;
+    }());
+    return scope!.controller;
+  }
+}
+
+class _AutoTabsRouterStack extends StatefulWidget implements AutoTabsRouter {
   final AnimatedIndexedStackBuilder? builder;
   final List<PageRouteInfo> routes;
   final Duration duration;
@@ -23,7 +61,7 @@ class AutoTabsRouter extends StatefulWidget {
   final bool declarative;
   final OnTabNavigateCallBack? onNavigate;
 
-  const AutoTabsRouter({
+  const _AutoTabsRouterStack({
     Key? key,
     required this.routes,
     this.lazyLoad = true,
@@ -55,24 +93,106 @@ class AutoTabsRouter extends StatefulWidget {
         super(key: key);
 
   @override
-  AutoTabsRouterState createState() => AutoTabsRouterState();
+  _AutoTabsRouterStackState createState() => _AutoTabsRouterStackState();
+}
 
-  static TabsRouter of(BuildContext context) {
-    var scope = TabsRouterScope.of(context);
-    assert(() {
-      if (scope == null) {
-        throw FlutterError(
-            'AutoTabsRouter operation requested with a context that does not include an AutoTabsRouter.\n'
-            'The context used to retrieve the AutoTabsRouter must be that of a widget that '
-            'is a descendant of an AutoTabsRouter widget.');
+class _AutoTabsRouterPageView extends StatefulWidget implements AutoTabsRouter {
+  final List<PageRouteInfo> routes;
+  final PageViewBuilder builder;
+  final PageController pageController;
+  final int initialIndex;
+
+  _AutoTabsRouterPageView({
+    Key? key,
+    required this.routes,
+    required this.pageController,
+    this.builder = _defaultBuilder,
+    this.initialIndex = 0,
+  }) : super(key: key);
+
+  static Widget _defaultBuilder(_, child, animation) {
+    return FadeTransition(opacity: animation, child: child);
+  }
+
+  @override
+  _AutoTabsRouterPageViewState createState() => _AutoTabsRouterPageViewState();
+}
+
+class _AutoTabsRouterPageViewState extends State<_AutoTabsRouterPageView> {
+  late TabsRouter _controller;
+  late int _index;
+
+  TabsRouter get controller => _controller;
+
+  @override
+  void initState() {
+    _index = widget.initialIndex;
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final entry = StackEntryScope.of(context);
+
+    _controller = entry as TabsRouter;
+    _index = _controller.activeIndex;
+    _resetController();
+  }
+
+  void _resetController() {
+    _controller.setupRoutes(widget.routes);
+
+    final rootDelegate = RootRouterDelegate.of(context);
+
+    _controller.addListener(() {
+      if (_controller.activeIndex != _index) {
+        widget.pageController.jumpToPage(_controller.activeIndex);
+
+        setState(() {
+          _index = _controller.activeIndex;
+        });
+
+        rootDelegate.notify();
       }
-      return true;
-    }());
-    return scope!.controller;
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
+    _controller.setupRoutes(widget.routes);
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final stack = _controller.stack;
+
+    return RoutingControllerScope(
+      controller: _controller,
+      child: TabsRouterScope(
+        controller: _controller,
+        child: Builder(
+          builder: (context) {
+            return widget.builder(
+              context,
+              stack.map((item) => item.wrappedChild(context)).toList(),
+              _controller,
+            );
+          },
+        ),
+      ),
+    );
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter>
+class _AutoTabsRouterStackState extends State<_AutoTabsRouterStack>
     with SingleTickerProviderStateMixin {
   TabsRouter? _controller;
   late AnimationController _animationController;
@@ -159,7 +279,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   }
 
   @override
-  void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
+  void didUpdateWidget(covariant _AutoTabsRouterStack oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes);

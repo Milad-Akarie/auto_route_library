@@ -1,3 +1,6 @@
+## [2.2.1]
+- Added a `pageView` builder to `AutoTabsRouter` that allows the user to use a `PageView` with tabs for traditional sliding tabs.
+- Default example now uses `pageView` factory consturctor. Old example is commented out.
 # ChangeLog
 ## [2.2.0] Breaking changes!
 - Remove helper methods pushToChild and replaceInChild from TabsRouter [Bad idea]. [Breaking]
