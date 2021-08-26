@@ -29,7 +29,7 @@ class RootRouter extends _i1.RootStackRouter {
     HomeRoute.name: (routeData) => _i1.MaterialPageX<String>(
         routeData: routeData,
         builder: (_) {
-          return const _i3.HomePage();
+          return _i3.HomePage();
         }),
     UserDataCollectorRoute.name: (routeData) => _i1.MaterialPageX<_i4.UserData>(
         routeData: routeData,
@@ -166,7 +166,7 @@ class RootRouter extends _i1.RootStackRouter {
       ];
 }
 
-class HomeRoute extends _i1.PageRouteInfo {
+class HomeRoute extends _i1.PageRouteInfo<void> {
   const HomeRoute({List<_i1.PageRouteInfo>? children})
       : super(name, path: '/', initialChildren: children);
 
@@ -221,14 +221,14 @@ class LoginRouteArgs {
   final bool showBackButton;
 }
 
-class BooksTab extends _i1.PageRouteInfo {
+class BooksTab extends _i1.PageRouteInfo<void> {
   const BooksTab({List<_i1.PageRouteInfo>? children})
       : super(name, path: 'books', initialChildren: children);
 
   static const String name = 'BooksTab';
 }
 
-class ProfileTab extends _i1.PageRouteInfo {
+class ProfileTab extends _i1.PageRouteInfo<void> {
   const ProfileTab({List<_i1.PageRouteInfo>? children})
       : super(name, path: 'profile', initialChildren: children);
 
@@ -253,7 +253,7 @@ class SettingsTabArgs {
   final String tab;
 }
 
-class BookListRoute extends _i1.PageRouteInfo {
+class BookListRoute extends _i1.PageRouteInfo<void> {
   const BookListRoute() : super(name, path: '');
 
   static const String name = 'BookListRoute';
@@ -275,7 +275,7 @@ class BookDetailsRouteArgs {
   final int id;
 }
 
-class ProfileRoute extends _i1.PageRouteInfo {
+class ProfileRoute extends _i1.PageRouteInfo<void> {
   const ProfileRoute() : super(name, path: '');
 
   static const String name = 'ProfileRoute';
