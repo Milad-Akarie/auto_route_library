@@ -16,7 +16,7 @@ class AuthGuard extends AutoRouteGuard {
           isAuthenticated = true;
           // we can't pop the bottom page in the navigator's stack
           // so we just remove it from our local stack
-          router.removeLast();
+          router.popForced();
           resolver.next();
         }),
       );

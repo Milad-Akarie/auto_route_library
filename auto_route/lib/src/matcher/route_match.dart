@@ -37,8 +37,7 @@ class RouteMatch {
 
   bool get fromRedirect => redirectedFrom != null;
 
-  List<String> get allSegments =>
-      [...segments, if (hasChildren) ...children!.last.allSegments];
+  List<String> get allSegments => [...segments, if (hasChildren) ...children!.last.allSegments];
 
   List<RouteMatch> get flattened {
     return [this, if (hasChildren) ...children!.last.flattened];
@@ -107,7 +106,7 @@ class RouteMatch {
 
   @override
   String toString() {
-    return 'RouteMatch{routeName: $routeName pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom}';
+    return 'RouteMatch{pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom, routeName: $routeName, path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
   }
 
   PageRouteInfo toRoute() => PageRouteInfo.fromMatch(this);

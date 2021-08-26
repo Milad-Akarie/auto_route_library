@@ -5,18 +5,20 @@
 // **************************************************************************
 
 import 'package:auto_route/auto_route.dart' as _i1;
+import 'package:flutter/cupertino.dart' as _i14;
 import 'package:flutter/material.dart' as _i2;
 
-import '../screens/books/book_details_page.dart' as _i8;
-import '../screens/books/book_list_page.dart' as _i7;
+import '../screens/books/book_details_page.dart' as _i9;
+import '../screens/books/book_list_page.dart' as _i8;
 import '../screens/home_page.dart' as _i3;
 import '../screens/login_page.dart' as _i5;
-import '../screens/profile/my_books_page.dart' as _i10;
-import '../screens/profile/profile_page.dart' as _i9;
-import '../screens/settings.dart' as _i6;
+import '../screens/profile/my_books_page.dart' as _i11;
+import '../screens/profile/profile_page.dart' as _i10;
+import '../screens/settings.dart' as _i7;
 import '../screens/user-data/data_collector.dart' as _i4;
-import '../screens/user-data/sinlge_field_page.dart' as _i11;
-import '../screens/user-data/user_data_page.dart' as _i12;
+import '../screens/user-data/single_field_page.dart' as _i12;
+import '../screens/user-data/user_data_page.dart' as _i13;
+import 'router.dart' as _i6;
 
 class RootRouter extends _i1.RootStackRouter {
   RootRouter([_i2.GlobalKey<_i2.NavigatorState>? navigatorKey])
@@ -24,7 +26,7 @@ class RootRouter extends _i1.RootStackRouter {
 
   @override
   final Map<String, _i1.PageFactory> pagesMap = {
-    HomeRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    HomeRoute.name: (routeData) => _i1.MaterialPageX<String>(
         routeData: routeData,
         builder: (_) {
           return const _i3.HomePage();
@@ -37,7 +39,7 @@ class RootRouter extends _i1.RootStackRouter {
           return _i4.UserDataCollectorPage(
               key: args.key, onResult: args.onResult);
         }),
-    LoginRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
+    LoginRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
           final args =
@@ -46,7 +48,10 @@ class RootRouter extends _i1.RootStackRouter {
               key: args.key,
               onLoginResult: args.onLoginResult,
               showBackButton: args.showBackButton);
-        }),
+        },
+        customRouteBuilder: _i6.myCustomRouteBuilder,
+        opaque: true,
+        barrierDismissible: false),
     BooksTab.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
@@ -63,12 +68,12 @@ class RootRouter extends _i1.RootStackRouter {
           final pathParams = data.pathParams;
           final args = data.argsAs<SettingsTabArgs>(
               orElse: () => SettingsTabArgs(tab: pathParams.getString('tab')));
-          return _i6.SettingsPage(key: args.key, tab: args.tab);
+          return _i7.SettingsPage(key: args.key, tab: args.tab);
         }),
     BookListRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i7.BookListPage();
+          return _i8.BookListPage();
         }),
     BookDetailsRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -77,12 +82,12 @@ class RootRouter extends _i1.RootStackRouter {
           final args = data.argsAs<BookDetailsRouteArgs>(
               orElse: () =>
                   BookDetailsRouteArgs(id: pathParams.getInt('id', -1)));
-          return _i8.BookDetailsPage(id: args.id);
+          return _i9.BookDetailsPage(id: args.id);
         }),
     ProfileRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
         builder: (_) {
-          return _i9.ProfilePage();
+          return _i10.ProfilePage();
         }),
     MyBooksRoute.name: (routeData) => _i1.MaterialPageX<dynamic>(
         routeData: routeData,
@@ -90,15 +95,15 @@ class RootRouter extends _i1.RootStackRouter {
           final queryParams = data.queryParams;
           final args = data.argsAs<MyBooksRouteArgs>(
               orElse: () => MyBooksRouteArgs(
-                  filter: queryParams.getString('filter', 'none')));
-          return _i10.MyBooksPage(key: args.key, filter: args.filter);
+                  filter: queryParams.optString('filter', 'none')));
+          return _i11.MyBooksPage(key: args.key, filter: args.filter);
         }),
     NameFieldRoute.name: (routeData) => _i1.CustomPage<dynamic>(
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<NameFieldRouteArgs>(
               orElse: () => const NameFieldRouteArgs());
-          return _i11.SingleFieldPage(
+          return _i12.SingleFieldPage(
               key: args.key,
               message: args.message,
               willPopMessage: args.willPopMessage,
@@ -112,7 +117,7 @@ class RootRouter extends _i1.RootStackRouter {
         builder: (data) {
           final args = data.argsAs<FavoriteBookFieldRouteArgs>(
               orElse: () => const FavoriteBookFieldRouteArgs());
-          return _i11.SingleFieldPage(
+          return _i12.SingleFieldPage(
               key: args.key,
               message: args.message,
               willPopMessage: args.willPopMessage,
@@ -126,7 +131,7 @@ class RootRouter extends _i1.RootStackRouter {
         builder: (data) {
           final args = data.argsAs<UserDataRouteArgs>(
               orElse: () => const UserDataRouteArgs());
-          return _i12.UserDataPage(key: args.key, onResult: args.onResult);
+          return _i13.UserDataPage(key: args.key, onResult: args.onResult);
         },
         transitionsBuilder: _i1.TransitionsBuilders.slideRightWithFade,
         opaque: true,
@@ -148,7 +153,7 @@ class RootRouter extends _i1.RootStackRouter {
           _i1.RouteConfig(SettingsTab.name, path: 'settings/:tab')
         ]),
         _i1.RouteConfig(UserDataCollectorRoute.name,
-            path: 'user-data',
+            path: '/user-data',
             children: [
               _i1.RouteConfig(NameFieldRoute.name, path: 'name'),
               _i1.RouteConfig(FavoriteBookFieldRoute.name,
@@ -171,11 +176,11 @@ class HomeRoute extends _i1.PageRouteInfo {
 class UserDataCollectorRoute
     extends _i1.PageRouteInfo<UserDataCollectorRouteArgs> {
   UserDataCollectorRoute(
-      {_i2.Key? key,
+      {_i14.Key? key,
       dynamic Function(_i4.UserData)? onResult,
       List<_i1.PageRouteInfo>? children})
       : super(name,
-            path: 'user-data',
+            path: '/user-data',
             args: UserDataCollectorRouteArgs(key: key, onResult: onResult),
             initialChildren: children);
 
@@ -185,14 +190,14 @@ class UserDataCollectorRoute
 class UserDataCollectorRouteArgs {
   const UserDataCollectorRouteArgs({this.key, this.onResult});
 
-  final _i2.Key? key;
+  final _i14.Key? key;
 
   final dynamic Function(_i4.UserData)? onResult;
 }
 
 class LoginRoute extends _i1.PageRouteInfo<LoginRouteArgs> {
   LoginRoute(
-      {_i2.Key? key,
+      {_i14.Key? key,
       void Function(bool)? onLoginResult,
       bool showBackButton = true})
       : super(name,
@@ -209,7 +214,7 @@ class LoginRouteArgs {
   const LoginRouteArgs(
       {this.key, this.onLoginResult, this.showBackButton = true});
 
-  final _i2.Key? key;
+  final _i14.Key? key;
 
   final void Function(bool)? onLoginResult;
 
@@ -231,7 +236,7 @@ class ProfileTab extends _i1.PageRouteInfo {
 }
 
 class SettingsTab extends _i1.PageRouteInfo<SettingsTabArgs> {
-  SettingsTab({_i2.Key? key, required String tab})
+  SettingsTab({_i14.Key? key, required String tab})
       : super(name,
             path: 'settings/:tab',
             args: SettingsTabArgs(key: key, tab: tab),
@@ -243,7 +248,7 @@ class SettingsTab extends _i1.PageRouteInfo<SettingsTabArgs> {
 class SettingsTabArgs {
   const SettingsTabArgs({this.key, required this.tab});
 
-  final _i2.Key? key;
+  final _i14.Key? key;
 
   final String tab;
 }
@@ -277,7 +282,7 @@ class ProfileRoute extends _i1.PageRouteInfo {
 }
 
 class MyBooksRoute extends _i1.PageRouteInfo<MyBooksRouteArgs> {
-  MyBooksRoute({_i2.Key? key, String filter = 'none'})
+  MyBooksRoute({_i14.Key? key, String? filter = 'none'})
       : super(name,
             path: 'my-books',
             args: MyBooksRouteArgs(key: key, filter: filter),
@@ -289,14 +294,14 @@ class MyBooksRoute extends _i1.PageRouteInfo<MyBooksRouteArgs> {
 class MyBooksRouteArgs {
   const MyBooksRouteArgs({this.key, this.filter = 'none'});
 
-  final _i2.Key? key;
+  final _i14.Key? key;
 
-  final String filter;
+  final String? filter;
 }
 
 class NameFieldRoute extends _i1.PageRouteInfo<NameFieldRouteArgs> {
   NameFieldRoute(
-      {_i2.Key? key,
+      {_i14.Key? key,
       String message = '',
       String willPopMessage = '',
       void Function(String)? onNext})
@@ -315,7 +320,7 @@ class NameFieldRouteArgs {
   const NameFieldRouteArgs(
       {this.key, this.message = '', this.willPopMessage = '', this.onNext});
 
-  final _i2.Key? key;
+  final _i14.Key? key;
 
   final String message;
 
@@ -327,7 +332,7 @@ class NameFieldRouteArgs {
 class FavoriteBookFieldRoute
     extends _i1.PageRouteInfo<FavoriteBookFieldRouteArgs> {
   FavoriteBookFieldRoute(
-      {_i2.Key? key,
+      {_i14.Key? key,
       String message = '',
       String willPopMessage = '',
       void Function(String)? onNext})
@@ -346,7 +351,7 @@ class FavoriteBookFieldRouteArgs {
   const FavoriteBookFieldRouteArgs(
       {this.key, this.message = '', this.willPopMessage = '', this.onNext});
 
-  final _i2.Key? key;
+  final _i14.Key? key;
 
   final String message;
 
@@ -356,7 +361,7 @@ class FavoriteBookFieldRouteArgs {
 }
 
 class UserDataRoute extends _i1.PageRouteInfo<UserDataRouteArgs> {
-  UserDataRoute({_i2.Key? key, dynamic Function(_i4.UserData)? onResult})
+  UserDataRoute({_i14.Key? key, dynamic Function(_i4.UserData)? onResult})
       : super(name,
             path: 'results',
             args: UserDataRouteArgs(key: key, onResult: onResult));
@@ -367,7 +372,7 @@ class UserDataRoute extends _i1.PageRouteInfo<UserDataRouteArgs> {
 class UserDataRouteArgs {
   const UserDataRouteArgs({this.key, this.onResult});
 
-  final _i2.Key? key;
+  final _i14.Key? key;
 
   final dynamic Function(_i4.UserData)? onResult;
 }

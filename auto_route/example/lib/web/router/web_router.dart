@@ -55,21 +55,17 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context
-                        .pushRoute(
-                          UserRoute(
-                            id: 1,
-                            children: [
-                              UserProfileRoute()
-                              // UserPostsRoute(children: [
-                              //   UserAllPostsRoute(),
-                              // ])
-                            ],
-                          ),
-                        )
-                        .then(
-                          (value) => print('UserPopped $value'),
-                        );
+                    context.pushRoute(
+                      UserRoute(
+                        id: 1,
+                        children: [
+                          UserProfileRoute(likes: 2)
+                          // UserPostsRoute(children: [
+                          //   UserAllPostsRoute(),
+                          // ])
+                        ],
+                      ),
+                    );
                   },
               child: Text('Navigate to user/1'),
             ),
@@ -86,10 +82,12 @@ class HomePage extends StatelessWidget {
 
 class UserProfilePage extends StatelessWidget {
   final VoidCallback? navigate;
+  final int likes;
 
   const UserProfilePage({
     Key? key,
     this.navigate,
+    @queryParam this.likes = 0,
   }) : super(key: key);
 
 //
@@ -209,6 +207,7 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('UserPageQuery ${context.routeData.queryParams}');
     return Scaffold(
       appBar: AppBar(
         title: Text(context.topRoute.name),

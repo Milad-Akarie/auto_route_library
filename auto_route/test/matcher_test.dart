@@ -64,7 +64,11 @@ void main() {
       children: [subRouteC1],
     );
 
-    final routeCollection = RouteCollection.from([routeA, routeB, routeC]);
+    final routeCollection = RouteCollection.from([
+      routeA,
+      routeB,
+      routeC,
+    ]);
 
     final match = RouteMatcher(routeCollection).match;
 
@@ -72,10 +76,10 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'B',
+          key: ValueKey('B'),
           path: '/b',
           stringMatch: '/b',
           segments: ['/', 'b'],
-          key: ValueKey('B'),
         )
       ];
       expect(match('/b'), expectedMatches);
@@ -90,11 +94,15 @@ void main() {
         RouteMatch(
           routeName: 'C',
           path: '/c',
+          stringMatch: '/c',
+          key: ValueKey('C'),
           segments: ['/', 'c'],
           children: [
             RouteMatch(
               routeName: 'C1',
-              path: '/c1',
+              path: 'c1',
+              stringMatch: 'c1',
+              key: ValueKey('C1'),
               segments: ['c1'],
             )
           ],
@@ -134,10 +142,18 @@ void main() {
 
     test('Should return two matches [A,B]', () {
       final expectedMatches = [
-        RouteMatch(routeName: 'A', path: '/', segments: ['/']),
+        RouteMatch(
+          routeName: 'A',
+          path: '/',
+          stringMatch: '/',
+          key: ValueKey('A'),
+          segments: ['/'],
+        ),
         RouteMatch(
           routeName: 'B',
           path: '/b',
+          stringMatch: '/b',
+          key: ValueKey('B'),
           segments: ['/', 'b'],
         )
       ];
@@ -149,16 +165,22 @@ void main() {
         RouteMatch(
           routeName: 'A',
           path: '/',
+          stringMatch: '/',
+          key: ValueKey('A'),
           segments: ['/'],
         ),
         RouteMatch(
           routeName: 'C',
           path: '/c',
+          stringMatch: '/c',
+          key: ValueKey('C'),
           segments: ['/', 'c'],
           children: [
             RouteMatch(
               routeName: 'C1',
-              path: '/c1',
+              path: 'c1',
+              stringMatch: 'c1',
+              key: ValueKey('C1'),
               segments: ['c1'],
             )
           ],
@@ -169,15 +191,25 @@ void main() {
 
     test('Should return two prefix matches with one nested match [A, D/D0]', () {
       final expectedMatches = [
-        RouteMatch(routeName: 'A', path: '/', segments: ['/']),
+        RouteMatch(
+          routeName: 'A',
+          path: '/',
+          stringMatch: '/',
+          key: ValueKey('A'),
+          segments: ['/'],
+        ),
         RouteMatch(
           routeName: 'D',
           path: '/d',
+          stringMatch: '/d',
+          key: ValueKey('D'),
           segments: ['/', 'd'],
           children: [
             RouteMatch(
               routeName: 'D0',
               path: '',
+              stringMatch: '',
+              key: ValueKey('D0'),
               segments: [],
             ),
           ],
@@ -188,19 +220,31 @@ void main() {
 
     test('Should return two matches with two nested matches including empty path [A, D/D0/D1]', () {
       final expectedMatches = [
-        RouteMatch(routeName: 'A', path: '/', segments: ['/']),
+        RouteMatch(
+          routeName: 'A',
+          path: '/',
+          stringMatch: '/',
+          key: ValueKey('A'),
+          segments: ['/'],
+        ),
         RouteMatch(
           routeName: 'D',
           path: '/d',
+          stringMatch: '/d',
+          key: ValueKey('D'),
           segments: ['/', 'd'],
           children: [
             RouteMatch(
               path: '',
+              stringMatch: '',
+              key: ValueKey('D0'),
               routeName: 'D0',
               segments: [],
             ),
             RouteMatch(
               routeName: 'D1',
+              stringMatch: 'd1',
+              key: ValueKey('D1'),
               path: 'd1',
               segments: ['d1'],
             )
@@ -216,9 +260,27 @@ void main() {
 
     test('Should return two prefix matches and one full match [A, B, B/B1]', () {
       final expectedMatches = [
-        RouteMatch(routeName: 'A', path: '/', segments: ['/']),
-        RouteMatch(routeName: 'B', path: '/b', segments: ['/', 'b']),
-        RouteMatch(routeName: 'B1', path: '/b1', segments: ['/', 'b', 'b1'])
+        RouteMatch(
+          routeName: 'A',
+          key: ValueKey('A'),
+          stringMatch: '/',
+          path: '/',
+          segments: ['/'],
+        ),
+        RouteMatch(
+          routeName: 'B',
+          key: ValueKey('B'),
+          stringMatch: '/b',
+          path: '/b',
+          segments: ['/', 'b'],
+        ),
+        RouteMatch(
+          routeName: 'B1',
+          key: ValueKey('B1'),
+          stringMatch: '/b/b1',
+          path: '/b/b1',
+          segments: ['/', 'b', 'b1'],
+        )
       ];
       expect(match('/b/b1', includePrefixMatches: true), expectedMatches);
     });
@@ -245,7 +307,9 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'WC',
-          path: '/x/y',
+          key: ValueKey('WC'),
+          stringMatch: '/x/y',
+          path: '*',
           segments: ['/', 'x', 'y'],
         )
       ];
@@ -256,7 +320,9 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'WC',
-          path: '/c/c1/x',
+          key: ValueKey('WC'),
+          stringMatch: '/c/c1/x',
+          path: '*',
           segments: ['/', 'c', 'c1', 'x'],
         )
       ];
@@ -267,6 +333,8 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           path: '/d/*',
+          key: ValueKey('PWC'),
+          stringMatch: '/d/x/y',
           routeName: 'PWC',
           segments: ['/', 'd', 'x', 'y'],
         )
@@ -296,8 +364,10 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'A',
+          key: ValueKey('A'),
+          stringMatch: '/a',
           path: '/a',
-          segments: ['/', 'a'],
+          segments: ['/'],
           redirectedFrom: '/',
         )
       ];
@@ -308,11 +378,15 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'C',
+          key: ValueKey('C'),
+          stringMatch: '/c',
           path: '/c',
           segments: ['/', 'c'],
           children: [
             RouteMatch(
               routeName: 'C1',
+              key: ValueKey('C1'),
+              stringMatch: 'c1',
               path: 'c1',
               segments: ['c1'],
               redirectedFrom: '/c',
@@ -327,9 +401,11 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'A',
-          path: '/',
-          segments: ['/', 'a'],
-          redirectedFrom: '/x/y',
+          key: ValueKey('A'),
+          stringMatch: '/a',
+          path: '/a',
+          segments: ['*'],
+          redirectedFrom: '*',
         )
       ];
       expect(match('/x/y'), expectedMatches);
@@ -356,7 +432,9 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'A',
-          path: '/',
+          key: ValueKey('A'),
+          stringMatch: '/a/1',
+          path: '/a/:id',
           segments: ['/', 'a', '1'],
           pathParams: Parameters({'id': '1'}),
         )
@@ -368,7 +446,9 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'B',
-          path: '/b/1/n/none',
+          key: ValueKey('B'),
+          stringMatch: '/b/1/n/none',
+          path: '/b/:id/n/:type',
           segments: ['/', 'b', '1', 'n', 'none'],
           pathParams: Parameters({
             'id': '1',
@@ -383,12 +463,16 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           routeName: 'C',
+          key: ValueKey('C'),
+          stringMatch: '/c',
           path: '/c',
           segments: ['/', 'c'],
           children: [
             RouteMatch(
               path: ':id',
               routeName: 'C1',
+              key: ValueKey('C1'),
+              stringMatch: '1',
               segments: ['1'],
               pathParams: Parameters({'id': '1'}),
             )
@@ -419,7 +503,7 @@ void main() {
       final expectedMatches = [
         RouteMatch(
           key: ValueKey('A'),
-          stringMatch: '/',
+          stringMatch: '/a',
           routeName: 'A',
           path: '/a',
           segments: ['/', 'a'],
@@ -464,8 +548,8 @@ void main() {
             RouteMatch(
               key: ValueKey('C1'),
               routeName: 'C1',
-              path: '/c1',
-              stringMatch: '/c1',
+              path: 'c1',
+              stringMatch: 'c1',
               segments: ['c1'],
               queryParams: Parameters({'foo': 'bar'}),
             )
@@ -481,13 +565,14 @@ void main() {
           key: ValueKey('A'),
           stringMatch: '/a',
           routeName: 'A',
-          path: '/',
+          path: '/a',
           segments: ['/', 'a'],
           queryParams: Parameters({
             'foo': ['bar', 'baz']
           }),
         )
       ];
+
       expect(match('/a?foo=bar&foo=baz'), expectedMatches);
     });
   });

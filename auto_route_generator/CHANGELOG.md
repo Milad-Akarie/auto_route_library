@@ -1,6 +1,8 @@
 # ChangeLog
 # ChangeLog
 ## [2.1.0] Breaking changes!
+- adds `void` type to `PageRouteInfo<void>` to become `strong-mode` compliant
+## [2.1.0] Breaking changes!
 - AutoRouteGuard no longer returns a future<bool> and passes in a resolver. [Breaking]
 - Remove onInitialRoutes from AutoRouterDelegate. [Breaking]
 - Rename RoutingControllerScope to RouterScope. [Breaking]

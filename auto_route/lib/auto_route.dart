@@ -1,5 +1,6 @@
 library auto_route;
 
+export 'src/navigation_failure.dart';
 export 'src/auto_route_guard.dart';
 export 'src/common/common.dart';
 export 'src/matcher/route_match.dart';

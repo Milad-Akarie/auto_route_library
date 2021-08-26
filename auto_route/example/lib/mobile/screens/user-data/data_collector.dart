@@ -23,32 +23,33 @@ class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
 class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
   Widget build(context) {
-    var settingsState = context.watch<SettingsState>();
-    print('building settingState ${settingsState.userData}');
+    print('router building');
     return Scaffold(
-      body: AutoRouter.declarative(
-          routes: (_) => [
-                if (settingsState.userData.favoriteBook == null)
-                  FavoriteBookFieldRoute(
-                    message: 'What is your favorite book?',
-                    willPopMessage: 'Please enter a book name!',
-                    onNext: (text) {
-                      settingsState.userData = settingsState.userData.copyWith(favoriteBook: text);
-                    },
-                  ),
-                if (settingsState.userData.name == null)
-                  NameFieldRoute(
-                    message: 'What is your name?',
-                    willPopMessage: 'Please enter a name!',
-                    onNext: (text) {
-                      settingsState.userData = settingsState.userData.copyWith(name: text);
-                    },
-                  ),
-                if (settingsState.userData.isDone) UserDataRoute(onResult: widget.onResult),
-              ],
-          onPopRoute: (route, results) {
-            // reset the state based on popped route
-          }),
+      body: AutoRouter.declarative(routes: (context) {
+        var settingsState = context.watch<SettingsState>();
+
+        return [
+          if (settingsState.userData.favoriteBook == null)
+            FavoriteBookFieldRoute(
+              message: 'What is your favorite book?',
+              willPopMessage: 'Please enter a book name!',
+              onNext: (text) {
+                settingsState.userData = settingsState.userData.copyWith(favoriteBook: text);
+              },
+            ),
+          if (settingsState.userData.name == null)
+            NameFieldRoute(
+              message: 'What is your name?',
+              willPopMessage: 'Please enter a name!',
+              onNext: (text) {
+                settingsState.userData = settingsState.userData.copyWith(name: text);
+              },
+            ),
+          if (settingsState.userData.isDone) UserDataRoute(onResult: widget.onResult),
+        ];
+      }, onPopRoute: (route, results) {
+        // reset the state based on popped route
+      }),
     );
   }
 }
