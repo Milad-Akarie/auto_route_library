@@ -66,7 +66,7 @@ class ParamConfig {
       case 'num':
         return type.isNullable ? 'optNum' : 'getNum';
       case 'bool':
-        return type.isNullable ? 'optNum' : 'getBool';
+        return type.isNullable ? 'optBool' : 'getBool';
       default:
         return 'get';
     }
