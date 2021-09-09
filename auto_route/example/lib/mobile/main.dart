@@ -16,8 +16,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _rootRouter = RootRouter();
-  late final DefaultRouteParser _routeParser = _rootRouter.defaultRouteParser();
+  final _rootRouter = RootRouter(
+    authGuard: AuthGuard(),
+  );
 
   // final _authService = AuthService();
 
@@ -35,8 +36,8 @@ class _MyAppState extends State<MyApp> {
         _rootRouter,
       ),
       routeInformationParser: _rootRouter.defaultRouteParser(
-        includePrefixMatches: true,
-      ),
+          // includePrefixMatches: true,
+          ),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => AuthService(),

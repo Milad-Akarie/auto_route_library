@@ -1,4 +1,14 @@
 # ChangeLog
+##[2.3.1]
+- Fix navigate to nested routes open last visited nested route #676
+- Add pop parent route support in AutoBackButton
+##[2.3.0]
+- Fix crash when passing non-string values as query params #606
+- Update analyzer version to 2.0.0
+- Update build_runner,build and source_gen versions
+- Merge #616 Export navigation failure
+- Merge #550 Enable AutoTabsScaffold to support custom appbar [Breaking]
+- Update README file
 ## [2.2.1] 
 - Fix crash when passing non-string values as query params #606
 - Update analyzer version to 2.0.0

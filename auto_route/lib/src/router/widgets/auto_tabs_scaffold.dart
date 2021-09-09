@@ -3,8 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-typedef AutoTabsBuilder = PreferredSize Function(
-    BuildContext context, TabsRouter tabsRouter);
+typedef AppBarBuilder = PreferredSizeWidget Function(
+  BuildContext context,
+  TabsRouter tabsRouter,
+);
+
+typedef BottomNavigationBuilder = Widget Function(
+  BuildContext context,
+  TabsRouter tabsRouter,
+);
 
 class AutoTabsScaffold extends StatelessWidget {
   final AnimatedIndexedStackBuilder? builder;
@@ -12,7 +19,7 @@ class AutoTabsScaffold extends StatelessWidget {
   final Duration animationDuration;
   final Curve animationCurve;
   final bool lazyLoad;
-  final AutoTabsBuilder? bottomNavigationBuilder;
+  final BottomNavigationBuilder? bottomNavigationBuilder;
   final NavigatorObserversBuilder navigatorObservers;
   final bool inheritNavigatorObservers;
   final Widget? floatingActionButton;
@@ -35,7 +42,7 @@ class AutoTabsScaffold extends StatelessWidget {
   final String? restorationId;
   final bool extendBody;
   final bool extendBodyBehindAppBar;
-  final AutoTabsBuilder? appBarBuilder;
+  final AppBarBuilder? appBarBuilder;
   final GlobalKey<ScaffoldState>? scaffoldKey;
 
   const AutoTabsScaffold({
