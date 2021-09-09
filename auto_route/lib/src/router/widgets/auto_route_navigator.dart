@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
@@ -67,7 +68,7 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
+    final navigator = Navigator(
       key: widget.router.navigatorKey,
       observers: widget.navigatorObservers,
       restorationScopeId:
@@ -88,6 +89,18 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         return true;
       },
     );
+
+    // fixes nested cupertino routes back gesture issue
+    if (!widget.router.isRoot) {
+      return WillPopScope(
+        child: navigator,
+        onWillPop: widget.router.canPopSelfOrChildren
+            ? () => SynchronousFuture(true)
+            : null,
+      );
+    }
+
+    return navigator;
   }
 }
 
