@@ -20,7 +20,7 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  final _appRouter = WebAppRouter(authGuard: AuthGuard());
+  final _appRouter = WebAppRouter();
   final authService = AuthService();
 
   @override

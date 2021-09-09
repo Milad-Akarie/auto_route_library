@@ -5,7 +5,13 @@ import '../../../auto_route.dart';
 
 class AutoBackButton extends StatefulWidget {
   final Color? color;
-  const AutoBackButton({Key? key, this.color}) : super(key: key);
+  final bool showIfParentCanPop;
+
+  const AutoBackButton({
+    Key? key,
+    this.color,
+    this.showIfParentCanPop = true,
+  }) : super(key: key);
 
   @override
   _AutoBackButtonState createState() => _AutoBackButtonState();
@@ -15,7 +21,9 @@ class _AutoBackButtonState extends State<AutoBackButton> {
   @override
   Widget build(BuildContext context) {
     final scope = RouterScope.of(context);
-    if (scope.controller.canPopSelfOrChildren) {
+    if (scope.controller.canPopSelfOrChildren ||
+        (widget.showIfParentCanPop &&
+            scope.controller.parent()?.canPopSelfOrChildren == true)) {
       return BackButton(
         color: widget.color,
         onPressed: scope.controller.popTop,
