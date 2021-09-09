@@ -11,7 +11,8 @@ dependencies:
     sdk: flutter
   provider: ^5.0.0
   auto_route:
-    path: ../
+    path: ../../auto_route
+  modal_bottom_sheet: ^2.0.0
 
 
 dev_dependencies:
