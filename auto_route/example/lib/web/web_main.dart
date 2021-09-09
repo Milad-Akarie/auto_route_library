@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/auth_guard.dart';
+import 'package:example/web/router/web_auth_guard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +20,7 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  final _appRouter = WebAppRouter();
+  final _appRouter = WebAppRouter(authGuard: AuthGuard());
   final authService = AuthService();
 
   @override

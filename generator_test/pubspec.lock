@@ -35,7 +35,7 @@ packages:
       path: "../auto_route"
       relative: true
     source: path
-    version: "2.2.1"
+    version: "2.3.1"
   auto_route_generator:
     dependency: "direct main"
     description:

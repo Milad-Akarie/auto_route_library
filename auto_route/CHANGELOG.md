@@ -1,4 +1,7 @@
 # ChangeLog
+##[2.3.2]
+- Merge fix(generator): Bool opt type as num #688
+- Fix nested back gesture issue #686 
 ##[2.3.1]
 - Fix navigate to nested routes open last visited nested route #676
 - Add pop parent route support in AutoBackButton
