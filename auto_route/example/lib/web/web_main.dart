@@ -22,7 +22,7 @@ class App extends StatefulWidget {
 class AppState extends State<App> {
   final _appRouter = WebAppRouter(authGuard: AuthGuard());
   final authService = AuthService();
-
+  final x = 1;
   @override
   void initState() {
     super.initState();
@@ -81,6 +81,7 @@ class AppState extends State<App> {
   }
 }
 
+@AutoRoute()
 class LoginPage extends StatelessWidget {
   final void Function(bool isLoggedIn)? onLoginResult;
 

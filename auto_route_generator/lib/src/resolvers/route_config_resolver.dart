@@ -17,13 +17,13 @@ const TypeChecker autoRouteChecker = TypeChecker.fromUrl(
 
 // extracts route configs from class fields and their meta data
 class RouteConfigResolver {
-  final RouterConfig _routerConfig;
+  final RouterConfig routerConfig;
   final TypeResolver _typeResolver;
 
-  RouteConfigResolver(this._routerConfig, this._typeResolver);
+  RouteConfigResolver(this.routerConfig, this._typeResolver);
 
-  RouteConfig resolve(ConstantReader autoRoute) {
-    final page = autoRoute.peek('page')?.typeValue;
+  RouteConfig resolve(ConstantReader autoRoute, [DartType? page]) {
+    // final page = autoRoute.peek('page')?.typeValue;
     var path = autoRoute.peek('path')?.stringValue;
     if (page == null) {
       var redirectTo = autoRoute.peek('redirectTo')?.stringValue;
@@ -45,7 +45,7 @@ class RouteConfigResolver {
     var className = page.getDisplayString(withNullability: false);
 
     if (path == null) {
-      var prefix = _routerConfig.parent != null ? '' : '/';
+      var prefix = routerConfig.parent != null ? '' : '/';
       if (autoRoute.peek('initial')?.boolValue == true) {
         path = prefix;
       } else {
@@ -53,7 +53,7 @@ class RouteConfigResolver {
       }
     }
     throwIf(
-      path.startsWith("/") && _routerConfig.parent != null,
+      path.startsWith("/") && routerConfig.parent != null,
       'Child [$path] can not start with a forward slash',
     );
 
@@ -72,11 +72,7 @@ class RouteConfigResolver {
     var initial = autoRoute.peek('initial')?.boolValue ?? false;
     var usesPathAsKey = autoRoute.peek('usesPathAsKey')?.boolValue ?? false;
     var guards = <ImportableType>[];
-    autoRoute
-        .peek('guards')
-        ?.listValue
-        .map((g) => g.toTypeValue())
-        .forEach((guard) {
+    autoRoute.peek('guards')?.listValue.map((g) => g.toTypeValue()).forEach((guard) {
       guards.add(_typeResolver.resolveType(guard!));
     });
 
@@ -105,43 +101,34 @@ class RouteConfigResolver {
       cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       routeType = RouteType.custom;
-      durationInMilliseconds =
-          autoRoute.peek('durationInMilliseconds')?.intValue;
-      reverseDurationInMilliseconds =
-          autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
+      durationInMilliseconds = autoRoute.peek('durationInMilliseconds')?.intValue;
+      reverseDurationInMilliseconds = autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
       customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      customRouteBarrierDismissible =
-          autoRoute.peek('barrierDismissible')?.boolValue;
+      customRouteBarrierDismissible = autoRoute.peek('barrierDismissible')?.boolValue;
       customRouteBarrierLabel = autoRoute.peek('barrierLabel')?.stringValue;
-      final function =
-          autoRoute.peek('transitionsBuilder')?.objectValue.toFunctionValue();
+      final function = autoRoute.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
-        transitionBuilder =
-            _typeResolver.resolveImportableFunctionType(function);
+        transitionBuilder = _typeResolver.resolveImportableFunctionType(function);
       }
-      final builderFunction =
-          autoRoute.peek('customRouteBuilder')?.objectValue.toFunctionValue();
+      final builderFunction = autoRoute.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (builderFunction != null) {
-        customRouteBuilder =
-            _typeResolver.resolveImportableFunctionType(builderFunction);
+        customRouteBuilder = _typeResolver.resolveImportableFunctionType(builderFunction);
       }
     } else {
-      var globConfig = _routerConfig.globalRouteConfig;
+      var globConfig = routerConfig.globalRouteConfig;
       routeType = globConfig.routeType;
       if (globConfig.routeType == RouteType.custom) {
         transitionBuilder = globConfig.transitionBuilder;
         durationInMilliseconds = globConfig.durationInMilliseconds;
-        customRouteBarrierDismissible =
-            globConfig.customRouteBarrierDismissible;
+        customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
         customRouteOpaque = globConfig.customRouteOpaque;
-        reverseDurationInMilliseconds =
-            globConfig.reverseDurationInMilliseconds;
+        reverseDurationInMilliseconds = globConfig.reverseDurationInMilliseconds;
         customRouteBuilder = globConfig.customRouteBuilder;
       }
     }
 
     var name = autoRoute.peek('name')?.stringValue;
-    var replacementInRouteName = _routerConfig.replaceInRouteName;
+    var replacementInRouteName = routerConfig.replaceInRouteName;
 
     final constructor = classElement.unnamedConstructor;
     var hasConstConstructor = false;
@@ -163,10 +150,8 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs = parameters.where((p) =>
-          (p.isRequired || p.isPositional) &&
-          !p.isPathParam &&
-          !p.isQueryParam);
+      var unParsableRequiredArgs =
+          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
         print(
             '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '

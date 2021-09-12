@@ -7,7 +7,7 @@ class RouterConfig {
   final String routerClassName;
   final RouterConfig? parent;
   final String? replaceInRouteName;
-  final ClassElement element;
+  final ClassElement? element;
 
   RouterConfig({
     required this.routes,
@@ -49,6 +49,6 @@ class RouterConfig {
     return routers;
   }
 
-  List<RouterConfig> get collectAllRoutersIncludingParent => subRouters.fold(
-      [this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
+  List<RouterConfig> get collectAllRoutersIncludingParent =>
+      subRouters.fold([this], (all, e) => all..addAll(e.collectAllRoutersIncludingParent));
 }

@@ -14,10 +14,14 @@ dependencies:
   build_runner: ^2.1.2
   code_builder: ^4.1.0
   dart_style: ^2.1.0
+  merging_builder: ^0.2.2
   auto_route:
-    ^2.3.2
-#    path: ../auto_route
+#    ^2.3.2
+    path: ../auto_route
 
+dependency_overrides:
+  analyzer: 2.2.0
+  meta: 1.7.0
 
 dev_dependencies:
   source_gen_test:

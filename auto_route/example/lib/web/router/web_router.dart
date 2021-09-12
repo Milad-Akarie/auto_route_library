@@ -31,6 +31,26 @@ import 'package:flutter/material.dart';
 )
 class $WebAppRouter {}
 
+class ReturnType<T> implements Type {
+  const ReturnType() : super();
+
+  Type get type => T;
+}
+
+class Parent {
+  final String? _path;
+  final Type? _page;
+
+  const Parent(Type page)
+      : _page = page,
+        _path = null;
+
+  const Parent.fromPath(String path)
+      : _path = path,
+        _page = null;
+}
+
+@AutoRoute(initial: true)
 class HomePage extends StatelessWidget {
   final VoidCallback? navigate, showUserPosts;
 
@@ -81,6 +101,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
+@AutoRoute()
 class UserProfilePage extends StatelessWidget {
   final VoidCallback? navigate;
   final int likes;
@@ -88,7 +109,7 @@ class UserProfilePage extends StatelessWidget {
   const UserProfilePage({
     Key? key,
     this.navigate,
-    @queryParam this.likes = 0,
+    @queryParam this.likes = 3,
   }) : super(key: key);
 
   @override
@@ -130,6 +151,7 @@ class UserProfilePage extends StatelessWidget {
   }
 }
 
+@AutoRoute(path: 'x')
 class UserPostsPage extends StatefulWidget {
   @override
   _UserPostsPageState createState() => _UserPostsPageState();
@@ -162,6 +184,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
   }
 }
 
+@AutoRoute()
 class UserPage extends StatefulWidget {
   final int id;
 
@@ -221,6 +244,7 @@ class _UserPageState extends State<UserPage> {
   }
 }
 
+@AutoRoute()
 class NotFoundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -235,6 +259,7 @@ class NotFoundScreen extends StatelessWidget {
   }
 }
 
+@AutoRoute()
 class UserAllPostsPage extends StatelessWidget {
   final VoidCallback? navigate;
 
@@ -265,6 +290,7 @@ class UserAllPostsPage extends StatelessWidget {
   }
 }
 
+@AutoRoute()
 class UserFavoritePostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
