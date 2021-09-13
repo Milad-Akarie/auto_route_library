@@ -11,7 +11,9 @@ import '../models/router_config.dart';
 import '../resolvers/route_parameter_resolver.dart';
 import '../resolvers/type_resolver.dart';
 
-const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(AutoRoute);
+const TypeChecker autoRouteChecker = TypeChecker.fromUrl(
+  'package:auto_route/src/common/auto_route_annotations.dart#AutoRouterAnnotation',
+);
 
 // extracts route configs from class fields and their meta data
 class RouteConfigResolver {
@@ -70,7 +72,11 @@ class RouteConfigResolver {
     var initial = autoRoute.peek('initial')?.boolValue ?? false;
     var usesPathAsKey = autoRoute.peek('usesPathAsKey')?.boolValue ?? false;
     var guards = <ImportableType>[];
-    autoRoute.peek('guards')?.listValue.map((g) => g.toTypeValue()).forEach((guard) {
+    autoRoute
+        .peek('guards')
+        ?.listValue
+        .map((g) => g.toTypeValue())
+        .forEach((guard) {
       guards.add(_typeResolver.resolveType(guard!));
     });
 
@@ -99,18 +105,25 @@ class RouteConfigResolver {
       cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       routeType = RouteType.custom;
-      durationInMilliseconds = autoRoute.peek('durationInMilliseconds')?.intValue;
-      reverseDurationInMilliseconds = autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
+      durationInMilliseconds =
+          autoRoute.peek('durationInMilliseconds')?.intValue;
+      reverseDurationInMilliseconds =
+          autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
       customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      customRouteBarrierDismissible = autoRoute.peek('barrierDismissible')?.boolValue;
+      customRouteBarrierDismissible =
+          autoRoute.peek('barrierDismissible')?.boolValue;
       customRouteBarrierLabel = autoRoute.peek('barrierLabel')?.stringValue;
-      final function = autoRoute.peek('transitionsBuilder')?.objectValue.toFunctionValue();
+      final function =
+          autoRoute.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
-        transitionBuilder = _typeResolver.resolveImportableFunctionType(function);
+        transitionBuilder =
+            _typeResolver.resolveImportableFunctionType(function);
       }
-      final builderFunction = autoRoute.peek('customRouteBuilder')?.objectValue.toFunctionValue();
+      final builderFunction =
+          autoRoute.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (builderFunction != null) {
-        customRouteBuilder = _typeResolver.resolveImportableFunctionType(builderFunction);
+        customRouteBuilder =
+            _typeResolver.resolveImportableFunctionType(builderFunction);
       }
     } else {
       var globConfig = _routerConfig.globalRouteConfig;
@@ -118,9 +131,11 @@ class RouteConfigResolver {
       if (globConfig.routeType == RouteType.custom) {
         transitionBuilder = globConfig.transitionBuilder;
         durationInMilliseconds = globConfig.durationInMilliseconds;
-        customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
+        customRouteBarrierDismissible =
+            globConfig.customRouteBarrierDismissible;
         customRouteOpaque = globConfig.customRouteOpaque;
-        reverseDurationInMilliseconds = globConfig.reverseDurationInMilliseconds;
+        reverseDurationInMilliseconds =
+            globConfig.reverseDurationInMilliseconds;
         customRouteBuilder = globConfig.customRouteBuilder;
       }
     }
@@ -148,8 +163,10 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs =
-          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+      var unParsableRequiredArgs = parameters.where((p) =>
+          (p.isRequired || p.isPositional) &&
+          !p.isPathParam &&
+          !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
         print(
             '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '

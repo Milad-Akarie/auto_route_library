@@ -1,5 +1,8 @@
 # ChangeLog
-# ChangeLog
+##[2.3.2]
+- Merge fix(generator): Bool opt type as num #688
+- Fix nested back gesture issue #686
+
 ## [2.1.0] Breaking changes!
 - adds `void` type to `PageRouteInfo<void>` to become `strong-mode` compliant
 ## [2.1.0] Breaking changes!

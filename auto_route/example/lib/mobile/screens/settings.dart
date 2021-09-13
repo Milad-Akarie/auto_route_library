@@ -55,9 +55,13 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
               //   _count++;
               // });
 
-              // context.navigateNamedTo('profile/my-books?filter=yedds', includePrefixMatches: true);
+              // context.navigateNamedTo(
+              //   'profile/my-books?filter=yedds',
+              //   includePrefixMatches: true,
+              // );
               context.navigateTo(
                 ProfileTab(children: [
+                  ProfileRoute(),
                   MyBooksRoute(),
                 ]),
               );

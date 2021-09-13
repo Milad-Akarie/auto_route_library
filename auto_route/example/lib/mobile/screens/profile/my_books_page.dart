@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 class MyBooksPage extends StatelessWidget {
@@ -8,8 +9,8 @@ class MyBooksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
+    return Scaffold(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -25,10 +26,9 @@ class MyBooksPage extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.router.navigateNamed('/settings/newSegment');
-                //   return context.router.navigate(
-                //   BooksTab(),
-                // );
+                context.router.navigate(
+                  BooksTab(),
+                );
               },
               child: Text('navigate to /settings/newSegment'),
             )
