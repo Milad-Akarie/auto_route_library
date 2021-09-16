@@ -4,16 +4,9 @@ import 'package:flutter/widgets.dart';
 
 class AutoRouteInformationProvider extends RouteInformationProvider
     with WidgetsBindingObserver, ChangeNotifier {
-  /// Create a platform route information provider.
-  ///
-  /// Use the [initialRouteInformation] to set the default route information for this
-  /// provider.
-  AutoRouteInformationProvider._(
-      {required RouteInformation initialRouteInformation})
-      : _value = initialRouteInformation;
-
-  factory AutoRouteInformationProvider(
-      {RouteInformation? initialRouteInformation}) {
+  factory AutoRouteInformationProvider({
+    RouteInformation? initialRouteInformation,
+  }) {
     final initialRouteInfo = initialRouteInformation ??
         RouteInformation(
           location: WidgetsBinding.instance?.window.defaultRouteName ??
@@ -24,9 +17,19 @@ class AutoRouteInformationProvider extends RouteInformationProvider
     );
   }
 
+  /// Create a platform route information provider.
+  ///
+  /// Use the [initialRouteInformation] to set the default route information for this
+  /// provider.
+  AutoRouteInformationProvider._({
+    required RouteInformation initialRouteInformation,
+  }) : _value = initialRouteInformation;
+
   @override
-  void routerReportsNewRouteInformation(RouteInformation routeInformation,
-      {bool isNavigation = true}) {
+  void routerReportsNewRouteInformation(
+    RouteInformation routeInformation, {
+    bool isNavigation = true,
+  }) {
     var replace = false;
     if (routeInformation is AutoRouteInformation) {
       replace = routeInformation.replace;
@@ -74,7 +77,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider
 
   @override
   Future<bool> didPushRouteInformation(
-      RouteInformation routeInformation) async {
+    RouteInformation routeInformation,
+  ) async {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
     return true;

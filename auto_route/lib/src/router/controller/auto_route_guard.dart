@@ -75,7 +75,7 @@ abstract class ReevaluationStrategy {
       RePushFirstGuardedAndUp;
 
   const factory ReevaluationStrategy.removeFirstGuardedRouteAndUp() =
-      _removeFirstGuardedAndUp;
+      _RemoveFirstGuardedAndUp;
 }
 
 class RePushAllStrategy extends ReevaluationStrategy {
@@ -127,15 +127,17 @@ class RePushFirstGuardedAndUp extends ReevaluationStrategy {
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
-    router._pushAllGuarded(routes.sublist(
-      firstGuardedRouteIndex,
-      routes.length,
-    ));
+    router._pushAllGuarded(
+      routes.sublist(
+        firstGuardedRouteIndex,
+        routes.length,
+      ),
+    );
   }
 }
 
-class _removeFirstGuardedAndUp extends ReevaluationStrategy {
-  const _removeFirstGuardedAndUp() : super._();
+class _RemoveFirstGuardedAndUp extends ReevaluationStrategy {
+  const _RemoveFirstGuardedAndUp() : super._();
 
   @override
   void reevaluate(AutoRedirectGuard guard, StackRouter router) {

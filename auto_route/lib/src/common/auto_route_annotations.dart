@@ -111,17 +111,17 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
-  const CustomAutoRouter(
-      {this.transitionsBuilder,
-      this.barrierDismissible = false,
-      this.durationInMilliseconds,
-      this.reverseDurationInMilliseconds,
-      this.customRouteBuilder,
-      this.opaque = true,
-      required List<AutoRoute> routes,
-      bool preferRelativeImports = true,
-      String? replaceInRouteName})
-      : super._(
+  const CustomAutoRouter({
+    this.transitionsBuilder,
+    this.barrierDismissible = false,
+    this.durationInMilliseconds,
+    this.reverseDurationInMilliseconds,
+    this.customRouteBuilder,
+    this.opaque = true,
+    required List<AutoRoute> routes,
+    bool preferRelativeImports = true,
+    String? replaceInRouteName,
+  }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,

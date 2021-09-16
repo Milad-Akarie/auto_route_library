@@ -1,4 +1,3 @@
-import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';

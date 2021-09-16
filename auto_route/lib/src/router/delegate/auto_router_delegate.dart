@@ -40,13 +40,14 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     return delegate as AutoRouterDelegate;
   }
 
-  static reportUrlChanged(BuildContext context, String url) {
+  static void reportUrlChanged(BuildContext context, String url) {
     Router.of(context)
         .routeInformationProvider
         ?.routerReportsNewRouteInformation(
           RouteInformation(
             location: url,
           ),
+          type: RouteInformationReportingType.navigate,
         );
   }
 
@@ -222,9 +223,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     if (tree.hasSegments) {
       controller.navigateAll(tree.segments);
     }
-    if (onNavigate != null) {
-      onNavigate!(tree, true);
-    }
+    onNavigate?.call(tree, true);
 
     return SynchronousFuture(null);
   }

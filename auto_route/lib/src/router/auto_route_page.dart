@@ -17,12 +17,13 @@ abstract class AutoRoutePage<T> extends Page<T> {
   Future<T?> get popped => _popCompleter.future;
 
   AutoRoutePage({
+    LocalKey? key,
     required this.routeData,
     required this.child,
     this.fullscreenDialog = false,
     this.maintainState = true,
-    LocalKey? key,
   }) : super(
+          key: key,
           restorationId: 'simple_page',
           name: routeData.name,
           arguments: routeData.route.args,
@@ -43,9 +44,9 @@ abstract class AutoRoutePage<T> extends Page<T> {
     }
 
     return RouteDataScope(
-      child: childToBuild,
       stateHash: routeData.hashCode,
       routeData: routeData,
+      child: childToBuild,
     );
   }
 
@@ -127,11 +128,12 @@ class CupertinoPageX<T> extends _TitledAutoRoutePage<T> {
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
-            routeData: routeData,
-            child: child,
-            maintainState: maintainState,
-            fullscreenDialog: fullscreenDialog,
-            title: title);
+          routeData: routeData,
+          child: child,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          title: title,
+        );
 
   @override
   Route<T> onCreateRoute(BuildContext context) {
@@ -198,7 +200,10 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
 }
 
 typedef CustomRouteBuilder = Route<T> Function<T>(
-    BuildContext context, Widget child, CustomPage<T> page);
+  BuildContext context,
+  Widget child,
+  CustomPage<T> page,
+);
 
 class CustomPage<T> extends AutoRoutePage<T> {
   final bool opaque;
@@ -254,10 +259,11 @@ class CustomPage<T> extends AutoRoutePage<T> {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 }

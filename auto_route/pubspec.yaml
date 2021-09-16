@@ -7,15 +7,12 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
+  collection: ^1.15.0
   flutter:
     sdk: flutter
   path: ^1.8.0
-  collection: ^1.15.0
-
-
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-
+  lint: ^1.7.2

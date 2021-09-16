@@ -58,8 +58,8 @@ class PageRouteInfo<T> {
     if (mapNullOrEmpty(params)) {
       return template;
     }
-    var paramsRegex = RegExp(":(${params.keys.join('|')})");
-    var path = template.replaceAllMapped(paramsRegex, (match) {
+    final paramsRegex = RegExp(":(${params.keys.join('|')})");
+    final path = template.replaceAllMapped(paramsRegex, (match) {
       return params[match.group(1)]?.toString() ?? '';
     });
     return path;
@@ -79,26 +79,27 @@ class PageRouteInfo<T> {
     List<PageRouteInfo>? children,
     String? fragment,
   }) {
-    if ((name == null || identical(name, this._name)) &&
+    if ((name == null || identical(name, _name)) &&
         (path == null || identical(path, this.path)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
-        (params == null || identical(params, this.rawPathParams)) &&
-        (queryParams == null || identical(queryParams, this.rawQueryParams)) &&
-        (children == null || identical(children, this.initialChildren))) {
+        (params == null || identical(params, rawPathParams)) &&
+        (queryParams == null || identical(queryParams, rawQueryParams)) &&
+        (children == null || identical(children, initialChildren))) {
       return this;
     }
 
     return PageRouteInfo(
-      name ?? this._name,
+      name ?? _name,
       path: path ?? this.path,
       args: args ?? this.args,
-      rawPathParams: params ?? this.rawPathParams,
-      rawQueryParams: queryParams ?? this.rawQueryParams,
-      initialChildren: children ?? this.initialChildren,
+      rawPathParams: params ?? rawPathParams,
+      rawQueryParams: queryParams ?? rawQueryParams,
+      initialChildren: children ?? initialChildren,
     );
   }
 
+  @override
   String toString() {
     return 'Route{name: $_name, path: $path, params: $rawPathParams}, children: ${initialChildren?.map((e) => e.routeName)}';
   }
@@ -132,16 +133,16 @@ class PageRouteInfo<T> {
           _name == other._name &&
           path == other.path &&
           fragment == other.fragment &&
-          ListEquality().equals(initialChildren, other.initialChildren) &&
-          MapEquality().equals(rawPathParams, other.rawPathParams) &&
-          MapEquality().equals(rawQueryParams, other.rawQueryParams);
+          const ListEquality().equals(initialChildren, other.initialChildren) &&
+          const MapEquality().equals(rawPathParams, other.rawPathParams) &&
+          const MapEquality().equals(rawQueryParams, other.rawQueryParams);
 
   @override
   int get hashCode =>
       _name.hashCode ^
       path.hashCode ^
       fragment.hashCode ^
-      MapEquality().hash(rawPathParams) ^
-      MapEquality().hash(rawQueryParams) ^
-      ListEquality().hash(initialChildren);
+      const MapEquality().hash(rawPathParams) ^
+      const MapEquality().hash(rawQueryParams) ^
+      const ListEquality().hash(initialChildren);
 }

@@ -21,7 +21,7 @@ class Parameters {
       identical(this, other) ||
       other is Parameters &&
           runtimeType == other.runtimeType &&
-          MapEquality(
+          const MapEquality(
             values: DeepCollectionEquality(),
           ).equals(_params, other._params);
 
@@ -31,24 +31,25 @@ class Parameters {
   bool get isNotEmpty => _params.isNotEmpty;
   bool get isEmpty => _params.isEmpty;
 
-  dynamic get(String key, [defaultValue]) {
+  dynamic get(String key, [dynamic defaultValue]) {
     return _params[key] ?? defaultValue;
   }
 
   String? optString(String key, [String? defaultValue]) =>
-      _params[key] ?? defaultValue;
+      _params[key] as String? ?? defaultValue;
 
   String getString(String key, [String? defaultValue]) {
-    var val = _params[key] ?? defaultValue;
+    final String? val = _params[key] as String? ?? defaultValue;
     if (val == null) {
       throw FlutterError(
-          'Failed to parse [String] $key value from ${_params[key]}');
+        'Failed to parse [String] $key value from ${_params[key]}',
+      );
     }
     return val;
   }
 
   int? optInt(String key, [int? defaultValue]) {
-    var param = _params[key];
+    final param = _params[key];
     if (param == null) {
       return defaultValue;
     } else if (param is int) {
@@ -59,16 +60,17 @@ class Parameters {
   }
 
   int getInt(String key, [int? defaultValue]) {
-    var val = optInt(key, defaultValue);
+    final val = optInt(key, defaultValue);
     if (val == null) {
       throw FlutterError(
-          'Failed to parse [int] $key value from ${_params[key]}');
+        'Failed to parse [int] $key value from ${_params[key]}',
+      );
     }
     return val;
   }
 
   double? optDouble(String key, [double? defaultValue]) {
-    var param = _params[key];
+    final param = _params[key];
     if (param == null) {
       return defaultValue;
     } else if (param is double) {
@@ -79,16 +81,17 @@ class Parameters {
   }
 
   double getDouble(String key, [double? defaultValue]) {
-    var val = optDouble(key, defaultValue);
+    final val = optDouble(key, defaultValue);
     if (val == null) {
       throw FlutterError(
-          'Failed to parse [double] $key value from ${_params[key]}');
+        'Failed to parse [double] $key value from ${_params[key]}',
+      );
     }
     return val;
   }
 
   num? optNum(String key, [num? defaultValue]) {
-    var param = _params[key];
+    final param = _params[key];
     if (param == null) {
       return defaultValue;
     } else if (param is num) {
@@ -99,10 +102,11 @@ class Parameters {
   }
 
   num getNum(String key, [num? defaultValue]) {
-    var val = optNum(key, defaultValue);
+    final val = optNum(key, defaultValue);
     if (val == null) {
       throw FlutterError(
-          'Failed to parse [num] $key value from ${_params[key]}');
+        'Failed to parse [num] $key value from ${_params[key]}',
+      );
     }
     return val;
   }
@@ -119,10 +123,11 @@ class Parameters {
   }
 
   bool getBool(String key, [bool? defaultValue]) {
-    var val = optBool(key, defaultValue);
+    final val = optBool(key, defaultValue);
     if (val == null) {
       throw FlutterError(
-          'Failed to parse [bool] $key value from ${_params[key]}');
+        'Failed to parse [bool] $key value from ${_params[key]}',
+      );
     }
     return val;
   }

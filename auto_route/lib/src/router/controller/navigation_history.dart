@@ -15,11 +15,13 @@ class NavigationHistory {
       if (segments.length == 1 || !segments.first.hasChildren) {
         return segments.first;
       } else {
-        return segments.first.copyWith(children: [
-          toHierarchy(
-            segments.sublist(1, segments.length),
-          ),
-        ]);
+        return segments.first.copyWith(
+          children: [
+            toHierarchy(
+              segments.sublist(1, segments.length),
+            ),
+          ],
+        );
       }
     }
 

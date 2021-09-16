@@ -15,11 +15,11 @@ abstract class RootStackRouter extends StackRouter {
         router: this,
         route: const RouteMatch(
           name: 'Root',
-          segments: const [''],
+          segments: [''],
           path: '',
           stringMatch: '',
           isBranch: true,
-          key: const ValueKey('Root'),
+          key: ValueKey('Root'),
         ),
         pendingChildren: [],
       );
@@ -35,8 +35,9 @@ abstract class RootStackRouter extends StackRouter {
 
   AutoRouteInformationProvider? _lazyInformationProvider;
 
-  AutoRouteInformationProvider routeInfoProvider(
-      {RouteInformation? initialRouteInformation}) {
+  AutoRouteInformationProvider routeInfoProvider({
+    RouteInformation? initialRouteInformation,
+  }) {
     return _lazyInformationProvider ??= AutoRouteInformationProvider(
       initialRouteInformation: initialRouteInformation,
     );
@@ -88,7 +89,7 @@ abstract class RootStackRouter extends StackRouter {
       DefaultRouteParser(matcher, includePrefixMatches: includePrefixMatches);
 
   AutoRoutePage _pageBuilder(RouteData data) {
-    var builder = pagesMap[data.name];
+    final builder = pagesMap[data.name];
     assert(builder != null);
     return builder!(data) as AutoRoutePage;
   }

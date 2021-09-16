@@ -40,8 +40,8 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   void _updateDeclarativeRoutes() {
     final delegate = AutoRouterDelegate.of(context);
-    var newRoutes = widget.declarativeRoutesBuilder!(context);
-    if (!ListEquality().equals(newRoutes, _routesSnapshot)) {
+    final newRoutes = widget.declarativeRoutesBuilder!(context);
+    if (!const ListEquality().equals(newRoutes, _routesSnapshot)) {
       _routesSnapshot = newRoutes;
       widget.router.updateDeclarativeRoutes(newRoutes);
       WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -71,13 +71,13 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
       pages: widget.router.hasEntries
           ? widget.router.stack
           : [_PlaceHolderPage(widget.placeholder)],
-      transitionDelegate: _CustomTransitionDelegate(),
+      transitionDelegate: const _CustomTransitionDelegate(),
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
           return false;
         }
         if (route.settings is AutoRoutePage) {
-          var routeData = (route.settings as AutoRoutePage).routeData;
+          final routeData = (route.settings as AutoRoutePage).routeData;
           widget.router.removeRoute(routeData);
           widget.didPop?.call(routeData.route, result);
         }
@@ -88,10 +88,10 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     // fixes nested cupertino routes back gesture issue
     if (!widget.router.isRoot) {
       return WillPopScope(
-        child: navigator,
         onWillPop: widget.router.canPopSelfOrChildren
             ? () => SynchronousFuture(true)
             : null,
+        child: navigator,
       );
     }
 

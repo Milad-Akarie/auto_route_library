@@ -25,7 +25,7 @@ void main() {
       [routeA, routeB, routeC],
     );
     test('Calling [routes] should return a list of all route configs', () {
-      var expectedRoutes = [routeA, routeB, routeC];
+      final expectedRoutes = [routeA, routeB, routeC];
       expect(collection.routes, expectedRoutes);
     });
 
@@ -40,7 +40,7 @@ void main() {
     test(
         'Extracting sub collection of a branch route should return sub collection',
         () {
-      var expectedCollection = RouteCollection.from([subRouteC1]);
+      final expectedCollection = RouteCollection.from([subRouteC1]);
       expect(collection.subCollectionOf('C'), expectedCollection);
     });
 
@@ -82,7 +82,7 @@ void main() {
 
     test('Should return one match [B]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'B',
           key: ValueKey('B'),
           path: '/b',
@@ -99,7 +99,7 @@ void main() {
 
     test('Should return one match with one nested match [C/C1]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'C',
           path: '/c',
           stringMatch: '/c',
@@ -149,7 +149,7 @@ void main() {
     final match = RouteMatcher(routeCollection).match;
 
     test('Should return two matches [A,B]', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'A',
           path: '/',
@@ -170,7 +170,7 @@ void main() {
 
     test('Should return two prefix matches with one nested match [A, C/C1]',
         () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'A',
           path: '/',
@@ -200,7 +200,7 @@ void main() {
 
     test('Should return two prefix matches with one nested match [A, D/D0]',
         () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'A',
           path: '/',
@@ -231,7 +231,7 @@ void main() {
     test(
         'Should return two matches with two nested matches including empty path [A, D/D0/D1]',
         () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'A',
           path: '/',
@@ -272,7 +272,7 @@ void main() {
 
     test('Should return two prefix matches and one full match [A, B, B/B1]',
         () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'A',
           key: ValueKey('A'),
@@ -317,7 +317,7 @@ void main() {
     final match = RouteMatcher(routeCollection).match;
 
     test('Should match wildcard [WC]', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'WC',
           key: ValueKey('WC'),
@@ -330,7 +330,7 @@ void main() {
     });
 
     test('Incomplete match should return [WC]', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'WC',
           key: ValueKey('WC'),
@@ -343,7 +343,7 @@ void main() {
     });
 
     test('Should match prefixed wildcard route [PWC]', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           path: '/d/*',
           key: ValueKey('PWC'),
@@ -377,7 +377,7 @@ void main() {
     final match = RouteMatcher(routeCollection).match;
 
     test('Should match route [A]', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'A',
           key: ValueKey('A'),
@@ -391,7 +391,7 @@ void main() {
     });
 
     test('Should match route [C/C1]', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'C',
           key: ValueKey('C'),
@@ -414,7 +414,7 @@ void main() {
     });
 
     test('Should match route [A]', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'A',
           key: ValueKey('A'),
@@ -445,7 +445,7 @@ void main() {
     final match = RouteMatcher(routeCollection).match;
 
     test('Should match route [A] and extract path param {id:1}', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'A',
           key: ValueKey('A'),
@@ -460,7 +460,7 @@ void main() {
 
     test('Should match route [B] and extract path params {id:1, type:none}',
         () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'B',
           key: ValueKey('B'),
@@ -477,7 +477,7 @@ void main() {
     });
 
     test('Should match route [C]', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'C',
           key: ValueKey('C'),
@@ -517,7 +517,7 @@ void main() {
     final match = RouteMatcher(routeCollection).match;
 
     test('Should match route [A] and extract query param {foo:bar}', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           key: ValueKey('A'),
           stringMatch: '/a',
@@ -533,7 +533,7 @@ void main() {
     test(
         'Should match routes [B,B1] and extract query params {foo:bar, bar:baz} for both',
         () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           key: ValueKey('B'),
           stringMatch: '/b',
@@ -551,14 +551,16 @@ void main() {
           queryParams: Parameters({'foo': 'bar', 'bar': 'baz'}),
         )
       ];
-      expect(match('/b/b1?foo=bar&bar=baz', includePrefixMatches: true),
-          expectedMatches);
+      expect(
+        match('/b/b1?foo=bar&bar=baz', includePrefixMatches: true),
+        expectedMatches,
+      );
     });
 
     test(
         'Should match route [C/C1] and extract query parameters {foo:bar} for parent and child',
         () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           name: 'C',
           path: '/c',
@@ -582,7 +584,7 @@ void main() {
     });
 
     test('Should match route [A] and extract query param {foo:[bar,baz]}', () {
-      final expectedMatches = [
+      const expectedMatches = [
         RouteMatch(
           key: ValueKey('A'),
           stringMatch: '/a',

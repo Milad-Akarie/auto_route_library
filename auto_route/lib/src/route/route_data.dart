@@ -35,15 +35,17 @@ class RouteData {
     if (args == null) {
       if (orElse == null) {
         throw FlutterError(
-            '${T.toString()} can not be null because it has a required parameter');
+          '${T.toString()} can not be null because it has a required parameter',
+        );
       } else {
         return orElse();
       }
     } else if (args is! T) {
       throw FlutterError(
-          'Expected [${T.toString()}],  found [${args.runtimeType}]');
+        'Expected [${T.toString()}],  found [${args.runtimeType}]',
+      );
     } else {
-      return args as T;
+      return args;
     }
   }
 
@@ -71,7 +73,7 @@ class RouteData {
 
   Parameters get inheritedPathParams {
     if (_parent == null) {
-      return const Parameters(const {});
+      return const Parameters({});
     }
     return _parent!.breadcrumbs.map((e) => e.pathParams).reduce(
           (value, element) => value + element,

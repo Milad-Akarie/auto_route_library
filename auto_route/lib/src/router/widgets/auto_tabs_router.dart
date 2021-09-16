@@ -10,7 +10,10 @@ import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
 
 typedef AnimatedIndexedStackBuilder = Widget Function(
-    BuildContext context, Widget child, Animation<double> animation);
+  BuildContext context,
+  Widget child,
+  Animation<double> animation,
+);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder? builder;
@@ -66,16 +69,19 @@ class AutoTabsRouter extends StatefulWidget {
   AutoTabsRouterState createState() => AutoTabsRouterState();
 
   static TabsRouter of(BuildContext context, {bool watch = false}) {
-    var scope = TabsRouterScope.of(context, watch: watch);
-    assert(() {
-      if (scope == null) {
-        throw FlutterError(
+    final scope = TabsRouterScope.of(context, watch: watch);
+    assert(
+      () {
+        if (scope == null) {
+          throw FlutterError(
             'AutoTabsRouter operation requested with a context that does not include an AutoTabsRouter.\n'
             'The context used to retrieve the AutoTabsRouter must be that of a widget that '
-            'is a descendant of an AutoTabsRouter widget.');
-      }
-      return true;
-    }());
+            'is a descendant of an AutoTabsRouter widget.',
+          );
+        }
+        return true;
+      }(),
+    );
     return scope!.controller;
   }
 }
@@ -104,7 +110,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
       ),
     );
     super.initState();
-    _tabsHash = ListEquality().hash(widget.routes);
+    _tabsHash = const ListEquality().hash(widget.routes);
   }
 
   late List<NavigatorObserver> _navigatorObservers;
@@ -117,11 +123,11 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
     if (_controller == null) {
       final parentScope = RouterScope.of(context, watch: true);
       _inheritableObserversBuilder = () {
-        var observers = widget.navigatorObservers();
+        final observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
           return observers;
         }
-        var inheritedObservers = parentScope.inheritableObserversBuilder();
+        final inheritedObservers = parentScope.inheritableObserversBuilder();
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
@@ -172,9 +178,9 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   @override
   void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes);
-      _tabsHash = ListEquality().hash(widget.routes);
+      _tabsHash = const ListEquality().hash(widget.routes);
       setState(() {
         _index = _controller!.activeIndex;
       });
@@ -208,7 +214,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             },
             stack: stack,
           );
-    var stateHash = controller!.stateHash;
+    final stateHash = controller!.stateHash;
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
@@ -227,7 +233,11 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
     );
   }
 
-  Widget _defaultBuilder(_, child, animation) {
+  Widget _defaultBuilder(
+    BuildContext _,
+    Widget child,
+    Animation<double> animation,
+  ) {
     return FadeTransition(opacity: animation, child: child);
   }
 }
@@ -263,7 +273,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
         .whereType<AutoRouterObserver>()
         .forEach((observer) {
       final routes = widget.stack.map((e) => e.routeData.route).toList();
-      var previousRoute;
+      TabPageRoute? previousRoute;
       if (previous != -1) {
         previousRoute =
             TabPageRoute(routeInfo: routes[previous], index: previous);

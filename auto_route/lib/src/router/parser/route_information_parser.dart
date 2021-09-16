@@ -15,9 +15,10 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
   @override
   Future<UrlState> parseRouteInformation(
-      RouteInformation routeInformation) async {
+    RouteInformation routeInformation,
+  ) async {
     final uri = Uri.parse(routeInformation.location ?? '');
-    var matches =
+    final matches =
         _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(UrlState(uri, matches ?? const []));
   }
@@ -53,8 +54,10 @@ class UrlState {
 
   String get path => uri.path;
 
-  factory UrlState.fromSegments(List<RouteMatch> routes,
-      {bool shouldReplace = false}) {
+  factory UrlState.fromSegments(
+    List<RouteMatch> routes, {
+    bool shouldReplace = false,
+  }) {
     return UrlState(
       _buildUri(routes),
       routes,
@@ -70,11 +73,11 @@ class UrlState {
     List<RouteMatch> segments,
     bool Function(RouteMatch segment) predicate,
   ) {
-    for (var segment in segments) {
+    for (final segment in segments) {
       if (predicate(segment)) {
         return segment;
       } else if (segment.hasChildren) {
-        var subSegment = _findSegment(segment.children!, predicate);
+        final subSegment = _findSegment(segment.children!, predicate);
         if (subSegment != null) {
           return subSegment;
         }
@@ -100,18 +103,18 @@ class UrlState {
     );
     final normalized = p.normalize(fullPath);
     final lastSegment = routes.last;
-    Map<String, dynamic> queryParams = {};
+    final Map<String, dynamic> queryParams = {};
     if (lastSegment.queryParams.isNotEmpty) {
-      var queries = lastSegment.queryParams.rawMap;
-      for (var key in queries.keys) {
-        var value = queries[key]?.toString() ?? '';
+      final queries = lastSegment.queryParams.rawMap;
+      for (final key in queries.keys) {
+        final value = queries[key]?.toString() ?? '';
         if (value.isNotEmpty) {
-          queryParams[key] = value.toString();
+          queryParams[key] = value;
         }
       }
     }
 
-    var fragment;
+    String? fragment;
     if (lastSegment.fragment.isNotEmpty == true) {
       fragment = lastSegment.fragment;
     }
@@ -127,10 +130,10 @@ class UrlState {
       identical(this, other) ||
       other is UrlState &&
           runtimeType == other.runtimeType &&
-          ListEquality().equals(segments, other.segments);
+          const ListEquality().equals(segments, other.segments);
 
   @override
-  int get hashCode => ListEquality().hash(segments);
+  int get hashCode => const ListEquality().hash(segments);
 
   UrlState copyWith({
     List<RouteMatch>? segments,
@@ -140,7 +143,7 @@ class UrlState {
     return UrlState(
       uri ?? this.uri,
       segments ?? this.segments,
-      shouldReplace: replace ?? this.shouldReplace,
+      shouldReplace: replace ?? shouldReplace,
     );
   }
 }
