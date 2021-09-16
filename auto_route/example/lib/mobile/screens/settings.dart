@@ -14,7 +14,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
-  var _count = 0;
+  final _count = 0;
 
   @override
   void didInitTabRoute(TabPageRoute? previousRoute) {}

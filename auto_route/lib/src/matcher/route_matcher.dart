@@ -13,9 +13,11 @@ class RouteCollection {
   RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
 
   factory RouteCollection.from(List<RouteConfig> routes) {
-    final routesMap = LinkedHashMap<String, RouteConfig>();
-    routes.forEach((r) => routesMap[r.name] = r);
-    return RouteCollection(routesMap);
+    final routesMap = <String, RouteConfig>{};
+    for (final route in routes) {
+      routesMap[route.name] = route;
+    }
+    return RouteCollection(LinkedHashMap.from(routesMap));
   }
 
   Iterable<RouteConfig> get routes => _routesMap.values;
