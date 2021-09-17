@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/screens/books/book_details_page.dart';
 import 'package:example/mobile/screens/books/book_list_page.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../screens/home_page.dart';
@@ -9,8 +10,7 @@ import '../screens/login_page.dart';
 import '../screens/profile/routes.dart';
 import '../screens/settings.dart';
 import '../screens/user-data/routes.dart';
-import 'auth_guard.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+
 export 'router.gr.dart';
 
 @MaterialAutoRouter(
@@ -27,12 +27,7 @@ export 'router.gr.dart';
           name: 'BooksTab',
           children: [
             AutoRoute(path: '', page: BookListPage),
-            AutoRoute(
-              path: ':id',
-              usesPathAsKey: true,
-              page: BookDetailsPage,
-              guards: [AuthGuard],
-            ),
+            AutoRoute(path: ':id', page: BookDetailsPage, usesPathAsKey: true),
           ],
         ),
         profileTab,
@@ -86,7 +81,8 @@ class DialogModalRoute<T> extends CustomRoute<T> {
 
 // typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget child, CustomPage page);
 
-Route<T> myCustomRouteBuilder<T>(BuildContext context, Widget child, CustomPage<T> page) {
+Route<T> myCustomRouteBuilder<T>(
+    BuildContext context, Widget child, CustomPage<T> page) {
   return PageRouteBuilder(
       fullscreenDialog: page.fullscreenDialog,
       // this's important

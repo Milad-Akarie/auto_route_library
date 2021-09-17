@@ -208,6 +208,8 @@ abstract class RoutingController with ChangeNotifier {
 
   RoutingController? get _parent;
 
+  bool get isTopMost => this == topMost;
+
   T? parent<T extends RoutingController>() {
     return _parent == null ? null : _parent as T;
   }
@@ -253,7 +255,22 @@ abstract class RoutingController with ChangeNotifier {
 
   bool get canPopSelfOrChildren;
 
-  List<RouteMatch> get currentSegments;
+  List<RouteMatch> get currentSegments {
+    var currentData = currentChild;
+    final segments = <RouteMatch>[];
+    if (currentData != null) {
+      segments.add(currentData.route);
+      final childCtrl = _childControllers[currentData.key];
+      if (childCtrl?.hasEntries == true) {
+        segments.addAll(childCtrl!.currentSegments);
+      } else if (currentData.route.hasChildren) {
+        segments.addAll(
+          currentData.route.children!.last.flattened,
+        );
+      }
+    }
+    return segments;
+  }
 
   @override
   String toString() => '${routeData.name} Router';
@@ -288,7 +305,18 @@ class TabsRouter extends RoutingController {
         _activeIndex = initialIndex ?? 0,
         _parent = parent {
     if (parent != null) {
-      addListener(root.notifyListeners);
+      var hasPendingSubNavigation =
+          initialPreMatchedRoutes?.isNotEmpty == true &&
+              initialPreMatchedRoutes!.last.hasChildren;
+      addListener(
+        () {
+          if (!hasPendingSubNavigation) {
+            root.notifyListeners();
+          } else {
+            hasPendingSubNavigation = false;
+          }
+        },
+      );
     }
   }
 
@@ -445,25 +473,6 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  List<RouteMatch> get currentSegments {
-    var currentData = currentChild;
-    final segments = <RouteMatch>[];
-    if (currentData != null) {
-      segments.add(currentData.route);
-      if (_childControllers.containsKey(currentData.key)) {
-        segments.addAll(
-          _childControllers[currentData.key]!.currentSegments,
-        );
-      }
-    } else if (routeData.route.hasChildren) {
-      segments.addAll(
-        routeData.route.children!.last.flattened,
-      );
-    }
-    return segments;
-  }
-
-  @override
   void _updateSharedPathData({
     Map<String, dynamic> queryParams = const {},
     String fragment = '',
@@ -498,7 +507,18 @@ abstract class StackRouter extends RoutingController {
   })  : _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         _parent = parent {
     if (parent != null) {
-      addListener(root.notifyListeners);
+      var hasPendingSubNavigation =
+          initialPreMatchedRoutes?.isNotEmpty == true &&
+              initialPreMatchedRoutes!.last.hasChildren;
+      addListener(
+        () {
+          if (!hasPendingSubNavigation) {
+            root.notifyListeners();
+          } else {
+            hasPendingSubNavigation = false;
+          }
+        },
+      );
     }
   }
 
@@ -509,25 +529,6 @@ abstract class StackRouter extends RoutingController {
   PageBuilder get pageBuilder;
 
   RouteMatcher get matcher;
-
-  @override
-  List<RouteMatch> get currentSegments {
-    var currentData = currentChild;
-    final segments = <RouteMatch>[];
-    if (currentData != null) {
-      segments.add(currentData.route);
-      if (_childControllers.containsKey(currentData.key)) {
-        segments.addAll(
-          _childControllers[currentData.key]!.currentSegments,
-        );
-      }
-    } else if (routeData.route.hasChildren) {
-      segments.addAll(
-        routeData.route.children!.last.flattened,
-      );
-    }
-    return segments;
-  }
 
   @override
   bool get canPopSelfOrChildren {

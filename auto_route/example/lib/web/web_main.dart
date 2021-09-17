@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/web/router/web_auth_guard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/widgets.dart';
 
 import 'router/web_router.gr.dart';
 
@@ -20,7 +20,7 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  final _appRouter = WebAppRouter(authGuard: AuthGuard());
+  final _appRouter = WebAppRouter();
   final authService = AuthService();
 
   @override
@@ -36,6 +36,7 @@ class AppState extends State<App> {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
+      routeInformationProvider: AutoRouteInformationProvider(),
       routerDelegate: AutoRouterDelegate(
         _appRouter,
         // initialDeepLink: '/user/5',
@@ -71,12 +72,12 @@ class AppState extends State<App> {
         // },
       ),
       routeInformationParser: _appRouter.defaultRouteParser(),
-      builder: (_, router) {
-        return ChangeNotifierProvider(
-          create: (_) => AuthService(),
-          child: router,
-        );
-      },
+      // builder: (_, router) {
+      //   return ChangeNotifierProvider(
+      //     create: (_) => AuthService(),
+      //     child: router,
+      //   );
+      // },
     );
   }
 }
