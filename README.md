@@ -94,9 +94,9 @@ class App extends StatlessWidget{
    
   Widget build(BuildContext context){    
       return MaterialApp.router(    
-             routerDelegate: AutoRouterDelegeate(_appDelegate),
+             routerDelegate: AutoRouterDelegeate(_appRouter),
              // or
-             // routerDelegate:_appDelegate.delegate(),    
+             // routerDelegate: _appRouter.delegate(),    
              routeInformationParser: _appRouter.defaultRouteParser(),    
          ),    
   }    
