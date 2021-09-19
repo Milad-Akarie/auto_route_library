@@ -22,6 +22,10 @@ class AutoTabsRouter extends StatefulWidget {
   final int? _activeIndex;
   final bool declarative;
   final OnTabNavigateCallBack? onNavigate;
+  // if activeIndex != homeIndex
+  // set activeIndex to homeIndex
+  // else pop parent
+  final int homeIndex;
 
   const AutoTabsRouter({
     Key? key,
@@ -30,6 +34,7 @@ class AutoTabsRouter extends StatefulWidget {
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
+    this.homeIndex = -1,
     this.inheritNavigatorObservers = true,
     this.navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
@@ -47,6 +52,7 @@ class AutoTabsRouter extends StatefulWidget {
     this.curve = Curves.ease,
     this.builder,
     this.onNavigate,
+    this.homeIndex = -1,
     this.inheritNavigatorObservers = true,
     this.navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
@@ -57,8 +63,8 @@ class AutoTabsRouter extends StatefulWidget {
   @override
   AutoTabsRouterState createState() => AutoTabsRouterState();
 
-  static TabsRouter of(BuildContext context) {
-    var scope = TabsRouterScope.of(context);
+  static TabsRouter of(BuildContext context, {bool watch = false}) {
+    var scope = TabsRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
         throw FlutterError(
@@ -119,6 +125,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
       _controller = TabsRouter(
           parent: _parentController,
           key: parentRoute.key,
+          homeIndex: widget.homeIndex,
           managedByWidget: widget.declarative,
           initialIndex: widget._activeIndex,
           routeData: parentRoute,
@@ -188,7 +195,6 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             lazyLoad: widget.lazyLoad,
             navigatorObservers: _navigatorObservers,
             itemBuilder: (BuildContext context, int index) {
-              // _controller!.updateStackEntryAt(index);
               return stack[index].buildPage(context);
             },
             stack: stack,

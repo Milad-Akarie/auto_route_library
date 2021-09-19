@@ -99,6 +99,7 @@ class RouterConfigResolver {
       var routeReader = ConstantReader(entry);
       RouteConfig route;
       route = routeResolver.resolve(routeReader);
+
       var children = routeReader.peek('children')?.listValue;
       if (children?.isNotEmpty == true) {
         var subRouterConfig = routerConfig.copyWith(

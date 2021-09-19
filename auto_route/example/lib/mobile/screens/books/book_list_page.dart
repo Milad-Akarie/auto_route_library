@@ -19,7 +19,8 @@ class _BookListPageState extends State<BookListPage> {
                       Hero(
                         tag: 'Hero${book.id}',
                         child: Card(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           child: ListTile(
                             title: Text(book.name),
                             subtitle: Text(book.genre),

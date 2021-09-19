@@ -27,7 +27,7 @@ export 'router.gr.dart';
           name: 'BooksTab',
           children: [
             AutoRoute(path: '', page: BookListPage),
-            AutoRoute(path: ':id', page: BookDetailsPage, usesPathAsKey: true),
+            AutoRoute(path: ':id', page: BookDetailsPage),
           ],
         ),
         profileTab,
@@ -41,7 +41,7 @@ export 'router.gr.dart';
     userDataRoutes,
     // auth
 
-    DialogModalRoute(page: LoginPage, path: '/login'),
+    AutoRoute(page: LoginPage, path: '/login'),
 
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
@@ -54,38 +54,38 @@ class DialogModalRoute<T> extends CustomRoute<T> {
       : super(
           page: page,
           path: path,
-          customRouteBuilder: dialogRouteBuilder,
+          // customRouteBuilder: dialogRouteBuilder,
         );
 
   // must be static and public
-  static Route<T> dialogRouteBuilder<T>(
-    BuildContext context,
-    Widget child,
-    CustomPage<T> page,
-  ) {
-    // DialogRoute is coming from flutter material
-    if (kIsWeb) {
-      return DialogRoute<T>(
-        context: context,
-        settings: page,
-        builder: (context) => child,
-      );
-    } else {
-      return MaterialPageRoute<T>(
-        settings: page,
-        builder: (context) => child,
-      );
-    }
-  }
+  // static Route<T> dialogRouteBuilder<T>(
+  //   BuildContext context,
+  //   Widget child,
+  //   // CustomPage<T> page,
+  // ) {
+  //   // DialogRoute is coming from flutter material
+  //   if (kIsWeb) {
+  //     return DialogRoute<T>(
+  //       context: context,
+  //       settings: page,
+  //       builder: (context) => child,
+  //     );
+  //   } else {
+  //     return MaterialPageRoute<T>(
+  //       settings: page,
+  //       builder: (context) => child,
+  //     );
+  //   }
+  // }
 }
 
 // typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget child, CustomPage page);
-
-Route<T> myCustomRouteBuilder<T>(
-    BuildContext context, Widget child, CustomPage<T> page) {
-  return PageRouteBuilder(
-      fullscreenDialog: page.fullscreenDialog,
-      // this's important
-      settings: page,
-      pageBuilder: (_, __, ___) => child);
-}
+//
+// Route<T> myCustomRouteBuilder<T>(
+//     BuildContext context, Widget child, CustomPage<T> page) {
+//   return PageRouteBuilder(
+//       fullscreenDialog: page.fullscreenDialog,
+//       // this's important
+//       settings: page,
+//       pageBuilder: (_, __, ___) => child);
+// }

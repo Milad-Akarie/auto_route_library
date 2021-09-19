@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/data/db.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,19 +28,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                // context.router.push(MyBooksRoute());
-
-                showDialog(
-                    context: context,
-                    useRootNavigator: true,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Are you sure?'),
-                        actions: [
-                          BackButton(),
-                        ],
-                      );
-                    });
+                context.router.push(MyBooksRoute());
               },
               child: Text('My Books'),
             ),

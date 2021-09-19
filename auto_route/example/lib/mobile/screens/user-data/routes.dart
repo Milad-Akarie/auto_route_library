@@ -8,22 +8,22 @@ const userDataRoutes = AutoRoute<UserData>(
   path: '/user-data',
   page: UserDataCollectorPage,
   children: [
-    CustomRoute(
+    AutoRoute(
       path: 'name',
       name: 'NameFieldRoute',
       page: SingleFieldPage,
-      transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+      // transitionsBuilder: TransitionsBuilders.slideRightWithFade,
     ),
-    CustomRoute(
+    AutoRoute(
       path: 'favorite-book',
       page: SingleFieldPage,
       name: 'FavoriteBookFieldRoute',
-      transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+      // transitionsBuilder: TransitionsBuilders.slideRightWithFade,
     ),
-    CustomRoute(
+    AutoRoute(
       path: 'results',
       page: UserDataPage,
-      transitionsBuilder: TransitionsBuilders.slideRightWithFade,
+      // transitionsBuilder: TransitionsBuilders.slideRightWithFade,
     ),
   ],
 );

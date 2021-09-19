@@ -26,8 +26,8 @@ class MyBooksPage extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.router.navigate(
-                  BooksTab(),
+                context.navigateTo(
+                  SettingsTab(tab: 'newSegment'),
                 );
               },
               child: Text('navigate to /settings/newSegment'),

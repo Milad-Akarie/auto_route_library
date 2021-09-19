@@ -48,8 +48,8 @@ class AutoRouter extends StatefulWidget {
   @override
   AutoRouterState createState() => AutoRouterState();
 
-  static StackRouter of(BuildContext context) {
-    var scope = StackRouterScope.of(context);
+  static StackRouter of(BuildContext context, {bool watch = false}) {
+    var scope = StackRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
         throw FlutterError(

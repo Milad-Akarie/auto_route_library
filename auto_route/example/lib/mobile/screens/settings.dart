@@ -30,7 +30,8 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final observer = RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    final observer =
+        RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
     if (observer != null) {
       observer.subscribe(this, context.routeData);
     }
@@ -43,6 +44,8 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
 
   @override
   Widget build(BuildContext context) {
+    print('------ building SettingsPage');
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

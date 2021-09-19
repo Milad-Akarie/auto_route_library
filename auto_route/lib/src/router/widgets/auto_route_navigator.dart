@@ -47,20 +47,6 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         delegate.notifyUrlChanged();
       });
     }
-
-    //
-    // else if (!ListEquality().equals(
-    //   delegate.urlState.segments,
-    //   delegate.controller.currentSegments,
-    // )) {
-    //   shouldNotify = true;
-    //
-    // }
-    // if (shouldNotify) {
-    //   // WidgetsBinding.instance?.addPostFrameCallback((_) {
-    //   //   // delegate.notifyUrlChanged();
-    //   // });
-    // }
   }
 
   @override

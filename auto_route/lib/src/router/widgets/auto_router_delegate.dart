@@ -82,7 +82,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   UrlState? get currentConfiguration {
-    print('rebuilding ${_urlState.url}');
+    // print('rebuilding ${_urlState.url}');
     return _urlState;
   }
 

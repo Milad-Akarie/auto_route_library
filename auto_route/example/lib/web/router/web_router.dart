@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
     AutoRoute(path: '/login', page: LoginPage),
     AutoRoute(
       path: '/user/:userID',
-      usesPathAsKey: true,
+      usesPathAsKey: false,
       page: UserPage,
       // guards: [AuthGuard],
       children: [
@@ -42,7 +42,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Navigator;
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -69,12 +68,12 @@ class HomePage extends StatelessWidget {
                     //   ),
                     // );
                   },
-              child: Text('Navigate to user/1'),
+              child: Text('Navigate to user/2'),
             ),
             ElevatedButton(
               onPressed: showUserPosts,
               child: Text('Show user posts'),
-            )
+            ),
           ],
         ),
       ),
@@ -191,7 +190,11 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.topRoute.name + ' $_id'),
+        title: Builder(
+          builder: (context) {
+            return Text(context.topRoute.name + ' $_id');
+          },
+        ),
         leading: AutoBackButton(),
       ),
       body: AutoRouter(

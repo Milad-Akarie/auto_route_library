@@ -16,8 +16,13 @@ class RouterScope extends InheritedWidget {
     required this.segmentsHash,
   }) : super(child: child);
 
-  static RouterScope of(BuildContext context) {
-    var scope = context.dependOnInheritedWidgetOfExactType<RouterScope>();
+  static RouterScope of(BuildContext context, {bool watch = false}) {
+    var scope;
+    if (watch) {
+      scope = context.dependOnInheritedWidgetOfExactType<RouterScope>();
+    } else {
+      scope = context.findAncestorWidgetOfExactType<RouterScope>();
+    }
     assert(() {
       if (scope == null) {
         throw FlutterError(
@@ -55,8 +60,11 @@ class StackRouterScope extends InheritedWidget {
     required this.segmentsHash,
   }) : super(child: child);
 
-  static StackRouterScope? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<StackRouterScope>();
+  static StackRouterScope? of(BuildContext context, {bool watch = false}) {
+    if (watch) {
+      return context.dependOnInheritedWidgetOfExactType<StackRouterScope>();
+    }
+    return context.findAncestorWidgetOfExactType<StackRouterScope>();
   }
 
   @override
@@ -68,14 +76,18 @@ class StackRouterScope extends InheritedWidget {
 class TabsRouterScope extends InheritedWidget {
   final TabsRouter controller;
   final int segmentsHash;
+
   const TabsRouterScope({
     required Widget child,
     required this.segmentsHash,
     required this.controller,
   }) : super(child: child);
 
-  static TabsRouterScope? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<TabsRouterScope>();
+  static TabsRouterScope? of(BuildContext context, {bool watch = false}) {
+    if (watch) {
+      return context.dependOnInheritedWidgetOfExactType<TabsRouterScope>();
+    }
+    return context.findAncestorWidgetOfExactType<TabsRouterScope>();
   }
 
   @override

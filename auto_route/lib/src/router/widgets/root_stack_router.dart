@@ -18,9 +18,15 @@ abstract class RootStackRouter extends StackRouter {
           segments: const [''],
           path: '',
           stringMatch: '',
+          isBranch: true,
           key: const ValueKey('Root'),
         ),
       );
+
+  @override
+  void _updateRouteDate(RouteData data) {
+    // root data shouldn't update
+  }
 
   Map<String, PageFactory> get pagesMap;
 

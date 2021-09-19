@@ -44,11 +44,12 @@ class AutoTabsScaffold extends StatelessWidget {
   final bool extendBodyBehindAppBar;
   final AppBarBuilder? appBarBuilder;
   final GlobalKey<ScaffoldState>? scaffoldKey;
-
+  final int homeIndex;
   const AutoTabsScaffold({
     Key? key,
     required this.routes,
     this.lazyLoad = true,
+    this.homeIndex = -1,
     this.animationDuration = const Duration(milliseconds: 300),
     this.animationCurve = Curves.ease,
     this.builder,
@@ -86,6 +87,7 @@ class AutoTabsScaffold extends StatelessWidget {
       routes: routes,
       duration: animationDuration,
       lazyLoad: lazyLoad,
+      homeIndex: homeIndex,
       navigatorObservers: navigatorObservers,
       inheritNavigatorObservers: inheritNavigatorObservers,
       curve: animationCurve,
