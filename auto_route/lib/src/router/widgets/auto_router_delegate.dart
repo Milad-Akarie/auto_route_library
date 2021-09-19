@@ -81,10 +81,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   UrlState get urlState => _urlState;
 
   @override
-  UrlState? get currentConfiguration {
-    // print('rebuilding ${_urlState.url}');
-    return _urlState;
-  }
+  UrlState? get currentConfiguration => _urlState;
 
   @override
   Future<void> setInitialRoutePath(UrlState tree) {
