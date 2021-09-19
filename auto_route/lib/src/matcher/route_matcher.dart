@@ -135,7 +135,10 @@ class RouteMatcher {
     if (redirectMatches != null && redirectMatches.length == 1) {
       redirectMatches = redirectMatches
           .map(
-            (e) => e.copyWith(segments: p.split(redirectedFrom)),
+            (e) => e.copyWith(
+              segments: p.split(redirectedFrom),
+              // stringMatch: redirectTo.path,
+            ),
           )
           .toList();
     }
@@ -176,6 +179,7 @@ class RouteMatcher {
     return RouteMatch(
       path: config.path,
       routeName: config.name,
+      isBranch: config.hasSubTree,
       key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
       stringMatch: stringMatch,
       segments: extractedSegments,
@@ -226,6 +230,7 @@ class RouteMatcher {
       key: ValueKey(
         config.usesPathAsKey ? route.stringMatch : route.routeName,
       ),
+      isBranch: config.hasSubTree,
       guards: config.guards,
       stringMatch: route.stringMatch,
       fragment: route.fragment,

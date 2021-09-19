@@ -90,71 +90,64 @@ Field buildPagesMap(List<RouteConfig> routes) {
 Spec buildMethod(RouteConfig r) {
   return Method(
     (b) => b
-      ..lambda = true
       ..requiredParameters.add(
         Parameter((b) => b.name = 'routeData'),
       )
-      ..body = TypeReference(
-        (b) => b
-          ..symbol = r.pageTypeName
-          ..url = autoRouteImport
-          ..types.add(r.returnType?.refer ?? refer('dynamic')),
-      ).newInstance(
-        [],
-        {
-          'routeData': refer('routeData'),
-          'builder': Method(
-            (b) => b
-              ..requiredParameters.add(Parameter(
-                (b) => b.name = r.parameters.isNotEmpty ? 'data' : '_',
-              ))
-              ..body = Block(
-                (b) => b.statements.addAll([
-                  if (!r.hasUnparsableRequiredArgs &&
-                      r.parameters.any((p) => p.isPathParam))
-                    refer('data')
-                        .property('pathParams')
-                        .assignFinal('pathParams')
-                        .statement,
-                  if (!r.hasUnparsableRequiredArgs &&
-                      r.parameters.any((p) => p.isQueryParam))
-                    refer('data')
-                        .property('queryParams')
-                        .assignFinal('queryParams')
-                        .statement,
-                  if (r.parameters.isNotEmpty)
-                    refer('data')
-                        .property('argsAs')
-                        .call([], {
-                          if (!r.hasUnparsableRequiredArgs)
-                            'orElse': Method(
-                              (b) => b
-                                ..lambda = true
-                                ..body = r.pathQueryParams.isEmpty
-                                    ? refer('${r.routeName}Args')
-                                        .constInstance([]).code
-                                    : refer('${r.routeName}Args').newInstance(
-                                        [],
-                                        Map.fromEntries(r.parameters
-                                            .where((p) =>
-                                                p.isPathParam || p.isQueryParam)
-                                            .map(
-                                              (p) => MapEntry(
-                                                p.name,
-                                                getUrlParamAssignment(p),
-                                              ),
-                                            )),
-                                      ).code,
-                            ).closure
-                        }, [
-                          refer('${r.routeName}Args'),
-                        ])
-                        .assignFinal('args')
-                        .statement,
-                  r.hasConstConstructor
-                      ? r.pageType!.refer.constInstance([]).returned.statement
-                      : r.pageType!.refer
-                          .newInstance(
+      ..body = Block((b) => b.statements.addAll([
+            if (!r.hasUnparsableRequiredArgs &&
+                r.parameters.any((p) => p.isPathParam))
+              refer('routeData')
+                  .property('pathParams')
+                  .assignFinal('pathParams')
+                  .statement,
+            if (!r.hasUnparsableRequiredArgs &&
+                r.parameters.any((p) => p.isQueryParam))
+              refer('routeData')
+                  .property('queryParams')
+                  .assignFinal('queryParams')
+                  .statement,
+            if (r.parameters.isNotEmpty)
+              refer('routeData')
+                  .property('argsAs')
+                  .call([], {
+                    if (!r.hasUnparsableRequiredArgs)
+                      'orElse': Method(
+                        (b) => b
+                          ..lambda = true
+                          ..body = r.pathQueryParams.isEmpty
+                              ? refer('${r.routeName}Args')
+                                  .constInstance([]).code
+                              : refer('${r.routeName}Args').newInstance(
+                                  [],
+                                  Map.fromEntries(r.parameters
+                                      .where((p) =>
+                                          p.isPathParam || p.isQueryParam)
+                                      .map(
+                                        (p) => MapEntry(
+                                          p.name,
+                                          getUrlParamAssignment(p),
+                                        ),
+                                      )),
+                                ).code,
+                      ).closure
+                  }, [
+                    refer('${r.routeName}Args'),
+                  ])
+                  .assignFinal('args')
+                  .statement,
+            TypeReference(
+              (b) => b
+                ..symbol = r.pageTypeName
+                ..url = autoRouteImport
+                ..types.add(r.returnType?.refer ?? refer('dynamic')),
+            )
+                .newInstance(
+                  [],
+                  {
+                    'routeData': refer('routeData'),
+                    'child': r.hasConstConstructor
+                        ? r.pageType!.refer.constInstance([])
+                        : r.pageType!.refer.newInstance(
                             r.positionalParams
                                 .map((p) => refer('args').property(p.name)),
                             Map.fromEntries(r.namedParams.map(
@@ -163,38 +156,40 @@ Spec buildMethod(RouteConfig r) {
                                 refer('args').property(p.name),
                               ),
                             )),
-                          )
-                          .returned
-                          .statement,
-                ]),
-              ),
-          ).closure,
-          if (r.maintainState == false) 'maintainState': literalBool(false),
-          if (r.fullscreenDialog == true) 'fullscreenDialog': literalBool(true),
-          if ((r.routeType == RouteType.cupertino ||
-                  r.routeType == RouteType.adaptive) &&
-              r.cupertinoNavTitle != null)
-            'title': literalString(r.cupertinoNavTitle!),
-          if (r.routeType == RouteType.custom) ...{
-            if (r.customRouteBuilder != null)
-              'customRouteBuilder': r.customRouteBuilder!.refer,
-            if (r.transitionBuilder != null)
-              'transitionsBuilder': r.transitionBuilder!.refer,
-            if (r.durationInMilliseconds != null)
-              'durationInMilliseconds': literalNum(r.durationInMilliseconds!),
-            if (r.reverseDurationInMilliseconds != null)
-              'reverseDurationInMilliseconds':
-                  literalNum(r.reverseDurationInMilliseconds!),
-            if (r.customRouteOpaque != null)
-              'opaque': literalBool(r.customRouteOpaque!),
-            if (r.customRouteBarrierDismissible != null)
-              'barrierDismissible':
-                  literalBool(r.customRouteBarrierDismissible!),
-            if (r.customRouteBarrierLabel != null)
-              'barrierLabel': literalString(r.customRouteBarrierLabel!),
-          }
-        },
-      ).code,
+                          ),
+                    if (r.maintainState == false)
+                      'maintainState': literalBool(false),
+                    if (r.fullscreenDialog == true)
+                      'fullscreenDialog': literalBool(true),
+                    if ((r.routeType == RouteType.cupertino ||
+                            r.routeType == RouteType.adaptive) &&
+                        r.cupertinoNavTitle != null)
+                      'title': literalString(r.cupertinoNavTitle!),
+                    if (r.routeType == RouteType.custom) ...{
+                      if (r.customRouteBuilder != null)
+                        'customRouteBuilder': r.customRouteBuilder!.refer,
+                      if (r.transitionBuilder != null)
+                        'transitionsBuilder': r.transitionBuilder!.refer,
+                      if (r.durationInMilliseconds != null)
+                        'durationInMilliseconds':
+                            literalNum(r.durationInMilliseconds!),
+                      if (r.reverseDurationInMilliseconds != null)
+                        'reverseDurationInMilliseconds':
+                            literalNum(r.reverseDurationInMilliseconds!),
+                      if (r.customRouteOpaque != null)
+                        'opaque': literalBool(r.customRouteOpaque!),
+                      if (r.customRouteBarrierDismissible != null)
+                        'barrierDismissible':
+                            literalBool(r.customRouteBarrierDismissible!),
+                      if (r.customRouteBarrierLabel != null)
+                        'barrierLabel':
+                            literalString(r.customRouteBarrierLabel!),
+                    }
+                  },
+                )
+                .returned
+                .statement
+          ])),
   ).closure;
 }
 

@@ -7,6 +7,7 @@ import 'widgets/auto_router.dart';
 
 extension AutoRouterX on BuildContext {
   StackRouter get router => AutoRouter.of(this);
+  StackRouter get watchRouter => AutoRouter.of(this, watch: true);
 
   @optionalTypeArgs
   Future<T?> pushRoute<T extends Object?>(PageRouteInfo route,
@@ -38,7 +39,9 @@ extension AutoRouterX on BuildContext {
           );
 
   TabsRouter get tabsRouter => AutoTabsRouter.of(this);
-  RouteData get topRoute => router.topRoute;
+  TabsRouter get watchTabsRouter => AutoTabsRouter.of(this, watch: true);
+
+  RouteData get topRoute => watchRouter.topRoute;
 
   T? innerRouterOf<T extends RoutingController>(String routeKey) =>
       RouterScope.of(this).controller.innerRouterOf<T>(routeKey);

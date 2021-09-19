@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web/router/web_auth_guard.dart';
 import 'package:example/web/router/web_router.gr.dart';
 import 'package:example/web/web_main.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,12 +8,13 @@ import 'package:flutter/material.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: HomePage),
+    AutoRoute(path: '/', page: HomePage, initial: true),
     AutoRoute(path: '/login', page: LoginPage),
     AutoRoute(
       path: '/user/:userID',
+      usesPathAsKey: false,
       page: UserPage,
-      guards: [AuthGuard],
+      // guards: [AuthGuard],
       children: [
         AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
         ]),
       ],
     ),
-    AutoRoute(path: '/404', page: NotFoundScreen),
+    AutoRoute(path: '*', page: NotFoundScreen),
   ],
 )
 class $WebAppRouter {}
@@ -42,7 +42,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Navigator;
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -56,24 +55,25 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.pushRoute(
-                      UserRoute(
-                        id: 1,
-                        children: [
-                          UserProfileRoute(likes: 2)
-                          // UserPostsRoute(children: [
-                          //   UserAllPostsRoute(),
-                          // ])
-                        ],
-                      ),
-                    );
+                    context.router.navigateNamed('/user/1/profile');
+                    // context.pushRoute(
+                    //   UserRoute(
+                    //     id: 1,
+                    //     children: [
+                    //       UserProfileRoute(likes: 2)
+                    //       // UserPostsRoute(children: [
+                    //       //   UserAllPostsRoute(),
+                    //       // ])
+                    //     ],
+                    //   ),
+                    // );
                   },
-              child: Text('Navigate to user/1'),
+              child: Text('Navigate to user/2'),
             ),
             ElevatedButton(
               onPressed: showUserPosts,
               child: Text('Show user posts'),
-            )
+            ),
           ],
         ),
       ),
@@ -175,13 +175,14 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  bool showPosts = false;
+  late var _id = widget.id;
 
   @override
   void didUpdateWidget(covariant UserPage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.id != oldWidget.id) {
-      print('user id updated ${widget.id}');
+      print('User Id changed ${widget.id}');
+      _id = widget.id;
     }
   }
 
@@ -189,7 +190,11 @@ class _UserPageState extends State<UserPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.topRoute.name),
+        title: Builder(
+          builder: (context) {
+            return Text(context.topRoute.name + ' $_id');
+          },
+        ),
         leading: AutoBackButton(),
       ),
       body: AutoRouter(
@@ -254,7 +259,7 @@ class UserAllPostsPage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.router.push(UserFavoritePostsRoute());
+                    context.pushRoute(UserFavoritePostsRoute());
                   },
               child: Text('Favorite'),
             ),

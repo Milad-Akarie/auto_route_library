@@ -2,7 +2,7 @@ part of '../router/controller/routing_controller.dart';
 
 class RouteData {
   RouteMatch _route;
-  final RouteData? parent;
+  RouteData? _parent;
   final RoutingController router;
 
   LocalKey get key => _route.key;
@@ -10,13 +10,14 @@ class RouteData {
   RouteData({
     required RouteMatch route,
     required this.router,
-    this.parent,
+    RouteData? parent,
     List<RouteMatch>? preMatchedPendingRoutes,
   })  : _route = route,
+        _parent = parent,
         _preMatchedPendingRoutes = preMatchedPendingRoutes;
 
   List<RouteMatch> get breadcrumbs => List.unmodifiable([
-        if (parent != null) ...parent!.breadcrumbs,
+        if (_parent != null) ..._parent!.breadcrumbs,
         _route,
       ]);
 
@@ -60,6 +61,10 @@ class RouteData {
     }
   }
 
+  void _updateParentData(RouteData value) {
+    _parent = value;
+  }
+
   RouteMatch get route => _route;
 
   String get name => _route.routeName;
@@ -71,10 +76,10 @@ class RouteData {
   String get match => _route.stringMatch;
 
   Parameters get inheritedPathParams {
-    if (parent == null) {
+    if (_parent == null) {
       return const Parameters(const {});
     }
-    return parent!.breadcrumbs.map((e) => e.pathParams).reduce(
+    return _parent!.breadcrumbs.map((e) => e.pathParams).reduce(
           (value, element) => value + element,
         );
   }
@@ -93,5 +98,5 @@ class RouteData {
           route == other.route;
 
   @override
-  int get hashCode => route.hashCode ^ parent.hashCode;
+  int get hashCode => route.hashCode;
 }

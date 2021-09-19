@@ -17,6 +17,7 @@ class RouteMatch {
   final Object? args;
   final List<AutoRouteGuard> guards;
   final LocalKey key;
+  final bool isBranch;
 
   const RouteMatch({
     required this.routeName,
@@ -24,6 +25,7 @@ class RouteMatch {
     required this.path,
     required this.stringMatch,
     required this.key,
+    this.isBranch = false,
     this.children,
     this.args,
     this.guards = const [],
@@ -36,6 +38,8 @@ class RouteMatch {
   bool get hasChildren => children?.isNotEmpty == true;
 
   bool get fromRedirect => redirectedFrom != null;
+
+  bool get hasEmptyPath => path == '';
 
   List<String> get allSegments =>
       [...segments, if (hasChildren) ...children!.last.allSegments];

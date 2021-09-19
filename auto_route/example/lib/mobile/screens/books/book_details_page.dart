@@ -17,7 +17,7 @@ class BookDetailsPage extends StatefulWidget {
 }
 
 class _BookDetailsPageState extends State<BookDetailsPage> {
-  int counter = 0;
+  int counter = 1;
 
   @override
   Widget build(BuildContext context) {
