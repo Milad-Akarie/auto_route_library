@@ -174,7 +174,7 @@ context.router.popUntilRoot();
 // removes the entry.
 context.router.removeLast(); 
 
-// removes any route in stack that satisfis the predicate
+// removes any route in stack that satisfies the predicate
 // this works exactly like removing items from a regualar List
 // <PageRouteInfo>[...].removeWhere((r)=>)
 context.router.removeWhere((route) => );
