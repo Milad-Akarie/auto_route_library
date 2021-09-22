@@ -26,7 +26,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
 
   @override
   void routerReportsNewRouteInformation(RouteInformation routeInformation,
-      {bool isNavigation = true}) {
+      {required RouteInformationReportingType type}) {
     var replace = false;
     if (routeInformation is AutoRouteInformation) {
       replace = routeInformation.replace;
@@ -35,7 +35,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
     SystemNavigator.routeInformationUpdated(
       location: routeInformation.location!,
       state: routeInformation.state,
-      replace: replace || !isNavigation,
+      replace: replace || type != RouteInformationReportingType.navigate,
     );
     _value = routeInformation;
   }
