@@ -38,9 +38,9 @@
     
 ## Introduction 
 #### What is AutoRoute? 
-It’s a Flutter navigation package, it allows for strongly-typed arguments passing, effortless deep-linking and it uses code generation to simplify routes setup, with that being said it requires a minimal amount of code to generate everything needed for navigation inside of your App.    
+It’s a Flutter navigation package, it allows for strongly-typed arguments passing, effortless deep-linking, and it uses code generation to simplify routes setup, with that being said it requires a minimal amount of code to generate everything needed for navigation inside your App.    
 #### Why AutoRoute?
- If your App requires deep-linking or guarded routes or just a clean routing setup you'll need to use named/generated routes and you’ll end up writing a lot of boilerplate code for mediator argument classes, checking for required arguments, extracting arguments and a bunch of other stuff. AutoRoute does all that for you and much more.    
+ If your App requires deep-linking or guarded routes or just a clean routing setup you'll need to use named/generated routes, and you’ll end up writing a lot of boilerplate code for mediator argument classes, checking for required arguments, extracting arguments and a bunch of other stuff. AutoRoute does all that for you and much more.    
 ### Installation    
  ```yaml    
 dependencies:    
@@ -175,7 +175,7 @@ context.router.popUntilRoot();
 context.router.removeLast(); 
 
 // removes any route in stack that satisfies the predicate
-// this works exactly like removing items from a regualar List
+// this works exactly like removing items from a regular List
 // <PageRouteInfo>[...].removeWhere((r)=>)
 context.router.removeWhere((route) => );
     
@@ -214,11 +214,11 @@ You can return results by either using the pop completer or by passing a callbac
 ```dart    
 var result = await router.push(LoginRoute());    
 ```  
-then inside of your `LoginPage` pop with results
+then inside your `LoginPage` pop with results
 ```dart  
 router.pop(true);   
 ```  
-as you'd notice we didn't specify the result type,  we're playing with dynamic values here, which can be risky and I personally don't recommend it.  
+as you'd notice we didn't specify the result type,  we're playing with dynamic values here, which can be risky, and I personally don't recommend it.  
 
 To avoid working with dynamic values we specify what type of results we expect our page to return, which is a `bool` value.
 ```dart   
@@ -370,7 +370,7 @@ class UserPage extends StatelessWidget {
     
 Now if we navigate to `/user/1` we will be presented with a page that has an appBar title that says `User 1` and an empty  body, why? because we haven't pushed any routes to our nested AutoRouter, but if we navigate to `user/1/profile` the `UserProfilePage` will be pushed to the nested router and that's what we will see.    
     
-What if want to show one of the child pages at `/users/1`? we can simply do that by giving the child page an empty path `''`.    
+What if we want to show one of the child pages at `/users/1`? we can simply do that by giving the child page an empty path `''`.    
     
 ```dart    
    AutoRoute(    
@@ -397,9 +397,9 @@ or by using `RedirectRoute`
 in both cases whenever we navigate to `/user/1` we will be presented with the `UserProfilePage`.    
     
 ## Finding The Right Router 
-Every nested AutoRouter has its own routing controller to manage the stack inside of it and the easiest way to obtain a scoped controller is by using context.     
+Every nested AutoRouter has its own routing controller to manage the stack inside it and the easiest way to obtain a scoped controller is by using context.     
     
-In the previous example `UserPage` is a root level stack entry so calling `AutoRouter.of(context)` anywhere inside of it will get us the root routing controller.    
+In the previous example `UserPage` is a root level stack entry so calling `AutoRouter.of(context)` anywhere inside it will get us the root routing controller.    
     
 `AutoRouter` widgets that are used to render nested routes insert a new router scope into the widgets tree, so when a nested route calls for the scoped controller they will get the closest parent controller in the widgets tree not the root controller.     
     
@@ -477,7 +477,7 @@ class UserPage extends StatelessWidget {
 Think of route guards as middleware or interceptors, routes can not be added to the stack without going through their assigned guards, Guards are useful for restricting access to certain routes.
 
 We create a route guard by extending `AutoRouteGuard` from the auto_route package
-and implementing our logic inside of the onNavigation method.
+and implementing our logic inside the onNavigation method.
 ```dart
 class AuthGuard extends AutoRouteGuard {
  @override
@@ -485,7 +485,7 @@ class AuthGuard extends AutoRouteGuard {
  // the navigation is paused until resolver.next() is called with either 
  // true to resume/continue navigation or false to abort navigation
      if(authenitcated){
-       // if user is autenticated we continue
+       // if user is authenticated we continue
         resolver.next(true);
       }else{
          // we redirect the user to our login page
@@ -508,9 +508,9 @@ Now we assign our guard to the routes we want to protect.
 ```dart
  AutoRoute(page: ProfileScreen, guards: [AuthGuard]);
 ```
-After we run code generation, our router will have a required named argument called authGuard or whatever your guard name is
+After we run code generation, our router will have a required named-argument called authGuard or whatever your guard name is
 ```dart
-// we pass our AuthGaurd to the generated router.
+// we pass our AuthGuard to the generated router.
 final _appRouter = AppRouter(authGuard: AuthGuard());
 ```
 
@@ -522,7 +522,7 @@ final _appRouter = AppRouter(authGuard: AuthGuard());
 | Property                                 | Default value | Definition                                                                               |
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |
 | preferRelativeImports [bool] | true         | if true relative imports will be used when possible |
-| replaceInRouteName [String] |    ''     | used to replace conventional words in generated route name (whatToReplacePattern,replacment) |
+| replaceInRouteName [String] |    ''     | used to replace conventional words in generated route name (whatToReplacePattern,replacement) |
 
 #### CustomAutoRouter
 
@@ -622,4 +622,4 @@ CustomRoute(page: CustomPage, customRouteBuilder: myCustomRouteBuilder)
 
 ## More docs are coming soon    
 ### Support auto_route
-  You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can enhance a certain functionality or by reporting any problems you encounter and of course buying a couple coffees will help speed up the development process.
+  You can support auto_route by liking it on Pub and staring it on GitHub, sharing ideas on how we can enhance a certain functionality or by reporting any problems you encounter and of course buying a couple coffees will help speed up the development process.
