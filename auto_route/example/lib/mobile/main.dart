@@ -17,8 +17,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _rootRouter = RootRouter(
-      // authGuard: AuthGuard(),
-      );
+    authGuard: AuthGuard(),
+  );
 
   // final _authService = AuthService();
 

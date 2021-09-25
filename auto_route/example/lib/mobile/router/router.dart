@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/screens/books/book_details_page.dart';
-import 'package:example/mobile/screens/books/book_list_page.dart';
+import 'package:example/mobile/screens/books/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -21,15 +20,7 @@ export 'router.gr.dart';
       path: '/',
       page: HomePage,
       children: [
-        AutoRoute(
-          path: 'books',
-          page: EmptyRouterPage,
-          name: 'BooksTab',
-          children: [
-            AutoRoute(path: '', page: BookListPage),
-            AutoRoute(path: ':id', page: BookDetailsPage),
-          ],
-        ),
+        booksTab,
         profileTab,
         AutoRoute(
           path: 'settings/:tab',

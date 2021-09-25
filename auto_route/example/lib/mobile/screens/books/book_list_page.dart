@@ -24,8 +24,10 @@ class _BookListPageState extends State<BookListPage> {
                           child: ListTile(
                             title: Text(book.name),
                             subtitle: Text(book.genre),
-                            onTap: () {
-                              BookDetailsRoute(id: book.id).show(context);
+                            onTap: () async {
+                              var _book = await BookDetailsRoute(id: book.id)
+                                  .show<Book>(context);
+                              print(_book?.reads);
                             },
                           ),
                         ),

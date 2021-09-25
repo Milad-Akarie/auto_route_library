@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/data/db.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 
 import 'book_details_page.dart';
@@ -10,7 +11,7 @@ const booksTab = AutoRoute(
   name: 'BooksTab',
   children: [
     AutoRoute(path: '', page: BookListPage),
-    AutoRoute(
+    AutoRoute<Book>(
       path: ':id',
       usesPathAsKey: true,
       page: BookDetailsPage,

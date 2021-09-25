@@ -4,12 +4,28 @@ class Book {
   final int id;
   final String name;
   final String genre;
+  final int reads;
 
   const Book({
     required this.id,
     required this.name,
     required this.genre,
+    this.reads = 0,
   });
+
+  Book copyWith({
+    int? id,
+    String? name,
+    String? genre,
+    int? reads,
+  }) {
+    return Book(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      genre: genre ?? this.genre,
+      reads: reads ?? this.reads,
+    );
+  }
 }
 
 class BooksDB {
@@ -42,7 +58,9 @@ class BooksDBProvider extends InheritedWidget {
   }
 
   static BooksDB? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<BooksDBProvider>()?.booksDb;
+    return context
+        .dependOnInheritedWidgetOfExactType<BooksDBProvider>()
+        ?.booksDb;
   }
 }
 
@@ -93,6 +111,8 @@ class UsersDBProvider extends InheritedWidget {
   }
 
   static UsersDB? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<UsersDBProvider>()?.usersDB;
+    return context
+        .dependOnInheritedWidgetOfExactType<UsersDBProvider>()
+        ?.usersDB;
   }
 }
