@@ -22,6 +22,7 @@ class AutoTabsRouter extends StatefulWidget {
   final int? _activeIndex;
   final bool declarative;
   final OnTabNavigateCallBack? onNavigate;
+
   // if activeIndex != homeIndex
   // set activeIndex to homeIndex
   // else pop parent
@@ -123,18 +124,18 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
       _navigatorObservers = _inheritableObserversBuilder();
       _parentController = parentScope.controller;
       _controller = TabsRouter(
-          parent: _parentController,
-          key: parentRoute.key,
-          homeIndex: widget.homeIndex,
-          managedByWidget: widget.declarative,
-          initialIndex: widget._activeIndex,
-          routeData: parentRoute,
-          onNavigate: widget.onNavigate,
-          routeCollection: _parentController.routeCollection.subCollectionOf(
-            parentRoute.name,
-          ),
-          pageBuilder: _parentController.pageBuilder,
-          initialPreMatchedRoutes: parentRoute.preMatchedPendingRoutes);
+        parent: _parentController,
+        key: parentRoute.key,
+        homeIndex: widget.homeIndex,
+        managedByWidget: widget.declarative,
+        initialIndex: widget._activeIndex,
+        routeData: parentRoute,
+        onNavigate: widget.onNavigate,
+        routeCollection: _parentController.routeCollection.subCollectionOf(
+          parentRoute.name,
+        ),
+        pageBuilder: _parentController.pageBuilder,
+      );
       _parentController.attachChildController(_controller!);
       _setupController();
     }

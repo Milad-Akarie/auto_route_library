@@ -3,13 +3,12 @@ import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import '../controller/routing_controller.dart';
-import 'auto_route_navigator.dart';
+import '../widgets/auto_route_navigator.dart';
 
 part 'root_stack_router.dart';
 
@@ -49,9 +48,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   @override
-  Future<bool> popRoute() {
-    return controller.topMost.pop();
-  }
+  Future<bool> popRoute() => controller.topMost.pop();
 
   late List<NavigatorObserver> _navigatorObservers;
 
@@ -108,6 +105,10 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(UrlState state) {
+    final topMost = controller.topMost;
+    if (topMost is StackRouter && topMost.hasPagelessTopRoute) {
+      topMost.popUntil((route) => route.settings is AutoRoutePage);
+    }
     if (state.hasSegments) {
       return controller.navigateAll(state.segments);
     }
@@ -139,14 +140,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     final newState = UrlState.fromSegments(controller.currentSegments);
     if (_urlState.url != newState.url) {
       final segments = newState.segments;
-
       final replace = segments.isNotEmpty &&
           (segments.last.fromRedirect ||
               (segments.last.hasEmptyPath && _urlState.path == '/'));
-
       _urlState = newState.copyWith(replace: replace);
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   @override
@@ -155,10 +154,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     removeListener(_rebuildListener);
   }
 
-  void notifyUrlChanged() {
-    // notifyListeners();
-    _rebuildListener();
-  }
+  void notifyUrlChanged() => _rebuildListener();
 }
 
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {

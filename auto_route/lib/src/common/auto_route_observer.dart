@@ -134,7 +134,7 @@ class TabPageRoute {
     required this.index,
   });
 
-  String get name => routeInfo.routeName;
+  String get name => routeInfo.name;
   String get path => routeInfo.path;
   String get match => routeInfo.stringMatch;
 }

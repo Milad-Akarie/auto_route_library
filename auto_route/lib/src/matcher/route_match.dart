@@ -11,7 +11,7 @@ class RouteMatch {
   final String fragment;
   final List<String> segments;
   final String? redirectedFrom;
-  final String routeName;
+  final String name;
   final String path;
   final String stringMatch;
   final Object? args;
@@ -20,7 +20,7 @@ class RouteMatch {
   final bool isBranch;
 
   const RouteMatch({
-    required this.routeName,
+    required this.name,
     required this.segments,
     required this.path,
     required this.stringMatch,
@@ -34,6 +34,9 @@ class RouteMatch {
     this.fragment = '',
     this.redirectedFrom,
   });
+
+  @Deprecated("Renamed to 'name'")
+  String get routeName => name;
 
   bool get hasChildren => children?.isNotEmpty == true;
 
@@ -65,7 +68,7 @@ class RouteMatch {
     return RouteMatch(
       path: path ?? this.path,
       stringMatch: stringMatch ?? this.stringMatch,
-      routeName: routeName ?? this.routeName,
+      name: routeName ?? this.name,
       segments: segments ?? this.segments,
       children: children ?? this.children,
       pathParams: pathParams ?? this.pathParams,
@@ -84,7 +87,7 @@ class RouteMatch {
       other is RouteMatch &&
           runtimeType == other.runtimeType &&
           path == other.path &&
-          routeName == other.routeName &&
+          name == other.name &&
           stringMatch == other.stringMatch &&
           pathParams == other.pathParams &&
           key == other.key &&
@@ -105,13 +108,13 @@ class RouteMatch {
       redirectedFrom.hashCode ^
       path.hashCode ^
       stringMatch.hashCode ^
-      routeName.hashCode ^
+      name.hashCode ^
       key.hashCode ^
       ListEquality().hash(segments);
 
   @override
   String toString() {
-    return 'RouteMatch{pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom, routeName: $routeName, path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
+    return 'RouteMatch{pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom, routeName: $name, path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
   }
 
   PageRouteInfo toRoute() => PageRouteInfo.fromMatch(this);

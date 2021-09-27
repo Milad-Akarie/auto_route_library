@@ -10,6 +10,9 @@ List<Class> buildRouteInfoAndArgs(
   return [
     Class(
       (b) => b
+        ..docs.addAll([
+          '/// generated route for [${r.pageType?.refer.accept(emitter).toString()}]'
+        ])
         ..name = r.routeName
         ..extend = TypeReference((b) {
           b

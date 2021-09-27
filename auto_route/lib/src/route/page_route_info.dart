@@ -105,7 +105,7 @@ class PageRouteInfo<T> {
 
   factory PageRouteInfo.fromMatch(RouteMatch match) {
     return PageRouteInfo(
-      match.routeName,
+      match.name,
       path: match.path,
       rawPathParams: match.pathParams.rawMap,
       rawQueryParams: match.queryParams.rawMap,
