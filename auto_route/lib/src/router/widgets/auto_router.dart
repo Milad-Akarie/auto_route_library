@@ -102,7 +102,7 @@ class AutoRouterState extends State<AutoRouter> {
           parentData.name,
         ),
         pageBuilder: _parentController.pageBuilder,
-        preMatchedRoutes: parentData.preMatchedPendingRoutes,
+        // preMatchedRoutes: parentData.preMatchedPendingRoutes,
       );
       _parentController.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
@@ -214,7 +214,6 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           managedByWidget: true,
           onRoutes: widget.onNavigate,
           navigatorKey: widget.navigatorKey,
-          preMatchedRoutes: parentData.preMatchedPendingRoutes,
           routeCollection: _parentController.routeCollection.subCollectionOf(
             parentData.name,
           ),

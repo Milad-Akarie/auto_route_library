@@ -1,5 +1,10 @@
 # ChangeLog
-##[2.4.0]
+## [2.4.1]
+- Fix pushing same route not rebuilding stack; effecting #717 #710 
+- Fix dialogs/bottom sheets don't play nicely with auto_route when using nested routers
+- Add option to push an un-routable widgets to StackRouters 
+- Add a comment containing the widget type reference to generated routes for easy source jumping
+## [2.4.0]
 - Fix url updates delay
 - Fix navigate does not update url
 - Add auto_route_information_provider.dart to fix infinite browser back button when using url redirects
@@ -7,7 +12,8 @@
 - Change routers are now not ( Watched ) by default to reduce rebuilds [ may Break]
 - Add optional homeIndex property to AutoTabsRouter to make sure we always pop from home tab
 - Change AutoBackButton to use StackRouterScope instead of RouterScope
-##[2.3.2]
+
+## [2.3.2]
 - Merge fix(generator): Bool opt type as num #688
 - Fix nested back gesture issue #686
 ## [2.1.0] Breaking changes!

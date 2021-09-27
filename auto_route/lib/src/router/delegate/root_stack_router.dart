@@ -14,19 +14,15 @@ abstract class RootStackRouter extends StackRouter {
   RouteData get routeData => RouteData(
         router: this,
         route: const RouteMatch(
-          routeName: 'Root',
+          name: 'Root',
           segments: const [''],
           path: '',
           stringMatch: '',
           isBranch: true,
           key: const ValueKey('Root'),
         ),
+        pendingChildren: [],
       );
-
-  @override
-  void _updateRouteDate(RouteData data) {
-    // root data shouldn't update
-  }
 
   Map<String, PageFactory> get pagesMap;
 
@@ -37,10 +33,37 @@ abstract class RootStackRouter extends StackRouter {
   @override
   bool get managedByWidget => _managedByWidget;
 
+  AutoRouteInformationProvider? _lazyInformationProvider;
+
+  AutoRouteInformationProvider routeInfoProvider(
+      {RouteInformation? initialRouteInformation}) {
+    return _lazyInformationProvider ??= AutoRouteInformationProvider(
+      initialRouteInformation: initialRouteInformation,
+    );
+  }
+
   @override
   PageBuilder get pageBuilder => _pageBuilder;
 
   AutoRouterDelegate? _lazyRootDelegate;
+
+  AutoRouterDelegate declarativeDelegate({
+    required RoutesBuilder routes,
+    String? navRestorationScopeId,
+    RoutePopCallBack? onPopRoute,
+    OnNavigateCallBack? onNavigate,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  }) {
+    return _lazyRootDelegate ??= AutoRouterDelegate.declarative(
+      this,
+      routes: routes,
+      onNavigate: onNavigate,
+      onPopRoute: onPopRoute,
+      navRestorationScopeId: navRestorationScopeId,
+      navigatorObservers: navigatorObservers,
+    );
+  }
 
   // _lazyRootDelegate is only built one time
   AutoRouterDelegate delegate({
@@ -71,8 +94,8 @@ abstract class RootStackRouter extends StackRouter {
   }
 
   @override
-  RouteMatcher get matcher => RouteMatcher(routeCollection);
+  late final RouteMatcher matcher = RouteMatcher(routeCollection);
 
   @override
-  RouteCollection get routeCollection => RouteCollection.from(routes);
+  late final RouteCollection routeCollection = RouteCollection.from(routes);
 }

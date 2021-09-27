@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.router.navigateNamed('/user/1/profile');
+                    context.router.push(UserPostsRoute());
                     // context.pushRoute(
                     //   UserRoute(
                     //     id: 1,
@@ -146,10 +146,21 @@ class _UserPostsPageState extends State<UserPostsPage> {
               'User Posts',
               style: TextStyle(fontSize: 30),
             ),
+            ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    useRootNavigator: false,
+                    builder: (_) => AlertDialog(
+                      title: Text('Alert'),
+                    ),
+                  );
+                },
+                child: Text('Show Dialog')),
             Expanded(
               child: AutoRouter(
                   // onNewRoutes: (routes) {
-                  //   print('OnNew UserPsot routes ${routes.map((e) => e.routeName)}');
+                  //   print('OnNew UserPost routes ${routes.map((e) => e.routeName)}');
                   //   return SynchronousFuture(null);
                   // },
                   // routes: (context) => [],
@@ -192,36 +203,12 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title: Builder(
           builder: (context) {
-            return Text(context.topRoute.name + ' $_id');
+            return Text(context.topRouteMatch.name + ' $_id');
           },
         ),
         leading: AutoBackButton(),
       ),
-      body: AutoRouter(
-          // onNavigate: (routes, initial) async {
-          //   // print('onNew routes ${routes.last.routeName}');
-          //   showPosts = false;
-          //   if (routes.isNotEmpty && routes.last.routeName == UserPostsRoute.name) {
-          //     showPosts = true;
-          //   }
-          //   if (!initial) {
-          //     setState(() {});
-          //   }
-          //
-          //   return null;
-          // },
-          // routes: (_) => [
-          //       UserProfileRoute(navigate: () {
-          //         setState(() {
-          //           showPosts = true;
-          //         });
-          //       }),
-          //       if (showPosts) UserPostsRoute()
-          //     ],
-          // onPopRoute: (route, _) {
-          //   showPosts = false;
-          // }
-          ),
+      body: AutoRouter(),
     );
   }
 }

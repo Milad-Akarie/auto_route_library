@@ -41,7 +41,10 @@ extension AutoRouterX on BuildContext {
   TabsRouter get tabsRouter => AutoTabsRouter.of(this);
   TabsRouter get watchTabsRouter => AutoTabsRouter.of(this, watch: true);
 
+  // returns the top most rendered route
   RouteData get topRoute => watchRouter.topRoute;
+  // returns the top most match rendered or pending
+  RouteMatch get topRouteMatch => watchRouter.topMatch;
 
   T? innerRouterOf<T extends RoutingController>(String routeKey) =>
       RouterScope.of(this).controller.innerRouterOf<T>(routeKey);

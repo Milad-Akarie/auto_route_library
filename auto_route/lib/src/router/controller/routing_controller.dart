@@ -6,6 +6,7 @@ import 'package:auto_route/src/navigation_failure.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/router/auto_route_page.dart';
+import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ abstract class RoutingController with ChangeNotifier {
 
   bool _isRouteActive(String routeName) {
     return currentSegments.any(
-      (r) => r.routeName == routeName,
+      (r) => r.name == routeName,
     );
   }
 
@@ -51,7 +52,7 @@ abstract class RoutingController with ChangeNotifier {
       route: route,
       router: this,
       parent: parent,
-      preMatchedPendingRoutes: route.children,
+      pendingChildren: route.children ?? [],
     );
 
     final mayUpdateController = childControllers[routeData.key];
@@ -234,6 +235,7 @@ abstract class RoutingController with ChangeNotifier {
   RouteData get current;
 
   RouteData get topRoute => topMost.current;
+  RouteMatch get topMatch => topRoute.topMatch;
 
   RouteData get routeData;
 
@@ -251,8 +253,6 @@ abstract class RoutingController with ChangeNotifier {
           ((c) => c.routeData.name == routeName),
         );
   }
-
-  List<RouteMatch>? get initialPreMatchedRoutes;
 
   PageBuilder get pageBuilder;
 
@@ -295,7 +295,6 @@ class TabsRouter extends RoutingController {
   final PageBuilder pageBuilder;
   final RouteMatcher matcher;
   RouteData _routeData;
-  final List<RouteMatch>? initialPreMatchedRoutes;
   int _activeIndex = 0;
   bool managedByWidget;
   OnTabNavigateCallBack? onNavigate;
@@ -310,16 +309,14 @@ class TabsRouter extends RoutingController {
       this.onNavigate,
       this.homeIndex = -1,
       RoutingController? parent,
-      this.initialPreMatchedRoutes,
       int? initialIndex})
       : matcher = RouteMatcher(routeCollection),
         _activeIndex = initialIndex ?? 0,
         _parent = parent,
         _routeData = routeData {
     if (parent != null) {
-      var hasPendingSubNavigation =
-          initialPreMatchedRoutes?.isNotEmpty == true &&
-              initialPreMatchedRoutes!.last.hasChildren;
+      var hasPendingSubNavigation = routeData.hasPendingChildren &&
+          routeData.pendingChildren.last.hasChildren;
       addListener(
         () {
           if (!hasPendingSubNavigation) {
@@ -401,10 +398,10 @@ class TabsRouter extends RoutingController {
 
   void setupRoutes(List<PageRouteInfo> routes) {
     final routesToPush = _matchAllOrReportFailure(routes)!;
-    if (initialPreMatchedRoutes?.isNotEmpty == true) {
-      final preMatchedRoute = initialPreMatchedRoutes!.last;
+    if (_routeData.hasPendingChildren) {
+      final preMatchedRoute = _routeData.pendingChildren.last;
       final correspondingRouteIndex = routes.indexWhere(
-        (r) => r.routeName == preMatchedRoute.routeName,
+        (r) => r.routeName == preMatchedRoute.name,
       );
       if (correspondingRouteIndex != -1) {
         if (managedByWidget) {
@@ -417,6 +414,7 @@ class TabsRouter extends RoutingController {
     if (routesToPush.isNotEmpty) {
       _pushAll(routesToPush);
     }
+    _routeData.pendingChildren.clear();
   }
 
   void _pushAll(List<RouteMatch> routes) {
@@ -521,7 +519,6 @@ abstract class StackRouter extends RoutingController {
   final RoutingController? _parent;
   final LocalKey key;
   final GlobalKey<NavigatorState> _navigatorKey;
-  final List<RouteMatch>? initialPreMatchedRoutes;
   final OnNestedNavigateCallBack? onNavigate;
 
   StackRouter({
@@ -529,13 +526,11 @@ abstract class StackRouter extends RoutingController {
     this.onNavigate,
     RoutingController? parent,
     GlobalKey<NavigatorState>? navigatorKey,
-    this.initialPreMatchedRoutes,
   })  : _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         _parent = parent {
     if (parent != null) {
-      var hasPendingSubNavigation =
-          initialPreMatchedRoutes?.isNotEmpty == true &&
-              initialPreMatchedRoutes!.last.hasChildren;
+      var hasPendingSubNavigation = routeData.hasPendingChildren &&
+          routeData.pendingChildren.last.hasChildren;
       addListener(
         () {
           if (!hasPendingSubNavigation) {
@@ -580,15 +575,44 @@ abstract class StackRouter extends RoutingController {
     return null;
   }
 
+  // widgets pushed using this method
+  // don't have paths nor effect url
+  Future<T?> pushWidget<T extends Object?>(
+    Widget widget, {
+    RouteTransitionsBuilder? transitionBuilder,
+    Duration transitionDuration = const Duration(milliseconds: 300),
+  }) {
+    final navigator = _navigatorKey.currentState;
+    assert(navigator != null);
+    return navigator!.push<T>(
+      AutoPageRouteBuilder<T>(
+        child: widget,
+        transitionBuilder: transitionBuilder,
+        transitionDuration: transitionDuration,
+      ),
+    );
+  }
+
   @override
   RoutingController get topMost {
-    if (childControllers.isNotEmpty) {
+    if (childControllers.isNotEmpty && !hasPagelessTopRoute) {
       var topRouteKey = _pages.last.routeData.key;
       if (childControllers.containsKey(topRouteKey)) {
         return childControllers[topRouteKey]!.topMost;
       }
     }
     return this;
+  }
+
+  // a workaround to check weather the current
+  // navigator's top route is pageless
+  bool get hasPagelessTopRoute {
+    var hasPagelessTopRoute = false;
+    _navigatorKey.currentState?.popUntil((route) {
+      hasPagelessTopRoute = route.settings is! AutoRoutePage;
+      return true;
+    });
+    return hasPagelessTopRoute;
   }
 
   void _updateSharedPathData({
@@ -1053,13 +1077,11 @@ class NestedStackRouter extends StackRouter {
     this.managedByWidget = false,
     required RoutingController parent,
     OnNestedNavigateCallBack? onRoutes,
-    List<RouteMatch>? preMatchedRoutes,
     GlobalKey<NavigatorState>? navigatorKey,
   })  : matcher = RouteMatcher(routeCollection),
         _routeData = routeData,
         super(
           key: key,
-          initialPreMatchedRoutes: preMatchedRoutes,
           parent: parent,
           onNavigate: onRoutes,
           navigatorKey: navigatorKey,
@@ -1078,14 +1100,16 @@ class NestedStackRouter extends StackRouter {
     }
   }
 
-  void _pushInitialRoutes() {
-    if (initialPreMatchedRoutes?.isNotEmpty == true) {
+  void _pushInitialRoutes() async {
+    if (_routeData.hasPendingChildren) {
+      final initialRoutes = _routeData.pendingChildren;
       if (managedByWidget) {
-        onNavigate?.call(initialPreMatchedRoutes!, true);
+        onNavigate?.call(initialRoutes, true);
       } else {
-        _pushAllGuarded(initialPreMatchedRoutes!);
+        await _pushAllGuarded(initialRoutes);
       }
     }
+    _routeData.pendingChildren.clear();
   }
 }
 

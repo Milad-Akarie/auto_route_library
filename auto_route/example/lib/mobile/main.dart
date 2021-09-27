@@ -17,28 +17,16 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final _rootRouter = RootRouter(
-      // authGuard: AuthGuard(),
-      );
-
-  // final _authService = AuthService();
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _authService.addListener(() => setState(() {}));
-  // }
+    authGuard: AuthGuard(),
+  );
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
-      routerDelegate: AutoRouterDelegate(
-        _rootRouter,
-      ),
-      routeInformationProvider: AutoRouteInformationProvider(),
-      routeInformationParser: _rootRouter.defaultRouteParser(
-          // includePrefixMatches: true,
-          ),
+      routerDelegate: _rootRouter.delegate(),
+      routeInformationProvider: _rootRouter.routeInfoProvider(),
+      routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => AuthService(),

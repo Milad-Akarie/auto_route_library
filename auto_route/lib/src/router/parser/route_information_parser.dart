@@ -38,10 +38,7 @@ class AutoRouteInformation extends RouteInformation {
     required String location,
     Object? state,
     this.replace = true,
-  }) : super(
-          location: location,
-          state: state,
-        );
+  }) : super(location: location, state: state);
 }
 
 @immutable
@@ -58,7 +55,11 @@ class UrlState {
 
   factory UrlState.fromSegments(List<RouteMatch> routes,
       {bool shouldReplace = false}) {
-    return UrlState(_buildUri(routes), routes, shouldReplace: shouldReplace);
+    return UrlState(
+      _buildUri(routes),
+      routes,
+      shouldReplace: shouldReplace,
+    );
   }
 
   bool get hasSegments => segments.isNotEmpty;
@@ -82,7 +83,7 @@ class UrlState {
   }
 
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (match) => match.routeName == routeName)
+    return _findSegment(segments, (match) => match.name == routeName)
             ?.children ??
         const [];
   }

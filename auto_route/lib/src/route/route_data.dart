@@ -11,28 +11,20 @@ class RouteData {
     required RouteMatch route,
     required this.router,
     RouteData? parent,
-    List<RouteMatch>? preMatchedPendingRoutes,
+    required this.pendingChildren,
   })  : _route = route,
-        _parent = parent,
-        _preMatchedPendingRoutes = preMatchedPendingRoutes;
+        _parent = parent;
 
   List<RouteMatch> get breadcrumbs => List.unmodifiable([
         if (_parent != null) ..._parent!.breadcrumbs,
         _route,
       ]);
 
-  List<RouteMatch>? _preMatchedPendingRoutes;
-
-  // one time read only
-  List<RouteMatch>? get preMatchedPendingRoutes {
-    final pending = _preMatchedPendingRoutes;
-    _preMatchedPendingRoutes = null;
-    return pending;
-  }
+  final List<RouteMatch> pendingChildren;
 
   bool get isActive => router.isRouteActive(name);
 
-  bool get hasPendingRoutes => _preMatchedPendingRoutes != null;
+  bool get hasPendingChildren => pendingChildren.isNotEmpty;
 
   static RouteData of(BuildContext context) {
     return RouteDataScope.of(context);
@@ -67,7 +59,7 @@ class RouteData {
 
   RouteMatch get route => _route;
 
-  String get name => _route.routeName;
+  String get name => _route.name;
 
   String get path => _route.path;
 
@@ -89,6 +81,22 @@ class RouteData {
   Parameters get queryParams => _route.queryParams;
 
   String get fragment => _route.fragment;
+
+  RouteMatch _getTopMatch(RouteMatch routeMatch) {
+    if (routeMatch.hasChildren) {
+      return _getTopMatch(routeMatch.children!.last);
+    } else {
+      return routeMatch;
+    }
+  }
+
+  RouteMatch get topMatch {
+    if (hasPendingChildren) {
+      return _getTopMatch(pendingChildren.last);
+    }
+
+    return _route;
+  }
 
   @override
   bool operator ==(Object other) =>

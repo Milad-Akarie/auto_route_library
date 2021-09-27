@@ -178,7 +178,7 @@ class RouteMatcher {
     final stringMatch = p.joinAll(extractedSegments);
     return RouteMatch(
       path: config.path,
-      routeName: config.name,
+      name: config.name,
       isBranch: config.hasSubTree,
       key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
       stringMatch: stringMatch,
@@ -223,7 +223,7 @@ class RouteMatcher {
       return null;
     }
     return RouteMatch(
-      routeName: route.routeName,
+      name: route.routeName,
       segments: p.split(route.stringMatch),
       path: route.path,
       args: route.args,
