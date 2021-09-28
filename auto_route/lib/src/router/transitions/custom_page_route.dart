@@ -6,6 +6,7 @@ class AutoPageRouteBuilder<T> extends PageRoute<T> {
     this.transitionBuilder,
     this.transitionDuration = const Duration(milliseconds: 300),
     required this.child,
+    this.fullscreenDialog = false,
   });
 
   final RouteTransitionsBuilder? transitionBuilder;
@@ -16,6 +17,9 @@ class AutoPageRouteBuilder<T> extends PageRoute<T> {
 
   @override
   String? get barrierLabel => null;
+
+  @override
+  final bool fullscreenDialog;
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,

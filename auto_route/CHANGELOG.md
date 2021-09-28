@@ -1,4 +1,7 @@
 # ChangeLog
+## [2.4.2]
+- Add fullscreenDialog flag to pushWidget method
+- Add pushNativeRoute method
 ## [2.4.1]
 - Fix pushing same route not rebuilding stack; effecting #717 #710
 - Fix dialogs/bottom sheets don't play nicely with auto_route when using nested routers

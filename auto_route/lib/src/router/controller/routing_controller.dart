@@ -580,6 +580,7 @@ abstract class StackRouter extends RoutingController {
   Future<T?> pushWidget<T extends Object?>(
     Widget widget, {
     RouteTransitionsBuilder? transitionBuilder,
+    bool fullscreenDialog = false,
     Duration transitionDuration = const Duration(milliseconds: 300),
   }) {
     final navigator = _navigatorKey.currentState;
@@ -587,10 +588,19 @@ abstract class StackRouter extends RoutingController {
     return navigator!.push<T>(
       AutoPageRouteBuilder<T>(
         child: widget,
+        fullscreenDialog: fullscreenDialog,
         transitionBuilder: transitionBuilder,
         transitionDuration: transitionDuration,
       ),
     );
+  }
+
+  // routes pushed using this method
+  // don't have paths nor effect url
+  Future<T?> pushNativeRoute<T extends Object?>(Route<T> route) {
+    final navigator = _navigatorKey.currentState;
+    assert(navigator != null);
+    return navigator!.push<T>(route);
   }
 
   @override
