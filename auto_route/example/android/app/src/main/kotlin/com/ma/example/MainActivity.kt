@@ -1,4 +1,4 @@
-package com.auto_route.example
+package com.ma.example
 
 import io.flutter.embedding.android.FlutterActivity
 
