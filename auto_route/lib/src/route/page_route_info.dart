@@ -117,9 +117,8 @@ class PageRouteInfo<T> {
     );
   }
 
-// maybe?
-  Future<void> show(BuildContext context) {
-    return context.router.push(this);
+  Future<T?> show<T>(BuildContext context) {
+    return context.router.push<T>(this);
   }
 
   @override
