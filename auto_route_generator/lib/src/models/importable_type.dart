@@ -1,12 +1,12 @@
 import 'package:code_builder/code_builder.dart' show TypeReference;
 
-class ImportableType {
+class ResolvedType {
   String? import;
   String name;
   bool isNullable;
-  List<ImportableType> typeArguments;
+  List<ResolvedType> typeArguments;
 
-  ImportableType({
+  ResolvedType({
     required this.name,
     this.import,
     this.typeArguments = const [],
@@ -31,20 +31,20 @@ class ImportableType {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ImportableType &&
+      other is ResolvedType &&
           runtimeType == other.runtimeType &&
           identity == other.identity;
 
   @override
   int get hashCode => import.hashCode ^ name.hashCode;
 
-  ImportableType copyWith({
+  ResolvedType copyWith({
     String? import,
     String? name,
-    List<ImportableType>? typeArguments,
+    List<ResolvedType>? typeArguments,
     bool? isNullable,
   }) {
-    return new ImportableType(
+    return new ResolvedType(
       import: import ?? this.import,
       name: name ?? this.name,
       isNullable: isNullable ?? this.isNullable,

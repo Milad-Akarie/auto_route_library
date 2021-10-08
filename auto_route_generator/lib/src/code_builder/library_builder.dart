@@ -21,9 +21,10 @@ TypeReference listRefer(Reference reference, {bool nullable = false}) =>
       ..isNullable = nullable
       ..types.add(reference));
 
-String generateLibrary(RouterConfig config) {
+String generateLibrary(RouterConfig config, {bool usesPartBuilder = false}) {
+  final fileName = config.element.source.uri.pathSegments.last;
   final emitter = DartEmitter(
-    allocator: Allocator.simplePrefixing(),
+    allocator: usesPartBuilder ? Allocator.none : Allocator.simplePrefixing(),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
@@ -45,13 +46,16 @@ String generateLibrary(RouterConfig config) {
     checkedRoutes.add(route);
   });
 
-  var allGuards = allRoutes.fold<Set<ImportableType>>(
+  var allGuards = allRoutes.fold<Set<ResolvedType>>(
     {},
     (acc, a) => acc..addAll(a.guards),
   );
 
   final library = Library(
     (b) => b
+      ..directives.addAll([
+        if (usesPartBuilder) Directive.partOf(fileName),
+      ])
       ..body.addAll([
         buildRouterConfig(config, allGuards, allRoutes),
         ...allRoutes
@@ -62,5 +66,14 @@ String generateLibrary(RouterConfig config) {
       ]),
   );
 
-  return DartFormatter().format(library.accept(emitter).toString());
+  return [_header, DartFormatter().format(library.accept(emitter).toString())]
+      .join('\n');
 }
+
+const String _header = '''
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// AutoRouteGenerator
+// **************************************************************************
+''';

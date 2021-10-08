@@ -6,6 +6,7 @@ import 'package:auto_route/src/navigation_failure.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/router/auto_route_page.dart';
+import 'package:auto_route/src/router/controller/pageless_routes_observer.dart';
 import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:flutter/foundation.dart';
@@ -75,8 +76,10 @@ abstract class RoutingController with ChangeNotifier {
         onFailure(RouteNotFoundFailure(route));
         return null;
       } else {
+        final path = routeCollection.findPathTo(route.routeName);
         throw FlutterError(
-            "[${toString()}] Router can not navigate to ${route.fullPath}");
+            "\nLooks like you're trying to navigate to a nested route without adding their parent to stack first \n"
+            "try navigating to ${path.map((e) => e.name).reduce((a, b) => a += ' -> ${b}')}");
       }
     }
   }
@@ -115,10 +118,10 @@ abstract class RoutingController with ChangeNotifier {
   _RouterScopeResult<T>?
       _findPathScopeOrReportFailure<T extends RoutingController>(String path,
           {bool includePrefixMatches = false, OnNavigationFailure? onFailure}) {
-    final routers = [
-      if (this is T) this as T,
-      ..._getAncestors().whereType<T>()
-    ];
+    final routers = topMostRouter(ignorePagelessRoutes: true)
+        ._buildRoutersHierarchy()
+        .whereType<T>();
+
     for (var router in routers) {
       final matches = router.matcher.match(
         path,
@@ -142,18 +145,20 @@ abstract class RoutingController with ChangeNotifier {
 
   RoutingController _findScope<T extends RoutingController>(
       PageRouteInfo route) {
-    if (_parent == null || _canHandleNavigation(route)) {
-      return this;
-    }
-    final routers = [this, ..._getAncestors()];
-    return routers.firstWhere((r) => r._canHandleNavigation(route),
-        orElse: () => this);
+    return topMostRouter(ignorePagelessRoutes: true)
+        ._buildRoutersHierarchy()
+        .firstWhere(
+          (r) => r._canHandleNavigation(route),
+          orElse: () => this,
+        );
   }
 
   Future<dynamic> navigate(PageRouteInfo route,
       {OnNavigationFailure? onFailure}) async {
     return _findScope(route)._navigate(route, onFailure: onFailure);
   }
+
+  void _onNavigate(List<RouteMatch> routes, bool initial);
 
   Future<dynamic> _navigate(PageRouteInfo route,
       {OnNavigationFailure? onFailure}) async {
@@ -183,7 +188,7 @@ abstract class RoutingController with ChangeNotifier {
     return SynchronousFuture(null);
   }
 
-  List<RoutingController> _getAncestors() {
+  List<RoutingController> _buildRoutersHierarchy() {
     void collectRouters(
         RoutingController currentParent, List<RoutingController> all) {
       all.add(currentParent);
@@ -192,7 +197,7 @@ abstract class RoutingController with ChangeNotifier {
       }
     }
 
-    final routers = <RoutingController>[];
+    final routers = <RoutingController>[this];
     if (_parent != null) {
       collectRouters(_parent!, routers);
     }
@@ -206,7 +211,7 @@ abstract class RoutingController with ChangeNotifier {
     bool includeAncestors = false,
   });
 
-  int get currentSegmentsHash => const ListEquality().hash(currentSegments);
+  int get stateHash => const ListEquality().hash(currentSegments);
 
   LocalKey get key;
 
@@ -228,13 +233,17 @@ abstract class RoutingController with ChangeNotifier {
 
   bool get isRoot => _parent == null;
 
+  @Deprecated('use topMostRouter() instead')
   RoutingController get topMost;
+
+  RoutingController topMostRouter({bool ignorePagelessRoutes = false});
 
   RouteData? get currentChild;
 
   RouteData get current;
 
   RouteData get topRoute => topMost.current;
+
   RouteMatch get topMatch => topRoute.topMatch;
 
   RouteData get routeData;
@@ -372,10 +381,15 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  RoutingController get topMost {
+  RoutingController get topMost => topMostRouter();
+
+  @override
+  RoutingController topMostRouter({bool ignorePagelessRoutes = false}) {
     var activeKey = _activePage?.routeData.key;
     if (childControllers.containsKey(activeKey)) {
-      return childControllers[activeKey]!.topMost;
+      return childControllers[activeKey]!.topMostRouter(
+        ignorePagelessRoutes: ignorePagelessRoutes,
+      );
     }
     return this;
   }
@@ -451,12 +465,7 @@ class TabsRouter extends RoutingController {
         if (mayUpdateController != null) {
           final newRoutes = mayUpdateRoute.children ?? const [];
           if (mayUpdateController.managedByWidget) {
-            if (mayUpdateController is StackRouter) {
-              mayUpdateController.onNavigate?.call(newRoutes, false);
-            } else if (mayUpdateController is TabsRouter &&
-                newRoutes.isNotEmpty) {
-              mayUpdateController.onNavigate?.call(newRoutes.last, false);
-            }
+            mayUpdateController._onNavigate(newRoutes, false);
           }
           return mayUpdateController._navigateAll(newRoutes,
               onFailure: onFailure);
@@ -513,6 +522,13 @@ class TabsRouter extends RoutingController {
           ._updateSharedPathData(queryParams: queryParams, fragment: fragment);
     }
   }
+
+  @override
+  void _onNavigate(List<RouteMatch> routes, bool initial) {
+    if (routes.isNotEmpty) {
+      onNavigate?.call(routes.last, initial);
+    }
+  }
 }
 
 abstract class StackRouter extends RoutingController {
@@ -541,7 +557,20 @@ abstract class StackRouter extends RoutingController {
         },
       );
     }
+    pagelessRoutesObserver.addListener(notifyListeners);
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pagelessRoutesObserver.removeListener(notifyListeners);
+    pagelessRoutesObserver.dispose();
+  }
+
+  @override
+  int get stateHash => super.stateHash ^ hasPagelessTopRoute.hashCode;
+
+  late final pagelessRoutesObserver = PagelessRoutesObserver();
 
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
@@ -553,7 +582,7 @@ abstract class StackRouter extends RoutingController {
 
   @override
   bool get canPopSelfOrChildren {
-    if (_pages.length > 1) {
+    if (_pages.length > 1 || hasPagelessTopRoute) {
       return true;
     } else if (_pages.isNotEmpty &&
         childControllers.containsKey(_pages.last.routeData.key)) {
@@ -604,8 +633,9 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  RoutingController get topMost {
-    if (childControllers.isNotEmpty && !hasPagelessTopRoute) {
+  RoutingController topMostRouter({bool ignorePagelessRoutes = false}) {
+    if (childControllers.isNotEmpty &&
+        (ignorePagelessRoutes || !hasPagelessTopRoute)) {
       var topRouteKey = _pages.last.routeData.key;
       if (childControllers.containsKey(topRouteKey)) {
         return childControllers[topRouteKey]!.topMost;
@@ -614,16 +644,13 @@ abstract class StackRouter extends RoutingController {
     return this;
   }
 
-  // a workaround to check weather the current
-  // navigator's top route is pageless
-  bool get hasPagelessTopRoute {
-    var hasPagelessTopRoute = false;
-    _navigatorKey.currentState?.popUntil((route) {
-      hasPagelessTopRoute = route.settings is! AutoRoutePage;
-      return true;
-    });
-    return hasPagelessTopRoute;
-  }
+  @override
+  RoutingController get topMost => topMostRouter();
+
+  @override
+  RouteData get topRoute => topMostRouter(ignorePagelessRoutes: true).current;
+
+  bool get hasPagelessTopRoute => pagelessRoutesObserver.hasPagelessTopRoute;
 
   void _updateSharedPathData({
     Map<String, dynamic> queryParams = const {},
@@ -685,6 +712,11 @@ abstract class StackRouter extends RoutingController {
     }
   }
 
+  @override
+  void _onNavigate(List<RouteMatch> routes, bool initial) {
+    onNavigate?.call(routes, initial);
+  }
+
   bool _removeLast({bool notify = true}) {
     var didRemove = false;
     if (_pages.isNotEmpty) {
@@ -707,10 +739,9 @@ abstract class StackRouter extends RoutingController {
   }
 
   StackRouter _findStackScope(PageRouteInfo route) {
-    if (_parent == null || _canHandleNavigation(route)) {
-      return this;
-    }
-    final stackRouters = _getAncestors().whereType<StackRouter>();
+    final stackRouters = topMostRouter(ignorePagelessRoutes: true)
+        ._buildRoutersHierarchy()
+        .whereType<StackRouter>();
     return stackRouters.firstWhere(
       (c) => c._canHandleNavigation(route),
       orElse: () => this,
@@ -988,12 +1019,7 @@ abstract class StackRouter extends RoutingController {
       if (mayUpdateController != null) {
         final newChildren = mayUpdateRoute.children ?? const [];
         if (mayUpdateController.managedByWidget) {
-          if (mayUpdateController is StackRouter) {
-            mayUpdateController.onNavigate?.call(newChildren, false);
-          } else if (mayUpdateController is TabsRouter &&
-              newChildren.isNotEmpty) {
-            mayUpdateController.onNavigate?.call(newChildren.last, false);
-          }
+          mayUpdateController._onNavigate(newChildren, false);
         }
         return mayUpdateController._navigateAll(
           newChildren,
@@ -1069,6 +1095,8 @@ abstract class StackRouter extends RoutingController {
 
   @override
   bool get hasEntries => _pages.isNotEmpty;
+
+  void refresh() => notifyListeners();
 }
 
 class NestedStackRouter extends StackRouter {

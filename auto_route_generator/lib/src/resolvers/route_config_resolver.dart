@@ -15,6 +15,13 @@ const TypeChecker autoRouteChecker = TypeChecker.fromUrl(
   'package:auto_route/src/common/auto_route_annotations.dart#AutoRouterAnnotation',
 );
 
+const validMetaValues = [
+  'String',
+  'bool',
+  'int',
+  'double',
+];
+
 // extracts route configs from class fields and their meta data
 class RouteConfigResolver {
   final RouterConfig _routerConfig;
@@ -71,7 +78,7 @@ class RouteConfigResolver {
     var fullMatch = autoRoute.peek('fullMatch')?.boolValue;
     var initial = autoRoute.peek('initial')?.boolValue ?? false;
     var usesPathAsKey = autoRoute.peek('usesPathAsKey')?.boolValue ?? false;
-    var guards = <ImportableType>[];
+    var guards = <ResolvedType>[];
     autoRoute
         .peek('guards')
         ?.listValue
@@ -80,7 +87,7 @@ class RouteConfigResolver {
       guards.add(_typeResolver.resolveType(guard!));
     });
 
-    var returnType = ImportableType(name: 'dynamic');
+    var returnType = ResolvedType(name: 'dynamic');
     var dartType = autoRoute.objectValue.type;
     if (dartType is InterfaceType) {
       returnType = _typeResolver.resolveType(dartType.typeArguments.first);
@@ -93,8 +100,8 @@ class RouteConfigResolver {
     bool? customRouteOpaque;
     bool? customRouteBarrierDismissible;
     String? customRouteBarrierLabel;
-    ImportableType? customRouteBuilder;
-    ImportableType? transitionBuilder;
+    ResolvedType? customRouteBuilder;
+    ResolvedType? transitionBuilder;
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
       routeType = RouteType.material;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CupertinoRoute))) {
@@ -116,14 +123,12 @@ class RouteConfigResolver {
       final function =
           autoRoute.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
-        transitionBuilder =
-            _typeResolver.resolveImportableFunctionType(function);
+        transitionBuilder = _typeResolver.resolveFunctionType(function);
       }
       final builderFunction =
           autoRoute.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (builderFunction != null) {
-        customRouteBuilder =
-            _typeResolver.resolveImportableFunctionType(builderFunction);
+        customRouteBuilder = _typeResolver.resolveFunctionType(builderFunction);
       }
     } else {
       var globConfig = _routerConfig.globalRouteConfig;
@@ -137,6 +142,57 @@ class RouteConfigResolver {
         reverseDurationInMilliseconds =
             globConfig.reverseDurationInMilliseconds;
         customRouteBuilder = globConfig.customRouteBuilder;
+      }
+    }
+
+    final meta = <MetaEntry>[];
+    for (final entry in autoRoute
+        .read('meta')
+        .mapValue
+        .entries
+        .where((e) => e.value?.type != null)) {
+      final valueType =
+          entry.value!.type!.getDisplayString(withNullability: false);
+      throwIf(!validMetaValues.contains(valueType),
+          'Meta value type ${valueType} is not supported!\nSupported types are ${validMetaValues}');
+      switch (valueType) {
+        case 'bool':
+          {
+            meta.add(MetaEntry<bool>(
+              key: entry.key!.toStringValue()!,
+              type: valueType,
+              value: entry.value!.toBoolValue()!,
+            ));
+            break;
+          }
+        case 'String':
+          {
+            meta.add(MetaEntry<String>(
+              key: entry.key!.toStringValue()!,
+              type: valueType,
+              value: entry.value!.toStringValue()!,
+            ));
+
+            break;
+          }
+        case 'int':
+          {
+            meta.add(MetaEntry<int>(
+              key: entry.key!.toStringValue()!,
+              type: valueType,
+              value: entry.value!.toIntValue()!,
+            ));
+            break;
+          }
+        case 'double':
+          {
+            meta.add(MetaEntry<double>(
+              key: entry.key!.toStringValue()!,
+              type: valueType,
+              value: entry.value!.toDoubleValue()!,
+            ));
+            break;
+          }
       }
     }
 
@@ -207,6 +263,7 @@ class RouteConfigResolver {
       pathName: pathName,
       fullMatch: fullMatch,
       usesPathAsKey: usesPathAsKey,
+      meta: meta,
     );
   }
 }

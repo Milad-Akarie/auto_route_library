@@ -23,7 +23,6 @@ class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
 class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
   Widget build(context) {
-    print('router building');
     var settingsState = context.watch<SettingsState>();
 
     return Scaffold(

@@ -3,6 +3,7 @@ import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -103,28 +104,53 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
   }
 
+  void _onNewState(UrlState newState) {
+    if (!newState.hasSegments) {
+      _urlState = newState;
+      return;
+    }
+
+    final segments = newState.segments;
+    final lastVisibleSegmentIndex =
+        segments.lastIndexWhere((e) => e.path.isNotEmpty);
+    var lastVisibleSegment = segments.last;
+    if (lastVisibleSegmentIndex != -1) {
+      lastVisibleSegment = segments[lastVisibleSegmentIndex];
+    }
+
+    final replace = lastVisibleSegment.fromRedirect &&
+        newState.url.startsWith(_urlState.url) &&
+        newState.url != _urlState.url;
+
+    _urlState = newState.copyWith(replace: replace);
+
+    notifyListeners();
+  }
+
   @override
   Future<void> setNewRoutePath(UrlState state) {
-    final topMost = controller.topMost;
+    final topMost = controller.topMostRouter();
     if (topMost is StackRouter && topMost.hasPagelessTopRoute) {
       topMost.popUntil((route) => route.settings is AutoRoutePage);
     }
+
     if (state.hasSegments) {
       return controller.navigateAll(state.segments);
     }
+    notifyListeners();
     return SynchronousFuture(null);
   }
 
   @override
   Widget build(BuildContext context) {
-    final segmentsHash = controller.currentSegmentsHash;
+    final stateHash = controller.stateHash;
     return RouterScope(
       controller: controller,
       navigatorObservers: _navigatorObservers,
       inheritableObserversBuilder: navigatorObservers,
-      segmentsHash: segmentsHash,
+      stateHash: stateHash,
       child: StackRouterScope(
-        segmentsHash: segmentsHash,
+        stateHash: stateHash,
         controller: controller,
         child: AutoRouteNavigator(
           router: controller,
@@ -138,14 +164,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   void _rebuildListener() {
     final newState = UrlState.fromSegments(controller.currentSegments);
-    if (_urlState.url != newState.url) {
-      final segments = newState.segments;
-      final replace = segments.isNotEmpty &&
-          (segments.last.fromRedirect ||
-              (segments.last.hasEmptyPath && _urlState.path == '/'));
-      _urlState = newState.copyWith(replace: replace);
-    }
-    notifyListeners();
+    _onNewState(newState);
   }
 
   @override
@@ -202,15 +221,15 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
 
   @override
   Widget build(BuildContext context) {
-    final segmentsHash = controller.currentSegmentsHash;
+    final stateHash = controller.stateHash;
     return RouterScope(
       controller: controller,
       inheritableObserversBuilder: navigatorObservers,
-      segmentsHash: segmentsHash,
+      stateHash: stateHash,
       navigatorObservers: _navigatorObservers,
       child: StackRouterScope(
         controller: controller,
-        segmentsHash: segmentsHash,
+        stateHash: stateHash,
         child: AutoRouteNavigator(
           router: controller,
           declarativeRoutesBuilder: routes,

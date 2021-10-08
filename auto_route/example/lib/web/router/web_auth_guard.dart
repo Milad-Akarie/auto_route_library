@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web/router/web_router.gr.dart';
+import 'package:example/web/router/web_router.dart';
 import 'package:flutter/cupertino.dart';
 
 // mock auth state

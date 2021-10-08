@@ -123,15 +123,15 @@ class AutoRouterState extends State<AutoRouter> {
       navRestorationScopeId: widget.navRestorationScopeId,
       navigatorObservers: _navigatorObservers,
     );
-    final segmentsHash = controller!.currentSegmentsHash;
+    final stateHash = controller!.stateHash;
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       navigatorObservers: _navigatorObservers,
-      segmentsHash: segmentsHash,
+      stateHash: stateHash,
       child: StackRouterScope(
         controller: _controller!,
-        segmentsHash: segmentsHash,
+        stateHash: stateHash,
         child: widget.builder == null
             ? navigator
             : Builder(
@@ -235,12 +235,12 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    final segmentsHash = controller!.currentSegmentsHash;
+    final stateHash = controller!.stateHash;
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       navigatorObservers: _navigatorObservers,
-      segmentsHash: segmentsHash,
+      stateHash: stateHash,
       child: HeroControllerScope(
         controller: _heroController,
         child: AutoRouteNavigator(

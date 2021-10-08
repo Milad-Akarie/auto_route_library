@@ -11,6 +11,8 @@ class RouteConfig {
   final String? redirectTo;
   final List<AutoRouteGuard> guards;
   final bool usesPathAsKey;
+  final String? parent;
+  final Map<String, dynamic> meta;
 
   RouteConfig(
     this.name, {
@@ -19,6 +21,8 @@ class RouteConfig {
     this.guards = const [],
     this.fullMatch = false,
     this.redirectTo,
+    this.parent,
+    this.meta = const {},
     List<RouteConfig>? children,
   }) : _children = children != null ? RouteCollection.from(children) : null;
 

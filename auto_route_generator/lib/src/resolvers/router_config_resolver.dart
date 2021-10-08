@@ -18,11 +18,12 @@ class RouterConfigResolver {
 
   RouterConfigResolver(this._typeResolver);
 
-  RouterConfig resolve(ConstantReader autoRouter, ClassElement clazz) {
+  RouterConfig resolve(ConstantReader autoRouter, ClassElement clazz,
+      {bool usesPartBuilder = false}) {
     /// ensure router config classes are prefixed with $
     /// to use the stripped name for the generated class
     throwIf(
-      !clazz.displayName.startsWith(r'$'),
+      !usesPartBuilder && !clazz.displayName.startsWith(r'$'),
       'Router class name must be prefixed with \$',
       element: clazz,
     );
@@ -31,8 +32,8 @@ class RouterConfigResolver {
     int? durationInMilliseconds;
     bool? customRouteOpaque;
     bool? customRouteBarrierDismissible;
-    ImportableType? transitionBuilder;
-    ImportableType? customRouteBuilder;
+    ResolvedType? transitionBuilder;
+    ResolvedType? customRouteBuilder;
 
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       routeType = RouteType.cupertino;
@@ -51,14 +52,13 @@ class RouterConfigResolver {
       final function =
           autoRouter.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
-        transitionBuilder =
-            _typeResolver.resolveImportableFunctionType(function);
+        transitionBuilder = _typeResolver.resolveFunctionType(function);
       }
       final customRouteBuilderValue =
           autoRouter.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (customRouteBuilderValue != null) {
-        customRouteBuilder = _typeResolver
-            .resolveImportableFunctionType(customRouteBuilderValue);
+        customRouteBuilder =
+            _typeResolver.resolveFunctionType(customRouteBuilderValue);
       }
     }
 
@@ -81,7 +81,9 @@ class RouterConfigResolver {
 
     var routerConfig = RouterConfig(
       globalRouteConfig: _globalRouteConfig,
-      routerClassName: clazz.displayName.substring(1),
+      routerClassName: usesPartBuilder
+          ? '_\$${clazz.displayName}'
+          : clazz.displayName.substring(1),
       element: clazz,
       replaceInRouteName: replaceInRouteName,
       routes: const [],

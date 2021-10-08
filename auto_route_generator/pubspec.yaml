@@ -8,15 +8,15 @@ environment:
 
 dependencies:
   build: ^2.1.0
-  source_gen: ^1.1.0
+  source_gen: ^1.1.1
   analyzer: ^2.3.0
   path: ^1.8.0
   build_runner: ^2.1.2
   code_builder: ^4.1.0
-  dart_style: ^2.1.0
+  dart_style: ^2.2.0
   auto_route:
-    ^2.4.1
-#    path: ../auto_route
+#    ^2.4.1
+    path: ../auto_route
 
 
 dev_dependencies:

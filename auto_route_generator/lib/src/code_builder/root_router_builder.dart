@@ -9,7 +9,7 @@ import 'library_builder.dart';
 
 const _routeConfigType = Reference("RouteConfig", autoRouteImport);
 
-Class buildRouterConfig(RouterConfig router, Set<ImportableType> guards,
+Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards,
         List<RouteConfig> routes) =>
     Class((b) => b
       ..name = router.routerClassName
@@ -207,7 +207,8 @@ Expression getUrlParamAssignment(ParamConfig p) {
   }
 }
 
-Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
+Iterable<Object> buildRoutes(List<RouteConfig> routes, {Reference? parent}) =>
+    routes.map(
       (r) {
         return _routeConfigType.newInstance(
           [
@@ -218,6 +219,12 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
           ],
           {
             'path': literalString(r.pathName),
+            if (parent != null) 'parent': parent.property('name'),
+            if (r.meta.isNotEmpty)
+              'meta': literalMap({
+                for (final metaEntry in r.meta)
+                  literalString(metaEntry.key): _getLiteralValue(metaEntry),
+              }, stringRefer, refer('dynamic')),
             if (r.redirectTo != null)
               'redirectTo': literalString(r.redirectTo!),
             if (r.fullMatch == true) 'fullMatch': literalBool(true),
@@ -231,8 +238,28 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes) => routes.map(
                   )
                   .toList(growable: false)),
             if (r.childRouterConfig != null)
-              'children': literalList(buildRoutes(r.childRouterConfig!.routes))
+              'children': literalList(
+                buildRoutes(
+                  r.childRouterConfig!.routes,
+                  parent: refer(r.routeName),
+                ),
+              )
           },
         );
       },
     );
+
+Expression _getLiteralValue(MetaEntry<dynamic> metaEntry) {
+  switch (metaEntry.type) {
+    case 'String':
+      return literalString(metaEntry.value);
+    case 'int':
+      return literalNum(metaEntry.value);
+    case 'double':
+      return literalNum(metaEntry.value);
+    case 'bool':
+      return literalBool(metaEntry.value);
+    default:
+      return literal(metaEntry.value);
+  }
+}

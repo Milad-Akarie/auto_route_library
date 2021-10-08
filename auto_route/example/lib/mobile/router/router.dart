@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/screens/books/book_details_page.dart';
 import 'package:example/mobile/screens/books/book_list_page.dart';
 
@@ -9,25 +8,28 @@ import '../screens/profile/routes.dart';
 import '../screens/settings.dart';
 import '../screens/user-data/routes.dart';
 
-export 'router.gr.dart';
-
-@CustomAutoRouter(
-  transitionsBuilder: TransitionsBuilders.fadeIn,
+@AdaptiveAutoRouter(
+  // transitionsBuilder: TransitionsBuilders.fadeIn,
   replaceInRouteName: 'Page|Dialog,Route',
   routes: <AutoRoute>[
     // app stack
     AutoRoute<String>(
       path: '/',
       page: HomePage,
-      guards: [AuthGuard],
+      // guards: [nAuthGuard],
       children: [
         AutoRoute(
           path: 'books',
           page: EmptyRouterPage,
           name: 'BooksTab',
+          initial: true,
           children: [
             AutoRoute(path: '', page: BookListPage),
-            AutoRoute(path: ':id', page: BookDetailsPage),
+            AutoRoute(
+              path: ':id',
+              page: BookDetailsPage,
+              meta: {'hideBottomNav': true},
+            ),
           ],
         ),
         profileTab,

@@ -10,11 +10,11 @@ class TypeResolver {
   final List<LibraryElement> libs;
   final Uri? targetFile;
 
-  TypeResolver(this.libs, this.targetFile);
+  TypeResolver(this.libs, [this.targetFile]);
 
   String? resolveImport(Element? element) {
     // return early if source is null or element is a core type
-    if (element?.source == null || _isCoreDartType(element!)) {
+    if (libs.isEmpty || element?.source == null || _isCoreDartType(element!)) {
       return null;
     }
 
@@ -54,14 +54,14 @@ class TypeResolver {
     return element.source?.fullName == 'dart:core';
   }
 
-  List<ImportableType> _resolveTypeArguments(DartType typeToCheck) {
-    final importableTypes = <ImportableType>[];
+  List<ResolvedType> _resolveTypeArguments(DartType typeToCheck) {
+    final types = <ResolvedType>[];
     if (typeToCheck is ParameterizedType) {
       for (DartType type in typeToCheck.typeArguments) {
         if (type.element is TypeParameterElement) {
-          importableTypes.add(ImportableType(name: 'dynamic'));
+          types.add(ResolvedType(name: 'dynamic'));
         } else {
-          importableTypes.add(ImportableType(
+          types.add(ResolvedType(
             name: type.element?.name ?? 'void',
             import: resolveImport(type.element),
             typeArguments: _resolveTypeArguments(type),
@@ -69,10 +69,10 @@ class TypeResolver {
         }
       }
     }
-    return importableTypes;
+    return types;
   }
 
-  ImportableType resolveImportableFunctionType(ExecutableElement function) {
+  ResolvedType resolveFunctionType(ExecutableElement function) {
     final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
     var functionName = displayName;
     Element elementToImport = function;
@@ -80,14 +80,14 @@ class TypeResolver {
       functionName = '${function.enclosingElement.displayName}.$displayName';
       elementToImport = function.enclosingElement;
     }
-    return ImportableType(
+    return ResolvedType(
       name: functionName,
       import: resolveImport(elementToImport),
     );
   }
 
-  ImportableType resolveType(DartType type) {
-    return ImportableType(
+  ResolvedType resolveType(DartType type) {
+    return ResolvedType(
       name: type.element?.name ?? type.getDisplayString(withNullability: false),
       isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
       import: resolveImport(type.element),

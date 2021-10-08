@@ -1,20 +1,23 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web/router/web_router.gr.dart';
+import 'package:example/web/router/web_auth_guard.dart';
 import 'package:example/web/web_main.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+// optionally add part directive to use
+// pare builder
+part 'web_router.g.dart';
 
 @MaterialAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: HomePage, initial: true),
+    AutoRoute(path: '/home', page: HomePage, initial: true),
     AutoRoute(path: '/login', page: LoginPage),
     AutoRoute(
       path: '/user/:userID',
       usesPathAsKey: false,
       page: UserPage,
-      // guards: [AuthGuard],
+      guards: [AuthGuard],
       children: [
         AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
@@ -29,7 +32,9 @@ import 'package:flutter/material.dart';
     AutoRoute(path: '*', page: NotFoundScreen),
   ],
 )
-class $WebAppRouter {}
+class WebAppRouter extends _$WebAppRouter {
+  WebAppRouter() : super(authGuard: AuthGuard());
+}
 
 class HomePage extends StatelessWidget {
   final VoidCallback? navigate, showUserPosts;
@@ -43,7 +48,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: AutoBackButton(),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -55,7 +62,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.router.push(UserPostsRoute());
+                    context.navigateNamedTo('/user/1');
                     // context.pushRoute(
                     //   UserRoute(
                     //     id: 1,
@@ -107,7 +114,7 @@ class UserProfilePage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.router.navigateNamed('posts');
+                    context.navigateTo(UserPostsRoute());
                   },
               child: Text('Posts'),
             ),
@@ -150,7 +157,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    useRootNavigator: false,
+                    useRootNavigator: true,
                     builder: (_) => AlertDialog(
                       title: Text('Alert'),
                     ),

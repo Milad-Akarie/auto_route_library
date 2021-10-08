@@ -200,15 +200,15 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             },
             stack: stack,
           );
-    var segmentsHash = controller!.currentSegmentsHash;
+    var stateHash = controller!.stateHash;
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
-      segmentsHash: segmentsHash,
+      stateHash: stateHash,
       navigatorObservers: _navigatorObservers,
       child: TabsRouterScope(
           controller: _controller!,
-          segmentsHash: segmentsHash,
+          stateHash: stateHash,
           child: AnimatedBuilder(
             animation: _animation,
             builder: (context, child) =>

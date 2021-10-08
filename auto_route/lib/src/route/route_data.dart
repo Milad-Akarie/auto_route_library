@@ -63,6 +63,8 @@ class RouteData {
 
   String get path => _route.path;
 
+  Map<String, dynamic> get meta => _route.meta;
+
   Object? get args => _route.args;
 
   String get match => _route.stringMatch;
