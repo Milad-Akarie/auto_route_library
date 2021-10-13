@@ -44,6 +44,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
           RouteInformation(
             location: url,
           ),
+          type: RouteInformationReportingType.navigate,
         );
   }
 
