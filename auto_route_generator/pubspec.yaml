@@ -17,6 +17,7 @@ dependencies:
   auto_route:
     git:
       url: https://github.com/nibo/auto_route_library
+      ref: internal_ref
       path: auto_route
 #    path: ../auto_route
 
