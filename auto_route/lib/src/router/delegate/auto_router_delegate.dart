@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
+import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
+import 'package:auto_route/src/router/controller/navigation_history.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -76,10 +78,18 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   UrlState _urlState = UrlState.fromSegments(const []);
 
+  UrlState? _previousState;
+
   UrlState get urlState => _urlState;
 
   @override
-  UrlState? get currentConfiguration => _urlState;
+  UrlState? get currentConfiguration {
+    if (_urlState != _previousState) {
+      controller.navigationHistory.add(_urlState.segments);
+      _previousState = _urlState;
+    }
+    return _urlState;
+  }
 
   @override
   Future<void> setInitialRoutePath(UrlState tree) {

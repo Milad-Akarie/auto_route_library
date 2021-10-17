@@ -1,7 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/auth_guard.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../router/router.gr.dart';
 import '../user-data/data_collector.dart';
@@ -35,9 +33,9 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.read<AuthService>().isAuthenticated = false;
+                context.navigateBack();
               },
-              child: Text('Logout'),
+              child: Text('Navigate Back'),
             ),
             const SizedBox(height: 32),
             userData == null

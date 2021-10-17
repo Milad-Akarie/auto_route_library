@@ -8,10 +8,14 @@ import 'package:flutter/material.dart';
 // pare builder
 part 'web_router.g.dart';
 
-@MaterialAutoRouter(
+@CupertinoAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/home', page: HomePage, initial: true),
+    AutoRoute(
+      path: '/home',
+      page: HomePage,
+      initial: true,
+    ),
     AutoRoute(path: '/login', page: LoginPage),
     AutoRoute(
       path: '/user/:userID',
@@ -19,7 +23,11 @@ part 'web_router.g.dart';
       page: UserPage,
       guards: [AuthGuard],
       children: [
-        AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
+        AutoRoute(
+          path: 'profile',
+          page: UserProfilePage,
+          initial: true,
+        ),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
           AutoRoute(path: 'all', page: UserAllPostsPage, initial: true),
           AutoRoute(
@@ -32,8 +40,17 @@ part 'web_router.g.dart';
     AutoRoute(path: '*', page: NotFoundScreen),
   ],
 )
+
+// when using a part build you should not
+// use the '$' prefix on the actual class
+// instead extend the generated class
+// prefixing it with '_$'
 class WebAppRouter extends _$WebAppRouter {
-  WebAppRouter() : super(authGuard: AuthGuard());
+  WebAppRouter(
+    AuthService authService,
+  ) : super(
+          authGuard: AuthGuard(authService),
+        );
 }
 
 class HomePage extends StatelessWidget {
@@ -110,26 +127,18 @@ class UserProfilePage extends StatelessWidget {
               'User Profile : $userId',
               style: TextStyle(fontSize: 30),
             ),
+            const SizedBox(height: 16),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate ??
-                  () {
-                    context.navigateTo(UserPostsRoute());
-                  },
+              onPressed: navigate ?? () => context.navigateTo(UserPostsRoute()),
               child: Text('Posts'),
             ),
-            const SizedBox(
-              height: 32,
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: navigate ??
+                  () => App.of(context).authService.isAuthenticated = false,
+              child: Text('Logout'),
             ),
-            // MaterialButton(
-            //   color: Colors.blue,
-            //   onPressed: () {
-            //     setState(() {
-            //       _count++;
-            //     });
-            //   },
-            //   child: Text('Count $_count'),
-            // ),
           ],
         ),
       ),
@@ -165,13 +174,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
                 },
                 child: Text('Show Dialog')),
             Expanded(
-              child: AutoRouter(
-                  // onNewRoutes: (routes) {
-                  //   print('OnNew UserPost routes ${routes.map((e) => e.routeName)}');
-                  //   return SynchronousFuture(null);
-                  // },
-                  // routes: (context) => [],
-                  ),
+              child: AutoRouter(),
             )
           ],
         ),

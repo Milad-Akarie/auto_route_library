@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import '../../auto_route.dart';
 
 @immutable
-class RouteMatch {
+class RouteMatch<T> {
   final Parameters pathParams;
   final Parameters queryParams;
   final List<RouteMatch>? children;
@@ -14,7 +14,7 @@ class RouteMatch {
   final String name;
   final String path;
   final String stringMatch;
-  final Object? args;
+  final T? args;
   final List<AutoRouteGuard> guards;
   final LocalKey key;
   final bool isBranch;
@@ -123,5 +123,7 @@ class RouteMatch {
     return 'RouteMatch{pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom, routeName: $name, path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
   }
 
-  PageRouteInfo toRoute() => PageRouteInfo.fromMatch(this);
+  @Deprecated("renamed to 'toPageRouteInfo'")
+  PageRouteInfo toRoute() => toPageRouteInfo();
+  PageRouteInfo toPageRouteInfo() => PageRouteInfo.fromMatch(this);
 }

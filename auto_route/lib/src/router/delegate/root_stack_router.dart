@@ -97,5 +97,7 @@ abstract class RootStackRouter extends StackRouter {
   late final RouteMatcher matcher = RouteMatcher(routeCollection);
 
   @override
+  final NavigationHistory navigationHistory = NavigationHistory();
+  @override
   late final RouteCollection routeCollection = RouteCollection.from(routes);
 }

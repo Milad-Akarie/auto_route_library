@@ -1,23 +1,23 @@
 part of '../router/controller/routing_controller.dart';
 
 class RouteData {
-  RouteMatch _route;
+  RouteMatch _match;
   RouteData? _parent;
   final RoutingController router;
 
-  LocalKey get key => _route.key;
+  LocalKey get key => _match.key;
 
   RouteData({
     required RouteMatch route,
     required this.router,
     RouteData? parent,
     required this.pendingChildren,
-  })  : _route = route,
+  })  : _match = route,
         _parent = parent;
 
   List<RouteMatch> get breadcrumbs => List.unmodifiable([
         if (_parent != null) ..._parent!.breadcrumbs,
-        _route,
+        _match,
       ]);
 
   final List<RouteMatch> pendingChildren;
@@ -31,7 +31,7 @@ class RouteData {
   }
 
   T argsAs<T>({T Function()? orElse}) {
-    final args = _route.args;
+    final args = _match.args;
     if (args == null) {
       if (orElse == null) {
         throw FlutterError(
@@ -48,8 +48,8 @@ class RouteData {
   }
 
   void _updateRoute(RouteMatch value) {
-    if (_route != value) {
-      _route = value;
+    if (_match != value) {
+      _match = value;
     }
   }
 
@@ -57,17 +57,17 @@ class RouteData {
     _parent = value;
   }
 
-  RouteMatch get route => _route;
+  RouteMatch get route => _match;
 
-  String get name => _route.name;
+  String get name => _match.name;
 
-  String get path => _route.path;
+  String get path => _match.path;
 
-  Map<String, dynamic> get meta => _route.meta;
+  Map<String, dynamic> get meta => _match.meta;
 
-  Object? get args => _route.args;
+  Object? get args => _match.args;
 
-  String get match => _route.stringMatch;
+  String get match => _match.stringMatch;
 
   Parameters get inheritedPathParams {
     if (_parent == null) {
@@ -78,11 +78,11 @@ class RouteData {
         );
   }
 
-  Parameters get pathParams => _route.pathParams;
+  Parameters get pathParams => _match.pathParams;
 
-  Parameters get queryParams => _route.queryParams;
+  Parameters get queryParams => _match.queryParams;
 
-  String get fragment => _route.fragment;
+  String get fragment => _match.fragment;
 
   RouteMatch _getTopMatch(RouteMatch routeMatch) {
     if (routeMatch.hasChildren) {
@@ -97,7 +97,7 @@ class RouteData {
       return _getTopMatch(pendingChildren.last);
     }
 
-    return _route;
+    return _match;
   }
 
   @override

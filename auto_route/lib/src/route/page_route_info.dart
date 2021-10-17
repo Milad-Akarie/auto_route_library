@@ -112,6 +112,7 @@ class PageRouteInfo<T> {
       fragment: match.fragment,
       redirectedFrom: match.redirectedFrom,
       stringMatch: match.stringMatch,
+      args: match.args,
       initialChildren:
           match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList(),
     );

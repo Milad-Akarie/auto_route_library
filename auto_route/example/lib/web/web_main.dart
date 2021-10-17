@@ -1,3 +1,4 @@
+import 'package:example/web/router/web_auth_guard.dart';
 import 'package:example/web/router/web_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +18,15 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  final _appRouter = WebAppRouter();
+  final authService = AuthService();
+  late final _appRouter = WebAppRouter(authService);
   var loggedIn = false;
+
+  void authenticate(bool authenticated) {
+    setState(() {
+      loggedIn = authenticated;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,19 +34,25 @@ class AppState extends State<App> {
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       routeInformationProvider: _appRouter.routeInfoProvider(),
-      routerDelegate: _appRouter.delegate(
-          // routes: (_) => [
-          //   if (loggedIn)
-          //     UserRoute(id: 1)
-          //   else
-          //     LoginRoute(onLoginResult: (_) {
-          //       setState(() {
-          //         loggedIn = true;
-          //       });
-          //     })
-          // ],
-          ),
+      routerDelegate: _appRouter.delegate(),
       routeInformationParser: _appRouter.defaultRouteParser(),
+      // builder: (context, router) {
+      //   return AutoRouteRedirector<bool>(
+      //     router: _appRouter,
+      //     state: loggedIn,
+      //     child: router!,
+      //     mapStateToRedirect: (loggedIn) {
+      //       print(loggedIn);
+      //       if (!loggedIn) {
+      //         return RouteRedirect.replace(LoginRoute());
+      //       } else {
+      //         return RouteRedirect.replace(HomeRoute());
+      //       }
+      //
+      //       return RouteRedirect.toNone();
+      //     },
+      //   );
+      // },
     );
   }
 }
@@ -58,6 +72,7 @@ class LoginPage extends StatelessWidget {
         body: Center(
           child: ElevatedButton(
             onPressed: () {
+              App.of(context).authService.isAuthenticated = true;
               // context.read<AuthService>().isAuthenticated = true;
               onLoginResult?.call(true);
             },

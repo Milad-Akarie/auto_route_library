@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 
-import '../auto_route_guard.dart';
 import '../matcher/route_matcher.dart';
 
 class RouteConfig {

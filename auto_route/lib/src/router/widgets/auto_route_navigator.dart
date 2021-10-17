@@ -1,3 +1,4 @@
+import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

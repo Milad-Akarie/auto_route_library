@@ -2,11 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart' show BuildContext, optionalTypeArgs;
 
 import '../navigation_failure.dart';
-import 'controller/routing_controller.dart';
-import 'widgets/auto_router.dart';
+import 'controller/../widgets/auto_router.dart';
 
 extension AutoRouterX on BuildContext {
   StackRouter get router => AutoRouter.of(this);
+
   StackRouter get watchRouter => AutoRouter.of(this, watch: true);
 
   @optionalTypeArgs
@@ -29,6 +29,9 @@ extension AutoRouterX on BuildContext {
             route,
             onFailure: onFailure,
           );
+
+  bool navigateBack() => RouterScope.of(this).controller.navigateBack();
+
   Future<void> navigateNamedTo(String path,
           {bool includePrefixMatches = false,
           OnNavigationFailure? onFailure}) =>
@@ -39,10 +42,12 @@ extension AutoRouterX on BuildContext {
           );
 
   TabsRouter get tabsRouter => AutoTabsRouter.of(this);
+
   TabsRouter get watchTabsRouter => AutoTabsRouter.of(this, watch: true);
 
   // returns the top most rendered route
   RouteData get topRoute => watchRouter.topRoute;
+
   // returns the top most match rendered or pending
   RouteMatch get topRouteMatch => watchRouter.topMatch;
 
