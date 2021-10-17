@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import '../../auto_route.dart';
 
 @immutable
-class RouteMatch {
+class RouteMatch<T> {
   final Parameters pathParams;
   final Parameters queryParams;
   final List<RouteMatch>? children;
@@ -14,10 +14,11 @@ class RouteMatch {
   final String name;
   final String path;
   final String stringMatch;
-  final Object? args;
+  final T? args;
   final List<AutoRouteGuard> guards;
   final LocalKey key;
   final bool isBranch;
+  final Map<String, dynamic> meta;
 
   const RouteMatch({
     required this.name,
@@ -33,6 +34,7 @@ class RouteMatch {
     this.queryParams = const Parameters({}),
     this.fragment = '',
     this.redirectedFrom,
+    this.meta = const {},
   });
 
   @Deprecated("Renamed to 'name'")
@@ -64,6 +66,7 @@ class RouteMatch {
     Object? args,
     LocalKey? key,
     List<AutoRouteGuard>? guards,
+    Map<String, dynamic>? meta,
   }) {
     return RouteMatch(
       path: path ?? this.path,
@@ -78,6 +81,7 @@ class RouteMatch {
       key: key ?? this.key,
       guards: guards ?? this.guards,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
+      meta: meta ?? this.meta,
     );
   }
 
@@ -96,26 +100,30 @@ class RouteMatch {
           ListEquality().equals(children, other.children) &&
           fragment == other.fragment &&
           redirectedFrom == other.redirectedFrom &&
-          ListEquality().equals(segments, other.segments);
+          ListEquality().equals(segments, other.segments) &&
+          MapEquality().equals(meta, other.meta);
 
   @override
   int get hashCode =>
       pathParams.hashCode ^
       queryParams.hashCode ^
-      ListEquality().hash(children) ^
-      ListEquality().hash(guards) ^
+      const ListEquality().hash(children) ^
+      const ListEquality().hash(guards) ^
       fragment.hashCode ^
       redirectedFrom.hashCode ^
       path.hashCode ^
       stringMatch.hashCode ^
       name.hashCode ^
       key.hashCode ^
-      ListEquality().hash(segments);
+      const ListEquality().hash(segments) ^
+      const MapEquality().hash(meta);
 
   @override
   String toString() {
     return 'RouteMatch{pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom, routeName: $name, path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
   }
 
-  PageRouteInfo toRoute() => PageRouteInfo.fromMatch(this);
+  @Deprecated("renamed to 'toPageRouteInfo'")
+  PageRouteInfo toRoute() => toPageRouteInfo();
+  PageRouteInfo toPageRouteInfo() => PageRouteInfo.fromMatch(this);
 }

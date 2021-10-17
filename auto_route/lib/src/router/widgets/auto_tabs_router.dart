@@ -1,5 +1,6 @@
 import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
+import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:collection/collection.dart';
@@ -200,15 +201,15 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             },
             stack: stack,
           );
-    var segmentsHash = controller!.currentSegmentsHash;
+    var stateHash = controller!.stateHash;
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
-      segmentsHash: segmentsHash,
+      stateHash: stateHash,
       navigatorObservers: _navigatorObservers,
       child: TabsRouterScope(
           controller: _controller!,
-          segmentsHash: segmentsHash,
+          stateHash: stateHash,
           child: AnimatedBuilder(
             animation: _animation,
             builder: (context, child) =>

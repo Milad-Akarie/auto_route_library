@@ -1,7 +1,7 @@
+import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/db.dart';
-import '../../router/router.gr.dart';
 
 class BookListPage extends StatefulWidget {
   @override

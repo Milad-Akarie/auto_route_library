@@ -29,6 +29,34 @@ class RouteCollection {
     return this[key]!.children!;
   }
 
+  List<RouteConfig> findPathTo(String routeName) {
+    final track = <RouteConfig>[];
+    for (final route in routes) {
+      if (_findPath(route, routeName, track)) {
+        break;
+      }
+    }
+    return track;
+  }
+
+  bool _findPath(RouteConfig node, String routeName, List<RouteConfig> track) {
+    if (node.name == routeName) {
+      track.add(node);
+      return true;
+    }
+
+    if (node.hasSubTree) {
+      for (RouteConfig child in node.children!.routes) {
+        if (_findPath(child, routeName, track)) {
+          track.insert(0, node);
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -37,7 +65,7 @@ class RouteCollection {
           MapEquality().equals(_routesMap, other._routesMap);
 
   @override
-  int get hashCode => _routesMap.hashCode;
+  int get hashCode => MapEquality().hash(_routesMap);
 }
 
 class RouteMatcher {
@@ -136,8 +164,8 @@ class RouteMatcher {
       redirectMatches = redirectMatches
           .map(
             (e) => e.copyWith(
-              segments: p.split(redirectedFrom),
-              // stringMatch: redirectTo.path,
+              segments: p.split(redirectTo.path),
+              stringMatch: redirectTo.path,
             ),
           )
           .toList();
@@ -179,6 +207,7 @@ class RouteMatcher {
     return RouteMatch(
       path: config.path,
       name: config.name,
+      meta: config.meta,
       isBranch: config.hasSubTree,
       key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
       stringMatch: stringMatch,
@@ -227,6 +256,7 @@ class RouteMatcher {
       segments: p.split(route.stringMatch),
       path: route.path,
       args: route.args,
+      meta: config.meta,
       key: ValueKey(
         config.usesPathAsKey ? route.stringMatch : route.routeName,
       ),

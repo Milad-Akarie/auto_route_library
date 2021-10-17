@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 class RouterScope extends InheritedWidget {
   final RoutingController controller;
   final NavigatorObserversBuilder inheritableObserversBuilder;
-  final int segmentsHash;
+  final int stateHash;
   final List<NavigatorObserver> navigatorObservers;
 
   const RouterScope({
@@ -13,7 +13,7 @@ class RouterScope extends InheritedWidget {
     required this.controller,
     required this.navigatorObservers,
     required this.inheritableObserversBuilder,
-    required this.segmentsHash,
+    required this.stateHash,
   }) : super(child: child);
 
   static RouterScope of(BuildContext context, {bool watch = false}) {
@@ -46,18 +46,18 @@ class RouterScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RouterScope oldWidget) {
-    return segmentsHash != oldWidget.segmentsHash;
+    return stateHash != oldWidget.stateHash;
   }
 }
 
 class StackRouterScope extends InheritedWidget {
   final StackRouter controller;
-  final int segmentsHash;
+  final int stateHash;
 
   const StackRouterScope({
     required Widget child,
     required this.controller,
-    required this.segmentsHash,
+    required this.stateHash,
   }) : super(child: child);
 
   static StackRouterScope? of(BuildContext context, {bool watch = false}) {
@@ -69,17 +69,17 @@ class StackRouterScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant StackRouterScope oldWidget) {
-    return segmentsHash != oldWidget.segmentsHash;
+    return stateHash != oldWidget.stateHash;
   }
 }
 
 class TabsRouterScope extends InheritedWidget {
   final TabsRouter controller;
-  final int segmentsHash;
+  final int stateHash;
 
   const TabsRouterScope({
     required Widget child,
-    required this.segmentsHash,
+    required this.stateHash,
     required this.controller,
   }) : super(child: child);
 
@@ -92,6 +92,6 @@ class TabsRouterScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant TabsRouterScope oldWidget) {
-    return segmentsHash != oldWidget.segmentsHash;
+    return stateHash != oldWidget.stateHash;
   }
 }

@@ -97,25 +97,27 @@ class _HomePageState extends State<HomePage> {
           );
   }
 
-  BottomNavigationBar buildBottomNav(
-      BuildContext context, TabsRouter tabsRouter) {
-    return BottomNavigationBar(
-      currentIndex: tabsRouter.activeIndex,
-      onTap: tabsRouter.setActiveIndex,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.source),
-          label: 'Books',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Profile',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings),
-          label: 'Settings',
-        ),
-      ],
-    );
+  Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
+    final hideBottomNav = context.topRouteMatch.meta['hideBottomNav'] == true;
+    return hideBottomNav
+        ? SizedBox.shrink()
+        : BottomNavigationBar(
+            currentIndex: tabsRouter.activeIndex,
+            onTap: tabsRouter.setActiveIndex,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.source),
+                label: 'Books',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Settings',
+              ),
+            ],
+          );
   }
 }

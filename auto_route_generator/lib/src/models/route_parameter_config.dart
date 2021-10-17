@@ -19,7 +19,7 @@ const validPathParamTypes = [
 /// in generating route parameters.
 
 class ParamConfig {
-  final ImportableType type;
+  final ResolvedType type;
   final String name;
   final String? alias;
   final bool isPositional;
@@ -76,13 +76,13 @@ class ParamConfig {
 }
 
 class FunctionParamConfig extends ParamConfig {
-  final ImportableType returnType;
+  final ResolvedType returnType;
   final List<ParamConfig> params;
 
   FunctionParamConfig({
     required this.returnType,
     this.params = const [],
-    required ImportableType type,
+    required ResolvedType type,
     required String name,
     String? alias,
     required bool isPositional,

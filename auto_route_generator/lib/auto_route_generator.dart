@@ -1,8 +1,8 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route_generator/src/resolvers/route_config_resolver.dart';
-import 'package:source_gen/src/output_helpers.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
+import 'package:source_gen/src/output_helpers.dart';
 
 import 'src/code_builder/library_builder.dart';
 import 'src/resolvers/router_config_resolver.dart';
@@ -38,18 +38,53 @@ class AutoRouteGenerator extends Generator {
       element: element,
     );
 
-    var libs = await buildStep.resolver.libraries.toList();
+    final clazz = element as ClassElement;
+    final usesPartBuilder = _hasPartDirective(clazz);
 
-    Uri? targetFileUri;
-    if (annotation.peek('preferRelativeImports')?.boolValue != false) {
-      targetFileUri = element.source?.uri;
+    late TypeResolver typeResolver;
+
+    if (usesPartBuilder) {
+      typeResolver = TypeResolver(const []);
+    } else {
+      var libs = await buildStep.resolver.libraries.toList();
+      Uri? targetFileUri;
+      if (annotation.peek('preferRelativeImports')?.boolValue != false) {
+        targetFileUri = element.source.uri;
+      }
+      typeResolver = TypeResolver(libs, targetFileUri);
     }
-    var importResolver = TypeResolver(libs, targetFileUri);
 
-    var routerResolver = RouterConfigResolver(importResolver);
-    final routerConfig =
-        routerResolver.resolve(annotation, element as ClassElement);
+    final routerResolver = RouterConfigResolver(typeResolver);
+    final routerConfig = routerResolver.resolve(
+      annotation,
+      clazz,
+      usesPartBuilder: usesPartBuilder,
+    );
 
-    return generateLibrary(routerConfig);
+    final content = generateLibrary(
+      routerConfig,
+      usesPartBuilder: usesPartBuilder,
+    );
+    if (usesPartBuilder) {
+      return buildStep.writeAsString(
+        AssetId(buildStep.inputId.package,
+            buildStep.inputId.path.replaceAll('.dart', '.g.dart')),
+        content,
+      );
+    }
+    return content;
+  }
+
+  bool _hasPartDirective(ClassElement clazz) {
+    final fileName = clazz.source.uri.pathSegments.last;
+    final part = fileName.replaceAll(
+      '.dart',
+      '.g.dart',
+    );
+
+    final hasPart = clazz.library.parts.any(
+      (e) => e.uri?.endsWith(part) ?? false,
+    );
+    return hasPart;
   }
 }

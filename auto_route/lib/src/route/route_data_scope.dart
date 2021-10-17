@@ -4,12 +4,12 @@ import '../../auto_route.dart';
 
 class RouteDataScope extends InheritedWidget {
   final RouteData routeData;
-  final int segmentsHash;
+  final int stateHash;
 
   const RouteDataScope({
     required this.routeData,
     required Widget child,
-    required this.segmentsHash,
+    required this.stateHash,
   }) : super(child: child);
 
   static RouteData of(BuildContext context) {
@@ -28,6 +28,6 @@ class RouteDataScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(covariant RouteDataScope oldWidget) {
-    return segmentsHash != oldWidget.segmentsHash;
+    return stateHash != oldWidget.stateHash;
   }
 }

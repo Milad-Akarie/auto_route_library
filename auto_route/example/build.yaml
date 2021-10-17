@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      auto_route_generator:autoRouteGenerator:
+        generate_for:
+          - lib/mobile/router/router.dart
+          - lib/web/router/web_router.dart

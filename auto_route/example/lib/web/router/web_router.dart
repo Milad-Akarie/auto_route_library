@@ -1,22 +1,33 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web/router/web_router.gr.dart';
+import 'package:example/web/router/web_auth_guard.dart';
 import 'package:example/web/web_main.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-@MaterialAutoRouter(
+// optionally add part directive to use
+// pare builder
+part 'web_router.g.dart';
+
+@CupertinoAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: HomePage, initial: true),
+    AutoRoute(
+      path: '/home',
+      page: HomePage,
+      initial: true,
+    ),
     AutoRoute(path: '/login', page: LoginPage),
     AutoRoute(
       path: '/user/:userID',
       usesPathAsKey: false,
       page: UserPage,
-      // guards: [AuthGuard],
+      guards: [AuthGuard],
       children: [
-        AutoRoute(path: 'profile', page: UserProfilePage, initial: true),
+        AutoRoute(
+          path: 'profile',
+          page: UserProfilePage,
+          initial: true,
+        ),
         AutoRoute(path: 'posts', page: UserPostsPage, children: [
           AutoRoute(path: 'all', page: UserAllPostsPage, initial: true),
           AutoRoute(
@@ -29,7 +40,18 @@ import 'package:flutter/material.dart';
     AutoRoute(path: '*', page: NotFoundScreen),
   ],
 )
-class $WebAppRouter {}
+
+// when using a part build you should not
+// use the '$' prefix on the actual class
+// instead extend the generated class
+// prefixing it with '_$'
+class WebAppRouter extends _$WebAppRouter {
+  WebAppRouter(
+    AuthService authService,
+  ) : super(
+          authGuard: AuthGuard(authService),
+        );
+}
 
 class HomePage extends StatelessWidget {
   final VoidCallback? navigate, showUserPosts;
@@ -43,7 +65,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: AutoBackButton(),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -55,7 +79,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.router.push(UserPostsRoute());
+                    context.navigateNamedTo('/user/1');
                     // context.pushRoute(
                     //   UserRoute(
                     //     id: 1,
@@ -103,26 +127,18 @@ class UserProfilePage extends StatelessWidget {
               'User Profile : $userId',
               style: TextStyle(fontSize: 30),
             ),
+            const SizedBox(height: 16),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate ??
-                  () {
-                    context.router.navigateNamed('posts');
-                  },
+              onPressed: navigate ?? () => context.navigateTo(UserPostsRoute()),
               child: Text('Posts'),
             ),
-            const SizedBox(
-              height: 32,
+            const SizedBox(height: 8),
+            ElevatedButton(
+              onPressed: navigate ??
+                  () => App.of(context).authService.isAuthenticated = false,
+              child: Text('Logout'),
             ),
-            // MaterialButton(
-            //   color: Colors.blue,
-            //   onPressed: () {
-            //     setState(() {
-            //       _count++;
-            //     });
-            //   },
-            //   child: Text('Count $_count'),
-            // ),
           ],
         ),
       ),
@@ -150,7 +166,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    useRootNavigator: false,
+                    useRootNavigator: true,
                     builder: (_) => AlertDialog(
                       title: Text('Alert'),
                     ),
@@ -158,13 +174,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
                 },
                 child: Text('Show Dialog')),
             Expanded(
-              child: AutoRouter(
-                  // onNewRoutes: (routes) {
-                  //   print('OnNew UserPost routes ${routes.map((e) => e.routeName)}');
-                  //   return SynchronousFuture(null);
-                  // },
-                  // routes: (context) => [],
-                  ),
+              child: AutoRouter(),
             )
           ],
         ),

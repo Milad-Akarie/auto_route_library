@@ -44,7 +44,7 @@ abstract class AutoRoutePage<T> extends Page<T> {
 
     return RouteDataScope(
       child: childToBuild,
-      segmentsHash: routeData.hashCode,
+      stateHash: routeData.hashCode,
       routeData: routeData,
     );
   }

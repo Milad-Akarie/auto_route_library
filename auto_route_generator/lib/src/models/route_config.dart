@@ -17,23 +17,24 @@ class RouteConfig {
   final bool? customRouteBarrierDismissible;
   final String? customRouteBarrierLabel;
   final bool? maintainState;
-  final ImportableType? pageType;
+  final ResolvedType? pageType;
   final String className;
-  final ImportableType? returnType;
+  final ResolvedType? returnType;
   final List<ParamConfig> parameters;
-  final ImportableType? transitionBuilder;
-  final ImportableType? customRouteBuilder;
+  final ResolvedType? transitionBuilder;
+  final ResolvedType? customRouteBuilder;
   final String? redirectTo;
   final bool? usesTabsRouter;
   final int? reverseDurationInMilliseconds;
   final int? durationInMilliseconds;
   final int routeType;
-  final List<ImportableType> guards;
+  final List<ResolvedType> guards;
   final String? cupertinoNavTitle;
   final String? replacementInRouteName;
   final RouterConfig? childRouterConfig;
   final bool hasConstConstructor;
   final bool usesPathAsKey;
+  final List<MetaEntry> meta;
 
   RouteConfig({
     this.name,
@@ -63,6 +64,7 @@ class RouteConfig {
     this.childRouterConfig,
     this.hasConstConstructor = false,
     this.usesPathAsKey = false,
+    this.meta = const [],
   });
 
   RouteConfig copyWith({
@@ -76,23 +78,24 @@ class RouteConfig {
     bool? customRouteBarrierDismissible,
     String? customRouteBarrierLabel,
     bool? maintainState,
-    ImportableType? pageType,
+    ResolvedType? pageType,
     String? className,
-    ImportableType? returnType,
+    ResolvedType? returnType,
     List<ParamConfig>? parameters,
-    ImportableType? transitionBuilder,
-    ImportableType? customRouteBuilder,
+    ResolvedType? transitionBuilder,
+    ResolvedType? customRouteBuilder,
     String? redirectTo,
     bool? usesTabsRouter,
     int? reverseDurationInMilliseconds,
     int? durationInMilliseconds,
     int? routeType,
-    List<ImportableType>? guards,
+    List<ResolvedType>? guards,
     String? cupertinoNavTitle,
     String? replacementInRouteName,
     RouterConfig? childRouterConfig,
     bool? hasConstConstructor,
     bool? usesPathAsKey,
+    List<MetaEntry>? meta,
   }) {
     if ((name == null || identical(name, this.name)) &&
         (pathName == null || identical(pathName, this.pathName)) &&
@@ -174,6 +177,7 @@ class RouteConfig {
       childRouterConfig: childRouterConfig ?? this.childRouterConfig,
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
+      meta: meta ?? this.meta,
     );
   }
 
@@ -233,6 +237,18 @@ class RouteConfig {
 
   bool get hasUnparsableRequiredArgs => parameters.any((p) =>
       (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+}
+
+class MetaEntry<T> {
+  MetaEntry({
+    required this.type,
+    required this.key,
+    required this.value,
+  });
+
+  final String type;
+  final T value;
+  final String key;
 }
 
 class RouteType {

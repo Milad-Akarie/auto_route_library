@@ -1,3 +1,4 @@
+import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,10 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   Widget build(BuildContext context) {
     final navigator = Navigator(
       key: widget.router.navigatorKey,
-      observers: widget.navigatorObservers,
+      observers: [
+        widget.router.pagelessRoutesObserver,
+        ...widget.navigatorObservers
+      ],
       restorationScopeId:
           widget.navRestorationScopeId ?? widget.router.routeData.name,
       pages: widget.router.hasEntries

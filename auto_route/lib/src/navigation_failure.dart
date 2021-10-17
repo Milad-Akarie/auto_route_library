@@ -1,8 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/route/page_route_info.dart';
 
-import 'auto_route_guard.dart';
-
 typedef OnNavigationFailure = void Function(NavigationFailure failure);
 
 abstract class NavigationFailure {
