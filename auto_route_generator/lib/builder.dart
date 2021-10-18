@@ -9,6 +9,5 @@ Builder autoRouteGenerator(BuilderOptions options) {
     AutoRouteGenerator(),
     header: '',
     generatedExtension: '.gr.dart',
-    additionalOutputExtensions: ['.g.dart'],
   );
 }

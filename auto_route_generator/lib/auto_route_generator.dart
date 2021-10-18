@@ -61,25 +61,17 @@ class AutoRouteGenerator extends Generator {
       usesPartBuilder: usesPartBuilder,
     );
 
-    final content = generateLibrary(
+    return generateLibrary(
       routerConfig,
       usesPartBuilder: usesPartBuilder,
     );
-    if (usesPartBuilder) {
-      return buildStep.writeAsString(
-        AssetId(buildStep.inputId.package,
-            buildStep.inputId.path.replaceAll('.dart', '.g.dart')),
-        content,
-      );
-    }
-    return content;
   }
 
   bool _hasPartDirective(ClassElement clazz) {
     final fileName = clazz.source.uri.pathSegments.last;
     final part = fileName.replaceAll(
       '.dart',
-      '.g.dart',
+      '.gr.dart',
     );
 
     final hasPart = clazz.library.parts.any(

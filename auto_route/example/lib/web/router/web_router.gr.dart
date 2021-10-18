@@ -1,3 +1,7 @@
+// **************************************************************************
+// AutoRouteGenerator
+// **************************************************************************
+
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -72,9 +76,7 @@ class _$WebAppRouter extends RootStackRouter {
 
   @override
   List<RouteConfig> get routes => [
-        RouteConfig('/#redirect',
-            path: '/', redirectTo: '/home', fullMatch: true),
-        RouteConfig(HomeRoute.name, path: '/home'),
+        RouteConfig(HomeRoute.name, path: '/'),
         RouteConfig(LoginRoute.name, path: '/login'),
         RouteConfig(UserRoute.name, path: '/user/:userID', guards: [
           authGuard
@@ -110,7 +112,7 @@ class HomeRoute extends PageRouteInfo<HomeRouteArgs> {
   HomeRoute(
       {Key? key, void Function()? navigate, void Function()? showUserPosts})
       : super(name,
-            path: '/home',
+            path: '/',
             args: HomeRouteArgs(
                 key: key, navigate: navigate, showUserPosts: showUserPosts));
 

@@ -1,4 +1,13 @@
 # ChangeLog
+## [3.0.1]
+- Fix conflict with source_gen:combining_builder by using .gr.dart instead of .g.dart
+## [3.0.0]
+- Add option to use part builder .g.dart
+- Add option to pass const meta data from annotation to consumed route data.
+- Show better error message when router can not navigate to given route.
+- ancestor router can now push directly to nested router if it's already in stack.
+- Add navigateBack functionality
+- Add AutoRedirectRoute which reevaluates guarded routes that's already in stack
 ## [2.4.1]
 - Fix pushing same route not rebuilding stack; effecting #717 #710 
 - Fix dialogs/bottom sheets don't play nicely with auto_route when using nested routers
