@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 class LoginPage extends StatelessWidget {
   final void Function(bool isLoggedIn)? onLoginResult;
   final bool showBackButton;
-  const LoginPage({Key? key, this.onLoginResult, this.showBackButton = true}) : super(key: key);
+  const LoginPage({Key? key, this.onLoginResult, this.showBackButton = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

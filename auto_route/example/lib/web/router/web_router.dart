@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 
 // optionally add part directive to use
 // pare builder
-part 'web_router.g.dart';
+part 'web_router.gr.dart';
 
 @CupertinoAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
     AutoRoute(
-      path: '/home',
+      path: '/',
       page: HomePage,
       initial: true,
     ),
@@ -130,7 +130,7 @@ class UserProfilePage extends StatelessWidget {
             const SizedBox(height: 16),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate ?? () => context.navigateTo(UserPostsRoute()),
+              onPressed: navigate ?? () => context.navigateNamedTo('/'),
               child: Text('Posts'),
             ),
             const SizedBox(height: 8),

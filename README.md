@@ -58,7 +58,7 @@ dev_dependencies:
 ## Setup And Usage
 Create a placeholder class and annotate it with `@MaterialAutoRouter` which takes a list of routes as a required argument.
 
-**Note**:  Unless you want to generate a part of file (.g.dart) The name of the router must be prefixed with **\$** so we have a  generated class with the same name minus the **$**.
+**Note**:  Unless you want to generate a part of file (.gr.dart) The name of the router must be prefixed with **\$** so we have a  generated class with the same name minus the **$**.
 
 ```dart      
       
@@ -77,7 +77,7 @@ class $AppRouter {}
 ### Using part builder ( New in version 3.0.0+)
 To generate a part-of file instead of a stand alone `AppRouter` class, simply add a `Part Directive` to your `AppRouter` and extend the generated private router.
 ```dart    
-part 'app_router.g.dart'
+part 'app_router.gr.dart'
 
 @MaterialAutoRouter(      
   replaceInRouteName: 'Page,Route',      
