@@ -350,16 +350,17 @@ What if want to show one of the child pages at `/dashboard`? we can simply do th
       ],      
     ),      
 ```      
-or by using a `RedirectRoute` ```dart      
-AutoRoute(      
-path: '/dashboard',      
-page: UserPage,      
-children: [      
-RedirectRoute(path: '', redirectTo: 'users'),      
-AutoRoute(path: 'users', page: UsersPage),      
-AutoRoute(path: 'posts', page: PostsPage),       
-],      
-),
+or by using a `RedirectRoute` 
+```dart      
+   AutoRoute(
+      path: '/dashboard',
+      page: UserPage,
+      children: [
+        RedirectRoute(path: '', redirectTo: 'users'),
+        AutoRoute(path: 'users', page: UsersPage),
+        AutoRoute(path: 'posts', page: PostsPage),
+     ],
+   ),
 ```      
 which can be simplified to the following where auto_route generates the redirect code for you.  
 ```dart      
