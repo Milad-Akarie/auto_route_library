@@ -113,7 +113,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
     super.didChangeDependencies();
     final parentRoute = RouteDataScope.of(context);
     if (_controller == null) {
-      final parentScope = RouterScope.of(context);
+      final parentScope = RouterScope.of(context, watch: true);
       _inheritableObserversBuilder = () {
         var observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
@@ -208,14 +208,15 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
       stateHash: stateHash,
       navigatorObservers: _navigatorObservers,
       child: TabsRouterScope(
-          controller: _controller!,
-          stateHash: stateHash,
-          child: AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) =>
-                builder(context, child ?? builderChild, _animation),
-            child: builderChild,
-          )),
+        controller: _controller!,
+        stateHash: stateHash,
+        child: AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) =>
+              builder(context, child ?? builderChild, _animation),
+          child: builderChild,
+        ),
+      ),
     );
   }
 

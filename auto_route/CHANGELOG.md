@@ -1,4 +1,6 @@
 # ChangeLog
+## [3.0.2]
+- Make AutoTabsScaffold builders rebuild on global routes hierarchy changes
 ## [3.0.1]
 - Fix conflict with source_gen:combining_builder by using .gr.dart instead of .g.dart
 ## [3.0.0] 

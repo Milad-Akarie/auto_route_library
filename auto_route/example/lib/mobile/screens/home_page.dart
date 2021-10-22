@@ -83,11 +83,14 @@ class _HomePageState extends State<HomePage> {
           })
         : AutoTabsScaffold(
             homeIndex: 0,
-            backgroundColor: Colors.white,
+            drawer: SizedBox(),
             appBarBuilder: (context, tabsRouter) {
+              // print('App bar rebuilding');
               return AppBar(
-                  title: Text(context.topRoute.name),
-                  leading: AutoBackButton());
+                title: Text(tabsRouter.topRoute.name),
+                leading:
+                    tabsRouter.canPopSelfOrChildren ? AutoBackButton() : null,
+              );
             },
             routes: [
               BooksTab(),
@@ -99,7 +102,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
-    final hideBottomNav = context.topRouteMatch.meta['hideBottomNav'] == true;
+    final hideBottomNav = tabsRouter.topMatch.meta['hideBottomNav'] == true;
     return hideBottomNav
         ? SizedBox.shrink()
         : BottomNavigationBar(
