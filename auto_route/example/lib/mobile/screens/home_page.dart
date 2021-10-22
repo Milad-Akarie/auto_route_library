@@ -83,6 +83,7 @@ class _HomePageState extends State<HomePage> {
           })
         : AutoTabsScaffold(
             homeIndex: 0,
+            backgroundColor: Colors.white,
             appBarBuilder: (context, tabsRouter) {
               return AppBar(
                   title: Text(context.topRoute.name),
