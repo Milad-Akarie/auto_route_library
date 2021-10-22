@@ -113,14 +113,16 @@ class PageRouteInfo<T> {
       redirectedFrom: match.redirectedFrom,
       stringMatch: match.stringMatch,
       args: match.args,
-      initialChildren:
-          match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList(),
+      initialChildren: match.children
+          ?.map(
+            (m) => PageRouteInfo.fromMatch(m),
+          )
+          .toList(),
     );
   }
 
-// maybe?
-  Future<void> show(BuildContext context) {
-    return context.router.push(this);
+  Future<T?> show<T>(BuildContext context) {
+    return context.router.push<T>(this);
   }
 
   @override

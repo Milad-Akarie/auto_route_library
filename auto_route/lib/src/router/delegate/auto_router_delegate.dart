@@ -85,6 +85,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   @override
   UrlState? get currentConfiguration {
     if (_urlState != _previousState) {
+      print(_urlState.url);
       controller.navigationHistory.add(_urlState.segments);
       _previousState = _urlState;
     }
