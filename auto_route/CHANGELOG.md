@@ -1,4 +1,6 @@
 # ChangeLog
+## [3.0.4]
+- Fix dynamic routes for AutoTabsScaffold don't work #783
 ## [3.0.2]
 - Make AutoTabsScaffold builders rebuild on global routes hierarchy changes
 ## [3.0.1]

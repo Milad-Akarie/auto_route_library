@@ -9,7 +9,7 @@ class HomePage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  HomePageState createState() => HomePageState();
 }
 
 class RouteDestination {
@@ -24,7 +24,7 @@ class RouteDestination {
   });
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> {
   final destinations = [
     RouteDestination(
       route: BooksTab(),
@@ -43,6 +43,11 @@ class _HomePageState extends State<HomePage> {
     ),
   ];
 
+  void toggleSettingsTap() => setState(() {
+        _showSettingsTap = !_showSettingsTap;
+      });
+
+  bool _showSettingsTap = true;
   @override
   Widget build(context) {
     // builder will rebuild everytime this router's stack
@@ -95,7 +100,7 @@ class _HomePageState extends State<HomePage> {
             routes: [
               BooksTab(),
               ProfileTab(),
-              SettingsTab(tab: 'default'),
+              if (_showSettingsTap) SettingsTab(tab: 'default'),
             ],
             bottomNavigationBuilder: buildBottomNav,
           );
@@ -117,10 +122,11 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.person),
                 label: 'Profile',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Settings',
-              ),
+              if (_showSettingsTap)
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.settings),
+                  label: 'Settings',
+                ),
             ],
           );
   }

@@ -41,7 +41,7 @@ class AutoRouteGenerator extends Generator {
     final clazz = element as ClassElement;
     final usesPartBuilder = _hasPartDirective(clazz);
 
-    late TypeResolver typeResolver;
+    final TypeResolver typeResolver;
 
     if (usesPartBuilder) {
       typeResolver = TypeResolver(const []);
@@ -60,7 +60,6 @@ class AutoRouteGenerator extends Generator {
       clazz,
       usesPartBuilder: usesPartBuilder,
     );
-
     return generateLibrary(
       routerConfig,
       usesPartBuilder: usesPartBuilder,
