@@ -8,10 +8,16 @@ import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final authService = AuthService();
+
   final _rootRouter = RootRouter(
       // authGuard: AuthGuard(),
-
       );
 
   @override
@@ -23,7 +29,7 @@ class MyApp extends StatelessWidget {
       routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
-          create: (_) => AuthService(),
+          create: (_) => authService,
           child: BooksDBProvider(
             child: router!,
           ),

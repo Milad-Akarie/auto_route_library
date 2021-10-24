@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/screens/home_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../router/router.gr.dart';
@@ -29,6 +30,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 context.router.push(MyBooksRoute());
               },
               child: Text('My Books'),
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                context
+                    .findRootAncestorStateOfType<HomePageState>()
+                    ?.toggleSettingsTap();
+              },
+              child: Text('Toggle Settings Tab'),
             ),
             const SizedBox(height: 32),
             ElevatedButton(
