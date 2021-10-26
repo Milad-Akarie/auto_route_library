@@ -1,5 +1,8 @@
 # ChangeLog
 ## [3.0.4]
+- Fix IndexedStack widgets are not updated on tabs routes change.
+- Fix RangeError when updating routes in AutoTabsScaffold #788
+## [3.0.3]
 - Fix dynamic routes for AutoTabsScaffold don't work #783
 ## [3.0.2]
 - Make AutoTabsScaffold builders rebuild on global routes hierarchy changes

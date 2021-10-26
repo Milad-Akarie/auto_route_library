@@ -80,7 +80,6 @@ class AutoRouterState extends State<AutoRouter> {
     super.didChangeDependencies();
     final parentData = RouteDataScope.of(context);
     final parentScope = RouterScope.of(context);
-
     if (_controller == null) {
       _inheritableObserversBuilder = () {
         var observers = widget.navigatorObservers();
@@ -102,8 +101,8 @@ class AutoRouterState extends State<AutoRouter> {
           parentData.name,
         ),
         pageBuilder: _parentController.pageBuilder,
-        // preMatchedRoutes: parentData.preMatchedPendingRoutes,
       );
+
       _parentController.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
     }

@@ -48,6 +48,7 @@ class HomePageState extends State<HomePage> {
       });
 
   bool _showSettingsTap = true;
+
   @override
   Widget build(context) {
     // builder will rebuild everytime this router's stack
@@ -90,7 +91,6 @@ class HomePageState extends State<HomePage> {
             homeIndex: 0,
             drawer: SizedBox(),
             appBarBuilder: (context, tabsRouter) {
-              // print('App bar rebuilding');
               return AppBar(
                 title: Text(tabsRouter.topRoute.name),
                 leading:

@@ -34,7 +34,10 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   void removeChildController(RoutingController childController) {
-    childControllers.remove(childController.routeData.key);
+    // childController must have the same key and  instance
+    if (childController == childControllers[childController.key]) {
+      childControllers.remove(childController.key);
+    }
   }
 
   List<RouteData> get stackData =>
@@ -458,6 +461,8 @@ class TabsRouter extends RoutingController {
     final routesToPush = _matchAllOrReportFailure(routes)!;
     _pages.clear();
     _pushAll(routesToPush);
+    final targetIndex = _activeIndex >= _pages.length ? 0 : _activeIndex;
+    setActiveIndex(targetIndex, notify: false);
   }
 
   @override

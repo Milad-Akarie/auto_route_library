@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
+import 'home_page.dart';
+
 class SettingsPage extends StatefulWidget {
   final String tab;
 
@@ -44,8 +46,6 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
 
   @override
   Widget build(BuildContext context) {
-    print('------ building SettingsPage');
-
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -70,7 +70,16 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
               );
             },
             child: Text('navigateNamed to profile/my-books'),
-          )
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              context
+                  .findRootAncestorStateOfType<HomePageState>()
+                  ?.toggleSettingsTap();
+            },
+            child: Text('Toggle Settings Tab'),
+          ),
         ],
       ),
     );
