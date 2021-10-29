@@ -79,7 +79,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.navigateNamedTo('/user/1');
+                    context.navigateNamedTo('/user/1/posts/favorite');
                     // context.pushRoute(
                     //   UserRoute(
                     //     id: 1,

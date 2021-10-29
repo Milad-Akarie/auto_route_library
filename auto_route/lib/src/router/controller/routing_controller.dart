@@ -343,14 +343,11 @@ class TabsRouter extends RoutingController {
         _parent = parent,
         _routeData = routeData {
     if (parent != null) {
-      var hasPendingSubNavigation = routeData.hasPendingChildren &&
-          routeData.pendingChildren.last.hasChildren;
       addListener(
         () {
-          if (!hasPendingSubNavigation) {
+          if (!routeData.hasPendingSubNavigation &&
+              currentChild?.hasPendingChildren != true) {
             root.notifyListeners();
-          } else {
-            hasPendingSubNavigation = false;
           }
         },
       );
@@ -457,11 +454,17 @@ class TabsRouter extends RoutingController {
     }
   }
 
-  void replaceAll(List<PageRouteInfo> routes) {
+  void replaceAll(
+      List<PageRouteInfo> routes, PageRouteInfo<dynamic> previousActiveRoute) {
     final routesToPush = _matchAllOrReportFailure(routes)!;
     _pages.clear();
     _pushAll(routesToPush);
-    final targetIndex = _activeIndex >= _pages.length ? 0 : _activeIndex;
+    var targetIndex =
+        routesToPush.indexWhere((r) => r.name == previousActiveRoute.routeName);
+    if (targetIndex == -1) {
+      targetIndex = homeIndex == -1 ? 0 : homeIndex;
+    }
+
     setActiveIndex(targetIndex, notify: false);
   }
 
@@ -569,14 +572,10 @@ abstract class StackRouter extends RoutingController {
   })  : _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         _parent = parent {
     if (parent != null) {
-      var hasPendingSubNavigation = routeData.hasPendingChildren &&
-          routeData.pendingChildren.last.hasChildren;
       addListener(
         () {
-          if (!hasPendingSubNavigation) {
+          if (!routeData.hasPendingSubNavigation) {
             root.notifyListeners();
-          } else {
-            hasPendingSubNavigation = false;
           }
         },
       );

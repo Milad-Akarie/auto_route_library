@@ -11,8 +11,9 @@ class NavigationHistory {
 
   void add(List<RouteMatch> flatSegments) {
     if (flatSegments.isEmpty) return;
+
     RouteMatch toHierarchy(List<RouteMatch> segments) {
-      if (segments.length == 1 || !segments.first.hasChildren) {
+      if (segments.length == 1) {
         return segments.first;
       } else {
         return segments.first.copyWith(children: [
@@ -24,10 +25,15 @@ class NavigationHistory {
     }
 
     final entry = toHierarchy(flatSegments);
+
     final entryIndex = entries.lastIndexWhere((e) => e == entry);
     if (entryIndex != -1) {
       entries.removeRange(entryIndex, entries.length);
     }
     entries.add(entry);
+    print('------------------');
+    entries.forEach((element) {
+      print(element.allSegments.join('/'));
+    });
   }
 }

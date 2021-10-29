@@ -30,6 +30,9 @@ class RouteData {
     return RouteDataScope.of(context);
   }
 
+  bool get hasPendingSubNavigation =>
+      hasPendingChildren && pendingChildren.last.hasChildren;
+
   T argsAs<T>({T Function()? orElse}) {
     final args = _match.args;
     if (args == null) {
@@ -43,7 +46,7 @@ class RouteData {
       throw FlutterError(
           'Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
-      return args as T;
+      return args;
     }
   }
 
@@ -62,6 +65,8 @@ class RouteData {
   String get name => _match.name;
 
   String get path => _match.path;
+
+  RouteData? get parent => _parent;
 
   Map<String, dynamic> get meta => _match.meta;
 
