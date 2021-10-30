@@ -108,8 +108,8 @@ flutter packages pub run build_runner build
 #### Finalize the setup
 after you run the generator your router class will be generated, hook it up with MaterialApp.
 ```dart   
-// assuing this is the root widget of your App   
-class App extends StatlessWidget{  
+// assuming this is the root widget of your App   
+class App extends StatelessWidget{  
   // make sure you don't initiate your router  
   // inside of the build function.  
    final _appRouter = AppRouter();      
@@ -122,7 +122,10 @@ class App extends StatlessWidget{
   }      
 ```      
 ## Generated Routes
-A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroid.
+A `PageRouteInfo` object will be generated for every declared AutoRoute.
+These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor.
+Think of them as string path segments on steroids.
+
 ```dart      
 class BookListRoute extends PageRouteInfo {      
   const BookListRoute() : super(name, path: '/books');      
@@ -130,7 +133,8 @@ class BookListRoute extends PageRouteInfo {
   static const String name = 'BookListRoute';      
 }      
 ```      
-if the declared route has children AutoRoute will add a children parameter to its constructor to be used in nested navigation. more on that here.
+
+If the declared route has children AutoRoute will add a children parameter to its constructor to be used in nested navigation. More on that here.
 
 ```dart      
 class UserRoute extends PageRouteInfo {      
@@ -174,7 +178,7 @@ router.pushAll([
    BookDetailsRoute(id:1),  
 ]);  
   
-// This's like providing a completely new stack as it rebuilds the stack  
+// This is like providing a completely new stack as it rebuilds the stack  
 // with the list of passed routes  
 // entires might just update if alright exist  
 router.replaceAll([  
@@ -182,9 +186,9 @@ router.replaceAll([
 ]);  
 // pops the last page unless stack has 1 entry      
 context.router.pop();     
-// keeps poping routes until predicate is satisfied  
+// keeps popping routes until predicate is satisfied  
 context.router.popUntil((route) => route.name == 'HomeRoute');  
-// a simplifed version of the above line  
+// a simplified version of the above line  
 context.router.popUntilRouteWithName('HomeRoute');  
 // pops all routes down to the root  
 context.router.popUntilRoot();  
@@ -194,8 +198,8 @@ context.router.popUntilRoot();
 // removes the entry.  
 context.router.removeLast();   
   
-// removes any route in stack that satisfis the predicate  
-// this works exactly like removing items from a regualar List  
+// removes any route in stack that satisfies the predicate  
+// this works exactly like removing items from a regular List  
 // <PageRouteInfo>[...].removeWhere((r)=>)  
 context.router.removeWhere((route) => );  
       
@@ -207,7 +211,8 @@ context.navigateNamedTo('/books');
 context.popRoute();  
 ```      
 ## Passing Arguments
-That's the fun part! **AutoRoute** automatically detects and handles your page arguments for you, the generated route object will deliver all the arguments your page needs including path/query params.
+That's the fun part! **AutoRoute** automatically detects and handles your page arguments for you.
+The generated route object will deliver all the arguments your page needs including path/query params.
 
 e.g. The following page widget will take an argument of type `Book`.
 
@@ -220,7 +225,7 @@ class BookDetailsPage extends StatelessWidget {
  ```      
 **Note:** Default values are respected. Required fields are also respected and handled properly.
 
-The generated `BookDetailsRoute` will deliver the same arguments to it's corresponding page.
+The generated `BookDetailsRoute` will deliver the same arguments to its corresponding page.
 ```drt      
 router.push(BookDetailsRoute(book: book));      
 ```      
@@ -263,7 +268,7 @@ class BookDetailsPage extends StatelessWidget {
   ...      
  ```      
 
-The generated `BookDetailsRoute` will deliver the same arguments to it's corresponding page.
+The generated `BookDetailsRoute` will deliver the same arguments to its corresponding page.
 ```dart      
 context.router.push(      
       BookDetailsRoute(      
@@ -288,7 +293,7 @@ Nested navigation means building an inner router inside of a page of another rou
 <img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/dev/art/nested_router_demo.png" height="370">      
 </p>   
 
-defining nested routes is as easy as populating the children field of the parent route. In the following example  `UsersPage` ,  `PostsPage` and `SettingsPage` are nested children of `DashboardPage`.
+Defining nested routes is as easy as populating the children field of the parent route. In the following example  `UsersPage` ,  `PostsPage` and `SettingsPage` are nested children of `DashboardPage`.
 ```dart      
 @MaterialAutoRouter(      
   replaceInRouteName: 'Page,Route',      
@@ -336,7 +341,8 @@ class DashboardPage extends StatelessWidget {
 
 Now if we navigate to `/dashboard/users` we will be taken to the `DashboardPage` and the `UsersPage` will be shown inside of it.
 
-What if want to show one of the child pages at `/dashboard`? we can simply do that by giving the child routes an empty path `''` or set it as initial.
+What if want to show one of the child pages at `/dashboard`?
+We can simply do that by giving the child routes an empty path `''` or set it as initial.
 
 ```dart      
    AutoRoute(      
@@ -375,22 +381,28 @@ which can be simplified to the following where auto_route generates the redirect
     ),      
 ```     
 ### Things to keep in mind when implementing nested navigation
-1- Each router manages it's own pages stack.  
+1- Each router manages its own pages stack.  
 2- Navigation actions like push, pop and friends are handled by the current router and bubble up if it couldn't be handled.
 
 
 ## Tab Navigation
-If you're working with flutter mobile you're most likely to implement tabs navigation, that's why auto_route makes tabs navigation as easy and straightforward as possible.
+If you're working with flutter mobile you're most likely to implement tabs navigation, that's why auto_route makes tabs navigation as easy and as straightforward as possible.
 
-in the previous example we used an `AutoRouter` widget to render nested child routes, `AutoRouter` is just a shortcut for `AutoStackRouter`, `StackRouters` manage a stack of pages inside of them where the active/visible page is always the one on top and you'd need to pop it to see the page beneath it.
+In the previous example we used an `AutoRouter` widget to render nested child routes.
+`AutoRouter` is just a shortcut for `AutoStackRouter`.
+`StackRouters` manage a stack of pages inside of them where the active/visible page is always the one on top and you'd need to pop it to see the page beneath it.
 
-Now we can try to implement our tabs using an `AutoRouter` (StackRouter) by pushing or replacing a nested route every-time the tab changes and that might work but our tabs state will be lost, not to mention the transition between tabs issues, luckily auto_route comes equipped with an `AutoTabsRouter` which is especially made to handle tab navigation.
+Now we can try to implement our tabs using an `AutoRouter` (StackRouter) by pushing or replacing a nested route everytime the tab changes.
+While that might work, our tabs state will be lost, not to mention the issues with transition between tabs.
+Luckily auto_route comes equipped with an `AutoTabsRouter` which is especially made to handle tab navigation.
 
 `AutoTabsRouter` lets you switch between different routes while preserving offstage-routes state, tab routes are lazily loaded by default ( can be disabled ) and finally it allows to create whatever transition animation you want.
 
 Let's change the previous example to use tab navigation.
 
-Notice that we're not going to change  anything in our routes declaration map, we still have a dashboard page that has tree nested children, users, posts and settings.
+Notice that we're not going to change anything in our routes declaration map.
+We still have a dashboard page that has three nested children: users, posts and settings.
+
 ```dart      
 class DashboardPage extends StatelessWidget {  
   @override  
@@ -410,11 +422,11 @@ class DashboardPage extends StatelessWidget {
         // Here we're building our Scaffold inside of AutoTabsRouter  
         // to access the tabsRouter controller provided in this context  
         //   
-        //alterntivly you could use a global key  
+        // alternatively you could use a global key  
         return Scaffold(  
             body: FadeTransition(  
               opacity: animation,  
-              // the passed child is techinaclly our animated selected-tab page  
+              // the passed child is technically our animated selected-tab page  
               child: child,  
             ),  
             bottomNavigationBar: BottomNavigationBar(  
@@ -434,13 +446,11 @@ class DashboardPage extends StatelessWidget {
   }  
 }  
 ```      
-if you think the above setup is a bit messy you could use the shipped-in `AutoTabsScaffold` that makes things much cleaner.
+If you think the above setup is a bit messy, you could use the shipped-in `AutoTabsScaffold` which makes things much cleaner.
 ```dart      
 class DashboardPage extends StatelessWidget {  
-  
- @override    
-Widget build(context) {    
- @override  
+
+  @override  
   Widget build(context) {  
     return AutoTabsScaffold(  
        routes: const [  
@@ -457,7 +467,8 @@ Widget build(context) {
                 BottomNavigationBarItem(label: 'Posts',...),  
                 BottomNavigationBarItem(label: 'Settings',...),  
               ],  
-            )),         
+            ),
+          ),         
        }  
     );  
 }  
@@ -466,16 +477,17 @@ Widget build(context) {
 ## Finding The Right Router
 Every nested `AutoRouter` has its own routing controller to manage the stack inside of it and the easiest way to obtain a scoped controller is by using context.
 
-In the previous example `DashboardPage` is a root level stack entry so calling `AutoRouter.of(context)` anywhere inside of it will get us the root routing controller.
+In the previous example `DashboardPage` is a root level stack entry.
+So calling `AutoRouter.of(context)` anywhere inside of it will get us the root routing controller.
 
-`AutoRouter` widgets that are used to render nested routes, insert a new router scope into the widgets tree, so when a nested route calls for the scoped controller they will get the closest parent controller in the widgets tree not the root controller.
+`AutoRouter` widgets that are used to render nested routes, insert a new router scope into the widgets tree, so when a nested route calls for the scoped controller they will get the closest parent controller in the widgets tree and not the root controller.
 
 ```dart      
 class Dashboard extends StatelessWidget {      
      
   @override      
   Widget build(BuildContext context) {      
-  // this will get us the root routing controller      
+    // this will get us the root routing controller      
     AutoRouter.of(context);      
     return Scaffold(      
       appBar: AppBar(title: Text('Dashboard page')),       
@@ -485,23 +497,27 @@ class Dashboard extends StatelessWidget {
   }      
 }      
 ```      
-Here's a simple diagram to help visualize this
+Here's a simple diagram to help visualize this:
 
 <p align="center">      
 <img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">      
 </p>      
 
-As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we have too different routing controllers  `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type.
+As you can tell from the above diagram, it's possible to access parent routing controllers by calling `router.parent<T>()`.
+We're using a generic function because we have two different routing controllers: `StackRouter` and `TabsRouter`.
+One of them could be the parent controller of the current router and that's why we need to specify a type.
+
 ```dart      
-router.parent<StackRouter>() // this returns  the parent router as a Stack Routing controller      
-router.parent<TabsRouter>() // this returns athe parent router as a Tabs Routing controller      
+router.parent<StackRouter>() // this returns the parent router as a Stack Routing controller      
+router.parent<TabsRouter>() // this returns the parent router as a Tabs Routing controller      
 ```      
-on the other hand obtaining the root controller does not require type casting because it's always a `StackRouter`.
+On the other hand, obtaining the root controller does not require type casting because it's always a `StackRouter`.
 ```dart      
 router.root // this returns the root router as a Stack Routing controller      
 ```      
 
-You can obtain access to inner-routers from outside their scope using a global key
+You can obtain access to inner-routers from outside their scope using a global key.
+
 ```dart      
 class DashboardPage extends StatefulWidget {  
   @override  
@@ -536,9 +552,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
 You could also obtain access to inner-routers from outside their scope without a global key as long as they're initiated.
 ```dart      
-// assuming this's the root router      
+// assuming this is the root router      
 context.innerRouterOf<StackRouter>(UserRoute.name)       
-// or if we're usign an AutoTabsRouter inside of DashboardPage  
+// or if we're using an AutoTabsRouter inside of DashboardPage  
 context.innerRouterOf<TabsRouter>(UserRoute.name)    
 ```      
 Accessing the `DashboardPage` inner router from the previous example.
@@ -555,8 +571,7 @@ class Dashboard extends StatelessWidget {
           IconButton(      
             icon: Icon(Icons.person),      
             onPressed: () {      
-              // accessing the inner router from      
-              // outside the scope      
+              // accessing the inner router from outside the scope
               final router = context.innerRouterOf<StackRouter>(DashboardRoute.name)  
               router?.push(const UsersRoute());      
             },      
@@ -571,7 +586,7 @@ class Dashboard extends StatelessWidget {
 ## Navigating Without Context
 To navigate without context you can simply assign your generated router to a global variable
 ```dart      
-// declerate your route as a global vairable  
+// declare your route as a global variable  
 final appRouter = AppRouter();    
   
 class MyApp extends StatefulWidget {  
@@ -584,7 +599,8 @@ class MyApp extends StatefulWidget {
       );  
     }  
 ```  
-**Note:** using global variable is not recommended and is considered a bad practice and most of the times you should use dependency injection instead.
+**Note:** using a global variable is not recommended and is considered a bad practice.
+Most of the times you should use dependency injection instead.
 
 Here's an example using `get_it` which is just a personal favorite, you can use any dependency injection package you like.
 
@@ -605,18 +621,23 @@ class MyApp extends StatefulWidget {
       );  
     }  
 ```  
-now you can access to your router anywhere inside of your App without using context.
+
+Now you can access to your router anywhere inside of your App without using context.
+
 ```dart   
 getIt<AppRouter>().push(...);  
-```  
+```
+
 **Note:** navigating without context is not recommended in nested navigation.
 
 ## Working with Paths
 Working with paths in **AutoRoute** is optional because `PageRouteInfo` objects are matched by name unless pushed as a string using the `initialDeepLink` property in root delegate or `pushNamed`, `replaceNamed` `navigateNamed` methods.
 
-if you don’t specify a path it’s going to be generated from the page name e.g. `BookListPage` will have ‘book-list-page’ as a path, if initial arg is set to true the path will be `/` unless it's relative then it will be an empty string `''`.
+If you don't specify a path it's going to be generated from the page name, e.g. `BookListPage` will have ‘book-list-page’ as a path.
+If initial arg is set to true the path will be `/` unless it's relative then it will be an empty string `''`.
 
-When developing a web Application or a native App that requires deep-linking you'd probably need to define paths with clear memorable names, and that's done using the `path` argument in `AutoRoute`.
+When developing a web application or a native app that requires deep-linking, you'd probably need to define paths with clear memorable names.
+That's done using the `path` argument in `AutoRoute`.
 
 ```dart      
  AutoRoute(path: '/books', page: BookListPage),      
@@ -626,7 +647,7 @@ You can define a dynamic segment by prefixing it with a colon
 ```dart      
  AutoRoute(path: '/books/:id', page: BookDetailsPage),      
 ```      
-The simplest way to extract path parameters from path and gain access to them is by annotating constructor params with `@PathParam('optional-alias')` with the same alias/name of the segment.
+The simplest way to extract path parameters from the path and gain access to them is by annotating constructor params with `@PathParam('optional-alias')` with the same alias/name of the segment.
 
 ```dart      
 class BookDetailsPage extends StatelessWidget {      
@@ -635,18 +656,19 @@ class BookDetailsPage extends StatelessWidget {
   final int bookId;      
   ...      
 ```      
-Now writing `/books/1` in the browser will navigate you to `BookDetailsPage` and automatically extract the `bookId` argument from path and inject it to your widget.
+Now writing `/books/1` in the browser will navigate you to `BookDetailsPage` and automatically extract the `bookId` argument from the path and inject it into your widget.
 
 ### Query Parameters
-Query parameters are accessed the same way, simply annotate the constructor parameter to hold the value of the query param with `@QueryParam('optional-alias')` and let AutoRoute do the rest.
+Query parameters are accessed the same way.
+Simply annotate the constructor parameter to hold the value of the query param with `@QueryParam('optional-alias')` and let AutoRoute do the rest.
 
-you could also access path/query parameters using the scoped `RouteData` object.
+You could also access path/query parameters using the scoped `RouteData` object.
 ```dart      
  RouteData.of(context).pathParams;      
  // or using the extension      
  context.routeData.queryParams      
 ```      
-`Tip`: if your parameter name is the same as the path/query parameter, you could use the const @pathParam or @queryParam and not pass a slug/alias.
+*Tip*: if your parameter name is the same as the path/query parameter, you could use the const `@pathParam` or `@queryParam` and not pass a slug/alias.
 
 ```dart    
 class BookDetailsPage extends StatelessWidget {      
@@ -657,7 +679,8 @@ class BookDetailsPage extends StatelessWidget {
 ```    
 
 ### Redirecting Paths
-Paths can be redirected using `RedirectRoute`. The following setup will navigate us to `/books` when `/` is matched.
+Paths can be redirected using `RedirectRoute`.
+The following setup will navigate us to `/books` when `/` is matched.
 
 ```dart      
 <AutoRoute> [      
@@ -671,7 +694,7 @@ When redirecting initial routes the above setup can be simplified by setting the
      AutoRoute(path: '/books', page: BookListPage, initial: true),      
  ]      
 ```    
-**Note**:  `RedirectRoutes` are fully matched.
+**Note**: `RedirectRoutes` are fully matched.
 
 ### Wildcards
 auto_route supports wildcard matching to handle invalid or undefined paths.
@@ -685,32 +708,33 @@ RedirectRoute(path: '*', redirectTo: '/')
 **Note:** be sure to always add your wildcards at the end of your route list because routes are matched in order.
 
 ## Route Guards
-Think of route guards as middleware or interceptors, routes can not be added to the stack without going through their assigned guards, guards are useful for restricting access to certain routes.
+Think of route guards as middleware or interceptors.
+Routes can not be added to the stack without going through their assigned guards.
+Guards are useful for restricting access to certain routes.
 
-We create a route guard by extending `AutoRouteGuard` from the auto_route package  
-and implementing our logic inside of the onNavigation method.
+We create a route guard by extending `AutoRouteGuard` from the auto_route package and implementing our logic inside of the onNavigation method.
 ```dart  
 class AuthGuard extends AutoRouteGuard {  
- @override  
- void onNavigation(NavigationResolver resolver, StackRouter router) {  
- // the navigation is paused until resolver.next() is called with either   
- // true to resume/continue navigation or false to abort navigation  
-     if(authenitcated){  
-       // if user is authenticated we continue  
-        resolver.next(true);  
-      }else{  
-         // we redirect the user to our login page  
-         router.push(LoginRoute(onResult: (success){  
-                // if success == true the navigation will be resumed  
-                // else it will be aborted  
-               resolver.next(success);  
-          }));  
-         }      
-     }  
+  @override  
+  void onNavigation(NavigationResolver resolver, StackRouter router) {  
+    // the navigation is paused until resolver.next() is called with either   
+    // true to resume/continue navigation or false to abort navigation  
+    if(authenitcated) {  
+      // if user is authenticated we continue  
+      resolver.next(true);  
+    } else {  
+      // we redirect the user to our login page  
+      router.push(LoginRoute(onResult: (success) {  
+        // if success == true the navigation will be resumed  
+        // else it will be aborted  
+        resolver.next(success);  
+      }));  
+    }      
+  }  
 }  
   
 ```  
-**Important**:  `resolver.next()` should only be called once.
+**Important**: `resolver.next()` should only be called once.
 
 The `NavigationResolver` object contains the guarded route which you can access by calling the property `resolver.route` and a list of pending routes (if there are any) accessed by calling `resolver.pendingRoutes`.
 
@@ -719,7 +743,7 @@ Now we assign our guard to the routes we want to protect.
 ```dart  
  AutoRoute(page: ProfileScreen, guards: [AuthGuard]);  
 ```  
-After we run code generation, our router will have a required named argument called authGuard or whatever your guard name is
+After we run code generation, our router will have a required named argument called authGuard or whatever your guard name is.
 ```dart  
 // we pass our AuthGuard to the generated router.  
 final _appRouter = AppRouter(authGuard: AuthGuard());  
@@ -728,21 +752,21 @@ final _appRouter = AppRouter(authGuard: AuthGuard());
 
 ## Wrapping Routes
 
-In some cases we want to wrap our screen with a parent widget usually to provide some values through context, e.g wrapping your route with a custom `Theme` or a `Provider`, to do that simply implement `AutoRouteWrapper`, and have wrappedRoute(context) method return (this) as the child of your wrapper widget.
+In some cases we want to wrap our screen with a parent widget usually to provide some values through context, e.g wrapping your route with a custom `Theme` or a `Provider`.
+To do that simply implement `AutoRouteWrapper` and have `wrappedRoute(context)` method return `this` as the child of your wrapper widget.
 
 ```dart  
 class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {  
   @override  
   Widget wrappedRoute(BuildContext context) {  
-  return Provider(create: (ctx) => ProductsBloc(), child: this);  
+    return Provider(create: (ctx) => ProductsBloc(), child: this);  
   }  
   ...  
 ```  
 ## Navigation Observers
-Navigation observers  are used to observe when routes are pushed ,replaced or popped ..etc.
+Navigation observers are used to observe when routes are pushed, replaced, popped, etc.
 
 We implement an AutoRouter observer by extending an `AutoRouterObserver` which is just a `NavigatorObserver` with tab route support.
-
 
 ```dart  
 class MyObserver extends AutoRouterObserver {  
@@ -750,9 +774,9 @@ class MyObserver extends AutoRouterObserver {
   void didPush(Route route, Route? previousRoute) {  
     print('New route pushed: ${route.settings.name}');  
   }  
- ...  
- // only override to observer tab routes  
- @override  
+  ...  
+  // only override to observer tab routes  
+  @override  
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {  
     print('Tab route visited: ${route.name}');  
   }  
@@ -763,8 +787,12 @@ class MyObserver extends AutoRouterObserver {
   ...  
 }  
 ```  
-Then we pass our observer to the root delegate `AutoRouterDelegate`.  
-**Important** notice that `navigatorObservers` property is a builder function that returns a list of observes and the reason for that is a navigator observer instance can only be used by a single router, so unless you're using a one single router or you don't want your nested routers to inherit observers make sure navigatorObservers builder always returns fresh observer instances.
+Then we pass our observer to the root delegate `AutoRouterDelegate`.
+
+**Important**: Notice that `navigatorObservers` property is a builder function that returns a list of observers.
+This is because a navigator observer instance can only be used by a single router.
+Unless you're using one single router or you don't want your nested routers to inherit observers, make sure `navigatorObservers` builder always returns fresh observer instances.
+
 ```dart  
    return MaterialApp.router(  
       routerDelegate: AutoRouterDelegate(  
@@ -774,7 +802,9 @@ Then we pass our observer to the root delegate `AutoRouterDelegate`.
       routeInformationParser: _appRouter.defaultRouteParser(),  
     );  
 ```  
-the following approach **won't** work if you have nested routers unless they don't inherit the observers.
+
+The following approach **won't** work if you have nested routers unless they don't inherit the observers.
+
 ```dart  
    final _observer = MyObserver();  
    return MaterialApp.router(  
@@ -787,7 +817,7 @@ the following approach **won't** work if you have nested routers unless they don
     );  
 ```  
 
-Every nested router can have it's own observers and inherit it's parent's.
+Every nested router can have its own observers and inherit its parent's.
 ```dart  
  AutoRouter(  
     inheritNavigatorObservers: true, // true by default  
@@ -811,7 +841,8 @@ First we provide our `AutoRouteObserver` instance
     );  
 ```  
 
-Next we use an `AutoRouteAware` mixin which is a  `RouteAware` mixin with tab support to provided the needed listeners then subscribe to our `AutoRouteObserver`.
+Next we use an `AutoRouteAware` mixin, which is a `RouteAware` mixin with tab support, to provide the needed listeners.
+Then we subscribe to our `AutoRouteObserver`.
 ```dart  
 class BooksListPage extends State<BookListPage> with AutoRouteAware {  
    AutoRouteObserver? _observer;  
@@ -832,30 +863,29 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
  @override  
   void dispose() {  
     super.dispose();  
-    // don't forget to unsubscribe from the  
-    // observer on dispose  
+    // don't forget to unsubscribe from the observer on dispose  
     _observer.unsubscribe(this);  
   }  
-  
- // only override if this is a tab page  
-   @override  
-   void didInitTabRoute(TabPageRoute? previousRoute) {}  
-  
- // only override if this is a tab page  
-   @override  
-   void didChangeTabRoute(TabPageRoute previousRoute) {}  
-  
-   @override  
-   void didPopNext() {}  
-  
-   @override  
-   void didPushNext() {}  
-  
-   @override  
-   void didPush() {}  
-  
-   @override  
-   void didPop() {}  
+
+  // only override if this is a tab page  
+  @override  
+  void didInitTabRoute(TabPageRoute? previousRoute) {}  
+
+  // only override if this is a tab page  
+  @override  
+  void didChangeTabRoute(TabPageRoute previousRoute) {}  
+
+  @override  
+  void didPopNext() {}  
+
+  @override  
+  void didPushNext() {}  
+
+  @override  
+  void didPush() {}  
+
+  @override  
+  void didPop() {}  
 }  
 ```  
 
@@ -872,7 +902,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 
 | Property                        | Default value | Definition                                                                       |  
 | ------------------------------- | :-----------: | -------------------------------------------------------------------------------- |  
-| customRouteBuilder    |     null      | used to provide a custom route, it takes in BuildContext and a CustomPage  and returns a PageRoute             |  
+| customRouteBuilder    |     null      | used to provide a custom route, it takes in BuildContext and a CustomPage and returns a PageRoute             |  
 | transitionsBuilder    |     null      | extension for the transitionsBuilder property in PageRouteBuilder                |  
 | opaque                   |     true      | extension for the opaque property in PageRouteBuilder                            |  
 | barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |  
@@ -903,7 +933,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 | Property                        | Default value | Definition                                                                       |  
 | ------------------------------- | :-----------: | -------------------------------------------------------------------------------- |  
 | transitionsBuilder    |     null      | extension for the transitionsBuilder property in PageRouteBuilder                |  
-| customRouteBuilder    |     null      | used to provide a custom route, it takes in BuildContext and a CustomPage  and returns a PageRoute
+| customRouteBuilder    |     null      | used to provide a custom route, it takes in BuildContext and a CustomPage and returns a PageRoute
 | opaque                  |     true      | extension for the opaque property in PageRouteBuilder                            |  
 | barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |  
 | durationInMilliseconds  |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |  
@@ -911,7 +941,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 
 ## Custom Route Transitions
 
-To use custom route transitions use a `CustomRoute` and pass in your preferences.  
+To use custom route transitions, use a `CustomRoute` and pass in your preferences.  
 The `TransitionsBuilder` function needs to be passed as a static/const reference that has the same signature as the `TransitionsBuilder` function of the `PageRouteBuilder` class.
 
 ```dart  
@@ -922,34 +952,34 @@ transitionsBuilder: TransitionBuilders.slideBottom,
 durationInMilliseconds: 400)  
 ```  
 
-
-
 *Tip* Use **@CustomAutoRouter()** to define global custom route transitions.
 
 You can of course use your own transitionsBuilder function as long as it has the same function signature.  
-The function has to take in exactly a `BuildContext`, `Animation<Double>`, `Animation<Double>` and a child `Widget` and it needs to return a `Widget`, typically you would wrap your child with one of flutter's transition widgets as follows.
+The function has to take in exactly a `BuildContext`, `Animation<Double>`, `Animation<Double>` and a child `Widget` and it needs to return a `Widget`.
+Typically you would wrap your child with one of Flutter's transition widgets as follows.
 
 ```dart  
 Widget zoomInTransition(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {  
- // you get an animation object and a widget  
- // make your own transition  
-    return ScaleTransition(scale: animation, child: child);  
-  }  
+  // you get an animation object and a widget  
+  // make your own transition  
+  return ScaleTransition(scale: animation, child: child);  
+}  
 ```  
 
-Now pass the reference of your function to `CustomRoute` .
+Now pass the reference of your function to `CustomRoute`.
 
 ```dart  
 CustomRoute(page: ZoomInScreen, transitionsBuilder: zoomInTransition)  
 ```  
 ## Custom Route Builder
-You can use your own custom route by passing a `CustomRouteBuilder` function to `CustomRoute`,  there isn't a simple way to strongly-type a static function in code generation, so make sure your custom builder  signature matches the following.
+You can use your own custom route by passing a `CustomRouteBuilder` function to `CustomRoute`.
+There isn't a simple way to strongly-type a static function in code generation, so make sure your custom builder's signature matches the following.
 ```dart  
 typedef CustomRouteBuilder = Route<T> Function<T>(    
   BuildContext context, Widget child, CustomPage page);  
 ```  
-Now we implement our builder function the same way we did with the TransitionsBuilder function,  
-the most important part here is passing the page argument to our custom route.
+Now we implement our builder function the same way we did with the TransitionsBuilder function. 
+The most important part here is passing the page argument to our custom route.
 ```dart  
 Route<T> myCustomRouteBuilder<T>(BuildContext context, Widget child, CustomPage<T> page){    
   return PageRouteBuilder(    
