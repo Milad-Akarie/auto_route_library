@@ -108,18 +108,23 @@ flutter packages pub run build_runner build
 #### Finalize the setup
 after you run the generator your router class will be generated, hook it up with MaterialApp.
 ```dart   
-// assuing this is the root widget of your App   
-class App extends StatlessWidget{  
+// assuming this is the root widget of your App   
+class App extends StatelessWidget {
+  App({Key? key}) : super(key: key);
   // make sure you don't initiate your router  
   // inside of the build function.  
-   final _appRouter = AppRouter();      
-     
-  Widget build(BuildContext context){      
-      return MaterialApp.router(      
-             routerDelegate:_appDelegate.delegate(),      
-             routeInformationParser: _appRouter.defaultRouteParser(),      
-         ),      
-  }      
+  final _appRouter = AppRouter();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerDelegate: _appRouter.delegate(),
+      routeInformationParser: _appRouter.defaultRouteParser(),
+      routeInformationProvider: _appRouter.routeInfoProvider(),
+    );
+  }
+}
+
 ```      
 ## Generated Routes
 A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroid.
