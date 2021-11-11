@@ -345,6 +345,7 @@ Now if we navigate to `/dashboard/users` we will be taken to the `DashboardPage`
 
 What if want to show one of the child pages at `/dashboard`? we can simply do that by giving the child routes an empty path `''` or set it as initial.
 
+
 ```dart        
    AutoRoute(        
       path: '/dashboard',        
@@ -381,6 +382,7 @@ which can be simplified to the following where `auto_route` generates the redire
       ],        
     ),        
 ```       
+
 ### Things to keep in mind when implementing nested navigation
 1- Each router manages it's own pages stack.    
 2- Navigation actions like push, pop and friends are handled by the topmost router and bubble up if it couldn't be handled.
