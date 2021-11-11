@@ -26,7 +26,7 @@ class Parameters {
           ).equals(_params, other._params);
 
   @override
-  int get hashCode => _params.hashCode;
+  int get hashCode => MapEquality().hash(_params);
 
   bool get isNotEmpty => _params.isNotEmpty;
   bool get isEmpty => _params.isEmpty;

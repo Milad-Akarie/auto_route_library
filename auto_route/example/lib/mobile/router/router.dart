@@ -8,11 +8,11 @@ import '../screens/profile/routes.dart';
 import '../screens/settings.dart';
 import '../screens/user-data/routes.dart';
 
-@AdaptiveAutoRouter(
-  // transitionsBuilder: TransitionsBuilders.fadeIn,
+@MaterialAutoRouter(
   replaceInRouteName: 'Page|Dialog,Route',
   routes: <AutoRoute>[
     // app stack
+
     AutoRoute<String>(
       path: '/',
       page: HomePage,
@@ -24,7 +24,10 @@ import '../screens/user-data/routes.dart';
           name: 'BooksTab',
           initial: true,
           children: [
-            AutoRoute(path: '', page: BookListPage),
+            AutoRoute(
+              path: '',
+              page: BookListPage,
+            ),
             AutoRoute(
               path: ':id',
               page: BookDetailsPage,

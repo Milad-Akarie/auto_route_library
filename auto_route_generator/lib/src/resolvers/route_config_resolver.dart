@@ -200,6 +200,10 @@ class RouteConfigResolver {
     var replacementInRouteName = _routerConfig.replaceInRouteName;
 
     final constructor = classElement.unnamedConstructor;
+    throwIf(
+      constructor == null,
+      'Route widgets must have an unnamed constructor',
+    );
     var hasConstConstructor = false;
     var params = constructor!.parameters;
     var parameters = <ParamConfig>[];

@@ -120,7 +120,7 @@ class RouteMatch<T> {
 
   @override
   String toString() {
-    return 'RouteMatch{pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom, routeName: $name, path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
+    return 'RouteMatch{ routeName: $name, pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom,  path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
   }
 
   @Deprecated("renamed to 'toPageRouteInfo'")

@@ -1,4 +1,4 @@
-part of 'auto_router_delegate.dart';
+part of 'routing_controller.dart';
 
 typedef PageBuilder = AutoRoutePage Function(RouteData data);
 typedef PageFactory = Page<dynamic> Function(RouteData data);
@@ -8,7 +8,10 @@ abstract class RootStackRouter extends StackRouter {
       : super(
           key: const ValueKey('Root'),
           navigatorKey: navigatorKey,
-        );
+        ) {
+    _navigationHistory =
+        kIsWeb ? WebNavigationHistory(this) : NativeNavigationHistory(this);
+  }
 
   @override
   RouteData get routeData => RouteData(
@@ -29,6 +32,7 @@ abstract class RootStackRouter extends StackRouter {
   List<RouteConfig> get routes;
 
   bool _managedByWidget = false;
+  late final _navigationHistory;
 
   @override
   bool get managedByWidget => _managedByWidget;
@@ -97,7 +101,8 @@ abstract class RootStackRouter extends StackRouter {
   late final RouteMatcher matcher = RouteMatcher(routeCollection);
 
   @override
-  final NavigationHistory navigationHistory = NavigationHistory();
+  NavigationHistory get navigationHistory => _navigationHistory;
+
   @override
   late final RouteCollection routeCollection = RouteCollection.from(routes);
 }

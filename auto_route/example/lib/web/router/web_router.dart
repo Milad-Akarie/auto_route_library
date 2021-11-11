@@ -17,30 +17,40 @@ part 'web_router.gr.dart';
       initial: true,
     ),
     AutoRoute(path: '/login', page: LoginPage),
-    AutoRoute(
+    RedirectRoute(
       path: '/user/:userID',
-      usesPathAsKey: false,
-      page: UserPage,
+      redirectTo: '/user/:userID/page',
+    ),
+    AutoRoute(
+      path: '/user/:userID/page',
       guards: [AuthGuard],
+      page: UserPage,
       children: [
         AutoRoute(
           path: 'profile',
           page: UserProfilePage,
           initial: true,
         ),
-        AutoRoute(path: 'posts', page: UserPostsPage, children: [
-          AutoRoute(path: 'all', page: UserAllPostsPage, initial: true),
-          AutoRoute(
-            path: 'favorite',
-            page: UserFavoritePostsPage,
-          ),
-        ]),
+        AutoRoute(
+          path: 'posts',
+          page: UserPostsPage,
+          children: [
+            AutoRoute(
+              path: 'all',
+              page: UserAllPostsPage,
+              initial: true,
+            ),
+            AutoRoute(
+              path: 'favorite',
+              page: UserFavoritePostsPage,
+            ),
+          ],
+        ),
       ],
     ),
     AutoRoute(path: '*', page: NotFoundScreen),
   ],
 )
-
 // when using a part build you should not
 // use the '$' prefix on the actual class
 // instead extend the generated class
@@ -79,18 +89,14 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.navigateNamedTo('/user/1');
-                    // context.pushRoute(
-                    //   UserRoute(
-                    //     id: 1,
-                    //     children: [
-                    //       UserProfileRoute(likes: 2)
-                    //       // UserPostsRoute(children: [
-                    //       //   UserAllPostsRoute(),
-                    //       // ])
-                    //     ],
-                    //   ),
+                    // context.replaceRoute(
+                    //   UserRoute(id: 5, children: [
+                    //     // UserPostsRoute(children: [
+                    //     //   // UserFavoritePostsRoute(),
+                    //     // ]),
+                    //   ]),
                     // );
+                    context.navigateNamedTo('/user/2');
                   },
               child: Text('Navigate to user/2'),
             ),
@@ -105,38 +111,64 @@ class HomePage extends StatelessWidget {
   }
 }
 
+class QueryPage extends StatelessWidget {
+  const QueryPage({
+    Key? key,
+    @pathParam this.id = '-',
+  }) : super(key: key);
+  final String id;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Query: $id'),
+      ),
+    );
+  }
+}
+
 class UserProfilePage extends StatelessWidget {
   final VoidCallback? navigate;
   final int likes;
-
+  final int userId;
   const UserProfilePage({
     Key? key,
     this.navigate,
+    @PathParam('userID') this.userId = -1,
     @queryParam this.likes = 0,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var userId = context.routeData.inheritedPathParams.getInt('userID');
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'User Profile : $userId',
+              'User Profile : $userId  likes: $likes}',
+              style: TextStyle(fontSize: 30),
+            ),
+            Text(
+              '${context.routeData.queryParams}',
               style: TextStyle(fontSize: 30),
             ),
             const SizedBox(height: 16),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate ?? () => context.navigateNamedTo('/'),
+              onPressed: navigate ??
+                  () {
+                    context.router.pushNamed('posts');
+                  },
               child: Text('Posts'),
             ),
             const SizedBox(height: 8),
             ElevatedButton(
               onPressed: navigate ??
-                  () => App.of(context).authService.isAuthenticated = false,
+                  () {
+                    App.of(context).authService.isAuthenticated = false;
+                  },
               child: Text('Logout'),
             ),
           ],
@@ -259,6 +291,14 @@ class UserAllPostsPage extends StatelessWidget {
                     context.pushRoute(UserFavoritePostsRoute());
                   },
               child: Text('Favorite'),
+            ),
+            MaterialButton(
+              color: Colors.red,
+              onPressed: navigate ??
+                  () {
+                    context.navigateBack();
+                  },
+              child: Text('back'),
             ),
           ],
         ),

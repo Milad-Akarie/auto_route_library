@@ -1,24 +1,4 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/matcher/route_matcher.dart';
-import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/router/auto_route_page.dart';
-import 'package:auto_route/src/router/controller/controller_scope.dart';
-import 'package:auto_route/src/router/controller/navigation_history.dart';
-import 'package:auto_route/src/router/parser/route_information_parser.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-import '../controller/routing_controller.dart';
-import '../widgets/auto_route_navigator.dart';
-
-part 'root_stack_router.dart';
-
-typedef RoutesBuilder = List<PageRouteInfo> Function(BuildContext context);
-typedef RoutePopCallBack = void Function(RouteMatch route, dynamic results);
-typedef OnNavigateCallBack = void Function(UrlState tree, bool initial);
-typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
+part of 'routing_controller.dart';
 
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   final List<PageRouteInfo>? initialRoutes;
@@ -51,7 +31,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   @override
-  Future<bool> popRoute() => controller.topMost.pop();
+  Future<bool> popRoute() => controller.topMostRouter().pop();
 
   late List<NavigatorObserver> _navigatorObservers;
 
@@ -76,79 +56,55 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
-  UrlState _urlState = UrlState.fromSegments(const []);
-
-  UrlState? _previousState;
-
-  UrlState get urlState => _urlState;
+  UrlState get urlState => controller.navigationHistory.urlState;
 
   @override
-  UrlState? get currentConfiguration {
-    if (_urlState != _previousState) {
-      controller.navigationHistory.add(_urlState.segments);
-      _previousState = _urlState;
-    }
-    return _urlState;
-  }
+  UrlState? get currentConfiguration => urlState;
 
   @override
-  Future<void> setInitialRoutePath(UrlState tree) {
+  Future<void> setInitialRoutePath(UrlState state) {
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
     if (controller.hasEntries) {
       return SynchronousFuture(null);
     }
+    _onNewUrlState(state);
 
     if (initialRoutes?.isNotEmpty == true) {
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
       return controller.pushNamed(initialDeepLink!, includePrefixMatches: true);
-    } else if (tree.hasSegments) {
-      final routes = List<PageRouteInfo>.unmodifiable(
-        tree.segments.map((m) => PageRouteInfo.fromMatch(m)),
-      );
-      return controller.pushAll(routes);
+    } else if (state.hasSegments) {
+      return controller.navigateAll(state.segments);
     } else {
       throw FlutterError("Can not resolve initial route");
     }
-  }
-
-  void _onNewState(UrlState newState) {
-    if (!newState.hasSegments) {
-      _urlState = newState;
-      return;
-    }
-
-    final segments = newState.segments;
-    final lastVisibleSegmentIndex =
-        segments.lastIndexWhere((e) => e.path.isNotEmpty);
-    var lastVisibleSegment = segments.last;
-    if (lastVisibleSegmentIndex != -1) {
-      lastVisibleSegment = segments[lastVisibleSegmentIndex];
-    }
-
-    final replace = lastVisibleSegment.fromRedirect &&
-        newState.url.startsWith(_urlState.url) &&
-        newState.url != _urlState.url;
-
-    _urlState = newState.copyWith(replace: replace);
-
-    notifyListeners();
   }
 
   @override
   Future<void> setNewRoutePath(UrlState state) {
     final topMost = controller.topMostRouter();
     if (topMost is StackRouter && topMost.hasPagelessTopRoute) {
-      topMost.popUntil((route) => route.settings is AutoRoutePage);
+      topMost.popUntil((route) => route.settings is Page);
     }
 
     if (state.hasSegments) {
+      _onNewUrlState(state);
       return controller.navigateAll(state.segments);
     }
+
     notifyListeners();
     return SynchronousFuture(null);
+  }
+
+  void _onNewUrlState(UrlState state) {
+    final pathInBrowser = state.uri.path;
+    var matchedUrlState = state.flatten;
+    if (pathInBrowser != matchedUrlState.path) {
+      matchedUrlState = matchedUrlState.copyWith(replace: true);
+    }
+    controller.navigationHistory._onNewUrlState(matchedUrlState);
   }
 
   @override
@@ -173,14 +129,14 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   void _rebuildListener() {
-    final newState = UrlState.fromSegments(controller.currentSegments);
-    _onNewState(newState);
+    notifyListeners();
   }
 
   @override
   void dispose() {
     super.dispose();
     removeListener(_rebuildListener);
+    controller.dispose();
   }
 
   void notifyUrlChanged() => _rebuildListener();
@@ -218,7 +174,6 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   }
 
   Future<void> _onNavigate(UrlState tree, [bool initial = false]) {
-    _urlState = tree;
     if (tree.hasSegments) {
       controller.navigateAll(tree.segments);
     }
@@ -249,5 +204,25 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
         ),
       ),
     );
+  }
+}
+
+class SimpleRouterDelegate extends RouterDelegate with ChangeNotifier {
+  final WidgetBuilder builder;
+
+  SimpleRouterDelegate(this.builder);
+  @override
+  Widget build(BuildContext context) {
+    return builder(context);
+  }
+
+  @override
+  Future<bool> popRoute() {
+    return SynchronousFuture(false);
+  }
+
+  @override
+  Future<void> setNewRoutePath(configuration) {
+    throw UnimplementedError();
   }
 }

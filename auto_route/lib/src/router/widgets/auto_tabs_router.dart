@@ -173,7 +173,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller!.replaceAll(widget.routes);
+      _controller!.replaceAll(widget.routes, oldWidget.routes[_index]);
       _tabsHash = ListEquality().hash(widget.routes);
       setState(() {
         _index = _controller!.activeIndex;

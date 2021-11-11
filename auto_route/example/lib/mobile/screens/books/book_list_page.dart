@@ -17,18 +17,15 @@ class _BookListPageState extends State<BookListPage> {
         children: booksDb?.books
                 .map((book) => Column(
                       children: [
-                        Hero(
-                          tag: 'Hero${book.id}',
-                          child: Card(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            child: ListTile(
-                              title: Text(book.name),
-                              subtitle: Text(book.genre),
-                              onTap: () {
-                                BookDetailsRoute(id: book.id).show(context);
-                              },
-                            ),
+                        Card(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: ListTile(
+                            title: Text(book.name),
+                            subtitle: Text(book.genre),
+                            onTap: () {
+                              BookDetailsRoute(id: book.id).show(context);
+                            },
                           ),
                         ),
                       ],

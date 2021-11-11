@@ -30,6 +30,9 @@ class RouteData {
     return RouteDataScope.of(context);
   }
 
+  bool get hasPendingSubNavigation =>
+      hasPendingChildren && pendingChildren.last.hasChildren;
+
   T argsAs<T>({T Function()? orElse}) {
     final args = _match.args;
     if (args == null) {
@@ -43,7 +46,7 @@ class RouteData {
       throw FlutterError(
           'Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
-      return args as T;
+      return args;
     }
   }
 
@@ -63,6 +66,8 @@ class RouteData {
 
   String get path => _match.path;
 
+  RouteData? get parent => _parent;
+
   Map<String, dynamic> get meta => _match.meta;
 
   Object? get args => _match.args;
@@ -70,12 +75,10 @@ class RouteData {
   String get match => _match.stringMatch;
 
   Parameters get inheritedPathParams {
-    if (_parent == null) {
-      return const Parameters(const {});
-    }
-    return _parent!.breadcrumbs.map((e) => e.pathParams).reduce(
+    final params = breadcrumbs.map((e) => e.pathParams).reduce(
           (value, element) => value + element,
         );
+    return params;
   }
 
   Parameters get pathParams => _match.pathParams;
@@ -105,8 +108,21 @@ class RouteData {
       identical(this, other) ||
       other is RouteData &&
           runtimeType == other.runtimeType &&
-          route == other.route;
+          _match == other._match &&
+          _parent == other._parent;
 
   @override
-  int get hashCode => route.hashCode;
+  int get hashCode => _match.hashCode ^ _parent.hashCode;
+
+// @override
+  // bool operator ==(Object other) =>
+  //     identical(this, other) ||
+  //     other is RouteData &&
+  //         runtimeType == other.runtimeType &&
+  //         route == other.route;
+  //
+  //
+  //
+  // @override
+  // int get hashCode => route.hashCode;
 }

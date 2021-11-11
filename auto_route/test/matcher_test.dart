@@ -383,7 +383,7 @@ void main() {
           key: ValueKey('A'),
           stringMatch: '/a',
           path: '/a',
-          segments: ['/'],
+          segments: ['/', 'a'],
           redirectedFrom: '/',
         )
       ];
@@ -405,7 +405,7 @@ void main() {
               stringMatch: 'c1',
               path: 'c1',
               segments: ['c1'],
-              redirectedFrom: '/c',
+              redirectedFrom: '',
             )
           ],
         ),
@@ -420,7 +420,7 @@ void main() {
           key: ValueKey('A'),
           stringMatch: '/a',
           path: '/a',
-          segments: ['*'],
+          segments: ['/', 'a'],
           redirectedFrom: '*',
         )
       ];
