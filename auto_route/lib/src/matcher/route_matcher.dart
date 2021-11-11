@@ -108,7 +108,11 @@ class RouteMatcher {
           return _handleRedirect(
             routesCollection: collection,
             includePrefixMatches: includePrefixMatches,
-            redirectTo: uri.replace(path: Uri.parse(config.redirectTo!).path),
+            redirectTo: uri.replace(
+                path: Uri.parse(
+              PageRouteInfo.expandPath(
+                  config.redirectTo!, match.pathParams.rawMap),
+            ).path),
             redirectedFrom: config.path,
           );
         }
@@ -123,7 +127,7 @@ class RouteMatcher {
             match = match.copyWith(children: children);
           }
           matches.add(match);
-          if (match.allSegments.length == pathSegments.length) {
+          if (match.allSegments.length >= pathSegments.length) {
             break;
           }
         } else {

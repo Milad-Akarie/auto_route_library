@@ -47,6 +47,13 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Text('Navigate Back'),
             ),
             const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () {
+                context.navigateNamedTo('settings/tab1');
+              },
+              child: Text('Navigate to settings/tab1'),
+            ),
+            const SizedBox(height: 32),
             userData == null
                 ? ElevatedButton(
                     onPressed: () {

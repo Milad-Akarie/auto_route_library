@@ -54,7 +54,7 @@ class HomePageState extends State<HomePage> {
     // builder will rebuild everytime this router's stack
     // updates
     // we need it to indicate which NavigationRailDestination is active
-    return kIsWeb
+    return kIsWeb && false
         ? AutoRouter(builder: (context, child) {
             // we check for active route index by using
             // router.isRouteActive method

@@ -30,14 +30,11 @@ class _$WebAppRouter extends RootStackRouter {
               showUserPosts: args.showUserPosts));
     },
     LoginRoute.name: (routeData) {
-      final args = routeData.argsAs<LoginRouteArgs>(
-          orElse: () => const LoginRouteArgs());
       return CupertinoPageX<dynamic>(
-          routeData: routeData,
-          child: LoginPage(key: args.key, onLoginResult: args.onLoginResult));
+          routeData: routeData, child: const LoginPage());
     },
     UserRoute.name: (routeData) {
-      final pathParams = routeData.pathParams;
+      final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<UserRouteArgs>(
           orElse: () => UserRouteArgs(id: pathParams.getInt('userID', -1)));
       return CupertinoPageX<dynamic>(
@@ -48,14 +45,19 @@ class _$WebAppRouter extends RootStackRouter {
           routeData: routeData, child: NotFoundScreen());
     },
     UserProfileRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
       final queryParams = routeData.queryParams;
       final args = routeData.argsAs<UserProfileRouteArgs>(
-          orElse: () =>
-              UserProfileRouteArgs(likes: queryParams.getInt('likes', 0)));
+          orElse: () => UserProfileRouteArgs(
+              userId: pathParams.getInt('userID', -1),
+              likes: queryParams.getInt('likes', 0)));
       return CupertinoPageX<dynamic>(
           routeData: routeData,
           child: UserProfilePage(
-              key: args.key, navigate: args.navigate, likes: args.likes));
+              key: args.key,
+              navigate: args.navigate,
+              userId: args.userId,
+              likes: args.likes));
     },
     UserPostsRoute.name: (routeData) {
       return CupertinoPageX<dynamic>(
@@ -78,7 +80,11 @@ class _$WebAppRouter extends RootStackRouter {
   List<RouteConfig> get routes => [
         RouteConfig(HomeRoute.name, path: '/'),
         RouteConfig(LoginRoute.name, path: '/login'),
-        RouteConfig(UserRoute.name, path: '/user/:userID', guards: [
+        RouteConfig('/user/:userID#redirect',
+            path: '/user/:userID',
+            redirectTo: '/user/:userID/page',
+            fullMatch: true),
+        RouteConfig(UserRoute.name, path: '/user/:userID/page', guards: [
           authGuard
         ], children: [
           RouteConfig('#redirect',
@@ -127,31 +133,25 @@ class HomeRouteArgs {
   final void Function()? navigate;
 
   final void Function()? showUserPosts;
+
+  @override
+  String toString() {
+    return 'HomeRouteArgs{key: $key, navigate: $navigate, showUserPosts: $showUserPosts}';
+  }
 }
 
 /// generated route for [LoginPage]
-class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
-  LoginRoute({Key? key, void Function(bool)? onLoginResult})
-      : super(name,
-            path: '/login',
-            args: LoginRouteArgs(key: key, onLoginResult: onLoginResult));
+class LoginRoute extends PageRouteInfo<void> {
+  const LoginRoute() : super(name, path: '/login');
 
   static const String name = 'LoginRoute';
-}
-
-class LoginRouteArgs {
-  const LoginRouteArgs({this.key, this.onLoginResult});
-
-  final Key? key;
-
-  final void Function(bool)? onLoginResult;
 }
 
 /// generated route for [UserPage]
 class UserRoute extends PageRouteInfo<UserRouteArgs> {
   UserRoute({Key? key, int id = -1, List<PageRouteInfo>? children})
       : super(name,
-            path: '/user/:userID',
+            path: '/user/:userID/page',
             args: UserRouteArgs(key: key, id: id),
             rawPathParams: {'userID': id},
             initialChildren: children);
@@ -165,6 +165,11 @@ class UserRouteArgs {
   final Key? key;
 
   final int id;
+
+  @override
+  String toString() {
+    return 'UserRouteArgs{key: $key, id: $id}';
+  }
 }
 
 /// generated route for [NotFoundScreen]
@@ -176,24 +181,34 @@ class NotFoundRoute extends PageRouteInfo<void> {
 
 /// generated route for [UserProfilePage]
 class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
-  UserProfileRoute({Key? key, void Function()? navigate, int likes = 0})
+  UserProfileRoute(
+      {Key? key, void Function()? navigate, int userId = -1, int likes = 0})
       : super(name,
             path: 'profile',
             args: UserProfileRouteArgs(
-                key: key, navigate: navigate, likes: likes),
+                key: key, navigate: navigate, userId: userId, likes: likes),
+            rawPathParams: {'userID': userId},
             rawQueryParams: {'likes': likes});
 
   static const String name = 'UserProfileRoute';
 }
 
 class UserProfileRouteArgs {
-  const UserProfileRouteArgs({this.key, this.navigate, this.likes = 0});
+  const UserProfileRouteArgs(
+      {this.key, this.navigate, this.userId = -1, this.likes = 0});
 
   final Key? key;
 
   final void Function()? navigate;
 
+  final int userId;
+
   final int likes;
+
+  @override
+  String toString() {
+    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, userId: $userId, likes: $likes}';
+  }
 }
 
 /// generated route for [UserPostsPage]
@@ -220,6 +235,11 @@ class UserAllPostsRouteArgs {
   final Key? key;
 
   final void Function()? navigate;
+
+  @override
+  String toString() {
+    return 'UserAllPostsRouteArgs{key: $key, navigate: $navigate}';
+  }
 }
 
 /// generated route for [UserFavoritePostsPage]

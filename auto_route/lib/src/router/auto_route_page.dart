@@ -23,7 +23,7 @@ abstract class AutoRoutePage<T> extends Page<T> {
     this.maintainState = true,
     LocalKey? key,
   }) : super(
-          restorationId: 'simple_page',
+          restorationId: routeData.name,
           name: routeData.name,
           arguments: routeData.route.args,
         );
@@ -100,6 +100,97 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
+}
+
+class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T>
+    with _CustomPageRouteTransitionMixin<T> {
+  _CustomPageBasedPageRouteBuilder({
+    required AutoRoutePage page,
+  }) : super(settings: page);
+
+  @override
+  Widget buildContent(BuildContext context) => _page.buildPage(context);
+
+  @override
+  bool get maintainState => _page.maintainState;
+
+  @override
+  bool get fullscreenDialog => _page.fullscreenDialog;
+
+  @override
+  String get debugLabel => '${super.debugLabel}(${_page.name})';
+}
+
+mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
+  /// Builds the primary contents of the route.
+  CustomPage<T> get _page => settings as CustomPage<T>;
+
+  @protected
+  Widget buildContent(BuildContext context);
+
+  @override
+  Duration get transitionDuration => Duration(
+        milliseconds: _page.durationInMilliseconds,
+      );
+
+  @override
+  Duration get reverseTransitionDuration => Duration(
+        milliseconds: _page.reverseDurationInMilliseconds,
+      );
+
+  @override
+  bool get barrierDismissible => _page.barrierDismissible;
+
+  @override
+  Color? get barrierColor => _page.barrierColor;
+
+  @override
+  String? get barrierLabel => _page.barrierLabel;
+
+  @override
+  bool get opaque => _page.opaque;
+
+  @override
+  bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
+    // Don't perform outgoing animation if the next route is a fullscreen dialog.
+    return (nextRoute is MaterialRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog) ||
+        (nextRoute is _CustomPageRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog) ||
+        (nextRoute is CupertinoRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog);
+  }
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    final Widget result = buildContent(context);
+
+    return Semantics(
+      scopesRoute: true,
+      explicitChildNodes: true,
+      child: result,
+    );
+  }
+
+  Widget _defaultTransitionsBuilder(
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
+    return child;
+  }
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    final transitionsBuilder =
+        _page.transitionsBuilder ?? _defaultTransitionsBuilder;
+    return transitionsBuilder(context, animation, secondaryAnimation, child);
+  }
 }
 
 abstract class _TitledAutoRoutePage<T> extends AutoRoutePage<T> {
@@ -181,14 +272,8 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   @override
   Route<T> onCreateRoute(BuildContext context) {
     if (kIsWeb) {
-      return PageRouteBuilder<T>(
-        pageBuilder: (_, __, ___) => buildPage(context),
-        settings: this,
-        maintainState: maintainState,
-        fullscreenDialog: fullscreenDialog,
-      );
+      return _CustomPageBasedPageRouteBuilder<T>(page: this);
     }
-
     final platform = Theme.of(context).platform;
     if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {
       return _PageBasedCupertinoPageRoute<T>(page: this);
@@ -234,30 +319,10 @@ class CustomPage<T> extends AutoRoutePage<T> {
 
   @override
   Route<T> onCreateRoute(BuildContext context) {
+    final result = buildPage(context);
     if (customRouteBuilder != null) {
-      return customRouteBuilder!<T>(context, buildPage(context), this);
+      return customRouteBuilder!<T>(context, result, this);
     }
-    return PageRouteBuilder<T>(
-      pageBuilder: (_, __, ___) => buildPage(context),
-      settings: this,
-      opaque: opaque,
-      transitionDuration: Duration(milliseconds: durationInMilliseconds),
-      reverseTransitionDuration:
-          Duration(milliseconds: reverseDurationInMilliseconds),
-      barrierColor: barrierColor,
-      barrierDismissible: barrierDismissible,
-      barrierLabel: barrierLabel,
-      transitionsBuilder: transitionsBuilder ?? _defaultTransitionsBuilder,
-      fullscreenDialog: fullscreenDialog,
-      maintainState: maintainState,
-    );
-  }
-
-  Widget _defaultTransitionsBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
-    return child;
+    return _CustomPageBasedPageRouteBuilder<T>(page: this);
   }
 }

@@ -59,7 +59,7 @@ List<Class> buildRouteInfoAndArgs(
                         ),
                       ),
                     ),
-                  if (r.pathParams.isNotEmpty)
+                  if (r.parameters.any((p) => p.isPathParam))
                     'rawPathParams': literalMap(
                       Map.fromEntries(
                         r.parameters.where((p) => p.isPathParam).map(
@@ -105,6 +105,18 @@ List<Class> buildRouteInfoAndArgs(
               ..optionalParameters.addAll(
                 buildArgParams(r.parameters, emitter),
               )),
+          )
+          ..methods.add(
+            Method(
+              (b) => b
+                ..name = 'toString'
+                ..lambda = false
+                ..annotations.add(refer('override'))
+                ..returns = stringRefer
+                ..body = literalString(
+                  '${r.routeName}Args{${r.parameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
+                ).returned.statement,
+            ),
           ),
       )
   ];

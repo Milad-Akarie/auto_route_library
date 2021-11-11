@@ -37,7 +37,7 @@ class PageRouteInfo<T> {
     if (_stringMatch != null) {
       return _stringMatch!;
     }
-    return _expand(path, rawPathParams);
+    return expandPath(path, rawPathParams);
   }
 
   String get fullPath =>
@@ -54,7 +54,7 @@ class PageRouteInfo<T> {
   @deprecated
   Map<String, dynamic> get params => rawPathParams;
 
-  static String _expand(String template, Map<String, dynamic> params) {
+  static String expandPath(String template, Map<String, dynamic> params) {
     if (mapNullOrEmpty(params)) {
       return template;
     }

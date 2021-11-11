@@ -1,4 +1,3 @@
-import 'package:example/web/router/web_auth_guard.dart';
 import 'package:example/web/router/web_router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,15 +17,8 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  final authService = AuthService();
+  late final authService = AuthService();
   late final _appRouter = WebAppRouter(authService);
-  var loggedIn = false;
-
-  void authenticate(bool authenticated) {
-    setState(() {
-      loggedIn = authenticated;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +50,7 @@ class AppState extends State<App> {
 }
 
 class LoginPage extends StatelessWidget {
-  final void Function(bool isLoggedIn)? onLoginResult;
-
-  const LoginPage({Key? key, this.onLoginResult}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +63,23 @@ class LoginPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {
               App.of(context).authService.isAuthenticated = true;
-              // context.read<AuthService>().isAuthenticated = true;
-              onLoginResult?.call(true);
             },
             child: Text('Login'),
           ),
         ),
       ),
     );
+  }
+}
+
+// mock auth state
+class AuthService extends ChangeNotifier {
+  bool _isAuthenticated = false;
+
+  bool get isAuthenticated => _isAuthenticated;
+
+  set isAuthenticated(bool value) {
+    _isAuthenticated = value;
+    notifyListeners();
   }
 }
