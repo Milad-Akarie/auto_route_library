@@ -72,7 +72,7 @@ abstract class RoutingController with ChangeNotifier {
   RouteData _createRouteData(RouteMatch route, RouteData parent) {
     final mayUpdateController = childControllers[route.key];
 
-    var pendingChildren = const <RouteMatch>[];
+    var pendingChildren = <RouteMatch>[];
     if (mayUpdateController == null && route.hasChildren) {
       pendingChildren = route.children!;
     }
