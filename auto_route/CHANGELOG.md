@@ -1,4 +1,6 @@
 # ChangeLog
+## [3.1.1]
+- Fix Regression bug (caused by immutable pendingRoutes list) #822
 ## [3.1.0]
 - Prefer previous-current route index as new current index when updating tab routes #797
 - Improve native navigation history
