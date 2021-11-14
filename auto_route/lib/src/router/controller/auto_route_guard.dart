@@ -74,7 +74,7 @@ abstract class AutoRedirectGuard extends AutoRedirectGuardBase {
     _redirectResolver = resolver;
     assert(!resolver.isResolved, 'Resolver is already completed');
     final router = resolver._router._findStackScope(route);
-    router.push(route);
+    router.push(route).then((_) => _redirectResolver = null);
     await resolver._completer.future;
     if (router.current.name == route.routeName) {
       router.removeLast();

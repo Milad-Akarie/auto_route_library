@@ -1,10 +1,9 @@
 import 'package:analyzer/dart/element/element.dart' show ParameterElement;
 import 'package:code_builder/code_builder.dart' as _code;
-import 'package:code_builder/code_builder.dart';
 
 import 'importable_type.dart';
 
-const reservedVarNames = ['name', 'children'];
+const reservedVarNames = ['children'];
 
 const validPathParamTypes = [
   'String',

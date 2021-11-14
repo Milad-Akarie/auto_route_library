@@ -11,6 +11,7 @@ class BookListPage extends StatefulWidget {
 class _BookListPageState extends State<BookListPage> {
   @override
   Widget build(BuildContext context) {
+    print('Books page built');
     var booksDb = BooksDBProvider.of(context);
     return Scaffold(
       body: ListView(
