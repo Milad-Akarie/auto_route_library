@@ -17,7 +17,10 @@ class App extends StatefulWidget {
 }
 
 class AppState extends State<App> {
-  late final authService = AuthService();
+  late final authService = AuthService()
+    ..addListener(() {
+      setState(() {});
+    });
   late final _appRouter = WebAppRouter(authService);
 
   @override
@@ -26,25 +29,16 @@ class AppState extends State<App> {
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
       routeInformationProvider: _appRouter.routeInfoProvider(),
-      routerDelegate: _appRouter.delegate(),
+      routerDelegate: _appRouter.delegate(
+          // onNavigate: (UrlState state, bool initial) {},
+          // routes: (_) => [
+          //   if (authService.isAuthenticated)
+          //     HomeRoute()
+          //   else
+          //     LoginRoute(),
+          // ],
+          ),
       routeInformationParser: _appRouter.defaultRouteParser(),
-      // builder: (context, router) {
-      //   return AutoRouteRedirector<bool>(
-      //     router: _appRouter,
-      //     state: loggedIn,
-      //     child: router!,
-      //     mapStateToRedirect: (loggedIn) {
-      //       print(loggedIn);
-      //       if (!loggedIn) {
-      //         return RouteRedirect.replace(LoginRoute());
-      //       } else {
-      //         return RouteRedirect.replace(HomeRoute());
-      //       }
-      //
-      //       return RouteRedirect.toNone();
-      //     },
-      //   );
-      // },
     );
   }
 }

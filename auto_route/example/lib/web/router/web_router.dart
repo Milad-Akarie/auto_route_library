@@ -89,14 +89,12 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    // context.replaceRoute(
-                    //   UserRoute(id: 5, children: [
-                    //     // UserPostsRoute(children: [
-                    //     //   // UserFavoritePostsRoute(),
-                    //     // ]),
-                    //   ]),
-                    // );
-                    context.navigateNamedTo('/user/2');
+                    context.pushRoute(
+                      UserRoute(id: 5, children: [
+                        UserProfileRoute(name: 'Name'),
+                      ]),
+                    );
+                    // context.navigateNamedTo('/user/2');
                   },
               child: Text('Navigate to user/2'),
             ),
@@ -135,6 +133,7 @@ class UserProfilePage extends StatelessWidget {
   const UserProfilePage({
     Key? key,
     this.navigate,
+    required String name,
     @PathParam('userID') this.userId = -1,
     @queryParam this.likes = 0,
   }) : super(key: key);

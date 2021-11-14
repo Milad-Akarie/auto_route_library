@@ -89,12 +89,10 @@ class HomePageState extends State<HomePage> {
           })
         : AutoTabsScaffold(
             homeIndex: 0,
-            drawer: SizedBox(),
             appBarBuilder: (context, tabsRouter) {
               return AppBar(
                 title: Text(tabsRouter.topRoute.name),
-                leading:
-                    tabsRouter.canPopSelfOrChildren ? AutoBackButton() : null,
+                leading: AutoBackButton(),
               );
             },
             routes: [
@@ -112,7 +110,7 @@ class HomePageState extends State<HomePage> {
         ? SizedBox.shrink()
         : BottomNavigationBar(
             currentIndex: tabsRouter.activeIndex,
-            onTap: tabsRouter.setActiveIndex,
+            onTap: (index) => tabsRouter.navigate(destinations[index].route),
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.source),

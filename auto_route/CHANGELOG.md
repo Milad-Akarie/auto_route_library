@@ -1,4 +1,7 @@
 # ChangeLog
+## [3.1.2]
+- Fix Bad state: No element exception when setting initialRoutes #826
+- Fix conflict when param name is 'name' #824
 ## [3.1.1]
 - Fix Regression bug (caused by immutable pendingRoutes list) #822
 ## [3.1.0]

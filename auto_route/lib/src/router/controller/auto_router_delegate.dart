@@ -69,13 +69,13 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     if (controller.hasEntries) {
       return SynchronousFuture(null);
     }
-    _onNewUrlState(state);
 
     if (initialRoutes?.isNotEmpty == true) {
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
       return controller.pushNamed(initialDeepLink!, includePrefixMatches: true);
     } else if (state.hasSegments) {
+      _onNewUrlState(state);
       return controller.navigateAll(state.segments);
     } else {
       throw FlutterError("Can not resolve initial route");

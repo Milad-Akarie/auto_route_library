@@ -45,17 +45,13 @@ class _$WebAppRouter extends RootStackRouter {
           routeData: routeData, child: NotFoundScreen());
     },
     UserProfileRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final queryParams = routeData.queryParams;
-      final args = routeData.argsAs<UserProfileRouteArgs>(
-          orElse: () => UserProfileRouteArgs(
-              userId: pathParams.getInt('userID', -1),
-              likes: queryParams.getInt('likes', 0)));
+      final args = routeData.argsAs<UserProfileRouteArgs>();
       return CupertinoPageX<dynamic>(
           routeData: routeData,
           child: UserProfilePage(
               key: args.key,
               navigate: args.navigate,
+              name: args.name,
               userId: args.userId,
               likes: args.likes));
     },
@@ -79,6 +75,8 @@ class _$WebAppRouter extends RootStackRouter {
   @override
   List<RouteConfig> get routes => [
         RouteConfig(HomeRoute.name, path: '/'),
+        RouteConfig('/login#redirect',
+            path: '/login', redirectTo: '/', fullMatch: true),
         RouteConfig(LoginRoute.name, path: '/login'),
         RouteConfig('/user/:userID#redirect',
             path: '/user/:userID',
@@ -113,11 +111,12 @@ class _$WebAppRouter extends RootStackRouter {
       ];
 }
 
-/// generated route for [HomePage]
+/// generated route for
+/// [HomePage]
 class HomeRoute extends PageRouteInfo<HomeRouteArgs> {
   HomeRoute(
       {Key? key, void Function()? navigate, void Function()? showUserPosts})
-      : super(name,
+      : super(HomeRoute.name,
             path: '/',
             args: HomeRouteArgs(
                 key: key, navigate: navigate, showUserPosts: showUserPosts));
@@ -140,17 +139,19 @@ class HomeRouteArgs {
   }
 }
 
-/// generated route for [LoginPage]
+/// generated route for
+/// [LoginPage]
 class LoginRoute extends PageRouteInfo<void> {
-  const LoginRoute() : super(name, path: '/login');
+  const LoginRoute() : super(LoginRoute.name, path: '/login');
 
   static const String name = 'LoginRoute';
 }
 
-/// generated route for [UserPage]
+/// generated route for
+/// [UserPage]
 class UserRoute extends PageRouteInfo<UserRouteArgs> {
   UserRoute({Key? key, int id = -1, List<PageRouteInfo>? children})
-      : super(name,
+      : super(UserRoute.name,
             path: '/user/:userID/page',
             args: UserRouteArgs(key: key, id: id),
             rawPathParams: {'userID': id},
@@ -172,21 +173,31 @@ class UserRouteArgs {
   }
 }
 
-/// generated route for [NotFoundScreen]
+/// generated route for
+/// [NotFoundScreen]
 class NotFoundRoute extends PageRouteInfo<void> {
-  const NotFoundRoute() : super(name, path: '*');
+  const NotFoundRoute() : super(NotFoundRoute.name, path: '*');
 
   static const String name = 'NotFoundRoute';
 }
 
-/// generated route for [UserProfilePage]
+/// generated route for
+/// [UserProfilePage]
 class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
   UserProfileRoute(
-      {Key? key, void Function()? navigate, int userId = -1, int likes = 0})
-      : super(name,
+      {Key? key,
+      void Function()? navigate,
+      required String name,
+      int userId = -1,
+      int likes = 0})
+      : super(UserProfileRoute.name,
             path: 'profile',
             args: UserProfileRouteArgs(
-                key: key, navigate: navigate, userId: userId, likes: likes),
+                key: key,
+                navigate: navigate,
+                name: name,
+                userId: userId,
+                likes: likes),
             rawPathParams: {'userID': userId},
             rawQueryParams: {'likes': likes});
 
@@ -195,11 +206,17 @@ class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
 
 class UserProfileRouteArgs {
   const UserProfileRouteArgs(
-      {this.key, this.navigate, this.userId = -1, this.likes = 0});
+      {this.key,
+      this.navigate,
+      required this.name,
+      this.userId = -1,
+      this.likes = 0});
 
   final Key? key;
 
   final void Function()? navigate;
+
+  final String name;
 
   final int userId;
 
@@ -207,22 +224,24 @@ class UserProfileRouteArgs {
 
   @override
   String toString() {
-    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, userId: $userId, likes: $likes}';
+    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, name: $name, userId: $userId, likes: $likes}';
   }
 }
 
-/// generated route for [UserPostsPage]
+/// generated route for
+/// [UserPostsPage]
 class UserPostsRoute extends PageRouteInfo<void> {
   const UserPostsRoute({List<PageRouteInfo>? children})
-      : super(name, path: 'posts', initialChildren: children);
+      : super(UserPostsRoute.name, path: 'posts', initialChildren: children);
 
   static const String name = 'UserPostsRoute';
 }
 
-/// generated route for [UserAllPostsPage]
+/// generated route for
+/// [UserAllPostsPage]
 class UserAllPostsRoute extends PageRouteInfo<UserAllPostsRouteArgs> {
   UserAllPostsRoute({Key? key, void Function()? navigate})
-      : super(name,
+      : super(UserAllPostsRoute.name,
             path: 'all',
             args: UserAllPostsRouteArgs(key: key, navigate: navigate));
 
@@ -242,9 +261,11 @@ class UserAllPostsRouteArgs {
   }
 }
 
-/// generated route for [UserFavoritePostsPage]
+/// generated route for
+/// [UserFavoritePostsPage]
 class UserFavoritePostsRoute extends PageRouteInfo<void> {
-  const UserFavoritePostsRoute() : super(name, path: 'favorite');
+  const UserFavoritePostsRoute()
+      : super(UserFavoritePostsRoute.name, path: 'favorite');
 
   static const String name = 'UserFavoritePostsRoute';
 }
