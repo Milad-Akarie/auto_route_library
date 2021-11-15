@@ -77,7 +77,7 @@ abstract class AutoRedirectGuard extends AutoRedirectGuardBase {
     router.push(route).then((_) => _redirectResolver = null);
     await resolver._completer.future;
     if (router.current.name == route.routeName) {
-      router.removeLast();
+      router._removeLast(notify: false);
       router.markUrlStateForReplace();
     }
     _redirectResolver = null;

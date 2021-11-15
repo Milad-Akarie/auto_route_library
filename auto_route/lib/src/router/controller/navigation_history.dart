@@ -1,14 +1,13 @@
 part of 'routing_controller.dart';
 
-abstract class NavigationHistory {
-  NavigationHistory() {
-    _router.addListener(() {
-      _onNewUrlState(UrlState.fromSegments(
-        _router.currentSegments,
-        shouldReplace: _isUrlStateMarkedForReplace,
-      ));
-      _unMarkUrlStateForReplace();
-    });
+abstract class NavigationHistory with ChangeNotifier {
+  void rebuildUrl() {
+    final newState = UrlState.fromSegments(
+      _router.currentSegments,
+      shouldReplace: _isUrlStateMarkedForReplace,
+    );
+    _unMarkUrlStateForReplace();
+    _onNewUrlState(newState);
   }
 
   bool _isUrlStateMarkedForReplace = false;
@@ -22,7 +21,10 @@ abstract class NavigationHistory {
   UrlState _urlState = UrlState.fromSegments([]);
 
   void _onNewUrlState(UrlState newState) {
-    _urlState = newState;
+    if (_urlState != newState) {
+      _urlState = newState;
+      notifyListeners();
+    }
   }
 
   bool isRouteActive(String routeName) {
@@ -122,7 +124,6 @@ class NativeNavigationHistory extends NavigationHistory {
     }
 
     if (_currentUrl == newState.url) return;
-
     _addEntry(newState);
   }
 
@@ -150,12 +151,9 @@ class NativeNavigationHistory extends NavigationHistory {
     }
 
     final route = toHierarchy(urlState.segments);
-    final entryIndex = _entries.lastIndexWhere(
-      (e) => e.url == urlState.url,
-    );
-
-    if (entryIndex != -1) {
-      _entries.removeRange(entryIndex, _entries.length);
+    // limit history registration to 20 entries
+    if (_entries.length > 20) {
+      _entries.removeAt(0);
     }
     _entries.add(_HistoryEntry(route, urlState.url));
   }

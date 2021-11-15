@@ -1,4 +1,7 @@
 # ChangeLog
+## [3.1.3]
+- Fix navigateNamedTo does not update the stack #831
+- Refactor navigation history and set kept history records to 20 entries max
 ## [3.1.2]
 - Fix Bad state: No element exception when setting initialRoutes #826
 - Fix conflict when param name is 'name' #824

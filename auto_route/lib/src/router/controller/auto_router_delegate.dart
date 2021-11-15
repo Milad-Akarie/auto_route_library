@@ -44,7 +44,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     this.navigatorObservers = defaultNavigatorObserversBuilder,
   }) : assert(initialDeepLink == null || initialRoutes == null) {
     _navigatorObservers = navigatorObservers();
-    controller.addListener(_rebuildListener);
+    controller.navigationHistory.addListener(_handleRebuild);
   }
 
   factory AutoRouterDelegate.declarative(
@@ -108,38 +108,92 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final stateHash = controller.stateHash;
-    return RouterScope(
-      controller: controller,
-      navigatorObservers: _navigatorObservers,
-      inheritableObserversBuilder: navigatorObservers,
-      stateHash: stateHash,
-      child: StackRouterScope(
-        stateHash: stateHash,
-        controller: controller,
-        child: AutoRouteNavigator(
-          router: controller,
-          placeholder: placeholder,
-          navRestorationScopeId: navRestorationScopeId,
-          navigatorObservers: _navigatorObservers,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => _AutoRootRouter(
+        router: controller,
+        navigatorObservers: _navigatorObservers,
+        navigatorObserversBuilder: navigatorObservers,
+        navRestorationScopeId: navRestorationScopeId,
+        placeholder: placeholder,
+      );
 
-  void _rebuildListener() {
+  void _handleRebuild() {
     notifyListeners();
   }
 
   @override
   void dispose() {
     super.dispose();
-    removeListener(_rebuildListener);
+    removeListener(_handleRebuild);
     controller.dispose();
   }
 
-  void notifyUrlChanged() => _rebuildListener();
+  void notifyUrlChanged() => _handleRebuild();
+}
+
+class _AutoRootRouter extends StatefulWidget {
+  _AutoRootRouter({
+    Key? key,
+    required this.router,
+    this.navRestorationScopeId,
+    this.navigatorObservers = const [],
+    required this.navigatorObserversBuilder,
+    this.placeholder,
+  }) : super(key: key);
+  final StackRouter router;
+  final String? navRestorationScopeId;
+  final List<NavigatorObserver> navigatorObservers;
+  final NavigatorObserversBuilder navigatorObserversBuilder;
+
+  /// A builder for the placeholder page that is shown
+  /// before the first route can be rendered. Defaults to
+  /// an empty page with [Theme.scaffoldBackgroundColor].
+  final WidgetBuilder? placeholder;
+
+  @override
+  _AutoRootRouterState createState() => _AutoRootRouterState();
+}
+
+class _AutoRootRouterState extends State<_AutoRootRouter> {
+  StackRouter get router => widget.router;
+
+  @override
+  void initState() {
+    super.initState();
+    router.addListener(_handleRebuild);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    router.removeListener(_handleRebuild);
+  }
+
+  void _handleRebuild() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final stateHash = router.stateHash;
+    return RouterScope(
+      controller: router,
+      navigatorObservers: widget.navigatorObservers,
+      inheritableObserversBuilder: widget.navigatorObserversBuilder,
+      stateHash: stateHash,
+      child: StackRouterScope(
+        stateHash: stateHash,
+        controller: router,
+        child: AutoRouteNavigator(
+          router: router,
+          placeholder: widget.placeholder,
+          navRestorationScopeId: widget.navRestorationScopeId,
+          navigatorObservers: widget.navigatorObservers,
+        ),
+      ),
+    );
+  }
 }
 
 class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
@@ -148,7 +202,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   final OnNavigateCallBack? onNavigate;
 
   _DeclarativeAutoRouterDelegate(
-    RootStackRouter controller, {
+    RootStackRouter router, {
     required this.routes,
     String? navRestorationScopeId,
     this.onPopRoute,
@@ -156,11 +210,11 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
-          controller,
+          router,
           navRestorationScopeId: navRestorationScopeId,
           navigatorObservers: navigatorObservers,
         ) {
-    controller._managedByWidget = true;
+    router._managedByWidget = true;
   }
 
   @override
@@ -211,6 +265,7 @@ class SimpleRouterDelegate extends RouterDelegate with ChangeNotifier {
   final WidgetBuilder builder;
 
   SimpleRouterDelegate(this.builder);
+
   @override
   Widget build(BuildContext context) {
     return builder(context);

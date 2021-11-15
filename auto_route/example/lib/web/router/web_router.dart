@@ -63,7 +63,7 @@ class WebAppRouter extends _$WebAppRouter {
         );
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final VoidCallback? navigate, showUserPosts;
 
   const HomePage({
@@ -71,6 +71,16 @@ class HomePage extends StatelessWidget {
     this.navigate,
     this.showUserPosts,
   }) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,19 +97,19 @@ class HomePage extends StatelessWidget {
               style: TextStyle(fontSize: 30),
             ),
             ElevatedButton(
-              onPressed: navigate ??
+              onPressed: widget.navigate ??
                   () {
-                    context.pushRoute(
-                      UserRoute(id: 5, children: [
-                        UserProfileRoute(name: 'Name'),
-                      ]),
-                    );
-                    // context.navigateNamedTo('/user/2');
+                    // context.pushRoute(
+                    //   UserRoute(id: 5, children: [
+                    //     UserProfileRoute(name: 'Name'),
+                    //   ]),
+                    // );
+                    context.navigateNamedTo('/user/2');
                   },
               child: Text('Navigate to user/2'),
             ),
             ElevatedButton(
-              onPressed: showUserPosts,
+              onPressed: widget.showUserPosts,
               child: Text('Show user posts'),
             ),
           ],
@@ -133,7 +143,6 @@ class UserProfilePage extends StatelessWidget {
   const UserProfilePage({
     Key? key,
     this.navigate,
-    required String name,
     @PathParam('userID') this.userId = -1,
     @queryParam this.likes = 0,
   }) : super(key: key);
