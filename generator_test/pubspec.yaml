@@ -23,7 +23,7 @@ environment:
 
 dependencies:
   build: ^2.0.3
-  source_gen: 1.0.5
+  source_gen: ^1.1.1
   path: ^1.8.0
   build_runner: ^2.0.6
   code_builder: ^4.1.0

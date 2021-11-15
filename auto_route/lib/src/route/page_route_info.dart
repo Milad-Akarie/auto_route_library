@@ -1,4 +1,3 @@
-import 'package:auto_route/src/matcher/route_match.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;

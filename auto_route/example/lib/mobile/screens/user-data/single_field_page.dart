@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SingleFieldPage extends StatefulWidget {
@@ -25,9 +24,11 @@ class _SingleFieldPageState extends State<SingleFieldPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        _scaffoldKey.currentState?.showSnackBar(
-          SnackBar(content: Text(widget.willPopMessage)),
-        );
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+            .showSnackBar(SnackBar(content: Text(widget.willPopMessage)));
+        // _scaffoldKey.currentState?.showSnackBar(
+        //   SnackBar(content: Text(widget.willPopMessage)),
+        // );
         return true;
       },
       child: Scaffold(
@@ -47,13 +48,14 @@ class _SingleFieldPageState extends State<SingleFieldPage> {
                 },
               ),
             ),
-            RaisedButton(
-                child: Text('Next'),
-                onPressed: _text.isEmpty
-                    ? null
-                    : () {
-                        widget.onNext?.call(_text);
-                      })
+            TextButton(
+              onPressed: _text.isEmpty
+                  ? null
+                  : () {
+                      widget.onNext?.call(_text);
+                    },
+              child: Text('Next'),
+            ),
           ],
         ),
       ),

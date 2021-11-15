@@ -2,19 +2,13 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
-import 'package:auto_route/src/navigation_failure.dart';
-import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
-import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/controller/pageless_routes_observer.dart';
 import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:auto_route/src/router/widgets/auto_route_navigator.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../../utils.dart';

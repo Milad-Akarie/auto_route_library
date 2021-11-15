@@ -1,11 +1,7 @@
-import 'package:auto_route/src/route/page_route_info.dart';
 import 'package:auto_route/src/route/route_data_scope.dart';
-import 'package:auto_route/src/router/controller/controller_scope.dart';
-import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
-import '../controller/routing_controller.dart';
 import 'auto_route_navigator.dart';
 
 class AutoRouter extends StatefulWidget {
