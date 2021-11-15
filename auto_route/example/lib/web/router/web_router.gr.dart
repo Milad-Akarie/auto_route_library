@@ -45,13 +45,17 @@ class _$WebAppRouter extends RootStackRouter {
           routeData: routeData, child: NotFoundScreen());
     },
     UserProfileRoute.name: (routeData) {
-      final args = routeData.argsAs<UserProfileRouteArgs>();
+      final pathParams = routeData.inheritedPathParams;
+      final queryParams = routeData.queryParams;
+      final args = routeData.argsAs<UserProfileRouteArgs>(
+          orElse: () => UserProfileRouteArgs(
+              userId: pathParams.getInt('userID', -1),
+              likes: queryParams.getInt('likes', 0)));
       return CupertinoPageX<dynamic>(
           routeData: routeData,
           child: UserProfilePage(
               key: args.key,
               navigate: args.navigate,
-              name: args.name,
               userId: args.userId,
               likes: args.likes));
     },
@@ -75,8 +79,6 @@ class _$WebAppRouter extends RootStackRouter {
   @override
   List<RouteConfig> get routes => [
         RouteConfig(HomeRoute.name, path: '/'),
-        RouteConfig('/login#redirect',
-            path: '/login', redirectTo: '/', fullMatch: true),
         RouteConfig(LoginRoute.name, path: '/login'),
         RouteConfig('/user/:userID#redirect',
             path: '/user/:userID',
@@ -185,19 +187,11 @@ class NotFoundRoute extends PageRouteInfo<void> {
 /// [UserProfilePage]
 class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
   UserProfileRoute(
-      {Key? key,
-      void Function()? navigate,
-      required String name,
-      int userId = -1,
-      int likes = 0})
+      {Key? key, void Function()? navigate, int userId = -1, int likes = 0})
       : super(UserProfileRoute.name,
             path: 'profile',
             args: UserProfileRouteArgs(
-                key: key,
-                navigate: navigate,
-                name: name,
-                userId: userId,
-                likes: likes),
+                key: key, navigate: navigate, userId: userId, likes: likes),
             rawPathParams: {'userID': userId},
             rawQueryParams: {'likes': likes});
 
@@ -206,17 +200,11 @@ class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
 
 class UserProfileRouteArgs {
   const UserProfileRouteArgs(
-      {this.key,
-      this.navigate,
-      required this.name,
-      this.userId = -1,
-      this.likes = 0});
+      {this.key, this.navigate, this.userId = -1, this.likes = 0});
 
   final Key? key;
 
   final void Function()? navigate;
-
-  final String name;
 
   final int userId;
 
@@ -224,7 +212,7 @@ class UserProfileRouteArgs {
 
   @override
   String toString() {
-    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, name: $name, userId: $userId, likes: $likes}';
+    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, userId: $userId, likes: $likes}';
   }
 }
 

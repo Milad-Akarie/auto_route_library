@@ -105,12 +105,12 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
-    final hideBottomNav = tabsRouter.topMatch.meta['hideBottomNav'] == true;
+    final hideBottomNav = tabsRouter.topMatch.meta['hideBottomNavf'] == true;
     return hideBottomNav
         ? SizedBox.shrink()
         : BottomNavigationBar(
             currentIndex: tabsRouter.activeIndex,
-            onTap: (index) => tabsRouter.navigate(destinations[index].route),
+            onTap: tabsRouter.setActiveIndex,
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.source),

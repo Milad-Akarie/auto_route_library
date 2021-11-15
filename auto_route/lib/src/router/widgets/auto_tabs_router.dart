@@ -209,6 +209,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             stack: stack,
           );
     var stateHash = controller!.stateHash;
+
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
@@ -290,6 +291,10 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   @override
   void initState() {
     super.initState();
+    _setup();
+  }
+
+  void _setup() {
     for (var i = 0; i < widget.stack.length; ++i) {
       if (i == widget.activeIndex || !widget.lazyLoad) {
         _initializedPagesTracker[i] = true;
@@ -303,6 +308,11 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   @override
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.tabsHash != oldWidget.tabsHash) {
+      _initializedPagesTracker.clear();
+      _setup();
+      return;
+    }
     if (widget.lazyLoad &&
         _initializedPagesTracker[widget.activeIndex] != true) {
       _initializedPagesTracker[widget.activeIndex] = true;
