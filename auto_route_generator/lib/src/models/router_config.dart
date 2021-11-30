@@ -8,6 +8,7 @@ class RouterConfig {
   final RouterConfig? parent;
   final String? replaceInRouteName;
   final ClassElement element;
+  final bool generateRouteArguments;
 
   RouterConfig({
     required this.routes,
@@ -16,6 +17,7 @@ class RouterConfig {
     required this.routerClassName,
     this.parent,
     this.replaceInRouteName,
+    this.generateRouteArguments = true,
   });
 
   RouterConfig copyWith({
@@ -28,6 +30,7 @@ class RouterConfig {
     RouterConfig? parent,
     String? replaceInRouteName,
     ClassElement? element,
+    bool? generateRouteArguments,
   }) {
     return RouterConfig(
       routes: routes ?? this.routes,
@@ -35,6 +38,8 @@ class RouterConfig {
       routerClassName: routerClassName ?? this.routerClassName,
       replaceInRouteName: replaceInRouteName ?? this.replaceInRouteName,
       parent: parent ?? this.parent,
+      generateRouteArguments:
+          generateRouteArguments ?? this.generateRouteArguments,
       element: this.element,
     );
   }

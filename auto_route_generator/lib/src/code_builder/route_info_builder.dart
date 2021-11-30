@@ -88,7 +88,7 @@ List<Class> buildRouteInfoAndArgs(
           ),
         ),
     ),
-    if (r.parameters.isNotEmpty)
+    if (r.parameters.isNotEmpty && r.generateRouteArguments)
       Class(
         (b) => b
           ..name = argsClassRefer.symbol

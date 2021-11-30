@@ -35,6 +35,7 @@ class RouteConfig {
   final bool hasConstConstructor;
   final bool usesPathAsKey;
   final List<MetaEntry> meta;
+  final bool generateRouteArguments;
 
   RouteConfig({
     this.name,
@@ -65,6 +66,7 @@ class RouteConfig {
     this.hasConstConstructor = false,
     this.usesPathAsKey = false,
     this.meta = const [],
+    this.generateRouteArguments = true,
   });
 
   RouteConfig copyWith({

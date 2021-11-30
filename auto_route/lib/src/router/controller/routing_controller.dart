@@ -97,7 +97,6 @@ abstract class RoutingController with ChangeNotifier {
     if (!isRouteKeyActive(current.key) && !current._match.hasEmptyPath) {
       navigationHistory.rebuildUrl();
     }
-    ;
   }
 
   RouteMatch? _matchOrReportFailure(
@@ -115,7 +114,7 @@ abstract class RoutingController with ChangeNotifier {
         final path = routeCollection.findPathTo(route.routeName);
         throw FlutterError(
             "\nLooks like you're trying to navigate to a nested route without adding their parent to stack first \n"
-            "try navigating to ${path.map((e) => e.name).reduce((a, b) => a += ' -> ${b}')}");
+            "try navigating to ${path.map((e) => e.name).reduce((a, b) => a += ' -> $b')}");
       }
     }
   }

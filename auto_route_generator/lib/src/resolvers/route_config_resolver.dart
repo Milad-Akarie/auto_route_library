@@ -154,7 +154,7 @@ class RouteConfigResolver {
       final valueType =
           entry.value!.type!.getDisplayString(withNullability: false);
       throwIf(!validMetaValues.contains(valueType),
-          'Meta value type ${valueType} is not supported!\nSupported types are ${validMetaValues}');
+          'Meta value type $valueType is not supported!\nSupported types are $validMetaValues');
       switch (valueType) {
         case 'bool':
           {
@@ -268,6 +268,7 @@ class RouteConfigResolver {
       fullMatch: fullMatch,
       usesPathAsKey: usesPathAsKey,
       meta: meta,
+      generateRouteArguments: _routerConfig.generateRouteArguments,
     );
   }
 }

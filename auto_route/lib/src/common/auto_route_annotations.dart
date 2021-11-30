@@ -21,10 +21,19 @@ class AutoRouterAnnotation {
   /// defaults no null, ignored if a route name is provided.
   final String? replaceInRouteName;
 
+  /// Auto generate route arguments
+  /// By default the route arguments are generated, set to false to disable it
+  ///
+  /// You can use this if your route arguments are created in a different way
+  ///
+  /// defaults to true
+  final bool? generateRouteArguments;
+
   const AutoRouterAnnotation._(
     this.routes,
     this.preferRelativeImports, {
     this.replaceInRouteName,
+    this.generateRouteArguments = true,
   });
 }
 
@@ -35,10 +44,12 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = true,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? generateRouteArguments,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          generateRouteArguments: generateRouteArguments,
         );
 }
 
@@ -49,10 +60,12 @@ class CupertinoAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = true,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? generateRouteArguments,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          generateRouteArguments: generateRouteArguments,
         );
 }
 
@@ -61,10 +74,12 @@ class AdaptiveAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = false,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? generateRouteArguments,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          generateRouteArguments: generateRouteArguments,
         );
 }
 
@@ -111,20 +126,22 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
-  const CustomAutoRouter(
-      {this.transitionsBuilder,
-      this.barrierDismissible = false,
-      this.durationInMilliseconds,
-      this.reverseDurationInMilliseconds,
-      this.customRouteBuilder,
-      this.opaque = true,
-      required List<AutoRoute> routes,
-      bool preferRelativeImports = true,
-      String? replaceInRouteName})
-      : super._(
+  const CustomAutoRouter({
+    this.transitionsBuilder,
+    this.barrierDismissible = false,
+    this.durationInMilliseconds,
+    this.reverseDurationInMilliseconds,
+    this.customRouteBuilder,
+    this.opaque = true,
+    required List<AutoRoute> routes,
+    bool preferRelativeImports = true,
+    String? replaceInRouteName,
+    bool? generateRouteArguments,
+  }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          generateRouteArguments: generateRouteArguments,
         );
 }
 

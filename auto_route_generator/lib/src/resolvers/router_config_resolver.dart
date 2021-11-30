@@ -76,6 +76,8 @@ class RouterConfigResolver {
     );
 
     var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
+    final generateRouteArguments =
+        autoRouter.peek('generateRouteArguments')?.boolValue;
 
     final autoRoutes = autoRouter.read('routes').listValue;
 
@@ -87,6 +89,7 @@ class RouterConfigResolver {
       element: clazz,
       replaceInRouteName: replaceInRouteName,
       routes: const [],
+      generateRouteArguments: generateRouteArguments ?? true,
     );
 
     var routes = _resolveRoutes(routerConfig, autoRoutes);
