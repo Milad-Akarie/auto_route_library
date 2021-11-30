@@ -33,9 +33,9 @@ abstract class NavigationHistory with ChangeNotifier {
     );
   }
 
-  bool isRouteKeyActive(Key key) {
+  bool isRouteDataActive(RouteData data) {
     return urlState.segments.any(
-      (r) => r.key == key,
+      (r) => r.key == data.key && r.stringMatch == data.match,
     );
   }
 

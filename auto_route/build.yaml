@@ -1,0 +1,7 @@
+targets:
+  $default:
+    builders:
+      auto_route_generator:autoRouteGenerator:
+        generate_for:
+          - test/**.dart
+

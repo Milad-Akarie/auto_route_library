@@ -98,6 +98,11 @@ abstract class RootStackRouter extends StackRouter {
   }
 
   @override
+  void updateRouteData(RouteData data) {
+    throw FlutterError('Root RouteData should not update');
+  }
+
+  @override
   late final RouteMatcher matcher = RouteMatcher(routeCollection);
 
   @override
