@@ -183,6 +183,14 @@ class AutoRoute<T> {
   /// meta data
   final Map<String, dynamic> meta;
 
+  /// Auto generate route arguments
+  /// By default the route arguments are generated, set to false to disable it
+  ///
+  /// You can use this if your route arguments are created in a different way
+  ///
+  /// defaults to true
+  final bool? generateRouteArguments;
+
   const AutoRoute({
     this.page,
     this.initial = false,
@@ -195,6 +203,7 @@ class AutoRoute<T> {
     this.usesPathAsKey = false,
     this.children,
     this.meta = const {},
+    this.generateRouteArguments,
   });
 }
 

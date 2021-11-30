@@ -242,6 +242,12 @@ class RouteConfigResolver {
       }
     }
 
+    var generateRouteArgumentsFromRoute =
+        autoRoute.peek('generateRouteArguments')?.boolValue;
+
+    var generateRouteArguments =
+        generateRouteArgumentsFromRoute ?? _routerConfig.generateRouteArguments;
+
     return RouteConfig(
       className: className,
       name: name,
@@ -268,7 +274,7 @@ class RouteConfigResolver {
       fullMatch: fullMatch,
       usesPathAsKey: usesPathAsKey,
       meta: meta,
-      generateRouteArguments: _routerConfig.generateRouteArguments,
+      generateRouteArguments: generateRouteArguments,
     );
   }
 }
