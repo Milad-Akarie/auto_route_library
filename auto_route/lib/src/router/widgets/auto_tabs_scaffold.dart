@@ -91,7 +91,7 @@ class AutoTabsScaffold extends StatelessWidget {
       navigatorObservers: navigatorObservers,
       inheritNavigatorObservers: inheritNavigatorObservers,
       curve: animationCurve,
-      builder: (context, child, animation) {
+      builder: (context, child, animation, tabRouter) {
         final tabsRouter = context.tabsRouter;
         return Scaffold(
           key: scaffoldKey,
@@ -123,11 +123,7 @@ class AutoTabsScaffold extends StatelessWidget {
                 ),
           body: builder == null
               ? FadeTransition(opacity: animation, child: child)
-              : builder!(
-                  context,
-                  child,
-                  animation,
-                ),
+              : builder!(context, child, animation, tabsRouter),
           bottomNavigationBar: bottomNavigationBuilder == null
               ? null
               : bottomNavigationBuilder!(

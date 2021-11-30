@@ -10,7 +10,11 @@ import '../../../auto_route.dart';
 import '../controller/routing_controller.dart';
 
 typedef AnimatedIndexedStackBuilder = Widget Function(
-    BuildContext context, Widget child, Animation<double> animation);
+  BuildContext context,
+  Widget child,
+  Animation<double> animation,
+  TabsRouter tabsRouter,
+);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder? builder;
