@@ -44,7 +44,6 @@ abstract class AutoRoutePage<T> extends Page<T> {
 
     return RouteDataScope(
       child: childToBuild,
-      stateHash: routeData.hashCode,
       routeData: routeData,
     );
   }
@@ -77,18 +76,19 @@ class MaterialPageX<T> extends AutoRoutePage<T> {
 
   @override
   Route<T> onCreateRoute(BuildContext context) {
-    return _PageBasedMaterialPageRoute<T>(page: this);
+    return PageBasedMaterialPageRoute<T>(page: this);
   }
 }
 
-class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
+class PageBasedMaterialPageRoute<T> extends PageRoute<T>
     with MaterialRouteTransitionMixin<T> {
-  _PageBasedMaterialPageRoute({
+  PageBasedMaterialPageRoute({
     required AutoRoutePage page,
   }) : super(settings: page);
 
   AutoRoutePage get _page => settings as AutoRoutePage;
 
+  List<VoidCallback> scopes = [];
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
 
@@ -167,12 +167,10 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final Widget result = buildContent(context);
-
     return Semantics(
       scopesRoute: true,
       explicitChildNodes: true,
-      child: result,
+      child: buildContent(context),
     );
   }
 
@@ -278,7 +276,7 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
     if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {
       return _PageBasedCupertinoPageRoute<T>(page: this);
     }
-    return _PageBasedMaterialPageRoute<T>(page: this);
+    return PageBasedMaterialPageRoute<T>(page: this);
   }
 }
 

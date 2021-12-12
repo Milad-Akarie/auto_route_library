@@ -1,5 +1,4 @@
 import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
@@ -113,7 +112,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final parentRoute = RouteDataScope.of(context);
+    final parentRoute = RouteData.of(context);
     if (_controller == null) {
       final parentScope = RouterScope.of(context, watch: true);
       _inheritableObserversBuilder = () {

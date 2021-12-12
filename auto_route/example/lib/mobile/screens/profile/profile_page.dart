@@ -12,6 +12,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   UserData? userData;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,9 +27,21 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.router.push(MyBooksRoute());
+                // context.router.push(MyBooksRoute());
+                context.navigateTo(
+                  HomeRoute(
+                    children: [
+                      BooksTab(
+                        children: [
+                          BookListRoute(),
+                          BookDetailsRoute(id: 4),
+                        ],
+                      )
+                    ],
+                  ),
+                );
               },
-              child: Text('My Books '),
+              child: Text('My Books'),
             ),
             const SizedBox(height: 32),
             ElevatedButton(
