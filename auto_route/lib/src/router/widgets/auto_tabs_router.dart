@@ -160,6 +160,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
 
   @override
   void dispose() {
+    _animationController.dispose();
     super.dispose();
     if (_controller != null) {
       _controller!.dispose();
