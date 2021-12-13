@@ -27,7 +27,7 @@ class RouteData {
   bool get hasPendingChildren => pendingChildren.isNotEmpty;
 
   static RouteData of(BuildContext context) {
-    return RouteDataScope.of(context);
+    return RouteDataScope.of(context).routeData;
   }
 
   bool get hasPendingSubNavigation =>
@@ -102,27 +102,4 @@ class RouteData {
 
     return _match;
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RouteData &&
-          runtimeType == other.runtimeType &&
-          _match == other._match &&
-          _parent == other._parent;
-
-  @override
-  int get hashCode => _match.hashCode ^ _parent.hashCode;
-
-// @override
-  // bool operator ==(Object other) =>
-  //     identical(this, other) ||
-  //     other is RouteData &&
-  //         runtimeType == other.runtimeType &&
-  //         route == other.route;
-  //
-  //
-  //
-  // @override
-  // int get hashCode => route.hashCode;
 }

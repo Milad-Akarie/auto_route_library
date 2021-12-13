@@ -1,5 +1,4 @@
 import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:flutter/material.dart';
@@ -78,9 +77,9 @@ class AutoRouterState extends State<AutoRouter> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final parentData = RouteDataScope.of(context);
-    final parentScope = RouterScope.of(context);
     if (_controller == null) {
+      final parentRouteData = RouteData.of(context);
+      final parentScope = RouterScope.of(context, watch: true);
       _inheritableObserversBuilder = () {
         var observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
@@ -94,11 +93,11 @@ class AutoRouterState extends State<AutoRouter> {
       _parentController = parentScope.controller;
       _controller = NestedStackRouter(
         parent: _parentController,
-        key: parentData.key,
-        routeData: parentData,
+        key: parentRouteData.key,
+        routeData: parentRouteData,
         navigatorKey: widget.navigatorKey,
         routeCollection: _parentController.routeCollection.subCollectionOf(
-          parentData.name,
+          parentRouteData.name,
         ),
         pageBuilder: _parentController.pageBuilder,
       );
@@ -192,7 +191,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final parentData = RouteDataScope.of(context);
+    final parentData = RouteData.of(context);
     if (_controller == null) {
       _heroController = HeroController();
       final parentScope = RouterScope.of(context);
@@ -235,6 +234,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   Widget build(BuildContext context) {
     assert(_controller != null);
     final stateHash = controller!.stateHash;
+
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,

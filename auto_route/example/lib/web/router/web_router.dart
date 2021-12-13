@@ -167,7 +167,7 @@ class UserProfilePage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.router.pushNamed('posts');
+                    context.router.pushNamed('/user/12/page/profile');
                   },
               child: Text('Posts'),
             ),
