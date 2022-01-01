@@ -261,24 +261,3 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     );
   }
 }
-
-class SimpleRouterDelegate extends RouterDelegate with ChangeNotifier {
-  final WidgetBuilder builder;
-
-  SimpleRouterDelegate(this.builder);
-
-  @override
-  Widget build(BuildContext context) {
-    return builder(context);
-  }
-
-  @override
-  Future<bool> popRoute() {
-    return SynchronousFuture(false);
-  }
-
-  @override
-  Future<void> setNewRoutePath(configuration) {
-    throw UnimplementedError();
-  }
-}

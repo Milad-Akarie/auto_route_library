@@ -1,4 +1,14 @@
 # ChangeLog
+## [3.2.1]
+- Merge some readme file typo-fixes
+- Add @optionalTypeArgs to AutoRoute annotations
+- Fix AdaptiveRoute issue with CustomRoute
+- Change analyzer constrains to include version 3.0.0
+- Add notify flag to removeWhere method inside of StackRouter
+## [3.2.0]
+- Merge fix conform new API in Flutter 2.6
+- Fix declarative routes update issue
+- Add Router tests
 ## [3.1.3]
 - Fix navigateNamedTo does not update the stack #831
 - Refactor navigation history and set kept history records to 20 entries max

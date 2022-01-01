@@ -20,10 +20,12 @@ abstract class NavigationHistory with ChangeNotifier {
 
   UrlState _urlState = UrlState.fromSegments([]);
 
-  void _onNewUrlState(UrlState newState) {
+  void _onNewUrlState(UrlState newState, {bool notify = true}) {
     if (_urlState != newState) {
       _urlState = newState;
-      notifyListeners();
+      if (notify) {
+        notifyListeners();
+      }
     }
   }
 
@@ -116,8 +118,8 @@ class NativeNavigationHistory extends NavigationHistory {
   final _entries = <_HistoryEntry>[];
 
   @override
-  void _onNewUrlState(UrlState newState) {
-    super._onNewUrlState(newState);
+  void _onNewUrlState(UrlState newState, {bool notify = true}) {
+    super._onNewUrlState(newState, notify: notify);
 
     if (newState.shouldReplace && length > 0) {
       _entries.removeLast();

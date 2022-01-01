@@ -8,6 +8,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   ///
   /// Use the [initialRouteInformation] to set the default route information for this
   /// provider.
+
   AutoRouteInformationProvider._(
       {required RouteInformation initialRouteInformation})
       : _value = initialRouteInformation;
@@ -25,30 +26,37 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   }
 
   @override
-  void routerReportsNewRouteInformation(
-    RouteInformation routeInformation, {
-    RouteInformationReportingType type = RouteInformationReportingType.navigate,
-  }) {
-    var replace = false;
-    if (routeInformation is AutoRouteInformation) {
+  void routerReportsNewRouteInformation(RouteInformation routeInformation,
+      {required RouteInformationReportingType type}) {
+    var replace = type == RouteInformationReportingType.neglect ||
+        (type == RouteInformationReportingType.none &&
+            _valueInEngine.location == routeInformation.location);
+
+    if (!replace && routeInformation is AutoRouteInformation) {
       replace = routeInformation.replace;
     }
+
     SystemNavigator.selectMultiEntryHistory();
     SystemNavigator.routeInformationUpdated(
       location: routeInformation.location!,
       state: routeInformation.state,
-      replace: replace || type != RouteInformationReportingType.navigate,
+      replace: replace,
     );
     _value = routeInformation;
+    _valueInEngine = routeInformation;
   }
 
   @override
   RouteInformation get value => _value;
   RouteInformation _value;
 
+  RouteInformation _valueInEngine = RouteInformation(
+      location: WidgetsBinding.instance!.window.defaultRouteName);
+
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
     if (_value == routeInformation) return;
     _value = routeInformation;
+    _valueInEngine = routeInformation;
     notifyListeners();
   }
 

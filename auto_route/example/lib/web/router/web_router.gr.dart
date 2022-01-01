@@ -7,6 +7,8 @@
 // **************************************************************************
 // AutoRouteGenerator
 // **************************************************************************
+//
+// ignore_for_file: type=lint
 
 part of 'web_router.dart';
 
@@ -37,7 +39,7 @@ class _$WebAppRouter extends RootStackRouter {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<UserRouteArgs>(
           orElse: () => UserRouteArgs(id: pathParams.getInt('userID', -1)));
-      return CupertinoPageX<dynamic>(
+      return AdaptivePage<dynamic>(
           routeData: routeData, child: UserPage(key: args.key, id: args.id));
     },
     NotFoundRoute.name: (routeData) {
