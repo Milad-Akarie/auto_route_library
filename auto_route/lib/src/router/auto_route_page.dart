@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -121,6 +120,83 @@ class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T>
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
+
+class _NoAnimationPageRouteBuilder<T> extends PageRoute<T>
+    with _NoAnimationPageRouteTransitionMixin<T> {
+  _NoAnimationPageRouteBuilder({
+    required AutoRoutePage page,
+  }) : super(settings: page);
+
+  @override
+  Widget buildContent(BuildContext context) => _page.buildPage(context);
+
+  @override
+  bool get maintainState => _page.maintainState;
+
+  @override
+  bool get fullscreenDialog => _page.fullscreenDialog;
+
+  @override
+  String get debugLabel => '${super.debugLabel}(${_page.name})';
+
+  @override
+  Duration get transitionDuration => Duration.zero;
+}
+
+mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
+  /// Builds the primary contents of the route.
+  AutoRoutePage<T> get _page => settings as AutoRoutePage<T>;
+
+  @protected
+  Widget buildContent(BuildContext context);
+
+  @override
+  bool get barrierDismissible => false;
+
+  @override
+  Color? get barrierColor => null;
+
+  @override
+  String? get barrierLabel => null;
+
+  @override
+  bool get opaque => true;
+
+  @override
+  bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
+    // Don't perform outgoing animation if the next route is a fullscreen dialog.
+    return (nextRoute is MaterialRouteTransitionMixin &&
+        !nextRoute.fullscreenDialog) ||
+        (nextRoute is _NoAnimationPageRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog) ||
+        (nextRoute is CupertinoRouteTransitionMixin &&
+            !nextRoute.fullscreenDialog);
+  }
+
+  @override
+  Widget buildPage(
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      ) {
+    return Semantics(
+      scopesRoute: true,
+      explicitChildNodes: true,
+      child: buildContent(context),
+    );
+  }
+
+  Widget _defaultTransitionsBuilder(
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      Widget child) {
+    return child;
+  }
+
+}
+
+
 mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   /// Builds the primary contents of the route.
   CustomPage<T> get _page => settings as CustomPage<T>;
@@ -155,7 +231,7 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
     // Don't perform outgoing animation if the next route is a fullscreen dialog.
     return (nextRoute is MaterialRouteTransitionMixin &&
             !nextRoute.fullscreenDialog) ||
-        (nextRoute is _CustomPageRouteTransitionMixin &&
+        (nextRoute is _NoAnimationPageRouteTransitionMixin &&
             !nextRoute.fullscreenDialog) ||
         (nextRoute is CupertinoRouteTransitionMixin &&
             !nextRoute.fullscreenDialog);
@@ -270,7 +346,7 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
   @override
   Route<T> onCreateRoute(BuildContext context) {
     if (kIsWeb) {
-      return _CustomPageBasedPageRouteBuilder<T>(page: this);
+      return _NoAnimationPageRouteBuilder<T>(page: this);
     }
     final platform = Theme.of(context).platform;
     if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {

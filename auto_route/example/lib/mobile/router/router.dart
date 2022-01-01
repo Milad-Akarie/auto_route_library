@@ -15,7 +15,7 @@ import '../screens/user-data/routes.dart';
     AutoRoute<String>(
       path: '/',
       page: HomePage,
-      // guards: [nAuthGuard],
+      // guards: [AuthGuard],
       children: [
         AutoRoute(
           path: 'books',

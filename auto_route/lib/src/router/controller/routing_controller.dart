@@ -47,15 +47,11 @@ abstract class RoutingController with ChangeNotifier {
 
   void attachChildController(RoutingController childController) {
     assert(!_childControllers.contains(childController));
-    print('Adding child Controller ${childController.hashCode}');
     _childControllers.add(childController);
   }
 
   void removeChildController(RoutingController childController) {
     _childControllers.remove(childController);
-    print('Removed child Controller ${childController.hashCode}');
-    print(
-        'child Controllers ${_childControllers.map((e) => e.hashCode).join('    |     ')}');
   }
 
   RoutingController? _innerControllerOf(Key? key) =>
@@ -954,7 +950,7 @@ abstract class StackRouter extends RoutingController {
     return didRemove;
   }
 
-  bool removeWhere(RouteDataPredicate predicate) {
+  bool removeWhere(RouteDataPredicate predicate,{bool notify = true}) {
     var didRemove = false;
     for (var entry in List.unmodifiable(_pages)) {
       if (predicate(entry.routeData)) {
@@ -962,7 +958,9 @@ abstract class StackRouter extends RoutingController {
         _pages.remove(entry);
       }
     }
-    notifyAll(forceUrlRebuild: true);
+    if(notify) {
+      notifyAll(forceUrlRebuild: true);
+    }
     return didRemove;
   }
 
@@ -979,12 +977,12 @@ abstract class StackRouter extends RoutingController {
       final data = _createRouteData(match, routeData);
       _pages.add(pageBuilder(data));
     }
-
     navigationHistory._onNewUrlState(
       UrlState.fromSegments(
         root.currentSegments,
         shouldReplace: current == routeData,
       ),
+      notify: false,
     );
   }
 
@@ -1215,8 +1213,6 @@ class NestedStackRouter extends StackRouter {
           onNavigate: onRoutes,
           navigatorKey: navigatorKey,
         ) {
-    print(
-        '${_routeData.name} ${hashCode}  ${_routeData.pendingChildren.map((e) => e.name)}');
     _pushInitialRoutes();
   }
 
