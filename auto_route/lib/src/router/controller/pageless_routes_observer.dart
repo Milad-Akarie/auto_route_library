@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   bool _hasPagelessTopRoute = false;
+  Route<dynamic>? current;
 
   bool get hasPagelessTopRoute => _hasPagelessTopRoute;
 
@@ -13,6 +14,7 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   }
 
   void _checkCurrentRoute(Route? route) {
+    current = route;
     if (route != null) {
       hasPagelessTopRoute = route.settings is! Page;
     }

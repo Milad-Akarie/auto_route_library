@@ -31,6 +31,12 @@ class MyBooksPage extends StatelessWidget {
                 );
               },
               child: Text('navigate to /settings/newSegment'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.navigateBack();
+              },
+              child: Text('Navigate back'),
             )
           ],
         ),

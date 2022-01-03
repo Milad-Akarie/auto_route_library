@@ -7,18 +7,19 @@ import 'library_builder.dart';
 
 List<Class> buildRouteInfoAndArgs(
     RouteConfig r, RouterConfig router, DartEmitter emitter) {
+  final argsClassRefer = refer('${r.routeName}Args');
   return [
     Class(
       (b) => b
         ..docs.addAll([
-          '/// generated route for [${r.pageType?.refer.accept(emitter).toString()}]'
+          '/// generated route for \n/// [${r.pageType?.refer.accept(emitter).toString()}]'
         ])
         ..name = r.routeName
         ..extend = TypeReference((b) {
           b
             ..symbol = 'PageRouteInfo'
             ..url = autoRouteImport;
-          if (r.parameters.isNotEmpty) b.types.add(refer('${r.routeName}Args'));
+          if (r.parameters.isNotEmpty) b.types.add(argsClassRefer);
           // adds `void` type to be `strong-mode` compliant
           if (r.parameters.isEmpty) b.types.add(refer('void'));
         })
@@ -44,11 +45,11 @@ List<Class> buildRouteInfoAndArgs(
                       ..type = listRefer(pageRouteType, nullable: true)),
                 ])
                 ..initializers.add(refer('super').call([
-                  refer('name')
+                  refer(r.routeName).property('name')
                 ], {
                   'path': literalString(r.pathName),
                   if (r.parameters.isNotEmpty)
-                    'args': refer('${r.routeName}Args').call(
+                    'args': argsClassRefer.call(
                       [],
                       Map.fromEntries(
                         r.parameters.map(
@@ -59,7 +60,7 @@ List<Class> buildRouteInfoAndArgs(
                         ),
                       ),
                     ),
-                  if (r.pathParams.isNotEmpty)
+                  if (r.parameters.any((p) => p.isPathParam))
                     'rawPathParams': literalMap(
                       Map.fromEntries(
                         r.parameters.where((p) => p.isPathParam).map(
@@ -90,7 +91,7 @@ List<Class> buildRouteInfoAndArgs(
     if (r.parameters.isNotEmpty)
       Class(
         (b) => b
-          ..name = '${r.routeName}Args'
+          ..name = argsClassRefer.symbol
           ..fields.addAll([
             ...r.parameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
@@ -105,6 +106,18 @@ List<Class> buildRouteInfoAndArgs(
               ..optionalParameters.addAll(
                 buildArgParams(r.parameters, emitter),
               )),
+          )
+          ..methods.add(
+            Method(
+              (b) => b
+                ..name = 'toString'
+                ..lambda = false
+                ..annotations.add(refer('override'))
+                ..returns = stringRefer
+                ..body = literalString(
+                  '${r.routeName}Args{${r.parameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
+                ).returned.statement,
+            ),
           ),
       )
   ];

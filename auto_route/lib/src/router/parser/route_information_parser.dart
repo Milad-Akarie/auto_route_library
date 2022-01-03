@@ -66,6 +66,8 @@ class UrlState {
 
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
 
+  UrlState get flatten => UrlState.fromSegments(segments.last.flattened);
+
   RouteMatch? _findSegment(
     List<RouteMatch> segments,
     bool Function(RouteMatch segment) predicate,

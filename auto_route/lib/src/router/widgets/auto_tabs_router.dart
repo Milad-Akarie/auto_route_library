@@ -1,5 +1,4 @@
 import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/route/route_data_scope.dart';
 import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/controller/controller_scope.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
@@ -113,7 +112,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final parentRoute = RouteDataScope.of(context);
+    final parentRoute = RouteData.of(context);
     if (_controller == null) {
       final parentScope = RouterScope.of(context, watch: true);
       _inheritableObserversBuilder = () {
@@ -173,7 +172,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
   void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller!.replaceAll(widget.routes);
+      _controller!.replaceAll(widget.routes, oldWidget.routes[_index]);
       _tabsHash = ListEquality().hash(widget.routes);
       setState(() {
         _index = _controller!.activeIndex;
@@ -209,6 +208,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             stack: stack,
           );
     var stateHash = controller!.stateHash;
+
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
@@ -290,6 +290,10 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   @override
   void initState() {
     super.initState();
+    _setup();
+  }
+
+  void _setup() {
     for (var i = 0; i < widget.stack.length; ++i) {
       if (i == widget.activeIndex || !widget.lazyLoad) {
         _initializedPagesTracker[i] = true;
@@ -303,6 +307,11 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
   @override
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.tabsHash != oldWidget.tabsHash) {
+      _initializedPagesTracker.clear();
+      _setup();
+      return;
+    }
     if (widget.lazyLoad &&
         _initializedPagesTracker[widget.activeIndex] != true) {
       _initializedPagesTracker[widget.activeIndex] = true;

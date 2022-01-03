@@ -1,3 +1,5 @@
+import 'package:meta/meta.dart' show optionalTypeArgs;
+
 class AutoRouterAnnotation {
   /// if true relative imports will be generated
   /// when possible
@@ -144,7 +146,7 @@ class CustomAutoRouter extends AutoRouterAnnotation {
 /// [T] is the results type returned
 /// from this page route MaterialPageRoute<T>()
 /// defaults to dynamic
-
+@optionalTypeArgs
 class AutoRoute<T> {
   // initial route will have an explicit name of "/"
   // there could be only one initial route per navigator.
@@ -206,6 +208,7 @@ class RedirectRoute extends AutoRoute {
   }) : super(path: path, fullMatch: true);
 }
 
+@optionalTypeArgs
 class MaterialRoute<T> extends AutoRoute<T> {
   const MaterialRoute({
     String? path,
@@ -237,6 +240,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
 }
 
 // forces usage of CupertinoPageRoute instead of MaterialPageRoute
+@optionalTypeArgs
 class CupertinoRoute<T> extends AutoRoute<T> {
   /// passed to the title property in [CupertinoPageRoute]
   final String? title;
@@ -271,6 +275,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
         );
 }
 
+@optionalTypeArgs
 class AdaptiveRoute<T> extends AutoRoute<T> {
   const AdaptiveRoute({
     bool initial = false,
@@ -305,6 +310,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
   final String? cupertinoPageTitle;
 }
 
+@optionalTypeArgs
 class CustomRoute<T> extends AutoRoute<T> {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]

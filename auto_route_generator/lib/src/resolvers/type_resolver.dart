@@ -64,6 +64,7 @@ class TypeResolver {
           types.add(ResolvedType(
             name: type.element?.name ?? 'void',
             import: resolveImport(type.element),
+            isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
             typeArguments: _resolveTypeArguments(type),
           ));
         }

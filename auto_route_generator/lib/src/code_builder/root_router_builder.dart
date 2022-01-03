@@ -97,7 +97,7 @@ Spec buildMethod(RouteConfig r) {
             if (!r.hasUnparsableRequiredArgs &&
                 r.parameters.any((p) => p.isPathParam))
               refer('routeData')
-                  .property('pathParams')
+                  .property('inheritedPathParams')
                   .assignFinal('pathParams')
                   .statement,
             if (!r.hasUnparsableRequiredArgs &&

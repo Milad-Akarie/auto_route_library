@@ -4,16 +4,40 @@ import 'package:flutter/material.dart';
 
 import 'home_page.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends StatelessWidget {
+  final String tab;
+  final String query;
+  SettingsPage({
+    Key? key,
+    @pathParam required this.tab,
+    @queryParam this.query = 'none',
+  }) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(tab),
+            Text(query),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Settings2Page extends StatefulWidget {
   final String tab;
 
-  SettingsPage({Key? key, @pathParam required this.tab}) : super(key: key);
+  Settings2Page({Key? key, @pathParam required this.tab}) : super(key: key);
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
+class _SettingsPageState extends State<Settings2Page> with AutoRouteAware {
   var _count = 0;
 
   @override
@@ -54,17 +78,8 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAware {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              // setState(() {
-              //   _count++;
-              // });
-
-              // context.navigateNamedTo(
-              //   'profile/my-books?filter=yedds',
-              //   includePrefixMatches: true,
-              // );
               context.navigateTo(
                 ProfileTab(children: [
-                  ProfileRoute(),
                   MyBooksRoute(),
                 ]),
               );
