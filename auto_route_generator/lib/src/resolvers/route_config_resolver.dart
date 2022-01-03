@@ -45,6 +45,7 @@ class RouteConfigResolver {
         className: '',
         fullMatch: autoRoute.peek('fullMatch')?.boolValue ?? true,
         routeType: RouteType.redirect,
+        deferredLoading: _routerConfig.deferredLoading,
       );
     }
     final classElement = page.element as ClassElement;
@@ -154,7 +155,7 @@ class RouteConfigResolver {
       final valueType =
           entry.value!.type!.getDisplayString(withNullability: false);
       throwIf(!validMetaValues.contains(valueType),
-          'Meta value type ${valueType} is not supported!\nSupported types are ${validMetaValues}');
+          'Meta value type $valueType is not supported!\nSupported types are $validMetaValues');
       switch (valueType) {
         case 'bool':
           {
@@ -264,6 +265,7 @@ class RouteConfigResolver {
       fullMatch: fullMatch,
       usesPathAsKey: usesPathAsKey,
       meta: meta,
+      deferredLoading: _routerConfig.deferredLoading,
     );
   }
 }

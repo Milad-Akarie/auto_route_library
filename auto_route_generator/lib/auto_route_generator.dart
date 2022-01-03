@@ -60,9 +60,12 @@ class AutoRouteGenerator extends Generator {
       clazz,
       usesPartBuilder: usesPartBuilder,
     );
+    final deferredLoading =
+        annotation.peek('deferredLoading')?.boolValue ?? false;
     return generateLibrary(
       routerConfig,
       usesPartBuilder: usesPartBuilder,
+      deferredLoading: deferredLoading,
     );
   }
 

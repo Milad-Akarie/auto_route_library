@@ -35,6 +35,7 @@ class RouteConfig {
   final bool hasConstConstructor;
   final bool usesPathAsKey;
   final List<MetaEntry> meta;
+  final bool deferredLoading;
 
   RouteConfig({
     this.name,
@@ -65,6 +66,7 @@ class RouteConfig {
     this.hasConstConstructor = false,
     this.usesPathAsKey = false,
     this.meta = const [],
+    this.deferredLoading = false,
   });
 
   RouteConfig copyWith({
@@ -96,6 +98,7 @@ class RouteConfig {
     bool? hasConstConstructor,
     bool? usesPathAsKey,
     List<MetaEntry>? meta,
+    bool? deferredLoading,
   }) {
     if ((name == null || identical(name, this.name)) &&
         (pathName == null || identical(pathName, this.pathName)) &&
@@ -140,7 +143,9 @@ class RouteConfig {
         (childRouterConfig == null ||
             identical(childRouterConfig, this.childRouterConfig)) &&
         (hasConstConstructor == null ||
-            identical(hasConstConstructor, this.hasConstConstructor))) {
+            identical(hasConstConstructor, this.hasConstConstructor)) &&
+        (deferredLoading == null ||
+            identical(deferredLoading, this.deferredLoading))) {
       return this;
     }
 
@@ -178,6 +183,7 @@ class RouteConfig {
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
       meta: meta ?? this.meta,
+      deferredLoading: deferredLoading ?? this.deferredLoading,
     );
   }
 

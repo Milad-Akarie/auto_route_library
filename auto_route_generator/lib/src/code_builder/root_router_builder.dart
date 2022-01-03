@@ -145,18 +145,11 @@ Spec buildMethod(RouteConfig r) {
                   [],
                   {
                     'routeData': refer('routeData'),
-                    'child': r.hasConstConstructor
-                        ? r.pageType!.refer.constInstance([])
-                        : r.pageType!.refer.newInstance(
-                            r.positionalParams
-                                .map((p) => refer('args').property(p.name)),
-                            Map.fromEntries(r.namedParams.map(
-                              (p) => MapEntry(
-                                p.name,
-                                refer('args').property(p.name),
-                              ),
-                            )),
-                          ),
+                    'child': r.deferredLoading
+                        ? getDeferredBuilder(r)
+                        : r.hasConstConstructor
+                            ? r.pageType!.refer.constInstance([])
+                            : getPageInstance(r),
                     if (r.maintainState == false)
                       'maintainState': literalBool(false),
                     if (r.fullscreenDialog == true)
@@ -191,6 +184,50 @@ Spec buildMethod(RouteConfig r) {
                 .statement
           ])),
   ).closure;
+}
+
+Expression getDeferredBuilder(RouteConfig r) {
+  return TypeReference((b) => b
+    ..symbol = 'FutureBuilder'
+    ..url = materialImport).newInstance([], {
+    'builder': Method((b) => b
+      ..requiredParameters.addAll([
+        Parameter((b) => b.name = 'context'),
+        Parameter((b) => b.name = 'snapshot')
+      ])
+      ..body = refer('snapshot.connectionState')
+          .equalTo(refer('ConnectionState.done', materialImport))
+          .conditional(
+              getPageInstance(r),
+              //TODO give user ability to provide his own lading widget
+              TypeReference((b) => b
+                ..symbol = 'Scaffold'
+                ..url = materialImport).constInstance([], {
+                'body': TypeReference((b) => b
+                  ..symbol = 'Center'
+                  ..url = materialImport).constInstance([], {
+                  'child': TypeReference((b) => b
+                    ..symbol = 'CircularProgressIndicator'
+                    ..url = materialImport).constInstance([])
+                })
+              }))
+          .code).closure,
+    'future': TypeReference((b) => b
+      ..symbol = 'loadLibrary'
+      ..url = r.pageType!.refer.url).newInstance({}),
+  });
+}
+
+Expression getPageInstance(RouteConfig r) {
+  return r.pageType!.refer.newInstance(
+    r.positionalParams.map((p) => refer('args').property(p.name)),
+    Map.fromEntries(r.namedParams.map(
+      (p) => MapEntry(
+        p.name,
+        refer('args').property(p.name),
+      ),
+    )),
+  );
 }
 
 Expression getUrlParamAssignment(ParamConfig p) {
@@ -229,6 +266,7 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes, {Reference? parent}) =>
               'redirectTo': literalString(r.redirectTo!),
             if (r.fullMatch == true) 'fullMatch': literalBool(true),
             if (r.usesPathAsKey == true) 'usesPathAsKey': literalBool(true),
+            if (r.deferredLoading == true) 'deferredLoading': literalBool(true),
             if (r.guards.isNotEmpty)
               'guards': literalList(r.guards
                   .map(

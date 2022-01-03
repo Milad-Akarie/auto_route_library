@@ -5,11 +5,13 @@ import '../../utils.dart';
 import '../models/importable_type.dart';
 import '../models/route_config.dart';
 import '../models/router_config.dart';
+import 'deferred_pages_allocator.dart';
 import 'root_router_builder.dart';
 import 'route_info_builder.dart';
 
 const autoRouteImport = 'package:auto_route/auto_route.dart';
 const materialImport = 'package:flutter/material.dart';
+const foundationImport = 'package:flutter/foundation.dart';
 
 const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
@@ -21,10 +23,18 @@ TypeReference listRefer(Reference reference, {bool nullable = false}) =>
       ..isNullable = nullable
       ..types.add(reference));
 
-String generateLibrary(RouterConfig config, {bool usesPartBuilder = false}) {
+String generateLibrary(
+  RouterConfig config, {
+  bool usesPartBuilder = false,
+  bool deferredLoading = false,
+}) {
   final fileName = config.element.source.uri.pathSegments.last;
   final emitter = DartEmitter(
-    allocator: usesPartBuilder ? Allocator.none : Allocator.simplePrefixing(),
+    allocator: usesPartBuilder
+        ? Allocator.none
+        : deferredLoading
+            ? DeferredPagesAllocator(config.routes)
+            : Allocator.simplePrefixing(),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );

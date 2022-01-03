@@ -21,10 +21,15 @@ class AutoRouterAnnotation {
   /// defaults no null, ignored if a route name is provided.
   final String? replaceInRouteName;
 
+  /// Use for web for lazy loading other routes
+  /// more info https://dart.dev/guides/language/language-tour#deferred-loading
+  final bool deferredLoading;
+
   const AutoRouterAnnotation._(
     this.routes,
     this.preferRelativeImports, {
     this.replaceInRouteName,
+    this.deferredLoading = false,
   });
 }
 
@@ -35,10 +40,12 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = true,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? deferredLoading,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          deferredLoading: deferredLoading ?? false,
         );
 }
 
@@ -49,10 +56,12 @@ class CupertinoAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = true,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? deferredLoading,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          deferredLoading: deferredLoading ?? false,
         );
 }
 
@@ -61,10 +70,12 @@ class AdaptiveAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = false,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? deferredLoading,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          deferredLoading: deferredLoading ?? false,
         );
 }
 
@@ -111,20 +122,22 @@ class CustomAutoRouter extends AutoRouterAnnotation {
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
-  const CustomAutoRouter(
-      {this.transitionsBuilder,
-      this.barrierDismissible = false,
-      this.durationInMilliseconds,
-      this.reverseDurationInMilliseconds,
-      this.customRouteBuilder,
-      this.opaque = true,
-      required List<AutoRoute> routes,
-      bool preferRelativeImports = true,
-      String? replaceInRouteName})
-      : super._(
+  const CustomAutoRouter({
+    this.transitionsBuilder,
+    this.barrierDismissible = false,
+    this.durationInMilliseconds,
+    this.reverseDurationInMilliseconds,
+    this.customRouteBuilder,
+    this.opaque = true,
+    required List<AutoRoute> routes,
+    bool preferRelativeImports = true,
+    String? replaceInRouteName,
+    bool? deferredLoading,
+  }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          deferredLoading: deferredLoading ?? false,
         );
 }
 
@@ -166,6 +179,8 @@ class AutoRoute<T> {
   /// meta data
   final Map<String, dynamic> meta;
 
+  final bool deferredLoading;
+
   const AutoRoute({
     this.page,
     this.initial = false,
@@ -178,6 +193,7 @@ class AutoRoute<T> {
     this.usesPathAsKey = false,
     this.children,
     this.meta = const {},
+    this.deferredLoading = false,
   });
 }
 
@@ -203,6 +219,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
     bool usesPathAsKey = false,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool deferredLoading = false,
   }) : super(
           page: page,
           guards: guards,
@@ -215,6 +232,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
           children: children,
           name: name,
           meta: meta,
+          deferredLoading: deferredLoading,
         );
 }
 
@@ -236,6 +254,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
     bool usesPathAsKey = false,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool deferredLoading = false,
   }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
@@ -248,6 +267,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          deferredLoading: deferredLoading,
         );
 }
 
@@ -265,6 +285,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
     List<Type>? guards,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool deferredLoading = false,
   }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
@@ -277,6 +298,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          deferredLoading: deferredLoading,
         );
 
   /// passed to the title property in [CupertinoPageRoute]
@@ -346,6 +368,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     this.opaque = true,
     this.barrierDismissible = false,
     Map<String, dynamic> meta = const {},
+    bool deferredLoading = false,
   }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
@@ -358,6 +381,7 @@ class CustomRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          deferredLoading: deferredLoading,
         );
 }
 
