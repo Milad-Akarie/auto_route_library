@@ -929,7 +929,7 @@ The `TransitionsBuilder` function needs to be passed as a static/const reference
 CustomRoute(    
 page: LoginScreen,    
 //TransitionsBuilders class contains a preset of common transitions builders.     
-transitionsBuilder: TransitionBuilders.slideBottom,    
+transitionsBuilder: TransitionsBuilders.slideBottom,    
 durationInMilliseconds: 400)    
 ```    
 
