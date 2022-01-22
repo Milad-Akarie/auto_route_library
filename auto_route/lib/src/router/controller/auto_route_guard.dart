@@ -13,10 +13,8 @@ abstract class AutoRouteGuard {
   }
 }
    */
-  void onNavigation(
-    NavigationResolver resolver,
-    StackRouter router,
-  );
+  void onNavigation(NavigationResolver resolver,
+      StackRouter router,);
 }
 
 class NavigationResolver {
@@ -25,12 +23,11 @@ class NavigationResolver {
   final RouteMatch route;
   final List<RouteMatch> pendingRoutes;
 
-  NavigationResolver(
-    this._router,
-    this._completer,
-    this.route, {
-    this.pendingRoutes = const [],
-  });
+  NavigationResolver(this._router,
+      this._completer,
+      this.route, {
+        this.pendingRoutes = const [],
+      });
 
   void next([bool continueNavigation = true]) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
@@ -53,7 +50,7 @@ abstract class AutoRedirectGuardBase extends AutoRouteGuard
   // and there are auth-protected routes in the stack
   void reevaluate({
     ReevaluationStrategy strategy =
-        const ReevaluationStrategy.rePushFirstGuardedRoute(),
+    const ReevaluationStrategy.rePushFirstGuardedRoute(),
   }) {
     _strategy = strategy;
     notifyListeners();
@@ -104,13 +101,16 @@ abstract class ReevaluationStrategy {
   const factory ReevaluationStrategy.rePushAllRoutes() = RePushAllStrategy;
 
   const factory ReevaluationStrategy.rePushFirstGuardedRoute() =
-      RePushFirstGuarded;
+  RePushFirstGuarded;
 
   const factory ReevaluationStrategy.rePushFirstGuardedRouteAndUp() =
-      RePushFirstGuardedAndUp;
+  RePushFirstGuardedAndUp;
 
   const factory ReevaluationStrategy.removeFirstGuardedRouteAndUp() =
-      _RemoveFirstGuardedAndUp;
+  _RemoveFirstGuardedAndUp;
+
+  const factory ReevaluationStrategy.removeAllAndPush(PageRouteInfo route) =
+  _RemoveAllAndPush;
 }
 
 class RePushAllStrategy extends ReevaluationStrategy {
@@ -120,17 +120,17 @@ class RePushAllStrategy extends ReevaluationStrategy {
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final stackData = router.stackData;
     final routesToRemove =
-        List<RouteMatch>.unmodifiable(stackData.map((e) => e._match));
+    List<RouteMatch>.unmodifiable(stackData.map((e) => e._match));
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
 
     final routesToPush = <RouteMatch>[];
-    for(final existingMatch in stackData.map((e) => e.route)){
+    for (final existingMatch in stackData.map((e) => e.route)) {
       final routeToPush = router.matcher.matchByRoute(
         existingMatch.toPageRouteInfo(),
       );
-      if(routeToPush!= null) {
+      if (routeToPush != null) {
         routesToPush.add(routeToPush);
       }
     }
@@ -145,11 +145,11 @@ class RePushFirstGuarded extends ReevaluationStrategy {
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
     final firstGuardedRouteIndex =
-        routes.indexWhere((r) => r.guards.contains(guard));
+    routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
 
     final routesToRemove =
-        routes.sublist(firstGuardedRouteIndex, routes.length);
+    routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
@@ -157,7 +157,7 @@ class RePushFirstGuarded extends ReevaluationStrategy {
     final routeToPush = router.matcher.matchByRoute(
       routes[firstGuardedRouteIndex].toPageRouteInfo(),
     );
-    if(routeToPush!= null) {
+    if (routeToPush != null) {
       router._pushAllGuarded([routeToPush]);
     }
   }
@@ -170,25 +170,25 @@ class RePushFirstGuardedAndUp extends ReevaluationStrategy {
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
     final firstGuardedRouteIndex =
-        routes.indexWhere((r) => r.guards.contains(guard));
+    routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
     final routesToRemove =
-        routes.sublist(firstGuardedRouteIndex, routes.length);
+    routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
 
 
     final routesToPush = <RouteMatch>[];
-    for(final existingMatch in routes.sublist(
+    for (final existingMatch in routes.sublist(
       firstGuardedRouteIndex,
       routes.length,
-    )){
+    )) {
       final routeToPush = router.matcher.matchByRoute(
         existingMatch.toPageRouteInfo(),
       );
-      if(routeToPush!= null) {
-       routesToPush.add(routeToPush);
+      if (routeToPush != null) {
+        routesToPush.add(routeToPush);
       }
     }
     router._pushAllGuarded(routesToPush);
@@ -202,15 +202,26 @@ class _RemoveFirstGuardedAndUp extends ReevaluationStrategy {
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
     final firstGuardedRouteIndex =
-        routes.indexWhere((r) => r.guards.contains(guard));
+    routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
     final routesToRemove =
-        routes.sublist(firstGuardedRouteIndex, routes.length);
+    routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(
         route,
         notify: route == routesToRemove.last,
       );
     }
+  }
+}
+
+class _RemoveAllAndPush extends ReevaluationStrategy {
+  final PageRouteInfo route;
+  const _RemoveAllAndPush(this.route) : super._();
+
+  @override
+  void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
+    router._reset();
+    router.push(route);
   }
 }
