@@ -1,5 +1,4 @@
 import 'package:auto_route_generator/src/models/route_config.dart';
-import 'package:auto_route_generator/utils.dart';
 import 'package:code_builder/code_builder.dart';
 
 class DeferredPagesAllocator implements Allocator {
@@ -26,14 +25,29 @@ class DeferredPagesAllocator implements Allocator {
 
   @override
   Iterable<Directive> get imports => _imports.keys.map(
-        (u) {
-          var routeElement =
-              routes.firstOrNull((element) => element.pageType?.import == u);
-          if (routeElement != null) {
-            return Directive.importDeferredAs(u, '_i${_imports[u]}');
+        (importPath) {
+          if (routes.containsPageImport(importPath)) {
+            return Directive.importDeferredAs(
+                importPath, '_i${_imports[importPath]}');
           } else {
-            return Directive.import(u, as: '_i${_imports[u]}');
+            return Directive.import(importPath,
+                as: '_i${_imports[importPath]}');
           }
         },
       );
+}
+
+extension _RouteConfigList on List<RouteConfig> {
+  bool containsPageImport(String importPath) {
+    return any((routeConfig) {
+      if (routeConfig.pageType?.import == importPath) {
+        return true;
+      }
+      if (routeConfig.childRouterConfig == null) {
+        return false;
+      }
+      return routeConfig.childRouterConfig!.routes
+          .containsPageImport(importPath);
+    });
+  }
 }
