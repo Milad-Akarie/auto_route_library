@@ -7,7 +7,7 @@
 <p align="center">        
 <a href="https://img.shields.io/badge/License-MIT-green"><img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>        
 <a href="https://github.com/Milad-Akarie/auto_route_library/stargazers"><img src="https://img.shields.io/github/stars/Milad-Akarie/auto_route_library?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>        
-<a href="https://pub.dev/packages/auto_route/versions/2.0.0"><img src="https://img.shields.io/badge/pub-2.2.0-orange" alt="pub version"></a>        
+<a href="https://pub.dev/packages/auto_route"><img src="https://img.shields.io/pub/v/auto_route.svg?label=pub&color=orange" alt="pub version"></a>        
 <a href="https://discord.gg/x3SBU4WRRd">        
  <img src="https://img.shields.io/discord/821043906703523850.svg?color=7289da&label=Discord&logo=discord&style=flat-square" alt="Discord Badge"></a>        
 </p>        
@@ -110,17 +110,19 @@ flutter packages pub run build_runner build
 after you run the generator your router class will be generated, hook it up with MaterialApp.
 ```dart     
 // assuing this is the root widget of your App     
-class App extends StatlessWidget{    
+class App extends StatelessWidget {
   // make sure you don't initiate your router    
   // inside of the build function.    
-   final _appRouter = AppRouter();        
-       
-  Widget build(BuildContext context){        
-      return MaterialApp.router(        
-             routerDelegate:_appDelegate.delegate(),        
-             routeInformationParser: _appRouter.defaultRouteParser(),        
-         ),        
-  }        
+  final _appRouter = AppRouter();
+
+  @override
+  Widget build(BuildContext context){
+    return MaterialApp.router(
+      routerDelegate: _appRouter.delegate(),
+      routeInformationParser: _appRouter.defaultRouteParser(),
+    );
+  }
+}
 ```        
 ## Generated Routes
 A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroid.
@@ -345,6 +347,7 @@ Now if we navigate to `/dashboard/users` we will be taken to the `DashboardPage`
 
 What if want to show one of the child pages at `/dashboard`? we can simply do that by giving the child routes an empty path `''` or set it as initial.
 
+
 ```dart        
    AutoRoute(        
       path: '/dashboard',        
@@ -381,6 +384,7 @@ which can be simplified to the following where `auto_route` generates the redire
       ],        
     ),        
 ```       
+
 ### Things to keep in mind when implementing nested navigation
 1- Each router manages it's own pages stack.    
 2- Navigation actions like push, pop and friends are handled by the topmost router and bubble up if it couldn't be handled.
@@ -578,7 +582,7 @@ class Dashboard extends StatelessWidget {
 ## Navigating Without Context
 To navigate without context you can simply assign your generated router to a global variable
 ```dart        
-// declerate your route as a global vairable    
+// declarate your route as a global vairable    
 final appRouter = AppRouter();      
     
 class MyApp extends StatefulWidget {    

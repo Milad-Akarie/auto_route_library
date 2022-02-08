@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web/router/web_auth_guard.dart';
 import 'package:example/web/web_main.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // optionally add part directive to use
@@ -21,7 +20,7 @@ part 'web_router.gr.dart';
       path: '/user/:userID',
       redirectTo: '/user/:userID/page',
     ),
-    AutoRoute(
+    AdaptiveRoute(
       path: '/user/:userID/page',
       guards: [AuthGuard],
       page: UserPage,
@@ -99,11 +98,7 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: widget.navigate ??
                   () {
-                    // context.pushRoute(
-                    //   UserRoute(id: 5, children: [
-                    //     UserProfileRoute(name: 'Name'),
-                    //   ]),
-                    // );
+
                     context.navigateNamedTo('/user/2');
                   },
               child: Text('Navigate to user/2'),
@@ -167,7 +162,7 @@ class UserProfilePage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.router.pushNamed('/user/12/page/profile');
+                    context.pushRoute(const UserPostsRoute());
                   },
               child: Text('Posts'),
             ),

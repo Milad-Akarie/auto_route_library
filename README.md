@@ -7,7 +7,7 @@
 <p align="center">        
 <a href="https://img.shields.io/badge/License-MIT-green"><img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License"></a>        
 <a href="https://github.com/Milad-Akarie/auto_route_library/stargazers"><img src="https://img.shields.io/github/stars/Milad-Akarie/auto_route_library?style=flat&logo=github&colorB=green&label=stars" alt="stars"></a>        
-<a href="https://pub.dev/packages/auto_route/versions/2.0.0"><img src="https://img.shields.io/badge/pub-2.2.0-orange" alt="pub version"></a>        
+<a href="https://pub.dev/packages/auto_route"><img src="https://img.shields.io/pub/v/auto_route.svg?label=pub&color=orange" alt="pub version"></a>        
 <a href="https://discord.gg/x3SBU4WRRd">        
  <img src="https://img.shields.io/discord/821043906703523850.svg?color=7289da&label=Discord&logo=discord&style=flat-square" alt="Discord Badge"></a>        
 </p>        
@@ -582,7 +582,7 @@ class Dashboard extends StatelessWidget {
 ## Navigating Without Context
 To navigate without context you can simply assign your generated router to a global variable
 ```dart        
-// declerate your route as a global vairable    
+// declarate your route as a global vairable    
 final appRouter = AppRouter();      
     
 class MyApp extends StatefulWidget {    

@@ -1,4 +1,14 @@
 # ChangeLog
+## [3.2.1]
+- Merge some readme file typo-fixes
+- Add @optionalTypeArgs to AutoRoute annotations
+- Fix AdaptiveRoute issue with CustomRoute
+- Change analyzer constrains to include version 3.0.0
+- Add notify flag to removeWhere method inside of StackRouter
+## [3.2.0]
+- Merge fix conform new API in Flutter 2.6
+- Fix declarative routes update issue
+- Add Router tests
 ## [3.1.0]
 - Prefer previous-current route index as new current index when updating tab routes #797
 - Improve native navigation history
