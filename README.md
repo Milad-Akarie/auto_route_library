@@ -78,7 +78,7 @@ class $AppRouter {}
 ### Using part builder ( New in version 3.0.0+)
 To generate a part-of file instead of a stand alone `AppRouter` class, simply add a `Part Directive` to your `AppRouter` and extend the generated private router.
 ```dart      
-part 'app_router.gr.dart'  
+part 'app_router.gr.dart';
   
 @MaterialAutoRouter(        
   replaceInRouteName: 'Page,Route',        
