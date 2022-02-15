@@ -1,9 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart' show BuildContext, optionalTypeArgs;
 
-import '../navigation_failure.dart';
-import 'controller/../widgets/auto_router.dart';
-
 extension AutoRouterX on BuildContext {
   StackRouter get router => AutoRouter.of(this);
 

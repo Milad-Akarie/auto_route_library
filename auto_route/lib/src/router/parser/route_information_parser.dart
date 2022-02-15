@@ -82,6 +82,7 @@ class UrlState {
         }
       }
     }
+    return null;
   }
 
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {

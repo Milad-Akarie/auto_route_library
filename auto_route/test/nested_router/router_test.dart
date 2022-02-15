@@ -97,7 +97,7 @@ void main() {
     expectTopPage(router, SecondNested1Route.name);
   });
   testWidgets(
-      'Pushing ${SecondRoute} should add a child router then popping it should remove it',
+      'Pushing $SecondRoute should add a child router then popping it should remove it',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.push(SecondRoute());
@@ -109,7 +109,7 @@ void main() {
   });
 
   testWidgets(
-      'Pushing ${SecondRoute} twice should add 2 child routers then popping once should remove top-child-router',
+      'Pushing $SecondRoute twice should add 2 child routers then popping once should remove top-child-router',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.pushAll([

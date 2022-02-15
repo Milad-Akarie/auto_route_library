@@ -13,8 +13,10 @@ abstract class AutoRouteGuard {
   }
 }
    */
-  void onNavigation(NavigationResolver resolver,
-      StackRouter router,);
+  void onNavigation(
+    NavigationResolver resolver,
+    StackRouter router,
+  );
 }
 
 class NavigationResolver {
@@ -23,11 +25,12 @@ class NavigationResolver {
   final RouteMatch route;
   final List<RouteMatch> pendingRoutes;
 
-  NavigationResolver(this._router,
-      this._completer,
-      this.route, {
-        this.pendingRoutes = const [],
-      });
+  NavigationResolver(
+    this._router,
+    this._completer,
+    this.route, {
+    this.pendingRoutes = const [],
+  });
 
   void next([bool continueNavigation = true]) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
@@ -50,7 +53,7 @@ abstract class AutoRedirectGuardBase extends AutoRouteGuard
   // and there are auth-protected routes in the stack
   void reevaluate({
     ReevaluationStrategy strategy =
-    const ReevaluationStrategy.rePushFirstGuardedRoute(),
+        const ReevaluationStrategy.rePushFirstGuardedRoute(),
   }) {
     _strategy = strategy;
     notifyListeners();
@@ -101,16 +104,16 @@ abstract class ReevaluationStrategy {
   const factory ReevaluationStrategy.rePushAllRoutes() = RePushAllStrategy;
 
   const factory ReevaluationStrategy.rePushFirstGuardedRoute() =
-  RePushFirstGuarded;
+      RePushFirstGuarded;
 
   const factory ReevaluationStrategy.rePushFirstGuardedRouteAndUp() =
-  RePushFirstGuardedAndUp;
+      RePushFirstGuardedAndUp;
 
   const factory ReevaluationStrategy.removeFirstGuardedRouteAndUp() =
-  _RemoveFirstGuardedAndUp;
+      _RemoveFirstGuardedAndUp;
 
   const factory ReevaluationStrategy.removeAllAndPush(PageRouteInfo route) =
-  _RemoveAllAndPush;
+      _RemoveAllAndPush;
 }
 
 class RePushAllStrategy extends ReevaluationStrategy {
@@ -120,7 +123,7 @@ class RePushAllStrategy extends ReevaluationStrategy {
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final stackData = router.stackData;
     final routesToRemove =
-    List<RouteMatch>.unmodifiable(stackData.map((e) => e._match));
+        List<RouteMatch>.unmodifiable(stackData.map((e) => e._match));
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
@@ -145,11 +148,11 @@ class RePushFirstGuarded extends ReevaluationStrategy {
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
     final firstGuardedRouteIndex =
-    routes.indexWhere((r) => r.guards.contains(guard));
+        routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
 
     final routesToRemove =
-    routes.sublist(firstGuardedRouteIndex, routes.length);
+        routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
@@ -170,14 +173,13 @@ class RePushFirstGuardedAndUp extends ReevaluationStrategy {
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
     final firstGuardedRouteIndex =
-    routes.indexWhere((r) => r.guards.contains(guard));
+        routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
     final routesToRemove =
-    routes.sublist(firstGuardedRouteIndex, routes.length);
+        routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
-
 
     final routesToPush = <RouteMatch>[];
     for (final existingMatch in routes.sublist(
@@ -202,10 +204,10 @@ class _RemoveFirstGuardedAndUp extends ReevaluationStrategy {
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
     final firstGuardedRouteIndex =
-    routes.indexWhere((r) => r.guards.contains(guard));
+        routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
     final routesToRemove =
-    routes.sublist(firstGuardedRouteIndex, routes.length);
+        routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(
         route,
