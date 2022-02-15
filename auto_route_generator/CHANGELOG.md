@@ -1,4 +1,7 @@
 # ChangeLog
+## [3.2.3]
+- Fix routes with empty path don't update url #960
+- Fix RouteInformationProvider.routerReportsNewRouteInformation required 'type' issue #958
 ## [3.2.1]
 - Merge some readme file typo-fixes
 - Add @optionalTypeArgs to AutoRoute annotations
