@@ -232,6 +232,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
     bool usesPathAsKey = false,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool generateRouteArguments = true,
   }) : super(
           page: page,
           guards: guards,
@@ -244,6 +245,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
           children: children,
           name: name,
           meta: meta,
+          generateRouteArguments: generateRouteArguments,
         );
 }
 
@@ -266,6 +268,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
     bool usesPathAsKey = false,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool generateRouteArguments = true,
   }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
@@ -278,6 +281,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          generateRouteArguments: generateRouteArguments,
         );
 }
 
@@ -296,6 +300,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
     List<Type>? guards,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool generateRouteArguments = true,
   }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
@@ -308,6 +313,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          generateRouteArguments: generateRouteArguments,
         );
 
   /// passed to the title property in [CupertinoPageRoute]
@@ -377,6 +383,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     this.reverseDurationInMilliseconds,
     this.opaque = true,
     this.barrierDismissible = false,
+    bool generateRouteArguments = true,
     Map<String, dynamic> meta = const {},
   }) : super(
           initial: initial,
@@ -390,6 +397,7 @@ class CustomRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          generateRouteArguments: generateRouteArguments,
         );
 }
 

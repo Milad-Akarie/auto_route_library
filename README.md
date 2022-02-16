@@ -878,6 +878,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 | ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |    
 | preferRelativeImports [bool] | true         | if true relative imports will be used when possible |    
 | replaceInRouteName [String] |    ''     | used to replace conventional words in generated route name (whatToReplacePattern,replacement) |    
+| generateRouteArguments [bool] |    true     | used to tell AutoRoute to generated or not generate route arguments to all their routes, this is useful if you are generating your args in another way and just importing they, like in a micro app architecture |
 
 #### CustomAutoRouter
 
@@ -889,7 +890,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 | barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |    
 | durationInMilliseconds  |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |    
 | reverseDurationInMilliseconds  |     null      | extension for the reverseDurationInMilliseconds(millieSeconds) property in PageRouteBuilder |    
-
+| generateRouteArguments  |    true     | used to tell AutoRoute to generated or not generate route arguments to all their routes, this is useful if you are generating your args in another way and just importing they, like in a micro app architecture |
 
 #### MaterialRoute | CupertinoRoute | AdaptiveRoute | CustomRoute
 
@@ -902,6 +903,8 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 | fullscreenDialog  |     false     | extension for the fullscreenDialog property in PageRoute                                   |    
 | maintainState    |     true      | extension for the maintainState property in PageRoute                                      |    
 | meta    |     {}      | primitive meta data to be passed to the consumed route
+| maintainState    |     true      | extension for the maintainState property in PageRoute                                      |    
+| generateRouteArguments    |     true      | used to tell AutoRoute to generated or not generate route arguments to this specific route, this is useful if you are generating your args in another way and just importing they, like in a micro app architecture
 
 #### CupertinoRoute Specific => CupertinoPageRoute
 
@@ -919,7 +922,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 | barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |    
 | durationInMilliseconds  |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |    
 | reverseDurationInMilliseconds  |     null      | extension for the reverseDurationInMilliseconds(millieSeconds) property in PageRouteBuilder |    
-
+| generateRouteArguments    |     true      | used to tell AutoRoute to generated or not generate route arguments to this specific route, this is useful if you are generating your args in another way and just importing they, like in a micro app architecture
 ## Custom Route Transitions
 
 To use custom route transitions use a `CustomRoute` and pass in your preferences.    
