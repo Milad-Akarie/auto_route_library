@@ -1,10 +1,6 @@
-import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/router/controller/controller_scope.dart';
-import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
-import '../controller/routing_controller.dart';
 import 'auto_route_navigator.dart';
 
 class AutoRouter extends StatefulWidget {
@@ -13,6 +9,7 @@ class AutoRouter extends StatefulWidget {
   final String? navRestorationScopeId;
   final bool inheritNavigatorObservers;
   final GlobalKey<NavigatorState>? navigatorKey;
+  final WidgetBuilder? placeholder;
 
   const AutoRouter({
     Key? key,
@@ -22,6 +19,7 @@ class AutoRouter extends StatefulWidget {
     this.navRestorationScopeId,
     this.navigatorKey,
     this.inheritNavigatorObservers = true,
+    this.placeholder,
   }) : super(key: key);
 
   static Widget declarative({
@@ -34,6 +32,7 @@ class AutoRouter extends StatefulWidget {
     bool inheritNavigatorObservers = true,
     GlobalKey<NavigatorState>? navigatorKey,
     OnNestedNavigateCallBack? onNavigate,
+    WidgetBuilder? placeholder,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
@@ -41,6 +40,7 @@ class AutoRouter extends StatefulWidget {
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
         onNavigate: onNavigate,
+        placeholder: placeholder,
         routes: routes,
       );
 
@@ -120,6 +120,7 @@ class AutoRouterState extends State<AutoRouter> {
       router: _controller!,
       navRestorationScopeId: widget.navRestorationScopeId,
       navigatorObservers: _navigatorObservers,
+      placeholder: widget.placeholder,
     );
     final stateHash = controller!.stateHash;
     return RouterScope(
@@ -162,6 +163,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final bool inheritNavigatorObservers;
   final GlobalKey<NavigatorState>? navigatorKey;
   final OnNestedNavigateCallBack? onNavigate;
+  final WidgetBuilder? placeholder;
 
   const _DeclarativeAutoRouter({
     Key? key,
@@ -173,6 +175,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
     this.navRestorationScopeId,
     this.inheritNavigatorObservers = true,
     this.onNavigate,
+    this.placeholder,
   }) : super(key: key);
 
   @override
@@ -248,6 +251,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: _navigatorObservers,
           didPop: widget.onPopRoute,
+          placeholder: widget.placeholder,
         ),
       ),
     );

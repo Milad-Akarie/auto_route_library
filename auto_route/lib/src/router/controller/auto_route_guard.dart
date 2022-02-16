@@ -111,6 +111,9 @@ abstract class ReevaluationStrategy {
 
   const factory ReevaluationStrategy.removeFirstGuardedRouteAndUp() =
       _RemoveFirstGuardedAndUp;
+
+  const factory ReevaluationStrategy.removeAllAndPush(PageRouteInfo route) =
+      _RemoveAllAndPush;
 }
 
 class RePushAllStrategy extends ReevaluationStrategy {
@@ -126,11 +129,11 @@ class RePushAllStrategy extends ReevaluationStrategy {
     }
 
     final routesToPush = <RouteMatch>[];
-    for(final existingMatch in stackData.map((e) => e.route)){
+    for (final existingMatch in stackData.map((e) => e.route)) {
       final routeToPush = router.matcher.matchByRoute(
         existingMatch.toPageRouteInfo(),
       );
-      if(routeToPush!= null) {
+      if (routeToPush != null) {
         routesToPush.add(routeToPush);
       }
     }
@@ -157,7 +160,7 @@ class RePushFirstGuarded extends ReevaluationStrategy {
     final routeToPush = router.matcher.matchByRoute(
       routes[firstGuardedRouteIndex].toPageRouteInfo(),
     );
-    if(routeToPush!= null) {
+    if (routeToPush != null) {
       router._pushAllGuarded([routeToPush]);
     }
   }
@@ -178,17 +181,16 @@ class RePushFirstGuardedAndUp extends ReevaluationStrategy {
       router._removeRoute(route, notify: false);
     }
 
-
     final routesToPush = <RouteMatch>[];
-    for(final existingMatch in routes.sublist(
+    for (final existingMatch in routes.sublist(
       firstGuardedRouteIndex,
       routes.length,
-    )){
+    )) {
       final routeToPush = router.matcher.matchByRoute(
         existingMatch.toPageRouteInfo(),
       );
-      if(routeToPush!= null) {
-       routesToPush.add(routeToPush);
+      if (routeToPush != null) {
+        routesToPush.add(routeToPush);
       }
     }
     router._pushAllGuarded(routesToPush);
@@ -212,5 +214,16 @@ class _RemoveFirstGuardedAndUp extends ReevaluationStrategy {
         notify: route == routesToRemove.last,
       );
     }
+  }
+}
+
+class _RemoveAllAndPush extends ReevaluationStrategy {
+  final PageRouteInfo route;
+  const _RemoveAllAndPush(this.route) : super._();
+
+  @override
+  void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
+    router._reset();
+    router.push(route);
   }
 }

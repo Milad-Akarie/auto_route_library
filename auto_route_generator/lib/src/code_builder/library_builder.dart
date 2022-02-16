@@ -40,7 +40,7 @@ String generateLibrary(RouterConfig config, {bool usesPartBuilder = false}) {
     throwIf(
       (checkedRoutes.any((r) =>
           r.routeName == route.routeName && r.pathName != route.pathName)),
-      'Duplicate route names must have the same path! [${route.name}]\nNote: Unless specified, route name is generated from page name.',
+      'Duplicate route names must have the same path! (name: ${route.routeName}, path: ${route.pathName})\nNote: Unless specified, route name is generated from page name.',
       element: config.element,
     );
     checkedRoutes.add(route);

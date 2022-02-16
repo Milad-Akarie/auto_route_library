@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:auto_route/src/matcher/route_match.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
@@ -207,6 +206,7 @@ class RouteMatcher {
     if (parts.isNotEmpty && parts.last == "*") {
       extractedSegments = segments;
     }
+
     final stringMatch = p.joinAll(extractedSegments);
     return RouteMatch(
       path: config.path,

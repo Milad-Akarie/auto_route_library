@@ -26,9 +26,9 @@ part 'web_router.gr.dart';
       page: UserPage,
       children: [
         AutoRoute(
-          path: 'profile',
+          path: '',
           page: UserProfilePage,
-          initial: true,
+          // initial: true,
         ),
         AutoRoute(
           path: 'posts',

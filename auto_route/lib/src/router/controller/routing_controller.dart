@@ -2,27 +2,24 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
-import 'package:auto_route/src/navigation_failure.dart';
-import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/route/route_data_scope.dart';
-import 'package:auto_route/src/router/auto_route_page.dart';
 import 'package:auto_route/src/router/controller/pageless_routes_observer.dart';
 import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:auto_route/src/router/widgets/auto_route_navigator.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:universal_html/html.dart' as html;
 
 import '../../utils.dart';
 
 part '../../route/route_data.dart';
+
 part 'auto_route_guard.dart';
+
 part 'auto_router_delegate.dart';
+
 part 'navigation_history.dart';
+
 part 'root_stack_router.dart';
 
 typedef RouteDataPredicate = bool Function(RouteData route);
@@ -36,6 +33,7 @@ typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
 
 abstract class RoutingController with ChangeNotifier {
   final _childControllers = <RoutingController>[];
+
   List<RoutingController> get childControllers => _childControllers;
   final List<AutoRoutePage> _pages = [];
 
@@ -73,8 +71,7 @@ abstract class RoutingController with ChangeNotifier {
     if (!isRoot) {
       root.notifyListeners();
     }
-    if (forceUrlRebuild ||
-        (!isRouteDataActive(current) && !current._match.hasEmptyPath)) {
+    if (forceUrlRebuild || !isRouteDataActive(current)) {
       navigationHistory.rebuildUrl();
     }
   }
@@ -111,15 +108,6 @@ abstract class RoutingController with ChangeNotifier {
 
     return routeData;
   }
-
-  // void _maybeNotifyRoot() {
-  //   if (!isRoot) {
-  //     root.notifyListeners();
-  //   }
-  //   if (!isRouteDataActive(current) && !current._match.hasEmptyPath) {
-  //     navigationHistory.rebuildUrl();
-  //   }
-  // }
 
   RouteMatch? _matchOrReportFailure(
     PageRouteInfo route, [
@@ -950,7 +938,7 @@ abstract class StackRouter extends RoutingController {
     return didRemove;
   }
 
-  bool removeWhere(RouteDataPredicate predicate,{bool notify = true}) {
+  bool removeWhere(RouteDataPredicate predicate, {bool notify = true}) {
     var didRemove = false;
     for (var entry in List.unmodifiable(_pages)) {
       if (predicate(entry.routeData)) {
@@ -958,7 +946,7 @@ abstract class StackRouter extends RoutingController {
         _pages.remove(entry);
       }
     }
-    if(notify) {
+    if (notify) {
       notifyAll(forceUrlRebuild: true);
     }
     return didRemove;
