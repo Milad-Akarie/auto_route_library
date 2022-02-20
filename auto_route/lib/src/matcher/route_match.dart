@@ -37,7 +37,6 @@ class RouteMatch<T> {
     this.meta = const {},
   });
 
-
   bool get hasChildren => children?.isNotEmpty == true;
 
   bool get fromRedirect => redirectedFrom != null;
