@@ -37,7 +37,7 @@ class HomePageState extends State<HomePage> {
       label: 'Profile',
     ),
     RouteDestination(
-      route: SettingsTab(tab: 'хиты'),
+      route: SettingsTab(tab: 'tab'),
       icon: Icons.settings,
       label: 'Settings',
     ),
@@ -98,7 +98,7 @@ class HomePageState extends State<HomePage> {
             routes: [
               BooksTab(),
               ProfileTab(),
-              if (_showSettingsTap) SettingsTab(tab: 'хиты'),
+              if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
             bottomNavigationBuilder: buildBottomNav,
           );

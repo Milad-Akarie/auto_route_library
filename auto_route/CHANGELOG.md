@@ -1,4 +1,6 @@
 # ChangeLog
+## [3.2.4]
+- Fix path/query params are not updated in url when navigating to the same current path #854 #944
 ## [3.2.3+1]
 - Remove forgotten print statement
 ## [3.2.3]
