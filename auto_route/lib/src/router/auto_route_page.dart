@@ -184,7 +184,6 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
       child: buildContent(context),
     );
   }
-
 }
 
 mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {

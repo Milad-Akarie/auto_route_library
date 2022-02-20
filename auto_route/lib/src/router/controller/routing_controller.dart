@@ -826,7 +826,6 @@ abstract class StackRouter extends RoutingController {
         }
       }
     }
-
     return _pushAllGuarded(
       routes,
       onFailure: onFailure,
@@ -1098,7 +1097,6 @@ abstract class StackRouter extends RoutingController {
         if (mayUpdateController.managedByWidget) {
           mayUpdateController._onNavigate(newChildren, false);
         }
-
         return mayUpdateController._navigateAll(
           newChildren,
           onFailure: onFailure,
