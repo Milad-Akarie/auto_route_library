@@ -222,7 +222,7 @@ e.g. The following page widget will take an argument of type `Book`.
 
 ```dart        
 class BookDetailsPage extends StatelessWidget {        
- const BookDetailsRoute({required this.book});        
+ const BookDetailsPage({required this.book});        
         
   final Book book;     
   ...        
