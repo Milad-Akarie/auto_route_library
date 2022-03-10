@@ -134,7 +134,7 @@ class RootRouter extends _i12.RootStackRouter {
           _i12.RouteConfig('#redirect',
               path: '',
               parent: HomeRoute.name,
-              redirectTo: 'settings/:tab',
+              redirectTo: 'books',
               fullMatch: true),
           _i12.RouteConfig(BooksTab.name,
               path: 'books',

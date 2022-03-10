@@ -89,13 +89,7 @@ class _$WebAppRouter extends RootStackRouter {
         RouteConfig(UserRoute.name, path: '/user/:userID/page', guards: [
           authGuard
         ], children: [
-          RouteConfig('#redirect',
-              path: '',
-              parent: UserRoute.name,
-              redirectTo: 'profile',
-              fullMatch: true),
-          RouteConfig(UserProfileRoute.name,
-              path: 'profile', parent: UserRoute.name),
+          RouteConfig(UserProfileRoute.name, path: '', parent: UserRoute.name),
           RouteConfig(UserPostsRoute.name,
               path: 'posts',
               parent: UserRoute.name,
@@ -191,7 +185,7 @@ class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
   UserProfileRoute(
       {Key? key, void Function()? navigate, int userId = -1, int likes = 0})
       : super(UserProfileRoute.name,
-            path: 'profile',
+            path: '',
             args: UserProfileRouteArgs(
                 key: key, navigate: navigate, userId: userId, likes: likes),
             rawPathParams: {'userID': userId},

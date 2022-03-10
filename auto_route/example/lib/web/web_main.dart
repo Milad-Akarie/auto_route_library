@@ -1,7 +1,6 @@
 import 'package:example/web/router/web_router.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(App());
@@ -28,6 +27,11 @@ class AppState extends State<App> {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       routeInformationProvider: _appRouter.routeInfoProvider(),
       routerDelegate: _appRouter.delegate(
           // onNavigate: (UrlState state, bool initial) {},

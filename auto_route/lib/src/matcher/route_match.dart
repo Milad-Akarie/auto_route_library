@@ -37,9 +37,6 @@ class RouteMatch<T> {
     this.meta = const {},
   });
 
-  @Deprecated("Renamed to 'name'")
-  String get routeName => name;
-
   bool get hasChildren => children?.isNotEmpty == true;
 
   bool get fromRedirect => redirectedFrom != null;
@@ -123,7 +120,5 @@ class RouteMatch<T> {
     return 'RouteMatch{ routeName: $name, pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom,  path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
   }
 
-  @Deprecated("renamed to 'toPageRouteInfo'")
-  PageRouteInfo toRoute() => toPageRouteInfo();
   PageRouteInfo toPageRouteInfo() => PageRouteInfo.fromMatch(this);
 }

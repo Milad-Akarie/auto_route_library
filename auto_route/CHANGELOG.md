@@ -1,4 +1,13 @@
 # ChangeLog
+## [3.2.4]
+- Fix path/query params are not updated in url when navigating to the same current path #854 #944
+## [3.2.3+1]
+- Remove forgotten print statement
+## [3.2.3]
+- Fix routes with empty path don't update url #960
+- Fix RouteInformationProvider.routerReportsNewRouteInformation required 'type' issue #958
+## [3.2.2]
+-Add removeAllAndPush route strategy to auto_redirect_route
 ## [3.2.1]
 - Merge some readme file typo-fixes
 - Add @optionalTypeArgs to AutoRoute annotations

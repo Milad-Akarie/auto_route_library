@@ -120,7 +120,6 @@ class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T>
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
-
 class _NoAnimationPageRouteBuilder<T> extends PageRoute<T>
     with _NoAnimationPageRouteTransitionMixin<T> {
   _NoAnimationPageRouteBuilder({
@@ -166,7 +165,7 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
   bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
     // Don't perform outgoing animation if the next route is a fullscreen dialog.
     return (nextRoute is MaterialRouteTransitionMixin &&
-        !nextRoute.fullscreenDialog) ||
+            !nextRoute.fullscreenDialog) ||
         (nextRoute is _NoAnimationPageRouteTransitionMixin &&
             !nextRoute.fullscreenDialog) ||
         (nextRoute is CupertinoRouteTransitionMixin &&
@@ -175,27 +174,17 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
 
   @override
   Widget buildPage(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      ) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     return Semantics(
       scopesRoute: true,
       explicitChildNodes: true,
       child: buildContent(context),
     );
   }
-
-  Widget _defaultTransitionsBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
-    return child;
-  }
-
 }
-
 
 mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   /// Builds the primary contents of the route.

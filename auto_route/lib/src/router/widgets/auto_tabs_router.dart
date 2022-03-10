@@ -1,12 +1,7 @@
-import 'package:auto_route/src/route/page_route_info.dart';
-import 'package:auto_route/src/router/auto_route_page.dart';
-import 'package:auto_route/src/router/controller/controller_scope.dart';
-import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
-import '../controller/routing_controller.dart';
 
 typedef AnimatedIndexedStackBuilder = Widget Function(
     BuildContext context, Widget child, Animation<double> animation);

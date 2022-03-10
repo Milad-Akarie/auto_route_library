@@ -37,7 +37,7 @@ class HomePageState extends State<HomePage> {
       label: 'Profile',
     ),
     RouteDestination(
-      route: SettingsTab(tab: 'default'),
+      route: SettingsTab(tab: 'tab'),
       icon: Icons.settings,
       label: 'Settings',
     ),
@@ -54,7 +54,7 @@ class HomePageState extends State<HomePage> {
     // builder will rebuild everytime this router's stack
     // updates
     // we need it to indicate which NavigationRailDestination is active
-    return kIsWeb && false
+    return kIsWeb
         ? AutoRouter(builder: (context, child) {
             // we check for active route index by using
             // router.isRouteActive method
@@ -98,14 +98,14 @@ class HomePageState extends State<HomePage> {
             routes: [
               BooksTab(),
               ProfileTab(),
-              if (_showSettingsTap) SettingsTab(tab: 'default'),
+              if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
             bottomNavigationBuilder: buildBottomNav,
           );
   }
 
   Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
-    final hideBottomNav = tabsRouter.topMatch.meta['hideBottomNavf'] == true;
+    final hideBottomNav = tabsRouter.topMatch.meta['hideBottomNav'] == true;
     return hideBottomNav
         ? SizedBox.shrink()
         : BottomNavigationBar(
