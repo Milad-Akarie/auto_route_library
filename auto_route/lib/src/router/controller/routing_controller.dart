@@ -328,6 +328,8 @@ abstract class RoutingController with ChangeNotifier {
     return segments;
   }
 
+  String get currentPath => navigationHistory.urlState.path;
+
   @override
   String toString() => '${routeData.name} Router';
 
