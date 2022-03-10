@@ -199,7 +199,7 @@ Expression getDeferredBuilder(RouteConfig r) {
           .equalTo(refer('ConnectionState.done', materialImport))
           .conditional(
               getPageInstance(r),
-              //TODO give user ability to provide his own lading widget
+              //TODO give user ability to provide his own loading widget
               TypeReference((b) => b
                 ..symbol = 'Scaffold'
                 ..url = materialImport).constInstance([], {

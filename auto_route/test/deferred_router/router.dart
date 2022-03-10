@@ -1,13 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:flutter/material.dart';
 
 import '../test_page.dart';
 
-part 'router.gr.dart';
-
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
+  deferredLoading: true,
   routes: [
     AutoRoute(page: FirstPage, initial: true),
     AutoRoute(name: 'SecondRoute', page: EmptyRouterPage, children: [
@@ -16,7 +14,7 @@ part 'router.gr.dart';
     ]),
   ],
 )
-class AppRouter extends _$AppRouter {}
+class $AppRouter {}
 
 class EmptyRouterPage extends AutoRouter {
   const EmptyRouterPage({Key? key}) : super(key: key);

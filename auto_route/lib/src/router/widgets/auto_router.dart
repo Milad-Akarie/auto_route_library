@@ -253,11 +253,3 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     );
   }
 }
-
-class EmptyRouterPage extends AutoRouter {
-  const EmptyRouterPage({Key? key}) : super(key: key);
-}
-
-class EmptyRouterScreen extends AutoRouter {
-  const EmptyRouterScreen({Key? key}) : super(key: key);
-}
