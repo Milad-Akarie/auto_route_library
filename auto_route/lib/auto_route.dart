@@ -14,7 +14,5 @@ export 'src/router/parser/route_information_parser.dart';
 export 'src/router/provider/auto_route_information_provider.dart';
 export 'src/router/widgets/auto_back_button.dart';
 export 'src/router/widgets/auto_router.dart';
-export 'src/router/widgets/auto_router.dart';
-export 'src/router/widgets/auto_tabs_router.dart';
 export 'src/router/widgets/auto_tabs_router.dart';
 export 'src/router/widgets/auto_tabs_scaffold.dart';
