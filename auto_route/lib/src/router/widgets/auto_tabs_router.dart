@@ -125,7 +125,8 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
         key: parentRoute.key,
         homeIndex: widget.homeIndex,
         managedByWidget: widget.declarative,
-        initialIndex: widget._activeIndex,
+        initialIndex: widget._activeIndex ??
+            (widget.homeIndex != -1 ? widget.homeIndex : null),
         routeData: parentRoute,
         onNavigate: widget.onNavigate,
         routeCollection: _parentController.routeCollection.subCollectionOf(
