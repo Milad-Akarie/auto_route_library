@@ -35,7 +35,7 @@ class AutoTabsRouter extends StatefulWidget {
     this.navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
   })  : declarative = false,
-        _activeIndex = null,
+        _activeIndex = homeIndex,
         onNavigate = null,
         super(key: key);
 
