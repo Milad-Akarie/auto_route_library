@@ -333,6 +333,9 @@ class CustomRoute<T> extends AutoRoute<T> {
   /// passed to the barrierLabel property in [PageRouteBuilder]
   final String? barrierLabel;
 
+  /// passed to the barrierColor property in [PageRouteBuilder]
+  final int? barrierColor;
+
   const CustomRoute({
     bool initial = false,
     bool fullscreenDialog = false,
@@ -346,6 +349,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     List<AutoRoute>? children,
     this.customRouteBuilder,
     this.barrierLabel,
+    this.barrierColor,
     this.transitionsBuilder,
     this.durationInMilliseconds,
     this.reverseDurationInMilliseconds,

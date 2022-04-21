@@ -52,6 +52,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     RootStackRouter controller, {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
+    String? initialDeepLink,
     RoutePopCallBack? onPopRoute,
     OnNavigateCallBack? onNavigate,
     NavigatorObserversBuilder navigatorObservers,
@@ -206,6 +207,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     RootStackRouter router, {
     required this.routes,
     String? navRestorationScopeId,
+    String? initialDeepLink,
     this.onPopRoute,
     this.onNavigate,
     NavigatorObserversBuilder navigatorObservers =
@@ -214,13 +216,21 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
           router,
           navRestorationScopeId: navRestorationScopeId,
           navigatorObservers: navigatorObservers,
+          initialDeepLink: initialDeepLink,
         ) {
     router._managedByWidget = true;
   }
 
   @override
   Future<void> setInitialRoutePath(UrlState tree) {
-    return _onNavigate(tree, true);
+    if (initialDeepLink != null) {
+      final routes = controller.buildPageRoutesStack(initialDeepLink!);
+       controller.pendingRoutesHandler._setPendingRoutes(routes);
+    } else if (tree.hasSegments) {
+      final routes = tree.segments.map((e) => e.toPageRouteInfo()).toList();
+       controller.pendingRoutesHandler._setPendingRoutes(routes);
+    }
+    return SynchronousFuture(null);
   }
 
   @override
@@ -228,12 +238,12 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     return _onNavigate(tree);
   }
 
-  Future<void> _onNavigate(UrlState tree, [bool initial = false]) {
+  Future<void> _onNavigate(UrlState tree) {
     if (tree.hasSegments) {
       controller.navigateAll(tree.segments);
     }
     if (onNavigate != null) {
-      onNavigate!(tree, true);
+      onNavigate!(tree);
     }
 
     return SynchronousFuture(null);

@@ -88,6 +88,7 @@ class PageBasedMaterialPageRoute<T> extends PageRoute<T>
   AutoRoutePage get _page => settings as AutoRoutePage;
 
   List<VoidCallback> scopes = [];
+
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
 
@@ -207,7 +208,8 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   bool get barrierDismissible => _page.barrierDismissible;
 
   @override
-  Color? get barrierColor => _page.barrierColor;
+  Color? get barrierColor =>
+      _page.barrierColor == null ? null : Color(_page.barrierColor!);
 
   @override
   String? get barrierLabel => _page.barrierLabel;
@@ -352,7 +354,7 @@ class CustomPage<T> extends AutoRoutePage<T> {
   final bool opaque;
   final int durationInMilliseconds;
   final int reverseDurationInMilliseconds;
-  final Color? barrierColor;
+  final int? barrierColor;
   final bool barrierDismissible;
   final String? barrierLabel;
   final RouteTransitionsBuilder? transitionsBuilder;

@@ -43,7 +43,7 @@ void main() {
   });
 
   testWidgets(
-      'Pushing ${SecondRoute.name} and ${ThirdRoute.name}  show show [ThirdPage]',
+      'Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show [ThirdPage]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.pushAll([

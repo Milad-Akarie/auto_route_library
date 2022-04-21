@@ -58,7 +58,7 @@ class WebAppRouter extends _$WebAppRouter {
   WebAppRouter(
     AuthService authService,
   ) : super(
-          authGuard: AuthGuard(authService),
+          // authGuard: AuthGuard(authService),
         );
 }
 

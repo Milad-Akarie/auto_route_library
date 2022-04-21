@@ -184,6 +184,8 @@ Spec buildMethod(RouteConfig r) {
                       if (r.customRouteBarrierLabel != null)
                         'barrierLabel':
                             literalString(r.customRouteBarrierLabel!),
+                      if (r.customRouteBarrierColor != null)
+                        'barrierColor': literal(r.customRouteBarrierColor!),
                     }
                   },
                 )

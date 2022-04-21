@@ -202,7 +202,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             },
             stack: stack,
           );
-    var stateHash = controller!.stateHash;
+    final stateHash = controller!.stateHash;
 
     return RouterScope(
       controller: _controller!,

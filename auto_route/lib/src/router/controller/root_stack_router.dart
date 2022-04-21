@@ -55,6 +55,7 @@ abstract class RootStackRouter extends StackRouter {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
+    String? initialDeepLink,
     OnNavigateCallBack? onNavigate,
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
@@ -63,6 +64,7 @@ abstract class RootStackRouter extends StackRouter {
       this,
       routes: routes,
       onNavigate: onNavigate,
+      initialDeepLink: initialDeepLink,
       onPopRoute: onPopRoute,
       navRestorationScopeId: navRestorationScopeId,
       navigatorObservers: navigatorObservers,

@@ -54,7 +54,7 @@ class HomePageState extends State<HomePage> {
     // builder will rebuild everytime this router's stack
     // updates
     // we need it to indicate which NavigationRailDestination is active
-    return kIsWeb
+    return kIsWeb || true
         ? AutoRouter(builder: (context, child) {
             // we check for active route index by using
             // router.isRouteActive method
@@ -89,10 +89,11 @@ class HomePageState extends State<HomePage> {
           })
         : AutoTabsScaffold(
             homeIndex: 0,
+            drawer: SizedBox(),
             appBarBuilder: (context, tabsRouter) {
               return AppBar(
                 title: Text(tabsRouter.topRoute.name),
-                leading: AutoBackButton(),
+                leading: AutoLeadingButton(),
               );
             },
             routes: [

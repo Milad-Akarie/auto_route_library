@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/screens/books/book_details_page.dart';
 import 'package:example/mobile/screens/books/book_list_page.dart';
-
 import '../screens/home_page.dart';
 import '../screens/login_page.dart';
 import '../screens/profile/routes.dart';
 import '../screens/settings.dart';
 import '../screens/user-data/routes.dart';
+import 'auth_guard.dart';
 
 @MaterialAutoRouter(
   replaceInRouteName: 'Page|Dialog,Route',
@@ -15,7 +15,7 @@ import '../screens/user-data/routes.dart';
     AutoRoute<String>(
       path: '/',
       page: HomePage,
-      // guards: [AuthGuard],
+      guards: [AuthGuard],
       children: [
         AutoRoute(
           path: 'books',
@@ -30,6 +30,7 @@ import '../screens/user-data/routes.dart';
             AutoRoute(
               path: ':id',
               page: BookDetailsPage,
+              fullscreenDialog: true,
               meta: {'hideBottomNav': true},
             ),
           ],

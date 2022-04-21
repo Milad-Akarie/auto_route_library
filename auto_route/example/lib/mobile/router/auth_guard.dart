@@ -11,7 +11,7 @@ class AuthGuard extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (!isAuthenticated) {
       // ignore: unawaited_futures
-      router.push(
+      router.pushAndPopUntil(
         LoginRoute(onLoginResult: (_) {
           isAuthenticated = true;
           // we can't pop the bottom page in the navigator's stack
@@ -19,6 +19,7 @@ class AuthGuard extends AutoRouteGuard {
           resolver.next();
           router.removeLast();
         }),
+        predicate: (r) => true,
       );
     } else {
       resolver.next(true);

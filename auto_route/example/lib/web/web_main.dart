@@ -1,6 +1,5 @@
 import 'package:example/web/router/web_router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(App());
@@ -20,6 +19,7 @@ class AppState extends State<App> {
     ..addListener(() {
       setState(() {});
     });
+
   late final _appRouter = WebAppRouter(authService);
 
   @override
@@ -27,22 +27,16 @@ class AppState extends State<App> {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
       routeInformationProvider: _appRouter.routeInfoProvider(),
-      routerDelegate: _appRouter.delegate(
-          // onNavigate: (UrlState state, bool initial) {},
-          // routes: (_) => [
-          //   if (authService.isAuthenticated)
-          //     HomeRoute()
-          //   else
-          //     LoginRoute(),
-          // ],
-          ),
       routeInformationParser: _appRouter.defaultRouteParser(),
+      routerDelegate: _appRouter.declarativeDelegate(
+        initialDeepLink: '/user/1/posts/favorite',
+        routes: (handler) {
+          print(handler.peek?.map((e) => e.routeName));
+          if (!authService.isAuthenticated) return [LoginRoute()];
+          return handler.initialPendingRoutes ?? [HomeRouter()];
+        },
+      ),
     );
   }
 }

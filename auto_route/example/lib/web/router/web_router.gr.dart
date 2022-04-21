@@ -13,14 +13,23 @@
 part of 'web_router.dart';
 
 class _$WebAppRouter extends RootStackRouter {
-  _$WebAppRouter(
-      {GlobalKey<NavigatorState>? navigatorKey, required this.authGuard})
+  _$WebAppRouter([GlobalKey<NavigatorState>? navigatorKey])
       : super(navigatorKey);
-
-  final AuthGuard authGuard;
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    LoginRoute.name: (routeData) {
+      return CupertinoPageX<dynamic>(
+          routeData: routeData, child: const LoginPage());
+    },
+    HomeRouter.name: (routeData) {
+      return CupertinoPageX<dynamic>(
+          routeData: routeData, child: const EmptyRouterPage());
+    },
+    NotFoundRoute.name: (routeData) {
+      return CupertinoPageX<dynamic>(
+          routeData: routeData, child: NotFoundScreen());
+    },
     HomeRoute.name: (routeData) {
       final args =
           routeData.argsAs<HomeRouteArgs>(orElse: () => const HomeRouteArgs());
@@ -31,20 +40,12 @@ class _$WebAppRouter extends RootStackRouter {
               navigate: args.navigate,
               showUserPosts: args.showUserPosts));
     },
-    LoginRoute.name: (routeData) {
-      return CupertinoPageX<dynamic>(
-          routeData: routeData, child: const LoginPage());
-    },
     UserRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<UserRouteArgs>(
           orElse: () => UserRouteArgs(id: pathParams.getInt('userID', -1)));
       return AdaptivePage<dynamic>(
           routeData: routeData, child: UserPage(key: args.key, id: args.id));
-    },
-    NotFoundRoute.name: (routeData) {
-      return CupertinoPageX<dynamic>(
-          routeData: routeData, child: NotFoundScreen());
     },
     UserProfileRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
@@ -80,33 +81,58 @@ class _$WebAppRouter extends RootStackRouter {
 
   @override
   List<RouteConfig> get routes => [
-        RouteConfig(HomeRoute.name, path: '/'),
         RouteConfig(LoginRoute.name, path: '/login'),
-        RouteConfig('/user/:userID#redirect',
-            path: '/user/:userID',
-            redirectTo: '/user/:userID/page',
-            fullMatch: true),
-        RouteConfig(UserRoute.name, path: '/user/:userID/page', guards: [
-          authGuard
-        ], children: [
-          RouteConfig(UserProfileRoute.name, path: '', parent: UserRoute.name),
-          RouteConfig(UserPostsRoute.name,
-              path: 'posts',
-              parent: UserRoute.name,
+        RouteConfig(HomeRouter.name, path: '/', children: [
+          RouteConfig(HomeRoute.name, path: '', parent: HomeRouter.name),
+          RouteConfig(UserRoute.name,
+              path: 'user/:userID',
+              parent: HomeRouter.name,
               children: [
-                RouteConfig('#redirect',
-                    path: '',
-                    parent: UserPostsRoute.name,
-                    redirectTo: 'all',
-                    fullMatch: true),
-                RouteConfig(UserAllPostsRoute.name,
-                    path: 'all', parent: UserPostsRoute.name),
-                RouteConfig(UserFavoritePostsRoute.name,
-                    path: 'favorite', parent: UserPostsRoute.name)
+                RouteConfig(UserProfileRoute.name,
+                    path: '', parent: UserRoute.name),
+                RouteConfig(UserPostsRoute.name,
+                    path: 'posts',
+                    parent: UserRoute.name,
+                    children: [
+                      RouteConfig('#redirect',
+                          path: '',
+                          parent: UserPostsRoute.name,
+                          redirectTo: 'all',
+                          fullMatch: true),
+                      RouteConfig(UserAllPostsRoute.name,
+                          path: 'all', parent: UserPostsRoute.name),
+                      RouteConfig(UserFavoritePostsRoute.name,
+                          path: 'favorite', parent: UserPostsRoute.name)
+                    ])
               ])
         ]),
         RouteConfig(NotFoundRoute.name, path: '*')
       ];
+}
+
+/// generated route for
+/// [LoginPage]
+class LoginRoute extends PageRouteInfo<void> {
+  const LoginRoute() : super(LoginRoute.name, path: '/login');
+
+  static const String name = 'LoginRoute';
+}
+
+/// generated route for
+/// [EmptyRouterPage]
+class HomeRouter extends PageRouteInfo<void> {
+  const HomeRouter({List<PageRouteInfo>? children})
+      : super(HomeRouter.name, path: '/', initialChildren: children);
+
+  static const String name = 'HomeRouter';
+}
+
+/// generated route for
+/// [NotFoundScreen]
+class NotFoundRoute extends PageRouteInfo<void> {
+  const NotFoundRoute() : super(NotFoundRoute.name, path: '*');
+
+  static const String name = 'NotFoundRoute';
 }
 
 /// generated route for
@@ -115,7 +141,7 @@ class HomeRoute extends PageRouteInfo<HomeRouteArgs> {
   HomeRoute(
       {Key? key, void Function()? navigate, void Function()? showUserPosts})
       : super(HomeRoute.name,
-            path: '/',
+            path: '',
             args: HomeRouteArgs(
                 key: key, navigate: navigate, showUserPosts: showUserPosts));
 
@@ -138,19 +164,11 @@ class HomeRouteArgs {
 }
 
 /// generated route for
-/// [LoginPage]
-class LoginRoute extends PageRouteInfo<void> {
-  const LoginRoute() : super(LoginRoute.name, path: '/login');
-
-  static const String name = 'LoginRoute';
-}
-
-/// generated route for
 /// [UserPage]
 class UserRoute extends PageRouteInfo<UserRouteArgs> {
   UserRoute({Key? key, int id = -1, List<PageRouteInfo>? children})
       : super(UserRoute.name,
-            path: '/user/:userID/page',
+            path: 'user/:userID',
             args: UserRouteArgs(key: key, id: id),
             rawPathParams: {'userID': id},
             initialChildren: children);
@@ -169,14 +187,6 @@ class UserRouteArgs {
   String toString() {
     return 'UserRouteArgs{key: $key, id: $id}';
   }
-}
-
-/// generated route for
-/// [NotFoundScreen]
-class NotFoundRoute extends PageRouteInfo<void> {
-  const NotFoundRoute() : super(NotFoundRoute.name, path: '*');
-
-  static const String name = 'NotFoundRoute';
 }
 
 /// generated route for

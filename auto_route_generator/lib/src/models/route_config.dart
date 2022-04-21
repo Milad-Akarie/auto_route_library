@@ -16,6 +16,7 @@ class RouteConfig {
   final bool? customRouteOpaque;
   final bool? customRouteBarrierDismissible;
   final String? customRouteBarrierLabel;
+  final int? customRouteBarrierColor;
   final bool? maintainState;
   final ResolvedType? pageType;
   final String className;
@@ -64,6 +65,7 @@ class RouteConfig {
     this.childRouterConfig,
     this.hasConstConstructor = false,
     this.usesPathAsKey = false,
+    this.customRouteBarrierColor,
     this.meta = const [],
   });
 
@@ -76,6 +78,7 @@ class RouteConfig {
     bool? fullMatch,
     bool? customRouteOpaque,
     bool? customRouteBarrierDismissible,
+    int? customRouteBarrierColor,
     String? customRouteBarrierLabel,
     bool? maintainState,
     ResolvedType? pageType,
@@ -178,6 +181,8 @@ class RouteConfig {
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
       meta: meta ?? this.meta,
+      customRouteBarrierColor:
+          customRouteBarrierColor ?? this.customRouteBarrierColor,
     );
   }
 
