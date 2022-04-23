@@ -208,17 +208,40 @@ class RouteConfig {
 
   Iterable<ParamConfig> get namedParams => parameters.where((p) => p.isNamed);
 
+  static const String kDefaultRouteNameSuffix = 'Route';
+
+  static String defaultRouteName(String className) {
+    return capitalize('${className}$kDefaultRouteNameSuffix');
+  }
+
   String get routeName {
-    var nameToUse;
-    if (name != null) {
-      nameToUse = name;
-    } else if (replacementInRouteName != null &&
-        replacementInRouteName!.split(',').length == 2) {
-      var parts = replacementInRouteName!.split(',');
-      nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
-    } else {
-      nameToUse = "${className}Route";
+    final _name = name;
+    final _defaultRouteName = defaultRouteName(className);
+
+    if (_name != null) {
+      if (_name.isEmpty) return _defaultRouteName;
+      return _name;
     }
+
+    final pattern = replacementInRouteName;
+
+    if (pattern == null) return _defaultRouteName;
+
+    final parts = pattern.split(';');
+
+    String nameToUse = className;
+
+    for (final part in parts) {
+      final splitted = part.split(',');
+      if (splitted.length != 2) continue;
+      final toReplace = splitted[0].split('/');
+      final replacement = splitted[1];
+      final regExp = RegExp(toReplace.join('|'));
+      nameToUse = nameToUse.replaceAll(regExp, replacement);
+    }
+
+    if (nameToUse == className) nameToUse = _defaultRouteName;
+
     return capitalize(nameToUse);
   }
 
