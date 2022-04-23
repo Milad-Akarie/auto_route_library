@@ -19,26 +19,40 @@
 --- **for more docs with examples** https://autoroute.vercel.app
 
 - [Introduction](#introduction)
-  - [Installation](#installation)
-  - [Setup and Usage](#setup-and-usage)
-- [Generated routes](#generated-routes)
-- [Navigation](#navigating-between-screens)
-  - [Navigating Between Screens](#navigating-between-screens)
-  - [Passing Arguments](#passing-arguments)
-  - [Returning Results](#returning-results)
-  - [Nested navigation](#nested-navigation)
-  - [Tab Navigation](#tab-navigation)
-  - [Finding The Right Router](#finding-the-right-router)
-  - [Navigating Without Context](#navigating-without-context)
-- [Declarative Navigation](#declarative-navigation)
+    - [What is AutoRoute?](#what-is-autoroute)
+    - [Why AutoRoute?](#why-autoroute)
+- [Installation](#installation)
+- [Setup And Usage](#setup-and-usage)
+  - [Using part builder ( New in version 3.0.0+)](#using-part-builder--new-in-version-300)
+    - [Now simply run the generator](#now-simply-run-the-generator)
+    - [Finalize the setup](#finalize-the-setup)
+- [Generated Routes](#generated-routes)
+- [Navigating Between Screens](#navigating-between-screens)
+- [Passing Arguments](#passing-arguments)
+- [Returning Results](#returning-results)
+- [Nested Navigation](#nested-navigation)
+  - [Things to keep in mind when implementing nested navigation](#things-to-keep-in-mind-when-implementing-nested-navigation)
+- [Tab Navigation](#tab-navigation)
+- [Finding The Right Router](#finding-the-right-router)
+- [Navigating Without Context](#navigating-without-context)
 - [Working with Paths](#working-with-paths)
-- [Route guards](#route-guards)
-- [Wrapping routes](#wrapping-routes)
+  - [Path Parameters (dynamic segments)](#path-parameters-dynamic-segments)
+  - [Query Parameters](#query-parameters)
+  - [Redirecting Paths](#redirecting-paths)
+  - [Wildcards](#wildcards)
+- [Route Guards](#route-guards)
+- [Wrapping Routes](#wrapping-routes)
 - [Navigation Observers](#navigation-observers)
-- [Customization](#customizations)
-  - [Custom Route Transitions](#custom-route-transitions)
-  - [Custom Route Builder](#custom-route-builder)
+- [Customizations](#customizations)
+      - [MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter](#materialautorouter--cupertinoautorouter--adaptiveautorouter)
+    - [CustomAutoRouter](#customautorouter)
+    - [MaterialRoute | CupertinoRoute | AdaptiveRoute | CustomRoute](#materialroute--cupertinoroute--adaptiveroute--customroute)
+    - [CupertinoRoute Specific => CupertinoPageRoute](#cupertinoroute-specific--cupertinopageroute)
+    - [CustomRoute Specific => PageRouteBuilder](#customroute-specific--pageroutebuilder)
+- [Custom Route Transitions](#custom-route-transitions)
+- [Custom Route Builder](#custom-route-builder)
 - [Examples](#examples)
+  - [Support auto_route](#support-auto_route)
 
 
 ## Introduction
@@ -874,51 +888,51 @@ class BooksListPage extends State<BookListPage> with AutoRouteAware {
 ## Customizations
 ##### MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter
 
-| Property                                 | Default value | Definition                                                                               |    
-| ---------------------------------------- | ------------- | ---------------------------------------------------------------------------------------- |    
-| preferRelativeImports [bool] | true         | if true relative imports will be used when possible |    
-| replaceInRouteName [String] |    ''     | used to replace conventional words in generated route name (whatToReplacePattern,replacement) |    
+| Property                     | Default value | Definition                                                                                                                  |
+| ---------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| preferRelativeImports [bool] | true          | if true relative imports will be used when possible                                                                         |
+| replaceInRouteName [String?] | null          | used to replace conventional words in generated route name (whatToReplace1/toReplace2,replacement1;toReplace2,replacement2) |
 
 #### CustomAutoRouter
 
-| Property                        | Default value | Definition                                                                       |    
-| ------------------------------- | :-----------: | -------------------------------------------------------------------------------- |    
-| customRouteBuilder    |     null      | used to provide a custom route, it takes in BuildContext and a CustomPage  and returns a PageRoute             |    
-| transitionsBuilder    |     null      | extension for the transitionsBuilder property in PageRouteBuilder                |    
-| opaque                   |     true      | extension for the opaque property in PageRouteBuilder                            |    
-| barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |    
-| durationInMilliseconds  |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |    
-| reverseDurationInMilliseconds  |     null      | extension for the reverseDurationInMilliseconds(millieSeconds) property in PageRouteBuilder |    
+| Property                      | Default value | Definition                                                                                         |
+| ----------------------------- | :-----------: | -------------------------------------------------------------------------------------------------- |
+| customRouteBuilder            |     null      | used to provide a custom route, it takes in BuildContext and a CustomPage  and returns a PageRoute |
+| transitionsBuilder            |     null      | extension for the transitionsBuilder property in PageRouteBuilder                                  |
+| opaque                        |     true      | extension for the opaque property in PageRouteBuilder                                              |
+| barrierDismissible            |     false     | extension for the barrierDismissible property in PageRouteBuilder                                  |
+| durationInMilliseconds        |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder                   |
+| reverseDurationInMilliseconds |     null      | extension for the reverseDurationInMilliseconds(millieSeconds) property in PageRouteBuilder        |
 
 
 #### MaterialRoute | CupertinoRoute | AdaptiveRoute | CustomRoute
 
-| Property                | Default value | Definition                                                                                 |    
-| ----------------------- | :-----------: | ------------------------------------------------------------------------------------------ |    
-| initial          |     false     | sets path to '/' or '' unless path is provided then it generates auto redirect to it.                                                          |    
-| path           |     null      | an auto generated path will be used if not provided|    
-| name           |     null      | this will be the name of the generated route, if not provided a generated name will be used|    
-| usePathAsKey           |     false      | if true path is used as page key instead of name|    
-| fullscreenDialog  |     false     | extension for the fullscreenDialog property in PageRoute                                   |    
-| maintainState    |     true      | extension for the maintainState property in PageRoute                                      |    
-| meta    |     {}      | primitive meta data to be passed to the consumed route
+| Property         | Default value | Definition                                                                                  |
+| ---------------- | :-----------: | ------------------------------------------------------------------------------------------- |
+| initial          |     false     | sets path to '/' or '' unless path is provided then it generates auto redirect to it.       |
+| path             |     null      | an auto generated path will be used if not provided                                         |
+| name             |     null      | this will be the name of the generated route, if not provided a generated name will be used |
+| usePathAsKey     |     false     | if true path is used as page key instead of name                                            |
+| fullscreenDialog |     false     | extension for the fullscreenDialog property in PageRoute                                    |
+| maintainState    |     true      | extension for the maintainState property in PageRoute                                       |
+| meta             |      {}       | primitive meta data to be passed to the consumed route                                      |
 
 #### CupertinoRoute Specific => CupertinoPageRoute
 
-| Property       | Default value | Definition                                             |    
-| -------------- | :-----------: | ------------------------------------------------------ |    
-| title  |     null      | extension for the title property in CupertinoPageRoute |    
+| Property | Default value | Definition                                             |
+| -------- | :-----------: | ------------------------------------------------------ |
+| title    |     null      | extension for the title property in CupertinoPageRoute |
 
 #### CustomRoute Specific => PageRouteBuilder
 
-| Property                        | Default value | Definition                                                                       |    
-| ------------------------------- | :-----------: | -------------------------------------------------------------------------------- |    
-| transitionsBuilder    |     null      | extension for the transitionsBuilder property in PageRouteBuilder                |    
-| customRouteBuilder    |     null      | used to provide a custom route, it takes in BuildContext and a CustomPage  and returns a PageRoute
-| opaque                  |     true      | extension for the opaque property in PageRouteBuilder                            |    
-| barrierDismissible       |     false     | extension for the barrierDismissible property in PageRouteBuilder                |    
-| durationInMilliseconds  |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder |    
-| reverseDurationInMilliseconds  |     null      | extension for the reverseDurationInMilliseconds(millieSeconds) property in PageRouteBuilder |    
+| Property                      | Default value | Definition                                                                                         |
+| ----------------------------- | :-----------: | -------------------------------------------------------------------------------------------------- |
+| transitionsBuilder            |     null      | extension for the transitionsBuilder property in PageRouteBuilder                                  |
+| customRouteBuilder            |     null      | used to provide a custom route, it takes in BuildContext and a CustomPage  and returns a PageRoute |
+| opaque                        |     true      | extension for the opaque property in PageRouteBuilder                                              |
+| barrierDismissible            |     false     | extension for the barrierDismissible property in PageRouteBuilder                                  |
+| durationInMilliseconds        |     null      | extension for the transitionDuration(millieSeconds) property in PageRouteBuilder                   |
+| reverseDurationInMilliseconds |     null      | extension for the reverseDurationInMilliseconds(millieSeconds) property in PageRouteBuilder        |
 
 ## Custom Route Transitions
 
