@@ -211,7 +211,7 @@ class RouteConfig {
   static const String kDefaultRouteNameSuffix = 'Route';
 
   static String defaultRouteName(String className) {
-    return capitalize('${className}$kDefaultRouteNameSuffix');
+    return capitalize('$className$kDefaultRouteNameSuffix');
   }
 
   String get routeName {
