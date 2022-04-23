@@ -14,13 +14,32 @@ class AutoRouterAnnotation {
   ///
   /// You can replace some relative parts in your route names
   /// by providing a replacement in the follow pattern
-  /// [whatToReplace,replacement]
-  /// what to replace and the replacement should be
-  /// separated with a comma [,]
-  /// e.g 'Page,Route'
+  ///
+  /// [whatToReplace1/otherToReplace1,replacement1;whatToReplace2,replacement2]
+  ///
+  /// what to replace and the replacement should be separated with a comma [,]
+  /// e.g 'Page,Route'.
   /// so ProductDetailsPage would be ProductDetailsRoute
   ///
-  /// defaults no null, ignored if a route name is provided.
+  /// You can specify multiple replacements using slash [/] and semicolon [;].
+  ///
+  /// Treat slash as "or" [||] operator.
+  /// i. e. pattern 'Screen/View,Route'
+  /// means if class name contains 'Screen' or 'View',
+  /// then it will be replaced by 'Route'.
+  /// So 'Screen/View,Route' pattern will make 'MyRoute' out of 'MyScreen'
+  /// and 'MyView'.
+  ///
+  /// Treat semicolon as "and" [&&] operator.
+  /// i. e. pattern 'Screen,Route;Deferred,'
+  /// means if class name contains 'Screen' then it will be replaced by 'Route',
+  /// also after this, the resulting string will be checked if it
+  /// contains 'Deferred'.
+  /// If contains, 'Deferred' will be replaced by ''(empty string).
+  /// So, 'Screen/Scope/View,Route;Deferred,' pattern will make 'MyRoute'
+  /// out of 'MyScreenDeferred'.
+  ///
+  /// Defaults to null, ignored if a route name is provided.
   final String? replaceInRouteName;
 
   const AutoRouterAnnotation._(
