@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -101,6 +102,53 @@ class HomePageState extends State<HomePage> {
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
             bottomNavigationBuilder: buildBottomNav,
+            endDrawer: Drawer(
+              child: Column(
+                children: [
+                  SizedBox(height: 50),
+                  SvgPicture.asset(
+                    'assets/auto_route_logo.svg',
+                    width: 250,
+                  ),
+                  SizedBox(height: 50),
+                  ListTile(
+                    leading: Icon(Icons.ad_units_outlined),
+                    title: Text("Tab Bar"),
+                    onTap: () {
+                      context.router.pop();
+                      context.router.push(TabbarRoute());
+                    },
+                  ),
+                  SizedBox(height: 5),
+                  ListTile(
+                    leading: Icon(Icons.source),
+                    title: Text("Books"),
+                    onTap: () {
+                      context.router.pop();
+                      context.navigateTo(destinations[0].route);
+                    },
+                  ),
+                  SizedBox(height: 5),
+                  ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text("Profile"),
+                    onTap: () {
+                      context.router.pop();
+                      context.navigateTo(destinations[1].route);
+                    },
+                  ),
+                  SizedBox(height: 5),
+                  ListTile(
+                    leading: Icon(Icons.settings),
+                    title: Text("Settings"),
+                    onTap: () {
+                      context.router.pop();
+                      context.navigateTo(destinations[2].route);
+                    },
+                  ),
+                ],
+              ),
+            ),
           );
   }
 

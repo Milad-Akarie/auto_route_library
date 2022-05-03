@@ -10,34 +10,37 @@
 //
 // ignore_for_file: type=lint
 
-import 'package:auto_route/auto_route.dart' as _i4;
-import 'package:flutter/material.dart' as _i12;
+import 'package:auto_route/auto_route.dart' as _i5;
+import 'package:flutter/material.dart' as _i15;
 
-import '../screens/books/book_details_page.dart' as _i7;
-import '../screens/books/book_list_page.dart' as _i6;
+import '../screens/books/book_details_page.dart' as _i8;
+import '../screens/books/book_list_page.dart' as _i7;
 import '../screens/home_page.dart' as _i1;
 import '../screens/login_page.dart' as _i3;
-import '../screens/profile/my_books_page.dart' as _i9;
-import '../screens/profile/profile_page.dart' as _i8;
-import '../screens/settings.dart' as _i5;
+import '../screens/profile/my_books_page.dart' as _i10;
+import '../screens/profile/profile_page.dart' as _i9;
+import '../screens/settings.dart' as _i6;
+import '../screens/tabbar/page_one_Screen.dart' as _i13;
+import '../screens/tabbar/page_two_screen.dart' as _i14;
+import '../screens/tabbar/tabbar_screen.dart' as _i4;
 import '../screens/user-data/data_collector.dart' as _i2;
-import '../screens/user-data/single_field_page.dart' as _i10;
-import '../screens/user-data/user_data_page.dart' as _i11;
+import '../screens/user-data/single_field_page.dart' as _i11;
+import '../screens/user-data/user_data_page.dart' as _i12;
 
-class RootRouter extends _i4.RootStackRouter {
-  RootRouter([_i12.GlobalKey<_i12.NavigatorState>? navigatorKey])
+class RootRouter extends _i5.RootStackRouter {
+  RootRouter([_i15.GlobalKey<_i15.NavigatorState>? navigatorKey])
       : super(navigatorKey);
 
   @override
-  final Map<String, _i4.PageFactory> pagesMap = {
+  final Map<String, _i5.PageFactory> pagesMap = {
     HomeRoute.name: (routeData) {
-      return _i4.MaterialPageX<String>(
+      return _i5.MaterialPageX<String>(
           routeData: routeData, child: const _i1.HomePage());
     },
     UserDataCollectorRoute.name: (routeData) {
       final args = routeData.argsAs<UserDataCollectorRouteArgs>(
           orElse: () => const UserDataCollectorRouteArgs());
-      return _i4.MaterialPageX<_i2.UserData>(
+      return _i5.MaterialPageX<_i2.UserData>(
           routeData: routeData,
           child: _i2.UserDataCollectorPage(
               key: args.key, onResult: args.onResult));
@@ -45,20 +48,24 @@ class RootRouter extends _i4.RootStackRouter {
     LoginRoute.name: (routeData) {
       final args = routeData.argsAs<LoginRouteArgs>(
           orElse: () => const LoginRouteArgs());
-      return _i4.MaterialPageX<dynamic>(
+      return _i5.MaterialPageX<dynamic>(
           routeData: routeData,
           child: _i3.LoginPage(
               key: args.key,
               onLoginResult: args.onLoginResult,
               showBackButton: args.showBackButton));
     },
+    TabbarRoute.name: (routeData) {
+      return _i5.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i4.TabbarScreen());
+    },
     BooksTab.name: (routeData) {
-      return _i4.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i4.EmptyRouterPage());
+      return _i5.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i5.EmptyRouterPage());
     },
     ProfileTab.name: (routeData) {
-      return _i4.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i4.EmptyRouterPage());
+      return _i5.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i5.EmptyRouterPage());
     },
     SettingsTab.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
@@ -67,41 +74,41 @@ class RootRouter extends _i4.RootStackRouter {
           orElse: () => SettingsTabArgs(
               tab: pathParams.getString('tab'),
               query: queryParams.getString('query', 'none')));
-      return _i4.MaterialPageX<dynamic>(
+      return _i5.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i5.SettingsPage(
+          child: _i6.SettingsPage(
               key: args.key, tab: args.tab, query: args.query));
     },
     BookListRoute.name: (routeData) {
-      return _i4.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i6.BookListPage());
+      return _i5.MaterialPageX<dynamic>(
+          routeData: routeData, child: _i7.BookListPage());
     },
     BookDetailsRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<BookDetailsRouteArgs>(
           orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -1)));
-      return _i4.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i7.BookDetailsPage(id: args.id));
+      return _i5.MaterialPageX<dynamic>(
+          routeData: routeData, child: _i8.BookDetailsPage(id: args.id));
     },
     ProfileRoute.name: (routeData) {
-      return _i4.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i8.ProfilePage());
+      return _i5.MaterialPageX<dynamic>(
+          routeData: routeData, child: _i9.ProfilePage());
     },
     MyBooksRoute.name: (routeData) {
       final queryParams = routeData.queryParams;
       final args = routeData.argsAs<MyBooksRouteArgs>(
           orElse: () => MyBooksRouteArgs(
               filter: queryParams.optString('filter', 'none')));
-      return _i4.MaterialPageX<dynamic>(
+      return _i5.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i9.MyBooksPage(key: args.key, filter: args.filter));
+          child: _i10.MyBooksPage(key: args.key, filter: args.filter));
     },
     NameFieldRoute.name: (routeData) {
       final args = routeData.argsAs<NameFieldRouteArgs>(
           orElse: () => const NameFieldRouteArgs());
-      return _i4.MaterialPageX<dynamic>(
+      return _i5.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i10.SingleFieldPage(
+          child: _i11.SingleFieldPage(
               key: args.key,
               message: args.message,
               willPopMessage: args.willPopMessage,
@@ -110,9 +117,9 @@ class RootRouter extends _i4.RootStackRouter {
     FavoriteBookFieldRoute.name: (routeData) {
       final args = routeData.argsAs<FavoriteBookFieldRouteArgs>(
           orElse: () => const FavoriteBookFieldRouteArgs());
-      return _i4.MaterialPageX<dynamic>(
+      return _i5.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i10.SingleFieldPage(
+          child: _i11.SingleFieldPage(
               key: args.key,
               message: args.message,
               willPopMessage: args.willPopMessage,
@@ -121,63 +128,77 @@ class RootRouter extends _i4.RootStackRouter {
     UserDataRoute.name: (routeData) {
       final args = routeData.argsAs<UserDataRouteArgs>(
           orElse: () => const UserDataRouteArgs());
-      return _i4.MaterialPageX<dynamic>(
+      return _i5.MaterialPageX<dynamic>(
           routeData: routeData,
-          child: _i11.UserDataPage(key: args.key, onResult: args.onResult));
+          child: _i12.UserDataPage(key: args.key, onResult: args.onResult));
+    },
+    PageOneRoute.name: (routeData) {
+      return _i5.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i13.PageOneScreen());
+    },
+    PageTowRoute.name: (routeData) {
+      return _i5.MaterialPageX<dynamic>(
+          routeData: routeData, child: const _i14.PageTwoScreen());
     }
   };
 
   @override
-  List<_i4.RouteConfig> get routes => [
-        _i4.RouteConfig(HomeRoute.name, path: '/', children: [
-          _i4.RouteConfig('#redirect',
+  List<_i5.RouteConfig> get routes => [
+        _i5.RouteConfig(HomeRoute.name, path: '/', children: [
+          _i5.RouteConfig('#redirect',
               path: '',
               parent: HomeRoute.name,
               redirectTo: 'books',
               fullMatch: true),
-          _i4.RouteConfig(BooksTab.name,
+          _i5.RouteConfig(BooksTab.name,
               path: 'books',
               parent: HomeRoute.name,
               children: [
-                _i4.RouteConfig(BookListRoute.name,
+                _i5.RouteConfig(BookListRoute.name,
                     path: '', parent: BooksTab.name),
-                _i4.RouteConfig(BookDetailsRoute.name,
+                _i5.RouteConfig(BookDetailsRoute.name,
                     path: ':id',
                     parent: BooksTab.name,
                     meta: <String, dynamic>{'hideBottomNav': true})
               ]),
-          _i4.RouteConfig(ProfileTab.name,
+          _i5.RouteConfig(ProfileTab.name,
               path: 'profile',
               parent: HomeRoute.name,
               children: [
-                _i4.RouteConfig(ProfileRoute.name,
+                _i5.RouteConfig(ProfileRoute.name,
                     path: '', parent: ProfileTab.name),
-                _i4.RouteConfig(MyBooksRoute.name,
+                _i5.RouteConfig(MyBooksRoute.name,
                     path: 'my-books', parent: ProfileTab.name)
               ]),
-          _i4.RouteConfig(SettingsTab.name,
+          _i5.RouteConfig(SettingsTab.name,
               path: 'settings/:tab', parent: HomeRoute.name)
         ]),
-        _i4.RouteConfig(UserDataCollectorRoute.name,
+        _i5.RouteConfig(UserDataCollectorRoute.name,
             path: '/user-data',
             children: [
-              _i4.RouteConfig(NameFieldRoute.name,
+              _i5.RouteConfig(NameFieldRoute.name,
                   path: 'name', parent: UserDataCollectorRoute.name),
-              _i4.RouteConfig(FavoriteBookFieldRoute.name,
+              _i5.RouteConfig(FavoriteBookFieldRoute.name,
                   path: 'favorite-book', parent: UserDataCollectorRoute.name),
-              _i4.RouteConfig(UserDataRoute.name,
+              _i5.RouteConfig(UserDataRoute.name,
                   path: 'results', parent: UserDataCollectorRoute.name)
             ]),
-        _i4.RouteConfig(LoginRoute.name, path: '/login'),
-        _i4.RouteConfig('*#redirect',
-            path: '*', redirectTo: '/', fullMatch: true)
+        _i5.RouteConfig(LoginRoute.name, path: '/login'),
+        _i5.RouteConfig('*#redirect',
+            path: '*', redirectTo: '/', fullMatch: true),
+        _i5.RouteConfig(TabbarRoute.name, path: '/tabbar', children: [
+          _i5.RouteConfig(PageOneRoute.name,
+              path: 'page-1', parent: TabbarRoute.name),
+          _i5.RouteConfig(PageTowRoute.name,
+              path: 'page-2', parent: TabbarRoute.name)
+        ])
       ];
 }
 
 /// generated route for
 /// [_i1.HomePage]
-class HomeRoute extends _i4.PageRouteInfo<void> {
-  const HomeRoute({List<_i4.PageRouteInfo>? children})
+class HomeRoute extends _i5.PageRouteInfo<void> {
+  const HomeRoute({List<_i5.PageRouteInfo>? children})
       : super(HomeRoute.name, path: '/', initialChildren: children);
 
   static const String name = 'HomeRoute';
@@ -186,11 +207,11 @@ class HomeRoute extends _i4.PageRouteInfo<void> {
 /// generated route for
 /// [_i2.UserDataCollectorPage]
 class UserDataCollectorRoute
-    extends _i4.PageRouteInfo<UserDataCollectorRouteArgs> {
+    extends _i5.PageRouteInfo<UserDataCollectorRouteArgs> {
   UserDataCollectorRoute(
-      {_i12.Key? key,
+      {_i15.Key? key,
       dynamic Function(_i2.UserData)? onResult,
-      List<_i4.PageRouteInfo>? children})
+      List<_i5.PageRouteInfo>? children})
       : super(UserDataCollectorRoute.name,
             path: '/user-data',
             args: UserDataCollectorRouteArgs(key: key, onResult: onResult),
@@ -202,7 +223,7 @@ class UserDataCollectorRoute
 class UserDataCollectorRouteArgs {
   const UserDataCollectorRouteArgs({this.key, this.onResult});
 
-  final _i12.Key? key;
+  final _i15.Key? key;
 
   final dynamic Function(_i2.UserData)? onResult;
 
@@ -214,9 +235,9 @@ class UserDataCollectorRouteArgs {
 
 /// generated route for
 /// [_i3.LoginPage]
-class LoginRoute extends _i4.PageRouteInfo<LoginRouteArgs> {
+class LoginRoute extends _i5.PageRouteInfo<LoginRouteArgs> {
   LoginRoute(
-      {_i12.Key? key,
+      {_i15.Key? key,
       void Function(bool)? onLoginResult,
       bool showBackButton = true})
       : super(LoginRoute.name,
@@ -233,7 +254,7 @@ class LoginRouteArgs {
   const LoginRouteArgs(
       {this.key, this.onLoginResult, this.showBackButton = true});
 
-  final _i12.Key? key;
+  final _i15.Key? key;
 
   final void Function(bool)? onLoginResult;
 
@@ -246,27 +267,36 @@ class LoginRouteArgs {
 }
 
 /// generated route for
-/// [_i4.EmptyRouterPage]
-class BooksTab extends _i4.PageRouteInfo<void> {
-  const BooksTab({List<_i4.PageRouteInfo>? children})
+/// [_i4.TabbarScreen]
+class TabbarRoute extends _i5.PageRouteInfo<void> {
+  const TabbarRoute({List<_i5.PageRouteInfo>? children})
+      : super(TabbarRoute.name, path: '/tabbar', initialChildren: children);
+
+  static const String name = 'TabbarRoute';
+}
+
+/// generated route for
+/// [_i5.EmptyRouterPage]
+class BooksTab extends _i5.PageRouteInfo<void> {
+  const BooksTab({List<_i5.PageRouteInfo>? children})
       : super(BooksTab.name, path: 'books', initialChildren: children);
 
   static const String name = 'BooksTab';
 }
 
 /// generated route for
-/// [_i4.EmptyRouterPage]
-class ProfileTab extends _i4.PageRouteInfo<void> {
-  const ProfileTab({List<_i4.PageRouteInfo>? children})
+/// [_i5.EmptyRouterPage]
+class ProfileTab extends _i5.PageRouteInfo<void> {
+  const ProfileTab({List<_i5.PageRouteInfo>? children})
       : super(ProfileTab.name, path: 'profile', initialChildren: children);
 
   static const String name = 'ProfileTab';
 }
 
 /// generated route for
-/// [_i5.SettingsPage]
-class SettingsTab extends _i4.PageRouteInfo<SettingsTabArgs> {
-  SettingsTab({_i12.Key? key, required String tab, String query = 'none'})
+/// [_i6.SettingsPage]
+class SettingsTab extends _i5.PageRouteInfo<SettingsTabArgs> {
+  SettingsTab({_i15.Key? key, required String tab, String query = 'none'})
       : super(SettingsTab.name,
             path: 'settings/:tab',
             args: SettingsTabArgs(key: key, tab: tab, query: query),
@@ -279,7 +309,7 @@ class SettingsTab extends _i4.PageRouteInfo<SettingsTabArgs> {
 class SettingsTabArgs {
   const SettingsTabArgs({this.key, required this.tab, this.query = 'none'});
 
-  final _i12.Key? key;
+  final _i15.Key? key;
 
   final String tab;
 
@@ -292,16 +322,16 @@ class SettingsTabArgs {
 }
 
 /// generated route for
-/// [_i6.BookListPage]
-class BookListRoute extends _i4.PageRouteInfo<void> {
+/// [_i7.BookListPage]
+class BookListRoute extends _i5.PageRouteInfo<void> {
   const BookListRoute() : super(BookListRoute.name, path: '');
 
   static const String name = 'BookListRoute';
 }
 
 /// generated route for
-/// [_i7.BookDetailsPage]
-class BookDetailsRoute extends _i4.PageRouteInfo<BookDetailsRouteArgs> {
+/// [_i8.BookDetailsPage]
+class BookDetailsRoute extends _i5.PageRouteInfo<BookDetailsRouteArgs> {
   BookDetailsRoute({int id = -1})
       : super(BookDetailsRoute.name,
             path: ':id',
@@ -323,17 +353,17 @@ class BookDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i8.ProfilePage]
-class ProfileRoute extends _i4.PageRouteInfo<void> {
+/// [_i9.ProfilePage]
+class ProfileRoute extends _i5.PageRouteInfo<void> {
   const ProfileRoute() : super(ProfileRoute.name, path: '');
 
   static const String name = 'ProfileRoute';
 }
 
 /// generated route for
-/// [_i9.MyBooksPage]
-class MyBooksRoute extends _i4.PageRouteInfo<MyBooksRouteArgs> {
-  MyBooksRoute({_i12.Key? key, String? filter = 'none'})
+/// [_i10.MyBooksPage]
+class MyBooksRoute extends _i5.PageRouteInfo<MyBooksRouteArgs> {
+  MyBooksRoute({_i15.Key? key, String? filter = 'none'})
       : super(MyBooksRoute.name,
             path: 'my-books',
             args: MyBooksRouteArgs(key: key, filter: filter),
@@ -345,7 +375,7 @@ class MyBooksRoute extends _i4.PageRouteInfo<MyBooksRouteArgs> {
 class MyBooksRouteArgs {
   const MyBooksRouteArgs({this.key, this.filter = 'none'});
 
-  final _i12.Key? key;
+  final _i15.Key? key;
 
   final String? filter;
 
@@ -356,10 +386,10 @@ class MyBooksRouteArgs {
 }
 
 /// generated route for
-/// [_i10.SingleFieldPage]
-class NameFieldRoute extends _i4.PageRouteInfo<NameFieldRouteArgs> {
+/// [_i11.SingleFieldPage]
+class NameFieldRoute extends _i5.PageRouteInfo<NameFieldRouteArgs> {
   NameFieldRoute(
-      {_i12.Key? key,
+      {_i15.Key? key,
       String message = '',
       String willPopMessage = '',
       void Function(String)? onNext})
@@ -378,7 +408,7 @@ class NameFieldRouteArgs {
   const NameFieldRouteArgs(
       {this.key, this.message = '', this.willPopMessage = '', this.onNext});
 
-  final _i12.Key? key;
+  final _i15.Key? key;
 
   final String message;
 
@@ -393,11 +423,11 @@ class NameFieldRouteArgs {
 }
 
 /// generated route for
-/// [_i10.SingleFieldPage]
+/// [_i11.SingleFieldPage]
 class FavoriteBookFieldRoute
-    extends _i4.PageRouteInfo<FavoriteBookFieldRouteArgs> {
+    extends _i5.PageRouteInfo<FavoriteBookFieldRouteArgs> {
   FavoriteBookFieldRoute(
-      {_i12.Key? key,
+      {_i15.Key? key,
       String message = '',
       String willPopMessage = '',
       void Function(String)? onNext})
@@ -416,7 +446,7 @@ class FavoriteBookFieldRouteArgs {
   const FavoriteBookFieldRouteArgs(
       {this.key, this.message = '', this.willPopMessage = '', this.onNext});
 
-  final _i12.Key? key;
+  final _i15.Key? key;
 
   final String message;
 
@@ -431,9 +461,9 @@ class FavoriteBookFieldRouteArgs {
 }
 
 /// generated route for
-/// [_i11.UserDataPage]
-class UserDataRoute extends _i4.PageRouteInfo<UserDataRouteArgs> {
-  UserDataRoute({_i12.Key? key, dynamic Function(_i2.UserData)? onResult})
+/// [_i12.UserDataPage]
+class UserDataRoute extends _i5.PageRouteInfo<UserDataRouteArgs> {
+  UserDataRoute({_i15.Key? key, dynamic Function(_i2.UserData)? onResult})
       : super(UserDataRoute.name,
             path: 'results',
             args: UserDataRouteArgs(key: key, onResult: onResult));
@@ -444,7 +474,7 @@ class UserDataRoute extends _i4.PageRouteInfo<UserDataRouteArgs> {
 class UserDataRouteArgs {
   const UserDataRouteArgs({this.key, this.onResult});
 
-  final _i12.Key? key;
+  final _i15.Key? key;
 
   final dynamic Function(_i2.UserData)? onResult;
 
@@ -452,4 +482,20 @@ class UserDataRouteArgs {
   String toString() {
     return 'UserDataRouteArgs{key: $key, onResult: $onResult}';
   }
+}
+
+/// generated route for
+/// [_i13.PageOneScreen]
+class PageOneRoute extends _i5.PageRouteInfo<void> {
+  const PageOneRoute() : super(PageOneRoute.name, path: 'page-1');
+
+  static const String name = 'PageOneRoute';
+}
+
+/// generated route for
+/// [_i14.PageTwoScreen]
+class PageTowRoute extends _i5.PageRouteInfo<void> {
+  const PageTowRoute() : super(PageTowRoute.name, path: 'page-2');
+
+  static const String name = 'PageTowRoute';
 }
