@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
 
-typedef AnimatedIndexedStackBuilder = Widget Function(
-    BuildContext context, Widget child, Animation<double> animation);
+typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child, Animation<double> animation);
+typedef AutoTabsBuilder = Widget Function(BuildContext context, List<Widget> children, TabsRouter tabsRouter);
+typedef AutoTabsPageViewBuilder = Widget Function(BuildContext context, Widget child);
+typedef OnNavigationChanged = Function(TabsRouter tabsRouter);
 
 class AutoTabsRouter extends StatefulWidget {
   final AnimatedIndexedStackBuilder? builder;
@@ -32,12 +34,34 @@ class AutoTabsRouter extends StatefulWidget {
     this.builder,
     this.homeIndex = -1,
     this.inheritNavigatorObservers = true,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   })  : declarative = false,
         _activeIndex = null,
         onNavigate = null,
         super(key: key);
+
+  factory AutoTabsRouter.pageView({
+    Key? key,
+    required List<PageRouteInfo> routes,
+    AutoTabsPageViewBuilder? builder,
+    int homeIndex,
+    bool animatePageTransition,
+    Duration duration,
+    Curve curve,
+    bool inheritNavigatorObservers,
+    NavigatorObserversBuilder navigatorObservers,
+  }) = _AutoTabsRouterPageView;
+
+  factory AutoTabsRouter.builder({
+    Key? key,
+    required List<PageRouteInfo> routes,
+    required AutoTabsBuilder builder,
+    OnNavigationChanged? onNavigate,
+    OnNavigationChanged? onRouterReady,
+    int homeIndex,
+    bool inheritNavigatorObservers,
+    NavigatorObserversBuilder navigatorObservers,
+  }) = _AutoTabsRouterBuilder;
 
   const AutoTabsRouter.declarative({
     Key? key,
@@ -50,8 +74,7 @@ class AutoTabsRouter extends StatefulWidget {
     this.onNavigate,
     this.homeIndex = -1,
     this.inheritNavigatorObservers = true,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   })  : declarative = true,
         _activeIndex = activeIndex,
         super(key: key);
@@ -63,8 +86,7 @@ class AutoTabsRouter extends StatefulWidget {
     var scope = TabsRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoTabsRouter operation requested with a context that does not include an AutoTabsRouter.\n'
+        throw FlutterError('AutoTabsRouter operation requested with a context that does not include an AutoTabsRouter.\n'
             'The context used to retrieve the AutoTabsRouter must be that of a widget that '
             'is a descendant of an AutoTabsRouter widget.');
       }
@@ -74,8 +96,7 @@ class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-class AutoTabsRouterState extends State<AutoTabsRouter>
-    with SingleTickerProviderStateMixin {
+class AutoTabsRouterState extends State<AutoTabsRouter> with SingleTickerProviderStateMixin {
   TabsRouter? _controller;
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -87,6 +108,8 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
 
   @override
   void initState() {
+    super.initState();
+
     _animationController = AnimationController(
       vsync: this,
       duration: widget.duration,
@@ -97,7 +120,6 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
         curve: widget.curve,
       ),
     );
-    super.initState();
     _tabsHash = ListEquality().hash(widget.routes);
   }
 
@@ -149,6 +171,8 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
           _index = _controller!.activeIndex;
         });
         _animationController.forward(from: 0.0);
+      } else if (mounted) {
+        setState(() {});
       }
     });
   }
@@ -189,6 +213,7 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
     assert(_controller != null);
     final stack = _controller!.stack;
     final builder = widget.builder ?? _defaultBuilder;
+    final stateHash = controller!.stateHash;
 
     final builderChild = stack.isEmpty
         ? Container(color: Theme.of(context).scaffoldBackgroundColor)
@@ -196,13 +221,13 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
             activeIndex: _index,
             tabsHash: _tabsHash,
             lazyLoad: widget.lazyLoad,
+            animation: _animation,
             navigatorObservers: _navigatorObservers,
             itemBuilder: (BuildContext context, int index) {
               return stack[index].buildPage(context);
             },
             stack: stack,
           );
-    final stateHash = controller!.stateHash;
 
     return RouterScope(
       controller: _controller!,
@@ -214,8 +239,11 @@ class AutoTabsRouterState extends State<AutoTabsRouter>
         stateHash: stateHash,
         child: AnimatedBuilder(
           animation: _animation,
-          builder: (context, child) =>
-              builder(context, child ?? builderChild, _animation),
+          builder: (context, child) => builder(
+            context,
+            child ?? builderChild,
+            _animation,
+          ),
           child: builderChild,
         ),
       ),
@@ -236,6 +264,7 @@ class _IndexedStackBuilder extends StatefulWidget {
     required this.stack,
     required this.lazyLoad,
     required this.tabsHash,
+    required this.animation,
   }) : super(key: key);
 
   final int activeIndex;
@@ -244,43 +273,21 @@ class _IndexedStackBuilder extends StatefulWidget {
   final List<AutoRoutePage> stack;
   final List<NavigatorObserver> navigatorObservers;
   final int tabsHash;
+  final Animation<double> animation;
 
   @override
   _IndexedStackBuilderState createState() => _IndexedStackBuilderState();
 }
 
-class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
+class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteAwareTabsMixin<_IndexedStackBuilder> {
   final _dummyWidget = const SizedBox.shrink();
   final _initializedPagesTracker = <int, bool>{};
 
-  void _didInitTabRoute(int index, [int previous = -1]) {
-    widget.navigatorObservers
-        .whereType<AutoRouterObserver>()
-        .forEach((observer) {
-      final routes = widget.stack.map((e) => e.routeData.route).toList();
-      var previousRoute;
-      if (previous != -1) {
-        previousRoute =
-            TabPageRoute(routeInfo: routes[previous], index: previous);
-      }
-      observer.didInitTabRoute(
-        TabPageRoute(routeInfo: routes[index], index: index),
-        previousRoute,
-      );
-    });
-  }
+  @override
+  List<RouteMatch> get routes => widget.stack.map((e) => e.routeData.route).toList();
 
-  void _didChangeTabRoute(int index, int previous) {
-    widget.navigatorObservers
-        .whereType<AutoRouterObserver>()
-        .forEach((observer) {
-      final routes = widget.stack.map((e) => e.routeData.route).toList();
-      observer.didChangeTabRoute(
-        TabPageRoute(routeInfo: routes[index], index: index),
-        TabPageRoute(routeInfo: routes[previous], index: previous),
-      );
-    });
-  }
+  @override
+  List<NavigatorObserver> get observers => widget.navigatorObservers;
 
   @override
   void initState() {
@@ -307,8 +314,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
       _setup();
       return;
     }
-    if (widget.lazyLoad &&
-        _initializedPagesTracker[widget.activeIndex] != true) {
+    if (widget.lazyLoad && _initializedPagesTracker[widget.activeIndex] != true) {
       _initializedPagesTracker[widget.activeIndex] = true;
       _didInitTabRoute(widget.activeIndex, oldWidget.activeIndex);
     } else if (widget.activeIndex != oldWidget.activeIndex) {
@@ -325,11 +331,289 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> {
       children: List.generate(
         widget.stack.length,
         (index) {
-          return _initializedPagesTracker[index] == true
-              ? widget.itemBuilder(context, index)
-              : _dummyWidget;
+          if (!widget.stack[index].maintainState && index != widget.activeIndex) {
+            _initializedPagesTracker[index] = false;
+          }
+          final isInitialized = _initializedPagesTracker[index] == true;
+          return isInitialized ? widget.itemBuilder(context, index) : _dummyWidget;
         },
       ),
     );
   }
+}
+
+
+
+class _AutoTabsRouterPageView extends AutoTabsRouter {
+  final AutoTabsPageViewBuilder? _pageViewModeBuilder;
+  final bool animatePageTransition;
+
+  const _AutoTabsRouterPageView({
+    Key? key,
+    required List<PageRouteInfo> routes,
+    AutoTabsPageViewBuilder? builder,
+    int homeIndex = -1,
+    this.animatePageTransition = true,
+    Duration duration = kTabScrollDuration,
+    Curve curve = Curves.easeInOut,
+    bool inheritNavigatorObservers = true,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  })  : _pageViewModeBuilder = builder,
+        super(
+          key: key,
+          routes: routes,
+          homeIndex: homeIndex,
+          duration: duration,
+          curve: curve,
+          navigatorObservers: navigatorObservers,
+          inheritNavigatorObservers: inheritNavigatorObservers,
+        );
+
+  @override
+  AutoTabsRouterPageViewState createState() => AutoTabsRouterPageViewState();
+}
+
+class AutoTabsRouterPageViewState extends AutoTabsRouterState with _RouteAwareTabsMixin<AutoTabsRouter> {
+  late List<NavigatorObserver> _navigatorObservers;
+  late NavigatorObserversBuilder _inheritableObserversBuilder;
+  late PageController _pageController;
+
+  @override
+  void _setupController() {
+    assert(_controller != null);
+    _controller!.setupRoutes(widget.routes);
+    _pageController = PageController(initialPage: _controller!.activeIndex);
+    _didInitTabRoute(_controller!.activeIndex);
+    _controller!.addListener(() {
+      if (_controller!.activeIndex != _pageController.page) {
+        _didChangeTabRoute(_controller!.activeIndex, _pageController.page?.toInt() ?? 0);
+      }
+      if (_controller!.activeIndex != _pageController.page?.round()) {
+        if (typedWidget.animatePageTransition && _canAnimateTransition(_pageController.page, _controller!.activeIndex)) {
+          _pageController.animateToPage(
+            _controller!.activeIndex,
+            duration: widget.duration,
+            curve: widget.curve,
+          );
+        } else {
+          _pageController.jumpToPage(_controller!.activeIndex);
+        }
+      } else if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
+      _controller!.replaceAll(widget.routes, oldWidget.routes[_pageController.page?.round() ?? 0]);
+      _tabsHash = const ListEquality().hash(widget.routes);
+      _pageController.jumpToPage(
+        _controller!.activeIndex,
+      );
+    }
+  }
+
+  _AutoTabsRouterPageView get typedWidget => widget as _AutoTabsRouterPageView;
+
+  @override
+  Widget build(BuildContext context) {
+    assert(_controller != null);
+    final stack = _controller!.stack;
+    final builder = typedWidget._pageViewModeBuilder ?? _defaultPageViewBuilder;
+    final stateHash = controller!.stateHash;
+    return RouterScope(
+      controller: _controller!,
+      inheritableObserversBuilder: _inheritableObserversBuilder,
+      stateHash: stateHash,
+      navigatorObservers: _navigatorObservers,
+      child: TabsRouterScope(
+        controller: _controller!,
+        stateHash: stateHash,
+        child: Builder(builder: (context) {
+          return builder(
+            context,
+            PageView.builder(
+              controller: _pageController,
+              itemCount: stack.length,
+              onPageChanged: _controller!.setActiveIndex,
+              itemBuilder: (context, index) {
+                return KeepAliveTab(
+                  key: ValueKey(index),
+                  page: stack[index],
+                );
+              },
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _defaultPageViewBuilder(_, Widget child) {
+    return child;
+  }
+
+  // to make sure we don't animate to a page that's more than
+  // one step away
+  bool _canAnimateTransition(double? pageViewIndex, int activeIndex) {
+    if (pageViewIndex == null) return false;
+    return (pageViewIndex - activeIndex).abs() <= 1;
+  }
+
+  @override
+  List<NavigatorObserver> get observers => _navigatorObservers;
+
+  @override
+  List<RouteMatch> get routes => _controller!.stackData.map((e) => e.route).toList();
+}
+
+class _AutoTabsRouterBuilder extends AutoTabsRouter {
+  final AutoTabsBuilder _customBuilder;
+  final OnNavigationChanged? _onChanged;
+  final OnNavigationChanged? onRouterReady;
+
+  const _AutoTabsRouterBuilder({
+    Key? key,
+    required List<PageRouteInfo> routes,
+    OnNavigationChanged? onNavigate,
+    this.onRouterReady,
+    required AutoTabsBuilder builder,
+    int homeIndex = -1,
+    bool inheritNavigatorObservers = true,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  })  : _customBuilder = builder,
+        _onChanged = onNavigate,
+        super(
+          key: key,
+          routes: routes,
+          homeIndex: homeIndex,
+          navigatorObservers: navigatorObservers,
+          inheritNavigatorObservers: inheritNavigatorObservers,
+        );
+
+  @override
+  _AutoTabsRouterBuilderState createState() => _AutoTabsRouterBuilderState();
+}
+
+class _AutoTabsRouterBuilderState extends AutoTabsRouterState with _RouteAwareTabsMixin<AutoTabsRouter> {
+  @override
+  void _setupController() {
+    assert(_controller != null);
+    _controller!.setupRoutes(widget.routes);
+    typedWidget.onRouterReady?.call(_controller!);
+    _didInitTabRoute(_controller!.activeIndex);
+    _controller!.addListener(() {
+      if (_controller!.activeIndex != _controller!.previousIndex) {
+        _didChangeTabRoute(_controller!.activeIndex, _controller!.previousIndex ?? -1);
+        typedWidget._onChanged?.call(_controller!);
+      }
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _AutoTabsRouterBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!ListEquality().equals(widget.routes, oldWidget.routes)) {
+      _controller!.replaceAll(widget.routes, oldWidget.routes[_index]);
+      _tabsHash = ListEquality().hash(widget.routes);
+      typedWidget._onChanged?.call(_controller!);
+    }
+  }
+
+  _AutoTabsRouterBuilder get typedWidget => widget as _AutoTabsRouterBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    assert(_controller != null);
+    final stack = _controller!.stack;
+    final builder = typedWidget._customBuilder;
+    final stateHash = controller!.stateHash;
+    return RouterScope(
+      controller: _controller!,
+      inheritableObserversBuilder: _inheritableObserversBuilder,
+      stateHash: stateHash,
+      navigatorObservers: _navigatorObservers,
+      child: TabsRouterScope(
+        controller: _controller!,
+        stateHash: stateHash,
+        child: Builder(
+            key: ValueKey(_tabsHash),
+            builder: (context) {
+              return builder(
+                context,
+                List.generate(
+                  stack.length,
+                  (index) => KeepAliveTab(
+                    key: ValueKey(index),
+                    page: stack[index],
+                  ),
+                ),
+                _controller!,
+              );
+            }),
+      ),
+    );
+  }
+
+  @override
+  List<NavigatorObserver> get observers => _navigatorObservers;
+
+  @override
+  List<RouteMatch> get routes => _controller!.stackData.map((e) => e.route).toList();
+}
+
+mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
+  List<NavigatorObserver> get observers;
+
+  List<RouteMatch> get routes;
+
+  void _didInitTabRoute(int index, [int previous = -1]) {
+    observers.whereType<AutoRouterObserver>().forEach((observer) {
+      var previousRoute;
+      if (previous != -1) {
+        previousRoute = TabPageRoute(routeInfo: routes[previous], index: previous);
+      }
+      observer.didInitTabRoute(
+        TabPageRoute(routeInfo: routes[index], index: index),
+        previousRoute,
+      );
+    });
+  }
+
+  void _didChangeTabRoute(int index, int previous) {
+    observers.whereType<AutoRouterObserver>().forEach((observer) {
+      observer.didChangeTabRoute(
+        TabPageRoute(routeInfo: routes[index], index: index),
+        TabPageRoute(routeInfo: routes[previous], index: previous),
+      );
+    });
+  }
+}
+
+class KeepAliveTab extends StatefulWidget {
+  const KeepAliveTab({
+    Key? key,
+    required this.page,
+  }) : super(key: key);
+  final AutoRoutePage page;
+
+  @override
+  State<KeepAliveTab> createState() => _KeepAliveTabState();
+}
+
+class _KeepAliveTabState extends State<KeepAliveTab> with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.page.buildPage(context);
+  }
+
+  @override
+  bool get wantKeepAlive => widget.page.maintainState;
 }

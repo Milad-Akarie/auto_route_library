@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:example/data/db.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.gr.dart';
@@ -14,16 +15,25 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final authService = AuthService();
 
-  final _rootRouter = RootRouter(authGuard: AuthGuard());
+  final _rootRouter = RootRouter(
+      // authGuard: AuthGuard(),
+      );
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark().copyWith(
-          pageTransitionsTheme: PageTransitionsTheme(builders: {
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder()
-      })),
-      routerDelegate: _rootRouter.delegate(),
+        pageTransitionsTheme: PageTransitionsTheme(
+            builders: {
+              TargetPlatform.iOS: NoShadowCupertinoPageTransitionsBuilder(),
+              TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+            }
+        )
+      ),
+      routerDelegate: _rootRouter.delegate(
+        initialDeepLink: '/profile/my-books',
+        navigatorObservers: () => [AutoRouteObserver()],
+      ),
       routeInformationProvider: _rootRouter.routeInfoProvider(),
       routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {

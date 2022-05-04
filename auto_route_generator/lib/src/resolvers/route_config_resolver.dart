@@ -47,7 +47,15 @@ class RouteConfigResolver {
         routeType: RouteType.redirect,
       );
     }
+
+    throwIf(
+      page.element is! ClassElement,
+      '${page.getDisplayString(withNullability: false)} is not a class element',
+      element: page.element,
+    );
+
     final classElement = page.element as ClassElement;
+    final hasWrappedRoute = classElement.allSupertypes.any((e) => e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.getDisplayString(withNullability: false);
 
@@ -67,12 +75,6 @@ class RouteConfigResolver {
     var pathName = path;
     var pathParams = RouteParameterResolver.extractPathParams(path);
 
-    throwIf(
-      page.element is! ClassElement,
-      '${page.getDisplayString(withNullability: false)} is not a class element',
-      element: page.element,
-    );
-
     var fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
     var maintainState = autoRoute.peek('maintainState')?.boolValue;
     var fullMatch = autoRoute.peek('fullMatch')?.boolValue;
@@ -80,11 +82,7 @@ class RouteConfigResolver {
     var usesPathAsKey = autoRoute.peek('usesPathAsKey')?.boolValue ?? false;
 
     var guards = <ResolvedType>[];
-    autoRoute
-        .peek('guards')
-        ?.listValue
-        .map((g) => g.toTypeValue())
-        .forEach((guard) {
+    autoRoute.peek('guards')?.listValue.map((g) => g.toTypeValue()).forEach((guard) {
       guards.add(_typeResolver.resolveType(guard!));
     });
 
@@ -114,21 +112,16 @@ class RouteConfigResolver {
       cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       routeType = RouteType.custom;
-      durationInMilliseconds =
-          autoRoute.peek('durationInMilliseconds')?.intValue;
-      reverseDurationInMilliseconds =
-          autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
+      durationInMilliseconds = autoRoute.peek('durationInMilliseconds')?.intValue;
+      reverseDurationInMilliseconds = autoRoute.peek('reverseDurationInMilliseconds')?.intValue;
       customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
-      customRouteBarrierDismissible =
-          autoRoute.peek('barrierDismissible')?.boolValue;
+      customRouteBarrierDismissible = autoRoute.peek('barrierDismissible')?.boolValue;
       customRouteBarrierLabel = autoRoute.peek('barrierLabel')?.stringValue;
-      final function =
-          autoRoute.peek('transitionsBuilder')?.objectValue.toFunctionValue();
+      final function = autoRoute.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
         transitionBuilder = _typeResolver.resolveFunctionType(function);
       }
-      final builderFunction =
-          autoRoute.peek('customRouteBuilder')?.objectValue.toFunctionValue();
+      final builderFunction = autoRoute.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (builderFunction != null) {
         customRouteBuilder = _typeResolver.resolveFunctionType(builderFunction);
       }
@@ -139,25 +132,18 @@ class RouteConfigResolver {
       if (globConfig.routeType == RouteType.custom) {
         transitionBuilder = globConfig.transitionBuilder;
         durationInMilliseconds = globConfig.durationInMilliseconds;
-        customRouteBarrierDismissible =
-            globConfig.customRouteBarrierDismissible;
+        customRouteBarrierDismissible = globConfig.customRouteBarrierDismissible;
         customRouteOpaque = globConfig.customRouteOpaque;
-        reverseDurationInMilliseconds =
-            globConfig.reverseDurationInMilliseconds;
+        reverseDurationInMilliseconds = globConfig.reverseDurationInMilliseconds;
         customRouteBuilder = globConfig.customRouteBuilder;
       }
     }
 
     final meta = <MetaEntry>[];
-    for (final entry in autoRoute
-        .read('meta')
-        .mapValue
-        .entries
-        .where((e) => e.value?.type != null)) {
-      final valueType =
-          entry.value!.type!.getDisplayString(withNullability: false);
-      throwIf(!validMetaValues.contains(valueType),
-          'Meta value type ${valueType} is not supported!\nSupported types are ${validMetaValues}');
+    for (final entry in autoRoute.read('meta').mapValue.entries.where((e) => e.value?.type != null)) {
+      final valueType = entry.value!.type!.getDisplayString(withNullability: false);
+      throwIf(
+          !validMetaValues.contains(valueType), 'Meta value type ${valueType} is not supported!\nSupported types are ${validMetaValues}');
       switch (valueType) {
         case 'bool':
           {
@@ -211,9 +197,7 @@ class RouteConfigResolver {
     var params = constructor!.parameters;
     var parameters = <ParamConfig>[];
     if (params.isNotEmpty == true) {
-      if (constructor.isConst &&
-          params.length == 1 &&
-          params.first.type.getDisplayString(withNullability: false) == 'Key') {
+      if (constructor.isConst && params.length == 1 && params.first.type.getDisplayString(withNullability: false) == 'Key') {
         hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);
@@ -226,13 +210,9 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs = parameters.where((p) =>
-          (p.isRequired || p.isPositional) &&
-          !p.isPathParam &&
-          !p.isQueryParam);
+      var unParsableRequiredArgs = parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
-        print(
-            '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
+        print('\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
             'that can not be parsed from path,\n@PathParam() and @QueryParam() annotations will be ignored.\n');
       }
     }
@@ -251,6 +231,7 @@ class RouteConfigResolver {
       initial: initial,
       pathParams: pathParams,
       routeType: routeType,
+      hasWrappedRoute: hasWrappedRoute,
       transitionBuilder: transitionBuilder,
       customRouteBuilder: customRouteBuilder,
       customRouteBarrierDismissible: customRouteBarrierDismissible,

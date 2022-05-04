@@ -6,32 +6,32 @@ import '../screens/login_page.dart';
 import '../screens/profile/routes.dart';
 import '../screens/settings.dart';
 import '../screens/user-data/routes.dart';
-import 'auth_guard.dart';
 
 @MaterialAutoRouter(
-  replaceInRouteName: 'Page|Dialog,Route',
+  replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
     // app stack
     AutoRoute<String>(
       path: '/',
       page: HomePage,
-      guards: [AuthGuard],
+      // guards: [AuthGuard],
       children: [
         AutoRoute(
           path: 'books',
           page: EmptyRouterPage,
           name: 'BooksTab',
           initial: true,
+          maintainState: true,
           children: [
             AutoRoute(
               path: '',
-              page: BookListPage,
+              page: BookListScreen,
             ),
             AutoRoute(
               path: ':id',
               page: BookDetailsPage,
               fullscreenDialog: true,
-              meta: {'hideBottomNav': true},
+              // meta: {'hideBottomNav': true},
             ),
           ],
         ),

@@ -78,7 +78,7 @@ class $AppRouter {}
 ### Using part builder ( New in version 3.0.0+)
 To generate a part-of file instead of a stand alone `AppRouter` class, simply add a `Part Directive` to your `AppRouter` and extend the generated private router.
 ```dart      
-part 'app_router.gr.dart'  
+part 'app_router.gr.dart';
   
 @MaterialAutoRouter(        
   replaceInRouteName: 'Page,Route',        
@@ -351,7 +351,7 @@ What if want to show one of the child pages at `/dashboard`? we can simply do th
 ```dart        
    AutoRoute(        
       path: '/dashboard',        
-      page: UserPage,        
+      page: DashboardPage,        
       children: [        
         AutoRoute(path: '', page: UsersPage),    
         //The same thing can be done using the initial flag    
@@ -364,7 +364,7 @@ or by using a `RedirectRoute`
 ```dart        
 	AutoRoute(        
 	path: '/dashboard',        
-	page: UserPage,        
+	page: DashboardPage,        
 		children: [        
 			RedirectRoute(path: '', redirectTo: 'users'),        
 			AutoRoute(path: 'users', page: UsersPage),        
@@ -376,7 +376,7 @@ which can be simplified to the following where `auto_route` generates the redire
 ```dart        
    AutoRoute(        
       path: '/dashboard',        
-      page: UserPage,        
+      page: DashboardPage,        
       children: [        
         // RedirectRoute(path: '', redirectTo: 'users'),        
         AutoRoute(path: 'users', page: UsersPage, initial: true),        
@@ -929,7 +929,7 @@ The `TransitionsBuilder` function needs to be passed as a static/const reference
 CustomRoute(    
 page: LoginScreen,    
 //TransitionsBuilders class contains a preset of common transitions builders.     
-transitionsBuilder: TransitionBuilders.slideBottom,    
+transitionsBuilder: TransitionsBuilders.slideBottom,    
 durationInMilliseconds: 400)    
 ```    
 

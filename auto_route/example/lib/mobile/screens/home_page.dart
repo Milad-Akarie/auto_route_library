@@ -24,7 +24,7 @@ class RouteDestination {
   });
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final destinations = [
     RouteDestination(
       route: BooksTab(),
@@ -49,12 +49,13 @@ class HomePageState extends State<HomePage> {
 
   bool _showSettingsTap = true;
 
+
   @override
   Widget build(context) {
     // builder will rebuild everytime this router's stack
     // updates
     // we need it to indicate which NavigationRailDestination is active
-    return kIsWeb || true
+    return kIsWeb
         ? AutoRouter(builder: (context, child) {
             // we check for active route index by using
             // router.isRouteActive method
@@ -87,21 +88,22 @@ class HomePageState extends State<HomePage> {
               ],
             );
           })
-        : AutoTabsScaffold(
-            homeIndex: 0,
-            drawer: SizedBox(),
-            appBarBuilder: (context, tabsRouter) {
-              return AppBar(
-                title: Text(tabsRouter.topRoute.name),
-                leading: AutoLeadingButton(),
-              );
-            },
+        : AutoTabsRouter.pageView(
             routes: [
               BooksTab(),
               ProfileTab(),
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
-            bottomNavigationBuilder: buildBottomNav,
+            builder: (context, child) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text(context.topRoute.name),
+                  leading: AutoLeadingButton(),
+                ),
+                body: child,
+                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+              );
+            },
           );
   }
 

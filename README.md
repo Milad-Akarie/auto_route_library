@@ -351,7 +351,7 @@ What if want to show one of the child pages at `/dashboard`? we can simply do th
 ```dart        
    AutoRoute(        
       path: '/dashboard',        
-      page: UserPage,        
+      page: DashboardPage,        
       children: [        
         AutoRoute(path: '', page: UsersPage),    
         //The same thing can be done using the initial flag    
@@ -364,7 +364,7 @@ or by using a `RedirectRoute`
 ```dart        
 	AutoRoute(        
 	path: '/dashboard',        
-	page: UserPage,        
+	page: DashboardPage,        
 		children: [        
 			RedirectRoute(path: '', redirectTo: 'users'),        
 			AutoRoute(path: 'users', page: UsersPage),        
@@ -376,7 +376,7 @@ which can be simplified to the following where `auto_route` generates the redire
 ```dart        
    AutoRoute(        
       path: '/dashboard',        
-      page: UserPage,        
+      page: DashboardPage,        
       children: [        
         // RedirectRoute(path: '', redirectTo: 'users'),        
         AutoRoute(path: 'users', page: UsersPage, initial: true),        
