@@ -29,6 +29,49 @@ abstract class AutoRouteAware {
   void didChangeTabRoute(TabPageRoute previousRoute) {}
 }
 
+mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
+    implements AutoRouteAware {
+  AutoRouteObserver? _observer;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // RouterScope exposes the list of provided observers
+    // including inherited observers
+    _observer =
+        RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    if (_observer != null) {
+      // we subscribe to the observer by passing our
+      // AutoRouteAware state and the scoped routeData
+      _observer!.subscribe(this, context.routeData);
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _observer?.unsubscribe(this);
+  }
+
+  @override
+  void didChangeTabRoute(TabPageRoute previousRoute) {}
+
+  @override
+  void didInitTabRoute(TabPageRoute? previousRoute) {}
+
+  @override
+  void didPop() {}
+
+  @override
+  void didPush() {}
+
+  @override
+  void didPopNext() {}
+
+  @override
+  void didPushNext() {}
+}
+
 class AutoRouteObserver extends AutoRouterObserver {
   final Map<LocalKey, Set<AutoRouteAware>> _listeners =
       <LocalKey, Set<AutoRouteAware>>{};

@@ -9,15 +9,16 @@ class RouterScope extends InheritedWidget {
   final List<NavigatorObserver> navigatorObservers;
 
   const RouterScope({
+    Key? key,
     required Widget child,
     required this.controller,
     required this.navigatorObservers,
     required this.inheritableObserversBuilder,
     required this.stateHash,
-  }) : super(child: child);
+  }) : super(child: child, key: key);
 
   static RouterScope of(BuildContext context, {bool watch = false}) {
-    var scope;
+    RouterScope? scope;
     if (watch) {
       scope = context.dependOnInheritedWidgetOfExactType<RouterScope>();
     } else {
@@ -55,10 +56,11 @@ class StackRouterScope extends InheritedWidget {
   final int stateHash;
 
   const StackRouterScope({
+    Key? key,
     required Widget child,
     required this.controller,
     required this.stateHash,
-  }) : super(child: child);
+  }) : super(child: child, key: key);
 
   static StackRouterScope? of(BuildContext context, {bool watch = false}) {
     if (watch) {
@@ -78,10 +80,11 @@ class TabsRouterScope extends InheritedWidget {
   final int stateHash;
 
   const TabsRouterScope({
+    Key? key,
     required Widget child,
     required this.stateHash,
     required this.controller,
-  }) : super(child: child);
+  }) : super(child: child, key: key);
 
   static TabsRouterScope? of(BuildContext context, {bool watch = false}) {
     if (watch) {

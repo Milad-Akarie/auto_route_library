@@ -18,11 +18,11 @@ abstract class RootStackRouter extends StackRouter {
         router: this,
         route: const RouteMatch(
           name: 'Root',
-          segments: const [''],
+          segments: [''],
           path: '',
           stringMatch: '',
           isBranch: true,
-          key: const ValueKey('Root'),
+          key: ValueKey('Root'),
         ),
         pendingChildren: [],
       );
@@ -31,8 +31,9 @@ abstract class RootStackRouter extends StackRouter {
 
   List<RouteConfig> get routes;
 
+  // ignore: prefer_final_fields
   bool _managedByWidget = false;
-  late final _navigationHistory;
+  late final NavigationHistory _navigationHistory;
 
   @override
   bool get managedByWidget => _managedByWidget;
@@ -55,6 +56,7 @@ abstract class RootStackRouter extends StackRouter {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
+    String? initialDeepLink,
     OnNavigateCallBack? onNavigate,
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
@@ -63,6 +65,7 @@ abstract class RootStackRouter extends StackRouter {
       this,
       routes: routes,
       onNavigate: onNavigate,
+      initialDeepLink: initialDeepLink,
       onPopRoute: onPopRoute,
       navRestorationScopeId: navRestorationScopeId,
       navigatorObservers: navigatorObservers,

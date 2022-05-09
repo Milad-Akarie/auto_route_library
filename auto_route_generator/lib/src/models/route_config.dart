@@ -16,6 +16,7 @@ class RouteConfig {
   final bool? customRouteOpaque;
   final bool? customRouteBarrierDismissible;
   final String? customRouteBarrierLabel;
+  final int? customRouteBarrierColor;
   final bool? maintainState;
   final ResolvedType? pageType;
   final String className;
@@ -24,7 +25,7 @@ class RouteConfig {
   final ResolvedType? transitionBuilder;
   final ResolvedType? customRouteBuilder;
   final String? redirectTo;
-  final bool? usesTabsRouter;
+  final bool? hasWrappedRoute;
   final int? reverseDurationInMilliseconds;
   final int? durationInMilliseconds;
   final int routeType;
@@ -53,7 +54,7 @@ class RouteConfig {
     this.transitionBuilder,
     this.customRouteBuilder,
     this.redirectTo,
-    this.usesTabsRouter,
+    this.hasWrappedRoute,
     this.durationInMilliseconds,
     this.reverseDurationInMilliseconds,
     this.returnType,
@@ -64,6 +65,7 @@ class RouteConfig {
     this.childRouterConfig,
     this.hasConstConstructor = false,
     this.usesPathAsKey = false,
+    this.customRouteBarrierColor,
     this.meta = const [],
   });
 
@@ -76,6 +78,7 @@ class RouteConfig {
     bool? fullMatch,
     bool? customRouteOpaque,
     bool? customRouteBarrierDismissible,
+    int? customRouteBarrierColor,
     String? customRouteBarrierLabel,
     bool? maintainState,
     ResolvedType? pageType,
@@ -125,7 +128,7 @@ class RouteConfig {
             identical(customRouteBuilder, this.customRouteBuilder)) &&
         (redirectTo == null || identical(redirectTo, this.redirectTo)) &&
         (usesTabsRouter == null ||
-            identical(usesTabsRouter, this.usesTabsRouter)) &&
+            identical(usesTabsRouter, this.hasWrappedRoute)) &&
         (reverseDurationInMilliseconds == null ||
             identical(reverseDurationInMilliseconds,
                 this.reverseDurationInMilliseconds)) &&
@@ -164,7 +167,7 @@ class RouteConfig {
       transitionBuilder: transitionBuilder ?? this.transitionBuilder,
       customRouteBuilder: customRouteBuilder ?? this.customRouteBuilder,
       redirectTo: redirectTo ?? this.redirectTo,
-      usesTabsRouter: usesTabsRouter ?? this.usesTabsRouter,
+      hasWrappedRoute: usesTabsRouter ?? this.hasWrappedRoute,
       reverseDurationInMilliseconds:
           reverseDurationInMilliseconds ?? this.reverseDurationInMilliseconds,
       durationInMilliseconds:
@@ -178,6 +181,8 @@ class RouteConfig {
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
       meta: meta ?? this.meta,
+      customRouteBarrierColor:
+          customRouteBarrierColor ?? this.customRouteBarrierColor,
     );
   }
 

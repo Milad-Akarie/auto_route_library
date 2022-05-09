@@ -86,7 +86,6 @@ class RouterConfigResolver {
           : clazz.displayName.substring(1),
       element: clazz,
       replaceInRouteName: replaceInRouteName,
-
       routes: const [],
     );
 

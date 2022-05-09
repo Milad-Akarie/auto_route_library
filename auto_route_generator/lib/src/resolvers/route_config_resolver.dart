@@ -47,7 +47,16 @@ class RouteConfigResolver {
         routeType: RouteType.redirect,
       );
     }
+
+    throwIf(
+      page.element is! ClassElement,
+      '${page.getDisplayString(withNullability: false)} is not a class element',
+      element: page.element,
+    );
+
     final classElement = page.element as ClassElement;
+    final hasWrappedRoute = classElement.allSupertypes.any((e) =>
+        e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.getDisplayString(withNullability: false);
 
@@ -67,17 +76,12 @@ class RouteConfigResolver {
     var pathName = path;
     var pathParams = RouteParameterResolver.extractPathParams(path);
 
-    throwIf(
-      page.element is! ClassElement,
-      '${page.getDisplayString(withNullability: false)} is not a class element',
-      element: page.element,
-    );
-
     var fullscreenDialog = autoRoute.peek('fullscreenDialog')?.boolValue;
     var maintainState = autoRoute.peek('maintainState')?.boolValue;
     var fullMatch = autoRoute.peek('fullMatch')?.boolValue;
     var initial = autoRoute.peek('initial')?.boolValue ?? false;
     var usesPathAsKey = autoRoute.peek('usesPathAsKey')?.boolValue ?? false;
+
     var guards = <ResolvedType>[];
     autoRoute
         .peek('guards')
@@ -102,6 +106,7 @@ class RouteConfigResolver {
     String? customRouteBarrierLabel;
     ResolvedType? customRouteBuilder;
     ResolvedType? transitionBuilder;
+    int? customRouteBarrierColor;
     if (autoRoute.instanceOf(TypeChecker.fromRuntime(MaterialRoute))) {
       routeType = RouteType.material;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CupertinoRoute))) {
@@ -130,6 +135,7 @@ class RouteConfigResolver {
       if (builderFunction != null) {
         customRouteBuilder = _typeResolver.resolveFunctionType(builderFunction);
       }
+      customRouteBarrierColor = autoRoute.peek('barrierColor')?.intValue;
     } else {
       var globConfig = _routerConfig.globalRouteConfig;
       routeType = globConfig.routeType;
@@ -248,6 +254,7 @@ class RouteConfigResolver {
       initial: initial,
       pathParams: pathParams,
       routeType: routeType,
+      hasWrappedRoute: hasWrappedRoute,
       transitionBuilder: transitionBuilder,
       customRouteBuilder: customRouteBuilder,
       customRouteBarrierDismissible: customRouteBarrierDismissible,
@@ -268,6 +275,7 @@ class RouteConfigResolver {
       fullMatch: fullMatch,
       usesPathAsKey: usesPathAsKey,
       meta: meta,
+      customRouteBarrierColor: customRouteBarrierColor,
     );
   }
 }

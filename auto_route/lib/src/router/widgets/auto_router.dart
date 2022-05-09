@@ -89,7 +89,6 @@ class AutoRouterState extends State<AutoRouter> {
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-
       _parentController = parentScope.controller;
       _controller = NestedStackRouter(
         parent: _parentController,
@@ -213,7 +212,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           key: parentData.key,
           routeData: parentData,
           managedByWidget: true,
-          onRoutes: widget.onNavigate,
+          onNavigate: widget.onNavigate,
           navigatorKey: widget.navigatorKey,
           routeCollection: _parentController.routeCollection.subCollectionOf(
             parentData.name,

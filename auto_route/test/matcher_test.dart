@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +8,7 @@ void main() {
     test(
         'Building default constructor with empty map should throw in assertion error',
         () {
-      expect(() => RouteCollection(LinkedHashMap()), throwsAssertionError);
+      expect(() => RouteCollection({}), throwsAssertionError);
     });
 
     final routeA = RouteConfig('A', path: '/');
@@ -82,7 +80,7 @@ void main() {
 
     test('Should return one match [B]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'B',
           key: ValueKey('B'),
           path: '/b',
@@ -99,7 +97,7 @@ void main() {
 
     test('Should return one match with one nested match [C/C1]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'C',
           path: '/c',
           stringMatch: '/c',
@@ -150,14 +148,14 @@ void main() {
 
     test('Should return two matches [A,B]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'A',
           path: '/',
           stringMatch: '/',
           key: ValueKey('A'),
           segments: ['/'],
         ),
-        RouteMatch(
+        const RouteMatch(
           name: 'B',
           path: '/b',
           stringMatch: '/b',
@@ -171,14 +169,14 @@ void main() {
     test('Should return two prefix matches with one nested match [A, C/C1]',
         () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'A',
           path: '/',
           stringMatch: '/',
           key: ValueKey('A'),
           segments: ['/'],
         ),
-        RouteMatch(
+        const RouteMatch(
           name: 'C',
           path: '/c',
           stringMatch: '/c',
@@ -201,21 +199,21 @@ void main() {
     test('Should return two prefix matches with one nested match [A, D/D0]',
         () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'A',
           path: '/',
           stringMatch: '/',
           key: ValueKey('A'),
           segments: ['/'],
         ),
-        RouteMatch(
+        const RouteMatch(
           name: 'D',
           path: '/d',
           stringMatch: '/d',
           key: ValueKey('D'),
           segments: ['/', 'd'],
           children: [
-            RouteMatch(
+             RouteMatch(
               name: 'D0',
               path: '',
               stringMatch: '',
@@ -232,21 +230,21 @@ void main() {
         'Should return two matches with two nested matches including empty path [A, D/D0/D1]',
         () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'A',
           path: '/',
           stringMatch: '/',
-          key: ValueKey('A'),
+          key:  ValueKey('A'),
           segments: ['/'],
         ),
-        RouteMatch(
+        const RouteMatch(
           name: 'D',
           path: '/d',
           stringMatch: '/d',
           key: ValueKey('D'),
           segments: ['/', 'd'],
           children: [
-            RouteMatch(
+             RouteMatch(
               path: '',
               stringMatch: '',
               key: ValueKey('D0'),
@@ -273,21 +271,21 @@ void main() {
     test('Should return two prefix matches and one full match [A, B, B/B1]',
         () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'A',
           key: ValueKey('A'),
           stringMatch: '/',
           path: '/',
           segments: ['/'],
         ),
-        RouteMatch(
+        const RouteMatch(
           name: 'B',
           key: ValueKey('B'),
           stringMatch: '/b',
           path: '/b',
           segments: ['/', 'b'],
         ),
-        RouteMatch(
+        const RouteMatch(
           name: 'B1',
           key: ValueKey('B1'),
           stringMatch: '/b/b1',
@@ -318,7 +316,7 @@ void main() {
 
     test('Should match wildcard [WC]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'WC',
           key: ValueKey('WC'),
           stringMatch: '/x/y',
@@ -331,7 +329,7 @@ void main() {
 
     test('Incomplete match should return [WC]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'WC',
           key: ValueKey('WC'),
           stringMatch: '/c/c1/x',
@@ -344,7 +342,7 @@ void main() {
 
     test('Should match prefixed wildcard route [PWC]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           path: '/d/*',
           key: ValueKey('PWC'),
           stringMatch: '/d/x/y',
@@ -378,7 +376,7 @@ void main() {
 
     test('Should match route [A]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'A',
           key: ValueKey('A'),
           stringMatch: '/a',
@@ -392,14 +390,14 @@ void main() {
 
     test('Should match route [C/C1]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'C',
           key: ValueKey('C'),
           stringMatch: '/c',
           path: '/c',
           segments: ['/', 'c'],
           children: [
-            RouteMatch(
+             RouteMatch(
               name: 'C1',
               key: ValueKey('C1'),
               stringMatch: 'c1',
@@ -415,7 +413,7 @@ void main() {
 
     test('Should match route [A]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'A',
           key: ValueKey('A'),
           stringMatch: '/a',
@@ -446,13 +444,13 @@ void main() {
 
     test('Should match route [A] and extract path param {id:1}', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'A',
           key: ValueKey('A'),
           stringMatch: '/a/1',
           path: '/a/:id',
           segments: ['/', 'a', '1'],
-          pathParams: Parameters({'id': '1'}),
+          pathParams:  Parameters({'id': '1'}),
         )
       ];
       expect(match('/a/1'), expectedMatches);
@@ -461,13 +459,13 @@ void main() {
     test('Should match route [B] and extract path params {id:1, type:none}',
         () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'B',
           key: ValueKey('B'),
           stringMatch: '/b/1/n/none',
           path: '/b/:id/n/:type',
           segments: ['/', 'b', '1', 'n', 'none'],
-          pathParams: Parameters({
+          pathParams:  Parameters({
             'id': '1',
             'type': 'none',
           }),
@@ -478,7 +476,7 @@ void main() {
 
     test('Should match route [C]', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'C',
           key: ValueKey('C'),
           stringMatch: '/c',
@@ -518,13 +516,13 @@ void main() {
 
     test('Should match route [A] and extract query param {foo:bar}', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           key: ValueKey('A'),
           stringMatch: '/a',
           name: 'A',
           path: '/a',
           segments: ['/', 'a'],
-          queryParams: Parameters({'foo': 'bar'}),
+          queryParams:  Parameters({'foo': 'bar'}),
         )
       ];
       expect(match('/a?foo=bar'), expectedMatches);
@@ -534,15 +532,15 @@ void main() {
         'Should match routes [B,B1] and extract query params {foo:bar, bar:baz} for both',
         () {
       final expectedMatches = [
-        RouteMatch(
-          key: ValueKey('B'),
+        const RouteMatch(
+          key:  ValueKey('B'),
           stringMatch: '/b',
           name: 'B',
           path: '/b',
           segments: ['/', 'b'],
           queryParams: Parameters({'foo': 'bar', 'bar': 'baz'}),
         ),
-        RouteMatch(
+        const RouteMatch(
           key: ValueKey('B1'),
           stringMatch: '/b/b1',
           name: 'B1',
@@ -559,7 +557,7 @@ void main() {
         'Should match route [C/C1] and extract query parameters {foo:bar} for parent and child',
         () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           name: 'C',
           path: '/c',
           stringMatch: '/c',
@@ -568,7 +566,7 @@ void main() {
           queryParams: Parameters({'foo': 'bar'}),
           children: [
             RouteMatch(
-              key: ValueKey('C1'),
+              key:  ValueKey('C1'),
               name: 'C1',
               path: 'c1',
               stringMatch: 'c1',
@@ -583,13 +581,13 @@ void main() {
 
     test('Should match route [A] and extract query param {foo:[bar,baz]}', () {
       final expectedMatches = [
-        RouteMatch(
+        const RouteMatch(
           key: ValueKey('A'),
           stringMatch: '/a',
           name: 'A',
           path: '/a',
           segments: ['/', 'a'],
-          queryParams: Parameters({
+          queryParams:  Parameters({
             'foo': ['bar', 'baz']
           }),
         )

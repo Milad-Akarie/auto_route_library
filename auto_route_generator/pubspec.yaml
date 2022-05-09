@@ -1,6 +1,6 @@
 name: auto_route_generator
 description: AutoRoute is a declartive routing solution, where everything needed for navigation is automatically generated for you.
-version: 3.2.3
+version: 4.0.0
 homepage: https://github.com/Milad-Akarie/auto_route_library
 
 environment:
@@ -15,8 +15,8 @@ dependencies:
   code_builder: ^4.1.0
   dart_style: ^2.2.0
   auto_route:
-#       ^3.2.3
-    path: ../auto_route
+       ^4.0.0
+#    path: ../auto_route
 
 
 dev_dependencies:

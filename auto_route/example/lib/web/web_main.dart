@@ -1,6 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:example/web/router/web_router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(App());
@@ -20,29 +20,30 @@ class AppState extends State<App> {
     ..addListener(() {
       setState(() {});
     });
-  late final _appRouter = WebAppRouter(authService);
 
+  late final _appRouter = WebAppRouter(authService);
+ List<PageRouteInfo>? urlRoutes;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
       routeInformationProvider: _appRouter.routeInfoProvider(),
-      routerDelegate: _appRouter.delegate(
-          // onNavigate: (UrlState state, bool initial) {},
-          // routes: (_) => [
-          //   if (authService.isAuthenticated)
-          //     HomeRoute()
-          //   else
-          //     LoginRoute(),
-          // ],
-          ),
       routeInformationParser: _appRouter.defaultRouteParser(),
+      routerDelegate: _appRouter.delegate(
+        // initialDeepLink: '/user/1/posts/favorite',
+        // onNavigate: (urlState){
+        //   print(urlState.path);
+        //   setState(() {
+        //     urlRoutes = urlState.segments.map((e) => e.toPageRouteInfo()).toList();
+        //   });
+        // },
+        // routes: (handler) {
+        //   print(handler.peek?.map((e) => e.routeName));
+        //   if (!authService.isAuthenticated) return [LoginRoute()];
+        //   return handler.initialPendingRoutes ?? [HomeRouter()];
+        // },
+      ),
     );
   }
 }
@@ -58,11 +59,28 @@ class LoginPage extends StatelessWidget {
           title: Text('Login to continue'),
         ),
         body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              App.of(context).authService.isAuthenticated = true;
-            },
-            child: Text('Login'),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  App.of(context).authService.isAuthenticated = true;
+                },
+                child: Text('Login'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  App.of(context).authService.isVerified = true;
+                },
+                child: Text('Verify'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final authService = App.of(context).authService;
+                  authService.loginAndVerify();
+                },
+                child: Text('Login & Verify'),
+              ),
+            ],
           ),
         ),
       ),
@@ -76,8 +94,25 @@ class AuthService extends ChangeNotifier {
 
   bool get isAuthenticated => _isAuthenticated;
 
+
+  bool _isVerified = false;
+
+  bool get isVerified => _isVerified;
+
+  set isVerified(bool value) {
+    _isVerified = value;
+    notifyListeners();
+  }
+
   set isAuthenticated(bool value) {
     _isAuthenticated = value;
+    notifyListeners();
+  }
+
+
+  void loginAndVerify() {
+    _isAuthenticated = true;
+    _isVerified = true;
     notifyListeners();
   }
 }

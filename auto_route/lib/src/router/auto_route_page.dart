@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/router/widgets/custom_cupertino_transitions_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -36,13 +37,8 @@ abstract class AutoRoutePage<T> extends Page<T> {
   LocalKey get routeKey => routeData.key;
 
   Widget buildPage(BuildContext context) {
-    var childToBuild = child;
-    if (childToBuild is AutoRouteWrapper) {
-      childToBuild = (childToBuild as AutoRouteWrapper).wrappedRoute(context);
-    }
-
     return RouteDataScope(
-      child: childToBuild,
+      child: child,
       routeData: routeData,
     );
   }
@@ -88,6 +84,7 @@ class PageBasedMaterialPageRoute<T> extends PageRoute<T>
   AutoRoutePage get _page => settings as AutoRoutePage;
 
   List<VoidCallback> scopes = [];
+
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
 
@@ -207,7 +204,8 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   bool get barrierDismissible => _page.barrierDismissible;
 
   @override
-  Color? get barrierColor => _page.barrierColor;
+  Color? get barrierColor =>
+      _page.barrierColor == null ? null : Color(_page.barrierColor!);
 
   @override
   String? get barrierLabel => _page.barrierLabel;
@@ -281,11 +279,12 @@ class CupertinoPageX<T> extends _TitledAutoRoutePage<T> {
     bool fullscreenDialog = false,
     bool maintainState = true,
   }) : super(
-            routeData: routeData,
-            child: child,
-            maintainState: maintainState,
-            fullscreenDialog: fullscreenDialog,
-            title: title);
+          routeData: routeData,
+          child: child,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+          title: title,
+        );
 
   @override
   Route<T> onCreateRoute(BuildContext context) {
@@ -294,7 +293,7 @@ class CupertinoPageX<T> extends _TitledAutoRoutePage<T> {
 }
 
 class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
-    with CupertinoRouteTransitionMixin<T> {
+    with CustomCupertinoRouteTransitionMixin<T> {
   _PageBasedCupertinoPageRoute({
     required _TitledAutoRoutePage page,
   }) : super(settings: page);
@@ -349,7 +348,7 @@ class CustomPage<T> extends AutoRoutePage<T> {
   final bool opaque;
   final int durationInMilliseconds;
   final int reverseDurationInMilliseconds;
-  final Color? barrierColor;
+  final int? barrierColor;
   final bool barrierDismissible;
   final String? barrierLabel;
   final RouteTransitionsBuilder? transitionsBuilder;

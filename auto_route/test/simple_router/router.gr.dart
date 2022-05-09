@@ -18,13 +18,16 @@ class _$AppRouter extends RootStackRouter {
   @override
   final Map<String, PageFactory> pagesMap = {
     FirstRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(routeData: routeData, child: FirstPage());
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const FirstPage());
     },
     SecondRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(routeData: routeData, child: SecondPage());
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const SecondPage());
     },
     ThirdRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(routeData: routeData, child: ThirdPage());
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const ThirdPage());
     }
   };
 
