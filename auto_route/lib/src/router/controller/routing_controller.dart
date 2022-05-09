@@ -337,16 +337,19 @@ abstract class RoutingController with ChangeNotifier {
 }
 
 class TabsRouter extends RoutingController {
+  @override
   final RoutingController? _parent;
+  @override
   final LocalKey key;
+  @override
   final RouteCollection routeCollection;
+  @override
   final PageBuilder pageBuilder;
+  @override
   final RouteMatcher matcher;
   RouteData _routeData;
   int _activeIndex = 0;
   int? _previousIndex;
-  bool managedByWidget;
-  OnTabNavigateCallBack? onNavigate;
   final int homeIndex;
 
   TabsRouter(
@@ -354,13 +357,9 @@ class TabsRouter extends RoutingController {
       required this.pageBuilder,
       required this.key,
       required RouteData routeData,
-      this.managedByWidget = false,
-      this.onNavigate,
       this.homeIndex = -1,
-      RoutingController? parent,
-      int? initialIndex})
+      RoutingController? parent})
       : matcher = RouteMatcher(routeCollection),
-        _activeIndex = initialIndex ?? 0,
         _parent = parent,
         _routeData = routeData;
 
@@ -375,10 +374,12 @@ class TabsRouter extends RoutingController {
     }
   }
 
+  @override
   RouteData get current {
     return currentChild ?? routeData;
   }
 
+  @override
   RouteData? get currentChild {
     if (_activeIndex < _pages.length) {
       return _pages[_activeIndex].routeData;
@@ -421,7 +422,6 @@ class TabsRouter extends RoutingController {
     return this;
   }
 
-
   @override
   @optionalTypeArgs
   Future<bool> pop<T extends Object?>([T? result]) {
@@ -443,10 +443,8 @@ class TabsRouter extends RoutingController {
         (r) => r.routeName == preMatchedRoute.name,
       );
       if (correspondingRouteIndex != -1) {
-        if (managedByWidget) {
-          onNavigate?.call(preMatchedRoute);
-        }
         routesToPush[correspondingRouteIndex] = preMatchedRoute;
+        _previousIndex = _activeIndex;
         _activeIndex = correspondingRouteIndex;
       }
     }
@@ -485,9 +483,9 @@ class TabsRouter extends RoutingController {
       final pageToUpdateIndex = _pages.indexWhere(
         (p) => p.routeKey == mayUpdateRoute.key,
       );
+
       if (pageToUpdateIndex != -1) {
         final routeToBeUpdated = _pages[pageToUpdateIndex].routeData._match;
-
         for (final ctr in _childControllers) {
           if (ctr.routeData == _pages[pageToUpdateIndex].routeData) {
             ctr._markedForDataUpdate = true;
@@ -497,22 +495,15 @@ class TabsRouter extends RoutingController {
         final data = _createRouteData(mayUpdateRoute, routeData);
         _pages[pageToUpdateIndex] = pageBuilder(data);
 
-        if (!managedByWidget) {
-          if (_activeIndex != pageToUpdateIndex) {
-            setActiveIndex(pageToUpdateIndex);
-          } else if (mayUpdateRoute != routeToBeUpdated) {
-            notifyAll();
-          }
-        } else if (onNavigate != null) {
-          onNavigate!(mayUpdateRoute);
+        if (_activeIndex != pageToUpdateIndex) {
+          setActiveIndex(pageToUpdateIndex);
+        } else if (mayUpdateRoute != routeToBeUpdated) {
+          notifyAll();
         }
 
         var mayUpdateController = _innerControllerOf(mayUpdateRoute.key);
         if (mayUpdateController != null) {
           final newRoutes = mayUpdateRoute.children ?? const [];
-          if (mayUpdateController.managedByWidget) {
-            mayUpdateController._onNavigate(newRoutes);
-          }
           return mayUpdateController._navigateAll(newRoutes, onFailure: onFailure);
         }
       }
@@ -566,15 +557,16 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  void _onNavigate(List<RouteMatch> routes) {
-    if (routes.isNotEmpty) {
-      onNavigate?.call(routes.last);
-    }
-  }
+  void _onNavigate(List<RouteMatch> routes) {}
+
+  @override
+  bool get managedByWidget => false;
 }
 
 abstract class StackRouter extends RoutingController {
+  @override
   final RoutingController? _parent;
+  @override
   final LocalKey key;
   final GlobalKey<NavigatorState> _navigatorKey;
   final OnNestedNavigateCallBack? onNavigate;
@@ -587,7 +579,7 @@ abstract class StackRouter extends RoutingController {
   })  : _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         _parent = parent;
 
-  Map<AutoRedirectGuardBase, VoidCallback> _redirectGuardsListeners = {};
+  final Map<AutoRedirectGuardBase, VoidCallback> _redirectGuardsListeners = {};
 
   late final pendingRoutesHandler = PendingRoutesHandler();
 
@@ -630,10 +622,13 @@ abstract class StackRouter extends RoutingController {
 
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
+  @override
   RouteCollection get routeCollection;
 
+  @override
   PageBuilder get pageBuilder;
 
+  @override
   RouteMatcher get matcher;
 
   @override
@@ -704,6 +699,7 @@ abstract class StackRouter extends RoutingController {
 
   bool get hasPagelessTopRoute => pagelessRoutesObserver.hasPagelessTopRoute;
 
+  @override
   void _updateSharedPathData({
     Map<String, dynamic> queryParams = const {},
     String fragment = '',
@@ -1174,13 +1170,16 @@ abstract class StackRouter extends RoutingController {
   void popUntilRouteWithName(String name) {
     popUntil(ModalRoute.withName(name));
   }
-
 }
 
 class NestedStackRouter extends StackRouter {
+  @override
   final RouteMatcher matcher;
+  @override
   final RouteCollection routeCollection;
+  @override
   final PageBuilder pageBuilder;
+  @override
   final bool managedByWidget;
 
   RouteData _routeData;

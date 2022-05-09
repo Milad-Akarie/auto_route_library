@@ -18,11 +18,11 @@ abstract class RootStackRouter extends StackRouter {
         router: this,
         route: const RouteMatch(
           name: 'Root',
-          segments: const [''],
+          segments: [''],
           path: '',
           stringMatch: '',
           isBranch: true,
-          key: const ValueKey('Root'),
+          key: ValueKey('Root'),
         ),
         pendingChildren: [],
       );
@@ -31,8 +31,9 @@ abstract class RootStackRouter extends StackRouter {
 
   List<RouteConfig> get routes;
 
-  bool _managedByWidget = false;
-  late final _navigationHistory;
+   // ignore: prefer_final_fields
+   bool _managedByWidget = false;
+  late final NavigationHistory _navigationHistory;
 
   @override
   bool get managedByWidget => _managedByWidget;

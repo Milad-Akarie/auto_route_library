@@ -10,8 +10,19 @@ class TestPage extends StatelessWidget {
   }
 }
 
-class FirstPage extends TestPage {}
 
-class SecondPage extends TestPage {}
+class NotFoundPage extends TestPage {
+  const NotFoundPage({Key? key}) : super(key: key);
+}
 
-class ThirdPage extends TestPage {}
+class FirstPage extends TestPage {
+  const FirstPage({Key? key}) : super(key: key);
+}
+
+class SecondPage extends TestPage {
+  const SecondPage({Key? key}) : super(key: key);
+}
+
+class ThirdPage extends TestPage {
+  const ThirdPage({Key? key}) : super(key: key);
+}

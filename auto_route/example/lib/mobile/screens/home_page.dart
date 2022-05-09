@@ -49,7 +49,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   bool _showSettingsTap = true;
 
-
   @override
   Widget build(context) {
     // builder will rebuild everytime this router's stack
@@ -94,7 +93,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ProfileTab(),
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
-            builder: (context, child) {
+            builder: (context, child, _) {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(context.topRoute.name),

@@ -64,7 +64,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   UrlState? get currentConfiguration => urlState;
 
   @override
-  Future<void> setInitialRoutePath(UrlState state) {
+  Future<void> setInitialRoutePath(UrlState configuration) {
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
@@ -76,24 +76,24 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return controller.pushAll(initialRoutes!);
     } else if (initialDeepLink != null) {
       return controller.pushNamed(initialDeepLink!, includePrefixMatches: true);
-    } else if (state.hasSegments) {
-      _onNewUrlState(state);
-      return controller.navigateAll(state.segments);
+    } else if (configuration.hasSegments) {
+      _onNewUrlState(configuration);
+      return controller.navigateAll(configuration.segments);
     } else {
       throw FlutterError("Can not resolve initial route");
     }
   }
 
   @override
-  Future<void> setNewRoutePath(UrlState state) {
+  Future<void> setNewRoutePath(UrlState configuration) {
     final topMost = controller.topMostRouter();
     if (topMost is StackRouter && topMost.hasPagelessTopRoute) {
       topMost.popUntil((route) => route.settings is Page);
     }
 
-    if (state.hasSegments) {
-      _onNewUrlState(state);
-      return controller.navigateAll(state.segments);
+    if (configuration.hasSegments) {
+      _onNewUrlState(configuration);
+      return controller.navigateAll(configuration.segments);
     }
 
     notifyListeners();
@@ -133,7 +133,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 }
 
 class _AutoRootRouter extends StatefulWidget {
-  _AutoRootRouter({
+  const _AutoRootRouter({
     Key? key,
     required this.router,
     this.navRestorationScopeId,

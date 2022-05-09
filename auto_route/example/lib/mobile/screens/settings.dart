@@ -2,8 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
-
 class SettingsPage extends StatefulWidget {
   final String tab;
   final String query;
@@ -40,7 +38,14 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
                     query: 'updated Query $queryUpdateCont',
                   ));
                 },
-                child: Text('Update Query $queryUpdateCont'))
+                child: Text('Update Query $queryUpdateCont')),
+            ElevatedButton(
+                onPressed: () {
+                  context.navigateTo(BooksTab(
+                     children: [BookDetailsRoute(id: 2)]
+                  ));
+                },
+                child: Text('Navigate to book details/1'))
           ],
         ),
       ),
@@ -57,5 +62,3 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
     print('did change tab route from ${previousRoute.name}');
   }
 }
-
-
