@@ -320,10 +320,7 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
     if (kIsWeb) {
       return _NoAnimationPageRouteBuilder<T>(page: this);
     }
-    final platform = Theme.of(context).platform;
-    if (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS) {
-      return _PageBasedCupertinoPageRoute<T>(page: this);
-    }
+
     return PageBasedMaterialPageRoute<T>(page: this);
   }
 }
