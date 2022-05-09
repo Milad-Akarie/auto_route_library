@@ -40,4 +40,3 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
     _checkCurrentRoute(newRoute);
   }
 }
-

@@ -31,8 +31,8 @@ abstract class RootStackRouter extends StackRouter {
 
   List<RouteConfig> get routes;
 
-   // ignore: prefer_final_fields
-   bool _managedByWidget = false;
+  // ignore: prefer_final_fields
+  bool _managedByWidget = false;
   late final NavigationHistory _navigationHistory;
 
   @override

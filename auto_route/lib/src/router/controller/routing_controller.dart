@@ -25,7 +25,8 @@ part 'root_stack_router.dart';
 typedef RouteDataPredicate = bool Function(RouteData route);
 typedef OnNestedNavigateCallBack = void Function(List<RouteMatch> routes);
 typedef OnTabNavigateCallBack = void Function(RouteMatch route);
-typedef RoutesBuilder = List<PageRouteInfo> Function(PendingRoutesHandler handler);
+typedef RoutesBuilder = List<PageRouteInfo> Function(
+    PendingRoutesHandler handler);
 typedef RoutePopCallBack = void Function(RouteMatch route, dynamic results);
 typedef OnNavigateCallBack = void Function(UrlState tree);
 typedef NavigatorObserversBuilder = List<NavigatorObserver> Function();
@@ -51,7 +52,8 @@ abstract class RoutingController with ChangeNotifier {
     _childControllers.remove(childController);
   }
 
-  RoutingController? _innerControllerOf(Key? key) => _childControllers.lastWhereOrNull(
+  RoutingController? _innerControllerOf(Key? key) =>
+      _childControllers.lastWhereOrNull(
         (c) => c.key == key,
       );
 
@@ -80,7 +82,8 @@ abstract class RoutingController with ChangeNotifier {
     }
   }
 
-  List<RouteData> get stackData => List.unmodifiable(_pages.map((e) => e.routeData));
+  List<RouteData> get stackData =>
+      List.unmodifiable(_pages.map((e) => e.routeData));
 
   bool isRouteActive(String routeName) {
     return navigationHistory.isRouteActive(routeName);
@@ -125,7 +128,8 @@ abstract class RoutingController with ChangeNotifier {
         return null;
       } else {
         final path = routeCollection.findPathTo(route.routeName);
-        throw FlutterError("\nLooks like you're trying to navigate to a nested route without adding their parent to stack first \n"
+        throw FlutterError(
+            "\nLooks like you're trying to navigate to a nested route without adding their parent to stack first \n"
             "try navigating to ${path.map((e) => e.name).reduce((a, b) => a += ' -> $b')}");
       }
     }
@@ -153,9 +157,12 @@ abstract class RoutingController with ChangeNotifier {
     return routeCollection.containsKey(route.routeName);
   }
 
-  _RouterScopeResult<T>? _findPathScopeOrReportFailure<T extends RoutingController>(String path,
-      {bool includePrefixMatches = false, OnNavigationFailure? onFailure}) {
-    final routers = topMostRouter(ignorePagelessRoutes: true)._buildRoutersHierarchy().whereType<T>();
+  _RouterScopeResult<T>?
+      _findPathScopeOrReportFailure<T extends RoutingController>(String path,
+          {bool includePrefixMatches = false, OnNavigationFailure? onFailure}) {
+    final routers = topMostRouter(ignorePagelessRoutes: true)
+        ._buildRoutersHierarchy()
+        .whereType<T>();
 
     for (var router in routers) {
       final matches = router.matcher.match(
@@ -178,20 +185,25 @@ abstract class RoutingController with ChangeNotifier {
     return null;
   }
 
-  RoutingController _findScope<T extends RoutingController>(PageRouteInfo route) {
-    return topMostRouter(ignorePagelessRoutes: true)._buildRoutersHierarchy().firstWhere(
+  RoutingController _findScope<T extends RoutingController>(
+      PageRouteInfo route) {
+    return topMostRouter(ignorePagelessRoutes: true)
+        ._buildRoutersHierarchy()
+        .firstWhere(
           (r) => r._canHandleNavigation(route),
           orElse: () => this,
         );
   }
 
-  Future<dynamic> navigate(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+  Future<dynamic> navigate(PageRouteInfo route,
+      {OnNavigationFailure? onFailure}) async {
     return _findScope(route)._navigate(route, onFailure: onFailure);
   }
 
   void _onNavigate(List<RouteMatch> routes);
 
-  Future<dynamic> _navigate(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+  Future<dynamic> _navigate(PageRouteInfo route,
+      {OnNavigationFailure? onFailure}) async {
     final match = _matchOrReportFailure(route, onFailure);
     if (match != null) {
       return _navigateAll([match], onFailure: onFailure);
@@ -219,7 +231,8 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   List<RoutingController> _buildRoutersHierarchy() {
-    void collectRouters(RoutingController currentParent, List<RoutingController> all) {
+    void collectRouters(
+        RoutingController currentParent, List<RoutingController> all) {
       all.add(currentParent);
       if (currentParent._parent != null) {
         collectRouters(currentParent._parent!, all);
@@ -303,7 +316,8 @@ abstract class RoutingController with ChangeNotifier {
   Future<bool> pop<T extends Object?>([T? result]);
 
   @optionalTypeArgs
-  Future<bool> popTop<T extends Object?>([T? result]) => topMostRouter().pop<T>(result);
+  Future<bool> popTop<T extends Object?>([T? result]) =>
+      topMostRouter().pop<T>(result);
 
   bool get canPopSelfOrChildren;
 
@@ -324,20 +338,29 @@ abstract class RoutingController with ChangeNotifier {
     return segments;
   }
 
-  PageRouteInfo? buildPageRoute(String? path, {bool includePrefixMatches = true}) {
+  PageRouteInfo? buildPageRoute(String? path,
+      {bool includePrefixMatches = true}) {
     if (path == null) return null;
-    return matcher.match(path, includePrefixMatches: includePrefixMatches)?.firstOrNull?.toPageRouteInfo();
+    return matcher
+        .match(path, includePrefixMatches: includePrefixMatches)
+        ?.firstOrNull
+        ?.toPageRouteInfo();
   }
 
-  List<PageRouteInfo>? buildPageRoutesStack(String? path, {bool includePrefixMatches = true}) {
+  List<PageRouteInfo>? buildPageRoutesStack(String? path,
+      {bool includePrefixMatches = true}) {
     if (path == null) return null;
-    return matcher.match(path, includePrefixMatches: includePrefixMatches)?.map((m) => m.toPageRouteInfo()).toList();
+    return matcher
+        .match(path, includePrefixMatches: includePrefixMatches)
+        ?.map((m) => m.toPageRouteInfo())
+        .toList();
   }
 
   @override
   String toString() => '${routeData.name} Router';
 
-  Future<void> _navigateAll(List<RouteMatch> routes, {OnNavigationFailure? onFailure});
+  Future<void> _navigateAll(List<RouteMatch> routes,
+      {OnNavigationFailure? onFailure});
 }
 
 class TabsRouter extends RoutingController {
@@ -466,13 +489,15 @@ class TabsRouter extends RoutingController {
     }
   }
 
-  void replaceAll(List<PageRouteInfo> routes, PageRouteInfo<dynamic> previousActiveRoute) {
+  void replaceAll(
+      List<PageRouteInfo> routes, PageRouteInfo<dynamic> previousActiveRoute) {
     final routesToPush = _matchAllOrReportFailure(routes)!;
 
     _pages.clear();
     _childControllers.clear();
     _pushAll(routesToPush);
-    var targetIndex = routesToPush.indexWhere((r) => r.name == previousActiveRoute.routeName);
+    var targetIndex =
+        routesToPush.indexWhere((r) => r.name == previousActiveRoute.routeName);
     if (targetIndex == -1) {
       targetIndex = homeIndex == -1 ? 0 : homeIndex;
     }
@@ -480,7 +505,8 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  Future<void> _navigateAll(List<RouteMatch> routes, {OnNavigationFailure? onFailure}) async {
+  Future<void> _navigateAll(List<RouteMatch> routes,
+      {OnNavigationFailure? onFailure}) async {
     if (routes.isNotEmpty) {
       final mayUpdateRoute = routes.last;
 
@@ -508,7 +534,8 @@ class TabsRouter extends RoutingController {
         var mayUpdateController = _innerControllerOf(mayUpdateRoute.key);
         if (mayUpdateController != null) {
           final newRoutes = mayUpdateRoute.children ?? const [];
-          return mayUpdateController._navigateAll(newRoutes, onFailure: onFailure);
+          return mayUpdateController._navigateAll(newRoutes,
+              onFailure: onFailure);
         }
       }
       _updateSharedPathData(
@@ -556,7 +583,8 @@ class TabsRouter extends RoutingController {
       fragment: fragment,
     ));
     if (includeAncestors && _parent != null) {
-      _parent!._updateSharedPathData(queryParams: queryParams, fragment: fragment);
+      _parent!
+          ._updateSharedPathData(queryParams: queryParams, fragment: fragment);
     }
   }
 
@@ -590,7 +618,8 @@ abstract class StackRouter extends RoutingController {
   void _attachRedirectGuard(AutoRedirectGuardBase guard) {
     final stackRouters = _buildRoutersHierarchy().whereType<StackRouter>();
 
-    if (stackRouters.any((r) => r._redirectGuardsListeners.containsKey(guard))) {
+    if (stackRouters
+        .any((r) => r._redirectGuardsListeners.containsKey(guard))) {
       return;
     }
 
@@ -640,7 +669,9 @@ abstract class StackRouter extends RoutingController {
     if (_pages.length > 1 || hasPagelessTopRoute) {
       return true;
     } else if (_pages.isNotEmpty) {
-      return _innerControllerOf(_pages.last.routeData.key)?.canPopSelfOrChildren ?? false;
+      return _innerControllerOf(_pages.last.routeData.key)
+              ?.canPopSelfOrChildren ??
+          false;
     }
     return false;
   }
@@ -686,7 +717,8 @@ abstract class StackRouter extends RoutingController {
 
   @override
   RoutingController topMostRouter({bool ignorePagelessRoutes = false}) {
-    if (_childControllers.isNotEmpty && (ignorePagelessRoutes || !hasPagelessTopRoute)) {
+    if (_childControllers.isNotEmpty &&
+        (ignorePagelessRoutes || !hasPagelessTopRoute)) {
       var topRouteKey = currentChild?.key;
       final innerRouter = _innerControllerOf(topRouteKey);
       if (innerRouter != null) {
@@ -791,19 +823,23 @@ abstract class StackRouter extends RoutingController {
   List<AutoRoutePage> get stack => List.unmodifiable(_pages);
 
   @optionalTypeArgs
-  Future<T?> push<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+  Future<T?> push<T extends Object?>(PageRouteInfo route,
+      {OnNavigationFailure? onFailure}) async {
     return _findStackScope(route)._push<T>(route, onFailure: onFailure);
   }
 
   StackRouter _findStackScope(PageRouteInfo route) {
-    final stackRouters = topMostRouter(ignorePagelessRoutes: true)._buildRoutersHierarchy().whereType<StackRouter>();
+    final stackRouters = topMostRouter(ignorePagelessRoutes: true)
+        ._buildRoutersHierarchy()
+        .whereType<StackRouter>();
     return stackRouters.firstWhere(
       (c) => c._canHandleNavigation(route),
       orElse: () => this,
     );
   }
 
-  Future<dynamic> _popUntilOrPushAll(List<RouteMatch> routes, {OnNavigationFailure? onFailure}) async {
+  Future<dynamic> _popUntilOrPushAll(List<RouteMatch> routes,
+      {OnNavigationFailure? onFailure}) async {
     final anchor = routes.first;
     final anchorPage = _pages.lastWhereOrNull(
       (p) => p.routeKey == anchor.key,
@@ -1004,7 +1040,8 @@ abstract class StackRouter extends RoutingController {
       if (await _canNavigate(
         route,
         onFailure,
-        pendingRoutes: routes.whereIndexed((index, element) => index > i).toList(),
+        pendingRoutes:
+            routes.whereIndexed((index, element) => index > i).toList(),
       )) {
         if (i != (routes.length - 1)) {
           _addEntry(route, notify: false);

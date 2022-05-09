@@ -1,7 +1,18 @@
 # ChangeLog
-## [3.2.3]
-- Fix routes with empty path don't update url #960
-- Fix RouteInformationProvider.routerReportsNewRouteInformation required 'type' issue #958
+## [4.0.0] (Breaking changes)
+- Refactor AutoRedirectGuard [Breaking Change]
+- Add AutoRouteAwareStateMixin to minimize boilerplate for AutoRouteAware states
+- Add NoShadowCupertinoTransitionsBuilder to remove unwanted shadow in nested cupertino routes
+- Add PageView support to AutoTabsRouter
+- Add TabBar support to AutoTabsRouter
+- Add custom builder support to AutoTabsRouter
+- Remove AutoTabsRouter.declarative implementation (replaced with builder) [Breaking Change]
+- AutoRouter.declarative routes now accepts a PendingRoutesHandler instead of context [Breaking Change]
+- Fix wrapped routes are rebuilt everytime the stack changes
+- Fix query params are not updated in Tab-Routes
+- Add router.activeGuardObserver to access active guards. e.g to implement loading indicator
+- Fix initial route is not showing when nested router is rebuilt
+- Replace AutoBackButton with AutoLeadingButton to support drawer and close icons
 ## [3.2.1]
 - Merge some readme file typo-fixes
 - Add @optionalTypeArgs to AutoRoute annotations

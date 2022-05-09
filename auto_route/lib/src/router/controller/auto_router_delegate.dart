@@ -225,10 +225,10 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   Future<void> setInitialRoutePath(UrlState tree) {
     if (initialDeepLink != null) {
       final routes = controller.buildPageRoutesStack(initialDeepLink!);
-       controller.pendingRoutesHandler._setPendingRoutes(routes);
+      controller.pendingRoutesHandler._setPendingRoutes(routes);
     } else if (tree.hasSegments) {
       final routes = tree.segments.map((e) => e.toPageRouteInfo()).toList();
-       controller.pendingRoutesHandler._setPendingRoutes(routes);
+      controller.pendingRoutesHandler._setPendingRoutes(routes);
     }
     return SynchronousFuture(null);
   }

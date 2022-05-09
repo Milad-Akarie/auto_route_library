@@ -2,13 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 /// The adjustments made to this code is to fix children not
 /// updating when [_warpUnderwayCount] == 0
 /// and to set pageController.offset.round() to [TabController.index]
 /// so page is set when the scroll pos is rounded to it
-
-
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +66,8 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
   bool get _controllerIsValid => _controller?.animation != null;
 
   void _updateTabController() {
-    final TabController? newController = widget.controller ?? DefaultTabController.of(context);
+    final TabController? newController =
+        widget.controller ?? DefaultTabController.of(context);
     assert(() {
       if (newController == null) {
         throw FlutterError(
@@ -85,9 +83,11 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
 
     if (newController == _controller) return;
 
-    if (_controllerIsValid) _controller!.animation!.removeListener(_handleTabControllerAnimationTick);
+    if (_controllerIsValid)
+      _controller!.animation!.removeListener(_handleTabControllerAnimationTick);
     _controller = newController;
-    if (_controller != null) _controller!.animation!.addListener(_handleTabControllerAnimationTick);
+    if (_controller != null)
+      _controller!.animation!.addListener(_handleTabControllerAnimationTick);
   }
 
   @override
@@ -117,7 +117,8 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
 
   @override
   void dispose() {
-    if (_controllerIsValid) _controller!.animation!.removeListener(_handleTabControllerAnimationTick);
+    if (_controllerIsValid)
+      _controller!.animation!.removeListener(_handleTabControllerAnimationTick);
     _controller = null;
     // We don't own the _controller Animation, so it's not disposed here.
     super.dispose();
@@ -129,7 +130,8 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
   }
 
   void _handleTabControllerAnimationTick() {
-    if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging) return; // This widget is driving the controller's animation.
+    if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging)
+      return; // This widget is driving the controller's animation.
 
     if (_controller!.index != _currentIndex) {
       _currentIndex = _controller!.index;
@@ -140,7 +142,8 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
   Future<void> _warpToCurrentIndex() async {
     if (!mounted) return Future<void>.value();
 
-    if (_pageController.page == _currentIndex!.toDouble()) return Future<void>.value();
+    if (_pageController.page == _currentIndex!.toDouble())
+      return Future<void>.value();
 
     final Duration duration = _controller!.animationDuration;
 
@@ -153,13 +156,16 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
 
     if ((_currentIndex! - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
-      await _pageController.animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+      await _pageController.animateToPage(_currentIndex!,
+          duration: duration, curve: Curves.ease);
       _warpUnderwayCount -= 1;
       return Future<void>.value();
     }
 
     assert((_currentIndex! - previousIndex).abs() > 1);
-    final int initialPage = _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
+    final int initialPage = _currentIndex! > previousIndex
+        ? _currentIndex! - 1
+        : _currentIndex! + 1;
     final List<Widget> originalChildren = _childrenWithKey;
     setState(() {
       _warpUnderwayCount += 1;
@@ -170,7 +176,8 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
     });
     _pageController.jumpToPage(initialPage);
 
-    await _pageController.animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+    await _pageController.animateToPage(_currentIndex!,
+        duration: duration, curve: Curves.ease);
     if (!mounted) return Future<void>.value();
     setState(() {
       _warpUnderwayCount -= 1;
@@ -189,17 +196,21 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
     if (notification.depth != 0) return false;
 
     _warpUnderwayCount += 1;
-    if (notification is ScrollUpdateNotification && !_controller!.indexIsChanging) {
+    if (notification is ScrollUpdateNotification &&
+        !_controller!.indexIsChanging) {
       if ((_pageController.page! - _controller!.index).abs() > 1.0) {
         _controller!.index = _pageController.page!.round();
         _currentIndex = _controller!.index;
       }
       _controller!.index = _pageController.page!.round();
-      _controller!.offset = (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
+      _controller!.offset =
+          (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
     } else if (notification is ScrollEndNotification) {
       _controller!.index = _pageController.page!.round();
       _currentIndex = _controller!.index;
-      if (!_controller!.indexIsChanging) _controller!.offset = (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
+      if (!_controller!.indexIsChanging)
+        _controller!.offset =
+            (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
     }
     _warpUnderwayCount -= 1;
 

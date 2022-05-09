@@ -50,7 +50,6 @@ class PageRouteInfo<T> {
 
   Parameters get queryParams => Parameters(rawQueryParams);
 
-
   static String expandPath(String template, Map<String, dynamic> params) {
     if (mapNullOrEmpty(params)) {
       return template;
