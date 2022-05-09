@@ -265,7 +265,7 @@ router.pop<bool>(true);
 We only have to add a callback function as a parameter to our page constructor like follows:
 ```dart        
 class BookDetailsPage extends StatelessWidget {        
- const BookDetailsRoute({this.book, required this.onRateBook});        
+ const BookDetailsPage({this.book, required this.onRateBook});        
         
   final Book book;        
   final void Function(int) onRateBook;        

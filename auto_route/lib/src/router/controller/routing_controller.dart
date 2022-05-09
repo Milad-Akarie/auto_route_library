@@ -66,6 +66,10 @@ abstract class RoutingController with ChangeNotifier {
 
   UrlState get urlState => navigationHistory.urlState;
 
+  String get currentPath => urlState.path;
+
+  String get currentUrl => urlState.url;
+
   void notifyAll({bool forceUrlRebuild = false}) {
     notifyListeners();
     if (!isRoot) {
