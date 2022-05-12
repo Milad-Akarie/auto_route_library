@@ -1,4 +1,7 @@
 # ChangeLog
+## [4.0.1] 
+- Fix incompatibility issues with flutter 3.0.0
+- fix reverseDurationInMilliseconds not being generated from router config
 ## [4.0.0] (Breaking changes)
 - Refactor AutoRedirectGuard [Breaking Change]
 - Add AutoRouteAwareStateMixin to minimize boilerplate for AutoRouteAware states

@@ -1,6 +1,6 @@
 name: auto_route
 description: AutoRoute is a declarative routing solution, where everything needed for navigation is automatically generated for you.
-version: 4.0.0
+version: 4.0.1
 homepage: https://github.com/Milad-Akarie/auto_route_library
 
 environment:

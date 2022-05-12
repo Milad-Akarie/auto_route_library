@@ -186,8 +186,9 @@ mixin CustomCupertinoRouteTransitionMixin<T> on PageRoute<T> {
     // If we're being popped into, we also cannot be swiped until the pop above
     // it completes. This translates to our secondary animation being
     // dismissed.
-    if (route.secondaryAnimation!.status != AnimationStatus.dismissed)
+    if (route.secondaryAnimation!.status != AnimationStatus.dismissed) {
       return false;
+    }
     // If we're in a gesture already, we cannot start another.
     if (isPopGestureInProgress(route)) return false;
 
@@ -782,15 +783,17 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
 
   @override
   _CupertinoEdgeShadowDecoration lerpFrom(Decoration? a, double t) {
-    if (a is _CupertinoEdgeShadowDecoration)
+    if (a is _CupertinoEdgeShadowDecoration) {
       return _CupertinoEdgeShadowDecoration.lerp(a, this, t)!;
+    }
     return _CupertinoEdgeShadowDecoration.lerp(null, this, t)!;
   }
 
   @override
   _CupertinoEdgeShadowDecoration lerpTo(Decoration? b, double t) {
-    if (b is _CupertinoEdgeShadowDecoration)
+    if (b is _CupertinoEdgeShadowDecoration) {
       return _CupertinoEdgeShadowDecoration.lerp(this, b, t)!;
+    }
     return _CupertinoEdgeShadowDecoration.lerp(this, null, t)!;
   }
 
