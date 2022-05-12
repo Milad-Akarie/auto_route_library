@@ -87,7 +87,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             );
           })
-        : AutoTabsRouter.pageView(
+        : AutoTabsRouter.tabBar(
             routes: [
               BooksTab(),
               ProfileTab(),

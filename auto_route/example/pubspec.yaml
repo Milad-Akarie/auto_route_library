@@ -12,6 +12,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   provider: ^5.0.0
+  url_strategy: ^0.2.0
   auto_route:
     path: ../../auto_route
 

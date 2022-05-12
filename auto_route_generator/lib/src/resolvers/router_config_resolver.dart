@@ -30,11 +30,11 @@ class RouterConfigResolver {
 
     int routeType = RouteType.material;
     int? durationInMilliseconds;
+    int? reverseDurationInMilliseconds;
     bool? customRouteOpaque;
     bool? customRouteBarrierDismissible;
     ResolvedType? transitionBuilder;
     ResolvedType? customRouteBuilder;
-
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       routeType = RouteType.cupertino;
     } else if (autoRouter
@@ -46,6 +46,8 @@ class RouterConfigResolver {
 
       durationInMilliseconds =
           autoRouter.peek('durationInMilliseconds')?.intValue;
+      reverseDurationInMilliseconds =
+          autoRouter.peek('reverseDurationInMilliseconds')?.intValue;
       customRouteOpaque = autoRouter.peek('opaque')?.boolValue;
       customRouteBarrierDismissible =
           autoRouter.peek('barrierDismissible')?.boolValue;
@@ -65,7 +67,7 @@ class RouterConfigResolver {
     _globalRouteConfig = RouteConfig(
       routeType: routeType,
       fullscreenDialog: false,
-      reverseDurationInMilliseconds: null,
+      reverseDurationInMilliseconds: reverseDurationInMilliseconds,
       durationInMilliseconds: durationInMilliseconds,
       customRouteOpaque: customRouteOpaque,
       customRouteBarrierDismissible: customRouteBarrierDismissible,

@@ -7,20 +7,22 @@ import 'package:flutter/material.dart';
 // pare builder
 part 'web_router.gr.dart';
 
-@CupertinoAutoRouter(
+@CustomAutoRouter(
+  transitionsBuilder: TransitionsBuilders.noTransition,
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
-    AutoRoute(
+    CustomRoute(
       path: '/',
       page: HomePage,
       initial: true,
+      reverseDurationInMilliseconds: 0,
     ),
     AutoRoute(path: '/login', page: LoginPage),
     RedirectRoute(
       path: '/user/:userID',
       redirectTo: '/user/:userID/page',
     ),
-    AdaptiveRoute(
+    AutoRoute(
       path: '/user/:userID/page',
       guards: [AuthGuard],
       page: UserPage,
@@ -63,7 +65,6 @@ class WebAppRouter extends _$WebAppRouter {
 
 class HomePage extends StatelessWidget {
   final VoidCallback? navigate, showUserPosts;
-
   const HomePage({
     Key? key,
     this.navigate,
@@ -88,7 +89,8 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.navigateNamedTo('/user/2');
+
+                    context.navigateNamedTo('/user/2?query=foo');
                   },
               child: Text('Navigate to user/2'),
             ),
@@ -210,10 +212,11 @@ class _UserPostsPageState extends State<UserPostsPage> {
 
 class UserPage extends StatefulWidget {
   final int id;
-
+  final String? query;
   UserPage({
     Key? key,
     @PathParam('userID') this.id = -1,
+    @QueryParam() this.query,
   }) : super(key: key);
 
   @override
@@ -227,7 +230,7 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name + ' ${widget.id}');
+            return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
           },
         ),
         leading: AutoLeadingButton(),
