@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
-import 'auto_route_navigator.dart';
 
 class AutoRouter extends StatefulWidget {
   final NavigatorObserversBuilder navigatorObservers;
@@ -39,6 +38,7 @@ class AutoRouter extends StatefulWidget {
         navigatorKey: navigatorKey,
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
+        inheritNavigatorObservers: inheritNavigatorObservers,
         onNavigate: onNavigate,
         placeholder: placeholder,
         routes: routes,

@@ -83,11 +83,13 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
 
     if (newController == _controller) return;
 
-    if (_controllerIsValid)
+    if (_controllerIsValid) {
       _controller!.animation!.removeListener(_handleTabControllerAnimationTick);
+    }
     _controller = newController;
-    if (_controller != null)
+    if (_controller != null) {
       _controller!.animation!.addListener(_handleTabControllerAnimationTick);
+    }
   }
 
   @override
@@ -117,8 +119,9 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
 
   @override
   void dispose() {
-    if (_controllerIsValid)
+    if (_controllerIsValid) {
       _controller!.animation!.removeListener(_handleTabControllerAnimationTick);
+    }
     _controller = null;
     // We don't own the _controller Animation, so it's not disposed here.
     super.dispose();
@@ -130,8 +133,9 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
   }
 
   void _handleTabControllerAnimationTick() {
-    if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging)
-      return; // This widget is driving the controller's animation.
+    if (_warpUnderwayCount > 0 || !_controller!.indexIsChanging) {
+      return;
+    } // This widget is driving the controller's animation.
 
     if (_controller!.index != _currentIndex) {
       _currentIndex = _controller!.index;
@@ -142,8 +146,9 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
   Future<void> _warpToCurrentIndex() async {
     if (!mounted) return Future<void>.value();
 
-    if (_pageController.page == _currentIndex!.toDouble())
+    if (_pageController.page == _currentIndex!.toDouble()) {
       return Future<void>.value();
+    }
 
     final Duration duration = _controller!.animationDuration;
 
@@ -208,9 +213,10 @@ class _CustomTabBarViewState extends State<CustomTabBarView> {
     } else if (notification is ScrollEndNotification) {
       _controller!.index = _pageController.page!.round();
       _currentIndex = _controller!.index;
-      if (!_controller!.indexIsChanging)
+      if (!_controller!.indexIsChanging) {
         _controller!.offset =
             (_pageController.page! - _controller!.index).clamp(-1.0, 1.0);
+      }
     }
     _warpUnderwayCount -= 1;
 
