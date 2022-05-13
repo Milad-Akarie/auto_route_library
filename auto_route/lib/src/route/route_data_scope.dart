@@ -6,9 +6,10 @@ class RouteDataScope extends InheritedWidget {
   final RouteData routeData;
 
   const RouteDataScope({
+    Key? key,
     required this.routeData,
     required Widget child,
-  }) : super(child: child);
+  }) : super(child: child, key: key);
 
   static RouteDataScope of(BuildContext context) {
     var scope = context.findAncestorWidgetOfExactType<RouteDataScope>();

@@ -7,20 +7,22 @@ import 'package:flutter/material.dart';
 // pare builder
 part 'web_router.gr.dart';
 
-@CupertinoAutoRouter(
+@CustomAutoRouter(
+  transitionsBuilder: TransitionsBuilders.noTransition,
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
-    AutoRoute(
+    CustomRoute(
       path: '/',
       page: HomePage,
       initial: true,
+      reverseDurationInMilliseconds: 0,
     ),
     AutoRoute(path: '/login', page: LoginPage),
     RedirectRoute(
       path: '/user/:userID',
       redirectTo: '/user/:userID/page',
     ),
-    AdaptiveRoute(
+    AutoRoute(
       path: '/user/:userID/page',
       guards: [AuthGuard],
       page: UserPage,
@@ -28,7 +30,6 @@ part 'web_router.gr.dart';
         AutoRoute(
           path: '',
           page: UserProfilePage,
-          // initial: true,
         ),
         AutoRoute(
           path: 'posts',
@@ -62,30 +63,20 @@ class WebAppRouter extends _$WebAppRouter {
         );
 }
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   final VoidCallback? navigate, showUserPosts;
-
   const HomePage({
     Key? key,
     this.navigate,
     this.showUserPosts,
   }) : super(key: key);
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AutoBackButton(),
+        leading: AutoLeadingButton(),
       ),
       body: Center(
         child: Column(
@@ -96,15 +87,15 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(fontSize: 30),
             ),
             ElevatedButton(
-              onPressed: widget.navigate ??
+              onPressed: navigate ??
                   () {
 
-                    context.navigateNamedTo('/user/2');
+                    context.navigateNamedTo('/user/2?query=foo');
                   },
               child: Text('Navigate to user/2'),
             ),
             ElevatedButton(
-              onPressed: widget.showUserPosts,
+              onPressed: showUserPosts,
               child: Text('Show user posts'),
             ),
           ],
@@ -135,6 +126,7 @@ class UserProfilePage extends StatelessWidget {
   final VoidCallback? navigate;
   final int likes;
   final int userId;
+
   const UserProfilePage({
     Key? key,
     this.navigate,
@@ -220,10 +212,11 @@ class _UserPostsPageState extends State<UserPostsPage> {
 
 class UserPage extends StatefulWidget {
   final int id;
-
+  final String? query;
   UserPage({
     Key? key,
     @PathParam('userID') this.id = -1,
+    @QueryParam() this.query,
   }) : super(key: key);
 
   @override
@@ -231,27 +224,16 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  late var _id = widget.id;
-
-  @override
-  void didUpdateWidget(covariant UserPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.id != oldWidget.id) {
-      print('User Id changed ${widget.id}');
-      _id = widget.id;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name + ' $_id');
+            return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
           },
         ),
-        leading: AutoBackButton(),
+        leading: AutoLeadingButton(),
       ),
       body: AutoRouter(),
     );

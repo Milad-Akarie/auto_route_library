@@ -23,10 +23,10 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   }
 
   @override
-  RouteInformation restoreRouteInformation(UrlState urlState) {
+  RouteInformation restoreRouteInformation(UrlState configuration) {
     return AutoRouteInformation(
-      location: urlState.url.isEmpty ? '/' : urlState.url,
-      replace: urlState.shouldReplace,
+      location: configuration.url.isEmpty ? '/' : configuration.url,
+      replace: configuration.shouldReplace,
     );
   }
 }
@@ -114,7 +114,7 @@ class UrlState {
       }
     }
 
-    var fragment;
+    String? fragment;
     if (lastSegment.fragment.isNotEmpty == true) {
       fragment = lastSegment.fragment;
     }
@@ -130,10 +130,10 @@ class UrlState {
       identical(this, other) ||
       other is UrlState &&
           runtimeType == other.runtimeType &&
-          ListEquality().equals(segments, other.segments);
+          const ListEquality().equals(segments, other.segments);
 
   @override
-  int get hashCode => ListEquality().hash(segments);
+  int get hashCode => const ListEquality().hash(segments);
 
   UrlState copyWith({
     List<RouteMatch>? segments,
@@ -143,7 +143,7 @@ class UrlState {
     return UrlState(
       uri ?? this.uri,
       segments ?? this.segments,
-      shouldReplace: replace ?? this.shouldReplace,
+      shouldReplace: replace ?? shouldReplace,
     );
   }
 }

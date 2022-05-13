@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/screens/books/book_details_page.dart';
 import 'package:example/mobile/screens/books/book_list_page.dart';
-
 import '../screens/home_page.dart';
 import '../screens/login_page.dart';
 import '../screens/profile/routes.dart';
@@ -9,7 +8,7 @@ import '../screens/settings.dart';
 import '../screens/user-data/routes.dart';
 
 @MaterialAutoRouter(
-  replaceInRouteName: 'Page|Dialog,Route',
+  replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
     // app stack
     AutoRoute<String>(
@@ -22,15 +21,17 @@ import '../screens/user-data/routes.dart';
           page: EmptyRouterPage,
           name: 'BooksTab',
           initial: true,
+          maintainState: true,
           children: [
             AutoRoute(
               path: '',
-              page: BookListPage,
+              page: BookListScreen,
             ),
             AutoRoute(
               path: ':id',
               page: BookDetailsPage,
-              meta: {'hideBottomNav': true},
+              fullscreenDialog: true,
+              // meta: {'hideBottomNav': true},
             ),
           ],
         ),

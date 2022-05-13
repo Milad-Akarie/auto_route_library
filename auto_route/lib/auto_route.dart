@@ -13,8 +13,12 @@ export 'src/router/controller/routing_controller.dart';
 export 'src/router/parser/route_information_parser.dart';
 export 'src/router/provider/auto_route_information_provider.dart';
 export 'src/router/widgets/auto_back_button.dart';
+export 'src/router/widgets/auto_leading_button.dart';
 export 'src/router/widgets/auto_router.dart';
-export 'src/router/widgets/auto_router.dart';
-export 'src/router/widgets/auto_tabs_router.dart';
+export 'src/router/widgets/auto_route_navigator.dart';
 export 'src/router/widgets/auto_tabs_router.dart';
 export 'src/router/widgets/auto_tabs_scaffold.dart';
+export 'src/router/widgets/wrapped_route.dart';
+export 'src/router/widgets/custom_cupertino_transitions_builder.dart'
+    show NoShadowCupertinoPageTransitionsBuilder;
+export 'src/router/widgets/custom_tab_bar_view.dart';

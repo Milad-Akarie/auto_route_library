@@ -27,19 +27,8 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                // context.router.push(MyBooksRoute());
-                context.navigateTo(
-                  HomeRoute(
-                    children: [
-                      BooksTab(
-                        children: [
-                          BookListRoute(),
-                          BookDetailsRoute(id: 4),
-                        ],
-                      )
-                    ],
-                  ),
-                );
+                context.router.push(MyBooksRoute());
+
               },
               child: Text('My Books'),
             ),

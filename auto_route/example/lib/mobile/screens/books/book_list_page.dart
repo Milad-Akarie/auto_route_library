@@ -1,14 +1,22 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/db.dart';
 
-class BookListPage extends StatefulWidget {
+class BookListScreen extends StatefulWidget {
   @override
-  _BookListPageState createState() => _BookListPageState();
+  _BookListScreenState createState() => _BookListScreenState();
 }
 
-class _BookListPageState extends State<BookListPage> {
+class _BookListScreenState extends State<BookListScreen>  with AutoRouteAwareStateMixin<BookListScreen> {
+
+  @override
+  void didPushNext() {
+    print('didPushNext');
+   }
+
+
   @override
   Widget build(BuildContext context) {
    

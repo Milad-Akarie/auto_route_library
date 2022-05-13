@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
-import 'auto_route_navigator.dart';
 
 class AutoRouter extends StatefulWidget {
   final NavigatorObserversBuilder navigatorObservers;
@@ -39,6 +38,7 @@ class AutoRouter extends StatefulWidget {
         navigatorKey: navigatorKey,
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
+        inheritNavigatorObservers: inheritNavigatorObservers,
         onNavigate: onNavigate,
         placeholder: placeholder,
         routes: routes,
@@ -89,7 +89,6 @@ class AutoRouterState extends State<AutoRouter> {
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
-
       _parentController = parentScope.controller;
       _controller = NestedStackRouter(
         parent: _parentController,
@@ -213,7 +212,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           key: parentData.key,
           routeData: parentData,
           managedByWidget: true,
-          onRoutes: widget.onNavigate,
+          onNavigate: widget.onNavigate,
           navigatorKey: widget.navigatorKey,
           routeCollection: _parentController.routeCollection.subCollectionOf(
             parentData.name,

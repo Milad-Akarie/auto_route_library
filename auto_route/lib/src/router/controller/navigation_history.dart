@@ -18,7 +18,7 @@ abstract class NavigationHistory with ChangeNotifier {
 
   void _unMarkUrlStateForReplace() => _isUrlStateMarkedForReplace = false;
 
-  UrlState _urlState = UrlState.fromSegments([]);
+  UrlState _urlState = UrlState.fromSegments(const []);
 
   void _onNewUrlState(UrlState newState, {bool notify = true}) {
     if (_urlState != newState) {
@@ -37,7 +37,7 @@ abstract class NavigationHistory with ChangeNotifier {
 
   bool isRouteDataActive(RouteData data) {
     return urlState.segments.any(
-      (r) => r.key == data.key && r.stringMatch == data.match,
+      (route) => route == data.route,
     );
   }
 

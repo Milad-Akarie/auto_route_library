@@ -88,6 +88,24 @@ Field buildPagesMap(List<RouteConfig> routes) {
 }
 
 Spec buildMethod(RouteConfig r) {
+  var constructedPage = r.hasConstConstructor
+      ? r.pageType!.refer.constInstance([])
+      : r.pageType!.refer.newInstance(
+          r.positionalParams.map((p) => refer('args').property(p.name)),
+          Map.fromEntries(r.namedParams.map(
+            (p) => MapEntry(
+              p.name,
+              refer('args').property(p.name),
+            ),
+          )),
+        );
+
+  if (r.hasWrappedRoute == true) {
+    constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
+      [],
+      {'child': constructedPage},
+    );
+  }
   return Method(
     (b) => b
       ..requiredParameters.add(
@@ -145,18 +163,7 @@ Spec buildMethod(RouteConfig r) {
                   [],
                   {
                     'routeData': refer('routeData'),
-                    'child': r.hasConstConstructor
-                        ? r.pageType!.refer.constInstance([])
-                        : r.pageType!.refer.newInstance(
-                            r.positionalParams
-                                .map((p) => refer('args').property(p.name)),
-                            Map.fromEntries(r.namedParams.map(
-                              (p) => MapEntry(
-                                p.name,
-                                refer('args').property(p.name),
-                              ),
-                            )),
-                          ),
+                    'child': constructedPage,
                     if (r.maintainState == false)
                       'maintainState': literalBool(false),
                     if (r.fullscreenDialog == true)
@@ -184,6 +191,8 @@ Spec buildMethod(RouteConfig r) {
                       if (r.customRouteBarrierLabel != null)
                         'barrierLabel':
                             literalString(r.customRouteBarrierLabel!),
+                      if (r.customRouteBarrierColor != null)
+                        'barrierColor': literal(r.customRouteBarrierColor!),
                     }
                   },
                 )
