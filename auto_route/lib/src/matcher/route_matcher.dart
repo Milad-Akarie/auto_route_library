@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
@@ -7,13 +5,15 @@ import 'package:path/path.dart' as p;
 import '../../auto_route.dart';
 
 class RouteCollection {
-  final LinkedHashMap<String, RouteConfig> _routesMap;
+  final Map<String, RouteConfig> _routesMap;
 
   RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
 
   factory RouteCollection.from(List<RouteConfig> routes) {
-    final routesMap = LinkedHashMap<String, RouteConfig>();
-    routes.forEach((r) => routesMap[r.name] = r);
+    final routesMap = <String, RouteConfig>{};
+    for (var r in routes) {
+      routesMap[r.name] = r;
+    }
     return RouteCollection(routesMap);
   }
 
@@ -61,10 +61,10 @@ class RouteCollection {
       identical(this, other) ||
       other is RouteCollection &&
           runtimeType == other.runtimeType &&
-          MapEquality().equals(_routesMap, other._routesMap);
+          const MapEquality().equals(_routesMap, other._routesMap);
 
   @override
-  int get hashCode => MapEquality().hash(_routesMap);
+  int get hashCode => const MapEquality().hash(_routesMap);
 }
 
 class RouteMatcher {

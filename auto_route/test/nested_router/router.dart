@@ -5,13 +5,16 @@ import '../test_page.dart';
 
 part 'router.gr.dart';
 
+
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: [
-    AutoRoute(page: FirstPage, initial: true),
-    AutoRoute(name: 'SecondRoute', page: EmptyRouterPage, children: [
-      AutoRoute(page: SecondNested1Page, initial: true),
-      AutoRoute(page: SecondNested2Page),
+    AutoRoute(path: '/first', page: FirstPage, initial: true),
+    AutoRoute(
+        path: '/second',
+        name: 'SecondRoute', page: EmptyRouterPage, children: [
+      AutoRoute(path: 'nested1',page: SecondNested1Page, initial: true),
+      AutoRoute(path: 'nested2',page: SecondNested2Page),
     ]),
   ],
 )
@@ -21,6 +24,10 @@ class EmptyRouterPage extends AutoRouter {
   const EmptyRouterPage({Key? key}) : super(key: key);
 }
 
-class SecondNested1Page extends TestPage {}
+class SecondNested1Page extends TestPage {
+  const SecondNested1Page({Key? key}) : super(key: key);
+}
 
-class SecondNested2Page extends TestPage {}
+class SecondNested2Page extends TestPage {
+  const SecondNested2Page({Key? key}) : super(key: key);
+}

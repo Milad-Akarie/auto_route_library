@@ -21,12 +21,12 @@ class Parameters {
       identical(this, other) ||
       other is Parameters &&
           runtimeType == other.runtimeType &&
-          MapEquality(
+          const MapEquality(
             values: DeepCollectionEquality(),
           ).equals(_params, other._params);
 
   @override
-  int get hashCode => MapEquality().hash(_params);
+  int get hashCode => const MapEquality().hash(_params);
 
   bool get isNotEmpty => _params.isNotEmpty;
   bool get isEmpty => _params.isEmpty;

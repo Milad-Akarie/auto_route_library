@@ -10,7 +10,7 @@ const booksTab = AutoRoute(
   page: EmptyRouterPage,
   name: 'BooksTab',
   children: [
-    AutoRoute(path: '', page: BookListPage),
+    AutoRoute(path: '', page: BookListScreen),
     AutoRoute(
       path: ':id',
       usesPathAsKey: true,

@@ -40,8 +40,9 @@ class RootRouter extends _i12.RootStackRouter {
           orElse: () => const UserDataCollectorRouteArgs());
       return _i12.MaterialPageX<_i2.UserData>(
           routeData: routeData,
-          child: _i2.UserDataCollectorPage(
-              key: args.key, onResult: args.onResult));
+          child: _i12.WrappedRoute(
+              child: _i2.UserDataCollectorPage(
+                  key: args.key, onResult: args.onResult)));
     },
     LoginRoute.name: (routeData) {
       final args = routeData.argsAs<LoginRouteArgs>(
@@ -75,14 +76,16 @@ class RootRouter extends _i12.RootStackRouter {
     },
     BookListRoute.name: (routeData) {
       return _i12.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i6.BookListPage());
+          routeData: routeData, child: _i6.BookListScreen());
     },
     BookDetailsRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<BookDetailsRouteArgs>(
           orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -1)));
       return _i12.MaterialPageX<dynamic>(
-          routeData: routeData, child: _i7.BookDetailsPage(id: args.id));
+          routeData: routeData,
+          child: _i7.BookDetailsPage(id: args.id),
+          fullscreenDialog: true);
     },
     ProfileRoute.name: (routeData) {
       return _i12.MaterialPageX<dynamic>(
@@ -143,9 +146,7 @@ class RootRouter extends _i12.RootStackRouter {
                 _i12.RouteConfig(BookListRoute.name,
                     path: '', parent: BooksTab.name),
                 _i12.RouteConfig(BookDetailsRoute.name,
-                    path: ':id',
-                    parent: BooksTab.name,
-                    meta: <String, dynamic>{'hideBottomNav': true})
+                    path: ':id', parent: BooksTab.name)
               ]),
           _i12.RouteConfig(ProfileTab.name,
               path: 'profile',
@@ -293,7 +294,7 @@ class SettingsTabArgs {
 }
 
 /// generated route for
-/// [_i6.BookListPage]
+/// [_i6.BookListScreen]
 class BookListRoute extends _i12.PageRouteInfo<void> {
   const BookListRoute() : super(BookListRoute.name, path: '');
 

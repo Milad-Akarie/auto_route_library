@@ -2,12 +2,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Future<void> pumpRouterApp(WidgetTester tester, RootStackRouter router) {
+Future<void> pumpRouterApp(
+  WidgetTester tester,
+  RootStackRouter router, {
+  String? initialLink,
+}) {
   return tester
       .pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.defaultRouteParser(),
-          routerDelegate: router.delegate(),
+          routerDelegate: router.delegate(initialDeepLink: initialLink),
         ),
       )
       .then((_) => tester.pumpAndSettle());

@@ -2,16 +2,23 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
-
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   final String tab;
   final String query;
+
   SettingsPage({
     Key? key,
     @pathParam required this.tab,
     @queryParam this.query = 'none',
   }) : super(key: key);
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMixin<SettingsPage> {
+  var queryUpdateCont = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,84 +26,39 @@ class SettingsPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(tab),
-            Text(query),
+            Text(widget.tab),
+            Text(widget.query),
+            ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    queryUpdateCont++;
+                  });
+                  context.navigateTo(SettingsTab(
+                    tab: 'Updated Path param $queryUpdateCont',
+                    query: 'updated Query $queryUpdateCont',
+                  ));
+                },
+                child: Text('Update Query $queryUpdateCont')),
+            ElevatedButton(
+                onPressed: () {
+                  context.navigateTo(BooksTab(
+                     children: [BookDetailsRoute(id: 2)]
+                  ));
+                },
+                child: Text('Navigate to book details/1'))
           ],
         ),
       ),
     );
   }
-}
-
-class Settings2Page extends StatefulWidget {
-  final String tab;
-
-  Settings2Page({Key? key, @pathParam required this.tab}) : super(key: key);
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends State<Settings2Page> with AutoRouteAware {
-  var _count = 0;
-
-  @override
-  void didInitTabRoute(TabPageRoute? previousRoute) {}
-
-  @override
-  void didPush() {
-    print('did push settings tab');
+  void didInitTabRoute(TabPageRoute? previousRoute) {
+    print('init tab route from ${previousRoute?.name}');
   }
 
   @override
   void didChangeTabRoute(TabPageRoute previousRoute) {
-    print('Changed to settings tab from ${previousRoute.name}');
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final observer =
-        RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
-    if (observer != null) {
-      observer.subscribe(this, context.routeData);
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('Settings/${widget.tab} $_count'),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              context.navigateTo(
-                ProfileTab(children: [
-                  MyBooksRoute(),
-                ]),
-              );
-            },
-            child: Text('navigateNamed to profile/my-books'),
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              context
-                  .findRootAncestorStateOfType<HomePageState>()
-                  ?.toggleSettingsTap();
-            },
-            child: Text('Toggle Settings Tab'),
-          ),
-        ],
-      ),
-    );
+    print('did change tab route from ${previousRoute.name}');
   }
 }

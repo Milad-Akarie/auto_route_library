@@ -68,7 +68,7 @@ class RouteMatch<T> {
     return RouteMatch(
       path: path ?? this.path,
       stringMatch: stringMatch ?? this.stringMatch,
-      name: routeName ?? this.name,
+      name: routeName ?? name,
       segments: segments ?? this.segments,
       children: children ?? this.children,
       pathParams: pathParams ?? this.pathParams,
@@ -92,13 +92,13 @@ class RouteMatch<T> {
           stringMatch == other.stringMatch &&
           pathParams == other.pathParams &&
           key == other.key &&
-          ListEquality().equals(guards, other.guards) &&
+          const ListEquality().equals(guards, other.guards) &&
           queryParams == other.queryParams &&
-          ListEquality().equals(children, other.children) &&
+          const ListEquality().equals(children, other.children) &&
           fragment == other.fragment &&
           redirectedFrom == other.redirectedFrom &&
-          ListEquality().equals(segments, other.segments) &&
-          MapEquality().equals(meta, other.meta);
+          const ListEquality().equals(segments, other.segments) &&
+          const MapEquality().equals(meta, other.meta);
 
   @override
   int get hashCode =>

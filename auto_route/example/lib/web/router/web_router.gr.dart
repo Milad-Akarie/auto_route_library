@@ -24,27 +24,45 @@ class _$WebAppRouter extends RootStackRouter {
     HomeRoute.name: (routeData) {
       final args =
           routeData.argsAs<HomeRouteArgs>(orElse: () => const HomeRouteArgs());
-      return CupertinoPageX<dynamic>(
+      return CustomPage<dynamic>(
           routeData: routeData,
           child: HomePage(
               key: args.key,
               navigate: args.navigate,
-              showUserPosts: args.showUserPosts));
+              showUserPosts: args.showUserPosts),
+          reverseDurationInMilliseconds: 0,
+          opaque: true,
+          barrierDismissible: false);
     },
     LoginRoute.name: (routeData) {
-      return CupertinoPageX<dynamic>(
-          routeData: routeData, child: const LoginPage());
+      return CustomPage<dynamic>(
+          routeData: routeData,
+          child: const LoginPage(),
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          opaque: true,
+          barrierDismissible: false);
     },
     UserRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
+      final queryParams = routeData.queryParams;
       final args = routeData.argsAs<UserRouteArgs>(
-          orElse: () => UserRouteArgs(id: pathParams.getInt('userID', -1)));
-      return AdaptivePage<dynamic>(
-          routeData: routeData, child: UserPage(key: args.key, id: args.id));
+          orElse: () => UserRouteArgs(
+              id: pathParams.getInt('userID', -1),
+              query: queryParams.optString('query')));
+      return CustomPage<dynamic>(
+          routeData: routeData,
+          child: UserPage(key: args.key, id: args.id, query: args.query),
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          opaque: true,
+          barrierDismissible: false);
     },
     NotFoundRoute.name: (routeData) {
-      return CupertinoPageX<dynamic>(
-          routeData: routeData, child: NotFoundScreen());
+      return CustomPage<dynamic>(
+          routeData: routeData,
+          child: NotFoundScreen(),
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          opaque: true,
+          barrierDismissible: false);
     },
     UserProfileRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
@@ -53,28 +71,42 @@ class _$WebAppRouter extends RootStackRouter {
           orElse: () => UserProfileRouteArgs(
               userId: pathParams.getInt('userID', -1),
               likes: queryParams.getInt('likes', 0)));
-      return CupertinoPageX<dynamic>(
+      return CustomPage<dynamic>(
           routeData: routeData,
           child: UserProfilePage(
               key: args.key,
               navigate: args.navigate,
               userId: args.userId,
-              likes: args.likes));
+              likes: args.likes),
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          opaque: true,
+          barrierDismissible: false);
     },
     UserPostsRoute.name: (routeData) {
-      return CupertinoPageX<dynamic>(
-          routeData: routeData, child: UserPostsPage());
+      return CustomPage<dynamic>(
+          routeData: routeData,
+          child: UserPostsPage(),
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          opaque: true,
+          barrierDismissible: false);
     },
     UserAllPostsRoute.name: (routeData) {
       final args = routeData.argsAs<UserAllPostsRouteArgs>(
           orElse: () => const UserAllPostsRouteArgs());
-      return CupertinoPageX<dynamic>(
+      return CustomPage<dynamic>(
           routeData: routeData,
-          child: UserAllPostsPage(key: args.key, navigate: args.navigate));
+          child: UserAllPostsPage(key: args.key, navigate: args.navigate),
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          opaque: true,
+          barrierDismissible: false);
     },
     UserFavoritePostsRoute.name: (routeData) {
-      return CupertinoPageX<dynamic>(
-          routeData: routeData, child: UserFavoritePostsPage());
+      return CustomPage<dynamic>(
+          routeData: routeData,
+          child: UserFavoritePostsPage(),
+          transitionsBuilder: TransitionsBuilders.noTransition,
+          opaque: true,
+          barrierDismissible: false);
     }
   };
 
@@ -148,26 +180,30 @@ class LoginRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [UserPage]
 class UserRoute extends PageRouteInfo<UserRouteArgs> {
-  UserRoute({Key? key, int id = -1, List<PageRouteInfo>? children})
+  UserRoute(
+      {Key? key, int id = -1, String? query, List<PageRouteInfo>? children})
       : super(UserRoute.name,
             path: '/user/:userID/page',
-            args: UserRouteArgs(key: key, id: id),
+            args: UserRouteArgs(key: key, id: id, query: query),
             rawPathParams: {'userID': id},
+            rawQueryParams: {'query': query},
             initialChildren: children);
 
   static const String name = 'UserRoute';
 }
 
 class UserRouteArgs {
-  const UserRouteArgs({this.key, this.id = -1});
+  const UserRouteArgs({this.key, this.id = -1, this.query});
 
   final Key? key;
 
   final int id;
 
+  final String? query;
+
   @override
   String toString() {
-    return 'UserRouteArgs{key: $key, id: $id}';
+    return 'UserRouteArgs{key: $key, id: $id, query: $query}';
   }
 }
 

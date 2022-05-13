@@ -88,6 +88,18 @@ Field buildPagesMap(List<RouteConfig> routes) {
 }
 
 Spec buildMethod(RouteConfig r) {
+  var constructedPage = r.deferredLoading
+      ? getDeferredBuilder(r)
+      : r.hasConstConstructor
+          ? r.pageType!.refer.constInstance([])
+          : getPageInstance(r);
+
+  if (r.hasWrappedRoute == true) {
+    constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
+      [],
+      {'child': constructedPage},
+    );
+  }
   return Method(
     (b) => b
       ..requiredParameters.add(
@@ -145,11 +157,7 @@ Spec buildMethod(RouteConfig r) {
                   [],
                   {
                     'routeData': refer('routeData'),
-                    'child': r.deferredLoading
-                        ? getDeferredBuilder(r)
-                        : r.hasConstConstructor
-                            ? r.pageType!.refer.constInstance([])
-                            : getPageInstance(r),
+                    'child': constructedPage,
                     if (r.maintainState == false)
                       'maintainState': literalBool(false),
                     if (r.fullscreenDialog == true)
@@ -177,6 +185,8 @@ Spec buildMethod(RouteConfig r) {
                       if (r.customRouteBarrierLabel != null)
                         'barrierLabel':
                             literalString(r.customRouteBarrierLabel!),
+                      if (r.customRouteBarrierColor != null)
+                        'barrierColor': literal(r.customRouteBarrierColor!),
                     }
                   },
                 )

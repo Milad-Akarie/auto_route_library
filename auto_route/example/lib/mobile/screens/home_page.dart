@@ -24,7 +24,7 @@ class RouteDestination {
   });
 }
 
-class HomePageState extends State<HomePage> {
+class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final destinations = [
     RouteDestination(
       route: BooksTab(),
@@ -87,20 +87,22 @@ class HomePageState extends State<HomePage> {
               ],
             );
           })
-        : AutoTabsScaffold(
-            homeIndex: 0,
-            appBarBuilder: (context, tabsRouter) {
-              return AppBar(
-                title: Text(tabsRouter.topRoute.name),
-                leading: AutoBackButton(),
-              );
-            },
+        : AutoTabsRouter.tabBar(
             routes: [
               BooksTab(),
               ProfileTab(),
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
-            bottomNavigationBuilder: buildBottomNav,
+            builder: (context, child, _) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text(context.topRoute.name),
+                  leading: AutoLeadingButton(),
+                ),
+                body: child,
+                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+              );
+            },
           );
   }
 
