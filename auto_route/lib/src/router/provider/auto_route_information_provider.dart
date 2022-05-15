@@ -17,8 +17,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
       {RouteInformation? initialRouteInformation}) {
     final initialRouteInfo = initialRouteInformation ??
         RouteInformation(
-          location: WidgetsBinding.instance.window.defaultRouteName
-        );
+            location: WidgetsBinding.instance.window.defaultRouteName);
     return AutoRouteInformationProvider._(
       initialRouteInformation: initialRouteInfo,
     );
