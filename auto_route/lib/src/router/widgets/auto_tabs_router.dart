@@ -17,6 +17,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   final List<PageRouteInfo> routes;
   final NavigatorObserversBuilder navigatorObservers;
   final bool inheritNavigatorObservers;
+  final ScrollPhysics? physics;
 
   // if activeIndex != homeIndex
   // set activeIndex to homeIndex
@@ -28,6 +29,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     required this.routes,
     this.homeIndex = -1,
     this.inheritNavigatorObservers = true,
+    this.physics,
     this.navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(key: key);
@@ -52,6 +54,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     bool animatePageTransition,
     Duration duration,
     Curve curve,
+    ScrollPhysics? physics,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterPageView;
@@ -63,6 +66,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     int homeIndex,
     Duration? duration,
     Curve curve,
+    ScrollPhysics? physics,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterTabBar;
@@ -387,12 +391,14 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
     this.duration = kTabScrollDuration,
     this.curve = Curves.easeInOut,
     bool inheritNavigatorObservers = true,
+    ScrollPhysics? physics,
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
   })  : _pageViewModeBuilder = builder,
         super._(
           key: key,
           routes: routes,
+          physics: physics,
           homeIndex: homeIndex,
           navigatorObservers: navigatorObservers,
           inheritNavigatorObservers: inheritNavigatorObservers,
@@ -468,6 +474,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
             context,
             PageView.builder(
               controller: _pageController,
+              physics: widget.physics,
               itemCount: stack.length,
               onPageChanged: _controller!.setActiveIndex,
               itemBuilder: (context, index) {
@@ -515,12 +522,14 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     int homeIndex = -1,
     this.duration,
     this.curve = Curves.ease,
+    ScrollPhysics? physics,
     bool inheritNavigatorObservers = true,
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super._(
           key: key,
           routes: routes,
+          physics: physics,
           homeIndex: homeIndex,
           navigatorObservers: navigatorObservers,
           inheritNavigatorObservers: inheritNavigatorObservers,
@@ -599,6 +608,7 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
           return builder(
             context,
             CustomTabBarView(
+              physics: widget.physics,
               controller: _tabController,
               children: List.generate(
                 stack.length,
