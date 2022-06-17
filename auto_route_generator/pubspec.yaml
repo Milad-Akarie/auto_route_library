@@ -16,7 +16,9 @@ dependencies:
   code_builder: ^4.1.0
   dart_style: ^2.2.0
   auto_route:
-    path: ../auto_route
+    git:
+      url: https://github.com/kishan-dhankecha/auto_route_library
+      path: auto_route/
 
 
 dev_dependencies:
