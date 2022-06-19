@@ -54,6 +54,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     Curve curve,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
+    ScrollPhysics? physics,
   }) = _AutoTabsRouterPageView;
 
   const factory AutoTabsRouter.tabBar({
@@ -65,6 +66,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     Curve curve,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
+    ScrollPhysics? physics,
   }) = _AutoTabsRouterTabBar;
 
   const factory AutoTabsRouter.builder({
@@ -377,6 +379,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
   final bool animatePageTransition;
   final Duration duration;
   final Curve curve;
+  final ScrollPhysics? physics;
 
   const _AutoTabsRouterPageView({
     Key? key,
@@ -387,6 +390,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
     this.duration = kTabScrollDuration,
     this.curve = Curves.easeInOut,
     bool inheritNavigatorObservers = true,
+    this.physics,
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
   })  : _pageViewModeBuilder = builder,
@@ -469,6 +473,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
             PageView.builder(
               controller: _pageController,
               itemCount: stack.length,
+              physics: typedWidget.physics,
               onPageChanged: _controller!.setActiveIndex,
               itemBuilder: (context, index) {
                 return KeepAliveTab(
@@ -507,6 +512,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   final AutoTabsTabBarBuilder? builder;
   final Duration? duration;
   final Curve curve;
+  final ScrollPhysics? physics;
 
   const _AutoTabsRouterTabBar({
     Key? key,
@@ -516,6 +522,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     this.duration,
     this.curve = Curves.ease,
     bool inheritNavigatorObservers = true,
+    this.physics,
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super._(
@@ -600,6 +607,7 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
             context,
             CustomTabBarView(
               controller: _tabController,
+              physics: typedWidget.physics,
               children: List.generate(
                 stack.length,
                 (index) => KeepAliveTab(
