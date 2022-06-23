@@ -49,12 +49,14 @@ class UrlState {
 
   const UrlState(this.uri, this.segments, {this.shouldReplace = false});
 
-  String get url => uri.toString();
+  String get url => Uri.decodeFull(uri.toString());
 
   String get path => uri.path;
 
-  factory UrlState.fromSegments(List<RouteMatch> routes,
-      {bool shouldReplace = false}) {
+  factory UrlState.fromSegments(
+    List<RouteMatch> routes, {
+    bool shouldReplace = false,
+  }) {
     return UrlState(
       _buildUri(routes),
       routes,
