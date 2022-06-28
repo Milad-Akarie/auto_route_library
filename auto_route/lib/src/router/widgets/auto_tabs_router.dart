@@ -203,6 +203,12 @@ class _AutoTabsRouterIndexedStackState extends _AutoTabsRouterState
   }
 
   @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   void _setupController() {
     assert(_controller != null);
     _controller!.setupRoutes(widget.routes);
