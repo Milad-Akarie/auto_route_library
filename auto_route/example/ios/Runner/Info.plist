@@ -41,5 +41,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+
+	<key>FlutterDeepLinkingEnabled</key>
+    <true/>
+
+
+      <key>com.apple.developer.associated-domains</key>
+      <array>
+        <string>applinks:flutterbooksample.com</string>
+      </array>
+
 </dict>
 </plist>

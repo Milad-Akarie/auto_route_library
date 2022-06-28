@@ -9,6 +9,7 @@ import '../screens/user-data/routes.dart';
 
 @MaterialAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
+
   routes: <AutoRoute>[
     // app stack
     AutoRoute<String>(
@@ -18,7 +19,7 @@ import '../screens/user-data/routes.dart';
       children: [
         AutoRoute(
           path: 'books',
-          page: EmptyRouterPage,
+          page: EmptyRouterScreen,
           name: 'BooksTab',
           initial: true,
           maintainState: true,
@@ -50,3 +51,4 @@ import '../screens/user-data/routes.dart';
   ],
 )
 class $RootRouter {}
+

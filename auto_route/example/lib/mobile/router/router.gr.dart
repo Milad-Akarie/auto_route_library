@@ -39,9 +39,8 @@ class RootRouter extends _i4.RootStackRouter {
           orElse: () => const UserDataCollectorRouteArgs());
       return _i4.MaterialPageX<_i2.UserData>(
           routeData: routeData,
-          child: _i4.WrappedRoute(
-              child: _i2.UserDataCollectorPage(
-                  key: args.key, onResult: args.onResult)));
+          child: _i2.UserDataCollectorPage(
+              key: args.key, onResult: args.onResult));
     },
     LoginRoute.name: (routeData) {
       final args = routeData.argsAs<LoginRouteArgs>(
@@ -55,7 +54,7 @@ class RootRouter extends _i4.RootStackRouter {
     },
     BooksTab.name: (routeData) {
       return _i4.MaterialPageX<dynamic>(
-          routeData: routeData, child: const _i4.EmptyRouterPage());
+          routeData: routeData, child: const _i4.EmptyRouterScreen());
     },
     ProfileTab.name: (routeData) {
       return _i4.MaterialPageX<dynamic>(
@@ -247,7 +246,7 @@ class LoginRouteArgs {
 }
 
 /// generated route for
-/// [_i4.EmptyRouterPage]
+/// [_i4.EmptyRouterScreen]
 class BooksTab extends _i4.PageRouteInfo<void> {
   const BooksTab({List<_i4.PageRouteInfo>? children})
       : super(BooksTab.name, path: 'books', initialChildren: children);

@@ -100,12 +100,6 @@ Spec buildMethod(RouteConfig r) {
           )),
         );
 
-  if (r.hasWrappedRoute == true) {
-    constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
-      [],
-      {'child': constructedPage},
-    );
-  }
   return Method(
     (b) => b
       ..requiredParameters.add(
