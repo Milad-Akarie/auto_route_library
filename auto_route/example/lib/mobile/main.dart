@@ -5,7 +5,6 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -24,10 +23,11 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark().copyWith(
-          pageTransitionsTheme: PageTransitionsTheme(builders: {
-        TargetPlatform.iOS: NoShadowCupertinoPageTransitionsBuilder(),
-        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-      })),
+        pageTransitionsTheme: PageTransitionsTheme(builders: {
+          TargetPlatform.iOS: NoShadowCupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+        }),
+      ),
       routerDelegate: _rootRouter.delegate(
         navigatorObservers: () => [AutoRouteObserver()],
       ),

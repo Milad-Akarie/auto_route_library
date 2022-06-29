@@ -198,6 +198,12 @@ class _AutoTabsRouterIndexedStackState extends _AutoTabsRouterState with SingleT
     _tabsHash = const ListEquality().hash(widget.routes);
   }
 
+   @override
+  void dispose() {
+    super.dispose();
+    _animationController.dispose();
+  }
+
   @override
   void _setupController() {
     assert(_controller != null);
@@ -423,7 +429,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState with _RouteAwareT
   void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller!.replaceAll(widget.routes, oldWidget.routes[_pageController.page?.round() ?? 0]);
+      _controller!.replaceAll(widget.routes, oldWidget.routes[_controller!.activeIndex]);
       _updatePageController();
     }
   }
