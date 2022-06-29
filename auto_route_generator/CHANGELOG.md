@@ -1,4 +1,7 @@
 # ChangeLog
+## [4.2.0]
+- Add generate-time check for unresolvable path params
+- You can now access inherited path params using @pathParam annotation
 ## [4.0.0] (Breaking changes)
 - Refactor AutoRedirectGuard [Breaking Change]
 - Add AutoRouteAwareStateMixin to minimize boilerplate for AutoRouteAware states

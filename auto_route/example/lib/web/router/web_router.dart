@@ -24,7 +24,7 @@ part 'web_router.gr.dart';
     ),
     AutoRoute(
       path: '/user/:userID/page',
-      guards: [AuthGuard],
+      // guards: [AuthGuard],
       page: UserPage,
       children: [
         AutoRoute(
@@ -59,7 +59,7 @@ class WebAppRouter extends _$WebAppRouter {
   WebAppRouter(
     AuthService authService,
   ) : super(
-          authGuard: AuthGuard(authService),
+          // authGuard: AuthGuard(authService),
         );
 }
 

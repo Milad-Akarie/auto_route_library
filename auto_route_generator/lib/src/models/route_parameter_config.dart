@@ -5,14 +5,7 @@ import 'importable_type.dart';
 
 const reservedVarNames = ['children'];
 
-const validPathParamTypes = [
-  'String',
-  'int',
-  'double',
-  'num',
-  'bool',
-  'dynamic'
-];
+const validPathParamTypes = ['String', 'int', 'double', 'num', 'bool', 'dynamic'];
 
 /// holds constructor parameter info to be used
 /// in generating route parameters.
@@ -30,6 +23,7 @@ class ParamConfig {
   final bool isQueryParam;
   final String? defaultValueCode;
   final ParameterElement element;
+  final bool isInheritedPathParam;
 
   ParamConfig({
     required this.type,
@@ -42,6 +36,7 @@ class ParamConfig {
     required this.isRequired,
     required this.isPathParam,
     required this.isQueryParam,
+    required this.isInheritedPathParam,
     this.alias,
     this.defaultValueCode,
   });
@@ -104,16 +99,14 @@ class FunctionParamConfig extends ParamConfig {
           hasRequired: hasRequired,
           isRequired: isRequired,
           isOptional: isOptional,
+          isInheritedPathParam: false,
         );
 
-  List<ParamConfig> get requiredParams =>
-      params.where((p) => p.isPositional && !p.isOptional).toList();
+  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList();
 
-  List<ParamConfig> get optionalParams =>
-      params.where((p) => p.isPositional && p.isOptional).toList();
+  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList();
 
-  List<ParamConfig> get namedParams =>
-      params.where((p) => p.isNamed).toList(growable: false);
+  List<ParamConfig> get namedParams => params.where((p) => p.isNamed).toList(growable: false);
 
   _code.FunctionType get funRefer => _code.FunctionType((b) => b
     ..returnType = returnType.refer

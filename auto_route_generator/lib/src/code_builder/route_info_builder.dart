@@ -8,6 +8,7 @@ import 'library_builder.dart';
 List<Class> buildRouteInfoAndArgs(
     RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.routeName}Args');
+  final parameters = r.parameters.where((p) => !p.isInheritedPathParam).toList();
   return [
     Class(
       (b) => b
@@ -19,9 +20,9 @@ List<Class> buildRouteInfoAndArgs(
           b
             ..symbol = 'PageRouteInfo'
             ..url = autoRouteImport;
-          if (r.parameters.isNotEmpty) b.types.add(argsClassRefer);
+          if (parameters.isNotEmpty) b.types.add(argsClassRefer);
           // adds `void` type to be `strong-mode` compliant
-          if (r.parameters.isEmpty) b.types.add(refer('void'));
+          if (parameters.isEmpty) b.types.add(refer('void'));
         })
         ..fields.add(Field(
           (b) => b
@@ -35,9 +36,9 @@ List<Class> buildRouteInfoAndArgs(
           Constructor(
             (b) {
               b
-                ..constant = r.parameters.isEmpty
+                ..constant = parameters.isEmpty
                 ..optionalParameters.addAll([
-                  ...buildArgParams(r.parameters, emitter, toThis: false),
+                  ...buildArgParams(r.parameters , emitter, toThis: false),
                   if (r.isParent)
                     Parameter((b) => b
                       ..named = true
@@ -48,11 +49,11 @@ List<Class> buildRouteInfoAndArgs(
                   refer(r.routeName).property('name')
                 ], {
                   'path': literalString(r.pathName),
-                  if (r.parameters.isNotEmpty)
+                  if (parameters.isNotEmpty)
                     'args': argsClassRefer.call(
                       [],
                       Map.fromEntries(
-                        r.parameters.map(
+                        parameters.map(
                           (p) => MapEntry(
                             p.name,
                             refer(p.name),
@@ -60,10 +61,10 @@ List<Class> buildRouteInfoAndArgs(
                         ),
                       ),
                     ),
-                  if (r.parameters.any((p) => p.isPathParam))
+                  if (parameters.any((p) => p.isPathParam))
                     'rawPathParams': literalMap(
                       Map.fromEntries(
-                        r.parameters.where((p) => p.isPathParam).map(
+                        parameters.where((p) => p.isPathParam).map(
                               (p) => MapEntry(
                                 p.paramName,
                                 refer(p.name),
@@ -71,10 +72,10 @@ List<Class> buildRouteInfoAndArgs(
                             ),
                       ),
                     ),
-                  if (r.parameters.any((p) => p.isQueryParam))
+                  if (parameters.any((p) => p.isQueryParam))
                     'rawQueryParams': literalMap(
                       Map.fromEntries(
-                        r.parameters.where((p) => p.isQueryParam).map(
+                        parameters.where((p) => p.isQueryParam).map(
                               (p) => MapEntry(
                                 p.paramName,
                                 refer(p.name),
@@ -88,12 +89,12 @@ List<Class> buildRouteInfoAndArgs(
           ),
         ),
     ),
-    if (r.parameters.isNotEmpty)
+    if (parameters.isNotEmpty)
       Class(
         (b) => b
           ..name = argsClassRefer.symbol
           ..fields.addAll([
-            ...r.parameters.map((param) => Field((b) => b
+            ...parameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
               ..name = param.name
               ..type = param is FunctionParamConfig
@@ -115,7 +116,7 @@ List<Class> buildRouteInfoAndArgs(
                 ..annotations.add(refer('override'))
                 ..returns = stringRefer
                 ..body = literalString(
-                  '${r.routeName}Args{${r.parameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
+                  '${r.routeName}Args{${parameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
                 ).returned.statement,
             ),
           ),
@@ -126,7 +127,7 @@ List<Class> buildRouteInfoAndArgs(
 Iterable<Parameter> buildArgParams(
     List<ParamConfig> parameters, DartEmitter emitter,
     {bool toThis = true}) {
-  return parameters.map(
+  return parameters.where((p) => !p.isInheritedPathParam).map(
     (p) => Parameter(
       (b) {
         var defaultCode;

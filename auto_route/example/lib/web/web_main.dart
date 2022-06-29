@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web/router/web_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   runApp(App());
@@ -22,7 +23,7 @@ class AppState extends State<App> {
     });
 
   late final _appRouter = WebAppRouter(authService);
- List<PageRouteInfo>? urlRoutes;
+  List<PageRouteInfo>? urlRoutes;
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -31,19 +32,19 @@ class AppState extends State<App> {
       routeInformationProvider: _appRouter.routeInfoProvider(),
       routeInformationParser: _appRouter.defaultRouteParser(),
       routerDelegate: _appRouter.delegate(
-        // initialDeepLink: '/user/1/posts/favorite',
-        // onNavigate: (urlState){
-        //   print(urlState.path);
-        //   setState(() {
-        //     urlRoutes = urlState.segments.map((e) => e.toPageRouteInfo()).toList();
-        //   });
-        // },
-        // routes: (handler) {
-        //   print(handler.peek?.map((e) => e.routeName));
-        //   if (!authService.isAuthenticated) return [LoginRoute()];
-        //   return handler.initialPendingRoutes ?? [HomeRouter()];
-        // },
-      ),
+          // initialDeepLink: '/user/1/posts/favorite',
+          // onNavigate: (urlState){
+          //   print(urlState.path);
+          //   setState(() {
+          //     urlRoutes = urlState.segments.map((e) => e.toPageRouteInfo()).toList();
+          //   });
+          // },
+          // routes: (handler) {
+          //   print(handler.peek?.map((e) => e.routeName));
+          //   if (!authService.isAuthenticated) return [LoginRoute()];
+          //   return handler.initialPendingRoutes ?? [HomeRouter()];
+          // },
+          ),
     );
   }
 }
@@ -94,7 +95,6 @@ class AuthService extends ChangeNotifier {
 
   bool get isAuthenticated => _isAuthenticated;
 
-
   bool _isVerified = false;
 
   bool get isVerified => _isVerified;
@@ -108,7 +108,6 @@ class AuthService extends ChangeNotifier {
     _isAuthenticated = value;
     notifyListeners();
   }
-
 
   void loginAndVerify() {
     _isAuthenticated = true;

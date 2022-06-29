@@ -14,20 +14,32 @@ class RouteParameterResolver {
 
   RouteParameterResolver(this._typeResolver);
 
-  ParamConfig resolve(ParameterElement parameterElement) {
+  ParamConfig resolve(
+    ParameterElement parameterElement, {
+    List<PathParamConfig> pathParams = const [],
+    List<PathParamConfig> inheritedPathParams = const [],
+  }) {
     final paramType = parameterElement.type;
     if (paramType is FunctionType) {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
-    var pathParamAnnotation =
-        _pathParamChecker.firstAnnotationOfExact(parameterElement);
-    var paramAlias;
+    final paramName = parameterElement.name.replaceFirst("_", '');
+    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
+    String? paramAlias;
+    var nameOrAlias = paramName;
     if (pathParamAnnotation != null) {
       paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
+      if (paramAlias != null) {
+        nameOrAlias = paramAlias;
+      }
+      throwIf(
+        !(inheritedPathParams + pathParams).any((e) => e.name == nameOrAlias),
+        'This route or it\'s ancestors must have a path-param with the name $nameOrAlias',
+        element: parameterElement,
+      );
     }
-    var queryParamAnnotation =
-        _queryParamChecker.firstAnnotationOfExact(parameterElement);
+    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
     if (queryParamAnnotation != null) {
       paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
 
@@ -47,7 +59,7 @@ class RouteParameterResolver {
     return ParamConfig(
       type: type,
       element: parameterElement,
-      name: parameterElement.name.replaceFirst("_", ''),
+      name: paramName,
       alias: paramAlias,
       isPositional: parameterElement.isPositional,
       hasRequired: parameterElement.hasRequired,
@@ -56,6 +68,7 @@ class RouteParameterResolver {
       isNamed: parameterElement.isNamed,
       isPathParam: pathParamAnnotation != null,
       isQueryParam: queryParamAnnotation != null,
+      isInheritedPathParam: pathParamAnnotation != null && !pathParams.any((e) => e.name == nameOrAlias),
       defaultValueCode: parameterElement.defaultValueCode,
     );
   }

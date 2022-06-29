@@ -11,14 +11,13 @@ class AuthGuard extends AutoRedirectGuard {
   }
 
   @override
-  Future<bool> canNavigate(RouteMatch route) async{
+  Future<bool> canNavigate(RouteMatch route) async {
     return authService.isAuthenticated && authService.isVerified;
   }
 
   @override
   Future<void> onNavigation(
       NavigationResolver resolver, StackRouter router) async {
-
     if (await canNavigate(resolver.route)) {
       resolver.next();
     } else {

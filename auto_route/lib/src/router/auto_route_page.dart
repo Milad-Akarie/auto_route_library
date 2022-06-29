@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 abstract class AutoRoutePage<T> extends Page<T> {
   final RouteData routeData;
-  final Widget child;
+  final Widget _child;
   final bool fullscreenDialog;
   final bool maintainState;
 
@@ -18,11 +18,16 @@ abstract class AutoRoutePage<T> extends Page<T> {
 
   AutoRoutePage({
     required this.routeData,
-    required this.child,
+    required Widget child,
     this.fullscreenDialog = false,
     this.maintainState = true,
     LocalKey? key,
-  }) : super(
+  })  : _child = child is AutoRouteWrapper
+            ? WrappedRoute(
+                child: child as AutoRouteWrapper,
+              )
+            : child,
+        super(
           restorationId: routeData.name,
           name: routeData.name,
           arguments: routeData.route.args,
@@ -37,7 +42,7 @@ abstract class AutoRoutePage<T> extends Page<T> {
 
   Widget buildPage(BuildContext context) {
     return RouteDataScope(
-      child: child,
+      child: _child,
       routeData: routeData,
     );
   }
