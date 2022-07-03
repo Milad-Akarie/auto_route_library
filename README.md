@@ -1113,8 +1113,8 @@ appBar: AppBar(
 ```dart       
 var isLoading = false;  
  void initiState(){  
-   final guradObserver = context.router.activeGuardObserver;  
-    guradObserver.addListener(){  
+   final guardObserver = context.router.activeGuardObserver;  
+    guardObserver.addListener(){  
       setState((){  
         isLoading = guardObserver.guardInProgress;  
        });  
