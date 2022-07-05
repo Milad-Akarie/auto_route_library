@@ -198,10 +198,10 @@ class _AutoTabsRouterIndexedStackState extends _AutoTabsRouterState with SingleT
     _tabsHash = const ListEquality().hash(widget.routes);
   }
 
-   @override
+  @override
   void dispose() {
-    super.dispose();
     _animationController.dispose();
+    super.dispose();
   }
 
   @override
