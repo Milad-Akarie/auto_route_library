@@ -89,8 +89,9 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-
-                    context.navigateNamedTo('/user/2?query=foo');
+                    context.router.markUrlStateForReplace();
+                    context.navigateNamedTo('/user/2/page/favorite');
+                    // context.navigateTo(UserRoute(id: 2));
                   },
               child: Text('Navigate to user/2'),
             ),
