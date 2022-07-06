@@ -64,6 +64,20 @@ class UrlState {
     );
   }
 
+  RouteMatch get currentHierarchy => toHierarchy(segments);
+
+  static RouteMatch toHierarchy(List<RouteMatch> segments) {
+    if (segments.length == 1) {
+      return segments.first;
+    } else {
+      return segments.first.copyWith(children: [
+        toHierarchy(
+          segments.sublist(1, segments.length),
+        ),
+      ]);
+    }
+  }
+
   bool get hasSegments => segments.isNotEmpty;
 
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
