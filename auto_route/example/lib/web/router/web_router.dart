@@ -24,7 +24,7 @@ part 'web_router.gr.dart';
     ),
     AutoRoute(
       path: '/user/:userID/page',
-      guards: [AuthGuard],
+      // guards: [AuthGuard],
       page: UserPage,
       children: [
         AutoRoute(
@@ -59,7 +59,7 @@ class WebAppRouter extends _$WebAppRouter {
   WebAppRouter(
     AuthService authService,
   ) : super(
-          authGuard: AuthGuard(authService),
+          // authGuard: AuthGuard(authService),
         );
 }
 
@@ -89,8 +89,9 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-
-                    context.navigateNamedTo('/user/2?query=foo');
+                    context.router.markUrlStateForReplace();
+                    context.navigateNamedTo('/user/2/page/favorite');
+                    // context.navigateTo(UserRoute(id: 2));
                   },
               child: Text('Navigate to user/2'),
             ),

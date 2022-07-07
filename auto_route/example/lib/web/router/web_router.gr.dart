@@ -13,11 +13,8 @@
 part of 'web_router.dart';
 
 class _$WebAppRouter extends RootStackRouter {
-  _$WebAppRouter(
-      {GlobalKey<NavigatorState>? navigatorKey, required this.authGuard})
+  _$WebAppRouter([GlobalKey<NavigatorState>? navigatorKey])
       : super(navigatorKey);
-
-  final AuthGuard authGuard;
 
   @override
   final Map<String, PageFactory> pagesMap = {
@@ -68,15 +65,14 @@ class _$WebAppRouter extends RootStackRouter {
       final pathParams = routeData.inheritedPathParams;
       final queryParams = routeData.queryParams;
       final args = routeData.argsAs<UserProfileRouteArgs>(
-          orElse: () => UserProfileRouteArgs(
-              userId: pathParams.getInt('userID', -1),
-              likes: queryParams.getInt('likes', 0)));
+          orElse: () =>
+              UserProfileRouteArgs(likes: queryParams.getInt('likes', 0)));
       return CustomPage<dynamic>(
           routeData: routeData,
           child: UserProfilePage(
               key: args.key,
               navigate: args.navigate,
-              userId: args.userId,
+              userId: pathParams.getInt('userID', -1),
               likes: args.likes),
           transitionsBuilder: TransitionsBuilders.noTransition,
           opaque: true,
@@ -118,9 +114,7 @@ class _$WebAppRouter extends RootStackRouter {
             path: '/user/:userID',
             redirectTo: '/user/:userID/page',
             fullMatch: true),
-        RouteConfig(UserRoute.name, path: '/user/:userID/page', guards: [
-          authGuard
-        ], children: [
+        RouteConfig(UserRoute.name, path: '/user/:userID/page', children: [
           RouteConfig(UserProfileRoute.name, path: '', parent: UserRoute.name),
           RouteConfig(UserPostsRoute.name,
               path: 'posts',
@@ -218,33 +212,28 @@ class NotFoundRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [UserProfilePage]
 class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
-  UserProfileRoute(
-      {Key? key, void Function()? navigate, int userId = -1, int likes = 0})
+  UserProfileRoute({Key? key, void Function()? navigate, int likes = 0})
       : super(UserProfileRoute.name,
             path: '',
             args: UserProfileRouteArgs(
-                key: key, navigate: navigate, userId: userId, likes: likes),
-            rawPathParams: {'userID': userId},
+                key: key, navigate: navigate, likes: likes),
             rawQueryParams: {'likes': likes});
 
   static const String name = 'UserProfileRoute';
 }
 
 class UserProfileRouteArgs {
-  const UserProfileRouteArgs(
-      {this.key, this.navigate, this.userId = -1, this.likes = 0});
+  const UserProfileRouteArgs({this.key, this.navigate, this.likes = 0});
 
   final Key? key;
 
   final void Function()? navigate;
 
-  final int userId;
-
   final int likes;
 
   @override
   String toString() {
-    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, userId: $userId, likes: $likes}';
+    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, likes: $likes}';
   }
 }
 

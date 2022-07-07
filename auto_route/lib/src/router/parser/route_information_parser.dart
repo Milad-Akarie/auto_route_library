@@ -49,17 +49,33 @@ class UrlState {
 
   const UrlState(this.uri, this.segments, {this.shouldReplace = false});
 
-  String get url => uri.toString();
+  String get url => Uri.decodeFull(uri.toString());
 
   String get path => uri.path;
 
-  factory UrlState.fromSegments(List<RouteMatch> routes,
-      {bool shouldReplace = false}) {
+  factory UrlState.fromSegments(
+    List<RouteMatch> routes, {
+    bool shouldReplace = false,
+  }) {
     return UrlState(
       _buildUri(routes),
       routes,
       shouldReplace: shouldReplace,
     );
+  }
+
+  RouteMatch get currentHierarchy => toHierarchy(segments);
+
+  static RouteMatch toHierarchy(List<RouteMatch> segments) {
+    if (segments.length == 1) {
+      return segments.first;
+    } else {
+      return segments.first.copyWith(children: [
+        toHierarchy(
+          segments.sublist(1, segments.length),
+        ),
+      ]);
+    }
   }
 
   bool get hasSegments => segments.isNotEmpty;

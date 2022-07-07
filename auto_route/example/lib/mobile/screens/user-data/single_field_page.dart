@@ -24,7 +24,7 @@ class _SingleFieldPageState extends State<SingleFieldPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-       ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(widget.willPopMessage)),
         );
         return true;

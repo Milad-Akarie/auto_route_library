@@ -6,7 +6,13 @@ class TestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(context.routeData.name);
+    return Column(
+      children: [
+        Text(context.routeData.name),
+        Text(context.routeData.match),
+        Text(context.router.urlState.url),
+      ],
+    );
   }
 }
 

@@ -9,57 +9,55 @@ import 'library_builder.dart';
 
 const _routeConfigType = Reference("RouteConfig", autoRouteImport);
 
-Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards,
-        List<RouteConfig> routes) =>
-    Class((b) => b
-      ..name = router.routerClassName
-      ..extend = refer('RootStackRouter', autoRouteImport)
-      ..fields.addAll([
-        ...guards.map((g) => Field((b) => b
-          ..modifier = FieldModifier.final$
-          ..name = toLowerCamelCase(g.name)
-          ..type = g.refer)),
-        buildPagesMap(routes)
-      ])
-      ..methods.add(
-        Method(
+Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards, List<RouteConfig> routes) => Class((b) => b
+  ..name = router.routerClassName
+  ..extend = refer('RootStackRouter', autoRouteImport)
+  ..fields.addAll([
+    ...guards.map((g) => Field((b) => b
+      ..modifier = FieldModifier.final$
+      ..name = toLowerCamelCase(g.name)
+      ..type = g.refer)),
+    buildPagesMap(routes)
+  ])
+  ..methods.add(
+    Method(
+      (b) => b
+        ..type = MethodType.getter
+        ..name = 'routes'
+        ..annotations.add(refer('override'))
+        ..returns = listRefer(_routeConfigType)
+        ..body = literalList(buildRoutes(router.routes)).code,
+    ),
+  )
+  ..constructors.add(
+    Constructor((b) => b
+      ..optionalParameters.addAll([
+        Parameter(
           (b) => b
-            ..type = MethodType.getter
-            ..name = 'routes'
-            ..annotations.add(refer('override'))
-            ..returns = listRefer(_routeConfigType)
-            ..body = literalList(buildRoutes(router.routes)).code,
-        ),
-      )
-      ..constructors.add(
-        Constructor((b) => b
-          ..optionalParameters.addAll([
-            Parameter(
+            ..name = 'navigatorKey'
+            ..type = TypeReference(
               (b) => b
-                ..name = 'navigatorKey'
-                ..type = TypeReference(
-                  (b) => b
-                    ..url = materialImport
-                    ..symbol = 'GlobalKey'
-                    ..isNullable = true
-                    ..types.add(
-                      refer('NavigatorState', materialImport),
-                    ),
+                ..url = materialImport
+                ..symbol = 'GlobalKey'
+                ..isNullable = true
+                ..types.add(
+                  refer('NavigatorState', materialImport),
                 ),
             ),
-            ...guards.map(
-              (g) => Parameter((b) => b
-                ..name = toLowerCamelCase(g.name)
-                ..named = true
-                ..required = true
-                ..toThis = true),
-            ),
-          ])
-          ..initializers.add(refer('super').call([
-            refer('navigatorKey'),
-          ]).code)),
-        // ),
-      ));
+        ),
+        ...guards.map(
+          (g) => Parameter((b) => b
+            ..name = toLowerCamelCase(g.name)
+            ..named = true
+            ..required = true
+            ..toThis = true),
+        ),
+      ])
+      ..initializers.add(refer('super').call([
+        refer('navigatorKey'),
+      ]).code)),
+    // ),
+  ));
 
 Field buildPagesMap(List<RouteConfig> routes) {
   return Field((b) => b
@@ -75,10 +73,7 @@ Field buildPagesMap(List<RouteConfig> routes) {
         ]),
     )
     ..assignment = literalMap(Map.fromEntries(
-      routes
-          .where((r) => r.routeType != RouteType.redirect)
-          .distinctBy((e) => e.routeName)
-          .map(
+      routes.where((r) => r.routeType != RouteType.redirect).distinctBy((e) => e.routeName).map(
             (r) => MapEntry(
               refer(r.routeName).property('name'),
               buildMethod(r),
@@ -88,37 +83,38 @@ Field buildPagesMap(List<RouteConfig> routes) {
 }
 
 Spec buildMethod(RouteConfig r) {
-  var constructedPage = r.deferredLoading
-      ? getDeferredBuilder(r)
-      : r.hasConstConstructor
-          ? r.pageType!.refer.constInstance([])
-          : getPageInstance(r);
+  // var constructedPage = r.deferredLoading
+  //     ? getDeferredBuilder(r)
+  //     : r.hasConstConstructor
+  //         ? r.pageType!.refer.constInstance([])
+  //         : getPageInstance(r);
+  var constructedPage = r.hasConstConstructor
+      ? r.pageType!.refer.constInstance([])
+      : r.pageType!.refer.newInstance(
+          r.positionalParams.map((p) {
+            return  p.isInheritedPathParam ?  getUrlParamAssignment(p) :
+             refer('args').property(p.name);
+          }),
+          Map.fromEntries(r.namedParams.map(
+            (p) => MapEntry(
+              p.name,
+              p.isInheritedPathParam ?  getUrlParamAssignment(p) :
+              refer('args').property(p.name),
+            ),
+          )),
+        );
 
-  if (r.hasWrappedRoute == true) {
-    constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
-      [],
-      {'child': constructedPage},
-    );
-  }
   return Method(
     (b) => b
       ..requiredParameters.add(
         Parameter((b) => b.name = 'routeData'),
       )
       ..body = Block((b) => b.statements.addAll([
-            if (!r.hasUnparsableRequiredArgs &&
-                r.parameters.any((p) => p.isPathParam))
-              refer('routeData')
-                  .property('inheritedPathParams')
-                  .assignFinal('pathParams')
-                  .statement,
-            if (!r.hasUnparsableRequiredArgs &&
-                r.parameters.any((p) => p.isQueryParam))
-              refer('routeData')
-                  .property('queryParams')
-                  .assignFinal('queryParams')
-                  .statement,
-            if (r.parameters.isNotEmpty)
+            if ((!r.hasUnparsableRequiredArgs || r.parameters.any((p) => p.isInheritedPathParam)) && r.parameters.any((p) => p.isPathParam))
+              refer('routeData').property('inheritedPathParams').assignFinal('pathParams').statement,
+            if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
+              refer('routeData').property('queryParams').assignFinal('queryParams').statement,
+            if (r.parameters.where((p) => !p.isInheritedPathParam).isNotEmpty)
               refer('routeData')
                   .property('argsAs')
                   .call([], {
@@ -127,19 +123,17 @@ Spec buildMethod(RouteConfig r) {
                         (b) => b
                           ..lambda = true
                           ..body = r.pathQueryParams.isEmpty
-                              ? refer('${r.routeName}Args')
-                                  .constInstance([]).code
+                              ? refer('${r.routeName}Args').constInstance([]).code
                               : refer('${r.routeName}Args').newInstance(
                                   [],
-                                  Map.fromEntries(r.parameters
-                                      .where((p) =>
-                                          p.isPathParam || p.isQueryParam)
-                                      .map(
-                                        (p) => MapEntry(
-                                          p.name,
-                                          getUrlParamAssignment(p),
+                                  Map.fromEntries(
+                                    r.parameters.where((p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam).map(
+                                          (p) => MapEntry(
+                                            p.name,
+                                            getUrlParamAssignment(p),
+                                          ),
                                         ),
-                                      )),
+                                  ),
                                 ).code,
                       ).closure
                   }, [
@@ -158,35 +152,20 @@ Spec buildMethod(RouteConfig r) {
                   {
                     'routeData': refer('routeData'),
                     'child': constructedPage,
-                    if (r.maintainState == false)
-                      'maintainState': literalBool(false),
-                    if (r.fullscreenDialog == true)
-                      'fullscreenDialog': literalBool(true),
-                    if ((r.routeType == RouteType.cupertino ||
-                            r.routeType == RouteType.adaptive) &&
-                        r.cupertinoNavTitle != null)
+                    if (r.maintainState == false) 'maintainState': literalBool(false),
+                    if (r.fullscreenDialog == true) 'fullscreenDialog': literalBool(true),
+                    if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) && r.cupertinoNavTitle != null)
                       'title': literalString(r.cupertinoNavTitle!),
                     if (r.routeType == RouteType.custom) ...{
-                      if (r.customRouteBuilder != null)
-                        'customRouteBuilder': r.customRouteBuilder!.refer,
-                      if (r.transitionBuilder != null)
-                        'transitionsBuilder': r.transitionBuilder!.refer,
-                      if (r.durationInMilliseconds != null)
-                        'durationInMilliseconds':
-                            literalNum(r.durationInMilliseconds!),
+                      if (r.customRouteBuilder != null) 'customRouteBuilder': r.customRouteBuilder!.refer,
+                      if (r.transitionBuilder != null) 'transitionsBuilder': r.transitionBuilder!.refer,
+                      if (r.durationInMilliseconds != null) 'durationInMilliseconds': literalNum(r.durationInMilliseconds!),
                       if (r.reverseDurationInMilliseconds != null)
-                        'reverseDurationInMilliseconds':
-                            literalNum(r.reverseDurationInMilliseconds!),
-                      if (r.customRouteOpaque != null)
-                        'opaque': literalBool(r.customRouteOpaque!),
-                      if (r.customRouteBarrierDismissible != null)
-                        'barrierDismissible':
-                            literalBool(r.customRouteBarrierDismissible!),
-                      if (r.customRouteBarrierLabel != null)
-                        'barrierLabel':
-                            literalString(r.customRouteBarrierLabel!),
-                      if (r.customRouteBarrierColor != null)
-                        'barrierColor': literal(r.customRouteBarrierColor!),
+                        'reverseDurationInMilliseconds': literalNum(r.reverseDurationInMilliseconds!),
+                      if (r.customRouteOpaque != null) 'opaque': literalBool(r.customRouteOpaque!),
+                      if (r.customRouteBarrierDismissible != null) 'barrierDismissible': literalBool(r.customRouteBarrierDismissible!),
+                      if (r.customRouteBarrierLabel != null) 'barrierLabel': literalString(r.customRouteBarrierLabel!),
+                      if (r.customRouteBarrierColor != null) 'barrierColor': literal(r.customRouteBarrierColor!),
                     }
                   },
                 )
@@ -254,26 +233,20 @@ Expression getUrlParamAssignment(ParamConfig p) {
   }
 }
 
-Iterable<Object> buildRoutes(List<RouteConfig> routes, {Reference? parent}) =>
-    routes.map(
+Iterable<Object> buildRoutes(List<RouteConfig> routes, {Reference? parent}) => routes.map(
       (r) {
         return _routeConfigType.newInstance(
           [
-            if (r.routeType == RouteType.redirect)
-              literalString('${r.pathName}#redirect')
-            else
-              refer(r.routeName).property('name'),
+            if (r.routeType == RouteType.redirect) literalString('${r.pathName}#redirect') else refer(r.routeName).property('name'),
           ],
           {
             'path': literalString(r.pathName),
             if (parent != null) 'parent': parent.property('name'),
             if (r.meta.isNotEmpty)
               'meta': literalMap({
-                for (final metaEntry in r.meta)
-                  literalString(metaEntry.key): _getLiteralValue(metaEntry),
+                for (final metaEntry in r.meta) literalString(metaEntry.key): _getLiteralValue(metaEntry),
               }, stringRefer, refer('dynamic')),
-            if (r.redirectTo != null)
-              'redirectTo': literalString(r.redirectTo!),
+            if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo!),
             if (r.fullMatch == true) 'fullMatch': literalBool(true),
             if (r.usesPathAsKey == true) 'usesPathAsKey': literalBool(true),
             if (r.deferredLoading == true) 'deferredLoading': literalBool(true),

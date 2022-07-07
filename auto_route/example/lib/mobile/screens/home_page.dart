@@ -87,13 +87,13 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             );
           })
-        : AutoTabsRouter.tabBar(
+        : AutoTabsRouter.pageView(
             routes: [
               BooksTab(),
               ProfileTab(),
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
-            builder: (context, child, _) {
+            builder: (context, child, animation) {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(context.topRoute.name),

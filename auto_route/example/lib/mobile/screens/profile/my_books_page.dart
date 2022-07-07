@@ -27,7 +27,7 @@ class MyBooksPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 context.navigateTo(
-                  SettingsTab(tab: 'newSegment',query: 'newQuery'),
+                  SettingsTab(tab: 'newSegment', query: 'newQuery'),
                 );
               },
               child: Text('navigate to /settings/newSegment'),

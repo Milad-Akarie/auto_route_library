@@ -4,22 +4,22 @@ import 'package:flutter/material.dart';
 
 import '../../../data/db.dart';
 
-class BookListScreen extends StatefulWidget {
+class BookListScreen extends StatefulWidget  {
   @override
   _BookListScreenState createState() => _BookListScreenState();
+
+
 }
 
-class _BookListScreenState extends State<BookListScreen>  with AutoRouteAwareStateMixin<BookListScreen> {
-
+class _BookListScreenState extends State<BookListScreen>
+    with AutoRouteAwareStateMixin<BookListScreen> {
   @override
   void didPushNext() {
     print('didPushNext');
-   }
-
+  }
 
   @override
   Widget build(BuildContext context) {
-   
     var booksDb = BooksDBProvider.of(context);
     return Scaffold(
       body: ListView(
@@ -44,4 +44,6 @@ class _BookListScreenState extends State<BookListScreen>  with AutoRouteAwareSta
       ),
     );
   }
+
+
 }

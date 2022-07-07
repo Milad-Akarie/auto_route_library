@@ -28,7 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ElevatedButton(
               onPressed: () {
                 context.router.push(MyBooksRoute());
-
               },
               child: Text('My Books'),
             ),

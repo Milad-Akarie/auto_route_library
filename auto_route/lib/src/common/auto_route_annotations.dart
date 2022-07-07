@@ -20,7 +20,7 @@ class AutoRouterAnnotation {
   /// e.g 'Page,Route'
   /// so ProductDetailsPage would be ProductDetailsRoute
   ///
-  /// defaults no null, ignored if a route name is provided.
+  /// defaults to null, ignored if a route name is provided.
   final String? replaceInRouteName;
 
   /// Use for web for lazy loading other routes
