@@ -21,8 +21,9 @@ import '../screens/login_page.dart' as _i3;
 import '../screens/profile/my_books_page.dart' as _i10;
 import '../screens/profile/profile_page.dart' as _i9;
 import '../screens/settings.dart' as _i5;
-import '../screens/user-data/data_collector.dart' as _i2;
+import '../screens/user-data/data_collector.dart' as _i15;
 import '../screens/user-data/single_field_page.dart' as _i11;
+import '../screens/user-data/user_data_collector_page.dart' as _i2;
 import '../screens/user-data/user_data_page.dart' as _i12;
 import 'router.dart' as _i8;
 
@@ -39,7 +40,7 @@ class RootRouter extends _i13.RootStackRouter {
     UserDataCollectorRoute.name: (routeData) {
       final args = routeData.argsAs<UserDataCollectorRouteArgs>(
           orElse: () => const UserDataCollectorRouteArgs());
-      return _i13.MaterialPageX<_i2.UserData>(
+      return _i13.MaterialPageX<_i15.UserData>(
           routeData: routeData,
           child: _i2.UserDataCollectorPage(
               key: args.key, onResult: args.onResult));
@@ -210,7 +211,7 @@ class UserDataCollectorRoute
     extends _i13.PageRouteInfo<UserDataCollectorRouteArgs> {
   UserDataCollectorRoute(
       {_i14.Key? key,
-      dynamic Function(_i2.UserData)? onResult,
+      dynamic Function(_i15.UserData)? onResult,
       List<_i13.PageRouteInfo>? children})
       : super(UserDataCollectorRoute.name,
             path: '/user-data',
@@ -225,7 +226,7 @@ class UserDataCollectorRouteArgs {
 
   final _i14.Key? key;
 
-  final dynamic Function(_i2.UserData)? onResult;
+  final dynamic Function(_i15.UserData)? onResult;
 
   @override
   String toString() {
@@ -480,7 +481,7 @@ class FavoriteBookFieldRouteArgs {
 /// generated route for
 /// [_i12.UserDataPage]
 class UserDataRoute extends _i13.PageRouteInfo<UserDataRouteArgs> {
-  UserDataRoute({_i14.Key? key, dynamic Function(_i2.UserData)? onResult})
+  UserDataRoute({_i14.Key? key, dynamic Function(_i15.UserData)? onResult})
       : super(UserDataRoute.name,
             path: 'results',
             args: UserDataRouteArgs(key: key, onResult: onResult));
@@ -493,7 +494,7 @@ class UserDataRouteArgs {
 
   final _i14.Key? key;
 
-  final dynamic Function(_i2.UserData)? onResult;
+  final dynamic Function(_i15.UserData)? onResult;
 
   @override
   String toString() {

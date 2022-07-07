@@ -83,26 +83,11 @@ Field buildPagesMap(List<RouteConfig> routes) {
 }
 
 Spec buildMethod(RouteConfig r) {
-  // var constructedPage = r.deferredLoading
-  //     ? getDeferredBuilder(r)
-  //     : r.hasConstConstructor
-  //         ? r.pageType!.refer.constInstance([])
-  //         : getPageInstance(r);
-  var constructedPage = r.hasConstConstructor
-      ? r.pageType!.refer.constInstance([])
-      : r.pageType!.refer.newInstance(
-          r.positionalParams.map((p) {
-            return  p.isInheritedPathParam ?  getUrlParamAssignment(p) :
-             refer('args').property(p.name);
-          }),
-          Map.fromEntries(r.namedParams.map(
-            (p) => MapEntry(
-              p.name,
-              p.isInheritedPathParam ?  getUrlParamAssignment(p) :
-              refer('args').property(p.name),
-            ),
-          )),
-        );
+  final constructedPage = r.deferredLoading
+      ? getDeferredBuilder(r)
+      : r.hasConstConstructor
+          ? r.pageType!.refer.constInstance([])
+          : getPageInstance(r);
 
   return Method(
     (b) => b
@@ -110,7 +95,8 @@ Spec buildMethod(RouteConfig r) {
         Parameter((b) => b.name = 'routeData'),
       )
       ..body = Block((b) => b.statements.addAll([
-            if ((!r.hasUnparsableRequiredArgs || r.parameters.any((p) => p.isInheritedPathParam)) && r.parameters.any((p) => p.isPathParam))
+            if ((!r.hasUnparsableRequiredArgs || r.parameters.any((p) => p.isInheritedPathParam)) &&
+                r.parameters.any((p) => p.isPathParam))
               refer('routeData').property('inheritedPathParams').assignFinal('pathParams').statement,
             if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
               refer('routeData').property('queryParams').assignFinal('queryParams').statement,
@@ -127,7 +113,9 @@ Spec buildMethod(RouteConfig r) {
                               : refer('${r.routeName}Args').newInstance(
                                   [],
                                   Map.fromEntries(
-                                    r.parameters.where((p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam).map(
+                                    r.parameters
+                                        .where((p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam)
+                                        .map(
                                           (p) => MapEntry(
                                             p.name,
                                             getUrlParamAssignment(p),
@@ -154,16 +142,19 @@ Spec buildMethod(RouteConfig r) {
                     'child': constructedPage,
                     if (r.maintainState == false) 'maintainState': literalBool(false),
                     if (r.fullscreenDialog == true) 'fullscreenDialog': literalBool(true),
-                    if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) && r.cupertinoNavTitle != null)
+                    if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) &&
+                        r.cupertinoNavTitle != null)
                       'title': literalString(r.cupertinoNavTitle!),
                     if (r.routeType == RouteType.custom) ...{
                       if (r.customRouteBuilder != null) 'customRouteBuilder': r.customRouteBuilder!.refer,
                       if (r.transitionBuilder != null) 'transitionsBuilder': r.transitionBuilder!.refer,
-                      if (r.durationInMilliseconds != null) 'durationInMilliseconds': literalNum(r.durationInMilliseconds!),
+                      if (r.durationInMilliseconds != null)
+                        'durationInMilliseconds': literalNum(r.durationInMilliseconds!),
                       if (r.reverseDurationInMilliseconds != null)
                         'reverseDurationInMilliseconds': literalNum(r.reverseDurationInMilliseconds!),
                       if (r.customRouteOpaque != null) 'opaque': literalBool(r.customRouteOpaque!),
-                      if (r.customRouteBarrierDismissible != null) 'barrierDismissible': literalBool(r.customRouteBarrierDismissible!),
+                      if (r.customRouteBarrierDismissible != null)
+                        'barrierDismissible': literalBool(r.customRouteBarrierDismissible!),
                       if (r.customRouteBarrierLabel != null) 'barrierLabel': literalString(r.customRouteBarrierLabel!),
                       if (r.customRouteBarrierColor != null) 'barrierColor': literal(r.customRouteBarrierColor!),
                     }
@@ -180,10 +171,7 @@ Expression getDeferredBuilder(RouteConfig r) {
     ..symbol = 'FutureBuilder'
     ..url = materialImport).newInstance([], {
     'builder': Method((b) => b
-      ..requiredParameters.addAll([
-        Parameter((b) => b.name = 'context'),
-        Parameter((b) => b.name = 'snapshot')
-      ])
+      ..requiredParameters.addAll([Parameter((b) => b.name = 'context'), Parameter((b) => b.name = 'snapshot')])
       ..body = refer('snapshot.connectionState')
           .equalTo(refer('ConnectionState.done', materialImport))
           .conditional(
@@ -209,11 +197,13 @@ Expression getDeferredBuilder(RouteConfig r) {
 
 Expression getPageInstance(RouteConfig r) {
   return r.pageType!.refer.newInstance(
-    r.positionalParams.map((p) => refer('args').property(p.name)),
+    r.positionalParams.map((p) {
+      return p.isInheritedPathParam ? getUrlParamAssignment(p) : refer('args').property(p.name);
+    }),
     Map.fromEntries(r.namedParams.map(
       (p) => MapEntry(
         p.name,
-        refer('args').property(p.name),
+        p.isInheritedPathParam ? getUrlParamAssignment(p) : refer('args').property(p.name),
       ),
     )),
   );
@@ -237,7 +227,10 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes, {Reference? parent}) => r
       (r) {
         return _routeConfigType.newInstance(
           [
-            if (r.routeType == RouteType.redirect) literalString('${r.pathName}#redirect') else refer(r.routeName).property('name'),
+            if (r.routeType == RouteType.redirect)
+              literalString('${r.pathName}#redirect')
+            else
+              refer(r.routeName).property('name'),
           ],
           {
             'path': literalString(r.pathName),

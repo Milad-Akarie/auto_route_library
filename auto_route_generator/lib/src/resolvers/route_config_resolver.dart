@@ -56,7 +56,8 @@ class RouteConfigResolver {
     );
 
     final classElement = page.element as ClassElement;
-    final hasWrappedRoute = classElement.allSupertypes.any((e) => e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
+    final hasWrappedRoute =
+        classElement.allSupertypes.any((e) => e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.getDisplayString(withNullability: false);
 
@@ -142,20 +143,11 @@ class RouteConfigResolver {
       }
     }
 
-    final meta = <MetaEntry>[]; //TODO KUBAZ
-    // for (final entry in autoRoute
-    //     .read('meta')
-    //     .mapValue
-    //     .entries
-    //     .where((e) => e.value?.type != null)) {
-    //   final valueType =
-    //       entry.value!.type!.getDisplayString(withNullability: false);
-    //   throwIf(!validMetaValues.contains(valueType),
-    //       'Meta value type $valueType is not supported!\nSupported types are $validMetaValues');
+    final meta = <MetaEntry>[];
     for (final entry in autoRoute.read('meta').mapValue.entries.where((e) => e.value?.type != null)) {
       final valueType = entry.value!.type!.getDisplayString(withNullability: false);
-      throwIf(
-          !validMetaValues.contains(valueType), 'Meta value type ${valueType} is not supported!\nSupported types are ${validMetaValues}');
+      throwIf(!validMetaValues.contains(valueType),
+          'Meta value type ${valueType} is not supported!\nSupported types are ${validMetaValues}');
       switch (valueType) {
         case 'bool':
           {
@@ -209,7 +201,9 @@ class RouteConfigResolver {
     var params = constructor!.parameters;
     var parameters = <ParamConfig>[];
     if (params.isNotEmpty == true) {
-      if (constructor.isConst && params.length == 1 && params.first.type.getDisplayString(withNullability: false) == 'Key') {
+      if (constructor.isConst &&
+          params.length == 1 &&
+          params.first.type.getDisplayString(withNullability: false) == 'Key') {
         hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);
@@ -226,9 +220,11 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs = parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+      var unParsableRequiredArgs =
+          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
-        print('\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
+        print(
+            '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
             'that can not be parsed from path,\n@PathParam() and @QueryParam() annotations will be ignored.\n');
       }
     }

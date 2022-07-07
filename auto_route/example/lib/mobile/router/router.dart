@@ -20,7 +20,7 @@ import '../screens/user-data/routes.dart';
       children: [
         AutoRoute(
           path: 'books',
-          page: EmptyRouterPage, // EmptyRouterPage TODO KUBAZ EmptyRouterScreen
+          page: EmptyRouterPage,
           name: 'BooksTab',
           initial: true,
           maintainState: true,
