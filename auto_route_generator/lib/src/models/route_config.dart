@@ -204,7 +204,7 @@ class RouteConfig {
   }
 
   List<ParamConfig> get pathQueryParams {
-    return parameters.where((p) => p.isPathParam || p.isQueryParam).toList();
+    return parameters.where((p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam).toList();
   }
 
   Iterable<ParamConfig> get requiredParams =>
@@ -244,6 +244,10 @@ class RouteConfig {
 
   bool get hasUnparsableRequiredArgs => parameters.any((p) =>
       (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+
+
+
+
 }
 
 class MetaEntry<T> {

@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
@@ -18,8 +19,7 @@ class RouterConfigResolver {
 
   RouterConfigResolver(this._typeResolver);
 
-  RouterConfig resolve(ConstantReader autoRouter, ClassElement clazz,
-      {bool usesPartBuilder = false}) {
+  RouterConfig resolve(ConstantReader autoRouter, ClassElement clazz, {bool usesPartBuilder = false}) {
     /// ensure router config classes are prefixed with $
     /// to use the stripped name for the generated class
     throwIf(
@@ -37,30 +37,22 @@ class RouterConfigResolver {
     ResolvedType? customRouteBuilder;
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       routeType = RouteType.cupertino;
-    } else if (autoRouter
-        .instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
+    } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
       routeType = RouteType.adaptive;
-    } else if (autoRouter
-        .instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
+    } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
       routeType = RouteType.custom;
 
-      durationInMilliseconds =
-          autoRouter.peek('durationInMilliseconds')?.intValue;
-      reverseDurationInMilliseconds =
-          autoRouter.peek('reverseDurationInMilliseconds')?.intValue;
+      durationInMilliseconds = autoRouter.peek('durationInMilliseconds')?.intValue;
+      reverseDurationInMilliseconds = autoRouter.peek('reverseDurationInMilliseconds')?.intValue;
       customRouteOpaque = autoRouter.peek('opaque')?.boolValue;
-      customRouteBarrierDismissible =
-          autoRouter.peek('barrierDismissible')?.boolValue;
-      final function =
-          autoRouter.peek('transitionsBuilder')?.objectValue.toFunctionValue();
+      customRouteBarrierDismissible = autoRouter.peek('barrierDismissible')?.boolValue;
+      final function = autoRouter.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
         transitionBuilder = _typeResolver.resolveFunctionType(function);
       }
-      final customRouteBuilderValue =
-          autoRouter.peek('customRouteBuilder')?.objectValue.toFunctionValue();
+      final customRouteBuilderValue = autoRouter.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (customRouteBuilderValue != null) {
-        customRouteBuilder =
-            _typeResolver.resolveFunctionType(customRouteBuilderValue);
+        customRouteBuilder = _typeResolver.resolveFunctionType(customRouteBuilderValue);
       }
     }
 
@@ -84,10 +76,8 @@ class RouterConfigResolver {
     final autoRoutes = autoRouter.read('routes').listValue;
 
     var routerConfig = RouterConfig(
-      globalRouteConfig: _globalRouteConfig,
-      routerClassName: usesPartBuilder
-          ? '_\$${clazz.displayName}'
-          : clazz.displayName.substring(1),
+      parentRouteConfig: _globalRouteConfig,
+      routerClassName: usesPartBuilder ? '_\$${clazz.displayName}' : clazz.displayName.substring(1),
       element: clazz,
       replaceInRouteName: replaceInRouteName,
       routes: const [],
@@ -98,23 +88,26 @@ class RouterConfigResolver {
     return routerConfig.copyWith(routes: routes);
   }
 
-  List<RouteConfig> _resolveRoutes(
-      RouterConfig routerConfig, List<DartObject> routesList) {
+  List<RouteConfig> _resolveRoutes(RouterConfig routerConfig, List<DartObject> routesList,
+      {List<PathParamConfig> inheritedPathParams = const []}) {
     var routeResolver = RouteConfigResolver(routerConfig, _typeResolver);
     final routes = <RouteConfig>[];
     for (var entry in routesList) {
       var routeReader = ConstantReader(entry);
       RouteConfig route;
-      route = routeResolver.resolve(routeReader);
+      route = routeResolver.resolve(routeReader, inheritedPathParams);
 
       var children = routeReader.peek('children')?.listValue;
       if (children?.isNotEmpty == true) {
         var subRouterConfig = routerConfig.copyWith(
           parent: routerConfig,
         );
-        var nestedRoutes = _resolveRoutes(subRouterConfig, children!);
-        route = route.copyWith(
-            childRouterConfig: subRouterConfig.copyWith(routes: nestedRoutes));
+        var nestedRoutes = _resolveRoutes(
+          subRouterConfig,
+          children!,
+          inheritedPathParams: inheritedPathParams + route.pathParams,
+        );
+        route = route.copyWith(childRouterConfig: subRouterConfig.copyWith(routes: nestedRoutes));
       }
       routes.add(route);
     }

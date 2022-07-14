@@ -13,6 +13,7 @@ part 'router.gr.dart';
       path: '/',
       page: TabsHostPage,
       children: tabRoutes,
+
     ),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],

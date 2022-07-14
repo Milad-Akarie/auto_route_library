@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  }) ;
 
   @override
   HomePageState createState() => HomePageState();
@@ -87,20 +87,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             );
           })
-        : AutoTabsRouter.tabBar(
+        : AutoTabsRouter.pageView(
             routes: [
               BooksTab(),
               ProfileTab(),
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
-            builder: (context, child, _) {
+            builder: (context, child, animation) {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(context.topRoute.name),
                   leading: AutoLeadingButton(),
                 ),
                 body: child,
-                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+                bottomNavigationBar:
+                    buildBottomNav(context, context.tabsRouter),
               );
             },
           );

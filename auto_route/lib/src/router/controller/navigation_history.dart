@@ -139,20 +139,7 @@ class NativeNavigationHistory extends NavigationHistory {
 
   void _addEntry(UrlState urlState) {
     if (!urlState.hasSegments) return;
-
-    RouteMatch toHierarchy(List<RouteMatch> segments) {
-      if (segments.length == 1) {
-        return segments.first;
-      } else {
-        return segments.first.copyWith(children: [
-          toHierarchy(
-            segments.sublist(1, segments.length),
-          ),
-        ]);
-      }
-    }
-
-    final route = toHierarchy(urlState.segments);
+    final route = UrlState.toHierarchy(urlState.segments);
     // limit history registration to 20 entries
     if (_entries.length > 20) {
       _entries.removeAt(0);

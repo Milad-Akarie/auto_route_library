@@ -1,4 +1,15 @@
 # ChangeLog
+## [4.2.1]
+- Fix AutoTabsRouter animation controller is disposed after super.dispose()
+- merge readme fixes
+## [4.2.0]
+- Add generate-time check for unresolvable path params
+- You can now access inherited path params using @pathParam annotation
+## [4.1.0]
+- Upgrade minimum Flutter SDK to 3.0.0
+- Upgrade minimum Dart SDK to 2.17.0
+- Fix PageView tabs implementation non-neighbor transition issue
+- Add scroll physics and dragStart behavior to booth tabBar nad pageView implementations
 ## [4.0.1] 
 - Fix incompatibility issues with flutter 3.0.0
 - fix reverseDurationInMilliseconds not being generated from router config

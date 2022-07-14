@@ -4,17 +4,19 @@ version: 1.0.0+1
 publish_to: none
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  provider: ^5.0.0
+  provider: ^6.0.2
   url_strategy: ^0.2.0
+
   auto_route:
     path: ../../auto_route
+
 
 
 dev_dependencies:
@@ -26,10 +28,24 @@ dev_dependencies:
   effective_dart: ^1.3.2
 
 dependency_overrides:
-  auto_route:
-    path: ../../auto_route
-
+#  auto_route:
+#    git:
+#      url: https://github.com/Garzas/auto_route_library.git
+#      path: auto_route
+#      ref: 4.0.1
+#  auto_route_generator:
+#    git:
+#      url: https://github.com/Garzas/auto_route_library.git
+#      path: auto_route_generator
+#      ref: 4.0.1g
 
 flutter:
   uses-material-design: true
 
+
+#flutter_intl:
+#  enabled: true
+#  main_locale: ar
+#  class_name: Strings
+#  output_dir: lib/localization
+#  arb_dir: lib/localization

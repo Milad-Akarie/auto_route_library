@@ -15,11 +15,6 @@ class RouteData {
   })  : _match = route,
         _parent = parent;
 
-  List<RouteMatch> get breadcrumbs => List.unmodifiable([
-        if (_parent != null) ..._parent!.breadcrumbs,
-        _match,
-      ]);
-
   final List<RouteMatch> pendingChildren;
 
   bool get isActive => router.isRouteActive(name);
@@ -74,6 +69,11 @@ class RouteData {
 
   String get match => _match.stringMatch;
 
+  List<RouteMatch> get breadcrumbs => List.unmodifiable([
+        if (_parent != null) ..._parent!.breadcrumbs,
+        _match,
+      ]);
+
   Parameters get inheritedPathParams {
     final params = breadcrumbs.map((e) => e.pathParams).reduce(
           (value, element) => value + element,
@@ -99,7 +99,6 @@ class RouteData {
     if (hasPendingChildren) {
       return _getTopMatch(pendingChildren.last);
     }
-
     return _match;
   }
 }

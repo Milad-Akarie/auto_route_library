@@ -26,7 +26,7 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
     var settingsState = context.watch<SettingsState>();
 
     return Scaffold(
-      body: AutoRouter.declarative(routes: (context) {
+      body: AutoRouter.declarative(routes: (handler) {
         return [
           if (settingsState.userData.favoriteBook == null)
             FavoriteBookFieldRoute(

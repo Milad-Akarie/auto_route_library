@@ -13,7 +13,6 @@ class AutoRouteGenerator extends Generator {
   @override
   Future<String> generate(LibraryReader library, BuildStep buildStep) async {
     final values = <String>{};
-
     for (var annotatedElement in library.annotatedWith(autoRouteChecker)) {
       final generatedValue = generateForAnnotatedElement(
           annotatedElement.element, annotatedElement.annotation, buildStep);

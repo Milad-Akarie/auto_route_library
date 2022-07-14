@@ -1,4 +1,6 @@
+import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
@@ -54,6 +56,8 @@ abstract class AutoTabsRouter extends StatefulWidget {
     Curve curve,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
+    ScrollPhysics? physics,
+    DragStartBehavior dragStartBehavior,
   }) = _AutoTabsRouterPageView;
 
   const factory AutoTabsRouter.tabBar({
@@ -65,6 +69,8 @@ abstract class AutoTabsRouter extends StatefulWidget {
     Curve curve,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
+    ScrollPhysics? physics,
+    DragStartBehavior dragStartBehavior,
   }) = _AutoTabsRouterTabBar;
 
   const factory AutoTabsRouter.builder({
@@ -200,6 +206,12 @@ class _AutoTabsRouterIndexedStackState extends _AutoTabsRouterState
       ),
     );
     _tabsHash = const ListEquality().hash(widget.routes);
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -378,6 +390,9 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
   final Duration duration;
   final Curve curve;
 
+  final ScrollPhysics? physics;
+  final DragStartBehavior dragStartBehavior;
+
   const _AutoTabsRouterPageView({
     Key? key,
     required List<PageRouteInfo> routes,
@@ -386,6 +401,8 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
     this.animatePageTransition = true,
     this.duration = kTabScrollDuration,
     this.curve = Curves.easeInOut,
+    this.physics,
+    this.dragStartBehavior = DragStartBehavior.start,
     bool inheritNavigatorObservers = true,
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
@@ -410,29 +427,20 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
   void _setupController() {
     assert(_controller != null);
     _controller!.setupRoutes(widget.routes);
-    _pageController = PageController(initialPage: _controller!.activeIndex);
+    _updatePageController();
     _didInitTabRoute(_controller!.activeIndex);
     _controller!.addListener(() {
       if (_controller!.activeIndex != _pageController.page) {
         _didChangeTabRoute(
-            _controller!.activeIndex, _pageController.page?.toInt() ?? 0);
-      }
-      if (_controller!.activeIndex != _pageController.page?.round()) {
-        if (typedWidget.animatePageTransition &&
-            _canAnimateTransition(
-                _pageController.page, _controller!.activeIndex)) {
-          _pageController.animateToPage(
-            _controller!.activeIndex,
-            duration: typedWidget.duration,
-            curve: typedWidget.curve,
-          );
-        } else {
-          _pageController.jumpToPage(_controller!.activeIndex);
-        }
-      } else if (mounted) {
-        setState(() {});
+            _controller!.activeIndex, _controller!.previousIndex!);
       }
     });
+  }
+
+  void _updatePageController() {
+    _pageController = PageController(
+      initialPage: _controller!.activeIndex,
+    );
   }
 
   @override
@@ -440,10 +448,8 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
     super.didUpdateWidget(oldWidget);
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(
-          widget.routes, oldWidget.routes[_pageController.page?.round() ?? 0]);
-      _pageController.jumpToPage(
-        _controller!.activeIndex,
-      );
+          widget.routes, oldWidget.routes[_controller!.activeIndex]);
+      _updatePageController();
     }
   }
 
@@ -452,7 +458,6 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    final stack = _controller!.stack;
     final builder = typedWidget._pageViewModeBuilder ?? _defaultPageViewBuilder;
     final stateHash = controller!.stateHash;
     return RouterScope(
@@ -466,16 +471,11 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
         child: Builder(builder: (context) {
           return builder(
             context,
-            PageView.builder(
+            AutoPageView(
+              physics: typedWidget.physics,
+              dragStartBehavior: typedWidget.dragStartBehavior,
               controller: _pageController,
-              itemCount: stack.length,
-              onPageChanged: _controller!.setActiveIndex,
-              itemBuilder: (context, index) {
-                return KeepAliveTab(
-                  key: ValueKey(index),
-                  page: stack[index],
-                );
-              },
+              router: _controller!,
             ),
             _pageController,
           );
@@ -486,13 +486,6 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
 
   Widget _defaultPageViewBuilder(_, Widget child, __) {
     return child;
-  }
-
-  // to make sure we don't animate to a page that's more than
-  // one step away
-  bool _canAnimateTransition(double? pageViewIndex, int activeIndex) {
-    if (pageViewIndex == null) return false;
-    return (pageViewIndex - activeIndex).abs() <= 1;
   }
 
   @override
@@ -507,7 +500,8 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   final AutoTabsTabBarBuilder? builder;
   final Duration? duration;
   final Curve curve;
-
+  final ScrollPhysics? physics;
+  final DragStartBehavior dragStartBehavior;
   const _AutoTabsRouterTabBar({
     Key? key,
     required List<PageRouteInfo> routes,
@@ -518,6 +512,8 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     bool inheritNavigatorObservers = true,
     NavigatorObserversBuilder navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.physics,
+    this.dragStartBehavior = DragStartBehavior.start,
   }) : super._(
           key: key,
           routes: routes,
@@ -538,6 +534,27 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
   void _setupController() {
     assert(_controller != null);
     _controller!.setupRoutes(widget.routes);
+    _updateTabController();
+    _didInitTabRoute(_controller!.activeIndex);
+    _controller!.addListener(() {
+      if (_controller!.activeIndex != _tabController.index) {
+        _didChangeTabRoute(
+          _controller!.activeIndex,
+          _tabController.index,
+        );
+        _tabController.animateTo(
+          _controller!.activeIndex,
+          duration: typedWidget.duration,
+          curve: typedWidget.curve,
+        );
+      }
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  void _updateTabController() {
     _tabController = TabController(
       initialIndex: _controller!.activeIndex,
       length: _controller!.pageCount,
@@ -545,23 +562,6 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
     );
     _tabController.addListener(() {
       _controller!.setActiveIndex(_tabController.index);
-    });
-    _didInitTabRoute(_controller!.activeIndex);
-    _controller!.addListener(() {
-      if (_controller!.activeIndex != _controller!.previousIndex) {
-        _didChangeTabRoute(_controller!.activeIndex,
-            _controller!.previousIndex ?? _tabController.index);
-      }
-      if (_controller!.activeIndex != _tabController.index &&
-          !_tabController.indexIsChanging) {
-        _tabController.animateTo(
-          _controller!.activeIndex,
-          duration: typedWidget.duration,
-          curve: typedWidget.curve,
-        );
-      } else if (mounted) {
-        setState(() {});
-      }
     });
   }
 
@@ -571,11 +571,7 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller!
           .replaceAll(widget.routes, oldWidget.routes[_tabController.index]);
-      _tabController.animateTo(
-        _controller!.activeIndex,
-        curve: typedWidget.curve,
-        duration: typedWidget.duration,
-      );
+      _updateTabController();
     }
   }
 
@@ -584,7 +580,6 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    final stack = _controller!.stack;
     final builder = typedWidget.builder ?? _defaultPageViewBuilder;
     final stateHash = controller!.stateHash;
     return RouterScope(
@@ -598,15 +593,11 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
         child: Builder(builder: (context) {
           return builder(
             context,
-            CustomTabBarView(
+            AutoTabView(
+              physics: typedWidget.physics,
+              dragStartBehavior: typedWidget.dragStartBehavior,
               controller: _tabController,
-              children: List.generate(
-                stack.length,
-                (index) => KeepAliveTab(
-                  key: ValueKey(index),
-                  page: stack[index],
-                ),
-              ),
+              router: _controller!,
             ),
             _tabController,
           );
