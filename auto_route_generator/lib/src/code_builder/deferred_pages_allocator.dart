@@ -1,4 +1,5 @@
 import 'package:auto_route_generator/src/models/route_config.dart';
+import 'package:auto_route_generator/utils.dart';
 import 'package:code_builder/code_builder.dart';
 
 class DeferredPagesAllocator implements Allocator {
@@ -8,8 +9,9 @@ class DeferredPagesAllocator implements Allocator {
   var _keys = 1;
 
   final List<RouteConfig> routes;
+  final bool defaultDeferredLoading;
 
-  DeferredPagesAllocator(this.routes);
+  DeferredPagesAllocator(this.routes, this.defaultDeferredLoading);
 
   @override
   String allocate(Reference reference) {
@@ -26,28 +28,38 @@ class DeferredPagesAllocator implements Allocator {
   @override
   Iterable<Directive> get imports => _imports.keys.map(
         (importPath) {
-          if (routes.containsPageImport(importPath)) {
-            return Directive.importDeferredAs(
-                importPath, '_i${_imports[importPath]}');
+          if (routes.isDeferred(importPath, defaultDeferredLoading)) {
+            return Directive.importDeferredAs(importPath, '_i${_imports[importPath]}');
           } else {
-            return Directive.import(importPath,
-                as: '_i${_imports[importPath]}');
+            return Directive.import(importPath, as: '_i${_imports[importPath]}');
           }
         },
       );
 }
 
 extension _RouteConfigList on List<RouteConfig> {
-  bool containsPageImport(String importPath) {
-    return any((routeConfig) {
+  bool isDeferred(String importPath, bool defaultDeferredLoading) {
+    return mapRouteToDeferredType(importPath, defaultDeferredLoading) == _DeferredStatus.Deferred;
+  }
+
+  _DeferredStatus mapRouteToDeferredType(String importPath, bool defaultDeferredLoading) {
+    for (RouteConfig routeConfig in this) {
       if (routeConfig.pageType?.import == importPath) {
-        return true;
+        return (routeConfig.deferredLoading ?? defaultDeferredLoading) ? _DeferredStatus.Deferred : _DeferredStatus.None;
       }
       if (routeConfig.childRouterConfig == null) {
-        return false;
+      } else {
+        final deferredStatus = routeConfig.childRouterConfig!.routes.mapRouteToDeferredType(importPath, defaultDeferredLoading);
+        if (deferredStatus == _DeferredStatus.Deferred) {
+          return _DeferredStatus.Deferred;
+        }
+        if (deferredStatus == _DeferredStatus.None) {
+          return defaultDeferredLoading ? _DeferredStatus.Deferred : _DeferredStatus.None;
+        }
       }
-      return routeConfig.childRouterConfig!.routes
-          .containsPageImport(importPath);
-    });
+    }
+    return _DeferredStatus.NotFound;
   }
 }
+
+enum _DeferredStatus { NotFound, Deferred, None }

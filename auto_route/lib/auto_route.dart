@@ -22,3 +22,4 @@ export 'src/router/widgets/wrapped_route.dart';
 export 'src/router/widgets/custom_cupertino_transitions_builder.dart'
     show NoShadowCupertinoPageTransitionsBuilder;
 export 'src/router/widgets/auto_page_view.dart';
+export 'src/router/widgets/deferred_widget.dart';
