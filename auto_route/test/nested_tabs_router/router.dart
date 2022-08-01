@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+import '../nested_router/router.dart';
 import '../test_page.dart';
 import 'router_test.dart';
 
@@ -13,7 +14,6 @@ part 'router.gr.dart';
       path: '/',
       page: TabsHostPage,
       children: tabRoutes,
-
     ),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
@@ -22,7 +22,6 @@ class AppRouter extends _$AppRouter {}
 
 class TabsHostPage extends StatelessWidget {
   const TabsHostPage({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {

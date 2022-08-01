@@ -9,7 +9,7 @@ import 'library_builder.dart';
 
 const _routeConfigType = Reference("RouteConfig", autoRouteImport);
 
-Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards, List<RouteConfig> routes) => Class((b) => b
+Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards, List<RouteConfig> routes, bool deferredLoading) => Class((b) => b
   ..name = router.routerClassName
   ..extend = refer('RootStackRouter', autoRouteImport)
   ..fields.addAll([
@@ -17,7 +17,7 @@ Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards, List<Rout
       ..modifier = FieldModifier.final$
       ..name = toLowerCamelCase(g.name)
       ..type = g.refer)),
-    buildPagesMap(routes)
+    buildPagesMap(routes, deferredLoading)
   ])
   ..methods.add(
     Method(
@@ -59,7 +59,7 @@ Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards, List<Rout
     // ),
   ));
 
-Field buildPagesMap(List<RouteConfig> routes) {
+Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
   return Field((b) => b
     ..name = "pagesMap"
     ..modifier = FieldModifier.final$
@@ -76,14 +76,14 @@ Field buildPagesMap(List<RouteConfig> routes) {
       routes.where((r) => r.routeType != RouteType.redirect).distinctBy((e) => e.routeName).map(
             (r) => MapEntry(
               refer(r.routeName).property('name'),
-              buildMethod(r),
+              buildMethod(r, deferredLoading),
             ),
           ),
     )).code);
 }
 
-Spec buildMethod(RouteConfig r) {
-  final constructedPage = r.deferredLoading
+Spec buildMethod(RouteConfig r, bool deferredLoading) {
+  final constructedPage = ((r.deferredLoading ?? deferredLoading) && r.pageType != null)
       ? getDeferredBuilder(r)
       : r.hasConstConstructor
           ? r.pageType!.refer.constInstance([])
@@ -95,8 +95,7 @@ Spec buildMethod(RouteConfig r) {
         Parameter((b) => b.name = 'routeData'),
       )
       ..body = Block((b) => b.statements.addAll([
-            if ((!r.hasUnparsableRequiredArgs || r.parameters.any((p) => p.isInheritedPathParam)) &&
-                r.parameters.any((p) => p.isPathParam))
+            if ((!r.hasUnparsableRequiredArgs || r.parameters.any((p) => p.isInheritedPathParam)) && r.parameters.any((p) => p.isPathParam))
               refer('routeData').property('inheritedPathParams').assignFinal('pathParams').statement,
             if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
               refer('routeData').property('queryParams').assignFinal('queryParams').statement,
@@ -113,9 +112,7 @@ Spec buildMethod(RouteConfig r) {
                               : refer('${r.routeName}Args').newInstance(
                                   [],
                                   Map.fromEntries(
-                                    r.parameters
-                                        .where((p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam)
-                                        .map(
+                                    r.parameters.where((p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam).map(
                                           (p) => MapEntry(
                                             p.name,
                                             getUrlParamAssignment(p),
@@ -142,19 +139,16 @@ Spec buildMethod(RouteConfig r) {
                     'child': constructedPage,
                     if (r.maintainState == false) 'maintainState': literalBool(false),
                     if (r.fullscreenDialog == true) 'fullscreenDialog': literalBool(true),
-                    if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) &&
-                        r.cupertinoNavTitle != null)
+                    if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) && r.cupertinoNavTitle != null)
                       'title': literalString(r.cupertinoNavTitle!),
                     if (r.routeType == RouteType.custom) ...{
                       if (r.customRouteBuilder != null) 'customRouteBuilder': r.customRouteBuilder!.refer,
                       if (r.transitionBuilder != null) 'transitionsBuilder': r.transitionBuilder!.refer,
-                      if (r.durationInMilliseconds != null)
-                        'durationInMilliseconds': literalNum(r.durationInMilliseconds!),
+                      if (r.durationInMilliseconds != null) 'durationInMilliseconds': literalNum(r.durationInMilliseconds!),
                       if (r.reverseDurationInMilliseconds != null)
                         'reverseDurationInMilliseconds': literalNum(r.reverseDurationInMilliseconds!),
                       if (r.customRouteOpaque != null) 'opaque': literalBool(r.customRouteOpaque!),
-                      if (r.customRouteBarrierDismissible != null)
-                        'barrierDismissible': literalBool(r.customRouteBarrierDismissible!),
+                      if (r.customRouteBarrierDismissible != null) 'barrierDismissible': literalBool(r.customRouteBarrierDismissible!),
                       if (r.customRouteBarrierLabel != null) 'barrierLabel': literalString(r.customRouteBarrierLabel!),
                       if (r.customRouteBarrierColor != null) 'barrierColor': literal(r.customRouteBarrierColor!),
                     }
@@ -168,31 +162,13 @@ Spec buildMethod(RouteConfig r) {
 
 Expression getDeferredBuilder(RouteConfig r) {
   return TypeReference((b) => b
-    ..symbol = 'FutureBuilder'
-    ..url = materialImport).newInstance([], {
-    'builder': Method((b) => b
-      ..requiredParameters.addAll([Parameter((b) => b.name = 'context'), Parameter((b) => b.name = 'snapshot')])
-      ..body = refer('snapshot.connectionState')
-          .equalTo(refer('ConnectionState.done', materialImport))
-          .conditional(
-              getPageInstance(r),
-              //TODO give user ability to provide his own loading widget
-              TypeReference((b) => b
-                ..symbol = 'Scaffold'
-                ..url = materialImport).constInstance([], {
-                'body': TypeReference((b) => b
-                  ..symbol = 'Center'
-                  ..url = materialImport).constInstance([], {
-                  'child': TypeReference((b) => b
-                    ..symbol = 'CircularProgressIndicator'
-                    ..url = materialImport).constInstance([])
-                })
-              }))
-          .code).closure,
-    'future': TypeReference((b) => b
+    ..symbol = 'DeferredWidget'
+    ..url = autoRouteImport).newInstance([
+    TypeReference((b) => b
       ..symbol = 'loadLibrary'
-      ..url = r.pageType!.refer.url).newInstance({}),
-  });
+      ..url = r.pageType!.refer.url),
+    Method((b) => b..body = getPageInstance(r).code).closure
+  ]);
 }
 
 Expression getPageInstance(RouteConfig r) {
@@ -227,10 +203,7 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes, {Reference? parent}) => r
       (r) {
         return _routeConfigType.newInstance(
           [
-            if (r.routeType == RouteType.redirect)
-              literalString('${r.pathName}#redirect')
-            else
-              refer(r.routeName).property('name'),
+            if (r.routeType == RouteType.redirect) literalString('${r.pathName}#redirect') else refer(r.routeName).property('name'),
           ],
           {
             'path': literalString(r.pathName),

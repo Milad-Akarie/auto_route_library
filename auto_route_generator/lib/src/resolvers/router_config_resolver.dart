@@ -56,8 +56,7 @@ class RouterConfigResolver {
       }
     }
 
-    final deferredLoading =
-        autoRouter.peek('deferredLoading')?.boolValue ?? false;
+    final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
 
     _globalRouteConfig = RouteConfig(
       routeType: routeType,
@@ -90,8 +89,11 @@ class RouterConfigResolver {
     return routerConfig.copyWith(routes: routes);
   }
 
-  List<RouteConfig> _resolveRoutes(RouterConfig routerConfig, List<DartObject> routesList,
-      {List<PathParamConfig> inheritedPathParams = const []}) {
+  List<RouteConfig> _resolveRoutes(
+    RouterConfig routerConfig,
+    List<DartObject> routesList, {
+    List<PathParamConfig> inheritedPathParams = const [],
+  }) {
     var routeResolver = RouteConfigResolver(routerConfig, _typeResolver);
     final routes = <RouteConfig>[];
     for (var entry in routesList) {
@@ -101,9 +103,7 @@ class RouterConfigResolver {
 
       var children = routeReader.peek('children')?.listValue;
       if (children?.isNotEmpty == true) {
-        var subRouterConfig = routerConfig.copyWith(
-          parent: routerConfig,
-        );
+        var subRouterConfig = routerConfig.copyWith(parent: routerConfig);
         var nestedRoutes = _resolveRoutes(
           subRouterConfig,
           children!,
