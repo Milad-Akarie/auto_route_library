@@ -8,7 +8,8 @@ import 'library_builder.dart';
 List<Class> buildRouteInfoAndArgs(
     RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.routeName}Args');
-  final parameters = r.parameters.where((p) => !p.isInheritedPathParam).toList();
+  final parameters =
+      r.parameters.where((p) => !p.isInheritedPathParam).toList();
   return [
     Class(
       (b) => b
@@ -38,7 +39,7 @@ List<Class> buildRouteInfoAndArgs(
               b
                 ..constant = parameters.isEmpty
                 ..optionalParameters.addAll([
-                  ...buildArgParams(r.parameters , emitter, toThis: false),
+                  ...buildArgParams(r.parameters, emitter, toThis: false),
                   if (r.isParent)
                     Parameter((b) => b
                       ..named = true
@@ -128,26 +129,26 @@ Iterable<Parameter> buildArgParams(
     List<ParamConfig> parameters, DartEmitter emitter,
     {bool toThis = true}) {
   return parameters.where((p) => !p.isInheritedPathParam).map(
-    (p) => Parameter(
-      (b) {
-        var defaultCode;
-        if (p.defaultValueCode != null) {
-          if (p.defaultValueCode!.contains('const')) {
-            defaultCode = Code(
-                'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.type.import).accept(emitter).toString()}');
-          } else {
-            defaultCode = refer(p.defaultValueCode!, p.type.import).code;
-          }
-        }
-        b
-          ..name = p.getSafeName()
-          ..named = true
-          ..toThis = toThis
-          ..required = p.isRequired || p.isPositional
-          ..defaultTo = defaultCode;
-        if (!toThis)
-          b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
-      },
-    ),
-  );
+        (p) => Parameter(
+          (b) {
+            var defaultCode;
+            if (p.defaultValueCode != null) {
+              if (p.defaultValueCode!.contains('const')) {
+                defaultCode = Code(
+                    'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.type.import).accept(emitter).toString()}');
+              } else {
+                defaultCode = refer(p.defaultValueCode!, p.type.import).code;
+              }
+            }
+            b
+              ..name = p.getSafeName()
+              ..named = true
+              ..toThis = toThis
+              ..required = p.isRequired || p.isPositional
+              ..defaultTo = defaultCode;
+            if (!toThis)
+              b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+          },
+        ),
+      );
 }
