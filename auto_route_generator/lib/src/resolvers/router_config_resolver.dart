@@ -19,7 +19,8 @@ class RouterConfigResolver {
 
   RouterConfigResolver(this._typeResolver);
 
-  RouterConfig resolve(ConstantReader autoRouter, ClassElement clazz, {bool usesPartBuilder = false}) {
+  RouterConfig resolve(ConstantReader autoRouter, ClassElement clazz,
+      {bool usesPartBuilder = false}) {
     /// ensure router config classes are prefixed with $
     /// to use the stripped name for the generated class
     throwIf(
@@ -37,22 +38,30 @@ class RouterConfigResolver {
     ResolvedType? customRouteBuilder;
     if (autoRouter.instanceOf(TypeChecker.fromRuntime(CupertinoAutoRouter))) {
       routeType = RouteType.cupertino;
-    } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
+    } else if (autoRouter
+        .instanceOf(TypeChecker.fromRuntime(AdaptiveAutoRouter))) {
       routeType = RouteType.adaptive;
-    } else if (autoRouter.instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
+    } else if (autoRouter
+        .instanceOf(TypeChecker.fromRuntime(CustomAutoRouter))) {
       routeType = RouteType.custom;
 
-      durationInMilliseconds = autoRouter.peek('durationInMilliseconds')?.intValue;
-      reverseDurationInMilliseconds = autoRouter.peek('reverseDurationInMilliseconds')?.intValue;
+      durationInMilliseconds =
+          autoRouter.peek('durationInMilliseconds')?.intValue;
+      reverseDurationInMilliseconds =
+          autoRouter.peek('reverseDurationInMilliseconds')?.intValue;
       customRouteOpaque = autoRouter.peek('opaque')?.boolValue;
-      customRouteBarrierDismissible = autoRouter.peek('barrierDismissible')?.boolValue;
-      final function = autoRouter.peek('transitionsBuilder')?.objectValue.toFunctionValue();
+      customRouteBarrierDismissible =
+          autoRouter.peek('barrierDismissible')?.boolValue;
+      final function =
+          autoRouter.peek('transitionsBuilder')?.objectValue.toFunctionValue();
       if (function != null) {
         transitionBuilder = _typeResolver.resolveFunctionType(function);
       }
-      final customRouteBuilderValue = autoRouter.peek('customRouteBuilder')?.objectValue.toFunctionValue();
+      final customRouteBuilderValue =
+          autoRouter.peek('customRouteBuilder')?.objectValue.toFunctionValue();
       if (customRouteBuilderValue != null) {
-        customRouteBuilder = _typeResolver.resolveFunctionType(customRouteBuilderValue);
+        customRouteBuilder =
+            _typeResolver.resolveFunctionType(customRouteBuilderValue);
       }
     }
 
@@ -78,7 +87,9 @@ class RouterConfigResolver {
 
     var routerConfig = RouterConfig(
       parentRouteConfig: _globalRouteConfig,
-      routerClassName: usesPartBuilder ? '_\$${clazz.displayName}' : clazz.displayName.substring(1),
+      routerClassName: usesPartBuilder
+          ? '_\$${clazz.displayName}'
+          : clazz.displayName.substring(1),
       element: clazz,
       replaceInRouteName: replaceInRouteName,
       routes: const [],
@@ -103,13 +114,16 @@ class RouterConfigResolver {
 
       var children = routeReader.peek('children')?.listValue;
       if (children?.isNotEmpty == true) {
-        var subRouterConfig = routerConfig.copyWith(parent: routerConfig);
+        var subRouterConfig = routerConfig.copyWith(
+          parent: routerConfig,
+        );
         var nestedRoutes = _resolveRoutes(
           subRouterConfig,
           children!,
           inheritedPathParams: inheritedPathParams + route.pathParams,
         );
-        route = route.copyWith(childRouterConfig: subRouterConfig.copyWith(routes: nestedRoutes));
+        route = route.copyWith(
+            childRouterConfig: subRouterConfig.copyWith(routes: nestedRoutes));
       }
       routes.add(route);
     }

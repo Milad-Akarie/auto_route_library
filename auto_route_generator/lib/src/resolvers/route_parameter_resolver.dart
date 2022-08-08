@@ -25,7 +25,8 @@ class RouteParameterResolver {
     }
     var type = _typeResolver.resolveType(paramType);
     final paramName = parameterElement.name.replaceFirst("_", '');
-    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
+    var pathParamAnnotation =
+        _pathParamChecker.firstAnnotationOfExact(parameterElement);
     String? paramAlias;
     var nameOrAlias = paramName;
     if (pathParamAnnotation != null) {
@@ -39,7 +40,8 @@ class RouteParameterResolver {
         element: parameterElement,
       );
     }
-    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
+    var queryParamAnnotation =
+        _queryParamChecker.firstAnnotationOfExact(parameterElement);
     if (queryParamAnnotation != null) {
       paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
 
@@ -68,7 +70,8 @@ class RouteParameterResolver {
       isNamed: parameterElement.isNamed,
       isPathParam: pathParamAnnotation != null,
       isQueryParam: queryParamAnnotation != null,
-      isInheritedPathParam: pathParamAnnotation != null && !pathParams.any((e) => e.name == nameOrAlias),
+      isInheritedPathParam: pathParamAnnotation != null &&
+          !pathParams.any((e) => e.name == nameOrAlias),
       defaultValueCode: parameterElement.defaultValueCode,
     );
   }

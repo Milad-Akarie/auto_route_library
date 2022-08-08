@@ -1,4 +1,6 @@
 # ChangeLog
+## [4.2.1]
+- Fix part builder doesn't work with analyzer 4.3.0+
 ## [4.2.0]
 - Add generate-time check for unresolvable path params
 - You can now access inherited path params using @pathParam annotation
