@@ -1112,14 +1112,14 @@ appBar: AppBar(
 `ActiveGuardObserver` can notify you when a guard is being checked and what guard it is, it can be used to implement loading indicator for example.
 ```dart       
 var isLoading = false;  
- void initiState(){  
+ void initState(){
    final guardObserver = context.router.activeGuardObserver;  
     guardObserver.addListener(){  
       setState((){  
         isLoading = guardObserver.guardInProgress;  
-       });  
-     }   
-  }  
+       });
+     }
+  }
 ```    
 
 ### Remove shadow from nested routers
