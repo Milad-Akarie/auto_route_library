@@ -16,7 +16,7 @@ import 'package:flutter/material.dart' as _i14;
 import '../screens/books/book_details_page.dart' as _i7;
 import '../screens/books/book_list_page.dart' as _i6;
 import '../screens/empty/empty_router_page.dart' as _i4;
-import '../screens/home_page.dart' as _i1;
+import '../screens/home_page.dart' deferred as _i1;
 import '../screens/login_page.dart' as _i3;
 import '../screens/profile/my_books_page.dart' as _i10;
 import '../screens/profile/profile_page.dart' as _i9;
@@ -35,7 +35,8 @@ class RootRouter extends _i13.RootStackRouter {
   final Map<String, _i13.PageFactory> pagesMap = {
     HomeRoute.name: (routeData) {
       return _i13.MaterialPageX<String>(
-          routeData: routeData, child: const _i1.HomePage());
+          routeData: routeData,
+          child: _i13.DeferredWidget(_i1.loadLibrary, () => _i1.HomePage()));
     },
     UserDataCollectorRoute.name: (routeData) {
       final args = routeData.argsAs<UserDataCollectorRouteArgs>(
@@ -147,39 +148,42 @@ class RootRouter extends _i13.RootStackRouter {
 
   @override
   List<_i13.RouteConfig> get routes => [
-        _i13.RouteConfig(HomeRoute.name, path: '/', children: [
-          _i13.RouteConfig('#redirect',
-              path: '',
-              parent: HomeRoute.name,
-              redirectTo: 'books',
-              fullMatch: true),
-          _i13.RouteConfig(BooksTab.name,
-              path: 'books',
-              parent: HomeRoute.name,
-              children: [
-                _i13.RouteConfig(BookListRoute.name,
-                    path: '', parent: BooksTab.name),
-                _i13.RouteConfig(BookDetailsRoute.name,
-                    path: ':id',
-                    parent: BooksTab.name,
-                    children: [
-                      _i13.RouteConfig(InheritedParamRoute.name,
-                          path: 'inherited-param-screen',
-                          parent: BookDetailsRoute.name)
-                    ])
-              ]),
-          _i13.RouteConfig(ProfileTab.name,
-              path: 'profile',
-              parent: HomeRoute.name,
-              children: [
-                _i13.RouteConfig(ProfileRoute.name,
-                    path: '', parent: ProfileTab.name),
-                _i13.RouteConfig(MyBooksRoute.name,
-                    path: 'my-books', parent: ProfileTab.name)
-              ]),
-          _i13.RouteConfig(SettingsTab.name,
-              path: 'settings/:tab', parent: HomeRoute.name)
-        ]),
+        _i13.RouteConfig(HomeRoute.name,
+            path: '/',
+            deferredLoading: true,
+            children: [
+              _i13.RouteConfig('#redirect',
+                  path: '',
+                  parent: HomeRoute.name,
+                  redirectTo: 'books',
+                  fullMatch: true),
+              _i13.RouteConfig(BooksTab.name,
+                  path: 'books',
+                  parent: HomeRoute.name,
+                  children: [
+                    _i13.RouteConfig(BookListRoute.name,
+                        path: '', parent: BooksTab.name),
+                    _i13.RouteConfig(BookDetailsRoute.name,
+                        path: ':id',
+                        parent: BooksTab.name,
+                        children: [
+                          _i13.RouteConfig(InheritedParamRoute.name,
+                              path: 'inherited-param-screen',
+                              parent: BookDetailsRoute.name)
+                        ])
+                  ]),
+              _i13.RouteConfig(ProfileTab.name,
+                  path: 'profile',
+                  parent: HomeRoute.name,
+                  children: [
+                    _i13.RouteConfig(ProfileRoute.name,
+                        path: '', parent: ProfileTab.name),
+                    _i13.RouteConfig(MyBooksRoute.name,
+                        path: 'my-books', parent: ProfileTab.name)
+                  ]),
+              _i13.RouteConfig(SettingsTab.name,
+                  path: 'settings/:tab', parent: HomeRoute.name)
+            ]),
         _i13.RouteConfig(UserDataCollectorRoute.name,
             path: '/user-data',
             children: [

@@ -19,7 +19,7 @@ Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards,
           ..modifier = FieldModifier.final$
           ..name = toLowerCamelCase(g.name)
           ..type = g.refer)),
-        buildPagesMap(routes, deferredLoading)
+        buildPagesMap(routes, router.deferredLoading)
       ])
       ..methods.add(
         Method(

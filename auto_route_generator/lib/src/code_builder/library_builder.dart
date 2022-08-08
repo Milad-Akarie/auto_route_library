@@ -29,8 +29,13 @@ String generateLibrary(
 }) {
   final fileName = config.element.source.uri.pathSegments.last;
 
-  throwIf(usesPartBuilder && deferredLoading,
-      'Part-file approach will not work with deferred loading because allocator need to mark all deferred imports!');
+  throwIf(
+    usesPartBuilder && deferredLoading,
+    'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
+    element: config.element,
+  );
+
+
 
   final emitter = DartEmitter(
     allocator: usesPartBuilder ? Allocator.none : DeferredPagesAllocator(config.routes, deferredLoading),
@@ -40,6 +45,15 @@ String generateLibrary(
 
   var allRouters = config.collectAllRoutersIncludingParent;
   List<RouteConfig> allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+
+  if(usesPartBuilder) {
+    for (final route in allRoutes) {
+      throwIf(
+        route.deferredLoading == true,
+        'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports! (${route.className})',
+      );
+    }
+  }
 
   final nonRedirectRoutes = allRoutes.where((r) => r.routeType != RouteType.redirect);
   final checkedRoutes = <RouteConfig>[];
@@ -63,7 +77,7 @@ String generateLibrary(
         if (usesPartBuilder) Directive.partOf(fileName),
       ])
       ..body.addAll([
-        buildRouterConfig(config, allGuards, allRoutes, deferredLoading),
+        buildRouterConfig(config, allGuards, allRoutes),
         ...allRoutes
             .where((r) => r.routeType != RouteType.redirect)
             .distinctBy((e) => e.routeName)

@@ -1,5 +1,4 @@
 import 'package:auto_route_generator/src/models/route_config.dart';
-import 'package:auto_route_generator/utils.dart';
 import 'package:code_builder/code_builder.dart';
 
 class DeferredPagesAllocator implements Allocator {

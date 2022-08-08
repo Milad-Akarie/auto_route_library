@@ -17,6 +17,7 @@ import '../screens/user-data/routes.dart';
       path: '/',
       page: HomePage,
       // guards: [AuthGuard],
+      deferredLoading: true,
       children: [
         AutoRoute(
           path: 'books',
@@ -48,7 +49,6 @@ import '../screens/user-data/routes.dart';
     ),
     userDataRoutes,
     // auth
-
     AutoRoute(page: LoginPage, path: '/login'),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
