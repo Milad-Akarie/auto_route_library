@@ -65,6 +65,8 @@ class RouterConfigResolver {
       }
     }
 
+    final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
+
     _globalRouteConfig = RouteConfig(
       routeType: routeType,
       fullscreenDialog: false,
@@ -76,6 +78,7 @@ class RouterConfigResolver {
       customRouteBuilder: customRouteBuilder,
       className: '',
       pathName: '',
+      deferredLoading: deferredLoading,
     );
 
     var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
@@ -90,6 +93,7 @@ class RouterConfigResolver {
       element: clazz,
       replaceInRouteName: replaceInRouteName,
       routes: const [],
+      deferredLoading: deferredLoading,
     );
 
     var routes = _resolveRoutes(routerConfig, autoRoutes);
@@ -97,8 +101,10 @@ class RouterConfigResolver {
   }
 
   List<RouteConfig> _resolveRoutes(
-      RouterConfig routerConfig, List<DartObject> routesList,
-      {List<PathParamConfig> inheritedPathParams = const []}) {
+    RouterConfig routerConfig,
+    List<DartObject> routesList, {
+    List<PathParamConfig> inheritedPathParams = const [],
+  }) {
     var routeResolver = RouteConfigResolver(routerConfig, _typeResolver);
     final routes = <RouteConfig>[];
     for (var entry in routesList) {
@@ -134,6 +140,7 @@ class RouterConfigResolver {
             className: '',
             fullMatch: true,
             routeType: RouteType.redirect,
+            deferredLoading: false,
           ));
     }
 

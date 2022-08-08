@@ -33,6 +33,8 @@ class RouteConfigResolver {
       ConstantReader autoRoute, List<PathParamConfig> inheritedPathParams) {
     final page = autoRoute.peek('page')?.typeValue;
     var path = autoRoute.peek('path')?.stringValue;
+    var isDeferred = autoRoute.peek('deferredLoading')?.boolValue ??
+        _routerConfig.deferredLoading;
     if (page == null) {
       var redirectTo = autoRoute.peek('redirectTo')?.stringValue;
       throwIf(
@@ -46,6 +48,7 @@ class RouteConfigResolver {
         className: '',
         fullMatch: autoRoute.peek('fullMatch')?.boolValue ?? true,
         routeType: RouteType.redirect,
+        deferredLoading: isDeferred,
       );
     }
 
@@ -278,6 +281,7 @@ class RouteConfigResolver {
       fullMatch: fullMatch,
       usesPathAsKey: usesPathAsKey,
       meta: meta,
+      deferredLoading: isDeferred,
       customRouteBarrierColor: customRouteBarrierColor,
     );
   }

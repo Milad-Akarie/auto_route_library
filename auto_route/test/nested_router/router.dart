@@ -20,6 +20,10 @@ part 'router.gr.dart';
 )
 class AppRouter extends _$AppRouter {}
 
+class EmptyRouterPage extends AutoRouter {
+  const EmptyRouterPage({Key? key}) : super(key: key);
+}
+
 class SecondNested1Page extends TestPage {
   const SecondNested1Page({Key? key}) : super(key: key);
 }

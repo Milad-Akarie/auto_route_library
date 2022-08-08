@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/screens/books/book_details_page.dart';
 import 'package:example/mobile/screens/books/book_list_page.dart';
+import 'package:example/mobile/screens/empty/empty_router_page.dart';
 import 'package:flutter/material.dart';
 import '../screens/home_page.dart';
 import '../screens/login_page.dart';
@@ -19,7 +20,7 @@ import '../screens/user-data/routes.dart';
       children: [
         AutoRoute(
           path: 'books',
-          page: EmptyRouterScreen,
+          page: EmptyRouterPage,
           name: 'BooksTab',
           initial: true,
           maintainState: true,
@@ -28,7 +29,11 @@ import '../screens/user-data/routes.dart';
               path: '',
               page: BookListScreen,
             ),
-            AutoRoute(path: ':id', page: BookDetailsPage, fullscreenDialog: true, children: [AutoRoute(page: InheritedParamScreen)]
+            AutoRoute(
+                path: ':id',
+                page: BookDetailsPage,
+                fullscreenDialog: true,
+                children: [AutoRoute(page: InheritedParamScreen)]
                 // meta: {'hideBottomNav': true},
                 ),
           ],
@@ -51,12 +56,11 @@ import '../screens/user-data/routes.dart';
 class $RootRouter {}
 
 class InheritedParamScreen extends StatelessWidget {
-  const InheritedParamScreen({Key? key, @pathParam required String id, @queryParam String nonPathParam = 'defa'}) : super(key: key);
+  const InheritedParamScreen({Key? key, @pathParam required String id, @queryParam String nonPathParam = 'defa'})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container();
   }
 }
-
-

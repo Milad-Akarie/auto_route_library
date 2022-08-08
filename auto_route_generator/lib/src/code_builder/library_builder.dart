@@ -5,41 +5,47 @@ import '../../utils.dart';
 import '../models/importable_type.dart';
 import '../models/route_config.dart';
 import '../models/router_config.dart';
+import 'deferred_pages_allocator.dart';
 import 'root_router_builder.dart';
 import 'route_info_builder.dart';
 
 const autoRouteImport = 'package:auto_route/auto_route.dart';
 const materialImport = 'package:flutter/material.dart';
+const foundationImport = 'package:flutter/foundation.dart';
 
 const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 const Reference requiredAnnotation = Reference('required', materialImport);
 
-TypeReference listRefer(Reference reference, {bool nullable = false}) =>
-    TypeReference((b) => b
-      ..symbol = "List"
-      ..isNullable = nullable
-      ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
+  ..symbol = "List"
+  ..isNullable = nullable
+  ..types.add(reference));
 
-String generateLibrary(RouterConfig config, {bool usesPartBuilder = false}) {
+String generateLibrary(
+  RouterConfig config, {
+  bool usesPartBuilder = false,
+  bool deferredLoading = false,
+}) {
   final fileName = config.element.source.uri.pathSegments.last;
+
+  throwIf(usesPartBuilder && deferredLoading,
+      'Part-file approach will not work with deferred loading because allocator need to mark all deferred imports!');
+
   final emitter = DartEmitter(
-    allocator: usesPartBuilder ? Allocator.none : Allocator.simplePrefixing(),
+    allocator: usesPartBuilder ? Allocator.none : DeferredPagesAllocator(config.routes, deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
 
   var allRouters = config.collectAllRoutersIncludingParent;
-  List<RouteConfig> allRoutes =
-      allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
+  List<RouteConfig> allRoutes = allRouters.fold(<RouteConfig>[], (acc, a) => acc..addAll(a.routes));
 
-  final nonRedirectRoutes =
-      allRoutes.where((r) => r.routeType != RouteType.redirect);
+  final nonRedirectRoutes = allRoutes.where((r) => r.routeType != RouteType.redirect);
   final checkedRoutes = <RouteConfig>[];
   nonRedirectRoutes.forEach((route) {
     throwIf(
-      (checkedRoutes.any((r) =>
-          r.routeName == route.routeName && r.pathName != route.pathName)),
+      (checkedRoutes.any((r) => r.routeName == route.routeName && r.pathName != route.pathName)),
       'Duplicate route names must have the same path! (name: ${route.routeName}, path: ${route.pathName})\nNote: Unless specified, route name is generated from page name.',
       element: config.element,
     );
@@ -57,7 +63,7 @@ String generateLibrary(RouterConfig config, {bool usesPartBuilder = false}) {
         if (usesPartBuilder) Directive.partOf(fileName),
       ])
       ..body.addAll([
-        buildRouterConfig(config, allGuards, allRoutes),
+        buildRouterConfig(config, allGuards, allRoutes, deferredLoading),
         ...allRoutes
             .where((r) => r.routeType != RouteType.redirect)
             .distinctBy((e) => e.routeName)
@@ -66,8 +72,7 @@ String generateLibrary(RouterConfig config, {bool usesPartBuilder = false}) {
       ]),
   );
 
-  return [_header, DartFormatter().format(library.accept(emitter).toString())]
-      .join('\n');
+  return [_header, DartFormatter().format(library.accept(emitter).toString())].join('\n');
 }
 
 const String _header = '''
