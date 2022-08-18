@@ -9,7 +9,7 @@ abstract class RootStackRouter extends StackRouter {
           key: const ValueKey('Root'),
           navigatorKey: navigatorKey,
         ) {
-    _navigationHistory = kIsWeb ? WebNavigationHistory(this) : NativeNavigationHistory(this);
+    _navigationHistory = NavigationHistory.create(this);
   }
 
   @override
@@ -60,7 +60,8 @@ abstract class RootStackRouter extends StackRouter {
     RoutePopCallBack? onPopRoute,
     String? initialDeepLink,
     OnNavigateCallBack? onNavigate,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate.declarative(
       this,
@@ -79,7 +80,8 @@ abstract class RootStackRouter extends StackRouter {
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,

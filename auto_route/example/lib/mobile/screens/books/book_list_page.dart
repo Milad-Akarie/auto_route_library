@@ -33,7 +33,7 @@ class _BookListScreenState extends State<BookListScreen>
                             title: Text(book.name),
                             subtitle: Text(book.genre),
                             onTap: () {
-                              context.replaceRoute( BookDetailsRoute(id: book.id));
+                              context.pushRoute( BookDetailsRoute(id: book.id));
                             },
                           ),
                         ),

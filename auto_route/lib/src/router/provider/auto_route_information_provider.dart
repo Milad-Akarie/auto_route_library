@@ -9,13 +9,14 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   /// Use the [initialRouteInformation] to set the default route information for this
   /// provider.
   AutoRouteInformationProvider._(
-      {required RouteInformation initialRouteInformation,this.neglectIf})
+      {required RouteInformation initialRouteInformation, this.neglectIf})
       : _value = initialRouteInformation;
 
-   bool Function(String? location)? neglectIf;
+  bool Function(String? location)? neglectIf;
 
   factory AutoRouteInformationProvider(
-      {RouteInformation? initialRouteInformation,bool Function(String? location)? neglectWhen}) {
+      {RouteInformation? initialRouteInformation,
+      bool Function(String? location)? neglectWhen}) {
     final initialRouteInfo = initialRouteInformation ??
         RouteInformation(
             location: WidgetsBinding.instance.window.defaultRouteName);
@@ -29,10 +30,9 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   void routerReportsNewRouteInformation(RouteInformation routeInformation,
       {RouteInformationReportingType type =
           RouteInformationReportingType.none}) {
-
-     if(neglectIf != null && neglectIf!(routeInformation.location)){
-       return;
-     }
+    if (neglectIf != null && neglectIf!(routeInformation.location)) {
+      return;
+    }
 
     var replace = type == RouteInformationReportingType.neglect ||
         (type == RouteInformationReportingType.none &&

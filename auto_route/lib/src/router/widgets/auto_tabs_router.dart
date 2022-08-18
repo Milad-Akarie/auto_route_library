@@ -430,7 +430,13 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
     _updatePageController();
     _didInitTabRoute(_controller!.activeIndex);
     _controller!.addListener(() {
-      if (_controller!.activeIndex != _pageController.page) {
+      var controllerPage = 0;
+      try {
+        controllerPage = _pageController.page!.toInt();
+      } catch (e) {
+        controllerPage = 0;
+      }
+      if (_controller!.activeIndex != controllerPage) {
         _didChangeTabRoute(
             _controller!.activeIndex, _controller!.previousIndex!);
       }
@@ -502,6 +508,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   final Curve curve;
   final ScrollPhysics? physics;
   final DragStartBehavior dragStartBehavior;
+
   const _AutoTabsRouterTabBar({
     Key? key,
     required List<PageRouteInfo> routes,
