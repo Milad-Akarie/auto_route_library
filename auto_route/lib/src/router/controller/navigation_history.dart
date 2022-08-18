@@ -121,10 +121,6 @@ class NativeNavigationHistory extends NavigationHistory {
   void _onNewUrlState(UrlState newState, {bool notify = true}) {
     super._onNewUrlState(newState, notify: notify);
 
-    if (newState.shouldReplace && length > 0) {
-      _entries.removeLast();
-    }
-
     if (_currentUrl == newState.url) return;
     _addEntry(newState);
   }
@@ -143,6 +139,9 @@ class NativeNavigationHistory extends NavigationHistory {
     // limit history registration to 20 entries
     if (_entries.length > 20) {
       _entries.removeAt(0);
+    }
+    if(urlState.shouldReplace && length > 0){
+      _entries.removeLast();
     }
     _entries.add(_HistoryEntry(route, urlState.url));
   }

@@ -97,7 +97,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(context.topRoute.name),
-                  leading: AutoLeadingButton(),
+                  leading: BackButton(onPressed: context.tabsRouter.navigateBack,),
                 ),
                 body: child,
                 bottomNavigationBar: buildBottomNav(context, context.tabsRouter),

@@ -88,6 +88,7 @@ Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
 }
 
 Spec buildMethod(RouteConfig r, bool deferredLoading) {
+
   final constructedPage = ((r.deferredLoading ?? deferredLoading) && r.pageType != null)
       ? getDeferredBuilder(r)
       : r.hasConstConstructor

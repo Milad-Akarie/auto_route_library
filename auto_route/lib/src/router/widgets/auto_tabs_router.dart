@@ -142,12 +142,12 @@ abstract class _AutoTabsRouterState extends State<AutoTabsRouter> {
 
   @override
   void dispose() {
-    super.dispose();
     if (_controller != null) {
       _controller!.dispose();
       _parentController.removeChildController(_controller!);
       _controller = null;
     }
+    super.dispose();
   }
 }
 

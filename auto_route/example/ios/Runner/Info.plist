@@ -46,12 +46,19 @@
 
 	<key>FlutterDeepLinkingEnabled</key>
     <true/>
-
-
-      <key>com.apple.developer.associated-domains</key>
-      <array>
-        <string>applinks:flutterbooksample.com</string>
-      </array>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLName</key>
+        <string>flutterbooksample.com</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+        <string>customscheme</string>
+        </array>
+        </dict>
+    </array>
 
 </dict>
 </plist>

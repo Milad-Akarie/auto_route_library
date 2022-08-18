@@ -15,7 +15,7 @@ void main() {
       'Pushing ${SecondRoute.name} with no children should present [$SecondNested1Page]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(SecondRoute());
+    router.push(const SecondRoute());
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
   });
@@ -24,7 +24,7 @@ void main() {
       'Navigating to ${SecondRoute.name} with no children should present [$SecondNested1Page]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.navigate(SecondRoute());
+    router.navigate(const SecondRoute());
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
   });
@@ -33,7 +33,7 @@ void main() {
       'Pushing ${SecondRoute.name} then popping-top should present [$FirstPage]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(SecondRoute());
+    router.push(const SecondRoute());
     await tester.pumpAndSettle();
     router.popTop();
     await tester.pumpAndSettle();
@@ -44,7 +44,7 @@ void main() {
       'Pushing ${SecondRoute.name} with children[$SecondNested1Route, $SecondNested2Route]  should present [$SecondNested2Page]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(SecondRoute(children: [
+    router.push(const SecondRoute(children: [
       SecondNested1Route(),
       SecondNested2Route(),
     ]));
@@ -56,7 +56,7 @@ void main() {
       'Navigating to ${SecondRoute.name} with children[$SecondNested1Route, $SecondNested2Route]  should present [$SecondNested2Page]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.navigate(SecondRoute(children: [
+    router.navigate(const SecondRoute(children: [
       SecondNested1Route(),
       SecondNested2Route(),
     ]));
@@ -68,13 +68,13 @@ void main() {
       'Navigating to $SecondRoute with children[$SecondNested2Route] when both routes are already at the top of their stacks should present [$SecondNested2Page]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(SecondRoute(children: [
+    router.push(const SecondRoute(children: [
       SecondNested1Route(),
       SecondNested2Route(),
     ]));
     await tester.pumpAndSettle();
     router.navigate(
-      SecondRoute(children: [
+      const SecondRoute(children: [
         SecondNested2Route(),
       ]),
     );
@@ -86,7 +86,7 @@ void main() {
       'Pushing ${SecondRoute.name} with children[$SecondNested1Route, $SecondNested2Route] then popping-top should present [$SecondNested1Page]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(SecondRoute(
+    router.push(const SecondRoute(
       children: [
         SecondNested1Route(),
         SecondNested2Route(),
@@ -101,7 +101,7 @@ void main() {
       'Pushing $SecondRoute should add a child router then popping it should remove it',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(SecondRoute());
+    router.push(const SecondRoute());
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 1);
     router.pop();
@@ -114,8 +114,8 @@ void main() {
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.pushAll([
-      SecondRoute(),
-      SecondRoute(),
+      const SecondRoute(),
+      const SecondRoute(),
     ]);
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 2);

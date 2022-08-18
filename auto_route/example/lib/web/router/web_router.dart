@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web/router/web_auth_guard.dart';
 import 'package:example/web/web_main.dart';
 import 'package:flutter/material.dart';
 

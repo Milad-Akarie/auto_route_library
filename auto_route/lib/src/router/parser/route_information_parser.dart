@@ -15,7 +15,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
   @override
   Future<UrlState> parseRouteInformation(
-      RouteInformation routeInformation) async {
+      RouteInformation routeInformation){
     final uri = Uri.parse(routeInformation.location ?? '');
     var matches =
         _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);

@@ -31,8 +31,8 @@ class _MyAppState extends State<MyApp> {
       routerDelegate: _rootRouter.delegate(
         navigatorObservers: () => [AutoRouteObserver()],
       ),
-      routeInformationProvider: _rootRouter.routeInfoProvider(),
-      routeInformationParser: _rootRouter.defaultRouteParser(includePrefixMatches: true),
+      // routeInformationProvider: _rootRouter.routeInfoProvider(),
+      routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => authService,
