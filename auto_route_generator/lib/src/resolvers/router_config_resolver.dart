@@ -97,6 +97,8 @@ class RouterConfigResolver {
     );
 
     var routes = _resolveRoutes(routerConfig, autoRoutes);
+
+
     return routerConfig.copyWith(routes: routes);
   }
 

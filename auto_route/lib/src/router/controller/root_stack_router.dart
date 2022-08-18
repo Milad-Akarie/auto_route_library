@@ -9,8 +9,7 @@ abstract class RootStackRouter extends StackRouter {
           key: const ValueKey('Root'),
           navigatorKey: navigatorKey,
         ) {
-    _navigationHistory =
-        kIsWeb ? WebNavigationHistory(this) : NativeNavigationHistory(this);
+    _navigationHistory = NavigationHistory.create(this);
   }
 
   @override
@@ -40,10 +39,13 @@ abstract class RootStackRouter extends StackRouter {
 
   AutoRouteInformationProvider? _lazyInformationProvider;
 
-  AutoRouteInformationProvider routeInfoProvider(
-      {RouteInformation? initialRouteInformation}) {
+  AutoRouteInformationProvider routeInfoProvider({
+    RouteInformation? initialRouteInformation,
+    bool Function(String? location)? neglectWhen,
+  }) {
     return _lazyInformationProvider ??= AutoRouteInformationProvider(
       initialRouteInformation: initialRouteInformation,
+      neglectWhen: neglectWhen,
     );
   }
 

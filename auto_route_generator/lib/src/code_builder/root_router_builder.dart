@@ -19,7 +19,7 @@ Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards,
           ..modifier = FieldModifier.final$
           ..name = toLowerCamelCase(g.name)
           ..type = g.refer)),
-        buildPagesMap(routes, deferredLoading)
+        buildPagesMap(routes, router.deferredLoading)
       ])
       ..methods.add(
         Method(
@@ -88,6 +88,7 @@ Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
 }
 
 Spec buildMethod(RouteConfig r, bool deferredLoading) {
+
   final constructedPage = ((r.deferredLoading ?? deferredLoading) && r.pageType != null)
       ? getDeferredBuilder(r)
       : r.hasConstConstructor

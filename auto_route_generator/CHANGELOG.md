@@ -1,4 +1,12 @@
 # ChangeLog
+## [5.0.0]
+- Add deferred loading support for web to enable code splitting for routes [By Garzas]
+- Move EmptyRouterScreen and EmptyRouterPage to a separate file to avoid import conflict when using deferred loading.
+- Fix a bug in Navigation History
+- Add License file to root package
+- Fix TabController dispose issue in AutoTabsRouter.tabBar
+- Add neglectWhen call back to ignore reporting location to engine
+- Remove universal_html dependency and implement own conditional html import
 ## [4.2.1]
 - Fix part builder doesn't work with analyzer 4.3.0+
 ## [4.2.0]
