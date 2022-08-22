@@ -9,7 +9,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-
 import '../../utils.dart';
 
 part '../../route/route_data.dart';
@@ -303,7 +302,14 @@ abstract class RoutingController with ChangeNotifier {
   @optionalTypeArgs
   Future<bool> popTop<T extends Object?>([T? result]) => topMostRouter().pop<T>(result);
 
+  @Deprecated('Use canPop instead')
   bool get canPopSelfOrChildren;
+
+  bool canPop({
+    bool ignoreChildRoutes = false,
+    bool ignoreParentRoutes = false,
+    bool ignorePagelessRoutes = false,
+  });
 
   List<RouteMatch> get currentSegments {
     var currentData = currentChild;
@@ -533,10 +539,36 @@ class TabsRouter extends RoutingController {
   }
 
   @override
+  @Deprecated('Use canPop instead')
   bool get canPopSelfOrChildren {
     final innerRouter = _innerControllerOf(_activePage?.routeKey);
     if (innerRouter != null) {
       return innerRouter.canPopSelfOrChildren;
+    }
+    return false;
+  }
+
+  @override
+  bool canPop({
+    bool ignoreChildRoutes = false,
+    bool ignoreParentRoutes = false,
+    bool ignorePagelessRoutes = false,
+  }) {
+    if (ignoreChildRoutes) return false;
+
+    final innerRouter = _innerControllerOf(_activePage?.routeKey);
+    if (innerRouter != null &&
+        innerRouter.canPop(
+          ignorePagelessRoutes: ignorePagelessRoutes,
+          ignoreParentRoutes: true,
+        )) {
+      return true;
+    }
+    if (!ignoreParentRoutes && _parent != null) {
+      return _parent!.canPop(
+        ignoreChildRoutes: true,
+        ignorePagelessRoutes: ignorePagelessRoutes,
+      );
     }
     return false;
   }
@@ -634,11 +666,42 @@ abstract class StackRouter extends RoutingController {
   RouteMatcher get matcher;
 
   @override
+  @Deprecated('Use canPop instead')
   bool get canPopSelfOrChildren {
     if (_pages.length > 1 || hasPagelessTopRoute) {
       return true;
     } else if (_pages.isNotEmpty) {
       return _innerControllerOf(_pages.last.routeData.key)?.canPopSelfOrChildren ?? false;
+    }
+    return false;
+  }
+
+  @override
+  bool canPop({
+    bool ignoreChildRoutes = false,
+    bool ignoreParentRoutes = false,
+    bool ignorePagelessRoutes = false,
+  }) {
+    if (_pages.length > 1 || (!ignorePagelessRoutes && hasPagelessTopRoute)) {
+      return true;
+    }
+
+    if (!ignoreChildRoutes && _pages.isNotEmpty) {
+      final innerRouter = _innerControllerOf(_pages.last.routeData.key);
+      if (innerRouter != null &&
+          innerRouter.canPop(
+            ignoreParentRoutes: true,
+            ignorePagelessRoutes: ignorePagelessRoutes,
+          )) {
+        return true;
+      }
+    }
+
+    if (!ignoreParentRoutes && _parent != null) {
+      return _parent!.canPop(
+        ignorePagelessRoutes: ignorePagelessRoutes,
+        ignoreChildRoutes: true,
+      );
     }
     return false;
   }

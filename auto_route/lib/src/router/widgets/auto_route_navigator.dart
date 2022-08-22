@@ -91,7 +91,7 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     if (!widget.router.isRoot) {
       return WillPopScope(
         child: navigator,
-        onWillPop: widget.router.canPopSelfOrChildren
+        onWillPop: widget.router.canPop(ignoreParentRoutes: true)
             ? () => SynchronousFuture(true)
             : null,
       );
