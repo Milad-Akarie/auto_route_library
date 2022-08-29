@@ -88,12 +88,12 @@ Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
 }
 
 Spec buildMethod(RouteConfig r, bool deferredLoading) {
-
-  final constructedPage = ((r.deferredLoading ?? deferredLoading) && r.pageType != null)
-      ? getDeferredBuilder(r)
-      : r.hasConstConstructor
-          ? r.pageType!.refer.constInstance([])
-          : getPageInstance(r);
+  final constructedPage =
+      ((r.deferredLoading ?? deferredLoading) && r.pageType != null)
+          ? getDeferredBuilder(r)
+          : r.hasConstConstructor
+              ? r.pageType!.refer.constInstance([])
+              : getPageInstance(r);
 
   return Method(
     (b) => b
@@ -209,12 +209,16 @@ Expression getDeferredBuilder(RouteConfig r) {
 Expression getPageInstance(RouteConfig r) {
   return r.pageType!.refer.newInstance(
     r.positionalParams.map((p) {
-      return p.isInheritedPathParam ? getUrlParamAssignment(p) : refer('args').property(p.name);
+      return p.isInheritedPathParam
+          ? getUrlParamAssignment(p)
+          : refer('args').property(p.name);
     }),
     Map.fromEntries(r.namedParams.map(
       (p) => MapEntry(
         p.name,
-        p.isInheritedPathParam ? getUrlParamAssignment(p) : refer('args').property(p.name),
+        p.isInheritedPathParam
+            ? getUrlParamAssignment(p)
+            : refer('args').property(p.name),
       ),
     )),
   );

@@ -58,7 +58,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     NavigatorObserversBuilder navigatorObservers,
     ScrollPhysics? physics,
     DragStartBehavior dragStartBehavior,
-  }) = _AutoTabsRouterPageView;
+  }) = AutoTabsRouterPageView;
 
   const factory AutoTabsRouter.tabBar({
     Key? key,
@@ -384,7 +384,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder>
   }
 }
 
-class _AutoTabsRouterPageView extends AutoTabsRouter {
+class AutoTabsRouterPageView extends AutoTabsRouter {
   final AutoTabsPageViewBuilder? _pageViewModeBuilder;
   final bool animatePageTransition;
   final Duration duration;
@@ -393,7 +393,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
   final ScrollPhysics? physics;
   final DragStartBehavior dragStartBehavior;
 
-  const _AutoTabsRouterPageView({
+  const AutoTabsRouterPageView({
     Key? key,
     required List<PageRouteInfo> routes,
     AutoTabsPageViewBuilder? builder,
@@ -450,7 +450,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
   }
 
   @override
-  void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
+  void didUpdateWidget(covariant AutoTabsRouterPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(
@@ -459,7 +459,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
     }
   }
 
-  _AutoTabsRouterPageView get typedWidget => widget as _AutoTabsRouterPageView;
+  AutoTabsRouterPageView get typedWidget => widget as AutoTabsRouterPageView;
 
   @override
   Widget build(BuildContext context) {

@@ -25,7 +25,7 @@ class TabsHostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const _routes = [
+    const routes = [
       Tab1Route(),
       Tab2Route(),
       Tab3Route(),
@@ -33,19 +33,19 @@ class TabsHostPage extends StatelessWidget {
 
     if (tabsType == 'IndexedStack') {
       return const AutoTabsRouter(
-        routes: _routes,
+        routes: routes,
       );
     }
 
     if (tabsType == 'PageView') {
       return const AutoTabsRouter.pageView(
-        routes: _routes,
+        routes: routes,
       );
     }
 
     if (tabsType == 'TabBar') {
       return const AutoTabsRouter.tabBar(
-        routes: _routes,
+        routes: routes,
       );
     }
 

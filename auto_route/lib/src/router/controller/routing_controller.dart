@@ -1266,9 +1266,9 @@ class PendingRoutesHandler {
   // one time read pending routes
   List<PageRouteInfo<dynamic>>? get initialPendingRoutes {
     if (_initialPendingRoutes == null) return null;
-    final _routes = List<PageRouteInfo>.of(_initialPendingRoutes!);
+    final routes = List<PageRouteInfo>.of(_initialPendingRoutes!);
     _initialPendingRoutes = null;
-    return _routes;
+    return routes;
   }
 }
 
