@@ -1,4 +1,6 @@
 # ChangeLog
+## [5.0.1]
+- Allow analyzer version 4.4.6
 ## [5.0.0]
 - Add deferred loading support for web to enable code splitting for routes [By Garzas]
 - Move EmptyRouterScreen and EmptyRouterPage to a separate file to avoid import conflict when using deferred loading.

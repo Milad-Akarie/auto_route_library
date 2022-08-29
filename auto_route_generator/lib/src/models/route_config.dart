@@ -147,7 +147,8 @@ class RouteConfig {
             identical(childRouterConfig, this.childRouterConfig)) &&
         (hasConstConstructor == null ||
             identical(hasConstConstructor, this.hasConstConstructor)) &&
-        (deferredLoading == null || identical(deferredLoading, this.deferredLoading))) {
+        (deferredLoading == null ||
+            identical(deferredLoading, this.deferredLoading))) {
       return this;
     }
 
