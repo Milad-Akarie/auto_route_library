@@ -59,7 +59,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // builder will rebuild everytime this router's stack
     // updates
     // we need it to indicate which NavigationRailDestination is active
-    return kIsWeb && false
+    return kIsWeb
         ? AutoRouter(builder: (context, child) {
             // we check for active route index by using
             // router.isRouteActive method

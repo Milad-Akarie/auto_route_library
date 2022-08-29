@@ -20,8 +20,11 @@ dependencies:
        ^5.0.1
 #    path: ../auto_route
 
-
 dev_dependencies:
   flutter_lints: ^2.0.1
   source_gen_test:
   test:
+
+dependency_overrides:
+  auto_route:
+    path: ../auto_route

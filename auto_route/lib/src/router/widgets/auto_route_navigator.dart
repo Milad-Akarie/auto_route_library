@@ -23,10 +23,10 @@ class AutoRouteNavigator extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _AutoRouteNavigatorState createState() => _AutoRouteNavigatorState();
+  AutoRouteNavigatorState createState() => AutoRouteNavigatorState();
 }
 
-class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
+class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   List<PageRouteInfo>? _routesSnapshot;
 
   @override
@@ -90,10 +90,10 @@ class _AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     // fixes nested cupertino routes back gesture issue
     if (!widget.router.isRoot) {
       return WillPopScope(
-        child: navigator,
         onWillPop: widget.router.canPop(ignoreParentRoutes: true)
             ? () => SynchronousFuture(true)
             : null,
+        child: navigator,
       );
     }
 

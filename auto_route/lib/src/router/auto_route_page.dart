@@ -43,8 +43,8 @@ abstract class AutoRoutePage<T> extends Page<T> {
 
   Widget buildPage(BuildContext context) {
     return RouteDataScope(
-      child: _child,
       routeData: routeData,
+      child: _child,
     );
   }
 
