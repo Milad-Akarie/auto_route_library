@@ -1,4 +1,6 @@
 # ChangeLog
+## [5.0.2]
+- Allow analyzer version 4.4.6
 ## [5.0.1]
 - Add ignorePagelessRoutes and ignoreChildRoutes property to AutoLeadingButton
 - Add builder property to AutoLeadingButton
