@@ -1,4 +1,8 @@
 # ChangeLog
+## [5.0.1]
+- Add ignorePagelessRoutes and ignoreChildRoutes property to AutoLeadingButton
+- Add builder property to AutoLeadingButton
+- Fix deferredLoading and AutoRouteWrapper are not working together
 ## [5.0.0]
 - Add deferred loading support for web to enable code splitting for routes [By Garzas]
 - Move EmptyRouterScreen and EmptyRouterPage to a separate file to avoid import conflict when using deferred loading.

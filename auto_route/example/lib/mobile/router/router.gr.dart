@@ -35,15 +35,17 @@ class RootRouter extends _i12.RootStackRouter {
     HomeRoute.name: (routeData) {
       return _i12.MaterialPageX<String>(
           routeData: routeData,
-          child: _i12.DeferredWidget(_i1.loadLibrary, () => _i1.HomePage()));
+          child: _i12.DeferredWidget(
+              _i1.loadLibrary, () => _i12.WrappedRoute(child: _i1.HomePage())));
     },
     UserDataCollectorRoute.name: (routeData) {
       final args = routeData.argsAs<UserDataCollectorRouteArgs>(
           orElse: () => const UserDataCollectorRouteArgs());
       return _i12.MaterialPageX<_i14.UserData>(
           routeData: routeData,
-          child: _i2.UserDataCollectorPage(
-              key: args.key, onResult: args.onResult));
+          child: _i12.WrappedRoute(
+              child: _i2.UserDataCollectorPage(
+                  key: args.key, onResult: args.onResult)));
     },
     LoginRoute.name: (routeData) {
       final args = routeData.argsAs<LoginRouteArgs>(
