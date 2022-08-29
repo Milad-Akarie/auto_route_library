@@ -36,6 +36,7 @@ class RouteConfigResolver {
     var isDeferred = autoRoute.peek('deferredLoading')?.boolValue ??
         _routerConfig.deferredLoading;
 
+
     if (page == null) {
       var redirectTo = autoRoute.peek('redirectTo')?.stringValue;
       throwIf(
