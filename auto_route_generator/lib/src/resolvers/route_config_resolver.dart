@@ -119,6 +119,7 @@ class RouteConfigResolver {
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(AdaptiveRoute))) {
       routeType = RouteType.adaptive;
       cupertinoNavTitle = autoRoute.peek('cupertinoPageTitle')?.stringValue;
+      customRouteOpaque = autoRoute.peek('opaque')?.boolValue;
     } else if (autoRoute.instanceOf(TypeChecker.fromRuntime(CustomRoute))) {
       routeType = RouteType.custom;
       durationInMilliseconds =

@@ -147,8 +147,13 @@ Spec buildMethod(RouteConfig r, bool deferredLoading) {
                     'child': constructedPage,
                     if (r.maintainState == false) 'maintainState': literalBool(false),
                     if (r.fullscreenDialog == true) 'fullscreenDialog': literalBool(true),
-                    if ((r.routeType == RouteType.cupertino || r.routeType == RouteType.adaptive) && r.cupertinoNavTitle != null)
-                      'title': literalString(r.cupertinoNavTitle!),
+                    if (r.routeType == RouteType.cupertino) ...{
+                      if (r.cupertinoNavTitle != null) 'title': literalString(r.cupertinoNavTitle!),
+                    },
+                    if (r.routeType == RouteType.adaptive) ...{
+                      if (r.cupertinoNavTitle != null) 'title': literalString(r.cupertinoNavTitle!),
+                      if (r.customRouteOpaque != null) 'opaque': literalBool(r.customRouteOpaque!),
+                    },
                     if (r.routeType == RouteType.custom) ...{
                       if (r.customRouteBuilder != null) 'customRouteBuilder': r.customRouteBuilder!.refer,
                       if (r.transitionBuilder != null) 'transitionsBuilder': r.transitionBuilder!.refer,
