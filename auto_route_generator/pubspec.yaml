@@ -2,7 +2,7 @@ name: auto_route_generator
 description: AutoRoute is a declartive routing solution, where everything needed for navigation is automatically generated for you.
 version: 5.0.2
 homepage: https://github.com/Milad-Akarie/auto_route_library
-
+publish_to: none
 environment:
   sdk: ">=2.17.0 <3.0.0"
 
@@ -17,7 +17,11 @@ dependencies:
   xml: ^6.0.1
   args: ^2.3.1
   auto_route:
-       ^5.0.1
+    git:
+      url: "https://github.com/djangoflow/auto_route_library.git"
+      ref: master
+      path: "auto_route"
+
 #    path: ../auto_route
 
 dev_dependencies:
