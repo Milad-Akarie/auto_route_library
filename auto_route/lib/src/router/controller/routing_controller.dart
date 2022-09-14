@@ -632,7 +632,9 @@ abstract class StackRouter extends RoutingController {
   }
 
   void _removeRedirectGuard(AutoRedirectGuardBase guard) {
-    guard.removeListener(_redirectGuardsListeners[guard]!);
+    if(_redirectGuardsListeners[guard]!=null){
+      guard.removeListener(_redirectGuardsListeners[guard]!);
+    }
     _redirectGuardsListeners.remove(guard);
   }
 
