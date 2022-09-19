@@ -36,6 +36,7 @@ class RouteConfig {
   final bool hasConstConstructor;
   final bool usesPathAsKey;
   final List<MetaEntry> meta;
+  final bool? deferredLoading;
   final bool generateRouteArguments;
 
   RouteConfig({
@@ -68,6 +69,7 @@ class RouteConfig {
     this.usesPathAsKey = false,
     this.customRouteBarrierColor,
     this.meta = const [],
+    this.deferredLoading,
     this.generateRouteArguments = true,
   });
 
@@ -101,6 +103,7 @@ class RouteConfig {
     bool? hasConstConstructor,
     bool? usesPathAsKey,
     List<MetaEntry>? meta,
+    bool? deferredLoading,
   }) {
     if ((name == null || identical(name, this.name)) &&
         (pathName == null || identical(pathName, this.pathName)) &&
@@ -145,7 +148,8 @@ class RouteConfig {
         (childRouterConfig == null ||
             identical(childRouterConfig, this.childRouterConfig)) &&
         (hasConstConstructor == null ||
-            identical(hasConstConstructor, this.hasConstConstructor))) {
+            identical(hasConstConstructor, this.hasConstConstructor)) &&
+        (deferredLoading == null || identical(deferredLoading, this.deferredLoading))) {
       return this;
     }
 
@@ -183,6 +187,7 @@ class RouteConfig {
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
       meta: meta ?? this.meta,
+      deferredLoading: deferredLoading ?? this.deferredLoading,
       customRouteBarrierColor:
           customRouteBarrierColor ?? this.customRouteBarrierColor,
     );
@@ -204,7 +209,10 @@ class RouteConfig {
   }
 
   List<ParamConfig> get pathQueryParams {
-    return parameters.where((p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam).toList();
+    return parameters
+        .where(
+            (p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam)
+        .toList();
   }
 
   Iterable<ParamConfig> get requiredParams =>
@@ -244,10 +252,6 @@ class RouteConfig {
 
   bool get hasUnparsableRequiredArgs => parameters.any((p) =>
       (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
-
-
-
-
 }
 
 class MetaEntry<T> {

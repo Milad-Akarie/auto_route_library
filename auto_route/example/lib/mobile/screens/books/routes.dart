@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/empty_router_widgets.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 
 import 'book_details_page.dart';

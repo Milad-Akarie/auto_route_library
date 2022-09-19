@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart' show ClassElement;
+
 import 'route_config.dart';
 
 class RouterConfig {
@@ -8,6 +9,7 @@ class RouterConfig {
   final RouterConfig? parent;
   final String? replaceInRouteName;
   final ClassElement element;
+  final bool deferredLoading;
   final bool generateRouteArguments;
 
   RouterConfig({
@@ -17,6 +19,7 @@ class RouterConfig {
     required this.routerClassName,
     this.parent,
     this.replaceInRouteName,
+    this.deferredLoading = false,
     this.generateRouteArguments = true,
   });
 
@@ -30,6 +33,7 @@ class RouterConfig {
     RouterConfig? parent,
     String? replaceInRouteName,
     ClassElement? element,
+    bool? deferredLoading,
     bool? generateRouteArguments,
   }) {
     return RouterConfig(
@@ -41,6 +45,7 @@ class RouterConfig {
       generateRouteArguments:
           generateRouteArguments ?? this.generateRouteArguments,
       element: this.element,
+      deferredLoading: deferredLoading ?? this.deferredLoading,
     );
   }
 

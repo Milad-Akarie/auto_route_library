@@ -451,30 +451,29 @@ class DashboardPage extends StatelessWidget {
 ```              
 if you think the above setup is a bit messy you could use the shipped-in `AutoTabsScaffold` that makes things much cleaner.
 ```dart              
-class DashboardPage extends StatelessWidget {          
- @override            
-Widget build(context) {            
- @override          
-  Widget build(context) {          
-    return AutoTabsScaffold(          
-       routes: const [          
-        UsersRoute(),          
-        PostsRoute(),          
-        SettingsRoute(),          
-      ],          
-      bottomNavigationBuilder: (_,tabsRouter) {          
-          return BottomNavigationBar(          
-              currentIndex: tabsRouter.activeIndex,          
-              onTap: tabsRouter.setActiveIndex          
-              items: [          
-                BottomNavigationBarItem(label: 'Users',...),          
-                BottomNavigationBarItem(label: 'Posts',...),          
-                BottomNavigationBarItem(label: 'Settings',...),          
-              ],          
-            )),                 
-       }          
-    );          
-}          
+class DashboardPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AutoTabsScaffold(
+      routes: const [
+        UsersRoute(),
+        PostsRoute(),
+        SettingsRoute(),
+      ],
+      bottomNavigationBuilder: (_, tabsRouter) {
+        return BottomNavigationBar(
+          currentIndex: tabsRouter.activeIndex,
+          onTap: tabsRouter.setActiveIndex,
+          items: const [
+            BottomNavigationBarItem(label: 'Users',...),
+            BottomNavigationBarItem(label: 'Posts',...),
+            BottomNavigationBarItem(label: 'Settings',...),
+          ],
+        );
+      },
+    );
+  }
+}       
 ```            
 ### Using PageView
 Use the `AutoTabsRouter.pageView` constructor to implement tabs using PageView
@@ -1114,14 +1113,15 @@ appBar: AppBar(
 `ActiveGuardObserver` can notify you when a guard is being checked and what guard it is, it can be used to implement loading indicator for example.
 ```dart       
 var isLoading = false;  
- void initiState(){  
-   final guardObserver = context.router.activeGuardObserver;  
-    guardObserver.addListener(){  
+ void initState(){
+    final guardObserver = context.router.activeGuardObserver;
+
+    guardObserver.addListener(() { 
       setState((){  
         isLoading = guardObserver.guardInProgress;  
        });  
-     }   
-  }  
+    });
+  }
 ```    
 
 ### Remove shadow from nested routers

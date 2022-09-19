@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/empty_router_widgets.dart';
 import 'package:flutter/material.dart';
 
 import '../test_page.dart';
@@ -13,7 +14,6 @@ part 'router.gr.dart';
       path: '/',
       page: TabsHostPage,
       children: tabRoutes,
-
     ),
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
@@ -23,10 +23,9 @@ class AppRouter extends _$AppRouter {}
 class TabsHostPage extends StatelessWidget {
   const TabsHostPage({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
-    const _routes = [
+    const routes = [
       Tab1Route(),
       Tab2Route(),
       Tab3Route(),
@@ -34,19 +33,19 @@ class TabsHostPage extends StatelessWidget {
 
     if (tabsType == 'IndexedStack') {
       return const AutoTabsRouter(
-        routes: _routes,
+        routes: routes,
       );
     }
 
     if (tabsType == 'PageView') {
       return const AutoTabsRouter.pageView(
-        routes: _routes,
+        routes: routes,
       );
     }
 
     if (tabsType == 'TabBar') {
       return const AutoTabsRouter.tabBar(
-        routes: _routes,
+        routes: routes,
       );
     }
 

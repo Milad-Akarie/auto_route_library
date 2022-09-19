@@ -3,13 +3,18 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatefulWidget implements AutoRouteWrapper {
   const HomePage({
-    super.key,
-  }) ;
+    Key? key,
+  }) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+   return this;
+  }
 }
 
 class RouteDestination {
@@ -97,11 +102,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(context.topRoute.name),
-                  leading: AutoLeadingButton(),
+                  leading: AutoLeadingButton(ignorePagelessRoutes: true,),
                 ),
                 body: child,
-                bottomNavigationBar:
-                    buildBottomNav(context, context.tabsRouter),
+                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
               );
             },
           );

@@ -3,15 +3,45 @@ import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
 
+enum LeadingType {
+  back,
+  close,
+  drawer,
+  noLeading;
+
+  bool get isBack => this == back;
+
+  bool get isClose => this == close;
+
+  bool get isDrawer => this == drawer;
+
+  bool get isNoLeading => this == noLeading;
+}
+
+typedef AutoLeadingButtonBuilder = Widget Function(
+  BuildContext context,
+  LeadingType leadingType,
+  VoidCallback? action, // could be popTop, openDrawer or null
+);
+
 class AutoLeadingButton extends StatefulWidget {
   final Color? color;
-  final bool showBackIfParentCanPop;
+
+  final bool showIfChildCanPop, ignorePagelessRoutes;
+  final bool _showIfParentCanPop;
+  final AutoLeadingButtonBuilder? builder;
 
   const AutoLeadingButton({
     Key? key,
     this.color,
-    this.showBackIfParentCanPop = true,
-  }) : super(key: key);
+    @Deprecated('Use showIfParentCanPop') bool? showBackIfParentCanPop,
+    bool? showIfParentCanPop,
+    this.showIfChildCanPop = true,
+    this.ignorePagelessRoutes = false,
+    this.builder,
+  })  : assert(color == null || builder == null),
+        _showIfParentCanPop = showIfParentCanPop ?? showBackIfParentCanPop ?? true,
+        super(key: key);
 
   @override
   State<AutoLeadingButton> createState() => _AutoLeadingButtonState();
@@ -36,9 +66,21 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
   @override
   Widget build(BuildContext context) {
     final scope = RouterScope.of(context, watch: true);
-    if (_canPopSelfOrChildren(scope.controller)) {
-      final bool useCloseButton =
-          scope.controller.topPage?.fullscreenDialog ?? false;
+    if (scope.controller.canPop(
+      ignoreChildRoutes: !widget.showIfChildCanPop,
+      ignoreParentRoutes: !widget._showIfParentCanPop,
+      ignorePagelessRoutes: widget.ignorePagelessRoutes,
+    )) {
+      final topPage = scope.controller.topPage;
+      final bool useCloseButton = topPage?.fullscreenDialog ?? false;
+
+      if (widget.builder != null) {
+        return widget.builder!(
+          context,
+          useCloseButton ? LeadingType.close : LeadingType.back,
+          scope.controller.popTop,
+        );
+      }
       return useCloseButton
           ? CloseButton(
               color: widget.color,
@@ -51,6 +93,13 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
     }
     final ScaffoldState? scaffold = Scaffold.maybeOf(context);
     if (scaffold?.hasDrawer == true) {
+      if (widget.builder != null) {
+        return widget.builder!(
+          context,
+          LeadingType.drawer,
+          _handleDrawerButton,
+        );
+      }
       return IconButton(
         icon: const Icon(Icons.menu),
         iconSize: Theme.of(context).iconTheme.size ?? 24,
@@ -58,19 +107,15 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
         tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
       );
     }
+
+    if (widget.builder != null) {
+      return widget.builder!(context, LeadingType.noLeading, null);
+    }
     return const SizedBox.shrink();
   }
 
   void _handleDrawerButton() {
     Scaffold.of(context).openDrawer();
-  }
-
-  bool _canPopSelfOrChildren(RoutingController controller) {
-    if (controller.parent() != null && widget.showBackIfParentCanPop) {
-      return controller.canPopSelfOrChildren ||
-          _canPopSelfOrChildren(controller.parent()!);
-    }
-    return controller.canPopSelfOrChildren;
   }
 
   void _handleRebuild() {

@@ -17,7 +17,7 @@ Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards, List<Rout
       ..modifier = FieldModifier.final$
       ..name = toLowerCamelCase(g.name)
       ..type = g.refer)),
-    buildPagesMap(routes)
+    buildPagesMap(routes, router.deferredLoading)
   ])
   ..methods.add(
     Method(
@@ -59,7 +59,7 @@ Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards, List<Rout
     // ),
   ));
 
-Field buildPagesMap(List<RouteConfig> routes) {
+Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
   return Field((b) => b
     ..name = "pagesMap"
     ..modifier = FieldModifier.final$
@@ -76,28 +76,26 @@ Field buildPagesMap(List<RouteConfig> routes) {
       routes.where((r) => r.routeType != RouteType.redirect).distinctBy((e) => e.routeName).map(
             (r) => MapEntry(
               refer(r.routeName).property('name'),
-              buildMethod(r),
+              buildMethod(r, deferredLoading),
             ),
           ),
     )).code);
 }
 
-Spec buildMethod(RouteConfig r) {
-  var constructedPage = r.hasConstConstructor
-      ? r.pageType!.refer.constInstance([])
-      : r.pageType!.refer.newInstance(
-          r.positionalParams.map((p) {
-            return  p.isInheritedPathParam ?  getUrlParamAssignment(p) :
-             refer('args').property(p.name);
-          }),
-          Map.fromEntries(r.namedParams.map(
-            (p) => MapEntry(
-              p.name,
-              p.isInheritedPathParam ?  getUrlParamAssignment(p) :
-              refer('args').property(p.name),
-            ),
-          )),
-        );
+Spec buildMethod(RouteConfig r, bool deferredLoading) {
+  final useConsConstructor = r.hasConstConstructor && !(r.deferredLoading ?? deferredLoading);
+  var constructedPage = useConsConstructor ? r.pageType!.refer.constInstance([]) : getPageInstance(r);
+
+  if (r.hasWrappedRoute == true) {
+    constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
+      [],
+      {'child': constructedPage},
+    );
+  }
+
+  if ((r.deferredLoading ?? deferredLoading) && r.pageType != null) {
+    constructedPage = getDeferredBuilder(r, constructedPage);
+  }
 
   return Method(
     (b) => b
@@ -170,6 +168,31 @@ Spec buildMethod(RouteConfig r) {
   ).closure;
 }
 
+Expression getDeferredBuilder(RouteConfig r, Expression page) {
+  return TypeReference((b) => b
+    ..symbol = 'DeferredWidget'
+    ..url = autoRouteImport).newInstance([
+    TypeReference((b) => b
+      ..symbol = 'loadLibrary'
+      ..url = r.pageType!.refer.url),
+    Method((b) => b..body = page.code).closure
+  ]);
+}
+
+Expression getPageInstance(RouteConfig r) {
+  return r.pageType!.refer.newInstance(
+    r.positionalParams.map((p) {
+      return p.isInheritedPathParam ? getUrlParamAssignment(p) : refer('args').property(p.name);
+    }),
+    Map.fromEntries(r.namedParams.map(
+      (p) => MapEntry(
+        p.name,
+        p.isInheritedPathParam ? getUrlParamAssignment(p) : refer('args').property(p.name),
+      ),
+    )),
+  );
+}
+
 Expression getUrlParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
     return refer('pathParams').property(p.getterMethodName).call([
@@ -200,6 +223,7 @@ Iterable<Object> buildRoutes(List<RouteConfig> routes, {Reference? parent}) => r
             if (r.redirectTo != null) 'redirectTo': literalString(r.redirectTo!),
             if (r.fullMatch == true) 'fullMatch': literalBool(true),
             if (r.usesPathAsKey == true) 'usesPathAsKey': literalBool(true),
+            if (r.deferredLoading == true) 'deferredLoading': literalBool(true),
             if (r.guards.isNotEmpty)
               'guards': literalList(r.guards
                   .map(

@@ -23,6 +23,10 @@ class AutoRouterAnnotation {
   /// defaults to null, ignored if a route name is provided.
   final String? replaceInRouteName;
 
+  /// Use for web for lazy loading other routes
+  /// more info https://dart.dev/guides/language/language-tour#deferred-loading
+  final bool deferredLoading;
+
   /// Auto generate route arguments
   /// By default the route arguments are generated, set to false to disable it
   ///
@@ -35,6 +39,7 @@ class AutoRouterAnnotation {
     this.routes,
     this.preferRelativeImports, {
     this.replaceInRouteName,
+    this.deferredLoading = false,
     this.generateRouteArguments = true,
   });
 }
@@ -46,11 +51,13 @@ class MaterialAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = true,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? deferredLoading,
     bool? generateRouteArguments,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          deferredLoading: deferredLoading ?? false,
           generateRouteArguments: generateRouteArguments,
         );
 }
@@ -62,11 +69,13 @@ class CupertinoAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = true,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? deferredLoading,
     bool? generateRouteArguments,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          deferredLoading: deferredLoading ?? false,
           generateRouteArguments: generateRouteArguments,
         );
 }
@@ -76,11 +85,13 @@ class AdaptiveAutoRouter extends AutoRouterAnnotation {
     bool preferRelativeImports = false,
     required List<AutoRoute> routes,
     String? replaceInRouteName,
+    bool? deferredLoading,
     bool? generateRouteArguments,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          deferredLoading: deferredLoading ?? false,
           generateRouteArguments: generateRouteArguments,
         );
 }
@@ -138,11 +149,13 @@ class CustomAutoRouter extends AutoRouterAnnotation {
     required List<AutoRoute> routes,
     bool preferRelativeImports = true,
     String? replaceInRouteName,
+    bool? deferredLoading,
     bool? generateRouteArguments,
   }) : super._(
           routes,
           preferRelativeImports,
           replaceInRouteName: replaceInRouteName,
+          deferredLoading: deferredLoading ?? false,
           generateRouteArguments: generateRouteArguments,
         );
 }
@@ -185,6 +198,8 @@ class AutoRoute<T> {
   /// meta data
   final Map<String, dynamic> meta;
 
+  final bool? deferredLoading;
+
   /// Auto generate route arguments
   /// By default the route arguments are generated, set to false to disable it
   ///
@@ -205,6 +220,7 @@ class AutoRoute<T> {
     this.usesPathAsKey = false,
     this.children,
     this.meta = const {},
+    this.deferredLoading,
     this.generateRouteArguments,
   });
 }
@@ -232,6 +248,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
     bool usesPathAsKey = false,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool? deferredLoading,
     bool generateRouteArguments = true,
   }) : super(
           page: page,
@@ -245,6 +262,7 @@ class MaterialRoute<T> extends AutoRoute<T> {
           children: children,
           name: name,
           meta: meta,
+          deferredLoading: deferredLoading,
           generateRouteArguments: generateRouteArguments,
         );
 }
@@ -268,6 +286,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
     bool usesPathAsKey = false,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool? deferredLoading,
     bool generateRouteArguments = true,
   }) : super(
           initial: initial,
@@ -281,6 +300,7 @@ class CupertinoRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          deferredLoading: deferredLoading,
           generateRouteArguments: generateRouteArguments,
         );
 }
@@ -300,6 +320,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
     List<Type>? guards,
     List<AutoRoute>? children,
     Map<String, dynamic> meta = const {},
+    bool? deferredLoading,
     bool generateRouteArguments = true,
   }) : super(
           initial: initial,
@@ -313,6 +334,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          deferredLoading: deferredLoading,
           generateRouteArguments: generateRouteArguments,
         );
 
@@ -389,6 +411,7 @@ class CustomRoute<T> extends AutoRoute<T> {
     this.barrierDismissible = false,
     bool generateRouteArguments = true,
     Map<String, dynamic> meta = const {},
+    bool? deferredLoading,
   }) : super(
           initial: initial,
           fullscreenDialog: fullscreenDialog,
@@ -401,6 +424,7 @@ class CustomRoute<T> extends AutoRoute<T> {
           guards: guards,
           children: children,
           meta: meta,
+          deferredLoading: deferredLoading,
           generateRouteArguments: generateRouteArguments,
         );
 }
