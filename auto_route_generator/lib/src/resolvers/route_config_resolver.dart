@@ -36,7 +36,6 @@ class RouteConfigResolver {
     var isDeferred = autoRoute.peek('deferredLoading')?.boolValue ??
         _routerConfig.deferredLoading;
 
-
     if (page == null) {
       var redirectTo = autoRoute.peek('redirectTo')?.stringValue;
       throwIf(
@@ -55,12 +54,12 @@ class RouteConfigResolver {
     }
 
     throwIf(
-      page.element is! ClassElement,
+      page.element2 is! ClassElement,
       '${page.getDisplayString(withNullability: false)} is not a class element',
-      element: page.element,
+      element: page.element2,
     );
 
-    final classElement = page.element as ClassElement;
+    final classElement = page.element2 as ClassElement;
     final hasWrappedRoute = classElement.allSupertypes.any((e) =>
         e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
