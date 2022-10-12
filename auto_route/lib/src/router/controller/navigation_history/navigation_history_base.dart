@@ -1,16 +1,13 @@
-
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/widgets.dart';
 
 import 'navigation_history.dart'
-if (dart.library.io) 'native_navigation_history.dart'
-if (dart.library.html) 'web_navigation_history.dart';
+    if (dart.library.io) 'native_navigation_history.dart'
+    if (dart.library.html) 'web_navigation_history.dart';
 
 abstract class NavigationHistory with ChangeNotifier {
-
-
-  static NavigationHistory create(StackRouter router){
+  static NavigationHistory create(StackRouter router) {
     return NavigationHistoryImpl(router);
   }
 
@@ -44,13 +41,13 @@ abstract class NavigationHistory with ChangeNotifier {
 
   bool isRouteActive(String routeName) {
     return urlState.segments.any(
-          (r) => r.name == routeName,
+      (r) => r.name == routeName,
     );
   }
 
   bool isRouteDataActive(RouteData data) {
     return urlState.segments.any(
-          (route) => route == data.route,
+      (route) => route == data.route,
     );
   }
 

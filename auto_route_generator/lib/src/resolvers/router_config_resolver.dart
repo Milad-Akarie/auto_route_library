@@ -65,7 +65,8 @@ class RouterConfigResolver {
       }
     }
 
-    final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
+    final deferredLoading =
+        autoRouter.peek('deferredLoading')?.boolValue ?? false;
 
     _globalRouteConfig = RouteConfig(
       routeType: routeType,
@@ -97,7 +98,6 @@ class RouterConfigResolver {
     );
 
     var routes = _resolveRoutes(routerConfig, autoRoutes);
-
 
     return routerConfig.copyWith(routes: routes);
   }

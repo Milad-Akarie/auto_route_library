@@ -1,4 +1,9 @@
 # ChangeLog
+## [5.0.2]
+- Change analyzer constrains to support up to version 6.0.0
+- Merge #1236
+- Merge add opaque property to AdaptiveRoute #1224
+- Merge readme.md file updates
 ## [5.0.1]
 - Add ignorePagelessRoutes and ignoreChildRoutes property to AutoLeadingButton
 - Add builder property to AutoLeadingButton

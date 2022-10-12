@@ -1,4 +1,9 @@
 # ChangeLog
+## [5.0.3]
+- Change analyzer constrains to support up to version 6.0.0
+- Merge #1236
+- Merge add opaque property to AdaptiveRoute #1224
+- Merge readme.md file updates
 ## [5.0.2]
 - Allow analyzer version 4.4.6
 ## [5.0.1]
