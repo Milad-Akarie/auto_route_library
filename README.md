@@ -129,7 +129,7 @@ class App extends StatelessWidget {
 }      
 ```              
 ## Generated Routes
-A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroid.
+A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroids.
 ```dart              
 class BookListRoute extends PageRouteInfo {              
   const BookListRoute() : super(name, path: '/books');              
