@@ -160,7 +160,7 @@ context.router
               
 // adds a new entry to the pages stack              
 router.push(const BooksListRoute())            
-// or by using using paths            
+// or by using paths            
 router.pushNamed('/books')             
           
 // removes last entry in stack and pushs provided route           
