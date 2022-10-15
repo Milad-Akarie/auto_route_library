@@ -163,7 +163,7 @@ router.push(const BooksListRoute())
 // or by using paths            
 router.pushNamed('/books')             
           
-// removes last entry in stack and pushs provided route           
+// removes last entry in stack and pushes provided route           
 // if last entry == provided route page will just be updated          
 router.replace(const BooksListRoute())              
 // or by using using paths            
