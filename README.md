@@ -429,7 +429,7 @@ class DashboardPage extends StatelessWidget {
         return Scaffold(          
             body: FadeTransition(          
               opacity: animation,          
-              // the passed child is techinaclly our animated selected-tab page          
+              // the passed child is technically our animated selected-tab page          
               child: child,          
             ),          
             bottomNavigationBar: BottomNavigationBar(          
