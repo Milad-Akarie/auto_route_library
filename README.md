@@ -412,7 +412,7 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {          
     return AutoTabsRouter(          
     // list of your tab routes          
-    // routes used here must be declaraed as children          
+    // routes used here must be declared as children          
     // routes of /dashboard           
       routes: const [          
         UsersRoute(),          
