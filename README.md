@@ -104,7 +104,7 @@ Use the [watch] flag to watch the files' system for edits and rebuild as necessa
 flutter packages pub run build_runner watch              
 ```              
 
-if you want the generator to run one time and exits use
+if you want the generator to run one time and exit, use
 
 ```terminal              
 flutter packages pub run build_runner build              
