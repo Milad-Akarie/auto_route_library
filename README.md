@@ -647,7 +647,7 @@ class Dashboard extends StatelessWidget {
 ## Navigating Without Context
 To navigate without context you can simply assign your generated router to a global variable
 ```dart              
-// declarate your route as a global vairable          
+// declare your route as a global vairable          
 final appRouter = AppRouter();            
           
 class MyApp extends StatefulWidget {          
