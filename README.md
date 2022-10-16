@@ -405,7 +405,7 @@ Now we can try to implement our tabs using an `AutoRouter` (StackRouter) by push
 
 Let's change the previous example to use tab navigation.
 
-Notice that we're not going to change  anything in our routes declaration map, we still have a dashboard page that has tree nested children, users, posts and settings.
+Notice that we're not going to change  anything in our routes declaration map, we still have a dashboard page that has three nested children, users, posts and settings.
 ```dart              
 class DashboardPage extends StatelessWidget {          
   @override          
