@@ -451,30 +451,29 @@ class DashboardPage extends StatelessWidget {
 ```              
 if you think the above setup is a bit messy you could use the shipped-in `AutoTabsScaffold` that makes things much cleaner.
 ```dart              
-class DashboardPage extends StatelessWidget {          
- @override            
-Widget build(context) {            
- @override          
-  Widget build(context) {          
-    return AutoTabsScaffold(          
-       routes: const [          
+class DashboardPage extends StatelessWidget {
+  @override
+  Widget build(context) {
+    return AutoTabsScaffold(
+			routes: const [
         UsersRoute(),          
         PostsRoute(),          
         SettingsRoute(),          
-      ],          
-      bottomNavigationBuilder: (_,tabsRouter) {          
-          return BottomNavigationBar(          
-              currentIndex: tabsRouter.activeIndex,          
-              onTap: tabsRouter.setActiveIndex          
-              items: [          
-                BottomNavigationBarItem(label: 'Users',...),          
-                BottomNavigationBarItem(label: 'Posts',...),          
-                BottomNavigationBarItem(label: 'Settings',...),          
-              ],          
-            )),                 
-       }          
-    );          
-}          
+			],
+      bottomNavigationBuilder: (_, tabsRouter) {
+        return BottomNavigationBar(
+          currentIndex: tabsRouter.activeIndex,
+          onTap: tabsRouter.setActiveIndex,
+          items: [
+            BottomNavigationBarItem(label: 'Users',...),          
+            BottomNavigationBarItem(label: 'Posts',...),          
+            BottomNavigationBarItem(label: 'Settings',...),          
+          ],
+        );
+      },
+    );
+  }
+}
 ```            
 ### Using PageView
 Use the `AutoTabsRouter.pageView` constructor to implement tabs using PageView
