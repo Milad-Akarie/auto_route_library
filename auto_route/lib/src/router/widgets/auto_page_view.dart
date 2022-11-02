@@ -1,5 +1,4 @@
 /// Most of the code here is taking from flutter's [TabView]
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +10,11 @@ class AutoPageView extends StatefulWidget {
     this.physics,
     required this.router,
     this.dragStartBehavior = DragStartBehavior.start,
+    this.scrollDirection = Axis.horizontal,
   }) : super(key: key);
 
   final PageController controller;
-
+  final Axis scrollDirection;
   final TabsRouter router;
 
   /// How the page view should respond to user input.
@@ -92,15 +92,12 @@ class AutoPageViewState extends State<AutoPageView> {
     final int previousIndex = _router.previousIndex ?? 0;
     if ((_router.activeIndex - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
-      await _controller.animateToPage(_router.activeIndex,
-          duration: duration, curve: Curves.ease);
+      await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
       _warpUnderwayCount -= 1;
       return Future<void>.value();
     }
     assert((_router.activeIndex - previousIndex).abs() > 1);
-    final int initialPage = _router.activeIndex > previousIndex
-        ? _router.activeIndex - 1
-        : _router.activeIndex + 1;
+    final int initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
 
     setState(() {
       _warpUnderwayCount += 1;
@@ -111,8 +108,7 @@ class AutoPageViewState extends State<AutoPageView> {
     });
     _controller.jumpToPage(initialPage);
 
-    await _controller.animateToPage(_router.activeIndex,
-        duration: duration, curve: Curves.ease);
+    await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
     if (!mounted) return Future<void>.value();
     setState(() {
       _warpUnderwayCount -= 1;
@@ -136,6 +132,7 @@ class AutoPageViewState extends State<AutoPageView> {
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
       child: PageView(
+        scrollDirection: widget.scrollDirection,
         dragStartBehavior: widget.dragStartBehavior,
         controller: _controller,
         physics: widget.physics == null
