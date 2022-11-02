@@ -568,6 +568,12 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
       vsync: this,
     );
     _tabController.addListener(() {
+      if (_controller!.activeIndex != _tabController.index) {
+        _didChangeTabRoute(
+          _tabController.index,
+          _controller!.activeIndex,
+        );
+      }
       _controller!.setActiveIndex(_tabController.index);
     });
   }
