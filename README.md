@@ -567,7 +567,7 @@ Here's a simple diagram to help visualize this
 <img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">              
 </p>              
 
-As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we have too different routing controllers  `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type.
+As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we have two different routing controllers  `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type.
 ```dart              
 router.parent<StackRouter>() // this returns  the parent router as a Stack Routing controller              
 router.parent<TabsRouter>() // this returns athe parent router as a Tabs Routing controller              
@@ -688,7 +688,7 @@ getIt<AppRouter>().push(...);
 **Note:** navigating without context is not recommended in nested navigation unless you use `navigate` instead of `push` and you provide a full hierarchy.  e.g `router.navigate(SecondRoute(children: [SubChild2Route()]))`
 
 ## Declarative Navigation
-To use declarative navigation with auto_route you simple use the `AutoRouter.declarative` constructor and return a list of routes based on state.
+To use declarative navigation with auto_route you simply use the `AutoRouter.declarative` constructor and return a list of routes based on state.
 ```dart           
 AutoRouter.declarative(      
   routes: (handler) => [      

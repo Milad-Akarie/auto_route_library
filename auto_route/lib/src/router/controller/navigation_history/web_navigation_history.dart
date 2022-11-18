@@ -34,4 +34,3 @@ class NavigationHistoryImpl extends NavigationHistory {
   @override
   int get length => _history.length;
 }
-
