@@ -454,6 +454,7 @@ if you think the above setup is a bit messy you could use the shipped-in `AutoTa
 class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final tabsRouter = AutoTabsRouter.of(context);
     return AutoTabsScaffold(
       routes: const [
         UsersRoute(),
@@ -485,6 +486,7 @@ AutoTabsRouter.pageView(
         SettingsTab(),      
         ],     
      builder: (context, child, _) {      
+        final tabsRouter = AutoTabsRouter.of(context);
         return Scaffold(      
               appBar: AppBar(      
               title: Text(context.topRoute.name),      
@@ -512,7 +514,8 @@ AutoTabsRouter.tabBar(
         ProfileTab(),      
         SettingsTab(),      
         ],     
-     builder: (context, child, controller) {      
+     builder: (context, child, controller) {    
+        final tabsRouter = AutoTabsRouter.of(context);
         return Scaffold(      
               appBar: AppBar(      
                  title: Text(context.topRoute.name),      
