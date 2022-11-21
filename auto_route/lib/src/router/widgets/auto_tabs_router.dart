@@ -528,10 +528,10 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
     _updateTabController();
     _didInitTabRoute(_controller!.activeIndex);
     _controller!.addListener(() {
-      if (_controller!.activeIndex != _tabController.index) {
+      if (_controller!.activeIndex != _controller!.previousIndex) {
         _didChangeTabRoute(
           _controller!.activeIndex,
-          _tabController.index,
+          _controller!.previousIndex ?? 0,
         );
         _tabController.animateTo(
           _controller!.activeIndex,

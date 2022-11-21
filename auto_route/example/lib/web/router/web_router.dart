@@ -58,18 +58,18 @@ class WebAppRouter extends _$WebAppRouter {
   WebAppRouter(
     AuthService authService,
   ) : super(
-          // authGuard: AuthGuard(authService),
+        // authGuard: AuthGuard(authService),
         );
 }
 
 class HomePage extends StatelessWidget {
   final VoidCallback? navigate, showUserPosts;
+
   const HomePage({
     Key? key,
     this.navigate,
     this.showUserPosts,
   }) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -88,9 +88,7 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.router.markUrlStateForReplace();
-                    context.navigateNamedTo('/user/2/page/favorite');
-                    // context.navigateTo(UserRoute(id: 2));
+                    context.navigateTo(UserRoute(id: 2, query: const ['value1', 'value2']));
                   },
               child: Text('Navigate to user/2'),
             ),
@@ -212,7 +210,8 @@ class _UserPostsPageState extends State<UserPostsPage> {
 
 class UserPage extends StatefulWidget {
   final int id;
-  final String? query;
+  final List<String>? query;
+
   UserPage({
     Key? key,
     @PathParam('userID') this.id = -1,
@@ -226,6 +225,7 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
+    print(context.routeData.queryParams);
     return Scaffold(
       appBar: AppBar(
         title: Builder(
@@ -235,7 +235,7 @@ class _UserPageState extends State<UserPage> {
         ),
         leading: AutoLeadingButton(),
       ),
-      body: AutoRouter(),
+      // body: AutoRouter(),
     );
   }
 }

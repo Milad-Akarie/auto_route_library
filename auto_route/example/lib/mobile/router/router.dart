@@ -50,4 +50,4 @@ import 'package:auto_route/empty_router_widgets.dart';
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )
-class $RootRouter {}
+ class $RootRouter {}
