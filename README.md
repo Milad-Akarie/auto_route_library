@@ -104,7 +104,7 @@ Use the [watch] flag to watch the files' system for edits and rebuild as necessa
 flutter packages pub run build_runner watch              
 ```              
 
-if you want the generator to run one time and exits use
+if you want the generator to run one time and exit, use
 
 ```terminal              
 flutter packages pub run build_runner build              
@@ -129,7 +129,7 @@ class App extends StatelessWidget {
 }      
 ```              
 ## Generated Routes
-A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroid.
+A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold path information plus strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroids.
 ```dart              
 class BookListRoute extends PageRouteInfo {              
   const BookListRoute() : super(name, path: '/books');              
@@ -160,10 +160,10 @@ context.router
               
 // adds a new entry to the pages stack              
 router.push(const BooksListRoute())            
-// or by using using paths            
+// or by using paths            
 router.pushNamed('/books')             
           
-// removes last entry in stack and pushs provided route           
+// removes last entry in stack and pushes provided route           
 // if last entry == provided route page will just be updated          
 router.replace(const BooksListRoute())              
 // or by using using paths            
@@ -412,7 +412,7 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {          
     return AutoTabsRouter(          
     // list of your tab routes          
-    // routes used here must be declaraed as children          
+    // routes used here must be declared as children          
     // routes of /dashboard           
       routes: const [          
         UsersRoute(),          
@@ -429,7 +429,7 @@ class DashboardPage extends StatelessWidget {
         return Scaffold(          
             body: FadeTransition(          
               opacity: animation,          
-              // the passed child is techinaclly our animated selected-tab page          
+              // the passed child is technically our animated selected-tab page          
               child: child,          
             ),          
             bottomNavigationBar: BottomNavigationBar(          
@@ -647,7 +647,7 @@ class Dashboard extends StatelessWidget {
 ## Navigating Without Context
 To navigate without context you can simply assign your generated router to a global variable
 ```dart              
-// declarate your route as a global vairable          
+// declare your route as a global vairable          
 final appRouter = AppRouter();            
           
 class MyApp extends StatefulWidget {          
