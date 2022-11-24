@@ -6,8 +6,6 @@ class AutoRouterObserver extends NavigatorObserver {
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {}
 }
 
-final observer = RouteObserver();
-
 abstract class AutoRouteAware {
   /// Called when the top route has been popped off, and the current route
   /// shows up.
@@ -23,7 +21,7 @@ abstract class AutoRouteAware {
   /// longer visible.
   void didPushNext() {}
 
-  // called when a tab route actives
+  // called when a tab route activates
   void didInitTabRoute(TabPageRoute? previousRoute) {}
   // called when tab route reactivates
   void didChangeTabRoute(TabPageRoute previousRoute) {}

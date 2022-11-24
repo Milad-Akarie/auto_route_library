@@ -125,13 +125,16 @@ class AutoTabViewState extends State<AutoTabView> {
 
     if ((_currentIndex! - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
-      await _pageController.animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+      await _pageController.animateToPage(_currentIndex!,
+          duration: duration, curve: Curves.ease);
       _warpUnderwayCount -= 1;
       return Future<void>.value();
     }
 
     assert((_currentIndex! - previousIndex).abs() > 1);
-    final int initialPage = _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
+    final int initialPage = _currentIndex! > previousIndex
+        ? _currentIndex! - 1
+        : _currentIndex! + 1;
     setState(() {
       _warpUnderwayCount += 1;
       _children = List<Widget>.of(_children, growable: false);
@@ -141,7 +144,8 @@ class AutoTabViewState extends State<AutoTabView> {
     });
     _pageController.jumpToPage(initialPage);
 
-    await _pageController.animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+    await _pageController.animateToPage(_currentIndex!,
+        duration: duration, curve: Curves.ease);
     if (!mounted) return Future<void>.value();
     setState(() {
       _warpUnderwayCount -= 1;
@@ -155,18 +159,21 @@ class AutoTabViewState extends State<AutoTabView> {
     if (notification.depth != 0) return false;
 
     _warpUnderwayCount += 1;
-    if (notification is ScrollUpdateNotification && !_controller.indexIsChanging) {
+    if (notification is ScrollUpdateNotification &&
+        !_controller.indexIsChanging) {
       if ((_pageController.page! - _controller.index).abs() > 1.0) {
         _controller.index = _pageController.page!.round();
         _currentIndex = _controller.index;
       }
       _controller.index = _pageController.page!.round();
-      _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+      _controller.offset =
+          (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
     } else if (notification is ScrollEndNotification) {
       _controller.index = _pageController.page!.round();
       _currentIndex = _controller.index;
       if (!_controller.indexIsChanging) {
-        _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+        _controller.offset =
+            (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
       }
     }
     _warpUnderwayCount -= 1;

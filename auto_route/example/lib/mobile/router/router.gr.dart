@@ -10,6 +10,7 @@
 //
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i12;
 import 'package:auto_route/empty_router_widgets.dart' deferred as _i4;
 import 'package:flutter/material.dart' as _i13;

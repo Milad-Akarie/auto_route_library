@@ -157,29 +157,18 @@ class RouteMatcher {
     required Uri redirectTo,
     required String redirectedFrom,
   }) {
-    var redirectMatches = _match(
+    return _match(
       redirectTo,
       routesCollection,
       includePrefixMatches: includePrefixMatches,
       redirectedFrom: redirectedFrom,
     );
-    if (redirectMatches != null && redirectMatches.length == 1) {
-      redirectMatches = redirectMatches
-          .map(
-            (e) => e.copyWith(
-              segments: p.split(redirectTo.path),
-              stringMatch: redirectTo.path,
-            ),
-          )
-          .toList();
-    }
-    return redirectMatches;
   }
 
   RouteMatch? matchByPath(Uri url, RouteConfig config,
       {String? redirectedFrom}) {
-    var parts = p.split(config.path);
-    var segments = p.split(url.path);
+    var parts = config.path.isEmpty ? [''] : p.split(config.path);
+    var segments = url.path.isEmpty ? [''] : p.split(url.path);
 
     if (parts.length > segments.length) {
       return null;

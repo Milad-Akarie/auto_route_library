@@ -19,7 +19,7 @@ void runTest() {
   setUp(() => router = AppRouter());
   testWidgets(
     'Initializing router App should present FirstRoute/Tab1Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
       expectTopPage(router, Tab1Route.name);
       expect(router.urlState.url, '/tab1');
@@ -28,7 +28,7 @@ void runTest() {
 
   testWidgets(
     'Switching active index to 1 should present FirstRoute/Tab2Route/Tab2Nested1Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
       final tabsRouter = router.innerRouterOf<TabsRouter>(TabsHostRoute.name);
       expect(tabsRouter, isNotNull);
@@ -41,7 +41,7 @@ void runTest() {
 
   testWidgets(
     'Switching active index to 2 should present FirstRoute/Tab3Route/Tab3Nested1Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
       final tabsRouter = router.innerRouterOf<TabsRouter>(TabsHostRoute.name);
       expect(tabsRouter, isNotNull);
@@ -54,7 +54,7 @@ void runTest() {
 
   testWidgets(
     'Navigating to Tab2Route using root router should present FirstRoute/Tab2Route/Tab2Nested1Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
       router.navigate(const Tab2Route());
       await tester.pumpAndSettle();
@@ -65,7 +65,7 @@ void runTest() {
 
   testWidgets(
     'Navigating to Tab3Route using root router should present FirstRoute/Tab3Route/Tab3Nested1Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
       router.navigate(const Tab3Route());
       await tester.pumpAndSettle();
@@ -76,7 +76,7 @@ void runTest() {
 
   testWidgets(
     'Navigating to Tab3Route with children [Tab3Nested2Route] using root router should present FirstRoute/Tab3Route/Tab3Nested2Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
       router.navigate(const Tab3Route(children: [Tab3Nested2Route()]));
       await tester.pumpAndSettle();
@@ -87,7 +87,7 @@ void runTest() {
 
   testWidgets(
     'Navigating from un-maintainedState route FirstRoute/Tab3Route/Tab3Nested2Route and going back should present FirstRoute/Tab3Route/Tab3Nested1Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
       router.navigate(const Tab3Route(children: [Tab3Nested2Route()]));
       await tester.pumpAndSettle();
@@ -102,7 +102,7 @@ void runTest() {
 
   testWidgets(
     'Initializing router App with deep-link "/tab3/tab3Nested2" should present FirstRoute/Tab3Route/Tab3Nested2Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router, initialLink: '/tab3/tab3Nested2');
       expectTopPage(router, Tab3Nested2Route.name);
       expect(router.urlState.url, '/tab3/tab3Nested2');
@@ -111,7 +111,7 @@ void runTest() {
 
   testWidgets(
     'Initializing router App with invalid deep-link should present FirstRoute/Tab1Route',
-        (WidgetTester tester) async {
+    (WidgetTester tester) async {
       await pumpRouterApp(tester, router, initialLink: '/invalid-deep-link');
       expectTopPage(router, Tab1Route.name);
       expect(router.urlState.url, '/tab1');

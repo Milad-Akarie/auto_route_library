@@ -92,12 +92,15 @@ class AutoPageViewState extends State<AutoPageView> {
     final int previousIndex = _router.previousIndex ?? 0;
     if ((_router.activeIndex - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
-      await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
+      await _controller.animateToPage(_router.activeIndex,
+          duration: duration, curve: Curves.ease);
       _warpUnderwayCount -= 1;
       return Future<void>.value();
     }
     assert((_router.activeIndex - previousIndex).abs() > 1);
-    final int initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
+    final int initialPage = _router.activeIndex > previousIndex
+        ? _router.activeIndex - 1
+        : _router.activeIndex + 1;
 
     setState(() {
       _warpUnderwayCount += 1;
@@ -108,7 +111,8 @@ class AutoPageViewState extends State<AutoPageView> {
     });
     _controller.jumpToPage(initialPage);
 
-    await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
+    await _controller.animateToPage(_router.activeIndex,
+        duration: duration, curve: Curves.ease);
     if (!mounted) return Future<void>.value();
     setState(() {
       _warpUnderwayCount -= 1;

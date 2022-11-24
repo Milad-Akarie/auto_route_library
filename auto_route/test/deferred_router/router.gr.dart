@@ -10,6 +10,7 @@
 //
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i3;
 import 'package:flutter/material.dart' as _i4;
 
@@ -24,71 +25,79 @@ class AppRouter extends _i3.RootStackRouter {
   final Map<String, _i3.PageFactory> pagesMap = {
     FirstRoute.name: (routeData) {
       return _i3.MaterialPageX<dynamic>(
-          routeData: routeData,
-          child: _i4.FutureBuilder(
-              builder: (context, snapshot) => snapshot.connectionState ==
-                      _i4.ConnectionState.done
-                  ? _i1.FirstPage()
-                  : const _i4.Scaffold(
-                      body: _i4.Center(child: _i4.CircularProgressIndicator())),
-              future: _i1.loadLibrary()));
+        routeData: routeData,
+        child: _i3.DeferredWidget(
+          _i1.loadLibrary,
+          () => _i1.FirstPage(),
+        ),
+      );
     },
     SecondRoute.name: (routeData) {
       return _i3.MaterialPageX<dynamic>(
-          routeData: routeData,
-          child: _i4.FutureBuilder(
-              builder: (context, snapshot) => snapshot.connectionState ==
-                      _i4.ConnectionState.done
-                  ? _i2.EmptyRouterPage()
-                  : const _i4.Scaffold(
-                      body: _i4.Center(child: _i4.CircularProgressIndicator())),
-              future: _i2.loadLibrary()));
+        routeData: routeData,
+        child: _i3.DeferredWidget(
+          _i2.loadLibrary,
+          () => _i2.EmptyRouterPage(),
+        ),
+      );
     },
     SecondNested1Route.name: (routeData) {
       return _i3.MaterialPageX<dynamic>(
-          routeData: routeData,
-          child: _i4.FutureBuilder(
-              builder: (context, snapshot) => snapshot.connectionState ==
-                      _i4.ConnectionState.done
-                  ? _i2.SecondNested1Page()
-                  : const _i4.Scaffold(
-                      body: _i4.Center(child: _i4.CircularProgressIndicator())),
-              future: _i2.loadLibrary()));
+        routeData: routeData,
+        child: _i3.DeferredWidget(
+          _i2.loadLibrary,
+          () => _i2.SecondNested1Page(),
+        ),
+      );
     },
     SecondNested2Route.name: (routeData) {
       return _i3.MaterialPageX<dynamic>(
-          routeData: routeData,
-          child: _i4.FutureBuilder(
-              builder: (context, snapshot) => snapshot.connectionState ==
-                      _i4.ConnectionState.done
-                  ? _i2.SecondNested2Page()
-                  : const _i4.Scaffold(
-                      body: _i4.Center(child: _i4.CircularProgressIndicator())),
-              future: _i2.loadLibrary()));
-    }
+        routeData: routeData,
+        child: _i3.DeferredWidget(
+          _i2.loadLibrary,
+          () => _i2.SecondNested2Page(),
+        ),
+      );
+    },
   };
 
   @override
   List<_i3.RouteConfig> get routes => [
-        _i3.RouteConfig(FirstRoute.name, path: '/', deferredLoading: true),
-        _i3.RouteConfig(SecondRoute.name,
-            path: '/empty-router-page',
-            deferredLoading: true,
-            children: [
-              _i3.RouteConfig(SecondNested1Route.name,
-                  path: '', parent: SecondRoute.name, deferredLoading: true),
-              _i3.RouteConfig(SecondNested2Route.name,
-                  path: 'second-nested2-page',
-                  parent: SecondRoute.name,
-                  deferredLoading: true)
-            ])
+        _i3.RouteConfig(
+          FirstRoute.name,
+          path: '/',
+          deferredLoading: true,
+        ),
+        _i3.RouteConfig(
+          SecondRoute.name,
+          path: '/empty-router-page',
+          deferredLoading: true,
+          children: [
+            _i3.RouteConfig(
+              SecondNested1Route.name,
+              path: '',
+              parent: SecondRoute.name,
+              deferredLoading: true,
+            ),
+            _i3.RouteConfig(
+              SecondNested2Route.name,
+              path: 'second-nested2-page',
+              parent: SecondRoute.name,
+              deferredLoading: true,
+            ),
+          ],
+        ),
       ];
 }
 
 /// generated route for
 /// [_i1.FirstPage]
 class FirstRoute extends _i3.PageRouteInfo<void> {
-  const FirstRoute() : super(FirstRoute.name, path: '/');
+  const FirstRoute()
+      : super(
+          FirstRoute.name,
+          path: '/',
+        );
 
   static const String name = 'FirstRoute';
 }
@@ -97,8 +106,11 @@ class FirstRoute extends _i3.PageRouteInfo<void> {
 /// [_i2.EmptyRouterPage]
 class SecondRoute extends _i3.PageRouteInfo<void> {
   const SecondRoute({List<_i3.PageRouteInfo>? children})
-      : super(SecondRoute.name,
-            path: '/empty-router-page', initialChildren: children);
+      : super(
+          SecondRoute.name,
+          path: '/empty-router-page',
+          initialChildren: children,
+        );
 
   static const String name = 'SecondRoute';
 }
@@ -106,7 +118,11 @@ class SecondRoute extends _i3.PageRouteInfo<void> {
 /// generated route for
 /// [_i2.SecondNested1Page]
 class SecondNested1Route extends _i3.PageRouteInfo<void> {
-  const SecondNested1Route() : super(SecondNested1Route.name, path: '');
+  const SecondNested1Route()
+      : super(
+          SecondNested1Route.name,
+          path: '',
+        );
 
   static const String name = 'SecondNested1Route';
 }
@@ -115,7 +131,10 @@ class SecondNested1Route extends _i3.PageRouteInfo<void> {
 /// [_i2.SecondNested2Page]
 class SecondNested2Route extends _i3.PageRouteInfo<void> {
   const SecondNested2Route()
-      : super(SecondNested2Route.name, path: 'second-nested2-page');
+      : super(
+          SecondNested2Route.name,
+          path: 'second-nested2-page',
+        );
 
   static const String name = 'SecondNested2Route';
 }

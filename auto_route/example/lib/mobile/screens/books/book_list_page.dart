@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 
 import '../../../data/db.dart';
 
-class BookListScreen extends StatefulWidget  {
+class BookListScreen extends StatefulWidget {
   @override
   _BookListScreenState createState() => _BookListScreenState();
-
-
 }
 
 class _BookListScreenState extends State<BookListScreen>
@@ -33,7 +31,7 @@ class _BookListScreenState extends State<BookListScreen>
                             title: Text(book.name),
                             subtitle: Text(book.genre),
                             onTap: () {
-                              context.pushRoute( BookDetailsRoute(id: book.id));
+                              context.pushRoute(BookDetailsRoute(id: book.id));
                             },
                           ),
                         ),
@@ -44,6 +42,4 @@ class _BookListScreenState extends State<BookListScreen>
       ),
     );
   }
-
-
 }

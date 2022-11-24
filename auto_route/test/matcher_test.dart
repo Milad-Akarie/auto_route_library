@@ -213,7 +213,7 @@ void main() {
           key: ValueKey('D'),
           segments: ['/', 'd'],
           children: [
-             RouteMatch(
+            RouteMatch(
               name: 'D0',
               path: '',
               stringMatch: '',
@@ -234,7 +234,7 @@ void main() {
           name: 'A',
           path: '/',
           stringMatch: '/',
-          key:  ValueKey('A'),
+          key: ValueKey('A'),
           segments: ['/'],
         ),
         const RouteMatch(
@@ -244,7 +244,7 @@ void main() {
           key: ValueKey('D'),
           segments: ['/', 'd'],
           children: [
-             RouteMatch(
+            RouteMatch(
               path: '',
               stringMatch: '',
               key: ValueKey('D0'),
@@ -397,7 +397,7 @@ void main() {
           path: '/c',
           segments: ['/', 'c'],
           children: [
-             RouteMatch(
+            RouteMatch(
               name: 'C1',
               key: ValueKey('C1'),
               stringMatch: 'c1',
@@ -411,18 +411,62 @@ void main() {
       expect(match('/c'), expectedMatches);
     });
 
-    test('Should match route [A]', () {
+    final match2 = RouteMatcher(
+      RouteCollection.from(
+        [
+          RouteConfig('A', path: '/a', children: [
+            RouteConfig('AR', path: 'r', redirectTo: ''),
+            RouteConfig('A1', path: ''),
+          ]),
+        ],
+      ),
+    ).match;
+    test('Should match route [A/A1] subRedirect to empty path', () {
       final expectedMatches = [
         const RouteMatch(
-          name: 'A',
-          key: ValueKey('A'),
-          stringMatch: '/a',
-          path: '/a',
-          segments: ['/', 'a'],
-          redirectedFrom: '*',
-        )
+            name: 'A',
+            key: ValueKey('A'),
+            stringMatch: '/a',
+            path: '/a',
+            segments: [
+              '/',
+              'a'
+            ],
+            children: [
+              RouteMatch(
+                name: 'A1',
+                key: ValueKey('A1'),
+                stringMatch: '',
+                path: '',
+                segments: [''],
+                redirectedFrom: 'r',
+              )
+            ])
       ];
-      expect(match('/x/y'), expectedMatches);
+      expect(match2('/a/r'), expectedMatches);
+    });
+
+    test('Should match route [A/a1] (empty child)', () {
+      final expectedMatches = [
+        const RouteMatch(
+            name: 'A',
+            key: ValueKey('A'),
+            stringMatch: '/a',
+            path: '/a',
+            segments: ['/', 'a'],
+            redirectedFrom: '*',
+            children: [
+              RouteMatch(
+                name: 'A1',
+                key: ValueKey(''),
+                stringMatch: '',
+                path: '',
+                segments: [],
+                redirectedFrom: 'a1',
+              )
+            ])
+      ];
+      expect(match('/a/a1'), expectedMatches);
     });
   });
 
@@ -450,7 +494,7 @@ void main() {
           stringMatch: '/a/1',
           path: '/a/:id',
           segments: ['/', 'a', '1'],
-          pathParams:  Parameters({'id': '1'}),
+          pathParams: Parameters({'id': '1'}),
         )
       ];
       expect(match('/a/1'), expectedMatches);
@@ -465,7 +509,7 @@ void main() {
           stringMatch: '/b/1/n/none',
           path: '/b/:id/n/:type',
           segments: ['/', 'b', '1', 'n', 'none'],
-          pathParams:  Parameters({
+          pathParams: Parameters({
             'id': '1',
             'type': 'none',
           }),
@@ -522,7 +566,7 @@ void main() {
           name: 'A',
           path: '/a',
           segments: ['/', 'a'],
-          queryParams:  Parameters({'foo': 'bar'}),
+          queryParams: Parameters({'foo': 'bar'}),
         )
       ];
       expect(match('/a?foo=bar'), expectedMatches);
@@ -533,7 +577,7 @@ void main() {
         () {
       final expectedMatches = [
         const RouteMatch(
-          key:  ValueKey('B'),
+          key: ValueKey('B'),
           stringMatch: '/b',
           name: 'B',
           path: '/b',
@@ -566,7 +610,7 @@ void main() {
           queryParams: Parameters({'foo': 'bar'}),
           children: [
             RouteMatch(
-              key:  ValueKey('C1'),
+              key: ValueKey('C1'),
               name: 'C1',
               path: 'c1',
               stringMatch: 'c1',
@@ -587,7 +631,7 @@ void main() {
           name: 'A',
           path: '/a',
           segments: ['/', 'a'],
-          queryParams:  Parameters({
+          queryParams: Parameters({
             'foo': ['bar', 'baz']
           }),
         )

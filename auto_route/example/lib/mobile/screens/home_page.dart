@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget implements AutoRouteWrapper {
 
   @override
   Widget wrappedRoute(BuildContext context) {
-   return this;
+    return this;
   }
 }
 
@@ -106,12 +106,16 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   bottom: TabBar(
                     controller: controller,
                     tabs: [
-                      for(final d in destinations)
-                        Tab(child: Text(d.label),)
-                    ],),
+                      for (final d in destinations)
+                        Tab(
+                          child: Text(d.label),
+                        )
+                    ],
+                  ),
                 ),
                 body: child,
-                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+                bottomNavigationBar:
+                    buildBottomNav(context, context.tabsRouter),
               );
             },
           );

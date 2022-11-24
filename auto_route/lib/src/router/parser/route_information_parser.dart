@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart'
+    show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
@@ -15,7 +16,8 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) {
     final uri = Uri.parse(routeInformation.location ?? '');
-    var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
+    var matches =
+        _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(UrlState(uri, matches ?? const []));
   }
 
@@ -99,7 +101,9 @@ class UrlState {
   }
 
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (match) => match.name == routeName)?.children ?? const [];
+    return _findSegment(segments, (match) => match.name == routeName)
+            ?.children ??
+        const [];
   }
 
   static Uri _buildUri(List<RouteMatch> routes) {
@@ -156,7 +160,9 @@ class UrlState {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is UrlState && runtimeType == other.runtimeType && const ListEquality().equals(segments, other.segments);
+      other is UrlState &&
+          runtimeType == other.runtimeType &&
+          const ListEquality().equals(segments, other.segments);
 
   @override
   int get hashCode => const ListEquality().hash(segments);

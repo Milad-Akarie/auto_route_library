@@ -7,6 +7,7 @@ import '../screens/profile/routes.dart';
 import '../screens/settings.dart';
 import '../screens/user-data/routes.dart';
 import 'package:auto_route/empty_router_widgets.dart';
+
 @MaterialAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',
   routes: <AutoRoute>[
@@ -50,4 +51,4 @@ import 'package:auto_route/empty_router_widgets.dart';
     RedirectRoute(path: '*', redirectTo: '/'),
   ],
 )
- class $RootRouter {}
+class $RootRouter {}

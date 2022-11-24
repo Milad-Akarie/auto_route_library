@@ -88,7 +88,8 @@ class HomePage extends StatelessWidget {
             ElevatedButton(
               onPressed: navigate ??
                   () {
-                    context.navigateTo(UserRoute(id: 2, query: const ['value1', 'value2']));
+                    context.navigateTo(
+                        UserRoute(id: 2, query: const ['value1', 'value2']));
                   },
               child: Text('Navigate to user/2'),
             ),
@@ -230,12 +231,13 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
+            return Text(context.topRouteMatch.name +
+                ' ${widget.id} query: ${widget.query}');
           },
         ),
         leading: AutoLeadingButton(),
       ),
-      // body: AutoRouter(),
+      body: AutoRouter(),
     );
   }
 }
