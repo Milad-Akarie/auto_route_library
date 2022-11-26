@@ -1,4 +1,6 @@
 # ChangeLog
+## [5.0.4]
+- Fix #1288
 ## [5.0.3]
 - Fix redirect-route related issues
 - Fix didChangeTabRoute not called when using AutoTabsRouter.tabBar()

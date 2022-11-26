@@ -1272,6 +1272,17 @@ abstract class StackRouter extends RoutingController {
   void popUntilRouteWithName(String name) {
     popUntil(ModalRoute.withName(name));
   }
+
+  void popUntilRouteWithPath(String path) {
+    popUntil((route) {
+      if ((route.settings is AutoRoutePage)) {
+        return (route.settings as AutoRoutePage).routeData.match == path;
+      }
+      // Assuming pageless routes are either dialogs or bottomSheetModals
+      // and the user set a path as in RouteSettings(name: path) when showing theme
+      return route.settings.name == path;
+    });
+  }
 }
 
 class NestedStackRouter extends StackRouter {
