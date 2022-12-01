@@ -54,12 +54,12 @@ class RouteConfigResolver {
     }
 
     throwIf(
-      page.element2 is! ClassElement,
+      page.element is! ClassElement,
       '${page.getDisplayString(withNullability: false)} is not a class element',
-      element: page.element2,
+      element: page.element,
     );
 
-    final classElement = page.element2 as ClassElement;
+    final classElement = page.element as ClassElement;
     final hasWrappedRoute = classElement.allSupertypes.any((e) =>
         e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);

@@ -1,4 +1,9 @@
 # ChangeLog
+## [5.0.4]
+- Fix #1288
+## [5.0.3]
+- Fix redirect-route related issues
+- Fix didChangeTabRoute not called when using AutoTabsRouter.tabBar()
 ## [5.0.2]
 - Change analyzer constrains to support up to version 6.0.0
 - Merge #1236

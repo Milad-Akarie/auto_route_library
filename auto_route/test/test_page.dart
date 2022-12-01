@@ -16,7 +16,6 @@ class TestPage extends StatelessWidget {
   }
 }
 
-
 class NotFoundPage extends TestPage {
   const NotFoundPage({Key? key}) : super(key: key);
 }

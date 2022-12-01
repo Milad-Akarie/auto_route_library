@@ -360,6 +360,7 @@ typedef CustomRouteBuilder = Route<T> Function<T>(
     BuildContext context, Widget child, CustomPage<T> page);
 
 class CustomPage<T> extends AutoRoutePage<T> {
+  @override
   final bool opaque;
   final int durationInMilliseconds;
   final int reverseDurationInMilliseconds;

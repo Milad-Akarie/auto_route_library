@@ -74,7 +74,7 @@ class AutoRouteGenerator extends Generator {
       '.dart',
       '.gr.dart',
     );
-    return clazz.library.parts2.any(
+    return clazz.library.parts.any(
       (e) => e.toString().endsWith(part),
     );
   }

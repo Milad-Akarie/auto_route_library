@@ -94,7 +94,7 @@ class RouteMatcher {
       {bool includePrefixMatches = false,
       bool root = false,
       String? redirectedFrom}) {
-    final pathSegments = p.split(uri.path);
+    final pathSegments = _split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
       var match = matchByPath(uri, config, redirectedFrom: redirectedFrom);
@@ -110,7 +110,9 @@ class RouteMatcher {
             redirectTo: uri.replace(
                 path: Uri.parse(
               PageRouteInfo.expandPath(
-                  config.redirectTo!, match.pathParams.rawMap),
+                config.redirectTo!,
+                match.pathParams.rawMap,
+              ),
             ).path),
             redirectedFrom: config.path,
           );
@@ -126,7 +128,7 @@ class RouteMatcher {
             match = match.copyWith(children: children);
           }
           matches.add(match);
-          if (match.allSegments.length >= pathSegments.length) {
+          if (match.allSegments().length >= pathSegments.length) {
             break;
           }
         } else {
@@ -145,7 +147,9 @@ class RouteMatcher {
     }
 
     if (matches.isEmpty ||
-        (root && matches.last.allSegments.length < pathSegments.length)) {
+        (root &&
+            matches.last.allSegments(includeEmpty: true).length <
+                pathSegments.length)) {
       return null;
     }
     return matches;
@@ -157,29 +161,20 @@ class RouteMatcher {
     required Uri redirectTo,
     required String redirectedFrom,
   }) {
-    var redirectMatches = _match(
+    return _match(
       redirectTo,
       routesCollection,
       includePrefixMatches: includePrefixMatches,
       redirectedFrom: redirectedFrom,
     );
-    if (redirectMatches != null && redirectMatches.length == 1) {
-      redirectMatches = redirectMatches
-          .map(
-            (e) => e.copyWith(
-              segments: p.split(redirectTo.path),
-              stringMatch: redirectTo.path,
-            ),
-          )
-          .toList();
-    }
-    return redirectMatches;
   }
+
+  List<String> _split(String path) => p.split(path);
 
   RouteMatch? matchByPath(Uri url, RouteConfig config,
       {String? redirectedFrom}) {
-    var parts = p.split(config.path);
-    var segments = p.split(url.path);
+    var parts = _split(config.path);
+    var segments = _split(url.path);
 
     if (parts.length > segments.length) {
       return null;
@@ -257,7 +252,7 @@ class RouteMatcher {
     }
     return RouteMatch(
       name: route.routeName,
-      segments: p.split(route.stringMatch),
+      segments: _split(route.stringMatch),
       path: route.path,
       args: route.args,
       meta: config.meta,
