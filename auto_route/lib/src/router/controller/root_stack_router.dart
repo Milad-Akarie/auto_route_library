@@ -15,6 +15,7 @@ abstract class RootStackRouter extends StackRouter {
   @override
   RouteData get routeData => RouteData(
         router: this,
+        type: const RouteType.material(),
         route: const RouteMatch(
           name: 'Root',
           segments: [''],
@@ -26,9 +27,11 @@ abstract class RootStackRouter extends StackRouter {
         pendingChildren: [],
       );
 
-  Map<String, PageFactory> get pagesMap;
+  Map<String, PageFactory> get pagesMap => throw UnimplementedError();
 
-  List<RouteConfig> get routes;
+  List<AutoRouteConfig> get routes;
+
+  RouteType get defaultRouteType => const RouteType.material();
 
   // ignore: prefer_final_fields
   bool _managedByWidget = false;
@@ -60,8 +63,7 @@ abstract class RootStackRouter extends StackRouter {
     RoutePopCallBack? onPopRoute,
     String? initialDeepLink,
     OnNavigateCallBack? onNavigate,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate.declarative(
       this,
@@ -80,8 +82,7 @@ abstract class RootStackRouter extends StackRouter {
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,

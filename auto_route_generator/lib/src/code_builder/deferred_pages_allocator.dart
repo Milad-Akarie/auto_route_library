@@ -52,19 +52,20 @@ extension _RouteConfigList on List<RouteConfig> {
             ? _DeferredStatus.Deferred
             : _DeferredStatus.None;
       }
-      if (routeConfig.childRouterConfig == null) {
-      } else {
-        final deferredStatus = routeConfig.childRouterConfig!.routes
-            .mapRouteToDeferredType(importPath, defaultDeferredLoading);
-        if (deferredStatus == _DeferredStatus.Deferred) {
-          return _DeferredStatus.Deferred;
-        }
-        if (deferredStatus == _DeferredStatus.None) {
-          return defaultDeferredLoading
-              ? _DeferredStatus.Deferred
-              : _DeferredStatus.None;
-        }
-      }
+      //todo handle this
+      // if (routeConfig.childRouterConfig == null) {
+      // } else {
+      //   final deferredStatus = routeConfig.childRouterConfig!.routes
+      //       .mapRouteToDeferredType(importPath, defaultDeferredLoading);
+      //   if (deferredStatus == _DeferredStatus.Deferred) {
+      //     return _DeferredStatus.Deferred;
+      //   }
+      //   if (deferredStatus == _DeferredStatus.None) {
+      //     return defaultDeferredLoading
+      //         ? _DeferredStatus.Deferred
+      //         : _DeferredStatus.None;
+      //   }
+      // }
     }
     return _DeferredStatus.NotFound;
   }

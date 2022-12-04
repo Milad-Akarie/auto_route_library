@@ -5,13 +5,13 @@ import 'package:example/mobile/router/auth_guard.dart';
 import 'book_details_page.dart';
 import 'book_list_page.dart';
 
-const booksTab = AutoRoute(
+const booksTab = PageInfo(
   path: 'books',
   page: EmptyRouterPage,
   name: 'BooksTab',
   children: [
-    AutoRoute(path: '', page: BookListScreen),
-    AutoRoute(
+    PageInfo(path: '', page: BookListScreen),
+    PageInfo(
       path: ':id',
       usesPathAsKey: true,
       page: BookDetailsPage,

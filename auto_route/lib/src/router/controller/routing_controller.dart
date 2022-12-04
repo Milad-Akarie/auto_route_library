@@ -100,6 +100,7 @@ abstract class RoutingController with ChangeNotifier {
       router: this,
       parent: parent,
       pendingChildren: route.children ?? [],
+      type: route.type ?? root.defaultRouteType,
     );
 
     for (final ctr in _childControllers) {
@@ -270,7 +271,7 @@ abstract class RoutingController with ChangeNotifier {
 
   void navigateBack() => navigationHistory.back();
 
-  StackRouter get root => (_parent?.root ?? this) as StackRouter;
+  RootStackRouter get root => (_parent?.root ?? this) as RootStackRouter;
 
   StackRouter? get parentAsStackRouter => parent<StackRouter>();
 

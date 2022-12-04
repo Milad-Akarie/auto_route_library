@@ -5,23 +5,23 @@ import 'package:example/mobile/screens/user-data/user_data_page.dart';
 
 import 'data_collector.dart';
 
-const userDataRoutes = AutoRoute<UserData>(
+const userDataRoutes = PageInfo<UserData>(
   path: '/user-data',
   page: UserDataCollectorPage,
   children: [
-    AutoRoute(
+    PageInfo(
       path: 'name',
       name: 'NameFieldRoute',
       page: SingleFieldPage,
       // transitionsBuilder: TransitionsBuilders.slideRightWithFade,
     ),
-    AutoRoute(
+    PageInfo(
       path: 'favorite-book',
       page: SingleFieldPage,
       name: 'FavoriteBookFieldRoute',
       // transitionsBuilder: TransitionsBuilders.slideRightWithFade,
     ),
-    AutoRoute(
+    PageInfo(
       path: 'results',
       page: UserDataPage,
       // transitionsBuilder: TransitionsBuilders.slideRightWithFade,

@@ -10,7 +10,7 @@ part 'router.gr.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: [
-    AutoRoute(
+    PageInfo(
       path: '/',
       page: TabsHostPage,
       children: tabRoutes,
@@ -54,24 +54,24 @@ class TabsHostPage extends StatelessWidget {
 }
 
 const tabRoutes = [
-  AutoRoute(path: 'tab1', page: Tab1Page, initial: true),
-  AutoRoute(
+  PageInfo(path: 'tab1', page: Tab1Page, initial: true),
+  PageInfo(
     path: 'tab2',
     page: EmptyRouterPage,
     name: 'Tab2Route',
     children: [
-      AutoRoute(path: 'tab2Nested1', page: Tab2Nested1Page, initial: true),
-      AutoRoute(path: 'tab2Nested2', page: Tab2Nested2Page),
+      PageInfo(path: 'tab2Nested1', page: Tab2Nested1Page, initial: true),
+      PageInfo(path: 'tab2Nested2', page: Tab2Nested2Page),
     ],
   ),
-  AutoRoute(
+  PageInfo(
     path: 'tab3',
     name: 'Tab3Route',
     page: EmptyRouterPage,
     maintainState: false,
     children: [
-      AutoRoute(path: 'tab3Nested1', page: Tab3Nested1Page, initial: true),
-      AutoRoute(path: 'tab3Nested2', page: Tab3Nested2Page),
+      PageInfo(path: 'tab3Nested1', page: Tab3Nested1Page, initial: true),
+      PageInfo(path: 'tab3Nested2', page: Tab3Nested2Page),
     ],
   ),
 ];

@@ -5,21 +5,21 @@ import 'package:path/path.dart' as p;
 import '../../auto_route.dart';
 
 class RouteCollection {
-  final Map<String, RouteConfig> _routesMap;
+  final Map<String, AutoRouteConfig> _routesMap;
 
   RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
 
-  factory RouteCollection.from(List<RouteConfig> routes) {
-    final routesMap = <String, RouteConfig>{};
+  factory RouteCollection.from(List<AutoRouteConfig> routes) {
+    final routesMap = <String, AutoRouteConfig>{};
     for (var r in routes) {
       routesMap[r.name] = r;
     }
     return RouteCollection(routesMap);
   }
 
-  Iterable<RouteConfig> get routes => _routesMap.values;
+  Iterable<AutoRouteConfig> get routes => _routesMap.values;
 
-  RouteConfig? operator [](String key) => _routesMap[key];
+  AutoRouteConfig? operator [](String key) => _routesMap[key];
 
   bool containsKey(String key) => _routesMap.containsKey(key);
 
@@ -28,8 +28,8 @@ class RouteCollection {
     return this[key]!.children!;
   }
 
-  List<RouteConfig> findPathTo(String routeName) {
-    final track = <RouteConfig>[];
+  List<AutoRouteConfig> findPathTo(String routeName) {
+    final track = <AutoRouteConfig>[];
     for (final route in routes) {
       if (_findPath(route, routeName, track)) {
         break;
@@ -38,14 +38,14 @@ class RouteCollection {
     return track;
   }
 
-  bool _findPath(RouteConfig node, String routeName, List<RouteConfig> track) {
+  bool _findPath(AutoRouteConfig node, String routeName, List<AutoRouteConfig> track) {
     if (node.name == routeName) {
       track.add(node);
       return true;
     }
 
     if (node.hasSubTree) {
-      for (RouteConfig child in node.children!.routes) {
+      for (AutoRouteConfig child in node.children!.routes) {
         if (_findPath(child, routeName, track)) {
           track.insert(0, node);
           return true;
@@ -171,7 +171,7 @@ class RouteMatcher {
 
   List<String> _split(String path) => p.split(path);
 
-  RouteMatch? matchByPath(Uri url, RouteConfig config,
+  RouteMatch? matchByPath(Uri url, AutoRouteConfig config,
       {String? redirectedFrom}) {
     var parts = _split(config.path);
     var segments = _split(url.path);
@@ -216,6 +216,7 @@ class RouteMatcher {
       pathParams: Parameters(pathParams),
       queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
       fragment: url.fragment,
+      type: config.type,
     );
   }
 
@@ -267,6 +268,7 @@ class RouteMatcher {
       children: childMatches,
       pathParams: Parameters(route.rawPathParams),
       queryParams: Parameters(route.rawQueryParams),
+      type: config.type,
     );
   }
 

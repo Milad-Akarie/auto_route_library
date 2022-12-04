@@ -38,16 +38,16 @@ class _$AppRouter extends RootStackRouter {
   };
 
   @override
-  List<RouteConfig> get routes => [
-        RouteConfig(
+  List<AutoRouteConfig> get routes => [
+        AutoRouteConfig(
           FirstRoute.name,
           path: '/',
         ),
-        RouteConfig(
+        AutoRouteConfig(
           SecondRoute.name,
           path: '/second-page',
         ),
-        RouteConfig(
+        AutoRouteConfig(
           ThirdRoute.name,
           path: '/third-page',
         ),

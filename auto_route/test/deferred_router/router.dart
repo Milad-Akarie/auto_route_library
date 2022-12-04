@@ -7,10 +7,10 @@ import '../test_page.dart';
   replaceInRouteName: 'Page,Route',
   deferredLoading: true,
   routes: [
-    AutoRoute(page: FirstPage, initial: true),
-    AutoRoute(name: 'SecondRoute', page: EmptyRouterPage, children: [
-      AutoRoute(page: SecondNested1Page, initial: true),
-      AutoRoute(page: SecondNested2Page),
+    PageInfo(page: FirstPage, initial: true),
+    PageInfo(name: 'SecondRoute', page: EmptyRouterPage, children: [
+      PageInfo(page: SecondNested1Page, initial: true),
+      PageInfo(page: SecondNested2Page),
     ]),
   ],
 )

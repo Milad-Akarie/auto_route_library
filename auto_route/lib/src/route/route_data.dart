@@ -4,7 +4,7 @@ class RouteData {
   RouteMatch _match;
   RouteData? _parent;
   final RoutingController router;
-
+  final RouteType type;
   LocalKey get key => _match.key;
 
   RouteData({
@@ -12,6 +12,7 @@ class RouteData {
     required this.router,
     RouteData? parent,
     required this.pendingChildren,
+    required this.type,
   })  : _match = route,
         _parent = parent;
 

@@ -44,34 +44,34 @@ class _$AppRouter extends RootStackRouter {
   };
 
   @override
-  List<RouteConfig> get routes => [
-        RouteConfig(
+  List<AutoRouteConfig> get routes => [
+        AutoRouteConfig(
           '/#redirect',
           path: '/',
           redirectTo: '/first',
           fullMatch: true,
         ),
-        RouteConfig(
+        AutoRouteConfig(
           FirstRoute.name,
           path: '/first',
         ),
-        RouteConfig(
+        AutoRouteConfig(
           SecondRoute.name,
           path: '/second',
           children: [
-            RouteConfig(
+            AutoRouteConfig(
               '#redirect',
               path: '',
               parent: SecondRoute.name,
               redirectTo: 'nested1',
               fullMatch: true,
             ),
-            RouteConfig(
+            AutoRouteConfig(
               SecondNested1Route.name,
               path: 'nested1',
               parent: SecondRoute.name,
             ),
-            RouteConfig(
+            AutoRouteConfig(
               SecondNested2Route.name,
               path: 'nested2',
               parent: SecondRoute.name,

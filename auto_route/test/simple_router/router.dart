@@ -8,9 +8,9 @@ part 'router.gr.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: [
-    AutoRoute(page: FirstPage, initial: true),
-    AutoRoute(page: SecondPage),
-    AutoRoute(page: ThirdPage),
+    PageInfo(page: FirstPage, initial: true),
+    PageInfo(page: SecondPage),
+    PageInfo(page: ThirdPage),
   ],
 )
 class AppRouter extends _$AppRouter {}

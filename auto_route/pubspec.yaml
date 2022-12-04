@@ -25,3 +25,5 @@ dev_dependencies:
 dependency_overrides:
   auto_route_generator:
     path: ../auto_route_generator
+
+

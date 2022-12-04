@@ -3,12 +3,12 @@ import 'package:example/mobile/screens/profile/my_books_page.dart';
 import 'package:auto_route/empty_router_widgets.dart';
 import 'profile_page.dart';
 
-const profileTab = AutoRoute(
+const profileTab = PageInfo(
   path: 'profile',
   name: 'ProfileTab',
   page: EmptyRouterPage,
   children: [
-    AutoRoute(path: '', page: ProfilePage),
-    AutoRoute(path: 'my-books', page: MyBooksPage),
+    PageInfo(path: '', page: ProfilePage),
+    PageInfo(path: 'my-books', page: MyBooksPage),
   ],
 );

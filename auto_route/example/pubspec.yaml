@@ -28,5 +28,6 @@ dev_dependencies:
 dependency_overrides:
   auto_route:
     path: ../../auto_route
+
 flutter:
   uses-material-design: true

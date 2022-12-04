@@ -19,6 +19,7 @@ class RouteMatch<T> {
   final LocalKey key;
   final bool isBranch;
   final Map<String, dynamic> meta;
+  final RouteType? type;
 
   const RouteMatch({
     required this.name,
@@ -35,6 +36,7 @@ class RouteMatch<T> {
     this.fragment = '',
     this.redirectedFrom,
     this.meta = const {},
+     this.type,
   });
 
   bool get hasChildren => children?.isNotEmpty == true;
@@ -68,6 +70,7 @@ class RouteMatch<T> {
     LocalKey? key,
     List<AutoRouteGuard>? guards,
     Map<String, dynamic>? meta,
+    RouteType? type,
   }) {
     return RouteMatch(
       path: path ?? this.path,
@@ -83,6 +86,7 @@ class RouteMatch<T> {
       guards: guards ?? this.guards,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
       meta: meta ?? this.meta,
+      type: type ?? this.type,
     );
   }
 

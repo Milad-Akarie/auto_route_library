@@ -69,65 +69,65 @@ class _$AppRouter extends RootStackRouter {
   };
 
   @override
-  List<RouteConfig> get routes => [
-        RouteConfig(
+  List<AutoRouteConfig> get routes => [
+        AutoRouteConfig(
           TabsHostRoute.name,
           path: '/',
           children: [
-            RouteConfig(
+            AutoRouteConfig(
               '#redirect',
               path: '',
               parent: TabsHostRoute.name,
               redirectTo: 'tab1',
               fullMatch: true,
             ),
-            RouteConfig(
+            AutoRouteConfig(
               Tab1Route.name,
               path: 'tab1',
               parent: TabsHostRoute.name,
             ),
-            RouteConfig(
+            AutoRouteConfig(
               Tab2Route.name,
               path: 'tab2',
               parent: TabsHostRoute.name,
               children: [
-                RouteConfig(
+                AutoRouteConfig(
                   '#redirect',
                   path: '',
                   parent: Tab2Route.name,
                   redirectTo: 'tab2Nested1',
                   fullMatch: true,
                 ),
-                RouteConfig(
+                AutoRouteConfig(
                   Tab2Nested1Route.name,
                   path: 'tab2Nested1',
                   parent: Tab2Route.name,
                 ),
-                RouteConfig(
+                AutoRouteConfig(
                   Tab2Nested2Route.name,
                   path: 'tab2Nested2',
                   parent: Tab2Route.name,
                 ),
               ],
             ),
-            RouteConfig(
+            AutoRouteConfig(
               Tab3Route.name,
               path: 'tab3',
               parent: TabsHostRoute.name,
               children: [
-                RouteConfig(
+                AutoRouteConfig(
                   '#redirect',
                   path: '',
                   parent: Tab3Route.name,
                   redirectTo: 'tab3Nested1',
                   fullMatch: true,
                 ),
-                RouteConfig(
+                AutoRouteConfig(
                   Tab3Nested1Route.name,
                   path: 'tab3Nested1',
                   parent: Tab3Route.name,
                 ),
-                RouteConfig(
+                AutoRouteConfig(
                   Tab3Nested2Route.name,
                   path: 'tab3Nested2',
                   parent: Tab3Route.name,
@@ -136,7 +136,7 @@ class _$AppRouter extends RootStackRouter {
             ),
           ],
         ),
-        RouteConfig(
+        AutoRouteConfig(
           '*#redirect',
           path: '*',
           redirectTo: '/',

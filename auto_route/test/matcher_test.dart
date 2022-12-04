@@ -9,10 +9,10 @@ void main() {
       expect(() => RouteCollection({}), throwsAssertionError);
     });
 
-    final routeA = RouteConfig('A', path: '/');
-    final routeB = RouteConfig('B', path: '/b');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final routeC = RouteConfig(
+    final routeA = AutoRouteConfig('A', path: '/');
+    final routeB = AutoRouteConfig('B', path: '/b');
+    final subRouteC1 = AutoRouteConfig('C1', path: 'c1');
+    final routeC = AutoRouteConfig(
       'C',
       path: '/c',
       children: [subRouteC1],
@@ -53,10 +53,10 @@ void main() {
   });
 
   group('Testing matching with include prefix matches off', () {
-    final routeA = RouteConfig('A', path: '/');
-    final routeB = RouteConfig('B', path: '/b');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final routeC = RouteConfig(
+    final routeA = AutoRouteConfig('A', path: '/');
+    final routeB = AutoRouteConfig('B', path: '/b');
+    final subRouteC1 = AutoRouteConfig('C1', path: 'c1');
+    final routeC = AutoRouteConfig(
       'C',
       path: '/c',
       children: [subRouteC1],
@@ -115,18 +115,18 @@ void main() {
   });
 
   group('Testing matching with include prefix matches on', () {
-    final routeA = RouteConfig('A', path: '/');
-    final routeB = RouteConfig('B', path: '/b');
-    final routeB1 = RouteConfig('B1', path: '/b/b1');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final subRouteD0 = RouteConfig('D0', path: '');
-    final subRouteD1 = RouteConfig('D1', path: 'd1');
-    final routeD = RouteConfig(
+    final routeA = AutoRouteConfig('A', path: '/');
+    final routeB = AutoRouteConfig('B', path: '/b');
+    final routeB1 = AutoRouteConfig('B1', path: '/b/b1');
+    final subRouteC1 = AutoRouteConfig('C1', path: 'c1');
+    final subRouteD0 = AutoRouteConfig('D0', path: '');
+    final subRouteD1 = AutoRouteConfig('D1', path: 'd1');
+    final routeD = AutoRouteConfig(
       'D',
       path: '/d',
       children: [subRouteD0, subRouteD1],
     );
-    final routeC = RouteConfig(
+    final routeC = AutoRouteConfig(
       'C',
       path: '/c',
       children: [subRouteC1],
@@ -285,16 +285,16 @@ void main() {
   });
 
   group('Testing WildCard matching', () {
-    final routeA = RouteConfig('A', path: '/');
-    final routeB = RouteConfig('B', path: '/b');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final routeC = RouteConfig(
+    final routeA = AutoRouteConfig('A', path: '/');
+    final routeB = AutoRouteConfig('B', path: '/b');
+    final subRouteC1 = AutoRouteConfig('C1', path: 'c1');
+    final routeC = AutoRouteConfig(
       'C',
       path: '/c',
       children: [subRouteC1],
     );
-    final wcRoute = RouteConfig('WC', path: '*');
-    final prefixedWcRoute = RouteConfig('PWC', path: '/d/*');
+    final wcRoute = AutoRouteConfig('WC', path: '*');
+    final prefixedWcRoute = AutoRouteConfig('PWC', path: '/d/*');
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeC, prefixedWcRoute, wcRoute],
@@ -342,18 +342,18 @@ void main() {
   });
 
   group('Testing redirect routes', () {
-    final routeA = RouteConfig('A', path: '/a');
-    final routeARedirect = RouteConfig('AR', path: '/', redirectTo: '/a', fullMatch: true);
+    final routeA = AutoRouteConfig('A', path: '/a');
+    final routeARedirect = AutoRouteConfig('AR', path: '/', redirectTo: '/a', fullMatch: true);
 
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final subRouteC1Redirect = RouteConfig('C1R', path: '', redirectTo: 'c1', fullMatch: true);
+    final subRouteC1 = AutoRouteConfig('C1', path: 'c1');
+    final subRouteC1Redirect = AutoRouteConfig('C1R', path: '', redirectTo: 'c1', fullMatch: true);
 
-    final routeC = RouteConfig(
+    final routeC = AutoRouteConfig(
       'C',
       path: '/c',
       children: [subRouteC1Redirect, subRouteC1],
     );
-    final routeAWCRedirect = RouteConfig('A-WC-R', path: '*', redirectTo: '/a', fullMatch: true);
+    final routeAWCRedirect = AutoRouteConfig('A-WC-R', path: '*', redirectTo: '/a', fullMatch: true);
 
     final routeCollection = RouteCollection.from(
       [routeA, routeC, routeARedirect, routeAWCRedirect],
@@ -400,9 +400,9 @@ void main() {
     final match2 = RouteMatcher(
       RouteCollection.from(
         [
-          RouteConfig('A', path: '/a', children: [
-            RouteConfig('AR', path: 'r', redirectTo: ''),
-            RouteConfig('A1', path: ''),
+          AutoRouteConfig('A', path: '/a', children: [
+            AutoRouteConfig('AR', path: 'r', redirectTo: ''),
+            AutoRouteConfig('A1', path: ''),
           ]),
         ],
       ),
@@ -433,11 +433,11 @@ void main() {
   });
 
   group('Testing Path parameters parsing', () {
-    final routeA = RouteConfig('A', path: '/a/:id');
-    final routeB = RouteConfig('B', path: '/b/:id/n/:type');
-    final subRouteC1 = RouteConfig('C1', path: ':id');
+    final routeA = AutoRouteConfig('A', path: '/a/:id');
+    final routeB = AutoRouteConfig('B', path: '/b/:id/n/:type');
+    final subRouteC1 = AutoRouteConfig('C1', path: ':id');
 
-    final routeC = RouteConfig(
+    final routeC = AutoRouteConfig(
       'C',
       path: '/c',
       children: [subRouteC1],
@@ -504,11 +504,11 @@ void main() {
   });
 
   group('Testing query parameters parsing', () {
-    final routeA = RouteConfig('A', path: '/a');
-    final routeB = RouteConfig('B', path: '/b');
-    final routeB1 = RouteConfig('B1', path: '/b/b1');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final routeC = RouteConfig(
+    final routeA = AutoRouteConfig('A', path: '/a');
+    final routeB = AutoRouteConfig('B', path: '/b');
+    final routeB1 = AutoRouteConfig('B1', path: '/b/b1');
+    final subRouteC1 = AutoRouteConfig('C1', path: 'c1');
+    final routeC = AutoRouteConfig(
       'C',
       path: '/c',
       children: [subRouteC1],

@@ -62,24 +62,24 @@ class AppRouter extends _i3.RootStackRouter {
   };
 
   @override
-  List<_i3.RouteConfig> get routes => [
-        _i3.RouteConfig(
+  List<_i3.AutoRouteConfig> get routes => [
+        _i3.AutoRouteConfig(
           FirstRoute.name,
           path: '/',
           deferredLoading: true,
         ),
-        _i3.RouteConfig(
+        _i3.AutoRouteConfig(
           SecondRoute.name,
           path: '/empty-router-page',
           deferredLoading: true,
           children: [
-            _i3.RouteConfig(
+            _i3.AutoRouteConfig(
               SecondNested1Route.name,
               path: '',
               parent: SecondRoute.name,
               deferredLoading: true,
             ),
-            _i3.RouteConfig(
+            _i3.AutoRouteConfig(
               SecondNested2Route.name,
               path: 'second-nested2-page',
               parent: SecondRoute.name,
