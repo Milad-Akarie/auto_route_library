@@ -77,9 +77,9 @@ class TypeResolver {
     final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
     var functionName = displayName;
     Element elementToImport = function;
-    if (function.enclosingElement2 is ClassElement) {
-      functionName = '${function.enclosingElement2.displayName}.$displayName';
-      elementToImport = function.enclosingElement2;
+    if (function.enclosingElement is ClassElement) {
+      functionName = '${function.enclosingElement.displayName}.$displayName';
+      elementToImport = function.enclosingElement;
     }
     return ResolvedType(
       name: functionName,
@@ -89,7 +89,8 @@ class TypeResolver {
 
   ResolvedType resolveType(DartType type) {
     return ResolvedType(
-      name: type.element?.name ?? type.getDisplayString(withNullability: false),
+      name:
+          type.element?.name ?? type.getDisplayString(withNullability: false),
       isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
       import: resolveImport(type.element),
       typeArguments: _resolveTypeArguments(type),

@@ -19,30 +19,49 @@ class _$AppRouter extends RootStackRouter {
   final Map<String, PageFactory> pagesMap = {
     FirstRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
-          routeData: routeData, child: const FirstPage());
+        routeData: routeData,
+        child: const FirstPage(),
+      );
     },
     SecondRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
-          routeData: routeData, child: const SecondPage());
+        routeData: routeData,
+        child: const SecondPage(),
+      );
     },
     ThirdRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
-          routeData: routeData, child: const ThirdPage());
-    }
+        routeData: routeData,
+        child: const ThirdPage(),
+      );
+    },
   };
 
   @override
   List<RouteConfig> get routes => [
-        RouteConfig(FirstRoute.name, path: '/'),
-        RouteConfig(SecondRoute.name, path: '/second-page'),
-        RouteConfig(ThirdRoute.name, path: '/third-page')
+        RouteConfig(
+          FirstRoute.name,
+          path: '/',
+        ),
+        RouteConfig(
+          SecondRoute.name,
+          path: '/second-page',
+        ),
+        RouteConfig(
+          ThirdRoute.name,
+          path: '/third-page',
+        ),
       ];
 }
 
 /// generated route for
 /// [FirstPage]
 class FirstRoute extends PageRouteInfo<void> {
-  const FirstRoute() : super(FirstRoute.name, path: '/');
+  const FirstRoute()
+      : super(
+          FirstRoute.name,
+          path: '/',
+        );
 
   static const String name = 'FirstRoute';
 }
@@ -50,7 +69,11 @@ class FirstRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [SecondPage]
 class SecondRoute extends PageRouteInfo<void> {
-  const SecondRoute() : super(SecondRoute.name, path: '/second-page');
+  const SecondRoute()
+      : super(
+          SecondRoute.name,
+          path: '/second-page',
+        );
 
   static const String name = 'SecondRoute';
 }
@@ -58,7 +81,11 @@ class SecondRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [ThirdPage]
 class ThirdRoute extends PageRouteInfo<void> {
-  const ThirdRoute() : super(ThirdRoute.name, path: '/third-page');
+  const ThirdRoute()
+      : super(
+          ThirdRoute.name,
+          path: '/third-page',
+        );
 
   static const String name = 'ThirdRoute';
 }

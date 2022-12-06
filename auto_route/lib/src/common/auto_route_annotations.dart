@@ -277,6 +277,12 @@ class CupertinoRoute<T> extends AutoRoute<T> {
 
 @optionalTypeArgs
 class AdaptiveRoute<T> extends AutoRoute<T> {
+  /// passed to the title property in [CupertinoPageRoute]
+  final String? cupertinoPageTitle;
+
+  /// passed to the opaque property in [_NoAnimationPageRouteBuilder] only when kIsWeb
+  final bool opaque;
+
   const AdaptiveRoute({
     bool initial = false,
     bool fullscreenDialog = false,
@@ -289,6 +295,7 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
     required Type page,
     List<Type>? guards,
     List<AutoRoute>? children,
+    this.opaque = true,
     Map<String, dynamic> meta = const {},
     bool? deferredLoading,
   }) : super(
@@ -305,9 +312,6 @@ class AdaptiveRoute<T> extends AutoRoute<T> {
           meta: meta,
           deferredLoading: deferredLoading,
         );
-
-  /// passed to the title property in [CupertinoPageRoute]
-  final String? cupertinoPageTitle;
 }
 
 @optionalTypeArgs

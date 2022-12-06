@@ -1,5 +1,5 @@
-
-import 'package:auto_route/auto_route.dart' show RouteMatch, StackRouter, UrlState;
+import 'package:auto_route/auto_route.dart'
+    show RouteMatch, StackRouter, UrlState;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
@@ -65,9 +65,9 @@ class _HistoryEntry {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is _HistoryEntry &&
-              runtimeType == other.runtimeType &&
-              url == other.url;
+      other is _HistoryEntry &&
+          runtimeType == other.runtimeType &&
+          url == other.url;
 
   @override
   int get hashCode => url.hashCode;

@@ -41,10 +41,14 @@ class RouteMatch<T> {
 
   bool get fromRedirect => redirectedFrom != null;
 
-  bool get hasEmptyPath => path == '';
+  bool get hasEmptyPath => path.isEmpty;
 
-  List<String> get allSegments =>
-      [...segments, if (hasChildren) ...children!.last.allSegments];
+  List<String> allSegments({bool includeEmpty = false}) => [
+        if (segments.isEmpty && includeEmpty) '',
+        ...segments,
+        if (hasChildren)
+          ...children!.last.allSegments(includeEmpty: includeEmpty)
+      ];
 
   List<RouteMatch> get flattened {
     return [this, if (hasChildren) ...children!.last.flattened];

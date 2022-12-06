@@ -121,10 +121,11 @@ class UrlState {
     Map<String, dynamic> queryParams = {};
     if (lastSegment.queryParams.isNotEmpty) {
       var queries = lastSegment.queryParams.rawMap;
+
       for (var key in queries.keys) {
-        var value = queries[key]?.toString() ?? '';
-        if (value.isNotEmpty) {
-          queryParams[key] = value.toString();
+        var value = _normalizeQueryParamValue(queries[key]);
+        if (value != null) {
+          queryParams[key] = value;
         }
       }
     }
@@ -138,6 +139,22 @@ class UrlState {
       queryParameters: queryParams.isNotEmpty ? queryParams : null,
       fragment: fragment,
     );
+  }
+
+  static dynamic _normalizeQueryParamValue(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is Iterable) {
+      return value.map((el) => el?.toString()).toList();
+    }
+    if (value is! String) {
+      value = value.toString();
+    }
+    if (value.isEmpty) {
+      return null;
+    }
+    return value;
   }
 
   @override

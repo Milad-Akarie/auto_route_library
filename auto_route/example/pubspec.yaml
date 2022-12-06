@@ -13,7 +13,6 @@ dependencies:
     sdk: flutter
   provider: ^6.0.2
   url_strategy: ^0.2.0
-
   auto_route:
 
 

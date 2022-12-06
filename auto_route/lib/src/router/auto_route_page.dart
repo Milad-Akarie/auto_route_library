@@ -11,16 +11,20 @@ abstract class AutoRoutePage<T> extends Page<T> {
   final Widget _child;
   final bool fullscreenDialog;
   final bool maintainState;
+  final bool opaque;
 
   final _popCompleter = Completer<T?>();
 
   Future<T?> get popped => _popCompleter.future;
+
+  Widget get child => _child;
 
   AutoRoutePage({
     required this.routeData,
     required Widget child,
     this.fullscreenDialog = false,
     this.maintainState = true,
+    this.opaque = true,
     LocalKey? key,
   })  : _child = child is AutoRouteWrapper
             ? WrappedRoute(
@@ -161,7 +165,7 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
   String? get barrierLabel => null;
 
   @override
-  bool get opaque => true;
+  bool get opaque => _page.opaque;
 
   @override
   bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
@@ -270,11 +274,13 @@ abstract class _TitledAutoRoutePage<T> extends AutoRoutePage<T> {
     this.title,
     bool fullscreenDialog = false,
     bool maintainState = true,
+    bool opaque = true,
   }) : super(
           routeData: routeData,
           child: child,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
+          opaque: opaque,
         );
 }
 
@@ -330,12 +336,14 @@ class AdaptivePage<T> extends _TitledAutoRoutePage<T> {
     String? title,
     bool fullscreenDialog = false,
     bool maintainState = true,
+    bool opaque = true,
   }) : super(
           routeData: routeData,
           child: child,
           title: title,
           maintainState: maintainState,
           fullscreenDialog: fullscreenDialog,
+          opaque: opaque,
         );
 
   @override
@@ -352,6 +360,7 @@ typedef CustomRouteBuilder = Route<T> Function<T>(
     BuildContext context, Widget child, CustomPage<T> page);
 
 class CustomPage<T> extends AutoRoutePage<T> {
+  @override
   final bool opaque;
   final int durationInMilliseconds;
   final int reverseDurationInMilliseconds;

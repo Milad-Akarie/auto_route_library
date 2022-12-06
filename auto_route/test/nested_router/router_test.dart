@@ -18,7 +18,7 @@ void main() {
     router.push(const SecondRoute());
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
-    expect(router.urlState.url,'/second/nested1');
+    expect(router.urlState.url, '/second/nested1');
   });
 
   testWidgets(
@@ -28,7 +28,7 @@ void main() {
     router.navigate(const SecondRoute());
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
-    expect(router.urlState.url,'/second/nested1');
+    expect(router.urlState.url, '/second/nested1');
   });
 
   testWidgets(
@@ -40,7 +40,7 @@ void main() {
     router.popTop();
     await tester.pumpAndSettle();
     expectTopPage(router, FirstRoute.name);
-    expect(router.urlState.url,'/first');
+    expect(router.urlState.url, '/first');
   });
 
   testWidgets(
@@ -53,7 +53,7 @@ void main() {
     ]));
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested2Route.name);
-    expect(router.urlState.url,'/second/nested2');
+    expect(router.urlState.url, '/second/nested2');
   });
 
   testWidgets(
@@ -66,7 +66,7 @@ void main() {
     ]));
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested2Route.name);
-    expect(router.urlState.url,'/second/nested2');
+    expect(router.urlState.url, '/second/nested2');
   });
 
   testWidgets(
@@ -85,7 +85,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested2Route.name);
-    expect(router.urlState.url,'/second/nested2');
+    expect(router.urlState.url, '/second/nested2');
   });
 
   testWidgets(
@@ -95,14 +95,14 @@ void main() {
     router.push(const SecondRoute(
       children: [
         SecondNested1Route(),
-         SecondNested2Route(),
+        SecondNested2Route(),
       ],
     ));
     await tester.pumpAndSettle();
     router.popTop();
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
-    expect(router.urlState.url,'/second/nested1');
+    expect(router.urlState.url, '/second/nested1');
   });
 
   testWidgets(
@@ -112,11 +112,11 @@ void main() {
     router.push(const SecondRoute());
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 1);
-    expect(router.urlState.url,'/second/nested1');
+    expect(router.urlState.url, '/second/nested1');
     router.pop();
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 0);
-    expect(router.urlState.url,'/first');
+    expect(router.urlState.url, '/first');
   });
 
   testWidgets(
@@ -129,10 +129,10 @@ void main() {
     ]);
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 2);
-    expect(router.urlState.url,'/second/nested1');
+    expect(router.urlState.url, '/second/nested1');
     router.pop();
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 1);
-    expect(router.urlState.url,'/second/nested1');
+    expect(router.urlState.url, '/second/nested1');
   });
 }

@@ -52,6 +52,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     AutoTabsPageViewBuilder? builder,
     int homeIndex,
     bool animatePageTransition,
+    Axis scrollDirection,
     Duration duration,
     Curve curve,
     bool inheritNavigatorObservers,
@@ -66,6 +67,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     AutoTabsTabBarBuilder? builder,
     int homeIndex,
     Duration? duration,
+    Axis scrollDirection,
     Curve curve,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
@@ -389,7 +391,7 @@ class AutoTabsRouterPageView extends AutoTabsRouter {
   final bool animatePageTransition;
   final Duration duration;
   final Curve curve;
-
+  final Axis scrollDirection;
   final ScrollPhysics? physics;
   final DragStartBehavior dragStartBehavior;
 
@@ -398,6 +400,7 @@ class AutoTabsRouterPageView extends AutoTabsRouter {
     required List<PageRouteInfo> routes,
     AutoTabsPageViewBuilder? builder,
     int homeIndex = -1,
+    this.scrollDirection = Axis.horizontal,
     this.animatePageTransition = true,
     this.duration = kTabScrollDuration,
     this.curve = Curves.easeInOut,
@@ -478,6 +481,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
           return builder(
             context,
             AutoPageView(
+              scrollDirection: typedWidget.scrollDirection,
               physics: typedWidget.physics,
               dragStartBehavior: typedWidget.dragStartBehavior,
               controller: _pageController,
@@ -508,10 +512,11 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   final Curve curve;
   final ScrollPhysics? physics;
   final DragStartBehavior dragStartBehavior;
-
+  final Axis scrollDirection;
   const _AutoTabsRouterTabBar({
     Key? key,
     required List<PageRouteInfo> routes,
+    this.scrollDirection = Axis.horizontal,
     this.builder,
     int homeIndex = -1,
     this.duration,
@@ -544,10 +549,10 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
     _updateTabController();
     _didInitTabRoute(_controller!.activeIndex);
     _controller!.addListener(() {
-      if (_controller!.activeIndex != _tabController.index) {
+      if (_controller!.activeIndex != _controller!.previousIndex) {
         _didChangeTabRoute(
           _controller!.activeIndex,
-          _tabController.index,
+          _controller!.previousIndex ?? 0,
         );
         _tabController.animateTo(
           _controller!.activeIndex,
@@ -601,6 +606,7 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
           return builder(
             context,
             AutoTabView(
+              scrollDirection: typedWidget.scrollDirection,
               physics: typedWidget.physics,
               dragStartBehavior: typedWidget.dragStartBehavior,
               controller: _tabController,

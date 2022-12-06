@@ -1,5 +1,4 @@
 /// Most of the code here is taking from flutter's [TabView]
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -11,10 +10,11 @@ class AutoPageView extends StatefulWidget {
     this.physics,
     required this.router,
     this.dragStartBehavior = DragStartBehavior.start,
+    this.scrollDirection = Axis.horizontal,
   }) : super(key: key);
 
   final PageController controller;
-
+  final Axis scrollDirection;
   final TabsRouter router;
 
   /// How the page view should respond to user input.
@@ -136,6 +136,7 @@ class AutoPageViewState extends State<AutoPageView> {
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
       child: PageView(
+        scrollDirection: widget.scrollDirection,
         dragStartBehavior: widget.dragStartBehavior,
         controller: _controller,
         physics: widget.physics == null

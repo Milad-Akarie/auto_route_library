@@ -12,6 +12,11 @@ typedef BottomNavigationBuilder = Widget Function(
   TabsRouter tabsRouter,
 );
 
+typedef FloatingActionButtonBuilder = Widget? Function(
+  BuildContext context,
+  TabsRouter tabsRouter,
+);
+
 class AutoTabsScaffold extends StatelessWidget {
   final AnimatedIndexedStackBuilder? builder;
   final List<PageRouteInfo> routes;
@@ -22,6 +27,7 @@ class AutoTabsScaffold extends StatelessWidget {
   final NavigatorObserversBuilder navigatorObservers;
   final bool inheritNavigatorObservers;
   final Widget? floatingActionButton;
+  final FloatingActionButtonBuilder? floatingActionButtonBuilder;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
   final FloatingActionButtonAnimator? floatingActionButtonAnimator;
   final List<Widget>? persistentFooterButtons;
@@ -57,6 +63,7 @@ class AutoTabsScaffold extends StatelessWidget {
     this.navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.floatingActionButton,
+    this.floatingActionButtonBuilder,
     this.floatingActionButtonLocation,
     this.floatingActionButtonAnimator,
     this.persistentFooterButtons,
@@ -108,7 +115,8 @@ class AutoTabsScaffold extends StatelessWidget {
           onDrawerChanged: onDrawerChanged,
           endDrawerEnableOpenDragGesture: endDrawerEnableOpenDragGesture,
           onEndDrawerChanged: onEndDrawerChanged,
-          floatingActionButton: floatingActionButton,
+          floatingActionButton: floatingActionButton ??
+              floatingActionButtonBuilder?.call(context, tabsRouter),
           floatingActionButtonAnimator: floatingActionButtonAnimator,
           floatingActionButtonLocation: floatingActionButtonLocation,
           bottomSheet: bottomSheet,

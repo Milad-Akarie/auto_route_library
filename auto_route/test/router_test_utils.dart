@@ -6,12 +6,17 @@ Future<void> pumpRouterApp(
   WidgetTester tester,
   RootStackRouter router, {
   String? initialLink,
+  NavigatorObserversBuilder observers =
+      AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {
   return tester
       .pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.defaultRouteParser(),
-          routerDelegate: router.delegate(initialDeepLink: initialLink),
+          routerDelegate: router.delegate(
+            initialDeepLink: initialLink,
+            navigatorObservers: observers,
+          ),
         ),
       )
       .then((_) => tester.pumpAndSettle());
