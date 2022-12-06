@@ -29,26 +29,26 @@ class _UserDataCollectorPageState extends State<UserDataCollectorPage> {
     return Scaffold(
       body: AutoRouter.declarative(routes: (handler) {
         return [
-          if (settingsState.userData.favoriteBook == null)
-            FavoriteBookFieldRoute(
-              message: 'What is your favorite book?',
-              willPopMessage: 'Please enter a book name!',
-              onNext: (text) {
-                settingsState.userData =
-                    settingsState.userData.copyWith(favoriteBook: text);
-              },
-            ),
-          if (settingsState.userData.name == null)
-            NameFieldRoute(
-              message: 'What is your name?',
-              willPopMessage: 'Please enter a name!',
-              onNext: (text) {
-                settingsState.userData =
-                    settingsState.userData.copyWith(name: text);
-              },
-            ),
-          if (settingsState.userData.isDone)
-            UserDataRoute(onResult: widget.onResult),
+          // if (settingsState.userData.favoriteBook == null)
+          //   FavoriteBookFieldRoute(
+          //     message: 'What is your favorite book?',
+          //     willPopMessage: 'Please enter a book name!',
+          //     onNext: (text) {
+          //       settingsState.userData =
+          //           settingsState.userData.copyWith(favoriteBook: text);
+          //     },
+          //   ),
+          // if (settingsState.userData.name == null)
+          //   NameFieldRoute(
+          //     message: 'What is your name?',
+          //     willPopMessage: 'Please enter a name!',
+          //     onNext: (text) {
+          //       settingsState.userData =
+          //           settingsState.userData.copyWith(name: text);
+          //     },
+          //   ),
+          // if (settingsState.userData.isDone)
+          //   UserDataRoute(onResult: widget.onResult),
         ];
       }, onPopRoute: (route, results) {
         // reset the state based on popped route

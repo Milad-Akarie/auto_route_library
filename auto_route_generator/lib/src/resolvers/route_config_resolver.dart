@@ -20,16 +20,16 @@ class RouteConfigResolver {
 
   RouteConfigResolver(this._routerConfig, this._typeResolver);
 
-  RouteConfig resolve(AnnotatedElement annotatedElement, ConstantReader routePage) {
+  RouteConfig resolve(Element element, ConstantReader routePage) {
     var path = routePage.peek('path')?.stringValue;
     var isDeferred = routePage.peek('deferredLoading')?.boolValue ?? _routerConfig.deferredLoading;
     throwIf(
-      annotatedElement.element is! ClassElement,
-      '${annotatedElement.element.getDisplayString(withNullability: false)} is not a class element',
-      element: annotatedElement.element,
+      element is! ClassElement,
+      '${element.getDisplayString(withNullability: false)} is not a class element',
+      element: element,
     );
 
-    final classElement = annotatedElement.element as ClassElement;
+    final classElement = element as ClassElement;
     final page = classElement.thisType;
     final hasWrappedRoute =
         classElement.allSupertypes.any((e) => e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');

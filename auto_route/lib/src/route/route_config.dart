@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 
 import '../matcher/route_matcher.dart';
 
-class AutoRouteConfig {
+class AutoRouteEntry {
   final String name;
   final String path;
   final bool fullMatch;
@@ -13,7 +13,7 @@ class AutoRouteConfig {
   final Map<String, dynamic> meta;
   final RouteType? type;
 
-  AutoRouteConfig(
+  AutoRouteEntry(
     this.name, {
     required this.path,
     this.usesPathAsKey = false,
@@ -22,7 +22,7 @@ class AutoRouteConfig {
     this.redirectTo,
     this.type,
     this.meta = const {},
-    List<AutoRouteConfig>? children,
+    List<AutoRouteEntry>? children,
   }) : _children = children != null ? RouteCollection.from(children) : null;
 
   bool get hasSubTree => _children != null;
@@ -37,14 +37,14 @@ class AutoRouteConfig {
   }
 }
 
-class RedirectRoute extends AutoRouteConfig {
+class RedirectRoute extends AutoRouteEntry {
   RedirectRoute({
     required super.path,
     required String redirectTo,
   }) : super('Redirect#$path',fullMatch: true,redirectTo: redirectTo);
 }
 
-class AutoRoute extends AutoRouteConfig {
+class AutoRoute extends AutoRouteEntry {
   final PageInfo page;
   final bool fullscreenDialog;
   final bool maintainState;

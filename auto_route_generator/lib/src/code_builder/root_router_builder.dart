@@ -6,37 +6,38 @@ import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
-
-Class buildRouterConfig(RouterConfig router,
-        List<RouteConfig> routes) =>
-    Class((b) => b
-      ..name = router.routerClassName
-      ..extend = refer('RootStackRouter', autoRouteImport)
-      ..fields.addAll([
-        buildPagesMap(routes, router.deferredLoading)
-      ])
-      ..constructors.add(
-        Constructor((b) => b
-          ..optionalParameters.addAll([
-            Parameter(
+Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
+      (b) => b
+        ..name = '\$${router.routerClassName}'
+        ..abstract = true
+        ..extend = refer('RootStackRouter', autoRouteImport)
+        ..fields.addAll([buildPagesMap(routes, router.deferredLoading)])
+        ..constructors.addAll([
+            Constructor(
               (b) => b
-                ..name = 'navigatorKey'
-                ..type = TypeReference(
-                  (b) => b
-                    ..url = materialImport
-                    ..symbol = 'GlobalKey'
-                    ..isNullable = true
-                    ..types.add(
-                      refer('NavigatorState', materialImport),
-                    ),
+                ..optionalParameters.add(
+                  Parameter(
+                    (b) => b
+                      ..name = 'navigatorKey'
+                      ..type = TypeReference(
+                        (b) => b
+                          ..url = materialImport
+                          ..symbol = 'GlobalKey'
+                          ..isNullable = true
+                          ..types.add(
+                            refer('NavigatorState', materialImport),
+                          ),
+                      ),
+                  ),
+                )
+                ..initializers.add(
+                  refer('super').call([
+                    refer('navigatorKey'),
+                  ]).code,
                 ),
             ),
-          ])
-          ..initializers.add(refer('super').call([
-            refer('navigatorKey'),
-          ]).code)),
-        // ),
-      ));
+        ]),
+    );
 
 Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
   return Field((b) => b
@@ -52,9 +53,7 @@ Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
         ]),
     )
     ..assignment = literalMap(Map.fromEntries(
-      routes
-          .distinctBy((e) => e.routeName)
-          .map(
+      routes.distinctBy((e) => e.routeName).map(
             (r) => MapEntry(
               refer(r.routeName).property('name'),
               buildMethod(r, deferredLoading),
@@ -64,11 +63,8 @@ Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
 }
 
 Spec buildMethod(RouteConfig r, bool deferredLoading) {
-  final useConsConstructor =
-      r.hasConstConstructor && !(r.deferredLoading ?? deferredLoading);
-  var constructedPage = useConsConstructor
-      ? r.pageType!.refer.constInstance([])
-      : getPageInstance(r);
+  final useConsConstructor = r.hasConstConstructor && !(r.deferredLoading ?? deferredLoading);
+  var constructedPage = useConsConstructor ? r.pageType!.refer.constInstance([]) : getPageInstance(r);
 
   if (r.hasWrappedRoute == true) {
     constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
@@ -87,19 +83,11 @@ Spec buildMethod(RouteConfig r, bool deferredLoading) {
         Parameter((b) => b.name = 'routeData'),
       )
       ..body = Block((b) => b.statements.addAll([
-            if ((!r.hasUnparsableRequiredArgs ||
-                    r.parameters.any((p) => p.isInheritedPathParam)) &&
+            if ((!r.hasUnparsableRequiredArgs || r.parameters.any((p) => p.isInheritedPathParam)) &&
                 r.parameters.any((p) => p.isPathParam))
-              refer('routeData')
-                  .property('inheritedPathParams')
-                  .assignFinal('pathParams')
-                  .statement,
-            if (!r.hasUnparsableRequiredArgs &&
-                r.parameters.any((p) => p.isQueryParam))
-              refer('routeData')
-                  .property('queryParams')
-                  .assignFinal('queryParams')
-                  .statement,
+              refer('routeData').property('inheritedPathParams').assignFinal('pathParams').statement,
+            if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
+              refer('routeData').property('queryParams').assignFinal('queryParams').statement,
             if (r.parameters.where((p) => !p.isInheritedPathParam).isNotEmpty)
               refer('routeData')
                   .property('argsAs')
@@ -109,15 +97,12 @@ Spec buildMethod(RouteConfig r, bool deferredLoading) {
                         (b) => b
                           ..lambda = true
                           ..body = r.pathQueryParams.isEmpty
-                              ? refer('${r.routeName}Args')
-                                  .constInstance([]).code
+                              ? refer('${r.routeName}Args').constInstance([]).code
                               : refer('${r.routeName}Args').newInstance(
                                   [],
                                   Map.fromEntries(
                                     r.parameters
-                                        .where((p) =>
-                                            (p.isPathParam || p.isQueryParam) &&
-                                            !p.isInheritedPathParam)
+                                        .where((p) => (p.isPathParam || p.isQueryParam) && !p.isInheritedPathParam)
                                         .map(
                                           (p) => MapEntry(
                                             p.name,
@@ -165,16 +150,12 @@ Expression getDeferredBuilder(RouteConfig r, Expression page) {
 Expression getPageInstance(RouteConfig r) {
   return r.pageType!.refer.newInstance(
     r.positionalParams.map((p) {
-      return p.isInheritedPathParam
-          ? getUrlParamAssignment(p)
-          : refer('args').property(p.name);
+      return p.isInheritedPathParam ? getUrlParamAssignment(p) : refer('args').property(p.name);
     }),
     Map.fromEntries(r.namedParams.map(
       (p) => MapEntry(
         p.name,
-        p.isInheritedPathParam
-            ? getUrlParamAssignment(p)
-            : refer('args').property(p.name),
+        p.isInheritedPathParam ? getUrlParamAssignment(p) : refer('args').property(p.name),
       ),
     )),
   );

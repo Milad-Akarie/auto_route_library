@@ -1,9 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/db.dart';
 
+@RoutePage(path: 'path')
 class BookListScreen extends StatefulWidget {
   @override
   _BookListScreenState createState() => _BookListScreenState();
@@ -31,7 +31,7 @@ class _BookListScreenState extends State<BookListScreen>
                             title: Text(book.name),
                             subtitle: Text(book.genre),
                             onTap: () {
-                              context.pushRoute(BookDetailsRoute(id: book.id));
+                              // context.pushRoute(BookDetailsRoute(id: book.id));
                             },
                           ),
                         ),

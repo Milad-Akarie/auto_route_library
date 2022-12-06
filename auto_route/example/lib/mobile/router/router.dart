@@ -1,15 +1,13 @@
 import 'package:auto_route/auto_route.dart';
-import '../screens/home_page.dart';
-import '../screens/login_page.dart';
-import '../screens/settings.dart';
+import 'package:example/mobile/router/router.gr.dart';
 
-@AutoRouterAnnotation(
-  replaceInRouteName: 'Page|Screen,Route',
-)
-class $RootRouter extends RootStackRouter{
-
+@AutoRouterAnnotation(replaceInRouteName: 'Page|Screen,Route')
+class RootRouter extends $RootRouter {
   @override
-  List<AutoRouteConfig> get routes => [
+  final List<AutoRouteEntry> routes = [
+    AutoRoute(page: HomeRoute.page),
+    AutoRoute(page: BookListRoute.page),
+
     // AutoRoute(
     //
     //   page: HomePage,
@@ -45,5 +43,4 @@ class $RootRouter extends RootStackRouter{
     // AutoRoute(page: LoginPage, path: '/login'),
     // RedirectRoute(path: '*', redirectTo: '/'),
   ];
-
 }

@@ -15,22 +15,23 @@ class RouterConfigResolver {
     ClassElement clazz, {
     bool usesPartBuilder = false,
   }) {
-    /// ensure router config classes are prefixed with $
-    /// to use the stripped name for the generated class
-    throwIf(
-      !usesPartBuilder && !clazz.displayName.startsWith(r'$'),
-      'Router class name must be prefixed with \$',
-      element: clazz,
-    );
+    // /// ensure router config classes are prefixed with $
+    // /// to use the stripped name for the generated class
+    // throwIf(
+    //   !usesPartBuilder && !clazz.displayName.startsWith(r'$'),
+    //   'Router class name must be prefixed with \$',
+    //   element: clazz,
+    // );
 
     final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
     var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
 
     return RouterConfig(
-      routerClassName: usesPartBuilder ? '_\$${clazz.displayName}' : clazz.displayName.substring(1),
+      routerClassName: clazz.displayName,
       replaceInRouteName: replaceInRouteName,
       deferredLoading: deferredLoading,
       usesPartBuilder: usesPartBuilder,
+      import: clazz.source.uri.toString(),
     );
   }
 }

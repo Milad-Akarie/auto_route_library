@@ -25,11 +25,6 @@ class AutoRouterGenerator extends GeneratorForAnnotation<AutoRouterAnnotation> {
     final clazz = element as ClassElement;
     final usesPartBuilder = _hasPartDirective(clazz);
 
-    Uri? targetFileUri;
-    if (annotation.peek('preferRelativeImports')?.boolValue != false) {
-      targetFileUri = element.source.uri;
-    }
-
     final router = RouterConfigResolver().resolve(
       annotation,
       clazz,

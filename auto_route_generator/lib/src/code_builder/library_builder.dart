@@ -22,20 +22,18 @@ TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeRef
   ..types.add(reference));
 
 String generateLibrary(
-  RouterConfig config, {
-  bool usesPartBuilder = false,
-  bool deferredLoading = false,
+  RouterConfig router, {
   required List<RouteConfig> routes,
 }) {
   final fileName = '';
 
   throwIf(
-    usesPartBuilder && deferredLoading,
+    router.usesPartBuilder && router.deferredLoading,
     'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
   );
 
   final emitter = DartEmitter(
-    allocator: usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, deferredLoading),
+    allocator: router.usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, router.deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
@@ -43,7 +41,7 @@ String generateLibrary(
 
   final deferredRoutes = routes.where((r) => r.deferredLoading == true);
   throwIf(
-    usesPartBuilder && deferredRoutes.isNotEmpty,
+    router.usesPartBuilder && deferredRoutes.isNotEmpty,
     'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports! ${deferredRoutes.map((e) => e.name)}',
   );
 
@@ -67,13 +65,13 @@ String generateLibrary(
   final library = Library(
     (b) => b
       ..directives.addAll([
-        if (usesPartBuilder) Directive.partOf(fileName),
+        if (router.usesPartBuilder) Directive.partOf(fileName),
       ])
       ..body.addAll([
-        buildRouterConfig(config, routes),
+        buildRouterConfig(router, routes),
         ...routes
             .distinctBy((e) => e.routeName)
-            .map((r) => buildRouteInfoAndArgs(r, config, emitter))
+            .map((r) => buildRouteInfoAndArgs(r, router, emitter))
             .reduce((acc, a) => acc..addAll(a)),
       ]),
   );

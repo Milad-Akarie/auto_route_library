@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final authService = AuthService();
 
-  final _rootRouter = RootRouter();
+  // final _rootRouter = RootRouter();
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +26,11 @@ class _MyAppState extends State<MyApp> {
           TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
         }),
       ),
-      routerDelegate: _rootRouter.delegate(
-        navigatorObservers: () => [AutoRouteObserver()],
-      ),
-      // routeInformationProvider: _rootRouter.routeInfoProvider(),
-      routeInformationParser: _rootRouter.defaultRouteParser(),
+      // routerDelegate: _rootRouter.delegate(
+      //   navigatorObservers: () => [AutoRouteObserver()],
+      // ),
+      // // routeInformationProvider: _rootRouter.routeInfoProvider(),
+      // routeInformationParser: _rootRouter.defaultRouteParser(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => authService,

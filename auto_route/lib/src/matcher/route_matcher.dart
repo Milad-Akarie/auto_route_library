@@ -5,21 +5,21 @@ import 'package:path/path.dart' as p;
 import '../../auto_route.dart';
 
 class RouteCollection {
-  final Map<String, AutoRouteConfig> _routesMap;
+  final Map<String, AutoRouteEntry> _routesMap;
 
   RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
 
-  factory RouteCollection.from(List<AutoRouteConfig> routes) {
-    final routesMap = <String, AutoRouteConfig>{};
+  factory RouteCollection.from(List<AutoRouteEntry> routes) {
+    final routesMap = <String, AutoRouteEntry>{};
     for (var r in routes) {
       routesMap[r.name] = r;
     }
     return RouteCollection(routesMap);
   }
 
-  Iterable<AutoRouteConfig> get routes => _routesMap.values;
+  Iterable<AutoRouteEntry> get routes => _routesMap.values;
 
-  AutoRouteConfig? operator [](String key) => _routesMap[key];
+  AutoRouteEntry? operator [](String key) => _routesMap[key];
 
   bool containsKey(String key) => _routesMap.containsKey(key);
 
@@ -28,8 +28,8 @@ class RouteCollection {
     return this[key]!.children!;
   }
 
-  List<AutoRouteConfig> findPathTo(String routeName) {
-    final track = <AutoRouteConfig>[];
+  List<AutoRouteEntry> findPathTo(String routeName) {
+    final track = <AutoRouteEntry>[];
     for (final route in routes) {
       if (_findPath(route, routeName, track)) {
         break;
@@ -38,14 +38,14 @@ class RouteCollection {
     return track;
   }
 
-  bool _findPath(AutoRouteConfig node, String routeName, List<AutoRouteConfig> track) {
+  bool _findPath(AutoRouteEntry node, String routeName, List<AutoRouteEntry> track) {
     if (node.name == routeName) {
       track.add(node);
       return true;
     }
 
     if (node.hasSubTree) {
-      for (AutoRouteConfig child in node.children!.routes) {
+      for (AutoRouteEntry child in node.children!.routes) {
         if (_findPath(child, routeName, track)) {
           track.insert(0, node);
           return true;
@@ -171,7 +171,7 @@ class RouteMatcher {
 
   List<String> _split(String path) => p.split(path);
 
-  RouteMatch? matchByPath(Uri url, AutoRouteConfig config,
+  RouteMatch? matchByPath(Uri url, AutoRouteEntry config,
       {String? redirectedFrom}) {
     var parts = _split(config.path);
     var segments = _split(url.path);

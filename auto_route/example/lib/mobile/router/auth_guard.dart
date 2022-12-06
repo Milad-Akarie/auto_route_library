@@ -11,16 +11,16 @@ class AuthGuard extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (!isAuthenticated) {
       // ignore: unawaited_futures
-      router.pushAndPopUntil(
-        LoginRoute(onLoginResult: (_) {
-          isAuthenticated = true;
-          // we can't pop the bottom page in the navigator's stack
-          // so we just remove it from our local stack
-          resolver.next();
-          router.removeLast();
-        }),
-        predicate: (r) => true,
-      );
+      // router.pushAndPopUntil(
+      //   LoginRoute(onLoginResult: (_) {
+      //     isAuthenticated = true;
+      //     // we can't pop the bottom page in the navigator's stack
+      //     // so we just remove it from our local stack
+      //     resolver.next();
+      //     router.removeLast();
+      //   }),
+      //   predicate: (r) => true,
+      // );
     } else {
       resolver.next(true);
     }

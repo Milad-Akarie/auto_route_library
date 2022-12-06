@@ -34,20 +34,20 @@ class _SettingsPageState extends State<SettingsPage>
                 setState(() {
                   queryUpdateCont++;
                 });
-                context.navigateTo(SettingsTab(
-                  tab: 'Updated Path param $queryUpdateCont',
-                  query: 'updated Query $queryUpdateCont',
-                ));
+                // context.navigateTo(SettingsTab(
+                //   tab: 'Updated Path param $queryUpdateCont',
+                //   query: 'updated Query $queryUpdateCont',
+                // ));
               },
               child: Text('Update Query $queryUpdateCont'),
             ),
-            ElevatedButton(
-                onPressed: () {
-                  context.navigateTo(BooksTab(
-                    children: [BookDetailsRoute(id: 2)],
-                  ));
-                },
-                child: Text('Navigate to book details/1'))
+            // ElevatedButton(
+            //     onPressed: () {
+            //       context.navigateTo(BooksTab(
+            //         children: [BookDetailsRoute(id: 2)],
+            //       ));
+            //     },
+            //     child: Text('Navigate to book details/1'))
           ],
         ),
       ),

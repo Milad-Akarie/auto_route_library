@@ -18,6 +18,6 @@ builders:
     import: "package:auto_route_generator/builder.dart"
     builder_factories: [ "autoRouteBuilder" ]
     required_inputs: [ '.g.dart' ]
-    build_extensions: { "lib/$lib$": [ "lib/router.dart" ] }
+    build_extensions: { '.dart': [ ".gr.dart" ] }
     auto_apply: root_package
     build_to: source

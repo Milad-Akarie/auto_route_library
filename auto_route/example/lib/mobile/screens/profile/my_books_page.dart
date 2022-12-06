@@ -26,9 +26,9 @@ class MyBooksPage extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.navigateTo(
-                  SettingsTab(tab: 'newSegment', query: 'newQuery'),
-                );
+                // context.navigateTo(
+                //   SettingsTab(tab: 'newSegment', query: 'newQuery'),
+                // );
               },
               child: Text('navigate to /settings/newSegment'),
             ),

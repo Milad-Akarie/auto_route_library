@@ -7,12 +7,14 @@ class RouterConfig {
   final String? replaceInRouteName;
   final bool deferredLoading;
   final bool usesPartBuilder;
+  final String import;
 
- const RouterConfig({
+  const RouterConfig({
     required this.routerClassName,
     this.replaceInRouteName,
     this.deferredLoading = false,
     this.usesPartBuilder = false,
+    required this.import,
   });
 
   Map<String, dynamic> toJson() {
@@ -21,6 +23,7 @@ class RouterConfig {
       'replaceInRouteName': this.replaceInRouteName,
       'deferredLoading': this.deferredLoading,
       'usesPartBuilder': this.usesPartBuilder,
+      'import': this.import,
     };
   }
 
@@ -30,6 +33,7 @@ class RouterConfig {
       replaceInRouteName: map['replaceInRouteName'] as String?,
       deferredLoading: map['deferredLoading'] as bool,
       usesPartBuilder: map['usesPartBuilder'] as bool,
+      import: map['import'] as String,
     );
   }
 }
