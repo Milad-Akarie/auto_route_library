@@ -127,19 +127,22 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    if (route.settings is AutoRoutePage &&
-        previousRoute?.settings is AutoRoutePage) {
+    if (previousRoute?.settings is AutoRoutePage) {
+
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
       final List<AutoRouteAware>? previousSubscribers =
-          _listeners[previousKey]?.toList();
+      _listeners[previousKey]?.toList();
 
       if (previousSubscribers != null) {
         for (final AutoRouteAware routeAware in previousSubscribers) {
           routeAware.didPopNext();
         }
       }
-      final key = (route.settings as AutoRoutePage).routeKey;
+    }
 
+    if(route.settings is AutoRoutePage) {
+
+      final key = (route.settings as AutoRoutePage).routeKey;
       final List<AutoRouteAware>? subscribers = _listeners[key]?.toList();
 
       if (subscribers != null) {
