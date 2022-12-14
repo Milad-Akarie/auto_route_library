@@ -131,7 +131,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
       final List<AutoRouteAware>? previousSubscribers =
-      _listeners[previousKey]?.toList();
+        _listeners[previousKey]?.toList();
 
       if (previousSubscribers != null) {
         for (final AutoRouteAware routeAware in previousSubscribers) {
