@@ -7,13 +7,13 @@ abstract class NavigationFailure {
 }
 
 class RouteNotFoundFailure extends NavigationFailure {
-  final PageRouteInfo route;
+  final String path;
 
-  const RouteNotFoundFailure(this.route);
+  const RouteNotFoundFailure(this.path);
 
   @override
   String toString() {
-    return "Failed to navigate to ${route.fullPath}";
+    return "Failed to navigate to $path";
   }
 }
 

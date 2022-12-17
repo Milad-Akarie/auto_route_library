@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart' show optionalTypeArgs;
 
-class AutoRouterAnnotation {
+class AutoRouterConfig {
   /// if true relative imports will be generated
   /// when possible
   /// defaults to true
@@ -26,7 +26,7 @@ class AutoRouterAnnotation {
   /// more info https://dart.dev/guides/language/language-tour#deferred-loading
   final bool deferredLoading;
 
-  const AutoRouterAnnotation({
+  const AutoRouterConfig({
     this.preferRelativeImports = true,
     this.replaceInRouteName,
     this.deferredLoading = false,
@@ -146,31 +146,16 @@ class AutoRouterAnnotation {
 /// defaults to dynamic
 @optionalTypeArgs
 class RoutePage<T> {
-  // initial route will have an explicit name of "/"
-  // there could be only one initial route per navigator.
-  final bool initial;
-
-  /// route path name which will be assigned to the given variable name
-  /// const homeScreen = '[path]';
-  /// if null a kabab cased variable name
-  /// prefixed with '/' will be used;
-  /// homeScreen -> home-screen
-
-  final String? path;
   final String? name;
-  final bool fullMatch;
   final bool? deferredLoading;
-
   const RoutePage({
-    this.initial = false,
-    this.fullMatch = false,
-    this.path,
     this.name,
     this.deferredLoading,
   });
 }
 
-
+/// default routePage
+const routePage = RoutePage();
 
 
 class PathParam {

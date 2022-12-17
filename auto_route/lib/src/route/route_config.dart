@@ -1,10 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/utils.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../matcher/route_matcher.dart';
 
-class AutoRouteEntry {
+@immutable
+class AutoRoute {
   final String name;
-  final String path;
+  final String _path;
   final bool fullMatch;
   final RouteCollection? _children;
   final String? redirectTo;
@@ -12,18 +15,52 @@ class AutoRouteEntry {
   final bool usesPathAsKey;
   final Map<String, dynamic> meta;
   final RouteType? type;
+  final bool fullscreenDialog;
+  final bool maintainState;
 
-  AutoRouteEntry(
-    this.name, {
-    required this.path,
+  AutoRoute._({
+    required this.name,
+    String? path,
     this.usesPathAsKey = false,
     this.guards = const [],
     this.fullMatch = false,
     this.redirectTo,
     this.type,
     this.meta = const {},
-    List<AutoRouteEntry>? children,
-  }) : _children = children != null ? RouteCollection.from(children) : null;
+    this.maintainState = true,
+    this.fullscreenDialog = false,
+    List<AutoRoute>? children,
+  })  : _path = path ?? toKababCase(name),
+        _children = children != null ? RouteCollection.from(children) : null;
+
+  factory AutoRoute({
+    required Type name,
+    String? path,
+    bool usesPathAsKey = false,
+    List<AutoRouteGuard> guards = const [],
+    bool fullMatch = false,
+    String? redirectTo,
+    RouteType? type,
+    Map<String, dynamic> meta = const {},
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    List<AutoRoute>? children,
+  }) {
+    return AutoRoute._(
+      name: name.toString(),
+      path: path,
+      fullMatch: fullMatch,
+      maintainState: maintainState,
+      fullscreenDialog: fullMatch,
+      meta: meta,
+      type: type,
+      usesPathAsKey: usesPathAsKey,
+      guards: guards,
+      redirectTo: redirectTo,
+    );
+  }
+
+  String get path => _path;
 
   bool get hasSubTree => _children != null;
 
@@ -37,37 +74,23 @@ class AutoRouteEntry {
   }
 }
 
-class RedirectRoute extends AutoRouteEntry {
+@immutable
+class RedirectRoute extends AutoRoute {
   RedirectRoute({
     required super.path,
     required String redirectTo,
-  }) : super('Redirect#$path',fullMatch: true,redirectTo: redirectTo);
-}
-
-class AutoRoute extends AutoRouteEntry {
-  final PageInfo page;
-  final bool fullscreenDialog;
-  final bool maintainState;
-
-  AutoRoute({
-    required this.page,
-    super.usesPathAsKey = false,
-    super.guards = const [],
-    super.fullMatch = false,
-    super.meta = const {},
-    super.children,
-    super.type,
-    this.fullscreenDialog = false,
-    this.maintainState = true,
-  }) : super(
-          page.name,
-          path: page.path,
+  }) : super._(
+          name: 'Redirect#$path',
+          fullMatch: true,
+          redirectTo: redirectTo,
         );
 }
 
+@immutable
 class MaterialRoute extends AutoRoute {
   MaterialRoute({
-    required super.page,
+    required Type name,
+    super.path,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -75,15 +98,19 @@ class MaterialRoute extends AutoRoute {
     super.usesPathAsKey = false,
     super.children,
     super.meta = const {},
-  }) : super(type: const RouteType.material());
+  }) : super._(
+          name: name.toString(),
+          type: const RouteType.material(),
+        );
 }
 
+@immutable
 class CupertinoRoute extends AutoRoute {
   /// passed to the title property in [CupertinoPageRoute]
   final String? title;
 
   CupertinoRoute({
-    required super.page,
+    required Type name,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -92,12 +119,13 @@ class CupertinoRoute extends AutoRoute {
     super.children,
     super.meta = const {},
     this.title,
-  }) : super(type: const RouteType.cupertino());
+  }) : super._(name: name.toString(), type: const RouteType.cupertino());
 }
 
+@immutable
 class AdaptiveRoute extends AutoRoute {
   AdaptiveRoute({
-    required super.page,
+    required Type name,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -107,7 +135,8 @@ class AdaptiveRoute extends AutoRoute {
     super.meta = const {},
     String? cupertinoPageTitle,
     bool opaque = true,
-  }) : super(
+  }) : super._(
+          name: name.toString(),
           type: RouteType.adaptive(
             cupertinoPageTitle: cupertinoPageTitle,
             opaque: opaque,
@@ -115,9 +144,10 @@ class AdaptiveRoute extends AutoRoute {
         );
 }
 
+@immutable
 class CustomRoute extends AutoRoute {
   CustomRoute({
-    required super.page,
+    required Type name,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -133,7 +163,8 @@ class CustomRoute extends AutoRoute {
     bool barrierDismissible = true,
     String? barrierLabel,
     int? barrierColor,
-  }) : super(
+  }) : super._(
+          name: name.toString(),
           type: RouteType.custom(
             transitionsBuilder: transitionsBuilder,
             customRouteBuilder: customRouteBuilder,

@@ -15,6 +15,7 @@ class RouterConfigResolver {
     ClassElement clazz, {
     bool usesPartBuilder = false,
   }) {
+
     // /// ensure router config classes are prefixed with $
     // /// to use the stripped name for the generated class
     // throwIf(

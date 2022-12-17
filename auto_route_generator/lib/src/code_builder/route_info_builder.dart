@@ -6,13 +6,13 @@ import '../models/router_config.dart';
 import 'library_builder.dart';
 
 List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
-  final argsClassRefer = refer('${r.routeName}Args');
-  final parameters = r.parameters.where((p) => !p.isInheritedPathParam).toList();
+  final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
+  final parameters = r.parameters.toList();
   return [
     Class(
       (b) => b
         ..docs.addAll(['/// generated route for \n/// [${r.pageType?.refer.accept(emitter).toString()}]'])
-        ..name = r.routeName
+        ..name = r.getName(router.replaceInRouteName)
         ..extend = TypeReference((b) {
           b
             ..symbol = 'PageRouteInfo'
@@ -28,16 +28,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..name = 'name'
               ..static = true
               ..type = stringRefer
-              ..assignment = literalString(r.routeName).code,
-          ),
-          Field(
-            (b) => b
-              ..modifier = FieldModifier.constant
-              ..name = 'page'
-              ..static = true
-              ..type = refer('PageInfo', autoRouteImport)
-              ..assignment =
-                  refer('PageInfo', autoRouteImport).newInstance([refer('name'), literalString(r.pathName)]).code,
+              ..assignment = literalString(r.getName(router.replaceInRouteName)).code,
           ),
         ])
         ..constructors.add(
@@ -53,9 +44,8 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                     ..type = listRefer(pageRouteType, nullable: true)),
                 ])
                 ..initializers.add(refer('super').call([
-                  refer(r.routeName).property('name')
+                  refer(r.getName(router.replaceInRouteName)).property('name')
                 ], {
-                  'path': literalString(r.pathName),
                   if (parameters.isNotEmpty)
                     'args': argsClassRefer.call(
                       [],
@@ -121,7 +111,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                 ..annotations.add(refer('override'))
                 ..returns = stringRefer
                 ..body = literalString(
-                  '${r.routeName}Args{${parameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
+                  '${r.getName(router.replaceInRouteName)}Args{${parameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
                 ).returned.statement,
             ),
           ),
@@ -130,7 +120,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
 }
 
 Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter, {bool toThis = true}) {
-  return parameters.where((p) => !p.isInheritedPathParam).map(
+  return parameters.map(
         (p) => Parameter(
           (b) {
             var defaultCode;

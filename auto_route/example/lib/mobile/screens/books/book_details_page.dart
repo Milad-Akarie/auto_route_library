@@ -3,12 +3,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import '../../../data/db.dart';
-@RoutePage(path: '/book/:id')
+
+@RoutePage(name: 'BookDetailsRoute')
 class BookDetailsPage extends StatefulWidget {
   final int id;
 
   const BookDetailsPage({
-    @PathParam('id') this.id = -1,
+    @pathParam this.id = -1,
   });
 
   @override

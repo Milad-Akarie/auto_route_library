@@ -29,7 +29,7 @@ abstract class RootStackRouter extends StackRouter {
 
   Map<String, PageFactory> get pagesMap => throw UnimplementedError();
 
-  List<AutoRouteEntry> get routes;
+  List<AutoRoute> get routes;
 
   RouteType get defaultRouteType => const RouteType.material();
 

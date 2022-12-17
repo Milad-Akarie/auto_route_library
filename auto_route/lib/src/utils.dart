@@ -5,3 +5,8 @@ bool mapNullOrEmpty(Map? map) {
 bool listNullOrEmpty(Iterable? iterable) {
   return (iterable == null || iterable.isEmpty);
 }
+
+String toKababCase(String s) {
+  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'),
+          (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
+}

@@ -2,8 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-
 @RoutePage()
 class HomePage extends StatefulWidget implements AutoRouteWrapper {
   const HomePage({

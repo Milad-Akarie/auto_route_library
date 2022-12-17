@@ -7,7 +7,6 @@ import '../../utils.dart';
 import '../models/importable_type.dart';
 import '../models/route_config.dart';
 import '../models/route_parameter_config.dart';
-import '../models/router_config.dart';
 import '../resolvers/route_parameter_resolver.dart';
 import '../resolvers/type_resolver.dart';
 
@@ -15,14 +14,12 @@ const TypeChecker autoRouteChecker = TypeChecker.fromRuntime(RoutePage);
 
 // extracts route configs from class fields and their meta data
 class RouteConfigResolver {
-  final RouterConfig _routerConfig;
   final TypeResolver _typeResolver;
 
-  RouteConfigResolver(this._routerConfig, this._typeResolver);
+  RouteConfigResolver(this._typeResolver);
 
   RouteConfig resolve(Element element, ConstantReader routePage) {
-    var path = routePage.peek('path')?.stringValue;
-    var isDeferred = routePage.peek('deferredLoading')?.boolValue ?? _routerConfig.deferredLoading;
+    var isDeferred = routePage.peek('deferredLoading')?.boolValue;
     throwIf(
       element is! ClassElement,
       '${element.getDisplayString(withNullability: false)} is not a class element',
@@ -36,21 +33,6 @@ class RouteConfigResolver {
     var pageType = _typeResolver.resolveType(page);
     var className = page.getDisplayString(withNullability: false);
 
-    if (path == null) {
-      var prefix =  '/';
-      if (routePage.peek('initial')?.boolValue == true) {
-        path = prefix;
-      } else {
-        path = '$prefix${toKababCase(className)}';
-      }
-    }
-
-    var pathName = path;
-    var pathParams = RouteParameterResolver.extractPathParams(path);
-
-    final fullMatch = routePage.peek('fullMatch')?.boolValue;
-    final initial = routePage.peek('initial')?.boolValue ?? false;
-
 
     var returnType = ResolvedType(name: 'dynamic');
     var dartType = routePage.objectValue.type;
@@ -59,7 +41,6 @@ class RouteConfigResolver {
     }
 
     var name = routePage.peek('name')?.stringValue;
-    var replacementInRouteName = _routerConfig.replaceInRouteName;
     final constructor = classElement.unnamedConstructor;
     throwIf(
       constructor == null,
@@ -76,10 +57,7 @@ class RouteConfigResolver {
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);
         for (ParameterElement p in constructor.parameters) {
-          parameters.add(paramResolver.resolve(
-            p,
-            pathParams: pathParams,
-          ));
+          parameters.add(paramResolver.resolve(p));
         }
       }
     }
@@ -98,25 +76,21 @@ class RouteConfigResolver {
 
     if (pathParameters.isNotEmpty) {
       for (var pParam in pathParameters) {
-        throwIf(!validPathParamTypes.contains(pParam.type.name),
-            "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
-            element: pParam.element);
+        throwIf(
+          !validPathParamTypes.contains(pParam.type.name),
+          "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
+        );
       }
     }
 
     return RouteConfig(
       className: className,
       name: name,
-      initial: initial,
-      pathParams: pathParams,
       hasWrappedRoute: hasWrappedRoute,
       parameters: parameters,
       hasConstConstructor: hasConstConstructor,
-      replacementInRouteName: replacementInRouteName,
       returnType: returnType,
       pageType: pageType,
-      pathName: pathName,
-      fullMatch: fullMatch,
       deferredLoading: isDeferred,
     );
   }

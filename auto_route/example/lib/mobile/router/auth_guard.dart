@@ -2,11 +2,17 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 
-// mock auth state
 
+
+
+// mock auth state
 var isAuthenticated = false;
 
 class AuthGuard extends AutoRouteGuard {
+ static List<AutoRoute>? childList = [
+    AutoRoute(name: MyBooksRoute),
+    AutoRoute(name: ProfileRoute,),
+  ];
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (!isAuthenticated) {

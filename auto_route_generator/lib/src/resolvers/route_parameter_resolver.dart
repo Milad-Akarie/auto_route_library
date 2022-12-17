@@ -14,37 +14,29 @@ class RouteParameterResolver {
 
   RouteParameterResolver(this._typeResolver);
 
-  ParamConfig resolve(
-    ParameterElement parameterElement, {
-    List<PathParamConfig> pathParams = const [],
-    List<PathParamConfig> inheritedPathParams = const [],
-  }) {
+  ParamConfig resolve(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
     if (paramType is FunctionType) {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
     final paramName = parameterElement.name.replaceFirst("_", '');
-    var pathParamAnnotation =
-        _pathParamChecker.firstAnnotationOfExact(parameterElement);
-    String? paramAlias;
+    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
+
     var nameOrAlias = paramName;
     if (pathParamAnnotation != null) {
-      paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
+     final paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
       }
-      throwIf(
-        !(inheritedPathParams + pathParams).any((e) => e.name == nameOrAlias),
-        'This route or it\'s ancestors must have a path-param with the name $nameOrAlias',
-        element: parameterElement,
-      );
     }
-    var queryParamAnnotation =
-        _queryParamChecker.firstAnnotationOfExact(parameterElement);
-    if (queryParamAnnotation != null) {
-      paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
 
+    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
+    if (queryParamAnnotation != null) {
+      final paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
+      if (paramAlias != null) {
+        nameOrAlias = paramAlias;
+      }
       throwIf(
         !type.isNullable && !parameterElement.hasDefaultValue,
         'QueryParams must be nullable or have default value',
@@ -60,9 +52,8 @@ class RouteParameterResolver {
 
     return ParamConfig(
       type: type,
-      element: parameterElement,
       name: paramName,
-      alias: paramAlias,
+      alias: nameOrAlias,
       isPositional: parameterElement.isPositional,
       hasRequired: parameterElement.hasRequired,
       isRequired: parameterElement.isRequiredNamed,
@@ -70,8 +61,6 @@ class RouteParameterResolver {
       isNamed: parameterElement.isNamed,
       isPathParam: pathParamAnnotation != null,
       isQueryParam: queryParamAnnotation != null,
-      isInheritedPathParam: pathParamAnnotation != null &&
-          !pathParams.any((e) => e.name == nameOrAlias),
       defaultValueCode: parameterElement.defaultValueCode,
     );
   }
@@ -82,7 +71,6 @@ class RouteParameterResolver {
         returnType: _typeResolver.resolveType(type.returnType),
         type: _typeResolver.resolveType(type),
         params: type.parameters.map(resolve).toList(),
-        element: paramElement,
         name: paramElement.name,
         defaultValueCode: paramElement.defaultValueCode,
         isRequired: paramElement.isRequiredNamed,

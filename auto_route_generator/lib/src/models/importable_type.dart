@@ -23,6 +23,9 @@ class ResolvedType {
       ..types.addAll(typeArguments.map((e) => e.refer)));
   }
 
+
+
+
   @override
   String toString() {
     return name;
@@ -49,6 +52,30 @@ class ResolvedType {
       name: name ?? this.name,
       isNullable: isNullable ?? this.isNullable,
       typeArguments: typeArguments ?? this.typeArguments,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'import': this.import,
+      'name': this.name,
+      'isNullable': this.isNullable,
+      'typeArguments': this.typeArguments.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  factory ResolvedType.fromJson(Map<String, dynamic> map) {
+    final typedArgs = <ResolvedType>[];
+    if(map['typeArguments'] != null){
+      for(final arg in map['typeArguments']){
+        typedArgs.add(ResolvedType.fromJson(arg));
+      }
+    }
+    return ResolvedType(
+      import: map['import'] as String?,
+      name: map['name'] as String,
+      isNullable: map['isNullable'] as bool,
+      typeArguments: typedArgs,
     );
   }
 }

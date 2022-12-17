@@ -7,17 +7,19 @@
 #    auto_apply: dependents
 #    build_to: source
 builders:
+  autoRouteBuilder:
+    import: "package:auto_route_generator/builder.dart"
+    runs_before: [ 'auto_route_generator:autoRouterBuilder' ]
+    builder_factories: [ "autoRouteBuilder" ]
+    #    required_inputs: [ '.g.dart' ]
+    build_extensions: { '.dart': [ ".route.json" ] }
+    auto_apply: dependents
+    build_to: cache
   autoRouterBuilder:
     import: "package:auto_route_generator/builder.dart"
     builder_factories: [ "autoRouterBuilder" ]
-    build_extensions: { '.dart': [ '.gr.json' ] }
-    runs_before: [ 'auto_route_generator:autoRouteBuilder' ]
+    build_extensions: { '.dart': [ '.dart.json' ] }
     auto_apply: dependents
-    build_to: cache
-  autoRouteBuilder:
-    import: "package:auto_route_generator/builder.dart"
-    builder_factories: [ "autoRouteBuilder" ]
-    required_inputs: [ '.g.dart' ]
-    build_extensions: { '.dart': [ ".gr.dart" ] }
-    auto_apply: root_package
     build_to: source
+
+

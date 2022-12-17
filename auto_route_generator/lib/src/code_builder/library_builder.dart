@@ -52,15 +52,15 @@ String generateLibrary(
     }
   }
 
-
-  final checkedRoutes = <RouteConfig>[];
-  routes.forEach((route) {
-    throwIf(
-      (checkedRoutes.any((r) => r.routeName == route.routeName && r.pathName != route.pathName)),
-      'Duplicate route names must have the same path! (name: ${route.routeName}, path: ${route.pathName})\nNote: Unless specified, route name is generated from page name.',
-    );
-    checkedRoutes.add(route);
-  });
+// todo handle this
+  // final checkedRoutes = <RouteConfig>[];
+  // routes.forEach((route) {
+  //   throwIf(
+  //     (checkedRoutes.any((r) => r.routeName == route.routeName && r.pathName != route.pathName)),
+  //     'Duplicate route names must have the same path! (name: ${route.routeName}, path: ${route.pathName})\nNote: Unless specified, route name is generated from page name.',
+  //   );
+  //   checkedRoutes.add(route);
+  // });
 
   final library = Library(
     (b) => b
@@ -70,21 +70,12 @@ String generateLibrary(
       ..body.addAll([
         buildRouterConfig(router, routes),
         ...routes
-            .distinctBy((e) => e.routeName)
+            .distinctBy((e) => e.getName(router.replaceInRouteName))
             .map((r) => buildRouteInfoAndArgs(r, router, emitter))
             .reduce((acc, a) => acc..addAll(a)),
       ]),
   );
 
-  return [_header, DartFormatter().format(library.accept(emitter).toString())].join('\n');
+  return [DartFormatter().format(library.accept(emitter).toString())].join('\n');
 }
 
-const String _header = '''
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
-// **************************************************************************
-// AutoRouteGenerator
-// **************************************************************************
-//
-// ignore_for_file: type=lint
-''';

@@ -1,3 +1,4 @@
+import 'package:auto_route/empty_router_widgets.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
@@ -9,18 +10,15 @@ import '../utils.dart';
 @immutable
 class PageRouteInfo<T> {
   final String _name;
-  final String path;
   final T? args;
   final Map<String, dynamic> rawPathParams;
   final Map<String, dynamic> rawQueryParams;
   final List<PageRouteInfo>? initialChildren;
   final String fragment;
-  final String? _stringMatch;
   final String? redirectedFrom;
 
   const PageRouteInfo(
     this._name, {
-    required this.path,
     this.initialChildren,
     this.args,
     this.rawPathParams = const {},
@@ -28,19 +26,9 @@ class PageRouteInfo<T> {
     this.fragment = '',
     String? stringMatch,
     this.redirectedFrom,
-  }) : _stringMatch = stringMatch;
+  });
 
   String get routeName => _name;
-
-  String get stringMatch {
-    if (_stringMatch != null) {
-      return _stringMatch!;
-    }
-    return expandPath(path, rawPathParams);
-  }
-
-  String get fullPath =>
-      p.joinAll([stringMatch, if (hasChildren) initialChildren!.last.fullPath]);
 
   bool get hasChildren => initialChildren?.isNotEmpty == true;
 
@@ -76,7 +64,6 @@ class PageRouteInfo<T> {
     String? fragment,
   }) {
     if ((name == null || identical(name, _name)) &&
-        (path == null || identical(path, this.path)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
         (params == null || identical(params, rawPathParams)) &&
@@ -87,7 +74,6 @@ class PageRouteInfo<T> {
 
     return PageRouteInfo(
       name ?? _name,
-      path: path ?? this.path,
       args: args ?? this.args,
       rawPathParams: params ?? rawPathParams,
       rawQueryParams: queryParams ?? rawQueryParams,
@@ -97,13 +83,12 @@ class PageRouteInfo<T> {
 
   @override
   String toString() {
-    return 'Route{name: $_name, path: $path, params: $rawPathParams}, children: ${initialChildren?.map((e) => e.routeName)}';
+    return 'Route{name: $_name,  params: $rawPathParams}, children: ${initialChildren?.map((e) => e.routeName)}';
   }
 
   factory PageRouteInfo.fromMatch(RouteMatch match) {
     return PageRouteInfo(
       match.name,
-      path: match.path,
       rawPathParams: match.pathParams.rawMap,
       rawQueryParams: match.queryParams.rawMap,
       fragment: match.fragment,
@@ -127,7 +112,6 @@ class PageRouteInfo<T> {
       identical(this, other) ||
       other is PageRouteInfo &&
           _name == other._name &&
-          path == other.path &&
           fragment == other.fragment &&
           const ListEquality().equals(initialChildren, other.initialChildren) &&
           const MapEquality().equals(rawPathParams, other.rawPathParams) &&
@@ -136,9 +120,10 @@ class PageRouteInfo<T> {
   @override
   int get hashCode =>
       _name.hashCode ^
-      path.hashCode ^
       fragment.hashCode ^
       const MapEquality().hash(rawPathParams) ^
       const MapEquality().hash(rawQueryParams) ^
       const ListEquality().hash(initialChildren);
 }
+
+typedef EmptyRouterName= PageRouteInfo;
