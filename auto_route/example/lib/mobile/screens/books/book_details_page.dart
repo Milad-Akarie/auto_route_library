@@ -1,4 +1,3 @@
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +22,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
   Widget build(BuildContext context) {
     final booksDb = BooksDBProvider.of(context);
     final book = booksDb?.findBookById(widget.id);
-
     return book == null
         ? Container(child: Text('Book null'))
         : Scaffold(

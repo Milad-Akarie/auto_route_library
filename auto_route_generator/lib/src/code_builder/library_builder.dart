@@ -69,6 +69,7 @@ String generateLibrary(
       ])
       ..body.addAll([
         buildRouterConfig(router, routes),
+        if(routes.isNotEmpty)
         ...routes
             .distinctBy((e) => e.getName(router.replaceInRouteName))
             .map((r) => buildRouteInfoAndArgs(r, router, emitter))

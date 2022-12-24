@@ -1,8 +1,5 @@
-import 'package:auto_route/empty_router_widgets.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path/path.dart' as p;
-
 import '../../auto_route.dart';
 import '../utils.dart';
 
@@ -27,6 +24,7 @@ class PageRouteInfo<T> {
     String? stringMatch,
     this.redirectedFrom,
   });
+
 
   String get routeName => _name;
 

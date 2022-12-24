@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
@@ -12,6 +13,7 @@ class RouterConfigResolver {
 
   RouterConfig resolve(
     ConstantReader autoRouter,
+    AssetId input,
     ClassElement clazz, {
     bool usesPartBuilder = false,
   }) {
@@ -32,7 +34,7 @@ class RouterConfigResolver {
       replaceInRouteName: replaceInRouteName,
       deferredLoading: deferredLoading,
       usesPartBuilder: usesPartBuilder,
-      import: clazz.source.uri.toString(),
+      path: input.path,
     );
   }
 }

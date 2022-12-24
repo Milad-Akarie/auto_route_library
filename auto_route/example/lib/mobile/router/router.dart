@@ -21,6 +21,7 @@ class RootRouter extends $RootRouter {
         name: MyBooksRoute,
       ),
     ]),
+    ...?AuthGuard.childList
   ];
 }
 
