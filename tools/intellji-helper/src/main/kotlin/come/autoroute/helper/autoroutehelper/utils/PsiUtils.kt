@@ -12,6 +12,7 @@ import com.intellij.psi.util.parentOfType
 import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.psi.*
 import com.jetbrains.lang.dart.util.DartResolveUtil
+import come.autoroute.helper.autoroutehelper.Strings
 import come.autoroute.helper.autoroutehelper.models.RegisteredRoute
 import come.autoroute.helper.autoroutehelper.models.RoutePageInfo
 import come.autoroute.helper.autoroutehelper.models.RouterConfig
@@ -39,16 +40,22 @@ class PsiUtils {
                         customName = resolvedName?.lastChild?.text
                     }
                     return RoutePageInfo(
-                            classElement.name ?: "",
+                            classElement,
                             classElement.startOffset,
-                            routeAnnotation != null,
-                            customName?.replace(Regex("['|\"]"), ""),
+                            routeAnnotation,
+                            Utils.stripStringQuots(customName),
                     );
                 }
             }
             return null
         }
 
+
+        fun getAutoRouteImportOffsetIfNeeded(file: PsiFile?): Int? {
+            val imports = PsiTreeUtil.findChildrenOfType(file, DartImportStatement::class.java)
+            val hasImport = imports.any { i -> listOf(Strings.autoRouteImport, Strings.autoRouteAnnotationImport).contains(i.text) }
+            return if (hasImport) null else imports.firstOrNull()?.startOffset ?: 0
+        }
 
         private fun getRouterClass(project: Project, routerConfig: RouterConfig): DartClass? {
             val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(File("${project.basePath}/${routerConfig.path}"))
@@ -65,12 +72,12 @@ class PsiUtils {
             return RoutesList(getRoutes(listLiteral), listLiteral)
         }
 
-        private fun getRoutes(routesList: DartListLiteralExpression): List<RegisteredRoute> {
+        fun getRoutes(routesList: DartListLiteralExpression): List<RegisteredRoute> {
             val routes = ArrayList<RegisteredRoute>()
             for (item in routesList.elementList.map { it.lastChild }) {
                 if (item is DartCallExpression) {
                     val namedArguments = PsiTreeUtil.findChildrenOfType(item, DartNamedArgument::class.java)
-                    val nameArg = namedArguments.firstOrNull { it.firstChild.text == "name" } ?: continue
+                    val nameArg = namedArguments.firstOrNull { it.firstChild.text == "page" } ?: continue
                     var children: RoutesList? = null
                     val childrenArg = namedArguments.firstOrNull { it.firstChild.text == "children" }
                     if (childrenArg != null) {
@@ -83,7 +90,7 @@ class PsiUtils {
                             children = RoutesList(getRoutes(childListLiteral), childListLiteral)
                         }
                     }
-                    routes.add(RegisteredRoute(nameArg.lastChild.text, children, item.arguments!!))
+                    routes.add(RegisteredRoute(nameArg.lastChild.text.replaceFirst(".page", ""), children, item))
                 } else if (item is DartSpreadElement) {
                     val spreadListRef = DartResolveUtil.findReferenceAndComponentTarget(item.lastChild)?.context
                     val spreadListLiteral = PsiTreeUtil.findChildOfType(spreadListRef, DartListLiteralExpression::class.java)
@@ -94,6 +101,10 @@ class PsiUtils {
 
             }
             return routes
+        }
+
+        fun dartClassAt(file: PsiFile, offset: Int): DartClassDefinition? {
+            return PsiTreeUtil.findElementOfClassAtOffset(file, offset, DartClassDefinition::class.java, false)
         }
     }
 }

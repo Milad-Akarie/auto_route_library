@@ -4,21 +4,18 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.gr.dart';
 
-@AutoRouterConfig(replaceInRouteName: 'Page|Screen,Route')
+@AutoRouterConfig()
 class RootRouter extends $RootRouter {
   @override
   final List<AutoRoute> routes = [
     AutoRoute(
       path: '/',
-      name: HomeRoute,
+      page: HomeRoute.page,
     ),
-    // AutoRoute(path: '/books', name: BookListRoute, children: [
-    //   AutoRoute(name: BookDetailsRoute),
-    // ]),
-    AutoRoute(name: HomeRoute, children: [
-      AutoRoute(name: ProfileRoute),
+    AutoRoute(page: HomeRoute.page, children: [
+      AutoRoute(page: ProfileRoute.page),
       AutoRoute(
-        name: MyBooksRoute,
+        page: MyBooksRoute.page,
       ),
     ]),
     ...?AuthGuard.childList

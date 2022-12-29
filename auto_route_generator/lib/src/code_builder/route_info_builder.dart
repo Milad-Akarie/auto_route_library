@@ -8,6 +8,14 @@ import 'library_builder.dart';
 List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
   final parameters = r.parameters.toList();
+  final pageInfoRefer =  TypeReference(
+        (b) => b
+      ..url = autoRouteImport
+      ..symbol = 'PageInfo'
+      ..types.add(
+        r.pageType?.refer ?? refer('void'),
+      ),
+  );
   return [
     Class(
       (b) => b
@@ -29,6 +37,14 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..static = true
               ..type = stringRefer
               ..assignment = literalString(r.getName(router.replaceInRouteName)).code,
+          ),
+          Field(
+                (b) => b
+              ..modifier = FieldModifier.constant
+              ..name = 'page'
+              ..static = true
+              ..type = pageInfoRefer
+              ..assignment = pageInfoRefer.newInstance([refer('name')]).code,
           ),
         ])
         ..constructors.add(
@@ -121,25 +137,25 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
 
 Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter, {bool toThis = true}) {
   return parameters.map(
-        (p) => Parameter(
-          (b) {
-            var defaultCode;
-            if (p.defaultValueCode != null) {
-              if (p.defaultValueCode!.contains('const')) {
-                defaultCode = Code(
-                    'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.type.import).accept(emitter).toString()}');
-              } else {
-                defaultCode = refer(p.defaultValueCode!, p.type.import).code;
-              }
-            }
-            b
-              ..name = p.getSafeName()
-              ..named = true
-              ..toThis = toThis
-              ..required = p.isRequired || p.isPositional
-              ..defaultTo = defaultCode;
-            if (!toThis) b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
-          },
-        ),
-      );
+    (p) => Parameter(
+      (b) {
+        var defaultCode;
+        if (p.defaultValueCode != null) {
+          if (p.defaultValueCode!.contains('const')) {
+            defaultCode = Code(
+                'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.type.import).accept(emitter).toString()}');
+          } else {
+            defaultCode = refer(p.defaultValueCode!, p.type.import).code;
+          }
+        }
+        b
+          ..name = p.getSafeName()
+          ..named = true
+          ..toThis = toThis
+          ..required = p.isRequired || p.isPositional
+          ..defaultTo = defaultCode;
+        if (!toThis) b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+      },
+    ),
+  );
 }

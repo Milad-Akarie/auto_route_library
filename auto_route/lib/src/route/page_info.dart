@@ -1,15 +1,16 @@
-class PageInfo {
-  final String name;
-  final String path;
+import 'package:flutter/widgets.dart';
 
-  const PageInfo(this.name, this.path);
+class PageInfo<T extends Widget> {
+  final String name;
+
+  const PageInfo(this.name);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PageInfo && runtimeType == other.runtimeType && name == other.name && path == other.path;
+      other is PageInfo && runtimeType == other.runtimeType && name == other.name;
 
   @override
-  int get hashCode => name.hashCode ^ path.hashCode;
+  int get hashCode =>  name.hashCode;
 }
 

@@ -1,5 +1,7 @@
 package come.autoroute.helper.autoroutehelper.models
 
+import come.autoroute.helper.autoroutehelper.utils.Utils
+
 data class RouterConfig(
         val routerClassName: String,
         val replaceInRouteName: String?,
@@ -8,11 +10,7 @@ data class RouterConfig(
         val usesPartBuilder: Boolean,
 ) {
     fun getRouteName(result: RoutePageInfo): String {
-        if (result.customName != null) return result.customName
-        if (replaceInRouteName != null && replaceInRouteName.split(',').size == 2) {
-            val parts = replaceInRouteName.split(',');
-            return result.className.replaceFirst(parts[0].toRegex(), parts[1]);
-        }
-        return result.className
+        return Utils.resolveRouteName(result.classElement.name!!,
+                result.customName, replaceInRouteName)
     }
 }

@@ -9,14 +9,14 @@ part 'router.gr.dart';
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: [
-    PageInfo(path: '/first', page: FirstPage, initial: true),
+    PageInfo(name: '/first', page: FirstPage, initial: true),
     PageInfo(
-        path: '/second',
+        name: '/second',
         name: 'SecondRoute',
         page: EmptyRouterPage,
         children: [
-          PageInfo(path: 'nested1', page: SecondNested1Page, initial: true),
-          PageInfo(path: 'nested2', page: SecondNested2Page),
+          PageInfo(name: 'nested1', page: SecondNested1Page, initial: true),
+          PageInfo(name: 'nested2', page: SecondNested2Page),
         ]),
   ],
 )

@@ -13,13 +13,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.suggested.endOffset
+import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.psi.DartFile
+import com.jetbrains.lang.dart.psi.DartListLiteralExpression
 import come.autoroute.helper.autoroutehelper.Strings
 import come.autoroute.helper.autoroutehelper.listeners.DialogDismissListener
 import come.autoroute.helper.autoroutehelper.models.RouterConfig
 import come.autoroute.helper.autoroutehelper.utils.PsiUtils
 import java.io.File
-
 
 class AddToRouterAction : IntentionAction {
     override fun startInWriteAction(): Boolean {
@@ -27,15 +28,15 @@ class AddToRouterAction : IntentionAction {
     }
 
     override fun getText(): String {
-        return "Add to ${routerConfig?.routerClassName ?: "Router"}";
+        return "Add to ${routerConfig?.routerClassName ?: "Router"}"
     }
 
     override fun getFamilyName(): String {
-        return Strings.familyName;
+        return Strings.familyName
     }
 
-    private var lastModified: Long = -1;
-    private var routerConfig: RouterConfig? = null;
+    private var lastModified: Long = -1
+    private var routerConfig: RouterConfig? = null
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
         if (file !is DartFile) return false
@@ -66,10 +67,27 @@ class AddToRouterAction : IntentionAction {
                 JFrameDialog.show(it, routesList, routePageInfo, component, object : DialogDismissListener {
                     override fun onDone(dialog: JFrameDialog) {
                         dialog.apply {
+                            document.apply {
+                                WriteCommandAction.runWriteCommandAction(project) {
+                                    setReadOnly(false)
+                                    if (routePageInfo.annotation != null && !routeNameTextField.text.isNullOrBlank() && routePageInfo.customName.isNullOrBlank()) {
+                                        insertString(routePageInfo.annotation.endOffset - 1, "name: '${routeNameTextField.text}'")
+                                    } else if (routePageInfo.annotation == null) {
+                                        val nameArg = if (routeNameTextField.text == it.getRouteName(routePageInfo)) "" else "name: '${routeNameTextField.text}'";
+                                        insertString(routePageInfo.classElement.startOffset, "@RoutePage(${nameArg})\n")
+                                        PsiUtils.getAutoRouteImportOffsetIfNeeded(file)?.let { offset ->
+                                            insertString(offset, "${Strings.autoRouteImport}\n")
+                                        }
+
+                                    }
+                                }
+                            }
+
+
                             StringBuilder("AutoRoute(").let { b ->
                                 val argsList = mutableListOf<String>()
                                 if (pathTextField.text.isNotBlank()) argsList.add("path: '${pathTextField.text}'")
-                                argsList.add("name: ${routeNameTextField.text}")
+                                argsList.add("page: ${routeNameTextField.text}.page")
                                 if (!maintainStateCheckBox.isSelected) argsList.add("maintainState: false")
                                 if (fullscreenDialogCheckBox.isSelected) argsList.add("fullscreenDialog: true")
                                 if (fullPathMatchCheckBox.isSelected) argsList.add("fullMatch: true")
@@ -81,7 +99,7 @@ class AddToRouterAction : IntentionAction {
                                 var targetElement: PsiElement = routesList.element
                                 if (selectTargetIndex > 0) {
                                     val targetRoute = routeItems[selectTargetIndex - 1]
-                                    targetElement = targetRoute.route.element
+                                    targetElement = targetRoute.route.element.arguments!!
                                     if (targetRoute.route.children == null) {
                                         b.insert(0, "children:[")
                                         b.append("],")
@@ -91,7 +109,7 @@ class AddToRouterAction : IntentionAction {
                                 }
 
 
-                                if ( PsiTreeUtil.prevVisibleLeaf(targetElement.lastChild)?.text != ",") {
+                                if (PsiTreeUtil.prevVisibleLeaf(targetElement.lastChild)?.text != "," && (targetElement !is DartListLiteralExpression || targetElement.elementList.isNotEmpty())) {
                                     b.insert(0, ',')
                                 }
 
@@ -103,14 +121,10 @@ class AddToRouterAction : IntentionAction {
                                         PsiDocumentManager.getInstance(project).commitDocument(this)
                                     }
                                 }
-
-
                             }
                         }
                     }
                 })
-
-
             }
         }
     }

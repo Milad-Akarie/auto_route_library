@@ -1,9 +1,10 @@
 package come.autoroute.helper.autoroutehelper.models
 
-import com.intellij.psi.PsiElement
+import com.jetbrains.lang.dart.psi.DartCallExpression
+import com.jetbrains.lang.dart.psi.DartListLiteralExpression
 
 
-data class RoutesList(val routes: List<RegisteredRoute>, val element: PsiElement) {
+data class RoutesList(val routes: List<RegisteredRoute>, val element: DartListLiteralExpression) {
     fun flatten(dept: Int = 0): ArrayList<FlatRouteItem> {
         return routes.fold(ArrayList()) { acc, a ->
             acc.apply { addAll(a.flatten(this@RoutesList,dept)) }
@@ -11,7 +12,7 @@ data class RoutesList(val routes: List<RegisteredRoute>, val element: PsiElement
     }
 }
 
-data class RegisteredRoute(val name: String, val children: RoutesList? = null, val element: PsiElement) {
+data class RegisteredRoute(val name: String, val children: RoutesList? = null, val element: DartCallExpression) {
     fun flatten(parentList: RoutesList, dept: Int): ArrayList<FlatRouteItem> {
         val list = ArrayList<FlatRouteItem>();
         list.add(FlatRouteItem(this, parentList,dept))

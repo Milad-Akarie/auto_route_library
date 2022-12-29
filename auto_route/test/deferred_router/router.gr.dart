@@ -65,23 +65,23 @@ class AppRouter extends _i3.RootStackRouter {
   List<_i3.AutoRouteConfig> get routes => [
         _i3.AutoRouteConfig(
           FirstRoute.name,
-          path: '/',
+          name: '/',
           deferredLoading: true,
         ),
         _i3.AutoRouteConfig(
           SecondRoute.name,
-          path: '/empty-router-page',
+          name: '/empty-router-page',
           deferredLoading: true,
           children: [
             _i3.AutoRouteConfig(
               SecondNested1Route.name,
-              path: '',
+              name: '',
               parent: SecondRoute.name,
               deferredLoading: true,
             ),
             _i3.AutoRouteConfig(
               SecondNested2Route.name,
-              path: 'second-nested2-page',
+              name: 'second-nested2-page',
               parent: SecondRoute.name,
               deferredLoading: true,
             ),
@@ -96,7 +96,7 @@ class FirstRoute extends _i3.PageRouteInfo<void> {
   const FirstRoute()
       : super(
           FirstRoute.name,
-          path: '/',
+          name: '/',
         );
 
   static const String name = 'FirstRoute';
@@ -108,7 +108,7 @@ class SecondRoute extends _i3.PageRouteInfo<void> {
   const SecondRoute({List<_i3.PageRouteInfo>? children})
       : super(
           SecondRoute.name,
-          path: '/empty-router-page',
+          name: '/empty-router-page',
           initialChildren: children,
         );
 
@@ -121,7 +121,7 @@ class SecondNested1Route extends _i3.PageRouteInfo<void> {
   const SecondNested1Route()
       : super(
           SecondNested1Route.name,
-          path: '',
+          name: '',
         );
 
   static const String name = 'SecondNested1Route';
@@ -133,7 +133,7 @@ class SecondNested2Route extends _i3.PageRouteInfo<void> {
   const SecondNested2Route()
       : super(
           SecondNested2Route.name,
-          path: 'second-nested2-page',
+          name: 'second-nested2-page',
         );
 
   static const String name = 'SecondNested2Route';

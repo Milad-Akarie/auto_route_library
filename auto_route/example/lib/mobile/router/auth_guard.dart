@@ -10,8 +10,8 @@ var isAuthenticated = false;
 
 class AuthGuard extends AutoRouteGuard {
  static List<AutoRoute>? childList = [
-    AutoRoute(name: MyBooksRoute),
-    AutoRoute(name: ProfileRoute,),
+    AutoRoute(page: MyBooksRoute.page),
+    AutoRoute(page: ProfileRoute.page,),
   ];
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {

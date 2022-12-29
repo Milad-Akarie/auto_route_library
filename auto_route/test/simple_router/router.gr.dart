@@ -41,15 +41,15 @@ class _$AppRouter extends RootStackRouter {
   List<AutoRouteConfig> get routes => [
         AutoRouteConfig(
           FirstRoute.name,
-          path: '/',
+          name: '/',
         ),
         AutoRouteConfig(
           SecondRoute.name,
-          path: '/second-page',
+          name: '/second-page',
         ),
         AutoRouteConfig(
           ThirdRoute.name,
-          path: '/third-page',
+          name: '/third-page',
         ),
       ];
 }
@@ -60,7 +60,7 @@ class FirstRoute extends PageRouteInfo<void> {
   const FirstRoute()
       : super(
           FirstRoute.name,
-          path: '/',
+          name: '/',
         );
 
   static const String name = 'FirstRoute';
@@ -72,7 +72,7 @@ class SecondRoute extends PageRouteInfo<void> {
   const SecondRoute()
       : super(
           SecondRoute.name,
-          path: '/second-page',
+          name: '/second-page',
         );
 
   static const String name = 'SecondRoute';
@@ -84,7 +84,7 @@ class ThirdRoute extends PageRouteInfo<void> {
   const ThirdRoute()
       : super(
           ThirdRoute.name,
-          path: '/third-page',
+          name: '/third-page',
         );
 
   static const String name = 'ThirdRoute';

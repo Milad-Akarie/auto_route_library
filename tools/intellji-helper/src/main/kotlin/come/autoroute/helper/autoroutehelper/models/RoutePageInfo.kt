@@ -1,3 +1,6 @@
 package come.autoroute.helper.autoroutehelper.models
 
-class RoutePageInfo(val className: String, classOffset: Int, val hasRoutePageAnnotation: Boolean, val customName: String?)
+import com.jetbrains.lang.dart.psi.DartClassDefinition
+import com.jetbrains.lang.dart.psi.DartMetadata
+
+class RoutePageInfo(val classElement: DartClassDefinition, classOffset: Int, val annotation: DartMetadata?, val customName: String?)

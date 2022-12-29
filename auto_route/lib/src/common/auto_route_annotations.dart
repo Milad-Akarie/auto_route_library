@@ -19,7 +19,7 @@ class AutoRouterConfig {
   /// e.g 'Page,Route'
   /// so ProductDetailsPage would be ProductDetailsRoute
   ///
-  /// defaults to null, ignored if a route name is provided.
+  /// defaults to 'Page|Screen,Route', ignored if a route name is provided.
   final String? replaceInRouteName;
 
   /// Use for web for lazy loading other routes
@@ -28,7 +28,7 @@ class AutoRouterConfig {
 
   const AutoRouterConfig({
     this.preferRelativeImports = true,
-    this.replaceInRouteName,
+    this.replaceInRouteName = 'Page|Screen,Route',
     this.deferredLoading = false,
   });
 }

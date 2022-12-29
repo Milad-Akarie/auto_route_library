@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/utils.dart';
 import 'package:flutter/cupertino.dart';
-
 import '../matcher/route_matcher.dart';
 
 @immutable
@@ -17,6 +16,7 @@ class AutoRoute {
   final RouteType? type;
   final bool fullscreenDialog;
   final bool maintainState;
+  final bool initial;
 
   AutoRoute._({
     required this.name,
@@ -29,16 +29,22 @@ class AutoRoute {
     this.meta = const {},
     this.maintainState = true,
     this.fullscreenDialog = false,
+    this.initial = false,
     List<AutoRoute>? children,
-  })  : _path = path ?? toKababCase(name),
+  })  : _path = path ?? _parsePath(name, initial),
         _children = children != null ? RouteCollection.from(children) : null;
 
+  static String _parsePath(String name, bool initial) {
+    return initial ? '' : toKababCase(name);
+  }
+
   factory AutoRoute({
-    required Type name,
+    required PageInfo page,
     String? path,
     bool usesPathAsKey = false,
     List<AutoRouteGuard> guards = const [],
     bool fullMatch = false,
+    bool initial = false,
     String? redirectTo,
     RouteType? type,
     Map<String, dynamic> meta = const {},
@@ -47,13 +53,14 @@ class AutoRoute {
     List<AutoRoute>? children,
   }) {
     return AutoRoute._(
-      name: name.toString(),
+      name: page.name,
       path: path,
       fullMatch: fullMatch,
       maintainState: maintainState,
       fullscreenDialog: fullMatch,
       meta: meta,
       type: type,
+      initial: false,
       usesPathAsKey: usesPathAsKey,
       guards: guards,
       redirectTo: redirectTo,
@@ -89,17 +96,18 @@ class RedirectRoute extends AutoRoute {
 @immutable
 class MaterialRoute extends AutoRoute {
   MaterialRoute({
-    required Type name,
+    required PageInfo page,
     super.path,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
+    super.initial = false,
     super.guards,
     super.usesPathAsKey = false,
     super.children,
     super.meta = const {},
   }) : super._(
-          name: name.toString(),
+          name: page.name,
           type: const RouteType.material(),
         );
 }
@@ -114,6 +122,7 @@ class CupertinoRoute extends AutoRoute {
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
+    super.initial = false,
     super.guards,
     super.usesPathAsKey = false,
     super.children,
@@ -125,10 +134,11 @@ class CupertinoRoute extends AutoRoute {
 @immutable
 class AdaptiveRoute extends AutoRoute {
   AdaptiveRoute({
-    required Type name,
+    required PageInfo page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
+    super.initial = false,
     super.guards,
     super.usesPathAsKey = false,
     super.children,
@@ -136,7 +146,7 @@ class AdaptiveRoute extends AutoRoute {
     String? cupertinoPageTitle,
     bool opaque = true,
   }) : super._(
-          name: name.toString(),
+          name: page.name,
           type: RouteType.adaptive(
             cupertinoPageTitle: cupertinoPageTitle,
             opaque: opaque,
@@ -147,10 +157,11 @@ class AdaptiveRoute extends AutoRoute {
 @immutable
 class CustomRoute extends AutoRoute {
   CustomRoute({
-    required Type name,
+    required PageInfo page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
+    super.initial = false,
     super.guards,
     super.usesPathAsKey = false,
     super.children,
@@ -164,7 +175,7 @@ class CustomRoute extends AutoRoute {
     String? barrierLabel,
     int? barrierColor,
   }) : super._(
-          name: name.toString(),
+          name: page.name,
           type: RouteType.custom(
             transitionsBuilder: transitionsBuilder,
             customRouteBuilder: customRouteBuilder,

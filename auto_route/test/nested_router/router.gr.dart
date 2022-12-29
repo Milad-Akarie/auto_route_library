@@ -47,33 +47,33 @@ class _$AppRouter extends RootStackRouter {
   List<AutoRouteConfig> get routes => [
         AutoRouteConfig(
           '/#redirect',
-          path: '/',
+          name: '/',
           redirectTo: '/first',
           fullMatch: true,
         ),
         AutoRouteConfig(
           FirstRoute.name,
-          path: '/first',
+          name: '/first',
         ),
         AutoRouteConfig(
           SecondRoute.name,
-          path: '/second',
+          name: '/second',
           children: [
             AutoRouteConfig(
               '#redirect',
-              path: '',
+              name: '',
               parent: SecondRoute.name,
               redirectTo: 'nested1',
               fullMatch: true,
             ),
             AutoRouteConfig(
               SecondNested1Route.name,
-              path: 'nested1',
+              name: 'nested1',
               parent: SecondRoute.name,
             ),
             AutoRouteConfig(
               SecondNested2Route.name,
-              path: 'nested2',
+              name: 'nested2',
               parent: SecondRoute.name,
             ),
           ],
@@ -87,7 +87,7 @@ class FirstRoute extends PageRouteInfo<void> {
   const FirstRoute()
       : super(
           FirstRoute.name,
-          path: '/first',
+          name: '/first',
         );
 
   static const String name = 'FirstRoute';
@@ -99,7 +99,7 @@ class SecondRoute extends PageRouteInfo<void> {
   const SecondRoute({List<PageRouteInfo>? children})
       : super(
           SecondRoute.name,
-          path: '/second',
+          name: '/second',
           initialChildren: children,
         );
 
@@ -112,7 +112,7 @@ class SecondNested1Route extends PageRouteInfo<void> {
   const SecondNested1Route()
       : super(
           SecondNested1Route.name,
-          path: 'nested1',
+          name: 'nested1',
         );
 
   static const String name = 'SecondNested1Route';
@@ -124,7 +124,7 @@ class SecondNested2Route extends PageRouteInfo<void> {
   const SecondNested2Route()
       : super(
           SecondNested2Route.name,
-          path: 'nested2',
+          name: 'nested2',
         );
 
   static const String name = 'SecondNested2Route';

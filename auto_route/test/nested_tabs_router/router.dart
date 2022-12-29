@@ -11,7 +11,7 @@ part 'router.gr.dart';
   replaceInRouteName: 'Page,Route',
   routes: [
     PageInfo(
-      path: '/',
+      name: '/',
       page: TabsHostPage,
       children: tabRoutes,
     ),
@@ -54,24 +54,24 @@ class TabsHostPage extends StatelessWidget {
 }
 
 const tabRoutes = [
-  PageInfo(path: 'tab1', page: Tab1Page, initial: true),
+  PageInfo(name: 'tab1', page: Tab1Page, initial: true),
   PageInfo(
-    path: 'tab2',
+    name: 'tab2',
     page: EmptyRouterPage,
     name: 'Tab2Route',
     children: [
-      PageInfo(path: 'tab2Nested1', page: Tab2Nested1Page, initial: true),
-      PageInfo(path: 'tab2Nested2', page: Tab2Nested2Page),
+      PageInfo(name: 'tab2Nested1', page: Tab2Nested1Page, initial: true),
+      PageInfo(name: 'tab2Nested2', page: Tab2Nested2Page),
     ],
   ),
   PageInfo(
-    path: 'tab3',
+    name: 'tab3',
     name: 'Tab3Route',
     page: EmptyRouterPage,
     maintainState: false,
     children: [
-      PageInfo(path: 'tab3Nested1', page: Tab3Nested1Page, initial: true),
-      PageInfo(path: 'tab3Nested2', page: Tab3Nested2Page),
+      PageInfo(name: 'tab3Nested1', page: Tab3Nested1Page, initial: true),
+      PageInfo(name: 'tab3Nested2', page: Tab3Nested2Page),
     ],
   ),
 ];

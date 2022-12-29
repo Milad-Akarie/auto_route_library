@@ -72,64 +72,64 @@ class _$AppRouter extends RootStackRouter {
   List<AutoRouteConfig> get routes => [
         AutoRouteConfig(
           TabsHostRoute.name,
-          path: '/',
+          name: '/',
           children: [
             AutoRouteConfig(
               '#redirect',
-              path: '',
+              name: '',
               parent: TabsHostRoute.name,
               redirectTo: 'tab1',
               fullMatch: true,
             ),
             AutoRouteConfig(
               Tab1Route.name,
-              path: 'tab1',
+              name: 'tab1',
               parent: TabsHostRoute.name,
             ),
             AutoRouteConfig(
               Tab2Route.name,
-              path: 'tab2',
+              name: 'tab2',
               parent: TabsHostRoute.name,
               children: [
                 AutoRouteConfig(
                   '#redirect',
-                  path: '',
+                  name: '',
                   parent: Tab2Route.name,
                   redirectTo: 'tab2Nested1',
                   fullMatch: true,
                 ),
                 AutoRouteConfig(
                   Tab2Nested1Route.name,
-                  path: 'tab2Nested1',
+                  name: 'tab2Nested1',
                   parent: Tab2Route.name,
                 ),
                 AutoRouteConfig(
                   Tab2Nested2Route.name,
-                  path: 'tab2Nested2',
+                  name: 'tab2Nested2',
                   parent: Tab2Route.name,
                 ),
               ],
             ),
             AutoRouteConfig(
               Tab3Route.name,
-              path: 'tab3',
+              name: 'tab3',
               parent: TabsHostRoute.name,
               children: [
                 AutoRouteConfig(
                   '#redirect',
-                  path: '',
+                  name: '',
                   parent: Tab3Route.name,
                   redirectTo: 'tab3Nested1',
                   fullMatch: true,
                 ),
                 AutoRouteConfig(
                   Tab3Nested1Route.name,
-                  path: 'tab3Nested1',
+                  name: 'tab3Nested1',
                   parent: Tab3Route.name,
                 ),
                 AutoRouteConfig(
                   Tab3Nested2Route.name,
-                  path: 'tab3Nested2',
+                  name: 'tab3Nested2',
                   parent: Tab3Route.name,
                 ),
               ],
@@ -138,7 +138,7 @@ class _$AppRouter extends RootStackRouter {
         ),
         AutoRouteConfig(
           '*#redirect',
-          path: '*',
+          name: '*',
           redirectTo: '/',
           fullMatch: true,
         ),
@@ -151,7 +151,7 @@ class TabsHostRoute extends PageRouteInfo<void> {
   const TabsHostRoute({List<PageRouteInfo>? children})
       : super(
           TabsHostRoute.name,
-          path: '/',
+          name: '/',
           initialChildren: children,
         );
 
@@ -164,7 +164,7 @@ class Tab1Route extends PageRouteInfo<void> {
   const Tab1Route()
       : super(
           Tab1Route.name,
-          path: 'tab1',
+          name: 'tab1',
         );
 
   static const String name = 'Tab1Route';
@@ -176,7 +176,7 @@ class Tab2Route extends PageRouteInfo<void> {
   const Tab2Route({List<PageRouteInfo>? children})
       : super(
           Tab2Route.name,
-          path: 'tab2',
+          name: 'tab2',
           initialChildren: children,
         );
 
@@ -189,7 +189,7 @@ class Tab3Route extends PageRouteInfo<void> {
   const Tab3Route({List<PageRouteInfo>? children})
       : super(
           Tab3Route.name,
-          path: 'tab3',
+          name: 'tab3',
           initialChildren: children,
         );
 
@@ -202,7 +202,7 @@ class Tab2Nested1Route extends PageRouteInfo<void> {
   const Tab2Nested1Route()
       : super(
           Tab2Nested1Route.name,
-          path: 'tab2Nested1',
+          name: 'tab2Nested1',
         );
 
   static const String name = 'Tab2Nested1Route';
@@ -214,7 +214,7 @@ class Tab2Nested2Route extends PageRouteInfo<void> {
   const Tab2Nested2Route()
       : super(
           Tab2Nested2Route.name,
-          path: 'tab2Nested2',
+          name: 'tab2Nested2',
         );
 
   static const String name = 'Tab2Nested2Route';
@@ -226,7 +226,7 @@ class Tab3Nested1Route extends PageRouteInfo<void> {
   const Tab3Nested1Route()
       : super(
           Tab3Nested1Route.name,
-          path: 'tab3Nested1',
+          name: 'tab3Nested1',
         );
 
   static const String name = 'Tab3Nested1Route';
@@ -238,7 +238,7 @@ class Tab3Nested2Route extends PageRouteInfo<void> {
   const Tab3Nested2Route()
       : super(
           Tab3Nested2Route.name,
-          path: 'tab3Nested2',
+          name: 'tab3Nested2',
         );
 
   static const String name = 'Tab3Nested2Route';
