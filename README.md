@@ -113,7 +113,7 @@ flutter packages pub run build_runner build
 #### Finalize the setup
 after you run the generator your router class will be generated, hook it up with MaterialApp.
 ```dart           
-// assuing this is the root widget of your App           
+// assuming this is the root widget of your App           
 class App extends StatelessWidget {      
   // make sure you don't initiate your router          
   // inside of the build function.          
