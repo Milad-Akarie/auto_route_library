@@ -14,7 +14,8 @@ import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.psi.*
 import com.jetbrains.lang.dart.util.DartResolveUtil
 import come.autoroute.helper.autoroutehelper.Strings
-import come.autoroute.helper.autoroutehelper.models.RoutesList
+import come.autoroute.helper.autoroutehelper.models.RefactableClass
+import come.autoroute.helper.autoroutehelper.models.RefactorResult
 import come.autoroute.helper.autoroutehelper.utils.PsiUtils
 import come.autoroute.helper.autoroutehelper.utils.Utils
 
@@ -49,102 +50,203 @@ class MigrateToV6Action : IntentionAction {
         val clazz = PsiUtils.dartClassAt(file, editor.caretModel.offset) ?: return
         val annotation = findAutoRouterMetaData(clazz) ?: return
         val argsList = PsiTreeUtil.getChildOfType(annotation.lastChild, DartArgumentList::class.java);
-        val namedArgsList = PsiTreeUtil.getChildrenOfType(argsList, DartNamedArgument::class.java);
-        val routesArg = namedArgsList?.firstOrNull { it.firstChild.text == "routes" } ?: return
-
-        val replaceInRouteName = Utils.stripStringQuots(namedArgsList.firstOrNull { it.firstChild.text == "replaceInRouteName" }?.lastChild?.text)
+        val annotationArgsList = PsiTreeUtil.getChildrenOfType(argsList, DartNamedArgument::class.java);
+        val routesArg = annotationArgsList?.firstOrNull { it.firstChild.text == "routes" } ?: return
+        val replaceInRouteName = Utils.stripStringQuots(annotationArgsList.firstOrNull { it.firstChild.text == "replaceInRouteName" }?.lastChild?.text)
         val literalList = routesArg.lastChild as DartListLiteralExpression
-        val routeList = PsiUtils.getRoutes(literalList)
+        val refactoredRootList = refactor(literalList, replaceInRouteName)
+        val subRefactableClasses = handleReferencedLists(project, refactoredRootList.listRefs, replaceInRouteName)
+        handleRefactableClasses(project, refactoredRootList.classRefs.plus(subRefactableClasses).distinctBy { it.classRef })
 
         editor.document.apply {
             WriteCommandAction.runWriteCommandAction(project) {
                 setReadOnly(false)
-                val flatRoutes = RoutesList(routeList, literalList).flatten()
-                val allReferencedLists = flatRoutes.associateBy { it.list.element }.map { it.key }
-                val refactoredList = refactor(allReferencedLists.first(), replaceInRouteName)
                 PsiTreeUtil.nextVisibleLeaf(routesArg)?.let {
                     if (it.text == ",") it.delete()
                 }
                 routesArg.delete()
-                insertString(clazz.endOffset - 1, "@override\nfinal List<AutoRoute> routes = ${refactoredList.first};")
+                val defaultRouteType = annotation.referenceExpression.text!!.replace("AutoRouter", "").lowercase()
+                val routeTypeArgsList = ArrayList<String>();
+                if (defaultRouteType == "custom") {
+                    val customRouteArgs = annotationArgsList.filterNot { listOf("routes", "replaceInRouteName", "deferredLoading", "preferRelativeImports").contains(it.firstChild.text) };
+                    if (customRouteArgs.isNotEmpty()) {
+                        for (namedArg in customRouteArgs) {
+                            routeTypeArgsList.add(namedArg.text)
+                        }
+                        val nextVisibleElement = PsiTreeUtil.nextVisibleLeaf(customRouteArgs.last())
+                        val lastElementToDelete = if (nextVisibleElement?.text == ",") nextVisibleElement else customRouteArgs.first()
+                        annotation.deleteChildRange(customRouteArgs.firstOrNull(), lastElementToDelete)
+                    }
+                }
+
+                val refactoredContent = StringBuilder("@override\nRouteType get defaultRouteType => RouteType.${defaultRouteType}(${routeTypeArgsList.joinToString(",")});")
+
+                refactoredContent.appendLine()
+                refactoredContent.append("@override\nfinal List<AutoRoute> routes = ${refactoredRootList.text};")
+
+                insertString(clazz.endOffset - 1, refactoredContent)
                 val strippedClassName = clazz.name!!.subSequence(1, clazz.name!!.length)
                 replaceString(clazz.nameIdentifier!!.startOffset, clazz.nameIdentifier!!.endOffset, "$strippedClassName extends $${strippedClassName}")
                 replaceString(annotation.referenceExpression.startOffset, annotation.referenceExpression.endOffset, "AutoRouterConfig")
+
+
                 ReformatCodeProcessor(file, false).run()
-                PsiDocumentManager.getInstance(project).commitDocument(this)
+                PsiDocumentManager.getInstance(project).let {
+                    it.doPostponedOperationsAndUnblockDocument(this)
+                    it.commitDocument(this)
+                }
             }
+
         }
-
-
     }
 
-    private fun refactor(list: DartListLiteralExpression, replaceInRouteName: String?): Pair<String, List<RefactableClass>> {
-        val classRefs = ArrayList<RefactableClass>()
-        val sb = StringBuilder("[").apply {
-            var customName: String? = null
-            for (item in list.elementList) {
-                val argsList = item.expression?.lastChild as DartArguments?;
-                val namedArgs = PsiTreeUtil.getChildrenOfType(argsList?.argumentList, DartNamedArgument::class.java)
+}
 
-                var itemText = item.text;
-                if (namedArgs != null)
-                    for (namedArg in namedArgs.reversed()) {
-                        if (namedArg.firstChild.text == "name") {
-                            customName = Utils.stripStringQuots(namedArg?.lastChild?.text)
-                            if (namedArg != null) {
-                                val nextVisibleLeaf = PsiTreeUtil.nextVisibleLeaf(namedArg);
-                                val rangeEnd = if (nextVisibleLeaf?.text == ",") nextVisibleLeaf else namedArg
-                                argsList?.argumentList?.deleteChildRange(namedArg, rangeEnd)
-                            }
-                            itemText = item.text;
-                        } else if (namedArg.firstChild.text == "children") {
+private fun handleRefactableClasses(project: Project, list: List<RefactableClass>) {
+    val groupedByContainingFile = list.groupBy { it.classRef.containingFile }
+    for (file in groupedByContainingFile.keys) {
+        for (clazz in groupedByContainingFile[file]!!.sortedByDescending { it.classRef.startOffset }) {
+            val classRef = clazz.classRef
+            if (classRef.getMetadataByName("RoutePage") != null) return
+            FileDocumentManager.getInstance().getDocument(classRef.containingFile.virtualFile)?.apply {
+                WriteCommandAction.runWriteCommandAction(project) {
+                    setReadOnly(false)
+                    val argsList = ArrayList<String>()
+                    if (clazz.customName != null) {
+                        argsList.add("name: ${clazz.customName}")
+                    }
+                    if (clazz.deferredLoading != null) {
+                        argsList.add("deferredLoading: '${clazz.deferredLoading}'")
+                    }
+                    insertString(classRef.startOffset, "@RoutePage${clazz.returnType ?: ""}(${argsList.joinToString(",")})\n")
+                    PsiUtils.getAutoRouteImportOffsetIfNeeded(classRef.containingFile)?.let { offset ->
+                        insertString(offset, "${Strings.autoRouteImport}\n")
+                    }
+                    ReformatCodeProcessor(classRef.containingFile, false).run()
+                    PsiDocumentManager.getInstance(project).let {
+                        it.doPostponedOperationsAndUnblockDocument(this)
+                        it.commitDocument(this)
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+private val alreadyRefactoredLists = ArrayList<DartListLiteralExpression>()
+private fun handleReferencedLists(project: Project, refactoredList: List<DartListLiteralExpression>, replaceInRouteName: String?): List<RefactableClass> {
+    val refactableClasses = ArrayList<RefactableClass>()
+    val groupedByContainingFile = refactoredList.groupBy { it.containingFile }
+    for (file in groupedByContainingFile.keys) {
+        for (list in groupedByContainingFile[file]!!.sortedByDescending { it.startOffset }) {
+            if (alreadyRefactoredLists.contains(list)) continue
+            val refactorRes = refactor(list, replaceInRouteName)
+            refactableClasses.addAll(refactorRes.classRefs)
+            alreadyRefactoredLists.add(list)
+            if (refactorRes.listRefs.isNotEmpty()) {
+                val classRefsInSubLists = handleReferencedLists(project, refactorRes.listRefs, replaceInRouteName)
+                refactableClasses.addAll(classRefsInSubLists)
+            }
+            FileDocumentManager.getInstance().getDocument(file.virtualFile)?.apply {
+                WriteCommandAction.runWriteCommandAction(project) {
+                    setReadOnly(false)
+                    replaceString(list.startOffset, list.endOffset, refactorRes.text)
+                    ReformatCodeProcessor(file, false).run()
+                    PsiDocumentManager.getInstance(project).let {
+                        it.doPostponedOperationsAndUnblockDocument(this)
+                        it.commitDocument(this)
+                    }
+                }
+            }
+
+        }
+
+    }
+    return refactableClasses
+}
+
+
+private fun refactor(list: DartListLiteralExpression, replaceInRouteName: String?): RefactorResult {
+    val classRefs = ArrayList<RefactableClass>()
+    val listRefs = ArrayList<DartListLiteralExpression>()
+    val sb = StringBuilder("[").apply {
+
+        for (item in list.elementList.map { it.lastChild }) {
+            if (item is DartCallExpression) {
+                val returnType = item.typeArgumentsList.firstOrNull()?.text
+                val argsList = item.lastChild as DartArguments?
+                val namedArgs = PsiTreeUtil.getChildrenOfType(argsList?.argumentList, DartNamedArgument::class.java)
+                val argsBuilder = ArrayList<String>()
+                if (namedArgs != null) {
+                    var customName: String? = null
+                    var customNameRef: String? = null
+                    var deferredLoading: String? = null
+
+                    namedArgs.firstOrNull { it.firstChild.text == "name" }?.let {
+                        customNameRef = it.lastChild?.text
+                        if (it.lastChild !is DartStringLiteralExpression) {
+                            val resolvedVar = DartResolveUtil.findReferenceAndComponentTarget(it.lastChild)?.context
+                            customName = PsiTreeUtil.findChildOfType(resolvedVar, DartVarInit::class.java)?.expression?.text
+                                    ?: customNameRef
+                        }
+                    }
+                    namedArgs.firstOrNull { it.firstChild.text == "deferredLoading" }?.let {
+                        deferredLoading = it.lastChild?.text
+                    }
+
+                    for (namedArg in namedArgs.filterNot { listOf("name", "deferredLoading").contains(it.firstChild.text) }) {
+                        if (namedArg.firstChild.text == "children") {
                             if (namedArg != null) {
                                 if (namedArg.lastChild is DartListLiteralExpression) {
-                                    val originalListTextLength = namedArg.textLength
-                                    val childRefactoredList = refactor(namedArg.lastChild as DartListLiteralExpression, replaceInRouteName)
-                                    classRefs.addAll(childRefactoredList.second)
-                                    val startOffset = argsList!!.startOffsetInParent + namedArg.startOffsetInParent
-                                    itemText = itemText.replaceRange(IntRange(startOffset, startOffset + originalListTextLength), "children: ${childRefactoredList.first}")
+                                    val childRefactoredRes = refactor(namedArg.lastChild as DartListLiteralExpression, replaceInRouteName)
+                                    classRefs.addAll(childRefactoredRes.classRefs)
+                                    listRefs.addAll(childRefactoredRes.listRefs)
+                                    argsBuilder.add("children: ${childRefactoredRes.text}")
+                                } else {
+                                    if (namedArg.lastChild is DartReferenceExpression) {
+                                        val resolvedRef = DartResolveUtil.findReferenceAndComponentTarget(namedArg.lastChild)?.context
+                                        val listRef = PsiTreeUtil.findChildOfType(resolvedRef, DartListLiteralExpression::class.java)
+                                        if (listRef != null) {
+                                            listRefs.add(listRef)
+                                        }
+                                    }
+                                    argsBuilder.add(namedArg.text)
                                 }
                             }
                         } else if (namedArg.firstChild.text == "page") {
                             val pageRef = namedArg.lastChild
                             val clazzRef = DartResolveUtil.findReferenceAndComponentTarget(pageRef)
                             if (clazzRef != null) {
-                                classRefs.add(RefactableClass(clazzRef, customName))
+                                classRefs.add(RefactableClass(clazzRef, customNameRef, deferredLoading, returnType))
                             }
-                            val startOffset = argsList!!.startOffsetInParent + pageRef.startOffsetInParent;
-                            val routeName = Utils.resolveRouteName(pageRef.text, customName, replaceInRouteName)
-                            itemText = itemText.replaceRange(IntRange(startOffset, startOffset + pageRef.textLength), "${routeName}.page")
-
+                            val routeName = Utils.resolveRouteName(pageRef.text, Utils.stripStringQuots(customName), replaceInRouteName)
+                            argsBuilder.add("page: ${routeName}.page")
+                        } else {
+                            argsBuilder.add(namedArg.text)
                         }
                     }
-                append("$itemText,")
-            }
-            append("]")
-        }.toString()
-        return Pair(sb, classRefs)
-    }
-
-    class RefactableClass(val classRef: DartComponent, customName: String?)
-
-    private fun addAnnotationIfNeeded(project: Project, clazzRef: DartComponent, customName: String?) {
-        if (clazzRef.getMetadataByName("RoutePage") != null) return
-        FileDocumentManager.getInstance().getDocument(clazzRef.containingFile.virtualFile)?.apply {
-            WriteCommandAction.runWriteCommandAction(project) {
-                setReadOnly(false)
-                insertString(clazzRef.startOffset, "@RoutePage(${customName ?: ""})\n")
-                PsiUtils.getAutoRouteImportOffsetIfNeeded(clazzRef.containingFile)?.let { offset ->
-                    insertString(offset, "${Strings.autoRouteImport}\n")
                 }
-                ReformatCodeProcessor(clazzRef.containingFile, false).run()
-                PsiDocumentManager.getInstance(project).commitDocument(this)
+                append("${item.firstChild.text}(${argsBuilder.joinToString(",")}),")
+            } else {
+                if (item is DartSpreadElement) {
+                    val spreadListRef = DartResolveUtil.findReferenceAndComponentTarget(item.lastChild)?.context
+                    val spreadListLiteral = PsiTreeUtil.findChildOfType(spreadListRef, DartListLiteralExpression::class.java)
+                    if (spreadListLiteral != null) {
+                        listRefs.add(spreadListLiteral)
+                    }
+                }
+                append(item.text)
             }
         }
-    }
+        append("]")
+    }.toString()
 
-
+    return RefactorResult(sb, classRefs, listRefs)
 }
+
+
+
 
 
 

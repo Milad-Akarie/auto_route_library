@@ -72,7 +72,7 @@ class PsiUtils {
             return RoutesList(getRoutes(listLiteral), listLiteral)
         }
 
-        fun getRoutes(routesList: DartListLiteralExpression): List<RegisteredRoute> {
+        private fun getRoutes(routesList: DartListLiteralExpression): List<RegisteredRoute> {
             val routes = ArrayList<RegisteredRoute>()
             for (item in routesList.elementList.map { it.lastChild }) {
                 if (item is DartCallExpression) {
