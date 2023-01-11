@@ -10,6 +10,17 @@ data class RoutesList(val routes: List<RegisteredRoute>, val element: DartListLi
             acc.apply { addAll(a.flatten(this@RoutesList,dept)) }
         }
     }
+
+    fun collectAllLists() : List<DartListLiteralExpression>{
+        return  mutableListOf(element).apply {
+             for(childList in routes.mapNotNull { it.children }) {
+                 addAll(childList.collectAllLists())
+             }
+        }
+    }
+    override fun equals(other: Any?): Boolean {
+         return  other is RoutesList && element  == other.element
+    }
 }
 
 data class RegisteredRoute(val name: String, val children: RoutesList? = null, val element: DartCallExpression) {

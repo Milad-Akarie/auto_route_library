@@ -1,9 +1,11 @@
 import come.autoroute.helper.autoroutehelper.listeners.DialogDismissListener;
 import come.autoroute.helper.autoroutehelper.models.FlatRouteItem;
+import come.autoroute.helper.autoroutehelper.models.RoutePageInfo;
 import come.autoroute.helper.autoroutehelper.models.RouterConfig;
 import come.autoroute.helper.autoroutehelper.models.RoutesList;
-import come.autoroute.helper.autoroutehelper.models.RoutePageInfo;
-import org.jetbrains.annotations.NotNull;
+import come.autoroute.helper.autoroutehelper.utils.Utils;
+import org.apache.commons.lang.WordUtils;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
@@ -25,11 +27,14 @@ public class JFrameDialog extends JDialog {
     public JCheckBox deferredWebOnlyCheckBox;
     public JCheckBox fullscreenDialogCheckBox;
     public JComboBox<String> targetListCombo;
+    public JTextField fileNameField;
+    private JLabel fileNameLabel;
     public ArrayList<FlatRouteItem> routeItems;
     final DialogDismissListener listener;
-
-    public JFrameDialog(RouterConfig router, RoutesList routes, RoutePageInfo pageInfo, DialogDismissListener listener) {
+    public final RouterConfig router;
+    public JFrameDialog(RouterConfig router, RoutesList routes, @Nullable RoutePageInfo pageInfo, DialogDismissListener listener) {
         this.listener = listener;
+        this.router = router;
         this.routeItems = routes.flatten(1);
         setContentPane(contentPane);
         setModal(true);
@@ -37,8 +42,19 @@ public class JFrameDialog extends JDialog {
         getRootPane().setDefaultButton(buttonOK);
         targetListCombo.setRenderer(new ItemRenderer());
         targetListCombo.addItem("Root");
-        routeNameTextField.setText(router.getRouteName(pageInfo));
-        routeNameTextField.setEnabled(pageInfo.getCustomName() == null);
+        if (pageInfo != null) {
+            routeNameTextField.setText(router.getRouteName(pageInfo));
+            routeNameTextField.setEnabled(pageInfo.getCustomName() == null);
+            fileNameLabel.setVisible(false);
+            fileNameField.setVisible(false);
+        } else {
+            fileNameField.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
+                String pascalCaseName = resolveClassName();
+                if (pascalCaseName == null) return;
+                final String suggestedClassName = Utils.Companion.resolveRouteName(pascalCaseName.toString(),null,router.getReplaceInRouteName());
+                routeNameTextField.setText(suggestedClassName);
+            });
+        }
         for (final FlatRouteItem item : routeItems) {
             targetListCombo.addItem(new String(new char[item.getDept()]).replace("\0", "  ") + item.getRoute().getName());
         }
@@ -60,6 +76,19 @@ public class JFrameDialog extends JDialog {
 
     }
 
+    @Nullable
+    public String resolveClassName() {
+        final String path = fileNameField.getText();
+        final String[] segments = path.split("/");
+        if(segments.length == 0) return null;
+        final String lastSegment = segments[segments.length - 1].split("\\.")[0];
+        StringBuilder pascalCaseName = new StringBuilder();
+        for (String s : lastSegment.split("_")) {
+            pascalCaseName.append(WordUtils.capitalize(s));
+        }
+        return pascalCaseName.toString();
+    }
+
     private void onOK() {
         listener.onDone(this);
         dispose();
@@ -69,10 +98,12 @@ public class JFrameDialog extends JDialog {
         dispose();
     }
 
-    public static JFrameDialog show(RouterConfig router, RoutesList routes, RoutePageInfo pageInfo, @NotNull JComponent component, DialogDismissListener listener) {
+    public static JFrameDialog show(RouterConfig router, RoutesList routes, RoutePageInfo pageInfo, @Nullable JComponent component, DialogDismissListener listener) {
         JFrameDialog dialog = new JFrameDialog(router, routes, pageInfo, listener);
         dialog.pack();
-        dialog.setLocationRelativeTo(component);
+        if (component != null) {
+            dialog.setLocationRelativeTo(component);
+        }
         dialog.setVisible(true);
         return dialog;
     }
