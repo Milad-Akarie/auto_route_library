@@ -3,56 +3,54 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/mobile/screens/profile/routes.dart';
 
 @AutoRouterConfig()
 class RootRouter extends $RootRouter {
   @override
   final List<AutoRoute> routes = [
     AutoRoute(
-      path: '/',
       page: HomeRoute.page,
+      path: '/',
+      guards: [AuthGuard()],
+      children: [
+        RedirectRoute(path: '', redirectTo: 'books'),
+        AutoRoute(
+          path: 'books',
+          page: BooksTab.page,
+          maintainState: true,
+          children: [
+            AutoRoute(
+              path: '',
+              page: BookListRoute.page,
+              title: (ctx, _) => 'Books list',
+            ),
+            AutoRoute(
+              path: ':id',
+              page: BookDetailsRoute.page,
+              fullscreenDialog: true,
+              title: (ctx, data) {
+                return 'Book Details ${data.pathParams.get('id')}';
+              },
+            ),
+          ],
+        ),
+        profileTab,
+        AutoRoute(
+          path: 'settings/:tab',
+          page: SettingsTab.page,
+        ),
+      ],
     ),
-    AutoRoute(page: HomeRoute.page, children: [
-      AutoRoute(page: ProfileRoute.page),
-      AutoRoute(
-        page: MyBooksRoute.page,
-      ),
-    ]),
-    ...?AuthGuard.childList
+    AutoRoute(page: LoginRoute.page, path: '/login'),
+    RedirectRoute(path: '*', redirectTo: '/'),
   ];
 }
 
-// AutoRoute(
-//
-//   page: HomePage,
-//   children: [
-//     // AutoRoute(
-//     //   path: 'books',
-//     //   page: AutoRouter.emptyPage,
-//     //   name: 'BooksTab',
-//     //   initial: true,
-//     //   maintainState: true,
-//     //   children: [
-//     //     AutoRoute(
-//     //       path: '',
-//     //       page: BookListScreen,
-//     //     ),
-//     //     AutoRoute(
-//     //       path: ':id',
-//     //       page: BookDetailsPage,
-//     //       fullscreenDialog: true,
-//     //     ),
-//     //   ],
-//     // ),
-//     // profileTab,
-//     AutoRoute(
-//       path: 'settings/:tab',
-//       page: SettingsPage,
-//       name: 'SettingsTab',
-//     ),
-//   ],
-// ),
-//
-// // auth
-// AutoRoute(page: LoginPage, path: '/login'),
-// RedirectRoute(path: '*', redirectTo: '/'),/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine/n//AddedLine
+@RoutePage(name: 'BooksTab')
+class BooksTabPage extends AutoRouter {
+  const BooksTabPage({super.key});
+}
+
+@RoutePage(name: 'ProfileTab')
+class ProfileTabPage extends AutoRouter {}

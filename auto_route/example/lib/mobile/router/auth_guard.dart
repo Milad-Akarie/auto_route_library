@@ -9,24 +9,22 @@ import 'package:flutter/cupertino.dart';
 var isAuthenticated = false;
 
 class AuthGuard extends AutoRouteGuard {
- static List<AutoRoute>? childList = [
-    AutoRoute(page: MyBooksRoute.page),
-    AutoRoute(page: ProfileRoute.page,),
-  ];
+
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (!isAuthenticated) {
       // ignore: unawaited_futures
-      // router.pushAndPopUntil(
-      //   LoginRoute(onLoginResult: (_) {
-      //     isAuthenticated = true;
-      //     // we can't pop the bottom page in the navigator's stack
-      //     // so we just remove it from our local stack
-      //     resolver.next();
-      //     router.removeLast();
-      //   }),
-      //   predicate: (r) => true,
-      // );
+      router.push(
+        LoginRoute(onLoginResult: (_) {
+          isAuthenticated = true;
+          // we can't pop the bottom page in the navigator's stack
+          // so we just remove it from our local stack
+          router.markUrlStateForReplace();
+          router.removeLast();
+          resolver.next();
+        }),
+
+      );
     } else {
       resolver.next(true);
     }

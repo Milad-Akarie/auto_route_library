@@ -7,6 +7,7 @@ import '../models/router_config.dart';
 import 'deferred_pages_allocator.dart';
 import 'root_router_builder.dart';
 import 'route_info_builder.dart';
+import 'package:path/path.dart' as p;
 
 const autoRouteImport = 'package:auto_route/auto_route.dart';
 const materialImport = 'package:flutter/material.dart';
@@ -25,7 +26,6 @@ String generateLibrary(
   RouterConfig router, {
   required List<RouteConfig> routes,
 }) {
-  final fileName = '';
 
   throwIf(
     router.usesPartBuilder && router.deferredLoading,
@@ -52,20 +52,13 @@ String generateLibrary(
     }
   }
 
-// todo handle this
-  // final checkedRoutes = <RouteConfig>[];
-  // routes.forEach((route) {
-  //   throwIf(
-  //     (checkedRoutes.any((r) => r.routeName == route.routeName && r.pathName != route.pathName)),
-  //     'Duplicate route names must have the same path! (name: ${route.routeName}, path: ${route.pathName})\nNote: Unless specified, route name is generated from page name.',
-  //   );
-  //   checkedRoutes.add(route);
-  // });
+
+
 
   final library = Library(
     (b) => b
       ..directives.addAll([
-        if (router.usesPartBuilder) Directive.partOf(fileName),
+        if (router.usesPartBuilder) Directive.partOf(p.basename(router.path)),
       ])
       ..body.addAll([
         buildRouterConfig(router, routes),

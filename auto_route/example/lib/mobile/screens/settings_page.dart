@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
-@RoutePage()
+
+@RoutePage(name: 'SettingsTab')
 class SettingsPage extends StatefulWidget {
   final String tab;
   final String query;
@@ -34,20 +35,20 @@ class _SettingsPageState extends State<SettingsPage>
                 setState(() {
                   queryUpdateCont++;
                 });
-                // context.navigateTo(SettingsTab(
-                //   tab: 'Updated Path param $queryUpdateCont',
-                //   query: 'updated Query $queryUpdateCont',
-                // ));
+                context.navigateTo(SettingsTab(
+                  tab: 'Updated Path param $queryUpdateCont',
+                  query: 'updated Query $queryUpdateCont',
+                ));
               },
               child: Text('Update Query $queryUpdateCont'),
             ),
-            // ElevatedButton(
-            //     onPressed: () {
-            //       context.navigateTo(BooksTab(
-            //         children: [BookDetailsRoute(id: 2)],
-            //       ));
-            //     },
-            //     child: Text('Navigate to book details/1'))
+            ElevatedButton(
+                onPressed: () {
+                  context.navigateTo(BooksTab(
+                    children: [BookDetailsRoute(id: 2)],
+                  ));
+                },
+                child: Text('Navigate to book details/1'))
           ],
         ),
       ),

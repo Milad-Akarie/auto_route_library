@@ -3,6 +3,8 @@ import 'package:auto_route/src/utils.dart';
 import 'package:flutter/cupertino.dart';
 import '../matcher/route_matcher.dart';
 
+typedef TitleBuilder = String Function(BuildContext context, RouteData data);
+
 @immutable
 class AutoRoute {
   final String name;
@@ -16,7 +18,7 @@ class AutoRoute {
   final RouteType? type;
   final bool fullscreenDialog;
   final bool maintainState;
-  final bool initial;
+  final TitleBuilder? title;
 
   AutoRoute._({
     required this.name,
@@ -29,14 +31,10 @@ class AutoRoute {
     this.meta = const {},
     this.maintainState = true,
     this.fullscreenDialog = false,
-    this.initial = false,
+    this.title,
     List<AutoRoute>? children,
-  })  : _path = path ?? _parsePath(name, initial),
+  })  : _path = path ?? toKababCase(name),
         _children = children != null ? RouteCollection.from(children) : null;
-
-  static String _parsePath(String name, bool initial) {
-    return initial ? '' : toKababCase(name);
-  }
 
   factory AutoRoute({
     required PageInfo page,
@@ -44,13 +42,12 @@ class AutoRoute {
     bool usesPathAsKey = false,
     List<AutoRouteGuard> guards = const [],
     bool fullMatch = false,
-    bool initial = false,
-    String? redirectTo,
     RouteType? type,
     Map<String, dynamic> meta = const {},
     bool maintainState = true,
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
+    TitleBuilder? title,
   }) {
     return AutoRoute._(
       name: page.name,
@@ -60,10 +57,10 @@ class AutoRoute {
       fullscreenDialog: fullMatch,
       meta: meta,
       type: type,
-      initial: false,
       usesPathAsKey: usesPathAsKey,
       guards: guards,
-      redirectTo: redirectTo,
+      children: children,
+      title: title,
     );
   }
 
@@ -101,11 +98,11 @@ class MaterialRoute extends AutoRoute {
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
-    super.initial = false,
     super.guards,
     super.usesPathAsKey = false,
     super.children,
     super.meta = const {},
+    super.title,
   }) : super._(
           name: page.name,
           type: const RouteType.material(),
@@ -114,20 +111,16 @@ class MaterialRoute extends AutoRoute {
 
 @immutable
 class CupertinoRoute extends AutoRoute {
-  /// passed to the title property in [CupertinoPageRoute]
-  final String? title;
-
   CupertinoRoute({
     required Type name,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
-    super.initial = false,
     super.guards,
     super.usesPathAsKey = false,
     super.children,
     super.meta = const {},
-    this.title,
+    super.title,
   }) : super._(name: name.toString(), type: const RouteType.cupertino());
 }
 
@@ -138,19 +131,15 @@ class AdaptiveRoute extends AutoRoute {
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
-    super.initial = false,
     super.guards,
     super.usesPathAsKey = false,
     super.children,
     super.meta = const {},
-    String? cupertinoPageTitle,
+    super.title,
     bool opaque = true,
   }) : super._(
           name: page.name,
-          type: RouteType.adaptive(
-            cupertinoPageTitle: cupertinoPageTitle,
-            opaque: opaque,
-          ),
+          type: RouteType.adaptive(opaque: opaque),
         );
 }
 
@@ -161,11 +150,11 @@ class CustomRoute extends AutoRoute {
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
-    super.initial = false,
     super.guards,
     super.usesPathAsKey = false,
     super.children,
     super.meta = const {},
+    super.title,
     Function? transitionsBuilder,
     Function? customRouteBuilder,
     int? durationInMilliseconds,
@@ -187,4 +176,15 @@ class CustomRoute extends AutoRoute {
             barrierColor: barrierColor,
           ),
         );
+}
+
+@visibleForTesting
+class TestRoute extends AutoRoute {
+  TestRoute(
+    String name, {
+    required String path,
+    super.children,
+    super.redirectTo,
+    super.fullMatch,
+  }) : super._(name: name, path: path);
 }

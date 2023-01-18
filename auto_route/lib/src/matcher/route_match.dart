@@ -20,6 +20,7 @@ class RouteMatch<T> {
   final bool isBranch;
   final Map<String, dynamic> meta;
   final RouteType? type;
+  final TitleBuilder? title;
 
   const RouteMatch({
     required this.name,
@@ -36,7 +37,8 @@ class RouteMatch<T> {
     this.fragment = '',
     this.redirectedFrom,
     this.meta = const {},
-     this.type,
+    this.type,
+    this.title,
   });
 
   bool get hasChildren => children?.isNotEmpty == true;
@@ -48,8 +50,7 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren)
-          ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   List<RouteMatch> get flattened {
@@ -71,6 +72,7 @@ class RouteMatch<T> {
     List<AutoRouteGuard>? guards,
     Map<String, dynamic>? meta,
     RouteType? type,
+    TitleBuilder? title,
   }) {
     return RouteMatch(
       path: path ?? this.path,
@@ -87,6 +89,7 @@ class RouteMatch<T> {
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
       meta: meta ?? this.meta,
       type: type ?? this.type,
+      title: title ?? this.title,
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../main_router.dart';
 import '../router_test_utils.dart';
 import 'router.dart';
 
@@ -9,20 +10,20 @@ var tabsType = 'IndexedStack';
 
 void main() {
   tabsType = 'IndexedStack';
-  tabsType = 'PageView';
-  tabsType = 'TabBar';
+  // tabsType = 'PageView';
+  // tabsType = 'TabBar';
   runTest();
 }
 
 void runTest() {
-  late AppRouter router;
-  setUp(() => router = AppRouter());
+  late NestedTabsRouter router;
+  setUp(() => router = NestedTabsRouter());
   testWidgets(
     'Initializing router App should present FirstRoute/Tab1Route',
     (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
       expectTopPage(router, Tab1Route.name);
-      expect(router.urlState.url, '/tab1');
+      expect(router.urlState.url, '/');
     },
   );
 
@@ -35,7 +36,7 @@ void runTest() {
       tabsRouter!.setActiveIndex(1);
       await tester.pumpAndSettle();
       expectTopPage(router, Tab2Nested1Route.name);
-      expect(router.urlState.url, '/tab2/tab2Nested1');
+      expect(router.urlState.url, '/tab2');
     },
   );
 
@@ -48,7 +49,7 @@ void runTest() {
       tabsRouter!.setActiveIndex(2);
       await tester.pumpAndSettle();
       expectTopPage(router, Tab3Nested1Route.name);
-      expect(router.urlState.url, '/tab3/tab3Nested1');
+      expect(router.urlState.url, '/tab3');
     },
   );
 
@@ -59,7 +60,7 @@ void runTest() {
       router.navigate(const Tab2Route());
       await tester.pumpAndSettle();
       expectTopPage(router, Tab2Nested1Route.name);
-      expect(router.urlState.url, '/tab2/tab2Nested1');
+      expect(router.urlState.url, '/tab2');
     },
   );
 
@@ -70,7 +71,7 @@ void runTest() {
       router.navigate(const Tab3Route());
       await tester.pumpAndSettle();
       expectTopPage(router, Tab3Nested1Route.name);
-      expect(router.urlState.url, '/tab3/tab3Nested1');
+      expect(router.urlState.url, '/tab3');
     },
   );
 
@@ -96,7 +97,7 @@ void runTest() {
       await tester.pumpAndSettle();
       router.navigate(const Tab3Route());
       await tester.pumpAndSettle();
-      expect(router.urlState.url, '/tab3/tab3Nested1');
+      expect(router.urlState.url, '/tab3');
     },
   );
 
@@ -114,7 +115,7 @@ void runTest() {
     (WidgetTester tester) async {
       await pumpRouterApp(tester, router, initialLink: '/invalid-deep-link');
       expectTopPage(router, Tab1Route.name);
-      expect(router.urlState.url, '/tab1');
+      expect(router.urlState.url, '/');
     },
   );
 }

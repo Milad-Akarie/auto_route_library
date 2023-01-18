@@ -3,12 +3,9 @@ abstract class RouteType {
 
   const factory RouteType.material() = MaterialRouteType;
 
-  const factory RouteType.cupertino({String? title}) = CupertinoRouteType;
+  const factory RouteType.cupertino() = CupertinoRouteType;
 
-  const factory RouteType.adaptive({
-    String? cupertinoPageTitle,
-    bool opaque,
-  }) = AdaptiveRouteType;
+  const factory RouteType.adaptive({bool opaque}) = AdaptiveRouteType;
 
   const factory RouteType.custom({
     Function? transitionsBuilder,
@@ -27,21 +24,14 @@ class MaterialRouteType extends RouteType {
 }
 
 class CupertinoRouteType extends RouteType {
-  /// passed to the title property in [CupertinoPageRoute]
-  final String? title;
-
-  const CupertinoRouteType({this.title}) : super._();
+  const CupertinoRouteType() : super._();
 }
 
 class AdaptiveRouteType extends RouteType {
-  /// passed to the title property in [CupertinoPageRoute]
-  final String? cupertinoPageTitle;
-
   /// passed to the opaque property in [_NoAnimationPageRouteBuilder] only when kIsWeb
   final bool opaque;
 
   const AdaptiveRouteType({
-    this.cupertinoPageTitle,
     this.opaque = true,
   }) : super._();
 }

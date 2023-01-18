@@ -9,7 +9,7 @@ Future testGenerator({
 }) async {
   Logger.root.level = Level.INFO;
 
-  final anotherBuilder = autoRouteGenerator(BuilderOptions({}));
+  final anotherBuilder = autoRouteBuilder(BuilderOptions({}));
 
   return await testBuilder(
     anotherBuilder,

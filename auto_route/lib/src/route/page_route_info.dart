@@ -28,6 +28,7 @@ class PageRouteInfo<T> {
 
   String get routeName => _name;
 
+
   bool get hasChildren => initialChildren?.isNotEmpty == true;
 
   bool get fromRedirect => redirectedFrom != null;
@@ -124,4 +125,3 @@ class PageRouteInfo<T> {
       const ListEquality().hash(initialChildren);
 }
 
-typedef EmptyRouterName= PageRouteInfo;

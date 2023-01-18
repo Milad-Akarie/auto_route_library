@@ -91,17 +91,17 @@ fun JFrameDialog.getAnnotationText(className: String): String {
     if (routeNameTextField.text.isNotBlank()) {
         val resolvedName = Utils.resolveRouteName(
                 className,
-                routeNameTextField.text,
+                null,
                 router.replaceInRouteName,
         )
         if(resolvedName != routeNameTextField.text){
-             args.add("name: ${routeNameTextField.text}")
+             args.add("name: '${routeNameTextField.text}'")
         }
     }
     if(deferredWebOnlyCheckBox.isSelected){
         args.add("deferredLoading: true")
     }
-    return  "@RoutePage(${args.joinToString(",")})"
+    return  "@RoutePage(${args.joinToString(",")})\n"
 }
 
 fun JFrameDialog.addToRouter(project: Project) {
@@ -120,8 +120,8 @@ fun JFrameDialog.addToRouter(project: Project) {
         var targetElement: PsiElement = routeItems.first().list.element
         if (selectTargetIndex > 0) {
             val targetRoute = routeItems[selectTargetIndex - 1]
-            targetElement = targetRoute.route.element.arguments!!
             if (targetRoute.route.children == null) {
+                targetElement = targetRoute.route.element.arguments!!
                 b.insert(0, "children:[")
                 b.append("],")
             } else {

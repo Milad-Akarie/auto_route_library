@@ -1,6 +1,4 @@
-import 'package:flutter/widgets.dart';
-
-class PageInfo<T extends Widget> {
+class PageInfo<Args> {
   final String name;
 
   const PageInfo(this.name);

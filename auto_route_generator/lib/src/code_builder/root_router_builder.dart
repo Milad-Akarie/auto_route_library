@@ -8,7 +8,7 @@ import 'library_builder.dart';
 
 Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
       (b) => b
-        ..name = '\$${router.routerClassName}'
+        ..name = '${router.usesPartBuilder? '_' : '' }\$${router.routerClassName}'
         ..abstract = true
         ..extend = refer('RootStackRouter', autoRouteImport)
         ..fields.addAll([buildPagesMap(routes, router)])

@@ -98,6 +98,7 @@ abstract class RoutingController with ChangeNotifier {
       parent: parent,
       pendingChildren: route.children ?? [],
       type: route.type ?? root.defaultRouteType,
+      title: route.title,
     );
 
     for (final ctr in _childControllers) {
@@ -118,14 +119,15 @@ abstract class RoutingController with ChangeNotifier {
     if (match != null) {
       return match;
     } else {
-      final path = routeCollection.findPathTo(route.routeName).map((e) => e.name).reduce((a, b) => a += ' -> $b');
+      final paths = routeCollection.findPathTo(route.routeName).map((e) => e.name);
+      final path = paths.isEmpty ? '' : paths.reduce((a, b) => a += ' -> $b');
       if (onFailure != null) {
         onFailure(RouteNotFoundFailure(path));
         return null;
       } else {
         throw FlutterError(
             "\nLooks like you're trying to navigate to a nested route without adding their parent to stack first \n"
-            "try navigating to $path");
+            "${path.isEmpty ? '': 'try navigating to $path '}");
       }
     }
   }

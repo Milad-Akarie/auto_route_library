@@ -12,6 +12,32 @@ abstract class RootStackRouter extends StackRouter {
     _navigationHistory = NavigationHistory.create(this);
   }
 
+  RouterConfig<UrlState> config({
+    List<PageRouteInfo>? initialRoutes,
+    String? initialDeepLink,
+    String? navRestorationScopeId,
+    WidgetBuilder? placeholder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    bool includePrefixMatches = false,
+    bool Function(String? location)? neglectWhen,
+  }) {
+    return RouterConfig(
+      routeInformationParser: defaultRouteParser(
+        includePrefixMatches: includePrefixMatches,
+      ),
+      routeInformationProvider: routeInfoProvider(
+        neglectWhen: neglectWhen,
+      ),
+      routerDelegate: delegate(
+        initialDeepLink: initialDeepLink,
+        initialRoutes: initialRoutes,
+        navRestorationScopeId: navRestorationScopeId,
+        navigatorObservers: navigatorObservers,
+        placeholder: placeholder,
+      ),
+    );
+  }
+
   @override
   RouteData get routeData => RouteData(
         router: this,
@@ -115,5 +141,5 @@ abstract class RootStackRouter extends StackRouter {
   NavigationHistory get navigationHistory => _navigationHistory;
 
   @override
-  late final RouteCollection routeCollection = RouteCollection.from(routes);
+  late final RouteCollection routeCollection = RouteCollection.from(routes,root: true);
 }

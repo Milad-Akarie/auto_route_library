@@ -26,11 +26,7 @@ class AutoRoutePage<T> extends Page<T> {
     this.maintainState = true,
     this.opaque = true,
     LocalKey? key,
-  })  : _child = child is AutoRouteWrapper
-            ? WrappedRoute(
-                child: child as AutoRouteWrapper,
-              )
-            : child,
+  })  : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
         super(
           restorationId: routeData.name,
           name: routeData.name,
@@ -53,16 +49,17 @@ class AutoRoutePage<T> extends Page<T> {
 
   Route<T> onCreateRoute(BuildContext context) {
     final type = routeData.type;
+    final title = routeData.title?.call(context);
     if (type is MaterialRouteType) {
       return PageBasedMaterialPageRoute<T>(page: this);
     } else if (type is CupertinoRouteType) {
-      return _PageBasedCupertinoPageRoute<T>(page: this, title: type.title);
+      return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
     } else if (type is CustomRouteType) {
       final result = buildPage(context);
       if (type.customRouteBuilder != null) {
         return type.customRouteBuilder!<T>(context, result, this);
       }
-      return _CustomPageBasedPageRouteBuilder<T>(page: this,routeType: type);
+      return _CustomPageBasedPageRouteBuilder<T>(page: this, routeType: type);
     } else if (type is AdaptiveRouteType) {
       if (kIsWeb) {
         return _NoAnimationPageRouteBuilder(page: this);
@@ -75,7 +72,7 @@ class AutoRoutePage<T> extends Page<T> {
           return PageBasedMaterialPageRoute<T>(page: this);
         case TargetPlatform.macOS:
         case TargetPlatform.iOS:
-          return _PageBasedCupertinoPageRoute<T>(page: this, title: type.cupertinoPageTitle);
+          return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
       }
     }
     return PageBasedMaterialPageRoute<T>(page: this);
@@ -115,7 +112,7 @@ class PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTrans
 class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T> with _CustomPageRouteTransitionMixin<T> {
   _CustomPageBasedPageRouteBuilder({
     required AutoRoutePage page,
-   required this.routeType,
+    required this.routeType,
   }) : super(settings: page);
 
   @override
@@ -156,7 +153,7 @@ class _NoAnimationPageRouteBuilder<T> extends PageRoute<T> with _NoAnimationPage
 }
 
 mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
-  /// Builds the primary contents of the route.
+
   AutoRoutePage<T> get _page => settings as AutoRoutePage<T>;
 
   @protected
@@ -200,7 +197,9 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
 mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   /// Builds the primary contents of the route.
   AutoRoutePage<T> get _page => settings as AutoRoutePage<T>;
+
   CustomRouteType get routeType;
+
   @protected
   Widget buildContent(BuildContext context);
 

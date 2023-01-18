@@ -1,3 +1,4 @@
+import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
@@ -9,11 +10,26 @@ class RouteCollection {
 
   RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
 
-  factory RouteCollection.from(List<AutoRoute> routes) {
+  factory RouteCollection.from(List<AutoRoute> routes, {bool root = false}) {
+    // final checkedRoutes = <AutoRoute>[];
+    // for (var route in routes) {
+    //   assert(
+    //     (checkedRoutes.any((r) => r.name == route.name && r.path != route.path)),
+    //     'Duplicate route names must have the same path! (name: ${route.name}, path: ${route.path})\nNote: Unless specified, route name is generated from page name.',
+    //   );
+    //   checkedRoutes.add(route);
+    // }
+
     final routesMap = <String, AutoRoute>{};
     for (var r in routes) {
+      throwIf(
+        !root && r.path.startsWith('/'),
+        'Sub-paths can not start with a "/"',
+      );
+
       routesMap[r.name] = r;
     }
+
     return RouteCollection(routesMap);
   }
 
@@ -91,9 +107,7 @@ class RouteMatcher {
   }
 
   List<RouteMatch>? _match(Uri uri, RouteCollection collection,
-      {bool includePrefixMatches = false,
-      bool root = false,
-      String? redirectedFrom}) {
+      {bool includePrefixMatches = false, bool root = false, String? redirectedFrom}) {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
@@ -121,10 +135,8 @@ class RouteMatcher {
         if (match.segments.length != pathSegments.length) {
           // has rest
           if (config.hasSubTree) {
-            final rest = uri.replace(
-                pathSegments: pathSegments.sublist(match.segments.length));
-            final children = _match(rest, config.children!,
-                includePrefixMatches: includePrefixMatches);
+            final rest = uri.replace(pathSegments: pathSegments.sublist(match.segments.length));
+            final children = _match(rest, config.children!, includePrefixMatches: includePrefixMatches);
             match = match.copyWith(children: children);
           }
           matches.add(match);
@@ -136,8 +148,8 @@ class RouteMatcher {
           //
           // include empty route if exists
           if (config.hasSubTree && !match.hasChildren) {
-            match = match.copyWith(
-                children: _match(uri.replace(path: ''), config.children!));
+
+            match = match.copyWith(children: _match(uri.replace(path: ''), config.children!));
           }
 
           matches.add(match);
@@ -146,10 +158,7 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty ||
-        (root &&
-            matches.last.allSegments(includeEmpty: true).length <
-                pathSegments.length)) {
+    if (matches.isEmpty || (root && matches.last.allSegments(includeEmpty: true).length < pathSegments.length)) {
       return null;
     }
     return matches;
@@ -171,8 +180,7 @@ class RouteMatcher {
 
   List<String> _split(String path) => p.split(path);
 
-  RouteMatch? matchByPath(Uri url, AutoRoute config,
-      {String? redirectedFrom}) {
+  RouteMatch? matchByPath(Uri url, AutoRoute config, {String? redirectedFrom}) {
     var parts = _split(config.path);
     var segments = _split(url.path);
 
@@ -180,9 +188,7 @@ class RouteMatcher {
       return null;
     }
 
-    if (config.fullMatch &&
-        segments.length > parts.length &&
-        (parts.isEmpty || parts.last != '*')) {
+    if (config.fullMatch && segments.length > parts.length && (parts.isEmpty || parts.last != '*')) {
       return null;
     }
 
@@ -217,6 +223,7 @@ class RouteMatcher {
       queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
       fragment: url.fragment,
       type: config.type,
+      title: config.title,
     );
   }
 
@@ -270,11 +277,11 @@ class RouteMatcher {
       pathParams: Parameters(route.rawPathParams),
       queryParams: Parameters(route.rawQueryParams),
       type: config.type,
+      title: config.title,
     );
   }
 
-  Map<String, dynamic> _normalizeSingleValues(
-      Map<String, List<String>> queryParametersAll) {
+  Map<String, dynamic> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {
     final queryMap = <String, dynamic>{};
     for (var key in queryParametersAll.keys) {
       var list = queryParametersAll[key];

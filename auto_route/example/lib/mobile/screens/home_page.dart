@@ -2,8 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-@RoutePage()
-class HomePage extends StatefulWidget implements AutoRouteWrapper {
+
+@RoutePage<String>()
+class HomePage extends StatefulWidget  {
   const HomePage({
     Key? key,
   }) : super(key: key);
@@ -11,19 +12,15 @@ class HomePage extends StatefulWidget implements AutoRouteWrapper {
   @override
   HomePageState createState() => HomePageState();
 
-  @override
-  Widget wrappedRoute(BuildContext context) {
-    return this;
-  }
 }
 
 class RouteDestination {
-  final PageRouteInfo? route;
+  final PageRouteInfo route;
   final IconData icon;
   final String label;
 
   const RouteDestination({
-     this.route,
+    required this.route,
     required this.icon,
     required this.label,
   });
@@ -32,17 +29,17 @@ class RouteDestination {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final destinations = [
     RouteDestination(
-      // route: BooksTab(),
+      route: BooksTab(),
       icon: Icons.source,
       label: 'Books',
     ),
     RouteDestination(
-      // route: ProfileTab(),
+      route: ProfileTab(),
       icon: Icons.person,
       label: 'Profile',
     ),
     RouteDestination(
-      // route: SettingsTab(tab: 'tab'),
+      route: SettingsTab(tab: 'tab'),
       icon: Icons.settings,
       label: 'Settings',
     ),
@@ -63,30 +60,30 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ? AutoRouter(builder: (context, child) {
             // we check for active route index by using
             // router.isRouteActive method
-            // var activeIndex = destinations.indexWhere(
-            //   (d) => context.router.isRouteActive(d.route.routeName),
-            // );
+            var activeIndex = destinations.indexWhere(
+              (d) => context.router.isRouteActive(d.route.routeName),
+            );
             // there might be no active route until router is mounted
             // so we play safe
-            // if (activeIndex == -1) {
-            //   activeIndex = 0;
-            // }
+            if (activeIndex == -1) {
+              activeIndex = 0;
+            }
             return Row(
               children: [
-                // NavigationRail(
-                //   destinations: destinations
-                //       .map((item) => NavigationRailDestination(
-                //             icon: Icon(item.icon),
-                //             label: Text(item.label),
-                //           ))
-                //       .toList(),
-                //   selectedIndex: activeIndex,
-                //   onDestinationSelected: (index) {
-                //     // use navigate instead of push so you won't have
-                //     // many useless route stacks
-                //     context.navigateTo(destinations[index].route);
-                //   },
-                // ),
+                NavigationRail(
+                  destinations: destinations
+                      .map((item) => NavigationRailDestination(
+                            icon: Icon(item.icon),
+                            label: Text(item.label),
+                          ))
+                      .toList(),
+                  selectedIndex: activeIndex,
+                  onDestinationSelected: (index) {
+                    // use navigate instead of push so you won't have
+                    // many useless route stacks
+                    context.navigateTo(destinations[index].route);
+                  },
+                ),
                 // child is the rendered route stack
                 Expanded(child: child)
               ],
@@ -94,14 +91,14 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           })
         : AutoTabsRouter.tabBar(
             routes: [
-              // BooksTab(),
-              // ProfileTab(),
-              // if (_showSettingsTap) SettingsTab(tab: 'tab'),
+              BooksTab(),
+              ProfileTab(),
+              if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
             builder: (context, child, controller) {
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(context.topRoute.name),
+                  title: Text(context.topRoute.title?.call(context,) ?? context.topRoute.name),
                   leading: AutoLeadingButton(ignorePagelessRoutes: true),
                   bottom: TabBar(
                     controller: controller,
@@ -114,8 +111,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 body: child,
-                bottomNavigationBar:
-                    buildBottomNav(context, context.tabsRouter),
+                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
               );
             },
           );

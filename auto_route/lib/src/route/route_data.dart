@@ -5,6 +5,8 @@ class RouteData {
   RouteData? _parent;
   final RoutingController router;
   final RouteType type;
+  final TitleBuilder? _titleBuilder;
+
   LocalKey get key => _match.key;
 
   RouteData({
@@ -13,8 +15,13 @@ class RouteData {
     RouteData? parent,
     required this.pendingChildren,
     required this.type,
-  })  : _match = route,
+    TitleBuilder? title,
+  })
+      : _titleBuilder = title,
+        _match = route,
         _parent = parent;
+
+  String Function(BuildContext context)? get title => _titleBuilder == null ? null : (context) => _titleBuilder!(context, this);
 
   final List<RouteMatch> pendingChildren;
 
@@ -23,24 +30,23 @@ class RouteData {
   bool get hasPendingChildren => pendingChildren.isNotEmpty;
 
   static RouteData of(BuildContext context) {
-    return RouteDataScope.of(context).routeData;
+    return RouteDataScope
+        .of(context)
+        .routeData;
   }
 
-  bool get hasPendingSubNavigation =>
-      hasPendingChildren && pendingChildren.last.hasChildren;
+  bool get hasPendingSubNavigation => hasPendingChildren && pendingChildren.last.hasChildren;
 
   T argsAs<T>({T Function()? orElse}) {
     final args = _match.args;
     if (args == null) {
       if (orElse == null) {
-        throw FlutterError(
-            '${T.toString()} can not be null because it has a required parameter');
+        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }
@@ -70,7 +76,8 @@ class RouteData {
 
   String get match => _match.stringMatch;
 
-  List<RouteMatch> get breadcrumbs => List.unmodifiable([
+  List<RouteMatch> get breadcrumbs =>
+      List.unmodifiable([
         if (_parent != null) ..._parent!.breadcrumbs,
         _match,
       ]);
@@ -78,7 +85,7 @@ class RouteData {
   Parameters get inheritedPathParams {
     final params = breadcrumbs.map((e) => e.pathParams).reduce(
           (value, element) => value + element,
-        );
+    );
     return params;
   }
 

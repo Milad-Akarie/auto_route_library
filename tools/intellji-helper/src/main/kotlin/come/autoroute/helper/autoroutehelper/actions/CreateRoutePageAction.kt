@@ -29,7 +29,6 @@ class CreateRoutePageAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val project: Project = e.project ?: return
 
-
         val navElement = e.getData(CommonDataKeys.NAVIGATABLE) ?: return
         val routerConfig = project.service<RouterConfigService>().getConfig() ?: return
         val routesList = PsiUtils.getRoutesList(project, routerConfig) ?: return
@@ -70,5 +69,5 @@ private fun createFile(project: Project, path: String, navElement: Navigatable, 
 }
 
 private fun createPageContent(className: String, annotationText: String): String {
-    return "import 'package:flutter/material.dart';\n" + "import 'package:auto_route/auto_route.dart';\n" + "\n" + "$annotationText\n" + "class $className extends StatelessWidget {\n" + "  const $className({super.key});\n" + "  @override\n" + "  Widget build(BuildContext context) {\n" + "    return Container();\n" + "  }\n" + "}\n";
+    return "import 'package:flutter/material.dart';\nimport 'package:auto_route/auto_route.dart';\n\n${annotationText}class $className extends StatelessWidget {\n  const $className({super.key});\n  @override\n  Widget build(BuildContext context) {\n    return Container();\n  }\n}\n";
 }

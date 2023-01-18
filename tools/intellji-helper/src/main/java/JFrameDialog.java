@@ -51,7 +51,7 @@ public class JFrameDialog extends JDialog {
             fileNameField.getDocument().addDocumentListener((SimpleDocumentListener) e -> {
                 String pascalCaseName = resolveClassName();
                 if (pascalCaseName == null) return;
-                final String suggestedClassName = Utils.Companion.resolveRouteName(pascalCaseName.toString(),null,router.getReplaceInRouteName());
+                final String suggestedClassName = Utils.Companion.resolveRouteName(pascalCaseName,null,router.getReplaceInRouteName());
                 routeNameTextField.setText(suggestedClassName);
             });
         }

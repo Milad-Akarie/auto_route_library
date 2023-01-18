@@ -3,18 +3,21 @@ import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+
+
+
 void main() {
   group('Testing RouteCollection', () {
     test('Building default constructor with empty map should throw in assertion error', () {
       expect(() => RouteCollection({}), throwsAssertionError);
     });
 
-    final routeA = AutoRouteConfig('A', name: '/');
-    final routeB = AutoRouteConfig('B', name: '/b');
-    final subRouteC1 = AutoRouteConfig('C1', name: 'c1');
-    final routeC = AutoRouteConfig(
+    final routeA = TestRoute('A', path: '/');
+    final routeB = TestRoute('B', path: '/b');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
       'C',
-      name: '/c',
+      path: '/c',
       children: [subRouteC1],
     );
     final collection = RouteCollection.from(
@@ -53,12 +56,12 @@ void main() {
   });
 
   group('Testing matching with include prefix matches off', () {
-    final routeA = AutoRouteConfig('A', name: '/');
-    final routeB = AutoRouteConfig('B', name: '/b');
-    final subRouteC1 = AutoRouteConfig('C1', name: 'c1');
-    final routeC = AutoRouteConfig(
+    final routeA = TestRoute('A', path: '/');
+    final routeB = TestRoute('B', path: '/b');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
       'C',
-      name: '/c',
+      path: '/c',
       children: [subRouteC1],
     );
 
@@ -115,20 +118,20 @@ void main() {
   });
 
   group('Testing matching with include prefix matches on', () {
-    final routeA = AutoRouteConfig('A', name: '/');
-    final routeB = AutoRouteConfig('B', name: '/b');
-    final routeB1 = AutoRouteConfig('B1', name: '/b/b1');
-    final subRouteC1 = AutoRouteConfig('C1', name: 'c1');
-    final subRouteD0 = AutoRouteConfig('D0', name: '');
-    final subRouteD1 = AutoRouteConfig('D1', name: 'd1');
-    final routeD = AutoRouteConfig(
+    final routeA = TestRoute('A', path: '/');
+    final routeB = TestRoute('B', path: '/b');
+    final routeB1 = TestRoute('B1', path: '/b/b1');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final subRouteD0 = TestRoute('D0', path: '');
+    final subRouteD1 = TestRoute('D1', path: 'd1');
+    final routeD = TestRoute(
       'D',
-      name: '/d',
+      path: '/d',
       children: [subRouteD0, subRouteD1],
     );
-    final routeC = AutoRouteConfig(
+    final routeC = TestRoute(
       'C',
-      name: '/c',
+      path: '/c',
       children: [subRouteC1],
     );
 
@@ -285,16 +288,16 @@ void main() {
   });
 
   group('Testing WildCard matching', () {
-    final routeA = AutoRouteConfig('A', name: '/');
-    final routeB = AutoRouteConfig('B', name: '/b');
-    final subRouteC1 = AutoRouteConfig('C1', name: 'c1');
-    final routeC = AutoRouteConfig(
+    final routeA = TestRoute('A', path: '/');
+    final routeB = TestRoute('B', path: '/b');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
       'C',
-      name: '/c',
+      path: '/c',
       children: [subRouteC1],
     );
-    final wcRoute = AutoRouteConfig('WC', name: '*');
-    final prefixedWcRoute = AutoRouteConfig('PWC', name: '/d/*');
+    final wcRoute = TestRoute('WC', path: '*');
+    final prefixedWcRoute = TestRoute('PWC', path: '/d/*');
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeC, prefixedWcRoute, wcRoute],
@@ -342,18 +345,18 @@ void main() {
   });
 
   group('Testing redirect routes', () {
-    final routeA = AutoRouteConfig('A', name: '/a');
-    final routeARedirect = AutoRouteConfig('AR', name: '/', redirectTo: '/a', fullMatch: true);
+    final routeA = TestRoute('A', path: '/a');
+    final routeARedirect = TestRoute('AR', path: '/', redirectTo: '/a', fullMatch: true);
 
-    final subRouteC1 = AutoRouteConfig('C1', name: 'c1');
-    final subRouteC1Redirect = AutoRouteConfig('C1R', name: '', redirectTo: 'c1', fullMatch: true);
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final subRouteC1Redirect = TestRoute('C1R', path: '', redirectTo: 'c1', fullMatch: true);
 
-    final routeC = AutoRouteConfig(
+    final routeC = TestRoute(
       'C',
-      name: '/c',
+      path: '/c',
       children: [subRouteC1Redirect, subRouteC1],
     );
-    final routeAWCRedirect = AutoRouteConfig('A-WC-R', name: '*', redirectTo: '/a', fullMatch: true);
+    final routeAWCRedirect = TestRoute('A-WC-R', path: '*', redirectTo: '/a', fullMatch: true);
 
     final routeCollection = RouteCollection.from(
       [routeA, routeC, routeARedirect, routeAWCRedirect],
@@ -400,9 +403,9 @@ void main() {
     final match2 = RouteMatcher(
       RouteCollection.from(
         [
-          AutoRouteConfig('A', name: '/a', children: [
-            AutoRouteConfig('AR', name: 'r', redirectTo: ''),
-            AutoRouteConfig('A1', name: ''),
+          TestRoute('A', path: '/a', children: [
+            TestRoute('AR', path: 'r', redirectTo: ''),
+            TestRoute('A1', path: ''),
           ]),
         ],
       ),
@@ -433,13 +436,13 @@ void main() {
   });
 
   group('Testing Path parameters parsing', () {
-    final routeA = AutoRouteConfig('A', name: '/a/:id');
-    final routeB = AutoRouteConfig('B', name: '/b/:id/n/:type');
-    final subRouteC1 = AutoRouteConfig('C1', name: ':id');
+    final routeA = TestRoute('A', path: '/a/:id');
+    final routeB = TestRoute('B', path: '/b/:id/n/:type');
+    final subRouteC1 = TestRoute('C1', path: ':id');
 
-    final routeC = AutoRouteConfig(
+    final routeC = TestRoute(
       'C',
-      name: '/c',
+      path: '/c',
       children: [subRouteC1],
     );
 
@@ -504,13 +507,13 @@ void main() {
   });
 
   group('Testing query parameters parsing', () {
-    final routeA = AutoRouteConfig('A', name: '/a');
-    final routeB = AutoRouteConfig('B', name: '/b');
-    final routeB1 = AutoRouteConfig('B1', name: '/b/b1');
-    final subRouteC1 = AutoRouteConfig('C1', name: 'c1');
-    final routeC = AutoRouteConfig(
+    final routeA = TestRoute('A', path: '/a');
+    final routeB = TestRoute('B', path: '/b');
+    final routeB1 = TestRoute('B1', path: '/b/b1');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
       'C',
-      name: '/c',
+      path: '/c',
       children: [subRouteC1],
     );
 

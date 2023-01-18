@@ -8,13 +8,11 @@ import 'library_builder.dart';
 List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
   final parameters = r.parameters.toList();
-  final pageInfoRefer =  TypeReference(
-        (b) => b
+  final pageInfoRefer = TypeReference(
+    (b) => b
       ..url = autoRouteImport
       ..symbol = 'PageInfo'
-      ..types.add(
-        r.pageType?.refer ?? refer('void'),
-      ),
+      ..types.add((parameters.isNotEmpty) ? argsClassRefer : refer('void')),
   );
   return [
     Class(
@@ -24,10 +22,10 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
         ..extend = TypeReference((b) {
           b
             ..symbol = 'PageRouteInfo'
-            ..url = autoRouteImport;
-          if (parameters.isNotEmpty) b.types.add(argsClassRefer);
-          // adds `void` type to be `strong-mode` compliant
-          if (parameters.isEmpty) b.types.add(refer('void'));
+            ..url = autoRouteImport
+            ..types.add(
+              (parameters.isNotEmpty) ? argsClassRefer : refer('void'),
+            );
         })
         ..fields.addAll([
           Field(
@@ -39,7 +37,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..assignment = literalString(r.getName(router.replaceInRouteName)).code,
           ),
           Field(
-                (b) => b
+            (b) => b
               ..modifier = FieldModifier.constant
               ..name = 'page'
               ..static = true

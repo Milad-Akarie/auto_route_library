@@ -34,8 +34,13 @@ class AutoRouterGenerator extends GeneratorForAnnotation<AutoRouterConfig> {
       usesPartBuilder: usesPartBuilder,
     );
 
+    final generateForDir = annotation
+        .read('generateForDir')
+        .listValue
+        .map((e) => e.toStringValue());
+
     final routes = <RouteConfig>[];
-    await for (final asset in buildStep.findAssets(Glob('**.route.json'))) {
+    await for (final asset in buildStep.findAssets(Glob("${generateForDir.join(',')}/**.route.json"))) {
       final jsonList = jsonDecode(await buildStep.readAsString(asset));
       for(final json in jsonList as List<dynamic>){
         routes.add(RouteConfig.fromJson(json));

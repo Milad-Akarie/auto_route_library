@@ -61,14 +61,26 @@ class MigrateToV6Action : IntentionAction {
         val routesArg = annotationArgsList?.firstOrNull { it.firstChild.text == "routes" } ?: return
         val replaceInRouteName = Utils.stripStringQuots(annotationArgsList.firstOrNull { it.firstChild.text == "replaceInRouteName" }?.lastChild?.text)
         val literalList = routesArg.lastChild as DartListLiteralExpression
-        val refactoredRootList = refactor(literalList, replaceInRouteName)
-        val subRefactableClasses = handleReferencedLists(project, refactoredRootList.listRefs, replaceInRouteName)
-        handleRefactableClasses(project, refactoredRootList.classRefs.plus(subRefactableClasses).distinctBy { it.classRef })
+        val refactoredRootList = refactor(literalList, replaceInRouteName, true)
+        val allClasses = handleReferencedLists(project, refactoredRootList.listRefs, replaceInRouteName).plus(refactoredRootList.classRefs)
+
+        val emptyRouterClasses = allClasses.filter { it.classRef.name == "EmptyRouterPage" || it.classRef.name == "EmptyRouterScreen" }.distinctBy { it.customName }
+        handleRefactableClasses(project, allClasses.filterNot { it.classRef.name == "EmptyRouterPage" || it.classRef.name == "EmptyRouterScreen" }.distinctBy { it.classRef })
 
         editor.document.apply {
             WriteCommandAction.runWriteCommandAction(project) {
                 setReadOnly(false)
-
+                insertString(clazz.endOffset, StringBuilder().apply {
+                    for (emptyPage in emptyRouterClasses) {
+                        val name = if (emptyPage.customName == null) emptyPage.classRef.name!! else Utils.stripStringQuots(emptyPage.customName)
+                        appendLine("""
+                          @RoutePage()
+                         class $name extends AutoRouter {
+                             const $name({super.key});
+                         }
+                          """)
+                    }
+                }.toString())
                 val defaultRouteType = annotation.referenceExpression.text!!.replace("AutoRouter", "").lowercase()
                 val routeTypeArgsList = ArrayList<String>();
                 if (defaultRouteType == "custom") {
@@ -84,6 +96,7 @@ class MigrateToV6Action : IntentionAction {
                         annotation.deleteChildRange(customRouteArgs.firstOrNull(), lastElementToDelete)
                     }
                 }
+
 
                 val refactoredContent = StringBuilder("@override\nRouteType get defaultRouteType => RouteType.${defaultRouteType}" + "(${routeTypeArgsList.joinToString(",")});")
                 refactoredContent.appendLine()
@@ -107,6 +120,7 @@ class MigrateToV6Action : IntentionAction {
             }
 
         }
+        Utils.runBuildRunner(project)
     }
 
 }
@@ -132,15 +146,11 @@ private fun handleRefactableClasses(project: Project, list: List<RefactableClass
                         insertString(offset, "${Strings.autoRouteImport}\n")
                     }
                     PsiDocumentManager.getInstance(project).commitDocument(this);
-//                    ReformatCodeProcessor(classRef.containingFile, false).run()
-//                    PsiDocumentManager.getInstance(project).let {
-//                        it.doPostponedOperationsAndUnblockDocument(this)
-//                        it.commitDocument(this)
-//                    }
                 }
             }
         }
     }
+
 
 }
 
@@ -160,17 +170,13 @@ private fun handleReferencedLists(project: Project, refactoredList: List<DartLis
                 val classRefsInSubLists = handleReferencedLists(project, refactorRes.listRefs, replaceInRouteName)
                 refactableClasses.addAll(classRefsInSubLists)
             }
-            println("Refactored list: ${refactorRes.text}")
+
             FileDocumentManager.getInstance().getDocument(file.virtualFile)?.apply {
                 WriteCommandAction.runWriteCommandAction(project) {
                     setReadOnly(false)
                     replaceString(list.startOffset, list.endOffset, refactorRes.text)
                     ReformatCodeProcessor(file, true).run()
                     PsiDocumentManager.getInstance(project).commitDocument(this);
-//                    PsiDocumentManager.getInstance(project).let {
-//                        it.doPostponedOperationsAndUnblockDocument(this)
-//                        it.commitDocument(this)
-//                    }
                 }
             }
 
@@ -181,7 +187,7 @@ private fun handleReferencedLists(project: Project, refactoredList: List<DartLis
 }
 
 
-private fun refactor(list: DartListLiteralExpression, replaceInRouteName: String?): RefactorResult {
+private fun refactor(list: DartListLiteralExpression, replaceInRouteName: String?, root: Boolean = false): RefactorResult {
     val classRefs = ArrayList<RefactableClass>()
     val listRefs = ArrayList<DartListLiteralExpression>()
     val sb = StringBuilder("[").apply {
@@ -198,11 +204,13 @@ private fun refactor(list: DartListLiteralExpression, replaceInRouteName: String
 
                     namedArgs.firstOrNull { it.firstChild.text == "name" }?.let {
                         customNameRef = it.lastChild?.text
+                        customName = customNameRef;
                         if (it.lastChild !is DartStringLiteralExpression) {
                             val resolvedVar = DartResolveUtil.findReferenceAndComponentTarget(it.lastChild)?.context
                             customName = PsiTreeUtil.findChildOfType(resolvedVar, DartVarInit::class.java)?.expression?.text
                                     ?: customNameRef
                         }
+
                     }
                     namedArgs.firstOrNull { it.firstChild.text == "deferredLoading" }?.let {
                         deferredLoading = it.lastChild?.text
@@ -227,12 +235,16 @@ private fun refactor(list: DartListLiteralExpression, replaceInRouteName: String
                                 argsBuilder.add(namedArg.text)
                             }
 
+
+                        } else if (namedArg.firstChild.text == "initial") {
+                            argsBuilder.add("path: ${if (root) "'/'" else "''"}")
                         } else if (namedArg.firstChild.text == "page") {
                             val pageRef = namedArg.lastChild
                             val clazzRef = DartResolveUtil.findReferenceAndComponentTarget(pageRef)
                             if (clazzRef != null) {
                                 classRefs.add(RefactableClass(clazzRef, customNameRef, deferredLoading, returnType))
                             }
+                            print(customName);
                             val routeName = Utils.resolveRouteName(pageRef.text, Utils.stripStringQuots(customName), replaceInRouteName)
                             argsBuilder.add("page: ${routeName}.page")
                         } else {
