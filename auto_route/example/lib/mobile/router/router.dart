@@ -1,12 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/empty_router_widgets.dart';
 import 'package:example/mobile/screens/books/book_details_page.dart';
 import 'package:example/mobile/screens/books/book_list_page.dart';
+import 'package:example/mobile/screens/user-data/routes.dart';
+
 import '../screens/home_page.dart';
 import '../screens/login_page.dart';
 import '../screens/profile/routes.dart';
 import '../screens/settings.dart';
-import '../screens/user-data/routes.dart';
-import 'package:auto_route/empty_router_widgets.dart';
 
 @MaterialAutoRouter(
   replaceInRouteName: 'Page|Screen,Route',

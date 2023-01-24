@@ -31,39 +31,48 @@ void main() {
   });
 }
 
-const generatedFile = r'''// GENERATED CODE - DO NOT MODIFY BY HAND
+const generatedFile =
+    r'''// **************************************************************************
+// AutoRouteGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
 // AutoRouteGenerator
 // **************************************************************************
+//
+// ignore_for_file: type=lint
 
-import 'package:auto_route/auto_route.dart' as _i1;
-import 'package:flutter/material.dart' as _i2;
+import 'package:auto_route/auto_route.dart' as _i2;
+import 'package:flutter/material.dart' as _i3;
 
-import 'router.dart' as _i3;
+import 'router.dart' as _i1;
 
-class AppRouter extends _i1.RootStackRouter {
-  AppRouter([_i2.GlobalKey<_i2.NavigatorState>? navigatorKey])
+class AppRouter extends _i2.RootStackRouter {
+  AppRouter([_i3.GlobalKey<_i3.NavigatorState>? navigatorKey])
       : super(navigatorKey);
 
   @override
-  final Map<String, _i1.PageFactory> pagesMap = {
-    HomeScreenRoute.name: (routeData) => _i1.MaterialPageX<void>(
-        routeData: routeData,
-        builder: (data) {
-          final args = data.argsAs<HomeScreenRouteArgs>();
-          return _i3.HomeScreen(title: args.title);
-        })
+  final Map<String, _i2.PageFactory> pagesMap = {
+    HomeScreenRoute.name: (routeData) {
+      final args = routeData.argsAs<HomeScreenRouteArgs>();
+      return _i2.MaterialPageX<void>(
+          routeData: routeData, child: _i1.HomeScreen(title: args.title));
+    }
   };
 
   @override
-  List<_i1.RouteConfig> get routes =>
-      [_i1.RouteConfig(HomeScreenRoute.name, path: '/')];
+  List<_i2.RouteConfig> get routes =>
+      [_i2.RouteConfig(HomeScreenRoute.name, path: '/')];
 }
 
-class HomeScreenRoute extends _i1.PageRouteInfo<HomeScreenRouteArgs> {
+/// generated route for
+/// [_i1.HomeScreen]
+class HomeScreenRoute extends _i2.PageRouteInfo<HomeScreenRouteArgs> {
   HomeScreenRoute({required String title})
-      : super(name, path: '/', args: HomeScreenRouteArgs(title: title));
+      : super(HomeScreenRoute.name,
+            path: '/', args: HomeScreenRouteArgs(title: title));
 
   static const String name = 'HomeScreenRoute';
 }
@@ -72,5 +81,21 @@ class HomeScreenRouteArgs {
   const HomeScreenRouteArgs({required this.title});
 
   final String title;
+
+  @override
+  String toString() {
+    return 'HomeScreenRouteArgs{title: $title}';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is HomeScreenRouteArgs && this.title == other.title);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([title.hashCode]);
+  }
 }
 ''';
