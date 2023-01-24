@@ -128,6 +128,7 @@ class PageRouteInfo<T> {
       other is PageRouteInfo &&
           _name == other._name &&
           path == other.path &&
+          args == other.args &&
           fragment == other.fragment &&
           const ListEquality().equals(initialChildren, other.initialChildren) &&
           const MapEquality().equals(rawPathParams, other.rawPathParams) &&
@@ -137,6 +138,7 @@ class PageRouteInfo<T> {
   int get hashCode =>
       _name.hashCode ^
       path.hashCode ^
+      args.hashCode ^
       fragment.hashCode ^
       const MapEquality().hash(rawPathParams) ^
       const MapEquality().hash(rawQueryParams) ^
