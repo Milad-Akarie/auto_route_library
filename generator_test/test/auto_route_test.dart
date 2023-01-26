@@ -94,8 +94,6 @@ class HomeScreenRouteArgs {
   }
 
   @override
-  int get hashCode {
-    return Object.hashAll([title.hashCode]);
-  }
+  int get hashCode => Object.hashAll([title.hashCode]);
 }
 ''';

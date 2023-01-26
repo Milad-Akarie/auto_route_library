@@ -7,21 +7,21 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "23.0.0"
+    version: "50.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "5.2.0"
   args:
     dependency: transitive
     description:
       name: args
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.0"
+    version: "2.3.2"
   async:
     dependency: transitive
     description:
@@ -30,7 +30,7 @@ packages:
     source: hosted
     version: "2.6.1"
   auto_route:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: auto_route
       url: "https://pub.dartlang.org"

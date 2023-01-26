@@ -134,8 +134,8 @@ List<Class> buildRouteInfoAndArgs(
                 )
                 ..annotations.add(refer('override'))
                 ..returns = boolRefer
-                ..body = Code(
-                    'return identical(this, other) || (other is ${r.routeName}Args && ${parameters.map(
+                ..body = refer(
+                        'identical(this, other) || (other is ${r.routeName}Args && ${parameters.map(
                   (p) {
                     if (p.isPossibleDartCollection) {
                       return 'const ${refer('DeepCollectionEquality', collectionImport).accept(emitter).toString()}().equals(this.${p.name}, other.${p.name})';
@@ -145,7 +145,9 @@ List<Class> buildRouteInfoAndArgs(
                   },
                 ).join(
                   ' && ',
-                )});'),
+                )});')
+                    .returned
+                    .code,
             ),
           )
           ..methods.add(
@@ -153,10 +155,10 @@ List<Class> buildRouteInfoAndArgs(
               (b) => b
                 ..name = 'hashCode'
                 ..type = MethodType.getter
-                ..lambda = false
+                ..lambda = true
                 ..annotations.add(refer('override'))
                 ..returns = intRefer
-                ..body = Code('return Object.hashAll([${parameters.map(
+                ..body = Code('Object.hashAll([${parameters.map(
                   (p) {
                     if (p.isPossibleDartCollection) {
                       return 'const ${refer('DeepCollectionEquality', collectionImport).accept(emitter).toString()}().hash(${p.name})';
@@ -164,7 +166,7 @@ List<Class> buildRouteInfoAndArgs(
                       return '${p.name}.hashCode';
                     }
                   },
-                ).join(',')}]);'),
+                ).join(',')}])'),
             ),
           ),
       )
