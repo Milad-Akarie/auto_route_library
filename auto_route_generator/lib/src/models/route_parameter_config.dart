@@ -31,6 +31,7 @@ class ParamConfig {
   final String? defaultValueCode;
   final ParameterElement element;
   final bool isInheritedPathParam;
+  final bool isPossibleDartCollection;
 
   ParamConfig({
     required this.type,
@@ -44,6 +45,7 @@ class ParamConfig {
     required this.isPathParam,
     required this.isQueryParam,
     required this.isInheritedPathParam,
+    required this.isPossibleDartCollection,
     this.alias,
     this.defaultValueCode,
   });
@@ -94,20 +96,20 @@ class FunctionParamConfig extends ParamConfig {
     required bool isRequired,
     String? defaultValueCode,
   }) : super(
-          type: type,
-          name: name,
-          alias: alias,
-          isPathParam: false,
-          isQueryParam: false,
-          isNamed: isNamed,
-          defaultValueCode: defaultValueCode,
-          element: element,
-          isPositional: isPositional,
-          hasRequired: hasRequired,
-          isRequired: isRequired,
-          isOptional: isOptional,
-          isInheritedPathParam: false,
-        );
+            type: type,
+            name: name,
+            alias: alias,
+            isPathParam: false,
+            isQueryParam: false,
+            isNamed: isNamed,
+            defaultValueCode: defaultValueCode,
+            element: element,
+            isPositional: isPositional,
+            hasRequired: hasRequired,
+            isRequired: isRequired,
+            isOptional: isOptional,
+            isInheritedPathParam: false,
+            isPossibleDartCollection: false);
 
   List<ParamConfig> get requiredParams =>
       params.where((p) => p.isPositional && !p.isOptional).toList();

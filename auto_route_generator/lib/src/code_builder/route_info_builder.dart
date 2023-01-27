@@ -120,6 +120,54 @@ List<Class> buildRouteInfoAndArgs(
                   '${r.routeName}Args{${parameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
                 ).returned.statement,
             ),
+          )
+          ..methods.add(
+            Method(
+              (b) => b
+                ..name = 'operator =='
+                ..lambda = false
+                ..requiredParameters.add(
+                  Parameter((b) {
+                    b.name = 'other';
+                    b.type = dynamicRefer;
+                  }),
+                )
+                ..annotations.add(refer('override'))
+                ..returns = boolRefer
+                ..body = refer(
+                        'identical(this, other) || (other is ${r.routeName}Args && ${parameters.map(
+                  (p) {
+                    if (p.isPossibleDartCollection) {
+                      return 'const ${refer('DeepCollectionEquality', collectionImport).accept(emitter).toString()}().equals(this.${p.name}, other.${p.name})';
+                    } else {
+                      return 'this.${p.name}==other.${p.name}';
+                    }
+                  },
+                ).join(
+                  ' && ',
+                )});')
+                    .returned
+                    .code,
+            ),
+          )
+          ..methods.add(
+            Method(
+              (b) => b
+                ..name = 'hashCode'
+                ..type = MethodType.getter
+                ..lambda = true
+                ..annotations.add(refer('override'))
+                ..returns = intRefer
+                ..body = Code('Object.hashAll([${parameters.map(
+                  (p) {
+                    if (p.isPossibleDartCollection) {
+                      return 'const ${refer('DeepCollectionEquality', collectionImport).accept(emitter).toString()}().hash(${p.name})';
+                    } else {
+                      return '${p.name}.hashCode';
+                    }
+                  },
+                ).join(',')}])'),
+            ),
           ),
       )
   ];
