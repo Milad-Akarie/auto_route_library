@@ -21,6 +21,7 @@ class RouteCollection {
     // }
 
     final routesMap = <String, AutoRoute>{};
+
     for (var r in routes) {
       throwIf(
         !root && r.path.startsWith('/'),

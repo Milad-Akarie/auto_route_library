@@ -22,7 +22,6 @@ import come.autoroute.helper.autoroutehelper.models.RouterConfig
 import come.autoroute.helper.autoroutehelper.services.RouterConfigService
 import come.autoroute.helper.autoroutehelper.utils.PsiUtils
 import come.autoroute.helper.autoroutehelper.utils.Utils
-import java.io.File
 
 class AddToRouterAction : IntentionAction {
     override fun startInWriteAction(): Boolean {
@@ -41,11 +40,9 @@ class AddToRouterAction : IntentionAction {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
         if (file !is DartFile) return false
-        val routerConfigFile = File("${project.basePath}${Strings.routeJsonFilePath}")
-        if (!routerConfigFile.exists()) return false
+        routerConfig = project.service<RouterConfigService>().getConfig() ?: return false
         editor?.apply {
             PsiUtils.findPossibleRoutePage(this, file) ?: return false
-            routerConfig = project.service<RouterConfigService>().getConfig() ?: return false
         }
         return true
     }

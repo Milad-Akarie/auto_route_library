@@ -34,14 +34,13 @@ class AutoLeadingButton extends StatefulWidget {
   const AutoLeadingButton({
     Key? key,
     this.color,
-    @Deprecated('Use showIfParentCanPop') bool? showBackIfParentCanPop,
     bool? showIfParentCanPop,
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
     this.builder,
   })  : assert(color == null || builder == null),
         _showIfParentCanPop =
-            showIfParentCanPop ?? showBackIfParentCanPop ?? true,
+            showIfParentCanPop ?? true,
         super(key: key);
 
   @override

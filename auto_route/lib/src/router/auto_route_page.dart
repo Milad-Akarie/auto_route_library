@@ -49,7 +49,7 @@ class AutoRoutePage<T> extends Page<T> {
 
   Route<T> onCreateRoute(BuildContext context) {
     final type = routeData.type;
-    final title = routeData.title?.call(context);
+    final title = routeData.title(context);
     if (type is MaterialRouteType) {
       return PageBasedMaterialPageRoute<T>(page: this);
     } else if (type is CupertinoRouteType) {

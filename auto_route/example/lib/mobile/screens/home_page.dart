@@ -98,7 +98,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             builder: (context, child, controller) {
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(context.topRoute.title?.call(context,) ?? context.topRoute.name),
+                  title: Text(context.topRoute.title(context)),
                   leading: AutoLeadingButton(ignorePagelessRoutes: true),
                   bottom: TabBar(
                     controller: controller,

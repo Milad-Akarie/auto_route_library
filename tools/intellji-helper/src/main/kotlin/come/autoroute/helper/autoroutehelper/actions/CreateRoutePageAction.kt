@@ -40,7 +40,7 @@ class CreateRoutePageAction : AnAction() {
                 createFile(project, dialog.fileNameField.text, navElement, this) { file ->
                     FileDocumentManager.getInstance().getDocument(file)?.apply {
                         WriteCommandAction.runWriteCommandAction(project) {
-                            val className = dialog.resolveClassName() ?: return@runWriteCommandAction;
+                            val className = dialog.resolveClassName() ?: return@runWriteCommandAction
                             insertString(0, createPageContent(className, dialog.getAnnotationText(className)))
                         }
                     }
@@ -69,5 +69,5 @@ private fun createFile(project: Project, path: String, navElement: Navigatable, 
 }
 
 private fun createPageContent(className: String, annotationText: String): String {
-    return "import 'package:flutter/material.dart';\nimport 'package:auto_route/auto_route.dart';\n\n${annotationText}class $className extends StatelessWidget {\n  const $className({super.key});\n  @override\n  Widget build(BuildContext context) {\n    return Container();\n  }\n}\n";
+    return "import 'package:flutter/material.dart';\nimport 'package:auto_route/auto_route.dart';\n\n${annotationText}class $className extends StatelessWidget {\n  const $className({super.key});\n  @override\n  Widget build(BuildContext context) {\n    return Container();\n  }\n}\n"
 }

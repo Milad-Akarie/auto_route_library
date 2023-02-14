@@ -1,6 +1,8 @@
 package come.autoroute.helper.autoroutehelper.utils
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import come.autoroute.helper.autoroutehelper.services.RouterConfigService
 import org.jetbrains.plugins.terminal.TerminalView
 
 class Utils {
@@ -19,7 +21,9 @@ class Utils {
         }
 
         fun runBuildRunner(project: Project) {
-            val shellTerminalWidget = TerminalView.getInstance(project).createLocalShellWidget(project.basePath, "build_runner");
+            val routerConfig  = project.service<RouterConfigService>().getConfig() ?: return
+            val path = routerConfig.path.split("/").dropLast(1).joinToString("/")
+            val shellTerminalWidget = TerminalView.getInstance(project).createLocalShellWidget(path, "build_runner");
             shellTerminalWidget.executeCommand("flutter pub run build_runner build --delete-conflicting-outputs && exit");
         }
     }

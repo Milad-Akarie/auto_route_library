@@ -16,12 +16,12 @@ class RouteData {
     required this.pendingChildren,
     required this.type,
     TitleBuilder? title,
-  })
-      : _titleBuilder = title,
+  })  : _titleBuilder = title,
         _match = route,
         _parent = parent;
 
-  String Function(BuildContext context)? get title => _titleBuilder == null ? null : (context) => _titleBuilder!(context, this);
+  String Function(BuildContext context) get title =>
+      _titleBuilder == null ? (_) => _match.name : (context) => _titleBuilder!(context, this);
 
   final List<RouteMatch> pendingChildren;
 
@@ -30,9 +30,7 @@ class RouteData {
   bool get hasPendingChildren => pendingChildren.isNotEmpty;
 
   static RouteData of(BuildContext context) {
-    return RouteDataScope
-        .of(context)
-        .routeData;
+    return RouteDataScope.of(context).routeData;
   }
 
   bool get hasPendingSubNavigation => hasPendingChildren && pendingChildren.last.hasChildren;
@@ -76,8 +74,7 @@ class RouteData {
 
   String get match => _match.stringMatch;
 
-  List<RouteMatch> get breadcrumbs =>
-      List.unmodifiable([
+  List<RouteMatch> get breadcrumbs => List.unmodifiable([
         if (_parent != null) ..._parent!.breadcrumbs,
         _match,
       ]);
@@ -85,7 +82,7 @@ class RouteData {
   Parameters get inheritedPathParams {
     final params = breadcrumbs.map((e) => e.pathParams).reduce(
           (value, element) => value + element,
-    );
+        );
     return params;
   }
 

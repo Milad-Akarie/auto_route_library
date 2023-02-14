@@ -5,7 +5,7 @@ import come.autoroute.helper.autoroutehelper.utils.Utils
 data class RouterConfig(
         val routerClassName: String,
         val replaceInRouteName: String?,
-        val path: String,
+        var path: String,
         val deferredLoading: Boolean,
         val usesPartBuilder: Boolean,
 ) {

@@ -3,9 +3,6 @@ import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-
-
-
 void main() {
   group('Testing RouteCollection', () {
     test('Building default constructor with empty map should throw in assertion error', () {
@@ -22,6 +19,7 @@ void main() {
     );
     final collection = RouteCollection.from(
       [routeA, routeB, routeC],
+      root: true,
     );
     test('Calling [routes] should return a list of all route configs', () {
       var expectedRoutes = [routeA, routeB, routeC];
@@ -37,7 +35,7 @@ void main() {
     });
 
     test('Extracting sub collection of a branch route should return sub collection', () {
-      var expectedCollection = RouteCollection.from([subRouteC1]);
+      var expectedCollection = RouteCollection.from([subRouteC1], root: true);
       expect(collection.subCollectionOf('C'), expectedCollection);
     });
 
@@ -65,11 +63,14 @@ void main() {
       children: [subRouteC1],
     );
 
-    final routeCollection = RouteCollection.from([
-      routeA,
-      routeB,
-      routeC,
-    ]);
+    final routeCollection = RouteCollection.from(
+      [
+        routeA,
+        routeB,
+        routeC,
+      ],
+      root: true,
+    );
 
     final match = RouteMatcher(routeCollection).match;
 
@@ -137,6 +138,7 @@ void main() {
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeB1, routeC, routeD],
+      root: true,
     );
 
     final match = RouteMatcher(routeCollection).match;
@@ -301,6 +303,7 @@ void main() {
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeC, prefixedWcRoute, wcRoute],
+      root: true,
     );
     final match = RouteMatcher(routeCollection).match;
 
@@ -360,6 +363,7 @@ void main() {
 
     final routeCollection = RouteCollection.from(
       [routeA, routeC, routeARedirect, routeAWCRedirect],
+      root: true,
     );
     final match = RouteMatcher(routeCollection).match;
 
@@ -408,6 +412,7 @@ void main() {
             TestRoute('A1', path: ''),
           ]),
         ],
+        root: true,
       ),
     ).match;
 
@@ -448,6 +453,7 @@ void main() {
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeC],
+      root: true,
     );
     final match = RouteMatcher(routeCollection).match;
 
@@ -519,6 +525,7 @@ void main() {
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeB1, routeC],
+      root: true,
     );
     final match = RouteMatcher(routeCollection).match;
 

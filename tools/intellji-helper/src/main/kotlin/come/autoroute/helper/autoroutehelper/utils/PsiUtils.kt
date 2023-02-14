@@ -58,7 +58,7 @@ class PsiUtils {
         }
 
         private fun getRouterClass(project: Project, routerConfig: RouterConfig): DartClass? {
-            val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(File("${project.basePath}/${routerConfig.path}"))
+            val virtualFile = LocalFileSystem.getInstance().findFileByIoFile(File(routerConfig.path))
                     ?: return null
             val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return null
             return DartResolveUtil.getClassDeclarations(psiFile).firstOrNull { it.name == routerConfig.routerClassName }
