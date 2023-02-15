@@ -107,4 +107,5 @@ const String _header = '''
 // **************************************************************************
 //
 // ignore_for_file: type=lint
+// coverage:ignore-file
 ''';
