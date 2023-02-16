@@ -43,7 +43,7 @@ class PsiUtils {
                             classElement,
                             classElement.startOffset,
                             routeAnnotation,
-                            Utils.stripStringQuots(customName),
+                            Utils.stripStringQts(customName),
                     );
                 }
             }

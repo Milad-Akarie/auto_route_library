@@ -8,6 +8,9 @@ import 'package:example/mobile/screens/profile/routes.dart';
 @AutoRouterConfig()
 class RootRouter extends $RootRouter {
   @override
+  RouteType get defaultRouteType => RouteType.material();
+
+  @override
   final List<AutoRoute> routes = [
     AutoRoute(
       page: HomeRoute.page,
@@ -44,6 +47,8 @@ class RootRouter extends $RootRouter {
     ),
     AutoRoute(page: LoginRoute.page, path: '/login'),
     RedirectRoute(path: '*', redirectTo: '/'),
+    AutoRoute(path: '/products', page: ProductsRoute.page),
+    AutoRoute(page: ProductsRoute.page),
   ];
 }
 
@@ -53,4 +58,6 @@ class BooksTabPage extends AutoRouter {
 }
 
 @RoutePage(name: 'ProfileTab')
-class ProfileTabPage extends AutoRouter {}
+class ProfileTabPage extends AutoRouter {
+  const ProfileTabPage({super.key});
+}

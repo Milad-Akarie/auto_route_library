@@ -3,12 +3,12 @@
   <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="12" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="15" left="15" bottom="15" right="15"/>
     <constraints>
-      <xy x="48" y="21" width="343" height="400"/>
+      <xy x="48" y="21" width="380" height="420"/>
     </constraints>
     <properties>
-      <maximumSize width="340" height="400"/>
-      <minimumSize width="340" height="330"/>
-      <preferredSize width="340" height="330"/>
+      <maximumSize width="380" height="400"/>
+      <minimumSize width="380" height="420"/>
+      <preferredSize width="380" height="420"/>
     </properties>
     <border type="none"/>
     <children>

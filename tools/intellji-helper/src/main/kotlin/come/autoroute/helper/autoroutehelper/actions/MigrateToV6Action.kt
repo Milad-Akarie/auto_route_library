@@ -59,7 +59,7 @@ class MigrateToV6Action : IntentionAction {
 
         val annotationArgsList = PsiTreeUtil.getChildrenOfType(argsList, DartNamedArgument::class.java)
         val routesArg = annotationArgsList?.firstOrNull { it.firstChild.text == "routes" } ?: return
-        val replaceInRouteName = Utils.stripStringQuots(annotationArgsList.firstOrNull { it.firstChild.text == "replaceInRouteName" }?.lastChild?.text)
+        val replaceInRouteName = Utils.stripStringQts(annotationArgsList.firstOrNull { it.firstChild.text == "replaceInRouteName" }?.lastChild?.text)
         val literalList = routesArg.lastChild as DartListLiteralExpression
         val refactoredRootList = refactor(literalList, replaceInRouteName, true)
         val allClasses = handleReferencedLists(project, refactoredRootList.listRefs, replaceInRouteName).plus(refactoredRootList.classRefs)
@@ -72,7 +72,7 @@ class MigrateToV6Action : IntentionAction {
                 setReadOnly(false)
                 insertString(clazz.endOffset, StringBuilder().apply {
                     for (emptyPage in emptyRouterClasses) {
-                        val name = if (emptyPage.customName == null) emptyPage.classRef.name!! else Utils.stripStringQuots(emptyPage.customName)
+                        val name = if (emptyPage.customName == null) emptyPage.classRef.name!! else Utils.stripStringQts(emptyPage.customName)
                         appendLine("""
                           @RoutePage()
                          class $name extends AutoRouter {
@@ -245,7 +245,7 @@ private fun refactor(list: DartListLiteralExpression, replaceInRouteName: String
                                 classRefs.add(RefactableClass(clazzRef, customNameRef, deferredLoading, returnType))
                             }
                             print(customName);
-                            val routeName = Utils.resolveRouteName(pageRef.text, Utils.stripStringQuots(customName), replaceInRouteName)
+                            val routeName = Utils.resolveRouteName(pageRef.text, Utils.stripStringQts(customName), replaceInRouteName)
                             argsBuilder.add("page: ${routeName}.page")
                         } else {
                             argsBuilder.add(namedArg.text)
