@@ -244,7 +244,6 @@ private fun refactor(list: DartListLiteralExpression, replaceInRouteName: String
                             if (clazzRef != null) {
                                 classRefs.add(RefactableClass(clazzRef, customNameRef, deferredLoading, returnType))
                             }
-                            print(customName);
                             val routeName = Utils.resolveRouteName(pageRef.text, Utils.stripStringQts(customName), replaceInRouteName)
                             argsBuilder.add("page: ${routeName}.page")
                         } else {

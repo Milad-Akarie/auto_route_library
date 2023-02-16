@@ -19,7 +19,6 @@ class RouterConfigService(private val project: Project) {
     private var routerConfigFile: File? = null
     fun getConfig(): RouterConfig? {
         if (routerConfigFile == null) {
-            println(project.basePath);
             findConfigFile(Strings.routerConfigFileExt, "${project.basePath!!}")?.let {
                 if (it.isNotEmpty()) {
                     routerConfigFile = it.first().toFile()
@@ -39,7 +38,6 @@ class RouterConfigService(private val project: Project) {
                      if(dartToolSegmentIndex != -1){
                          val cleaned =  pathSegments.filterIndexed{ index, _ ->  !IntRange(dartToolSegmentIndex,dartToolSegmentIndex+3).contains(index)}
                          val path = cleaned.joinToString("/").replaceFirst("router_config.json","dart")
-                         println(path)
                          routerConfig?.path = path
                      }
                 routerConfig

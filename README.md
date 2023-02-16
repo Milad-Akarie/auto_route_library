@@ -44,8 +44,15 @@
   - [Remove shadow from nested routers](#remove-shadow-from-nested-routers)
 - [Examples](#examples)
 
+## Idea Tools [New]
+
+- [AutoRoute-Helper](https://plugins.jetbrains.com/plugin/21071-autoroute-helper)  (Android Studio)
+
+<img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/intent_actoin_add_route_demo.gif" alt="add route from intent action" width= "px"></a>     
+<img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/add_route_page_demo.gif" alt="Add route page" width= "px"></a>
+
 ## Migration guides
--   [Migrating to v6.0](#migrating-to-v6.0)
+-   [Migrating to v6.0](migrating-to-v6.0)
 ## Introduction
 #### What is AutoRoute?
 It’s a Flutter navigation package, it allows for strongly-typed arguments passing, effortless deep-linking and it uses code generation to simplify routes setup, with that being said it requires a minimal amount of code to generate everything needed for navigation inside of your App.

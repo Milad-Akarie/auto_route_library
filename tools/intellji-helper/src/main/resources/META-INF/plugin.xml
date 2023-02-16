@@ -3,9 +3,11 @@
     <name>AutoRoute Helper</name>
     <vendor email="milad.akarie@gmail.com" url="https://github.com/Milad-Akarie">Milad Akarie</vendor>
     <description><![CDATA[
-    Helper for <a>https://pub.dev/packages/auto_route</a><br>
-    - Simply create route page from context action<br>
-    - Create route page file<br>
+    Helper for <a href="https://pub.dev/packages/auto_route"/><br>
+    - Create route page file<br><br>
+     <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/add_route_page_demo.gif" alt="add_route_page_demo" width="800"><br>
+    - Simply create route page from context action<br><br>
+     <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/intent_actoin_add_route_demo.gif" alt="intent_actoin_add_route_demo" width="800"><br>
     - Migrate to AutoRoute V6+
   ]]></description>
 
