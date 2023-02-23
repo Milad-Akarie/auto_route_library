@@ -17,27 +17,28 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 const Reference requiredAnnotation = Reference('required', materialImport);
 
-TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
-  ..symbol = "List"
-  ..isNullable = nullable
-  ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) =>
+    TypeReference((b) => b
+      ..symbol = "List"
+      ..isNullable = nullable
+      ..types.add(reference));
 
 String generateLibrary(
   RouterConfig router, {
   required List<RouteConfig> routes,
 }) {
-
   throwIf(
     router.usesPartBuilder && router.deferredLoading,
     'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
   );
 
   final emitter = DartEmitter(
-    allocator: router.usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, router.deferredLoading),
+    allocator: router.usesPartBuilder
+        ? Allocator.none
+        : DeferredPagesAllocator(routes, router.deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
-
 
   final deferredRoutes = routes.where((r) => r.deferredLoading == true);
   throwIf(
@@ -47,13 +48,11 @@ String generateLibrary(
 
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];
-    if (deferredRoutes.any((e) => e.pageType == route.pageType && route.deferredLoading != true)) {
+    if (deferredRoutes.any(
+        (e) => e.pageType == route.pageType && route.deferredLoading != true)) {
       routes[i] = route.copyWith(deferredLoading: true);
     }
   }
-
-
-
 
   final library = Library(
     (b) => b
@@ -62,14 +61,14 @@ String generateLibrary(
       ])
       ..body.addAll([
         buildRouterConfig(router, routes),
-        if(routes.isNotEmpty)
-        ...routes
-            .distinctBy((e) => e.getName(router.replaceInRouteName))
-            .map((r) => buildRouteInfoAndArgs(r, router, emitter))
-            .reduce((acc, a) => acc..addAll(a)),
+        if (routes.isNotEmpty)
+          ...routes
+              .distinctBy((e) => e.getName(router.replaceInRouteName))
+              .map((r) => buildRouteInfoAndArgs(r, router, emitter))
+              .reduce((acc, a) => acc..addAll(a)),
       ]),
   );
 
-  return [DartFormatter().format(library.accept(emitter).toString())].join('\n');
+  return [DartFormatter().format(library.accept(emitter).toString())]
+      .join('\n');
 }
-

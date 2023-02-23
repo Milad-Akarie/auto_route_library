@@ -38,16 +38,19 @@ class AutoRouterGenerator extends GeneratorForAnnotation<AutoRouterConfig> {
         .map((e) => e.toStringValue());
 
     final routes = <RouteConfig>[];
-    await for (final asset in buildStep.findAssets(Glob("${generateForDir.join(',')}/**.route.json"))) {
+    await for (final asset in buildStep
+        .findAssets(Glob("${generateForDir.join(',')}/**.route.json"))) {
       final jsonList = jsonDecode(await buildStep.readAsString(asset));
-      for(final json in jsonList as List<dynamic>){
+      for (final json in jsonList as List<dynamic>) {
         routes.add(RouteConfig.fromJson(json));
       }
     }
 
-
     try {
-      final path = [buildStep.inputId.package,buildStep.inputId.changeExtension('.router_config.json').path].join('/');
+      final path = [
+        buildStep.inputId.package,
+        buildStep.inputId.changeExtension('.router_config.json').path
+      ].join('/');
       final file = File('.dart_tool/build/generated/$path');
       if (!file.existsSync()) {
         file.createSync(recursive: true);

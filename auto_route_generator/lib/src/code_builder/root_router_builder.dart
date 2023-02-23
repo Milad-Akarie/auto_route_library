@@ -8,34 +8,35 @@ import 'library_builder.dart';
 
 Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
       (b) => b
-        ..name = '${router.usesPartBuilder? '_' : '' }\$${router.routerClassName}'
+        ..name =
+            '${router.usesPartBuilder ? '_' : ''}\$${router.routerClassName}'
         ..abstract = true
         ..extend = refer('RootStackRouter', autoRouteImport)
         ..fields.addAll([buildPagesMap(routes, router)])
         ..constructors.addAll([
-            Constructor(
-              (b) => b
-                ..optionalParameters.add(
-                  Parameter(
-                    (b) => b
-                      ..name = 'navigatorKey'
-                      ..type = TypeReference(
-                        (b) => b
-                          ..url = materialImport
-                          ..symbol = 'GlobalKey'
-                          ..isNullable = true
-                          ..types.add(
-                            refer('NavigatorState', materialImport),
-                          ),
-                      ),
-                  ),
-                )
-                ..initializers.add(
-                  refer('super').call([
-                    refer('navigatorKey'),
-                  ]).code,
+          Constructor(
+            (b) => b
+              ..optionalParameters.add(
+                Parameter(
+                  (b) => b
+                    ..name = 'navigatorKey'
+                    ..type = TypeReference(
+                      (b) => b
+                        ..url = materialImport
+                        ..symbol = 'GlobalKey'
+                        ..isNullable = true
+                        ..types.add(
+                          refer('NavigatorState', materialImport),
+                        ),
+                    ),
                 ),
-            ),
+              )
+              ..initializers.add(
+                refer('super').call([
+                  refer('navigatorKey'),
+                ]).code,
+              ),
+          ),
         ]),
     );
 
@@ -63,8 +64,11 @@ Field buildPagesMap(List<RouteConfig> routes, RouterConfig router) {
 }
 
 Spec buildMethod(RouteConfig r, RouterConfig router) {
-  final useConsConstructor = r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
-  var constructedPage = useConsConstructor ? r.pageType!.refer.constInstance([]) : getPageInstance(r);
+  final useConsConstructor =
+      r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
+  var constructedPage = useConsConstructor
+      ? r.pageType!.refer.constInstance([])
+      : getPageInstance(r);
 
   if (r.hasWrappedRoute == true) {
     constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
@@ -85,9 +89,16 @@ Spec buildMethod(RouteConfig r, RouterConfig router) {
       ..body = Block((b) => b.statements.addAll([
             if ((!r.hasUnparsableRequiredArgs) &&
                 r.parameters.any((p) => p.isPathParam))
-              refer('routeData').property('inheritedPathParams').assignFinal('pathParams').statement,
-            if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
-              refer('routeData').property('queryParams').assignFinal('queryParams').statement,
+              refer('routeData')
+                  .property('inheritedPathParams')
+                  .assignFinal('pathParams')
+                  .statement,
+            if (!r.hasUnparsableRequiredArgs &&
+                r.parameters.any((p) => p.isQueryParam))
+              refer('routeData')
+                  .property('queryParams')
+                  .assignFinal('queryParams')
+                  .statement,
             if (r.parameters.isNotEmpty)
               refer('routeData')
                   .property('argsAs')
@@ -97,12 +108,15 @@ Spec buildMethod(RouteConfig r, RouterConfig router) {
                         (b) => b
                           ..lambda = true
                           ..body = r.pathQueryParams.isEmpty
-                              ? refer('${r.getName(router.replaceInRouteName)}Args').constInstance([]).code
-                              : refer('${r.getName(router.replaceInRouteName)}Args').newInstance(
+                              ? refer('${r.getName(router.replaceInRouteName)}Args')
+                                  .constInstance([]).code
+                              : refer('${r.getName(router.replaceInRouteName)}Args')
+                                  .newInstance(
                                   [],
                                   Map.fromEntries(
                                     r.parameters
-                                        .where((p) => (p.isPathParam || p.isQueryParam))
+                                        .where((p) =>
+                                            (p.isPathParam || p.isQueryParam))
                                         .map(
                                           (p) => MapEntry(
                                             p.name,
@@ -150,7 +164,7 @@ Expression getDeferredBuilder(RouteConfig r, Expression page) {
 Expression getPageInstance(RouteConfig r) {
   return r.pageType!.refer.newInstance(
     r.positionalParams.map((p) {
-      return  refer('args').property(p.name);
+      return refer('args').property(p.name);
     }),
     Map.fromEntries(r.namedParams.map(
       (p) => MapEntry(

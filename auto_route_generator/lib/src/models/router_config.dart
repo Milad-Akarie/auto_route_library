@@ -1,6 +1,3 @@
-import 'package:analyzer/dart/element/element.dart' show ClassElement;
-
-import 'route_config.dart';
 
 class RouterConfig {
   final String routerClassName;

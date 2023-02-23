@@ -21,17 +21,19 @@ class RouteParameterResolver {
     }
     var type = _typeResolver.resolveType(paramType);
     final paramName = parameterElement.name.replaceFirst("_", '');
-    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
+    var pathParamAnnotation =
+        _pathParamChecker.firstAnnotationOfExact(parameterElement);
 
     var nameOrAlias = paramName;
     if (pathParamAnnotation != null) {
-     final paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
+      final paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
       }
     }
 
-    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
+    var queryParamAnnotation =
+        _queryParamChecker.firstAnnotationOfExact(parameterElement);
     if (queryParamAnnotation != null) {
       final paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {

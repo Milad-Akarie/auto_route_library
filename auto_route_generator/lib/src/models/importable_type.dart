@@ -23,9 +23,6 @@ class ResolvedType {
       ..types.addAll(typeArguments.map((e) => e.refer)));
   }
 
-
-
-
   @override
   String toString() {
     return name;
@@ -66,8 +63,8 @@ class ResolvedType {
 
   factory ResolvedType.fromJson(Map<String, dynamic> map) {
     final typedArgs = <ResolvedType>[];
-    if(map['typeArguments'] != null){
-      for(final arg in map['typeArguments']){
+    if (map['typeArguments'] != null) {
+      for (final arg in map['typeArguments']) {
         typedArgs.add(ResolvedType.fromJson(arg));
       }
     }

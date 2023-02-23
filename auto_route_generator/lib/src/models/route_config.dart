@@ -34,7 +34,6 @@ class RouteConfig {
     return '${className}Arguments';
   }
 
-
   List<ParamConfig> get argParams {
     return parameters.where((p) => !p.isPathParam && !p.isQueryParam).toList();
   }
@@ -43,9 +42,11 @@ class RouteConfig {
     return parameters.where((p) => (p.isPathParam || p.isQueryParam)).toList();
   }
 
-  Iterable<ParamConfig> get requiredParams => parameters.where((p) => p.isPositional && !p.isOptional);
+  Iterable<ParamConfig> get requiredParams =>
+      parameters.where((p) => p.isPositional && !p.isOptional);
 
-  Iterable<ParamConfig> get positionalParams => parameters.where((p) => p.isPositional);
+  Iterable<ParamConfig> get positionalParams =>
+      parameters.where((p) => p.isPositional);
 
   Iterable<ParamConfig> get namedParams => parameters.where((p) => p.isNamed);
 
@@ -53,7 +54,8 @@ class RouteConfig {
     var nameToUse;
     if (name != null) {
       nameToUse = name;
-    } else if (replacementInRouteName != null && replacementInRouteName.split(',').length == 2) {
+    } else if (replacementInRouteName != null &&
+        replacementInRouteName.split(',').length == 2) {
       var parts = replacementInRouteName.split(',');
       nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
     } else {
@@ -62,8 +64,8 @@ class RouteConfig {
     return capitalize(nameToUse);
   }
 
-  bool get hasUnparsableRequiredArgs =>
-      parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+  bool get hasUnparsableRequiredArgs => parameters.any((p) =>
+      (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
 
   RouteConfig copyWith({
     String? name,
@@ -89,7 +91,8 @@ class RouteConfig {
       returnType: returnType ?? this.returnType,
       parameters: parameters ?? this.parameters,
       hasWrappedRoute: hasWrappedRoute ?? this.hasWrappedRoute,
-      replacementInRouteName: replacementInRouteName ?? this.replacementInRouteName,
+      replacementInRouteName:
+          replacementInRouteName ?? this.replacementInRouteName,
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
       deferredLoading: deferredLoading ?? this.deferredLoading,
     );
@@ -128,9 +131,13 @@ class RouteConfig {
     return RouteConfig(
       name: map['name'] as String?,
       pathParams: pathParams,
-      pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType']),
+      pageType: map['pageType'] == null
+          ? null
+          : ResolvedType.fromJson(map['pageType']),
       className: map['className'] as String,
-      returnType: map['returnType'] == null ? null : ResolvedType.fromJson(map['returnType']),
+      returnType: map['returnType'] == null
+          ? null
+          : ResolvedType.fromJson(map['returnType']),
       parameters: parameters,
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,
       replacementInRouteName: map['replacementInRouteName'] as String?,
@@ -138,5 +145,4 @@ class RouteConfig {
       deferredLoading: map['deferredLoading'] as bool?,
     );
   }
-
 }

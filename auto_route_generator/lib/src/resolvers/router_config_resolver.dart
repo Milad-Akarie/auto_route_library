@@ -2,13 +2,11 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-import '../../utils.dart';
 import '../models/router_config.dart';
 
 /// Extracts and holds router configs
 
 class RouterConfigResolver {
-
   const RouterConfigResolver();
 
   RouterConfig resolve(
@@ -17,7 +15,6 @@ class RouterConfigResolver {
     ClassElement clazz, {
     bool usesPartBuilder = false,
   }) {
-
     // /// ensure router config classes are prefixed with $
     // /// to use the stripped name for the generated class
     // throwIf(
@@ -26,7 +23,8 @@ class RouterConfigResolver {
     //   element: clazz,
     // );
 
-    final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
+    final deferredLoading =
+        autoRouter.peek('deferredLoading')?.boolValue ?? false;
     var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
 
     return RouterConfig(

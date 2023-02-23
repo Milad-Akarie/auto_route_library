@@ -17,8 +17,7 @@ dependencies:
   xml: ^6.0.1
   args: ^2.3.1
   glob: ^2.0.1
-  merging_builder_svb: ^0.2.4
-#  auto_route: ^6.0.0-rc
+  auto_route: ^6.0.0-rc
 
 
 dev_dependencies:
@@ -26,6 +25,6 @@ dev_dependencies:
   source_gen_test:
   test:
 
-dependency_overrides:
-  auto_route:
-    path: ../auto_route
+#dependency_overrides:
+#  auto_route:
+#    path: ../auto_route

@@ -50,7 +50,8 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren)
+          ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   List<RouteMatch> get flattened {

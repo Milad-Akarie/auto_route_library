@@ -25,9 +25,7 @@ class PageRouteInfo<T> {
     this.redirectedFrom,
   });
 
-
   String get routeName => _name;
-
 
   bool get hasChildren => initialChildren?.isNotEmpty == true;
 
@@ -124,4 +122,3 @@ class PageRouteInfo<T> {
       const MapEquality().hash(rawQueryParams) ^
       const ListEquality().hash(initialChildren);
 }
-

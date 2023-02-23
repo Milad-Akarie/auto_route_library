@@ -47,8 +47,6 @@ class RootRouter extends $RootRouter {
     ),
     AutoRoute(page: LoginRoute.page, path: '/login'),
     RedirectRoute(path: '*', redirectTo: '/'),
-    AutoRoute(path: '/products', page: ProductsRoute.page),
-    AutoRoute(page: ProductsRoute.page),
   ];
 }
 

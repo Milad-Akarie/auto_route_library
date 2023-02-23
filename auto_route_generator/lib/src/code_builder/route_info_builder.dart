@@ -5,7 +5,8 @@ import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
-List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
+List<Class> buildRouteInfoAndArgs(
+    RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
   final parameters = r.parameters.toList();
   final pageInfoRefer = TypeReference(
@@ -17,7 +18,9 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
   return [
     Class(
       (b) => b
-        ..docs.addAll(['/// generated route for \n/// [${r.pageType?.refer.accept(emitter).toString()}]'])
+        ..docs.addAll([
+          '/// generated route for \n/// [${r.pageType?.refer.accept(emitter).toString()}]'
+        ])
         ..name = r.getName(router.replaceInRouteName)
         ..extend = TypeReference((b) {
           b
@@ -34,7 +37,8 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..name = 'name'
               ..static = true
               ..type = stringRefer
-              ..assignment = literalString(r.getName(router.replaceInRouteName)).code,
+              ..assignment =
+                  literalString(r.getName(router.replaceInRouteName)).code,
           ),
           Field(
             (b) => b
@@ -108,7 +112,9 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
             ...parameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
               ..name = param.name
-              ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
+              ..type = param is FunctionParamConfig
+                  ? param.funRefer
+                  : param.type.refer)),
           ])
           ..constructors.add(
             Constructor((b) => b
@@ -133,7 +139,9 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
   ];
 }
 
-Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter, {bool toThis = true}) {
+Iterable<Parameter> buildArgParams(
+    List<ParamConfig> parameters, DartEmitter emitter,
+    {bool toThis = true}) {
   return parameters.map(
     (p) => Parameter(
       (b) {
@@ -152,7 +160,8 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emi
           ..toThis = toThis
           ..required = p.isRequired || p.isPositional
           ..defaultTo = defaultCode;
-        if (!toThis) b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+        if (!toThis)
+          b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
       },
     ),
   );

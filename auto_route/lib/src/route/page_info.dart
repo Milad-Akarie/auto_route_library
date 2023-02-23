@@ -6,9 +6,10 @@ class PageInfo<Args> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PageInfo && runtimeType == other.runtimeType && name == other.name;
+      other is PageInfo &&
+          runtimeType == other.runtimeType &&
+          name == other.name;
 
   @override
-  int get hashCode =>  name.hashCode;
+  int get hashCode => name.hashCode;
 }
-

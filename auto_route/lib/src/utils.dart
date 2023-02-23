@@ -10,10 +10,13 @@ bool listNullOrEmpty(Iterable? iterable) {
 
 String toKababCase(String s) {
   return s.replaceAllMapped(RegExp('(.+?)([A-Z])'),
-          (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
+      (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
 }
 
-void throwIf(bool condition, String message,) {
+void throwIf(
+  bool condition,
+  String message,
+) {
   if (condition) {
     throw FlutterError(message);
   }

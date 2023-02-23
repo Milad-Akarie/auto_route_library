@@ -19,6 +19,7 @@ class AutoRouterConfig {
   /// Use for web for lazy loading other routes
   /// more info https://dart.dev/guides/language/language-tour#deferred-loading
   final bool deferredLoading;
+
   /// Only files exist in provided directories will be processed
   final List<String> generateForDir;
 
@@ -44,7 +45,6 @@ class RoutePage<T> {
 
 /// default routePage
 const routePage = RoutePage();
-
 
 class PathParam {
   final String? name;
