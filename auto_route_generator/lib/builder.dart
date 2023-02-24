@@ -7,7 +7,7 @@ Builder autoRouteGenerator(BuilderOptions options) {
   // gr stands for generated router.
   return LibraryBuilder(
     AutoRouteGenerator(),
-    header: '',
+    header: '// coverage:ignore-file',
     generatedExtension: '.gr.dart',
   );
 }
