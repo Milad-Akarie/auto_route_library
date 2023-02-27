@@ -79,7 +79,8 @@ class _MainWebPageState extends State<MainWebPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                context.router.pushPathState(((context.router.pathState as int?) ?? 0) + 1);
+                final currentState = ((context.router.pathState as int?) ?? 0);
+                context.router.pushPathState(currentState + 1);
               },
               child: AnimatedBuilder(
                   animation: context.router.navigationHistory,
