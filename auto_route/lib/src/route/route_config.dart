@@ -120,6 +120,7 @@ class CupertinoRoute extends AutoRoute {
     super.usesPathAsKey = false,
     super.children,
     super.meta = const {},
+    super.path,
     super.title,
   }) : super._(name: name.toString(), type: const RouteType.cupertino());
 }
@@ -133,6 +134,7 @@ class AdaptiveRoute extends AutoRoute {
     super.fullMatch = false,
     super.guards,
     super.usesPathAsKey = false,
+    super.path,
     super.children,
     super.meta = const {},
     super.title,
@@ -155,6 +157,7 @@ class CustomRoute extends AutoRoute {
     super.children,
     super.meta = const {},
     super.title,
+    super.path,
     Function? transitionsBuilder,
     Function? customRouteBuilder,
     int? durationInMilliseconds,
