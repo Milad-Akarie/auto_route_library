@@ -11,6 +11,8 @@ class BookListScreen extends StatefulWidget {
 
 class _BookListScreenState extends State<BookListScreen>
     with AutoRouteAwareStateMixin<BookListScreen> {
+
+
   @override
   void didPushNext() {
     print('didPushNext');

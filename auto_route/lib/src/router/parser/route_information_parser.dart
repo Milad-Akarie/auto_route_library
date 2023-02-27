@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart'
-    show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
@@ -16,9 +15,8 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) {
     final uri = Uri.parse(routeInformation.location ?? '');
-    var matches =
-        _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
-    return SynchronousFuture<UrlState>(UrlState(uri, matches ?? const []));
+    var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
+    return SynchronousFuture<UrlState>(UrlState(uri, matches ?? const [],pathState: routeInformation.state));
   }
 
   @override
@@ -26,6 +24,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     return AutoRouteInformation(
       location: configuration.url.isEmpty ? '/' : configuration.url,
       replace: configuration.shouldReplace,
+      state: configuration.pathState,
     );
   }
 }
@@ -38,6 +37,17 @@ class AutoRouteInformation extends RouteInformation {
     Object? state,
     this.replace = true,
   }) : super(location: location, state: state);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AutoRouteInformation &&
+          runtimeType == other.runtimeType &&
+          location == other.location &&
+          state == other.state;
+
+  @override
+  int get hashCode => replace.hashCode;
 }
 
 @immutable
@@ -45,8 +55,14 @@ class UrlState {
   final List<RouteMatch> segments;
   final Uri uri;
   final bool shouldReplace;
+  final Object? pathState;
 
-  const UrlState(this.uri, this.segments, {this.shouldReplace = false});
+  const UrlState(
+    this.uri,
+    this.segments, {
+    this.shouldReplace = false,
+    this.pathState,
+  });
 
   String get url => Uri.decodeFull(uri.toString());
 
@@ -55,11 +71,13 @@ class UrlState {
   factory UrlState.fromSegments(
     List<RouteMatch> routes, {
     bool shouldReplace = false,
+    Object? state,
   }) {
     return UrlState(
       _buildUri(routes),
       routes,
       shouldReplace: shouldReplace,
+      pathState: state,
     );
   }
 
@@ -81,7 +99,7 @@ class UrlState {
 
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
 
-  UrlState get flatten => UrlState.fromSegments(segments.last.flattened);
+  UrlState get flatten => UrlState.fromSegments(segments.last.flattened,state: pathState);
 
   RouteMatch? _findSegment(
     List<RouteMatch> segments,
@@ -101,9 +119,7 @@ class UrlState {
   }
 
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (match) => match.name == routeName)
-            ?.children ??
-        const [];
+    return _findSegment(segments, (match) => match.name == routeName)?.children ?? const [];
   }
 
   static Uri _buildUri(List<RouteMatch> routes) {
@@ -162,20 +178,23 @@ class UrlState {
       identical(this, other) ||
       other is UrlState &&
           runtimeType == other.runtimeType &&
+          pathState == other.pathState &&
           const ListEquality().equals(segments, other.segments);
 
   @override
-  int get hashCode => const ListEquality().hash(segments);
+  int get hashCode => const ListEquality().hash(segments) ^ pathState.hashCode;
 
   UrlState copyWith({
     List<RouteMatch>? segments,
     Uri? uri,
-    bool? replace,
+    bool? shouldReplace,
+    Object? pathState,
   }) {
     return UrlState(
       uri ?? this.uri,
       segments ?? this.segments,
-      shouldReplace: replace ?? shouldReplace,
+      shouldReplace: shouldReplace ?? this.shouldReplace,
+      pathState: pathState ?? this.pathState,
     );
   }
 }

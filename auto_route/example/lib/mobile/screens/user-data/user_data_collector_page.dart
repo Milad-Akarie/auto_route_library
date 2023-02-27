@@ -1,5 +1,4 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/user-data/data_collector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,7 +1,6 @@
 //
 
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
 
@@ -15,7 +14,7 @@ class RootRouter extends $RootRouter {
     AutoRoute(
       page: HomeRoute.page,
       path: '/',
-      guards: [AuthGuard()],
+      // guards: [AuthGuard()],
       children: [
         RedirectRoute(path: '', redirectTo: 'books'),
         AutoRoute(

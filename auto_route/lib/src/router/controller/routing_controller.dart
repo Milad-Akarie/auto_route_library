@@ -270,7 +270,13 @@ abstract class RoutingController with ChangeNotifier {
 
   bool get canNavigateBack => navigationHistory.canNavigateBack;
 
+ @Deprecated('use back() instead')
   void navigateBack() => navigationHistory.back();
+  void back() => navigationHistory.back();
+
+  void pushPathState(Object? state)=> navigationHistory.pushPathState(state);
+  Object? get pathState => navigationHistory.pathState;
+
 
   RootStackRouter get root => (_parent?.root ?? this) as RootStackRouter;
 

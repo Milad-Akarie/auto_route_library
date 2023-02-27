@@ -20,6 +20,12 @@ abstract class NavigationHistory with ChangeNotifier {
     onNewUrlState(newState);
   }
 
+  void pushPathState(Object? state){
+    onNewUrlState(urlState.copyWith(pathState: state));
+  }
+
+  Object? get pathState => _urlState.pathState;
+  
   bool _isUrlStateMarkedForReplace = false;
 
   bool get isUrlStateMarkedForReplace => _isUrlStateMarkedForReplace;
@@ -31,6 +37,7 @@ abstract class NavigationHistory with ChangeNotifier {
   UrlState _urlState = UrlState.fromSegments(const []);
 
   void onNewUrlState(UrlState newState, {bool notify = true}) {
+
     if (_urlState != newState) {
       _urlState = newState;
       if (notify) {
