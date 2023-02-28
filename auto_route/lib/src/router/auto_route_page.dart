@@ -11,7 +11,6 @@ class AutoRoutePage<T> extends Page<T> {
   final Widget _child;
   final bool fullscreenDialog;
   final bool maintainState;
-  final bool opaque;
 
   final _popCompleter = Completer<T?>();
 
@@ -24,11 +23,8 @@ class AutoRoutePage<T> extends Page<T> {
     required Widget child,
     this.fullscreenDialog = false,
     this.maintainState = true,
-    this.opaque = true,
     LocalKey? key,
-  })  : _child = child is AutoRouteWrapper
-            ? WrappedRoute(child: child as AutoRouteWrapper)
-            : child,
+  })  : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
         super(
           restorationId: routeData.name,
           name: routeData.name,
@@ -37,9 +33,10 @@ class AutoRoutePage<T> extends Page<T> {
 
   @override
   bool canUpdate(Page<dynamic> other) {
-    return other.runtimeType == runtimeType &&
-        (other as AutoRoutePage).routeKey == routeKey;
+    return other.runtimeType == runtimeType && (other as AutoRoutePage).routeKey == routeKey;
   }
+
+  bool get opaque => routeData.type.opaque;
 
   LocalKey get routeKey => routeData.key;
 
@@ -66,16 +63,8 @@ class AutoRoutePage<T> extends Page<T> {
     } else if (type is AdaptiveRouteType) {
       if (kIsWeb) {
         return _NoAnimationPageRouteBuilder(page: this);
-      }
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.linux:
-        case TargetPlatform.windows:
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.android:
-          return PageBasedMaterialPageRoute<T>(page: this);
-        case TargetPlatform.macOS:
-        case TargetPlatform.iOS:
-          return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
+      } else if ([TargetPlatform.macOS, TargetPlatform.iOS].contains(defaultTargetPlatform)) {
+        return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
       }
     }
     return PageBasedMaterialPageRoute<T>(page: this);
@@ -90,8 +79,7 @@ class AutoRoutePage<T> extends Page<T> {
   }
 }
 
-class PageBasedMaterialPageRoute<T> extends PageRoute<T>
-    with MaterialRouteTransitionMixin<T> {
+class PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTransitionMixin<T> {
   PageBasedMaterialPageRoute({
     required AutoRoutePage page,
   }) : super(settings: page);
@@ -113,8 +101,7 @@ class PageBasedMaterialPageRoute<T> extends PageRoute<T>
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 }
 
-class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T>
-    with _CustomPageRouteTransitionMixin<T> {
+class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T> with _CustomPageRouteTransitionMixin<T> {
   _CustomPageBasedPageRouteBuilder({
     required AutoRoutePage page,
     required this.routeType,
@@ -134,10 +121,10 @@ class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T>
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
+
 }
 
-class _NoAnimationPageRouteBuilder<T> extends PageRoute<T>
-    with _NoAnimationPageRouteTransitionMixin<T> {
+class _NoAnimationPageRouteBuilder<T> extends PageRoute<T> with _NoAnimationPageRouteTransitionMixin<T> {
   _NoAnimationPageRouteBuilder({
     required AutoRoutePage page,
   }) : super(settings: page);
@@ -179,14 +166,10 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
   @override
   bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
     // Don't perform outgoing animation if the next route is a fullscreen dialog.
-    return (nextRoute is _CustomPageBasedPageRouteBuilder &&
-                !nextRoute.fullscreenDialog ||
-            nextRoute is MaterialRouteTransitionMixin &&
-                !nextRoute.fullscreenDialog) ||
-        (nextRoute is _NoAnimationPageRouteTransitionMixin &&
-            !nextRoute.fullscreenDialog) ||
-        (nextRoute is CupertinoRouteTransitionMixin &&
-            !nextRoute.fullscreenDialog);
+    return (nextRoute is _CustomPageBasedPageRouteBuilder && !nextRoute.fullscreenDialog ||
+            nextRoute is MaterialRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
+        (nextRoute is _NoAnimationPageRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
+        (nextRoute is CupertinoRouteTransitionMixin && !nextRoute.fullscreenDialog);
   }
 
   @override
@@ -226,24 +209,20 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   bool get barrierDismissible => routeType.barrierDismissible;
 
   @override
-  Color? get barrierColor =>
-      routeType.barrierColor == null ? null : Color(routeType.barrierColor!);
+  Color? get barrierColor => routeType.barrierColor;
 
   @override
   String? get barrierLabel => routeType.barrierLabel;
 
   @override
-  bool get opaque => _page.opaque;
+  bool get opaque => routeType.opaque;
 
   @override
   bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
     // Don't perform outgoing animation if the next route is a fullscreen dialog.
-    return (nextRoute is MaterialRouteTransitionMixin &&
-            !nextRoute.fullscreenDialog) ||
-        (nextRoute is _NoAnimationPageRouteTransitionMixin &&
-            !nextRoute.fullscreenDialog) ||
-        (nextRoute is CupertinoRouteTransitionMixin &&
-            !nextRoute.fullscreenDialog);
+    return (nextRoute is MaterialRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
+        (nextRoute is _NoAnimationPageRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
+        (nextRoute is CupertinoRouteTransitionMixin && !nextRoute.fullscreenDialog);
   }
 
   @override
@@ -260,24 +239,19 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return child;
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    final transitionsBuilder =
-        routeType.transitionsBuilder ?? _defaultTransitionsBuilder;
+  Widget buildTransitions(
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    final transitionsBuilder = routeType.transitionsBuilder ?? _defaultTransitionsBuilder;
     return transitionsBuilder(context, animation, secondaryAnimation, child);
   }
 }
 
-class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
-    with CustomCupertinoRouteTransitionMixin<T> {
+class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CustomCupertinoRouteTransitionMixin<T> {
   _PageBasedCupertinoPageRoute({
     required AutoRoutePage<T> page,
     this.title,

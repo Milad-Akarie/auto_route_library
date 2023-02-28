@@ -26,6 +26,10 @@ void main() {
       expect(collection.routes, expectedRoutes);
     });
 
+    test('Calling findPathTo to C1 should return a list of route trails[C,C1]', () {
+      expect(collection.findPathTo('C1'), [routeC, subRouteC1]);
+    });
+
     test('Calling [containsKey] with existing key should return true', () {
       expect(collection.containsKey('A'), isTrue);
     });
@@ -50,6 +54,30 @@ void main() {
 
     test('Calling [] operator with a non-existing key should return null', () {
       expect(collection['X'], isNull);
+    });
+    test('call RouteMatch.fromRedirect should return true', () {
+      expect(
+          const RouteMatch(
+            name: 'A',
+            segments: ['a'],
+            path: 'a',
+            redirectedFrom: '/',
+            stringMatch: 'a',
+            key: ValueKey('a'),
+          ).fromRedirect,
+          isTrue);
+    });
+
+    test('call RouteMatch.hasEmptyPath should return true', () {
+      expect(
+          const RouteMatch(
+            name: 'A',
+            segments: [''],
+            path: '',
+            stringMatch: '',
+            key: ValueKey(''),
+          ).hasEmptyPath,
+          isTrue);
     });
   });
 

@@ -1,5 +1,9 @@
+import 'package:flutter/material.dart';
+
 abstract class RouteType {
-  const RouteType._();
+  const RouteType._({this.opaque = true});
+
+  final bool opaque;
 
   const factory RouteType.material() = MaterialRouteType;
 
@@ -15,25 +19,20 @@ abstract class RouteType {
     bool opaque,
     bool barrierDismissible,
     String? barrierLabel,
-    int? barrierColor,
+    Color? barrierColor,
   }) = CustomRouteType;
 }
 
 class MaterialRouteType extends RouteType {
-  const MaterialRouteType() : super._();
+  const MaterialRouteType({super.opaque}) : super._();
 }
 
 class CupertinoRouteType extends RouteType {
-  const CupertinoRouteType() : super._();
+  const CupertinoRouteType({super.opaque}) : super._();
 }
 
 class AdaptiveRouteType extends RouteType {
-  /// passed to the opaque property in [_NoAnimationPageRouteBuilder] only when kIsWeb
-  final bool opaque;
-
-  const AdaptiveRouteType({
-    this.opaque = true,
-  }) : super._();
+  const AdaptiveRouteType({super.opaque}) : super._();
 }
 
 class CustomRouteType extends RouteType {
@@ -71,9 +70,6 @@ class CustomRouteType extends RouteType {
   /// this property is ignored unless a [transitionBuilder] is provided
   final int? reverseDurationInMilliseconds;
 
-  /// passed to the opaque property in [PageRouteBuilder]
-  final bool opaque;
-
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   final bool barrierDismissible;
 
@@ -81,7 +77,7 @@ class CustomRouteType extends RouteType {
   final String? barrierLabel;
 
   /// passed to the barrierColor property in [PageRouteBuilder]
-  final int? barrierColor;
+  final Color? barrierColor;
 
   const CustomRouteType({
     this.customRouteBuilder,
@@ -90,7 +86,7 @@ class CustomRouteType extends RouteType {
     this.transitionsBuilder,
     this.durationInMilliseconds,
     this.reverseDurationInMilliseconds,
-    this.opaque = true,
+    super.opaque,
     this.barrierDismissible = false,
   }) : super._();
 }

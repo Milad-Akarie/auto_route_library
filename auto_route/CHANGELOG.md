@@ -1,4 +1,9 @@
 # ChangeLog
+## [6.0.0-rc-2]
+- Fix CustomRoute.opaque not working
+## [6.0.0-rc-1] 
+- Add path property to CustomRoute,CupertinoRoute and AdaptiveRoute
+- Add functionality to push path states to browser history and read it
 ## [6.0.0-rc] Breaking
 make sure you check the [Migration guide](https://github.com/Milad-Akarie/auto_route_library/tree/v6.0.0_redesigned#migrating-to-v60)  
 - AutoRoute now takes a PageInfo object from the generated routes instead of Type

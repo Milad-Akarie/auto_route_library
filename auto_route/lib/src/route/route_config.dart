@@ -165,7 +165,7 @@ class CustomRoute extends AutoRoute {
     bool opaque = true,
     bool barrierDismissible = true,
     String? barrierLabel,
-    int? barrierColor,
+    Color? barrierColor,
   }) : super._(
           name: page.name,
           type: RouteType.custom(

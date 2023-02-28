@@ -1,5 +1,3 @@
-import 'package:analyzer/dart/analysis/utilities.dart';
-import 'package:analyzer/dart/ast/ast.dart';
 
 final content = r'''
 import 'package:auto_route/auto_route.dart';

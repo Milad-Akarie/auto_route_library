@@ -27,10 +27,12 @@ class RootRouter extends $RootRouter {
               page: BookListRoute.page,
               title: (ctx, _) => 'Books list',
             ),
-            AutoRoute(
+            CustomRoute(
               path: ':id',
               page: BookDetailsRoute.page,
-              fullscreenDialog: true,
+              durationInMilliseconds: 0,
+              reverseDurationInMilliseconds: 0,
+              opaque: false,
               title: (ctx, data) {
                 return 'Book Details ${data.pathParams.get('id')}';
               },
