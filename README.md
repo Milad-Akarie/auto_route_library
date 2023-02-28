@@ -66,7 +66,8 @@ Create a placeholder class and annotate it with `@MaterialAutoRouter` which take
 **Note**:  Unless you want to generate a part of file (.gr.dart) The name of the router must be prefixed with **\$** so we have a  generated class with the same name minus the **$**.
 
 ```dart              
-              
+import 'package:auto_route/annotations.dart';
+
 // @CupertinoAutoRouter              
 // @AdaptiveAutoRouter              
 // @CustomAutoRouter              
@@ -81,8 +82,12 @@ class $AppRouter {}
 ```              
 ### Using part builder ( New in version 3.0.0+)
 To generate a part-of file instead of a stand alone `AppRouter` class, simply add a `Part Directive` to your `AppRouter` and extend the generated private router.
-```dart            
-part 'app_router.gr.dart';      
+```dart
+import 'package:flutter/material.dart';
+import 'package:auto_route/auto_route.dart';
+
+// The part statement below assumes that the file name containing this AppRouter class to be app_router.dart
+part 'app_router.gr.dart';
         
 @MaterialAutoRouter(              
   replaceInRouteName: 'Page,Route',              
