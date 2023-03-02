@@ -7,6 +7,7 @@
 /// and to set pageController.offset.round() to [TabController.index]
 /// so page is set when the scroll pos is rounded to it
 import 'package:auto_route/auto_route.dart';
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -194,7 +195,7 @@ class AutoTabViewState extends State<AutoTabView> {
     }());
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
-      child: PageView(
+      child: ExpandablePageView(
         scrollDirection: widget.scrollDirection,
         dragStartBehavior: widget.dragStartBehavior,
         controller: _pageController,

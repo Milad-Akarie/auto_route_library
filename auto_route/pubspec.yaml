@@ -13,6 +13,7 @@ dependencies:
   path: ^1.8.0
   collection: ^1.15.0
   meta: ^1.7.0
+  expandable_page_view: ^1.0.17
 
 
 dev_dependencies:
