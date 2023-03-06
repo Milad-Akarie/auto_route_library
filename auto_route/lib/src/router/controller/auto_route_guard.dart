@@ -1,7 +1,6 @@
 part of 'routing_controller.dart';
 
-typedef OnNavigation = Function(
-    NavigationResolver resolver, StackRouter router);
+typedef OnNavigation = Function(NavigationResolver resolver, StackRouter router);
 
 abstract class AutoRouteGuard {
   /// clients will call [resolver.next(true --> default)] to continue
@@ -23,13 +22,12 @@ abstract class AutoRouteGuard {
     StackRouter router,
   );
 
-  factory AutoRouteGuard.simple(OnNavigation onNavigation) =
-      AutoRouteGuardCallback;
-  factory AutoRouteGuard.redirect(
-          PageRouteInfo? Function(NavigationResolver resolver) redirect) =
+  factory AutoRouteGuard.simple(OnNavigation onNavigation) = AutoRouteGuardCallback;
+
+  factory AutoRouteGuard.redirect(PageRouteInfo? Function(NavigationResolver resolver) redirect) =
       _AutoRouteGuardRedirectCallback;
-  factory AutoRouteGuard.redirectPath(
-          String? Function(NavigationResolver resolver) redirect) =
+
+  factory AutoRouteGuard.redirectPath(String? Function(NavigationResolver resolver) redirect) =
       _AutoRouteGuardRedirectPathCallback;
 }
 
@@ -69,8 +67,7 @@ class AutoRouteGuardCallback extends AutoRouteGuard {
   const AutoRouteGuardCallback(this.onNavigate);
 
   @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) =>
-      onNavigate(resolver, router);
+  void onNavigation(NavigationResolver resolver, StackRouter router) => onNavigate(resolver, router);
 }
 
 class NavigationResolver {
@@ -91,11 +88,19 @@ class NavigationResolver {
     _completer.complete(continueNavigation);
   }
 
+  // helpful for when you want to revert to the previous
+  // url back can not navigate
+  void nextOrBack([bool continueNavigation = true]) {
+    next(continueNavigation);
+    if (!continueNavigation) {
+      _router.back();
+    }
+  }
+
   bool get isResolved => _completer.isCompleted;
 }
 
-abstract class AutoRedirectGuardBase extends AutoRouteGuard
-    with ChangeNotifier {
+abstract class AutoRedirectGuardBase extends AutoRouteGuard with ChangeNotifier {
   late ReevaluationStrategy _strategy;
 
   Future<bool> canNavigate(RouteMatch route);
@@ -108,8 +113,7 @@ abstract class AutoRedirectGuardBase extends AutoRouteGuard
   // e.g when the user is no longer authenticated
   // and there are auth-protected routes in the stack
   void reevaluate({
-    ReevaluationStrategy strategy =
-        const ReevaluationStrategy.rePushFirstGuardedRoute(),
+    ReevaluationStrategy strategy = const ReevaluationStrategy.rePushFirstGuardedRoute(),
   }) {
     _strategy = strategy;
     notifyListeners();
@@ -133,8 +137,7 @@ abstract class AutoRedirectGuard extends AutoRedirectGuardBase {
   NavigationResolver? _redirectResolver;
 
   @protected
-  void redirect(PageRouteInfo route,
-      {required NavigationResolver resolver}) async {
+  void redirect(PageRouteInfo route, {required NavigationResolver resolver}) async {
     if (_redirectResolver == resolver) return;
     _redirectResolver = resolver;
     assert(!resolver.isResolved, 'Resolver is already completed');
@@ -170,17 +173,13 @@ abstract class ReevaluationStrategy {
 
   const factory ReevaluationStrategy.rePushAllRoutes() = RePushAllStrategy;
 
-  const factory ReevaluationStrategy.rePushFirstGuardedRoute() =
-      RePushFirstGuarded;
+  const factory ReevaluationStrategy.rePushFirstGuardedRoute() = RePushFirstGuarded;
 
-  const factory ReevaluationStrategy.rePushFirstGuardedRouteAndUp() =
-      RePushFirstGuardedAndUp;
+  const factory ReevaluationStrategy.rePushFirstGuardedRouteAndUp() = RePushFirstGuardedAndUp;
 
-  const factory ReevaluationStrategy.removeFirstGuardedRouteAndUp() =
-      _RemoveFirstGuardedAndUp;
+  const factory ReevaluationStrategy.removeFirstGuardedRouteAndUp() = _RemoveFirstGuardedAndUp;
 
-  const factory ReevaluationStrategy.removeAllAndPush(PageRouteInfo route) =
-      _RemoveAllAndPush;
+  const factory ReevaluationStrategy.removeAllAndPush(PageRouteInfo route) = _RemoveAllAndPush;
 }
 
 class RePushAllStrategy extends ReevaluationStrategy {
@@ -189,8 +188,7 @@ class RePushAllStrategy extends ReevaluationStrategy {
   @override
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final stackData = router.stackData;
-    final routesToRemove =
-        List<RouteMatch>.unmodifiable(stackData.map((e) => e._match));
+    final routesToRemove = List<RouteMatch>.unmodifiable(stackData.map((e) => e._match));
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
@@ -214,12 +212,10 @@ class RePushFirstGuarded extends ReevaluationStrategy {
   @override
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
-    final firstGuardedRouteIndex =
-        routes.indexWhere((r) => r.guards.contains(guard));
+    final firstGuardedRouteIndex = routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
 
-    final routesToRemove =
-        routes.sublist(firstGuardedRouteIndex, routes.length);
+    final routesToRemove = routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
@@ -239,11 +235,9 @@ class RePushFirstGuardedAndUp extends ReevaluationStrategy {
   @override
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
-    final firstGuardedRouteIndex =
-        routes.indexWhere((r) => r.guards.contains(guard));
+    final firstGuardedRouteIndex = routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
-    final routesToRemove =
-        routes.sublist(firstGuardedRouteIndex, routes.length);
+    final routesToRemove = routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(route, notify: false);
     }
@@ -270,11 +264,9 @@ class _RemoveFirstGuardedAndUp extends ReevaluationStrategy {
   @override
   void reevaluate(AutoRedirectGuardBase guard, StackRouter router) {
     final routes = router.stackData.map((e) => e.route).toList();
-    final firstGuardedRouteIndex =
-        routes.indexWhere((r) => r.guards.contains(guard));
+    final firstGuardedRouteIndex = routes.indexWhere((r) => r.guards.contains(guard));
     if (firstGuardedRouteIndex == -1) return;
-    final routesToRemove =
-        routes.sublist(firstGuardedRouteIndex, routes.length);
+    final routesToRemove = routes.sublist(firstGuardedRouteIndex, routes.length);
     for (final route in routesToRemove) {
       router._removeRoute(
         route,

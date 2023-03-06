@@ -19,6 +19,7 @@ class AutoRoute {
   final bool fullscreenDialog;
   final bool maintainState;
   final TitleBuilder? title;
+  final bool keepHistory;
 
   AutoRoute._({
     required this.name,
@@ -32,6 +33,7 @@ class AutoRoute {
     this.maintainState = true,
     this.fullscreenDialog = false,
     this.title,
+    this.keepHistory = true,
     List<AutoRoute>? children,
   })  : _path = path ?? toKababCase(name),
         _children = children != null ? RouteCollection.from(children) : null;
@@ -48,6 +50,7 @@ class AutoRoute {
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
     TitleBuilder? title,
+    bool keepHistory = true,
   }) {
     return AutoRoute._(
       name: page.name,
@@ -61,6 +64,7 @@ class AutoRoute {
       guards: guards,
       children: children,
       title: title,
+      keepHistory: keepHistory,
     );
   }
 
@@ -103,6 +107,7 @@ class MaterialRoute extends AutoRoute {
     super.children,
     super.meta = const {},
     super.title,
+    super.keepHistory,
   }) : super._(
           name: page.name,
           type: const RouteType.material(),
@@ -122,6 +127,7 @@ class CupertinoRoute extends AutoRoute {
     super.meta = const {},
     super.path,
     super.title,
+    super.keepHistory,
   }) : super._(name: name.toString(), type: const RouteType.cupertino());
 }
 
@@ -139,6 +145,7 @@ class AdaptiveRoute extends AutoRoute {
     super.meta = const {},
     super.title,
     bool opaque = true,
+    super.keepHistory,
   }) : super._(
           name: page.name,
           type: RouteType.adaptive(opaque: opaque),
@@ -158,6 +165,7 @@ class CustomRoute extends AutoRoute {
     super.meta = const {},
     super.title,
     super.path,
+    super.keepHistory,
     Function? transitionsBuilder,
     Function? customRouteBuilder,
     int? durationInMilliseconds,

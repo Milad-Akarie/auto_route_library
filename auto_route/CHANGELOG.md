@@ -1,4 +1,8 @@
 # ChangeLog
+## [6.0.0-rc-3] Breaking
+- Add transition builder to AutoTabsRouter and AutoTabsScaffold to only rebuild the body for animation and remove animation property from builder [breaking]
+- Add router.currentHierarchy() helper method for debugging and testing. 
+- Add keepHistory flag to AutoRoute(), to remove route from stack on pushNext
 ## [6.0.0-rc-2]
 - Fix CustomRoute.opaque not working
 ## [6.0.0-rc-1] 

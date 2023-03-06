@@ -6,7 +6,6 @@ class RouteData {
   final RoutingController router;
   final RouteType type;
   final TitleBuilder? _titleBuilder;
-
   LocalKey get key => _match.key;
 
   RouteData({

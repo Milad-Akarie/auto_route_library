@@ -4,14 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage<String>()
-class HomePage extends StatefulWidget  {
+class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
   }) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
-
 }
 
 class RouteDestination {
@@ -89,26 +88,27 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             );
           })
-        : AutoTabsRouter.tabBar(
+        : AutoTabsRouter(
             routes: [
               BooksTab(),
               ProfileTab(),
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
-            builder: (context, child, controller) {
+            transitionBuilder: (_, child, animation) => FadeTransition(opacity: animation, child: child),
+            builder: (context, child) {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(context.topRoute.title(context)),
                   leading: AutoLeadingButton(ignorePagelessRoutes: true),
-                  bottom: TabBar(
-                    controller: controller,
-                    tabs: [
-                      for (final d in destinations)
-                        Tab(
-                          child: Text(d.label),
-                        )
-                    ],
-                  ),
+                  // bottom: TabBar(
+                  //   controller: controller,
+                  //   tabs: [
+                  //     for (final d in destinations)
+                  //       Tab(
+                  //         child: Text(d.label),
+                  //       )
+                  //   ],
+                  // ),
                 ),
                 body: child,
                 bottomNavigationBar: buildBottomNav(context, context.tabsRouter),

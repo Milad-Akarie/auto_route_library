@@ -9,6 +9,7 @@ class RootRouter extends $RootRouter {
   @override
   RouteType get defaultRouteType => RouteType.material();
 
+
   @override
   final List<AutoRoute> routes = [
     AutoRoute(
@@ -27,12 +28,9 @@ class RootRouter extends $RootRouter {
               page: BookListRoute.page,
               title: (ctx, _) => 'Books list',
             ),
-            CustomRoute(
+            AutoRoute(
               path: ':id',
               page: BookDetailsRoute.page,
-              durationInMilliseconds: 0,
-              reverseDurationInMilliseconds: 0,
-              opaque: false,
               title: (ctx, data) {
                 return 'Book Details ${data.pathParams.get('id')}';
               },

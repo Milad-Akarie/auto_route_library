@@ -1,27 +1,19 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/web_demo/router/web_router.gr.dart';
 
 import '../web_main.dart';
 
-class AuthGuard extends AutoRedirectGuard {
+class AuthGuard extends AutoRouteGuard {
   final AuthService authService;
 
-  AuthGuard(this.authService) {
-    authService.addListener(reevaluate);
-  }
+  AuthGuard(this.authService);
 
   @override
-  Future<bool> canNavigate(RouteMatch route) async {
-    return authService.isAuthenticated && authService.isVerified;
-  }
-
-  @override
-  Future<void> onNavigation(
-      NavigationResolver resolver, StackRouter router) async {
-    if (await canNavigate(resolver.route)) {
+  Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {
+    if (authService.isAuthenticated) {
       resolver.next();
     } else {
-      redirect(LoginRoute(), resolver: resolver);
+      router.replace(WebLoginRoute(resolver: resolver));
     }
   }
 }

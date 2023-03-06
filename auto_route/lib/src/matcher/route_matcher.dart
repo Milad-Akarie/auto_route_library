@@ -234,6 +234,7 @@ class RouteMatcher {
       fragment: url.fragment,
       type: config.type,
       title: config.title,
+      keepHistory: config.keepHistory,
     );
   }
 
@@ -289,6 +290,7 @@ class RouteMatcher {
       queryParams: Parameters(route.rawQueryParams),
       type: config.type,
       title: config.title,
+      keepHistory: config.keepHistory,
     );
   }
 

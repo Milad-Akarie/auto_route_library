@@ -50,6 +50,7 @@ class PageRouteInfo<T> {
     return [this, if (hasChildren) ...initialChildren!.last.flattened];
   }
 
+
   PageRouteInfo copyWith({
     String? name,
     String? path,

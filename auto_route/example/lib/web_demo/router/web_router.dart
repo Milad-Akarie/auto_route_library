@@ -1,15 +1,14 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/web_demo/router/web_auth_guard.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/material.dart';
 
-@AutoRouterConfig()
+@AutoRouterConfig(generateForDir: ['lib/web_demo'])
 class WebAppRouter extends $WebAppRouter {
-  WebAppRouter(
-    AuthService authService,
-  ) : super(
-        // authGuard: AuthGuard(authService),
-        );
+  AuthService authService;
+
+  WebAppRouter(this.authService);
 
   @override
   RouteType get defaultRouteType => RouteType.custom(
@@ -18,9 +17,22 @@ class WebAppRouter extends $WebAppRouter {
       );
 
   @override
-  final List<AutoRoute> routes = [
-    AutoRoute(page: MainWebRoute.page, path: '/'),
-    AutoRoute(path: '/login', page: LoginRoute.page),
+  late final List<AutoRoute> routes = [
+    AutoRoute(
+      page: MainWebRoute.page,
+      path: '/',
+      guards: [AuthGuard(authService)],
+    ),
+    AutoRoute(
+      path: '/login',
+      page: WebLoginRoute.page,
+      keepHistory: false,
+      // guards: [
+      //   AutoRouteGuard.simple(
+      //     (resolver, _) => resolver.nextOrBack(!authService.isAuthenticated),
+      //   )
+      // ],
+    ),
     RedirectRoute(path: '/user/:userID', redirectTo: '/user/:userID/page'),
     AutoRoute(path: '/user/:userID/page', page: UserRoute.page, children: [
       AutoRoute(path: '', page: UserProfileRoute.page),
@@ -72,8 +84,8 @@ class _MainWebPageState extends State<MainWebPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
-                onPressed: widget.navigate ??
-                    () => context.navigateTo(UserRoute(id: 2, query: const ['value1', 'value2'])),
+                onPressed:
+                    widget.navigate ?? () => context.navigateTo(UserRoute(id: 2, query: const ['value1', 'value2'])),
                 child: Text('Navigate to user/2'),
               ),
             ),
@@ -85,9 +97,8 @@ class _MainWebPageState extends State<MainWebPage> {
               child: AnimatedBuilder(
                   animation: context.router.navigationHistory,
                   builder: (context, _) {
-                  return Text('Update State: ${context.router.pathState}');
-                }
-              ),
+                    return Text('Update State: ${context.router.pathState}');
+                  }),
             ),
           ],
         ),

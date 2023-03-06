@@ -30,13 +30,13 @@
 /build/
 
 # Android related
-**/android/**/gradle-wrapper.jar
-**/android/.gradle
-**/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
-**/android/local.properties
-**/android/**/GeneratedPluginRegistrant.java
+packages/micro/android/**/gradle-wrapper.jar
+packages/micro/android/.gradle
+packages/micro/android/captures/
+packages/micro/android/gradlew
+packages/micro/android/gradlew.bat
+packages/micro/android/local.properties
+packages/micro/android/**/GeneratedPluginRegistrant.java
 
 # iOS/XCode related
 **/ios/**/*.mode1v3

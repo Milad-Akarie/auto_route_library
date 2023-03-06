@@ -14,7 +14,7 @@ class AutoRoutePage<T> extends Page<T> {
 
   final _popCompleter = Completer<T?>();
 
-  Future<T?> get popped => _popCompleter.future;
+  Future<T?> get popped => routeData.router.ignorePopCompleters ? SynchronousFuture(null) : _popCompleter.future;
 
   Widget get child => _child;
 
@@ -121,7 +121,6 @@ class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T> with _CustomPageR
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
-
 }
 
 class _NoAnimationPageRouteBuilder<T> extends PageRoute<T> with _NoAnimationPageRouteTransitionMixin<T> {

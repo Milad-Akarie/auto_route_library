@@ -16,7 +16,6 @@ dependencies:
   auto_route:
 
 
-
 dev_dependencies:
   build_runner:
   flutter_test:

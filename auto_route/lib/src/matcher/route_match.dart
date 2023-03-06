@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -21,6 +23,7 @@ class RouteMatch<T> {
   final Map<String, dynamic> meta;
   final RouteType? type;
   final TitleBuilder? title;
+  final bool keepHistory;
 
   const RouteMatch({
     required this.name,
@@ -39,6 +42,7 @@ class RouteMatch<T> {
     this.meta = const {},
     this.type,
     this.title,
+    this.keepHistory = true,
   });
 
   bool get hasChildren => children?.isNotEmpty == true;
@@ -50,8 +54,7 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren)
-          ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   List<RouteMatch> get flattened {
@@ -74,6 +77,7 @@ class RouteMatch<T> {
     Map<String, dynamic>? meta,
     RouteType? type,
     TitleBuilder? title,
+    bool? keepHistory,
   }) {
     return RouteMatch(
       path: path ?? this.path,
@@ -91,6 +95,7 @@ class RouteMatch<T> {
       meta: meta ?? this.meta,
       type: type ?? this.type,
       title: title ?? this.title,
+      keepHistory: keepHistory ?? this.keepHistory,
     );
   }
 
@@ -133,4 +138,54 @@ class RouteMatch<T> {
   }
 
   PageRouteInfo toPageRouteInfo() => PageRouteInfo.fromMatch(this);
+}
+
+
+class HierarchySegment {
+  final String name;
+  final List<HierarchySegment> children;
+  final Parameters? pathParams, queryParams;
+
+  const HierarchySegment(
+    this.name, {
+    this.pathParams,
+    this.queryParams,
+    this.children = const [],
+  });
+
+  @override
+  String toString() {
+    return '$name: {pathParams: $pathParams, queryParams: $queryParams, children: $children}';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is HierarchySegment &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          pathParams == other.pathParams &&
+          queryParams == other.queryParams &&
+          const ListEquality().equals(children, other.children);
+
+  @override
+  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
+}
+
+extension PrettyHierarchySegmentX on List<HierarchySegment> {
+  String get prettyMap {
+    const encoder = JsonEncoder.withIndent('  ');
+
+    Map _toMap(List<HierarchySegment> segments) {
+      return Map.fromEntries(segments.map(
+        (e) => MapEntry(e.name, {
+          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
+          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
+          if (e.children.isNotEmpty) 'children': _toMap(e.children),
+        }),
+      ));
+    }
+
+    return encoder.convert(_toMap(this));
+  }
 }
