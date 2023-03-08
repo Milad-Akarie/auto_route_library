@@ -10,11 +10,11 @@ class WebAppRouter extends $WebAppRouter {
 
   WebAppRouter(this.authService);
 
-  @override
-  RouteType get defaultRouteType => RouteType.custom(
-        transitionsBuilder: TransitionsBuilders.noTransition,
-        reverseDurationInMilliseconds: 0,
-      );
+  // @override
+  // RouteType get defaultRouteType => RouteType.custom(
+  //       transitionsBuilder: TransitionsBuilders.noTransition,
+  //       reverseDurationInMilliseconds: 0,
+  //     );
 
   @override
   late final List<AutoRoute> routes = [
@@ -33,8 +33,7 @@ class WebAppRouter extends $WebAppRouter {
       //   )
       // ],
     ),
-    RedirectRoute(path: '/user/:userID', redirectTo: '/user/:userID/page'),
-    AutoRoute(path: '/user/:userID/page', page: UserRoute.page, children: [
+    AutoRoute(path: '/user/:userID', page: UserRoute.page, children: [
       AutoRoute(path: '', page: UserProfileRoute.page),
       AutoRoute(
         path: 'posts',
@@ -65,7 +64,6 @@ class MainWebPage extends StatefulWidget {
 }
 
 class _MainWebPageState extends State<MainWebPage> {
-  var _state = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +230,6 @@ class UserPage extends StatefulWidget {
 class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
-    print(context.routeData.queryParams);
     return Scaffold(
       appBar: AppBar(
         title: Builder(
@@ -240,7 +237,7 @@ class _UserPageState extends State<UserPage> {
             return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
           },
         ),
-        leading: AutoLeadingButton(),
+        // leading: AutoLeadingButton(),
       ),
       body: AutoRouter(),
     );

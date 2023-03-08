@@ -23,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(
               'Profile page',
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 32),
             ElevatedButton(

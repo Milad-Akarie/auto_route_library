@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.0-rc-1] 
+- Support dart_style 2.2.5
 ## [6.0.0-rc] Breaking
 make sure you check the [Migration guide](https://github.com/Milad-Akarie/auto_route_library/tree/v6.0.0_redesigned#migrating-to-v60)
 - AutoRoute now takes a PageInfo object from the generated routes instead of Type

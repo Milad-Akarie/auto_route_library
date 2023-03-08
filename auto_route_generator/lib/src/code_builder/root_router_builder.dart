@@ -8,8 +8,7 @@ import 'library_builder.dart';
 
 Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
       (b) => b
-        ..name =
-            '${router.usesPartBuilder ? '_' : ''}\$${router.routerClassName}'
+        ..name = '${router.usesPartBuilder ? '_' : ''}\$${router.routerClassName}'
         ..abstract = true
         ..extend = refer('RootStackRouter', autoRouteImport)
         ..fields.addAll([buildPagesMap(routes, router)])
@@ -64,11 +63,8 @@ Field buildPagesMap(List<RouteConfig> routes, RouterConfig router) {
 }
 
 Spec buildMethod(RouteConfig r, RouterConfig router) {
-  final useConsConstructor =
-      r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
-  var constructedPage = useConsConstructor
-      ? r.pageType!.refer.constInstance([])
-      : getPageInstance(r);
+  final useConsConstructor = r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
+  var constructedPage = useConsConstructor ? r.pageType!.refer.constInstance([]) : getPageInstance(r);
 
   if (r.hasWrappedRoute == true) {
     constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
@@ -87,49 +83,36 @@ Spec buildMethod(RouteConfig r, RouterConfig router) {
         Parameter((b) => b.name = 'routeData'),
       )
       ..body = Block((b) => b.statements.addAll([
-            if ((!r.hasUnparsableRequiredArgs) &&
-                r.parameters.any((p) => p.isPathParam))
-              refer('routeData')
-                  .property('inheritedPathParams')
-                  .assignFinal('pathParams')
-                  .statement,
-            if (!r.hasUnparsableRequiredArgs &&
-                r.parameters.any((p) => p.isQueryParam))
-              refer('routeData')
-                  .property('queryParams')
-                  .assignFinal('queryParams')
-                  .statement,
+            if ((!r.hasUnparsableRequiredArgs) && r.parameters.any((p) => p.isPathParam))
+              declareFinal('pathParams').assign(refer('routeData').property('inheritedPathParams')).statement,
+            if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
+              declareFinal('queryParams').assign(refer('routeData').property('queryParams')).statement,
             if (r.parameters.isNotEmpty)
-              refer('routeData')
-                  .property('argsAs')
-                  .call([], {
-                    if (!r.hasUnparsableRequiredArgs)
-                      'orElse': Method(
-                        (b) => b
-                          ..lambda = true
-                          ..body = r.pathQueryParams.isEmpty
-                              ? refer('${r.getName(router.replaceInRouteName)}Args')
-                                  .constInstance([]).code
-                              : refer('${r.getName(router.replaceInRouteName)}Args')
-                                  .newInstance(
-                                  [],
-                                  Map.fromEntries(
-                                    r.parameters
-                                        .where((p) =>
-                                            (p.isPathParam || p.isQueryParam))
-                                        .map(
-                                          (p) => MapEntry(
-                                            p.name,
-                                            getUrlParamAssignment(p),
+              declareFinal('args')
+                  .assign(
+                    refer('routeData').property('argsAs').call([], {
+                      if (!r.hasUnparsableRequiredArgs)
+                        'orElse': Method(
+                          (b) => b
+                            ..lambda = true
+                            ..body = r.pathQueryParams.isEmpty
+                                ? refer('${r.getName(router.replaceInRouteName)}Args').constInstance([]).code
+                                : refer('${r.getName(router.replaceInRouteName)}Args').newInstance(
+                                    [],
+                                    Map.fromEntries(
+                                      r.parameters.where((p) => (p.isPathParam || p.isQueryParam)).map(
+                                            (p) => MapEntry(
+                                              p.name,
+                                              getUrlParamAssignment(p),
+                                            ),
                                           ),
-                                        ),
-                                  ),
-                                ).code,
-                      ).closure
-                  }, [
-                    refer('${r.getName(router.replaceInRouteName)}Args'),
-                  ])
-                  .assignFinal('args')
+                                    ),
+                                  ).code,
+                        ).closure
+                    }, [
+                      refer('${r.getName(router.replaceInRouteName)}Args'),
+                    ]),
+                  )
                   .statement,
             TypeReference(
               (b) => b

@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart'
-    show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
@@ -16,10 +15,11 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) {
     final uri = Uri.parse(routeInformation.location ?? '');
-    var matches =
-        _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
+    print(routeInformation.location);
+    var matches = _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(
-        UrlState(uri, matches ?? const [], pathState: routeInformation.state));
+      UrlState(uri, matches ?? const [], pathState: routeInformation.state),
+    );
   }
 
   @override
@@ -98,7 +98,6 @@ class UrlState {
     }
   }
 
-
   @override
   String toString() {
     return 'UrlState{uri: $uri, shouldReplace: $shouldReplace, pathState: $pathState}';
@@ -108,8 +107,7 @@ class UrlState {
 
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
 
-  UrlState get flatten =>
-      UrlState.fromSegments(segments.last.flattened, state: pathState);
+  UrlState get flatten => UrlState.fromSegments(segments.last.flattened, state: pathState);
 
   RouteMatch? _findSegment(
     List<RouteMatch> segments,
@@ -128,11 +126,8 @@ class UrlState {
     return null;
   }
 
-
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (match) => match.name == routeName)
-            ?.children ??
-        const [];
+    return _findSegment(segments, (match) => match.name == routeName)?.children ?? const [];
   }
 
   static Uri _buildUri(List<RouteMatch> routes) {

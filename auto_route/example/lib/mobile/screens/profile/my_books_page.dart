@@ -17,12 +17,12 @@ class MyBooksPage extends StatelessWidget {
           children: [
             Text(
               'My Books -> filter: $filter',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             Text(
               'Fragment Support? ${context.routeData.fragment}',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 32),
             ElevatedButton(

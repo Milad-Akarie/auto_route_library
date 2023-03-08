@@ -61,7 +61,8 @@ class AutoTabsScaffold extends StatelessWidget {
     this.transitionBuilder,
     this.bottomNavigationBuilder,
     this.inheritNavigatorObservers = true,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.floatingActionButton,
     this.floatingActionButtonBuilder,
     this.floatingActionButtonLocation,
@@ -121,7 +122,8 @@ class AutoTabsScaffold extends StatelessWidget {
           onDrawerChanged: onDrawerChanged,
           endDrawerEnableOpenDragGesture: endDrawerEnableOpenDragGesture,
           onEndDrawerChanged: onEndDrawerChanged,
-          floatingActionButton: floatingActionButton ?? floatingActionButtonBuilder?.call(context, tabsRouter),
+          floatingActionButton: floatingActionButton ??
+              floatingActionButtonBuilder?.call(context, tabsRouter),
           floatingActionButtonAnimator: floatingActionButtonAnimator,
           floatingActionButtonLocation: floatingActionButtonLocation,
           bottomSheet: bottomSheet,

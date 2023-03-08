@@ -1,55 +1,47 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:mockito/mockito.dart';
 import '../main_router.dart';
-import '../router_test_utils.dart';
 import 'router.dart';
 
+class MockListener extends Mock {
+  void call();
+}
+
 void main() {
-  late SimpleRouter router;
+  late SimpleRouter _router;
   setUp(() {
-    router = SimpleRouter();
+    _router = SimpleRouter()..ignorePopCompleters = true;
   });
 
-  testWidgets('Initial route should be ${FirstRoute.name}', (WidgetTester tester) async {
-    await pumpRouterApp(tester, router);
-    expect(find.text(FirstRoute.name), findsOneWidget);
+  void expectHierarchy(List<HierarchySegment> list) {
+    expect(_router.currentHierarchy(), list);
+  }
+
+  test('Pushing single route should add it to stack and notify navigation history', () async {
+    final listener = MockListener();
+    _router.navigationHistory.addListener(listener);
+    await _router.push(const FirstRoute());
+    expectHierarchy(const [HierarchySegment(FirstRoute.name)]);
+    verify(listener()).called(1);
+    verifyNoMoreInteractions(listener);
   });
 
-  testWidgets('Pushing ${SecondRoute.name} should show [SecondPage]', (WidgetTester tester) async {
-    await pumpRouterApp(tester, router);
-    router.push(const SecondRoute());
-    await tester.pumpAndSettle();
-    expect(find.text(SecondRoute.name), findsOneWidget);
-    expect(router.urlState.url,  'second-route');
+  test('Checking if pushed route is active should return true', () async {
+    await _router.push(const FirstRoute());
+     expect(_router.isPathActive('/'),true);
+     expect(_router.isRouteActive(FirstRoute.name),true);
   });
 
-  testWidgets('Navigating to ${SecondRoute.name} should show [SecondPage]', (WidgetTester tester) async {
-    await pumpRouterApp(tester, router);
-    router.navigate(const SecondRoute());
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, SecondRoute.name);
-    expect(router.urlState.url,   'second-route');
+  test('Replacing single route should replace top stack entry and notify navigation history', () async {
+    final listener = MockListener();
+    _router.navigationHistory.addListener(listener);
+    await _router.push(const FirstRoute());
+    await _router.replace(const SecondRoute());
+    expectHierarchy(const [HierarchySegment(SecondRoute.name)]);
+    verify(listener()).called(2);
   });
 
-  testWidgets('Pushing ${SecondRoute.name} then popping should show [FirstPage]', (WidgetTester tester) async {
-    await pumpRouterApp(tester, router);
-    router.push(const SecondRoute());
-    await tester.pumpAndSettle();
-    router.pop();
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, FirstRoute.name);
-    expect(router.urlState.url, '/');
-  });
 
-  testWidgets('Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show [ThirdPage]',
-      (WidgetTester tester) async {
-    await pumpRouterApp(tester, router);
-    router.pushAll([
-      const SecondRoute(),
-      const ThirdRoute(),
-    ]);
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, ThirdRoute.name);
-    expect(router.urlState.url, 'third-route');
-  });
+
 }

@@ -109,8 +109,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     controller.navigationHistory.onNewUrlState(matchedUrlState);
   }
 
-
-
   @override
   Widget build(BuildContext context) => _AutoRootRouter(
         router: controller,

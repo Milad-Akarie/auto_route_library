@@ -9,7 +9,6 @@ import 'package:flutter/cupertino.dart';
 var isAuthenticated = false;
 
 class AuthGuard extends AutoRouteGuard {
-
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (!isAuthenticated) {

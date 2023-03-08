@@ -1,8 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/router/web_router.dart';
 import 'package:flutter/material.dart';
+import 'package:url_strategy/url_strategy.dart';
 
-void main() => runApp(App());
+
+void main() {
+  setPathUrlStrategy();
+  runApp(App());
+}
 
 class App extends StatefulWidget {
   @override
