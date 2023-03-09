@@ -1,4 +1,7 @@
 # ChangeLog
+## [6.0.0-rc-4] 
+- Fix android back button closes App
+- Add check for root routes must start with '/' or "*"
 ## [6.0.0-rc-3] Breaking
 - Add transition builder to AutoTabsRouter and AutoTabsScaffold to only rebuild the body for animation and remove animation property from builder [breaking]
 - Add router.currentHierarchy() helper method for debugging and testing. 

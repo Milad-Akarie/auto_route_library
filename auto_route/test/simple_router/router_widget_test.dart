@@ -20,7 +20,7 @@ void main() {
     router.push(const SecondRoute());
     await tester.pumpAndSettle();
     expect(find.text(SecondRoute.name), findsOneWidget);
-    expect(router.urlState.url, 'second-route');
+    expect(router.urlState.url, '/second-route');
   });
 
   testWidgets('Navigating to ${SecondRoute.name} should show [SecondPage]', (WidgetTester tester) async {
@@ -28,7 +28,7 @@ void main() {
     router.navigate(const SecondRoute());
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.urlState.url, 'second-route');
+    expect(router.urlState.url, '/second-route');
   });
 
   testWidgets('Pushing ${SecondRoute.name} then popping should show [FirstPage]', (WidgetTester tester) async {
@@ -50,6 +50,6 @@ void main() {
     ]);
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
-    expect(router.urlState.url, 'third-route');
+    expect(router.urlState.url, '/third-route');
   });
 }

@@ -8,7 +8,7 @@ bool listNullOrEmpty(Iterable? iterable) {
   return (iterable == null || iterable.isEmpty);
 }
 
-String toKababCase(String s) {
+String toKebabCase(String s) {
   return s.replaceAllMapped(RegExp('(.+?)([A-Z])'),
       (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
 }

@@ -39,7 +39,7 @@ void main() {
     });
 
     test('Extracting sub collection of a branch route should return sub collection', () {
-      var expectedCollection = RouteCollection.from([subRouteC1], root: true);
+      var expectedCollection = RouteCollection.from([subRouteC1], root: false);
       expect(collection.subCollectionOf('C'), expectedCollection);
     });
 

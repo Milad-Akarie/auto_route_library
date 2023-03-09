@@ -29,8 +29,8 @@ void main() {
 
   test('Checking if pushed route is active should return true', () async {
     await _router.push(const FirstRoute());
-     expect(_router.isPathActive('/'),true);
-     expect(_router.isRouteActive(FirstRoute.name),true);
+    expect(_router.isPathActive('/'), true);
+    expect(_router.isRouteActive(FirstRoute.name), true);
   });
 
   test('Replacing single route should replace top stack entry and notify navigation history', () async {
@@ -41,7 +41,4 @@ void main() {
     expectHierarchy(const [HierarchySegment(SecondRoute.name)]);
     verify(listener()).called(2);
   });
-
-
-
 }
