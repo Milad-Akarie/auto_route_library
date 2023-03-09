@@ -29,6 +29,7 @@ abstract class RootStackRouter extends StackRouter {
       routeInformationProvider: routeInfoProvider(
         neglectWhen: neglectWhen,
       ),
+      backButtonDispatcher: RootBackButtonDispatcher(),
       routerDelegate: delegate(
         initialDeepLink: initialDeepLink,
         initialRoutes: initialRoutes,

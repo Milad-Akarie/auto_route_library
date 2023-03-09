@@ -27,7 +27,10 @@ class RouteCollection {
         !root && r.path.startsWith('/'),
         'Sub-paths can not start with a "/"',
       );
-
+      throwIf(
+        root && !r.path.startsWith(RegExp('[/]|[*]')),
+        'Root-paths must start with a "/"',
+      );
       routesMap[r.name] = r;
     }
 
