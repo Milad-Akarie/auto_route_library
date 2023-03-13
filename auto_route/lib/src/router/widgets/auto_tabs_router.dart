@@ -164,8 +164,9 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
   final Curve curve;
   final bool lazyLoad;
 
-  static Widget _defaultTransitionBuilder(_, Widget child, Animation<double> animation){
-    return FadeTransition(opacity: animation,child: child);
+  static Widget _defaultTransitionBuilder(
+      _, Widget child, Animation<double> animation) {
+    return FadeTransition(opacity: animation, child: child);
   }
 
   const _AutoTabsRouterIndexedStack({
@@ -292,10 +293,10 @@ class _AutoTabsRouterIndexedStackState extends _AutoTabsRouterState
               child: builderChild,
               builder: (context, child) {
                 return typedWidget.transitionBuilder(
-                context,
-                child!,
-                _animation,
-              );
+                  context,
+                  child!,
+                  _animation,
+                );
               },
             ),
           );
