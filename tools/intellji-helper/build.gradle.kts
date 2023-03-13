@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "come.autoroute.helper"
-version = "0.1.2"
+version = "0.1.3"
 
 repositories {
     mavenCentral()
@@ -16,9 +16,9 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2021.2.4")
+    version.set("2022.1.1")
     type.set("IC") // Target IDE Platform
-    plugins.set(listOf("terminal","Dart:212.5744"))
+    plugins.set(listOf("terminal","Dart:221.5591.52"))
 
 }
 

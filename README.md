@@ -48,7 +48,7 @@
 ## Idea Tools [New]
 
 - [AutoRoute-Helper](https://plugins.jetbrains.com/plugin/21071-autoroute-helper)  (Android Studio)    
-  **Note** if you can't find the plugin on the marketplace yet you can [Download](https://github.com/Milad-Akarie/auto_route_library/blob/v6.0.0_redesigned/tools/AutoRoute-Helper-0.1.2.jar?raw=true)  it here install manually
+  **Note** if you can't find the plugin on the marketplace yet you can [Download](https://github.com/Milad-Akarie/auto_route_library/blob/v6.0.0_redesigned/tools/AutoRoute-Helper-0.1.3.jar?raw=true)  it here install manually
 
 <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/intent_actoin_add_route_demo.gif" alt="add route from intent action" width= "px"></a>  
 <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/add_route_page_demo.gif" alt="Add route page" width= "px"></a>
