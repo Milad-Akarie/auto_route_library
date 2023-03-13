@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.0-rc-6] 
+- Fix topMostRouter is not always called on root-scope
 ## [6.0.0-rc-5] Breaking
 - Fix but with new AutoTabsRouter.transition builder
 - rename AutoRouteBuilder to auto_route_generator in build.yaml file to follow naming convention [breaking]
