@@ -88,27 +88,26 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             );
           })
-        : AutoTabsRouter(
+        : AutoTabsRouter.tabBar(
             routes: [
               BooksTab(),
               ProfileTab(),
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
-            transitionBuilder: (_, child, animation) => FadeTransition(opacity: animation, child: child),
-            builder: (context, child) {
+            builder: (context, child,controller) {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(context.topRoute.title(context)),
                   leading: AutoLeadingButton(ignorePagelessRoutes: true),
-                  // bottom: TabBar(
-                  //   controller: controller,
-                  //   tabs: [
-                  //     for (final d in destinations)
-                  //       Tab(
-                  //         child: Text(d.label),
-                  //       )
-                  //   ],
-                  // ),
+                  bottom: TabBar(
+                    controller: controller,
+                    tabs: [
+                      for (final d in destinations)
+                        Tab(
+                          child: Text(d.label),
+                        )
+                    ],
+                  ),
                 ),
                 body: child,
                 bottomNavigationBar: buildBottomNav(context, context.tabsRouter),

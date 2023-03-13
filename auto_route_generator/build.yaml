@@ -1,12 +1,12 @@
 builders:
-  autoRouteBuilder:
+  auto_route_generator:
     import: "package:auto_route_generator/builder.dart"
     runs_before: [ 'auto_route_generator:autoRouterBuilder' ]
     builder_factories: [ "autoRouteBuilder" ]
     build_extensions: { '.dart': [ ".route.json" ] }
     auto_apply: dependents
     build_to: cache
-  autoRouterBuilder:
+  auto_router_generator:
     import: "package:auto_route_generator/builder.dart"
     builder_factories: [ "autoRouterBuilder" ]
     build_extensions: { '.dart': [ '.dart.json' ] }

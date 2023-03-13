@@ -1,4 +1,7 @@
 # ChangeLog
+## [6.0.0-rc-5] Breaking
+- Fix but with new AutoTabsRouter.transition builder
+- rename AutoRouteBuilder to auto_route_generator in build.yaml file to follow naming convention [breaking]
 ## [6.0.0-rc-4] 
 - Fix android back button closes App
 - Add check for root routes must start with '/' or "*"

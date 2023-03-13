@@ -43,7 +43,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     Duration duration,
     Curve curve,
     AnimatedIndexedStackBuilder? builder,
-    AnimatedIndexedStackTransitionBuilder? transitionBuilder,
+    AnimatedIndexedStackTransitionBuilder transitionBuilder,
     int homeIndex,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
@@ -159,10 +159,14 @@ abstract class _AutoTabsRouterState extends State<AutoTabsRouter> {
 // -----------------------------------------------------------
 class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
   final AnimatedIndexedStackBuilder? builder;
-  final AnimatedIndexedStackTransitionBuilder? transitionBuilder;
+  final AnimatedIndexedStackTransitionBuilder transitionBuilder;
   final Duration duration;
   final Curve curve;
   final bool lazyLoad;
+
+  static Widget _defaultTransitionBuilder(_, Widget child, Animation<double> animation){
+    return FadeTransition(opacity: animation,child: child);
+  }
 
   const _AutoTabsRouterIndexedStack({
     Key? key,
@@ -171,7 +175,7 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
-    this.transitionBuilder,
+    this.transitionBuilder = _defaultTransitionBuilder,
     int homeIndex = -1,
     bool inheritNavigatorObservers = true,
     NavigatorObserversBuilder navigatorObservers =
@@ -281,19 +285,18 @@ class _AutoTabsRouterIndexedStackState extends _AutoTabsRouterState
         controller: _controller!,
         stateHash: stateHash,
         child: Builder(builder: (context) {
-          if (typedWidget.transitionBuilder == null) {
-            return builderChild;
-          }
           return builder(
             context,
             AnimatedBuilder(
               animation: _animation,
               child: builderChild,
-              builder: (context, child) => typedWidget.transitionBuilder!(
+              builder: (context, child) {
+                return typedWidget.transitionBuilder(
                 context,
                 child!,
                 _animation,
-              ),
+              );
+              },
             ),
           );
         }),
@@ -301,8 +304,8 @@ class _AutoTabsRouterIndexedStackState extends _AutoTabsRouterState
     );
   }
 
-  Widget _defaultBuilder(_, child, animation) {
-    return FadeTransition(opacity: animation, child: child);
+  Widget _defaultBuilder(_, child) {
+    return child;
   }
 }
 
