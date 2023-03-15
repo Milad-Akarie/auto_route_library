@@ -7,7 +7,10 @@ abstract class RouteType {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is RouteType && runtimeType == other.runtimeType && opaque == other.opaque;
+      identical(this, other) ||
+      other is RouteType &&
+          runtimeType == other.runtimeType &&
+          opaque == other.opaque;
 
   @override
   int get hashCode => opaque.hashCode;
@@ -106,7 +109,8 @@ class CustomRouteType extends RouteType {
           transitionsBuilder == other.transitionsBuilder &&
           customRouteBuilder == other.customRouteBuilder &&
           durationInMilliseconds == other.durationInMilliseconds &&
-          reverseDurationInMilliseconds == other.reverseDurationInMilliseconds &&
+          reverseDurationInMilliseconds ==
+              other.reverseDurationInMilliseconds &&
           barrierDismissible == other.barrierDismissible &&
           barrierLabel == other.barrierLabel &&
           barrierColor == other.barrierColor;

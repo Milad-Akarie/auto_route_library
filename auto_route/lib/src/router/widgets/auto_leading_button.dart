@@ -70,7 +70,6 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
       ignoreParentRoutes: !widget._showIfParentCanPop,
       ignorePagelessRoutes: widget.ignorePagelessRoutes,
     )) {
-
       final topPage = scope.controller.topPage;
       final bool useCloseButton = topPage?.fullscreenDialog ?? false;
       if (widget.builder != null) {

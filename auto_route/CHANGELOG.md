@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.0-rc-7]
+- Fix fullscreenDialog and maintainState flags are not passing to route data
 ## [6.0.0-rc-6] 
 - Fix topMostRouter is not always called on root-scope
 ## [6.0.0-rc-5] Breaking
