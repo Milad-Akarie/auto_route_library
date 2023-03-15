@@ -5,6 +5,13 @@ abstract class RouteType {
 
   final bool opaque;
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is RouteType && runtimeType == other.runtimeType && opaque == other.opaque;
+
+  @override
+  int get hashCode => opaque.hashCode;
+
   const factory RouteType.material() = MaterialRouteType;
 
   const factory RouteType.cupertino() = CupertinoRouteType;
@@ -89,4 +96,29 @@ class CustomRouteType extends RouteType {
     super.opaque,
     this.barrierDismissible = false,
   }) : super._();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is CustomRouteType &&
+          runtimeType == other.runtimeType &&
+          transitionsBuilder == other.transitionsBuilder &&
+          customRouteBuilder == other.customRouteBuilder &&
+          durationInMilliseconds == other.durationInMilliseconds &&
+          reverseDurationInMilliseconds == other.reverseDurationInMilliseconds &&
+          barrierDismissible == other.barrierDismissible &&
+          barrierLabel == other.barrierLabel &&
+          barrierColor == other.barrierColor;
+
+  @override
+  int get hashCode =>
+      super.hashCode ^
+      transitionsBuilder.hashCode ^
+      customRouteBuilder.hashCode ^
+      durationInMilliseconds.hashCode ^
+      reverseDurationInMilliseconds.hashCode ^
+      barrierDismissible.hashCode ^
+      barrierLabel.hashCode ^
+      barrierColor.hashCode;
 }

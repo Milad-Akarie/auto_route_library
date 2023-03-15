@@ -24,6 +24,8 @@ class RouteMatch<T> {
   final RouteType? type;
   final TitleBuilder? title;
   final bool keepHistory;
+  final bool fullscreenDialog;
+  final bool maintainState;
 
   const RouteMatch({
     required this.name,
@@ -43,6 +45,8 @@ class RouteMatch<T> {
     this.type,
     this.title,
     this.keepHistory = true,
+    this.fullscreenDialog = false,
+    this.maintainState = true,
   });
 
   bool get hasChildren => children?.isNotEmpty == true;
@@ -54,8 +58,7 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren)
-          ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   List<RouteMatch> get flattened {
@@ -79,6 +82,8 @@ class RouteMatch<T> {
     RouteType? type,
     TitleBuilder? title,
     bool? keepHistory,
+    bool? fullscreenDialog,
+    bool? maintainState,
   }) {
     return RouteMatch(
       path: path ?? this.path,
@@ -97,6 +102,8 @@ class RouteMatch<T> {
       type: type ?? this.type,
       title: title ?? this.title,
       keepHistory: keepHistory ?? this.keepHistory,
+      fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
+      maintainState: maintainState ?? this.maintainState,
     );
   }
 
@@ -110,6 +117,10 @@ class RouteMatch<T> {
           stringMatch == other.stringMatch &&
           pathParams == other.pathParams &&
           key == other.key &&
+          type == other.type &&
+          maintainState == other.maintainState &&
+          fullscreenDialog == other.fullscreenDialog &&
+          keepHistory == other.keepHistory &&
           const ListEquality().equals(guards, other.guards) &&
           queryParams == other.queryParams &&
           const ListEquality().equals(children, other.children) &&
@@ -130,6 +141,10 @@ class RouteMatch<T> {
       stringMatch.hashCode ^
       name.hashCode ^
       key.hashCode ^
+      maintainState.hashCode ^
+      fullscreenDialog.hashCode ^
+      keepHistory.hashCode ^
+      type.hashCode ^
       const ListEquality().hash(segments) ^
       const MapEquality().hash(meta);
 
@@ -169,11 +184,7 @@ class HierarchySegment {
           const ListEquality().equals(children, other.children);
 
   @override
-  int get hashCode =>
-      name.hashCode ^
-      pathParams.hashCode ^
-      queryParams.hashCode ^
-      const ListEquality().hash(children);
+  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
 }
 
 extension PrettyHierarchySegmentX on List<HierarchySegment> {
@@ -183,10 +194,8 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
     Map _toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(segments.map(
         (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true)
-            'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true)
-            'queryParams': e.queryParams!.rawMap,
+          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
+          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
           if (e.children.isNotEmpty) 'children': _toMap(e.children),
         }),
       ));

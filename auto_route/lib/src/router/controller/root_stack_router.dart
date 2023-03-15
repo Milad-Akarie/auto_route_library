@@ -17,8 +17,7 @@ abstract class RootStackRouter extends StackRouter {
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     bool includePrefixMatches = false,
     bool Function(String? location)? neglectWhen,
   }) {
@@ -91,8 +90,7 @@ abstract class RootStackRouter extends StackRouter {
     RoutePopCallBack? onPopRoute,
     String? initialDeepLink,
     OnNavigateCallBack? onNavigate,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate.declarative(
       this,
@@ -111,8 +109,7 @@ abstract class RootStackRouter extends StackRouter {
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,
@@ -145,6 +142,5 @@ abstract class RootStackRouter extends StackRouter {
   NavigationHistory get navigationHistory => _navigationHistory;
 
   @override
-  late final RouteCollection routeCollection =
-      RouteCollection.from(routes, root: true);
+  late final RouteCollection routeCollection = RouteCollection.from(routes, root: true);
 }

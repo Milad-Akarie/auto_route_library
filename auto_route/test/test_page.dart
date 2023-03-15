@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'main_router.dart';
 import 'nested_tabs_router/router_test.dart';
 
-
 class TestPage extends StatelessWidget {
   const TestPage({Key? key}) : super(key: key);
 
@@ -20,11 +19,45 @@ class TestPage extends StatelessWidget {
   }
 }
 
-
 @RoutePage()
-class SecondHostPage extends AutoRouter {
-  const SecondHostPage({Key? key}) : super(key: key);
+class SecondHostPage extends StatelessWidget {
+  const SecondHostPage({
+    Key? key,
+     this.useCustomLeading = false,
+    this.hasDrawer = false,
+  }) : super(key: key);
+  final bool useCustomLeading;
+  final bool hasDrawer;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          leading: useCustomLeading
+              ? AutoLeadingButton(
+                  builder: (context, leadingType, action) {
+                    if (leadingType.isBack) {
+                      return const BackButton();
+                    } else if (leadingType.isClose) {
+                      return const CloseButton();
+                    } else if (leadingType.isDrawer) {
+                      return IconButton(
+                        icon: const Icon(Icons.menu),
+                        onPressed: () {},
+                      );
+                    }else if(leadingType.isNoLeading) {
+                      return const SizedBox.shrink();
+                    }
+                    throw 'Invalid leading type';
+                  },
+                )
+              : const AutoLeadingButton(),
+        ),
+        drawer: hasDrawer ?  const Drawer() : null,
+        body: const AutoRouter());
+  }
 }
+
 @RoutePage()
 class SecondNested1Page extends TestPage {
   const SecondNested1Page({Key? key}) : super(key: key);
@@ -44,10 +77,12 @@ class NotFoundPage extends TestPage {
 class FirstPage extends TestPage {
   const FirstPage({Key? key}) : super(key: key);
 }
+
 @RoutePage()
 class SecondPage extends TestPage {
   const SecondPage({Key? key}) : super(key: key);
 }
+
 @RoutePage()
 class ThirdPage extends TestPage {
   const ThirdPage({Key? key}) : super(key: key);
@@ -91,7 +126,6 @@ class Tab3Nested2Page extends TestPage {
 @RoutePage()
 class TabsHostPage extends StatelessWidget {
   const TabsHostPage({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {

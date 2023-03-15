@@ -57,7 +57,7 @@ class AutoRoute {
       path: path,
       fullMatch: fullMatch,
       maintainState: maintainState,
-      fullscreenDialog: fullMatch,
+      fullscreenDialog: fullscreenDialog,
       meta: meta,
       type: type,
       usesPathAsKey: usesPathAsKey,

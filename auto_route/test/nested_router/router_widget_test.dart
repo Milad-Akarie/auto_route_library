@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../main_router.dart';
@@ -15,7 +15,7 @@ void main() {
   testWidgets('Pushing ${SecondHostRoute.name} with no children should present [$SecondNested1Route]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondHostRoute());
+    router.push(SecondHostRoute());
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
     expect(router.urlState.url, '/second');
@@ -25,7 +25,7 @@ void main() {
       'Navigating to ${SecondHostRoute.name} with  children[$SecondNested1Route] should present [$SecondNested1Route]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.navigate(const SecondHostRoute());
+    router.navigate(SecondHostRoute());
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
     expect(router.urlState.url, '/second');
@@ -34,7 +34,7 @@ void main() {
   testWidgets('Pushing ${SecondHostRoute.name} then popping-top should present [$FirstPage]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondHostRoute());
+    router.push(SecondHostRoute());
     await tester.pumpAndSettle();
 
     router.popTop();
@@ -47,7 +47,7 @@ void main() {
       'Pushing ${SecondHostRoute.name} with children[$SecondNested1Route, $SecondNested2Route]  should present [$SecondNested2Route]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondHostRoute(children: [
+    router.push(SecondHostRoute(children: const [
       SecondNested1Route(),
       SecondNested2Route(),
     ]));
@@ -60,7 +60,7 @@ void main() {
       'Navigating to ${SecondHostRoute.name} with children[$SecondNested1Route, $SecondNested2Route]  should present [$SecondNested2Route]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.navigate(const SecondHostRoute(children: [
+    router.navigate(SecondHostRoute(children: const [
       SecondNested1Route(),
       SecondNested2Route(),
     ]));
@@ -73,13 +73,13 @@ void main() {
       'Navigating to $SecondHostRoute with children[$SecondNested2Route] when both routes are already at the top of their stacks should present [$SecondNested2Route]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondHostRoute(children: [
+    router.push(SecondHostRoute(children: const [
       SecondNested1Route(),
       SecondNested2Route(),
     ]));
     await tester.pumpAndSettle();
     router.navigate(
-      const SecondHostRoute(children: [
+      SecondHostRoute(children: const [
         SecondNested2Route(),
       ]),
     );
@@ -92,8 +92,8 @@ void main() {
       'Pushing ${SecondHostRoute.name} with children[$SecondNested1Route, $SecondNested2Route] then popping-top should present [$SecondNested1Route]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondHostRoute(
-      children: [
+    router.push(SecondHostRoute(
+      children: const [
         SecondNested1Route(),
         SecondNested2Route(),
       ],
@@ -108,7 +108,7 @@ void main() {
   testWidgets('Pushing $SecondHostRoute should add a child router then popping it should remove it',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondHostRoute());
+    router.push(SecondHostRoute());
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 1);
     expect(router.urlState.url, '/second');
@@ -123,8 +123,8 @@ void main() {
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.pushAll([
-      const SecondHostRoute(),
-      const SecondHostRoute(),
+      SecondHostRoute(),
+      SecondHostRoute(),
     ]);
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 2);
@@ -136,10 +136,74 @@ void main() {
   });
 
   testWidgets(
+    'Pushing ${SecondHostRoute.name} should show back leading in AutoLeadingButton',
+    (WidgetTester tester) async {
+      await pumpRouterApp(tester, router);
+      router.push(SecondHostRoute());
+      await tester.pumpAndSettle();
+      expect(find.byType(BackButton), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Pushing ${SecondHostRoute.name}  should show back leading in Custom AutoLeadingButton',
+    (WidgetTester tester) async {
+      await pumpRouterApp(tester, router);
+      router.push(SecondHostRoute());
+      await tester.pumpAndSettle();
+      expect(find.byType(BackButton), findsOneWidget);
+    },
+  );
+
+  testWidgets('Initializing App with ${SecondHostRoute.name} with drawer should show drawer toggle leading in AutoLeadingButton',
+      (WidgetTester tester) async {
+    await pumpRouterConfigApp(tester, router.config(initialRoutes: [SecondHostRoute(hasDrawer: true)]));
+    expect(find.byIcon(Icons.menu), findsOneWidget);
+  });
+
+  testWidgets('Initializing App with ${SecondHostRoute.name} with no drawer  should show empty leading in AutoLeadingButton',
+          (WidgetTester tester) async {
+        await pumpRouterConfigApp(tester, router.config(initialRoutes: [SecondHostRoute(hasDrawer: false)]));
+        expect(find.byIcon(Icons.menu), findsNothing);
+      });
+
+  testWidgets(
+      'Initializing App with ${SecondHostRoute.name} should show drawer toggle leading in Custom AutoLeadingButton',
+      (WidgetTester tester) async {
+    await pumpRouterConfigApp(
+        tester,
+        router.config(initialRoutes: [
+          SecondHostRoute(
+            hasDrawer: true,
+            useCustomLeading: true,
+          )
+        ]));
+    expect(find.byIcon(Icons.menu), findsOneWidget);
+  });
+
+  testWidgets(
+      'Initializing App with ${SecondHostRoute.name} then pushing a second-nested child should show back leading in AutoLeadingButton',
+      (WidgetTester tester) async {
+    await pumpRouterConfigApp(tester, router.config(initialRoutes: [SecondHostRoute()]));
+    router.push(const SecondNested2Route());
+    await tester.pumpAndSettle();
+    expect(find.byType(CloseButton), findsOneWidget);
+  });
+
+  testWidgets(
+      'Initializing App with ${SecondHostRoute.name} then pushing a second-nested child should show close leading in Custom AutoLeadingButton',
+      (WidgetTester tester) async {
+    await pumpRouterConfigApp(tester, router.config(initialRoutes: [SecondHostRoute(useCustomLeading: true)]));
+    router.push(const SecondNested2Route());
+    await tester.pumpAndSettle();
+    expect(find.byType(CloseButton), findsOneWidget);
+  });
+
+  testWidgets(
     'Obtaining topMostRouter should return SecondHostRoute router',
     (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
-      router.push(const SecondHostRoute(children: [SecondNested1Route()]));
+      router.push(SecondHostRoute(children: const [SecondNested1Route()]));
       await tester.pumpAndSettle();
       expect(router.topMostRouter(), router.innerRouterOf(SecondHostRoute.name));
     },
@@ -149,7 +213,7 @@ void main() {
     'When root router has pageless route, Obtaining topMostRouter from any router in hierarchy should return root router',
     (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
-      router.push(const SecondHostRoute(children: [SecondNested1Route()]));
+      router.push(SecondHostRoute(children: const [SecondNested1Route()]));
       await tester.pumpAndSettle();
       final secondHostRouter = router.innerRouterOf(SecondHostRoute.name)!;
       expect(router.topMostRouter(), secondHostRouter);
@@ -164,7 +228,7 @@ void main() {
     'When root router has pageless route, Obtaining topMostRouter with ignorePagelessRoutes: true from any router in hierarchy should return SecondHostRoute',
     (WidgetTester tester) async {
       await pumpRouterApp(tester, router);
-      router.push(const SecondHostRoute(children: [SecondNested1Route()]));
+      router.push(SecondHostRoute(children: const [SecondNested1Route()]));
       await tester.pumpAndSettle();
       router.pushWidget(const Text('Test'));
       await tester.pumpAndSettle();

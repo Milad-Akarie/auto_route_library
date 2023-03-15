@@ -153,6 +153,8 @@ class RouteMatcher {
       type: config.type,
       title: config.title,
       keepHistory: config.keepHistory,
+      fullscreenDialog: config.fullscreenDialog,
+      maintainState: config.maintainState,
     );
   }
 
@@ -209,6 +211,8 @@ class RouteMatcher {
       type: config.type,
       title: config.title,
       keepHistory: config.keepHistory,
+      fullscreenDialog: config.fullscreenDialog,
+      maintainState: config.maintainState,
     );
   }
 
