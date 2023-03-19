@@ -286,9 +286,7 @@ class UserAllPostsPage extends StatelessWidget {
             MaterialButton(
               color: Colors.red,
               onPressed: navigate ??
-                  () {
-                    context.navigateBack();
-                  },
+                  () => context.back(),
               child: Text('back'),
             ),
           ],

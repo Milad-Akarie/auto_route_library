@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.0]
+- Fix secondAnimation value is always 0 in custom route transition
 ## [6.0.0-rc-7]
 - Fix fullscreenDialog and maintainState flags are not passing to route data
 ## [6.0.0-rc-6] 

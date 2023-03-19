@@ -1,4 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+
+typedef CustomRouteBuilder = Route<T> Function<T>(
+    BuildContext context,
+    Widget child,
+    AutoRoutePage<T> page,
+    );
 
 abstract class RouteType {
   const RouteType._({this.opaque = true});
@@ -22,8 +29,8 @@ abstract class RouteType {
   const factory RouteType.adaptive({bool opaque}) = AdaptiveRouteType;
 
   const factory RouteType.custom({
-    Function? transitionsBuilder,
-    Function? customRouteBuilder,
+    RouteTransitionsBuilder? transitionsBuilder,
+    CustomRouteBuilder? customRouteBuilder,
     int? durationInMilliseconds,
     int? reverseDurationInMilliseconds,
     bool opaque,
@@ -55,7 +62,7 @@ class CustomRouteType extends RouteType {
   ///
   /// you should only reference the function so
   /// the generator can import it into the generated file
-  final Function? transitionsBuilder;
+  final RouteTransitionsBuilder? transitionsBuilder;
 
   /// this builder function is passed to customRouteBuilder property
   /// in [CustomPage]
@@ -68,7 +75,7 @@ class CustomRouteType extends RouteType {
   /// this builder function accepts a BuildContext and a CustomPage
   /// that has all the other properties assigned to it
   /// so using them then is totally up to you.
-  final Function? customRouteBuilder;
+  final CustomRouteBuilder? customRouteBuilder;
 
   /// route transition duration in milliseconds
   /// is passed to [PageRouteBuilder]

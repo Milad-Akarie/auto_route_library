@@ -9,5 +9,11 @@ class NestedRouter extends MainRouter {
       AutoRoute(path: '', page: SecondNested1Route.page),
       AutoRoute(path: 'nested2', page: SecondNested2Route.page, fullscreenDialog: true),
     ]),
+    AutoRoute(path: '/declarative', page: DeclarativeRouterHostRoute.page, children: [
+      AutoRoute(path: '', page: SecondNested1Route.page),
+      AutoRoute(path: 'nested2', page: SecondNested2Route.page),
+      AutoRoute(path: 'nested3', page: SecondNested3Route.page),
+    ]),
+
   ];
 }

@@ -8,6 +8,10 @@ class MockListener extends Mock {
   void call();
 }
 
+class MockOnNavigationFailureListener extends Mock {
+  void call(NavigationFailure? failure);
+}
+
 void main() {
   late SimpleRouter _router;
   setUp(() {
@@ -40,5 +44,23 @@ void main() {
     await _router.replace(const SecondRoute());
     expectHierarchy(const [HierarchySegment(SecondRoute.name)]);
     verify(listener()).called(2);
+  });
+
+  test('Navigating to a none-declared route should call onFailure(<RouteNotFoundFailure>)', () async {
+    final mockListener = MockOnNavigationFailureListener();
+    await _router.push(const SecondNested1Route(), onFailure: mockListener);
+    expect(verify(mockListener(captureAny)).captured.single, isA<RouteNotFoundFailure>());
+  });
+
+  test('Navigating to a none-declared path should call onFailure(<RouteNotFoundFailure>)', () async {
+    final mockListener = MockOnNavigationFailureListener();
+    await _router.navigateNamed('/none-declared', onFailure: mockListener);
+    expect(verify(mockListener(captureAny)).captured.single, isA<RouteNotFoundFailure>());
+  });
+
+  test('Routes rejected by guards should call onFailure(<RejectedByGuardFailure>)', () async {
+    final mockListener = MockOnNavigationFailureListener();
+    await _router.push(const FourthRoute(), onFailure: mockListener);
+    expect(verify(mockListener(captureAny)).captured.single, isA<RejectedByGuardFailure>());
   });
 }

@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.0]
+- Sync with auto_route version
 ## [6.0.0-rc-1] 
 - Support dart_style 2.2.5
 ## [6.0.0-rc] Breaking

@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import 'main_router.dart';
-import 'nested_tabs_router/router_test.dart';
 
 class TestPage extends StatelessWidget {
   const TestPage({Key? key}) : super(key: key);
@@ -10,6 +9,7 @@ class TestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Text(context.routeData.name),
         Text(context.routeData.match),
@@ -23,7 +23,7 @@ class TestPage extends StatelessWidget {
 class SecondHostPage extends StatelessWidget {
   const SecondHostPage({
     Key? key,
-     this.useCustomLeading = false,
+    this.useCustomLeading = false,
     this.hasDrawer = false,
   }) : super(key: key);
   final bool useCustomLeading;
@@ -45,7 +45,7 @@ class SecondHostPage extends StatelessWidget {
                         icon: const Icon(Icons.menu),
                         onPressed: () {},
                       );
-                    }else if(leadingType.isNoLeading) {
+                    } else if (leadingType.isNoLeading) {
                       return const SizedBox.shrink();
                     }
                     throw 'Invalid leading type';
@@ -53,7 +53,7 @@ class SecondHostPage extends StatelessWidget {
                 )
               : const AutoLeadingButton(),
         ),
-        drawer: hasDrawer ?  const Drawer() : null,
+        drawer: hasDrawer ? const Drawer() : null,
         body: const AutoRouter());
   }
 }
@@ -66,6 +66,11 @@ class SecondNested1Page extends TestPage {
 @RoutePage()
 class SecondNested2Page extends TestPage {
   const SecondNested2Page({Key? key}) : super(key: key);
+}
+
+@RoutePage()
+class SecondNested3Page extends TestPage {
+  const SecondNested3Page({Key? key}) : super(key: key);
 }
 
 @RoutePage()
@@ -86,6 +91,10 @@ class SecondPage extends TestPage {
 @RoutePage()
 class ThirdPage extends TestPage {
   const ThirdPage({Key? key}) : super(key: key);
+}
+@RoutePage()
+class FourthPage extends TestPage {
+  const FourthPage({Key? key}) : super(key: key);
 }
 
 @RoutePage()
@@ -125,7 +134,9 @@ class Tab3Nested2Page extends TestPage {
 
 @RoutePage()
 class TabsHostPage extends StatelessWidget {
-  const TabsHostPage({Key? key}) : super(key: key);
+  final String tabsType;
+
+  const TabsHostPage({Key? key, @queryParam this.tabsType = 'IndexedStack'}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -154,5 +165,29 @@ class TabsHostPage extends StatelessWidget {
     }
 
     throw 'unsupported tabs type';
+  }
+}
+
+@RoutePage()
+class DeclarativeRouterHostScreen extends StatelessWidget {
+  const DeclarativeRouterHostScreen({Key? key, required this.pageNotifier}) : super(key: key);
+  final ValueNotifier<int> pageNotifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<int>(
+      valueListenable: pageNotifier,
+      builder: (context,value,_){
+        return AutoRouter.declarative(
+          routes: (_) => [
+             const SecondNested1Route(),
+             if(value >= 2)
+               const SecondNested2Route(),
+            if(value == 3)
+              const SecondNested3Route()
+          ],
+        );
+      },
+    );
   }
 }

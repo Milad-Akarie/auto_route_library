@@ -21,6 +21,15 @@ void main() {
       [routeA, routeB, routeC],
       root: true,
     );
+
+    test('Creating root RouteCollection with a root route not starting with "/" should throw', () {
+      expect(()=> RouteCollection.from([TestRoute('A', path: 'a')], root: true), throwsFlutterError);
+    });
+
+    test('Creating sub RouteCollection with a sub route starting with "/" should throw', () {
+      expect(()=> RouteCollection.from([TestRoute('A', path: '/a')], root: false), throwsFlutterError);
+    });
+
     test('Calling [routes] should return a list of all route configs', () {
       var expectedRoutes = [routeA, routeB, routeC];
       expect(collection.routes, expectedRoutes);

@@ -43,9 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () {
-                context.navigateBack();
-              },
+              onPressed: () => context.back(),
               child: Text('Navigate Back'),
             ),
             const SizedBox(height: 32),

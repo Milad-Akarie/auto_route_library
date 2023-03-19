@@ -94,7 +94,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ProfileTab(),
               if (_showSettingsTap) SettingsTab(tab: 'tab'),
             ],
-            builder: (context, child,controller) {
+            builder: (context, child, controller) {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(context.topRoute.title(context)),
@@ -139,5 +139,24 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
             ],
           );
+  }
+}
+
+@RoutePage()
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          child: Text('Dashboard'),
+          onPressed: () {
+            context.pushRoute(HomeRoute());
+          },
+        ),
+      ),
+    );
   }
 }

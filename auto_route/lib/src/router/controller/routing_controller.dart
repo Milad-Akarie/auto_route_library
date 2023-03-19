@@ -9,7 +9,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils.dart';
 
 part '../../route/route_data.dart';
 
@@ -1139,7 +1138,7 @@ abstract class StackRouter extends RoutingController {
       if (match == null) {
         break;
       }
-      if (!listNullOrEmpty(match.guards)) {
+      if (match.guards.isNotEmpty) {
         throw FlutterError("Declarative routes can not have guards");
       }
       routesToPush.add(match);

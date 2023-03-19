@@ -7,6 +7,12 @@ class SimpleRouter extends MainRouter {
   final List<AutoRoute> routes = [
     AutoRoute(page: FirstRoute.page, path: '/'),
     AutoRoute(page: SecondRoute.page),
-    AutoRoute(page: ThirdRoute.page,children: [MaterialRoute(page: ThirdRoute.page)]),
+    AutoRoute(page: ThirdRoute.page),
+    AutoRoute(
+      page: FourthRoute.page,
+      guards: [
+        AutoRouteGuard.simple((resolver, _) => resolver.next(false)),
+      ],
+    ),
   ];
 }

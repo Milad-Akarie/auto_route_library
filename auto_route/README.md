@@ -47,14 +47,14 @@
 
 ## Idea Tools [New]
 
-- [AutoRoute-Helper](https://plugins.jetbrains.com/plugin/21071-autoroute-helper)  (Android Studio)    
-  **Note** if you can't find the plugin on the marketplace yet you can [Download](https://github.com/Milad-Akarie/auto_route_library/blob/v6.0.0_redesigned/tools/AutoRoute-Helper-0.1.2.jar?raw=true)  it here install manually
+- [AutoRoute-Helper](https://plugins.jetbrains.com/plugin/21071-autoroute-helper)  (Android Studio)
 
 <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/intent_actoin_add_route_demo.gif" alt="add route from intent action" width= "px"></a>  
 <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/add_route_page_demo.gif" alt="Add route page" width= "px"></a>
 
 ## Migration guides
-- [Migrating to v6.0](#migrating-to-v6.0)
+- [Migrating to v6](#migrating-to-v6)
+
 ## Introduction
 #### What is AutoRoute?
 It’s a Flutter navigation package, it allows for strongly-typed arguments passing, effortless deep-linking and it uses code generation to simplify routes setup, with that being said it requires a minimal amount of code to generate everything needed for navigation inside of your App.
@@ -103,7 +103,7 @@ class AppRouter extends _$AppRouter {
 Routable pages are just simple everyday widgets annotated with `@RoutePage()` which allows them to be constructed by the router.
 ```dart        
 @RoutePage()    
-class HomeScreen§ extends StatefulWidget {}    
+class HomeScreen extends StatefulWidget {}    
 ```      
 
 #### Now simply run the generator
@@ -229,7 +229,7 @@ context.pushRoute(const BooksListRoute());
 context.replaceRoute(const BooksListRoute());                
 context.navigateTo(const BooksListRoute());                
 context.navigateNamedTo('/books');                
-context.navigateBack();               
+context.back();               
 context.popRoute();                
 ```                    
 ## Passing Arguments
@@ -1077,10 +1077,10 @@ MaterialApp.router(
   ),          
  ```               
 **Note:** `CupertinoRoute` already uses this fix, so no need to override `PageTransitionsTheme`
-## Migrating to v6.0
+## Migrating to v6
 In version 6.0 auto_route aims for less generated code for more flexibility and less generation time.
 
-**Note You can use AutoRoute-helper plugin for Android studio to help you migrate to v6.0**
+**Note: You can use AutoRoute-helper plugin for Android studio to help you migrate to v6.0**
 
 <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/migrate_to_v6_demo.gif" alt="add route from intent action" width= "px"></a>  
 1- Instead of using `MaterialAutoRouter`,`CupertinoAutoRouter` ...etc we now only have one annotation for our router which is `@AutoRouterConfig()` and instead of passing our routes list to the annotation we now pass it to the overridable getter `routes` inside of the generated router class and for the default route type you can override `defaultRouteType`
@@ -1111,7 +1111,7 @@ RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive 
    ]    
  }    
  ```        
----2- Passing page components as types is changed,  now you'd annotation the target page with `@RoutePage()` annotation and pass the generated `result.page` to AutoRoute();
+2- Passing page components as types is changed,  now you'd annotate the target page with `@RoutePage()` annotation and pass the generated `result.page` to AutoRoute();
 
 #### Before
 ```dart                
@@ -1128,7 +1128,7 @@ class ProductDetailsPage extends StatelessWidget {...}
  ```dart     
 AutoRoute(page: ProductDetailsRoute.page) // ProductDetailsRoute is generated    
  ```        
---- 3- `EmptyRoutePage` no longer exists, instead you will now make your own empty pages by extending the `AutoRouter` widget
+3- `EmptyRoutePage` no longer exists, instead you will now make your own empty pages by extending the `AutoRouter` widget
 
 #### Before
 
@@ -1143,7 +1143,7 @@ class ProductsRouterPage extends AutoRouter {}
  ```dart     
 AutoRoute(page: ProductsRouter.page)    
  ```        
----4- Passing route guards is also changed now, instead of passing guards as types you now pass instances.
+4- Passing route guards is also changed now, instead of passing guards as types you now pass instances.
 
 #### Before
 
