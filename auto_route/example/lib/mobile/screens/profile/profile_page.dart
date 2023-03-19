@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../router/router.gr.dart';
 import '../user-data/data_collector.dart';
 
+@RoutePage()
 class ProfilePage extends StatefulWidget {
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -22,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Text(
               'Profile page',
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -42,9 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () {
-                context.navigateBack();
-              },
+              onPressed: () => context.back(),
               child: Text('Navigate Back'),
             ),
             const SizedBox(height: 32),
@@ -58,13 +57,13 @@ class _ProfilePageState extends State<ProfilePage> {
             userData == null
                 ? ElevatedButton(
                     onPressed: () {
-                      context.pushRoute(
-                        UserDataCollectorRoute(onResult: (data) {
-                          setState(() {
-                            userData = data;
-                          });
-                        }),
-                      );
+                      // context.pushRoute(
+                      //   // UserDataCollectorRoute(onResult: (data) {
+                      //   //   setState(() {
+                      //   //     userData = data;
+                      //   //   });
+                      //   // }),
+                      // );
                     },
                     child: Text('Collect user data'),
                   )

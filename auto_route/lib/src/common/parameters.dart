@@ -8,10 +8,12 @@ class Parameters {
 
   Map<String, dynamic> get rawMap => _params;
 
+  // coverage:ignore-start
   @override
   String toString() {
     return _params.toString();
   }
+  // coverage:ignore-end
 
   Parameters operator +(Parameters other) =>
       Parameters({..._params, ...other._params});
@@ -94,7 +96,7 @@ class Parameters {
     } else if (param is num) {
       return param;
     } else {
-      return double.tryParse(param.toString()) ?? defaultValue;
+      return num.tryParse(param.toString()) ?? defaultValue;
     }
   }
 

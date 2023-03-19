@@ -36,12 +36,12 @@ class AutoRouteInformationProvider extends RouteInformationProvider
 
     var replace = type == RouteInformationReportingType.neglect ||
         (type == RouteInformationReportingType.none &&
-            _valueInEngine.location == routeInformation.location);
+            _valueInEngine.location == routeInformation.location &&
+            _valueInEngine.state == routeInformation.state);
 
     if (!replace && routeInformation is AutoRouteInformation) {
       replace = routeInformation.replace;
     }
-
     SystemNavigator.selectMultiEntryHistory();
     SystemNavigator.routeInformationUpdated(
       location: routeInformation.location!,

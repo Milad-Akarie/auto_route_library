@@ -4,7 +4,8 @@ class RouteData {
   RouteMatch _match;
   RouteData? _parent;
   final RoutingController router;
-
+  final RouteType type;
+  final TitleBuilder? _titleBuilder;
   LocalKey get key => _match.key;
 
   RouteData({
@@ -12,8 +13,15 @@ class RouteData {
     required this.router,
     RouteData? parent,
     required this.pendingChildren,
-  })  : _match = route,
+    required this.type,
+    TitleBuilder? title,
+  })  : _titleBuilder = title,
+        _match = route,
         _parent = parent;
+
+  String Function(BuildContext context) get title => _titleBuilder == null
+      ? (_) => _match.name
+      : (context) => _titleBuilder!(context, this);
 
   final List<RouteMatch> pendingChildren;
 

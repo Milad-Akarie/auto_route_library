@@ -32,7 +32,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   @override
-  Future<bool> popRoute() => controller.topMostRouter().pop();
+  Future<bool> popRoute() async => controller.popTop();
 
   late List<NavigatorObserver> _navigatorObservers;
 
@@ -103,9 +103,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   void _onNewUrlState(UrlState state) {
     final pathInBrowser = state.uri.path;
     var matchedUrlState = state.flatten;
-
     if (pathInBrowser != matchedUrlState.path) {
-      matchedUrlState = matchedUrlState.copyWith(replace: true);
+      matchedUrlState = matchedUrlState.copyWith(shouldReplace: true);
     }
     controller.navigationHistory.onNewUrlState(matchedUrlState);
   }

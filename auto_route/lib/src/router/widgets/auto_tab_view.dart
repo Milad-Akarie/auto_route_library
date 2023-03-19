@@ -183,15 +183,6 @@ class AutoTabViewState extends State<AutoTabView> {
 
   @override
   Widget build(BuildContext context) {
-    assert(() {
-      if (_controller.length != widget.router.pageCount) {
-        throw FlutterError(
-          "Controller's length property (${_controller.length}) does not match the "
-          "number of tabs (${widget.router.pageCount}) present in TabsRouter pages count.",
-        );
-      }
-      return true;
-    }());
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
       child: PageView(

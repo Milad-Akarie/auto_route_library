@@ -1,5 +1,8 @@
 part of 'routing_controller.dart';
 
+typedef OnNavigation = Function(
+    NavigationResolver resolver, StackRouter router);
+
 abstract class AutoRouteGuard {
   /// clients will call [resolver.next(true --> default)] to continue
   /// navigation or [resolver.next(false)] to abort navigation
@@ -13,10 +16,63 @@ abstract class AutoRouteGuard {
   }
 }
    */
+  const AutoRouteGuard();
+
   void onNavigation(
     NavigationResolver resolver,
     StackRouter router,
   );
+
+  factory AutoRouteGuard.simple(OnNavigation onNavigation) =
+      AutoRouteGuardCallback;
+
+  factory AutoRouteGuard.redirect(
+          PageRouteInfo? Function(NavigationResolver resolver) redirect) =
+      _AutoRouteGuardRedirectCallback;
+
+  factory AutoRouteGuard.redirectPath(
+          String? Function(NavigationResolver resolver) redirect) =
+      _AutoRouteGuardRedirectPathCallback;
+}
+
+class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
+  final PageRouteInfo? Function(NavigationResolver resolver) redirect;
+
+  const _AutoRouteGuardRedirectCallback(this.redirect);
+
+  @override
+  void onNavigation(NavigationResolver resolver, router) {
+    final redirectTo = redirect(resolver);
+    if (redirectTo != null) {
+      router.push(redirectTo);
+    }
+    resolver.next(redirectTo == null);
+  }
+}
+
+class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
+  final String? Function(NavigationResolver resolver) redirect;
+
+  const _AutoRouteGuardRedirectPathCallback(this.redirect);
+
+  @override
+  void onNavigation(NavigationResolver resolver, router) {
+    final redirectTo = redirect(resolver);
+    if (redirectTo != null) {
+      router.pushNamed(redirectTo);
+    }
+    resolver.next(redirectTo == null);
+  }
+}
+
+class AutoRouteGuardCallback extends AutoRouteGuard {
+  final OnNavigation onNavigate;
+
+  const AutoRouteGuardCallback(this.onNavigate);
+
+  @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) =>
+      onNavigate(resolver, router);
 }
 
 class NavigationResolver {
@@ -35,6 +91,15 @@ class NavigationResolver {
   void next([bool continueNavigation = true]) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
     _completer.complete(continueNavigation);
+  }
+
+  // helpful for when you want to revert to the previous
+  // url back can not navigate
+  void nextOrBack([bool continueNavigation = true]) {
+    next(continueNavigation);
+    if (!continueNavigation) {
+      _router.back();
+    }
   }
 
   bool get isResolved => _completer.isCompleted;

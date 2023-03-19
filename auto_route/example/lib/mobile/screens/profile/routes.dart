@@ -1,14 +1,16 @@
+// import 'package:auto_route/auto_route.dart';
+// import 'package:example/mobile/screens/profile/my_books_page.dart';
+// import 'package:auto_route/empty_router_widgets.dart';
+// import 'profile_page.dart';
+//
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/screens/profile/my_books_page.dart';
-import 'package:auto_route/empty_router_widgets.dart';
-import 'profile_page.dart';
+import 'package:example/mobile/router/router.gr.dart';
 
-const profileTab = AutoRoute(
+ final profileTab = AutoRoute(
   path: 'profile',
-  name: 'ProfileTab',
-  page: EmptyRouterPage,
+  page: ProfileTab.page,
   children: [
-    AutoRoute(path: '', page: ProfilePage),
-    AutoRoute(path: 'my-books', page: MyBooksPage),
+    AutoRoute(path: '', page: ProfileRoute.page),
+    AutoRoute(path: 'my-books', page: MyBooksRoute.page),
   ],
 );

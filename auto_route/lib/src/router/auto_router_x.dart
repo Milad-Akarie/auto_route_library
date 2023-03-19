@@ -26,8 +26,10 @@ extension AutoRouterX on BuildContext {
             route,
             onFailure: onFailure,
           );
+  @Deprecated('Use back() instead')
+  void navigateBack() => RouterScope.of(this).controller.back();
 
-  void navigateBack() => RouterScope.of(this).controller.navigateBack();
+  void back() => RouterScope.of(this).controller.back();
 
   Future<void> navigateNamedTo(String path,
           {bool includePrefixMatches = false,

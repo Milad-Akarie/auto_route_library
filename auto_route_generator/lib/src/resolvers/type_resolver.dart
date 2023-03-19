@@ -89,8 +89,7 @@ class TypeResolver {
 
   ResolvedType resolveType(DartType type) {
     return ResolvedType(
-      name:
-          type.element?.name ?? type.getDisplayString(withNullability: false),
+      name: type.element?.name ?? type.getDisplayString(withNullability: false),
       isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
       import: resolveImport(type.element),
       typeArguments: _resolveTypeArguments(type),

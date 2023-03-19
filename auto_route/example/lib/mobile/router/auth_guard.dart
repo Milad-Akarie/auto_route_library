@@ -2,8 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/cupertino.dart';
 
-// mock auth state
 
+
+
+// mock auth state
 var isAuthenticated = false;
 
 class AuthGuard extends AutoRouteGuard {
@@ -11,15 +13,16 @@ class AuthGuard extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     if (!isAuthenticated) {
       // ignore: unawaited_futures
-      router.pushAndPopUntil(
+      router.push(
         LoginRoute(onLoginResult: (_) {
           isAuthenticated = true;
           // we can't pop the bottom page in the navigator's stack
           // so we just remove it from our local stack
-          resolver.next();
+          router.markUrlStateForReplace();
           router.removeLast();
+          resolver.next();
         }),
-        predicate: (r) => true,
+
       );
     } else {
       resolver.next(true);

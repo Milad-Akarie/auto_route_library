@@ -3,18 +3,14 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget implements AutoRouteWrapper {
+@RoutePage<String>()
+class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
   }) : super(key: key);
 
   @override
   HomePageState createState() => HomePageState();
-
-  @override
-  Widget wrappedRoute(BuildContext context) {
-    return this;
-  }
 }
 
 class RouteDestination {
@@ -101,7 +97,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             builder: (context, child, controller) {
               return Scaffold(
                 appBar: AppBar(
-                  title: Text(context.topRoute.name),
+                  title: Text(context.topRoute.title(context)),
                   leading: AutoLeadingButton(ignorePagelessRoutes: true),
                   bottom: TabBar(
                     controller: controller,
@@ -114,8 +110,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 body: child,
-                bottomNavigationBar:
-                    buildBottomNav(context, context.tabsRouter),
+                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
               );
             },
           );
@@ -144,5 +139,24 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
             ],
           );
+  }
+}
+
+@RoutePage()
+class WelcomeScreen extends StatelessWidget {
+  const WelcomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: ElevatedButton(
+          child: Text('Dashboard'),
+          onPressed: () {
+            context.pushRoute(HomeRoute());
+          },
+        ),
+      ),
+    );
   }
 }

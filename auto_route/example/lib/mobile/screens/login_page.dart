@@ -1,7 +1,9 @@
+import 'package:auto_route/annotations.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+@RoutePage()
 class LoginPage extends StatelessWidget {
   final void Function(bool isLoggedIn)? onLoginResult;
   final bool showBackButton;

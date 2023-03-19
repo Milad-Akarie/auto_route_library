@@ -1,31 +1,19 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/empty_router_widgets.dart';
-import 'package:flutter/material.dart';
+import '../main_router.dart';
 
-import '../test_page.dart';
+class NestedRouter extends MainRouter {
+  @override
+  final List<AutoRoute> routes = [
+    AutoRoute(path: '/', page: FirstRoute.page),
+    AutoRoute(path: '/second', page: SecondHostRoute.page, children: [
+      AutoRoute(path: '', page: SecondNested1Route.page),
+      AutoRoute(path: 'nested2', page: SecondNested2Route.page, fullscreenDialog: true),
+    ]),
+    AutoRoute(path: '/declarative', page: DeclarativeRouterHostRoute.page, children: [
+      AutoRoute(path: '', page: SecondNested1Route.page),
+      AutoRoute(path: 'nested2', page: SecondNested2Route.page),
+      AutoRoute(path: 'nested3', page: SecondNested3Route.page),
+    ]),
 
-part 'router.gr.dart';
-
-@MaterialAutoRouter(
-  replaceInRouteName: 'Page,Route',
-  routes: [
-    AutoRoute(path: '/first', page: FirstPage, initial: true),
-    AutoRoute(
-        path: '/second',
-        name: 'SecondRoute',
-        page: EmptyRouterPage,
-        children: [
-          AutoRoute(path: 'nested1', page: SecondNested1Page, initial: true),
-          AutoRoute(path: 'nested2', page: SecondNested2Page),
-        ]),
-  ],
-)
-class AppRouter extends _$AppRouter {}
-
-class SecondNested1Page extends TestPage {
-  const SecondNested1Page({Key? key}) : super(key: key);
-}
-
-class SecondNested2Page extends TestPage {
-  const SecondNested2Page({Key? key}) : super(key: key);
+  ];
 }

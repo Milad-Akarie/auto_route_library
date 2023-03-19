@@ -1,71 +1,6 @@
-import 'package:collection/collection.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
-
-import '../../auto_route.dart';
-
-class RouteCollection {
-  final Map<String, RouteConfig> _routesMap;
-
-  RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
-
-  factory RouteCollection.from(List<RouteConfig> routes) {
-    final routesMap = <String, RouteConfig>{};
-    for (var r in routes) {
-      routesMap[r.name] = r;
-    }
-    return RouteCollection(routesMap);
-  }
-
-  Iterable<RouteConfig> get routes => _routesMap.values;
-
-  RouteConfig? operator [](String key) => _routesMap[key];
-
-  bool containsKey(String key) => _routesMap.containsKey(key);
-
-  RouteCollection subCollectionOf(String key) {
-    assert(this[key]?.children != null, "$key does not have children");
-    return this[key]!.children!;
-  }
-
-  List<RouteConfig> findPathTo(String routeName) {
-    final track = <RouteConfig>[];
-    for (final route in routes) {
-      if (_findPath(route, routeName, track)) {
-        break;
-      }
-    }
-    return track;
-  }
-
-  bool _findPath(RouteConfig node, String routeName, List<RouteConfig> track) {
-    if (node.name == routeName) {
-      track.add(node);
-      return true;
-    }
-
-    if (node.hasSubTree) {
-      for (RouteConfig child in node.children!.routes) {
-        if (_findPath(child, routeName, track)) {
-          track.insert(0, node);
-          return true;
-        }
-      }
-    }
-
-    return false;
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RouteCollection &&
-          runtimeType == other.runtimeType &&
-          const MapEquality().equals(_routesMap, other._routesMap);
-
-  @override
-  int get hashCode => const MapEquality().hash(_routesMap);
-}
 
 class RouteMatcher {
   final RouteCollection collection;
@@ -171,8 +106,7 @@ class RouteMatcher {
 
   List<String> _split(String path) => p.split(path);
 
-  RouteMatch? matchByPath(Uri url, RouteConfig config,
-      {String? redirectedFrom}) {
+  RouteMatch? matchByPath(Uri url, AutoRoute config, {String? redirectedFrom}) {
     var parts = _split(config.path);
     var segments = _split(url.path);
 
@@ -216,6 +150,11 @@ class RouteMatcher {
       pathParams: Parameters(pathParams),
       queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
       fragment: url.fragment,
+      type: config.type,
+      title: config.title,
+      keepHistory: config.keepHistory,
+      fullscreenDialog: config.fullscreenDialog,
+      maintainState: config.maintainState,
     );
   }
 
@@ -250,23 +189,30 @@ class RouteMatcher {
     } else if (route.hasChildren) {
       return null;
     }
+    final stringMatch =
+        PageRouteInfo.expandPath(config.path, route.rawPathParams);
     return RouteMatch(
       name: route.routeName,
-      segments: _split(route.stringMatch),
-      path: route.path,
+      segments: _split(stringMatch),
+      path: config.path,
       args: route.args,
       meta: config.meta,
       key: ValueKey(
-        config.usesPathAsKey ? route.stringMatch : route.routeName,
+        config.usesPathAsKey ? stringMatch : route.routeName,
       ),
       isBranch: config.hasSubTree,
       guards: config.guards,
-      stringMatch: route.stringMatch,
+      stringMatch: stringMatch,
       fragment: route.fragment,
       redirectedFrom: route.redirectedFrom,
       children: childMatches,
       pathParams: Parameters(route.rawPathParams),
       queryParams: Parameters(route.rawQueryParams),
+      type: config.type,
+      title: config.title,
+      keepHistory: config.keepHistory,
+      fullscreenDialog: config.fullscreenDialog,
+      maintainState: config.maintainState,
     );
   }
 

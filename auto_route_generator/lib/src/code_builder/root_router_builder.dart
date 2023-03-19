@@ -1,67 +1,46 @@
 import 'package:code_builder/code_builder.dart';
 
 import '../../utils.dart';
-import '../models/importable_type.dart';
 import '../models/route_config.dart';
 import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
-const _routeConfigType = Reference("RouteConfig", autoRouteImport);
-
-Class buildRouterConfig(RouterConfig router, Set<ResolvedType> guards,
-        List<RouteConfig> routes) =>
-    Class((b) => b
-      ..name = router.routerClassName
-      ..extend = refer('RootStackRouter', autoRouteImport)
-      ..fields.addAll([
-        ...guards.map((g) => Field((b) => b
-          ..modifier = FieldModifier.final$
-          ..name = toLowerCamelCase(g.name)
-          ..type = g.refer)),
-        buildPagesMap(routes, router.deferredLoading)
-      ])
-      ..methods.add(
-        Method(
-          (b) => b
-            ..type = MethodType.getter
-            ..name = 'routes'
-            ..annotations.add(refer('override'))
-            ..returns = listRefer(_routeConfigType)
-            ..body = literalList(buildRoutes(router.routes)).code,
-        ),
-      )
-      ..constructors.add(
-        Constructor((b) => b
-          ..optionalParameters.addAll([
-            Parameter(
-              (b) => b
-                ..name = 'navigatorKey'
-                ..type = TypeReference(
+Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
+      (b) => b
+        ..name =
+            '${router.usesPartBuilder ? '_' : ''}\$${router.routerClassName}'
+        ..abstract = true
+        ..extend = refer('RootStackRouter', autoRouteImport)
+        ..fields.addAll([buildPagesMap(routes, router)])
+        ..constructors.addAll([
+          Constructor(
+            (b) => b
+              ..optionalParameters.add(
+                Parameter(
                   (b) => b
-                    ..url = materialImport
-                    ..symbol = 'GlobalKey'
-                    ..isNullable = true
-                    ..types.add(
-                      refer('NavigatorState', materialImport),
+                    ..name = 'navigatorKey'
+                    ..type = TypeReference(
+                      (b) => b
+                        ..url = materialImport
+                        ..symbol = 'GlobalKey'
+                        ..isNullable = true
+                        ..types.add(
+                          refer('NavigatorState', materialImport),
+                        ),
                     ),
                 ),
-            ),
-            ...guards.map(
-              (g) => Parameter((b) => b
-                ..name = toLowerCamelCase(g.name)
-                ..named = true
-                ..required = true
-                ..toThis = true),
-            ),
-          ])
-          ..initializers.add(refer('super').call([
-            refer('navigatorKey'),
-          ]).code)),
-        // ),
-      ));
+              )
+              ..initializers.add(
+                refer('super').call([
+                  refer('navigatorKey'),
+                ]).code,
+              ),
+          ),
+        ]),
+    );
 
-Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
+Field buildPagesMap(List<RouteConfig> routes, RouterConfig router) {
   return Field((b) => b
     ..name = "pagesMap"
     ..modifier = FieldModifier.final$
@@ -75,21 +54,18 @@ Field buildPagesMap(List<RouteConfig> routes, bool deferredLoading) {
         ]),
     )
     ..assignment = literalMap(Map.fromEntries(
-      routes
-          .where((r) => r.routeType != RouteType.redirect)
-          .distinctBy((e) => e.routeName)
-          .map(
+      routes.distinctBy((e) => e.getName(router.replaceInRouteName)).map(
             (r) => MapEntry(
-              refer(r.routeName).property('name'),
-              buildMethod(r, deferredLoading),
+              refer(r.getName(router.replaceInRouteName)).property('name'),
+              buildMethod(r, router),
             ),
           ),
     )).code);
 }
 
-Spec buildMethod(RouteConfig r, bool deferredLoading) {
+Spec buildMethod(RouteConfig r, RouterConfig router) {
   final useConsConstructor =
-      r.hasConstConstructor && !(r.deferredLoading ?? deferredLoading);
+      r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
   var constructedPage = useConsConstructor
       ? r.pageType!.refer.constInstance([])
       : getPageInstance(r);
@@ -101,7 +77,7 @@ Spec buildMethod(RouteConfig r, bool deferredLoading) {
     );
   }
 
-  if ((r.deferredLoading ?? deferredLoading) && r.pageType != null) {
+  if ((r.deferredLoading ?? router.deferredLoading) && r.pageType != null) {
     constructedPage = getDeferredBuilder(r, constructedPage);
   }
 
@@ -111,54 +87,51 @@ Spec buildMethod(RouteConfig r, bool deferredLoading) {
         Parameter((b) => b.name = 'routeData'),
       )
       ..body = Block((b) => b.statements.addAll([
-            if ((!r.hasUnparsableRequiredArgs ||
-                    r.parameters.any((p) => p.isInheritedPathParam)) &&
+            if ((!r.hasUnparsableRequiredArgs) &&
                 r.parameters.any((p) => p.isPathParam))
-              refer('routeData')
-                  .property('inheritedPathParams')
-                  .assignFinal('pathParams')
+              declareFinal('pathParams')
+                  .assign(refer('routeData').property('inheritedPathParams'))
                   .statement,
             if (!r.hasUnparsableRequiredArgs &&
                 r.parameters.any((p) => p.isQueryParam))
-              refer('routeData')
-                  .property('queryParams')
-                  .assignFinal('queryParams')
+              declareFinal('queryParams')
+                  .assign(refer('routeData').property('queryParams'))
                   .statement,
-            if (r.parameters.where((p) => !p.isInheritedPathParam).isNotEmpty)
-              refer('routeData')
-                  .property('argsAs')
-                  .call([], {
-                    if (!r.hasUnparsableRequiredArgs)
-                      'orElse': Method(
-                        (b) => b
-                          ..lambda = true
-                          ..body = r.pathQueryParams.isEmpty
-                              ? refer('${r.routeName}Args')
-                                  .constInstance([]).code
-                              : refer('${r.routeName}Args').newInstance(
-                                  [],
-                                  Map.fromEntries(
-                                    r.parameters
-                                        .where((p) =>
-                                            (p.isPathParam || p.isQueryParam) &&
-                                            !p.isInheritedPathParam)
-                                        .map(
-                                          (p) => MapEntry(
-                                            p.name,
-                                            getUrlParamAssignment(p),
+            if (r.parameters.isNotEmpty)
+              declareFinal('args')
+                  .assign(
+                    refer('routeData').property('argsAs').call([], {
+                      if (!r.hasUnparsableRequiredArgs)
+                        'orElse': Method(
+                          (b) => b
+                            ..lambda = true
+                            ..body = r.pathQueryParams.isEmpty
+                                ? refer('${r.getName(router.replaceInRouteName)}Args')
+                                    .constInstance([]).code
+                                : refer('${r.getName(router.replaceInRouteName)}Args')
+                                    .newInstance(
+                                    [],
+                                    Map.fromEntries(
+                                      r.parameters
+                                          .where((p) =>
+                                              (p.isPathParam || p.isQueryParam))
+                                          .map(
+                                            (p) => MapEntry(
+                                              p.name,
+                                              getUrlParamAssignment(p),
+                                            ),
                                           ),
-                                        ),
-                                  ),
-                                ).code,
-                      ).closure
-                  }, [
-                    refer('${r.routeName}Args'),
-                  ])
-                  .assignFinal('args')
+                                    ),
+                                  ).code,
+                        ).closure
+                    }, [
+                      refer('${r.getName(router.replaceInRouteName)}Args'),
+                    ]),
+                  )
                   .statement,
             TypeReference(
               (b) => b
-                ..symbol = r.pageTypeName
+                ..symbol = 'AutoRoutePage'
                 ..url = autoRouteImport
                 ..types.add(r.returnType?.refer ?? refer('dynamic')),
             )
@@ -167,42 +140,6 @@ Spec buildMethod(RouteConfig r, bool deferredLoading) {
                   {
                     'routeData': refer('routeData'),
                     'child': constructedPage,
-                    if (r.maintainState == false)
-                      'maintainState': literalBool(false),
-                    if (r.fullscreenDialog == true)
-                      'fullscreenDialog': literalBool(true),
-                    if (r.routeType == RouteType.cupertino) ...{
-                      if (r.cupertinoNavTitle != null)
-                        'title': literalString(r.cupertinoNavTitle!),
-                    },
-                    if (r.routeType == RouteType.adaptive) ...{
-                      if (r.cupertinoNavTitle != null)
-                        'title': literalString(r.cupertinoNavTitle!),
-                      if (r.customRouteOpaque != null)
-                        'opaque': literalBool(r.customRouteOpaque!),
-                    },
-                    if (r.routeType == RouteType.custom) ...{
-                      if (r.customRouteBuilder != null)
-                        'customRouteBuilder': r.customRouteBuilder!.refer,
-                      if (r.transitionBuilder != null)
-                        'transitionsBuilder': r.transitionBuilder!.refer,
-                      if (r.durationInMilliseconds != null)
-                        'durationInMilliseconds':
-                            literalNum(r.durationInMilliseconds!),
-                      if (r.reverseDurationInMilliseconds != null)
-                        'reverseDurationInMilliseconds':
-                            literalNum(r.reverseDurationInMilliseconds!),
-                      if (r.customRouteOpaque != null)
-                        'opaque': literalBool(r.customRouteOpaque!),
-                      if (r.customRouteBarrierDismissible != null)
-                        'barrierDismissible':
-                            literalBool(r.customRouteBarrierDismissible!),
-                      if (r.customRouteBarrierLabel != null)
-                        'barrierLabel':
-                            literalString(r.customRouteBarrierLabel!),
-                      if (r.customRouteBarrierColor != null)
-                        'barrierColor': literal(r.customRouteBarrierColor!),
-                    }
                   },
                 )
                 .returned
@@ -225,16 +162,12 @@ Expression getDeferredBuilder(RouteConfig r, Expression page) {
 Expression getPageInstance(RouteConfig r) {
   return r.pageType!.refer.newInstance(
     r.positionalParams.map((p) {
-      return p.isInheritedPathParam
-          ? getUrlParamAssignment(p)
-          : refer('args').property(p.name);
+      return refer('args').property(p.name);
     }),
     Map.fromEntries(r.namedParams.map(
       (p) => MapEntry(
         p.name,
-        p.isInheritedPathParam
-            ? getUrlParamAssignment(p)
-            : refer('args').property(p.name),
+        refer('args').property(p.name),
       ),
     )),
   );
@@ -251,63 +184,5 @@ Expression getUrlParamAssignment(ParamConfig p) {
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode!),
     ]);
-  }
-}
-
-Iterable<Object> buildRoutes(List<RouteConfig> routes, {Reference? parent}) =>
-    routes.map(
-      (r) {
-        return _routeConfigType.newInstance(
-          [
-            if (r.routeType == RouteType.redirect)
-              literalString('${r.pathName}#redirect')
-            else
-              refer(r.routeName).property('name'),
-          ],
-          {
-            'path': literalString(r.pathName),
-            if (parent != null) 'parent': parent.property('name'),
-            if (r.meta.isNotEmpty)
-              'meta': literalMap({
-                for (final metaEntry in r.meta)
-                  literalString(metaEntry.key): _getLiteralValue(metaEntry),
-              }, stringRefer, refer('dynamic')),
-            if (r.redirectTo != null)
-              'redirectTo': literalString(r.redirectTo!),
-            if (r.fullMatch == true) 'fullMatch': literalBool(true),
-            if (r.usesPathAsKey == true) 'usesPathAsKey': literalBool(true),
-            if (r.deferredLoading == true) 'deferredLoading': literalBool(true),
-            if (r.guards.isNotEmpty)
-              'guards': literalList(r.guards
-                  .map(
-                    (g) => refer(
-                      toLowerCamelCase(g.toString()),
-                    ),
-                  )
-                  .toList(growable: false)),
-            if (r.childRouterConfig != null)
-              'children': literalList(
-                buildRoutes(
-                  r.childRouterConfig!.routes,
-                  parent: refer(r.routeName),
-                ),
-              )
-          },
-        );
-      },
-    );
-
-Expression _getLiteralValue(MetaEntry<dynamic> metaEntry) {
-  switch (metaEntry.type) {
-    case 'String':
-      return literalString(metaEntry.value);
-    case 'int':
-      return literalNum(metaEntry.value);
-    case 'double':
-      return literalNum(metaEntry.value);
-    case 'bool':
-      return literalBool(metaEntry.value);
-    default:
-      return literal(metaEntry.value);
   }
 }
