@@ -116,8 +116,8 @@ abstract class _AutoTabsRouterState extends State<AutoTabsRouter> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final parentRoute = RouteData.of(context);
+    final parentScope = RouterScope.of(context, watch: true);
     if (_controller == null) {
-      final parentScope = RouterScope.of(context, watch: true);
       _inheritableObserversBuilder = () {
         var observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
