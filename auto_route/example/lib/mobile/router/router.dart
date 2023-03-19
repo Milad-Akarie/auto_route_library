@@ -1,54 +1,66 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/screens/books/book_details_page.dart';
-import 'package:example/mobile/screens/books/book_list_page.dart';
-import '../screens/home_page.dart';
-import '../screens/login_page.dart';
-import '../screens/profile/routes.dart';
-import '../screens/settings.dart';
-import '../screens/user-data/routes.dart';
-import 'package:auto_route/empty_router_widgets.dart';
+//
 
-@MaterialAutoRouter(
-  replaceInRouteName: 'Page|Screen,Route',
-  routes: <AutoRoute>[
-    // app stack
-    AutoRoute<String>(
+import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/mobile/screens/profile/routes.dart';
+
+@AutoRouterConfig()
+class RootRouter extends $RootRouter {
+  @override
+  RouteType get defaultRouteType => RouteType.custom(
+        reverseDurationInMilliseconds: 800,
+        transitionsBuilder: (ctx, animation1, animation2, child) {
+          // print('Anim1 ${animation1.value}');
+          print('Anim2 ${animation2.value}');
+          return child;
+        },
+      );
+
+  @override
+  final List<AutoRoute> routes = [
+    AutoRoute(
+      page: HomeRoute.page,
       path: '/',
-      page: HomePage,
-      // guards: [AuthGuard],
-      deferredLoading: true,
+      // guards: [AuthGuard()],
       children: [
+        RedirectRoute(path: '', redirectTo: 'books'),
         AutoRoute(
-          deferredLoading: true,
           path: 'books',
-          page: EmptyRouterPage,
-          name: 'BooksTab',
-          initial: true,
+          page: BooksTab.page,
           maintainState: true,
           children: [
             AutoRoute(
               path: '',
-              page: BookListScreen,
+              page: BookListRoute.page,
+              title: (ctx, _) => 'Books list',
             ),
             AutoRoute(
               path: ':id',
-              page: BookDetailsPage,
-              fullscreenDialog: true,
+              page: BookDetailsRoute.page,
+              title: (ctx, data) {
+                return 'Book Details ${data.pathParams.get('id')}';
+              },
             ),
           ],
         ),
         profileTab,
         AutoRoute(
           path: 'settings/:tab',
-          page: SettingsPage,
-          name: 'SettingsTab',
+          page: SettingsTab.page,
         ),
       ],
     ),
-    userDataRoutes,
-    // auth
-    AutoRoute(page: LoginPage, path: '/login'),
+    AutoRoute(page: LoginRoute.page, path: '/login'),
     RedirectRoute(path: '*', redirectTo: '/'),
-  ],
-)
-class $RootRouter {}
+  ];
+}
+
+@RoutePage(name: 'BooksTab')
+class BooksTabPage extends AutoRouter {
+  const BooksTabPage({super.key});
+}
+
+@RoutePage(name: 'ProfileTab')
+class ProfileTabPage extends AutoRouter {
+  const ProfileTabPage({super.key});
+}

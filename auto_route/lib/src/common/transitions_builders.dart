@@ -1,5 +1,10 @@
 // a class that holds a preset of
 // common route transition builder
+
+// all of the methods in this file map to existing, already-tested flutter widgets
+// so no-need to include them in test-coverage
+
+// coverage:ignore-file
 import 'package:flutter/material.dart';
 
 class TransitionsBuilders {

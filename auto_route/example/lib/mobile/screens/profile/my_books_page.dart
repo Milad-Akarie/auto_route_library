@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
+@RoutePage<String>()
 class MyBooksPage extends StatelessWidget {
   final String? filter;
 
@@ -16,12 +17,12 @@ class MyBooksPage extends StatelessWidget {
           children: [
             Text(
               'My Books -> filter: $filter',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             Text(
               'Fragment Support? ${context.routeData.fragment}',
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -33,9 +34,7 @@ class MyBooksPage extends StatelessWidget {
               child: Text('navigate to /settings/newSegment'),
             ),
             ElevatedButton(
-              onPressed: () {
-                context.navigateBack();
-              },
+              onPressed: () => context.back(),
               child: Text('Navigate back'),
             )
           ],

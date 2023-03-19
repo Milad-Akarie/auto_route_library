@@ -12,7 +12,7 @@ class RouterScope extends InheritedWidget {
     Key? key,
     required Widget child,
     required this.controller,
-    required this.navigatorObservers,
+    this.navigatorObservers = const [],
     required this.inheritableObserversBuilder,
     required this.stateHash,
   }) : super(child: child, key: key);

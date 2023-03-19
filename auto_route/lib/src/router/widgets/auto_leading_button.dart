@@ -34,14 +34,12 @@ class AutoLeadingButton extends StatefulWidget {
   const AutoLeadingButton({
     Key? key,
     this.color,
-    @Deprecated('Use showIfParentCanPop') bool? showBackIfParentCanPop,
     bool? showIfParentCanPop,
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
     this.builder,
   })  : assert(color == null || builder == null),
-        _showIfParentCanPop =
-            showIfParentCanPop ?? showBackIfParentCanPop ?? true,
+        _showIfParentCanPop = showIfParentCanPop ?? true,
         super(key: key);
 
   @override
@@ -74,7 +72,6 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
     )) {
       final topPage = scope.controller.topPage;
       final bool useCloseButton = topPage?.fullscreenDialog ?? false;
-
       if (widget.builder != null) {
         return widget.builder!(
           context,

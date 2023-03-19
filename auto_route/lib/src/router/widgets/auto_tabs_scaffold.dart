@@ -18,7 +18,7 @@ typedef FloatingActionButtonBuilder = Widget? Function(
 );
 
 class AutoTabsScaffold extends StatelessWidget {
-  final AnimatedIndexedStackBuilder? builder;
+  final AnimatedIndexedStackTransitionBuilder? transitionBuilder;
   final List<PageRouteInfo> routes;
   final Duration animationDuration;
   final Curve animationCurve;
@@ -50,6 +50,7 @@ class AutoTabsScaffold extends StatelessWidget {
   final AppBarBuilder? appBarBuilder;
   final GlobalKey<ScaffoldState>? scaffoldKey;
   final int homeIndex;
+
   const AutoTabsScaffold({
     Key? key,
     required this.routes,
@@ -57,7 +58,7 @@ class AutoTabsScaffold extends StatelessWidget {
     this.homeIndex = -1,
     this.animationDuration = const Duration(milliseconds: 300),
     this.animationCurve = Curves.ease,
-    this.builder,
+    this.transitionBuilder,
     this.bottomNavigationBuilder,
     this.inheritNavigatorObservers = true,
     this.navigatorObservers =
@@ -97,7 +98,13 @@ class AutoTabsScaffold extends StatelessWidget {
       navigatorObservers: navigatorObservers,
       inheritNavigatorObservers: inheritNavigatorObservers,
       curve: animationCurve,
-      builder: (context, child, animation) {
+      transitionBuilder: (context, child, animation) =>
+          transitionBuilder?.call(context, child, animation) ??
+          FadeTransition(
+            opacity: animation,
+            child: child,
+          ),
+      builder: (context, child) {
         final tabsRouter = context.tabsRouter;
         return Scaffold(
           key: scaffoldKey,
@@ -128,18 +135,15 @@ class AutoTabsScaffold extends StatelessWidget {
                   context,
                   tabsRouter,
                 ),
-          body: builder == null
-              ? FadeTransition(opacity: animation, child: child)
-              : builder!(
-                  context,
-                  child,
-                  animation,
-                ),
+          body: child,
           bottomNavigationBar: bottomNavigationBuilder == null
               ? null
-              : bottomNavigationBuilder!(
-                  context,
-                  tabsRouter,
+              : AnimatedBuilder(
+                  animation: tabsRouter,
+                  builder: (_, __) => bottomNavigationBuilder!(
+                    context,
+                    tabsRouter,
+                  ),
                 ),
         );
       },

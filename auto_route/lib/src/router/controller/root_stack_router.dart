@@ -12,9 +12,38 @@ abstract class RootStackRouter extends StackRouter {
     _navigationHistory = NavigationHistory.create(this);
   }
 
+  RouterConfig<UrlState> config({
+    List<PageRouteInfo>? initialRoutes,
+    String? initialDeepLink,
+    String? navRestorationScopeId,
+    WidgetBuilder? placeholder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    bool includePrefixMatches = false,
+    bool Function(String? location)? neglectWhen,
+  }) {
+    return RouterConfig(
+      routeInformationParser: defaultRouteParser(
+        includePrefixMatches: includePrefixMatches,
+      ),
+      routeInformationProvider: routeInfoProvider(
+        neglectWhen: neglectWhen,
+      ),
+      backButtonDispatcher: RootBackButtonDispatcher(),
+      routerDelegate: delegate(
+        initialDeepLink: initialDeepLink,
+        initialRoutes: initialRoutes,
+        navRestorationScopeId: navRestorationScopeId,
+        navigatorObservers: navigatorObservers,
+        placeholder: placeholder,
+      ),
+    );
+  }
+
   @override
   RouteData get routeData => RouteData(
         router: this,
+        type: const RouteType.material(),
         route: const RouteMatch(
           name: 'Root',
           segments: [''],
@@ -26,9 +55,11 @@ abstract class RootStackRouter extends StackRouter {
         pendingChildren: [],
       );
 
-  Map<String, PageFactory> get pagesMap;
+  Map<String, PageFactory> get pagesMap => throw UnimplementedError();
 
-  List<RouteConfig> get routes;
+  List<AutoRoute> get routes;
+
+  RouteType get defaultRouteType => const RouteType.material();
 
   // ignore: prefer_final_fields
   bool _managedByWidget = false;
@@ -114,5 +145,6 @@ abstract class RootStackRouter extends StackRouter {
   NavigationHistory get navigationHistory => _navigationHistory;
 
   @override
-  late final RouteCollection routeCollection = RouteCollection.from(routes);
+  late final RouteCollection routeCollection =
+      RouteCollection.from(routes, root: true);
 }

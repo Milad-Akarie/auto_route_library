@@ -1,4 +1,20 @@
 # ChangeLog
+## [6.0.0]
+- Sync with auto_route version
+## [6.0.0-rc-1] 
+- Support dart_style 2.2.5
+## [6.0.0-rc] Breaking
+make sure you check the [Migration guide](https://github.com/Milad-Akarie/auto_route_library/tree/v6.0.0_redesigned#migrating-to-v60)
+- AutoRoute now takes a PageInfo object from the generated routes instead of Type
+- Introduce @RoutePage() annotation to annotate routable widgets
+- Routes are defined in the body of the router class instead of inside the annotation
+- Remove replace @MaterialAutoRouter,@CupertinoAutoRouter ...etc with @AutoRouterConfig annotation
+- Remove EmptyRouterPage & EmptyRouterScreen
+- "initial" flag is removed now, use "/" for initial routes or empty path "" for nested-initial routes.
+- Passing route guards is also changed now, instead of passing guards as types you now pass instances.
+- Add title builder for AutoRoute(title: (ctx,data){})
+- Docs are changed to reflect the new changes so make sure you re-read them.
+ ---
 ## [5.0.3]
 - Change analyzer constrains to support up to version 6.0.0
 - Merge #1236

@@ -9,20 +9,34 @@ void main() {
       expect(() => RouteCollection({}), throwsAssertionError);
     });
 
-    final routeA = RouteConfig('A', path: '/');
-    final routeB = RouteConfig('B', path: '/b');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final routeC = RouteConfig(
+    final routeA = TestRoute('A', path: '/');
+    final routeB = TestRoute('B', path: '/b');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
       'C',
       path: '/c',
       children: [subRouteC1],
     );
     final collection = RouteCollection.from(
       [routeA, routeB, routeC],
+      root: true,
     );
+
+    test('Creating root RouteCollection with a root route not starting with "/" should throw', () {
+      expect(()=> RouteCollection.from([TestRoute('A', path: 'a')], root: true), throwsFlutterError);
+    });
+
+    test('Creating sub RouteCollection with a sub route starting with "/" should throw', () {
+      expect(()=> RouteCollection.from([TestRoute('A', path: '/a')], root: false), throwsFlutterError);
+    });
+
     test('Calling [routes] should return a list of all route configs', () {
       var expectedRoutes = [routeA, routeB, routeC];
       expect(collection.routes, expectedRoutes);
+    });
+
+    test('Calling findPathTo to C1 should return a list of route trails[C,C1]', () {
+      expect(collection.findPathTo('C1'), [routeC, subRouteC1]);
     });
 
     test('Calling [containsKey] with existing key should return true', () {
@@ -34,7 +48,7 @@ void main() {
     });
 
     test('Extracting sub collection of a branch route should return sub collection', () {
-      var expectedCollection = RouteCollection.from([subRouteC1]);
+      var expectedCollection = RouteCollection.from([subRouteC1], root: false);
       expect(collection.subCollectionOf('C'), expectedCollection);
     });
 
@@ -50,23 +64,50 @@ void main() {
     test('Calling [] operator with a non-existing key should return null', () {
       expect(collection['X'], isNull);
     });
+    test('call RouteMatch.fromRedirect should return true', () {
+      expect(
+          const RouteMatch(
+            name: 'A',
+            segments: ['a'],
+            path: 'a',
+            redirectedFrom: '/',
+            stringMatch: 'a',
+            key: ValueKey('a'),
+          ).fromRedirect,
+          isTrue);
+    });
+
+    test('call RouteMatch.hasEmptyPath should return true', () {
+      expect(
+          const RouteMatch(
+            name: 'A',
+            segments: [''],
+            path: '',
+            stringMatch: '',
+            key: ValueKey(''),
+          ).hasEmptyPath,
+          isTrue);
+    });
   });
 
   group('Testing matching with include prefix matches off', () {
-    final routeA = RouteConfig('A', path: '/');
-    final routeB = RouteConfig('B', path: '/b');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final routeC = RouteConfig(
+    final routeA = TestRoute('A', path: '/');
+    final routeB = TestRoute('B', path: '/b');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
       'C',
       path: '/c',
       children: [subRouteC1],
     );
 
-    final routeCollection = RouteCollection.from([
-      routeA,
-      routeB,
-      routeC,
-    ]);
+    final routeCollection = RouteCollection.from(
+      [
+        routeA,
+        routeB,
+        routeC,
+      ],
+      root: true,
+    );
 
     final match = RouteMatcher(routeCollection).match;
 
@@ -115,18 +156,18 @@ void main() {
   });
 
   group('Testing matching with include prefix matches on', () {
-    final routeA = RouteConfig('A', path: '/');
-    final routeB = RouteConfig('B', path: '/b');
-    final routeB1 = RouteConfig('B1', path: '/b/b1');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final subRouteD0 = RouteConfig('D0', path: '');
-    final subRouteD1 = RouteConfig('D1', path: 'd1');
-    final routeD = RouteConfig(
+    final routeA = TestRoute('A', path: '/');
+    final routeB = TestRoute('B', path: '/b');
+    final routeB1 = TestRoute('B1', path: '/b/b1');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final subRouteD0 = TestRoute('D0', path: '');
+    final subRouteD1 = TestRoute('D1', path: 'd1');
+    final routeD = TestRoute(
       'D',
       path: '/d',
       children: [subRouteD0, subRouteD1],
     );
-    final routeC = RouteConfig(
+    final routeC = TestRoute(
       'C',
       path: '/c',
       children: [subRouteC1],
@@ -134,6 +175,7 @@ void main() {
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeB1, routeC, routeD],
+      root: true,
     );
 
     final match = RouteMatcher(routeCollection).match;
@@ -285,19 +327,20 @@ void main() {
   });
 
   group('Testing WildCard matching', () {
-    final routeA = RouteConfig('A', path: '/');
-    final routeB = RouteConfig('B', path: '/b');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final routeC = RouteConfig(
+    final routeA = TestRoute('A', path: '/');
+    final routeB = TestRoute('B', path: '/b');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
       'C',
       path: '/c',
       children: [subRouteC1],
     );
-    final wcRoute = RouteConfig('WC', path: '*');
-    final prefixedWcRoute = RouteConfig('PWC', path: '/d/*');
+    final wcRoute = TestRoute('WC', path: '*');
+    final prefixedWcRoute = TestRoute('PWC', path: '/d/*');
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeC, prefixedWcRoute, wcRoute],
+      root: true,
     );
     final match = RouteMatcher(routeCollection).match;
 
@@ -342,21 +385,22 @@ void main() {
   });
 
   group('Testing redirect routes', () {
-    final routeA = RouteConfig('A', path: '/a');
-    final routeARedirect = RouteConfig('AR', path: '/', redirectTo: '/a', fullMatch: true);
+    final routeA = TestRoute('A', path: '/a');
+    final routeARedirect = TestRoute('AR', path: '/', redirectTo: '/a', fullMatch: true);
 
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final subRouteC1Redirect = RouteConfig('C1R', path: '', redirectTo: 'c1', fullMatch: true);
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final subRouteC1Redirect = TestRoute('C1R', path: '', redirectTo: 'c1', fullMatch: true);
 
-    final routeC = RouteConfig(
+    final routeC = TestRoute(
       'C',
       path: '/c',
       children: [subRouteC1Redirect, subRouteC1],
     );
-    final routeAWCRedirect = RouteConfig('A-WC-R', path: '*', redirectTo: '/a', fullMatch: true);
+    final routeAWCRedirect = TestRoute('A-WC-R', path: '*', redirectTo: '/a', fullMatch: true);
 
     final routeCollection = RouteCollection.from(
       [routeA, routeC, routeARedirect, routeAWCRedirect],
+      root: true,
     );
     final match = RouteMatcher(routeCollection).match;
 
@@ -400,11 +444,12 @@ void main() {
     final match2 = RouteMatcher(
       RouteCollection.from(
         [
-          RouteConfig('A', path: '/a', children: [
-            RouteConfig('AR', path: 'r', redirectTo: ''),
-            RouteConfig('A1', path: ''),
+          TestRoute('A', path: '/a', children: [
+            TestRoute('AR', path: 'r', redirectTo: ''),
+            TestRoute('A1', path: ''),
           ]),
         ],
+        root: true,
       ),
     ).match;
 
@@ -433,11 +478,11 @@ void main() {
   });
 
   group('Testing Path parameters parsing', () {
-    final routeA = RouteConfig('A', path: '/a/:id');
-    final routeB = RouteConfig('B', path: '/b/:id/n/:type');
-    final subRouteC1 = RouteConfig('C1', path: ':id');
+    final routeA = TestRoute('A', path: '/a/:id');
+    final routeB = TestRoute('B', path: '/b/:id/n/:type');
+    final subRouteC1 = TestRoute('C1', path: ':id');
 
-    final routeC = RouteConfig(
+    final routeC = TestRoute(
       'C',
       path: '/c',
       children: [subRouteC1],
@@ -445,6 +490,7 @@ void main() {
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeC],
+      root: true,
     );
     final match = RouteMatcher(routeCollection).match;
 
@@ -504,11 +550,11 @@ void main() {
   });
 
   group('Testing query parameters parsing', () {
-    final routeA = RouteConfig('A', path: '/a');
-    final routeB = RouteConfig('B', path: '/b');
-    final routeB1 = RouteConfig('B1', path: '/b/b1');
-    final subRouteC1 = RouteConfig('C1', path: 'c1');
-    final routeC = RouteConfig(
+    final routeA = TestRoute('A', path: '/a');
+    final routeB = TestRoute('B', path: '/b');
+    final routeB1 = TestRoute('B1', path: '/b/b1');
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
       'C',
       path: '/c',
       children: [subRouteC1],
@@ -516,6 +562,7 @@ void main() {
 
     final routeCollection = RouteCollection.from(
       [routeA, routeB, routeB1, routeC],
+      root: true,
     );
     final match = RouteMatcher(routeCollection).match;
 

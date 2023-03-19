@@ -7,14 +7,14 @@ abstract class NavigationFailure {
 }
 
 class RouteNotFoundFailure extends NavigationFailure {
-  final PageRouteInfo route;
+  final String path;
 
-  const RouteNotFoundFailure(this.route);
+  const RouteNotFoundFailure(this.path);
 
+ // coverage:ignore-start
   @override
-  String toString() {
-    return "Failed to navigate to ${route.fullPath}";
-  }
+  String toString() => "Failed to navigate to $path";
+// coverage:ignore-end
 }
 
 class RejectedByGuardFailure extends NavigationFailure {
@@ -23,8 +23,8 @@ class RejectedByGuardFailure extends NavigationFailure {
 
   const RejectedByGuardFailure(this.route, this.guard);
 
+  // coverage:ignore-start
   @override
-  String toString() {
-    return '${route.stringMatch} rejected by guard ${guard.runtimeType}';
-  }
+  String toString() => '${route.stringMatch} rejected by guard ${guard.runtimeType}';
+// coverage:ignore-end
 }
