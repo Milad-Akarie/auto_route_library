@@ -59,6 +59,10 @@ String generateLibrary(
       ..directives.addAll([
         if (router.usesPartBuilder) Directive.partOf(p.basename(router.path)),
       ])
+      ..comments.addAll([
+        "ignore_for_file: type=lint",
+        "coverage:ignore-file",
+      ])
       ..body.addAll([
         buildRouterConfig(router, routes),
         if (routes.isNotEmpty)
@@ -69,18 +73,5 @@ String generateLibrary(
       ]),
   );
 
-  return [DartFormatter().format(library.accept(emitter).toString())]
-      .join('\n');
+  return DartFormatter().format(library.accept(emitter).toString());
 }
-
-
-const String _header = '''
-// GENERATED CODE - DO NOT MODIFY BY HAND
-
-// **************************************************************************
-// AutoRouteGenerator
-// **************************************************************************
-//
-// ignore_for_file: type=lint
-// coverage:ignore-file
-''';

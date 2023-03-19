@@ -11,7 +11,7 @@ class RouteNotFoundFailure extends NavigationFailure {
 
   const RouteNotFoundFailure(this.path);
 
- // coverage:ignore-start
+  // coverage:ignore-start
   @override
   String toString() => "Failed to navigate to $path";
 // coverage:ignore-end
@@ -25,6 +25,7 @@ class RejectedByGuardFailure extends NavigationFailure {
 
   // coverage:ignore-start
   @override
-  String toString() => '${route.stringMatch} rejected by guard ${guard.runtimeType}';
+  String toString() =>
+      '${route.stringMatch} rejected by guard ${guard.runtimeType}';
 // coverage:ignore-end
 }

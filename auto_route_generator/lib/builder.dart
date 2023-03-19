@@ -18,6 +18,5 @@ Builder autoRouteBuilder(BuilderOptions options) {
     generatedExtension: '.route.json',
     formatOutput: (generated) => generated.replaceAll(RegExp(r'//.*|\s'), ''),
     allowSyntaxErrors: true,
-    
   );
 }

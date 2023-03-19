@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.0+1]
+- Use updated readme file
 ## [6.0.0]
 - Fix secondAnimation value is always 0 in custom route transition
 ## [6.0.0-rc-7]

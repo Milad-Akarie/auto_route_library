@@ -2,10 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 typedef CustomRouteBuilder = Route<T> Function<T>(
-    BuildContext context,
-    Widget child,
-    AutoRoutePage<T> page,
-    );
+  BuildContext context,
+  Widget child,
+  AutoRoutePage<T> page,
+);
 
 abstract class RouteType {
   const RouteType._({this.opaque = true});

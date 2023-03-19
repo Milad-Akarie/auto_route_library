@@ -9,7 +9,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-
 part '../../route/route_data.dart';
 
 part 'auto_route_guard.dart';
@@ -745,7 +744,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   void _removeRedirectGuard(AutoRedirectGuardBase guard) {
-    if(_redirectGuardsListeners[guard]!=null){
+    if (_redirectGuardsListeners[guard] != null) {
       guard.removeListener(_redirectGuardsListeners[guard]!);
     }
     _redirectGuardsListeners.remove(guard);
