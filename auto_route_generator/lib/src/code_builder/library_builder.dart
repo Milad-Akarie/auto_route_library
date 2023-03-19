@@ -72,3 +72,15 @@ String generateLibrary(
   return [DartFormatter().format(library.accept(emitter).toString())]
       .join('\n');
 }
+
+
+const String _header = '''
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+// **************************************************************************
+// AutoRouteGenerator
+// **************************************************************************
+//
+// ignore_for_file: type=lint
+// coverage:ignore-file
+''';
