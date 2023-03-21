@@ -38,6 +38,24 @@ class AutoRoute {
   })  : _path = path,
         _children = children != null ? RouteCollection.from(children) : null;
 
+  // a simplified copyWith to update routes without paths
+  const AutoRoute._changePath({
+    required this.name,
+    required String path,
+    required this.usesPathAsKey,
+    required this.guards,
+    required this.fullMatch,
+    required this.redirectTo,
+    required this.type,
+    required this.meta,
+    required this.maintainState,
+    required this.fullscreenDialog,
+    required this.title,
+    required this.keepHistory,
+    required RouteCollection? children,
+  })  : _path = path,
+        _children = children;
+
   factory AutoRoute({
     required PageInfo page,
     String? path,
@@ -81,33 +99,21 @@ class AutoRoute {
     return 'RouteConfig{name: $name}';
   }
 
-  AutoRoute copyWith({
-    String? name,
-    String? path,
-    bool? fullMatch,
-    String? redirectTo,
-    List<AutoRouteGuard>? guards,
-    bool? usesPathAsKey,
-    Map<String, dynamic>? meta,
-    RouteType? type,
-    bool? fullscreenDialog,
-    bool? maintainState,
-    TitleBuilder? title,
-    bool? keepHistory,
-  }) {
-    return AutoRoute._(
-      name: name ?? this.name,
-      path: path ?? _path,
-      fullMatch: fullMatch ?? this.fullMatch,
-      redirectTo: redirectTo ?? this.redirectTo,
-      guards: guards ?? this.guards,
-      usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
-      meta: meta ?? this.meta,
-      type: type ?? this.type,
-      fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
-      maintainState: maintainState ?? this.maintainState,
-      title: title ?? this.title,
-      keepHistory: keepHistory ?? this.keepHistory,
+  AutoRoute changePath(String path) {
+    return AutoRoute._changePath(
+      name: name,
+      path: path,
+      fullMatch: fullMatch,
+      redirectTo: redirectTo,
+      guards: guards,
+      usesPathAsKey: usesPathAsKey,
+      meta: meta,
+      type: type,
+      fullscreenDialog: fullscreenDialog,
+      maintainState: maintainState,
+      title: title,
+      keepHistory: keepHistory,
+      children: children,
     );
   }
 }
@@ -249,8 +255,8 @@ class RouteCollection {
         );
         routesMap[r.name] = r;
       } else {
-        routesMap[r.name] = r.copyWith(
-          path: _generateRoutePath(r.name, root),
+        routesMap[r.name] = r.changePath(
+          _generateRoutePath(r.name, root),
         );
       }
     }
