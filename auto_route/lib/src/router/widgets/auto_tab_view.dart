@@ -16,15 +16,18 @@ class AutoTabView extends StatefulWidget {
   const AutoTabView({
     Key? key,
     required this.controller,
-    this.physics,
+    required this.animatePageTransition,
+    required this.dragStartBehavior,
     required this.router,
+    this.physics,
     this.scrollDirection = Axis.horizontal,
-    this.dragStartBehavior = DragStartBehavior.start,
   }) : super(key: key);
-  final Axis scrollDirection;
-  final TabController controller;
 
+  final bool animatePageTransition;
+  final TabController controller;
   final TabsRouter router;
+  final Axis scrollDirection;
+  final DragStartBehavior dragStartBehavior;
 
   /// How the page view should respond to user input.
   ///
@@ -38,7 +41,6 @@ class AutoTabView extends StatefulWidget {
   final ScrollPhysics? physics;
 
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
-  final DragStartBehavior dragStartBehavior;
 
   @override
   State<AutoTabView> createState() => AutoTabViewState();
@@ -108,15 +110,15 @@ class AutoTabViewState extends State<AutoTabView> {
   }
 
   Future<void> _warpToCurrentIndex() async {
-    if (!mounted) return Future<void>.value();
+    final Duration duration = _controller.animationDuration;
+    final bool animatePageTransition = widget.animatePageTransition;
 
+    if (!mounted) return Future<void>.value();
     if (_pageController.page == _currentIndex!.toDouble()) {
       return Future<void>.value();
     }
 
-    final Duration duration = _controller.animationDuration;
-
-    if (duration == Duration.zero) {
+    if (!animatePageTransition || duration == Duration.zero) {
       _pageController.jumpToPage(_currentIndex!);
       return Future<void>.value();
     }

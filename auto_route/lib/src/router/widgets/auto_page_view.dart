@@ -8,14 +8,18 @@ class AutoPageView extends StatefulWidget {
     Key? key,
     required this.controller,
     this.physics,
+    required this.animatePageTransition,
     required this.router,
-    this.dragStartBehavior = DragStartBehavior.start,
+    this.duration = const Duration(milliseconds: 300),
     this.scrollDirection = Axis.horizontal,
+    this.dragStartBehavior = DragStartBehavior.start,
   }) : super(key: key);
 
   final PageController controller;
-  final Axis scrollDirection;
+  final bool animatePageTransition;
   final TabsRouter router;
+  final Duration duration;
+  final Axis scrollDirection;
 
   /// How the page view should respond to user input.
   ///
@@ -30,7 +34,6 @@ class AutoPageView extends StatefulWidget {
 
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
-
   @override
   State<AutoPageView> createState() => AutoPageViewState();
 }
@@ -81,19 +84,21 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   Future<void> _warpToCurrentIndex() async {
+    final Duration duration = widget.duration;
+    final bool animatePageTransition = widget.animatePageTransition;
+
     if (!mounted) return Future<void>.value();
 
-    const Duration duration = Duration(milliseconds: 300);
-
-    if (duration == Duration.zero) {
+    if (!animatePageTransition || duration == Duration.zero) {
       _controller.jumpToPage(_router.activeIndex);
       return Future<void>.value();
     }
+
     final int previousIndex = _router.previousIndex ?? 0;
     if ((_router.activeIndex - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
       await _controller.animateToPage(_router.activeIndex,
-          duration: duration, curve: Curves.ease);
+          duration: widget.duration, curve: Curves.ease);
       _warpUnderwayCount -= 1;
       return Future<void>.value();
     }
@@ -112,7 +117,7 @@ class AutoPageViewState extends State<AutoPageView> {
     _controller.jumpToPage(initialPage);
 
     await _controller.animateToPage(_router.activeIndex,
-        duration: duration, curve: Curves.ease);
+        duration: widget.duration, curve: Curves.ease);
     if (!mounted) return Future<void>.value();
     setState(() {
       _warpUnderwayCount -= 1;
