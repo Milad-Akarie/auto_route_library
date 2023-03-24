@@ -69,6 +69,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     required List<PageRouteInfo> routes,
     AutoTabsTabBarBuilder? builder,
     int homeIndex,
+    bool animatePageTransition,
     Duration? duration,
     Axis scrollDirection,
     Curve curve,
@@ -498,6 +499,8 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
           return builder(
             context,
             AutoPageView(
+              animatePageTransition: typedWidget.animatePageTransition,
+              duration: typedWidget.duration,
               scrollDirection: typedWidget.scrollDirection,
               physics: typedWidget.physics,
               dragStartBehavior: typedWidget.dragStartBehavior,
@@ -525,6 +528,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
 
 class _AutoTabsRouterTabBar extends AutoTabsRouter {
   final AutoTabsTabBarBuilder? builder;
+  final bool animatePageTransition;
   final Duration? duration;
   final Curve curve;
   final ScrollPhysics? physics;
@@ -537,6 +541,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     this.scrollDirection = Axis.horizontal,
     this.builder,
     int homeIndex = -1,
+    this.animatePageTransition = true,
     this.duration,
     this.curve = Curves.ease,
     bool inheritNavigatorObservers = true,
@@ -586,6 +591,7 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
 
   void _updateTabController() {
     _tabController = TabController(
+      animationDuration: typedWidget.duration,
       initialIndex: _controller!.activeIndex,
       length: _controller!.pageCount,
       vsync: this,
@@ -624,6 +630,7 @@ class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
           return builder(
             context,
             AutoTabView(
+              animatePageTransition: typedWidget.animatePageTransition,
               scrollDirection: typedWidget.scrollDirection,
               physics: typedWidget.physics,
               dragStartBehavior: typedWidget.dragStartBehavior,

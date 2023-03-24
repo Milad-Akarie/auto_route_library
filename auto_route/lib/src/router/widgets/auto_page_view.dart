@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 class AutoPageView extends StatefulWidget {
   const AutoPageView({
     Key? key,
+    required this.animatePageTransition,
+    this.duration = const Duration(milliseconds: 300),
     required this.controller,
     this.physics,
     required this.router,
@@ -13,6 +15,8 @@ class AutoPageView extends StatefulWidget {
     this.scrollDirection = Axis.horizontal,
   }) : super(key: key);
 
+  final bool animatePageTransition;
+  final Duration duration;
   final PageController controller;
   final Axis scrollDirection;
   final TabsRouter router;
@@ -83,17 +87,18 @@ class AutoPageViewState extends State<AutoPageView> {
   Future<void> _warpToCurrentIndex() async {
     if (!mounted) return Future<void>.value();
 
-    const Duration duration = Duration(milliseconds: 300);
+    final Duration duration = widget.duration;
+    final bool animatePageTransition = widget.animatePageTransition;
 
-    if (duration == Duration.zero) {
-      _controller.jumpToPage(_router.activeIndex);
-      return Future<void>.value();
-    }
     final int previousIndex = _router.previousIndex ?? 0;
     if ((_router.activeIndex - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
-      await _controller.animateToPage(_router.activeIndex,
-          duration: duration, curve: Curves.ease);
+      if (animatePageTransition) {
+        await _controller.animateToPage(_router.activeIndex,
+            duration: duration, curve: Curves.ease);
+      } else {
+        _controller.jumpToPage(_router.activeIndex);
+      }
       _warpUnderwayCount -= 1;
       return Future<void>.value();
     }
@@ -111,8 +116,12 @@ class AutoPageViewState extends State<AutoPageView> {
     });
     _controller.jumpToPage(initialPage);
 
-    await _controller.animateToPage(_router.activeIndex,
-        duration: duration, curve: Curves.ease);
+    if (animatePageTransition) {
+      await _controller.animateToPage(_router.activeIndex,
+          duration: duration, curve: Curves.ease);
+    } else {
+      _controller.jumpToPage(_router.activeIndex);
+    }
     if (!mounted) return Future<void>.value();
     setState(() {
       _warpUnderwayCount -= 1;
