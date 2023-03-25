@@ -9,14 +9,17 @@ Builder autoRouterBuilder(BuilderOptions options) {
     AutoRouterGenerator(),
     generatedExtension: '.gr.dart',
     allowSyntaxErrors: true,
+    options: options,
   );
 }
 
 Builder autoRouteBuilder(BuilderOptions options) {
+  print(options.config);
   return LibraryBuilder(
     AutoRouteGenerator(),
     generatedExtension: '.route.json',
     formatOutput: (generated) => generated.replaceAll(RegExp(r'//.*|\s'), ''),
     allowSyntaxErrors: true,
+    options: options,
   );
 }

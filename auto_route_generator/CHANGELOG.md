@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.1]
+- update CodeBuilder to 4.4.0
 ## [6.0.0]
 - Sync with auto_route version
 ## [6.0.0-rc-1] 

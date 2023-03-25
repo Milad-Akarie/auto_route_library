@@ -33,18 +33,25 @@ class WebAppRouter extends $WebAppRouter {
       //   )
       // ],
     ),
-    AutoRoute(path: '/user/:userID', page: UserRoute.page, children: [
-      AutoRoute(path: '', page: UserProfileRoute.page),
-      AutoRoute(
-        path: 'posts',
-        page: UserPostsRoute.page,
-        children: [
-          RedirectRoute(path: '', redirectTo: 'all'),
-          AutoRoute(path: 'all', page: UserAllPostsRoute.page),
-          AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
-        ],
+    AutoRoute(
+      path: '/user/:userID',
+      page: UserRoute.page,
+      type: RouteType.custom(
+        transitionsBuilder: TransitionsBuilders.slideTop,
       ),
-    ]),
+      children: [
+        AutoRoute(path: '', page: UserProfileRoute.page),
+        AutoRoute(
+          path: 'posts',
+          page: UserPostsRoute.page,
+          children: [
+            RedirectRoute(path: '', redirectTo: 'all'),
+            AutoRoute(path: 'all', page: UserAllPostsRoute.page),
+            AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
+          ],
+        ),
+      ],
+    ),
     AutoRoute(path: '*', page: NotFoundRoute.page),
   ];
 }
@@ -64,7 +71,6 @@ class MainWebPage extends StatefulWidget {
 }
 
 class _MainWebPageState extends State<MainWebPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -231,6 +237,7 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.red,
       appBar: AppBar(
         title: Builder(
           builder: (context) {
@@ -239,7 +246,7 @@ class _UserPageState extends State<UserPage> {
         ),
         // leading: AutoLeadingButton(),
       ),
-      body: AutoRouter(),
+      // body: AutoRouter(),
     );
   }
 }
@@ -285,8 +292,7 @@ class UserAllPostsPage extends StatelessWidget {
             ),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate ??
-                  () => context.back(),
+              onPressed: navigate ?? () => context.back(),
               child: Text('back'),
             ),
           ],
