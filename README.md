@@ -1080,7 +1080,7 @@ MaterialApp.router(
 ## Migrating to v6
 In version 6.0 auto_route aims for less generated code for more flexibility and less generation time.
 
-**Note: You can use AutoRoute-helper plugin for Android studio to help you migrate to v6.0**
+**Note: You can use [AutoRoute-helper](https://plugins.jetbrains.com/plugin/21071-autoroute-helper) plugin for Android studio to help you migrate to v6.0**
 
 <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/migrate_to_v6_demo.gif" alt="add route from intent action" width= "px"></a>  
 1- Instead of using `MaterialAutoRouter`,`CupertinoAutoRouter` ...etc we now only have one annotation for our router which is `@AutoRouterConfig()` and instead of passing our routes list to the annotation we now pass it to the overridable getter `routes` inside of the generated router class and for the default route type you can override `defaultRouteType`
