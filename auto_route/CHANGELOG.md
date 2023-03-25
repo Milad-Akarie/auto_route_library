@@ -1,4 +1,8 @@
 # ChangeLog
+## [6.0.3]
+- include merged pr's 
+- ## [6.0.2]
+- Make AutoRoute.path call save
 ## [6.0.1]
 - Fix bug when with nested parent routes without and generated-path #1411
 ## [6.0.0+1]

@@ -86,7 +86,7 @@ class AutoRoute {
     );
   }
 
-  String get path => _path!;
+  String get path => _path ?? '';
 
   bool get hasSubTree => _children != null;
 
