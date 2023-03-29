@@ -4,6 +4,8 @@ class RouterConfig {
   final bool deferredLoading;
   final bool usesPartBuilder;
   final String path;
+  final int? cacheHash;
+  final List<String> generateForDir;
 
   const RouterConfig({
     required this.routerClassName,
@@ -11,6 +13,8 @@ class RouterConfig {
     this.deferredLoading = false,
     this.usesPartBuilder = false,
     required this.path,
+    required this.cacheHash,
+    required this.generateForDir,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +24,8 @@ class RouterConfig {
       'deferredLoading': this.deferredLoading,
       'usesPartBuilder': this.usesPartBuilder,
       'path': this.path,
+      'cacheHash': this.cacheHash,
+      'generateForDir': this.generateForDir,
     };
   }
 
@@ -30,6 +36,8 @@ class RouterConfig {
       deferredLoading: map['deferredLoading'] as bool,
       usesPartBuilder: map['usesPartBuilder'] as bool,
       path: map['path'] as String,
+      cacheHash: map['cacheHash'] as int?,
+      generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
     );
   }
 }

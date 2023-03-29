@@ -4,7 +4,7 @@ import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/material.dart';
 
-@AutoRouterConfig(generateForDir: ['lib/web_demo'])
+@AutoRouterConfig(generateForDir: ['lib/web_demo'],deferredLoading: false)
 class WebAppRouter extends $WebAppRouter {
   AuthService authService;
 

@@ -4,7 +4,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
 
-@AutoRouterConfig()
+@AutoRouterConfig(generateForDir: ['lib/mobile'])
 class RootRouter extends $RootRouter {
   @override
   RouteType get defaultRouteType => RouteType.custom(

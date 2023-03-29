@@ -4,6 +4,9 @@
 // AutoRouterGenerator
 // **************************************************************************
 
+// ignore_for_file: type=lint
+// coverage:ignore-file
+
 part of 'main_router.dart';
 
 abstract class _$MainRouter extends RootStackRouter {
