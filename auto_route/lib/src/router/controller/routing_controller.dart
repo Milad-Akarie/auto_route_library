@@ -183,6 +183,10 @@ abstract class RoutingController with ChangeNotifier {
     return routeData;
   }
 
+  RouteMatch? match(PageRouteInfo route) {
+    return matcher.matchByRoute(route);
+  }
+
   RouteMatch? _matchOrReportFailure(
     PageRouteInfo route, [
     OnNavigationFailure? onFailure,

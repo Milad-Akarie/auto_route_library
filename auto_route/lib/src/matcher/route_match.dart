@@ -62,6 +62,8 @@ class RouteMatch<T> {
           ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
+  String get fullPath => allSegments().join('/');
+
   List<RouteMatch> get flattened {
     return [this, if (hasChildren) ...children!.last.flattened];
   }

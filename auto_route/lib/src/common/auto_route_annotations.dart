@@ -48,11 +48,15 @@ const routePage = RoutePage();
 
 class PathParam {
   final String? name;
+  // ignore: unused_field
+  final bool _inherited;
 
-  const PathParam([this.name]);
+  const PathParam([this.name]) : _inherited = false;
+  const PathParam.inherit([this.name]) : _inherited = true;
 }
 
 const pathParam = PathParam();
+const inheritPathParam = PathParam();
 
 class QueryParam {
   final String? name;

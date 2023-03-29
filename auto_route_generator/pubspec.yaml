@@ -1,6 +1,6 @@
 name: auto_route_generator
 description: AutoRoute is a declarative routing solution, where everything needed for navigation is automatically generated for you.
-version: 6.0.1
+version: 6.0.2
 homepage: https://github.com/Milad-Akarie/auto_route_library
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -16,13 +16,11 @@ dependencies:
   xml: ^6.0.1
   args: ^2.3.1
   glob: ^2.0.1
-  auto_route: ^6.0.0
+  auto_route: ^6.0.4
+#    path: ../auto_route
 
 dev_dependencies:
   flutter_lints: ^2.0.1
   source_gen_test:
   test:
 
-#dependency_overrides:
-#  auto_route:
-#    path: ../auto_route

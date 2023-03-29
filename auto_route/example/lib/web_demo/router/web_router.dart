@@ -1,10 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/data/db.dart';
 import 'package:example/web_demo/router/web_auth_guard.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/material.dart';
 
-@AutoRouterConfig(generateForDir: ['lib/web_demo'])
+@AutoRouterConfig(generateForDir: ['lib/web_demo'],deferredLoading: false)
 class WebAppRouter extends $WebAppRouter {
   AuthService authService;
 
@@ -161,7 +162,7 @@ class UserProfilePage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.pushRoute(const UserPostsRoute());
+                    context.pushRoute( UserPostsRoute());
                   },
               child: Text('Posts'),
             ),
@@ -182,6 +183,9 @@ class UserProfilePage extends StatelessWidget {
 
 @RoutePage()
 class UserPostsPage extends StatefulWidget {
+  final int id;
+  const UserPostsPage({@PathParam.inherit('userID') required this.id});
+
   @override
   _UserPostsPageState createState() => _UserPostsPageState();
 }
@@ -194,7 +198,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
         child: Column(
           children: [
             Text(
-              'User Posts',
+              'User Posts ${widget.id}',
               style: TextStyle(fontSize: 30),
             ),
             ElevatedButton(
@@ -246,7 +250,7 @@ class _UserPageState extends State<UserPage> {
         ),
         // leading: AutoLeadingButton(),
       ),
-      // body: AutoRouter(),
+      body: AutoRouter(),
     );
   }
 }

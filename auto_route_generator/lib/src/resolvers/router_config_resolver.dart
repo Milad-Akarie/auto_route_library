@@ -14,6 +14,7 @@ class RouterConfigResolver {
     AssetId input,
     ClassElement clazz, {
     bool usesPartBuilder = false,
+    int? cacheHash,
   }) {
     // /// ensure router config classes are prefixed with $
     // /// to use the stripped name for the generated class
@@ -26,6 +27,10 @@ class RouterConfigResolver {
     final deferredLoading =
         autoRouter.peek('deferredLoading')?.boolValue ?? false;
     var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
+    final generateForDir = autoRouter
+        .read('generateForDir')
+        .listValue
+        .map((e) => e.toStringValue()!);
 
     return RouterConfig(
       routerClassName: clazz.displayName,
@@ -33,6 +38,8 @@ class RouterConfigResolver {
       deferredLoading: deferredLoading,
       usesPartBuilder: usesPartBuilder,
       path: input.path,
+      cacheHash: cacheHash,
+      generateForDir: List.of(generateForDir),
     );
   }
 }

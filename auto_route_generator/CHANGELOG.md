@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.2]
+- Add option to used cached_builds for more optimized generation
 ## [6.0.1]
 - update CodeBuilder to 4.4.0
 ## [6.0.0]

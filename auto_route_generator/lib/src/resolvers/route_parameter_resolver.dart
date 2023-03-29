@@ -25,13 +25,15 @@ class RouteParameterResolver {
         _pathParamChecker.firstAnnotationOfExact(parameterElement);
 
     var nameOrAlias = paramName;
+    var isInheritedPathParam = false;
     if (pathParamAnnotation != null) {
+      isInheritedPathParam =
+          pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
       final paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
       }
     }
-
     var queryParamAnnotation =
         _queryParamChecker.firstAnnotationOfExact(parameterElement);
     if (queryParamAnnotation != null) {
@@ -62,6 +64,7 @@ class RouteParameterResolver {
       isOptional: parameterElement.isOptional,
       isNamed: parameterElement.isNamed,
       isPathParam: pathParamAnnotation != null,
+      isInheritedPathParam: isInheritedPathParam,
       isQueryParam: queryParamAnnotation != null,
       defaultValueCode: parameterElement.defaultValueCode,
     );

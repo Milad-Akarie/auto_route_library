@@ -37,6 +37,8 @@
   - [Custom Route Transitions](#custom-route-transitions)
   - [Custom Route Builder](#custom-route-builder)
 - [Others](#others)
+  - [Optimizing generation time](#optimizing-generation-time)
+    - [Enabling cached builds (Experimental)](#enabling-cached-builds)
   - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
   - [ActiveGuardObserver](#activeguardobserver)
   - [Remove shadow from nested routers](#remove-shadow-from-nested-routers)
@@ -863,10 +865,7 @@ Now writing `/books/1` in the browser will navigate you to `BookDetailsPage` and
 extract the `bookId` argument from path and inject it to your widget.
 
 #### Inherited Path Parameters
-
-if you annotate a constructor parameter with `@PathParm()` and the route corresponding with the
-screen has no path-param with the same name but it's parent does, then that path-param is inherited
-and the generated route will not hold this as a parameter arg. e.g
+To inherit a path-parameter from a parent route's path we need to use `@PathParam.inherit` annotation in the child route's constructor e.g let's say we have the following setup
 
   ```dart          
 AutoRoute(        
@@ -879,15 +878,14 @@ AutoRoute(
 ```         
 
 now `ProductReviewScreen` expects a path-param named `id` but, from the above snippet we know that
-the route corresponding with it `review` has no path parameters, in that case auto_route will check
-if any ancestor path can provide this path-param and passes it to the child route.
+the path corresponding with it `review` has no path parameters, but we can inherit 'id' form the parent '/product/:id' like follows:
 
 ```dart          
 @RoutePage()    
 class ProductReviewScreen extends StatelessWidget {        
    // the path-param 'id' will be inherited and it can not be passed      
    // as a route arg by user      
-  const ProductReviewScreen({super.key, @pathParam required String id});       
+  const ProductReviewScreen({super.key, @PathParam.inherit('id') required String id});       
 }      
 ```         
 
@@ -1231,6 +1229,83 @@ CustomRoute(page: CustomPage, customRouteBuilder:
 ```                
 
 ## Others
+### Optimizing generation time
+To pass builder configuration to auto_route_generator we need to add build.yaml file next to pubspec.yaml if not already added.
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator:
+      # configs for @RoutePage() generator ...
+      auto_route_generator:auto_router_generator:
+      # configs for @AutoRouterConfig() generator ...
+```  
+The first thing you want to do to reduce generation time is specifying the files build_runner should process and we do that by using [globs](https://pub.dev/packages/glob), Globs are kind of regex patterns with little differences that's used to match file names.
+**Note** for this to work on file level you need to follow a naming convention
+
+let's say we have the following files tree
+├── lib
+│   ├── none_widget_file.dart
+│   ├── none_widget_file2.dart
+│   └── ui
+│       ├── products_screen.dart
+│       ├── products_details_screen.dart
+
+By default the builder will process all of these files to check for a page with `@RoutePage()` annotation, we can help by letting it know what files we need processed, e.g only process the files inside the ui folder:
+**Note** (**) matches everything including '/';
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator:
+      generate_for:
+        - lib/ui/**.dart
+```  
+let's say you have widget files inside of the ui folder but we only need to process files ending with `_screen.dart`
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator:
+      generate_for:
+        - lib/ui/**_screen.dart
+```  
+now only `products_screen.dart`, `products_details_screen.dart` will be processed
+
+The same goes for `@AutoRouterConfig` builder
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator: # this for @RoutePage
+       generate_for:
+          - lib/ui/**_screen.dart
+      auto_route_generator:auto_router_generator: # this for @AutoRouterConfig
+        generate_for:
+          - lib/ui/router.dart 
+```  
+
+## Enabling cached builds 
+**This is still experimental**
+When cached builds are enabled auto_route will try to prevent redundant re-builds by analyzing whether the file changes has any effect on the extracted route info, e.g any changes inside of the build method should be ignored.
+
+**Note** Enable cached builds on both generators
+
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator: # this for @RoutePage
+       options:
+          enable_cached_builds: true
+       generate_for:
+          - lib/ui/**_screen.dart
+      auto_route_generator:auto_router_generator: # this for @AutoRouterConfig
+       options:
+          enable_cached_builds: true
+        generate_for:
+          - lib/ui/router.dart 
+```  
 
 ### AutoLeadingButton-BackButton
 
