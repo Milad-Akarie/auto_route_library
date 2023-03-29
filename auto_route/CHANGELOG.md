@@ -1,4 +1,7 @@
 # ChangeLog
+## [6.0.4]
+- Fix inherited path params are not working in v6
+- Add option to used cached_builds for more optimized generation
 ## [6.0.3]
 - include merged pr's 
 - ## [6.0.2]

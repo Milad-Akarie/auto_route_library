@@ -6,9 +6,9 @@ targets:
           enable_cached_builds: true
         generate_for:
           - lib/**_page.dart
-          - lib/**_router.dart
+          - lib/**router.dart
       auto_route_generator:auto_router_generator:
         options:
           enable_cached_builds: true
         generate_for:
-          - lib/**_router.dart
+          - lib/**router.dart

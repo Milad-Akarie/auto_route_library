@@ -7,10 +7,10 @@ import 'package:auto_route_generator/src/models/routes_list.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/resolvers/route_config_resolver.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
+import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:auto_route/annotations.dart';
-import 'package:collection/collection.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(RoutePage);
 final routesCacheFile = File('.dart_tool/build/cache/auto_routes_cache.json');
@@ -39,7 +39,6 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   @override
   bool get cacheEnabled => options?.config['enable_cached_builds'] == true;
 
-
   @override
   Future<RoutesList?> loadFromCache(BuildStep buildStep, int stepHash) async {
     Map<String, RoutesList> cachedRes = {};
@@ -63,7 +62,8 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
         if (child is ConstructorDeclaration || child is FieldDeclaration) {
           calculatedHash = calculatedHash ^ child.toSource().hashCode;
         }
-        final routePageMeta = clazz.metadata.firstWhereOrNull((e) => e.name.name == annotationName);
+        final routePageMeta = clazz.metadata
+            .firstOrNull((e) => e.name.name == annotationName);
         if (routePageMeta != null) {
           calculatedHash = calculatedHash ^ routePageMeta.toSource().hashCode;
         }
@@ -78,8 +78,10 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   }
 
   @override
-  Future<RoutesList?> onResolver(LibraryReader library, BuildStep buildStep, int stepHash) async {
-    final routeResolver = RouteConfigResolver(TypeResolver(await buildStep.resolver.libraries.toList()));
+  Future<RoutesList?> onResolver(
+      LibraryReader library, BuildStep buildStep, int stepHash) async {
+    final routeResolver = RouteConfigResolver(
+        TypeResolver(await buildStep.resolver.libraries.toList()));
     final routes = <RouteConfig>[];
     for (var annotatedElement in library.annotatedWith(_typeChecker)) {
       final route = routeResolver.resolve(

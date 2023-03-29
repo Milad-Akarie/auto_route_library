@@ -8,7 +8,9 @@ import 'library_builder.dart';
 List<Class> buildRouteInfoAndArgs(
     RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
-  final parameters = r.parameters.toList();
+  final parameters = r.parameters;
+  final nonInheritedParameters =
+      parameters.where((p) => !p.isInheritedPathParam).toList();
   final pageInfoRefer = TypeReference(
     (b) => b
       ..url = autoRouteImport
@@ -55,7 +57,8 @@ List<Class> buildRouteInfoAndArgs(
               b
                 ..constant = parameters.isEmpty
                 ..optionalParameters.addAll([
-                  ...buildArgParams(r.parameters, emitter, toThis: false),
+                  ...buildArgParams(nonInheritedParameters, emitter,
+                      toThis: false),
                   Parameter((b) => b
                     ..named = true
                     ..name = 'children'
@@ -64,11 +67,11 @@ List<Class> buildRouteInfoAndArgs(
                 ..initializers.add(refer('super').call([
                   refer(r.getName(router.replaceInRouteName)).property('name')
                 ], {
-                  if (parameters.isNotEmpty)
+                  if (nonInheritedParameters.isNotEmpty)
                     'args': argsClassRefer.call(
                       [],
                       Map.fromEntries(
-                        parameters.map(
+                        nonInheritedParameters.map(
                           (p) => MapEntry(
                             p.name,
                             refer(p.name),
@@ -76,10 +79,10 @@ List<Class> buildRouteInfoAndArgs(
                         ),
                       ),
                     ),
-                  if (parameters.any((p) => p.isPathParam))
+                  if (nonInheritedParameters.any((p) => p.isPathParam))
                     'rawPathParams': literalMap(
                       Map.fromEntries(
-                        parameters.where((p) => p.isPathParam).map(
+                        nonInheritedParameters.where((p) => p.isPathParam).map(
                               (p) => MapEntry(
                                 p.paramName,
                                 refer(p.name),

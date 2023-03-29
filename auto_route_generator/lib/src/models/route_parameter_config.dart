@@ -26,6 +26,7 @@ class ParamConfig {
   final bool isRequired;
   final bool isNamed;
   final bool isPathParam;
+  final bool isInheritedPathParam;
   final bool isQueryParam;
   final String? defaultValueCode;
 
@@ -39,6 +40,7 @@ class ParamConfig {
     required this.isRequired,
     required this.isPathParam,
     required this.isQueryParam,
+    required this.isInheritedPathParam,
     this.alias,
     this.defaultValueCode,
   });
@@ -81,6 +83,7 @@ class ParamConfig {
       'isRequired': this.isRequired,
       'isNamed': this.isNamed,
       'isPathParam': this.isPathParam,
+      'isInheritedPathParam': this.isInheritedPathParam,
       'isQueryParam': this.isQueryParam,
       'defaultValueCode': this.defaultValueCode,
     };
@@ -101,6 +104,7 @@ class ParamConfig {
       isRequired: map['isRequired'] as bool,
       isNamed: map['isNamed'] as bool,
       isPathParam: map['isPathParam'] as bool,
+      isInheritedPathParam: map['isInheritedPathParam'] as bool,
       isQueryParam: map['isQueryParam'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
     );
@@ -129,6 +133,7 @@ class FunctionParamConfig extends ParamConfig {
           alias: alias,
           isPathParam: false,
           isQueryParam: false,
+          isInheritedPathParam: false,
           isNamed: isNamed,
           defaultValueCode: defaultValueCode,
           isPositional: isPositional,

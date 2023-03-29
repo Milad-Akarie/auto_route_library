@@ -4,9 +4,9 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:build/build.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:source_gen/src/utils.dart';
 
 final _formatter = DartFormatter(fixes: [StyleFix.singleCascadeStatements]);
+
 abstract class CacheAwareBuilder<T> extends Builder {
   /// The [buildExtensions] configuration for `.dart`
   final String _generatedExtension;
@@ -142,4 +142,16 @@ source formatter.''',
     }
     return false;
   }
+}
+
+Map<String, List<String>> validatedBuildExtensionsFrom(
+  Map<String, dynamic>? optionsMap,
+  Map<String, List<String>> defaultExtensions,
+) {
+  final extensionsOption = optionsMap?.remove('build_extensions');
+  if (extensionsOption == null) return defaultExtensions;
+
+  throw ArgumentError(
+    'Configured build_extensions should be a map from inputs to outputs.',
+  );
 }

@@ -21,7 +21,8 @@ class RoutesList {
 
   factory RoutesList.fromJson(Map<String, dynamic> map) {
     return RoutesList(
-      routes: List.unmodifiable((map['routes'] as List<dynamic>).map((e) => RouteConfig.fromJson(e))),
+      routes: List.unmodifiable(
+          (map['routes'] as List<dynamic>).map((e) => RouteConfig.fromJson(e))),
       inputPath: map['inputPath'] as String,
       inputHash: map['inputHash'] as int?,
     );

@@ -24,9 +24,13 @@ class RouterConfigResolver {
     //   element: clazz,
     // );
 
-    final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
+    final deferredLoading =
+        autoRouter.peek('deferredLoading')?.boolValue ?? false;
     var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
-    final generateForDir = autoRouter.read('generateForDir').listValue.map((e) => e.toStringValue()!);
+    final generateForDir = autoRouter
+        .read('generateForDir')
+        .listValue
+        .map((e) => e.toStringValue()!);
 
     return RouterConfig(
       routerClassName: clazz.displayName,
