@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:path/path.dart' as p;
 import '../../auto_route.dart';
 
 @immutable
@@ -62,7 +62,7 @@ class RouteMatch<T> {
           ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
-  String get fullPath => allSegments().join('/');
+  String get fullPath => p.joinAll(allSegments());
 
   List<RouteMatch> get flattened {
     return [this, if (hasChildren) ...children!.last.flattened];
