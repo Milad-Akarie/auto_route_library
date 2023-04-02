@@ -62,8 +62,8 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
         if (child is ConstructorDeclaration || child is FieldDeclaration) {
           calculatedHash = calculatedHash ^ child.toSource().hashCode;
         }
-        final routePageMeta = clazz.metadata
-            .firstOrNull((e) => e.name.name == annotationName);
+        final routePageMeta =
+            clazz.metadata.firstOrNull((e) => e.name.name == annotationName);
         if (routePageMeta != null) {
           calculatedHash = calculatedHash ^ routePageMeta.toSource().hashCode;
         }
@@ -78,7 +78,7 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   }
 
   @override
-  Future<RoutesList?> onResolver(
+  Future<RoutesList?> onResolve(
       LibraryReader library, BuildStep buildStep, int stepHash) async {
     final routeResolver = RouteConfigResolver(
         TypeResolver(await buildStep.resolver.libraries.toList()));

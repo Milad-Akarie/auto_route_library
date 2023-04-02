@@ -104,6 +104,10 @@ class PageRouteInfo<T> {
     return context.router.push<E>(this);
   }
 
+  RouteMatch? match(BuildContext context) {
+    return context.router.match(this);
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

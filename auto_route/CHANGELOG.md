@@ -1,4 +1,7 @@
 # ChangeLog
+## [6.0.5]
+- Fix RouteMatch.fullPath is not joined properly
+- Add helper method to get route match PageRouteInfo().match(context)
 ## [6.0.4]
 - Fix inherited path params are not working in v6
 - Add option to used cached_builds for more optimized generation

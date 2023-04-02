@@ -15,7 +15,8 @@ List<Class> buildRouteInfoAndArgs(
     (b) => b
       ..url = autoRouteImport
       ..symbol = 'PageInfo'
-      ..types.add((parameters.isNotEmpty) ? argsClassRefer : refer('void')),
+      ..types.add(
+          (nonInheritedParameters.isNotEmpty) ? argsClassRefer : refer('void')),
   );
   return [
     Class(
@@ -29,7 +30,9 @@ List<Class> buildRouteInfoAndArgs(
             ..symbol = 'PageRouteInfo'
             ..url = autoRouteImport
             ..types.add(
-              (parameters.isNotEmpty) ? argsClassRefer : refer('void'),
+              (nonInheritedParameters.isNotEmpty)
+                  ? argsClassRefer
+                  : refer('void'),
             );
         })
         ..fields.addAll([
@@ -107,12 +110,12 @@ List<Class> buildRouteInfoAndArgs(
           ),
         ),
     ),
-    if (parameters.isNotEmpty)
+    if (nonInheritedParameters.isNotEmpty)
       Class(
         (b) => b
           ..name = argsClassRefer.symbol
           ..fields.addAll([
-            ...parameters.map((param) => Field((b) => b
+            ...nonInheritedParameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
               ..name = param.name
               ..type = param is FunctionParamConfig
@@ -123,7 +126,7 @@ List<Class> buildRouteInfoAndArgs(
             Constructor((b) => b
               ..constant = true
               ..optionalParameters.addAll(
-                buildArgParams(r.parameters, emitter),
+                buildArgParams(nonInheritedParameters, emitter),
               )),
           )
           ..methods.add(
@@ -134,7 +137,7 @@ List<Class> buildRouteInfoAndArgs(
                 ..annotations.add(refer('override'))
                 ..returns = stringRefer
                 ..body = literalString(
-                  '${r.getName(router.replaceInRouteName)}Args{${parameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
+                  '${r.getName(router.replaceInRouteName)}Args{${nonInheritedParameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
                 ).returned.statement,
             ),
           ),

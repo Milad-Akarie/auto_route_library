@@ -80,7 +80,10 @@ Spec buildMethod(RouteConfig r, RouterConfig router) {
   if ((r.deferredLoading ?? router.deferredLoading) && r.pageType != null) {
     constructedPage = getDeferredBuilder(r, constructedPage);
   }
+  final inheritedParameters = r.parameters.where((p) => p.isInheritedPathParam);
 
+  final nonInheritedParameters =
+      r.parameters.where((p) => !p.isInheritedPathParam);
   return Method(
     (b) => b
       ..requiredParameters.add(
@@ -88,7 +91,8 @@ Spec buildMethod(RouteConfig r, RouterConfig router) {
       )
       ..body = Block((b) => b.statements.addAll([
             if ((!r.hasUnparsableRequiredArgs) &&
-                r.parameters.any((p) => p.isPathParam))
+                    r.parameters.any((p) => p.isPathParam) ||
+                inheritedParameters.isNotEmpty)
               declareFinal('pathParams')
                   .assign(refer('routeData').property('inheritedPathParams'))
                   .statement,
@@ -97,7 +101,7 @@ Spec buildMethod(RouteConfig r, RouterConfig router) {
               declareFinal('queryParams')
                   .assign(refer('routeData').property('queryParams'))
                   .statement,
-            if (r.parameters.isNotEmpty)
+            if (nonInheritedParameters.isNotEmpty)
               declareFinal('args')
                   .assign(
                     refer('routeData').property('argsAs').call([], {
@@ -112,7 +116,7 @@ Spec buildMethod(RouteConfig r, RouterConfig router) {
                                     .newInstance(
                                     [],
                                     Map.fromEntries(
-                                      r.parameters
+                                      nonInheritedParameters
                                           .where((p) =>
                                               (p.isPathParam || p.isQueryParam))
                                           .map(
@@ -167,7 +171,9 @@ Expression getPageInstance(RouteConfig r) {
     Map.fromEntries(r.namedParams.map(
       (p) => MapEntry(
         p.name,
-        refer('args').property(p.name),
+        p.isInheritedPathParam
+            ? getUrlParamAssignment(p)
+            : refer('args').property(p.name),
       ),
     )),
   );
