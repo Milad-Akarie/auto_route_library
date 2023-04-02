@@ -76,7 +76,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
       buildStep.inputId,
       allowSyntaxErrors: allowSyntaxErrors,
     );
-    var generated = await onResolver(LibraryReader(lib), buildStep, cacheHash);
+    var generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return null;
     return _writeContent(buildStep, generated);
   }
@@ -87,7 +87,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   Future<String> onGenerateContent(BuildStep buildStep, T item);
 
-  Future<T?> onResolver(LibraryReader library, BuildStep buildStep, int stepHash);
+  Future<T?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash);
 
   String validateAndFormatDartCode(BuildStep buildStep, String generated) {
     try {

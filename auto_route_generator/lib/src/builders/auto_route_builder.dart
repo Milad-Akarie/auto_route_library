@@ -78,7 +78,7 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   }
 
   @override
-  Future<RoutesList?> onResolver(
+  Future<RoutesList?> onResolve(
       LibraryReader library, BuildStep buildStep, int stepHash) async {
     final routeResolver = RouteConfigResolver(
         TypeResolver(await buildStep.resolver.libraries.toList()));

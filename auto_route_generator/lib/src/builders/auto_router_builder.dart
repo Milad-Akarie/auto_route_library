@@ -101,7 +101,7 @@ class AutoRouterBuilder extends CacheAwareBuilder<RouterConfig> {
   }
 
   @override
-  Future<RouterConfig?> onResolver(
+  Future<RouterConfig?> onResolve(
       LibraryReader library, BuildStep buildStep, int stepHash) async {
     final annotatedElements = library.annotatedWith(_typeChecker);
     if (annotatedElements.isEmpty) return null;
