@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.3]
+- Fix Inherited params not working? #1443
 ## [6.0.2]
 - Add option to used cached_builds for more optimized generation
 ## [6.0.1]

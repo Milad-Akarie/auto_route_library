@@ -29,7 +29,8 @@ abstract class CacheAwareBuilder<T> extends Builder {
     required this.annotationName,
     this.options,
   })  : _generatedExtension = generatedExtension,
-        buildExtensions = validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
+        buildExtensions = validatedBuildExtensionsFrom(
+            options != null ? Map.of(options.config) : null, {
           '.dart': [
             generatedExtension,
             ...additionalOutputExtensions,
@@ -59,7 +60,8 @@ abstract class CacheAwareBuilder<T> extends Builder {
       buildStep.inputId,
       allowSyntaxErrors: allowSyntaxErrors,
     );
-    if (!(await hasAnyTopLevelAnnotations(buildStep.inputId, buildStep, unit))) {
+    if (!(await hasAnyTopLevelAnnotations(
+        buildStep.inputId, buildStep, unit))) {
       return;
     }
 
@@ -87,7 +89,8 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   Future<String> onGenerateContent(BuildStep buildStep, T item);
 
-  Future<T?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash);
+  Future<T?> onResolve(
+      LibraryReader library, BuildStep buildStep, int stepHash);
 
   String validateAndFormatDartCode(BuildStep buildStep, String generated) {
     try {
@@ -118,14 +121,17 @@ source formatter.''',
   }
 
   @override
-  String toString() => 'Generating $_generatedExtension: ${this.runtimeType.toString()}';
+  String toString() =>
+      'Generating $_generatedExtension: ${this.runtimeType.toString()}';
 
-  Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep, [CompilationUnit? unit]) async {
+  Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep,
+      [CompilationUnit? unit]) async {
     if (!await buildStep.canRead(input)) return false;
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];
     for (var directive in parsed.directives) {
-      if (directive.metadata.any((e) => e.name.name == annotationName)) return true;
+      if (directive.metadata.any((e) => e.name.name == annotationName))
+        return true;
       if (directive is PartDirective) {
         partIds.add(
           AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input),
@@ -133,7 +139,8 @@ source formatter.''',
       }
     }
     for (var declaration in parsed.declarations) {
-      if (declaration.metadata.any((e) => e.name.name == annotationName)) return true;
+      if (declaration.metadata.any((e) => e.name.name == annotationName))
+        return true;
     }
     for (var partId in partIds) {
       if (await hasAnyTopLevelAnnotations(partId, buildStep)) {
