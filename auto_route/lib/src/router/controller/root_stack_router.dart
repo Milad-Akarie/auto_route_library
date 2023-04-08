@@ -4,7 +4,7 @@ typedef PageBuilder = AutoRoutePage Function(RouteData data);
 typedef PageFactory = Page<dynamic> Function(RouteData data);
 
 abstract class RootStackRouter extends StackRouter {
-  RootStackRouter([GlobalKey<NavigatorState>? navigatorKey])
+  RootStackRouter({GlobalKey<NavigatorState>? navigatorKey})
       : super(
           key: const ValueKey('Root'),
           navigatorKey: navigatorKey,
@@ -44,13 +44,11 @@ abstract class RootStackRouter extends StackRouter {
   RouteData get routeData => RouteData(
         router: this,
         type: const RouteType.material(),
-        route: const RouteMatch(
-          name: 'Root',
-          segments: [''],
-          path: '',
+        route:  RouteMatch(
+          config: DummyRootRoute('Root',path: ''),
+          segments: const [''],
           stringMatch: '',
-          isBranch: true,
-          key: ValueKey('Root'),
+          key: const ValueKey('Root'),
         ),
         pendingChildren: [],
       );

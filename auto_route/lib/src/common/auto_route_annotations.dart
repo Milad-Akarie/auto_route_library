@@ -1,5 +1,7 @@
 import 'package:meta/meta.dart' show optionalTypeArgs;
+import 'package:meta/meta_meta.dart';
 
+@Target({TargetKind.classType})
 class AutoRouterConfig {
   /// Auto generated route names can be a bit long with
   /// the [Route] suffix
@@ -34,6 +36,7 @@ class AutoRouterConfig {
 /// from this page route MaterialPageRoute<T>()
 /// defaults to dynamic
 @optionalTypeArgs
+@Target({TargetKind.classType})
 class RoutePage<T> {
   final String? name;
   final bool? deferredLoading;
@@ -46,6 +49,7 @@ class RoutePage<T> {
 /// default routePage
 const routePage = RoutePage();
 
+@Target({TargetKind.parameter})
 class PathParam {
   final String? name;
   // ignore: unused_field
@@ -58,6 +62,7 @@ class PathParam {
 const pathParam = PathParam();
 const inheritPathParam = PathParam();
 
+@Target({TargetKind.parameter})
 class QueryParam {
   final String? name;
 

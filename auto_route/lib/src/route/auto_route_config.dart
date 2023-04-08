@@ -2,8 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:meta/meta.dart';
 
 typedef TitleBuilder = String Function(BuildContext context, RouteData data);
+typedef RestorationIdBuilder = String Function(RouteMatch match);
 
 @immutable
 class AutoRoute {
@@ -19,6 +21,7 @@ class AutoRoute {
   final bool fullscreenDialog;
   final bool maintainState;
   final TitleBuilder? title;
+  final RestorationIdBuilder? restorationId;
   final bool keepHistory;
 
   AutoRoute._({
@@ -34,6 +37,7 @@ class AutoRoute {
     this.fullscreenDialog = false,
     this.title,
     this.keepHistory = true,
+    this.restorationId,
     List<AutoRoute>? children,
   })  : _path = path,
         _children = children != null ? RouteCollection.from(children) : null;
@@ -52,6 +56,7 @@ class AutoRoute {
     required this.fullscreenDialog,
     required this.title,
     required this.keepHistory,
+    required this.restorationId,
     required RouteCollection? children,
   })  : _path = path,
         _children = children;
@@ -68,6 +73,7 @@ class AutoRoute {
     bool fullscreenDialog = false,
     List<AutoRoute>? children,
     TitleBuilder? title,
+    RestorationIdBuilder? restorationId,
     bool keepHistory = true,
   }) {
     return AutoRoute._(
@@ -80,6 +86,7 @@ class AutoRoute {
       type: type,
       usesPathAsKey: usesPathAsKey,
       guards: guards,
+      restorationId: restorationId,
       children: children,
       title: title,
       keepHistory: keepHistory,
@@ -114,6 +121,7 @@ class AutoRoute {
       title: title,
       keepHistory: keepHistory,
       children: children,
+      restorationId: restorationId,
     );
   }
 }
@@ -144,6 +152,7 @@ class MaterialRoute extends AutoRoute {
     super.meta = const {},
     super.title,
     super.keepHistory,
+    super.restorationId,
   }) : super._(
           name: page.name,
           type: const RouteType.material(),
@@ -163,6 +172,7 @@ class CupertinoRoute extends AutoRoute {
     super.meta = const {},
     super.path,
     super.title,
+    super.restorationId,
     super.keepHistory,
   }) : super._(name: name.toString(), type: const RouteType.cupertino());
 }
@@ -180,6 +190,7 @@ class AdaptiveRoute extends AutoRoute {
     super.children,
     super.meta = const {},
     super.title,
+    super.restorationId,
     bool opaque = true,
     super.keepHistory,
   }) : super._(
@@ -209,6 +220,7 @@ class CustomRoute extends AutoRoute {
     bool opaque = true,
     bool barrierDismissible = true,
     String? barrierLabel,
+    super.restorationId,
     Color? barrierColor,
   }) : super._(
           name: page.name,
@@ -233,6 +245,19 @@ class TestRoute extends AutoRoute {
     super.children,
     super.redirectTo,
     super.fullMatch,
+    super.restorationId,
+  }) : super._(name: name, path: path);
+}
+
+@internal
+class DummyRootRoute extends AutoRoute {
+  DummyRootRoute(
+    String name, {
+    required String path,
+    super.children,
+    super.redirectTo,
+    super.fullMatch,
+    super.restorationId,
   }) : super._(name: name, path: path);
 }
 

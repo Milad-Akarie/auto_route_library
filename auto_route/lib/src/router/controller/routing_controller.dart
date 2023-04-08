@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
+import 'package:auto_route/src/route/auto_route_config.dart';
 import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
 import 'package:auto_route/src/router/controller/pageless_routes_observer.dart';
 import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
 
@@ -164,7 +166,6 @@ abstract class RoutingController with ChangeNotifier {
       parent: parent,
       pendingChildren: route.children ?? [],
       type: route.type ?? root.defaultRouteType,
-      title: route.title,
     );
 
     for (final ctr in _childControllers) {
@@ -1191,6 +1192,7 @@ abstract class StackRouter extends RoutingController {
     }
     return (page as AutoRoutePage<T>).popped;
   }
+
   late final AutoRouteGuard? _rootGuard = (root is AutoRouteGuard) ? (root as AutoRouteGuard) : null;
 
   Future<bool> _canNavigate(

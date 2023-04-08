@@ -20,22 +20,11 @@ Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
                 Parameter(
                   (b) => b
                     ..name = 'navigatorKey'
-                    ..type = TypeReference(
-                      (b) => b
-                        ..url = materialImport
-                        ..symbol = 'GlobalKey'
-                        ..isNullable = true
-                        ..types.add(
-                          refer('NavigatorState', materialImport),
-                        ),
-                    ),
+                    ..named = true
+                    ..toSuper = true
                 ),
               )
-              ..initializers.add(
-                refer('super').call([
-                  refer('navigatorKey'),
-                ]).code,
-              ),
+
           ),
         ]),
     );

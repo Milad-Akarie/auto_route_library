@@ -5,7 +5,7 @@ class RouteData {
   RouteData? _parent;
   final RoutingController router;
   final RouteType type;
-  final TitleBuilder? _titleBuilder;
+
   LocalKey get key => _match.key;
 
   RouteData({
@@ -14,14 +14,14 @@ class RouteData {
     RouteData? parent,
     required this.pendingChildren,
     required this.type,
-    TitleBuilder? title,
-  })  : _titleBuilder = title,
-        _match = route,
+  })  : _match = route,
         _parent = parent;
 
-  String Function(BuildContext context) get title => _titleBuilder == null
-      ? (_) => _match.name
-      : (context) => _titleBuilder!(context, this);
+  String Function(BuildContext context) get title =>
+      _match.titleBuilder == null ? (_) => _match.name : (context) => _match.titleBuilder!(context, this);
+
+  @internal
+  String get restorationId => _match.restorationId == null ? _match.name : _match.restorationId!(_match);
 
   final List<RouteMatch> pendingChildren;
 
@@ -33,21 +33,18 @@ class RouteData {
     return RouteDataScope.of(context).routeData;
   }
 
-  bool get hasPendingSubNavigation =>
-      hasPendingChildren && pendingChildren.last.hasChildren;
+  bool get hasPendingSubNavigation => hasPendingChildren && pendingChildren.last.hasChildren;
 
   T argsAs<T>({T Function()? orElse}) {
     final args = _match.args;
     if (args == null) {
       if (orElse == null) {
-        throw FlutterError(
-            '${T.toString()} can not be null because it has a required parameter');
+        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }

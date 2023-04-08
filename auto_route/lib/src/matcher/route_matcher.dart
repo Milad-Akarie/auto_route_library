@@ -26,9 +26,7 @@ class RouteMatcher {
   }
 
   List<RouteMatch>? _match(Uri uri, RouteCollection collection,
-      {bool includePrefixMatches = false,
-      bool root = false,
-      String? redirectedFrom}) {
+      {bool includePrefixMatches = false, bool root = false, String? redirectedFrom}) {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
@@ -56,10 +54,8 @@ class RouteMatcher {
         if (match.segments.length != pathSegments.length) {
           // has rest
           if (config.hasSubTree) {
-            final rest = uri.replace(
-                pathSegments: pathSegments.sublist(match.segments.length));
-            final children = _match(rest, config.children!,
-                includePrefixMatches: includePrefixMatches);
+            final rest = uri.replace(pathSegments: pathSegments.sublist(match.segments.length));
+            final children = _match(rest, config.children!, includePrefixMatches: includePrefixMatches);
             match = match.copyWith(children: children);
           }
           matches.add(match);
@@ -71,8 +67,7 @@ class RouteMatcher {
           //
           // include empty route if exists
           if (config.hasSubTree && !match.hasChildren) {
-            match = match.copyWith(
-                children: _match(uri.replace(path: ''), config.children!));
+            match = match.copyWith(children: _match(uri.replace(path: ''), config.children!));
           }
 
           matches.add(match);
@@ -81,10 +76,7 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty ||
-        (root &&
-            matches.last.allSegments(includeEmpty: true).length <
-                pathSegments.length)) {
+    if (matches.isEmpty || (root && matches.last.allSegments(includeEmpty: true).length < pathSegments.length)) {
       return null;
     }
     return matches;
@@ -114,9 +106,7 @@ class RouteMatcher {
       return null;
     }
 
-    if (config.fullMatch &&
-        segments.length > parts.length &&
-        (parts.isEmpty || parts.last != '*')) {
+    if (config.fullMatch && segments.length > parts.length && (parts.isEmpty || parts.last != '*')) {
       return null;
     }
 
@@ -138,23 +128,14 @@ class RouteMatcher {
 
     final stringMatch = p.joinAll(extractedSegments);
     return RouteMatch(
-      path: config.path,
-      name: config.name,
-      meta: config.meta,
-      isBranch: config.hasSubTree,
+      config: config,
       key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
       stringMatch: stringMatch,
       segments: extractedSegments,
       redirectedFrom: redirectedFrom,
-      guards: config.guards,
       pathParams: Parameters(pathParams),
       queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
       fragment: url.fragment,
-      type: config.type,
-      title: config.title,
-      keepHistory: config.keepHistory,
-      fullscreenDialog: config.fullscreenDialog,
-      maintainState: config.maintainState,
     );
   }
 
@@ -189,35 +170,22 @@ class RouteMatcher {
     } else if (route.hasChildren) {
       return null;
     }
-    final stringMatch =
-        PageRouteInfo.expandPath(config.path, route.rawPathParams);
+    final stringMatch = PageRouteInfo.expandPath(config.path, route.rawPathParams);
     return RouteMatch(
-      name: route.routeName,
+      config: config,
       segments: _split(stringMatch),
-      path: config.path,
       args: route.args,
-      meta: config.meta,
-      key: ValueKey(
-        config.usesPathAsKey ? stringMatch : route.routeName,
-      ),
-      isBranch: config.hasSubTree,
-      guards: config.guards,
+      key: ValueKey(config.usesPathAsKey ? stringMatch : route.routeName),
       stringMatch: stringMatch,
       fragment: route.fragment,
       redirectedFrom: route.redirectedFrom,
       children: childMatches,
       pathParams: Parameters(route.rawPathParams),
       queryParams: Parameters(route.rawQueryParams),
-      type: config.type,
-      title: config.title,
-      keepHistory: config.keepHistory,
-      fullscreenDialog: config.fullscreenDialog,
-      maintainState: config.maintainState,
     );
   }
 
-  Map<String, dynamic> _normalizeSingleValues(
-      Map<String, List<String>> queryParametersAll) {
+  Map<String, dynamic> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {
     final queryMap = <String, dynamic>{};
     for (var key in queryParametersAll.keys) {
       var list = queryParametersAll[key];

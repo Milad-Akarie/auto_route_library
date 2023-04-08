@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+
+
 class AutoRoutePage<T> extends Page<T> {
   final RouteData routeData;
   final Widget _child;
@@ -30,7 +32,7 @@ class AutoRoutePage<T> extends Page<T> {
             ? WrappedRoute(child: child as AutoRouteWrapper)
             : child,
         super(
-          restorationId: routeData.name,
+          restorationId: routeData.restorationId,
           name: routeData.name,
           arguments: routeData.route.args,
         );

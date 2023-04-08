@@ -2,12 +2,18 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../importable_route.dart' as im;
+
+typedef MyRoute = im.Route;
 
 @RoutePage<String>()
 class HomePage extends StatefulWidget {
+
   const HomePage({
     Key? key,
+    MyRoute? route,
   }) : super(key: key);
+
 
   @override
   HomePageState createState() => HomePageState();

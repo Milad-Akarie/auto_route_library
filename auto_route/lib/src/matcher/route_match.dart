@@ -13,53 +13,59 @@ class RouteMatch<T> {
   final String fragment;
   final List<String> segments;
   final String? redirectedFrom;
-  final String name;
-  final String path;
   final String stringMatch;
   final T? args;
-  final List<AutoRouteGuard> guards;
   final LocalKey key;
-  final bool isBranch;
-  final Map<String, dynamic> meta;
-  final RouteType? type;
-  final TitleBuilder? title;
-  final bool keepHistory;
-  final bool fullscreenDialog;
-  final bool maintainState;
+  final AutoRoute _config;
+
+  String get name => _config.name;
+
+  String get path => _config.path;
+
+  List<AutoRouteGuard> get guards => _config.guards;
+
+  bool get isBranch => _config.hasSubTree;
+
+  Map<String, dynamic> get meta => _config.meta;
+
+  RouteType? get type => _config.type;
+
+  TitleBuilder? get title => _config.title;
+
+  bool get keepHistory => _config.keepHistory;
+
+  bool get fullscreenDialog => _config.fullscreenDialog;
+
+  bool get maintainState => _config.maintainState;
+
+
+  RestorationIdBuilder? get restorationId => _config.restorationId;
+  TitleBuilder? get titleBuilder => _config.title;
+
 
   const RouteMatch({
-    required this.name,
+    required AutoRoute config,
     required this.segments,
-    required this.path,
     required this.stringMatch,
     required this.key,
-    this.isBranch = false,
     this.children,
     this.args,
-    this.guards = const [],
     this.pathParams = const Parameters({}),
     this.queryParams = const Parameters({}),
     this.fragment = '',
     this.redirectedFrom,
-    this.meta = const {},
-    this.type,
-    this.title,
-    this.keepHistory = true,
-    this.fullscreenDialog = false,
-    this.maintainState = true,
-  });
+  }) : _config = config;
 
   bool get hasChildren => children?.isNotEmpty == true;
 
   bool get fromRedirect => redirectedFrom != null;
 
-  bool get hasEmptyPath => path.isEmpty;
+  bool get hasEmptyPath => _config.path.isEmpty;
 
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren)
-          ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   String get fullPath => p.joinAll(allSegments());
@@ -69,7 +75,6 @@ class RouteMatch<T> {
   }
 
   RouteMatch copyWith({
-    String? path,
     String? stringMatch,
     Parameters? pathParams,
     Parameters? queryParams,
@@ -77,21 +82,13 @@ class RouteMatch<T> {
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
-    String? routeName,
     Object? args,
     LocalKey? key,
-    List<AutoRouteGuard>? guards,
-    Map<String, dynamic>? meta,
-    RouteType? type,
-    TitleBuilder? title,
-    bool? keepHistory,
-    bool? fullscreenDialog,
-    bool? maintainState,
+    AutoRoute? config,
   }) {
     return RouteMatch(
-      path: path ?? this.path,
+      config: config ?? this._config,
       stringMatch: stringMatch ?? this.stringMatch,
-      name: routeName ?? name,
       segments: segments ?? this.segments,
       children: children ?? this.children,
       pathParams: pathParams ?? this.pathParams,
@@ -99,14 +96,7 @@ class RouteMatch<T> {
       fragment: fragment ?? this.fragment,
       args: args ?? this.args,
       key: key ?? this.key,
-      guards: guards ?? this.guards,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
-      meta: meta ?? this.meta,
-      type: type ?? this.type,
-      title: title ?? this.title,
-      keepHistory: keepHistory ?? this.keepHistory,
-      fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
-      maintainState: maintainState ?? this.maintainState,
     );
   }
 
@@ -187,29 +177,23 @@ class HierarchySegment {
           const ListEquality().equals(children, other.children);
 
   @override
-  int get hashCode =>
-      name.hashCode ^
-      pathParams.hashCode ^
-      queryParams.hashCode ^
-      const ListEquality().hash(children);
+  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
 }
 
 extension PrettyHierarchySegmentX on List<HierarchySegment> {
   String get prettyMap {
     const encoder = JsonEncoder.withIndent('  ');
 
-    Map _toMap(List<HierarchySegment> segments) {
+    Map toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(segments.map(
         (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true)
-            'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true)
-            'queryParams': e.queryParams!.rawMap,
-          if (e.children.isNotEmpty) 'children': _toMap(e.children),
+          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
+          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
+          if (e.children.isNotEmpty) 'children': toMap(e.children),
         }),
       ));
     }
 
-    return encoder.convert(_toMap(this));
+    return encoder.convert(toMap(this));
   }
 }
