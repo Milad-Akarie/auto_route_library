@@ -1,21 +1,29 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web_demo/router/web_auth_guard.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/material.dart';
 
 @AutoRouterConfig(generateForDir: ['lib/web_demo'],deferredLoading: false)
-class WebAppRouter extends $WebAppRouter {
+class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
   AuthService authService;
 
   WebAppRouter(this.authService);
 
+  @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
+      if(authService.isAuthenticated || resolver.route.name == WebLoginRoute.name) {
+        resolver.next();
+      }else{
+        push(WebLoginRoute(resolver: resolver));
+      }
+  }
+
  @override
-  late final List<AutoRoute> routes = [
+   List<AutoRoute> get routes => [
     AutoRoute(
       page: MainWebRoute.page,
       path: '/',
-      guards: [AuthGuard(authService)],
+      // guards: [AuthGuard(authService)],
     ),
     AutoRoute(
       path: '/login',
@@ -40,6 +48,10 @@ class WebAppRouter extends $WebAppRouter {
     ),
     AutoRoute(path: '*', page: NotFoundRoute.page),
   ];
+
+
+
+
 }
 
 @RoutePage()

@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/router/web_router.dart';
+import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:url_strategy/url_strategy.dart';
 

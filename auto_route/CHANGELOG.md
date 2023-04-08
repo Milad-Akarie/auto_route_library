@@ -1,4 +1,6 @@
 # ChangeLog
+## [6.0.6]
+- RootRouter can implement AutoRouteGuard and guard all Stack-routes
 ## [6.0.5]
 - Fix RouteMatch.fullPath is not joined properly
 - Add helper method to get route match PageRouteInfo().match(context)
