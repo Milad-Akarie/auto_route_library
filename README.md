@@ -110,7 +110,7 @@ part 'app_router.gr.dart';
 class AppRouter extends _$AppRouter {      
     
   @override      
-  final List<AutoRoute> routes = [      
+  List<AutoRoute> get routes => [      
    /// routes go here     
    ]    
  }               
@@ -147,7 +147,7 @@ flutter packages pub run build_runner build
 class AppRouter extends $AppRouter {      
     
   @override      
-  final List<AutoRoute> routes = [      
+  List<AutoRoute> get routes => [      
     //HomeScreen is generated as HomeRoute because     
     //of the replaceInRouteName property    
     AutoRoute(HomeRoute.page),    
@@ -384,7 +384,7 @@ of `DashboardPage`.
 class AppRouter extends $AppRouter{    
     
   @override      
-  final List<AutoRoute> routes = [                  
+  List<AutoRoute> get routes => [                  
     AutoRoute(                    
       path: '/dashboard',                    
       page: DashboardRoute.page,                    
@@ -1414,7 +1414,7 @@ class AppRouter extends $AppRouter {
 RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc    
     
   @override      
-  final List<AutoRoute> routes = [      
+   List<AutoRoute> get routes => [      
    /// routes go here     
    ]    
  }    
