@@ -92,6 +92,7 @@ class SecondPage extends TestPage {
 class ThirdPage extends TestPage {
   const ThirdPage({Key? key}) : super(key: key);
 }
+
 @RoutePage()
 class FourthPage extends TestPage {
   const FourthPage({Key? key}) : super(key: key);
@@ -136,7 +137,8 @@ class Tab3Nested2Page extends TestPage {
 class TabsHostPage extends StatelessWidget {
   final String tabsType;
 
-  const TabsHostPage({Key? key, @queryParam this.tabsType = 'IndexedStack'}) : super(key: key);
+  const TabsHostPage({Key? key, @queryParam this.tabsType = 'IndexedStack'})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -170,21 +172,20 @@ class TabsHostPage extends StatelessWidget {
 
 @RoutePage()
 class DeclarativeRouterHostScreen extends StatelessWidget {
-  const DeclarativeRouterHostScreen({Key? key, required this.pageNotifier}) : super(key: key);
+  const DeclarativeRouterHostScreen({Key? key, required this.pageNotifier})
+      : super(key: key);
   final ValueNotifier<int> pageNotifier;
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<int>(
       valueListenable: pageNotifier,
-      builder: (context,value,_){
+      builder: (context, value, _) {
         return AutoRouter.declarative(
           routes: (_) => [
-             const SecondNested1Route(),
-             if(value >= 2)
-               const SecondNested2Route(),
-            if(value == 3)
-              const SecondNested3Route()
+            const SecondNested1Route(),
+            if (value >= 2) const SecondNested2Route(),
+            if (value == 3) const SecondNested3Route()
           ],
         );
       },

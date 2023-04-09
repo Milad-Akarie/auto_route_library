@@ -1,20 +1,21 @@
 # ChangeLog
-## [6.0.6]
-- RootRouter can implement AutoRouteGuard and guard all Stack-routes
-- Add restorationId builder
-- Mark annotations with supported types
+## [6.1.0]
+- The missing hierarchy to a pushed child-route will now be auto_created if there are no required args
+- The root router can implement an AutoRouteGuard and guard all Stack-routes
+- Add restorationId builder to AutoRoute
+- Mark annotations with supported types [for static analysis]
 ## [6.0.5]
 - Fix RouteMatch.fullPath is not joined properly
 - Add helper method to get route match PageRouteInfo().match(context)
 ## [6.0.4]
 - Fix inherited path params are not working in v6
-- Add option to used cached_builds for more optimized generation
+- Add option to use cached_builds for more optimized generation
 ## [6.0.3]
 - include merged pr's 
 - ## [6.0.2]
 - Make AutoRoute.path call save
 ## [6.0.1]
-- Fix bug when with nested parent routes without and generated-path #1411
+- Fix bug with nested parent routes without path #1411
 ## [6.0.0+1]
 - Use updated readme file
 ## [6.0.0]

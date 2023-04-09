@@ -6,7 +6,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 
- final profileTab = AutoRoute(
+final profileTab = AutoRoute(
   path: 'profile',
   page: ProfileTab.page,
   children: [

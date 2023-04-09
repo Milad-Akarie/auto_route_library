@@ -8,12 +8,10 @@ typedef MyRoute = im.Route;
 
 @RoutePage<String>()
 class HomePage extends StatefulWidget {
-
   const HomePage({
     Key? key,
     MyRoute? route,
   }) : super(key: key);
-
 
   @override
   HomePageState createState() => HomePageState();
@@ -116,7 +114,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 body: child,
-                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+                bottomNavigationBar:
+                    buildBottomNav(context, context.tabsRouter),
               );
             },
           );

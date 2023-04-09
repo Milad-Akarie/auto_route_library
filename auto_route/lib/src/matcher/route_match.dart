@@ -17,6 +17,7 @@ class RouteMatch<T> {
   final T? args;
   final LocalKey key;
   final AutoRoute _config;
+  final bool autoFilled;
 
   String get name => _config.name;
 
@@ -38,10 +39,8 @@ class RouteMatch<T> {
 
   bool get maintainState => _config.maintainState;
 
-
   RestorationIdBuilder? get restorationId => _config.restorationId;
   TitleBuilder? get titleBuilder => _config.title;
-
 
   const RouteMatch({
     required AutoRoute config,
@@ -54,6 +53,7 @@ class RouteMatch<T> {
     this.queryParams = const Parameters({}),
     this.fragment = '',
     this.redirectedFrom,
+    this.autoFilled = false,
   }) : _config = config;
 
   bool get hasChildren => children?.isNotEmpty == true;
@@ -65,7 +65,8 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren)
+          ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   String get fullPath => p.joinAll(allSegments());
@@ -85,6 +86,7 @@ class RouteMatch<T> {
     Object? args,
     LocalKey? key,
     AutoRoute? config,
+    bool? autoFilled,
   }) {
     return RouteMatch(
       config: config ?? this._config,
@@ -97,6 +99,7 @@ class RouteMatch<T> {
       args: args ?? this.args,
       key: key ?? this.key,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
+      autoFilled: autoFilled ?? this.autoFilled,
     );
   }
 
@@ -119,6 +122,7 @@ class RouteMatch<T> {
           const ListEquality().equals(children, other.children) &&
           fragment == other.fragment &&
           redirectedFrom == other.redirectedFrom &&
+          autoFilled == other.autoFilled &&
           const ListEquality().equals(segments, other.segments) &&
           const MapEquality().equals(meta, other.meta);
 
@@ -138,6 +142,7 @@ class RouteMatch<T> {
       fullscreenDialog.hashCode ^
       keepHistory.hashCode ^
       type.hashCode ^
+      autoFilled.hashCode ^
       const ListEquality().hash(segments) ^
       const MapEquality().hash(meta);
 
@@ -177,7 +182,11 @@ class HierarchySegment {
           const ListEquality().equals(children, other.children);
 
   @override
-  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
+  int get hashCode =>
+      name.hashCode ^
+      pathParams.hashCode ^
+      queryParams.hashCode ^
+      const ListEquality().hash(children);
 }
 
 extension PrettyHierarchySegmentX on List<HierarchySegment> {
@@ -187,8 +196,10 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
     Map toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(segments.map(
         (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
+          if (e.pathParams?.isNotEmpty == true)
+            'pathParams': e.pathParams!.rawMap,
+          if (e.queryParams?.isNotEmpty == true)
+            'queryParams': e.queryParams!.rawMap,
           if (e.children.isNotEmpty) 'children': toMap(e.children),
         }),
       ));

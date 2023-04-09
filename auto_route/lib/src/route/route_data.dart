@@ -17,11 +17,14 @@ class RouteData {
   })  : _match = route,
         _parent = parent;
 
-  String Function(BuildContext context) get title =>
-      _match.titleBuilder == null ? (_) => _match.name : (context) => _match.titleBuilder!(context, this);
+  String Function(BuildContext context) get title => _match.titleBuilder == null
+      ? (_) => _match.name
+      : (context) => _match.titleBuilder!(context, this);
 
   @internal
-  String get restorationId => _match.restorationId == null ? _match.name : _match.restorationId!(_match);
+  String get restorationId => _match.restorationId == null
+      ? _match.name
+      : _match.restorationId!(_match);
 
   final List<RouteMatch> pendingChildren;
 
@@ -33,18 +36,31 @@ class RouteData {
     return RouteDataScope.of(context).routeData;
   }
 
-  bool get hasPendingSubNavigation => hasPendingChildren && pendingChildren.last.hasChildren;
+  bool get hasPendingSubNavigation =>
+      hasPendingChildren && pendingChildren.last.hasChildren;
 
   T argsAs<T>({T Function()? orElse}) {
     final args = _match.args;
     if (args == null) {
       if (orElse == null) {
-        throw FlutterError('${T.toString()} can not be null because it has a required parameter');
+        final messages = [
+          '${T.toString()} can not be null because the corresponding page has a required parameter'
+        ];
+        if (_match.autoFilled) {
+          messages.add(
+              '${_match.name} is an auto created ancestor of target route ${_match.flattened.last.name}');
+          messages.add(
+              'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first');
+          messages.add(
+              'try navigating to ${_match.flattened.map((e) => e.name).join(' -> ')}');
+        }
+        throw FlutterError('\n${messages.join('\n')}\n');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError(
+          'Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }

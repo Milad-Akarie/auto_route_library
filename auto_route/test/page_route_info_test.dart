@@ -24,24 +24,40 @@ void main() {
     );
   });
 
-  test("Calling PageRouteInfo.fromRedirect on an redirected instance should return true", () {
-    expect(const PageRouteInfo('Name', redirectedFrom: '/redirect').fromRedirect, true);
+  test(
+      "Calling PageRouteInfo.fromRedirect on an redirected instance should return true",
+      () {
+    expect(
+        const PageRouteInfo('Name', redirectedFrom: '/redirect').fromRedirect,
+        true);
   });
 
-  test("Calling PageRouteInfo.pathParams should return Parameters instance with rawPathParams", () {
-    expect(const PageRouteInfo('Name', rawPathParams: {'foo': 'bar'}).pathParams, const Parameters({'foo': 'bar'}));
+  test(
+      "Calling PageRouteInfo.pathParams should return Parameters instance with rawPathParams",
+      () {
+    expect(
+        const PageRouteInfo('Name', rawPathParams: {'foo': 'bar'}).pathParams,
+        const Parameters({'foo': 'bar'}));
   });
 
-  test("Calling PageRouteInfo.queryParams should return Parameters instance with rawQueryParams", () {
-    expect(const PageRouteInfo('Name', rawQueryParams: {'foo': 'bar'}).queryParams, const Parameters({'foo': 'bar'}));
+  test(
+      "Calling PageRouteInfo.queryParams should return Parameters instance with rawQueryParams",
+      () {
+    expect(
+        const PageRouteInfo('Name', rawQueryParams: {'foo': 'bar'}).queryParams,
+        const Parameters({'foo': 'bar'}));
   });
 
-  test("Calling PageRouteInfo.copyWith with no params should return identically instance", () {
+  test(
+      "Calling PageRouteInfo.copyWith with no params should return identically instance",
+      () {
     const instance = PageRouteInfo('Name', redirectedFrom: '/redirect');
     expect(instance.copyWith() == instance, true);
   });
 
-  test("Calling PageRouteInfo.flattened should return list of flattened children", () {
+  test(
+      "Calling PageRouteInfo.flattened should return list of flattened children",
+      () {
     expect(
         const PageRouteInfo(
           'Name',

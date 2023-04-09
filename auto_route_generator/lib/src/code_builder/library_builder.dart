@@ -17,10 +17,11 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 const Reference requiredAnnotation = Reference('required', materialImport);
 
-TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
-  ..symbol = "List"
-  ..isNullable = nullable
-  ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) =>
+    TypeReference((b) => b
+      ..symbol = "List"
+      ..isNullable = nullable
+      ..types.add(reference));
 
 String generateLibrary(
   RouterConfig router, {
@@ -32,7 +33,9 @@ String generateLibrary(
   );
 
   final emitter = DartEmitter(
-    allocator: router.usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, router.deferredLoading),
+    allocator: router.usesPartBuilder
+        ? Allocator.none
+        : DeferredPagesAllocator(routes, router.deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
@@ -45,7 +48,8 @@ String generateLibrary(
 
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];
-    if (deferredRoutes.any((e) => e.pageType == route.pageType && route.deferredLoading != true)) {
+    if (deferredRoutes.any(
+        (e) => e.pageType == route.pageType && route.deferredLoading != true)) {
       routes[i] = route.copyWith(deferredLoading: true);
     }
   }

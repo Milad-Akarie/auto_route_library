@@ -22,7 +22,9 @@ void main() {
     expect(router.currentHierarchy(), list);
   }
 
-  test('Pushing single route should add it to stack and notify navigation history', () async {
+  test(
+      'Pushing single route should add it to stack and notify navigation history',
+      () async {
     final listener = MockListener();
     router.navigationHistory.addListener(listener);
     await router.push(const FirstRoute());
@@ -37,7 +39,9 @@ void main() {
     expect(router.isRouteActive(FirstRoute.name), true);
   });
 
-  test('Replacing single route should replace top stack entry and notify navigation history', () async {
+  test(
+      'Replacing single route should replace top stack entry and notify navigation history',
+      () async {
     final listener = MockListener();
     router.navigationHistory.addListener(listener);
     await router.push(const FirstRoute());
@@ -46,21 +50,30 @@ void main() {
     verify(listener()).called(2);
   });
 
-  test('Navigating to a none-declared route should call onFailure(<RouteNotFoundFailure>)', () async {
+  test(
+      'Navigating to a none-declared route should call onFailure(<RouteNotFoundFailure>)',
+      () async {
     final mockListener = MockOnNavigationFailureListener();
     await router.push(const SecondNested1Route(), onFailure: mockListener);
-    expect(verify(mockListener(captureAny)).captured.single, isA<RouteNotFoundFailure>());
+    expect(verify(mockListener(captureAny)).captured.single,
+        isA<RouteNotFoundFailure>());
   });
 
-  test('Navigating to a none-declared path should call onFailure(<RouteNotFoundFailure>)', () async {
+  test(
+      'Navigating to a none-declared path should call onFailure(<RouteNotFoundFailure>)',
+      () async {
     final mockListener = MockOnNavigationFailureListener();
     await router.navigateNamed('/none-declared', onFailure: mockListener);
-    expect(verify(mockListener(captureAny)).captured.single, isA<RouteNotFoundFailure>());
+    expect(verify(mockListener(captureAny)).captured.single,
+        isA<RouteNotFoundFailure>());
   });
 
-  test('Routes rejected by guards should call onFailure(<RejectedByGuardFailure>)', () async {
+  test(
+      'Routes rejected by guards should call onFailure(<RejectedByGuardFailure>)',
+      () async {
     final mockListener = MockOnNavigationFailureListener();
     await router.push(const FourthRoute(), onFailure: mockListener);
-    expect(verify(mockListener(captureAny)).captured.single, isA<RejectedByGuardFailure>());
+    expect(verify(mockListener(captureAny)).captured.single,
+        isA<RejectedByGuardFailure>());
   });
 }

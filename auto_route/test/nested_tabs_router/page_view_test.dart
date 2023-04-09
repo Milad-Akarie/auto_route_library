@@ -21,7 +21,8 @@ void main() {
     (WidgetTester tester) async {
       await pumpRouter(tester);
       final pageViewFinder = find.byType(AutoPageView);
-      final scrollController = (tester.widget<AutoPageView>(pageViewFinder)).controller;
+      final scrollController =
+          (tester.widget<AutoPageView>(pageViewFinder)).controller;
       expect(scrollController.page, 0);
       final dragOffset = scrollController.position.maxScrollExtent * .35;
       await tester.drag(pageViewFinder, Offset(-dragOffset, 0.0));

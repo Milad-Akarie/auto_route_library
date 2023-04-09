@@ -11,7 +11,8 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if (authService.isAuthenticated || resolver.route.name == WebLoginRoute.name) {
+    if (authService.isAuthenticated ||
+        resolver.route.name == WebLoginRoute.name) {
       resolver.next();
     } else {
       push(WebLoginRoute(resolver: resolver));
@@ -90,7 +91,6 @@ class _MainWebPageState extends State<MainWebPage> {
                           query: const ['value1', 'value2'],
                         ),
                       );
-
                     },
                 child: Text('Navigate to user/2'),
               ),
@@ -163,9 +163,9 @@ class UserProfilePage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.pushRoute(UserPostsRoute());
+                    context.pushRoute(UserFavoritePostsRoute());
                   },
-              child: Text('Posts'),
+              child: Text('Posts -> '),
             ),
             const SizedBox(height: 8),
             ElevatedButton(
@@ -247,7 +247,8 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
+            return Text(context.topRouteMatch.name +
+                ' ${widget.id} query: ${widget.query}');
           },
         ),
         // leading: AutoLeadingButton(),

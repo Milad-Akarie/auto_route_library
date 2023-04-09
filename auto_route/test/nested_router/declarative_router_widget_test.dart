@@ -14,7 +14,10 @@ void main() {
   testWidgets('Simple Declarative routing test', (WidgetTester tester) async {
     final pageNotifier = ValueNotifier(1);
     await pumpRouterConfigApp(
-        tester, router.config(initialRoutes: [DeclarativeRouterHostRoute(pageNotifier: pageNotifier)]));
+        tester,
+        router.config(initialRoutes: [
+          DeclarativeRouterHostRoute(pageNotifier: pageNotifier)
+        ]));
 
     final declarativeRouter = router.topMostRouter();
     expect(find.text(SecondNested1Route.name), findsOneWidget);

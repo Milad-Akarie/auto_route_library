@@ -10,7 +10,8 @@
 part of 'main_router.dart';
 
 abstract class _$MainRouter extends RootStackRouter {
-  _$MainRouter([GlobalKey<NavigatorState>? navigatorKey]) : super(navigatorKey);
+  // ignore: unused_element
+  _$MainRouter({super.navigatorKey});
 
   @override
   final Map<String, PageFactory> pagesMap = {

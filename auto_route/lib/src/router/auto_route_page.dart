@@ -6,8 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-
-
 class AutoRoutePage<T> extends Page<T> {
   final RouteData routeData;
   final Widget _child;

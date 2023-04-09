@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 @RoutePage()
 class WebLoginPage extends StatelessWidget {
- final NavigationResolver? resolver;
+  final NavigationResolver? resolver;
   final bool showBackButton;
   const WebLoginPage({Key? key, this.resolver, this.showBackButton = true})
       : super(key: key);
@@ -26,9 +26,9 @@ class WebLoginPage extends StatelessWidget {
           child: ElevatedButton(
             onPressed: () {
               App.of(context).authService.isAuthenticated = true;
-              if(resolver != null) {
+              if (resolver != null) {
                 resolver!.next(true);
-              }else{
+              } else {
                 context.pushRoute(MainWebRoute());
               }
             },

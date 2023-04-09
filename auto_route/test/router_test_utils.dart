@@ -6,7 +6,8 @@ Future<void> pumpRouterApp(
   WidgetTester tester,
   RootStackRouter router, {
   String? initialLink,
-  NavigatorObserversBuilder observers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  NavigatorObserversBuilder observers =
+      AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {
   return tester
       .pumpWidget(
@@ -24,9 +25,12 @@ Future<void> pumpRouterApp(
 Future<void> pumpRouterConfigApp(
   WidgetTester tester,
   RouterConfig<UrlState> config, {
-  NavigatorObserversBuilder observers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  NavigatorObserversBuilder observers =
+      AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {
-  return tester.pumpWidget(MaterialApp.router(routerConfig: config)).then((_) => tester.pumpAndSettle());
+  return tester
+      .pumpWidget(MaterialApp.router(routerConfig: config))
+      .then((_) => tester.pumpAndSettle());
 }
 
 void expectCurrentPage(StackRouter router, String name) {

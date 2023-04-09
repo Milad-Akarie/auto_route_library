@@ -14,18 +14,15 @@ Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
         ..extend = refer('RootStackRouter', autoRouteImport)
         ..fields.addAll([buildPagesMap(routes, router)])
         ..constructors.addAll([
-          Constructor(
-            (b) => b
-              ..optionalParameters.add(
-                Parameter(
-                  (b) => b
-                    ..name = 'navigatorKey'
-                    ..named = true
-                    ..toSuper = true
-                ),
-              )
-
-          ),
+          Constructor((b) => b
+            ..docs.addAll(
+                [if (router.usesPartBuilder) '// ignore: unused_element'])
+            ..optionalParameters.add(
+              Parameter((b) => b
+                ..name = 'navigatorKey'
+                ..named = true
+                ..toSuper = true),
+            )),
         ]),
     );
 
