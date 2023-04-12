@@ -94,7 +94,7 @@ class AppRouter extends $AppRouter {
   @override      
   final List<AutoRoute> routes = [      
    /// routes go here     
-   ]    
+   ];    
  }    
  ```                     
 
