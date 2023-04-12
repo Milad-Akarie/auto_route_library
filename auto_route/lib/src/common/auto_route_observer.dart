@@ -1,11 +1,18 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
+
+/// An extended version of  [NavigatorObserver] to support
+/// Tab-int and tab-change events observation
 class AutoRouterObserver extends NavigatorObserver {
+  /// called when a tab route activates
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {}
+  /// called when tab route reactivates
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {}
 }
 
+/// An interface used to mark classes as AutoRouteAware entities
+/// usually implemented by widget States
 abstract class AutoRouteAware {
   /// Called when the top route has been popped off, and the current route
   /// shows up.
@@ -21,12 +28,14 @@ abstract class AutoRouteAware {
   /// longer visible.
   void didPushNext() {}
 
-  // called when a tab route activates
+  /// called when a tab route activates
   void didInitTabRoute(TabPageRoute? previousRoute) {}
-  // called when tab route reactivates
+  /// called when tab route reactivates
   void didChangeTabRoute(TabPageRoute previousRoute) {}
 }
 
+/// a helper mixin to utilises [AutoRouteAware] in a better manner
+/// and reduce boilerplate code
 mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
     implements AutoRouteAware {
   AutoRouteObserver? _observer;
@@ -70,13 +79,21 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
   void didPushNext() {}
 }
 
+/// A [Navigator] observer that notifies [AutoRouteAware]s of changes to the
+/// state of their [Route].
+///
+/// [AutoRouteObserver] informs subscribers whenever a route of type `R` is pushed
+/// on top of their own route of type `R` or popped from it. This is for example
+/// useful to keep track of page transitions, e.g. a `RouteObserver<PageRoute>`
+/// will inform subscribed [AutoRouteAware]s whenever the user navigates away from
+/// the current page route to another page route.
 class AutoRouteObserver extends AutoRouterObserver {
   final Map<LocalKey, Set<AutoRouteAware>> _listeners =
       <LocalKey, Set<AutoRouteAware>>{};
 
-  /// Subscribe [routeAware] to be informed about changes to [route].
+  /// Subscribe [AutoRouteAware] to be informed about changes to [route].
   ///
-  /// Going forward, [routeAware] will be informed about qualifying changes
+  /// Going forward, [AutoRouteAware] will be informed about qualifying changes
   /// to [route], e.g. when [route] is covered by another route or when [route]
   /// is popped off the [Navigator] stack.
   void subscribe(AutoRouteAware routeAware, RouteData route) {
@@ -91,9 +108,9 @@ class AutoRouteObserver extends AutoRouterObserver {
     }
   }
 
-  /// Unsubscribe [routeAware].
+  /// Unsubscribe [AutoRouteAware].
   ///
-  /// [routeAware] is no longer informed about changes to its route. If the given argument was
+  /// [AutoRouteAware] is no longer informed about changes to its route. If the given argument was
   /// subscribed to multiple types, this will unregister it (once) from each type.
 
   void unsubscribe(AutoRouteAware routeAware) {
@@ -166,16 +183,24 @@ class AutoRouteObserver extends AutoRouterObserver {
   }
 }
 
+/// Holds information of Tab-init and Tab-changed events
+/// used in [AutoRouteAware] and [AutoRouterObserver]
 class TabPageRoute {
+  /// match information of the target tab
   final RouteMatch routeInfo;
-
+  /// index of the target tab
   final int index;
+
+  /// default constructor
   const TabPageRoute({
     required this.routeInfo,
     required this.index,
   });
 
+  /// helper getter to access [RouteMatch.name]
   String get name => routeInfo.name;
+  /// helper getter to access [RouteMatch.path]
   String get path => routeInfo.path;
+  /// helper getter to access [RouteMatch.stringMatch]
   String get match => routeInfo.stringMatch;
 }

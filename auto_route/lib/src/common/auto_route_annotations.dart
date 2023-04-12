@@ -1,6 +1,9 @@
 import 'package:meta/meta.dart' show optionalTypeArgs;
-import 'package:meta/meta_meta.dart';
+import 'package:meta/meta_meta.dart' show Target, TargetKind;
 
+/// Classes annotated with AutoRouteConfig will generate
+/// an abstract class that extends [RootStackRouter] that
+/// can be extended by the annotated class to be used as the RootRouter of the App
 @Target({TargetKind.classType})
 class AutoRouterConfig {
   /// Auto generated route names can be a bit long with
@@ -20,11 +23,14 @@ class AutoRouterConfig {
 
   /// Use for web for lazy loading other routes
   /// more info https://dart.dev/guides/language/language-tour#deferred-loading
+  /// defaults to false
   final bool deferredLoading;
 
-  /// Only files exist in provided directories will be processed
+  /// Only generated files exist in provided directories will be processed
+  /// defaults = const ['lib']
   final List<String> generateForDir;
 
+  /// default constructor
   const AutoRouterConfig({
     this.replaceInRouteName = 'Page|Screen,Route',
     this.deferredLoading = false,
@@ -32,14 +38,26 @@ class AutoRouterConfig {
   });
 }
 
+/// This annotation is used to mark flutter widgets as routable pages
+/// by enabling the router to construct them.
+///
 /// [T] is the results type returned
-/// from this page route MaterialPageRoute<T>()
+/// from this page route e.g MaterialPageRoute<T>()
 /// defaults to dynamic
 @optionalTypeArgs
 @Target({TargetKind.classType})
 class RoutePage<T> {
+  /// The name of the generated route
+  /// if not provided, a name will be generated from class name
+  /// and maybe altered by [replaceInRouteName]
   final String? name;
+
+  /// Use for web for lazy loading
+  /// more info https://dart.dev/guides/language/language-tour#deferred-loading
+  /// defaults to false
   final bool? deferredLoading;
+
+  /// default constructor
   const RoutePage({
     this.name,
     this.deferredLoading,
@@ -49,24 +67,49 @@ class RoutePage<T> {
 /// default routePage
 const routePage = RoutePage();
 
+/// this annotation is used to make parameters that's supposed
+/// to take their values from the dynamic segments of a path
 @Target({TargetKind.parameter})
 class PathParam {
+  /// name of the dynamic segment declared in path
+  /// e.g /path/:id -> name = id
+  ///
+  /// if not provided the name of the parameter will be used
+  /// (@PathParam() int id); -> name = id
   final String? name;
+
   // ignore: unused_field
   final bool _inherited;
 
+  /// default constructor
   const PathParam([this.name]) : _inherited = false;
+
+  /// Use this constructor to inherit a dynamic-segment
+  /// from a parent path
   const PathParam.inherit([this.name]) : _inherited = true;
 }
 
+/// default PathParam()
 const pathParam = PathParam();
+
+/// default PathParam.inherit()
 const inheritPathParam = PathParam();
 
+/// this annotation is used to make parameters that's supposed
+/// to take their values from query params of the url
+///
+/// e.g /path?foo=bar
 @Target({TargetKind.parameter})
 class QueryParam {
+  /// name of the query param from url
+  ///
+  /// if not provided the name of the parameter will be used
+  /// (@QueryParam() String foo); -> name = foo
   final String? name;
 
+  /// default constructor
   const QueryParam([this.name]);
 }
 
+/// default QueryParam()
 const queryParam = QueryParam();

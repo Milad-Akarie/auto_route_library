@@ -19,7 +19,6 @@ export 'src/router/widgets/auto_router.dart';
 export 'src/router/widgets/auto_route_navigator.dart';
 export 'src/router/widgets/auto_tabs_router.dart';
 export 'src/router/widgets/auto_tabs_scaffold.dart';
-export 'src/router/widgets/wrapped_route.dart';
 export 'src/router/widgets/custom_cupertino_transitions_builder.dart'
     show NoShadowCupertinoPageTransitionsBuilder;
 export 'src/router/widgets/auto_page_view.dart';

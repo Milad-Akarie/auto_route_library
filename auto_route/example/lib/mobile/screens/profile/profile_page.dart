@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../router/router.gr.dart';
 import '../user-data/data_collector.dart';
-
+//ignore_for_file: public_member_api_docs
 @RoutePage()
 class ProfilePage extends StatefulWidget {
   @override

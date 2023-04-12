@@ -5,15 +5,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+/// Signature for a function that returns a void future
+/// Used in [DeferredWidget] to load deferred libraries
 typedef LibraryLoader = Future<void> Function();
+
+/// Signature for a function that returns a widget
+/// Used in [DeferredWidget] to build the lazy-loaded library
 typedef DeferredWidgetBuilder = Widget Function();
 
 /// Wraps the child inside a deferred module loader.
 ///
 /// The child is created and a single instance of the Widget is maintained in
 /// state as long as closure to create widget stays the same.
-///
 class DeferredWidget extends StatefulWidget {
+  /// default constructor
   DeferredWidget(
     this.libraryLoader,
     this.createWidget, {
@@ -21,6 +26,7 @@ class DeferredWidget extends StatefulWidget {
     Widget? placeholder,
   }) : placeholder = placeholder ?? Container();
 
+  /// 
   final LibraryLoader libraryLoader;
   final DeferredWidgetBuilder createWidget;
   final Widget placeholder;
@@ -81,6 +87,7 @@ class _DeferredWidgetState extends State<DeferredWidget> {
 /// Displays a progress indicator when the widget is a deferred component
 /// and is currently being installed.
 class DeferredLoadingPlaceholder extends StatelessWidget {
+  /// default constructor
   const DeferredLoadingPlaceholder({
     super.key,
   });
