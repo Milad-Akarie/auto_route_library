@@ -6,11 +6,19 @@ import 'package:flutter/widgets.dart'
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
-
+/// AutoRoute extension of [RouteInformationParser]
 class DefaultRouteParser extends RouteInformationParser<UrlState> {
   final RouteMatcher _matcher;
+
+
+  /// If set to true all paths that's
+  /// matched as prefix will be included in
+  /// matching list.
+  /// Passed to [RouteMatcher.matchUri]
   final bool includePrefixMatches;
 
+
+  /// Default constructor
   DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
 
   @override
@@ -32,10 +40,14 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     );
   }
 }
-
+/// An extended type of [RouteInformation] that holds
+/// an extra property [replace] which forces the current
+/// route to be replaced
 class AutoRouteInformation extends RouteInformation {
+  /// forces the current location to be replaced with this location
   final bool replace;
 
+  /// Default constructor
   const AutoRouteInformation({
     required String location,
     Object? state,
@@ -54,13 +66,26 @@ class AutoRouteInformation extends RouteInformation {
   int get hashCode => replace.hashCode;
 }
 
+
+
+/// [UrlState] Holds current url state in a more structured way
+/// it's used by [Router] as configuration state
 @immutable
 class UrlState {
-  final List<RouteMatch> segments;
+  /// Represents current router uri
   final Uri uri;
+
+  /// The list of segments representing the current [uri]
+  final List<RouteMatch> segments;
+
+  /// This is passed to [AutoRouteInformation.replace]
+  /// when location is restored
   final bool shouldReplace;
+
+  /// Holds instance of browser entry-state
   final Object? pathState;
 
+  /// Default constructor
   const UrlState(
     this.uri,
     this.segments, {
@@ -68,10 +93,13 @@ class UrlState {
     this.pathState,
   });
 
+  /// Returns a fully decoded [uri]
   String get url => Uri.decodeFull(uri.toString());
-
+  /// Returns the path of [uri]
   String get path => uri.path;
 
+  /// Builds UrlState from list of
+  /// route matches instead of uri
   factory UrlState.fromSegments(
     List<RouteMatch> routes, {
     bool shouldReplace = false,
@@ -85,8 +113,10 @@ class UrlState {
     );
   }
 
-  RouteMatch get currentHierarchy => toHierarchy(segments);
-
+  /// Converts a list of linear route matches to
+  /// to a hierarchy of routes
+  /// e.g [Match1,Match2,Match3]
+  /// will be [Match1[Match2[Match3]]]
   static RouteMatch toHierarchy(List<RouteMatch> segments) {
     if (segments.length == 1) {
       return segments.first;
@@ -99,17 +129,26 @@ class UrlState {
     }
   }
 
+  /// Returns a new instance of [UrlState]
+  /// With the flattened version of [segments]
+  /// e.g if segments = [Match1[Match2[Match3]]]
+  /// the result is [Match1,Match2,Match3]
+  UrlState get flatten =>
+      UrlState.fromSegments(segments.last.flattened, state: pathState);
+
   @override
   String toString() {
     return 'UrlState{uri: $uri, shouldReplace: $shouldReplace, pathState: $pathState}';
   }
 
+  /// Returns true if [segments] is not empty
   bool get hasSegments => segments.isNotEmpty;
-
+  /// Returns to topMost item in the segments list
+  /// Witch is the last
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
 
-  UrlState get flatten =>
-      UrlState.fromSegments(segments.last.flattened, state: pathState);
+
+
 
   RouteMatch? _findSegment(
     List<RouteMatch> segments,
@@ -128,6 +167,7 @@ class UrlState {
     return null;
   }
 
+  /// re
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {
     return _findSegment(segments, (match) => match.name == routeName)
             ?.children ??
@@ -196,6 +236,8 @@ class UrlState {
   @override
   int get hashCode => const ListEquality().hash(segments) ^ pathState.hashCode;
 
+   /// Returns a new [UrlState] instance
+  /// with replaced properties
   UrlState copyWith({
     List<RouteMatch>? segments,
     Uri? uri,

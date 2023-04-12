@@ -6,22 +6,46 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+
+/// Creates a RoutePage based on [routeData.type],
+/// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
+  ///
   final RouteData routeData;
   final Widget _child;
 
+  /// Whether to treat the built route as a fullscreenDialog
+  /// Passed To [PageRoute.fullscreenDialog]
   bool get fullscreenDialog => routeData.route.fullscreenDialog;
 
+  /// Whether the built route should maintain it's state
+  /// Passed To [PageRoute.maintainState]
   bool get maintainState => routeData.route.maintainState;
+
+  /// Whether the built route should be opaque
+  /// Passed To [PageRoute.opaque]
+  bool get opaque => routeData.type.opaque;
+
+  /// The key that's used to decide whether
+  /// This page can be updated or not
+  /// used by [canUpdate]
+  LocalKey get routeKey => routeData.key;
+
 
   final _popCompleter = Completer<T?>();
 
+
+  /// The pop completer that's used in navigation actions
+  /// e.g [StackRouter.push]
+  /// it completes when the built route is popped
   Future<T?> get popped => routeData.router.ignorePopCompleters
       ? SynchronousFuture(null)
       : _popCompleter.future;
 
+  /// The widget passed to the route
   Widget get child => _child;
 
+  /// Default constructor
   AutoRoutePage({
     required this.routeData,
     required Widget child,
@@ -35,7 +59,7 @@ class AutoRoutePage<T> extends Page<T> {
           arguments: routeData.route.args,
         );
 
-  RouteType get routeType => routeData.type;
+
 
   @override
   bool canUpdate(Page<dynamic> other) {
@@ -43,10 +67,9 @@ class AutoRoutePage<T> extends Page<T> {
         (other as AutoRoutePage).routeKey == routeKey;
   }
 
-  bool get opaque => routeData.type.opaque;
 
-  LocalKey get routeKey => routeData.key;
-
+ /// Builds a the widget that's scoped
+  /// with [routeData]
   Widget buildPage(BuildContext context) {
     return RouteDataScope(
       routeData: routeData,
@@ -54,11 +77,13 @@ class AutoRoutePage<T> extends Page<T> {
     );
   }
 
+  /// Creates a PageRoute variant based on
+  /// [routeData.type]
   Route<T> onCreateRoute(BuildContext context) {
     final type = routeData.type;
     final title = routeData.title(context);
     if (type is MaterialRouteType) {
-      return PageBasedMaterialPageRoute<T>(page: this);
+      return _PageBasedMaterialPageRoute<T>(page: this);
     } else if (type is CupertinoRouteType) {
       return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
     } else if (type is CustomRouteType) {
@@ -75,7 +100,7 @@ class AutoRoutePage<T> extends Page<T> {
         return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
       }
     }
-    return PageBasedMaterialPageRoute<T>(page: this);
+    return _PageBasedMaterialPageRoute<T>(page: this);
   }
 
   @override
@@ -87,9 +112,9 @@ class AutoRoutePage<T> extends Page<T> {
   }
 }
 
-class PageBasedMaterialPageRoute<T> extends PageRoute<T>
+class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
     with MaterialRouteTransitionMixin<T> {
-  PageBasedMaterialPageRoute({
+  _PageBasedMaterialPageRoute({
     required AutoRoutePage page,
   }) : super(settings: page);
 

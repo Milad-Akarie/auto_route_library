@@ -891,7 +891,11 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
     }
   }
 }
-
+/// A custom cupertino transition builder to fix unwanted shadows in nested navigator
+///
+/// This fixes the issue referenced here
+// https://stackoverflow.com/questions/53457772/why-there-is-a-shadow-between-nested-navigator
+// https://stackoverflow.com/questions/68986632/rid-of-elevation-of-nested-flutter-navigator-2-0
 class NoShadowCupertinoPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Constructs a page transition animation that matches the iOS transition.
   const NoShadowCupertinoPageTransitionsBuilder();
