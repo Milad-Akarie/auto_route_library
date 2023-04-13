@@ -38,7 +38,7 @@ class RouteMatcher {
           matches.clear();
         }
         // handle redirects
-        if (config.isRedirect) {
+        if (config is RedirectRoute) {
           return _handleRedirect(
             routesCollection: collection,
             includePrefixMatches: includePrefixMatches,

@@ -14,11 +14,11 @@ class AutoRoutePage<T> extends Page<T> {
   final RouteData routeData;
   final Widget _child;
 
-  /// Whether to treat the built route as a fullscreenDialog
+  /// Whether to treat the built route as a fullscreenDialog.
   /// Passed To [PageRoute.fullscreenDialog]
   bool get fullscreenDialog => routeData.route.fullscreenDialog;
 
-  /// Whether the built route should maintain it's state
+  /// Whether the built route should maintain it's state.
   /// Passed To [PageRoute.maintainState]
   bool get maintainState => routeData.route.maintainState;
 

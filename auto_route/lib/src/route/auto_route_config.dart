@@ -4,24 +4,62 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
+/// Signature for a function that builds the route title
+/// Used in [AutoRoutePage]
 typedef TitleBuilder = String Function(BuildContext context, RouteData data);
+
+/// Signature for a function that builds the page [restorationId]
+/// Used in [AutoRoutePage]
 typedef RestorationIdBuilder = String Function(RouteMatch match);
 
+/// A route entry configuration used in [RouteMatcher]
+/// to create [RouteMatch]'s from paths and [PageRouteInfo]'s
 @immutable
 class AutoRoute {
+  /// The name of page this route should map to
   final String name;
   final String? _path;
+
+  /// Weather to match this route's path as fullMatch
   final bool fullMatch;
   final RouteCollection? _children;
-  final String? redirectTo;
+
+  /// The list of [AutoRouteGuard]'s this route
+  /// will go through before being presented
   final List<AutoRouteGuard> guards;
+
+  /// If set to true the [AutoRoutePage] will use the matched-path
+  /// as it's key otherwise [name] will be used
   final bool usesPathAsKey;
+
+  /// a Map of dynamic data that cab ne accessed by
+  /// [RouteData.mete] when the route is created
   final Map<String, dynamic> meta;
+
+  /// Indicates what kind of [PageRoute] this route will use
+  /// e.g [MaterialRouteType] will create [_PageBasedMaterialPageRoute]
   final RouteType? type;
+
+  /// Whether to treat the target route as a fullscreenDialog.
+  /// Passed To [PageRoute.fullscreenDialog]
   final bool fullscreenDialog;
+
+  /// Whether the target route should maintain it's state.
+  /// Passed To [PageRoute.maintainState]
   final bool maintainState;
+
+  /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
+  /// where it can be used by [CupertinoNavigationBar]
+  ///
+  /// it can also be used manually by calling [RouteData.title] inside widgets
   final TitleBuilder? title;
+
+  /// Builds a String value that that's passed to
+  /// [AutoRoutePage.restorationId]
   final RestorationIdBuilder? restorationId;
+
+  /// Whether the target route should be kept in stack
+  /// after another route is pushed above it
   final bool keepHistory;
 
   AutoRoute._({
@@ -30,7 +68,6 @@ class AutoRoute {
     this.usesPathAsKey = false,
     this.guards = const [],
     this.fullMatch = false,
-    this.redirectTo,
     this.type,
     this.meta = const {},
     this.maintainState = true,
@@ -42,14 +79,12 @@ class AutoRoute {
   })  : _path = path,
         _children = children != null ? RouteCollection.from(children) : null;
 
-  // a simplified copyWith to update routes without paths
   const AutoRoute._changePath({
     required this.name,
     required String path,
     required this.usesPathAsKey,
     required this.guards,
     required this.fullMatch,
-    required this.redirectTo,
     required this.type,
     required this.meta,
     required this.maintainState,
@@ -61,6 +96,7 @@ class AutoRoute {
   })  : _path = path,
         _children = children;
 
+  /// Builds a default AutoRoute instance with any [type]
   factory AutoRoute({
     required PageInfo page,
     String? path,
@@ -99,19 +135,19 @@ class AutoRoute {
 
   RouteCollection? get children => _children;
 
-  bool get isRedirect => redirectTo != null;
-
   @override
   String toString() {
     return 'RouteConfig{name: $name}';
   }
 
+  /// A simplified copyWith
+  ///
+  /// Returns a new AutoRoute instance with the provided path
   AutoRoute changePath(String path) {
     return AutoRoute._changePath(
       name: name,
       path: path,
       fullMatch: fullMatch,
-      redirectTo: redirectTo,
       guards: guards,
       usesPathAsKey: usesPathAsKey,
       meta: meta,
@@ -126,20 +162,26 @@ class AutoRoute {
   }
 }
 
+/// Builds a Redirect AutoRoute instance with no type
 @immutable
 class RedirectRoute extends AutoRoute {
+  /// The target path which this route should
+  /// redirect to
+  final String redirectTo;
+  /// Default constructor
   RedirectRoute({
     required super.path,
-    required String redirectTo,
+    required this.redirectTo,
   }) : super._(
           name: 'Redirect#$path',
           fullMatch: true,
-          redirectTo: redirectTo,
         );
 }
 
+/// Builds an [AutoRoute] instance with [RouteType.material] type
 @immutable
 class MaterialRoute extends AutoRoute {
+  /// default constructor
   MaterialRoute({
     required PageInfo page,
     super.path,
@@ -159,8 +201,10 @@ class MaterialRoute extends AutoRoute {
         );
 }
 
+/// Builds an [AutoRoute] instance with [RouteType.cupertino] type
 @immutable
 class CupertinoRoute extends AutoRoute {
+  /// Default constructor
   CupertinoRoute({
     required Type name,
     super.fullscreenDialog,
@@ -177,8 +221,10 @@ class CupertinoRoute extends AutoRoute {
   }) : super._(name: name.toString(), type: const RouteType.cupertino());
 }
 
+/// Builds an [AutoRoute] instance with [RouteType.adaptive] type
 @immutable
 class AdaptiveRoute extends AutoRoute {
+  /// Default constructor
   AdaptiveRoute({
     required PageInfo page,
     super.fullscreenDialog,
@@ -199,8 +245,10 @@ class AdaptiveRoute extends AutoRoute {
         );
 }
 
+/// Builds an [AutoRoute] instance with [RouteType.custom] type
 @immutable
 class CustomRoute extends AutoRoute {
+  /// Default constructor
   CustomRoute({
     required PageInfo page,
     super.fullscreenDialog,
@@ -237,25 +285,28 @@ class CustomRoute extends AutoRoute {
         );
 }
 
+/// Builds a simplified [AutoRoute] instance for test
 @visibleForTesting
 class TestRoute extends AutoRoute {
+  /// Default constructor
   TestRoute(
     String name, {
     required String path,
     super.children,
-    super.redirectTo,
     super.fullMatch,
     super.restorationId,
   }) : super._(name: name, path: path);
 }
 
+/// Builds a simplified [AutoRoute] instance for internal usage
+/// Used by [RootStackRouter] as root-node
 @internal
 class DummyRootRoute extends AutoRoute {
+  /// Default constructor
   DummyRootRoute(
     String name, {
     required String path,
     super.children,
-    super.redirectTo,
     super.fullMatch,
     super.restorationId,
   }) : super._(name: name, path: path);
