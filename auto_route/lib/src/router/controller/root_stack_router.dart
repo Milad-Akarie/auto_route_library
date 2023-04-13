@@ -144,5 +144,5 @@ abstract class RootStackRouter extends StackRouter {
 
   @override
   late final RouteCollection routeCollection =
-      RouteCollection.from(routes, root: true);
+      RouteCollection.fromList(routes, root: true);
 }

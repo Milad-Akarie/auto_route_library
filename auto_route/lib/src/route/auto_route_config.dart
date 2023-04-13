@@ -24,7 +24,7 @@ class AutoRoute {
   final bool fullMatch;
   final RouteCollection? _children;
 
-  /// The list of [AutoRouteGuard]'s this route
+  /// The list of [AutoRouteGuard]'s the matched route
   /// will go through before being presented
   final List<AutoRouteGuard> guards;
 
@@ -32,7 +32,7 @@ class AutoRoute {
   /// as it's key otherwise [name] will be used
   final bool usesPathAsKey;
 
-  /// a Map of dynamic data that cab ne accessed by
+  /// a Map of dynamic data that can be accessed by
   /// [RouteData.mete] when the route is created
   final Map<String, dynamic> meta;
 
@@ -77,7 +77,7 @@ class AutoRoute {
     this.restorationId,
     List<AutoRoute>? children,
   })  : _path = path,
-        _children = children != null ? RouteCollection.from(children) : null;
+        _children = children != null ? RouteCollection.fromList(children) : null;
 
   const AutoRoute._changePath({
     required this.name,
@@ -129,10 +129,16 @@ class AutoRoute {
     );
   }
 
+  /// The path defined by user or automatically-added
+  /// By [RouteCollection.fromList]
   String get path => _path ?? '';
 
+  /// Whether is route is a parent route
   bool get hasSubTree => _children != null;
 
+  /// The nested child-entries of this route
+  ///
+  /// returns null if this route has no child-entries
   RouteCollection? get children => _children;
 
   @override
@@ -163,11 +169,15 @@ class AutoRoute {
 }
 
 /// Builds a Redirect AutoRoute instance with no type
+///
+/// Redirect routes don't map to a page, instead they
+/// Map to an existing route-entry that maps to a page
 @immutable
 class RedirectRoute extends AutoRoute {
   /// The target path which this route should
   /// redirect to
   final String redirectTo;
+
   /// Default constructor
   RedirectRoute({
     required super.path,
@@ -312,12 +322,28 @@ class DummyRootRoute extends AutoRoute {
   }) : super._(name: name, path: path);
 }
 
+/// Holds a single set of config-entries
+///
+/// it makes accessing routes by name easier
+/// by creating a Map on init
+///
+/// it also has some helper-methods and getters
+/// to deal with config-entries
+///
+/// Mainly used by [RouteMatcher]
 class RouteCollection {
   final Map<String, AutoRoute> _routesMap;
 
-  RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
+  RouteCollection._(this._routesMap) : assert(_routesMap.isNotEmpty);
 
-  factory RouteCollection.from(List<AutoRoute> routes, {bool root = false}) {
+  /// Creates a Map of config-entries from [routes]
+  ///
+  /// also handles validating defined paths and
+  /// auto-generating the non-defined ones
+  ///
+  /// if this [RouteCollection] is created by the router [root] will be true
+  /// else if it's created by a parent route-entry it will be false
+  factory RouteCollection.fromList(List<AutoRoute> routes, {bool root = false}) {
     final routesMap = <String, AutoRoute>{};
     for (var r in routes) {
       if (r._path != null) {
@@ -337,20 +363,33 @@ class RouteCollection {
       }
     }
 
-    return RouteCollection(routesMap);
+    return RouteCollection._(routesMap);
   }
 
+  /// Returns the values of [_routesMap] as iterable
   Iterable<AutoRoute> get routes => _routesMap.values;
 
+  /// Helper to get the route-entry corresponding with [key]
   AutoRoute? operator [](String key) => _routesMap[key];
 
+  /// Helper to check if a route name exists inside of [_routesMap]
   bool containsKey(String key) => _routesMap.containsKey(key);
 
+  /// Returns the sub route-entries of the route corresponding with [key]
+  ///
+  /// Throws and error if corresponding route has not children
   RouteCollection subCollectionOf(String key) {
     assert(this[key]?.children != null, "$key does not have children");
     return this[key]!.children!;
   }
 
+  /// Finds the track to a certain route in the routes-tree
+  ///
+  /// This is mainly used to try adding parent routes to the
+  /// navigation sequences when pushing child routes without
+  /// adding their parents to stack first
+  ///
+  /// returns and empty list if the track is not found
   List<AutoRoute> findPathTo(String routeName) {
     final track = <AutoRoute>[];
     for (final route in routes) {

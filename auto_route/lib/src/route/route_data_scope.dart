@@ -2,15 +2,24 @@ import 'package:flutter/material.dart';
 
 import '../../auto_route.dart';
 
+
+/// Injects the given [routeData] to context
+/// so it can be looked up by any child widget
 class RouteDataScope extends InheritedWidget {
+
+  /// The route data to be scoped
   final RouteData routeData;
 
+  /// Default reconstruct
   const RouteDataScope({
     Key? key,
     required this.routeData,
     required Widget child,
   }) : super(child: child, key: key);
 
+  /// Looks up and returns the scoped [routeData]
+  ///
+  /// throws an error if it does not find it
   static RouteDataScope of(BuildContext context) {
     var scope = context.findAncestorWidgetOfExactType<RouteDataScope>();
     assert(() {
