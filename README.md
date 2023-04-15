@@ -1,1 +1,1 @@
-/auto_route/README.md
+auto_route/README.md
