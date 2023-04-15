@@ -1,3 +1,10 @@
+## 6.2.0
+
+ - **FIX**: need to always depend on RouterScope.
+ - **FIX**: url state decode issue.
+ - **FEAT**: Add a getter to expose child widget from AutoRoutePage.
+ - **FEAT**: deferred loading for web to enable code splitting for routes.
+
 # ChangeLog
 ## [6.1.0]
 - The missing hierarchy to a pushed child-route will now be auto_created if there are no required args

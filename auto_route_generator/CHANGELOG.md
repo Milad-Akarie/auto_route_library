@@ -1,3 +1,9 @@
+## 6.2.0
+
+ - **FIX**: include nested pages imports.
+ - **FIX**(generator): Bool opt type as num.
+ - **FEAT**: deferred loading for web to enable code splitting for routes.
+
 # ChangeLog
 ## [6.1.0]
 - Change navigatorKey param to super declaration to avoid material.dart import
