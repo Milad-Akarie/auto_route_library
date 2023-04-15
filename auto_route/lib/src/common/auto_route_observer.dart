@@ -1,12 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
-
 /// An extended version of  [NavigatorObserver] to support
 /// Tab-int and tab-change events observation
 class AutoRouterObserver extends NavigatorObserver {
   /// called when a tab route activates
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {}
+
   /// called when tab route reactivates
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {}
 }
@@ -30,6 +30,7 @@ abstract class AutoRouteAware {
 
   /// called when a tab route activates
   void didInitTabRoute(TabPageRoute? previousRoute) {}
+
   /// called when tab route reactivates
   void didChangeTabRoute(TabPageRoute previousRoute) {}
 }
@@ -188,6 +189,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 class TabPageRoute {
   /// match information of the target tab
   final RouteMatch routeInfo;
+
   /// index of the target tab
   final int index;
 
@@ -199,8 +201,10 @@ class TabPageRoute {
 
   /// helper getter to access [RouteMatch.name]
   String get name => routeInfo.name;
+
   /// helper getter to access [RouteMatch.path]
   String get path => routeInfo.path;
+
   /// helper getter to access [RouteMatch.stringMatch]
   String get match => routeInfo.stringMatch;
 }

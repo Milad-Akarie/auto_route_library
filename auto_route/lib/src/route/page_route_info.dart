@@ -96,7 +96,6 @@ class PageRouteInfo<T> {
     return path;
   }
 
-
   /// Returns a flattened list of this route and it's sub-routes
   /// e.g if we have = Route1[Route2[Route3]]
   /// the result is [Route1,Route2,Route3]

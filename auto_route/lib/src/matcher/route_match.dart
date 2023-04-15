@@ -114,7 +114,8 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren)
+          ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   /// Joins all segments to a valid path
@@ -256,12 +257,16 @@ class HierarchySegment {
           const ListEquality().equals(children, other.children);
 
   @override
-  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
+  int get hashCode =>
+      name.hashCode ^
+      pathParams.hashCode ^
+      queryParams.hashCode ^
+      const ListEquality().hash(children);
 }
+
 /// An extension to create a pretty json output of
 /// the current hierarchy
 extension PrettyHierarchySegmentX on List<HierarchySegment> {
-
   /// Returns a pretty json output from this hierarchy
   /// as a printable string
   String get prettyMap {
@@ -270,8 +275,10 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
     Map toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(segments.map(
         (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
+          if (e.pathParams?.isNotEmpty == true)
+            'pathParams': e.pathParams!.rawMap,
+          if (e.queryParams?.isNotEmpty == true)
+            'queryParams': e.queryParams!.rawMap,
           if (e.children.isNotEmpty) 'children': toMap(e.children),
         }),
       ));

@@ -2,18 +2,40 @@ import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
 
+/// A Wrapper for [Navigator] that handles stack-routing
 class AutoRouter extends StatefulWidget {
+  /// A builder function that returns a list of observes
+  ///
+  /// Why isn't this a list of navigatorObservers?
+  /// The reason for that is a [NavigatorObserver] instance can only
+  /// be used by a single [Navigator], so unless you're using a one
+  /// single router or you don't want your nested routers to inherit
+  /// observers make sure navigatorObservers builder always returns
+  /// fresh observer instances.
   final NavigatorObserversBuilder navigatorObservers;
+
+  /// This builder maybe used to build content with context
+  /// that has [_AutoRouterState.controller]
   final Widget Function(BuildContext context, Widget content)? builder;
+
+  /// Passed to [Navigator.restorationScopeId]
   final String? navRestorationScopeId;
+
+  /// Whether this router should inherit it's ancestor's observers
   final bool inheritNavigatorObservers;
+
+  /// The state key passed to [Navigator]
   final GlobalKey<NavigatorState>? navigatorKey;
+
+  /// A builder for the placeholder page that is shown
+  /// before the first route can be rendered. Defaults to
+  /// an empty page with [Theme.scaffoldBackgroundColor].
   final WidgetBuilder? placeholder;
 
+  /// Default constructor
   const AutoRouter({
     Key? key,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
     this.navigatorKey,
@@ -21,10 +43,11 @@ class AutoRouter extends StatefulWidget {
     this.placeholder,
   }) : super(key: key);
 
+  /// Builds a [_DeclarativeAutoRouter] which uses
+  /// a declarative list of routes to update navigator stack
   static Widget declarative({
     Key? key,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
@@ -45,14 +68,19 @@ class AutoRouter extends StatefulWidget {
       );
 
   @override
-  AutoRouterState createState() => AutoRouterState();
+  State<AutoRouter> createState() => _AutoRouterState();
 
+  /// Looks up and returns the scoped [StackRouter]
+  ///
+  /// if watch is true dependent widget will watch changes
+  /// of this scope otherwise it would just read it
+  ///
+  /// throws an error if it does not find it
   static StackRouter of(BuildContext context, {bool watch = false}) {
     var scope = StackRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -61,12 +89,13 @@ class AutoRouter extends StatefulWidget {
     return scope!.controller;
   }
 
+  /// Helper to access [RoutingController.innerRouterOf]
   static StackRouter? innerRouterOf(BuildContext context, String routeName) {
     return of(context).innerRouterOf<StackRouter>(routeName);
   }
 }
 
-class AutoRouterState extends State<AutoRouter> {
+class _AutoRouterState extends State<AutoRouter> {
   StackRouter? _controller;
 
   StackRouter? get controller => _controller;
@@ -151,9 +180,6 @@ class AutoRouterState extends State<AutoRouter> {
   }
 }
 
-typedef RoutesGenerator = List<PageRouteInfo> Function(
-    BuildContext context, List<PageRouteInfo> routes);
-
 class _DeclarativeAutoRouter extends StatefulWidget {
   final RoutesBuilder routes;
   final RoutePopCallBack? onPopRoute;
@@ -167,8 +193,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   const _DeclarativeAutoRouter({
     Key? key,
     required this.routes,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.navigatorKey,
     this.navRestorationScopeId,
@@ -236,7 +261,6 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   Widget build(BuildContext context) {
     assert(_controller != null);
     final stateHash = controller!.stateHash;
-
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,

@@ -891,6 +891,7 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
     }
   }
 }
+
 /// A custom cupertino transition builder to fix unwanted shadows in nested navigator
 ///
 /// This fixes the issue referenced here

@@ -6,17 +6,16 @@ import 'package:flutter/widgets.dart'
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
+
 /// AutoRoute extension of [RouteInformationParser]
 class DefaultRouteParser extends RouteInformationParser<UrlState> {
   final RouteMatcher _matcher;
-
 
   /// If set to true all paths that's
   /// matched as prefix will be included in
   /// matching list.
   /// Passed to [RouteMatcher.matchUri]
   final bool includePrefixMatches;
-
 
   /// Default constructor
   DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
@@ -40,6 +39,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     );
   }
 }
+
 /// An extended type of [RouteInformation] that holds
 /// an extra property [replace] which forces the current
 /// route to be replaced
@@ -65,8 +65,6 @@ class AutoRouteInformation extends RouteInformation {
   @override
   int get hashCode => replace.hashCode;
 }
-
-
 
 /// [UrlState] Holds current url state in a more structured way
 /// it's used by [Router] as configuration state
@@ -95,6 +93,7 @@ class UrlState {
 
   /// Returns a fully decoded [uri]
   String get url => Uri.decodeFull(uri.toString());
+
   /// Returns the path of [uri]
   String get path => uri.path;
 
@@ -143,12 +142,10 @@ class UrlState {
 
   /// Returns true if [segments] is not empty
   bool get hasSegments => segments.isNotEmpty;
+
   /// Returns to topMost item in the segments list
   /// Witch is the last
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
-
-
-
 
   RouteMatch? _findSegment(
     List<RouteMatch> segments,
@@ -236,7 +233,7 @@ class UrlState {
   @override
   int get hashCode => const ListEquality().hash(segments) ^ pathState.hashCode;
 
-   /// Returns a new [UrlState] instance
+  /// Returns a new [UrlState] instance
   /// with replaced properties
   UrlState copyWith({
     List<RouteMatch>? segments,

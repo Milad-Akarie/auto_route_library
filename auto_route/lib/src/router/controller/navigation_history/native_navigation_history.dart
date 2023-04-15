@@ -1,11 +1,13 @@
-import 'package:auto_route/auto_route.dart'
-    show RouteMatch, StackRouter, UrlState;
+import 'package:auto_route/auto_route.dart' show RouteMatch, StackRouter, UrlState;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 import 'navigation_history_base.dart';
 
+/// An implementation of [NavigationHistory]
+/// That's used for native platforms
 class NavigationHistoryImpl extends NavigationHistory {
+  /// Default constructor;
   NavigationHistoryImpl(this.router);
 
   @override
@@ -51,8 +53,15 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   @override
   void forward() {
-    throw FlutterError(
-        'forward navigation is not supported for non-web platforms');
+    throw FlutterError('forward navigation is not supported for non-web platforms');
+  }
+
+  @override
+  Object? get pathState => throw FlutterError('pathState is not supported for non-web platforms');
+
+  @override
+  void pushPathState(Object? state) {
+    throw FlutterError('pushPathState is not supported for non-web platforms');
   }
 }
 
@@ -64,10 +73,7 @@ class _HistoryEntry {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _HistoryEntry &&
-          runtimeType == other.runtimeType &&
-          url == other.url;
+      identical(this, other) || other is _HistoryEntry && runtimeType == other.runtimeType && url == other.url;
 
   @override
   int get hashCode => url.hashCode;

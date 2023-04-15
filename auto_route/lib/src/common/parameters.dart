@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 
-
 /// This class helps read typed data from
 /// raw maps, it's used for both path-parameters and query-parameters
 class Parameters {
@@ -39,6 +38,7 @@ class Parameters {
 
   /// Helper getter to [_params.isNotEmpty]
   bool get isNotEmpty => _params.isNotEmpty;
+
   /// Helper getter to [_params.isEmpty]
   bool get isEmpty => _params.isEmpty;
 
@@ -47,7 +47,6 @@ class Parameters {
   dynamic get(String key, [defaultValue]) {
     return _params[key] ?? defaultValue;
   }
-
 
   /// returns the value corresponding with [key] corresponding with [key] as nullable [String]
   /// if null returns [defaultValue]
@@ -101,6 +100,7 @@ class Parameters {
       return double.tryParse(param.toString()) ?? defaultValue;
     }
   }
+
   /// returns the value corresponding with [key] as [double]
   /// if null returns [defaultValue]
   double getDouble(String key, [double? defaultValue]) {

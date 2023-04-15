@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'data_collector.dart';
+
 //ignore_for_file: public_member_api_docs
 class UserDataPage extends StatelessWidget {
   final Function(UserData data)? onResult;

@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 
-
 /// Signature for a function that takes a [NavigationFailure]
 /// Used in [RoutingController].
 typedef OnNavigationFailure = void Function(NavigationFailure failure);
@@ -14,7 +13,6 @@ abstract class NavigationFailure {
 /// A failure indicates that the request route or path
 /// has not been found by the [RouteMatcher]
 class RouteNotFoundFailure extends NavigationFailure {
-
   /// the path or name of the target route
   final String path;
 
@@ -33,6 +31,7 @@ class RouteNotFoundFailure extends NavigationFailure {
 class RejectedByGuardFailure extends NavigationFailure {
   /// The rejected route
   final RouteMatch route;
+
   /// The guard that did the rejection
   final AutoRouteGuard guard;
 

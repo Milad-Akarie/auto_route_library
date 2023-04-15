@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../auto_route.dart';
 
-
 /// Injects the given [routeData] to context
 /// so it can be looked up by any child widget
 class RouteDataScope extends InheritedWidget {
-
   /// The route data to be scoped
   final RouteData routeData;
 

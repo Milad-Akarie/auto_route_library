@@ -2,24 +2,32 @@ import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-class AutoRouteInformationProvider extends RouteInformationProvider
-    with WidgetsBindingObserver, ChangeNotifier {
+/// The route information provider that propagates the platform route information changes.
+///
+/// This provider also reports the new route information from the [Router] widget
+/// back to engine using message channel method, the
+/// [SystemNavigator.routeInformationUpdated].
+///
+/// Each time [SystemNavigator.routeInformationUpdated] is called, the
+/// [SystemNavigator.selectMultiEntryHistory] method is also called. This
+/// overrides the initialization behavior of
+/// [Navigator.reportsRouteUpdateToEngine].
+class AutoRouteInformationProvider extends RouteInformationProvider with WidgetsBindingObserver, ChangeNotifier {
+  AutoRouteInformationProvider._({required RouteInformation initialRouteInformation, this.neglectIf})
+      : _value = initialRouteInformation;
+
+  /// if true is return the route will be
+  /// reported to engine
+  bool Function(String? location)? neglectIf;
+
   /// Create a platform route information provider.
   ///
   /// Use the [initialRouteInformation] to set the default route information for this
   /// provider.
-  AutoRouteInformationProvider._(
-      {required RouteInformation initialRouteInformation, this.neglectIf})
-      : _value = initialRouteInformation;
-
-  bool Function(String? location)? neglectIf;
-
   factory AutoRouteInformationProvider(
-      {RouteInformation? initialRouteInformation,
-      bool Function(String? location)? neglectWhen}) {
-    final initialRouteInfo = initialRouteInformation ??
-        RouteInformation(
-            location: WidgetsBinding.instance.window.defaultRouteName);
+      {RouteInformation? initialRouteInformation, bool Function(String? location)? neglectWhen}) {
+    final initialRouteInfo =
+        initialRouteInformation ?? RouteInformation(location: WidgetsBinding.instance.window.defaultRouteName);
     return AutoRouteInformationProvider._(
       initialRouteInformation: initialRouteInfo,
       neglectIf: neglectWhen,
@@ -28,8 +36,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
 
   @override
   void routerReportsNewRouteInformation(RouteInformation routeInformation,
-      {RouteInformationReportingType type =
-          RouteInformationReportingType.none}) {
+      {RouteInformationReportingType type = RouteInformationReportingType.none}) {
     if (neglectIf != null && neglectIf!(routeInformation.location)) {
       return;
     }
@@ -56,8 +63,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   RouteInformation get value => _value;
   RouteInformation _value;
 
-  RouteInformation _valueInEngine = RouteInformation(
-      location: WidgetsBinding.instance.window.defaultRouteName);
+  RouteInformation _valueInEngine = RouteInformation(location: WidgetsBinding.instance.window.defaultRouteName);
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
     if (_value == routeInformation) return;
@@ -89,8 +95,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   }
 
   @override
-  Future<bool> didPushRouteInformation(
-      RouteInformation routeInformation) async {
+  Future<bool> didPushRouteInformation(RouteInformation routeInformation) async {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
     return true;

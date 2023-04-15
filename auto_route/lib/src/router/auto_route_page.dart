@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-
 /// Creates a RoutePage based on [routeData.type],
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
@@ -31,9 +30,7 @@ class AutoRoutePage<T> extends Page<T> {
   /// used by [canUpdate]
   LocalKey get routeKey => routeData.key;
 
-
   final _popCompleter = Completer<T?>();
-
 
   /// The pop completer that's used in navigation actions
   /// e.g [StackRouter.push]
@@ -59,16 +56,13 @@ class AutoRoutePage<T> extends Page<T> {
           arguments: routeData.route.args,
         );
 
-
-
   @override
   bool canUpdate(Page<dynamic> other) {
     return other.runtimeType == runtimeType &&
         (other as AutoRoutePage).routeKey == routeKey;
   }
 
-
- /// Builds a the widget that's scoped
+  /// Builds a the widget that's scoped
   /// with [routeData]
   Widget buildPage(BuildContext context) {
     return RouteDataScope(

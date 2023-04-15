@@ -77,7 +77,8 @@ class AutoRoute {
     this.restorationId,
     List<AutoRoute>? children,
   })  : _path = path,
-        _children = children != null ? RouteCollection.fromList(children) : null;
+        _children =
+            children != null ? RouteCollection.fromList(children) : null;
 
   const AutoRoute._changePath({
     required this.name,
@@ -343,7 +344,8 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(List<AutoRoute> routes, {bool root = false}) {
+  factory RouteCollection.fromList(List<AutoRoute> routes,
+      {bool root = false}) {
     final routesMap = <String, AutoRoute>{};
     for (var r in routes) {
       if (r._path != null) {

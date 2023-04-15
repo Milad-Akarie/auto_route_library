@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/material.dart';
+
 //ignore_for_file: public_member_api_docs
 @AutoRouterConfig(generateForDir: ['lib/web_demo'], deferredLoading: false)
 class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {

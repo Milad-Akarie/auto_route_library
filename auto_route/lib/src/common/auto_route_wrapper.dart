@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart' show BuildContext, Widget, StatelessWidget, Key;
+import 'package:flutter/material.dart'
+    show BuildContext, Widget, StatelessWidget, Key;
 import 'package:meta/meta.dart' show optionalTypeArgs;
 
 /// clients will implement this class to provide a wrapped route.
@@ -23,9 +24,9 @@ abstract class AutoRouteWrapper {
 /// [AutoRouteWrapper]
 @optionalTypeArgs
 class WrappedRoute<T extends AutoRouteWrapper> extends StatelessWidget {
-
   /// default constructor
   const WrappedRoute({Key? key, required this.child}) : super(key: key);
+
   /// The routeble-widget that implements [AutoRouteWrapper]
   final T child;
 
