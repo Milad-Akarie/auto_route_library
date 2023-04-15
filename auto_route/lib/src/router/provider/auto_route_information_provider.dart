@@ -12,8 +12,10 @@ import 'package:flutter/widgets.dart';
 /// [SystemNavigator.selectMultiEntryHistory] method is also called. This
 /// overrides the initialization behavior of
 /// [Navigator.reportsRouteUpdateToEngine].
-class AutoRouteInformationProvider extends RouteInformationProvider with WidgetsBindingObserver, ChangeNotifier {
-  AutoRouteInformationProvider._({required RouteInformation initialRouteInformation, this.neglectIf})
+class AutoRouteInformationProvider extends RouteInformationProvider
+    with WidgetsBindingObserver, ChangeNotifier {
+  AutoRouteInformationProvider._(
+      {required RouteInformation initialRouteInformation, this.neglectIf})
       : _value = initialRouteInformation;
 
   /// if true is return the route will be
@@ -25,9 +27,11 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   /// Use the [initialRouteInformation] to set the default route information for this
   /// provider.
   factory AutoRouteInformationProvider(
-      {RouteInformation? initialRouteInformation, bool Function(String? location)? neglectWhen}) {
-    final initialRouteInfo =
-        initialRouteInformation ?? RouteInformation(location: WidgetsBinding.instance.window.defaultRouteName);
+      {RouteInformation? initialRouteInformation,
+      bool Function(String? location)? neglectWhen}) {
+    final initialRouteInfo = initialRouteInformation ??
+        RouteInformation(
+            location: WidgetsBinding.instance.window.defaultRouteName);
     return AutoRouteInformationProvider._(
       initialRouteInformation: initialRouteInfo,
       neglectIf: neglectWhen,
@@ -36,7 +40,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
 
   @override
   void routerReportsNewRouteInformation(RouteInformation routeInformation,
-      {RouteInformationReportingType type = RouteInformationReportingType.none}) {
+      {RouteInformationReportingType type =
+          RouteInformationReportingType.none}) {
     if (neglectIf != null && neglectIf!(routeInformation.location)) {
       return;
     }
@@ -63,7 +68,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   RouteInformation get value => _value;
   RouteInformation _value;
 
-  RouteInformation _valueInEngine = RouteInformation(location: WidgetsBinding.instance.window.defaultRouteName);
+  RouteInformation _valueInEngine = RouteInformation(
+      location: WidgetsBinding.instance.window.defaultRouteName);
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
     if (_value == routeInformation) return;
@@ -95,7 +101,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   }
 
   @override
-  Future<bool> didPushRouteInformation(RouteInformation routeInformation) async {
+  Future<bool> didPushRouteInformation(
+      RouteInformation routeInformation) async {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
     return true;

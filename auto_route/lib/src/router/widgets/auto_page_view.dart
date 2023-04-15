@@ -51,6 +51,7 @@ class AutoPageView extends StatefulWidget {
   @override
   State<AutoPageView> createState() => AutoPageViewState();
 }
+
 /// State implementation of [AutoPageView]
 class AutoPageViewState extends State<AutoPageView> {
   late final PageController _controller = widget.controller;
@@ -107,7 +108,8 @@ class AutoPageViewState extends State<AutoPageView> {
     if ((_router.activeIndex - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
       if (animatePageTransition) {
-        await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
+        await _controller.animateToPage(_router.activeIndex,
+            duration: duration, curve: Curves.ease);
       } else {
         _controller.jumpToPage(_router.activeIndex);
       }
@@ -115,7 +117,9 @@ class AutoPageViewState extends State<AutoPageView> {
       return Future<void>.value();
     }
     assert((_router.activeIndex - previousIndex).abs() > 1);
-    final int initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
+    final int initialPage = _router.activeIndex > previousIndex
+        ? _router.activeIndex - 1
+        : _router.activeIndex + 1;
 
     setState(() {
       _warpUnderwayCount += 1;
@@ -127,7 +131,8 @@ class AutoPageViewState extends State<AutoPageView> {
     _controller.jumpToPage(initialPage);
 
     if (animatePageTransition) {
-      await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
+      await _controller.animateToPage(_router.activeIndex,
+          duration: duration, curve: Curves.ease);
     } else {
       _controller.jumpToPage(_router.activeIndex);
     }

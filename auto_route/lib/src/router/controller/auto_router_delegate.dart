@@ -54,7 +54,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Forces a url update
   static reportUrlChanged(BuildContext context, String url) {
-    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
+    Router.of(context)
+        .routeInformationProvider
+        ?.routerReportsNewRouteInformation(
           RouteInformation(location: url),
           type: RouteInformationReportingType.navigate,
         );
@@ -244,7 +246,8 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     String? initialDeepLink,
     this.onPopRoute,
     this.onNavigate,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           router,
           navRestorationScopeId: navRestorationScopeId,

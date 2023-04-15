@@ -47,7 +47,8 @@ class RouterScope extends InheritedWidget {
     }
     assert(() {
       if (scope == null) {
-        throw FlutterError('RouterScope operation requested with a context that does not include a RouterScope.\n'
+        throw FlutterError(
+            'RouterScope operation requested with a context that does not include a RouterScope.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of a RouterScope widget.');
       }
