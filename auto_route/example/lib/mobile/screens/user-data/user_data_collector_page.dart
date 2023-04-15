@@ -3,6 +3,7 @@ import 'package:example/mobile/screens/user-data/data_collector.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+//ignore_for_file: public_member_api_docs
 class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
   final Function(UserData data)? onResult;
 

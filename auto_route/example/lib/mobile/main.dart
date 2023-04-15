@@ -4,6 +4,7 @@ import 'package:example/mobile/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:auto_route/auto_route.dart';
+//ignore_for_file: public_member_api_docs
 
 void main() => runApp(MyApp());
 

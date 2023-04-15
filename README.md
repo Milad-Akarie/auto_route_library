@@ -15,33 +15,33 @@
 </p>                  
 
 - [Introduction](#introduction)
-  - [Installation](#installation)
-  - [Setup and Usage](#setup-and-usage)
+    - [Installation](#installation)
+    - [Setup and Usage](#setup-and-usage)
 - [Generated routes](#generated-routes)
 - [Navigation](#navigating-between-screens)
-  - [Navigating Between Screens](#navigating-between-screens)
-  - [Passing Arguments](#passing-arguments)
-  - [Returning Results](#returning-results)
-  - [Nested navigation](#nested-navigation)
-  - [Tab Navigation](#tab-navigation)
-    - [Using PageView](#using-pageview)
-    - [Using TabBar](#using-tabbar)
-  - [Finding The Right Router](#finding-the-right-router)
-  - [Navigating Without Context](#navigating-without-context)
+    - [Navigating Between Screens](#navigating-between-screens)
+    - [Passing Arguments](#passing-arguments)
+    - [Returning Results](#returning-results)
+    - [Nested navigation](#nested-navigation)
+    - [Tab Navigation](#tab-navigation)
+        - [Using PageView](#using-pageview)
+        - [Using TabBar](#using-tabbar)
+    - [Finding The Right Router](#finding-the-right-router)
+    - [Navigating Without Context](#navigating-without-context)
 - [Declarative Navigation](#declarative-navigation)
 - [Working with Paths](#working-with-paths)
 - [Route guards](#route-guards)
 - [Wrapping routes](#wrapping-routes)
 - [Navigation Observers](#navigation-observers)
 - [Customization](#customizations)
-  - [Custom Route Transitions](#custom-route-transitions)
-  - [Custom Route Builder](#custom-route-builder)
+    - [Custom Route Transitions](#custom-route-transitions)
+    - [Custom Route Builder](#custom-route-builder)
 - [Others](#others)
-  - [Optimizing generation time](#optimizing-generation-time)
-    - [Enabling cached builds (Experimental)](#enabling-cached-builds)
-  - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
-  - [ActiveGuardObserver](#activeguardobserver)
-  - [Remove shadow from nested routers](#remove-shadow-from-nested-routers)
+    - [Optimizing generation time](#optimizing-generation-time)
+        - [Enabling cached builds (Experimental)](#enabling-cached-builds)
+    - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
+    - [ActiveGuardObserver](#activeguardobserver)
+    - [Remove shadow from nested routers](#remove-shadow-from-nested-routers)
 - [Examples](#examples)
 
 ## Idea Tools [New]
@@ -84,7 +84,6 @@ dev_dependencies:
 ## Setup And Usage
 
 1- Create a router class and annotate it with `@AutoRouterConfig` then extend "$YourClassName"
-.      
 2- override the routes getter and start adding your routes.
 
  ```dart     
@@ -92,7 +91,7 @@ dev_dependencies:
 class AppRouter extends $AppRouter {      
     
   @override      
-  final List<AutoRoute> routes = [      
+  List<AutoRoute> get routes => [      
    /// routes go here     
    ]    
  }    
@@ -111,7 +110,7 @@ part 'app_router.gr.dart';
 class AppRouter extends _$AppRouter {      
     
   @override      
-  final List<AutoRoute> routes = [      
+  List<AutoRoute> get routes => [      
    /// routes go here     
    ]    
  }               
@@ -148,7 +147,7 @@ flutter packages pub run build_runner build
 class AppRouter extends $AppRouter {      
     
   @override      
-  final List<AutoRoute> routes = [      
+  List<AutoRoute> get routes => [      
     //HomeScreen is generated as HomeRoute because     
     //of the replaceInRouteName property    
     AutoRoute(HomeRoute.page),    
@@ -385,7 +384,7 @@ of `DashboardPage`.
 class AppRouter extends $AppRouter{    
     
   @override      
-  final List<AutoRoute> routes = [                  
+  List<AutoRoute> get routes => [                  
     AutoRoute(                    
       path: '/dashboard',                    
       page: DashboardRoute.page,                    
@@ -1002,6 +1001,26 @@ Now we assign our guard to the routes we want to protect.
 ```dart                
  AutoRoute(page: ProfileRoute.page, guards: [AuthGuard()]);                
 ```                            
+#### Guarding all stack-routes
+You can have all your stack-routes (none-tab-routes) go throuw a global guard by having your Router implement an AutoRouteGuard.
+let's say you have an App with no publish screens, we'd have a global guard that only allows navigation if the user is authenticated or if we're navigating to the LoginRoute.
+
+```dart   
+@AutoRouterConfig()
+class AppRouter extends $AppRouter implements AutoRouteGuard {
+  @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
+      if(isAuthenticated || resolver.route.name == LoginRoute.name){
+         // we continue navigation
+          resolver.next();
+      }else{
+          // else we navigate to the Login page so we get authenticateed
+          push(LoginRoute(onResult:(didLogin)=> resolver.next(didLogin)))
+      }
+   }
+  // ..routes[]
+  }
+  ```  
 
 ## Wrapping Routes
 
@@ -1395,7 +1414,7 @@ class AppRouter extends $AppRouter {
 RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc    
     
   @override      
-  final List<AutoRoute> routes = [      
+   List<AutoRoute> get routes => [      
    /// routes go here     
    ]    
  }    
@@ -1483,4 +1502,4 @@ coming soon
 
 You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can
 enhance a certain functionality or by reporting any problems you encounter and of course buying a
-couple coffees will help speed up the development process.
+couple coffees will help speed up the development process

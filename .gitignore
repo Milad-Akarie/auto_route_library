@@ -76,3 +76,4 @@
 auto_route/pubspec.lock
 auto_route/example/pubspec.lock
 auto_route_generator/pubspec.lock
+pubspec_overrides.yaml

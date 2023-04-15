@@ -1,45 +1,55 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web_demo/router/web_auth_guard.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/material.dart';
 
-@AutoRouterConfig(generateForDir: ['lib/web_demo'],deferredLoading: false)
-class WebAppRouter extends $WebAppRouter {
+//ignore_for_file: public_member_api_docs
+@AutoRouterConfig(generateForDir: ['lib/web_demo'], deferredLoading: false)
+class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
   AuthService authService;
 
   WebAppRouter(this.authService);
 
- @override
-  late final List<AutoRoute> routes = [
-    AutoRoute(
-      page: MainWebRoute.page,
-      path: '/',
-      guards: [AuthGuard(authService)],
-    ),
-    AutoRoute(
-      path: '/login',
-      page: WebLoginRoute.page,
-      keepHistory: false,
-    ),
-    AutoRoute(
-      path: '/user/:userID',
-      page: UserRoute.page,
-      children: [
-        AutoRoute(path: '', page: UserProfileRoute.page),
+  @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
+    if (authService.isAuthenticated ||
+        resolver.route.name == WebLoginRoute.name) {
+      resolver.next();
+    } else {
+      push(WebLoginRoute(resolver: resolver));
+    }
+  }
+
+  @override
+  List<AutoRoute> get routes => [
         AutoRoute(
-          path: 'posts',
-          page: UserPostsRoute.page,
+          page: MainWebRoute.page,
+          path: '/',
+          // guards: [AuthGuard(authService)],
+        ),
+        AutoRoute(
+          path: '/login',
+          page: WebLoginRoute.page,
+          keepHistory: false,
+        ),
+        AutoRoute(
+          path: '/user/:userID',
+          page: UserRoute.page,
           children: [
-            RedirectRoute(path: '', redirectTo: 'all'),
-            AutoRoute(path: 'all', page: UserAllPostsRoute.page),
-            AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
+            AutoRoute(path: '', page: UserProfileRoute.page),
+            AutoRoute(
+              path: 'posts',
+              page: UserPostsRoute.page,
+              children: [
+                RedirectRoute(path: '', redirectTo: 'all'),
+                AutoRoute(path: 'all', page: UserAllPostsRoute.page),
+                AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
+              ],
+            ),
           ],
         ),
-      ],
-    ),
-    AutoRoute(path: '*', page: NotFoundRoute.page),
-  ];
+        AutoRoute(path: '*', page: NotFoundRoute.page),
+      ];
 }
 
 @RoutePage()
@@ -74,8 +84,15 @@ class _MainWebPageState extends State<MainWebPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
-                onPressed:
-                    widget.navigate ?? () => context.navigateTo(UserRoute(id: 2, query: const ['value1', 'value2'])),
+                onPressed: widget.navigate ??
+                    () {
+                      context.pushRoute(
+                        UserRoute(
+                          id: 2,
+                          query: const ['value1', 'value2'],
+                        ),
+                      );
+                    },
                 child: Text('Navigate to user/2'),
               ),
             ),
@@ -147,9 +164,9 @@ class UserProfilePage extends StatelessWidget {
               color: Colors.red,
               onPressed: navigate ??
                   () {
-                    context.pushRoute( UserPostsRoute());
+                    context.pushRoute(UserFavoritePostsRoute());
                   },
-              child: Text('Posts'),
+              child: Text('Posts -> '),
             ),
             const SizedBox(height: 8),
             ElevatedButton(
@@ -169,6 +186,7 @@ class UserProfilePage extends StatelessWidget {
 @RoutePage()
 class UserPostsPage extends StatefulWidget {
   final int id;
+
   const UserPostsPage({@PathParam.inherit('userID') required this.id});
 
   @override
@@ -230,7 +248,8 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
+            return Text(context.topRouteMatch.name +
+                ' ${widget.id} query: ${widget.query}');
           },
         ),
         // leading: AutoLeadingButton(),

@@ -1,10 +1,40 @@
 part of 'routing_controller.dart';
 
+/// An auto_route implementation for [RouterDelegate]
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
+  /// This initial list of routes
+  /// overrides default-initial paths e.g => AutoRoute(path:'/')
+  /// overrides initial paths coming from platform e.g browser's address bar
+  ///
+  /// Using this is not recommended if your App uses deep-links
+  /// unless you know what you're doing.
   final List<PageRouteInfo>? initialRoutes;
-  final StackRouter controller;
+
+  /// This initial path
+  /// overrides default-initial paths e.g => AutoRoute(path:'/')
+  /// overrides initial paths coming from platform e.g browser's address bar
+  ///
+  /// (NOTE): Flutter reports platform deep-links directly now
+  ///
+  /// Using this is not recommended if your App uses deep-links
+  /// unless you know what you're doing.
   final String? initialDeepLink;
+
+  /// An object that provides pages stack to [Navigator.pages]
+  /// and wraps a navigator key to handle stack navigation actions
+  final StackRouter controller;
+
+  /// Passed to [Navigator.restorationScopeId]
   final String? navRestorationScopeId;
+
+  /// A builder function that returns a list of observes
+  ///
+  /// Why isn't this a list of navigatorObservers?
+  /// The reason for that is a [NavigatorObserver] instance can only
+  /// be used by a single [Navigator], so unless you're using a one
+  /// single router or you don't want your nested routers to inherit
+  /// observers make sure navigatorObservers builder always returns
+  /// fresh observer instances.
   final NavigatorObserversBuilder navigatorObservers;
 
   /// A builder for the placeholder page that is shown
@@ -12,21 +42,22 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// an empty page with [Theme.scaffoldBackgroundColor].
   WidgetBuilder? placeholder;
 
+  /// Builds an empty observers list
   static List<NavigatorObserver> defaultNavigatorObserversBuilder() => const [];
 
+  /// Looks up and casts the scoped [Router] to [AutoRouterDelegate]
   static AutoRouterDelegate of(BuildContext context) {
     final delegate = Router.of(context).routerDelegate;
     assert(delegate is AutoRouterDelegate);
     return delegate as AutoRouterDelegate;
   }
 
+  /// Forces a url update
   static reportUrlChanged(BuildContext context, String url) {
     Router.of(context)
         .routeInformationProvider
         ?.routerReportsNewRouteInformation(
-          RouteInformation(
-            location: url,
-          ),
+          RouteInformation(location: url),
           type: RouteInformationReportingType.navigate,
         );
   }
@@ -36,6 +67,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   late List<NavigatorObserver> _navigatorObservers;
 
+  /// Default constructor
   AutoRouterDelegate(
     this.controller, {
     this.initialRoutes,
@@ -48,6 +80,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     controller.navigationHistory.addListener(_handleRebuild);
   }
 
+  /// Builds a [_DeclarativeAutoRouterDelegate] which uses
+  /// a declarative list of routes to update navigator stack
   factory AutoRouterDelegate.declarative(
     RootStackRouter controller, {
     required RoutesBuilder routes,
@@ -58,6 +92,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     NavigatorObserversBuilder navigatorObservers,
   }) = _DeclarativeAutoRouterDelegate;
 
+  /// Helper to access current urlState
   UrlState get urlState => controller.navigationHistory.urlState;
 
   @override
@@ -129,6 +164,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     controller.dispose();
   }
 
+  /// Force this delegate to rebuild
   void notifyUrlChanged() => _handleRebuild();
 }
 

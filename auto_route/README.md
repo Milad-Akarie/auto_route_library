@@ -84,7 +84,6 @@ dev_dependencies:
 ## Setup And Usage
 
 1- Create a router class and annotate it with `@AutoRouterConfig` then extend "$YourClassName"
-.      
 2- override the routes getter and start adding your routes.
 
  ```dart     
@@ -92,7 +91,7 @@ dev_dependencies:
 class AppRouter extends $AppRouter {      
     
   @override      
-  final List<AutoRoute> routes = [      
+  List<AutoRoute> get routes => [      
    /// routes go here     
    ]    
  }    
@@ -111,7 +110,7 @@ part 'app_router.gr.dart';
 class AppRouter extends _$AppRouter {      
     
   @override      
-  final List<AutoRoute> routes = [      
+  List<AutoRoute> get routes => [      
    /// routes go here     
    ]    
  }               
@@ -148,7 +147,7 @@ flutter packages pub run build_runner build
 class AppRouter extends $AppRouter {      
     
   @override      
-  final List<AutoRoute> routes = [      
+  List<AutoRoute> get routes => [      
     //HomeScreen is generated as HomeRoute because     
     //of the replaceInRouteName property    
     AutoRoute(HomeRoute.page),    
@@ -385,7 +384,7 @@ of `DashboardPage`.
 class AppRouter extends $AppRouter{    
     
   @override      
-  final List<AutoRoute> routes = [                  
+  List<AutoRoute> get routes => [                  
     AutoRoute(                    
       path: '/dashboard',                    
       page: DashboardRoute.page,                    
@@ -1002,6 +1001,26 @@ Now we assign our guard to the routes we want to protect.
 ```dart                
  AutoRoute(page: ProfileRoute.page, guards: [AuthGuard()]);                
 ```                            
+#### Guarding all stack-routes
+You can have all your stack-routes (none-tab-routes) go throuw a global guard by having your Router implement an AutoRouteGuard.
+let's say you have an App with no publish screens, we'd have a global guard that only allows navigation if the user is authenticated or if we're navigating to the LoginRoute.
+
+```dart   
+@AutoRouterConfig()
+class AppRouter extends $AppRouter implements AutoRouteGuard {
+  @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
+      if(isAuthenticated || resolver.route.name == LoginRoute.name){
+         // we continue navigation
+          resolver.next();
+      }else{
+          // else we navigate to the Login page so we get authenticateed
+          push(LoginRoute(onResult:(didLogin)=> resolver.next(didLogin)))
+      }
+   }
+  // ..routes[]
+  }
+  ```  
 
 ## Wrapping Routes
 
@@ -1285,7 +1304,7 @@ targets:
           - lib/ui/router.dart 
 ```  
 
-## Enabling cached builds 
+## Enabling cached builds
 **This is still experimental**
 When cached builds are enabled auto_route will try to prevent redundant re-builds by analyzing whether the file changes has any effect on the extracted route info, e.g any changes inside of the build method should be ignored.
 
@@ -1395,7 +1414,7 @@ class AppRouter extends $AppRouter {
 RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc    
     
   @override      
-  final List<AutoRoute> routes = [      
+   List<AutoRoute> get routes => [      
    /// routes go here     
    ]    
  }    
@@ -1483,4 +1502,4 @@ coming soon
 
 You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can
 enhance a certain functionality or by reporting any problems you encounter and of course buying a
-couple coffees will help speed up the development process.
+couple coffees will help speed up the development process

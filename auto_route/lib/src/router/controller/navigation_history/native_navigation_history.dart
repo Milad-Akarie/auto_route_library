@@ -5,7 +5,10 @@ import 'package:flutter/foundation.dart';
 
 import 'navigation_history_base.dart';
 
+/// An implementation of [NavigationHistory]
+/// That's used for native platforms
 class NavigationHistoryImpl extends NavigationHistory {
+  /// Default constructor;
   NavigationHistoryImpl(this.router);
 
   @override
@@ -53,6 +56,15 @@ class NavigationHistoryImpl extends NavigationHistory {
   void forward() {
     throw FlutterError(
         'forward navigation is not supported for non-web platforms');
+  }
+
+  @override
+  Object? get pathState =>
+      throw FlutterError('pathState is not supported for non-web platforms');
+
+  @override
+  void pushPathState(Object? state) {
+    throw FlutterError('pushPathState is not supported for non-web platforms');
   }
 }
 

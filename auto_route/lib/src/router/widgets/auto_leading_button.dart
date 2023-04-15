@@ -1,36 +1,80 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/controller/pageless_routes_observer.dart';
 import 'package:flutter/material.dart';
 
-import '../../../auto_route.dart';
-
+/// AppBar Leading button types
 enum LeadingType {
+  /// Whether to show a back button
   back,
+
+  /// Whether to show a close button
   close,
+
+  /// Whether to show a drawer toggle
   drawer,
+
+  /// Whether to show no leading at all
   noLeading;
 
+  /// Helper to check if this instance is [back]
   bool get isBack => this == back;
 
+  /// Helper to check if this instance is [close]
   bool get isClose => this == close;
 
+  /// Helper to check if this instance is [drawer]
   bool get isDrawer => this == drawer;
 
+  /// Helper to check if this instance is [noLeading]
   bool get isNoLeading => this == noLeading;
 }
 
+/// Signature function to customize the
+/// build of a leading button
 typedef AutoLeadingButtonBuilder = Widget Function(
   BuildContext context,
   LeadingType leadingType,
   VoidCallback? action, // could be popTop, openDrawer or null
 );
 
+/// An AutoRoute replacement of appBar aut-leading-button
+///
+/// Unlike the default [BackButton] this button will always
+/// the top-most route in the whole hierarchy not only current-stack
+///
+/// meant to be used with AppBar -> AppBar(leading: AutoLeadingButton())
+///
+/// e.g if we have such hierarchy
+/// - page1
+/// - page2
+///     - sub-page1
+///     - sub-page2
+/// and Page2 has an  AutoLeadingButton(), clicking
+/// it will pop sub-page2 then page2
+///
 class AutoLeadingButton extends StatefulWidget {
+  /// The color of [BackButton] and [CloseButton]
   final Color? color;
 
-  final bool showIfChildCanPop, ignorePagelessRoutes;
+  /// Whether to pop current stack and not care about
+  /// child routes
+  final bool showIfChildCanPop;
+
+  /// Whether to ignore pageless routes when
+  /// calculating top-most route
+  ///
+  /// What is a (PagelessRoute)?
+  /// [Route] that does not correspond to a [Page] object is called a pageless
+  /// route and is tied to the [Route] that _does_ correspond to a [Page] object
+  /// that is below it in the history.
+  final bool ignorePagelessRoutes;
   final bool _showIfParentCanPop;
+
+  /// Clients can use this builder to customize
+  /// the looks and feels of their leading buttons
   final AutoLeadingButtonBuilder? builder;
 
+  /// Default constructor
   const AutoLeadingButton({
     Key? key,
     this.color,

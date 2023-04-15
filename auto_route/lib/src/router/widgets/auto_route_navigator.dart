@@ -4,14 +4,38 @@ import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
 
+/// An AutoRoute Wrapper for [Navigator]
+/// it handles empty stacks and declarative routes
 class AutoRouteNavigator extends StatefulWidget {
+  /// The router that handles the pages stack
+  /// passed to [Navigator.pages]
   final StackRouter router;
+
+  /// The navigator restoration key
+  /// passed to [Navigator.restorationScopeId]
   final String? navRestorationScopeId;
+
+  /// A builder for the placeholder page that is shown
+  /// before the first route can be rendered. Defaults to
+  /// an empty page with [Theme.scaffoldBackgroundColor].
   final WidgetBuilder? placeholder;
+
+  /// The observers to observer navigator's navigation events
+  ///
+  /// Passed ot [Navigator.observers]
   final List<NavigatorObserver> navigatorObservers;
+
+  /// A callback to report popped [AutoRoutePage]s
+  /// Used by [Navigator.onPopPage]
   final RoutePopCallBack? didPop;
+
+  /// Clients will use this build for declarative routing
+  ///
+  /// it returns a list of [PageRouteInfo]s that's handled
+  /// by [router] to be finally passed to [Navigator.pages]
   final RoutesBuilder? declarativeRoutesBuilder;
 
+  /// Default constructor
   const AutoRouteNavigator({
     required this.router,
     required this.navigatorObservers,
@@ -26,6 +50,7 @@ class AutoRouteNavigator extends StatefulWidget {
   AutoRouteNavigatorState createState() => AutoRouteNavigatorState();
 }
 
+/// State of [AutoRouteNavigator]
 class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   List<PageRouteInfo>? _routesSnapshot;
 
@@ -67,8 +92,8 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
               widget.router.pagelessRoutesObserver,
               ...widget.navigatorObservers
             ],
-            restorationScopeId:
-                widget.navRestorationScopeId ?? widget.router.routeData.name,
+            restorationScopeId: widget.navRestorationScopeId ??
+                widget.router.routeData.restorationId,
             pages: widget.router.stack,
             onPopPage: (route, result) {
               if (!route.didPop(result)) {

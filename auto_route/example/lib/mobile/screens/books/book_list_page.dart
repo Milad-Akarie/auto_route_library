@@ -3,13 +3,15 @@ import 'package:example/data/db.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
+//ignore_for_file: public_member_api_docs
 @RoutePage()
 class BookListScreen extends StatefulWidget {
   @override
   State<BookListScreen> createState() => _BookListScreenState();
 }
 
-class _BookListScreenState extends State<BookListScreen> with AutoRouteAwareStateMixin<BookListScreen> {
+class _BookListScreenState extends State<BookListScreen>
+    with AutoRouteAwareStateMixin<BookListScreen> {
   @override
   void didPushNext() {
     print('didPushNext');

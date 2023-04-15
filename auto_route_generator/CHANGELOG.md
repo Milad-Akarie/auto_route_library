@@ -1,4 +1,8 @@
+## 6.2.0
+- Sync with auto_route version
 # ChangeLog
+## [6.1.0]
+- Change navigatorKey param to super declaration to avoid material.dart import
 ## [6.0.3]
 - Fix Inherited params not working? #1443
 ## [6.0.2]

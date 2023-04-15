@@ -10,12 +10,14 @@ void main() {
     router = SimpleRouter();
   });
 
-  testWidgets('Initial route should be ${FirstRoute.name}', (WidgetTester tester) async {
+  testWidgets('Initial route should be ${FirstRoute.name}',
+      (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     expect(find.text(FirstRoute.name), findsOneWidget);
   });
 
-  testWidgets('Pushing ${SecondRoute.name} should show [SecondPage]', (WidgetTester tester) async {
+  testWidgets('Pushing ${SecondRoute.name} should show [SecondPage]',
+      (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.push(const SecondRoute());
     await tester.pumpAndSettle();
@@ -23,7 +25,8 @@ void main() {
     expect(router.urlState.url, '/second-route');
   });
 
-  testWidgets('Navigating to ${SecondRoute.name} should show [SecondPage]', (WidgetTester tester) async {
+  testWidgets('Navigating to ${SecondRoute.name} should show [SecondPage]',
+      (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.navigate(const SecondRoute());
     await tester.pumpAndSettle();
@@ -31,7 +34,9 @@ void main() {
     expect(router.urlState.url, '/second-route');
   });
 
-  testWidgets('Pushing ${SecondRoute.name} then popping should show [FirstPage]', (WidgetTester tester) async {
+  testWidgets(
+      'Pushing ${SecondRoute.name} then popping should show [FirstPage]',
+      (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.push(const SecondRoute());
     await tester.pumpAndSettle();
@@ -41,7 +46,8 @@ void main() {
     expect(router.urlState.url, '/');
   });
 
-  testWidgets('Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show [ThirdPage]',
+  testWidgets(
+      'Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show [ThirdPage]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.pushAll([

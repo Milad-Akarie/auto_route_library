@@ -1,15 +1,21 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
+/// Signature for custom router builder used by
+/// [CustomRouteType]
 typedef CustomRouteBuilder = Route<T> Function<T>(
   BuildContext context,
   Widget child,
   AutoRoutePage<T> page,
 );
 
+/// An abstraction of route types used by
+/// [AutoRoutePage.onCreateRoute] to decide transition animations
 abstract class RouteType {
   const RouteType._({this.opaque = true});
 
+  /// Whether the target [Route] should be opaque
+  /// see [ModalRoute.opaque]
   final bool opaque;
 
   @override
@@ -22,12 +28,16 @@ abstract class RouteType {
   @override
   int get hashCode => opaque.hashCode;
 
+  /// Builds a [MaterialRouteType] route type
   const factory RouteType.material() = MaterialRouteType;
 
+  /// Builds a [CupertinoRouteType] route type
   const factory RouteType.cupertino() = CupertinoRouteType;
 
+  /// Builds a [AdaptiveRouteType] route type
   const factory RouteType.adaptive({bool opaque}) = AdaptiveRouteType;
 
+  /// Builds a [CustomRouteType] route type
   const factory RouteType.custom({
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
@@ -40,18 +50,29 @@ abstract class RouteType {
   }) = CustomRouteType;
 }
 
+/// Generates a route that uses [MaterialRouteTransitionMixin]
 class MaterialRouteType extends RouteType {
-  const MaterialRouteType({super.opaque}) : super._();
+  /// Default constructor
+  const MaterialRouteType() : super._(opaque: true);
 }
 
+/// Generates a route that uses [CupertinoRouteTransitionMixin]
 class CupertinoRouteType extends RouteType {
-  const CupertinoRouteType({super.opaque}) : super._();
+  /// Default constructor
+  const CupertinoRouteType() : super._(opaque: true);
 }
 
+/// Generates a route transitions based on platform
+///
+/// ios,macos => [CupertinoRouteTransitionMixin]
+/// web => NoTransition
+/// any other platform => [MaterialRouteTransitionMixin]
 class AdaptiveRouteType extends RouteType {
+  /// Default constructor
   const AdaptiveRouteType({super.opaque}) : super._();
 }
 
+/// Generates a route with user-defined transitions
 class CustomRouteType extends RouteType {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
@@ -62,6 +83,8 @@ class CustomRouteType extends RouteType {
   ///
   /// you should only reference the function so
   /// the generator can import it into the generated file
+  ///
+  /// see [PageRouteBuilder.transitionsBuilder] for more details
   final RouteTransitionsBuilder? transitionsBuilder;
 
   /// this builder function is passed to customRouteBuilder property
@@ -88,14 +111,21 @@ class CustomRouteType extends RouteType {
   final int? reverseDurationInMilliseconds;
 
   /// passed to the barrierDismissible property in [PageRouteBuilder]
+  ///
+  /// see [PageRouteBuilder.barrierDismissible] for more details
   final bool barrierDismissible;
 
   /// passed to the barrierLabel property in [PageRouteBuilder]
+  ///
+  /// see [PageRouteBuilder.barrierLabel] for more details
   final String? barrierLabel;
 
   /// passed to the barrierColor property in [PageRouteBuilder]
+  ///
+  /// see [PageRouteBuilder.barrierColor] for more details
   final Color? barrierColor;
 
+  /// Default constructor
   const CustomRouteType({
     this.customRouteBuilder,
     this.barrierLabel,

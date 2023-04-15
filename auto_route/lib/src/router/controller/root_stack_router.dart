@@ -1,10 +1,16 @@
 part of 'routing_controller.dart';
 
+/// Signature for a function uses [pagesMap] to build an [AutoRoutePage]
 typedef PageBuilder = AutoRoutePage Function(RouteData data);
+
+/// Signature for a function that builds an [AutoRoutePage]
+/// Used by [RoutingController]
 typedef PageFactory = Page<dynamic> Function(RouteData data);
 
+/// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {
-  RootStackRouter([GlobalKey<NavigatorState>? navigatorKey])
+  /// Default constructor
+  RootStackRouter({GlobalKey<NavigatorState>? navigatorKey})
       : super(
           key: const ValueKey('Root'),
           navigatorKey: navigatorKey,
@@ -12,6 +18,8 @@ abstract class RootStackRouter extends StackRouter {
     _navigationHistory = NavigationHistory.create(this);
   }
 
+  /// Returns a [RouterConfig] instead to be passed
+  /// to [MaterialApp.router]
   RouterConfig<UrlState> config({
     List<PageRouteInfo>? initialRoutes,
     String? initialDeepLink,
@@ -44,21 +52,22 @@ abstract class RootStackRouter extends StackRouter {
   RouteData get routeData => RouteData(
         router: this,
         type: const RouteType.material(),
-        route: const RouteMatch(
-          name: 'Root',
-          segments: [''],
-          path: '',
+        route: RouteMatch(
+          config: DummyRootRoute('Root', path: ''),
+          segments: const [''],
           stringMatch: '',
-          isBranch: true,
-          key: ValueKey('Root'),
+          key: const ValueKey('Root'),
         ),
-        pendingChildren: [],
+        pendingChildren: const [],
       );
 
+  /// The map holding the page names and their factories
   Map<String, PageFactory> get pagesMap => throw UnimplementedError();
 
+  /// The list of route entries to match against
   List<AutoRoute> get routes;
 
+  /// The default animation
   RouteType get defaultRouteType => const RouteType.material();
 
   // ignore: prefer_final_fields
@@ -70,6 +79,7 @@ abstract class RootStackRouter extends StackRouter {
 
   AutoRouteInformationProvider? _lazyInformationProvider;
 
+  /// Builds a lazy instance of [AutoRouteInformationProvider]
   AutoRouteInformationProvider routeInfoProvider({
     RouteInformation? initialRouteInformation,
     bool Function(String? location)? neglectWhen,
@@ -85,6 +95,7 @@ abstract class RootStackRouter extends StackRouter {
 
   AutoRouterDelegate? _lazyRootDelegate;
 
+  /// Builds a lazy instance of [AutoRouterDelegate.declarative]
   AutoRouterDelegate declarativeDelegate({
     required RoutesBuilder routes,
     String? navRestorationScopeId,
@@ -105,7 +116,8 @@ abstract class RootStackRouter extends StackRouter {
     );
   }
 
-  // _lazyRootDelegate is only built one time
+  /// Builds a lazy instance of [AutoRouterDelegate]
+  /// _lazyRootDelegate is only built one time
   AutoRouterDelegate delegate({
     List<PageRouteInfo>? initialRoutes,
     String? initialDeepLink,
@@ -124,6 +136,7 @@ abstract class RootStackRouter extends StackRouter {
     );
   }
 
+  /// Builds a lazy instance of [DefaultRouteParser]
   DefaultRouteParser defaultRouteParser({bool includePrefixMatches = false}) =>
       DefaultRouteParser(matcher, includePrefixMatches: includePrefixMatches);
 
@@ -146,5 +159,5 @@ abstract class RootStackRouter extends StackRouter {
 
   @override
   late final RouteCollection routeCollection =
-      RouteCollection.from(routes, root: true);
+      RouteCollection.fromList(routes, root: true);
 }

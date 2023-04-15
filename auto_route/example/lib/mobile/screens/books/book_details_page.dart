@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../../data/db.dart';
 
+//ignore_for_file: public_member_api_docs
 @RoutePage(name: 'BookDetailsRoute')
- class BookDetailsPage extends StatefulWidget {
+class BookDetailsPage extends StatefulWidget {
   final int id;
 
   const BookDetailsPage({

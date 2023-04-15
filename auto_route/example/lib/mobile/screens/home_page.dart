@@ -3,6 +3,8 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+//ignore_for_file: public_member_api_docs
+
 @RoutePage<String>()
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -110,7 +112,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 body: child,
-                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+                bottomNavigationBar:
+                    buildBottomNav(context, context.tabsRouter),
               );
             },
           );

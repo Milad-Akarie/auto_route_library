@@ -5,26 +5,66 @@ import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
 
+/// Signature for a wrapper builder used by [_AutoTabsRouterIndexedStack]
 typedef AnimatedIndexedStackBuilder = Widget Function(
-    BuildContext context, Widget child);
+  BuildContext context,
+  Widget child,
+);
+
+/// Signature for a translation builder used by [_AutoTabsRouterIndexedStack]
 typedef AnimatedIndexedStackTransitionBuilder = Widget Function(
-    BuildContext context, Widget child, Animation<double> animation);
+  BuildContext context,
+  Widget child,
+  Animation<double> animation,
+);
+
+/// Signature for a wrapper builder used by [_AutoTabsRouterBuilder]
 typedef AutoTabsBuilder = Widget Function(
-    BuildContext context, List<Widget> children, TabsRouter tabsRouter);
+  BuildContext context,
+  List<Widget> children,
+  TabsRouter tabsRouter,
+);
+
+/// Signature for a wrapper builder used by [_AutoTabsRouterPageView]
 typedef AutoTabsPageViewBuilder = Widget Function(
-    BuildContext context, Widget child, PageController pageController);
+  BuildContext context,
+  Widget child,
+  PageController pageController,
+);
+
+/// Signature for a wrapper builder used by [_AutoTabsRouterTabBar]
 typedef AutoTabsTabBarBuilder = Widget Function(
-    BuildContext context, Widget child, TabController tabController);
+  BuildContext context,
+  Widget child,
+  TabController tabController,
+);
+
+/// Signature for a callback function used by [_AutoTabsRouterBuilder]
 typedef OnNavigationChanged = Function(TabsRouter tabsRouter);
 
+/// An implementation of a router widget that handles parallel routeing
 abstract class AutoTabsRouter extends StatefulWidget {
+  /// The list of pages this router will handle
   final List<PageRouteInfo> routes;
+
+  /// A builder function that returns a list of observes
+  ///
+  /// Why isn't this a list of navigatorObservers?
+  /// The reason for that is a [NavigatorObserver] instance can only
+  /// be used by a single [Navigator], so unless you're using a one
+  /// single router or you don't want your nested routers to inherit
+  /// observers make sure navigatorObservers builder always returns
+  /// fresh observer instances.
   final NavigatorObserversBuilder navigatorObservers;
+
+  /// Whether this router should inherit it's ancestor's observers
   final bool inheritNavigatorObservers;
 
-  // if activeIndex != homeIndex
-  // set activeIndex to homeIndex
-  // else pop parent
+  /// The index to pop from
+  ///
+  /// if activeIndex != homeIndex
+  /// set activeIndex to homeIndex
+  /// else pop parent
   final int homeIndex;
 
   const AutoTabsRouter._({
@@ -36,6 +76,8 @@ abstract class AutoTabsRouter extends StatefulWidget {
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(key: key);
 
+  /// Builds an [AutoTabsRouter] to uses
+  /// a [IndexedStack] to render pages
   const factory AutoTabsRouter({
     Key? key,
     required List<PageRouteInfo> routes,
@@ -49,6 +91,8 @@ abstract class AutoTabsRouter extends StatefulWidget {
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterIndexedStack;
 
+  /// Builds an [AutoTabsRouter] to uses
+  /// a [PageView] to render pages
   const factory AutoTabsRouter.pageView({
     Key? key,
     required List<PageRouteInfo> routes,
@@ -62,8 +106,10 @@ abstract class AutoTabsRouter extends StatefulWidget {
     NavigatorObserversBuilder navigatorObservers,
     ScrollPhysics? physics,
     DragStartBehavior dragStartBehavior,
-  }) = AutoTabsRouterPageView;
+  }) = _AutoTabsRouterPageView;
 
+  /// Builds an [AutoTabsRouter] to uses
+  /// a [TabView] to render pages
   const factory AutoTabsRouter.tabBar({
     Key? key,
     required List<PageRouteInfo> routes,
@@ -79,6 +125,9 @@ abstract class AutoTabsRouter extends StatefulWidget {
     DragStartBehavior dragStartBehavior,
   }) = _AutoTabsRouterTabBar;
 
+  /// Builds an [AutoTabsRouter] with a custom builder
+  ///
+  /// Clients can use this builder to render tabbed-pages
   const factory AutoTabsRouter.builder({
     Key? key,
     required List<PageRouteInfo> routes,
@@ -90,6 +139,12 @@ abstract class AutoTabsRouter extends StatefulWidget {
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterBuilder;
 
+  /// Looks up and returns the scoped [controller]
+  ///
+  /// if watch is true dependent widget will watch changes
+  /// of this scope otherwise it would just read it
+  ///
+  /// throws an error if it does not find it
   static TabsRouter of(BuildContext context, {bool watch = false}) {
     var scope = TabsRouterScope.of(context, watch: watch);
     assert(() {
@@ -404,7 +459,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder>
   }
 }
 
-class AutoTabsRouterPageView extends AutoTabsRouter {
+class _AutoTabsRouterPageView extends AutoTabsRouter {
   final AutoTabsPageViewBuilder? _pageViewModeBuilder;
   final bool animatePageTransition;
   final Duration duration;
@@ -413,7 +468,7 @@ class AutoTabsRouterPageView extends AutoTabsRouter {
   final ScrollPhysics? physics;
   final DragStartBehavior dragStartBehavior;
 
-  const AutoTabsRouterPageView({
+  const _AutoTabsRouterPageView({
     Key? key,
     required List<PageRouteInfo> routes,
     AutoTabsPageViewBuilder? builder,
@@ -437,10 +492,10 @@ class AutoTabsRouterPageView extends AutoTabsRouter {
         );
 
   @override
-  AutoTabsRouterPageViewState createState() => AutoTabsRouterPageViewState();
+  _AutoTabsRouterPageViewState createState() => _AutoTabsRouterPageViewState();
 }
 
-class AutoTabsRouterPageViewState extends _AutoTabsRouterState
+class _AutoTabsRouterPageViewState extends _AutoTabsRouterState
     with _RouteAwareTabsMixin<AutoTabsRouter> {
   late PageController _pageController;
 
@@ -471,7 +526,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
   }
 
   @override
-  void didUpdateWidget(covariant AutoTabsRouterPageView oldWidget) {
+  void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(
@@ -480,7 +535,7 @@ class AutoTabsRouterPageViewState extends _AutoTabsRouterState
     }
   }
 
-  AutoTabsRouterPageView get typedWidget => widget as AutoTabsRouterPageView;
+  _AutoTabsRouterPageView get typedWidget => widget as _AutoTabsRouterPageView;
 
   @override
   Widget build(BuildContext context) {
@@ -783,11 +838,15 @@ mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
   }
 }
 
+/// A Wrapper widget to utilize [AutomaticKeepAliveClientMixin]
 class KeepAliveTab extends StatefulWidget {
+  /// Default contractor
   const KeepAliveTab({
     Key? key,
     required this.page,
   }) : super(key: key);
+
+  /// The tab page to keep-alive
   final AutoRoutePage page;
 
   @override

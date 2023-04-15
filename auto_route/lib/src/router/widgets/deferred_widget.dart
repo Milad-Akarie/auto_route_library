@@ -1,19 +1,20 @@
-// Copyright 2019 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+/// Signature for a function that returns a void future
+/// Used in [DeferredWidget] to load deferred libraries
 typedef LibraryLoader = Future<void> Function();
+
+/// Signature for a function that returns a widget
+/// Used in [DeferredWidget] to build the lazy-loaded library
 typedef DeferredWidgetBuilder = Widget Function();
 
 /// Wraps the child inside a deferred module loader.
 ///
 /// The child is created and a single instance of the Widget is maintained in
 /// state as long as closure to create widget stays the same.
-///
 class DeferredWidget extends StatefulWidget {
+  /// default constructor
   DeferredWidget(
     this.libraryLoader,
     this.createWidget, {
@@ -21,13 +22,18 @@ class DeferredWidget extends StatefulWidget {
     Widget? placeholder,
   }) : placeholder = placeholder ?? Container();
 
+  /// Triggers the deferred library loading process
   final LibraryLoader libraryLoader;
+
+  /// Creates the actual widget after it's loaded
   final DeferredWidgetBuilder createWidget;
+
+  /// The widget is displayed until [libraryLoader] is done loading
   final Widget placeholder;
   static final Map<LibraryLoader, Future<void>> _moduleLoaders = {};
   static final Set<LibraryLoader> _loadedModules = {};
 
-  static Future<void> preload(LibraryLoader loader) {
+  static Future<void> _preload(LibraryLoader loader) {
     if (!_moduleLoaders.containsKey(loader)) {
       _moduleLoaders[loader] = loader().then((dynamic _) {
         _loadedModules.add(loader);
@@ -53,7 +59,7 @@ class _DeferredWidgetState extends State<DeferredWidget> {
     if (DeferredWidget._loadedModules.contains(widget.libraryLoader)) {
       _onLibraryLoaded();
     } else {
-      DeferredWidget.preload(widget.libraryLoader)
+      DeferredWidget._preload(widget.libraryLoader)
           .then((dynamic _) => _onLibraryLoaded());
     }
     super.initState();
@@ -81,6 +87,7 @@ class _DeferredWidgetState extends State<DeferredWidget> {
 /// Displays a progress indicator when the widget is a deferred component
 /// and is currently being installed.
 class DeferredLoadingPlaceholder extends StatelessWidget {
+  /// default constructor
   const DeferredLoadingPlaceholder({
     super.key,
   });

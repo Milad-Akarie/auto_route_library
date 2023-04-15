@@ -1,11 +1,15 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 
+/// This class helps read typed data from
+/// raw maps, it's used for both path-parameters and query-parameters
 class Parameters {
   final Map<String, dynamic> _params;
 
+  /// default construct
   const Parameters(Map<String, dynamic>? params) : _params = params ?? const {};
 
+  /// returns the raw map passed to the constructor
   Map<String, dynamic> get rawMap => _params;
 
   // coverage:ignore-start
@@ -15,6 +19,8 @@ class Parameters {
   }
   // coverage:ignore-end
 
+  /// merges the value of two instances of [Parameters] classes
+  /// and returns a new instance containing the merged values.
   Parameters operator +(Parameters other) =>
       Parameters({..._params, ...other._params});
 
@@ -30,16 +36,25 @@ class Parameters {
   @override
   int get hashCode => const MapEquality().hash(_params);
 
+  /// Helper getter to [_params.isNotEmpty]
   bool get isNotEmpty => _params.isNotEmpty;
+
+  /// Helper getter to [_params.isEmpty]
   bool get isEmpty => _params.isEmpty;
 
+  /// returns the value corresponding with [key] as is, without type checking
+  /// if null returns [defaultValue]
   dynamic get(String key, [defaultValue]) {
     return _params[key] ?? defaultValue;
   }
 
+  /// returns the value corresponding with [key] corresponding with [key] as nullable [String]
+  /// if null returns [defaultValue]
   String? optString(String key, [String? defaultValue]) =>
       _params[key] ?? defaultValue;
 
+  /// returns the value corresponding with [key] as [String]
+  /// if null returns [defaultValue]
   String getString(String key, [String? defaultValue]) {
     var val = _params[key] ?? defaultValue;
     if (val == null) {
@@ -49,6 +64,8 @@ class Parameters {
     return val;
   }
 
+  /// returns the value corresponding with [key] as nullable [Int]
+  /// if null returns [defaultValue]
   int? optInt(String key, [int? defaultValue]) {
     var param = _params[key];
     if (param == null) {
@@ -60,6 +77,8 @@ class Parameters {
     }
   }
 
+  /// returns the value corresponding with [key] as [Int]
+  /// if null returns [defaultValue]
   int getInt(String key, [int? defaultValue]) {
     var val = optInt(key, defaultValue);
     if (val == null) {
@@ -69,6 +88,8 @@ class Parameters {
     return val;
   }
 
+  /// returns the value corresponding with [key] as nullable [double]
+  /// if null returns [defaultValue]
   double? optDouble(String key, [double? defaultValue]) {
     var param = _params[key];
     if (param == null) {
@@ -80,6 +101,8 @@ class Parameters {
     }
   }
 
+  /// returns the value corresponding with [key] as [double]
+  /// if null returns [defaultValue]
   double getDouble(String key, [double? defaultValue]) {
     var val = optDouble(key, defaultValue);
     if (val == null) {
@@ -89,6 +112,8 @@ class Parameters {
     return val;
   }
 
+  /// returns the value corresponding with [key] as  nullable [num]
+  /// if null returns [defaultValue]
   num? optNum(String key, [num? defaultValue]) {
     var param = _params[key];
     if (param == null) {
@@ -100,6 +125,8 @@ class Parameters {
     }
   }
 
+  /// returns the value corresponding with [key] as  [num]
+  /// if null returns [defaultValue]
   num getNum(String key, [num? defaultValue]) {
     var val = optNum(key, defaultValue);
     if (val == null) {
@@ -109,6 +136,8 @@ class Parameters {
     return val;
   }
 
+  /// returns the value corresponding with [key] as nullable [bool]
+  /// if null returns [defaultValue]
   bool? optBool(String key, [bool? defaultValue]) {
     switch (_params[key]?.toLowerCase()) {
       case 'true':
@@ -120,6 +149,8 @@ class Parameters {
     }
   }
 
+  /// returns the value corresponding with [key] as [bool]
+  /// if null returns [defaultValue]
   bool getBool(String key, [bool? defaultValue]) {
     var val = optBool(key, defaultValue);
     if (val == null) {

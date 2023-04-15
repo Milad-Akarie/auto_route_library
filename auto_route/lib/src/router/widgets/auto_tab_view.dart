@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// The adjustments made to this code is to fix children not
-/// updating in sync with TabRouter changes
-/// and to set pageController.offset.round() to [TabController.index]
-/// so page is set when the scroll pos is rounded to it
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+/// The adjustments made to this code from [TabView] is to fix children not
+/// updating in sync with TabRouter changes
+/// and to set pageController.offset.round() to [TabController.index]
+/// so page is set when the scroll pos is rounded to it
 class AutoTabView extends StatefulWidget {
   /// Creates a page view with one child per tab.
 
@@ -23,10 +23,19 @@ class AutoTabView extends StatefulWidget {
     this.dragStartBehavior = DragStartBehavior.start,
   }) : super(key: key);
 
+  /// Whether to use [TabController.animateToPage] or [TabController.jumpToPage]
   final bool animatePageTransition;
+
+  /// The scroll direction of the [PageView]
+  /// see [PageView.scrollDirection]
   final Axis scrollDirection;
+
+  /// The page controller used by [PageView]
+  /// see [PageView.controller]
   final TabController controller;
 
+  /// An object that controllers what page to display
+  /// and navigates from one page to another
   final TabsRouter router;
 
   /// How the page view should respond to user input.
@@ -47,6 +56,7 @@ class AutoTabView extends StatefulWidget {
   State<AutoTabView> createState() => AutoTabViewState();
 }
 
+/// State implementation of [AutoTabView]
 class AutoTabViewState extends State<AutoTabView> {
   TabController get _controller => widget.controller;
   late PageController _pageController;

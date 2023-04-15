@@ -2,11 +2,16 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
 
+/// Matches paths and [PageRouteInfo]s with
+/// the given [collection]
 class RouteMatcher {
+  /// The list of route-entries to match against
   final RouteCollection collection;
 
+  /// Default constructor
   const RouteMatcher(this.collection);
 
+  /// Parses a [Uri] from [rawPath] then maps call to [_match]
   List<RouteMatch>? match(String rawPath, {bool includePrefixMatches = false}) {
     return _match(
       Uri.parse(rawPath),
@@ -16,6 +21,12 @@ class RouteMatcher {
     );
   }
 
+  /// Matches a uri against the config-entries in [collection]
+  ///
+  /// if [includePrefixMatches] is true prefixed matches
+  /// will be included in the return list
+  ///
+  /// returns null if not match is found
   List<RouteMatch>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
     return _match(
       uri,
@@ -38,14 +49,14 @@ class RouteMatcher {
           matches.clear();
         }
         // handle redirects
-        if (config.isRedirect) {
+        if (config is RedirectRoute) {
           return _handleRedirect(
             routesCollection: collection,
             includePrefixMatches: includePrefixMatches,
             redirectTo: uri.replace(
                 path: Uri.parse(
               PageRouteInfo.expandPath(
-                config.redirectTo!,
+                config.redirectTo,
                 match.pathParams.rawMap,
               ),
             ).path),
@@ -106,9 +117,13 @@ class RouteMatcher {
 
   List<String> _split(String path) => p.split(path);
 
-  RouteMatch? matchByPath(Uri url, AutoRoute config, {String? redirectedFrom}) {
+  /// Matches a uri against a route-config [AutoRoute]
+  /// and returns a single match result
+  ///
+  /// returns null if not match is found
+  RouteMatch? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
     var parts = _split(config.path);
-    var segments = _split(url.path);
+    var segments = _split(uri.path);
 
     if (parts.length > segments.length) {
       return null;
@@ -138,26 +153,23 @@ class RouteMatcher {
 
     final stringMatch = p.joinAll(extractedSegments);
     return RouteMatch(
-      path: config.path,
-      name: config.name,
-      meta: config.meta,
-      isBranch: config.hasSubTree,
+      config: config,
       key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
       stringMatch: stringMatch,
       segments: extractedSegments,
       redirectedFrom: redirectedFrom,
-      guards: config.guards,
       pathParams: Parameters(pathParams),
-      queryParams: Parameters(_normalizeSingleValues(url.queryParametersAll)),
-      fragment: url.fragment,
-      type: config.type,
-      title: config.title,
-      keepHistory: config.keepHistory,
-      fullscreenDialog: config.fullscreenDialog,
-      maintainState: config.maintainState,
+      queryParams: Parameters(_normalizeSingleValues(uri.queryParametersAll)),
+      fragment: uri.fragment,
     );
   }
 
+  /// Matches a [PageRouteInfo] against the config-entries in [collection]
+  ///
+  /// The matching here mainly depends on route-name matching
+  /// and it does not care about paths
+  ///
+  /// returns null if not match is found
   RouteMatch? matchByRoute(PageRouteInfo route) {
     return _matchByRoute(route, collection);
   }
@@ -192,28 +204,62 @@ class RouteMatcher {
     final stringMatch =
         PageRouteInfo.expandPath(config.path, route.rawPathParams);
     return RouteMatch(
-      name: route.routeName,
+      config: config,
       segments: _split(stringMatch),
-      path: config.path,
       args: route.args,
-      meta: config.meta,
-      key: ValueKey(
-        config.usesPathAsKey ? stringMatch : route.routeName,
-      ),
-      isBranch: config.hasSubTree,
-      guards: config.guards,
+      key: ValueKey(config.usesPathAsKey ? stringMatch : route.routeName),
       stringMatch: stringMatch,
       fragment: route.fragment,
       redirectedFrom: route.redirectedFrom,
       children: childMatches,
       pathParams: Parameters(route.rawPathParams),
       queryParams: Parameters(route.rawQueryParams),
-      type: config.type,
-      title: config.title,
-      keepHistory: config.keepHistory,
-      fullscreenDialog: config.fullscreenDialog,
-      maintainState: config.maintainState,
     );
+  }
+
+  /// Builds the track to a certain route in the routes-tree
+  ///
+  /// This is mainly used to try adding parent routes to the
+  /// navigation sequences when pushing child routes without
+  /// adding their parents to stack first
+  ///
+  /// returns null if no track is found
+  RouteMatch? buildPathTo(PageRouteInfo<dynamic> route) {
+    final configs = collection.findPathTo(route.routeName);
+    if (configs.isEmpty) return null;
+    final matches = <RouteMatch>[];
+    for (var i = 0; i < configs.length; i++) {
+      final config = configs[i];
+      if (i == configs.length - 1) {
+        // last match should take route's info
+        final stringMatch =
+            PageRouteInfo.expandPath(config.path, route.rawPathParams);
+        matches.add(
+          RouteMatch(
+            config: config,
+            segments: _split(stringMatch),
+            args: route.args,
+            key: ValueKey(config.usesPathAsKey ? stringMatch : route.routeName),
+            stringMatch: stringMatch,
+            fragment: route.fragment,
+            redirectedFrom: route.redirectedFrom,
+            pathParams: Parameters(route.rawPathParams),
+            queryParams: Parameters(route.rawQueryParams),
+          ),
+        );
+      } else {
+        matches.add(
+          RouteMatch(
+            config: config,
+            segments: _split(config.path),
+            key: ValueKey(config.usesPathAsKey ? config.path : config.name),
+            stringMatch: config.path,
+            autoFilled: true,
+          ),
+        );
+      }
+    }
+    return UrlState.toHierarchy(matches);
   }
 
   Map<String, dynamic> _normalizeSingleValues(

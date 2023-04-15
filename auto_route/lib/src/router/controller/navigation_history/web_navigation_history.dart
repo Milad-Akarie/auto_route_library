@@ -1,10 +1,14 @@
 import 'package:auto_route/auto_route.dart';
+
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 
 import 'navigation_history_base.dart';
 
+/// An implementation of [NavigationHistory]
+/// That's used for web
 class NavigationHistoryImpl extends NavigationHistory {
+  /// Default constructor
   NavigationHistoryImpl(this.router);
 
   @override
@@ -33,4 +37,12 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   @override
   int get length => _history.length;
+
+  @override
+  void pushPathState(Object? state) {
+    onNewUrlState(urlState.copyWith(pathState: state));
+  }
+
+  @override
+  Object? get pathState => urlState.pathState;
 }

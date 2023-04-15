@@ -1,6 +1,11 @@
+/// Holds information of the generated [RoutePage] page
+///
+/// Might hold more info in the future
 class PageInfo<Args> {
+  /// The name of the generated [RoutePage]
   final String name;
 
+  /// Default constructor
   const PageInfo(this.name);
 
   @override

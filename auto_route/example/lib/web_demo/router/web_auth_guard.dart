@@ -3,13 +3,15 @@ import 'package:example/web_demo/router/web_router.gr.dart';
 
 import '../web_main.dart';
 
+//ignore_for_file: public_member_api_docs
 class AuthGuard extends AutoRouteGuard {
   final AuthService authService;
 
   AuthGuard(this.authService);
 
   @override
-  Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {
+  Future<void> onNavigation(
+      NavigationResolver resolver, StackRouter router) async {
     if (authService.isAuthenticated) {
       resolver.next();
     } else {

@@ -2,18 +2,30 @@ import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+/// The route information provider that propagates the platform route information changes.
+///
+/// This provider also reports the new route information from the [Router] widget
+/// back to engine using message channel method, the
+/// [SystemNavigator.routeInformationUpdated].
+///
+/// Each time [SystemNavigator.routeInformationUpdated] is called, the
+/// [SystemNavigator.selectMultiEntryHistory] method is also called. This
+/// overrides the initialization behavior of
+/// [Navigator.reportsRouteUpdateToEngine].
 class AutoRouteInformationProvider extends RouteInformationProvider
     with WidgetsBindingObserver, ChangeNotifier {
-  /// Create a platform route information provider.
-  ///
-  /// Use the [initialRouteInformation] to set the default route information for this
-  /// provider.
   AutoRouteInformationProvider._(
       {required RouteInformation initialRouteInformation, this.neglectIf})
       : _value = initialRouteInformation;
 
+  /// if true is return the route will be
+  /// reported to engine
   bool Function(String? location)? neglectIf;
 
+  /// Create a platform route information provider.
+  ///
+  /// Use the [initialRouteInformation] to set the default route information for this
+  /// provider.
   factory AutoRouteInformationProvider(
       {RouteInformation? initialRouteInformation,
       bool Function(String? location)? neglectWhen}) {

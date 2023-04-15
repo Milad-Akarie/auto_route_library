@@ -4,7 +4,7 @@ export 'src/common/common.dart';
 export 'src/matcher/route_match.dart';
 export 'src/navigation_failure.dart';
 export 'src/route/page_route_info.dart';
-export 'src/route/route_config.dart';
+export 'src/route/auto_route_config.dart' hide DummyRootRoute;
 export 'src/route/page_info.dart';
 export 'src/route/route_type.dart';
 export 'src/route/route_data_scope.dart';
@@ -19,7 +19,6 @@ export 'src/router/widgets/auto_router.dart';
 export 'src/router/widgets/auto_route_navigator.dart';
 export 'src/router/widgets/auto_tabs_router.dart';
 export 'src/router/widgets/auto_tabs_scaffold.dart';
-export 'src/router/widgets/wrapped_route.dart';
 export 'src/router/widgets/custom_cupertino_transitions_builder.dart'
     show NoShadowCupertinoPageTransitionsBuilder;
 export 'src/router/widgets/auto_page_view.dart';

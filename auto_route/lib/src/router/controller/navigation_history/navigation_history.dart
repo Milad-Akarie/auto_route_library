@@ -3,8 +3,11 @@ import 'package:auto_route/src/router/controller/routing_controller.dart'
 
 import 'navigation_history_base.dart';
 
+/// A stub implementation of [NavigationHistory]
 class NavigationHistoryImpl extends NavigationHistory {
+  /// Default constructor
   NavigationHistoryImpl(StackRouter router);
+
   @override
   void back() {
     throw Exception("Stub implementation");
@@ -23,4 +26,12 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   @override
   StackRouter get router => throw Exception("Stub implementation");
+
+  @override
+  Object? get pathState => throw Exception("Stub implementation");
+
+  @override
+  void pushPathState(Object? state) {
+    throw Exception("Stub implementation");
+  }
 }
