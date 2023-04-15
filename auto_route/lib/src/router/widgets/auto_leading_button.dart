@@ -64,7 +64,7 @@ class AutoLeadingButton extends StatefulWidget {
   /// Whether to ignore pageless routes when
   /// calculating top-most route
   ///
-  /// What is (PagelessRoute)?
+  /// What is a (PagelessRoute)?
   /// [Route] that does not correspond to a [Page] object is called a pageless
   /// route and is tied to the [Route] that _does_ correspond to a [Page] object
   /// that is below it in the history.

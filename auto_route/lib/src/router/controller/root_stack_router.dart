@@ -1,9 +1,15 @@
 part of 'routing_controller.dart';
 
+/// Signature for a function uses [pagesMap] to build an [AutoRoutePage]
 typedef PageBuilder = AutoRoutePage Function(RouteData data);
+
+/// Signature for a function that builds an [AutoRoutePage]
+/// Used by [RoutingController]
 typedef PageFactory = Page<dynamic> Function(RouteData data);
 
+/// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {
+  /// Default constructor
   RootStackRouter({GlobalKey<NavigatorState>? navigatorKey})
       : super(
           key: const ValueKey('Root'),
@@ -12,13 +18,14 @@ abstract class RootStackRouter extends StackRouter {
     _navigationHistory = NavigationHistory.create(this);
   }
 
+  /// Returns a [RouterConfig] instead to be passed
+  /// to [MaterialApp.router]
   RouterConfig<UrlState> config({
     List<PageRouteInfo>? initialRoutes,
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     bool includePrefixMatches = false,
     bool Function(String? location)? neglectWhen,
   }) {
@@ -50,13 +57,16 @@ abstract class RootStackRouter extends StackRouter {
           stringMatch: '',
           key: const ValueKey('Root'),
         ),
-        pendingChildren: [],
+        pendingChildren: const [],
       );
 
+  /// The map holding the page names and their factories
   Map<String, PageFactory> get pagesMap => throw UnimplementedError();
 
+  /// The list of route entries to match against
   List<AutoRoute> get routes;
 
+  /// The default animation
   RouteType get defaultRouteType => const RouteType.material();
 
   // ignore: prefer_final_fields
@@ -68,6 +78,7 @@ abstract class RootStackRouter extends StackRouter {
 
   AutoRouteInformationProvider? _lazyInformationProvider;
 
+  /// Builds a lazy instance of [AutoRouteInformationProvider]
   AutoRouteInformationProvider routeInfoProvider({
     RouteInformation? initialRouteInformation,
     bool Function(String? location)? neglectWhen,
@@ -83,14 +94,14 @@ abstract class RootStackRouter extends StackRouter {
 
   AutoRouterDelegate? _lazyRootDelegate;
 
+  /// Builds a lazy instance of [AutoRouterDelegate.declarative]
   AutoRouterDelegate declarativeDelegate({
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
     String? initialDeepLink,
     OnNavigateCallBack? onNavigate,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate.declarative(
       this,
@@ -103,14 +114,14 @@ abstract class RootStackRouter extends StackRouter {
     );
   }
 
-  // _lazyRootDelegate is only built one time
+  /// Builds a lazy instance of [AutoRouterDelegate]
+  /// _lazyRootDelegate is only built one time
   AutoRouterDelegate delegate({
     List<PageRouteInfo>? initialRoutes,
     String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,
@@ -122,6 +133,7 @@ abstract class RootStackRouter extends StackRouter {
     );
   }
 
+  /// Builds a lazy instance of [DefaultRouteParser]
   DefaultRouteParser defaultRouteParser({bool includePrefixMatches = false}) =>
       DefaultRouteParser(matcher, includePrefixMatches: includePrefixMatches);
 
@@ -143,6 +155,5 @@ abstract class RootStackRouter extends StackRouter {
   NavigationHistory get navigationHistory => _navigationHistory;
 
   @override
-  late final RouteCollection routeCollection =
-      RouteCollection.fromList(routes, root: true);
+  late final RouteCollection routeCollection = RouteCollection.fromList(routes, root: true);
 }

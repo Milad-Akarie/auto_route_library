@@ -7,7 +7,7 @@ import 'navigation_history.dart'
     if (dart.library.html) 'web_navigation_history.dart';
 
 /// An abstraction on a navigation history tracker
-/// that uses utilises browser history on web and mimics it on native
+/// that utilises browser history on web and mimics it on native
 abstract class NavigationHistory with ChangeNotifier {
   /// Creates an instance of [NavigationHistoryImpl]
   static NavigationHistory create(StackRouter router) {
@@ -90,6 +90,8 @@ abstract class NavigationHistory with ChangeNotifier {
   int get length;
 
   /// Navigate back one entry in history
+  ///
+  /// does nothing if history has only one entry
   void back();
 
   /// Navigate forward one entry in history
