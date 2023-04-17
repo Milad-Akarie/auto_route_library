@@ -1110,10 +1110,13 @@ Router).
 
 First we provide our `AutoRouteObserver` instance
 
-```dart                
+```dart
+   // define this variable outside of the build function (e.g. as a class variable)
+   final _observer = AutoRouteObserver();
+
    return MaterialApp.router(                            
       routerConfig: _appRouter.config(                         
-        navigatorObservers: () => [AutoRouteObserver()],                
+        navigatorObservers: () => [_observer],                
       ),          
     );                
 ```                
