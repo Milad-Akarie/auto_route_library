@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-04-18
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v6.2.1`](#auto_route---v621)
+ - [`auto_route_generator` - `v6.2.1`](#auto_route_generator---v621)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v6.2.1`
+
+---
+
+#### `auto_route` - `v6.2.1`
+
+ - **REFACTOR**: make AutoRouterState and AutoTabsRouterState public.
+ - **DOCS**: add all public api docs.
+
+
 ## 2023-04-15
 
 ### Changes
