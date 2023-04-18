@@ -13,5 +13,8 @@ command:
 scripts:
   analyze:
     exec: dart analyze .
+  version-ar:
+    exec: melos version
 
 
+# alias version-ar='melos version --no-dependent-constraints --scope=auto_route'
