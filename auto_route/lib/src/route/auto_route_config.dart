@@ -62,6 +62,15 @@ class AutoRoute {
   /// after another route is pushed above it
   final bool keepHistory;
 
+  /// Marks route as initial destination of a router
+  ///
+  /// initial will auto-generate initial paths
+  /// for routes with defined-paths
+  ///
+  /// if used with a non-initial defined path it auto-generates
+  /// a RedirectRoute() to that path
+  final bool initial;
+
   AutoRoute._({
     required this.name,
     String? path,
@@ -75,10 +84,10 @@ class AutoRoute {
     this.title,
     this.keepHistory = true,
     this.restorationId,
+    this.initial = false,
     List<AutoRoute>? children,
   })  : _path = path,
-        _children =
-            children != null ? RouteCollection.fromList(children) : null;
+        _children = children != null ? RouteCollection.fromList(children) : null;
 
   const AutoRoute._changePath({
     required this.name,
@@ -94,6 +103,7 @@ class AutoRoute {
     required this.keepHistory,
     required this.restorationId,
     required RouteCollection? children,
+    required this.initial,
   })  : _path = path,
         _children = children;
 
@@ -112,6 +122,7 @@ class AutoRoute {
     TitleBuilder? title,
     RestorationIdBuilder? restorationId,
     bool keepHistory = true,
+    bool initial = false,
   }) {
     return AutoRoute._(
       name: page.name,
@@ -127,6 +138,7 @@ class AutoRoute {
       children: children,
       title: title,
       keepHistory: keepHistory,
+      initial: initial,
     );
   }
 
@@ -165,6 +177,7 @@ class AutoRoute {
       keepHistory: keepHistory,
       children: children,
       restorationId: restorationId,
+      initial: initial,
     );
   }
 }
@@ -206,6 +219,7 @@ class MaterialRoute extends AutoRoute {
     super.title,
     super.keepHistory,
     super.restorationId,
+    super.initial,
   }) : super._(
           name: page.name,
           type: const RouteType.material(),
@@ -217,7 +231,7 @@ class MaterialRoute extends AutoRoute {
 class CupertinoRoute extends AutoRoute {
   /// Default constructor
   CupertinoRoute({
-    required Type name,
+    required PageInfo page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -229,7 +243,8 @@ class CupertinoRoute extends AutoRoute {
     super.title,
     super.restorationId,
     super.keepHistory,
-  }) : super._(name: name.toString(), type: const RouteType.cupertino());
+    super.initial,
+  }) : super._(name: page.name, type: const RouteType.cupertino());
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.adaptive] type
@@ -241,6 +256,7 @@ class AdaptiveRoute extends AutoRoute {
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
+    super.initial,
     super.guards,
     super.usesPathAsKey = false,
     super.path,
@@ -272,6 +288,7 @@ class CustomRoute extends AutoRoute {
     super.title,
     super.path,
     super.keepHistory,
+    super.initial,
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
     int? durationInMilliseconds,
@@ -302,10 +319,11 @@ class TestRoute extends AutoRoute {
   /// Default constructor
   TestRoute(
     String name, {
-    required String path,
+    String? path,
     super.children,
     super.fullMatch,
     super.restorationId,
+    super.initial,
   }) : super._(name: name, path: path);
 }
 
@@ -344,10 +362,16 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(List<AutoRoute> routes,
-      {bool root = false}) {
-    final routesMap = <String, AutoRoute>{};
+  factory RouteCollection.fromList(List<AutoRoute> routes, {bool root = false}) {
+    final routesMarkedInitial = routes.where((e) => e.initial);
+    throwIf(routesMarkedInitial.length > 1,
+        'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');
+
+    final targetInitialPath = root ? '/' : '';
+    var routesMap = <String, AutoRoute>{};
+    var hasValidInitialPath = false;
     for (var r in routes) {
+      var routeToUse = r;
       if (r._path != null) {
         throwIf(
           !root && r.path.startsWith('/'),
@@ -357,21 +381,32 @@ class RouteCollection {
           root && !r.path.startsWith(RegExp('[/]|[*]')),
           'Root-paths must start with a "/" or be a wild-card',
         );
-        routesMap[r.name] = r;
+        routeToUse = r;
       } else {
-        routesMap[r.name] = r.changePath(
-          _generateRoutePath(r.name, root),
+        routeToUse = r.changePath(
+          _generateRoutePath(r, root),
         );
       }
+      hasValidInitialPath |= routeToUse.path == targetInitialPath;
+      routesMap[r.name] = routeToUse;
     }
-
+    if (!hasValidInitialPath && routesMarkedInitial.isNotEmpty) {
+      final redirectRoute = RedirectRoute(
+        path: targetInitialPath,
+        redirectTo: routesMarkedInitial.first.path,
+      );
+      routesMap = {
+        redirectRoute.name: redirectRoute,
+        ...routesMap,
+      };
+    }
     return RouteCollection._(routesMap);
   }
 
   /// Returns the values of [_routesMap] as iterable
   Iterable<AutoRoute> get routes => _routesMap.values;
 
-  /// Helper to get the route-entry corresponding with [key]
+  /// Helper to get the route-entry corresponding to [key]
   AutoRoute? operator [](String key) => _routesMap[key];
 
   /// Helper to check if a route name exists inside of [_routesMap]
@@ -430,8 +465,9 @@ class RouteCollection {
   @override
   int get hashCode => const MapEquality().hash(_routesMap);
 
-  static String _generateRoutePath(String name, bool root) {
-    final kebabCased = toKebabCase(name);
+  static String _generateRoutePath(AutoRoute r, bool root) {
+    if (r.initial) return root ? '/' : '';
+    final kebabCased = toKebabCase(r.name);
     return root ? '/$kebabCased' : kebabCased;
   }
 }
