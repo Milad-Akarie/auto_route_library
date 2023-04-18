@@ -1,3 +1,7 @@
+## 6.2.1
+
+ - **REFACTOR**: make AutoRouterState and AutoTabsRouterState public.
+
 ## 6.2.0
 - Add public apis docs
 # ChangeLog
