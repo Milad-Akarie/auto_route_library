@@ -160,10 +160,12 @@ abstract class AutoTabsRouter extends StatefulWidget {
   }
 }
 
-abstract class _AutoTabsRouterState extends State<AutoTabsRouter> {
+/// The state implementation of [AutoTabsRouter]
+abstract class AutoTabsRouterState extends State<AutoTabsRouter> {
   TabsRouter? _controller;
   late RoutingController _parentController;
 
+  /// The [TabsRouter] controlling this tab-router widget
   TabsRouter? get controller => _controller;
   late List<NavigatorObserver> _navigatorObservers;
   late NavigatorObserversBuilder _inheritableObserversBuilder;
@@ -250,7 +252,7 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
       _AutoTabsRouterIndexedStackState();
 }
 
-class _AutoTabsRouterIndexedStackState extends _AutoTabsRouterState
+class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
@@ -495,7 +497,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
   _AutoTabsRouterPageViewState createState() => _AutoTabsRouterPageViewState();
 }
 
-class _AutoTabsRouterPageViewState extends _AutoTabsRouterState
+class _AutoTabsRouterPageViewState extends AutoTabsRouterState
     with _RouteAwareTabsMixin<AutoTabsRouter> {
   late PageController _pageController;
 
@@ -616,7 +618,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   _AutoTabsRouterTabBarState createState() => _AutoTabsRouterTabBarState();
 }
 
-class _AutoTabsRouterTabBarState extends _AutoTabsRouterState
+class _AutoTabsRouterTabBarState extends AutoTabsRouterState
     with _RouteAwareTabsMixin<AutoTabsRouter>, TickerProviderStateMixin {
   late TabController _tabController;
 
@@ -738,7 +740,7 @@ class _AutoTabsRouterBuilder extends AutoTabsRouter {
   _AutoTabsRouterBuilderState createState() => _AutoTabsRouterBuilderState();
 }
 
-class _AutoTabsRouterBuilderState extends _AutoTabsRouterState
+class _AutoTabsRouterBuilderState extends AutoTabsRouterState
     with _RouteAwareTabsMixin<AutoTabsRouter> {
   @override
   void _setupController() {

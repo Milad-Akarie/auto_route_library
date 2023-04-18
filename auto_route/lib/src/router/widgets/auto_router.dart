@@ -15,7 +15,7 @@ class AutoRouter extends StatefulWidget {
   final NavigatorObserversBuilder navigatorObservers;
 
   /// This builder maybe used to build content with context
-  /// that has [_AutoRouterState.controller]
+  /// that has [AutoRouterState.controller]
   final Widget Function(BuildContext context, Widget content)? builder;
 
   /// Passed to [Navigator.restorationScopeId]
@@ -70,7 +70,7 @@ class AutoRouter extends StatefulWidget {
       );
 
   @override
-  State<AutoRouter> createState() => _AutoRouterState();
+  State<AutoRouter> createState() => AutoRouterState();
 
   /// Looks up and returns the scoped [StackRouter]
   ///
@@ -98,9 +98,11 @@ class AutoRouter extends StatefulWidget {
   }
 }
 
-class _AutoRouterState extends State<AutoRouter> {
+/// State implementation of [AutoRouter]
+class AutoRouterState extends State<AutoRouter> {
   StackRouter? _controller;
 
+  /// The StackRouter controlling this router widget
   StackRouter? get controller => _controller;
   late List<NavigatorObserver> _navigatorObservers;
   late NavigatorObserversBuilder _inheritableObserversBuilder;
