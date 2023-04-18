@@ -394,7 +394,7 @@ class AppRouter extends $AppRouter{
         AutoRoute(path: 'settings', page: SettingsRoute.page),                      
       ],                    
     ),                
-    AutoRoute(path: '/login', page: LoginRoute.apge)                
+    AutoRoute(path: '/login', page: LoginRoute.page)                
   ],    
         
  }                    
