@@ -1,3 +1,8 @@
+## 6.3.0
+
+ - **REFACTOR**: make AutoRouterState and AutoTabsRouterState public.
+ - **FEAT**: Bring AutoRoute.initial back.
+
 ## 6.2.1
 
  - **REFACTOR**: make AutoRouterState and AutoTabsRouterState public.
