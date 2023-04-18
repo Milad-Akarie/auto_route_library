@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
@@ -12,8 +13,7 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if (authService.isAuthenticated ||
-        resolver.route.name == WebLoginRoute.name) {
+    if (authService.isAuthenticated || resolver.route.name == WebLoginRoute.name) {
       resolver.next();
     } else {
       push(WebLoginRoute(resolver: resolver));
@@ -22,11 +22,7 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
 
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(
-          page: MainWebRoute.page,
-          path: '/',
-          // guards: [AuthGuard(authService)],
-        ),
+        AutoRoute(page: MainWebRoute.page, initial: true),
         AutoRoute(
           path: '/login',
           page: WebLoginRoute.page,
@@ -36,13 +32,12 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
           path: '/user/:userID',
           page: UserRoute.page,
           children: [
-            AutoRoute(path: '', page: UserProfileRoute.page),
+            AutoRoute(page: UserProfileRoute.page, initial: true),
             AutoRoute(
               path: 'posts',
               page: UserPostsRoute.page,
               children: [
-                RedirectRoute(path: '', redirectTo: 'all'),
-                AutoRoute(path: 'all', page: UserAllPostsRoute.page),
+                AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
                 AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
               ],
             ),
@@ -96,17 +91,18 @@ class _MainWebPageState extends State<MainWebPage> {
                 child: Text('Navigate to user/2'),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                final currentState = ((context.router.pathState as int?) ?? 0);
-                context.router.pushPathState(currentState + 1);
-              },
-              child: AnimatedBuilder(
-                  animation: context.router.navigationHistory,
-                  builder: (context, _) {
-                    return Text('Update State: ${context.router.pathState}');
-                  }),
-            ),
+            if (kIsWeb)
+              ElevatedButton(
+                onPressed: () {
+                  final currentState = ((context.router.pathState as int?) ?? 0);
+                  context.router.pushPathState(currentState + 1);
+                },
+                child: AnimatedBuilder(
+                    animation: context.router.navigationHistory,
+                    builder: (context, _) {
+                      return Text('Update State: ${context.router.pathState}');
+                    }),
+              ),
           ],
         ),
       ),
@@ -248,8 +244,7 @@ class _UserPageState extends State<UserPage> {
       appBar: AppBar(
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name +
-                ' ${widget.id} query: ${widget.query}');
+            return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
           },
         ),
         // leading: AutoLeadingButton(),

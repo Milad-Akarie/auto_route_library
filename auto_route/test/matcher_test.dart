@@ -5,9 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Testing RouteCollection', () {
-    test(
-        'Building default constructor with empty map should throw in assertion error',
-        () {
+    test('Building default constructor with empty map should throw in assertion error', () {
       expect(() => RouteCollection.fromList(const []), throwsAssertionError);
     });
 
@@ -24,22 +22,70 @@ void main() {
       root: true,
     );
 
-    test(
-        'Creating root RouteCollection with a root route not starting with "/" should throw',
-        () {
+    test('Creating root RouteCollection with a root route not starting with "/" should throw', () {
+      expect(() => RouteCollection.fromList([TestRoute('A', path: 'a')], root: true), throwsFlutterError);
+    });
+
+    test('Creating sub RouteCollection with a sub route starting with "/" should throw', () {
       expect(
-          () =>
-              RouteCollection.fromList([TestRoute('A', path: 'a')], root: true),
-          throwsFlutterError);
+        () => RouteCollection.fromList([TestRoute('A', path: '/a')], root: false),
+        throwsFlutterError,
+      );
+    });
+
+    test('Auto-generated root paths for routes marked as initial should be "/"', () {
+      expect(
+        RouteCollection.fromList(
+          [TestRoute('A', initial: true)],
+          root: true,
+        ).routes.first.path,
+        '/',
+      );
+    });
+
+    test('Auto-generated sub-paths for routes marked as initial should be empty""', () {
+      expect(
+        RouteCollection.fromList(
+          [TestRoute('A', initial: true)],
+          root: false,
+        ).routes.first.path,
+        '',
+      );
+    });
+
+    test('Creating a RouteCollection with more than one routes marked as initial should throw', () {
+      expect(
+        () => RouteCollection.fromList(
+          [
+            TestRoute('A', path: '/a', initial: true),
+            TestRoute('B', path: '/b', initial: true),
+          ],
+          root: true,
+        ),
+        throwsFlutterError,
+      );
     });
 
     test(
-        'Creating sub RouteCollection with a sub route starting with "/" should throw',
+        'Creating a root RouteCollection with no initialPath with initial set to true should add a RedirectRoute(path:/)',
         () {
-      expect(
-          () => RouteCollection.fromList([TestRoute('A', path: '/a')],
-              root: false),
-          throwsFlutterError);
+      final firstResolvedRoute = RouteCollection.fromList(
+        [TestRoute('A', path: '/a', initial: true)],
+        root: true,
+      ).routes.first;
+      expect(firstResolvedRoute, isA<RedirectRoute>());
+      expect(firstResolvedRoute.path, '/');
+    });
+
+    test(
+        'Creating a sub RouteCollection with no initialPath with initial set to true should add a RedirectRoute(path:"")',
+        () {
+      final firstResolvedRoute = RouteCollection.fromList(
+        [TestRoute('A', path: 'a', initial: true)],
+        root: false,
+      ).routes.first;
+      expect(firstResolvedRoute, isA<RedirectRoute>());
+      expect(firstResolvedRoute.path, '');
     });
 
     test('Calling [routes] should return a list of all route configs', () {
@@ -47,8 +93,7 @@ void main() {
       expect(collection.routes, expectedRoutes);
     });
 
-    test('Calling findPathTo to C1 should return a list of route trails[C,C1]',
-        () {
+    test('Calling findPathTo to C1 should return a list of route trails[C,C1]', () {
       expect(collection.findPathTo('C1'), [routeC, subRouteC1]);
     });
 
@@ -60,24 +105,17 @@ void main() {
       expect(collection.containsKey('X'), isFalse);
     });
 
-    test(
-        'Extracting sub collection of a branch route should return sub collection',
-        () {
-      var expectedCollection =
-          RouteCollection.fromList([subRouteC1], root: false);
+    test('Extracting sub collection of a branch route should return sub collection', () {
+      var expectedCollection = RouteCollection.fromList([subRouteC1], root: false);
       expect(collection.subCollectionOf('C'), expectedCollection);
     });
 
-    test(
-        'Extracting sub collection of a leaf or a non-existing route should throw',
-        () {
+    test('Extracting sub collection of a leaf or a non-existing route should throw', () {
       expect(() => collection.subCollectionOf('A'), throwsAssertionError);
       expect(() => collection.subCollectionOf('X'), throwsAssertionError);
     });
 
-    test(
-        'Calling [] operator with an existing key should return corresponding route',
-        () {
+    test('Calling [] operator with an existing key should return corresponding route', () {
       expect(collection['A'], routeA);
     });
 
@@ -213,8 +251,7 @@ void main() {
       expect(match('/b', includePrefixMatches: true), expectedMatches);
     });
 
-    test('Should return two prefix matches with one nested match [A, C/C1]',
-        () {
+    test('Should return two prefix matches with one nested match [A, C/C1]', () {
       final expectedMatches = [
         RouteMatch(
           config: routeA,
@@ -240,8 +277,7 @@ void main() {
       expect(match('/c/c1', includePrefixMatches: true), expectedMatches);
     });
 
-    test('Should return two prefix matches with one nested match [A, D/D0]',
-        () {
+    test('Should return two prefix matches with one nested match [A, D/D0]', () {
       final expectedMatches = [
         RouteMatch(
           config: routeA,
@@ -267,9 +303,7 @@ void main() {
       expect(match('/d', includePrefixMatches: true), expectedMatches);
     });
 
-    test(
-        'Should return two matches with two nested matches including empty path [A, D/D0/D1]',
-        () {
+    test('Should return two matches with two nested matches including empty path [A, D/D0/D1]', () {
       final expectedMatches = [
         RouteMatch(
           config: routeA,
@@ -305,8 +339,7 @@ void main() {
       expect(match('/c/c1/undefined', includePrefixMatches: true), isNull);
     });
 
-    test('Should return two prefix matches and one full match [A, B, B/B1]',
-        () {
+    test('Should return two prefix matches and one full match [A, B, B/B1]', () {
       final expectedMatches = [
         RouteMatch(
           config: routeA,
@@ -504,8 +537,7 @@ void main() {
       expect(match('/a/1'), expectedMatches);
     });
 
-    test('Should match route [B] and extract path params {id:1, type:none}',
-        () {
+    test('Should match route [B] and extract path params {id:1, type:none}', () {
       final expectedMatches = [
         RouteMatch(
           config: routeB,
@@ -573,9 +605,7 @@ void main() {
       expect(match('/a?foo=bar'), expectedMatches);
     });
 
-    test(
-        'Should match routes [B,B1] and extract query params {foo:bar, bar:baz} for both',
-        () {
+    test('Should match routes [B,B1] and extract query params {foo:bar, bar:baz} for both', () {
       final expectedMatches = [
         RouteMatch(
           key: const ValueKey('B'),
@@ -592,13 +622,10 @@ void main() {
           queryParams: const Parameters({'foo': 'bar', 'bar': 'baz'}),
         )
       ];
-      expect(match('/b/b1?foo=bar&bar=baz', includePrefixMatches: true),
-          expectedMatches);
+      expect(match('/b/b1?foo=bar&bar=baz', includePrefixMatches: true), expectedMatches);
     });
 
-    test(
-        'Should match route [C/C1] and extract query parameters {foo:bar} for parent and child',
-        () {
+    test('Should match route [C/C1] and extract query parameters {foo:bar} for parent and child', () {
       final expectedMatches = [
         RouteMatch(
           config: routeC,

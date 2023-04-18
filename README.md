@@ -431,7 +431,7 @@ Now if we navigate to `/dashboard/users` we will be taken to the `DashboardPage`
 will be shown inside of it.
 
 What if want to show one of the child pages at `/dashboard`? we can simply do that by giving the
-child routes an empty path `''` to make initial.
+child routes an empty path `''` to make initial or by setting initial to true.
 
 ```dart                    
    AutoRoute(                    
@@ -1194,9 +1194,9 @@ The above code can be simplified using `AutoRouteAwareStateMixin`
 
 ##### MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter
 
-| Property                                 | Default value | Definition                                                                               |                
-| ---------------------------------------- | ------------- | ---------------------------------------------            
-| replaceInRouteName [String] |    Page\|Screen,Route     | used to replace conventional words in generated route name (whatToReplacePattern,replacement) |                
+| Property                    | Default value | Definition   |                
+|-----------------------------|---------------|--------------|
+| replaceInRouteName [String] | Page\         | Screen,Route | used to replace conventional words in generated route name (whatToReplacePattern,replacement) |                
 
 ## Custom Route Transitions
 
@@ -1477,21 +1477,6 @@ AutoRoute(page: ProfilePage, guards:[AuthGuard]) // as Type
 
  ```dart     
 AutoRoute(page: ProfilePage, guards:[AuthGuard(<params>)]) // as Instance    
- ```        
-
-5- "initial" flag is removed now, use  "/" for initial routes or empty path "" for nested-initial
-routes .
-
-#### Before
-
-```dart       
-AutoRoute(page: HomeScreen, initial: true)    
- ```          
-
-#### After
-
- ```dart     
-AutoRoute(page: HomeScreen, path: '/')    
  ```        
 
 ## Examples
