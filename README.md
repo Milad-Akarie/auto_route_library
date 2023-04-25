@@ -88,7 +88,7 @@ dev_dependencies:
 
  ```dart     
 @AutoRouterConfig()      
-class AppRouter extends $AppRouter {      
+class AppRouter extends _$AppRouter {      
     
   @override      
   List<AutoRoute> get routes => [      
@@ -150,8 +150,10 @@ class AppRouter extends $AppRouter {
   List<AutoRoute> get routes => [      
     //HomeScreen is generated as HomeRoute because     
     //of the replaceInRouteName property    
-    AutoRoute(HomeRoute.page),    
-   ]    
+    AutoRoute(
+      page: HomeRoute.page
+    ),  
+   ];    
  }    
  ```           
 
