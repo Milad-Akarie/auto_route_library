@@ -144,7 +144,7 @@ flutter packages pub run build_runner build
 
  ```dart     
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')      
-class AppRouter extends $AppRouter {      
+class AppRouter extends ـ$AppRouter {      
     
   @override      
   List<AutoRoute> get routes => [      
@@ -383,7 +383,7 @@ of `DashboardPage`.
 
 ```dart                    
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')                    
-class AppRouter extends $AppRouter{    
+class AppRouter extends ـ$AppRouter{    
     
   @override      
   List<AutoRoute> get routes => [                  
@@ -1009,7 +1009,7 @@ let's say you have an App with no publish screens, we'd have a global guard that
 
 ```dart   
 @AutoRouterConfig()
-class AppRouter extends $AppRouter implements AutoRouteGuard {
+class AppRouter extends ـ$AppRouter implements AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
       if(isAuthenticated || resolver.route.name == LoginRoute.name){
@@ -1410,7 +1410,7 @@ class $AppRouter {}
 
  ```dart     
 @AutoRouterConfig()      
-class AppRouter extends $AppRouter {      
+class AppRouter extends ـ$AppRouter {      
     
 @override      
 RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc    
