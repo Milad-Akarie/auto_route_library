@@ -3,9 +3,9 @@
     <name>AutoRoute Helper</name>
     <vendor email="milad.akarie@gmail.com" url="https://github.com/Milad-Akarie">Milad Akarie</vendor>
     <description><![CDATA[
-    Helper for <a href="https://pub.dev/packages/auto_route"/><br>
-    - Create route page file<br><br>
-    - Simply create route page from context action<br><br>
+    Helper for <a href="https://pub.dev/packages/auto_route">auto_route<a/><br>
+    - Create route page file<br>
+    - Simply create route page from context action<br>
     - Migrate to AutoRoute V6+
   ]]></description>
 

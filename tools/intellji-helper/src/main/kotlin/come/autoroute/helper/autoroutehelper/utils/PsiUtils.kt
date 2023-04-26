@@ -21,7 +21,8 @@ import java.io.File
 
 class PsiUtils {
     companion object {
-        private val allowedSuperClasses = listOf("StatelessWidget", "StatefulWidget")
+        private val allowedSuperClasses =
+            listOf("StatelessWidget", "StatefulWidget", "ConsumerWidget", "StatefulConsumerWidget")
         fun findPossibleRoutePage(editor: Editor, file: PsiFile?): RoutePageInfo? {
             if (file == null) return null
             val caretOffset = editor.caretModel.offset
@@ -41,7 +42,6 @@ class PsiUtils {
                     }
                     return RoutePageInfo(
                             classElement,
-                            classElement.startOffset,
                             routeAnnotation,
                             Utils.stripStringQts(customName),
                     );
