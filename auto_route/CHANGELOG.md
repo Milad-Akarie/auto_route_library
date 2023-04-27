@@ -1,3 +1,7 @@
+## 6.3.1
+
+ - **REFACTOR**: deprecated initialDeepLink and initialRouts.
+
 ## 6.3.0
 
  - **FEAT**: Bring AutoRoute.initial back.
