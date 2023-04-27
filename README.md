@@ -13,7 +13,7 @@
 <p align="center">                  
 <a href="https://www.buymeacoffee.com/miladakarie" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30px" width= "108px"></a>                  
 </p>                  
-
+---
 - [Introduction](#introduction)
     - [Installation](#installation)
     - [Setup and Usage](#setup-and-usage)
@@ -28,6 +28,7 @@
         - [Using TabBar](#using-tabbar)
     - [Finding The Right Router](#finding-the-right-router)
     - [Navigating Without Context](#navigating-without-context)
+- [Deep Linking](#deep-linking)
 - [Declarative Navigation](#declarative-navigation)
 - [Working with Paths](#working-with-paths)
 - [Route guards](#route-guards)
@@ -177,7 +178,8 @@ class App extends StatelessWidget {
 
 ## Generated Routes
 
-A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold strongly-typed page arguments which are extracted from the page's default
+A `PageRouteInfo` object will be generated for every declared AutoRoute, These objects hold
+strongly-typed page arguments which are extracted from the page's default
 constructor. Think of them as string path segments on steroids.
 
 ```dart                    
@@ -808,6 +810,58 @@ getIt<AppRouter>().push(...);
 use `navigate` instead of `push` and you provide a full hierarchy.
 e.g `router.navigate(SecondRoute(children: [SubChild2Route()]))`
 
+## Deep Linking
+
+AutoRoute will automatically handle deep-links coming from the platform, but native platforms
+require some setup, see [Deep linking topic](https://docs.flutter.dev/ui/navigation/deep-linking) in
+flutter documentation.
+
+### Using Deep-link Builder
+
+Deep link builder is an interceptor for deep-links where you can validate or override deep-links
+coming from the platform.
+
+In the following example we will only allow deep-links starting with `/products`
+
+```dart 
+    MaterialApp.router(
+      routerConfig: _appRouter.config(
+        deepLinkBuilder: (deepLink){
+          if(deepLink.path.startsWith('/products'){
+           // continute with the platfrom link
+            return deepLink;
+          }else{
+            return DeepLink.defaultPath;
+            // or DeepLink.path('/')
+            // or DeepLink([HomeRoute()])
+          }
+        }
+      ),
+    )
+```
+
+### Deep Linking to None-nested Routes
+
+AutoRoute can build a stack from a linear route list as long as they're ordered properly and can be
+matched as prefix.
+e.g `/` is a prefix match of `/products`, and `/products` is prefix match of `/products/:id`
+so we have a setup that looks something like this:
+-- `/`
+-- `/products`
+-- `/products/:id`
+
+Now receiving this deep-link `/products/123` will add all above routes to the stack, this of-course
+requires `includePrefixMatches` to be true in the root config (default is true) or when
+using `pushNamed`, `navigateNamed` and `replaceNamed`.
+
+**Things to keep in mind**:
+
+- if a full match can not finally be found no prefix matches will be included.
+- Paths that require a full path match => `AutoRoute(path:'path', fullMatch: true)` will not be
+  included as prefix matches.
+- in the above example if `/products/:id` comes before `/products`, `/products` will not be
+  included.
+
 ## Declarative Navigation
 
 To use declarative navigation with auto_route you simply use the `AutoRouter.declarative`
@@ -827,7 +881,7 @@ AutoRouter.declarative(
 ## Working with Paths
 
 Working with paths in **AutoRoute** is optional because `PageRouteInfo` objects are matched by name
-unless pushed as a string using the `initialDeepLink` property in root delegate or `pushNamed`
+unless pushed as a string using the `deepLinkBuilder` property in root delegate or `pushNamed`
 , `replaceNamed` `navigateNamed` methods.
 
 if you don’t specify a path it’s going to be generated from the page name e.g. `BookListPage` will
@@ -864,20 +918,23 @@ Now writing `/books/1` in the browser will navigate you to `BookDetailsPage` and
 extract the `bookId` argument from path and inject it to your widget.
 
 #### Inherited Path Parameters
-To inherit a path-parameter from a parent route's path we need to use `@PathParam.inherit` annotation in the child route's constructor e.g let's say we have the following setup
+
+To inherit a path-parameter from a parent route's path we need to use `@PathParam.inherit`
+annotation in the child route's constructor e.g let's say we have the following setup
 
   ```dart          
 AutoRoute(        
      path: '/product/:id',        
-     page: ProductScreen,        
+     page: ProductRoute.page,        
      children: [        
-        AutoRoute(path: 'review',page: ProductReviewScreen),        
+        AutoRoute(path: 'review',page: ProductReviewRoute.page),        
     ],      
  ),      
 ```         
 
 now `ProductReviewScreen` expects a path-param named `id` but, from the above snippet we know that
-the path corresponding with it `review` has no path parameters, but we can inherit 'id' form the parent '/product/:id' like follows:
+the path corresponding with it `review` has no path parameters, but we can inherit 'id' form the
+parent '/product/:id' like follows:
 
 ```dart          
 @RoutePage()    
@@ -1001,9 +1058,13 @@ Now we assign our guard to the routes we want to protect.
 ```dart                
  AutoRoute(page: ProfileRoute.page, guards: [AuthGuard()]);                
 ```                            
+
 #### Guarding all stack-routes
-You can have all your stack-routes (none-tab-routes) go throuw a global guard by having your Router implement an AutoRouteGuard.
-let's say you have an App with no publish screens, we'd have a global guard that only allows navigation if the user is authenticated or if we're navigating to the LoginRoute.
+
+You can have all your stack-routes (none-tab-routes) go through a global guard by having your Router
+implement an AutoRouteGuard.
+let's say you have an App with no publish screens, we'd have a global guard that only allows
+navigation if the user is authenticated or if we're navigating to the LoginRoute.
 
 ```dart   
 @AutoRouterConfig()
@@ -1248,8 +1309,12 @@ CustomRoute(page: CustomPage, customRouteBuilder:
 ```                
 
 ## Others
+
 ### Optimizing generation time
-To pass builder configuration to auto_route_generator we need to add build.yaml file next to pubspec.yaml if not already added.
+
+To pass builder configuration to auto_route_generator we need to add build.yaml file next to
+pubspec.yaml if not already added.
+
 ```yaml
 targets:
   $default:
@@ -1259,19 +1324,25 @@ targets:
       auto_route_generator:auto_router_generator:
       # configs for @AutoRouterConfig() generator ...
 ```  
-The first thing you want to do to reduce generation time is specifying the files build_runner should process and we do that by using [globs](https://pub.dev/packages/glob), Globs are kind of regex patterns with little differences that's used to match file names.
+
+The first thing you want to do to reduce generation time is specifying the files build_runner should
+process and we do that by using [globs](https://pub.dev/packages/glob), Globs are kind of regex
+patterns with little differences that's used to match file names.
 **Note** for this to work on file level you need to follow a naming convention
 
 let's say we have the following files tree
 ├── lib
-│   ├── none_widget_file.dart
-│   ├── none_widget_file2.dart
-│   └── ui
-│       ├── products_screen.dart
-│       ├── products_details_screen.dart
+│ ├── none_widget_file.dart
+│ ├── none_widget_file2.dart
+│ └── ui
+│ ├── products_screen.dart
+│ ├── products_details_screen.dart
 
-By default the builder will process all of these files to check for a page with `@RoutePage()` annotation, we can help by letting it know what files we need processed, e.g only process the files inside the ui folder:
+By default the builder will process all of these files to check for a page with `@RoutePage()`
+annotation, we can help by letting it know what files we need processed, e.g only process the files
+inside the ui folder:
 **Note** (**) matches everything including '/';
+
 ```yaml
 targets:
   $default:
@@ -1280,7 +1351,10 @@ targets:
       generate_for:
         - lib/ui/**.dart
 ```  
-let's say you have widget files inside of the ui folder but we only need to process files ending with `_screen.dart`
+
+let's say you have widget files inside of the ui folder but we only need to process files ending
+with `_screen.dart`
+
 ```yaml
 targets:
   $default:
@@ -1289,15 +1363,17 @@ targets:
       generate_for:
         - lib/ui/**_screen.dart
 ```  
+
 now only `products_screen.dart`, `products_details_screen.dart` will be processed
 
 The same goes for `@AutoRouterConfig` builder
+
 ```yaml
 targets:
   $default:
     builders:
       auto_route_generator:auto_route_generator: # this for @RoutePage
-       generate_for:
+        generate_for:
           - lib/ui/**_screen.dart
       auto_route_generator:auto_router_generator: # this for @AutoRouterConfig
         generate_for:
@@ -1305,8 +1381,11 @@ targets:
 ```  
 
 ## Enabling cached builds
+
 **This is still experimental**
-When cached builds are enabled auto_route will try to prevent redundant re-builds by analyzing whether the file changes has any effect on the extracted route info, e.g any changes inside of the build method should be ignored.
+When cached builds are enabled auto_route will try to prevent redundant re-builds by analyzing
+whether the file changes has any effect on the extracted route info, e.g any changes inside of the
+build method should be ignored.
 
 **Note** Enable cached builds on both generators
 
@@ -1315,12 +1394,12 @@ targets:
   $default:
     builders:
       auto_route_generator:auto_route_generator: # this for @RoutePage
-       options:
+        options:
           enable_cached_builds: true
-       generate_for:
+        generate_for:
           - lib/ui/**_screen.dart
       auto_route_generator:auto_router_generator: # this for @AutoRouterConfig
-       options:
+        options:
           enable_cached_builds: true
         generate_for:
           - lib/ui/router.dart 
@@ -1382,7 +1461,8 @@ MaterialApp.router(
 In version 6.0 auto_route aims for less generated code for more flexibility and less generation
 time.
 
-**Note: You can use [AutoRoute-helper](https://plugins.jetbrains.com/plugin/21071-autoroute-helper) plugin for Android studio to help you migrate to v6.0**
+**Note: You can use [AutoRoute-helper](https://plugins.jetbrains.com/plugin/21071-autoroute-helper)
+plugin for Android studio to help you migrate to v6.0**
 
 <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/migrate_to_v6_demo.gif" alt="add route from intent action" width= "px"></a>  
 1- Instead of using `MaterialAutoRouter`,`CupertinoAutoRouter` ...etc we now only have one

@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,18 +14,21 @@ void main() {
   setUp(() => router = NestedTabsRouter());
 
   Future<void> pumpRouter(WidgetTester tester) => pumpRouterConfigApp(
-        tester,
-        router.config(initialRoutes: [TabsHostRoute(tabsType: 'TabBar')]),
+    tester,
+        router.config(
+          deepLinkBuilder: (_) => DeepLink.single(
+            TabsHostRoute(tabsType: 'TabBar'),
+          ),
+        ),
       );
 
   testWidgets(
     'Scrolling through pages in AutoTabView should sync with active route',
-    (WidgetTester tester) async {
+        (WidgetTester tester) async {
       tester.binding.window.physicalSizeTestValue = const Size(500, 1500);
       await pumpRouter(tester);
       final pageViewFinder = find.byType(AutoTabView);
-      final scrollController =
-          (tester.widget<AutoTabView>(pageViewFinder)).controller;
+      final scrollController = (tester.widget<AutoTabView>(pageViewFinder)).controller;
       expect(scrollController.index, 0);
       await tester.drag(pageViewFinder, const Offset(-200, 0.0));
       await tester.pumpAndSettle();

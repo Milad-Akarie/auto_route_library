@@ -11,7 +11,11 @@ void runGeneralTests(String tabsType) {
 
   Future<void> pumpRouter(WidgetTester tester) => pumpRouterConfigApp(
         tester,
-        router.config(initialRoutes: [TabsHostRoute(tabsType: tabsType)]),
+        router.config(
+          deepLinkBuilder: (_) => DeepLink.single(
+            TabsHostRoute(tabsType: tabsType),
+          ),
+        ),
       );
 
   testWidgets(
@@ -100,8 +104,7 @@ void runGeneralTests(String tabsType) {
   testWidgets(
     'Initializing router App with deep-link "/tab3/tab3Nested2" should present FirstRoute/Tab3Route/Tab3Nested2Route',
     (WidgetTester tester) async {
-      await pumpRouterApp(tester, router,
-          initialLink: '/tab3/tab3Nested2?tabsType=$tabsType');
+      await pumpRouterApp(tester, router, initialLink: '/tab3/tab3Nested2?tabsType=$tabsType');
       expectTopPage(router, Tab3Nested2Route.name);
       expect(router.urlState.path, '/tab3/tab3Nested2');
     },
@@ -110,8 +113,7 @@ void runGeneralTests(String tabsType) {
   testWidgets(
     'Initializing router App with invalid deep-link should present FirstRoute/Tab1Route',
     (WidgetTester tester) async {
-      await pumpRouterApp(tester, router,
-          initialLink: '/invalid-deep-link?tabsType=$tabsType');
+      await pumpRouterApp(tester, router, initialLink: '/invalid-deep-link?tabsType=$tabsType');
       expectTopPage(router, Tab1Route.name);
       expect(router.urlState.path, '/');
     },

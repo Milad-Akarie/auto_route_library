@@ -6,17 +6,15 @@ import 'package:auto_route/src/route/auto_route_config.dart';
 import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
 import 'package:auto_route/src/router/controller/pageless_routes_observer.dart';
 import 'package:auto_route/src/router/transitions/custom_page_route.dart';
+import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
-
 part 'auto_route_guard.dart';
-
 part 'auto_router_delegate.dart';
-
 part 'root_stack_router.dart';
 
 /// Signature of a predicate to select [RouteData]

@@ -1,5 +1,9 @@
 part of 'routing_controller.dart';
 
+/// Signature for a function that builds [DeepLink]
+/// [deepLink] is the pre-resolved link coming from platform window
+typedef DeepLinkBuilder = FutureOr<DeepLink> Function(PlatformDeepLink deepLink);
+
 /// An auto_route implementation for [RouterDelegate]
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// This initial list of routes
@@ -8,6 +12,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   ///
   /// Using this is not recommended if your App uses deep-links
   /// unless you know what you're doing.
+  @Deprecated('Use deepLinkBuilder:(_)=> DeepLink(routes) instead')
   final List<PageRouteInfo>? initialRoutes;
 
   /// This initial path
@@ -18,11 +23,16 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   ///
   /// Using this is not recommended if your App uses deep-links
   /// unless you know what you're doing.
+  @Deprecated('Use deepLinkBuilder:(_)=> DeepLink.path(path) instead')
   final String? initialDeepLink;
 
   /// An object that provides pages stack to [Navigator.pages]
   /// and wraps a navigator key to handle stack navigation actions
   final StackRouter controller;
+
+  /// Clients can use this to intercept deep-links
+  /// coming from platform and validate, abort or override it.
+  final DeepLinkBuilder? deepLinkBuilder;
 
   /// Passed to [Navigator.restorationScopeId]
   final String? navRestorationScopeId;
@@ -54,9 +64,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Forces a url update
   static reportUrlChanged(BuildContext context, String url) {
-    Router.of(context)
-        .routeInformationProvider
-        ?.routerReportsNewRouteInformation(
+    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
           RouteInformation(location: url),
           type: RouteInformationReportingType.navigate,
         );
@@ -75,21 +83,24 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     this.navRestorationScopeId,
     this.initialDeepLink,
     this.navigatorObservers = defaultNavigatorObserversBuilder,
-  }) : assert(initialDeepLink == null || initialRoutes == null) {
+    this.deepLinkBuilder,
+  })  : assert(initialDeepLink == null || initialRoutes == null),
+        assert((deepLinkBuilder == null || (initialDeepLink == null && initialRoutes == null)),
+            'You can not use initialDeepLink or initialRoutes with deepLinkBuilder') {
     _navigatorObservers = navigatorObservers();
     controller.navigationHistory.addListener(_handleRebuild);
   }
 
   /// Builds a [_DeclarativeAutoRouterDelegate] which uses
   /// a declarative list of routes to update navigator stack
-  factory AutoRouterDelegate.declarative(
-    RootStackRouter controller, {
+  factory AutoRouterDelegate.declarative(RootStackRouter controller, {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     String? initialDeepLink,
     RoutePopCallBack? onPopRoute,
     OnNavigateCallBack? onNavigate,
     NavigatorObserversBuilder navigatorObservers,
+    DeepLinkBuilder? deepLinkBuilder,
   }) = _DeclarativeAutoRouterDelegate;
 
   /// Helper to access current urlState
@@ -99,7 +110,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   UrlState? get currentConfiguration => urlState;
 
   @override
-  Future<void> setInitialRoutePath(UrlState configuration) {
+  Future<void> setInitialRoutePath(UrlState configuration) async {
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
@@ -107,15 +118,39 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return SynchronousFuture(null);
     }
 
-    if (initialRoutes?.isNotEmpty == true) {
-      return controller.pushAll(initialRoutes!);
+    /// Todo remove below deprecated code
+    final platformDeepLink = PlatformDeepLink._(configuration);
+    if (deepLinkBuilder != null) {
+      return _handleDeepLink(await deepLinkBuilder!(platformDeepLink));
+      // ignore: deprecated_member_use_from_same_package
+    } else if (initialRoutes?.isNotEmpty == true) {
+      // ignore: deprecated_member_use_from_same_package
+      return _handleDeepLink(DeepLink(initialRoutes!));
+      // ignore: deprecated_member_use_from_same_package
     } else if (initialDeepLink != null) {
-      return controller.pushNamed(initialDeepLink!, includePrefixMatches: true);
+      // ignore: deprecated_member_use_from_same_package
+      return _handleDeepLink(DeepLink.path(initialDeepLink!, includePrefixMatches: true));
     } else if (configuration.hasSegments) {
-      _onNewUrlState(configuration);
-      return controller.navigateAll(configuration.segments);
+      return _handleDeepLink(platformDeepLink);
     } else {
       throw FlutterError("Can not resolve initial route");
+    }
+  }
+
+  Future<void> _handleDeepLink(DeepLink deepLink) {
+    throwIf(!deepLink.isValid, 'Can not resolve initial route');
+    if (deepLink is PlatformDeepLink) {
+      _onNewUrlState(deepLink.configuration);
+      return controller.navigateAll(deepLink.matches);
+    } else if (deepLink is _PathDeepLink) {
+      return controller.pushNamed(
+        deepLink.path,
+        includePrefixMatches: deepLink.includePrefixMatches,
+      );
+    } else if (deepLink is _RoutesDeepLink) {
+      return controller.pushAll(deepLink.routes);
+    } else {
+      throw FlutterError('Unsupported DeepLink ${deepLink.runtimeType}');
     }
   }
 
@@ -146,12 +181,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   Widget build(BuildContext context) => _AutoRootRouter(
-        router: controller,
-        navigatorObservers: _navigatorObservers,
-        navigatorObserversBuilder: navigatorObservers,
-        navRestorationScopeId: navRestorationScopeId,
-        placeholder: placeholder,
-      );
+    router: controller,
+    navigatorObservers: _navigatorObservers,
+    navigatorObserversBuilder: navigatorObservers,
+    navRestorationScopeId: navRestorationScopeId,
+    placeholder: placeholder,
+  );
 
   void _handleRebuild() {
     notifyListeners();
@@ -243,12 +278,13 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     RootStackRouter router, {
     required this.routes,
     String? navRestorationScopeId,
-    String? initialDeepLink,
+    @Deprecated('Use deepLinkBuilder instead') String? initialDeepLink,
+    super.deepLinkBuilder,
     this.onPopRoute,
     this.onNavigate,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  }) : super(
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  })  : assert(deepLinkBuilder == null || initialDeepLink == null),
+        super(
           router,
           navRestorationScopeId: navRestorationScopeId,
           navigatorObservers: navigatorObservers,
@@ -258,15 +294,34 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   }
 
   @override
-  Future<void> setInitialRoutePath(UrlState tree) {
-    if (initialDeepLink != null) {
-      final routes = controller.buildPageRoutesStack(initialDeepLink!);
-      controller.pendingRoutesHandler._setPendingRoutes(routes);
-    } else if (tree.hasSegments) {
-      final routes = tree.segments.map((e) => e.toPageRouteInfo()).toList();
-      controller.pendingRoutesHandler._setPendingRoutes(routes);
+  Future<void> setInitialRoutePath(UrlState configuration) async {
+    final platformDeepLink = PlatformDeepLink._(configuration);
+    if (deepLinkBuilder != null) {
+      final deepLink = await deepLinkBuilder!(platformDeepLink);
+      _handleDeclarativeDeepLink(deepLink);
+    }
+
+    /// Todo remove below deprecated code
+    // ignore: deprecated_member_use_from_same_package
+    else if (initialDeepLink != null) {
+      // ignore: deprecated_member_use_from_same_package
+      _handleDeclarativeDeepLink(DeepLink.path(initialDeepLink!));
+    } else if (configuration.hasSegments) {
+      _handleDeclarativeDeepLink(platformDeepLink);
     }
     return SynchronousFuture(null);
+  }
+
+  void _handleDeclarativeDeepLink(DeepLink deepLink) {
+    List<PageRouteInfo>? routes;
+    if (deepLink is PlatformDeepLink) {
+      routes = deepLink.matches.map((e) => e.toPageRouteInfo()).toList();
+    } else if (deepLink is _PathDeepLink) {
+      routes = controller.buildPageRoutesStack(deepLink.path);
+    } else if (deepLink is _RoutesDeepLink) {
+      routes = deepLink.routes;
+    }
+    controller.pendingRoutesHandler._setPendingRoutes(routes);
   }
 
   @override
@@ -306,4 +361,66 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
       ),
     );
   }
+}
+
+/// Holds deep-link information
+abstract class DeepLink {
+  const DeepLink._();
+
+  /// Whether this link is navigable
+  ///
+  /// e.g PathDeepLink.path.isNotEmpty;
+  bool get isValid;
+
+  /// Builds a deep-link from a list of [PageRouteInf]s
+  const factory DeepLink(List<PageRouteInfo> routes) = _RoutesDeepLink;
+
+  /// Builds a deep-link from a single [PageRouteInf]
+  factory DeepLink.single(PageRouteInfo route) => _RoutesDeepLink([route]);
+
+  /// Builds a deep-link form string path
+  const factory DeepLink.path(String path, {bool includePrefixMatches}) = _PathDeepLink;
+
+  /// Builds a deep link with initial path
+  static const DeepLink defaultPath = DeepLink.path(Navigator.defaultRouteName);
+}
+
+class _PathDeepLink extends DeepLink {
+  final String path;
+  final bool includePrefixMatches;
+
+  const _PathDeepLink(this.path, {this.includePrefixMatches = true}) : super._();
+
+  @override
+  bool get isValid => path.isNotEmpty;
+}
+
+class _RoutesDeepLink extends DeepLink {
+  final List<PageRouteInfo> routes;
+
+  const _RoutesDeepLink(this.routes) : super._();
+
+  @override
+  bool get isValid => routes.isNotEmpty;
+}
+
+/// Holds information of the deep-link
+/// coming from the platform window
+class PlatformDeepLink extends DeepLink {
+  /// The initial url state parsed from initial raw path
+  final UrlState configuration;
+
+  /// The raw deep-link as String
+  String get path => configuration.path;
+
+  /// The parsed uri from the raw path
+  Uri get uri => configuration.uri;
+
+  /// The pre-matched routes from the row path
+  List<RouteMatch> get matches => configuration.segments;
+
+  const PlatformDeepLink._(this.configuration) : super._();
+
+  @override
+  bool get isValid => configuration.hasSegments;
 }
