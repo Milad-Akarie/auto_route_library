@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -14,10 +15,13 @@ void main() {
   testWidgets('Simple Declarative routing test', (WidgetTester tester) async {
     final pageNotifier = ValueNotifier(1);
     await pumpRouterConfigApp(
-        tester,
-        router.config(initialRoutes: [
-          DeclarativeRouterHostRoute(pageNotifier: pageNotifier)
-        ]));
+      tester,
+      router.config(
+        deepLinkBuilder: (_) => DeepLink.single(
+          DeclarativeRouterHostRoute(pageNotifier: pageNotifier),
+        ),
+      ),
+    );
 
     final declarativeRouter = router.topMostRouter();
     expect(find.text(SecondNested1Route.name), findsOneWidget);
