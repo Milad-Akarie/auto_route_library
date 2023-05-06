@@ -11,6 +11,34 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.1.0`](#auto_route---v710)
+ - [`auto_route_generator` - `v6.2.1`](#auto_route_generator---v621)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v6.2.1`
+
+---
+
+#### `auto_route` - `v7.1.0`
+
+ - **FEAT**: add support to process files in micro-packages.
+
+
+## 2023-05-06
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`auto_route` - `v7.0.0`](#auto_route---v700)
 
 Packages with other changes:

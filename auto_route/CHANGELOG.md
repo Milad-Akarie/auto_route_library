@@ -1,3 +1,7 @@
+## 7.1.0
+
+ - **FEAT**: add support to process files in micro-packages.
+
 ## 7.0.0
 
 > Note: This release has breaking changes.
