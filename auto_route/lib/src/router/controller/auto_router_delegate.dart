@@ -93,7 +93,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Builds a [_DeclarativeAutoRouterDelegate] which uses
   /// a declarative list of routes to update navigator stack
-  factory AutoRouterDelegate.declarative(RootStackRouter controller, {
+  factory AutoRouterDelegate.declarative(
+    RootStackRouter controller, {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     String? initialDeepLink,
@@ -155,15 +156,16 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   @override
-  Future<void> setNewRoutePath(UrlState configuration) {
+  Future<void> setNewRoutePath(UrlState configuration) async {
     final topMost = controller.topMostRouter();
     if (topMost is StackRouter && topMost.hasPagelessTopRoute) {
       topMost.popUntil((route) => route.settings is Page);
     }
 
     if (configuration.hasSegments) {
-      _onNewUrlState(configuration);
-      return controller.navigateAll(configuration.segments);
+      final platformDeepLink = PlatformDeepLink._(configuration);
+      final deepLink = deepLinkBuilder == null ? platformDeepLink : await deepLinkBuilder!(platformDeepLink);
+      await _handleDeepLink(deepLink);
     }
 
     notifyListeners();
@@ -181,12 +183,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   Widget build(BuildContext context) => _AutoRootRouter(
-    router: controller,
-    navigatorObservers: _navigatorObservers,
-    navigatorObserversBuilder: navigatorObservers,
-    navRestorationScopeId: navRestorationScopeId,
-    placeholder: placeholder,
-  );
+        router: controller,
+        navigatorObservers: _navigatorObservers,
+        navigatorObserversBuilder: navigatorObservers,
+        navRestorationScopeId: navRestorationScopeId,
+        placeholder: placeholder,
+      );
 
   void _handleRebuild() {
     notifyListeners();
