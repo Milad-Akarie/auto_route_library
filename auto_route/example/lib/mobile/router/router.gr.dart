@@ -17,7 +17,6 @@ import 'package:example/mobile/screens/login_page.dart' as _i3;
 import 'package:example/mobile/screens/profile/my_books_page.dart' as _i4;
 import 'package:example/mobile/screens/profile/profile_page.dart' as _i5;
 import 'package:example/mobile/screens/settings_page.dart' as _i7;
-import 'package:flutter/foundation.dart' as _i11;
 import 'package:flutter/material.dart' as _i10;
 
 abstract class $RootRouter extends _i9.RootStackRouter {
@@ -79,13 +78,9 @@ abstract class $RootRouter extends _i9.RootStackRouter {
       );
     },
     HomeRoute.name: (routeData) {
-      final args =
-          routeData.argsAs<HomeRouteArgs>(orElse: () => const HomeRouteArgs());
       return _i9.AutoRoutePage<String>(
         routeData: routeData,
-        child: _i6.HomePage(
-          key: args.key,
-        ),
+        child: const _i6.HomePage(),
       );
     },
     WelcomeRoute.name: (routeData) {
@@ -271,35 +266,16 @@ class ProfileRoute extends _i9.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i6.HomePage]
-class HomeRoute extends _i9.PageRouteInfo<HomeRouteArgs> {
-  HomeRoute({
-    _i11.Key? key,
-    List<_i9.PageRouteInfo>? children,
-  }) : super(
+class HomeRoute extends _i9.PageRouteInfo<void> {
+  const HomeRoute({List<_i9.PageRouteInfo>? children})
+      : super(
           HomeRoute.name,
-          args: HomeRouteArgs(
-            key: key,
-          ),
           initialChildren: children,
         );
 
   static const String name = 'HomeRoute';
 
-  static const _i9.PageInfo<HomeRouteArgs> page =
-      _i9.PageInfo<HomeRouteArgs>(name);
-}
-
-class HomeRouteArgs {
-  const HomeRouteArgs({
-    this.key,
-  });
-
-  final _i11.Key? key;
-
-  @override
-  String toString() {
-    return 'HomeRouteArgs{key: $key}';
-  }
+  static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
 }
 
 /// generated route for

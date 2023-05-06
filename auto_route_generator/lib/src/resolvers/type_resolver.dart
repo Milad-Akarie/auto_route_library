@@ -1,8 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/nullability_suffix.dart'
-    show NullabilitySuffix;
-import 'package:analyzer/dart/element/type.dart'
-    show DartType, ParameterizedType;
+import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
+import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType;
 import 'package:auto_route_generator/src/models/importable_type.dart';
 import 'package:path/path.dart' as p;
 
@@ -17,33 +15,43 @@ class TypeResolver {
     if (libs.isEmpty || element?.source == null || _isCoreDartType(element!)) {
       return null;
     }
-
     for (var lib in libs) {
-      if (!_isCoreDartType(lib) &&
-          lib.exportNamespace.definedNames.values.contains(element)) {
-        return targetFile == null
-            ? lib.identifier
-            : _relative(
-                lib.source.uri,
-                targetFile!,
-              );
+      if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames.values.contains(element)) {
+        final uri = lib.source.uri;
+        if (uri.scheme == 'asset') {
+          return _assetToPackage(lib.source.uri);
+        }
+        return targetFile == null ? lib.identifier : _relative(uri, targetFile!);
       }
     }
     return null;
   }
 
+  String _assetToPackage(Uri uri) {
+    if (uri.scheme == 'asset') {
+      final validSegments = <String>[];
+      for (var i = 0; i < uri.pathSegments.length; i++) {
+        if (uri.pathSegments[i] == 'lib') {
+          if (i > 0 && i + 1 < uri.pathSegments.length) {
+            validSegments.add(uri.pathSegments[i - 1]);
+            validSegments.addAll(uri.pathSegments.sublist(i + 1));
+            return 'package:${validSegments.join('/')}';
+          }
+          break;
+        }
+      }
+    }
+    return uri.toString();
+  }
+
   String _relative(Uri fileUri, Uri to) {
     var libName = to.pathSegments.first;
-    if ((to.scheme == 'package' &&
-            fileUri.scheme == 'package' &&
-            fileUri.pathSegments.first == libName) ||
+    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.first == libName) ||
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
         return fileUri.pathSegments.last;
       } else {
-        return p.posix
-            .relative(fileUri.path, from: to.path)
-            .replaceFirst('../', '');
+        return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
       }
     } else {
       return fileUri.toString();

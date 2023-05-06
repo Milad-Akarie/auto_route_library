@@ -11,6 +11,7 @@
 import 'package:auto_route/auto_route.dart' as _i3;
 import 'package:example/web_demo/router/web_login_page.dart' as _i1;
 import 'package:example/web_demo/router/web_router.dart' as _i2;
+import 'package:flutter/foundation.dart' as _i5;
 import 'package:flutter/material.dart' as _i4;
 
 abstract class $WebAppRouter extends _i3.RootStackRouter {
@@ -166,7 +167,7 @@ class WebLoginRouteArgs {
 /// [_i2.MainWebPage]
 class MainWebRoute extends _i3.PageRouteInfo<MainWebRouteArgs> {
   MainWebRoute({
-    _i4.Key? key,
+    _i5.Key? key,
     dynamic navigate,
     dynamic showUserPosts,
     List<_i3.PageRouteInfo>? children,
@@ -193,7 +194,7 @@ class MainWebRouteArgs {
     this.showUserPosts,
   });
 
-  final _i4.Key? key;
+  final _i5.Key? key;
 
   final dynamic navigate;
 
@@ -209,7 +210,7 @@ class MainWebRouteArgs {
 /// [_i2.UserProfilePage]
 class UserProfileRoute extends _i3.PageRouteInfo<UserProfileRouteArgs> {
   UserProfileRoute({
-    _i4.Key? key,
+    _i5.Key? key,
     dynamic navigate,
     int userId = -1,
     int likes = 0,
@@ -241,7 +242,7 @@ class UserProfileRouteArgs {
     this.likes = 0,
   });
 
-  final _i4.Key? key;
+  final _i5.Key? key;
 
   final dynamic navigate;
 
@@ -273,7 +274,7 @@ class UserPostsRoute extends _i3.PageRouteInfo<void> {
 /// [_i2.UserPage]
 class UserRoute extends _i3.PageRouteInfo<UserRouteArgs> {
   UserRoute({
-    _i4.Key? key,
+    _i5.Key? key,
     int id = -1,
     List<String>? query,
     List<_i3.PageRouteInfo>? children,
@@ -302,7 +303,7 @@ class UserRouteArgs {
     this.query,
   });
 
-  final _i4.Key? key;
+  final _i5.Key? key;
 
   final int id;
 
@@ -332,7 +333,7 @@ class NotFoundRoute extends _i3.PageRouteInfo<void> {
 /// [_i2.UserAllPostsPage]
 class UserAllPostsRoute extends _i3.PageRouteInfo<UserAllPostsRouteArgs> {
   UserAllPostsRoute({
-    _i4.Key? key,
+    _i5.Key? key,
     dynamic navigate,
     List<_i3.PageRouteInfo>? children,
   }) : super(
@@ -356,7 +357,7 @@ class UserAllPostsRouteArgs {
     this.navigate,
   });
 
-  final _i4.Key? key;
+  final _i5.Key? key;
 
   final dynamic navigate;
 

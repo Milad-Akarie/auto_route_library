@@ -37,14 +37,15 @@
 - [Wrapping routes](#wrapping-routes)
 - [Navigation Observers](#navigation-observers)
 - [Customization](#customizations)
-    - [Custom Route Transitions](#custom-route-transitions)
-    - [Custom Route Builder](#custom-route-builder)
+  - [Custom Route Transitions](#custom-route-transitions)
+  - [Custom Route Builder](#custom-route-builder)
 - [Others](#others)
-    - [Optimizing generation time](#optimizing-generation-time)
-        - [Enabling cached builds (Experimental)](#enabling-cached-builds)
-    - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
-    - [ActiveGuardObserver](#activeguardobserver)
-    - [Remove shadow from nested routers](#remove-shadow-from-nested-routers)
+  - [Including Micro-Packages](#including-micro-packages)
+  - [Optimizing Generation Time](#optimizing-generation-time)
+    - [Enabling Cached Builds (Experimental)](#enabling-cached-builds)
+  - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
+  - [ActiveGuardObserver](#activeguardobserver)
+  - [Remove shadow from nested routers](#remove-shadow-from-nested-routers)
 - [Examples](#examples)
 
 ## Idea Tools [New]
@@ -1312,10 +1313,55 @@ CustomRoute(page: CustomPage, customRouteBuilder:
 
 ## Others
 
+### Including Micro-Packages
+
+By default auto_route will only process files inside of the lib folder, to have it process files
+inside micro-packages a little bit of setup is required.
+let's say we have the following setup:
+
+```yaml
+my-app
+├── lib
+│   ├── main.dart
+│   ├── router.dart
+│   └── login_page.dart
+└── packages
+└── feature_a
+└── some_page_a.dart
+```
+
+to have `auto_route_generator` process files inside of `packages/feautre_a` we will need to create
+a `build.yaml` file next to `pubspec.yaml` and override the default
+sources `build_runner` should visit.
+
+```yaml
+targets:
+  $default:
+    sources:
+      - $package$ # required by build_runner (leave as is)
+      - lib/$lib$ # required by build_runner (leave as is)
+      - lib/**.dart # add root package source (leave as is)
+      - packages/**.dart # add micro packages source
+      #builders: ...
+
+```
+
+**Note:** sources configuration is not exclusive to `auto_route_generator`, this will effect
+all `build_runner` builders.
+by doing the above step `build_runner` will start processing the packages folder
+but `auto_route_generator` needs to know whether it should include them, so add the packages folder
+to generateForDir
+
+ ```dart     
+// defaults to ['lib']   
+@AutoRouterConfig(generateForDir:['lib','packages'])  
+class AppRouter extends $AppRouter {}
+ ```   
+
 ### Optimizing generation time
 
-To pass builder configuration to auto_route_generator we need to add build.yaml file next to
-pubspec.yaml if not already added.
+To pass builder configuration to `auto_route_generator` we need to add `build.yaml` file next
+to `pubspec.yaml` if not already added.
 
 ```yaml
 targets:
