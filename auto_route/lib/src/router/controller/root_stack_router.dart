@@ -27,8 +27,10 @@ abstract class RootStackRouter extends StackRouter {
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-    bool includePrefixMatches = false,
+    bool includePrefixMatches = !kIsWeb,
+    bool rebuildSt = !kIsWeb,
     bool Function(String? location)? neglectWhen,
+    bool rebuildStackOnDeepLink = false,
   }) {
     return RouterConfig(
       routeInformationParser: defaultRouteParser(
@@ -43,6 +45,7 @@ abstract class RootStackRouter extends StackRouter {
         initialDeepLink: initialDeepLink,
         // ignore: deprecated_member_use_from_same_package
         initialRoutes: initialRoutes,
+        rebuildStackOnDeepLink: rebuildStackOnDeepLink,
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
         placeholder: placeholder,
@@ -129,6 +132,7 @@ abstract class RootStackRouter extends StackRouter {
     WidgetBuilder? placeholder,
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     DeepLinkBuilder? deepLinkBuilder,
+    bool rebuildStackOnDeepLink = false,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,
@@ -137,12 +141,13 @@ abstract class RootStackRouter extends StackRouter {
       navRestorationScopeId: navRestorationScopeId,
       navigatorObservers: navigatorObservers,
       placeholder: placeholder,
+      rebuildStackOnDeepLink: rebuildStackOnDeepLink,
       deepLinkBuilder: deepLinkBuilder,
     );
   }
 
   /// Builds a lazy instance of [DefaultRouteParser]
-  DefaultRouteParser defaultRouteParser({bool includePrefixMatches = false}) =>
+  DefaultRouteParser defaultRouteParser({bool includePrefixMatches = !kIsWeb}) =>
       DefaultRouteParser(matcher, includePrefixMatches: includePrefixMatches);
 
   AutoRoutePage _pageBuilder(RouteData data) {

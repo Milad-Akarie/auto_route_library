@@ -50,7 +50,20 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// A builder for the placeholder page that is shown
   /// before the first route can be rendered. Defaults to
   /// an empty page with [Theme.scaffoldBackgroundColor].
-  WidgetBuilder? placeholder;
+  final WidgetBuilder? placeholder;
+
+  /// if set to true the new stack
+  /// will replace the old one on
+  /// deep-links coming from the platform
+  ///
+  /// pops all previous routes
+  /// and pushes the new ones
+  ///
+  /// this is used after a deep-link is
+  /// resolved by [deepLinkBuilder] if provided
+  ///
+  /// defaults to false
+  final bool rebuildStackOnDeepLink;
 
   /// Builds an empty observers list
   static List<NavigatorObserver> defaultNavigatorObserversBuilder() => const [];
@@ -84,6 +97,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     this.initialDeepLink,
     this.navigatorObservers = defaultNavigatorObserversBuilder,
     this.deepLinkBuilder,
+    this.rebuildStackOnDeepLink = false,
   })  : assert(initialDeepLink == null || initialRoutes == null),
         assert((deepLinkBuilder == null || (initialDeepLink == null && initialRoutes == null)),
             'You can not use initialDeepLink or initialRoutes with deepLinkBuilder') {
@@ -163,9 +177,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
 
     if (configuration.hasSegments) {
-      final platformDeepLink = PlatformDeepLink._(configuration);
-      final deepLink = deepLinkBuilder == null ? platformDeepLink : await deepLinkBuilder!(platformDeepLink);
-      await _handleDeepLink(deepLink);
+      final platLink = PlatformDeepLink._(configuration);
+      final resolvedLink = deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
+      if (rebuildStackOnDeepLink) {
+        controller.popUntil((route) => false);
+      }
+      await _handleDeepLink(resolvedLink);
     }
 
     notifyListeners();
