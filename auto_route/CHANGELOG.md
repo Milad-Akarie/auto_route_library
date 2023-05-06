@@ -1,3 +1,10 @@
+## 7.0.0
+
+> Note: This release has breaking changes.
+
+ - **FIX**: deepLinkBuilder is not called on newRoutePath.
+ - **BREAKING** **CHANGE**: DefaultRouteParser.includePrefixMatches's value is now set to '!kIsWeb' instead of 'false'.
+
 ## 6.4.0
 
 - **REFACTOR**: deprecated initialDeepLink and initialRouts.
