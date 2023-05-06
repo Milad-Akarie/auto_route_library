@@ -1,3 +1,8 @@
+## 7.0.0
+
+ - **FEAT**: add support to process files in micro-packages.
+ - **DOCS**: add all public api docs.
+
 ## 6.2.0
 - Sync with auto_route version
 # ChangeLog

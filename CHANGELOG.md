@@ -15,6 +15,28 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`auto_route_generator` - `v7.0.0`](#auto_route_generator---v700)
+
+---
+
+#### `auto_route_generator` - `v7.0.0`
+
+ - **FEAT**: add support to process files in micro-packages.
+ - **DOCS**: add all public api docs.
+
+
+## 2023-05-06
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`auto_route` - `v7.1.0`](#auto_route---v710)
  - [`auto_route_generator` - `v6.2.1`](#auto_route_generator---v621)
 
