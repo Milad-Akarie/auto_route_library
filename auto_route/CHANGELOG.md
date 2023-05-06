@@ -1,9 +1,16 @@
+## 7.0.0
+
+> Note: This release has breaking changes.
+ - **FIX**: deepLinkBuilder is not called on newRoutePath.
+ - **BREAKING** **CHANGE**: DefaultRouteParser.includePrefixMatches's value is now set to '!kIsWeb'
+   instead of 'false'.
+ - **FEAT**: add rebuildStackOnDeepLink flag to rebuild the whole stack on incoming deep-links
 ## 6.4.0
 
 - **REFACTOR**: deprecated initialDeepLink and initialRouts.
 - **FEAT**: Added DeepLinkBuilder to validate or override platform deep-links
 - **FEAT**: Added Route.data ext to get routeData of auto routes
-- **DOCS**: Updated docs1
+- **DOCS**: Updated docs
 
 ## 6.3.0
 
