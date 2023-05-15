@@ -1,29 +1,35 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/src/builders/auto_route_builder.dart';
 import 'package:auto_route_generator/src/builders/cache_aware_builder.dart';
 import 'package:auto_route_generator/src/code_builder/library_builder.dart';
-import 'package:auto_route_generator/src/models/routes_list.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/router_config.dart';
+import 'package:auto_route_generator/src/models/routes_list.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:source_gen/source_gen.dart';
-import '../resolvers/router_config_resolver.dart';
+
 import '../../utils.dart';
-import 'package:auto_route/annotations.dart';
+import '../resolvers/router_config_resolver.dart';
+import '../resolvers/type_resolver.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(AutoRouterConfig);
 
 class AutoRouterBuilder extends CacheAwareBuilder<RouterConfig> {
   AutoRouterBuilder({super.options})
       : super(
-          // gr stands for generated router.
+          // gr stands for generated router/routes.
           generatedExtension: '.gr.dart',
           allowSyntaxErrors: true,
-          annotationName: 'AutoRouterConfig',
+          annotationNames: [
+            'AutoRouterConfig',
+            'AutoRouterConfig.microRoutes',
+          ],
         );
 
   @override
@@ -44,11 +50,10 @@ class AutoRouterBuilder extends CacheAwareBuilder<RouterConfig> {
   @override
   int calculateUpdatableHash(CompilationUnit unit) {
     var calculatedHash = 0;
-    for (final clazz in unit.declarations
-        .whereType<ClassDeclaration>()
-        .where((e) => e.metadata.any((e) => e.name.name == annotationName))) {
-      final routerAnnotation =
-          clazz.metadata.firstWhere((e) => e.name.name == annotationName);
+    for (final clazz in unit.declarations.whereType<ClassDeclaration>().where(
+        (e) => e.metadata.any((e) => annotationNames.contains(e.name.name)))) {
+      final routerAnnotation = clazz.metadata
+          .firstWhere((e) => annotationNames.contains(e.name.name));
       final partDirectives = unit.directives
           .whereType<PartDirective>()
           .fold<int>(0, (acc, a) => acc ^ a.toSource().hashCode);
@@ -116,7 +121,10 @@ class AutoRouterBuilder extends CacheAwareBuilder<RouterConfig> {
     final clazz = element as ClassElement;
 
     final usesPartBuilder = _hasPartDirective(clazz);
-    final router = RouterConfigResolver().resolve(
+
+    final router = RouterConfigResolver(
+      TypeResolver(await buildStep.resolver.libraries.toList()),
+    ).resolve(
       annotation,
       buildStep.inputId,
       clazz,

@@ -3,11 +3,14 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../models/router_config.dart';
+import '../resolvers/type_resolver.dart';
 
 /// Extracts and holds router configs
 
 class RouterConfigResolver {
-  const RouterConfigResolver();
+  final TypeResolver _typeResolver;
+
+  RouterConfigResolver(this._typeResolver);
 
   RouterConfig resolve(
     ConstantReader autoRouter,
@@ -31,6 +34,17 @@ class RouterConfigResolver {
         .read('generateForDir')
         .listValue
         .map((e) => e.toStringValue()!);
+    var isMicroPackage = autoRouter.read('_isMicroPackage').boolValue;
+    final microRoutes = autoRouter
+        .peek('microRoutes')
+        ?.listValue
+        .map((e) => _typeResolver.resolveType(e.toTypeValue()!));
+
+    // TODO rm
+    /* var microRoutes = autoRouter
+        .peek('microRoutes')
+        ?.listValue
+        .map((e) => e.toTypeValue()!.getDisplayString(withNullability: false)); */
 
     return RouterConfig(
       routerClassName: clazz.displayName,
@@ -40,6 +54,8 @@ class RouterConfigResolver {
       path: input.path,
       cacheHash: cacheHash,
       generateForDir: List.of(generateForDir),
+      isMicroPackage: isMicroPackage,
+      microRoutes: List.of(microRoutes ?? []),
     );
   }
 }

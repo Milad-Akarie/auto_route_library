@@ -1,3 +1,5 @@
+import 'importable_type.dart';
+
 class RouterConfig {
   final String routerClassName;
   final String? replaceInRouteName;
@@ -6,6 +8,8 @@ class RouterConfig {
   final String path;
   final int? cacheHash;
   final List<String> generateForDir;
+  final bool isMicroPackage;
+  final List<ResolvedType> microRoutes;
 
   const RouterConfig({
     required this.routerClassName,
@@ -15,6 +19,8 @@ class RouterConfig {
     required this.path,
     required this.cacheHash,
     required this.generateForDir,
+    this.isMicroPackage = false,
+    this.microRoutes = const [],
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +32,8 @@ class RouterConfig {
       'path': this.path,
       'cacheHash': this.cacheHash,
       'generateForDir': this.generateForDir,
+      'isMicroPackage': this.isMicroPackage,
+      'microRoutes': this.microRoutes,
     };
   }
 
@@ -38,6 +46,11 @@ class RouterConfig {
       path: map['path'] as String,
       cacheHash: map['cacheHash'] as int?,
       generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
+      isMicroPackage: map['isMicroPackage'] as bool,
+      // TODO
+      microRoutes: (map['microRoutes'] as List<dynamic>)
+          .map((e) => ResolvedType.fromJson(e))
+          .toList(),
     );
   }
 }

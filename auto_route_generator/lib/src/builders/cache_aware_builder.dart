@@ -14,7 +14,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   /// Whether to allow syntax errors in input libraries.
   final bool allowSyntaxErrors;
 
-  final String annotationName;
+  final List<String> annotationNames;
 
   bool get cacheEnabled;
 
@@ -26,7 +26,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     String generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
     this.allowSyntaxErrors = false,
-    required this.annotationName,
+    required this.annotationNames,
     this.options,
   })  : _generatedExtension = generatedExtension,
         buildExtensions = validatedBuildExtensionsFrom(
@@ -79,7 +79,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
       allowSyntaxErrors: allowSyntaxErrors,
     );
     var generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
-    if (generated == null) return null;
+    if (generated == null) return;
     return _writeContent(buildStep, generated);
   }
 
@@ -130,7 +130,7 @@ source formatter.''',
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];
     for (var directive in parsed.directives) {
-      if (directive.metadata.any((e) => e.name.name == annotationName))
+      if (directive.metadata.any((e) => annotationNames.contains(e.name.name)))
         return true;
       if (directive is PartDirective) {
         partIds.add(
@@ -139,8 +139,8 @@ source formatter.''',
       }
     }
     for (var declaration in parsed.declarations) {
-      if (declaration.metadata.any((e) => e.name.name == annotationName))
-        return true;
+      if (declaration.metadata
+          .any((e) => annotationNames.contains(e.name.name))) return true;
     }
     for (var partId in partIds) {
       if (await hasAnyTopLevelAnnotations(partId, buildStep)) {
