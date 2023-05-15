@@ -40,12 +40,6 @@ class RouterConfigResolver {
         ?.listValue
         .map((e) => _typeResolver.resolveType(e.toTypeValue()!));
 
-    // TODO rm
-    /* var microRoutes = autoRouter
-        .peek('microRoutes')
-        ?.listValue
-        .map((e) => e.toTypeValue()!.getDisplayString(withNullability: false)); */
-
     return RouterConfig(
       routerClassName: clazz.displayName,
       replaceInRouteName: replaceInRouteName,
