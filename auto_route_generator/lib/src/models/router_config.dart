@@ -47,6 +47,7 @@ class RouterConfig {
       cacheHash: map['cacheHash'] as int?,
       generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
       isMicroPackage: map['isMicroPackage'] as bool,
+      // TODO
       microRoutes: (map['microRoutes'] as List<dynamic>)
           .map((e) => ResolvedType.fromJson(e))
           .toList(),
