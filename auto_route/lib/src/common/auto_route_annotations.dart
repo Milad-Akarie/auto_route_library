@@ -30,12 +30,30 @@ class AutoRouterConfig {
   /// defaults = const ['lib']
   final List<String> generateForDir;
 
+  /// Indicates whether the package using the annotation
+  /// is a modukle, in that case a different
+  /// output will be generated.
+  // ignore: unused_field
+  final bool _isModule;
+
+  /// A List of modules to be added to the RootRouter.
+  final List<Type>? modules;
+
   /// default constructor
   const AutoRouterConfig({
     this.replaceInRouteName = 'Page|Screen,Route',
     this.deferredLoading = false,
     this.generateForDir = const ['lib'],
-  });
+    this.modules,
+  }) : _isModule = false;
+
+  /// default constructor
+  const AutoRouterConfig.module({
+    this.replaceInRouteName = 'Page|Screen,Route',
+    this.deferredLoading = false,
+    this.generateForDir = const ['lib'],
+  })  : _isModule = true,
+        modules = null;
 }
 
 /// This annotation is used to mark flutter widgets as routable pages
