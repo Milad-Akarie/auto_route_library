@@ -30,30 +30,12 @@ class AutoRouterConfig {
   /// defaults = const ['lib']
   final List<String> generateForDir;
 
-  /// Indicates whether the package using the annotation
-  /// is a microPackage, in that case a different
-  /// output will be generated.
-  // ignore: unused_field
-  final bool _isMicroPackage;
-
-  /// A List of micro routes to be added to the RootRouter.
-  final List<Type>? microRoutes;
-
   /// default constructor
   const AutoRouterConfig({
     this.replaceInRouteName = 'Page|Screen,Route',
     this.deferredLoading = false,
     this.generateForDir = const ['lib'],
-    this.microRoutes,
-  }) : _isMicroPackage = false;
-
-  /// default constructor
-  const AutoRouterConfig.microRoutes({
-    this.replaceInRouteName = 'Page|Screen,Route',
-    this.deferredLoading = false,
-    this.generateForDir = const ['lib'],
-  })  : _isMicroPackage = true,
-        microRoutes = null;
+  });
 }
 
 /// This annotation is used to mark flutter widgets as routable pages

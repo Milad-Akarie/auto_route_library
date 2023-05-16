@@ -10,83 +10,46 @@ Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
       (b) => b
         ..name =
             '${router.usesPartBuilder ? '_' : ''}\$${router.routerClassName}'
-        ..abstract = !router.isMicroPackage
-        ..extend = router.isMicroPackage
-            ? null
-            : refer('RootStackRouter', autoRouteImport)
+        ..abstract = true
+        ..extend = refer('RootStackRouter', autoRouteImport)
         ..fields.addAll([buildPagesMap(routes, router)])
-        ..constructors.addAll(
-          router.isMicroPackage
-              ? []
-              : [
-                  Constructor((b) => b
-                    ..docs.addAll([
-                      if (router.usesPartBuilder) '// ignore: unused_element'
-                    ])
-                    ..optionalParameters.add(
-                      Parameter((b) => b
-                        ..name = 'navigatorKey'
-                        ..named = true
-                        ..toSuper = true),
-                    )),
-                ],
-        ),
+        ..constructors.addAll([
+          Constructor((b) => b
+            ..docs.addAll(
+                [if (router.usesPartBuilder) '// ignore: unused_element'])
+            ..optionalParameters.add(
+              Parameter((b) => b
+                ..name = 'navigatorKey'
+                ..named = true
+                ..toSuper = true),
+            )),
+        ]),
     );
 
 Field buildPagesMap(List<RouteConfig> routes, RouterConfig router) {
-  return Field(
-    (b) => b
-      ..name = "pagesMap"
-      ..modifier = FieldModifier.final$
-      ..annotations.addAll(router.isMicroPackage ? [] : [refer('override')])
-      ..type = TypeReference(
-        (b) => b
-          ..symbol = 'Map'
-          ..types.addAll([
-            stringRefer,
-            refer('PageFactory', autoRouteImport),
-          ]),
-      )
-      ..assignment = buildAssignment(routes, router),
-  );
-}
-
-Code buildAssignment(List<RouteConfig> routes, RouterConfig router) {
-  final routez =
+  return Field((b) => b
+    ..name = "pagesMap"
+    ..modifier = FieldModifier.final$
+    ..annotations.add(refer('override'))
+    ..type = TypeReference(
+      (b) => b
+        ..symbol = 'Map'
+        ..types.addAll([
+          stringRefer,
+          refer('PageFactory', autoRouteImport),
+        ]),
+    )
+    ..assignment = literalMap(Map.fromEntries(
       routes.distinctBy((e) => e.getName(router.replaceInRouteName)).map(
             (r) => MapEntry(
               refer(r.getName(router.replaceInRouteName)).property('name'),
               buildMethod(r, router),
             ),
-          );
-
-  final microRoutez = router.microRoutes;
-
-  if (microRoutez.isEmpty) {
-    return literalMap(Map.fromEntries(routez)).code;
-  }
-
-  return Block.of([
-    Code('{'),
-    for (final route in routez) ...[
-      route.key.code,
-      Code(':'),
-      route.value.code,
-      Code(',')
-    ],
-    for (final microRoute in microRoutez) ...[
-      refer(microRoute.name, microRoute.import)
-          .newInstance([])
-          .property('pagesMap')
-          .spread
-          .code,
-      Code(',')
-    ],
-    Code('}'),
-  ]);
+          ),
+    )).code);
 }
 
-Expression buildMethod(RouteConfig r, RouterConfig router) {
+Spec buildMethod(RouteConfig r, RouterConfig router) {
   final useConsConstructor =
       r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
   var constructedPage = useConsConstructor

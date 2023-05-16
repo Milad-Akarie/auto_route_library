@@ -1,17 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/src/builders/cache_aware_builder.dart';
-import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/routes_list.dart';
+import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/resolvers/route_config_resolver.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
+import 'package:auto_route/annotations.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(RoutePage);
 final routesCacheFile = File('.dart_tool/build/cache/auto_routes_cache.json');
@@ -34,7 +33,7 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
       : super(
           generatedExtension: '.route.json',
           allowSyntaxErrors: true,
-          annotationNames: ['RoutePage'],
+          annotationName: 'RoutePage',
         );
 
   @override
@@ -63,8 +62,8 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
         if (child is ConstructorDeclaration || child is FieldDeclaration) {
           calculatedHash = calculatedHash ^ child.toSource().hashCode;
         }
-        final routePageMeta = clazz.metadata
-            .firstOrNull((e) => e.name.name == annotationNames.first);
+        final routePageMeta =
+            clazz.metadata.firstOrNull((e) => e.name.name == annotationName);
         if (routePageMeta != null) {
           calculatedHash = calculatedHash ^ routePageMeta.toSource().hashCode;
         }
