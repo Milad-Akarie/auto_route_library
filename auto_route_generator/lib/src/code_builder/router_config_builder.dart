@@ -11,45 +11,79 @@ Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
         ..name =
             '${router.usesPartBuilder ? '_' : ''}\$${router.routerClassName}'
         ..abstract = true
-        ..extend = refer('RootStackRouter', autoRouteImport)
+        ..extend = refer(
+          router.isModule ? 'AutoRouterModule' : 'RootStackRouter',
+          autoRouteImport,
+        )
         ..fields.addAll([buildPagesMap(routes, router)])
-        ..constructors.addAll([
-          Constructor((b) => b
-            ..docs.addAll(
-                [if (router.usesPartBuilder) '// ignore: unused_element'])
-            ..optionalParameters.add(
-              Parameter((b) => b
-                ..name = 'navigatorKey'
-                ..named = true
-                ..toSuper = true),
-            )),
-        ]),
+        ..constructors.addAll(router.isModule
+            ? []
+            : [
+                Constructor((b) => b
+                  ..docs.addAll(
+                      [if (router.usesPartBuilder) '// ignore: unused_element'])
+                  ..optionalParameters.add(
+                    Parameter((b) => b
+                      ..name = 'navigatorKey'
+                      ..named = true
+                      ..toSuper = true),
+                  )),
+              ]),
     );
 
 Field buildPagesMap(List<RouteConfig> routes, RouterConfig router) {
-  return Field((b) => b
-    ..name = "pagesMap"
-    ..modifier = FieldModifier.final$
-    ..annotations.add(refer('override'))
-    ..type = TypeReference(
-      (b) => b
-        ..symbol = 'Map'
-        ..types.addAll([
-          stringRefer,
-          refer('PageFactory', autoRouteImport),
-        ]),
-    )
-    ..assignment = literalMap(Map.fromEntries(
+  return Field(
+    (b) => b
+      ..name = "pagesMap"
+      ..modifier = FieldModifier.final$
+      ..annotations.add(refer('override'))
+      ..type = TypeReference(
+        (b) => b
+          ..symbol = 'Map'
+          ..types.addAll([
+            stringRefer,
+            refer('PageFactory', autoRouteImport),
+          ]),
+      )
+      ..assignment = buildAssignment(routes, router),
+  );
+}
+
+Code buildAssignment(List<RouteConfig> routes, RouterConfig router) {
+  final routez =
       routes.distinctBy((e) => e.getName(router.replaceInRouteName)).map(
             (r) => MapEntry(
               refer(r.getName(router.replaceInRouteName)).property('name'),
               buildMethod(r, router),
             ),
-          ),
-    )).code);
+          );
+  final modules = router.modules;
+
+  if (modules.isEmpty) {
+    return literalMap(Map.fromEntries(routez)).code;
+  }
+
+  return Block.of([
+    Code('{'),
+    for (final route in routez) ...[
+      route.key.code,
+      Code(':'),
+      route.value.code,
+      Code(',')
+    ],
+    for (final module in modules) ...[
+      refer(module.name, module.import)
+          .newInstance([])
+          .property('pagesMap')
+          .spread
+          .code,
+      Code(',')
+    ],
+    Code('}'),
+  ]);
 }
 
-Spec buildMethod(RouteConfig r, RouterConfig router) {
+Expression buildMethod(RouteConfig r, RouterConfig router) {
   final useConsConstructor =
       r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
   var constructedPage = useConsConstructor
