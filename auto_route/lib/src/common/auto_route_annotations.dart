@@ -31,7 +31,7 @@ class AutoRouterConfig {
   final List<String> generateForDir;
 
   /// Indicates whether the package using the annotation
-  /// is a modukle, in that case a different
+  /// is a module, in that case a different
   /// output will be generated.
   // ignore: unused_field
   final bool _isModule;
