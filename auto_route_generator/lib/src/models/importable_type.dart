@@ -44,7 +44,7 @@ class ResolvedType {
     List<ResolvedType>? typeArguments,
     bool? isNullable,
   }) {
-    return new ResolvedType(
+    return ResolvedType(
       import: import ?? this.import,
       name: name ?? this.name,
       isNullable: isNullable ?? this.isNullable,
