@@ -1,9 +1,14 @@
 import 'package:auto_route_generator/src/builders/auto_route_builder.dart';
 import 'package:auto_route_generator/src/builders/auto_router_builder.dart';
+import 'package:auto_route_generator/src/builders/auto_router_module_builder.dart';
 import 'package:build/build.dart';
 
 Builder autoRouterBuilder(BuilderOptions options) {
   return AutoRouterBuilder(options: options);
+}
+
+Builder autoRouterModuleBuilder(BuilderOptions options) {
+  return AutoRouterModuleBuilder(options: options);
 }
 
 Builder autoRouteBuilder(BuilderOptions options) {
