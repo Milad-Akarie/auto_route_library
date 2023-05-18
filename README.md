@@ -1396,8 +1396,8 @@ targets:
   $default:
     builders:
       auto_route_generator:auto_route_generator:
-      generate_for:
-        - lib/ui/**.dart
+        generate_for:
+          - lib/ui/**.dart
 ```  
 
 let's say you have widget files inside of the ui folder but we only need to process files ending
@@ -1408,8 +1408,8 @@ targets:
   $default:
     builders:
       auto_route_generator:auto_route_generator:
-      generate_for:
-        - lib/ui/**_screen.dart
+        generate_for:
+          - lib/ui/**_screen.dart
 ```  
 
 now only `products_screen.dart`, `products_details_screen.dart` will be processed
