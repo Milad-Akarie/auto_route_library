@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-05-20
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.2.0`](#auto_route---v720)
+ - [`auto_route_generator` - `v7.1.0`](#auto_route_generator---v710)
+
+---
+
+#### `auto_route` - `v7.2.0`
+
+ - **REVERT**: "feat: add more flexible multi package support".
+ - **REFACTOR**: resolve some flutter 3.10 deprecations.
+ - **FEAT**(auto_route): add `AutoRouterConfig.module` annotation.
+ - **FEAT**(auto_route): add `AutoRouterModule`.
+ - **FEAT**: add more flexible multi package support.
+ - **DOCS**(auto_route): fix typo.
+
+#### `auto_route_generator` - `v7.1.0`
+
+ - **REVERT**: "feat: add more flexible multi package support".
+ - **REVERT**: "cleanup".
+ - **FEAT**(auto_route_generator): expose the new `autoRouterModuleBuilder` to the package surface.
+ - **FEAT**(auto_route_generator): add `AutoRouterModuleBuilder`.
+ - **FEAT**(auto_route_generator): update code builder (add module support + rename).
+ - **FEAT**(auto_route_generator): update `RouterConfig` + `RouterConfigResolver` to match `AutoRouterConfig.module`.
+ - **FEAT**: add more flexible multi package support.
+
+
 ## 2023-05-06
 
 ### Changes

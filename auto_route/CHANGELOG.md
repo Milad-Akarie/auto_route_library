@@ -1,3 +1,12 @@
+## 7.2.0
+
+ - **REVERT**: "feat: add more flexible multi package support".
+ - **REFACTOR**: resolve some flutter 3.10 deprecations.
+ - **FEAT**(auto_route): add `AutoRouterConfig.module` annotation.
+ - **FEAT**(auto_route): add `AutoRouterModule`.
+ - **FEAT**: add more flexible multi package support.
+ - **DOCS**(auto_route): fix typo.
+
 ## 7.1.0
 
  - **FEAT**: add support to process files in micro-packages.
