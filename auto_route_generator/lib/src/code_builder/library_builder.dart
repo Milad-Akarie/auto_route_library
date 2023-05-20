@@ -5,7 +5,7 @@ import '../../utils.dart';
 import '../models/route_config.dart';
 import '../models/router_config.dart';
 import 'deferred_pages_allocator.dart';
-import 'root_router_builder.dart';
+import 'router_config_builder.dart';
 import 'route_info_builder.dart';
 import 'package:path/path.dart' as p;
 

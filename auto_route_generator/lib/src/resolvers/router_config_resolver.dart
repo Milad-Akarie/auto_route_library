@@ -3,11 +3,14 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../models/router_config.dart';
+import '../resolvers/type_resolver.dart';
 
 /// Extracts and holds router configs
 
 class RouterConfigResolver {
-  const RouterConfigResolver();
+  final TypeResolver _typeResolver;
+
+  RouterConfigResolver(this._typeResolver);
 
   RouterConfig resolve(
     ConstantReader autoRouter,
@@ -31,6 +34,11 @@ class RouterConfigResolver {
         .read('generateForDir')
         .listValue
         .map((e) => e.toStringValue()!);
+    var isModule = autoRouter.read('_isModule').boolValue;
+    final modules = autoRouter
+        .peek('modules')
+        ?.listValue
+        .map((e) => _typeResolver.resolveType(e.toTypeValue()!));
 
     return RouterConfig(
       routerClassName: clazz.displayName,
@@ -40,6 +48,8 @@ class RouterConfigResolver {
       path: input.path,
       cacheHash: cacheHash,
       generateForDir: List.of(generateForDir),
+      isModule: isModule,
+      modules: List.of(modules ?? []),
     );
   }
 }

@@ -79,7 +79,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
       allowSyntaxErrors: allowSyntaxErrors,
     );
     var generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
-    if (generated == null) return null;
+    if (generated == null) return;
     return _writeContent(buildStep, generated);
   }
 
