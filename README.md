@@ -17,19 +17,19 @@
 ---
 
 - [Introduction](#introduction)
-    - [Installation](#installation)
-    - [Setup and Usage](#setup-and-usage)
+  - [Installation](#installation)
+  - [Setup and Usage](#setup-and-usage)
 - [Generated routes](#generated-routes)
 - [Navigation](#navigating-between-screens)
-    - [Navigating Between Screens](#navigating-between-screens)
-    - [Passing Arguments](#passing-arguments)
-    - [Returning Results](#returning-results)
-    - [Nested navigation](#nested-navigation)
-    - [Tab Navigation](#tab-navigation)
-        - [Using PageView](#using-pageview)
-        - [Using TabBar](#using-tabbar)
-    - [Finding The Right Router](#finding-the-right-router)
-    - [Navigating Without Context](#navigating-without-context)
+  - [Navigating Between Screens](#navigating-between-screens)
+  - [Passing Arguments](#passing-arguments)
+  - [Returning Results](#returning-results)
+  - [Nested navigation](#nested-navigation)
+  - [Tab Navigation](#tab-navigation)
+    - [Using PageView](#using-pageview)
+    - [Using TabBar](#using-tabbar)
+  - [Finding The Right Router](#finding-the-right-router)
+  - [Navigating Without Context](#navigating-without-context)
 - [Deep Linking](#deep-linking)
 - [Declarative Navigation](#declarative-navigation)
 - [Working with Paths](#working-with-paths)
@@ -40,7 +40,7 @@
   - [Custom Route Transitions](#custom-route-transitions)
   - [Custom Route Builder](#custom-route-builder)
 - [Others](#others)
-  - [Including Micro-Packages](#including-micro-packages)
+  - [Including Micro/External Packages](#including-microexternal-packages)
   - [Optimizing Generation Time](#optimizing-generation-time)
     - [Enabling Cached Builds (Experimental)](#enabling-cached-builds)
   - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
@@ -1313,50 +1313,37 @@ CustomRoute(page: CustomPage, customRouteBuilder:
 
 ## Others
 
-### Including Micro-Packages
+### Including Micro/External Packages
 
-By default auto_route will only process files inside of the lib folder, to have it process files
-inside micro-packages a little bit of setup is required.
-let's say we have the following setup:
+To include routes inside of a depended-on package, that package needs to generate
+an `AutoRouterModule` that will be later consumed by the root router.
 
-```yaml
-my-app
-├── lib
-│   ├── main.dart
-│   ├── router.dart
-│   └── login_page.dart
-└── packages
-└── feature_a
-└── some_page_a.dart
-```
-
-to have `auto_route_generator` process files inside of `packages/feautre_a` we will need to create
-a `build.yaml` file next to `pubspec.yaml` and override the default
-sources `build_runner` should visit.
-
-```yaml
-targets:
-  $default:
-    sources:
-      - $package$ # required by build_runner (leave as is)
-      - lib/$lib$ # required by build_runner (leave as is)
-      - lib/**.dart # add root package source (leave as is)
-      - packages/**.dart # add micro packages source
-      #builders: ...
-
-```
-
-**Note:** sources configuration is not exclusive to `auto_route_generator`, this will effect
-all `build_runner` builders.
-by doing the above step `build_runner` will start processing the packages folder
-but `auto_route_generator` needs to know whether it should include them, so add the packages folder
-to generateForDir
+To have a package output an `AutoRouterModule` instead of a `RootStackRouter` we need to use
+the `AutoRouterConfig.moudle()` annotation like follows
 
  ```dart     
-// defaults to ['lib']   
-@AutoRouterConfig(generateForDir:['lib','packages'])  
-class AppRouter extends $AppRouter {}
- ```   
+@AutoRouterConfig.module()      
+class MyPackageModule extends $MyPackageModule {}    
+ ``` 
+
+Then when seting up our root router we need to tell it to include the generated module.
+
+```dart   
+@AutoRouterConfig(modules: [MyPackageModule])      
+class AppRouter extends $AppRouter{}    
+ ``` 
+
+Now you can use `PageRouteInfos` generated inside `MyPackageModule`.
+
+**Tip** You can `app_router.dart` export `MyPackageModule` so you only import `app_router.dart`
+inside of your code.
+
+```dart 
+/// ...imports
+export 'package:my_package/my_package_module.dart'
+@AutoRouterConfig(modules: [MyPackageModule])      
+class AppRouter extends $AppRouter{}    
+ ``` 
 
 ### Optimizing generation time
 
