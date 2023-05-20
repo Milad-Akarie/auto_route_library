@@ -25,7 +25,7 @@ void main() {
   testWidgets(
     'Scrolling through pages in AutoTabView should sync with active route',
         (WidgetTester tester) async {
-      tester.binding.window.physicalSizeTestValue = const Size(500, 1500);
+      tester.view.physicalSize = const Size(500, 1500);
       await pumpRouter(tester);
       final pageViewFinder = find.byType(AutoTabView);
       final scrollController = (tester.widget<AutoTabView>(pageViewFinder)).controller;
@@ -40,7 +40,7 @@ void main() {
       expect(scrollController.index, 2);
       expectTopPage(router, Tab3Nested1Route.name);
       expect(router.urlState.url, '/tab3');
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      addTearDown(tester.view.resetPhysicalSize);
     },
   );
 }

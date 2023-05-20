@@ -30,8 +30,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider
       {RouteInformation? initialRouteInformation,
       bool Function(String? location)? neglectWhen}) {
     final initialRouteInfo = initialRouteInformation ??
-        RouteInformation(
-            location: WidgetsBinding.instance.window.defaultRouteName);
+        RouteInformation(location: WidgetsBinding.instance.platformDispatcher.defaultRouteName);
+
     return AutoRouteInformationProvider._(
       initialRouteInformation: initialRouteInfo,
       neglectIf: neglectWhen,
@@ -68,8 +68,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   RouteInformation get value => _value;
   RouteInformation _value;
 
-  RouteInformation _valueInEngine = RouteInformation(
-      location: WidgetsBinding.instance.window.defaultRouteName);
+  RouteInformation _valueInEngine =
+      RouteInformation(location: WidgetsBinding.instance.platformDispatcher.defaultRouteName);
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
     if (_value == routeInformation) return;
