@@ -243,7 +243,7 @@ router.replaceAll([
 // pops the last page unless stack has 1 entry                    
 context.router.pop();                   
 // keeps poping routes until predicate is satisfied                
-context.router.popUntil((route) => route.name == 'HomeRoute');                
+context.router.popUntil((route) => route.settings.name == 'HomeRoute');                
 // a simplifed version of the above line                
 context.router.popUntilRouteWithName('HomeRoute');       
 // keeps poping routes until route with provided path is found              
