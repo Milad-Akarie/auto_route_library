@@ -1,11 +1,5 @@
 ## 7.1.0
 
- - **REVERT**: "feat: add more flexible multi package support".
- - **REVERT**: "cleanup".
- - **FEAT**(auto_route_generator): expose the new `autoRouterModuleBuilder` to the package surface.
- - **FEAT**(auto_route_generator): add `AutoRouterModuleBuilder`.
- - **FEAT**(auto_route_generator): update code builder (add module support + rename).
- - **FEAT**(auto_route_generator): update `RouterConfig` + `RouterConfigResolver` to match `AutoRouterConfig.module`.
  - **FEAT**: add more flexible multi package support.
 
 ## 7.0.0
