@@ -3,7 +3,7 @@ description: AutoRoute is a declarative routing solution, where everything neede
 version: 7.1.1
 homepage: https://github.com/Milad-Akarie/auto_route_library
 environment:
-  sdk: ">=2.17.0 <3.0.0"
+  sdk: ">=2.17.0 <4.0.0"
 
 dependencies:
   build: ^2.1.1

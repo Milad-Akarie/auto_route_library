@@ -1,6 +1,7 @@
 ## 7.1.1
 
- - **REFACTOR**: change module extension from .module.dart to .gm.dart.
+- **REFACTOR**: change module extension from .module.dart to .gm.dart.
+- update dart sdk constrains to ">=2.17.0 <4.0.0"
 
 ## 7.1.0
 
