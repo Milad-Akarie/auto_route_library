@@ -1,3 +1,8 @@
+## 7.1.1
+
+ - **REFACTOR**: change module extension from .module.dart to .gm.dart.
+ - **DOCS**: update CHANGELOG.md.
+
 ## 7.1.0
 
  - **FEAT**: add more flexible multi package support.

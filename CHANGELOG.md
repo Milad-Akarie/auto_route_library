@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-05-21
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route_generator` - `v7.1.1`](#auto_route_generator---v711)
+
+---
+
+#### `auto_route_generator` - `v7.1.1`
+
+ - **REFACTOR**: change module extension from .module.dart to .gm.dart.
+ - **DOCS**: update CHANGELOG.md.
+
+
 ## 2023-05-20
 
 ### Changes
