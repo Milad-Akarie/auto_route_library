@@ -59,6 +59,10 @@
 
 - [Migrating to v6](#migrating-to-v6)
 
+## Pre v6 documentation
+
+- [Pre v6 documentation](old/pre_v6_README.md)
+
 ## Introduction
 
 #### What is AutoRoute?
