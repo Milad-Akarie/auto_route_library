@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
 @RoutePage()
-class WebLoginPage extends StatelessWidget {
+class WebVerifyPage extends StatelessWidget {
   final ValueChanged<bool>? onResult;
 
-  const WebLoginPage({Key? key, this.onResult}) : super(key: key);
+  const WebVerifyPage({Key? key, this.onResult}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +27,14 @@ class WebLoginPage extends StatelessWidget {
             onPressed: () {
               // print('root has Guards: ${context.router.activeGuardObserver.guardInProgress}' );
               // print('nested has guards: ${context.router.innerRouterOf<StackRouter>(UserRoute.name)?.activeGuardObserver.guardInProgress}' );
-
-              App.of(context).authService.isAuthenticated = true;
-
+              App.of(context).authService.isVerified = true;
               if (onResult != null) {
                 onResult!(true);
               } else {
                 context.pushRoute(MainWebRoute());
               }
             },
-            child: Text('Login'),
+            child: Text('verify'),
           ),
         ),
       ),

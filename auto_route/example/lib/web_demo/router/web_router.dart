@@ -5,29 +5,31 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
-@AutoRouterConfig(generateForDir: ['lib/web_demo'], deferredLoading: false)
+@AutoRouterConfig(generateForDir: ['lib/web_demo'])
 class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
   AuthService authService;
 
   WebAppRouter(this.authService);
 
   @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if (authService.isAuthenticated || resolver.route.name == WebLoginRoute.name) {
+  void onNavigation(NavigationResolver resolver, StackRouter router) async {
+    if (authService.isAuthenticated || resolver.routeName == WebLoginRoute.name) {
       resolver.next();
     } else {
-      push(WebLoginRoute(resolver: resolver));
+      resolver.redirect(
+        WebLoginRoute(onResult: (didLogin) {
+          resolver.resolveNext(didLogin, reevaluateNext: false);
+        }),
+      );
     }
   }
 
   @override
-  List<AutoRoute> get routes => [
+  List<AutoRoute> get routes =>
+      [
         AutoRoute(page: MainWebRoute.page, initial: true),
-        AutoRoute(
-          path: '/login',
-          page: WebLoginRoute.page,
-          keepHistory: false,
-        ),
+        AutoRoute(path: '/login', page: WebLoginRoute.page),
+        AutoRoute(path: '/verify', page: WebVerifyRoute.page),
         AutoRoute(
           path: '/user/:userID',
           page: UserRoute.page,
@@ -36,6 +38,17 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
             AutoRoute(
               path: 'posts',
               page: UserPostsRoute.page,
+              guards: [
+                AutoRouteGuard.simple(
+                  (resolver, scope) {
+                    if (authService.isVerified) {
+                      resolver.next();
+                    } else {
+                      resolver.redirect(WebVerifyRoute(onResult: resolver.next));
+                    }
+                  },
+                )
+              ],
               children: [
                 AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
                 AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
@@ -91,6 +104,15 @@ class _MainWebPageState extends State<MainWebPage> {
                 child: Text('Navigate to user/2'),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ElevatedButton(
+                onPressed: () {
+                  App.of(context).authService.isAuthenticated = false;
+                },
+                child: Text('Logout'),
+              ),
+            ),
             if (kIsWeb)
               ElevatedButton(
                 onPressed: () {
@@ -128,7 +150,7 @@ class QueryPage extends StatelessWidget {
 }
 
 @RoutePage()
-class UserProfilePage extends StatelessWidget {
+class UserProfilePage extends StatefulWidget {
   final VoidCallback? navigate;
   final int likes;
   final int userId;
@@ -141,6 +163,13 @@ class UserProfilePage extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<UserProfilePage> createState() => _UserProfilePageState();
+}
+
+class _UserProfilePageState extends State<UserProfilePage> {
+  int _counter = 0;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -148,7 +177,7 @@ class UserProfilePage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'User Profile : $userId  likes: $likes}',
+              'User Profile : ${widget.userId}  likes: ${widget.likes}}',
               style: TextStyle(fontSize: 30),
             ),
             Text(
@@ -158,19 +187,32 @@ class UserProfilePage extends StatelessWidget {
             const SizedBox(height: 16),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate ??
+              onPressed: widget.navigate ??
                   () {
                     context.pushRoute(UserFavoritePostsRoute());
                   },
               child: Text('Posts -> '),
             ),
             const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: navigate ??
-                  () {
-                    App.of(context).authService.isAuthenticated = false;
-                  },
-              child: Text('Logout'),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _counter++;
+                  });
+                },
+                child: Text('State $_counter'),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ElevatedButton(
+                onPressed: () {
+                  App.of(context).authService.isAuthenticated = false;
+                },
+                child: Text('Logout'),
+              ),
             ),
           ],
         ),
@@ -211,6 +253,15 @@ class _UserPostsPageState extends State<UserPostsPage> {
                   );
                 },
                 child: Text('Show Dialog')),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ElevatedButton(
+                onPressed: () {
+                  App.of(context).authService.isAuthenticated = false;
+                },
+                child: Text('Logout'),
+              ),
+            ),
             Expanded(
               child: AutoRouter(),
             )
@@ -238,16 +289,22 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   @override
+  void initState() {
+    super.initState();
+    print('Initing User page $hashCode');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.red,
       appBar: AppBar(
+        leading: AutoLeadingButton(),
         title: Builder(
           builder: (context) {
             return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
           },
         ),
-        // leading: AutoLeadingButton(),
       ),
       body: AutoRouter(),
     );

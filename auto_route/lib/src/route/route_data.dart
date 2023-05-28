@@ -38,16 +38,13 @@ class RouteData {
   /// where it can be used by [CupertinoNavigationBar]
   ///
   /// it can also be used manually by calling [RouteData.title] inside widgets
-  String Function(BuildContext context) get title => _match.titleBuilder == null
-      ? (_) => _match.name
-      : (context) => _match.titleBuilder!(context, this);
+  String Function(BuildContext context) get title =>
+      _match.titleBuilder == null ? (_) => _match.name : (context) => _match.titleBuilder!(context, this);
 
   /// Builds a String value that that's passed to
   /// [AutoRoutePage.restorationId]
   @internal
-  String get restorationId => _match.restorationId == null
-      ? _match.name
-      : _match.restorationId!(_match);
+  String get restorationId => _match.restorationId == null ? _match.name : _match.restorationId!(_match);
 
   /// The pre-matched sub-routes of this route
   ///
@@ -75,24 +72,19 @@ class RouteData {
     final args = _match.args;
     if (args == null) {
       if (orElse == null) {
-        final messages = [
-          '${T.toString()} can not be null because the corresponding page has a required parameter'
-        ];
+        final messages = ['${T.toString()} can not be null because the corresponding page has a required parameter'];
         if (_match.autoFilled) {
-          messages.add(
-              '${_match.name} is an auto created ancestor of target route ${_match.flattened.last.name}');
+          messages.add('${_match.name} is an auto created ancestor of target route ${_match.flattened.last.name}');
           messages.add(
               'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first');
-          messages.add(
-              'try navigating to ${_match.flattened.map((e) => e.name).join(' -> ')}');
+          messages.add('try navigating to ${_match.flattened.map((e) => e.name).join(' -> ')}');
         }
         throw FlutterError('\n${messages.join('\n')}\n');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw FlutterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }

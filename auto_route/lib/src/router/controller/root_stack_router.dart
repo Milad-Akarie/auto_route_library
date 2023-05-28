@@ -28,9 +28,9 @@ abstract class RootStackRouter extends StackRouter {
     WidgetBuilder? placeholder,
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     bool includePrefixMatches = !kIsWeb,
-    bool rebuildSt = !kIsWeb,
     bool Function(String? location)? neglectWhen,
     bool rebuildStackOnDeepLink = false,
+    Listenable? reevaluateListenable,
   }) {
     return RouterConfig(
       routeInformationParser: defaultRouteParser(
@@ -45,6 +45,7 @@ abstract class RootStackRouter extends StackRouter {
         initialDeepLink: initialDeepLink,
         // ignore: deprecated_member_use_from_same_package
         initialRoutes: initialRoutes,
+        reevaluateListenable: reevaluateListenable,
         rebuildStackOnDeepLink: rebuildStackOnDeepLink,
         navRestorationScopeId: navRestorationScopeId,
         navigatorObservers: navigatorObservers,
@@ -133,6 +134,7 @@ abstract class RootStackRouter extends StackRouter {
     NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     DeepLinkBuilder? deepLinkBuilder,
     bool rebuildStackOnDeepLink = false,
+    Listenable? reevaluateListenable,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,
@@ -143,6 +145,7 @@ abstract class RootStackRouter extends StackRouter {
       placeholder: placeholder,
       rebuildStackOnDeepLink: rebuildStackOnDeepLink,
       deepLinkBuilder: deepLinkBuilder,
+      reevaluateListenable: reevaluateListenable,
     );
   }
 

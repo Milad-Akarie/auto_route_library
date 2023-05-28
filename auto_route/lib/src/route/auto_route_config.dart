@@ -142,6 +142,42 @@ class AutoRoute {
     );
   }
 
+  /// Creates an AutoRoute with a single [AutoRouteGuard]
+  /// callback
+  factory AutoRoute.guarded({
+    required PageInfo page,
+    required OnNavigation onNavigation,
+    String? path,
+    bool usesPathAsKey = false,
+    bool fullMatch = false,
+    RouteType? type,
+    Map<String, dynamic> meta = const {},
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    List<AutoRoute>? children,
+    TitleBuilder? title,
+    RestorationIdBuilder? restorationId,
+    bool keepHistory = true,
+    bool initial = false,
+  }) {
+    return AutoRoute._(
+      name: page.name,
+      path: path,
+      fullMatch: fullMatch,
+      maintainState: maintainState,
+      fullscreenDialog: fullscreenDialog,
+      meta: meta,
+      type: type,
+      usesPathAsKey: usesPathAsKey,
+      guards: [AutoRouteGuard.simple(onNavigation)],
+      restorationId: restorationId,
+      children: children,
+      title: title,
+      keepHistory: keepHistory,
+      initial: initial,
+    );
+  }
+
   /// The path defined by user or automatically-added
   /// By [RouteCollection.fromList]
   String get path => _path ?? '';

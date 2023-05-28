@@ -65,6 +65,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// defaults to false
   final bool rebuildStackOnDeepLink;
 
+  ///
+  final Listenable? reevaluateListenable;
+
   /// Builds an empty observers list
   static List<NavigatorObserver> defaultNavigatorObserversBuilder() => const [];
 
@@ -98,11 +101,13 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     this.navigatorObservers = defaultNavigatorObserversBuilder,
     this.deepLinkBuilder,
     this.rebuildStackOnDeepLink = false,
+    this.reevaluateListenable,
   })  : assert(initialDeepLink == null || initialRoutes == null),
         assert((deepLinkBuilder == null || (initialDeepLink == null && initialRoutes == null)),
             'You can not use initialDeepLink or initialRoutes with deepLinkBuilder') {
     _navigatorObservers = navigatorObservers();
     controller.navigationHistory.addListener(_handleRebuild);
+    reevaluateListenable?.addListener(controller.reevaluateGuards);
   }
 
   /// Builds a [_DeclarativeAutoRouterDelegate] which uses
@@ -215,6 +220,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   void dispose() {
     super.dispose();
     removeListener(_handleRebuild);
+    reevaluateListenable?.removeListener(controller.reevaluateGuards);
     controller.dispose();
   }
 
