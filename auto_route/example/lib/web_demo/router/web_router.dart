@@ -288,11 +288,6 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  @override
-  void initState() {
-    super.initState();
-    print('Initing User page $hashCode');
-  }
 
   @override
   Widget build(BuildContext context) {

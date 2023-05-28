@@ -1,4 +1,6 @@
 import 'dart:async';
+
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 /// Signature for a function that returns a void future
@@ -15,12 +17,12 @@ typedef DeferredWidgetBuilder = Widget Function();
 /// state as long as closure to create widget stays the same.
 class DeferredWidget extends StatefulWidget {
   /// default constructor
-  DeferredWidget(
+  const DeferredWidget(
     this.libraryLoader,
     this.createWidget, {
     super.key,
-    Widget? placeholder,
-  }) : placeholder = placeholder ?? Container();
+    this.placeholder,
+  });
 
   /// Triggers the deferred library loading process
   final LibraryLoader libraryLoader;
@@ -29,7 +31,7 @@ class DeferredWidget extends StatefulWidget {
   final DeferredWidgetBuilder createWidget;
 
   /// The widget is displayed until [libraryLoader] is done loading
-  final Widget placeholder;
+  final Widget? placeholder;
   static final Map<LibraryLoader, Future<void>> _moduleLoaders = {};
   static final Set<LibraryLoader> _loadedModules = {};
 
@@ -59,8 +61,7 @@ class _DeferredWidgetState extends State<DeferredWidget> {
     if (DeferredWidget._loadedModules.contains(widget.libraryLoader)) {
       _onLibraryLoaded();
     } else {
-      DeferredWidget._preload(widget.libraryLoader)
-          .then((dynamic _) => _onLibraryLoaded());
+      DeferredWidget._preload(widget.libraryLoader).then((dynamic _) => _onLibraryLoaded());
     }
     super.initState();
   }
@@ -80,7 +81,9 @@ class _DeferredWidgetState extends State<DeferredWidget> {
       _loadedCreator = widget.createWidget;
       _loadedChild = _loadedCreator!();
     }
-    return _loadedChild ?? widget.placeholder;
+
+    final placeHolder = AutoRouterDelegate.of(context).placeholder?.call(context) ?? const DeferredLoadingPlaceholder();
+    return _loadedChild ?? placeHolder;
   }
 }
 
