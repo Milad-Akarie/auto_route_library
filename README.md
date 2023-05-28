@@ -1038,8 +1038,10 @@ class AuthGuard extends AutoRouteGuard {
        // if user is authenticated we continue                
         resolver.next(true);                
       }else{                
-         // we redirect the user to our login page                
-         router.push(LoginRoute(onResult: (success){                
+         // we redirect the user to our login page 
+         // tip: use resolver.redirect to have the redirected route
+          // automatically removed from the stack when the resolver is completed
+         resolver.redirect(LoginRoute(onResult: (success){                
                 // if success == true the navigation will be resumed                
                 // else it will be aborted                
                resolver.next(success);                
@@ -1079,12 +1081,82 @@ class AppRouter extends $AppRouter implements AutoRouteGuard {
           resolver.next();
       }else{
           // else we navigate to the Login page so we get authenticateed
-          push(LoginRoute(onResult:(didLogin)=> resolver.next(didLogin)))
+          
+          // tip: use resolver.redirect to have the redirected route
+          // automatically removed from the stack when the resolver is completed
+          resolver.redirect(LoginRoute(onResult:(didLogin)=> resolver.next(didLogin)))
       }
    }
   // ..routes[]
   }
   ```  
+
+### Using a Reevaluate Listenable
+
+Route guards can prevent users from accessing private pages until they're logged in for example, but
+auth state may change when the user is already navigated to the private page, to make sure private
+pages are only accessed by logged-in users all the time we need a listenable that tells the router
+that auth-state has changed and you need to re-evaluate your stack.
+
+The following auth provider mock will act as our re-valuate listenable
+
+ ``` dart
+class AuthProvider extends ChangeNotifier {
+  bool _isLoggedIn = false;
+
+  bool get isLoggedIn => _isLoggedIn;
+
+  void login() {
+    _isLoggedIn = true;
+    notifyListeners();
+  }
+  
+  void logout() {
+    _isLoggedIn = false;
+    notifyListeners();
+  }
+}
+ ``` 
+
+We simply pass an instance of our `AuthProvider` to  `reevaluateListenable` inside
+of `router.config`
+
+ ```dart
+   MaterialApp.router
+(
+routerConfig: _appRouter.config(
+reevaluateListenable: authProvider,
+),
+);
+  ``` 
+
+Now every time `AutoProvider` notifies listeners, the stack will be re-evaluated
+and `AutoRouteGuard.onNavigation()` methods will be re-called on all guards
+
+In the above example we assigned our `AuthProvider` to `reevaluateListenable` directly, that's
+because `reevaluateListenable` takes a type [Listenable] and AuthProvider extends `ChangeNotifer`
+which is a `Listenable`, if your auth provider is a stream you can use
+`reevaluateListenable: ReevaluateListenable.stream(YOUR-STREAM)`
+
+**Note**: When the Stack is re-evaluated, the whole existing hierarchy will be re-pushed, so if you
+want to stop re-evaluating routes at some point, use `resolver.resolveNext(<options>)` which is
+like `resolver.next()` but with more options.
+
+```dart
+ @override
+  void onNavigation(NavigationResolver resolver, StackRouter router) async {
+    if (authProvider.isAuthenticated) {
+      resolver.next();
+    } else {
+      resolver.redirect(
+        WebLoginRoute(onResult: (didLogin) {
+           /// stop re-pushing any pending routes after current
+          resolver.resolveNext(didLogin, reevaluateNext: false);
+        }),
+      );
+    }
+  }
+``` 
 
 ## Wrapping Routes
 
@@ -1102,6 +1174,8 @@ class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
   }                
   ...                
 ```                
+
+
 
 ## Navigation Observers
 
@@ -1258,9 +1332,9 @@ The above code can be simplified using `AutoRouteAwareStateMixin`
 
 ##### MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter
 
-| Property                    | Default value | Definition   |                
-|-----------------------------|---------------|--------------|
-| replaceInRouteName [String] | Page\         | Screen,Route | used to replace conventional words in generated route name (whatToReplacePattern,replacement) |                
+| Property                    | Default value         | Definition                                                                                    |                
+|-----------------------------|-----------------------|-----------------------------------------------------------------------------------------------|
+| replaceInRouteName [String] | Page&#124Screen,Route | used to replace conventional words in generated route name (whatToReplacePattern,replacement) |                
 
 ## Custom Route Transitions
 
@@ -1326,7 +1400,7 @@ the `AutoRouterConfig.moudle()` annotation like follows
 class MyPackageModule extends $MyPackageModule {}    
  ``` 
 
-Then when seting up our root router we need to tell it to include the generated module.
+Then when setting up our root router we need to tell it to include the generated module.
 
 ```dart   
 @AutoRouterConfig(modules: [MyPackageModule])      

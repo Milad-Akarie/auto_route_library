@@ -33,7 +33,9 @@ class AppState extends State<App> {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      routerConfig: _appRouter.config(),
+      routerConfig: _appRouter.config(
+        reevaluateListenable: authService,
+      ),
     );
   }
 }
@@ -95,6 +97,9 @@ class AuthService extends ChangeNotifier {
 
   set isAuthenticated(bool value) {
     _isAuthenticated = value;
+    if (!_isAuthenticated) {
+      _isVerified = false;
+    }
     notifyListeners();
   }
 
