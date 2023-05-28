@@ -1,3 +1,7 @@
+## 7.3.1
+
+ - **FIX**: DeferredWidget's default loader not working,.
+
 ## 7.2.0
 - 
 
