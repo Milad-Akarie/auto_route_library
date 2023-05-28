@@ -1,9 +1,17 @@
 ## 7.3.1
 
- - **FIX**: DeferredWidget's default loader not working,.
+- **FIX**: DeferredWidget's default loader not working.
+- **FEAT**: DeferredWidget will now take AutoRouterDelegate.placeholder value if provided
+
+## 7.2.3
+
+- **FEAT**: Add global guards reevaluate listenable
+- **DOCS** Add reevaluate listenable docs to README.md
+- **FEAT**: Add NavigationResolver.redirect method to auto-remove routes pushed by guards when
+  resolving is complete
+- **FEAT**: Add AutoRoute.guarded constructor for cleaner single guard implementation
 
 ## 7.2.0
-- 
 
 - **FEAT**: add more flexible multi package support.
 - **REFACTOR**: resolve some flutter 3.10 deprecations.
@@ -16,10 +24,12 @@
 ## 7.0.0
 
 > Note: This release has breaking changes.
- - **FIX**: deepLinkBuilder is not called on newRoutePath.
- - **BREAKING** **CHANGE**: DefaultRouteParser.includePrefixMatches's value is now set to '!kIsWeb'
-   instead of 'false'.
- - **FEAT**: add rebuildStackOnDeepLink flag to rebuild the whole stack on incoming deep-links
+
+- **FIX**: deepLinkBuilder is not called on newRoutePath.
+- **BREAKING** **CHANGE**: DefaultRouteParser.includePrefixMatches's value is now set to '!kIsWeb'
+  instead of 'false'.
+- **FEAT**: add rebuildStackOnDeepLink flag to rebuild the whole stack on incoming deep-links
+
 ## 6.4.0
 
 - **REFACTOR**: deprecated initialDeepLink and initialRouts.
