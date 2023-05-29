@@ -158,6 +158,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   Future<void> _handleDeepLink(DeepLink deepLink) {
+    if (deepLink is _IgnoredDeepLink) return SynchronousFuture(null);
+
     throwIf(!deepLink.isValid, 'Can not resolve initial route');
     if (deepLink is PlatformDeepLink) {
       _onNewUrlState(deepLink.configuration);
@@ -338,6 +340,9 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
   }
 
   void _handleDeclarativeDeepLink(DeepLink deepLink) {
+    if (deepLink is _IgnoredDeepLink) return;
+
+    throwIf(!deepLink.isValid, 'Can not resolve initial route');
     List<PageRouteInfo>? routes;
     if (deepLink is PlatformDeepLink) {
       routes = deepLink.matches.map((e) => e.toPageRouteInfo()).toList();
@@ -408,6 +413,9 @@ abstract class DeepLink {
 
   /// Builds a deep link with initial path
   static const DeepLink defaultPath = DeepLink.path(Navigator.defaultRouteName);
+
+  /// Builds an ignored deep link instance
+  static const DeepLink none = _IgnoredDeepLink();
 }
 
 class _PathDeepLink extends DeepLink {
@@ -427,6 +435,13 @@ class _RoutesDeepLink extends DeepLink {
 
   @override
   bool get isValid => routes.isNotEmpty;
+}
+
+class _IgnoredDeepLink extends DeepLink {
+  const _IgnoredDeepLink() : super._();
+
+  @override
+  bool get isValid => false;
 }
 
 /// Holds information of the deep-link
