@@ -6,9 +6,9 @@
       <xy x="48" y="21" width="380" height="420"/>
     </constraints>
     <properties>
-      <maximumSize width="380" height="400"/>
-      <minimumSize width="380" height="420"/>
-      <preferredSize width="380" height="420"/>
+      <maximumSize width="380" height="420"/>
+      <minimumSize width="380" height="380"/>
+      <preferredSize width="380" height="380"/>
     </properties>
     <border type="none"/>
     <children>
@@ -44,11 +44,15 @@
                   <text value="Cancel"/>
                 </properties>
               </component>
-              <hspacer id="35368">
+              <component id="dd01b" class="javax.swing.JCheckBox" binding="runBuildRunnerCheckBox">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
-              </hspacer>
+                <properties>
+                  <selected value="false"/>
+                  <text value="Run Build_runner"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>

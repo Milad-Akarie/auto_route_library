@@ -66,20 +66,24 @@ class PsiUtils {
 
         fun getRoutesList(project: Project, routerConfig: RouterConfig): RoutesList? {
             val routerClass = getRouterClass(project, routerConfig) ?: return null
-            val routesList = routerClass.findFieldByName("routes")?.context ?: return null
-            val listLiteral = PsiTreeUtil.findChildOfType(routesList, DartListLiteralExpression::class.java)
+            val routesList = routerClass.findMemberByName("routes")?.context ?: return null
+            val listLiteral =
+                PsiTreeUtil.findChildOfType(routesList, DartListLiteralExpression::class.java)
                     ?: return null
             return RoutesList(getRoutes(listLiteral), listLiteral)
         }
 
-         fun getRoutes(routesList: DartListLiteralExpression): List<RegisteredRoute> {
+        private fun getRoutes(routesList: DartListLiteralExpression): List<RegisteredRoute> {
             val routes = ArrayList<RegisteredRoute>()
             for (item in routesList.elementList.map { it.lastChild }) {
                 if (item is DartCallExpression) {
-                    val namedArguments = PsiTreeUtil.findChildrenOfType(item, DartNamedArgument::class.java)
-                    val nameArg = namedArguments.firstOrNull { it.firstChild.text == "page" } ?: continue
+                    val namedArguments =
+                        PsiTreeUtil.findChildrenOfType(item, DartNamedArgument::class.java)
+                    val nameArg =
+                        namedArguments.firstOrNull { it.firstChild.text == "page" } ?: continue
                     var children: RoutesList? = null
-                    val childrenArg = namedArguments.firstOrNull { it.firstChild.text == "children" }
+                    val childrenArg =
+                        namedArguments.firstOrNull { it.firstChild.text == "children" }
                     if (childrenArg != null) {
                         var elementToSearch: PsiElement? = childrenArg
                         if (childrenArg.lastChild is DartReferenceExpression) {

@@ -15,6 +15,8 @@
     <depends>Dart</depends>
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="come.autoroute.helper.autoroutehelper.services.RouterConfigService"/>
+        <projectService
+            serviceImplementation="come.autoroute.helper.autoroutehelper.services.SettingsService" />
         <intentionAction id="AddToRouterAction">
             <className>come.autoroute.helper.autoroutehelper.actions.AddToRouterAction</className>
         </intentionAction>
@@ -23,9 +25,11 @@
         </intentionAction>
     </extensions>
     <actions>
-        <action id="NewRoutePage" class="come.autoroute.helper.autoroutehelper.actions.CreateRoutePageAction"
-                text="AutoRoute Page" description="Adds new route to existing router" icon="AllIcons.FileTypes.Any_type">
-            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
+        <action id="NewRoutePage"
+            class="come.autoroute.helper.autoroutehelper.actions.CreateRoutePageAction"
+            description="Adds new route to existing router" icon="AllIcons.FileTypes.Any_type"
+            text="AutoRoute Page">
+            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile" />
         </action>
     </actions>
 </idea-plugin>

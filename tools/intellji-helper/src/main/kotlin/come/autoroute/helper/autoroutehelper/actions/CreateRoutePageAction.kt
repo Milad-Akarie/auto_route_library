@@ -14,6 +14,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 import come.autoroute.helper.autoroutehelper.listeners.DialogDismissListener
 import come.autoroute.helper.autoroutehelper.services.RouterConfigService
+import come.autoroute.helper.autoroutehelper.services.SettingsService
 import come.autoroute.helper.autoroutehelper.utils.PsiUtils
 import come.autoroute.helper.autoroutehelper.utils.Utils
 import javax.swing.JWindow
@@ -34,27 +35,49 @@ class CreateRoutePageAction : AnAction() {
         val routesList = PsiUtils.getRoutesList(project, routerConfig) ?: return
         val source = e.inputEvent.source
         val component = if (source is JWindow) source.rootPane else null
-        JFrameDialog.show(routerConfig, routesList, null, component, object : DialogDismissListener {
-            override fun onDone(dialog: JFrameDialog) {
-                dialog.addToRouter(project)
-                createFile(project, dialog.fileNameField.text, navElement, this) { file ->
-                    FileDocumentManager.getInstance().getDocument(file)?.apply {
-                        WriteCommandAction.runWriteCommandAction(project) {
-                            val className = dialog.resolveClassName() ?: return@runWriteCommandAction
-                            insertString(0, createPageContent(className, dialog.getAnnotationText(className)))
+        JFrameDialog.show(
+            routerConfig,
+            routesList,
+            null,
+            component,
+            project.service<SettingsService>(),
+            object : DialogDismissListener {
+                override fun onDone(dialog: JFrameDialog) {
+                    dialog.addToRouter(project)
+                    createFile(project, dialog.fileNameField.text, navElement, this) { file ->
+                        FileDocumentManager.getInstance().getDocument(file)?.apply {
+                            WriteCommandAction.runWriteCommandAction(project) {
+                                val className =
+                                    dialog.resolveClassName() ?: return@runWriteCommandAction
+                                insertString(
+                                    0,
+                                    createPageContent(
+                                        className,
+                                        dialog.getAnnotationText(className)
+                                    )
+                                )
+                            }
+                        }
+                        if (project.service<SettingsService>().runBuildRunnerOnSave) {
+                            Utils.runBuildRunner(project)
                         }
                     }
-                    Utils.runBuildRunner(project)
                 }
-            }
-        })
+            })
 
 
     }
 }
 
-private fun createFile(project: Project, path: String, navElement: Navigatable, requester: Any, onCreated: (file: VirtualFile) -> Unit) {
-    val dir = if (navElement is PsiDirectory) navElement else if (navElement is PsiFile) navElement.containingDirectory else return
+private fun createFile(
+    project: Project,
+    path: String,
+    navElement: Navigatable,
+    requester: Any,
+    onCreated: (file: VirtualFile) -> Unit
+) {
+    val dir =
+        if (navElement is PsiDirectory) navElement else if (navElement is PsiFile) navElement.containingDirectory else return
     val segments = path.split('/').filterNot { it.isBlank() }
     var virtualDir = dir.virtualFile
     WriteCommandAction.runWriteCommandAction(project) {

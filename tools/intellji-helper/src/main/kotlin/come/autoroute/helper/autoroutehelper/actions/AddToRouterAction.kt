@@ -20,6 +20,7 @@ import come.autoroute.helper.autoroutehelper.Strings
 import come.autoroute.helper.autoroutehelper.listeners.DialogDismissListener
 import come.autoroute.helper.autoroutehelper.models.RouterConfig
 import come.autoroute.helper.autoroutehelper.services.RouterConfigService
+import come.autoroute.helper.autoroutehelper.services.SettingsService
 import come.autoroute.helper.autoroutehelper.utils.PsiUtils
 import come.autoroute.helper.autoroutehelper.utils.Utils
 
@@ -53,28 +54,47 @@ class AddToRouterAction : IntentionAction {
             val routesList = PsiUtils.getRoutesList(project, it) ?: return
             editor?.apply {
                 val routePageInfo = PsiUtils.findPossibleRoutePage(this, file) ?: return
-
-                JFrameDialog.show(it, routesList, routePageInfo, component, object : DialogDismissListener {
-                    override fun onDone(dialog: JFrameDialog) {
-                        dialog.apply {
-                            document.apply {
-                                WriteCommandAction.runWriteCommandAction(project) {
-                                    setReadOnly(false)
-                                    if (routePageInfo.annotation != null && !routeNameTextField.text.isNullOrBlank() && routePageInfo.customName.isNullOrBlank()) {
-                                        insertString(routePageInfo.annotation.endOffset - 1, "name: '${routeNameTextField.text}'")
-                                    } else if (routePageInfo.annotation == null) {
-                                        insertString(routePageInfo.classElement.startOffset, dialog.getAnnotationText(routePageInfo.classElement.name!!))
-                                        PsiUtils.getAutoRouteImportOffsetIfNeeded(file)?.let { offset ->
-                                            insertString(offset, "${Strings.autoRouteImport}\n")
+                val settingsService = project.service<SettingsService>()
+                JFrameDialog.show(
+                    it,
+                    routesList,
+                    routePageInfo,
+                    component.rootPane,
+                    settingsService,
+                    object : DialogDismissListener {
+                        override fun onDone(dialog: JFrameDialog) {
+                            dialog.apply {
+                                document.apply {
+                                    WriteCommandAction.runWriteCommandAction(project) {
+                                        setReadOnly(false)
+                                        if (routePageInfo.annotation != null && !routeNameTextField.text.isNullOrBlank() && routePageInfo.customName.isNullOrBlank()) {
+                                            insertString(
+                                                routePageInfo.annotation.endOffset - 1,
+                                                "name: '${routeNameTextField.text}'"
+                                            )
+                                        } else if (routePageInfo.annotation == null) {
+                                            insertString(
+                                                routePageInfo.classElement.startOffset,
+                                                dialog.getAnnotationText(routePageInfo.classElement.name!!)
+                                            )
+                                            PsiUtils.getAutoRouteImportOffsetIfNeeded(file)
+                                                ?.let { offset ->
+                                                    insertString(
+                                                        offset,
+                                                        "${Strings.autoRouteImport}\n"
+                                                    )
+                                                }
                                         }
                                     }
                                 }
+
+                                addToRouter(project)
+                                if (settingsService.runBuildRunnerOnSave) {
+                                    Utils.runBuildRunner(project)
+                                }
                             }
-                            addToRouter(project)
-                            Utils.runBuildRunner(project)
                         }
-                    }
-                })
+                    })
             }
         }
     }
@@ -87,18 +107,18 @@ fun JFrameDialog.getAnnotationText(className: String): String {
     val args = ArrayList<String>();
     if (routeNameTextField.text.isNotBlank()) {
         val resolvedName = Utils.resolveRouteName(
-                className,
-                null,
-                router.replaceInRouteName,
+            className,
+            null,
+            router.replaceInRouteName,
         )
-        if(resolvedName != routeNameTextField.text){
-             args.add("name: '${routeNameTextField.text}'")
+        if (resolvedName != routeNameTextField.text) {
+            args.add("name: '${routeNameTextField.text}'")
         }
     }
-    if(deferredWebOnlyCheckBox.isSelected){
+    if (deferredWebOnlyCheckBox.isSelected) {
         args.add("deferredLoading: true")
     }
-    return  "@RoutePage(${args.joinToString(",")})\n"
+    return "@RoutePage(${args.joinToString(",")})\n"
 }
 
 fun JFrameDialog.addToRouter(project: Project) {

@@ -17,9 +17,11 @@ class RouterConfigService(private val project: Project) {
     private var lastModified: Long = -1
     private var routerConfig: RouterConfig? = null
     private var routerConfigFile: File? = null
+
+
     fun getConfig(): RouterConfig? {
         if (routerConfigFile == null) {
-            findConfigFile(Strings.routerConfigFileExt, "${project.basePath!!}")?.let {
+            findConfigFile(Strings.routerConfigFileExt, project.basePath!!)?.let {
                 if (it.isNotEmpty()) {
                     routerConfigFile = it.first().toFile()
                 }
@@ -59,5 +61,6 @@ class RouterConfigService(private val project: Project) {
                     .collect(Collectors.toList())
         }
     }
+
 
 }
