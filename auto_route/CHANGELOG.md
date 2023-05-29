@@ -1,3 +1,7 @@
+## 7.3.2
+
+ - **FIX**: Remove guard from ActiveGuardObserver when resolved with false.
+
 ## 7.3.1
 
 - **FIX**: DeferredWidget's default loader not working.
