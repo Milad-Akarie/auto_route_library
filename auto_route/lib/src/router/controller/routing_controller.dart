@@ -16,6 +16,7 @@ part '../../route/route_data.dart';
 part 'auto_route_guard.dart';
 part 'auto_router_delegate.dart';
 part 'root_stack_router.dart';
+
 // ignore_for_file: deprecated_member_use_from_same_package
 /// Signature of a predicate to select [RouteData]
 typedef RouteDataPredicate = bool Function(RouteData route);
@@ -1497,6 +1498,7 @@ abstract class StackRouter extends RoutingController {
         if (guard is AutoRedirectGuard) {
           _removeRedirectGuard(guard);
         }
+        activeGuardObserver.remove(guard);
         return ResolverResult(
           continueNavigation: false,
           reevaluateNext: breakOnReevaluate,
