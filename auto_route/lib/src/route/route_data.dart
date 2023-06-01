@@ -24,11 +24,20 @@ class RouteData {
   /// This is ignored if [router] is a [TabsRouter]
   LocalKey get key => _match.key;
 
+  /// The virtual stack-key this route is a part of
+  ///
+  /// Routes can only be updated if they have the same [key]
+  /// and  the same stackKey
+  ///
+  /// Used inside of [AutoRoutePage.canUpdate]
+  final Key stackKey;
+
   /// Default constructor
   RouteData({
     required RouteMatch route,
     required this.router,
     RouteData? parent,
+    required this.stackKey,
     required this.pendingChildren,
     required this.type,
   })  : _match = route,

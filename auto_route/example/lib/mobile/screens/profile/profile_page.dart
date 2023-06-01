@@ -36,9 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context
-                    .findRootAncestorStateOfType<HomePageState>()
-                    ?.toggleSettingsTap();
+                context.findRootAncestorStateOfType<HomePageState>()?.toggleSettingsTap();
               },
               child: Text('Toggle Settings Tab'),
             ),
@@ -50,9 +48,24 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.navigateNamedTo('settings/хиты');
+                context.navigateNamedTo('settings/tab1');
               },
               child: Text('Navigate to settings/tab1'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.router.replaceAll(
+                  [
+                    HomeRoute(
+                      children: [
+                        SettingsTab(tab: 'Replaced'),
+                      ],
+                    ),
+                  ],
+                  updateExistingRoutes: false,
+                );
+              },
+              child: Text('ReplaceAll'),
             ),
             const SizedBox(height: 32),
             userData == null

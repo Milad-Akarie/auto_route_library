@@ -11,7 +11,6 @@ class RootRouter extends $RootRouter {
     AutoRoute(
       page: HomeRoute.page,
       path: '/',
-      // guards: [AuthGuard()],
       children: [
         RedirectRoute(path: '', redirectTo: 'books'),
         AutoRoute(

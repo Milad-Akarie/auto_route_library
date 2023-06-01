@@ -59,6 +59,7 @@ abstract class RootStackRouter extends StackRouter {
   RouteData get routeData => RouteData(
         router: this,
         type: const RouteType.material(),
+        stackKey: _stackKey,
         route: RouteMatch(
           config: DummyRootRoute('Root', path: ''),
           segments: const [''],

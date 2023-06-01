@@ -190,6 +190,7 @@ abstract class RoutingController with ChangeNotifier {
             [
               for (final pendingRoute in data.pendingChildren)
                 RouteData(
+                  stackKey: _stackKey,
                   route: pendingRoute,
                   router: data.router,
                   pendingChildren: [...?pendingRoute.children],
@@ -234,11 +235,14 @@ abstract class RoutingController with ChangeNotifier {
 
   List<RouteMatch>? _composeMatchesForReevaluate();
 
+  late Key _stackKey = UniqueKey();
+
   RouteData _createRouteData(RouteMatch route, RouteData parent) {
     final routeData = RouteData(
       route: route,
       router: this,
       parent: parent,
+      stackKey: _stackKey,
       pendingChildren: route.children ?? [],
       type: route.type ?? root.defaultRouteType,
     );
@@ -1272,14 +1276,36 @@ abstract class StackRouter extends RoutingController {
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
+  ///
+  /// if [updateExistingRoutes] is set to false a fresh stack
+  /// will be initiated.
   Future<void> replaceAll(
     List<PageRouteInfo> routes, {
     OnNavigationFailure? onFailure,
+    bool updateExistingRoutes = true,
   }) {
-    final scope = _findStackScope(routes.first);
-    scope._pages.clear();
-    markUrlStateForReplace();
-    return scope._pushAll(routes, onFailure: onFailure);
+    return _findStackScope(routes.first)._replaceAll(
+      routes,
+      onFailure: onFailure,
+      updateExistingRoutes: updateExistingRoutes,
+    );
+  }
+
+  Future<void> _replaceAll(
+    List<PageRouteInfo> routes, {
+    required bool updateExistingRoutes,
+    OnNavigationFailure? onFailure,
+  }) async {
+    final matches = _matchAllOrReportFailure(routes, onFailure);
+    if (matches != null) {
+      _pages.clear();
+      if (!updateExistingRoutes) {
+        _stackKey = UniqueKey();
+      }
+      markUrlStateForReplace();
+      _navigateAll(matches);
+    }
+    return SynchronousFuture(null);
   }
 
   /// Pop the whole stack except for the first entry

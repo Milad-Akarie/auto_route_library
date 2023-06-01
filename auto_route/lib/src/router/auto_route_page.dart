@@ -54,7 +54,9 @@ class AutoRoutePage<T> extends Page<T> {
 
   @override
   bool canUpdate(Page<dynamic> other) {
-    return other.runtimeType == runtimeType && (other as AutoRoutePage).routeKey == routeKey;
+    return other.runtimeType == runtimeType &&
+        (other as AutoRoutePage).routeKey == routeKey &&
+        routeData.stackKey == other.routeData.stackKey;
   }
 
   /// Builds a the widget that's scoped
