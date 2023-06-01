@@ -1303,7 +1303,7 @@ abstract class StackRouter extends RoutingController {
         _stackKey = UniqueKey();
       }
       markUrlStateForReplace();
-      _navigateAll(matches);
+      return _navigateAll(matches);
     }
     return SynchronousFuture(null);
   }
