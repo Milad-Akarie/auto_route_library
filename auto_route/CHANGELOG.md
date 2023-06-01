@@ -1,3 +1,7 @@
+## 7.3.3
+
+ - **FIX**: StackRouter.replaceAll does not work with nested tab-routes.
+
 ## 7.3.2
 
  - **FIX**: Remove guard from ActiveGuardObserver when resolved with false.
