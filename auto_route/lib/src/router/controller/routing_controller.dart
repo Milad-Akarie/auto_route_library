@@ -1000,6 +1000,7 @@ abstract class StackRouter extends RoutingController {
     RouteTransitionsBuilder? transitionBuilder,
     bool fullscreenDialog = false,
     Duration transitionDuration = const Duration(milliseconds: 300),
+    bool opaque = true,
   }) {
     final navigator = _navigatorKey.currentState;
     assert(navigator != null);
@@ -1009,6 +1010,7 @@ abstract class StackRouter extends RoutingController {
         fullscreenDialog: fullscreenDialog,
         transitionBuilder: transitionBuilder,
         transitionDuration: transitionDuration,
+        opaque: opaque,
       ),
     );
   }
