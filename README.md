@@ -1240,11 +1240,11 @@ Every nested router can have it's own observers and inherit it's parent's.
 ```dart                
  AutoRouter(                
     inheritNavigatorObservers: true, // true by default                
-    navgiatorObservers:()=> [list of observers]);                
+    navigatorObservers:()=> [list of observers]);                
                     
  AutoTabsRouter(                
     inheritNavigatorObservers: true, // true by default                
-    navgiatorObservers:()=> [list of observers]);                
+    navigatorObservers:()=> [list of observers]);                
 ```                
 
 We can also make a certain screen route aware by subscribing to an `AutoRouteObserver` ( Route not
