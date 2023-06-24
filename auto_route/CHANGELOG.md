@@ -1,3 +1,9 @@
+## 7.5.0
+
+ - **FIX**: Uri percent-encoded characters encoded twice #1620.
+ - **FIX**: delegate missing arguments in auto_route_guard redirect.
+ - **FEAT**(auto_route): add `AutoPageRouteBuilder.opaque` argument.
+
 ## 7.4.0
 
 - **FIX**: StackRouter.replaceAll does not work with nested tab-routes.
