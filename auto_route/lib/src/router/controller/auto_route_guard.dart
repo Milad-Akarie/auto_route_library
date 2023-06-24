@@ -191,6 +191,8 @@ class NavigationResolver {
   }) async {
     return _router._redirect(
       route,
+      onFailure: onFailure,
+      replace: replace,
       onMatch: (scope, match) async {
         await _completer.future;
         scope.markUrlStateForReplace();
