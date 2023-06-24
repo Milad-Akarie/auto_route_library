@@ -37,9 +37,7 @@ class RouteMatcher {
   }
 
   List<RouteMatch>? _match(Uri uri, RouteCollection collection,
-      {bool includePrefixMatches = false,
-      bool root = false,
-      String? redirectedFrom}) {
+      {bool includePrefixMatches = false, bool root = false, String? redirectedFrom}) {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
@@ -68,9 +66,13 @@ class RouteMatcher {
           // has rest
           if (config.hasSubTree) {
             final rest = uri.replace(
-                pathSegments: pathSegments.sublist(match.segments.length));
-            final children = _match(rest, config.children!,
-                includePrefixMatches: includePrefixMatches);
+              pathSegments: pathSegments.sublist(match.segments.length).map(Uri.decodeComponent),
+            );
+            final children = _match(
+              rest,
+              config.children!,
+              includePrefixMatches: includePrefixMatches,
+            );
             match = match.copyWith(children: children);
           }
           matches.add(match);
@@ -82,8 +84,7 @@ class RouteMatcher {
           //
           // include empty route if exists
           if (config.hasSubTree && !match.hasChildren) {
-            match = match.copyWith(
-                children: _match(uri.replace(path: ''), config.children!));
+            match = match.copyWith(children: _match(uri.replace(path: ''), config.children!));
           }
 
           matches.add(match);
@@ -92,10 +93,7 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty ||
-        (root &&
-            matches.last.allSegments(includeEmpty: true).length <
-                pathSegments.length)) {
+    if (matches.isEmpty || (root && matches.last.allSegments(includeEmpty: true).length < pathSegments.length)) {
       return null;
     }
     return matches;
@@ -129,9 +127,7 @@ class RouteMatcher {
       return null;
     }
 
-    if (config.fullMatch &&
-        segments.length > parts.length &&
-        (parts.isEmpty || parts.last != '*')) {
+    if (config.fullMatch && segments.length > parts.length && (parts.isEmpty || parts.last != '*')) {
       return null;
     }
 
@@ -201,8 +197,7 @@ class RouteMatcher {
     } else if (route.hasChildren) {
       return null;
     }
-    final stringMatch =
-        PageRouteInfo.expandPath(config.path, route.rawPathParams);
+    final stringMatch = PageRouteInfo.expandPath(config.path, route.rawPathParams);
     return RouteMatch(
       config: config,
       segments: _split(stringMatch),
@@ -232,8 +227,7 @@ class RouteMatcher {
       final config = configs[i];
       if (i == configs.length - 1) {
         // last match should take route's info
-        final stringMatch =
-            PageRouteInfo.expandPath(config.path, route.rawPathParams);
+        final stringMatch = PageRouteInfo.expandPath(config.path, route.rawPathParams);
         matches.add(
           RouteMatch(
             config: config,
@@ -262,8 +256,7 @@ class RouteMatcher {
     return UrlState.toHierarchy(matches);
   }
 
-  Map<String, dynamic> _normalizeSingleValues(
-      Map<String, List<String>> queryParametersAll) {
+  Map<String, dynamic> _normalizeSingleValues(Map<String, List<String>> queryParametersAll) {
     final queryMap = <String, dynamic>{};
     for (var key in queryParametersAll.keys) {
       var list = queryParametersAll[key];
