@@ -833,11 +833,11 @@ In the following example we will only allow deep-links starting with `/products`
 ```dart 
     MaterialApp.router(
       routerConfig: _appRouter.config(
-        deepLinkBuilder: (deepLink){
-          if(deepLink.path.startsWith('/products'){
-           // continute with the platfrom link
+        deepLinkBuilder: (deepLink) {
+          if (deepLink.path.startsWith('/products')) {
+            // continute with the platfrom link
             return deepLink;
-          }else{
+          } else {
             return DeepLink.defaultPath;
             // or DeepLink.path('/')
             // or DeepLink([HomeRoute()])
