@@ -64,7 +64,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
 
   bool _hasPartDirective(ClassElement clazz) {
     final fileName = clazz.source.uri.pathSegments.last;
-    final part = fileName.replaceAll('.dart', '.gr.dart');
+    final part = fileName.replaceAll('.dart', generatedExtension);
     return clazz.library.parts.any(
       (e) => e.toString().endsWith(part),
     );
