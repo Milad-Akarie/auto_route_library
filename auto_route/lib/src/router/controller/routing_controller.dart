@@ -1337,7 +1337,23 @@ abstract class StackRouter extends RoutingController {
   /// Calls [removeRoute] repeatedly until the predicate returns true.
   ///
   /// Note: [removeRoute] does not respect willPopScopes
-  bool removeUntil(RouteDataPredicate predicate) => _removeUntil(predicate);
+  /// if [scoped] is set to true the predicate will
+  /// visit all StackRouters in hierarchy starting from
+  /// top until satisfied
+  bool removeUntil(RouteDataPredicate predicate,{bool scoped = true}) {
+    if(scoped) {
+      return _removeUntil(predicate);
+    }
+    final routers = _topMostRouter()._buildRoutersHierarchy();
+    bool predicateWasSatisfied = false;
+    for (final router in routers.whereType<StackRouter>()) {
+      router._removeUntil((route) {
+        return predicateWasSatisfied = predicate(route);
+      });
+      if (predicateWasSatisfied) break;
+    }
+    return predicateWasSatisfied;
+  }
 
   /// Calls [pop] repeatedly on the navigator until the predicate returns true.
   ///
@@ -1621,7 +1637,7 @@ abstract class StackRouter extends RoutingController {
       popUntil(predicate, scoped: false);
     }
     final scope = _findStackScope(route);
-    if(scopedPopUntil) {
+    if (scopedPopUntil) {
       scope.popUntil(predicate);
     }
     return scope._push<T>(route, onFailure: onFailure);
@@ -1688,13 +1704,13 @@ abstract class StackRouter extends RoutingController {
 
   /// Helper to pop all routes until route with [name] is found
   /// see [popUntil]
-  void popUntilRouteWithName(String name) {
-    popUntil(ModalRoute.withName(name));
+  void popUntilRouteWithName(String name, {bool scoped = true}) {
+    popUntil(ModalRoute.withName(name), scoped: scoped);
   }
 
   /// Helper to pop all routes until route with [path] is found
   /// see [popUntil]
-  void popUntilRouteWithPath(String path) {
+  void popUntilRouteWithPath(String path, {bool scoped = true}) {
     popUntil((route) {
       if ((route.settings is AutoRoutePage)) {
         return (route.settings as AutoRoutePage).routeData.match == path;
@@ -1702,7 +1718,7 @@ abstract class StackRouter extends RoutingController {
       // Assuming pageless routes are either dialogs or bottomSheetModals
       // and the user set a path as in RouteSettings(name: path) when showing theme
       return route.settings.name == path;
-    });
+    }, scoped: scoped);
   }
 }
 
