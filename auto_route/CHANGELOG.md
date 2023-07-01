@@ -1,3 +1,8 @@
+## 7.6.0
+
+ - **FEAT**: add 'scoped' argument to to StackRouter.removeUntil, if true the predicate will visit all StackRouters in hierarchy.
+ - **FEAT**: add 'scoped' argument to to StackRouter.popUntil, if true the predicate will visit all StackRouters in hierarchy.
+
 ## 7.5.0
 
  - **FIX**: Uri percent-encoded characters encoded twice #1620.
