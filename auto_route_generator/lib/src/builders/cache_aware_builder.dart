@@ -9,7 +9,7 @@ final _formatter = DartFormatter(fixes: [StyleFix.singleCascadeStatements]);
 
 abstract class CacheAwareBuilder<T> extends Builder {
   /// The [buildExtensions] configuration for `.dart`
-  final String _generatedExtension;
+  final String generatedExtension;
 
   /// Whether to allow syntax errors in input libraries.
   final bool allowSyntaxErrors;
@@ -28,7 +28,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     this.allowSyntaxErrors = false,
     required this.annotationName,
     this.options,
-  })  : _generatedExtension = generatedExtension,
+  })  : this.generatedExtension = generatedExtension,
         buildExtensions = validatedBuildExtensionsFrom(
             options != null ? Map.of(options.config) : null, {
           '.dart': [
@@ -36,9 +36,9 @@ abstract class CacheAwareBuilder<T> extends Builder {
             ...additionalOutputExtensions,
           ]
         }) {
-    if (_generatedExtension.isEmpty || !_generatedExtension.startsWith('.')) {
+    if (generatedExtension.isEmpty || !generatedExtension.startsWith('.')) {
       throw ArgumentError.value(
-        _generatedExtension,
+        generatedExtension,
         'generatedExtension',
         'Extension must be in the format of .*',
       );
@@ -122,7 +122,7 @@ source formatter.''',
 
   @override
   String toString() =>
-      'Generating $_generatedExtension: ${this.runtimeType.toString()}';
+      'Generating $generatedExtension: ${this.runtimeType.toString()}';
 
   Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep,
       [CompilationUnit? unit]) async {
