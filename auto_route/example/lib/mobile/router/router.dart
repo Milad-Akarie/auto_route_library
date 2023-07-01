@@ -5,7 +5,6 @@ import 'package:example/mobile/screens/profile/routes.dart';
 
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
 class RootRouter extends $RootRouter {
-
   @override
   final List<AutoRoute> routes = [
     AutoRoute(

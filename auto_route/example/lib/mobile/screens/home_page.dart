@@ -90,33 +90,32 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             );
           })
-        : AutoTabsRouter(
-            routes: [
-              BooksTab(),
-              ProfileTab(),
-              if (_showSettingsTap) SettingsTab(tab: 'tab'),
-            ],
-            builder: (context, child) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text(context.topRoute.title(context)),
-                  leading: AutoLeadingButton(ignorePagelessRoutes: true),
-                  // bottom: TabBar(
-                  //   controller: controller,
-                  //   tabs: [
-                  //     for (final d in destinations)
-                  //       Tab(
-                  //         child: Text(d.label),
-                  //       )
-                  //   ],
-                  // ),
-                ),
-                body: child,
-                bottomNavigationBar:
-                    buildBottomNav(context, context.tabsRouter),
+        :  AutoTabsRouter(
+                routes: [
+                  BooksTab(),
+                  ProfileTab(),
+                  if (_showSettingsTap) SettingsTab(tab: 'tab'),
+                ],
+                builder: (context, child) {
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: Text(context.topRoute.title(context)),
+                      leading: AutoLeadingButton(ignorePagelessRoutes: true),
+                      // bottom: TabBar(
+                      //   controller: controller,
+                      //   tabs: [
+                      //     for (final d in destinations)
+                      //       Tab(
+                      //         child: Text(d.label),
+                      //       )
+                      //   ],
+                      // ),
+                    ),
+                    body: child,
+                    bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+                  );
+                },
               );
-            },
-          );
   }
 
   Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {

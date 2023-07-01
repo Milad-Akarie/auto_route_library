@@ -13,8 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
+
 part 'auto_route_guard.dart';
+
 part 'auto_router_delegate.dart';
+
 part 'root_stack_router.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -1339,8 +1342,24 @@ abstract class StackRouter extends RoutingController {
   /// Calls [pop] repeatedly on the navigator until the predicate returns true.
   ///
   /// see [Navigator.popUntil]
-  void popUntil(RoutePredicate predicate) {
-    _navigatorKey.currentState?.popUntil(predicate);
+  ///
+  /// if [scoped] is set to true the predicate will
+  /// visit all StackRouters in hierarchy starting from
+  /// top until satisfied
+  void popUntil(RoutePredicate predicate, {bool scoped = true}) {
+    if (scoped) {
+      return _navigatorKey.currentState?.popUntil(predicate);
+    }
+    final routers = _topMostRouter()._buildRoutersHierarchy();
+    bool predicateWasSatisfied = false;
+    for (final router in routers.whereType<StackRouter>()) {
+      final navState = router._navigatorKey.currentState;
+      if (navState == null) break;
+      navState.popUntil((route) {
+        return predicateWasSatisfied = predicate(route);
+      });
+      if (predicateWasSatisfied) break;
+    }
   }
 
   bool _removeUntil(RouteDataPredicate predicate, {bool notify = true}) {
@@ -1595,10 +1614,16 @@ abstract class StackRouter extends RoutingController {
   Future<T?> pushAndPopUntil<T extends Object?>(
     PageRouteInfo route, {
     required RoutePredicate predicate,
+    bool scopedPopUntil = true,
     OnNavigationFailure? onFailure,
   }) {
+    if (!scopedPopUntil) {
+      popUntil(predicate, scoped: false);
+    }
     final scope = _findStackScope(route);
-    scope.popUntil(predicate);
+    if(scopedPopUntil) {
+      scope.popUntil(predicate);
+    }
     return scope._push<T>(route, onFailure: onFailure);
   }
 

@@ -6,12 +6,15 @@ import 'package:flutter/material.dart';
 //ignore_for_file: public_member_api_docs
 @RoutePage()
 class BookListScreen extends StatefulWidget {
+  const BookListScreen(
+    // (String, int) record,
+  );
+
   @override
   State<BookListScreen> createState() => _BookListScreenState();
 }
 
-class _BookListScreenState extends State<BookListScreen>
-    with AutoRouteAwareStateMixin<BookListScreen> {
+class _BookListScreenState extends State<BookListScreen> with AutoRouteAwareStateMixin<BookListScreen> {
   @override
   void didPushNext() {
     print('didPushNext');

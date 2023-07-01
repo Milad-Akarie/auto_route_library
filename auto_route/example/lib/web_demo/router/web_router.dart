@@ -253,6 +253,7 @@ class _UserPostsPageState extends State<UserPostsPage> {
                   );
                 },
                 child: Text('Show Dialog')),
+
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(

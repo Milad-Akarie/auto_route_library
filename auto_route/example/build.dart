@@ -15,6 +15,12 @@ final _builders = <_i1.BuilderApplication>[
     hideOutput: true,
   ),
   _i1.apply(
+    r'auto_route_generator:auto_router_module_generator',
+    [_i2.autoRouterModuleBuilder],
+    _i1.toDependentsOf(r'auto_route_generator'),
+    hideOutput: false,
+  ),
+  _i1.apply(
     r'auto_route_generator:auto_router_generator',
     [_i2.autoRouterBuilder],
     _i1.toDependentsOf(r'auto_route_generator'),
