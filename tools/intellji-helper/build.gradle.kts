@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "come.autoroute.helper"
-version = "0.1.5"
+version = "0.1.6"
 
 repositories {
     mavenCentral()
@@ -14,9 +14,9 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.2.4")
+    version.set("2023.1")
     type.set("IC") // Target IDE Platform
-    plugins.set(listOf("terminal","Dart:222.4560")) // Check version here https://plugins.jetbrains.com/plugin/6351-dart/versions/stable
+    plugins.set(listOf("terminal","Dart:231.9065")) // Check version here https://plugins.jetbrains.com/plugin/6351-dart/versions/stable
 }
 
 tasks {
@@ -26,7 +26,7 @@ tasks {
         targetCompatibility = "11"
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
     }
 
     patchPluginXml {
