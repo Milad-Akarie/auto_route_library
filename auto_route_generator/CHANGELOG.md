@@ -1,8 +1,7 @@
-## 7.2.0
+## 7.1.2
 
- - **FEAT**: add 'scoped' argument to to StackRouter.popUntil, if true the predicate will visit all StackRouters in hierarchy.
- - **DOCS**: update CHANGELOG.md.
-
+ - **FIX**: AutoRouteConfig.module() doesn't generate part of file correctly. #1626.
+ 
 ## 7.1.1
 
 - **REFACTOR**: change module extension from .module.dart to .gm.dart.
