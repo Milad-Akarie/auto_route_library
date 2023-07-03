@@ -1,3 +1,8 @@
+## 7.2.0
+
+ - **FEAT**: add 'scoped' argument to to StackRouter.popUntil, if true the predicate will visit all StackRouters in hierarchy.
+ - **DOCS**: update CHANGELOG.md.
+
 ## 7.1.1
 
 - **REFACTOR**: change module extension from .module.dart to .gm.dart.
