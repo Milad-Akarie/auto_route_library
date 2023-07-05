@@ -18,3 +18,4 @@ scripts:
 
 
 # alias version-ar='melos version --no-dependent-constraints --scope=auto_route'
+# alias version-ar='melos publish --scope=auto_route'

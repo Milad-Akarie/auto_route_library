@@ -1,6 +1,8 @@
 ## 7.2.0
 
  - **FEAT**: Add basic support to dart records.
+ - **FIX**: encoded path segments are not decoded in RouteMatch.pathParams
+ - **FIX**: encoded browser path is checked against a decoded matched path when deciding whether to replace route #1637
 
 ## 7.1.2
 
