@@ -1,5 +1,5 @@
 import '../../utils.dart';
-import 'importable_type.dart';
+import 'resolved_type.dart';
 import 'route_parameter_config.dart';
 
 /// holds the extracted route configs

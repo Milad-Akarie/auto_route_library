@@ -121,7 +121,7 @@ class RouteMatcher {
   /// returns null if not match is found
   RouteMatch? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
     var parts = _split(config.path);
-    var segments = _split(uri.path);
+    var segments = _split(Uri.decodeComponent(uri.path));
 
     if (parts.length > segments.length) {
       return null;

@@ -4,7 +4,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
-import '../models/importable_type.dart';
+import '../models/resolved_type.dart';
 import '../models/route_config.dart';
 import '../models/route_parameter_config.dart';
 import '../resolvers/route_parameter_resolver.dart';

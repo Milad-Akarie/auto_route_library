@@ -15,14 +15,6 @@ class RouteParameterResolver {
   RouteParameterResolver(this._typeResolver);
 
   ParamConfig resolve(ParameterElement parameterElement) {
-
-    if(parameterElement.name == 'record'){
-       final type = parameterElement.type as RecordType;
-       type.namedFields;
-
-    }
-
-
     final paramType = parameterElement.type;
     if (paramType is FunctionType) {
       return _resolveFunctionType(parameterElement);

@@ -1,6 +1,6 @@
 import 'package:code_builder/code_builder.dart' as _code;
 
-import 'importable_type.dart';
+import 'resolved_type.dart';
 
 const reservedVarNames = ['children'];
 

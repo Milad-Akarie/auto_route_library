@@ -1,7 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
-import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType;
-import 'package:auto_route_generator/src/models/importable_type.dart';
+import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType, RecordType;
+import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:path/path.dart' as p;
 
 class TypeResolver {
@@ -64,9 +64,34 @@ class TypeResolver {
 
   List<ResolvedType> _resolveTypeArguments(DartType typeToCheck) {
     final types = <ResolvedType>[];
-    if (typeToCheck is ParameterizedType) {
+    if (typeToCheck is RecordType) {
+      for (final recordField in typeToCheck.positionalFields) {
+        types.add(ResolvedType(
+          name: recordField.type.element?.name ?? 'void',
+          import: resolveImport(recordField.type.element),
+          isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
+          typeArguments: _resolveTypeArguments(recordField.type),
+        ));
+      }
+      for (final recordField in typeToCheck.namedFields) {
+        types.add(ResolvedType(
+          name: recordField.type.element?.name ?? 'void',
+          import: resolveImport(recordField.type.element),
+          isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
+          typeArguments: _resolveTypeArguments(recordField.type),
+          nameInRecord: recordField.name,
+        ));
+      }
+    } else if (typeToCheck is ParameterizedType) {
       for (DartType type in typeToCheck.typeArguments) {
-        if (type.element is TypeParameterElement) {
+        if (type is RecordType) {
+          types.add(ResolvedType.record(
+            name: type.element?.name ?? 'void',
+            import: resolveImport(type.element),
+            isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+            typeArguments: _resolveTypeArguments(type),
+          ));
+        } else if (type.element is TypeParameterElement) {
           types.add(ResolvedType(name: 'dynamic'));
         } else {
           types.add(ResolvedType(
@@ -96,6 +121,14 @@ class TypeResolver {
   }
 
   ResolvedType resolveType(DartType type) {
+    if (type is RecordType) {
+      return ResolvedType.record(
+        name: type.element?.name ?? 'void',
+        import: resolveImport(type.element),
+        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        typeArguments: _resolveTypeArguments(type),
+      );
+    }
     return ResolvedType(
       name: type.element?.name ?? type.getDisplayString(withNullability: false),
       isNullable: type.nullabilitySuffix == NullabilitySuffix.question,

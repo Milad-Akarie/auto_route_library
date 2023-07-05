@@ -1,4 +1,4 @@
-import 'importable_type.dart';
+import 'resolved_type.dart';
 
 class RouterConfig {
   final String routerClassName;

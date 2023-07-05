@@ -199,7 +199,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   void _onNewUrlState(UrlState state) {
     final pathInBrowser = state.uri.path;
     var matchedUrlState = state.flatten;
-    if (pathInBrowser != matchedUrlState.path) {
+    final matchedPath = Uri.encodeFull(matchedUrlState.path);
+    if (pathInBrowser != matchedPath) {
       matchedUrlState = matchedUrlState.copyWith(shouldReplace: true);
     }
     controller.navigationHistory.onNewUrlState(matchedUrlState);

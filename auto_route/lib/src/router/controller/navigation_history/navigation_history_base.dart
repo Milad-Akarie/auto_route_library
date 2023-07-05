@@ -40,7 +40,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// Whether next browser entry update should replace current
   bool get isUrlStateMarkedForReplace => _isUrlStateMarkedForReplace;
 
-  /// Force next browser entry update should replace current
+  /// Force next browser entry update to replace current
   void markUrlStateForReplace() => _isUrlStateMarkedForReplace = true;
 
   void _unMarkUrlStateForReplace() => _isUrlStateMarkedForReplace = false;
