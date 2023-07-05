@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-07-05
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.7.0`](#auto_route---v770)
+ - [`auto_route_generator` - `v7.2.0`](#auto_route_generator---v720)
+
+---
+
+#### `auto_route` - `v7.7.0`
+
+ - **FEAT**: Add basic support to dart records.
+
+#### `auto_route_generator` - `v7.2.0`
+
+ - **FEAT**: Add basic support to dart records.
+
+
 ## 2023-07-03
 
 ### Changes

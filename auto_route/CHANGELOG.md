@@ -1,3 +1,7 @@
+## 7.7.0
+
+ - **FEAT**: Add basic support to dart records.
+
 ## 7.6.0
 
  - **FEAT**: add 'scoped' argument to to StackRouter.removeUntil, if true the predicate will visit all StackRouters in hierarchy.

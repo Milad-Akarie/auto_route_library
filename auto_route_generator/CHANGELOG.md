@@ -1,3 +1,7 @@
+## 7.2.0
+
+ - **FEAT**: Add basic support to dart records.
+
 ## 7.1.2
 
  - **FIX**: AutoRouteConfig.module() doesn't generate part of file correctly. #1626.
