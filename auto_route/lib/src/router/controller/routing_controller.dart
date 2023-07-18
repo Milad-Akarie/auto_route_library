@@ -681,8 +681,8 @@ class TabsRouter extends RoutingController {
     final routesToPush = _matchAllOrReportFailure(routes)!;
     if (_routeData.hasPendingChildren) {
       final preMatchedRoute = _routeData.pendingChildren.last;
-      final correspondingRouteIndex = routes.indexWhere(
-        (r) => r.routeName == preMatchedRoute.name,
+      final correspondingRouteIndex = routesToPush.indexWhere(
+        (r) => r.key == preMatchedRoute.key,
       );
       if (correspondingRouteIndex != -1) {
         routesToPush[correspondingRouteIndex] = preMatchedRoute;
