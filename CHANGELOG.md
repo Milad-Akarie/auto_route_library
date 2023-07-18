@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-07-18
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.7.1`](#auto_route---v771)
+ - [`auto_route_generator` - `v7.2.1`](#auto_route_generator---v721)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v7.2.1`
+
+---
+
+#### `auto_route` - `v7.7.1`
+
+ - **FIX**: tab routes should be matched by key not name.
+
+
 ## 2023-07-05
 
 ### Changes

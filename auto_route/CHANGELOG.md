@@ -1,3 +1,7 @@
+## 7.7.1
+
+ - **FIX**: tab routes should be matched by key not name.
+
 ## 7.7.0
 
 - **FEAT**: Add basic support to dart records.
