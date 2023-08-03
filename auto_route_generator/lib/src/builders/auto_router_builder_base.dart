@@ -96,7 +96,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
 
     return '$_header\n${generateLibrary(
       item,
-      routes: routes,
+      routes: routes..sort((a,b)=> a.className.compareTo(b.className)),
       ignoreForFile: ignoreForFile,
     )}';
   }
