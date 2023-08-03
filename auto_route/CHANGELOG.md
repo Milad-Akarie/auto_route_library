@@ -1,3 +1,9 @@
+## 7.8.0
+
+ - **FEAT**: add PlatformDeepLink.initial flag to tell whether we're coming from setInitialRoutePath or setNewRoutePath.
+ - **FEAT**: add option to pass custom ignore_for_file rules to the generated file.
+ - **FEAT**: support the new allowSnapshotting flag.
+
 ## 7.7.1
 
  - **FIX**: tab routes should be matched by key not name.

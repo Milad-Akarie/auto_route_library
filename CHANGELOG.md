@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-08-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.8.0`](#auto_route---v780)
+ - [`auto_route_generator` - `v7.3.0`](#auto_route_generator---v730)
+
+---
+
+#### `auto_route` - `v7.8.0`
+
+ - **FEAT**: add PlatformDeepLink.initial flag to tell whether we're coming from setInitialRoutePath or setNewRoutePath.
+ - **FEAT**: add option to pass custom ignore_for_file rules to the generated file.
+ - **FEAT**: support the new allowSnapshotting flag.
+
+#### `auto_route_generator` - `v7.3.0`
+
+ - **REFACTOR**: generated routes are not alphabetically sorted.
+ - **FEAT**: add option to pass custom ignore_for_file rules to the generated file.
+ - **FEAT**: Add basic support to dart records.
+
+
 ## 2023-07-18
 
 ### Changes
