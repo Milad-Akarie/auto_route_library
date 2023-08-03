@@ -48,6 +48,10 @@ class AutoRoute {
   /// Passed To [PageRoute.maintainState]
   final bool maintainState;
 
+  /// Whether the target route should allow snapshotting.
+  /// Passed To [PageRoute.allowSnapshotting]
+  final bool allowSnapshotting;
+
   /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
   /// where it can be used by [CupertinoNavigationBar]
   ///
@@ -84,6 +88,7 @@ class AutoRoute {
     this.title,
     this.keepHistory = true,
     this.restorationId,
+    this.allowSnapshotting =  true,
     this.initial = false,
     List<AutoRoute>? children,
   })  : _path = path,
@@ -104,6 +109,7 @@ class AutoRoute {
     required this.restorationId,
     required RouteCollection? children,
     required this.initial,
+    required this.allowSnapshotting,
   })  : _path = path,
         _children = children;
 
@@ -123,6 +129,7 @@ class AutoRoute {
     RestorationIdBuilder? restorationId,
     bool keepHistory = true,
     bool initial = false,
+    bool allowSnapshotting = true,
   }) {
     return AutoRoute._(
       name: page.name,
@@ -139,6 +146,7 @@ class AutoRoute {
       title: title,
       keepHistory: keepHistory,
       initial: initial,
+      allowSnapshotting: allowSnapshotting,
     );
   }
 
@@ -159,6 +167,7 @@ class AutoRoute {
     RestorationIdBuilder? restorationId,
     bool keepHistory = true,
     bool initial = false,
+    bool allowSnapshotting = true,
   }) {
     return AutoRoute._(
       name: page.name,
@@ -175,6 +184,7 @@ class AutoRoute {
       title: title,
       keepHistory: keepHistory,
       initial: initial,
+      allowSnapshotting: allowSnapshotting,
     );
   }
 
@@ -214,6 +224,7 @@ class AutoRoute {
       children: children,
       restorationId: restorationId,
       initial: initial,
+      allowSnapshotting: allowSnapshotting,
     );
   }
 }
@@ -256,6 +267,7 @@ class MaterialRoute extends AutoRoute {
     super.keepHistory,
     super.restorationId,
     super.initial,
+    super.allowSnapshotting = true,
   }) : super._(
           name: page.name,
           type: const RouteType.material(),
@@ -280,6 +292,7 @@ class CupertinoRoute extends AutoRoute {
     super.restorationId,
     super.keepHistory,
     super.initial,
+    super.allowSnapshotting = true,
   }) : super._(name: page.name, type: const RouteType.cupertino());
 }
 
@@ -302,6 +315,7 @@ class AdaptiveRoute extends AutoRoute {
     super.restorationId,
     bool opaque = true,
     super.keepHistory,
+    super.allowSnapshotting = true,
   }) : super._(
           name: page.name,
           type: RouteType.adaptive(opaque: opaque),
@@ -325,6 +339,7 @@ class CustomRoute extends AutoRoute {
     super.path,
     super.keepHistory,
     super.initial,
+    super.allowSnapshotting = true,
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
     int? durationInMilliseconds,

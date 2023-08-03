@@ -25,6 +25,11 @@ class AutoRoutePage<T> extends Page<T> {
   /// Passed To [PageRoute.opaque]
   bool get opaque => routeData.type.opaque;
 
+  /// Whether the built route should allow snapshotting
+  /// Passed To [PageRoute.allowSnapshotting]
+  bool get allowSnapshotting => routeData.route.allowSnapshotting;
+
+
   /// The key that's used to decide whether
   /// This page can be updated or not
   /// used by [canUpdate]
@@ -121,6 +126,9 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T> with MaterialRouteTran
   bool get fullscreenDialog => _page.fullscreenDialog;
 
   @override
+  bool get allowSnapshotting => _page.allowSnapshotting;
+
+  @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
@@ -153,6 +161,9 @@ class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T> with _CustomPageR
   bool get fullscreenDialog => _page.fullscreenDialog;
 
   @override
+  bool get allowSnapshotting => _page.allowSnapshotting;
+
+  @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
@@ -174,6 +185,9 @@ class _NoAnimationPageRouteBuilder<T> extends PageRoute<T> with _NoAnimationPage
   bool get fullscreenDialog => _page.fullscreenDialog;
 
   @override
+  bool get allowSnapshotting => _page.allowSnapshotting;
+
+  @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
@@ -191,6 +205,8 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
 
   @override
   bool get barrierDismissible => false;
+
+
 
   @override
   Color? get barrierColor => null;
@@ -236,6 +252,8 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   Duration get reverseTransitionDuration => Duration(
         milliseconds: routeType.reverseDurationInMilliseconds ?? 300,
       );
+
+
 
   @override
   bool get barrierDismissible => routeType.barrierDismissible;
@@ -297,6 +315,9 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T> with CustomCupertinoR
 
   @override
   bool get fullscreenDialog => _page.fullscreenDialog;
+
+  @override
+  bool get allowSnapshotting => _page.allowSnapshotting;
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';

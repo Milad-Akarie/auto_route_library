@@ -74,6 +74,9 @@ class RouteMatch<T> {
   /// Helper to access [AutoRoute.fullscreenDialog]
   bool get fullscreenDialog => _config.fullscreenDialog;
 
+  /// Helper to access [AutoRoute.allowSnapshotting]
+  bool get allowSnapshotting => _config.allowSnapshotting;
+
   /// Helper to access [AutoRoute.maintainState]
   bool get maintainState => _config.maintainState;
 
