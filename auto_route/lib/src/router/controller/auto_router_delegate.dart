@@ -139,7 +139,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
 
     /// Todo remove below deprecated code
-    final platformDeepLink = PlatformDeepLink._(configuration);
+    final platformDeepLink = PlatformDeepLink._(configuration,true);
     if (deepLinkBuilder != null) {
       return _handleDeepLink(await deepLinkBuilder!(platformDeepLink));
       // ignore: deprecated_member_use_from_same_package
@@ -184,7 +184,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
 
     if (configuration.hasSegments) {
-      final platLink = PlatformDeepLink._(configuration);
+      final platLink = PlatformDeepLink._(configuration,false);
       final resolvedLink = deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
       if (rebuildStackOnDeepLink) {
         controller.popUntil((route) => false);
@@ -323,7 +323,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
 
   @override
   Future<void> setInitialRoutePath(UrlState configuration) async {
-    final platformDeepLink = PlatformDeepLink._(configuration);
+    final platformDeepLink = PlatformDeepLink._(configuration,true);
     if (deepLinkBuilder != null) {
       final deepLink = await deepLinkBuilder!(platformDeepLink);
       _handleDeclarativeDeepLink(deepLink);
@@ -457,10 +457,15 @@ class PlatformDeepLink extends DeepLink {
   /// The parsed uri from the raw path
   Uri get uri => configuration.uri;
 
+  /// Whether this is the initial deep-link
+  final bool initial;
+
   /// The pre-matched routes from the row path
   List<RouteMatch> get matches => configuration.segments;
 
-  const PlatformDeepLink._(this.configuration) : super._();
+
+
+  const PlatformDeepLink._(this.configuration,this.initial) : super._();
 
   @override
   bool get isValid => configuration.hasSegments;
