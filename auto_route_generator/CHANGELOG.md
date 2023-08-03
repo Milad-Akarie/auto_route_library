@@ -1,8 +1,7 @@
 ## 7.3.0
 
- - **REFACTOR**: generated routes are not alphabetically sorted.
+ - **REFACTOR**: generated routes are now alphabetically sorted.
  - **FEAT**: add option to pass custom ignore_for_file rules to the generated file.
- - **FEAT**: Add basic support to dart records.
 
 ## 7.2.0
 
