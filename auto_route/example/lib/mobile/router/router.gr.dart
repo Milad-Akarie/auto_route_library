@@ -6,6 +6,8 @@
 
 // ignore_for_file: type=lint
 // coverage:ignore-file
+// ignore_for_file: rule-1
+// ignore_for_file: rule-2
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i9;

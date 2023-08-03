@@ -41,7 +41,8 @@
   - [Custom Route Builder](#custom-route-builder)
 - [Others](#others)
   - [Including Micro/External Packages](#including-microexternal-packages)
-  - [Optimizing Generation Time](#optimizing-generation-time)
+  - [Configuring builders](#configuring-builders)
+    - [Optimizing Generation Time](#optimizing-generation-time)
     - [Enabling Cached Builds (Experimental)](#enabling-cached-builds)
   - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
   - [ActiveGuardObserver](#activeguardobserver)
@@ -1423,8 +1424,7 @@ export 'package:my_package/my_package_module.dart'
 class AppRouter extends $AppRouter{}    
  ``` 
 
-### Optimizing generation time
-
+## Configuring builders
 To pass builder configuration to `auto_route_generator` we need to add `build.yaml` file next
 to `pubspec.yaml` if not already added.
 
@@ -1438,6 +1438,20 @@ targets:
       # configs for @AutoRouterConfig() generator ...
 ```  
 
+### Passing custom ignore_for_file rules
+You can pass custom ignore_for_file rules to the generated router by adding the following:
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_router_generator:
+       options:
+         ignore_fore_file:
+           - custom_rule_1
+           - custom_rule_2
+```  
+
+### Optimizing generation time
 The first thing you want to do to reduce generation time is specifying the files build_runner should
 process and we do that by using [globs](https://pub.dev/packages/glob), Globs are kind of regex
 patterns with little differences that's used to match file names.

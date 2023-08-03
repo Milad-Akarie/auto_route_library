@@ -18,6 +18,8 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   bool get cacheEnabled;
 
+  Set<String> get ignoreForFile => options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
+
   @override
   final Map<String, List<String>> buildExtensions;
   final BuilderOptions? options;
