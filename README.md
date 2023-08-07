@@ -97,7 +97,7 @@ dev_dependencies:
 
  ```dart     
 @AutoRouterConfig()      
-class AppRouter extends $AppRouter {      
+class AppRouter extends _$AppRouter {      
     
   @override      
   List<AutoRoute> get routes => [      
@@ -153,7 +153,7 @@ flutter packages pub run build_runner build
 
  ```dart     
 @AutoRouterConfig(replaceInRouteName: 'Screen,Route')      
-class AppRouter extends $AppRouter {      
+class AppRouter extends _$AppRouter {      
     
   @override      
   List<AutoRoute> get routes => [      
