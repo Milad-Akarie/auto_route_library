@@ -1,16 +1,27 @@
 import 'resolved_type.dart';
 
+/// RouterConfig
 class RouterConfig {
+  /// The name of the router class
   final String routerClassName;
+  /// The string to replace in route names
   final String? replaceInRouteName;
+  /// Whether the router should use deferred loading
   final bool deferredLoading;
+  /// Whether the router should use part builder
   final bool usesPartBuilder;
+  /// The path to the router file
   final String path;
+  /// The cache hash of the router properties
   final int? cacheHash;
+  /// The list of directories to generate for
   final List<String> generateForDir;
+  /// Whether the router is a module
   final bool isModule;
+  /// The list of modules
   final List<ResolvedType> modules;
 
+  /// Default constructor
   const RouterConfig({
     required this.routerClassName,
     this.replaceInRouteName,
@@ -23,6 +34,7 @@ class RouterConfig {
     this.modules = const [],
   });
 
+  /// Serializes this instance to a map
   Map<String, dynamic> toJson() {
     return {
       'routerClassName': this.routerClassName,
@@ -37,6 +49,7 @@ class RouterConfig {
     };
   }
 
+  /// Deserializes a map to an instance of [RouterConfig]
   factory RouterConfig.fromJson(Map<String, dynamic> map) {
     return RouterConfig(
       routerClassName: map['routerClassName'] as String,

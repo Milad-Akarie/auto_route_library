@@ -11,14 +11,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i9;
-import 'package:example/mobile/router/router.dart' as _i8;
-import 'package:example/mobile/screens/books/book_details_page.dart' as _i2;
-import 'package:example/mobile/screens/books/book_list_page.dart' as _i1;
-import 'package:example/mobile/screens/home_page.dart' as _i6;
-import 'package:example/mobile/screens/login_page.dart' as _i3;
-import 'package:example/mobile/screens/profile/my_books_page.dart' as _i4;
-import 'package:example/mobile/screens/profile/profile_page.dart' as _i5;
-import 'package:example/mobile/screens/settings_page.dart' as _i7;
+import 'package:example/mobile/router/router.dart' as _i3;
+import 'package:example/mobile/screens/books/book_details_page.dart' as _i1;
+import 'package:example/mobile/screens/books/book_list_page.dart' as _i2;
+import 'package:example/mobile/screens/home_page.dart' as _i4;
+import 'package:example/mobile/screens/login_page.dart' as _i5;
+import 'package:example/mobile/screens/profile/my_books_page.dart' as _i6;
+import 'package:example/mobile/screens/profile/profile_page.dart' as _i7;
+import 'package:example/mobile/screens/settings_page.dart' as _i8;
 import 'package:flutter/material.dart' as _i10;
 
 abstract class $RootRouter extends _i9.RootStackRouter {
@@ -26,12 +26,6 @@ abstract class $RootRouter extends _i9.RootStackRouter {
 
   @override
   final Map<String, _i9.PageFactory> pagesMap = {
-    BookListRoute.name: (routeData) {
-      return _i9.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.BookListScreen(),
-      );
-    },
     BookDetailsRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<BookDetailsRouteArgs>(
@@ -42,7 +36,25 @@ abstract class $RootRouter extends _i9.RootStackRouter {
               )));
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i2.BookDetailsPage(id: args.id),
+        child: _i1.BookDetailsPage(id: args.id),
+      );
+    },
+    BookListRoute.name: (routeData) {
+      return _i9.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: _i2.BookListScreen(),
+      );
+    },
+    BooksTab.name: (routeData) {
+      return _i9.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i3.BooksTabPage(),
+      );
+    },
+    HomeRoute.name: (routeData) {
+      return _i9.AutoRoutePage<String>(
+        routeData: routeData,
+        child: const _i4.HomePage(),
       );
     },
     LoginRoute.name: (routeData) {
@@ -50,7 +62,7 @@ abstract class $RootRouter extends _i9.RootStackRouter {
           orElse: () => const LoginRouteArgs());
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i3.LoginPage(
+        child: _i5.LoginPage(
           key: args.key,
           onLoginResult: args.onLoginResult,
           showBackButton: args.showBackButton,
@@ -67,7 +79,7 @@ abstract class $RootRouter extends _i9.RootStackRouter {
               )));
       return _i9.AutoRoutePage<String>(
         routeData: routeData,
-        child: _i4.MyBooksPage(
+        child: _i6.MyBooksPage(
           key: args.key,
           filter: args.filter,
         ),
@@ -76,19 +88,13 @@ abstract class $RootRouter extends _i9.RootStackRouter {
     ProfileRoute.name: (routeData) {
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i5.ProfilePage(),
+        child: _i7.ProfilePage(),
       );
     },
-    HomeRoute.name: (routeData) {
-      return _i9.AutoRoutePage<String>(
-        routeData: routeData,
-        child: const _i6.HomePage(),
-      );
-    },
-    WelcomeRoute.name: (routeData) {
+    ProfileTab.name: (routeData) {
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i6.WelcomeScreen(),
+        child: const _i3.ProfileTabPage(),
       );
     },
     SettingsTab.name: (routeData) {
@@ -104,44 +110,24 @@ abstract class $RootRouter extends _i9.RootStackRouter {
               ));
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: _i7.SettingsPage(
+        child: _i8.SettingsPage(
           key: args.key,
           tab: args.tab,
           query: args.query,
         ),
       );
     },
-    BooksTab.name: (routeData) {
+    WelcomeRoute.name: (routeData) {
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i8.BooksTabPage(),
-      );
-    },
-    ProfileTab.name: (routeData) {
-      return _i9.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const _i8.ProfileTabPage(),
+        child: const _i4.WelcomeScreen(),
       );
     },
   };
 }
 
 /// generated route for
-/// [_i1.BookListScreen]
-class BookListRoute extends _i9.PageRouteInfo<void> {
-  const BookListRoute({List<_i9.PageRouteInfo>? children})
-      : super(
-          BookListRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'BookListRoute';
-
-  static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i2.BookDetailsPage]
+/// [_i1.BookDetailsPage]
 class BookDetailsRoute extends _i9.PageRouteInfo<BookDetailsRouteArgs> {
   BookDetailsRoute({
     int id = -1,
@@ -171,7 +157,49 @@ class BookDetailsRouteArgs {
 }
 
 /// generated route for
-/// [_i3.LoginPage]
+/// [_i2.BookListScreen]
+class BookListRoute extends _i9.PageRouteInfo<void> {
+  const BookListRoute({List<_i9.PageRouteInfo>? children})
+      : super(
+          BookListRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'BookListRoute';
+
+  static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i3.BooksTabPage]
+class BooksTab extends _i9.PageRouteInfo<void> {
+  const BooksTab({List<_i9.PageRouteInfo>? children})
+      : super(
+          BooksTab.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'BooksTab';
+
+  static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i4.HomePage]
+class HomeRoute extends _i9.PageRouteInfo<void> {
+  const HomeRoute({List<_i9.PageRouteInfo>? children})
+      : super(
+          HomeRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'HomeRoute';
+
+  static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
+}
+
+/// generated route for
+/// [_i5.LoginPage]
 class LoginRoute extends _i9.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
     _i10.Key? key,
@@ -214,7 +242,7 @@ class LoginRouteArgs {
 }
 
 /// generated route for
-/// [_i4.MyBooksPage]
+/// [_i6.MyBooksPage]
 class MyBooksRoute extends _i9.PageRouteInfo<MyBooksRouteArgs> {
   MyBooksRoute({
     _i10.Key? key,
@@ -253,7 +281,7 @@ class MyBooksRouteArgs {
 }
 
 /// generated route for
-/// [_i5.ProfilePage]
+/// [_i7.ProfilePage]
 class ProfileRoute extends _i9.PageRouteInfo<void> {
   const ProfileRoute({List<_i9.PageRouteInfo>? children})
       : super(
@@ -267,35 +295,21 @@ class ProfileRoute extends _i9.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i6.HomePage]
-class HomeRoute extends _i9.PageRouteInfo<void> {
-  const HomeRoute({List<_i9.PageRouteInfo>? children})
+/// [_i3.ProfileTabPage]
+class ProfileTab extends _i9.PageRouteInfo<void> {
+  const ProfileTab({List<_i9.PageRouteInfo>? children})
       : super(
-          HomeRoute.name,
+          ProfileTab.name,
           initialChildren: children,
         );
 
-  static const String name = 'HomeRoute';
+  static const String name = 'ProfileTab';
 
   static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i6.WelcomeScreen]
-class WelcomeRoute extends _i9.PageRouteInfo<void> {
-  const WelcomeRoute({List<_i9.PageRouteInfo>? children})
-      : super(
-          WelcomeRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'WelcomeRoute';
-
-  static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i7.SettingsPage]
+/// [_i8.SettingsPage]
 class SettingsTab extends _i9.PageRouteInfo<SettingsTabArgs> {
   SettingsTab({
     _i10.Key? key,
@@ -340,29 +354,15 @@ class SettingsTabArgs {
 }
 
 /// generated route for
-/// [_i8.BooksTabPage]
-class BooksTab extends _i9.PageRouteInfo<void> {
-  const BooksTab({List<_i9.PageRouteInfo>? children})
+/// [_i4.WelcomeScreen]
+class WelcomeRoute extends _i9.PageRouteInfo<void> {
+  const WelcomeRoute({List<_i9.PageRouteInfo>? children})
       : super(
-          BooksTab.name,
+          WelcomeRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'BooksTab';
-
-  static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
-}
-
-/// generated route for
-/// [_i8.ProfileTabPage]
-class ProfileTab extends _i9.PageRouteInfo<void> {
-  const ProfileTab({List<_i9.PageRouteInfo>? children})
-      : super(
-          ProfileTab.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'ProfileTab';
+  static const String name = 'WelcomeRoute';
 
   static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
 }

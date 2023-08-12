@@ -6,6 +6,7 @@ import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
+/// Builds a router config class for the given [RouterConfig]
 Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
       (b) => b
         ..name =
@@ -15,7 +16,7 @@ Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
           router.isModule ? 'AutoRouterModule' : 'RootStackRouter',
           autoRouteImport,
         )
-        ..fields.addAll([buildPagesMap(routes, router)])
+        ..fields.addAll([_buildPagesMap(routes, router)])
         ..constructors.addAll(router.isModule
             ? []
             : [
@@ -31,7 +32,7 @@ Class buildRouterConfig(RouterConfig router, List<RouteConfig> routes) => Class(
               ]),
     );
 
-Field buildPagesMap(List<RouteConfig> routes, RouterConfig router) {
+Field _buildPagesMap(List<RouteConfig> routes, RouterConfig router) {
   return Field(
     (b) => b
       ..name = "pagesMap"
@@ -45,27 +46,28 @@ Field buildPagesMap(List<RouteConfig> routes, RouterConfig router) {
             refer('PageFactory', autoRouteImport),
           ]),
       )
-      ..assignment = buildAssignment(routes, router),
+      ..assignment = _buildAssignment(routes, router),
   );
 }
 
-Code buildAssignment(List<RouteConfig> routes, RouterConfig router) {
-  final routez =
+/// Builds the map assignment for the pagesMap field
+Code _buildAssignment(List<RouteConfig> routes, RouterConfig router) {
+  final effectiveRoutes =
       routes.distinctBy((e) => e.getName(router.replaceInRouteName)).map(
             (r) => MapEntry(
               refer(r.getName(router.replaceInRouteName)).property('name'),
-              buildMethod(r, router),
+              _buildMethod(r, router),
             ),
           );
   final modules = router.modules;
 
   if (modules.isEmpty) {
-    return literalMap(Map.fromEntries(routez)).code;
+    return literalMap(Map.fromEntries(effectiveRoutes)).code;
   }
 
   return Block.of([
     Code('{'),
-    for (final route in routez) ...[
+    for (final route in effectiveRoutes) ...[
       route.key.code,
       Code(':'),
       route.value.code,
@@ -83,12 +85,12 @@ Code buildAssignment(List<RouteConfig> routes, RouterConfig router) {
   ]);
 }
 
-Expression buildMethod(RouteConfig r, RouterConfig router) {
+Expression _buildMethod(RouteConfig r, RouterConfig router) {
   final useConsConstructor =
       r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
   var constructedPage = useConsConstructor
       ? r.pageType!.refer.constInstance([])
-      : getPageInstance(r);
+      : _getPageInstance(r);
 
   if (r.hasWrappedRoute == true) {
     constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
@@ -98,7 +100,7 @@ Expression buildMethod(RouteConfig r, RouterConfig router) {
   }
 
   if ((r.deferredLoading ?? router.deferredLoading) && r.pageType != null) {
-    constructedPage = getDeferredBuilder(r, constructedPage);
+    constructedPage = _getDeferredBuilder(r, constructedPage);
   }
   final inheritedParameters = r.parameters.where((p) => p.isInheritedPathParam);
 
@@ -142,7 +144,7 @@ Expression buildMethod(RouteConfig r, RouterConfig router) {
                                           .map(
                                             (p) => MapEntry(
                                               p.name,
-                                              getUrlParamAssignment(p),
+                                              _getUrlParamAssignment(p),
                                             ),
                                           ),
                                     ),
@@ -172,7 +174,7 @@ Expression buildMethod(RouteConfig r, RouterConfig router) {
   ).closure;
 }
 
-Expression getDeferredBuilder(RouteConfig r, Expression page) {
+Expression _getDeferredBuilder(RouteConfig r, Expression page) {
   return TypeReference((b) => b
     ..symbol = 'DeferredWidget'
     ..url = autoRouteImport).newInstance([
@@ -183,7 +185,7 @@ Expression getDeferredBuilder(RouteConfig r, Expression page) {
   ]);
 }
 
-Expression getPageInstance(RouteConfig r) {
+Expression _getPageInstance(RouteConfig r) {
   return r.pageType!.refer.newInstance(
     r.positionalParams.map((p) {
       return refer('args').property(p.name);
@@ -192,14 +194,14 @@ Expression getPageInstance(RouteConfig r) {
       (p) => MapEntry(
         p.name,
         p.isInheritedPathParam
-            ? getUrlParamAssignment(p)
+            ? _getUrlParamAssignment(p)
             : refer('args').property(p.name),
       ),
     )),
   );
 }
 
-Expression getUrlParamAssignment(ParamConfig p) {
+Expression _getUrlParamAssignment(ParamConfig p) {
   if (p.isPathParam) {
     return refer('pathParams').property(p.getterMethodName).call([
       literalString(p.paramName),

@@ -5,6 +5,8 @@ import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
+
+/// Builds a route info class and args class for the given [RouteConfig]
 List<Class> buildRouteInfoAndArgs(
     RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
@@ -145,6 +147,7 @@ List<Class> buildRouteInfoAndArgs(
   ];
 }
 
+/// Builds a list of [Parameter]s from the given [parameters]
 Iterable<Parameter> buildArgParams(
     List<ParamConfig> parameters, DartEmitter emitter,
     {bool toThis = true}) {

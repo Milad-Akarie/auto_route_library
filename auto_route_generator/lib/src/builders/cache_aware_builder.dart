@@ -6,7 +6,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
 
 final _formatter = DartFormatter(fixes: [StyleFix.singleCascadeStatements]);
-
+/// A [Builder] which skips resolving cached files
 abstract class CacheAwareBuilder<T> extends Builder {
   /// The [buildExtensions] configuration for `.dart`
   final String generatedExtension;
@@ -14,16 +14,21 @@ abstract class CacheAwareBuilder<T> extends Builder {
   /// Whether to allow syntax errors in input libraries.
   final bool allowSyntaxErrors;
 
+  /// The name of the annotation to look for.
   final String annotationName;
 
+  /// Whether to enable cache
   bool get cacheEnabled;
 
+  /// Custom ignore for file rules passed from the options
   Set<String> get ignoreForFile => options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
 
   @override
   final Map<String, List<String>> buildExtensions;
+  /// The [BuilderOptions] for this builder
   final BuilderOptions? options;
 
+  /// Default constructor
   CacheAwareBuilder({
     String generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
@@ -85,15 +90,20 @@ abstract class CacheAwareBuilder<T> extends Builder {
     return _writeContent(buildStep, generated);
   }
 
+  /// Loads the cached content from the cache
   Future<T?> loadFromCache(BuildStep buildStep, int stepHash);
 
+  /// Calculates a hash for the current compilation unit
   int calculateUpdatableHash(CompilationUnit unit);
 
+  /// Generates the content for the current compilation unit
   Future<String> onGenerateContent(BuildStep buildStep, T item);
 
+  /// Resolves the current compilation unit
   Future<T?> onResolve(
       LibraryReader library, BuildStep buildStep, int stepHash);
 
+  /// Validates the generated content and prepares it for writing
   String validateAndFormatDartCode(BuildStep buildStep, String generated) {
     try {
       return _formatter.format(generated);
@@ -126,6 +136,8 @@ source formatter.''',
   String toString() =>
       'Generating $generatedExtension: ${this.runtimeType.toString()}';
 
+
+  /// Checks if the current compilation unit has any top level annotations
   Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep,
       [CompilationUnit? unit]) async {
     if (!await buildStep.canRead(input)) return false;
@@ -153,6 +165,8 @@ source formatter.''',
   }
 }
 
+
+/// Validates the build extensions
 Map<String, List<String>> validatedBuildExtensionsFrom(
   Map<String, dynamic>? optionsMap,
   Map<String, List<String>> defaultExtensions,

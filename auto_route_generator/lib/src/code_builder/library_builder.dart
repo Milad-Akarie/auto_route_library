@@ -9,19 +9,23 @@ import 'router_config_builder.dart';
 import 'route_info_builder.dart';
 import 'package:path/path.dart' as p;
 
+/// AutoRoute imports
 const autoRouteImport = 'package:auto_route/auto_route.dart';
+/// Material imports
 const materialImport = 'package:flutter/material.dart';
-const foundationImport = 'package:flutter/foundation.dart';
 
+/// String type reference
 const Reference stringRefer = Reference('String');
+/// PageRouteInfo type reference
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
-const Reference requiredAnnotation = Reference('required', materialImport);
 
+/// Builds a list type reference of type [reference]
 TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
   ..symbol = "List"
   ..isNullable = nullable
   ..types.add(reference));
 
+/// Generates the router library output
 String generateLibrary(
   RouterConfig router, {
   required List<RouteConfig> routes,

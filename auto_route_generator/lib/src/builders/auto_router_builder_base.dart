@@ -20,7 +20,10 @@ import '../resolvers/type_resolver.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(AutoRouterConfig);
 
+/// Base class for [AutoRouterBuilder] and [AutoRouterModuleBuilder]
 abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
+
+  /// Default constructor
   AutoRouterBuilderBase({
     required super.generatedExtension,
     required super.allowSyntaxErrors,

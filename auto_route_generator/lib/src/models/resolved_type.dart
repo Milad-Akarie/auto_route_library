@@ -1,11 +1,20 @@
 import 'package:code_builder/code_builder.dart' show TypeReference, RecordType, Reference;
 
+/// A class that represents a resolved type.
+///
+/// holds the type name, import, type arguments and nullability
 class ResolvedType {
+  /// the import path of the type
   String? import;
+  /// the type name
   String name;
+  /// whether the type is nullable
   bool isNullable;
+  /// the type arguments
   List<ResolvedType> typeArguments;
   final bool _isRecordType;
+
+  /// the name of the field in the record
   final String? nameInRecord;
 
   ResolvedType._({
@@ -17,6 +26,7 @@ class ResolvedType {
     this.nameInRecord,
   }) : _isRecordType = isRecordType;
 
+  /// Default constructor
   ResolvedType({
     required this.name,
     this.import,
@@ -25,6 +35,8 @@ class ResolvedType {
     this.nameInRecord,
   })  : _isRecordType = false;
 
+
+  /// Constructor for a record types
   ResolvedType.record({
     required this.name,
     this.import,
@@ -33,10 +45,14 @@ class ResolvedType {
     this.nameInRecord,
   }) : _isRecordType = true;
 
+  /// the unique identity of the type
   String get identity => "$import#$name";
 
+  /// whether the type is for a named record field
   bool get isNamedRecordField => nameInRecord != null;
 
+
+  /// Creates a [TypeReference] from the type
   Reference get refer {
     if (_isRecordType) {
       return RecordType(
@@ -70,20 +86,7 @@ class ResolvedType {
   @override
   int get hashCode => import.hashCode ^ name.hashCode;
 
-  ResolvedType copyWith({
-    String? import,
-    String? name,
-    List<ResolvedType>? typeArguments,
-    bool? isNullable,
-  }) {
-    return ResolvedType(
-      import: import ?? this.import,
-      name: name ?? this.name,
-      isNullable: isNullable ?? this.isNullable,
-      typeArguments: typeArguments ?? this.typeArguments,
-    );
-  }
-
+  /// serializes the type to json
   Map<String, dynamic> toJson() {
     return {
       'import': this.import,
@@ -95,6 +98,7 @@ class ResolvedType {
     };
   }
 
+  /// deserializes the type from json
   factory ResolvedType.fromJson(Map<String, dynamic> map) {
     final typedArgs = <ResolvedType>[];
     if (map['typeArguments'] != null) {

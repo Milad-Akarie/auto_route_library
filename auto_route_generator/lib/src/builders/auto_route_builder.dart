@@ -13,9 +13,11 @@ import 'package:source_gen/source_gen.dart';
 import 'package:auto_route/annotations.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(RoutePage);
+
+/// Default location of the routes cache file
 final routesCacheFile = File('.dart_tool/build/cache/auto_routes_cache.json');
 
-final cacheResource = Resource<Map<String, RoutesList>>(
+final _cacheResource = Resource<Map<String, RoutesList>>(
   () async {
     final cachedRes = <String, RoutesList>{};
     final jsonRes = jsonDecode(await routesCacheFile.readAsString());
@@ -28,7 +30,10 @@ final cacheResource = Resource<Map<String, RoutesList>>(
   },
 );
 
+/// A [Builder] which generates json route files for annotated pages
 class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
+
+  /// Default constructor
   AutoRouteBuilder({super.options})
       : super(
           generatedExtension: '.route.json',
@@ -43,7 +48,7 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   Future<RoutesList?> loadFromCache(BuildStep buildStep, int stepHash) async {
     Map<String, RoutesList> cachedRes = {};
     if (await routesCacheFile.exists()) {
-      cachedRes = await buildStep.fetchResource(cacheResource);
+      cachedRes = await buildStep.fetchResource(_cacheResource);
     }
     if (cachedRes.containsKey(buildStep.inputId.path)) {
       final cached = cachedRes[buildStep.inputId.path]!;

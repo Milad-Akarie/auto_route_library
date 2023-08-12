@@ -9,11 +9,14 @@ import 'package:source_gen/source_gen.dart';
 final _pathParamChecker = TypeChecker.fromRuntime(PathParam);
 final _queryParamChecker = TypeChecker.fromRuntime(QueryParam);
 
+/// Resolves route parameters
 class RouteParameterResolver {
   final TypeResolver _typeResolver;
 
+  /// Default constructor
   RouteParameterResolver(this._typeResolver);
 
+  /// Resolves a ParameterElement into a consumable [ParamConfig]
   ParamConfig resolve(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
     if (paramType is FunctionType) {
@@ -85,6 +88,7 @@ class RouteParameterResolver {
         isNamed: paramElement.isNamed);
   }
 
+  /// Extracts path parameters from a route path
   static List<PathParamConfig> extractPathParams(String path) {
     return RegExp(r':([^/]+)').allMatches(path).map((m) {
       var paramName = m.group(1);

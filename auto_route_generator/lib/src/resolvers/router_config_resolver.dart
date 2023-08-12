@@ -6,12 +6,13 @@ import '../models/router_config.dart';
 import '../resolvers/type_resolver.dart';
 
 /// Extracts and holds router configs
-
 class RouterConfigResolver {
   final TypeResolver _typeResolver;
 
+  /// Default constructor
   RouterConfigResolver(this._typeResolver);
 
+  /// Resolves a [ClassElement] into a consumable [RouterConfig]
   RouterConfig resolve(
     ConstantReader autoRouter,
     AssetId input,

@@ -4,12 +4,18 @@ import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedTyp
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:path/path.dart' as p;
 
+/// A Helper class that resolves types
 class TypeResolver {
+  /// The list of resolved libraries in [BuildStep]
   final List<LibraryElement> libs;
+
+  /// The target file to resolve relative paths to
   final Uri? targetFile;
 
+  /// Default constructor
   TypeResolver(this.libs, [this.targetFile]);
 
+  /// Resolved the import path of the given [element]
   String? resolveImport(Element? element) {
     // return early if source is null or element is a core type
     if (libs.isEmpty || element?.source == null || _isCoreDartType(element!)) {
@@ -106,20 +112,7 @@ class TypeResolver {
     return types;
   }
 
-  ResolvedType resolveFunctionType(ExecutableElement function) {
-    final displayName = function.displayName.replaceFirst(RegExp('^_'), '');
-    var functionName = displayName;
-    Element elementToImport = function;
-    if (function.enclosingElement is ClassElement) {
-      functionName = '${function.enclosingElement.displayName}.$displayName';
-      elementToImport = function.enclosingElement;
-    }
-    return ResolvedType(
-      name: functionName,
-      import: resolveImport(elementToImport),
-    );
-  }
-
+  /// Resolves the given [type] to a [ResolvedType]
   ResolvedType resolveType(DartType type) {
     if (type is RecordType) {
       return ResolvedType.record(
