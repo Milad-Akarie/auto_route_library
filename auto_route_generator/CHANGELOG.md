@@ -1,6 +1,7 @@
 ## 7.3.1
 
  - **DOCS**: Add public Api docs to auto_route_generator.
+ - **REFACTOR**: Update analyzer constrains to support up to version 7.0.0
 
 ## 7.3.0
 
