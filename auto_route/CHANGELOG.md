@@ -2,7 +2,6 @@
 
  - **FIX**: crash if pendingChildren are passed in as unmodifiable list.
  - **DOCS**: Fix typos and a broken links.
- - **DOCS**: Add public Api docs to auto_route_generator.
  - **REFACTOR**: remove usages of RouteInformation.location in favor of RouteInformation.uri
 
 ## 7.8.0
