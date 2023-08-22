@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2023-08-22
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.8.1`](#auto_route---v781)
+ - [`auto_route_generator` - `v7.3.2`](#auto_route_generator---v732)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v7.3.2`
+
+---
+
+#### `auto_route` - `v7.8.1`
+
+ - **FIX**: crash if pendingChildren are passed in as unmodifiable list.
+ - **DOCS**: Fix typos and a broken links.
+ - **DOCS**: Add public Api docs to auto_route_generator.
+
+
 ## 2023-08-12
 
 ### Changes

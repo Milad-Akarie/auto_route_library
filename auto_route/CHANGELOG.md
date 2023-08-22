@@ -1,3 +1,9 @@
+## 7.8.1
+
+ - **FIX**: crash if pendingChildren are passed in as unmodifiable list.
+ - **DOCS**: Fix typos and a broken links.
+ - **DOCS**: Add public Api docs to auto_route_generator.
+
 ## 7.8.0
 
  - **FEAT**: add PlatformDeepLink.initial flag to tell whether we're coming from setInitialRoutePath or setNewRoutePath.
