@@ -219,13 +219,13 @@ router.pushNamed('/books')
 // removes last entry in stack and pushes provided route                 
 // if last entry == provided route page will just be updated                
 router.replace(const BooksListRoute())                    
-// or by using using paths                  
+// or by using paths                  
 router.replaceNamed('/books')                  
                 
 // pops until provided route, if it already exists in stack                    
 // else adds it to the stack (good for web Apps).                    
 router.navigate(const BooksListRoute())                  
-// or by using using paths                  
+// or by using paths                  
 router.navigateNamed('/books')                
               
 // on Web it calls window.history.back();            
@@ -241,7 +241,7 @@ router.pushAll([
                 
 // This's like providing a completely new stack as it rebuilds the stack                
 // with the list of passed routes                
-// entires might just update if already exist                
+// entries might just update if already exist                
 router.replaceAll([                
    LoginRoute()                
 ]);                
@@ -251,7 +251,7 @@ context.router.pop();
 context.router.popUntil((route) => route.settings.name == 'HomeRoute');                
 // a simplifed version of the above line                
 context.router.popUntilRouteWithName('HomeRoute');       
-// keeps poping routes until route with provided path is found              
+// keeps popping routes until route with provided path is found              
 context.router.popUntilRouteWithPath('/some-path');            
 // pops all routes down to the root                
 context.router.popUntilRoot();                
@@ -261,8 +261,8 @@ context.router.popUntilRoot();
 // removes the entry.                
 context.router.removeLast();                 
                 
-// removes any route in stack that satisfis the predicate                
-// this works exactly like removing items from a regualar List                
+// removes any route in stack that satisfies the predicate                
+// this works exactly like removing items from a regular List                
 // <PageRouteInfo>[...].removeWhere((r)=>)                
 context.router.removeWhere((route) => );                
                     
@@ -294,7 +294,7 @@ class BookDetailsPage extends StatelessWidget {
 
 **Note:** Default values are respected. Required fields are also respected and handled properly.
 
-The generated `BookDetailsRoute` will deliver the same arguments to it's corresponding page.
+The generated `BookDetailsRoute` will deliver the same arguments to its corresponding page.
 
 ```drt                    
 router.push(BookDetailsRoute(book: book));                    
@@ -355,7 +355,7 @@ class BookDetailsPage extends StatelessWidget {
   ...                    
  ```                    
 
-The generated `BookDetailsRoute` will deliver the same arguments to it's corresponding page.
+The generated `BookDetailsRoute` will deliver the same arguments to its corresponding page.
 
 ```dart                    
 context.pushRoute(                    
@@ -470,7 +470,7 @@ or by using a `RedirectRoute`
 
 ### Things to keep in mind when implementing nested navigation
 
-1- Each router manages it's own pages stack.                
+1- Each router manages its own pages stack.                
 2- Navigation actions like push, pop and friends are handled by the topmost router and bubble up if
 it couldn't be handled.
 
