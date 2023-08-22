@@ -62,7 +62,7 @@
 
 ## Pre v6 documentation
 
-- [Pre v6 documentation](old/pre_v6_README.md)
+- [Pre v6 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v6_README.md)
 
 ## Introduction
 
