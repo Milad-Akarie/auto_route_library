@@ -22,7 +22,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) {
-    final uri = Uri.parse(routeInformation.location ?? '');
+    final uri = routeInformation.uri;
     var matches =
         _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(
@@ -33,7 +33,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   @override
   RouteInformation restoreRouteInformation(UrlState configuration) {
     return AutoRouteInformation(
-      location: configuration.url.isEmpty ? '/' : configuration.url,
+      uri: configuration.url.isEmpty ? Uri(path: '/') : configuration.uri,
       replace: configuration.shouldReplace,
       state: configuration.pathState,
     );
@@ -49,17 +49,17 @@ class AutoRouteInformation extends RouteInformation {
 
   /// Default constructor
   const AutoRouteInformation({
-    required String location,
+    required Uri uri,
     Object? state,
     this.replace = true,
-  }) : super(location: location, state: state);
+  }) : super(uri: uri, state: state);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is AutoRouteInformation &&
           runtimeType == other.runtimeType &&
-          location == other.location &&
+          uri == other.uri &&
           state == other.state;
 
   @override

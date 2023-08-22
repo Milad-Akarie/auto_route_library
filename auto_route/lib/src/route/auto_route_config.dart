@@ -88,11 +88,12 @@ class AutoRoute {
     this.title,
     this.keepHistory = true,
     this.restorationId,
-    this.allowSnapshotting =  true,
+    this.allowSnapshotting = true,
     this.initial = false,
     List<AutoRoute>? children,
   })  : _path = path,
-        _children = children != null ? RouteCollection.fromList(children) : null;
+        _children =
+            children != null ? RouteCollection.fromList(children) : null;
 
   const AutoRoute._changePath({
     required this.name,
@@ -413,7 +414,8 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(List<AutoRoute> routes, {bool root = false}) {
+  factory RouteCollection.fromList(List<AutoRoute> routes,
+      {bool root = false}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(routesMarkedInitial.length > 1,
         'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');

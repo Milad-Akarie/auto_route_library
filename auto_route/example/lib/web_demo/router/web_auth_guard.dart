@@ -10,7 +10,8 @@ class AuthGuard extends AutoRouteGuard {
   AuthGuard(this.authService);
 
   @override
-  Future<void> onNavigation(NavigationResolver resolver, StackRouter router) async {
+  Future<void> onNavigation(
+      NavigationResolver resolver, StackRouter router) async {
     if (authService.isAuthenticated) {
       resolver.resolveNext(true, reevaluateNext: true);
     } else {

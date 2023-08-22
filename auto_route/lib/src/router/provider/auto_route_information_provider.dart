@@ -30,7 +30,10 @@ class AutoRouteInformationProvider extends RouteInformationProvider
       {RouteInformation? initialRouteInformation,
       bool Function(String? location)? neglectWhen}) {
     final initialRouteInfo = initialRouteInformation ??
-        RouteInformation(location: WidgetsBinding.instance.platformDispatcher.defaultRouteName);
+        RouteInformation(
+          uri: Uri.parse(
+              WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+        );
 
     return AutoRouteInformationProvider._(
       initialRouteInformation: initialRouteInfo,
@@ -42,13 +45,13 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   void routerReportsNewRouteInformation(RouteInformation routeInformation,
       {RouteInformationReportingType type =
           RouteInformationReportingType.none}) {
-    if (neglectIf != null && neglectIf!(routeInformation.location)) {
+    if (neglectIf != null && neglectIf!(routeInformation.uri.toString())) {
       return;
     }
 
     var replace = type == RouteInformationReportingType.neglect ||
         (type == RouteInformationReportingType.none &&
-            _valueInEngine.location == routeInformation.location &&
+            _valueInEngine.uri == routeInformation.uri &&
             _valueInEngine.state == routeInformation.state);
 
     if (!replace && routeInformation is AutoRouteInformation) {
@@ -56,7 +59,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
     }
     SystemNavigator.selectMultiEntryHistory();
     SystemNavigator.routeInformationUpdated(
-      location: routeInformation.location!,
+      uri: routeInformation.uri,
       state: routeInformation.state,
       replace: replace,
     );
@@ -68,8 +71,9 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   RouteInformation get value => _value;
   RouteInformation _value;
 
-  RouteInformation _valueInEngine =
-      RouteInformation(location: WidgetsBinding.instance.platformDispatcher.defaultRouteName);
+  RouteInformation _valueInEngine = RouteInformation(
+      uri: Uri.parse(
+          WidgetsBinding.instance.platformDispatcher.defaultRouteName));
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
     if (_value == routeInformation) return;
@@ -105,13 +109,6 @@ class AutoRouteInformationProvider extends RouteInformationProvider
       RouteInformation routeInformation) async {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
-    return true;
-  }
-
-  @override
-  Future<bool> didPushRoute(String route) async {
-    assert(hasListeners);
-    _platformReportsNewRouteInformation(RouteInformation(location: route));
     return true;
   }
 }

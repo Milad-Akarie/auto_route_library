@@ -12,7 +12,8 @@ class BookListScreen extends StatefulWidget {
   State<BookListScreen> createState() => _BookListScreenState();
 }
 
-class _BookListScreenState extends State<BookListScreen> with AutoRouteAwareStateMixin<BookListScreen> {
+class _BookListScreenState extends State<BookListScreen>
+    with AutoRouteAwareStateMixin<BookListScreen> {
   @override
   void didPushNext() {
     print('didPushNext');
@@ -20,11 +21,6 @@ class _BookListScreenState extends State<BookListScreen> with AutoRouteAwareStat
 
   @override
   Widget build(BuildContext context) {
-
-
-
-
-
     var booksDb = BooksDBProvider.of(context);
     return Scaffold(
       body: ListView(children: [

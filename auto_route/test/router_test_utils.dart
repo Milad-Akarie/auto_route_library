@@ -6,14 +6,16 @@ Future<void> pumpRouterApp(
   WidgetTester tester,
   RootStackRouter router, {
   String? initialLink,
-  NavigatorObserversBuilder observers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  NavigatorObserversBuilder observers =
+      AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {
   return tester
       .pumpWidget(
         MaterialApp.router(
           routeInformationParser: router.defaultRouteParser(),
           routerDelegate: router.delegate(
-            deepLinkBuilder: (link) => initialLink == null ? link : DeepLink.path(initialLink),
+            deepLinkBuilder: (link) =>
+                initialLink == null ? link : DeepLink.path(initialLink),
             navigatorObservers: observers,
           ),
         ),
@@ -24,9 +26,12 @@ Future<void> pumpRouterApp(
 Future<void> pumpRouterConfigApp(
   WidgetTester tester,
   RouterConfig<UrlState> config, {
-  NavigatorObserversBuilder observers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  NavigatorObserversBuilder observers =
+      AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {
-  return tester.pumpWidget(MaterialApp.router(routerConfig: config)).then((_) => tester.pumpAndSettle());
+  return tester
+      .pumpWidget(MaterialApp.router(routerConfig: config))
+      .then((_) => tester.pumpAndSettle());
 }
 
 void expectCurrentPage(StackRouter router, String name) {

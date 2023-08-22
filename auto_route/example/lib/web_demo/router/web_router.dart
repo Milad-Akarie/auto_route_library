@@ -13,7 +13,8 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
-    if (authService.isAuthenticated || resolver.routeName == WebLoginRoute.name) {
+    if (authService.isAuthenticated ||
+        resolver.routeName == WebLoginRoute.name) {
       resolver.next();
     } else {
       resolver.redirect(
@@ -25,8 +26,7 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
   }
 
   @override
-  List<AutoRoute> get routes =>
-      [
+  List<AutoRoute> get routes => [
         AutoRoute(page: MainWebRoute.page, initial: true),
         AutoRoute(path: '/login', page: WebLoginRoute.page),
         AutoRoute(path: '/verify', page: WebVerifyRoute.page),
@@ -44,13 +44,15 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
                     if (authService.isVerified) {
                       resolver.next();
                     } else {
-                      resolver.redirect(WebVerifyRoute(onResult: resolver.next));
+                      resolver
+                          .redirect(WebVerifyRoute(onResult: resolver.next));
                     }
                   },
                 )
               ],
               children: [
-                AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
+                AutoRoute(
+                    path: 'all', page: UserAllPostsRoute.page, initial: true),
                 AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
               ],
             ),
@@ -116,7 +118,8 @@ class _MainWebPageState extends State<MainWebPage> {
             if (kIsWeb)
               ElevatedButton(
                 onPressed: () {
-                  final currentState = ((context.router.pathState as int?) ?? 0);
+                  final currentState =
+                      ((context.router.pathState as int?) ?? 0);
                   context.router.pushPathState(currentState + 1);
                 },
                 child: AnimatedBuilder(
@@ -253,7 +256,6 @@ class _UserPostsPageState extends State<UserPostsPage> {
                   );
                 },
                 child: Text('Show Dialog')),
-
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
@@ -289,7 +291,6 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -298,7 +299,8 @@ class _UserPageState extends State<UserPage> {
         leading: AutoLeadingButton(),
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}');
+            return Text(context.topRouteMatch.name +
+                ' ${widget.id} query: ${widget.query}');
           },
         ),
       ),
