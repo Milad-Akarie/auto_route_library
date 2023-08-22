@@ -38,10 +38,11 @@ class RouteData {
     required this.router,
     RouteData? parent,
     required this.stackKey,
-    required this.pendingChildren,
+    required pendingChildren,
     required this.type,
   })  : _match = route,
-        _parent = parent;
+        _parent = parent,
+        pendingChildren = [...pendingChildren];
 
   /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
   /// where it can be used by [CupertinoNavigationBar]
