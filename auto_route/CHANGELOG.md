@@ -1,3 +1,7 @@
+## 7.8.2
+
+ - **DOCS**: Fix typos and a broken links.
+
 ## 7.8.1
 
  - **FIX**: crash if pendingChildren are passed in as unmodifiable list.
