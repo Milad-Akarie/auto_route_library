@@ -1,6 +1,6 @@
 ## 7.8.2
 
- - **DOCS**: Fix typos and a broken links.
+- **HOTFIX**: update sdk constrains to flutter: >=3.13.0 and dart: >=3.0.0 <4.0.0
 
 ## 7.8.1
 
