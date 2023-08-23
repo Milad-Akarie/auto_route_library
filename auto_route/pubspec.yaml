@@ -1,11 +1,11 @@
 name: auto_route
 description: AutoRoute is a declarative routing solution, where everything needed for navigation is automatically generated for you.
-version: 7.8.1
+version: 7.8.2
 homepage: https://github.com/Milad-Akarie/auto_route_library
 
 environment:
-  sdk: ">=2.17.0 <3.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.13.0"
 
 dependencies:
   flutter:
