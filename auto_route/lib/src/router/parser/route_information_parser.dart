@@ -7,6 +7,9 @@ import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
 
+final _hostRegex = RegExp(
+    r'^(?:[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?\.)+[a-z\d][a-z\d-]{0,61}[a-z\d]$');
+
 /// AutoRoute extension of [RouteInformationParser]
 class DefaultRouteParser extends RouteInformationParser<UrlState> {
   final RouteMatcher _matcher;
@@ -22,11 +25,29 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) {
-    final uri = routeInformation.uri;
-    var matches =
-        _matcher.matchUri(uri, includePrefixMatches: includePrefixMatches);
+    final resolvedUri = _normalize(routeInformation.uri);
+    var matches = _matcher.matchUri(resolvedUri,
+        includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(
-      UrlState(uri, matches ?? const [], pathState: routeInformation.state),
+      UrlState(routeInformation.uri, matches ?? const [],
+          pathState: routeInformation.state),
+    );
+  }
+
+  /// deep-links with customs schemes that have no actual host
+  /// like `myapp://books/1` will not consider the host as part of the path
+  /// that's why we need to normalize the path by adding the host as a prefix
+  Uri _normalize(Uri uri) {
+    var path = uri.path.isEmpty ? '/' : uri.path;
+
+    /// whether to treat the host as part of the path
+    if (!_hostRegex.hasMatch(uri.host)) {
+      path = p.normalize('/${uri.host}${uri.path}');
+    }
+    return Uri(
+      path: path,
+      queryParameters: uri.queryParameters.isEmpty ? null : uri.queryParameters,
+      fragment: uri.fragment.isEmpty ? null : uri.fragment,
     );
   }
 

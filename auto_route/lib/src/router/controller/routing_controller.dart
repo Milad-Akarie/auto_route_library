@@ -895,6 +895,7 @@ abstract class StackRouter extends RoutingController {
   final Map<AutoRedirectGuardBase, VoidCallback> _redirectGuardsListeners = {};
 
   /// The pending routes handler for this controller
+  @internal
   late final pendingRoutesHandler = PendingRoutesHandler();
 
   void _attachRedirectGuard(AutoRedirectGuardBase guard) {

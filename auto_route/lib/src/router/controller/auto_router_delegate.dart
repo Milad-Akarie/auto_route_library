@@ -155,6 +155,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     } else if (initialDeepLink != null) {
       // ignore: deprecated_member_use_from_same_package
       return _handleDeepLink(
+          // ignore: deprecated_member_use_from_same_package
           DeepLink.path(initialDeepLink!, includePrefixMatches: true));
     } else if (configuration.hasSegments) {
       return _handleDeepLink(platformDeepLink);
