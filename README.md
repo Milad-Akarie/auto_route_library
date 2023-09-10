@@ -382,7 +382,7 @@ Nested navigation means building an inner router inside of a page of another rou
 the below diagram users page is built inside of dashboard page.
 
 <p align="center">                    
-<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/dev/art/nested_router_demo.png" height="370">                    
+<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/nested_router_demo.png?raw=true" height="370">
 </p>                 
 
 defining nested routes is as easy as populating the children field of the parent route. In the
