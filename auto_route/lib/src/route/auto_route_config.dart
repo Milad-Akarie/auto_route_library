@@ -428,11 +428,11 @@ class RouteCollection {
       if (r._path != null) {
         throwIf(
           !root && r.path.startsWith('/'),
-          'Sub-paths can not start with a "/"',
+          'Sub-paths can not start with a "/": ${r.path}',
         );
         throwIf(
           root && !r.path.startsWith(RegExp('[/]|[*]')),
-          'Root-paths must start with a "/" or be a wild-card',
+          'Root-paths must start with a "/" or be a wild-card:  ${r.path}',
         );
         routeToUse = r;
       } else {
