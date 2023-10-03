@@ -92,8 +92,9 @@ class AutoRoute {
     this.initial = false,
     List<AutoRoute>? children,
   })  : _path = path,
-        _children =
-            children != null ? RouteCollection.fromList(children) : null;
+        _children = children != null && children.isNotEmpty
+            ? RouteCollection.fromList(children)
+            : null;
 
   const AutoRoute._change({
     required this.name,
@@ -242,7 +243,7 @@ class AutoRoute {
       maintainState: maintainState ?? this.maintainState,
       fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
       children: children != null
-          ? RouteCollection.fromList(children)
+          ? (children.isEmpty ? null : RouteCollection.fromList(children))
           : this.children, //copy
       title: title ?? this.title,
       restorationId: restorationId ?? this.restorationId,
