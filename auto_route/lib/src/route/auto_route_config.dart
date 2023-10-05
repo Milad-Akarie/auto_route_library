@@ -91,7 +91,8 @@ class AutoRoute {
     this.allowSnapshotting = true,
     this.initial = false,
     List<AutoRoute>? children,
-  })  : _path = path,
+  })
+      : _path = path,
         _children = children != null && children.isNotEmpty
             ? RouteCollection.fromList(children)
             : null;
@@ -112,7 +113,8 @@ class AutoRoute {
     required RouteCollection? children,
     required this.initial,
     required this.allowSnapshotting,
-  })  : _path = path,
+  })
+      : _path = path,
         _children = children;
 
   /// Builds a default AutoRoute instance with any [type]
@@ -237,14 +239,16 @@ class AutoRoute {
       name: name ?? this.name,
       path: path ?? this.path,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
-      guards: guards ?? List.from(this.guards), //copy
+      guards: guards ?? List.from(this.guards),
+      //copy
       fullMatch: fullMatch ?? this.fullMatch,
       meta: meta ?? this.meta,
       maintainState: maintainState ?? this.maintainState,
       fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
       children: children != null
           ? (children.isEmpty ? null : RouteCollection.fromList(children))
-          : this.children, //copy
+          : this.children,
+      //copy
       title: title ?? this.title,
       restorationId: restorationId ?? this.restorationId,
       keepHistory: keepHistory ?? this.keepHistory,
@@ -269,9 +273,9 @@ class RedirectRoute extends AutoRoute {
     required super.path,
     required this.redirectTo,
   }) : super._(
-          name: 'Redirect#$path',
-          fullMatch: true,
-        );
+    name: 'Redirect#$path',
+    fullMatch: true,
+  );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.material] type
@@ -294,9 +298,9 @@ class MaterialRoute extends AutoRoute {
     super.initial,
     super.allowSnapshotting = true,
   }) : super._(
-          name: page.name,
-          type: const RouteType.material(),
-        );
+    name: page.name,
+    type: const RouteType.material(),
+  );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.cupertino] type
@@ -342,9 +346,9 @@ class AdaptiveRoute extends AutoRoute {
     super.keepHistory,
     super.allowSnapshotting = true,
   }) : super._(
-          name: page.name,
-          type: RouteType.adaptive(opaque: opaque),
-        );
+    name: page.name,
+    type: RouteType.adaptive(opaque: opaque),
+  );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
@@ -375,26 +379,25 @@ class CustomRoute extends AutoRoute {
     super.restorationId,
     Color? barrierColor,
   }) : super._(
-          name: page.name,
-          type: RouteType.custom(
-            transitionsBuilder: transitionsBuilder,
-            customRouteBuilder: customRouteBuilder,
-            durationInMilliseconds: durationInMilliseconds,
-            reverseDurationInMilliseconds: reverseDurationInMilliseconds,
-            opaque: opaque,
-            barrierDismissible: barrierDismissible,
-            barrierLabel: barrierLabel,
-            barrierColor: barrierColor,
-          ),
-        );
+    name: page.name,
+    type: RouteType.custom(
+      transitionsBuilder: transitionsBuilder,
+      customRouteBuilder: customRouteBuilder,
+      durationInMilliseconds: durationInMilliseconds,
+      reverseDurationInMilliseconds: reverseDurationInMilliseconds,
+      opaque: opaque,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      barrierColor: barrierColor,
+    ),
+  );
 }
 
 /// Builds a simplified [AutoRoute] instance for test
 @visibleForTesting
 class TestRoute extends AutoRoute {
   /// Default constructor
-  TestRoute(
-    String name, {
+  TestRoute(String name, {
     String? path,
     super.children,
     super.fullMatch,
@@ -408,8 +411,7 @@ class TestRoute extends AutoRoute {
 @internal
 class DummyRootRoute extends AutoRoute {
   /// Default constructor
-  DummyRootRoute(
-    String name, {
+  DummyRootRoute(String name, {
     required String path,
     super.children,
     super.fullMatch,
@@ -442,7 +444,8 @@ class RouteCollection {
       {bool root = false}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(routesMarkedInitial.length > 1,
-        'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');
+        'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) =>
+        e.name)}');
 
     final targetInitialPath = root ? '/' : '';
     var routesMap = <String, AutoRoute>{};
@@ -535,9 +538,9 @@ class RouteCollection {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is RouteCollection &&
-          runtimeType == other.runtimeType &&
-          const MapEquality().equals(_routesMap, other._routesMap);
+          other is RouteCollection &&
+              runtimeType == other.runtimeType &&
+              const MapEquality().equals(_routesMap, other._routesMap);
 
   @override
   int get hashCode => const MapEquality().hash(_routesMap);
