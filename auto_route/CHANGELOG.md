@@ -1,7 +1,12 @@
 ## 7.8.4
 
- - **FIX**: ensure dynamic tab updates are handled in AutoTabsRouter.tabBar.
- - **FIX**: issue related to parsing deep-links after flutter 3.13.0.
+- **FIX**: Build Runner Efficiency Warning #1737
+- **FIX**: ensure dynamic tab updates are handled in AutoTabsRouter.tabBar.
+- **FEAT**: AutoRoute.copyWith
+
+## 7.8.3
+
+- **FIX**:
 
 ## 7.8.2
 
@@ -9,9 +14,9 @@
 
 ## 7.8.1
 
- - **FIX**: crash if pendingChildren are passed in as unmodifiable list.
- - **DOCS**: Fix typos and a broken links.
- - **REFACTOR**: remove usages of RouteInformation.location in favor of RouteInformation.uri
+- **FIX**: crash if pendingChildren are passed in as unmodifiable list.
+- **DOCS**: Fix typos and a broken links.
+- **REFACTOR**: remove usages of RouteInformation.location in favor of RouteInformation.uri
 
 ## 7.8.0
 
