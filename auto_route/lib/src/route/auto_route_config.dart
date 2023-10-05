@@ -92,10 +92,11 @@ class AutoRoute {
     this.initial = false,
     List<AutoRoute>? children,
   })  : _path = path,
-        _children =
-            children != null ? RouteCollection.fromList(children) : null;
+        _children = children != null && children.isNotEmpty
+            ? RouteCollection.fromList(children)
+            : null;
 
-  const AutoRoute._changePath({
+  const AutoRoute._change({
     required this.name,
     required String path,
     required this.usesPathAsKey,
@@ -209,23 +210,46 @@ class AutoRoute {
   /// A simplified copyWith
   ///
   /// Returns a new AutoRoute instance with the provided path
-  AutoRoute changePath(String path) {
-    return AutoRoute._changePath(
-      name: name,
-      path: path,
-      fullMatch: fullMatch,
-      guards: guards,
-      usesPathAsKey: usesPathAsKey,
-      meta: meta,
-      type: type,
-      fullscreenDialog: fullscreenDialog,
-      maintainState: maintainState,
-      title: title,
-      keepHistory: keepHistory,
-      children: children,
-      restorationId: restorationId,
-      initial: initial,
-      allowSnapshotting: allowSnapshotting,
+  AutoRoute changePath(String path) => copyWith(path: path);
+
+  /// A simplified copyWith
+  ///
+  /// Returns a new AutoRoute instance with the provided details overriding.
+  AutoRoute copyWith({
+    RouteType? type,
+    String? name,
+    String? path,
+    bool? usesPathAsKey,
+    List<AutoRouteGuard>? guards,
+    bool? fullMatch,
+    Map<String, dynamic>? meta,
+    bool? maintainState,
+    bool? fullscreenDialog,
+    List<AutoRoute>? children,
+    TitleBuilder? title,
+    RestorationIdBuilder? restorationId,
+    bool? keepHistory,
+    bool? initial,
+    bool? allowSnapshotting,
+  }) {
+    return AutoRoute._change(
+      type: type ?? this.type,
+      name: name ?? this.name,
+      path: path ?? this.path,
+      usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
+      guards: guards ?? List.from(this.guards), //copy
+      fullMatch: fullMatch ?? this.fullMatch,
+      meta: meta ?? this.meta,
+      maintainState: maintainState ?? this.maintainState,
+      fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
+      children: children != null
+          ? (children.isEmpty ? null : RouteCollection.fromList(children))
+          : this.children, //copy
+      title: title ?? this.title,
+      restorationId: restorationId ?? this.restorationId,
+      keepHistory: keepHistory ?? this.keepHistory,
+      initial: initial ?? this.initial,
+      allowSnapshotting: allowSnapshotting ?? this.allowSnapshotting,
     );
   }
 }
