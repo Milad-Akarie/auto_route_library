@@ -84,6 +84,11 @@ class AutoTabViewState extends State<AutoTabView> {
   void didUpdateWidget(AutoTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
+      oldWidget.controller.animation
+          ?.removeListener(_handleTabControllerAnimationTick);
+      _controller.animation?.addListener(_handleTabControllerAnimationTick);
+      _updateChildren();
+
       _currentIndex = _controller.index;
       _pageController.jumpToPage(_currentIndex!);
     }
