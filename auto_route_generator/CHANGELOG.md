@@ -1,3 +1,7 @@
+## 7.3.2
+
+ - **DOCS**: Add public Api docs to auto_route_generator.
+
 ## 7.3.1
 
  - **DOCS**: Add public Api docs to auto_route_generator.

@@ -1,3 +1,8 @@
+## 7.8.4
+
+ - **FIX**: ensure dynamic tab updates are handled in AutoTabsRouter.tabBar.
+ - **FIX**: issue related to parsing deep-links after flutter 3.13.0.
+
 ## 7.8.2
 
 - **HOTFIX**: update sdk constrains to flutter: >=3.13.0 and dart: >=3.0.0 <4.0.0
