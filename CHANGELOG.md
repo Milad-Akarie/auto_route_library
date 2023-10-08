@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 2023-08-26
+## 2023-10-05
 
 ### Changes
 
@@ -15,20 +15,19 @@ Packages with breaking changes:
 
 Packages with other changes:
 
- - [`auto_route` - `v7.8.3`](#auto_route---v783)
+ - [`auto_route` - `v7.8.4`](#auto_route---v784)
  - [`auto_route_generator` - `v7.3.2`](#auto_route_generator---v732)
-
-Packages with dependency updates only:
-
-> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
-
- - `auto_route_generator` - `v7.3.2`
 
 ---
 
-#### `auto_route` - `v7.8.3`
+#### `auto_route` - `v7.8.4`
 
+ - **FIX**: ensure dynamic tab updates are handled in AutoTabsRouter.tabBar.
  - **FIX**: issue related to parsing deep-links after flutter 3.13.0.
+
+#### `auto_route_generator` - `v7.3.2`
+
+ - **DOCS**: Add public Api docs to auto_route_generator.
 
 
 ## 2023-08-23
