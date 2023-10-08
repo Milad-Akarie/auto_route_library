@@ -25,7 +25,7 @@ class MigrateToV6Action : IntentionAction {
     }
 
     override fun getText(): String {
-        return "Migrate To AutoRoute V6";
+        return "Migrate to AutoRoute V6";
     }
 
     override fun getFamilyName(): String {

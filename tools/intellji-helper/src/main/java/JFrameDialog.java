@@ -1,13 +1,3 @@
-import org.apache.commons.lang.WordUtils;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-
-import javax.swing.*;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
-
 import come.autoroute.helper.autoroutehelper.listeners.DialogDismissListener;
 import come.autoroute.helper.autoroutehelper.models.FlatRouteItem;
 import come.autoroute.helper.autoroutehelper.models.RoutePageInfo;
@@ -15,6 +5,16 @@ import come.autoroute.helper.autoroutehelper.models.RouterConfig;
 import come.autoroute.helper.autoroutehelper.models.RoutesList;
 import come.autoroute.helper.autoroutehelper.services.SettingsService;
 import come.autoroute.helper.autoroutehelper.utils.Utils;
+import org.apache.commons.lang.WordUtils;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 
 public class JFrameDialog extends JDialog {
@@ -91,6 +91,7 @@ public class JFrameDialog extends JDialog {
 
     public static JFrameDialog show(RouterConfig router, RoutesList routes, RoutePageInfo pageInfo, @Nullable JComponent component, SettingsService settingsService, DialogDismissListener listener) {
         JFrameDialog dialog = new JFrameDialog(router, routes, pageInfo, settingsService, listener);
+
         dialog.pack();
         if (component != null) {
             dialog.setLocationRelativeTo(component);

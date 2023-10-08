@@ -29,6 +29,7 @@ class AddToRouterAction : IntentionAction {
         return false
     }
 
+
     override fun getText(): String {
         return "Add to ${routerConfig?.routerClassName ?: "Router"}"
     }

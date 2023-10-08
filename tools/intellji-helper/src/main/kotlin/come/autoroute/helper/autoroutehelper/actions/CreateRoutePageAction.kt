@@ -1,6 +1,7 @@
 package come.autoroute.helper.autoroutehelper.actions
 
 import JFrameDialog
+import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
@@ -21,6 +22,10 @@ import javax.swing.JWindow
 
 class CreateRoutePageAction : AnAction() {
 
+    override fun getActionUpdateThread(): ActionUpdateThread {
+        return ActionUpdateThread.EDT
+    }
+
     override fun update(e: AnActionEvent) {
         if (e.project == null) {
             e.presentation.isEnabledAndVisible = false
@@ -33,51 +38,51 @@ class CreateRoutePageAction : AnAction() {
         val navElement = e.getData(CommonDataKeys.NAVIGATABLE) ?: return
         val routerConfig = project.service<RouterConfigService>().getConfig() ?: return
         val routesList = PsiUtils.getRoutesList(project, routerConfig) ?: return
-        val source = e.inputEvent.source
+        val source = e.inputEvent?.source
         val component = if (source is JWindow) source.rootPane else null
         JFrameDialog.show(
-            routerConfig,
-            routesList,
-            null,
-            component,
-            project.service<SettingsService>(),
-            object : DialogDismissListener {
-                override fun onDone(dialog: JFrameDialog) {
-                    dialog.addToRouter(project)
-                    createFile(project, dialog.fileNameField.text, navElement, this) { file ->
-                        FileDocumentManager.getInstance().getDocument(file)?.apply {
-                            WriteCommandAction.runWriteCommandAction(project) {
-                                val className =
-                                    dialog.resolveClassName() ?: return@runWriteCommandAction
-                                insertString(
-                                    0,
-                                    createPageContent(
-                                        className,
-                                        dialog.getAnnotationText(className)
+                routerConfig,
+                routesList,
+                null,
+                component,
+                project.service<SettingsService>(),
+                object : DialogDismissListener {
+                    override fun onDone(dialog: JFrameDialog) {
+                        dialog.addToRouter(project)
+                        createFile(project, dialog.fileNameField.text, navElement, this) { file ->
+                            FileDocumentManager.getInstance().getDocument(file)?.apply {
+                                WriteCommandAction.runWriteCommandAction(project) {
+                                    val className =
+                                            dialog.resolveClassName() ?: return@runWriteCommandAction
+                                    insertString(
+                                            0,
+                                            createPageContent(
+                                                    className,
+                                                    dialog.getAnnotationText(className)
+                                            )
                                     )
-                                )
+                                }
+                            }
+                            if (project.service<SettingsService>().runBuildRunnerOnSave) {
+                                Utils.runBuildRunner(project)
                             }
                         }
-                        if (project.service<SettingsService>().runBuildRunnerOnSave) {
-                            Utils.runBuildRunner(project)
-                        }
                     }
-                }
-            })
+                })
 
 
     }
 }
 
 private fun createFile(
-    project: Project,
-    path: String,
-    navElement: Navigatable,
-    requester: Any,
-    onCreated: (file: VirtualFile) -> Unit
+        project: Project,
+        path: String,
+        navElement: Navigatable,
+        requester: Any,
+        onCreated: (file: VirtualFile) -> Unit
 ) {
     val dir =
-        if (navElement is PsiDirectory) navElement else if (navElement is PsiFile) navElement.containingDirectory else return
+            if (navElement is PsiDirectory) navElement else if (navElement is PsiFile) navElement.containingDirectory else return
     val segments = path.split('/').filterNot { it.isBlank() }
     var virtualDir = dir.virtualFile
     WriteCommandAction.runWriteCommandAction(project) {

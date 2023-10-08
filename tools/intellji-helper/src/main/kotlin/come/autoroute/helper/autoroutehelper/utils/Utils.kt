@@ -24,7 +24,7 @@ class Utils {
             val routerConfig  = project.service<RouterConfigService>().getConfig() ?: return
             val path = routerConfig.path.split("/").dropLast(1).joinToString("/")
             val shellTerminalWidget = TerminalView.getInstance(project).createLocalShellWidget(path, "build_runner")
-            shellTerminalWidget.executeCommand("flutter pub run build_runner build --delete-conflicting-outputs && exit")
+            shellTerminalWidget.executeCommand("dart run build_runner build --delete-conflicting-outputs && exit")
         }
     }
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "come.autoroute.helper"
-version = "0.1.5"
+version = "0.1.6"
 
 repositories {
     mavenCentral()
@@ -14,19 +14,19 @@ repositories {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2023.2")
+    version.set("2022.3.3")
     type.set("IC") // Target IDE Platform
-    plugins.set(listOf("terminal","Dart:223.4560")) // Check version here https://plugins.jetbrains.com/plugin/6351-dart/versions/stable
+    plugins.set(listOf("terminal","Dart:223.8950")) // Check version here https://plugins.jetbrains.com/plugin/6351-dart/versions/stable
 }
 
 tasks {
     // Set the JVM compatibility versions
     withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
     }
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
     }
 
     patchPluginXml {
@@ -44,9 +44,9 @@ tasks {
         token.set(System.getenv("PUBLISH_TOKEN"))
     }
 
-//    runIde {
-//        // Absolute path to installed target 3.5 Android Studio to use as
-//        // IDE Development Instance (the "Contents" directory is macOS specific):
-//        ideDir.set(file("/Applications/Android Studio.app/Contents"))
-//    }
+    runIde {
+        // Absolute path to installed target 3.5 Android Studio to use as
+        // IDE Development Instance (the "Contents" directory is macOS specific):
+        ideDir.set(file("/Applications/Android Studio.app/Contents"))
+    }
 }
