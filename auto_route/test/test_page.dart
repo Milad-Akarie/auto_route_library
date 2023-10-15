@@ -151,18 +151,21 @@ class TabsHostPage extends StatelessWidget {
     if (tabsType == 'IndexedStack') {
       return const AutoTabsRouter(
         routes: routes,
+        homeIndex: 0,
       );
     }
 
     if (tabsType == 'PageView') {
       return const AutoTabsRouter.pageView(
         routes: routes,
+        homeIndex: 0,
       );
     }
 
     if (tabsType == 'TabBar') {
       return const AutoTabsRouter.tabBar(
         routes: routes,
+        homeIndex: 0,
       );
     }
 
