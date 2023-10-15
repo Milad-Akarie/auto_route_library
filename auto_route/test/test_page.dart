@@ -134,38 +134,59 @@ class Tab3Nested2Page extends TestPage {
 }
 
 @RoutePage()
-class TabsHostPage extends StatelessWidget {
+class TabsHostPage extends StatefulWidget {
   final String tabsType;
 
   const TabsHostPage({Key? key, @queryParam this.tabsType = 'IndexedStack'})
       : super(key: key);
 
   @override
+  State<TabsHostPage> createState() => TabsHostPageState();
+}
+
+class TabsHostPageState extends State<TabsHostPage> {
+  int homeIndex = -1;
+
+  @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            homeIndex = 0;
+          });
+        },
+        tooltip: 'Change homeIndex',
+      ),
+      body: Builder(builder: _buildRouter),
+    );
+  }
+
+  Widget _buildRouter(BuildContext context) {
     const routes = [
       Tab1Route(),
       Tab2Route(),
       Tab3Route(),
     ];
 
-    if (tabsType == 'IndexedStack') {
-      return const AutoTabsRouter(
+    if (widget.tabsType == 'IndexedStack') {
+      return AutoTabsRouter(
         routes: routes,
-        homeIndex: 0,
+        homeIndex: homeIndex,
       );
     }
 
-    if (tabsType == 'PageView') {
-      return const AutoTabsRouter.pageView(
+    if (widget.tabsType == 'PageView') {
+      return AutoTabsRouter.pageView(
         routes: routes,
-        homeIndex: 0,
+        homeIndex: homeIndex,
       );
     }
 
-    if (tabsType == 'TabBar') {
-      return const AutoTabsRouter.tabBar(
+    if (widget.tabsType == 'TabBar') {
+      return AutoTabsRouter.tabBar(
         routes: routes,
-        homeIndex: 0,
+        homeIndex: homeIndex,
       );
     }
 

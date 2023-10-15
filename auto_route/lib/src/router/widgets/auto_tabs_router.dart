@@ -204,6 +204,14 @@ abstract class AutoTabsRouterState extends State<AutoTabsRouter> {
   void _setupController();
 
   @override
+  void didUpdateWidget(covariant AutoTabsRouter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.homeIndex != oldWidget.homeIndex) {
+      _controller?.homeIndex = widget.homeIndex;
+    }
+  }
+
+  @override
   void dispose() {
     if (_controller != null) {
       _controller!.dispose();

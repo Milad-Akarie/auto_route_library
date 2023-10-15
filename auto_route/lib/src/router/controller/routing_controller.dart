@@ -611,7 +611,7 @@ class TabsRouter extends RoutingController {
   /// if activeIndex != homeIndex
   /// set activeIndex to homeIndex
   /// else pop parent
-  final int homeIndex;
+  int homeIndex;
 
   /// Default constructor
   TabsRouter(

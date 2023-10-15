@@ -109,6 +109,9 @@ void runGeneralTests(String tabsType) {
       await tester.pumpAndSettle();
       expect(router.urlState.url, '/tab2');
 
+      await tester.tap(find.byTooltip('Change homeIndex'));
+      await tester.pump();
+
       final tabsRouter = router.innerRouterOf<TabsRouter>(TabsHostRoute.name);
       expect(tabsRouter, isNotNull);
       expect(await tabsRouter!.pop(), isTrue);
