@@ -1031,7 +1031,7 @@ Think of route guards as middleware or interceptors, routes can not be added to 
 going through their assigned guards, guards are useful for restricting access to certain routes.
 
 We create a route guard by extending `AutoRouteGuard` from the auto_route package                
-and implementing our logic inside of the onNavigation method.
+and implement our logic inside of the onNavigation method.
 
 ```dart                
 class AuthGuard extends AutoRouteGuard {                
@@ -1073,7 +1073,7 @@ Now we assign our guard to the routes we want to protect.
 
 You can have all your stack-routes (none-tab-routes) go through a global guard by having your Router
 implement an AutoRouteGuard.
-let's say you have an App with no publish screens, we'd have a global guard that only allows
+Let's say you have an App with no publish screens, we'd have a global guard that only allows
 navigation if the user is authenticated or if we're navigating to the LoginRoute.
 
 ```dart   
@@ -1099,8 +1099,8 @@ class AppRouter extends $AppRouter implements AutoRouteGuard {
 ### Using a Reevaluate Listenable
 
 Route guards can prevent users from accessing private pages until they're logged in for example, but
-auth state may change when the user is already navigated to the private page, to make sure private
-pages are only accessed by logged-in users all the time we need a listenable that tells the router
+auth state may change when the user is already navigated to the private page. To make sure private
+pages are only accessed by logged-in users all the time, we need a listenable that tells the router
 that auth-state has changed and you need to re-evaluate your stack.
 
 The following auth provider mock will act as our re-valuate listenable
@@ -1126,21 +1126,20 @@ class AuthProvider extends ChangeNotifier {
 We simply pass an instance of our `AuthProvider` to  `reevaluateListenable` inside
 of `router.config`
 
- ```dart
-   MaterialApp.router
-(
-routerConfig: _appRouter.config(
-reevaluateListenable: authProvider,
-),
+```dart
+MaterialApp.router(
+  routerConfig: _appRouter.config(
+    reevaluateListenable: authProvider,
+  ),
 );
-  ``` 
+``` 
 
-Now every time `AutoProvider` notifies listeners, the stack will be re-evaluated
-and `AutoRouteGuard.onNavigation()` methods will be re-called on all guards
+Now every time `AuthProvider` notifies its listeners, the stack will be re-evaluated
+and `AutoRouteGuard.onNavigation()` methods will be re-called on all guards.
 
-In the above example we assigned our `AuthProvider` to `reevaluateListenable` directly, that's
+In the above example we assigned our `AuthProvider` to `reevaluateListenable` directly. That's
 because `reevaluateListenable` takes a type [Listenable] and AuthProvider extends `ChangeNotifer`
-which is a `Listenable`, if your auth provider is a stream you can use
+which is a `Listenable`. If your auth provider is a stream you can use
 `reevaluateListenable: ReevaluateListenable.stream(YOUR-STREAM)`
 
 **Note**: When the Stack is re-evaluated, the whole existing hierarchy will be re-pushed, so if you
@@ -1148,7 +1147,7 @@ want to stop re-evaluating routes at some point, use `resolver.resolveNext(<opti
 like `resolver.next()` but with more options.
 
 ```dart
- @override
+  @override
   void onNavigation(NavigationResolver resolver, StackRouter router) async {
     if (authProvider.isAuthenticated) {
       resolver.next();
