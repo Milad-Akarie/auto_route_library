@@ -247,9 +247,9 @@ router.replaceAll([
 ]);                
 // pops the last page unless stack has 1 entry                    
 context.router.pop();                   
-// keeps poping routes until predicate is satisfied                
+// keeps popping routes until predicate is satisfied                
 context.router.popUntil((route) => route.settings.name == 'HomeRoute');                
-// a simplifed version of the above line                
+// a simplified version of the above line                
 context.router.popUntilRouteWithName('HomeRoute');       
 // keeps popping routes until route with provided path is found              
 context.router.popUntilRouteWithPath('/some-path');            
@@ -277,8 +277,8 @@ context.popRoute();
 
 ## Passing Arguments
 
-That's the fun part! **AutoRoute** automatically detects and handles your page arguments for you,
-the generated route object will deliver all the arguments your page needs including path/query
+That's the fun part! **AutoRoute** automatically detects and handles your page arguments for you: 
+the generated route object will deliver all the arguments your page needs, including path/query
 params.
 
 e.g. The following page widget will take an argument of type `Book`.
@@ -296,7 +296,7 @@ class BookDetailsPage extends StatelessWidget {
 
 The generated `BookDetailsRoute` will deliver the same arguments to its corresponding page.
 
-```drt                    
+```dart                    
 router.push(BookDetailsRoute(book: book));                    
 ```                    
 
@@ -305,7 +305,7 @@ router.push(BookDetailsRoute(book: book));
 ## Returning Results
 
 You can return results by either using the pop completer or by passing a callback function as an
-argument the same way you'd pass an object.
+argument, the same way you'd pass an object.
 
 1 - Using the pop completer
 
@@ -319,10 +319,10 @@ then inside of your `LoginPage` pop with results
 router.pop(true);                   
 ```                  
 
-as you'd notice we did not specify the result type, we're playing with dynamic values here, which
+As you may have noticed, we did not specify the result type, we're playing with dynamic values here, which
 can be risky and I personally don't recommend it.
 
-To avoid working with dynamic values we specify what type of results we expect our page to return,
+To avoid working with dynamic values, we specify what type of results we expect our page to return,
 which is a `bool` value.
 
 ```dart                   
@@ -367,7 +367,7 @@ context.pushRoute(
     );                    
 ```                    
 
-if you're finishing with results make sure you call the callback function as you pop the page
+If you're finishing with results, make sure you call the callback function as you pop the page
 
 ```dart                    
 onRateBook(RESULT);                    
