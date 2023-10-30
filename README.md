@@ -385,7 +385,7 @@ the below diagram users page is built inside of dashboard page.
 <img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/nested_router_demo.png?raw=true" height="370">
 </p>                 
 
-defining nested routes is as easy as populating the children field of the parent route. In the
+Defining nested routes is as easy as populating the children field of the parent route. In the
 following example  `UsersPage` ,  `PostsPage` and `SettingsPage` are nested children
 of `DashboardPage`.
 
@@ -410,7 +410,7 @@ class AppRouter extends $AppRouter{
  }                    
 ```                   
 
-To render/build nested routes we need an `AutoRouter` widget that works as an outlet or a nested
+To render/build nested routes, we need an `AutoRouter` widget that works as an outlet or a nested
 router-view inside of our dashboard page.
 
 ```dart                    
@@ -440,8 +440,8 @@ class DashboardPage extends StatelessWidget {
 Now if we navigate to `/dashboard/users` we will be taken to the `DashboardPage` and the `UsersPage`
 will be shown inside of it.
 
-What if want to show one of the child pages at `/dashboard`? we can simply do that by giving the
-child routes an empty path `''` to make initial or by setting initial to true.
+What if we want to show one of the child pages at `/dashboard`? We can simply do that by giving the
+child route an empty path `''` to make it initial or by setting initial to true.
 
 ```dart                    
    AutoRoute(                    
@@ -472,25 +472,25 @@ or by using a `RedirectRoute`
 
 1- Each router manages its own pages stack.                
 2- Navigation actions like push, pop and friends are handled by the topmost router and bubble up if
-it couldn't be handled.
+they couldn't be handled.
 
 ## Tab Navigation
 
-If you're working with flutter mobile you're most likely to implement tabs navigation, that's
+If you're working with flutter mobile, you're most likely to implement tabs navigation. That's
 why `auto_route` makes tabs navigation as easy and straightforward as possible.
 
-in the previous example we used an `AutoRouter` widget to render nested child routes, `AutoRouter`
-is just a shortcut for `AutoStackRouter`, `StackRouters` manage a stack of pages inside of them
+In the previous example, we used an `AutoRouter` widget to render nested child routes. `AutoRouter`
+is just a shortcut for `AutoStackRouter`. `StackRouters` manage a stack of pages inside of them, 
 where the active/visible page is always the one on top and you'd need to pop it to see the page
 beneath it.
 
 Now we can try to implement our tabs using an `AutoRouter` (StackRouter) by pushing or replacing a
-nested route every-time the tab changes and that might work but our tabs state will be lost, not to
-mention the transition between tabs issue, luckily auto_route comes equipped with
+nested route every-time the tab changes and that might work, but our tabs state will be lost, not to
+mention the transition between tabs issue. Luckily auto_route comes equipped with
 an `AutoTabsRouter` which is especially made to handle tab navigation.
 
 `AutoTabsRouter` lets you switch between different routes while preserving offstage-routes state,
-tab routes are lazily loaded by default ( can be disabled ) and finally it allows to create whatever
+ lazily load tab routes (default, can be disabled) and finally it allows you to create whatever
 transition animation you want.
 
 Let's change the previous example to use tab navigation.
@@ -543,7 +543,7 @@ class DashboardPage extends StatelessWidget {
 }                
 ```                    
 
-if you think the above setup is a bit messy you could use the shipped-in `AutoTabsScaffold` that
+If you think the above setup is a bit messy, you could use the shipped-in `AutoTabsScaffold` that
 makes things much cleaner.
 
 ```dart                    
@@ -649,12 +649,12 @@ AutoTabsRouter.tabBar(
 Every nested `AutoRouter` has its own routing controller to manage the stack inside of it and the
 easiest way to obtain a scoped controller is by using context.
 
-In the previous example `DashboardPage` is a root level stack entry so
+In the previous example `DashboardPage` is a root level stack entry, so
 calling `AutoRouter.of(context)` anywhere inside of it will get us the root routing controller.
 
 `AutoRouter` widgets that are used to render nested routes, insert a new router scope into the
 widgets tree, so when a nested route calls for the scoped controller they will get the closest
-parent controller in the widgets tree not the root controller.
+parent controller in the widgets tree, not the root controller.
 
 ```dart                    
 class Dashboard extends StatelessWidget {                    
@@ -678,8 +678,8 @@ Here's a simple diagram to help visualize this
 <img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">                    
 </p>                    
 
-As you can tell from the above diagram it's possible to access parent routing controllers by
-calling `router.parent<T>()`, we're using a generic function because we have two different routing
+As you can tell from the above diagram, it's possible to access parent routing controllers by
+calling `router.parent<T>()`. We're using a generic function because we have two different routing
 controllers  `StackRouter` and `TabsRouter`, one of them could be the parent controller of the
 current router and that's why we need to specify a type.
 
@@ -688,14 +688,14 @@ router.parent<StackRouter>() // this returns  the parent router as a Stack Routi
 router.parent<TabsRouter>() // this returns athe parent router as a Tabs Routing controller                    
 ```                    
 
-on the other hand obtaining the root controller does not require type casting because it's always
+On the other hand, obtaining the root controller does not require type casting because it's always
 a `StackRouter`.
 
 ```dart                    
 router.root // this returns the root router as a Stack Routing controller                    
 ```                    
 
-You can obtain access to inner-routers from outside their scope using a global key
+You can obtain access to inner-routers from outside their scope using a global key.
 
 ```dart                    
 class DashboardPage extends StatefulWidget {                
@@ -785,10 +785,10 @@ class MyApp extends StatefulWidget {
     }                
 ```                
 
-**Note:** using global variable is not recommended and is considered a bad practice and most of the
+**Note:** using a global variable is not recommended and is considered a bad practice and most of the
 times you should use dependency injection instead.
 
-Here's an example using `get_it` which is just a personal favorite, you can use any dependency
+Here's an example using `get_it` which is just a personal favorite. You can use any dependency
 injection package you like.
 
 ```dart                    
@@ -808,7 +808,7 @@ class MyApp extends StatefulWidget {
     }                
 ```                
 
-now you can access to your router anywhere inside of your App without using context.
+Now you can access your router anywhere inside of your App without using context.
 
 ```dart                 
 getIt<AppRouter>().push(...);                
