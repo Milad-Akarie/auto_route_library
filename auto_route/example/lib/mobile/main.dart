@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:example/data/db.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.dart';
@@ -22,12 +21,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _rootRouter.config(),
-      theme: ThemeData.dark().copyWith(
-        pageTransitionsTheme: PageTransitionsTheme(builders: {
-          TargetPlatform.iOS: NoShadowCupertinoPageTransitionsBuilder(),
-          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-        }),
-      ),
+      theme: ThemeData.dark(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => authService,
