@@ -33,7 +33,7 @@ class AutoRoute {
   final bool usesPathAsKey;
 
   /// a Map of dynamic data that can be accessed by
-  /// [RouteData.mete] when the route is created
+  /// [RouteData.meta] when the route is created
   final Map<String, dynamic> meta;
 
   /// Indicates what kind of [PageRoute] this route will use
