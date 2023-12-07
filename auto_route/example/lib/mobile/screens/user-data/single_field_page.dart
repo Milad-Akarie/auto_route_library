@@ -23,12 +23,11 @@ class _SingleFieldPageState extends State<SingleFieldPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (_) async {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(widget.willPopMessage)),
         );
-        return true;
       },
       child: Scaffold(
         key: _scaffoldKey,

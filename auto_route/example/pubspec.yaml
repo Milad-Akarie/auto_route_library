@@ -5,14 +5,14 @@ publish_to: none
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  provider: ^6.0.2
-  url_strategy: ^0.2.0
+  provider: ^6.1.1
   auto_route:
 
 
@@ -22,7 +22,7 @@ dev_dependencies:
     sdk: flutter
   auto_route_generator:
     path: ../../auto_route_generator
-  effective_dart: ^1.3.2
+  lints:
 
 dependency_overrides:
   auto_route:

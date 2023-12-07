@@ -176,9 +176,6 @@ mixin CustomCupertinoRouteTransitionMixin<T> on PageRoute<T> {
     // If the route wouldn't actually pop if we popped it, then the gesture
     // would be really confusing (or would skip internal routes), so disallow it.
     if (route.willHandlePopInternally) return false;
-    // If attempts to dismiss this route might be vetoed such as in a page
-    // with forms, then do not allow the user to dismiss the route with a swipe.
-    if (route.hasScopedWillPopCallback) return false;
     // Fullscreen dialogs aren't dismissible by back swipe.
     if (route.fullscreenDialog) return false;
     // If we're in an animation already, we cannot be manually swiped.
@@ -194,6 +191,14 @@ mixin CustomCupertinoRouteTransitionMixin<T> on PageRoute<T> {
 
     // Looks like a back gesture would be welcome!
     return true;
+  }
+
+  @override
+  RoutePopDisposition get popDisposition {
+    if (willHandlePopInternally) {
+      return RoutePopDisposition.pop;
+    }
+    return super.popDisposition;
   }
 
   @override
