@@ -92,8 +92,8 @@ dev_dependencies:
 
 ## Setup And Usage
 
-1- Create a router class and annotate it with `@AutoRouterConfig` then extend "$YourClassName"
-2- override the routes getter and start adding your routes.
+1. Create a router class and annotate it with `@AutoRouterConfig` then extend "$YourClassName"
+2. override the routes getter and start adding your routes.
 
  ```dart     
 @AutoRouterConfig()      
@@ -470,8 +470,8 @@ or by using a `RedirectRoute`
 
 ### Things to keep in mind when implementing nested navigation
 
-1- Each router manages its own pages stack.                
-2- Navigation actions like push, pop and friends are handled by the topmost router and bubble up if
+1. Each router manages its own pages stack.                
+2. Navigation actions like push, pop and friends are handled by the topmost router and bubble up if
 it couldn't be handled.
 
 ## Tab Navigation
@@ -1592,99 +1592,100 @@ time.
 plugin for Android studio to help you migrate to v6.0**
 
 <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/v6.0.0_redesigned/tools/demo/migrate_to_v6_demo.gif" alt="add route from intent action" width= "px"></a>  
-1- Instead of using `MaterialAutoRouter`,`CupertinoAutoRouter` ...etc we now only have one
+
+1. Instead of using `MaterialAutoRouter`,`CupertinoAutoRouter` ...etc we now only have one
 annotation for our router which is `@AutoRouterConfig()` and instead of passing our routes list to
 the annotation we now pass it to the overridable getter `routes` inside of the generated router
 class and for the default route type you can override `defaultRouteType`
+   
+   1. **Before**
 
-#### Before
+      ```dart
+      // @CupertinoAutoRouter
+      // @AdaptiveAutoRouter
+      // @CustomAutoRouter
+      @MaterialAutoRouter(
+        routes: <AutoRoute>[
+          /// routes go here
+        ],
+      )
+      class $AppRouter {}
+      ```       
 
-  ```dart       
-// @CupertinoAutoRouter                    
-// @AdaptiveAutoRouter                    
-// @CustomAutoRouter                    
-@MaterialAutoRouter(                              
-  routes: <AutoRoute>[                    
-    /// routes go here     
-     ],                    
-)                    
-class $AppRouter {}                    
-```       
+   2. **After**
 
-#### After
+      ```dart
+      @AutoRouterConfig()
+      class AppRouter extends $AppRouter {
 
- ```dart     
-@AutoRouterConfig()      
-class AppRouter extends $AppRouter {      
-    
-@override      
-RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc    
-    
-  @override      
-   List<AutoRoute> get routes => [      
-   /// routes go here     
-   ]    
- }    
- ```        
+        @override
+        RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
 
-2- Passing page components as types is changed, now you'd annotate the target page
+        @override
+        List<AutoRoute> get routes => [
+          /// routes go here
+        ]
+      }
+      ```
+
+2. Passing page components as types is changed, now you'd annotate the target page
 with `@RoutePage()` annotation and pass the generated `result.page` to AutoRoute();
 
-#### Before
+   1. **Before**
 
-```dart                
-class ProductDetailsPage extends StatelessWidget {...}                
-```        
+      ```dart
+      class ProductDetailsPage extends StatelessWidget {...}
+      ```
 
-```dart       
-AutoRoute(page: ProductDetailsPage) // as Type    
- ```          
+      ```dart
+      AutoRoute(page: ProductDetailsPage) // as Type
+      ```
 
-#### After
+   2. **After**
 
-  ```dart                
-@RoutePage() // Add this annotation to your routable pages    
-class ProductDetailsPage extends StatelessWidget {...}                
-```        
+      ```dart
+      @RoutePage() // Add this annotation to your routable pages
+      class ProductDetailsPage extends StatelessWidget {...}
+      ```
 
- ```dart     
-AutoRoute(page: ProductDetailsRoute.page) // ProductDetailsRoute is generated    
- ```        
+      ```dart
+      AutoRoute(page: ProductDetailsRoute.page) // ProductDetailsRoute is generated
+      ```
 
-3- `EmptyRoutePage` no longer exists, instead you will now make your own empty pages by extending
+3. `EmptyRoutePage` no longer exists, instead you will now make your own empty pages by extending
 the `AutoRouter` widget
 
-#### Before
+   1. **Before**
 
-```dart       
-AutoRoute(page: EmptyRoutePage,name: 'ProductsRouter') // as Type    
- ```          
+      ```dart
+      AutoRoute(page: EmptyRoutePage,name: 'ProductsRouter') // as Type
+      ```
 
-#### After
+   2. **After**
 
-  ```dart       
-@RoutePage(name: 'ProductsRouter')      
-class ProductsRouterPage extends AutoRouter {}    
- ```       
+      ```dart
+      @RoutePage(name: 'ProductsRouter')
+      class ProductsRouterPage extends AutoRouter {}
+      ```
 
- ```dart     
-AutoRoute(page: ProductsRouter.page)    
- ```        
+      ```dart
+      AutoRoute(page: ProductsRouter.page)
+      ```
 
-4- Passing route guards is also changed now, instead of passing guards as types you now pass
+4. Passing route guards is also changed now, instead of passing guards as types you now pass
 instances.
 
-#### Before
+   1. **Before**
 
-```dart       
-AutoRoute(page: ProfilePage, guards:[AuthGuard]) // as Type    
- ```          
+      ```dart
+      AutoRoute(page: ProfilePage, guards:[AuthGuard]) // as Type
+      ```
 
-#### After
+   2. **After**
 
- ```dart     
-AutoRoute(page: ProfilePage, guards:[AuthGuard(<params>)]) // as Instance    
- ```        
+      ```dart
+      AutoRoute(page: ProfilePage, guards:[AuthGuard(<params>)]) // as Instance
+      ```
 
 ## Examples
 
