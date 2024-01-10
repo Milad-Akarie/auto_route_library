@@ -166,14 +166,16 @@ class AppRouter extends $AppRouter {
 
 #### Finalize the setup
 
-after you run the generator your router class will be generated, hook it up with MaterialApp.
+after you run the generator your router class will be generated, hook it up with MaterialApp. 
 
-```dart                 
+```dart 
+// make sure you don't initiate your router                
+// inside a StatelessWidget.
+// Use a Statefull o initiate it as a global variable.                
+final _appRouter = AppRouter(); 
+
 // assuming this is the root widget of your App                 
-class App extends StatelessWidget {            
-  // make sure you don't initiate your router                
-  // inside of the build function.                
-  final _appRouter = AppRouter();            
+class App extends StatelessWidget {                      
             
   @override            
   Widget build(BuildContext context){            
