@@ -58,7 +58,6 @@ class NavigationHistoryImpl extends NavigationHistory {
   void back() {
     if (canNavigateBack) {
       _entries.removeLast();
-      // print(_entries);
       router.navigateAll([_entries.last.route]);
     }
   }
