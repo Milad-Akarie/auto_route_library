@@ -1018,6 +1018,18 @@ abstract class StackRouter extends RoutingController {
   @override
   RouteData get current => currentChild ?? routeData;
 
+  /// Check if current is the top-most route
+  bool get isCurrent {
+    bool isCurrent = false;
+    popUntil((route) {
+      if (route.settings.name == current.route.name) {
+        isCurrent = true;
+      }
+      return true;
+    });
+    return isCurrent;
+  }
+
   @override
   RouteData? get currentChild {
     if (_pages.isNotEmpty) {
@@ -1109,7 +1121,8 @@ abstract class StackRouter extends RoutingController {
   Future<bool> pop<T extends Object?>([T? result]) async {
     final NavigatorState? navigator = _navigatorKey.currentState;
     if (navigator == null) return SynchronousFuture<bool>(false);
-    if (kIsWeb && canNavigateBack && result == null) {
+
+    if (kIsWeb && isCurrent && canNavigateBack && result == null) {
       back();
       return true;
     } else if (await navigator.maybePop<T>(result)) {
@@ -1888,4 +1901,17 @@ class ActiveGuardObserver extends ValueNotifier<List<AutoRouteGuard>> {
 
   /// Whether there's a guard  pending completion
   bool get guardInProgress => value.isNotEmpty;
+}
+
+extension NavigatorStateX on NavigatorState {
+  bool isCurrent(String routeName) {
+    bool isCurrent = false;
+    popUntil((route) {
+      if (route.settings.name == routeName) {
+        isCurrent = true;
+      }
+      return true;
+    });
+    return isCurrent;
+  }
 }
