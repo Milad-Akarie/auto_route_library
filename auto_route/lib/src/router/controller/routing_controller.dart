@@ -1902,16 +1902,3 @@ class ActiveGuardObserver extends ValueNotifier<List<AutoRouteGuard>> {
   /// Whether there's a guard  pending completion
   bool get guardInProgress => value.isNotEmpty;
 }
-
-extension NavigatorStateX on NavigatorState {
-  bool isCurrent(String routeName) {
-    bool isCurrent = false;
-    popUntil((route) {
-      if (route.settings.name == routeName) {
-        isCurrent = true;
-      }
-      return true;
-    });
-    return isCurrent;
-  }
-}
