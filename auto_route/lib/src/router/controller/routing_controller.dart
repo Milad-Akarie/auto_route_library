@@ -657,15 +657,66 @@ class TabsRouter extends RoutingController {
   int? get previousIndex => _previousIndex;
 
   /// Updates [_activeIndex] and triggers a rebuild
-  void setActiveIndex(int index, {bool notify = true}) {
+  void setActiveIndex(int index, {bool notify = true}) async {
     assert(index >= 0 && index < _pages.length);
+
     if (_activeIndex != index) {
-      _previousIndex = _activeIndex;
-      _activeIndex = index;
-      if (notify) {
-        notifyAll();
+      final match = _routeMatch[index];
+      final result = await _canNavigate(match, onFailure: (_) {});
+      if (result.continueNavigation) {
+        _previousIndex = _activeIndex;
+        _activeIndex = index;
+        if (notify) {
+          notifyAll();
+        }
       }
     }
+  }
+
+  late final AutoRouteGuard? _rootGuard =
+      (root is AutoRouteGuard) ? (root as AutoRouteGuard) : null;
+  Future<ResolverResult> _canNavigate(
+    RouteMatch route, {
+    OnNavigationFailure? onFailure,
+  }) async {
+    final guards = <AutoRouteGuard>[
+      if (_rootGuard != null) _rootGuard!,
+      ...route.guards,
+    ];
+    if (guards.isEmpty) {
+      return SynchronousFuture(
+        const ResolverResult(
+          continueNavigation: true,
+          reevaluateNext: true,
+        ),
+      );
+    }
+    for (var guard in guards) {
+      final completer = Completer<ResolverResult>();
+
+      guard.onNavigation(
+          NavigationResolver(
+            root,
+            completer,
+            route,
+          ),
+          root);
+      final result = await completer.future;
+      if (!result.continueNavigation) {
+        if (onFailure != null) {
+          onFailure(RejectedByGuardFailure(route, guard));
+        }
+
+        return const ResolverResult(
+          continueNavigation: false,
+          reevaluateNext: false,
+        );
+      }
+    }
+    return const ResolverResult(
+      continueNavigation: true,
+      reevaluateNext: true,
+    );
   }
 
   @override
@@ -700,10 +751,13 @@ class TabsRouter extends RoutingController {
     }
   }
 
+  List<RouteMatch> _routeMatch = [];
+
   /// Pushes given [routes] to [_pages] stack
   /// after match validation and deciding initial index
   void setupRoutes(List<PageRouteInfo> routes) {
     final routesToPush = _matchAllOrReportFailure(routes)!;
+    _routeMatch = routesToPush;
     if (_routeData.hasPendingChildren) {
       final preMatchedRoute = _routeData.pendingChildren.last;
       final correspondingRouteIndex = routesToPush.indexWhere(
