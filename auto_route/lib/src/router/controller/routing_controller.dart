@@ -1018,17 +1018,23 @@ abstract class StackRouter extends RoutingController {
   @override
   RouteData get current => currentChild ?? routeData;
 
-  /// Check if current is the top-most route
-  bool get isCurrent {
-    bool isCurrent = false;
-    popUntil((route) {
-      if (route.settings.name == current.route.name) {
-        isCurrent = true;
-      }
+  /// Get the top [Route<dynamic>] of Navigator
+  /// Used to assess the current route and popDisposition
+  Route<dynamic> get _navigatorTopRoute {
+    late Route<dynamic> route;
+    popUntil((r) {
+      route = r;
       return true;
     });
-    return isCurrent;
+    return route;
   }
+
+  /// Get the popDisposition of the top [Route<dynamic>] of Navigator
+  RoutePopDisposition get _popDisposition => _navigatorTopRoute.popDisposition;
+
+  /// Check if current is currently visible
+  bool get currentVisible =>
+      _navigatorTopRoute.settings.name == current.route.name;
 
   @override
   RouteData? get currentChild {
@@ -1116,14 +1122,32 @@ abstract class StackRouter extends RoutingController {
     }
   }
 
+  /// If the [RoutePopDisposition] of the top-most route is [RoutePopDisposition.doNotPop]
+  /// this method will call maybePop instead of .back().
+  ///
+  /// Useful with PopScope widget.
+  Future<bool> maybeBack() async {
+    final NavigatorState? navigator = _navigatorKey.currentState;
+    if (navigator == null) return SynchronousFuture<bool>(false);
+
+    if (_popDisposition == RoutePopDisposition.doNotPop) {
+      return await navigator.maybePop();
+    }
+
+    navigationHistory.back();
+    return true;
+  }
+
   @override
   @optionalTypeArgs
   Future<bool> pop<T extends Object?>([T? result]) async {
     final NavigatorState? navigator = _navigatorKey.currentState;
     if (navigator == null) return SynchronousFuture<bool>(false);
-
-    if (kIsWeb && isCurrent && canNavigateBack && result == null) {
-      back();
+    // On the web, popping will not update the navigation history
+    // use maybeBack when a result does not need to be returned.
+    // Checks isCurrent to avoid going back when dialog is open.
+    if (kIsWeb && currentVisible && canNavigateBack && result == null) {
+      maybeBack();
       return true;
     } else if (await navigator.maybePop<T>(result)) {
       return true;
