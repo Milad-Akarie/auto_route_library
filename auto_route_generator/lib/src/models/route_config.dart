@@ -26,9 +26,6 @@ class RouteConfig {
   /// whether the route has a wrapped route
   final bool? hasWrappedRoute;
 
-  /// the replacement in the route name
-  final String? replacementInRouteName;
-
   /// whether the route has a const constructor
   final bool hasConstConstructor;
 
@@ -44,7 +41,6 @@ class RouteConfig {
     this.parameters = const [],
     this.hasWrappedRoute,
     this.returnType,
-    this.replacementInRouteName,
     this.hasConstConstructor = false,
     this.deferredLoading,
   });
@@ -116,7 +112,6 @@ class RouteConfig {
       returnType: returnType ?? this.returnType,
       parameters: parameters ?? this.parameters,
       hasWrappedRoute: hasWrappedRoute ?? this.hasWrappedRoute,
-      replacementInRouteName: replacementInRouteName ?? this.replacementInRouteName,
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
       deferredLoading: deferredLoading ?? this.deferredLoading,
     );
@@ -132,7 +127,6 @@ class RouteConfig {
       'returnType': this.returnType?.toJson(),
       'parameters': this.parameters.map((e) => e.toJson()).toList(),
       'hasWrappedRoute': this.hasWrappedRoute,
-      'replacementInRouteName': this.replacementInRouteName,
       'hasConstConstructor': this.hasConstConstructor,
       'deferredLoading': this.deferredLoading,
     };
@@ -162,7 +156,6 @@ class RouteConfig {
       returnType: map['returnType'] == null ? null : ResolvedType.fromJson(map['returnType']),
       parameters: parameters,
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,
-      replacementInRouteName: map['replacementInRouteName'] as String?,
       hasConstConstructor: map['hasConstConstructor'] as bool,
       deferredLoading: map['deferredLoading'] as bool?,
     );

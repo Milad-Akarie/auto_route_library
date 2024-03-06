@@ -431,7 +431,7 @@ class DummyRootRoute extends AutoRoute {
 class RouteCollection {
   final Map<String, AutoRoute> _routesMap;
 
-  RouteCollection._(this._routesMap) : assert(_routesMap.isNotEmpty);
+  RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
 
   /// Creates a Map of config-entries from [routes]
   ///
@@ -480,7 +480,7 @@ class RouteCollection {
         ...routesMap,
       };
     }
-    return RouteCollection._(routesMap);
+    return RouteCollection(routesMap);
   }
 
   /// Returns the values of [_routesMap] as iterable

@@ -56,8 +56,7 @@ abstract class $RootRouter extends _i9.RootStackRouter {
       );
     },
     LoginRoute.name: (routeData) {
-      final args = routeData.argsAs<LoginRouteArgs>(
-          orElse: () => const LoginRouteArgs());
+      final args = routeData.argsAs<LoginRouteArgs>(orElse: () => const LoginRouteArgs());
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i5.LoginPage(
@@ -139,8 +138,7 @@ class BookDetailsRoute extends _i9.PageRouteInfo<BookDetailsRouteArgs> {
 
   static const String name = 'BookDetailsRoute';
 
-  static const _i9.PageInfo<BookDetailsRouteArgs> page =
-      _i9.PageInfo<BookDetailsRouteArgs>(name);
+  static const _i9.PageInfo<BookDetailsRouteArgs> page = _i9.PageInfo<BookDetailsRouteArgs>(name);
 }
 
 class BookDetailsRouteArgs {
@@ -216,8 +214,7 @@ class LoginRoute extends _i9.PageRouteInfo<LoginRouteArgs> {
 
   static const String name = 'LoginRoute';
 
-  static const _i9.PageInfo<LoginRouteArgs> page =
-      _i9.PageInfo<LoginRouteArgs>(name);
+  static const _i9.PageInfo<LoginRouteArgs> page = _i9.PageInfo<LoginRouteArgs>(name);
 }
 
 class LoginRouteArgs {
@@ -258,8 +255,7 @@ class MyBooksRoute extends _i9.PageRouteInfo<MyBooksRouteArgs> {
 
   static const String name = 'MyBooksRoute';
 
-  static const _i9.PageInfo<MyBooksRouteArgs> page =
-      _i9.PageInfo<MyBooksRouteArgs>(name);
+  static const _i9.PageInfo<MyBooksRouteArgs> page = _i9.PageInfo<MyBooksRouteArgs>(name);
 }
 
 class MyBooksRouteArgs {
@@ -328,8 +324,7 @@ class SettingsTab extends _i9.PageRouteInfo<SettingsTabArgs> {
 
   static const String name = 'SettingsTab';
 
-  static const _i9.PageInfo<SettingsTabArgs> page =
-      _i9.PageInfo<SettingsTabArgs>(name);
+  static const _i9.PageInfo<SettingsTabArgs> page = _i9.PageInfo<SettingsTabArgs>(name);
 }
 
 class SettingsTabArgs {
@@ -363,4 +358,42 @@ class WelcomeRoute extends _i9.PageRouteInfo<void> {
   static const String name = 'WelcomeRoute';
 
   static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
+}
+
+typedef RouteCopyWith = RouteOverride Function({
+  String? path,
+  List<_i9.AutoRouteGuard>? guards,
+});
+typedef RouteOverrider = RouteOverride Function(RouteCopyWith route);
+
+class RootNavGraph extends NavGraph {
+  final RouteOverride? homeRoute;
+  final RouteOverride? booksTab;
+
+  RootNavGraph({this.homeRoute, this.booksTab});
+
+  @override
+  _i9.RouteCollection get routes {
+    return _i9.RouteCollection({
+      HomeRoute.name: _i9.AutoRoute(
+        path: homeRoute?.path ?? '/path',
+        page: HomeRoute.page,
+      ),
+      BooksTab.name: _i9.AutoRoute(
+        path: booksTab?.path ?? '/path',
+        page: BooksTab.page,
+      ),
+    });
+  }
+}
+
+abstract class NavGraph {
+  _i9.RouteCollection get routes;
+}
+
+class RouteOverride {
+  final String? path;
+  final List<_i9.AutoRouteGuard>? guards;
+
+  const RouteOverride({this.path, this.guards});
 }

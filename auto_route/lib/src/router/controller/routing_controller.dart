@@ -13,11 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
-
 part 'auto_route_guard.dart';
-
 part 'auto_router_delegate.dart';
-
 part 'root_stack_router.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -90,7 +87,7 @@ abstract class RoutingController with ChangeNotifier {
 
   void _removeTopRouterOf(Key? key) {
     for (final ctr in List.unmodifiable(_childControllers).reversed) {
-      if (ctr.key == key) {
+      if (ctr.identifier == key) {
         _childControllers.remove(ctr);
         break;
       }
