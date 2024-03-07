@@ -3,54 +3,90 @@ import 'dart:io';
 import 'export_statement.dart';
 import 'package_file_resolver.dart';
 
+final checkedExports = <Uri>{};
+final resolvedTypes = <Uri, Set<String>>{};
+
 Map<String, Iterable<SequenceMatchResult>> locateTopLevelDeclarations(
   final Uri file,
   Set<Uri> sources,
   Iterable<MatchSequence> sequences,
   PackageFileResolver resolver, [
-  int level = 0,
+  int depth = 0,
 ]) {
+  print(depth);
+  if (depth == 0) {
+    checkedExports.clear();
+    resolvedTypes.clear();
+  }
   if (sequences.isEmpty) return {};
   final results = <String, Iterable<SequenceMatchResult>>{};
   final targetTotal = sequences.map((e) => e.identifier).toSet();
+
   final foundUnique = <String>{};
   final exportsFound = <Uri, Iterable<ExportStatement>>{};
   for (final source in sources) {
+    print('Looking up $source');
+    if (source.toString() == 'src/widgets/framework.dart') {
+      print('Looking up $source');
+    }
+
+    for (final sequence in List.of(sequences)) {
+      if (resolvedTypes[source]?.contains(sequence.identifier) == true) {
+        foundUnique.add(sequence.identifier);
+        results[source.path] = [SequenceMatchResult(sequence.identifier, 0, 0, sequence.identifier)];
+        sequences = sequences.where((e) => e.identifier != sequence.identifier);
+      }
+    }
+
     final resolvedUri = resolver.resolve(source, relativeTo: file);
     final content = File.fromUri(resolvedUri).readAsBytesSync();
     final matches = findTopLevelSequences(content, [
       MatchSequence('export', 'export', terminator: 0x3B),
+      // MatchSequence('export', 'part', terminator: 0x3B),
       ...sequences,
     ]);
 
-    final nonExportMatches = matches.where((e) => e.identifier != 'export');
-    if (nonExportMatches.isNotEmpty) {
-      foundUnique.addAll(nonExportMatches.map((e) => e.identifier));
-      results[resolvedUri.path] = nonExportMatches;
+    final identifierMatches = matches.where((e) => e.identifier != 'export');
+    if (identifierMatches.isNotEmpty) {
+      resolvedTypes[resolvedUri] = identifierMatches.map((e) => e.identifier).toSet();
+      foundUnique.addAll(identifierMatches.map((e) => e.identifier));
+      results[resolvedUri.path] = identifierMatches;
     }
     if (foundUnique.length >= targetTotal.length) {
       break;
     }
 
     final exportMatches = matches.where((e) => e.identifier == 'export');
+    if (source.toString() == 'widgets.dart') {
+      print('exportMatches: $exportMatches');
+    }
+
     if (exportMatches.isNotEmpty) {
       final notFoundIdentifiers = targetTotal.difference(foundUnique);
       final exportStatements = exportMatches
           .where((e) => !e.source.contains('dart:'))
           .map((e) => ExportStatement.parse(e.source))
           .whereType<ExportStatement>()
+          .where((e) => !checkedExports.contains(e.uri))
           .toList();
+      checkedExports.addAll(exportStatements.map((e) => e.uri));
 
       for (final identifier in notFoundIdentifiers) {
-        for (final exportStatement in exportStatements) {
-          bool showsSome = false;
+        for (var i = 0; i < exportStatements.length; i++) {
+          final exportStatement = exportStatements[i];
+          if (exportStatement.show.isEmpty) {
+            continue;
+          } else if (exportStatement.hide.isNotEmpty) {
+            if (exportStatement.hides(identifier)) continue;
+          }
           if (exportStatement.shows(identifier)) {
             foundUnique.add(identifier);
-            showsSome = true;
+            results[resolvedUri.path] = [
+              ...?results[resolvedUri.path],
+              SequenceMatchResult(identifier, 0, 0, identifier)
+            ];
           }
-          if (showsSome) {
-            exportStatements.remove(exportStatement);
-          }
+          exportStatements.removeAt(i);
         }
       }
       if (foundUnique.length >= targetTotal.length) {
@@ -63,10 +99,10 @@ Map<String, Iterable<SequenceMatchResult>> locateTopLevelDeclarations(
   }
   if (foundUnique.length < targetTotal.length && exportsFound.isNotEmpty) {
     final notFoundIdentifiers = sequences.where((e) => !foundUnique.contains(e.identifier));
+
     for (final entry in exportsFound.entries) {
-      final exportSources = entry.value.map((e) => e.uri);
-      final subResults =
-          locateTopLevelDeclarations(entry.key, exportSources.toSet(), notFoundIdentifiers, resolver, level++);
+      final exportSources = entry.value.map((e) => e.uri).toSet();
+      final subResults = locateTopLevelDeclarations(entry.key, exportSources, notFoundIdentifiers, resolver, depth + 1);
       final foundIdentifiers = subResults.values.expand((e) => e);
       foundUnique.addAll(foundIdentifiers.map((e) => e.identifier));
       results[entry.key.path] = foundIdentifiers;
@@ -132,9 +168,6 @@ const scopes = {
   0x7B: 0x7D, // {}
   0x28: 0x29, // ()
   0x5B: 0x5D, // []
-  0x22: 0x22, // ""
-  0x27: 0x27, // ''
-  0x60: 0x60, // ``
 };
 
 List<SequenceMatchResult> findTopLevelSequences(List<int> byteArray, List<MatchSequence> matchSequences) {
@@ -142,6 +175,16 @@ List<SequenceMatchResult> findTopLevelSequences(List<int> byteArray, List<MatchS
   List<int> enteredScopes = [];
 
   for (int i = 0; i < byteArray.length; i++) {
+    /// if found ',", or ''' skip until the next one
+    if (byteArray[i] == 0x22 || byteArray[i] == 0x27 || byteArray[i] == 0x60) {
+      final start = byteArray[i];
+      i++;
+      while (i < byteArray.length && byteArray[i] != start) {
+        i++;
+      }
+      continue;
+    }
+
     if (byteArray[i] == 0x2F && i < byteArray.length - 1 && byteArray[i + 1] == 0x2F) {
       i += 2;
       while (i < byteArray.length && byteArray[i] != 0x0A) {
@@ -171,7 +214,7 @@ List<SequenceMatchResult> findTopLevelSequences(List<int> byteArray, List<MatchS
       continue;
     }
 
-    for (MatchSequence matchSequence in matchSequences) {
+    for (final matchSequence in matchSequences) {
       final sequenceEnd = matchSequence.matches(byteArray, i);
       if (sequenceEnd != -1) {
         final sequenceStart = i;
@@ -186,7 +229,7 @@ List<SequenceMatchResult> findTopLevelSequences(List<int> byteArray, List<MatchS
             ),
           ),
         );
-        break;
+        // break;
       }
     }
   }

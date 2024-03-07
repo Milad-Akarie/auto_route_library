@@ -16,7 +16,6 @@ final _configFile = File('auto_route_config.txt');
 
 void main() async {
   print('Starting... auto_route_generator');
-  final resolvedTypes = <String, Set<String>>{};
   final stopWatch = Stopwatch()..start();
   late final packageResolver = PackageFileResolver.forCurrentRoot();
   print('resolved packages in ${stopWatch.elapsedMilliseconds}ms');
@@ -26,7 +25,7 @@ void main() async {
 
   for (final asset in assets) {
     // if (asset.lastModifiedSync().millisecondsSinceEpoch < lastConfig) continue;
-    await _processFile(asset, packageResolver, resolvedTypes);
+    await _processFile(asset, packageResolver);
   }
 
   print('Time taken: ${stopWatch.elapsedMilliseconds}ms');
@@ -37,15 +36,14 @@ void main() async {
     final stopWatch = Stopwatch()..start();
     if (glob.matches(event.path)) {
       final asset = File(event.path);
-      await _processFile(asset, packageResolver, resolvedTypes);
+      await _processFile(asset, packageResolver);
       print('Watched file took: ${stopWatch.elapsedMilliseconds}ms');
       _configFile.writeAsStringSync((DateTime.timestamp().millisecondsSinceEpoch).toString());
     }
   });
 }
 
-Future<void> _processFile(
-    File asset, PackageFileResolver packageResolver, Map<String, Set<String>> resolvedTypes) async {
+Future<void> _processFile(File asset, PackageFileResolver packageResolver) async {
   final bytes = asset.readAsBytesSync();
   if (!hasRouteAnnotation(bytes)) return;
   final assetContent = utf8.decode(bytes);
@@ -65,16 +63,12 @@ Future<void> _processFile(
   final constructors = routePage.constructors;
   if (constructors.isEmpty) return;
   final parameters = routePage.constructors.first.parametersList;
-  final firstParamName = parameters[1].paramType;
 
-  final alreadyResolved =
-      resolvedTypes.values.fold(<String>{}, (previousValue, element) => previousValue..addAll(element));
 
   final fieldsToLookUp = routePage.fields
       .where((e) => !e.type!.isDartCoreType)
       .map((e) => e.typeName)
       .whereNotNull()
-      .where((e) => !alreadyResolved.contains(e))
       .toSet();
 
   if (fieldsToLookUp.isNotEmpty) {
@@ -90,7 +84,6 @@ Future<void> _processFile(
       packageResolver,
     );
     if (result.isNotEmpty) {
-      resolvedTypes[asset.path] = result.keys.toSet();
       for (final entry in result.entries) {
         for (final result in entry.value.where((e) => e.identifier != 'export')) {
           print('Found: ${result.identifier} : ${entry.key}');

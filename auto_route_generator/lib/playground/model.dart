@@ -10,7 +10,13 @@ abstract class DemoModel extends Object {
 typedef DemoModelX = DemoModel;
 
 const HEADER = "XXX";
-class Generice<T> {
+
+// comments comments comments
+// sdf
+/// sldkfjsdfsdlfkjsdlfkjsdf
+/// /sdflksjlfkjsldfkjlsdkjflsdfj
+/// sldfkjsldkfjsdf
+abstract class Generice<T> {
   final T x;
 
   Generice(this.x);
