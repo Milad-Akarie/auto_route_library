@@ -1,22 +1,81 @@
 import 'dart:io';
 
-Future<Map<String, List<SequenceMatchResult>>> locateTopLevelDeclarations(
-    Set<Uri> imports, List<MatchSequence> sequences) async {
+import 'export_statement.dart';
+import 'package_file_resolver.dart';
+
+Map<String, Iterable<SequenceMatchResult>> locateTopLevelDeclarations(
+  final Uri file,
+  Set<Uri> sources,
+  Iterable<MatchSequence> sequences,
+  PackageFileResolver resolver, [
+  int level = 0,
+]) {
   if (sequences.isEmpty) return {};
-  final results = <String, List<SequenceMatchResult>>{};
+  final results = <String, Iterable<SequenceMatchResult>>{};
   final targetTotal = sequences.map((e) => e.identifier).toSet();
   final foundUnique = <String>{};
-  for (final source in imports) {
-    final content = File.fromUri(source).readAsBytesSync();
-    final matches = findTopLevelSequences(content, sequences);
-    if (matches.isNotEmpty) {
-      results[source.path] = matches;
-      foundUnique.addAll(matches.map((e) => e.identifier));
+  final exportsFound = <Uri, Iterable<ExportStatement>>{};
+  for (final source in sources) {
+    final resolvedUri = resolver.resolve(source, relativeTo: file);
+    final content = File.fromUri(resolvedUri).readAsBytesSync();
+    final matches = findTopLevelSequences(content, [
+      MatchSequence('export', 'export', terminator: 0x3B),
+      ...sequences,
+    ]);
+
+    final nonExportMatches = matches.where((e) => e.identifier != 'export');
+    if (nonExportMatches.isNotEmpty) {
+      foundUnique.addAll(nonExportMatches.map((e) => e.identifier));
+      results[resolvedUri.path] = nonExportMatches;
     }
     if (foundUnique.length >= targetTotal.length) {
       break;
     }
+
+    final exportMatches = matches.where((e) => e.identifier == 'export');
+    if (exportMatches.isNotEmpty) {
+      final notFoundIdentifiers = targetTotal.difference(foundUnique);
+      final exportStatements = exportMatches
+          .where((e) => !e.source.contains('dart:'))
+          .map((e) => ExportStatement.parse(e.source))
+          .whereType<ExportStatement>()
+          .toList();
+
+      for (final identifier in notFoundIdentifiers) {
+        for (final exportStatement in exportStatements) {
+          bool showsSome = false;
+          if (exportStatement.shows(identifier)) {
+            foundUnique.add(identifier);
+            showsSome = true;
+          }
+          if (showsSome) {
+            exportStatements.remove(exportStatement);
+          }
+        }
+      }
+      if (foundUnique.length >= targetTotal.length) {
+        break;
+      }
+      if (exportStatements.isNotEmpty) {
+        exportsFound[resolvedUri] = exportStatements;
+      }
+    }
   }
+  if (foundUnique.length < targetTotal.length && exportsFound.isNotEmpty) {
+    final notFoundIdentifiers = sequences.where((e) => !foundUnique.contains(e.identifier));
+    for (final entry in exportsFound.entries) {
+      final exportSources = entry.value.map((e) => e.uri);
+      final subResults =
+          locateTopLevelDeclarations(entry.key, exportSources.toSet(), notFoundIdentifiers, resolver, level++);
+      final foundIdentifiers = subResults.values.expand((e) => e);
+      foundUnique.addAll(foundIdentifiers.map((e) => e.identifier));
+      results[entry.key.path] = foundIdentifiers;
+      if (foundUnique.length >= targetTotal.length) {
+        break;
+      }
+    }
+  }
+
   return results;
 }
 
@@ -24,8 +83,9 @@ class SequenceMatchResult {
   final String identifier;
   final int start;
   final int end;
+  final String source;
 
-  const SequenceMatchResult(this.identifier, this.start, this.end);
+  const SequenceMatchResult(this.identifier, this.start, this.end, this.source);
 
   @override
   String toString() {
@@ -36,11 +96,12 @@ class SequenceMatchResult {
 class MatchSequence {
   final String identifier;
   final String pattern;
+  final int? terminator;
 
-  const MatchSequence(this.identifier, this.pattern);
+  const MatchSequence(this.identifier, this.pattern, {this.terminator});
 
   int matches(List<int> byteArray, int startIndex) {
-    final chars = pattern.trim().codeUnits; // Trim the pattern to remove extra spaces
+    final chars = pattern.codeUnits;
     int lastConsumedIndex = startIndex;
     for (int i = 0; i < chars.length; i++) {
       while (startIndex < byteArray.length && byteArray[startIndex] == 32) {
@@ -55,6 +116,13 @@ class MatchSequence {
       } else {
         return -1;
       }
+    }
+
+    if (terminator != null) {
+      while (lastConsumedIndex < byteArray.length && byteArray[lastConsumedIndex] != terminator) {
+        lastConsumedIndex++;
+      }
+      return lastConsumedIndex + 1;
     }
     return lastConsumedIndex;
   }
@@ -108,7 +176,16 @@ List<SequenceMatchResult> findTopLevelSequences(List<int> byteArray, List<MatchS
       if (sequenceEnd != -1) {
         final sequenceStart = i;
         i = sequenceEnd;
-        results.add(SequenceMatchResult(matchSequence.identifier, sequenceStart, sequenceEnd));
+        results.add(
+          SequenceMatchResult(
+            matchSequence.identifier,
+            sequenceStart,
+            sequenceEnd,
+            String.fromCharCodes(
+              byteArray.sublist(sequenceStart, sequenceEnd),
+            ),
+          ),
+        );
         break;
       }
     }

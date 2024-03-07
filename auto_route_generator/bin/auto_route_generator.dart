@@ -10,6 +10,7 @@ import 'package:glob/list_local_fs.dart';
 import 'ast_extensions.dart';
 import 'lookup_utils.dart';
 import 'package_file_resolver.dart';
+import 'utils.dart';
 
 final _configFile = File('auto_route_config.txt');
 
@@ -25,7 +26,6 @@ void main() async {
 
   for (final asset in assets) {
     // if (asset.lastModifiedSync().millisecondsSinceEpoch < lastConfig) continue;
-    print('Processing: ${asset.path}');
     await _processFile(asset, packageResolver, resolvedTypes);
   }
 
@@ -55,17 +55,18 @@ Future<void> _processFile(
   final routePage = classDeclarations.firstWhereOrNull((e) => e.metadata.any((e) => e.name.name == 'RoutePage'));
   if (routePage == null) return;
 
-  final imports = unit.directives
+  late final imports = unit.directives
       .whereType<ImportDirective>()
       .where((e) => e.uri.stringValue != null && !e.uri.stringValue!.startsWith('dart:'))
       .map((e) => Uri.parse(e.uri.stringValue!))
-      .map((e) => packageResolver.resolve(e, relativeTo: asset.uri))
+      .sortedBy<num>((e) => !e.isScheme('package') || e.pathSegments.first == rootPackageName ? 0 : 1)
       .toSet();
+
+  final constructors = routePage.constructors;
+  if (constructors.isEmpty) return;
   final parameters = routePage.constructors.first.parametersList;
   final firstParamName = parameters[1].paramType;
 
-  DefaultFormalParameter;
-  SimpleFormalParameter;
   final alreadyResolved =
       resolvedTypes.values.fold(<String>{}, (previousValue, element) => previousValue..addAll(element));
 
@@ -73,21 +74,29 @@ Future<void> _processFile(
       .where((e) => !e.type!.isDartCoreType)
       .map((e) => e.typeName)
       .whereNotNull()
-      .where((e) => alreadyResolved.contains(e))
+      .where((e) => !alreadyResolved.contains(e))
       .toSet();
+
   if (fieldsToLookUp.isNotEmpty) {
-    final result = await locateTopLevelDeclarations(imports, [
-      for (final type in fieldsToLookUp) ...[
-        MatchSequence(type, 'class ${type}'),
-        MatchSequence(type, 'typedef ${type}'),
+    final result = locateTopLevelDeclarations(
+      asset.uri,
+      imports,
+      [
+        for (final type in fieldsToLookUp) ...[
+          MatchSequence(type, 'class ${type}'),
+          MatchSequence(type, 'typedef ${type}'),
+        ],
       ],
-    ]);
+      packageResolver,
+    );
     if (result.isNotEmpty) {
       resolvedTypes[asset.path] = result.keys.toSet();
       for (final entry in result.entries) {
-        print('Found: ${result.values} in ${entry.key}');
+        for (final result in entry.value.where((e) => e.identifier != 'export')) {
+          print('Found: ${result.identifier} : ${entry.key}');
+        }
+        // print('Found: ${result.values} in ${entry.key}');
       }
     }
   }
 }
-

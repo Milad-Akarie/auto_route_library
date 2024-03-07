@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:collection/collection.dart';
 
 const _dartCoreTypeNames = <String>{
   'bool',
@@ -40,6 +41,12 @@ extension FormalParameterX on FormalParameter {
         DefaultFormalParameter d => d.parameter.paramType,
         _ => null,
       };
+
+  List<Annotation> get annotations => metadata.toList();
+
+  bool hasAnnotation(String identifier) => annotations.any((e) => e.name.name == identifier);
+
+  Annotation? getAnnotation(String identifier) => annotations.firstWhereOrNull((e) => e.name.name == identifier);
 }
 
 extension FieldDeclarationX on FieldDeclaration {
@@ -62,6 +69,8 @@ extension TypeAnnotationX on TypeAnnotation {
   bool get isGeneric => typeArguments.isNotEmpty;
 
   bool get isNullable => question != null;
+
+  bool get isFunction => this is GenericFunctionType;
 
   List<TypeAnnotation> get typeArguments => (this as NamedType).typeArguments?.arguments ?? [];
 }

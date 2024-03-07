@@ -1,18 +1,18 @@
 import 'package:auto_route/annotations.dart';
-import 'package:auto_route_generator/src/models/resolved_type.dart';
+import 'package:flutter/material.dart';
 
-import 'model.dart';
+import 'model_index.dart';
 
 @RoutePage()
 class TestPage {
   final String param1;
-  final ResolvedType param2;
-  final Generice<int> generice;
+  final Offset param2;
+  final Generice<int> generice2;
 
   TestPage(
     this.param1, {
     required String x,
-    required this.param2,
     required this.generice,
+    void Function()? onPop,
   });
 }
