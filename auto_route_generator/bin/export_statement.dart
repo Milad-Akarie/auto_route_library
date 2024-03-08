@@ -1,4 +1,4 @@
-final _exportParseRegex = RegExp("export\\s*['|\"](.*?)['|\"]\\s*(;|show|hide)\\s*(.*[^,;])?");
+final _exportParseRegex = RegExp("(export|part)\\s*['|\"](.*?)['|\"]\\s*(;|show|hide)\\s*(.*[^,;])?");
 
 class ExportStatement {
   final Uri uri;
@@ -8,14 +8,16 @@ class ExportStatement {
   static ExportStatement? parse(String source) {
     final match = _exportParseRegex.matchAsPrefix(source);
     if (match == null) return null;
-    final path = match.group(1);
-    final show = match.group(2) == 'show' && match.group(3) != null
-        ? match.group(3)!.split(',').map((e) => e.trim()).toSet()
+    final path = match.group(2);
+    if (path == null) return null;
+    if (match.group(0) == 'part') return ExportStatement(uri: Uri.parse(path));
+    final show = match.group(3) == 'show' && match.group(4) != null
+        ? match.group(4)!.split(',').map((e) => e.trim()).toSet()
         : <String>{};
-    final hide = match.group(2) == 'hide' && match.group(3) != null
-        ? match.group(3)!.split(',').map((e) => e.trim()).toSet()
+    final hide = match.group(3) == 'hide' && match.group(4) != null
+        ? match.group(4)!.split(',').map((e) => e.trim()).toSet()
         : <String>{};
-    return ExportStatement(uri: Uri.parse(path!), show: show, hide: hide);
+    return ExportStatement(uri: Uri.parse(path), show: show, hide: hide);
   }
 
   ExportStatement({required this.uri, this.show = const {}, this.hide = const {}});

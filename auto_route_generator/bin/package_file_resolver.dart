@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 const packageConfigPath = '.dart_tool/package_config.json';
+const _skyEnginePackage = 'sky_engine';
 
 class PackageFileResolver {
   static Uri packageConfigUri = Uri.file(p.join(Directory.current.path, packageConfigPath));
@@ -37,6 +38,12 @@ class PackageFileResolver {
       final packagePath = packageToPath[package];
       if (packagePath != null) {
         return Uri.parse(p.joinAll([packagePath, 'lib', ...uri.pathSegments.skip(1)]));
+      }
+    } else if (uri.isScheme('dart')) {
+      final packagePath = packageToPath[_skyEnginePackage];
+      final dir = uri.path;
+      if (packagePath != null) {
+        return Uri.parse(p.joinAll([packagePath, 'lib', dir, '${dir}.dart']));
       }
     } else if (!uri.hasScheme) {
       assert(relativeTo != null);

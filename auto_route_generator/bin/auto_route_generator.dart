@@ -6,6 +6,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:collection/collection.dart';
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
+import 'package:path/path.dart' as path;
 
 import 'ast_extensions.dart';
 import 'lookup_utils.dart';
@@ -17,6 +18,9 @@ final _configFile = File('auto_route_config.txt');
 void main() async {
   print('Starting... auto_route_generator');
   final stopWatch = Stopwatch()..start();
+
+  final sdk = path.dirname(path.dirname(Platform.resolvedExecutable));
+
   late final packageResolver = PackageFileResolver.forCurrentRoot();
   print('resolved packages in ${stopWatch.elapsedMilliseconds}ms');
   final lastConfig = _configFile.existsSync() ? int.parse(_configFile.readAsStringSync()) : 0;
@@ -53,9 +57,9 @@ Future<void> _processFile(File asset, PackageFileResolver packageResolver) async
   final routePage = classDeclarations.firstWhereOrNull((e) => e.metadata.any((e) => e.name.name == 'RoutePage'));
   if (routePage == null) return;
 
-  late final imports = unit.directives
+  final imports = unit.directives
       .whereType<ImportDirective>()
-      .where((e) => e.uri.stringValue != null && !e.uri.stringValue!.startsWith('dart:'))
+      .where((e) => e.uri.stringValue != null)
       .map((e) => Uri.parse(e.uri.stringValue!))
       .sortedBy<num>((e) => !e.isScheme('package') || e.pathSegments.first == rootPackageName ? 0 : 1)
       .toSet();
