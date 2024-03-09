@@ -1,5 +1,9 @@
 const commonNameSpaces = {
   'package:flutter/material.dart': {
+    'VoidCallback',
+    'ValueNotifier',
+    'ValueChanged',
+    'Key',
     'Color',
     'Colors',
     'Text',

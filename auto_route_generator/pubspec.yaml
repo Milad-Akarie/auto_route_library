@@ -5,7 +5,7 @@ homepage: https://github.com/Milad-Akarie/auto_route_library
 environment:
   sdk: ">=3.3.0 <4.0.0"
 executables:
-  auto_route_generator:
+  auto_route:
 
 dependencies:
   build: ^2.1.1

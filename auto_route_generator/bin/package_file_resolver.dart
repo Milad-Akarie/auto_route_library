@@ -51,4 +51,13 @@ class PackageFileResolver {
     }
     return uri;
   }
+
+  String uriToPackage(Uri uri) {
+    final segments = uri.pathSegments;
+    final libIndex = segments.indexOf('lib');
+    if (libIndex > 1) {
+      return 'package:${segments[libIndex - 1]}/${segments.sublist(libIndex + 1).join('/')}';
+    }
+    return uri.toString();
+  }
 }
