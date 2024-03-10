@@ -431,6 +431,7 @@ class DummyRootRoute extends AutoRoute {
 class RouteCollection {
   final Map<String, AutoRoute> _routesMap;
 
+  /// Default constructor
   RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
 
   /// Creates a Map of config-entries from [routes]

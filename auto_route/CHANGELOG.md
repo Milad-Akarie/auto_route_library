@@ -1,3 +1,8 @@
+## 7.8.5
+
+- **FEAT**: add back mixin to AutoRouteAware
+- **FIX**: keep TabsRouter.homeIndex in sync with AutoTabsRouter.homeIndex
+
 ## 7.8.4
 
 - **FIX**: Build Runner Efficiency Warning #1737
