@@ -6,10 +6,13 @@ import 'package:code_builder/code_builder.dart' show TypeReference, RecordType, 
 class ResolvedType {
   /// the import path of the type
   String? import;
+
   /// the type name
   String name;
+
   /// whether the type is nullable
   bool isNullable;
+
   /// the type arguments
   List<ResolvedType> typeArguments;
   final bool _isRecordType;
@@ -33,8 +36,7 @@ class ResolvedType {
     this.typeArguments = const [],
     this.isNullable = false,
     this.nameInRecord,
-  })  : _isRecordType = false;
-
+  }) : _isRecordType = false;
 
   /// Constructor for a record types
   ResolvedType.record({
@@ -50,7 +52,6 @@ class ResolvedType {
 
   /// whether the type is for a named record field
   bool get isNamedRecordField => nameInRecord != null;
-
 
   /// Creates a [TypeReference] from the type
   Reference get refer {

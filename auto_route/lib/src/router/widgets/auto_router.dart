@@ -34,7 +34,7 @@ class AutoRouter extends StatefulWidget {
 
   /// Default constructor
   const AutoRouter({
-    Key? key,
+    super.key,
     this.navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
@@ -42,7 +42,7 @@ class AutoRouter extends StatefulWidget {
     this.navigatorKey,
     this.inheritNavigatorObservers = true,
     this.placeholder,
-  }) : super(key: key);
+  });
 
   /// Builds a [_DeclarativeAutoRouter] which uses
   /// a declarative list of routes to update navigator stack
@@ -196,7 +196,6 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final WidgetBuilder? placeholder;
 
   const _DeclarativeAutoRouter({
-    Key? key,
     required this.routes,
     this.navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
@@ -206,7 +205,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
     this.inheritNavigatorObservers = true,
     this.onNavigate,
     this.placeholder,
-  }) : super(key: key);
+  });
 
   @override
   _DeclarativeAutoRouterState createState() => _DeclarativeAutoRouterState();

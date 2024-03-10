@@ -68,13 +68,13 @@ abstract class AutoTabsRouter extends StatefulWidget {
   final int homeIndex;
 
   const AutoTabsRouter._({
-    Key? key,
+    super.key,
     required this.routes,
     this.homeIndex = -1,
     this.inheritNavigatorObservers = true,
     this.navigatorObservers =
         AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  }) : super(key: key);
+  });
 
   /// Builds an [AutoTabsRouter] to uses
   /// a [IndexedStack] to render pages
@@ -228,24 +228,17 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
   }
 
   const _AutoTabsRouterIndexedStack({
-    Key? key,
-    required List<PageRouteInfo> routes,
+    super.key,
+    required super.routes,
     this.lazyLoad = true,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
     this.builder,
     this.transitionBuilder = _defaultTransitionBuilder,
-    int homeIndex = -1,
-    bool inheritNavigatorObservers = true,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  }) : super._(
-          key: key,
-          routes: routes,
-          inheritNavigatorObservers: inheritNavigatorObservers,
-          navigatorObservers: navigatorObservers,
-          homeIndex: homeIndex,
-        );
+    super.homeIndex,
+    super.inheritNavigatorObservers,
+    super.navigatorObservers,
+  }) : super._();
 
   @override
   _AutoTabsRouterIndexedStackState createState() =>
@@ -370,7 +363,6 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState
 
 class _IndexedStackBuilder extends StatefulWidget {
   const _IndexedStackBuilder({
-    Key? key,
     required this.activeIndex,
     required this.itemBuilder,
     required this.navigatorObservers,
@@ -378,7 +370,7 @@ class _IndexedStackBuilder extends StatefulWidget {
     required this.lazyLoad,
     required this.tabsHash,
     required this.animation,
-  }) : super(key: key);
+  });
 
   final int activeIndex;
   final IndexedWidgetBuilder itemBuilder;
@@ -471,27 +463,20 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
   final DragStartBehavior dragStartBehavior;
 
   const _AutoTabsRouterPageView({
-    Key? key,
-    required List<PageRouteInfo> routes,
+    super.key,
+    required super.routes,
     AutoTabsPageViewBuilder? builder,
-    int homeIndex = -1,
+    super.homeIndex,
     this.scrollDirection = Axis.horizontal,
     this.animatePageTransition = true,
     this.duration = kTabScrollDuration,
     this.curve = Curves.easeInOut,
     this.physics,
     this.dragStartBehavior = DragStartBehavior.start,
-    bool inheritNavigatorObservers = true,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    super.inheritNavigatorObservers,
+    super.navigatorObservers,
   })  : _pageViewModeBuilder = builder,
-        super._(
-          key: key,
-          routes: routes,
-          homeIndex: homeIndex,
-          navigatorObservers: navigatorObservers,
-          inheritNavigatorObservers: inheritNavigatorObservers,
-        );
+        super._();
 
   @override
   _AutoTabsRouterPageViewState createState() => _AutoTabsRouterPageViewState();
@@ -593,26 +578,19 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   final Axis scrollDirection;
 
   const _AutoTabsRouterTabBar({
-    Key? key,
-    required List<PageRouteInfo> routes,
+    super.key,
+    required super.routes,
     this.scrollDirection = Axis.horizontal,
     this.builder,
-    int homeIndex = -1,
+    super.homeIndex,
     this.animatePageTransition = true,
     this.duration,
     this.curve = Curves.ease,
-    bool inheritNavigatorObservers = true,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    super.inheritNavigatorObservers,
+    super.navigatorObservers,
     this.physics,
     this.dragStartBehavior = DragStartBehavior.start,
-  }) : super._(
-          key: key,
-          routes: routes,
-          homeIndex: homeIndex,
-          navigatorObservers: navigatorObservers,
-          inheritNavigatorObservers: inheritNavigatorObservers,
-        );
+  }) : super._();
 
   @override
   _AutoTabsRouterTabBarState createState() => _AutoTabsRouterTabBarState();
@@ -719,22 +697,15 @@ class _AutoTabsRouterBuilder extends AutoTabsRouter {
   final OnNavigationChanged? onRouterReady;
 
   const _AutoTabsRouterBuilder({
-    Key? key,
-    required List<PageRouteInfo> routes,
+    super.key,
+    required super.routes,
     this.onNavigate,
     this.onRouterReady,
     required this.builder,
-    int homeIndex = -1,
-    bool inheritNavigatorObservers = true,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  }) : super._(
-          key: key,
-          routes: routes,
-          homeIndex: homeIndex,
-          navigatorObservers: navigatorObservers,
-          inheritNavigatorObservers: inheritNavigatorObservers,
-        );
+    super.homeIndex,
+    super.inheritNavigatorObservers,
+    super.navigatorObservers,
+  }) : super._();
 
   @override
   _AutoTabsRouterBuilderState createState() => _AutoTabsRouterBuilderState();
@@ -844,9 +815,9 @@ mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
 class KeepAliveTab extends StatefulWidget {
   /// Default contractor
   const KeepAliveTab({
-    Key? key,
+    super.key,
     required this.page,
-  }) : super(key: key);
+  });
 
   /// The tab page to keep-alive
   final AutoRoutePage page;

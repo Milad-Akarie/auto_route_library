@@ -131,7 +131,7 @@ class AutoTabsScaffold extends StatelessWidget {
 
   /// Default constructor;
   const AutoTabsScaffold({
-    Key? key,
+    super.key,
     required this.routes,
     this.lazyLoad = true,
     this.homeIndex = -1,
@@ -165,7 +165,7 @@ class AutoTabsScaffold extends StatelessWidget {
     this.extendBodyBehindAppBar = false,
     this.appBarBuilder,
     this.scaffoldKey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

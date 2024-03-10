@@ -70,10 +70,10 @@ class AutoRouteInformation extends RouteInformation {
 
   /// Default constructor
   const AutoRouteInformation({
-    required Uri uri,
-    Object? state,
+    required Uri super.uri,
+    super.state,
     this.replace = true,
-  }) : super(uri: uri, state: state);
+  });
 
   @override
   bool operator ==(Object other) =>

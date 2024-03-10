@@ -76,15 +76,14 @@ class AutoLeadingButton extends StatefulWidget {
 
   /// Default constructor
   const AutoLeadingButton({
-    Key? key,
+    super.key,
     this.color,
     bool? showIfParentCanPop,
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
     this.builder,
   })  : assert(color == null || builder == null),
-        _showIfParentCanPop = showIfParentCanPop ?? true,
-        super(key: key);
+        _showIfParentCanPop = showIfParentCanPop ?? true;
 
   @override
   State<AutoLeadingButton> createState() => _AutoLeadingButtonState();

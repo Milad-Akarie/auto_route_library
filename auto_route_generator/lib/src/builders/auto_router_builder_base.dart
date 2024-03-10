@@ -22,7 +22,6 @@ const _typeChecker = TypeChecker.fromRuntime(AutoRouterConfig);
 
 /// Base class for [AutoRouterBuilder] and [AutoRouterModuleBuilder]
 abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
-
   /// Default constructor
   AutoRouterBuilderBase({
     required super.generatedExtension,
@@ -99,7 +98,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
 
     return '$_header\n${generateLibrary(
       item,
-      routes: routes..sort((a,b)=> a.className.compareTo(b.className)),
+      routes: routes..sort((a, b) => a.className.compareTo(b.className)),
       ignoreForFile: ignoreForFile,
     )}';
   }
@@ -154,7 +153,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   }
 }
 
-const _header = '''  
+const _header = '''
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************

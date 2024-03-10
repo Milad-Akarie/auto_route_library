@@ -241,13 +241,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
 class _AutoRootRouter extends StatefulWidget {
   const _AutoRootRouter({
-    Key? key,
     required this.router,
     this.navRestorationScopeId,
     this.navigatorObservers = const [],
     required this.navigatorObserversBuilder,
     this.placeholder,
-  }) : super(key: key);
+  });
   final StackRouter router;
   final String? navRestorationScopeId;
   final List<NavigatorObserver> navigatorObservers;

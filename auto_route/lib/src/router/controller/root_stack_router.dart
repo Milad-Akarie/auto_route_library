@@ -10,10 +10,9 @@ typedef PageFactory = Page<dynamic> Function(RouteData data);
 /// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {
   /// Default constructor
-  RootStackRouter({GlobalKey<NavigatorState>? navigatorKey})
+  RootStackRouter({super.navigatorKey})
       : super(
           key: const ValueKey('Root'),
-          navigatorKey: navigatorKey,
         ) {
     _navigationHistory = NavigationHistory.create(this);
   }

@@ -10,6 +10,7 @@ class DeferredPagesAllocator implements Allocator {
 
   /// The list of routes to generate
   final List<RouteConfig> routes;
+
   /// The default deferred loading value
   final bool defaultDeferredLoading;
 

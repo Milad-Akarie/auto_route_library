@@ -6,6 +6,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
 
 final _formatter = DartFormatter(fixes: [StyleFix.singleCascadeStatements]);
+
 /// A [Builder] which skips resolving cached files
 abstract class CacheAwareBuilder<T> extends Builder {
   /// The [buildExtensions] configuration for `.dart`
@@ -25,6 +26,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   @override
   final Map<String, List<String>> buildExtensions;
+
   /// The [BuilderOptions] for this builder
   final BuilderOptions? options;
 
@@ -136,7 +138,6 @@ source formatter.''',
   String toString() =>
       'Generating $generatedExtension: ${this.runtimeType.toString()}';
 
-
   /// Checks if the current compilation unit has any top level annotations
   Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep,
       [CompilationUnit? unit]) async {
@@ -164,7 +165,6 @@ source formatter.''',
     return false;
   }
 }
-
 
 /// Validates the build extensions
 Map<String, List<String>> validatedBuildExtensionsFrom(

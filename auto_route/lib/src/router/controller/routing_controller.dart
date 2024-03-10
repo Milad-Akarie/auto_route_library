@@ -1776,20 +1776,14 @@ class NestedStackRouter extends StackRouter {
   NestedStackRouter({
     required this.routeCollection,
     required this.pageBuilder,
-    required LocalKey key,
+    required super.key,
     required RouteData routeData,
     this.managedByWidget = false,
-    required RoutingController parent,
-    OnNestedNavigateCallBack? onNavigate,
-    GlobalKey<NavigatorState>? navigatorKey,
+    required RoutingController super.parent,
+    super.onNavigate,
+    super.navigatorKey,
   })  : matcher = RouteMatcher(routeCollection),
-        _routeData = routeData,
-        super(
-          key: key,
-          parent: parent,
-          onNavigate: onNavigate,
-          navigatorKey: navigatorKey,
-        ) {
+        _routeData = routeData {
     _pushInitialRoutes();
   }
 

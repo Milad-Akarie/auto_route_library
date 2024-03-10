@@ -42,8 +42,8 @@ class AutoRouteNavigator extends StatefulWidget {
     this.didPop,
     this.declarativeRoutesBuilder,
     this.placeholder,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   AutoRouteNavigatorState createState() => AutoRouteNavigatorState();

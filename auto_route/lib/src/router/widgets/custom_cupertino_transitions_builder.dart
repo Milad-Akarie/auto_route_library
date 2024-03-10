@@ -5,11 +5,11 @@
 // The adjustments made to this code is to disable unwanted shadow
 // of routes when used as nested routes, e.g inside of a TabsRouter
 
-import 'package:flutter/cupertino.dart' show CupertinoDynamicColor;
-import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
 
+import 'package:flutter/cupertino.dart' show CupertinoDynamicColor;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -315,13 +315,10 @@ class CupertinoPageRoute<T> extends PageRoute<T>
   CupertinoPageRoute({
     required this.builder,
     this.title,
-    RouteSettings? settings,
+    super.settings,
     this.maintainState = true,
-    bool fullscreenDialog = false,
-  }) : super(
-          settings: settings,
-          fullscreenDialog: fullscreenDialog,
-        ) {
+    super.fullscreenDialog,
+  }) {
     assert(opaque);
   }
 
@@ -355,7 +352,7 @@ class CupertinoPageTransition extends StatelessWidget {
   ///  * `linearTransition` is whether to perform the transitions linearly.
   ///    Used to precisely track back gesture drags.
   CupertinoPageTransition({
-    Key? key,
+    super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
     required this.child,
@@ -388,8 +385,7 @@ class CupertinoPageTransition extends StatelessWidget {
                     parent: primaryRouteAnimation,
                     curve: Curves.linearToEaseOut,
                   ))
-            .drive(_CupertinoEdgeShadowDecoration.tween(linearTransition)),
-        super(key: key);
+            .drive(_CupertinoEdgeShadowDecoration.tween(linearTransition));
 
   // When this page is coming in to cover another page.
   final Animation<Offset> _primaryPositionAnimation;
@@ -435,7 +431,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
   ///  * `linearTransition` is whether to perform the secondary transition linearly.
   ///    Used to precisely track back gesture drags.
   CupertinoFullscreenDialogTransition({
-    Key? key,
+    super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
     required this.child,
@@ -454,8 +450,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
                     curve: Curves.linearToEaseOut,
                     reverseCurve: Curves.easeInToLinear,
                   ))
-            .drive(_kMiddleLeftTween),
-        super(key: key);
+            .drive(_kMiddleLeftTween);
 
   final Animation<Offset> _positionAnimation;
 
@@ -494,11 +489,11 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
 /// detector is associated.
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   const _CupertinoBackGestureDetector({
-    Key? key,
+    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
-  }) : super(key: key);
+  });
 
   final Widget child;
 

@@ -14,14 +14,14 @@ class AutoTabView extends StatefulWidget {
   /// Creates a page view with one child per tab.
 
   const AutoTabView({
-    Key? key,
+    super.key,
     required this.animatePageTransition,
     required this.controller,
     this.physics,
     required this.router,
     this.scrollDirection = Axis.horizontal,
     this.dragStartBehavior = DragStartBehavior.start,
-  }) : super(key: key);
+  });
 
   /// Whether to use [TabController.animateToPage] or [TabController.jumpToPage]
   final bool animatePageTransition;

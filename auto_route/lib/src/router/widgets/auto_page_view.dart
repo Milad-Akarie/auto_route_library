@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class AutoPageView extends StatefulWidget {
   /// Default constructor
   const AutoPageView({
-    Key? key,
+    super.key,
     required this.animatePageTransition,
     this.duration = const Duration(milliseconds: 300),
     required this.controller,
@@ -14,7 +14,7 @@ class AutoPageView extends StatefulWidget {
     required this.router,
     this.dragStartBehavior = DragStartBehavior.start,
     this.scrollDirection = Axis.horizontal,
-  }) : super(key: key);
+  });
 
   /// Whether to use [PageController.animateToPage] or [PageController.jumpToPage]
   final bool animatePageTransition;
