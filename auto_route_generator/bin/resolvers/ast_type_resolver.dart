@@ -1,7 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 
-import 'ast_extensions.dart';
+import '../ast_extensions.dart';
 import 'package_file_resolver.dart';
 
 /// A Helper class that resolves types
@@ -21,7 +21,7 @@ class AstTypeResolver {
       return null;
     }
     for (var lib in libs.entries) {
-      if (libs.values.contains(identifier)) {
+      if (lib.value.contains(identifier)) {
         return resolver.uriToPackage(Uri.parse(lib.key));
       }
     }
@@ -71,8 +71,10 @@ class AstTypeResolver {
   }
 
   /// Resolves the given [type] to a [ResolvedType]
-  ResolvedType resolveType(TypeAnnotation type) {
-    if (type is RecordTypeAnnotation) {
+  ResolvedType resolveType(TypeAnnotation? type) {
+    if (type == null) {
+      return ResolvedType(name: 'dynamic');
+    } else if (type is RecordTypeAnnotation) {
       return ResolvedType.record(
         name: type.name ?? 'void',
         import: resolveImport(type.name),

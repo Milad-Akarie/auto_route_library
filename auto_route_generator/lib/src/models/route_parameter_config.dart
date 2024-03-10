@@ -29,8 +29,6 @@ class ParamConfig {
   /// whether the parameter is optional
   final bool isOptional;
   /// whether the parameter is required
-  final bool hasRequired;
-  /// whether the parameter is required
   final bool isRequired;
   /// whether the parameter is named
   final bool isNamed;
@@ -49,7 +47,6 @@ class ParamConfig {
     required this.name,
     required this.isNamed,
     required this.isPositional,
-    required this.hasRequired,
     required this.isOptional,
     required this.isRequired,
     required this.isPathParam,
@@ -103,7 +100,6 @@ class ParamConfig {
       'alias': this.alias,
       'isPositional': this.isPositional,
       'isOptional': this.isOptional,
-      'hasRequired': this.hasRequired,
       'isRequired': this.isRequired,
       'isNamed': this.isNamed,
       'isPathParam': this.isPathParam,
@@ -125,7 +121,6 @@ class ParamConfig {
       alias: map['alias'] as String?,
       isPositional: map['isPositional'] as bool,
       isOptional: map['isOptional'] as bool,
-      hasRequired: map['hasRequired'] as bool,
       isRequired: map['isRequired'] as bool,
       isNamed: map['isNamed'] as bool,
       isPathParam: map['isPathParam'] as bool,
@@ -152,7 +147,6 @@ class FunctionParamConfig extends ParamConfig {
     required String name,
     String? alias,
     required bool isPositional,
-    required bool hasRequired,
     required bool isOptional,
     required bool isNamed,
     required bool isRequired,
@@ -167,7 +161,6 @@ class FunctionParamConfig extends ParamConfig {
           isNamed: isNamed,
           defaultValueCode: defaultValueCode,
           isPositional: isPositional,
-          hasRequired: hasRequired,
           isRequired: isRequired,
           isOptional: isOptional,
         );
@@ -182,7 +175,6 @@ class FunctionParamConfig extends ParamConfig {
       'alias': this.alias,
       'isPositional': this.isPositional,
       'isOptional': this.isOptional,
-      'hasRequired': this.hasRequired,
       'isRequired': this.isRequired,
       'isNamed': this.isNamed,
       'isPathParam': this.isPathParam,
@@ -208,7 +200,6 @@ class FunctionParamConfig extends ParamConfig {
       alias: map['alias'] as String?,
       isPositional: map['isPositional'] as bool,
       isOptional: map['isOptional'] as bool,
-      hasRequired: map['hasRequired'] as bool,
       isRequired: map['isRequired'] as bool,
       isNamed: map['isNamed'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,

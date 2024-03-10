@@ -9,27 +9,29 @@ const _skyEnginePackage = 'sky_engine';
 class PackageFileResolver {
   static Uri packageConfigUri = Uri.file(p.join(Directory.current.path, packageConfigPath));
   final Map<String, String> packageToPath;
+  final Map<String, String> pathToPackage;
 
-  PackageFileResolver(this.packageToPath);
+  PackageFileResolver(this.packageToPath, this.pathToPackage);
 
   factory PackageFileResolver.forCurrentRoot() {
     final packageConfig = File.fromUri(packageConfigUri);
     final packageConfigJson = jsonDecode(packageConfig.readAsStringSync())['packages'] as List<dynamic>;
     final packageToPath = <String, String>{};
+    final pathToPackage = <String, String>{};
     for (var entry in packageConfigJson) {
       final name = entry['name'] as String;
       if (name[0] == '_') continue;
       final packageUri = Uri.parse(entry['rootUri'] as String);
-      final resolvedUri = packageUri.hasScheme
+      final absoluteUri = packageUri.hasScheme
           ? packageUri
-          : Directory.current.uri.resolveUri(
-              packageUri.replace(
-                pathSegments: packageUri.pathSegments.skip(1),
-              ),
+          : Directory.current.uri.resolve(
+              packageUri.pathSegments.skip(1).join('/'),
             );
-      packageToPath[name] = resolvedUri.toString();
+      final resolvedPath = absoluteUri.replace(path: p.canonicalize(absoluteUri.path)).toString();
+      packageToPath[name] = resolvedPath;
+      pathToPackage[resolvedPath] = name;
     }
-    return PackageFileResolver(packageToPath);
+    return PackageFileResolver(packageToPath, pathToPackage);
   }
 
   Uri resolve(Uri uri, {Uri? relativeTo}) {
@@ -53,11 +55,9 @@ class PackageFileResolver {
   }
 
   String uriToPackage(Uri uri) {
-    final segments = uri.pathSegments;
-    final libIndex = segments.indexOf('lib');
-    if (libIndex > 1) {
-      return 'package:${segments[libIndex - 1]}/${segments.sublist(libIndex + 1).join('/')}';
-    }
-    return uri.toString();
+    final splits = uri.replace(scheme: 'file').toString().split('/lib/');
+    final package = pathToPackage[splits.firstOrNull];
+    if (package == null) return uri.toString();
+    return 'package:${package}/${splits.last}';
   }
 }

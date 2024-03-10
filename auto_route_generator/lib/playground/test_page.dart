@@ -1,17 +1,21 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:vertex_auth/vertex_auth.dart';
 
-import 'model_index.dart';
+import 'index_2.dart';
 
 // ignore_for_file: public_member_api_docs
 @RoutePage<Generice<List<String>>>()
-class TestPage {
-  final Key query;
+class TestPage extends StatelessWidget {
   final Generice<DemoModel> model;
   TestPage({
-    required this.query,
     required this.model,
-    Generice<DemoModel> Function(String x, [int y])? x,
+    AuthState? state,
   });
+
+  @override
+  Widget build(BuildContext context) {
+    throw UnimplementedError();
+  }
 }

@@ -1,13 +1,13 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:path/path.dart' as p;
 
 import '../../utils.dart';
 import '../models/route_config.dart';
 import '../models/router_config.dart';
 import 'deferred_pages_allocator.dart';
-import 'router_config_builder.dart';
 import 'route_info_builder.dart';
-import 'package:path/path.dart' as p;
+import 'router_config_builder.dart';
 
 /// AutoRoute imports
 const autoRouteImport = 'package:auto_route/auto_route.dart';
@@ -75,5 +75,6 @@ String generateLibrary(
       ]),
   );
 
+  // return library.accept(emitter).toString();
   return DartFormatter().format(library.accept(emitter).toString());
 }

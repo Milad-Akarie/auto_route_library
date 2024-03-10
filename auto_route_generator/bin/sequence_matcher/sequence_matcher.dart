@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import '../package_file_resolver.dart';
+import '../resolvers/package_file_resolver.dart';
 import 'common_namespaces.dart';
 import 'export_statement.dart';
 import 'sequence.dart';
@@ -38,19 +38,20 @@ class SequenceMatcher {
     final exportsFound = <Uri, Iterable<ExportStatement>>{};
 
     for (final source in sources) {
+      final resolvedUri = fileResolver.resolve(source, relativeTo: file);
+
       try {
         final notFoundIdentifiers = sequences.map((e) => e.identifier).where((e) => !foundUnique.contains(e)).toSet();
-
+        print(notFoundIdentifiers);
         for (final identifier in notFoundIdentifiers) {
           if (resolvedTypes[source.toString()]?.contains(identifier) == true) {
             foundUnique.add(identifier);
-            results[source.path] = {...?results[source.path], SequenceMatch(identifier, 0, 0, identifier)};
+            results[resolvedUri.path] = {...?results[resolvedUri.path], SequenceMatch(identifier, 0, 0, identifier)};
             sequences = sequences.where((e) => e.identifier != identifier);
           }
         }
 
         if (sequences.isEmpty) break;
-        final resolvedUri = fileResolver.resolve(source, relativeTo: file);
         final content = File.fromUri(resolvedUri).readAsBytesSync();
         final matches = findTopLevelSequences(content, [
           Sequence('export', 'export', terminator: 0x3B),
@@ -62,7 +63,7 @@ class SequenceMatcher {
         if (identifierMatches.isNotEmpty) {
           resolvedTypes[resolvedUri.toString()] = identifierMatches.map((e) => e.identifier).toSet();
           foundUnique.addAll(identifierMatches.map((e) => e.identifier));
-          results[source.path] = {...?results[source.path], ...identifierMatches};
+          results[resolvedUri.path] = {...?results[resolvedUri.path], ...identifierMatches};
           sequences = sequences.where((e) => !foundUnique.contains(e.identifier));
         }
         if (foundUnique.length >= targetTotal.length) {

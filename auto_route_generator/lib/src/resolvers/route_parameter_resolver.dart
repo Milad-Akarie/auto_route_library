@@ -62,7 +62,6 @@ class RouteParameterResolver {
       name: paramName,
       alias: nameOrAlias,
       isPositional: parameterElement.isPositional,
-      hasRequired: parameterElement.hasRequired,
       isRequired: parameterElement.isRequiredNamed,
       isOptional: parameterElement.isOptional,
       isNamed: parameterElement.isNamed,
@@ -83,7 +82,6 @@ class RouteParameterResolver {
         defaultValueCode: paramElement.defaultValueCode,
         isRequired: paramElement.isRequiredNamed,
         isPositional: paramElement.isPositional,
-        hasRequired: paramElement.hasRequired,
         isOptional: paramElement.isOptional,
         isNamed: paramElement.isNamed);
   }

@@ -38,11 +38,20 @@ extension ClassDeclarationX on ClassDeclaration {
   List<TypedParam> get defaultConstructorParams {
     if (defaultConstructor == null) return [];
     final params = <TypedParam>[];
-    for (final param in defaultConstructor!.parametersList) {
+    for (final param in defaultConstructor!.parameters.parameters) {
       final type = param.paramType ?? fields.firstWhereOrNull((e) => e.name == param.paramName)?.type;
       params.add(TypedParam(param, type));
     }
     return params;
+  }
+}
+
+extension FormalParameterListX on FormalParameterList {
+  List<TypedParam> get typedParams {
+    return parameters.map((e) {
+      final type = e.paramType;
+      return TypedParam(e, type);
+    }).toList();
   }
 }
 
@@ -52,17 +61,43 @@ extension AnnotationX on Annotation {
   List<TypeAnnotation> get returnTypeArgs => this.typeArguments?.arguments.toList() ?? const [];
 
   Set<String> get returnIdentifiers => {...returnTypeArgs.expand((e) => e.identifiers)};
+
+  bool? getBoolValue(String name) {
+    return false;
+    // final arg = arguments?.arguments.toList().firstWhereOrNull((e) => e.name?.name == name);
+    // return arg?.value is BooleanLiteral ? (arg!.value as BooleanLiteral).value : null;
+  }
+
+  String? getStringValue(String name) {
+    return null;
+    // final arg = arguments?.arguments.toList().firstWhereOrNull((e) => e.name?.name == name);
+    // return arg?.value is StringLiteral ? (arg!.value as StringLiteral).stringValue : null;
+  }
 }
 
-extension ConstructorDeclarationX on ConstructorDeclaration {
-  List<FormalParameter> get parametersList => parameters.parameters.toList();
-
-  bool get hasParameters => parametersList.isNotEmpty;
-}
+extension ConstructorDeclarationX on ConstructorDeclaration {}
 
 class TypedParam {
   final FormalParameter param;
   final TypeAnnotation? type;
+
+  Annotation? get pathParamAnnotation => param.getAnnotation('PathParam');
+
+  Annotation? get queryParamAnnotation => param.getAnnotation('QueryParam');
+
+  String get name => param.paramName ?? '';
+
+  bool get isNamed => param.isNamed;
+
+  bool get isPositional => param.isPositional;
+
+  bool get isOptional => param.isOptional;
+
+  bool get isRequiredNamed => param.isRequiredNamed;
+
+  bool get isSuper => param.actual is SuperFormalParameter;
+
+  bool get isThis => param.actual is FieldFormalParameter;
 
   TypedParam(this.param, this.type);
 }
@@ -75,6 +110,11 @@ extension FormalParameterX on FormalParameter {
         SimpleFormalParameter s => s.type,
         DefaultFormalParameter d => d.parameter.paramType,
         _ => null,
+      };
+
+  FormalParameter get actual => switch (this) {
+        DefaultFormalParameter d => d.parameter,
+        _ => this,
       };
 
   List<Annotation> get annotations => metadata.toList();
@@ -107,7 +147,10 @@ extension TypeAnnotationX on TypeAnnotation? {
 
   bool get isFunction => this is GenericFunctionType;
 
-  List<TypeAnnotation> get typeArgumentsList => (this as NamedType).typeArguments?.arguments ?? [];
+  List<TypeAnnotation> get typeArgumentsList => switch (this) {
+        NamedType n => [...?n.typeArguments?.arguments],
+        _ => const [],
+      };
 
   Set<String> get identifiers {
     return switch (this) {

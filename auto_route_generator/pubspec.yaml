@@ -20,6 +20,10 @@ dependencies:
   glob: ^2.0.1
   package_config: ^2.1.0
   auto_route: ^7.8.4
+  vertex_auth:
+    git:
+      url: git@github.com:vertex-ly/flutter-auth.git
+      ref: main
 
 
 dev_dependencies:
