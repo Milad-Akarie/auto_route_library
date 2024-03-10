@@ -102,6 +102,25 @@ void runGeneralTests(String tabsType) {
   );
 
   testWidgets(
+    'Attempting a pop when outside of the home tab should return to home tab',
+    (WidgetTester tester) async {
+      await pumpRouter(tester);
+      router.navigate(const Tab2Route());
+      await tester.pumpAndSettle();
+      expect(router.urlState.url, '/tab2');
+
+      await tester.tap(find.byTooltip('Change homeIndex'));
+      await tester.pump();
+
+      final tabsRouter = router.innerRouterOf<TabsRouter>(TabsHostRoute.name);
+      expect(tabsRouter, isNotNull);
+      expect(await tabsRouter!.pop(), isTrue);
+      await tester.pumpAndSettle();
+      expect(router.urlState.url, '/');
+    },
+  );
+
+  testWidgets(
     'Initializing router App with deep-link "/tab3/tab3Nested2" should present FirstRoute/Tab3Route/Tab3Nested2Route',
     (WidgetTester tester) async {
       await pumpRouterApp(tester, router,
