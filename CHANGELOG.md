@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-12
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.9.0`](#auto_route---v790)
+ - [`auto_route_generator` - `v7.3.3`](#auto_route_generator---v733)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v7.3.3`
+
+---
+
+#### `auto_route` - `v7.9.0`
+
+ - **REFACTOR**(example): remove unnecessary pageTransitionsTheme parameter.
+ - **FIX**: unable to get the label for back button(previous route title) and current route title on CupertinoNavigationBar and CupertinoSliverNavigationBar #1795.
+ - **FIX**: CupertinoNavigationBar and CupertinoSliverNavigationBar unable to get route title and previous route title.
+ - **FIX**: docstring typo(RouteData.mete -> RouteData.meta).
+ - **FIX**: keep TabsRouter.homeIndex in sync with AutoTabsRouter.homeIndex.
+ - **FEAT**: add back mixin to AutoRouteAware.
+
+
 ## 2023-10-05
 
 ### Changes

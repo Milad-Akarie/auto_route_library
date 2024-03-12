@@ -1,3 +1,12 @@
+## 7.9.0
+
+ - **REFACTOR**(example): remove unnecessary pageTransitionsTheme parameter.
+ - **FIX**: unable to get the label for back button(previous route title) and current route title on CupertinoNavigationBar and CupertinoSliverNavigationBar #1795.
+ - **FIX**: CupertinoNavigationBar and CupertinoSliverNavigationBar unable to get route title and previous route title.
+ - **FIX**: docstring typo(RouteData.mete -> RouteData.meta).
+ - **FIX**: keep TabsRouter.homeIndex in sync with AutoTabsRouter.homeIndex.
+ - **FEAT**: add back mixin to AutoRouteAware.
+
 ## 7.8.5
 
 - **FEAT**: add back mixin to AutoRouteAware
