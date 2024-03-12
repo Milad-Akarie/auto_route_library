@@ -313,7 +313,9 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
 }
 
 class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
-    with CustomCupertinoRouteTransitionMixin<T> {
+    with
+        CupertinoRouteTransitionMixin<T>,
+        CupertinoRouteTransitionOverrideMixin<T> {
   _PageBasedCupertinoPageRoute({
     required AutoRoutePage<T> page,
     this.title,

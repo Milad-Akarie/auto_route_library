@@ -1563,25 +1563,6 @@ var isLoading = false;
   }      
 ```          
 
-### Remove shadow from nested routers
-
-This fixes the issue referenced here          
-https://stackoverflow.com/questions/53457772/why-there-is-a-shadow-between-nested-navigator          
-https://stackoverflow.com/questions/68986632/rid-of-elevation-of-nested-flutter-navigator-2-0
-
-```dart             
-MaterialApp.router(            
-  theme: ThemeData.dark().copyWith(            
-  pageTransitionsTheme: PageTransitionsTheme(            
-     builders: {            
-         // replace default CupertinoPageTransitionsBuilder with this          
-        TargetPlatform.iOS: NoShadowCupertinoPageTransitionsBuilder(),            
-        TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),            
-    } )          
-  ),          
- ```               
-
-**Note:** `CupertinoRoute` already uses this fix, so no need to override `PageTransitionsTheme`
 
 ## Migrating to v6
 
