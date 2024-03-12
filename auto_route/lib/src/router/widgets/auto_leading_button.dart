@@ -119,17 +119,17 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
         return widget.builder!(
           context,
           useCloseButton ? LeadingType.close : LeadingType.back,
-          scope.controller.popTop,
+          scope.controller.maybePopTop,
         );
       }
       return useCloseButton
           ? CloseButton(
               color: widget.color,
-              onPressed: scope.controller.popTop,
+              onPressed: scope.controller.maybePopTop,
             )
           : BackButton(
               color: widget.color,
-              onPressed: scope.controller.popTop,
+              onPressed: scope.controller.maybePopTop,
             );
     }
     final ScaffoldState? scaffold = Scaffold.maybeOf(context);

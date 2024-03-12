@@ -26,10 +26,14 @@ extension AutoRouterX on BuildContext {
   }) =>
       router.replace<T>(route, onFailure: onFailure);
 
-  /// see [StackRouter.pop]
+  /// see [StackRouter.maybePop]
   @optionalTypeArgs
-  Future<bool> popRoute<T extends Object?>([T? result]) =>
-      router.pop<T>(result);
+  @Deprecated('Renamed to maybePop to avoid confusion')
+  Future<bool> popRoute<T extends Object?>([T? result]) => router.maybePop<T>(result);
+
+  /// see [StackRouter.maybePop]
+  @optionalTypeArgs
+  Future<bool> maybePop<T extends Object?>([T? result]) => router.maybePop<T>(result);
 
   /// see [RoutingController.navigate]
   Future<void> navigateTo(PageRouteInfo route,
@@ -38,11 +42,6 @@ extension AutoRouterX on BuildContext {
             route,
             onFailure: onFailure,
           );
-
-  @Deprecated('Use back() instead')
-
-  /// see [RoutingController.back]
-  void navigateBack() => RouterScope.of(this).controller.back();
 
   /// see [RoutingController.back]
   void back() => RouterScope.of(this).controller.back();

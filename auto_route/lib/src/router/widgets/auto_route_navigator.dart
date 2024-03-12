@@ -103,6 +103,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
                 widget.router.removeRoute(routeData);
                 widget.didPop?.call(routeData.route, result);
               }
+              route.onPopInvoked(true);
               return true;
             },
           )

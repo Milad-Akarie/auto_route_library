@@ -13,11 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
-
 part 'auto_route_guard.dart';
-
 part 'auto_router_delegate.dart';
-
 part 'root_stack_router.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -500,15 +497,29 @@ abstract class RoutingController with ChangeNotifier {
   /// Clients can either pop their own [_pages] stack
   /// or defer the call to a parent controller
   ///
-  /// see [Navigator.pop] for more details
+  /// see [Navigator.maybePop(context)] for more details
   @optionalTypeArgs
-  Future<bool> pop<T extends Object?>([T? result]);
+  Future<bool> maybePop<T extends Object?>([T? result]);
 
-  /// Calls [pop] on the controller with the top-most visible page
+  /// Clients can either pop their own [_pages] stack
+  /// or defer the call to a parent controller
+  ///
+  /// see [Navigator.maybePop(context)] for more details
   @optionalTypeArgs
-  Future<bool> popTop<T extends Object?>([T? result]) => _topMostRouter().pop<T>(result);
+  @Deprecated(
+      'pop was renamed to maybePop to avoid confusion, if you are looking for the implementation of Navigator.pop user popForced')
+  Future<bool> pop<T extends Object?>([T? result]) => maybePop(result);
 
-  /// Whether this controller can preform [pop]
+  /// Calls [maybePop] on the controller with the top-most visible page
+  @optionalTypeArgs
+  @Deprecated('pop was renamed to maybePopTop')
+  Future<bool> popTop<T extends Object?>([T? result]) => maybePopTop(result);
+
+  /// Calls [maybePop] on the controller with the top-most visible page
+  @optionalTypeArgs
+  Future<bool> maybePopTop<T extends Object?>([T? result]) => _topMostRouter().maybePop<T>(result);
+
+  /// Whether this controller can preform [maybePop]
   ///
   /// if [ignoreChildRoutes] is true
   /// it will only check whether this controller has multiple entire
@@ -664,12 +675,12 @@ class TabsRouter extends RoutingController {
 
   @override
   @optionalTypeArgs
-  Future<bool> pop<T extends Object?>([T? result]) {
+  Future<bool> maybePop<T extends Object?>([T? result]) {
     if (homeIndex != -1 && _activeIndex != homeIndex) {
       setActiveIndex(homeIndex);
       return SynchronousFuture<bool>(true);
     } else if (_parent != null) {
-      return _parent!.pop<T>(result);
+      return _parent!.maybePop<T>(result);
     } else {
       return SynchronousFuture<bool>(false);
     }
@@ -1074,13 +1085,13 @@ abstract class StackRouter extends RoutingController {
 
   @override
   @optionalTypeArgs
-  Future<bool> pop<T extends Object?>([T? result]) async {
+  Future<bool> maybePop<T extends Object?>([T? result]) async {
     final NavigatorState? navigator = _navigatorKey.currentState;
     if (navigator == null) return SynchronousFuture<bool>(false);
     if (await navigator.maybePop<T>(result)) {
       return true;
     } else if (_parent != null) {
-      return _parent!.pop<T>(result);
+      return _parent!.maybePop<T>(result);
     } else {
       return false;
     }
@@ -1274,7 +1285,7 @@ abstract class StackRouter extends RoutingController {
   Future<void> popAndPushAll(List<PageRouteInfo> routes, {onFailure}) {
     assert(routes.isNotEmpty);
     final scope = _findStackScope(routes.first);
-    scope.pop();
+    scope.maybePop();
     return scope._pushAll(routes, onFailure: onFailure, notify: true);
   }
 
@@ -1331,7 +1342,7 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
   }) {
     final scope = _findStackScope(route);
-    scope.pop<TO>(result);
+    scope.maybePop<TO>(result);
     return scope._push<T>(route, onFailure: onFailure);
   }
 
@@ -1356,7 +1367,7 @@ abstract class StackRouter extends RoutingController {
     return predicateWasSatisfied;
   }
 
-  /// Calls [pop] repeatedly on the navigator until the predicate returns true.
+  /// Calls [maybePop] repeatedly on the navigator until the predicate returns true.
   ///
   /// see [Navigator.popUntil]
   ///
@@ -1622,7 +1633,7 @@ abstract class StackRouter extends RoutingController {
     _childControllers.clear();
   }
 
-  /// Push the given [route] onto the navigator, and then [pop] all the previous
+  /// Push the given [route] onto the navigator, and then [maybePop] all the previous
   /// routes until the [predicate] returns true.
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it

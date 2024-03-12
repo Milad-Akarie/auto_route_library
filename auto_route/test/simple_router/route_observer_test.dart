@@ -1,6 +1,5 @@
 @GenerateNiceMocks([MockSpec<AutoRouterObserver>()])
 import 'package:auto_route/auto_route.dart';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -39,7 +38,7 @@ void main() {
             .name,
         SecondRoute.name);
 
-    router.pop();
+    router.maybePop();
     await tester.pumpAndSettle();
     expect(
         verify(mockObserver.didPop(captureAny, any))

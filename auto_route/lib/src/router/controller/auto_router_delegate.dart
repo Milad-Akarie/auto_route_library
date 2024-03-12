@@ -90,7 +90,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   @override
-  Future<bool> popRoute() async => controller.popTop();
+  Future<bool> popRoute() async => controller.maybePopTop();
 
   late List<NavigatorObserver> _navigatorObservers;
 
