@@ -1,11 +1,13 @@
 ## 7.9.0
 
- - **REFACTOR**(example): remove unnecessary pageTransitionsTheme parameter.
- - **FIX**: unable to get the label for back button(previous route title) and current route title on CupertinoNavigationBar and CupertinoSliverNavigationBar #1795.
- - **FIX**: CupertinoNavigationBar and CupertinoSliverNavigationBar unable to get route title and previous route title.
- - **FIX**: docstring typo(RouteData.mete -> RouteData.meta).
- - **FIX**: keep TabsRouter.homeIndex in sync with AutoTabsRouter.homeIndex.
- - **FEAT**: add back mixin to AutoRouteAware.
+- **FIX**: unable to get the label for back button(previous route title) and current route title on
+  CupertinoNavigationBar and CupertinoSliverNavigationBar #1795.
+- **FIX**: CupertinoNavigationBar and CupertinoSliverNavigationBar unable to get route title and
+  previous route title.
+- **Fix**: PopScope.onPopInvoked not called when canPop is set to true,
+- **Refactor**: rename router.pop to router.maybePop to avoid confusion
+- **Refactor**: rename router.popTop to router.maybePopTop to avoid confusion
+- **Refactor**: rename context.popRoute to context.maybePop
 
 ## 7.8.5
 
@@ -34,30 +36,34 @@
 
 ## 7.8.0
 
- - **FEAT**: add PlatformDeepLink.initial flag to tell whether we're coming from setInitialRoutePath or setNewRoutePath.
- - **FEAT**: add option to pass custom ignore_for_file rules to the generated file.
- - **FEAT**: support the new allowSnapshotting flag.
+- **FEAT**: add PlatformDeepLink.initial flag to tell whether we're coming from setInitialRoutePath
+  or setNewRoutePath.
+- **FEAT**: add option to pass custom ignore_for_file rules to the generated file.
+- **FEAT**: support the new allowSnapshotting flag.
 
 ## 7.7.1
 
- - **FIX**: tab routes should be matched by key not name.
+- **FIX**: tab routes should be matched by key not name.
 
 ## 7.7.0
 
 - **FEAT**: Add basic support to dart records.
 - **FIX**: encoded path segments are not decoded in RouteMatch.pathParams
-- **FIX**: encoded browser path is checked against a decoded matched path when deciding whether to replace route #1637
+- **FIX**: encoded browser path is checked against a decoded matched path when deciding whether to
+  replace route #1637
 
 ## 7.6.0
 
- - **FEAT**: add 'scoped' argument to to StackRouter.removeUntil, if true the predicate will visit all StackRouters in hierarchy.
- - **FEAT**: add 'scoped' argument to to StackRouter.popUntil, if true the predicate will visit all StackRouters in hierarchy.
+- **FEAT**: add 'scoped' argument to to StackRouter.removeUntil, if true the predicate will visit
+  all StackRouters in hierarchy.
+- **FEAT**: add 'scoped' argument to to StackRouter.popUntil, if true the predicate will visit all
+  StackRouters in hierarchy.
 
 ## 7.5.0
 
- - **FIX**: Uri percent-encoded characters encoded twice #1620.
- - **FIX**: delegate missing arguments in auto_route_guard redirect.
- - **FEAT**(auto_route): add `AutoPageRouteBuilder.opaque` argument.
+- **FIX**: Uri percent-encoded characters encoded twice #1620.
+- **FIX**: delegate missing arguments in auto_route_guard redirect.
+- **FEAT**(auto_route): add `AutoPageRouteBuilder.opaque` argument.
 
 ## 7.4.0
 
