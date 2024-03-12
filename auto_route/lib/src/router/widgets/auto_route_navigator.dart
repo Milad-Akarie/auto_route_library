@@ -112,13 +112,14 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
               color: Theme.of(context).scaffoldBackgroundColor,
             );
 
-    // fixes nested cupertino routes back gesture issue
-    if (!widget.router.isRoot) {
-      return PopScope(
-        canPop: widget.router.canPop(ignoreParentRoutes: true),
-        child: navigator,
-      );
-    }
+    //todo: fix nested cupertino routes back gesture issue
+    // // fixes nested cupertino routes back gesture issue
+    // if (!widget.router.isRoot) {
+    //   return PopScope(
+    //     canPop: widget.router.canPop(ignoreParentRoutes: true),
+    //     child: navigator,
+    //   );
+    // }
 
     return navigator;
   }
