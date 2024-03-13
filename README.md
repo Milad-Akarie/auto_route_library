@@ -685,11 +685,12 @@ class _DashboardPageState extends State<DashboardPage> {
       children: [
         Column(
           children: [
-            NavLink(label: 'Users',
-            onTap: () {
+            NavLink(
+              label: 'Users',
+              onTap: () {
                 final router = _innerRouterKey.currentState?.controller;
                 router?.push(const UsersRoute());
-              }
+              },
             ),
             ...
           ],
