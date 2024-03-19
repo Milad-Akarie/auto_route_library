@@ -1,3 +1,7 @@
+## 7.9.1
+
+ - **FIX**: incorrect top route information when deep-linking into an uninitialized tab route.
+
 ## 7.9.0
 
 - **FIX**: unable to get the label for back button(previous route title) and current route title on
