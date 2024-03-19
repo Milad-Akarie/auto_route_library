@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'eager_page_view.dart';
+
 /// Most of the code here is taking from flutter's [TabView]
 class AutoPageView extends StatefulWidget {
   /// Default constructor
@@ -58,6 +60,7 @@ class AutoPageViewState extends State<AutoPageView> {
   late final TabsRouter _router = widget.router;
   late List<Widget> _children;
   int _warpUnderwayCount = 0;
+  final _tabKeys = <int, GlobalKey<KeepAliveTabState>>{};
 
   @override
   void initState() {
@@ -87,15 +90,33 @@ class AutoPageViewState extends State<AutoPageView> {
     }
   }
 
+  /// Preload the page at [index]
+  bool preload(int index) {
+    final didPreload = _tabKeys[index]?.currentState?.preload() == true;
+    if (didPreload) {
+      _updateChildren();
+    }
+    return didPreload;
+  }
+
   void _updateChildren() {
     final stack = widget.router.stack;
     _children = List.generate(
       stack.length,
       (index) => KeepAliveTab(
-        key: ValueKey(index),
+        key: _tabKeys.putIfAbsent(index, () => GlobalKey()),
+        initiallyLoaded: _router.activeIndex == index,
         page: stack[index],
       ),
     );
+  }
+
+  _disposeInactiveChildren() {
+    for (int i = 0; i < _tabKeys.length; i++) {
+      if (i != _router.activeIndex) {
+        _tabKeys[i]?.currentState?.unloadIfRequired();
+      }
+    }
   }
 
   Future<void> _warpToCurrentIndex() async {
@@ -108,8 +129,7 @@ class AutoPageViewState extends State<AutoPageView> {
     if ((_router.activeIndex - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
       if (animatePageTransition) {
-        await _controller.animateToPage(_router.activeIndex,
-            duration: duration, curve: Curves.ease);
+        await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
       } else {
         _controller.jumpToPage(_router.activeIndex);
       }
@@ -117,10 +137,8 @@ class AutoPageViewState extends State<AutoPageView> {
       return Future<void>.value();
     }
     assert((_router.activeIndex - previousIndex).abs() > 1);
-    final int initialPage = _router.activeIndex > previousIndex
-        ? _router.activeIndex - 1
-        : _router.activeIndex + 1;
-
+    final int initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
+    _disposeInactiveChildren();
     setState(() {
       _warpUnderwayCount += 1;
       _children = List<Widget>.of(_children, growable: false);
@@ -131,8 +149,7 @@ class AutoPageViewState extends State<AutoPageView> {
     _controller.jumpToPage(initialPage);
 
     if (animatePageTransition) {
-      await _controller.animateToPage(_router.activeIndex,
-          duration: duration, curve: Curves.ease);
+      await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
     } else {
       _controller.jumpToPage(_router.activeIndex);
     }
@@ -144,11 +161,24 @@ class AutoPageViewState extends State<AutoPageView> {
 
   // Called when the PageView scrolls
   bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollEndNotification) {
+      _disposeInactiveChildren();
+    }
     if (_warpUnderwayCount > 0) return false;
     if (notification.depth != 0) return false;
     _warpUnderwayCount += 1;
+
     if (notification is ScrollUpdateNotification) {
-      _router.setActiveIndex(_controller.page!.round());
+      final currentPage = _controller.page!.round();
+      _router.setActiveIndex(currentPage);
+      final deltaDx = notification.dragDetails?.delta.dx;
+      if (deltaDx != null) {
+        if (deltaDx > 0 && currentPage > 0) {
+          preload(currentPage - 1);
+        } else if (deltaDx < 0 && currentPage < _children.length) {
+          preload(currentPage + 1);
+        }
+      }
     }
     _warpUnderwayCount -= 1;
     return false;
@@ -158,13 +188,15 @@ class AutoPageViewState extends State<AutoPageView> {
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
-      child: PageView(
+      child: EagerPageView(
         scrollDirection: widget.scrollDirection,
         dragStartBehavior: widget.dragStartBehavior,
+        cacheExtent: _children.length,
         controller: _controller,
         physics: widget.physics == null
             ? const PageScrollPhysics().applyTo(const ClampingScrollPhysics())
             : const PageScrollPhysics().applyTo(widget.physics),
+        // children: _children,
         children: _children,
       ),
     );

@@ -107,11 +107,10 @@ abstract class RoutingController with ChangeNotifier {
   /// if needed rebuild the url
   void notifyAll({bool forceUrlRebuild = false}) {
     notifyListeners();
-    if (!isRoot) {
-      root.notifyListeners();
-    }
     if (forceUrlRebuild || !isRouteDataActive(current)) {
       navigationHistory.rebuildUrl();
+    } else if (!isRoot) {
+      root.notifyListeners();
     }
   }
 
@@ -380,7 +379,7 @@ abstract class RoutingController with ChangeNotifier {
   });
 
   /// Takes a state snapshot of the current segments
-  int get stateHash => const ListEquality().hash(currentSegments);
+  int get stateHash => const ListEquality().hash(_addedSegments);
 
   /// The Identifier key of this routing controller
   LocalKey get key;
@@ -556,6 +555,21 @@ abstract class RoutingController with ChangeNotifier {
     return segments;
   }
 
+  /// this is an indicator for controller state changes,
+  /// every controller's state is considered updated if it's stateHash or any of it's children's stateHash changes
+  List<RouteMatch> get _addedSegments {
+    var currentData = currentChild;
+    final segments = <RouteMatch>[];
+    if (currentData != null) {
+      segments.add(currentData.route);
+      final childCtrl = _innerControllerOf(currentData.key);
+      if (childCtrl?.hasEntries == true) {
+        segments.addAll(childCtrl!._addedSegments);
+      }
+    }
+    return segments;
+  }
+
   /// Finds match of [path] then returns a route-able entity
   PageRouteInfo? buildPageRoute(String? path, {bool includePrefixMatches = true}) {
     if (path == null) return null;
@@ -606,10 +620,15 @@ class TabsRouter extends RoutingController {
       required this.key,
       required RouteData routeData,
       this.homeIndex = -1,
+      required this.preload,
       RoutingController? parent})
       : matcher = RouteMatcher(routeCollection),
         _parent = parent,
         _routeData = routeData;
+
+  /// Called to preload a page before other navigation events occur
+  /// if it returns true, the page has been preloaded, otherwise we assume it's already loaded
+  bool Function(int index) preload;
 
   @override
   RouteData get routeData => _routeData;
@@ -646,10 +665,20 @@ class TabsRouter extends RoutingController {
   void setActiveIndex(int index, {bool notify = true}) {
     assert(index >= 0 && index < _pages.length);
     if (_activeIndex != index) {
-      _previousIndex = _activeIndex;
-      _activeIndex = index;
-      if (notify) {
-        notifyAll();
+      void setIndex() {
+        _previousIndex = _activeIndex;
+        _activeIndex = index;
+        if (notify) {
+          notifyAll();
+        }
+      }
+
+      if (!preload(index)) {
+        setIndex();
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setIndex();
+        });
       }
     }
   }
@@ -763,9 +792,11 @@ class TabsRouter extends RoutingController {
             ctr._markedForDataUpdate = true;
           }
         }
-
         final data = _createRouteData(mayUpdateRoute, routeData);
+
         _pages[pageToUpdateIndex] = pageBuilder(data);
+
+        final hasInitCtrl = _innerControllerOf(mayUpdateRoute.key) != null;
 
         if (_activeIndex != pageToUpdateIndex) {
           setActiveIndex(pageToUpdateIndex);
@@ -773,10 +804,12 @@ class TabsRouter extends RoutingController {
           notifyAll();
         }
 
-        var mayUpdateController = _innerControllerOf(mayUpdateRoute.key);
-        if (mayUpdateController != null) {
-          final newRoutes = mayUpdateRoute.children ?? const [];
-          return mayUpdateController._navigateAll(newRoutes, onFailure: onFailure);
+        if (hasInitCtrl) {
+          final mayUpdateController = _innerControllerOf(mayUpdateRoute.key);
+          if (mayUpdateController != null) {
+            final newRoutes = mayUpdateRoute.children ?? const [];
+            mayUpdateController._navigateAll(newRoutes, onFailure: onFailure);
+          }
         }
       }
       _updateSharedPathData(
@@ -1779,6 +1812,7 @@ class NestedStackRouter extends StackRouter {
       final initialRoutes = List<RouteMatch>.unmodifiable(
         _routeData.pendingChildren,
       );
+
       if (managedByWidget) {
         pendingRoutesHandler._setPendingRoutes(
           initialRoutes.map((e) => e.toPageRouteInfo()).toList(),

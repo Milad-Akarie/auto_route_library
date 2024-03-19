@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// Creates a RoutePage based on [routeData.type],
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
-  ///
+  /// The Route Data that's used to build the page
   final RouteData routeData;
   final Widget _child;
 
