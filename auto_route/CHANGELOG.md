@@ -1,3 +1,7 @@
+## 7.9.2
+
+- **HOTFIX**: fix an issue with deep-links to tab-routes
+- **CHORE**: remove deprecated apis
 ## 7.9.1
 
  - **FIX**: incorrect top route information when deep-linking into an uninitialized tab route.
