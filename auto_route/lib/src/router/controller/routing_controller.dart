@@ -407,10 +407,6 @@ abstract class RoutingController with ChangeNotifier {
   bool get canNavigateBack => navigationHistory.canNavigateBack;
 
   /// See [NavigationHistory.back]
-  @Deprecated('use back() instead')
-  void navigateBack() => navigationHistory.back();
-
-  /// See [NavigationHistory.back]
   void back() => navigationHistory.back();
 
   /// See [NavigationHistory.pushPathState]
@@ -672,7 +668,6 @@ class TabsRouter extends RoutingController {
           notifyAll();
         }
       }
-
       if (!preload(index)) {
         setIndex();
       } else {
@@ -906,42 +901,13 @@ abstract class StackRouter extends RoutingController {
         _onNavigateCallback = onNavigate,
         _parent = parent;
 
-  final Map<AutoRedirectGuardBase, VoidCallback> _redirectGuardsListeners = {};
-
   /// The pending routes handler for this controller
   @internal
   late final pendingRoutesHandler = PendingRoutesHandler();
 
-  void _attachRedirectGuard(AutoRedirectGuardBase guard) {
-    final stackRouters = _buildRoutersHierarchy().whereType<StackRouter>();
-
-    if (stackRouters.any((r) => r._redirectGuardsListeners.containsKey(guard))) {
-      return;
-    }
-
-    guard.addListener(
-      _redirectGuardsListeners[guard] = () {
-        guard._reevaluate(this);
-      },
-    );
-  }
-
-  void _removeRedirectGuard(AutoRedirectGuardBase guard) {
-    if (_redirectGuardsListeners[guard] != null) {
-      guard.removeListener(_redirectGuardsListeners[guard]!);
-    }
-    _redirectGuardsListeners.remove(guard);
-  }
-
   @override
   void dispose() {
     super.dispose();
-    _redirectGuardsListeners.forEach(
-      (guard, listener) {
-        guard.removeListener(listener);
-        guard.dispose();
-      },
-    );
     pagelessRoutesObserver.dispose();
   }
 
@@ -1157,12 +1123,6 @@ abstract class StackRouter extends RoutingController {
       _pages.removeAt(pageIndex);
     }
 
-    final stack = _pages.map((e) => e.routeData._match);
-    for (final guard in route.guards.whereType<AutoRedirectGuard>()) {
-      if (!stack.any((r) => r.guards.contains(guard))) {
-        _removeRedirectGuard(guard);
-      }
-    }
     _updateSharedPathData(includeAncestors: true);
     _removeTopRouterOf(route.key);
     if (notify) {
@@ -1582,10 +1542,6 @@ abstract class StackRouter extends RoutingController {
     bool breakOnReevaluate = false;
     for (var guard in guards) {
       final completer = Completer<ResolverResult>();
-      if (guard is AutoRedirectGuard) {
-        _attachRedirectGuard(guard);
-      }
-
       activeGuardObserver.add(guard);
       guard.onNavigation(
         NavigationResolver(
@@ -1602,9 +1558,6 @@ abstract class StackRouter extends RoutingController {
       if (!result.continueNavigation) {
         if (onFailure != null) {
           onFailure(RejectedByGuardFailure(route, guard));
-        }
-        if (guard is AutoRedirectGuard) {
-          _removeRedirectGuard(guard);
         }
         activeGuardObserver.remove(guard);
         return ResolverResult(
@@ -1812,7 +1765,6 @@ class NestedStackRouter extends StackRouter {
       final initialRoutes = List<RouteMatch>.unmodifiable(
         _routeData.pendingChildren,
       );
-
       if (managedByWidget) {
         pendingRoutesHandler._setPendingRoutes(
           initialRoutes.map((e) => e.toPageRouteInfo()).toList(),

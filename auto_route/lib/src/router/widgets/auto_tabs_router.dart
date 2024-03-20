@@ -254,7 +254,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
   late Animation<double> _animation;
   int _index = 0;
   late int _tabsHash;
-  final _stackedIndexKey = GlobalKey<_IndexedStackBuilderState>();
+  final _indexedStackKey = GlobalKey<_IndexedStackBuilderState>();
 
   @override
   void initState() {
@@ -280,7 +280,11 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
 
   @override
   bool onPreload(int index) {
-    return _stackedIndexKey.currentState?.preload(index) == true;
+    final didPreload = _indexedStackKey.currentState?.preload(index) == true;
+    if (didPreload & mounted) {
+      setState(() {});
+    }
+    return didPreload;
   }
 
   @override
@@ -323,7 +327,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
     final builderChild = stack.isEmpty
         ? Container(color: Theme.of(context).scaffoldBackgroundColor)
         : _IndexedStackBuilder(
-            key: _stackedIndexKey,
+            key: _indexedStackKey,
             activeIndex: _index,
             tabsHash: _tabsHash,
             lazyLoad: widget.lazyLoad,
@@ -398,10 +402,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
 
   bool preload(int index) {
     if (_initializedPagesTracker[index] == true) return false;
-    setState(() {
-      _initializedPagesTracker[index] = true;
-    });
-    return true;
+    return _initializedPagesTracker[index] = true;
   }
 
   @override
@@ -524,7 +525,11 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
 
   @override
   bool onPreload(int index) {
-    return _pageViewKey.currentState?.preload(index) == true;
+    final didPreload = _pageViewKey.currentState?.preload(index) == true;
+    if (didPreload & mounted) {
+      setState(() {});
+    }
+    return didPreload;
   }
 
   late int _tabsHash = const ListEquality().hash(widget.routes);
@@ -667,7 +672,11 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
 
   @override
   bool onPreload(int index) {
-    return _tabViewKey.currentState?.preload(index) == true;
+    final didPreload = _tabViewKey.currentState?.preload(index) == true;
+    if (didPreload & mounted) {
+      setState(() {});
+    }
+    return didPreload;
   }
 
   @override
@@ -687,19 +696,19 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
             key: ValueKey(_tabsHash),
             builder: (context) {
               return builder(
-            context,
-            AutoTabView(
+                context,
+                AutoTabView(
                   key: _tabViewKey,
                   animatePageTransition: widget.animatePageTransition,
                   scrollDirection: widget.scrollDirection,
                   physics: widget.physics,
                   dragStartBehavior: widget.dragStartBehavior,
                   controller: _tabController,
-              router: _controller!,
-            ),
-            _tabController,
-          );
-        }),
+                  router: _controller!,
+                ),
+                _tabController,
+              );
+            }),
       ),
     );
   }

@@ -20,10 +20,6 @@ abstract class RootStackRouter extends StackRouter {
   /// Returns a [RouterConfig] instead to be passed
   /// to [MaterialApp.router]
   RouterConfig<UrlState> config({
-    @Deprecated('Use deepLinkBuilder:(_)=> DeepLink(routes) instead')
-    List<PageRouteInfo>? initialRoutes,
-    @Deprecated('Use deepLinkBuilder:(_)=> DeepLink.path(path) instead')
-    String? initialDeepLink,
     DeepLinkBuilder? deepLinkBuilder,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
@@ -43,10 +39,6 @@ abstract class RootStackRouter extends StackRouter {
       ),
       backButtonDispatcher: RootBackButtonDispatcher(),
       routerDelegate: delegate(
-        // ignore: deprecated_member_use_from_same_package
-        initialDeepLink: initialDeepLink,
-        // ignore: deprecated_member_use_from_same_package
-        initialRoutes: initialRoutes,
         reevaluateListenable: reevaluateListenable,
         rebuildStackOnDeepLink: rebuildStackOnDeepLink,
         navRestorationScopeId: navRestorationScopeId,
@@ -110,8 +102,6 @@ abstract class RootStackRouter extends StackRouter {
     required RoutesBuilder routes,
     String? navRestorationScopeId,
     RoutePopCallBack? onPopRoute,
-    @Deprecated('Use deepLinkBuilder:(_)=> DeepLink.path(path) instead')
-    String? initialDeepLink,
     OnNavigateCallBack? onNavigate,
     DeepLinkBuilder? deepLinkBuilder,
     NavigatorObserversBuilder navigatorObservers =
@@ -121,7 +111,6 @@ abstract class RootStackRouter extends StackRouter {
       this,
       routes: routes,
       onNavigate: onNavigate,
-      initialDeepLink: initialDeepLink,
       onPopRoute: onPopRoute,
       navRestorationScopeId: navRestorationScopeId,
       navigatorObservers: navigatorObservers,
@@ -132,10 +121,6 @@ abstract class RootStackRouter extends StackRouter {
   /// Builds a lazy instance of [AutoRouterDelegate]
   /// _lazyRootDelegate is only built one time
   AutoRouterDelegate delegate({
-    @Deprecated('Use deepLinkBuilder:(_)=> DeepLink(routes) instead')
-    List<PageRouteInfo>? initialRoutes,
-    @Deprecated('Use deepLinkBuilder:(_)=> DeepLink.path(path) instead')
-    String? initialDeepLink,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
     NavigatorObserversBuilder navigatorObservers =
@@ -146,8 +131,6 @@ abstract class RootStackRouter extends StackRouter {
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,
-      initialDeepLink: initialDeepLink,
-      initialRoutes: initialRoutes,
       navRestorationScopeId: navRestorationScopeId,
       navigatorObservers: navigatorObservers,
       placeholder: placeholder,

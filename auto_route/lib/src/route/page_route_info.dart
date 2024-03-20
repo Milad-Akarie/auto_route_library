@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
+
 import '../../auto_route.dart';
 import '../utils.dart';
 
@@ -154,12 +155,6 @@ class PageRouteInfo<T> {
           )
           .toList(),
     );
-  }
-
-  /// Calls [StackRouter.push] with this route on the nearest router
-  @Deprecated('Use push instead')
-  Future<E?> show<E>(BuildContext context) {
-    return context.router.push<E>(this);
   }
 
   /// Calls [StackRouter.push] with this route on the nearest router
