@@ -668,6 +668,7 @@ class TabsRouter extends RoutingController {
           notifyAll();
         }
       }
+
       if (!preload(index)) {
         setIndex();
       } else {

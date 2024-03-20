@@ -220,5 +220,3 @@ class NavigationResolver {
   /// see [Completer.isCompleted]
   bool get isResolved => _completer.isCompleted;
 }
-
-
