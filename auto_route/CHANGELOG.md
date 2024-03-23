@@ -1,3 +1,7 @@
+## 7.10.0
+
+ - **FEAT**: AutoTabsRouter will now use the declared routes if AutoTabsRouter.routes is not provided.
+
 ## 7.9.2
 
 - **HOTFIX**: fix an issue with deep-links to tab-routes
