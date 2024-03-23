@@ -45,7 +45,7 @@ typedef OnNavigationChanged = Function(TabsRouter tabsRouter);
 /// An implementation of a router widget that handles parallel routeing
 abstract class AutoTabsRouter extends StatefulWidget {
   /// The list of pages this router will handle
-  final List<PageRouteInfo> routes;
+  final List<PageRouteInfo>? routes;
 
   /// A builder function that returns a list of observes
   ///
@@ -79,7 +79,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// a [IndexedStack] to render pages
   const factory AutoTabsRouter({
     Key? key,
-    required List<PageRouteInfo> routes,
+    List<PageRouteInfo>? routes,
     bool lazyLoad,
     Duration duration,
     Curve curve,
@@ -94,7 +94,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// a [PageView] to render pages
   const factory AutoTabsRouter.pageView({
     Key? key,
-    required List<PageRouteInfo> routes,
+    List<PageRouteInfo>? routes,
     AutoTabsPageViewBuilder? builder,
     int homeIndex,
     bool animatePageTransition,
@@ -111,7 +111,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// a [TabView] to render pages
   const factory AutoTabsRouter.tabBar({
     Key? key,
-    required List<PageRouteInfo> routes,
+    List<PageRouteInfo>? routes,
     AutoTabsTabBarBuilder? builder,
     int homeIndex,
     bool animatePageTransition,
@@ -129,7 +129,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// Clients can use this builder to render tabbed-pages
   const factory AutoTabsRouter.builder({
     Key? key,
-    required List<PageRouteInfo> routes,
+    List<PageRouteInfo>? routes,
     required AutoTabsBuilder builder,
     OnNavigationChanged? onNavigate,
     OnNavigationChanged? onRouterReady,
@@ -233,7 +233,7 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
 
   const _AutoTabsRouterIndexedStack({
     super.key,
-    required super.routes,
+    super.routes,
     this.lazyLoad = true,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.ease,
@@ -309,7 +309,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
   void didUpdateWidget(covariant _AutoTabsRouterIndexedStack oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller!.replaceAll(widget.routes, oldWidget.routes[_index]);
+      _controller!.replaceAll(widget.routes, _index);
       _tabsHash = const ListEquality().hash(widget.routes);
       setState(() {
         _index = _controller!.activeIndex;
@@ -475,7 +475,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
 
   const _AutoTabsRouterPageView({
     super.key,
-    required super.routes,
+    super.routes,
     AutoTabsPageViewBuilder? builder,
     super.homeIndex,
     this.scrollDirection = Axis.horizontal,
@@ -538,7 +538,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
   void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller!.replaceAll(widget.routes, oldWidget.routes[_controller!.activeIndex]);
+      _controller!.replaceAll(widget.routes, _controller!.activeIndex);
       _tabsHash = const ListEquality().hash(widget.routes);
       _updatePageController();
     }
@@ -601,7 +601,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
 
   const _AutoTabsRouterTabBar({
     super.key,
-    required super.routes,
+    super.routes,
     this.scrollDirection = Axis.horizontal,
     this.builder,
     super.homeIndex,
@@ -664,7 +664,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
   void didUpdateWidget(covariant _AutoTabsRouterTabBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller!.replaceAll(widget.routes, oldWidget.routes[_tabController.index]);
+      _controller!.replaceAll(widget.routes, _tabController.index);
       _tabsHash = const ListEquality().hash(widget.routes);
       _updateTabController();
     }
@@ -731,7 +731,7 @@ class _AutoTabsRouterBuilder extends AutoTabsRouter {
 
   const _AutoTabsRouterBuilder({
     super.key,
-    required super.routes,
+    super.routes,
     this.onNavigate,
     this.onRouterReady,
     required this.builder,
@@ -770,7 +770,7 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
   void didUpdateWidget(covariant _AutoTabsRouterBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
-      _controller!.replaceAll(widget.routes, oldWidget.routes[_controller!.activeIndex]);
+      _controller!.replaceAll(widget.routes, _controller!.activeIndex);
       widget.onNavigate?.call(_controller!);
     }
   }

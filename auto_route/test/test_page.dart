@@ -26,6 +26,7 @@ class SecondHostPage extends StatelessWidget {
     this.useCustomLeading = false,
     this.hasDrawer = false,
   });
+
   final bool useCustomLeading;
   final bool hasDrawer;
 
@@ -136,31 +137,38 @@ class Tab3Nested2Page extends TestPage {
 @RoutePage()
 class TabsHostPage extends StatelessWidget {
   final String tabsType;
+  final bool useDefaultRoutes;
 
-  const TabsHostPage({super.key, @queryParam this.tabsType = 'IndexedStack'});
+  const TabsHostPage({
+    super.key,
+    @queryParam this.tabsType = 'IndexedStack',
+    @queryParam this.useDefaultRoutes = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    const routes = [
-      Tab1Route(),
-      Tab2Route(),
-      Tab3Route(),
-    ];
+    final routes = useDefaultRoutes
+        ? null
+        : [
+            const Tab1Route(),
+            const Tab2Route(),
+            const Tab3Route(),
+          ];
 
     if (tabsType == 'IndexedStack') {
-      return const AutoTabsRouter(
+      return AutoTabsRouter(
         routes: routes,
       );
     }
 
     if (tabsType == 'PageView') {
-      return const AutoTabsRouter.pageView(
+      return AutoTabsRouter.pageView(
         routes: routes,
       );
     }
 
     if (tabsType == 'TabBar') {
-      return const AutoTabsRouter.tabBar(
+      return AutoTabsRouter.tabBar(
         routes: routes,
       );
     }
@@ -172,6 +180,7 @@ class TabsHostPage extends StatelessWidget {
 @RoutePage()
 class DeclarativeRouterHostScreen extends StatelessWidget {
   const DeclarativeRouterHostScreen({super.key, required this.pageNotifier});
+
   final ValueNotifier<int> pageNotifier;
 
   @override

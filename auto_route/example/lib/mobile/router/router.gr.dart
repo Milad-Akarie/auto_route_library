@@ -30,7 +30,7 @@ abstract class $RootRouter extends _i9.RootStackRouter {
           orElse: () => BookDetailsRouteArgs(
                   id: pathParams.getInt(
                 'id',
-                -1,
+                -3,
               )));
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -99,7 +99,10 @@ abstract class $RootRouter extends _i9.RootStackRouter {
       final queryParams = routeData.queryParams;
       final args = routeData.argsAs<SettingsTabArgs>(
           orElse: () => SettingsTabArgs(
-                tab: pathParams.getString('tab'),
+                tab: pathParams.getString(
+                  'tab',
+                  'none',
+                ),
                 query: queryParams.getString(
                   'query',
                   'none',
@@ -127,7 +130,7 @@ abstract class $RootRouter extends _i9.RootStackRouter {
 /// [_i1.BookDetailsPage]
 class BookDetailsRoute extends _i9.PageRouteInfo<BookDetailsRouteArgs> {
   BookDetailsRoute({
-    int id = -1,
+    int id = -3,
     List<_i9.PageRouteInfo>? children,
   }) : super(
           BookDetailsRoute.name,
@@ -142,7 +145,7 @@ class BookDetailsRoute extends _i9.PageRouteInfo<BookDetailsRouteArgs> {
 }
 
 class BookDetailsRouteArgs {
-  const BookDetailsRouteArgs({this.id = -1});
+  const BookDetailsRouteArgs({this.id = -3});
 
   final int id;
 
@@ -307,7 +310,7 @@ class ProfileTab extends _i9.PageRouteInfo<void> {
 class SettingsTab extends _i9.PageRouteInfo<SettingsTabArgs> {
   SettingsTab({
     _i10.Key? key,
-    required String tab,
+    String tab = 'none',
     String query = 'none',
     List<_i9.PageRouteInfo>? children,
   }) : super(
@@ -330,7 +333,7 @@ class SettingsTab extends _i9.PageRouteInfo<SettingsTabArgs> {
 class SettingsTabArgs {
   const SettingsTabArgs({
     this.key,
-    required this.tab,
+    this.tab = 'none',
     this.query = 'none',
   });
 
@@ -358,42 +361,4 @@ class WelcomeRoute extends _i9.PageRouteInfo<void> {
   static const String name = 'WelcomeRoute';
 
   static const _i9.PageInfo<void> page = _i9.PageInfo<void>(name);
-}
-
-typedef RouteCopyWith = RouteOverride Function({
-  String? path,
-  List<_i9.AutoRouteGuard>? guards,
-});
-typedef RouteOverrider = RouteOverride Function(RouteCopyWith route);
-
-class RootNavGraph extends NavGraph {
-  final RouteOverride? homeRoute;
-  final RouteOverride? booksTab;
-
-  RootNavGraph({this.homeRoute, this.booksTab});
-
-  @override
-  _i9.RouteCollection get routes {
-    return _i9.RouteCollection({
-      HomeRoute.name: _i9.AutoRoute(
-        path: homeRoute?.path ?? '/path',
-        page: HomeRoute.page,
-      ),
-      BooksTab.name: _i9.AutoRoute(
-        path: booksTab?.path ?? '/path',
-        page: BooksTab.page,
-      ),
-    });
-  }
-}
-
-abstract class NavGraph {
-  _i9.RouteCollection get routes;
-}
-
-class RouteOverride {
-  final String? path;
-  final List<_i9.AutoRouteGuard>? guards;
-
-  const RouteOverride({this.path, this.guards});
 }

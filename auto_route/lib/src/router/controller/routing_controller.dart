@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/auto_route_config.dart';
+import 'package:auto_route/src/route/errors.dart';
 import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
 import 'package:auto_route/src/router/controller/pageless_routes_observer.dart';
 import 'package:auto_route/src/router/transitions/custom_page_route.dart';
@@ -713,8 +714,8 @@ class TabsRouter extends RoutingController {
 
   /// Pushes given [routes] to [_pages] stack
   /// after match validation and deciding initial index
-  void setupRoutes(List<PageRouteInfo> routes) {
-    final routesToPush = _matchAllOrReportFailure(routes)!;
+  void setupRoutes(List<PageRouteInfo>? routes) {
+    final routesToPush = _resolveRoutes(routes);
     if (_routeData.hasPendingChildren) {
       final preMatchedRoute = _routeData.pendingChildren.last;
       final correspondingRouteIndex = routesToPush.indexWhere(
@@ -728,15 +729,27 @@ class TabsRouter extends RoutingController {
     }
 
     if (routesToPush.isNotEmpty) {
-      _pushAll(routesToPush);
+      _pushAll(routesToPush, fromDefault: routes == null);
     }
     _routeData.pendingChildren.clear();
   }
 
-  void _pushAll(List<RouteMatch> routes) {
+  void _pushAll(List<RouteMatch> routes, {required bool fromDefault}) {
     for (var route in routes) {
       var data = _createRouteData(route, routeData);
-      _pages.add(pageBuilder(data));
+      try {
+        _pages.add(pageBuilder(data));
+      } on MissingRequiredParameterError catch (e) {
+        if (fromDefault) {
+          throw FlutterError(
+            'Can not automatically navigate to ${route.name} because it has required parameters. '
+            'Routes must be added manually to AutoTabsRouter'
+            '\n${e.message}',
+          );
+        } else {
+          rethrow;
+        }
+      }
     }
   }
 
@@ -757,15 +770,26 @@ class TabsRouter extends RoutingController {
     return matches;
   }
 
+  List<RouteMatch> _resolveRoutes(List<PageRouteInfo>? routes) {
+    final List<PageRouteInfo> routesToUse;
+    if (routes != null) {
+      routesToUse = routes;
+    } else {
+      routesToUse = routeCollection.routes.where((e) => e is! RedirectRoute).map((e) => PageRouteInfo(e.name)).toList();
+    }
+    return _matchAllOrReportFailure(routesToUse)!;
+  }
+
   /// Resets [_pages] stack with given [routes]
   /// and sets [previousActiveRoute] as active index if provided
-  void replaceAll(List<PageRouteInfo> routes, PageRouteInfo<dynamic> previousActiveRoute) {
-    final routesToPush = _matchAllOrReportFailure(routes)!;
+  void replaceAll(List<PageRouteInfo>? routes, int previousIndex) {
+    final routesToPush = _resolveRoutes(routes);
+    final previousActiveRoute = stackData[previousIndex];
 
     _pages.clear();
     _childControllers.clear();
-    _pushAll(routesToPush);
-    var targetIndex = routesToPush.indexWhere((r) => r.name == previousActiveRoute.routeName);
+    _pushAll(routesToPush, fromDefault: routes == null);
+    var targetIndex = routesToPush.indexWhere((r) => r.name == previousActiveRoute.name);
     if (targetIndex == -1) {
       targetIndex = homeIndex == -1 ? 0 : homeIndex;
     }
