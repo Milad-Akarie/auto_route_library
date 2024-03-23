@@ -88,6 +88,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Builds a [_DeclarativeAutoRouterDelegate] which uses
   /// a declarative list of routes to update navigator stack
+  @Deprecated('Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
   factory AutoRouterDelegate.declarative(
     RootStackRouter controller, {
     required RoutesBuilder routes,
