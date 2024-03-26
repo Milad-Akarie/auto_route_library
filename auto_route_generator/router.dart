@@ -3,9 +3,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i2;
-import 'package:auto_route_generator/playground/index_2.dart' as _i3;
 import 'package:auto_route_generator/playground/test_page.dart' as _i1;
-import 'package:vertex_auth/vertex_auth.dart' as _i4;
 
 abstract class $AstRouterTest extends _i2.RootStackRouter {
   $AstRouterTest({super.navigatorKey});
@@ -17,6 +15,7 @@ abstract class $AstRouterTest extends _i2.RootStackRouter {
       return _i2.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i1.TestPage(
+          key: args.key,
           model: args.model,
           state: args.state,
         ),
@@ -29,12 +28,14 @@ abstract class $AstRouterTest extends _i2.RootStackRouter {
 /// [_i1.TestPage]
 class TestPage extends _i2.PageRouteInfo<TestPageArgs> {
   TestPage({
-    required _i3.Generice<_i3.DemoModel> model,
-    _i4.AuthState? state,
+    Key? key,
+    required Generice<DemoModel> model,
+    AuthState? state,
     List<_i2.PageRouteInfo>? children,
   }) : super(
           TestPage.name,
           args: TestPageArgs(
+            key: key,
             model: model,
             state: state,
           ),
@@ -48,16 +49,19 @@ class TestPage extends _i2.PageRouteInfo<TestPageArgs> {
 
 class TestPageArgs {
   const TestPageArgs({
+    this.key,
     required this.model,
     this.state,
   });
 
-  final _i3.Generice<_i3.DemoModel> model;
+  final Key? key;
 
-  final _i4.AuthState? state;
+  final Generice<DemoModel> model;
+
+  final AuthState? state;
 
   @override
   String toString() {
-    return 'TestPageArgs{model: $model, state: $state}';
+    return 'TestPageArgs{key: $key, model: $model, state: $state}';
   }
 }

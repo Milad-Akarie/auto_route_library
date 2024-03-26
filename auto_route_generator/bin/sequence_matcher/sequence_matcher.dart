@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:collection/collection.dart';
+
+import '../auto_route.dart';
 import '../resolvers/package_file_resolver.dart';
 import 'common_namespaces.dart';
 import 'export_statement.dart';
@@ -19,12 +22,9 @@ class SequenceMatcher {
 
   SequenceMatcher(this.fileResolver);
 
-  Future<Map<String, Set<SequenceMatch>>> locateTopLevelDeclarations(
-    final Uri file,
-    Set<Uri> sources,
-    Iterable<Sequence> _sequences, [
-    int depth = 0,
-  ]) async {
+  Future<Map<String, Set<SequenceMatch>>> locateTopLevelDeclarations(final Uri file, List<Uri> sources,
+      Iterable<Sequence> _sequences,
+      {int depth = 0}) async {
     if (depth == 0) {
       checkedExports.clear();
     }
@@ -35,18 +35,16 @@ class SequenceMatcher {
     final targetTotal = sequences.map((e) => e.identifier).toSet();
 
     final foundUnique = <String>{};
-    final exportsFound = <Uri, Iterable<ExportStatement>>{};
 
     for (final source in sources) {
       final resolvedUri = fileResolver.resolve(source, relativeTo: file);
 
       try {
         final notFoundIdentifiers = sequences.map((e) => e.identifier).where((e) => !foundUnique.contains(e)).toSet();
-        print(notFoundIdentifiers);
         for (final identifier in notFoundIdentifiers) {
           if (resolvedTypes[source.toString()]?.contains(identifier) == true) {
             foundUnique.add(identifier);
-            results[resolvedUri.path] = {...?results[resolvedUri.path], SequenceMatch(identifier, 0, 0, identifier)};
+            results[file.path] = {...?results[file.path], SequenceMatch(identifier, 0, 0, identifier)};
             sequences = sequences.where((e) => e.identifier != identifier);
           }
         }
@@ -76,7 +74,12 @@ class SequenceMatcher {
               .map((e) => ExportStatement.parse(e.source))
               .whereType<ExportStatement>()
               .where((e) => !checkedExports.contains(e.uri))
-              .toList();
+              .toList()
+              .sortedBy<num>((e) {
+            final package = e.uri.pathSegments.first;
+            if (package == 'flutter') return 1;
+            return !e.uri.hasScheme || package == rootPackage ? -1 : 0;
+          });
 
           checkedExports.addAll(exportStatements.map((e) => e.uri));
           for (final identifier in notFoundIdentifiers) {
@@ -100,25 +103,23 @@ class SequenceMatcher {
             break;
           }
           if (exportStatements.isNotEmpty) {
-            exportsFound[resolvedUri] = exportStatements;
+            if (foundUnique.length < targetTotal.length) {
+              final notFoundIdentifiers = sequences.where((e) => !foundUnique.contains(e.identifier));
+              final exportSources = exportStatements.map((e) => e.uri).toList();
+              final subResults = await locateTopLevelDeclarations(
+                resolvedUri,
+                exportSources,
+                notFoundIdentifiers,
+                depth: depth + 1,
+              );
+              final foundIdentifiers = subResults.values.expand((e) => e);
+              foundUnique.addAll(foundIdentifiers.map((e) => e.identifier));
+              results[resolvedUri.path] = {...?results[resolvedUri.path], ...foundIdentifiers};
+            }
           }
         }
       } catch (e) {
         // print(e);
-      }
-    }
-
-    if (foundUnique.length < targetTotal.length && exportsFound.isNotEmpty) {
-      final notFoundIdentifiers = sequences.where((e) => !foundUnique.contains(e.identifier));
-      for (final entry in exportsFound.entries) {
-        final exportSources = entry.value.map((e) => e.uri).toSet();
-        final subResults = await locateTopLevelDeclarations(entry.key, exportSources, notFoundIdentifiers, depth + 1);
-        final foundIdentifiers = subResults.values.expand((e) => e);
-        foundUnique.addAll(foundIdentifiers.map((e) => e.identifier));
-        results[entry.key.path] = {...?results[entry.key.path], ...foundIdentifiers};
-        if (foundUnique.length >= targetTotal.length) {
-          break;
-        }
       }
     }
 

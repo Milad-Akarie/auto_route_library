@@ -22,21 +22,22 @@ import 'sequence_matcher/utils.dart';
 import 'utils.dart';
 
 final _configFile = File('auto_route_config.txt');
+late final rootPackage = rootPackageName;
 
 void main() async {
-  printBlue('Looking for route pages...');
+  printBlue('AutoRoute Builder Started...');
   final stopWatch = Stopwatch()..start();
   late final matcher = SequenceMatcher(PackageFileResolver.forCurrentRoot());
   final lastGenerate = _configFile.existsSync() ? int.parse(_configFile.readAsStringSync()) : 0;
-  final glob = Glob('playground/**.dart');
+  final glob = Glob('**screen.dart');
   final libDir = Directory.fromUri(Directory.current.uri.resolve('lib'));
   final assets = glob.listSync(root: libDir.path, followLinks: true).whereType<File>();
-  printYellow('assets collected in ${stopWatch.elapsedMilliseconds}ms');
+  printYellow('Assets collected in ${stopWatch.elapsedMilliseconds}ms');
   final stopWatch2 = Stopwatch()..start();
   final routesResult = await Future.wait([
     for (final asset in assets) _processFile(asset, () => matcher, lastGenerate),
   ]);
-  printYellow('processing took ${stopWatch2.elapsedMilliseconds}ms');
+  printYellow('Processing took ${stopWatch2.elapsedMilliseconds}ms');
 
   final routes = routesResult.whereNotNull();
   if (routes.isNotEmpty) {
@@ -83,8 +84,11 @@ Future<RouteConfig?> _processFile(File asset, SequenceMatcher Function() matcher
       .whereType<ImportDirective>()
       .where((e) => e.uri.stringValue != null)
       .map((e) => Uri.parse(e.uri.stringValue!))
-      .sortedBy<num>((e) => !e.hasScheme || e.pathSegments.first == rootPackageName ? 0 : 1)
-      .toSet();
+      .sortedBy<num>((e) {
+    final package = e.pathSegments.first;
+    if (package == 'flutter') return 1;
+    return !e.hasScheme || package == rootPackage ? -1 : 0;
+  }).toList();
 
   final params = routePage.defaultConstructorParams;
 
