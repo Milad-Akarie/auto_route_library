@@ -395,16 +395,96 @@ Let's change the previous example to use tab navigation.
 Notice that we're not going to change anything in our routes declaration map, we still have a dashboard page that has three nested children: users, posts and settings.
 
 ```dart  
-class DashboardPage extends StatelessWidget {  
-  
- @override Widget build(BuildContext context) { return AutoTabsRouter( // list of your tab routes // routes used here must be declared as children // routes of /dashboard routes: const [ UsersRoute(), PostsRoute(), SettingsRoute(), ], transitionBuilder: (context,child,animation) => FadeTransition( opacity: animation, // the passed child is technically our animated selected-tab page child: child, ), builder: (context, child) { // obtain the scoped TabsRouter controller using context final tabsRouter = AutoTabsRouter.of(context); // Here we're building our Scaffold inside of AutoTabsRouter // to access the tabsRouter controller provided in this context // // alternatively, you could use a global key return Scaffold( body: child, bottomNavigationBar: BottomNavigationBar( currentIndex: tabsRouter.activeIndex, onTap: (index) { // here we switch between tabs tabsRouter.setActiveIndex(index); }, items: [ BottomNavigationBarItem(label: 'Users', ...), BottomNavigationBarItem(label: 'Posts', ...), BottomNavigationBarItem(label: 'Settings', ...), ], ), ); }, ); }}  
+class DashboardPage extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return AutoTabsRouter(
+      // List of tab routes
+      // Routes used here must be declared as children of /dashboard
+      routes: const [
+        UsersRoute(),
+        PostsRoute(),
+        SettingsRoute(),
+      ],
+      transitionBuilder: (context, child, animation) => FadeTransition(
+        opacity: animation,
+        // The passed child is technically our animated selected-tab page
+        child: child,
+      ),
+      builder: (context, child) {
+        // Obtain the scoped TabsRouter controller using context
+        final tabsRouter = AutoTabsRouter.of(context);
+
+        // Building our Scaffold inside of AutoTabsRouter
+        // to access the tabsRouter controller provided in this context
+        //
+        // Alternatively, you could use a global key
+        return Scaffold(
+          body: child,
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: tabsRouter.activeIndex,
+            onTap: (index) {
+              // Here we switch between tabs
+              tabsRouter.setActiveIndex(index);
+            },
+            items: [
+              BottomNavigationBarItem(
+                label: 'Users',
+                // Additional properties for BottomNavigationBarItem can be added here
+              ),
+              BottomNavigationBarItem(
+                label: 'Posts',
+                // Additional properties for BottomNavigationBarItem can be added here
+              ),
+              BottomNavigationBarItem(
+                label: 'Settings',
+                // Additional properties for BottomNavigationBarItem can be added here
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
 ```  
 
 If you think the above setup is a bit messy you could use the shipped-in `AutoTabsScaffold` that makes things much cleaner.
 
 ```dart  
-class DashboardPage extends StatelessWidget {  
- @override Widget build(BuildContext context) { return AutoTabsScaffold( routes: const [ UsersRoute(), PostsRoute(), SettingsRoute(), ], bottomNavigationBuilder: (_, tabsRouter) { return BottomNavigationBar( currentIndex: tabsRouter.activeIndex, onTap: tabsRouter.setActiveIndex, items: const [ BottomNavigationBarItem(label: 'Users', ...), BottomNavigationBarItem(label: 'Posts', ...), BottomNavigationBarItem(label: 'Settings', ...), ], ); }, ); }}  
+class DashboardPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AutoTabsScaffold(
+      routes: const [
+        UsersRoute(),
+        PostsRoute(),
+        SettingsRoute(),
+      ],
+      bottomNavigationBuilder: (_, tabsRouter) {
+        return BottomNavigationBar(
+          currentIndex: tabsRouter.activeIndex,
+          onTap: tabsRouter.setActiveIndex,
+          items: const [
+            BottomNavigationBarItem(
+              label: 'Users',
+              // Additional properties for BottomNavigationBarItem can be added here
+            ),
+            BottomNavigationBarItem(
+              label: 'Posts',
+              // Additional properties for BottomNavigationBarItem can be added here
+            ),
+            BottomNavigationBarItem(
+              label: 'Settings',
+              // Additional properties for BottomNavigationBarItem can be added here
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
 ```  
 
 ### Using PageView
