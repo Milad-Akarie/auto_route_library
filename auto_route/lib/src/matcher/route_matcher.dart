@@ -123,11 +123,11 @@ class RouteMatcher {
 
   List<String> _split(String path) => p.split(path);
 
-  /// Matches a uri against a route-config [AutoRoute]
+  /// Matches a uri against a route-config [RouteDef]
   /// and returns a single match result
   ///
   /// returns null if not match is found
-  RouteMatch? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
+  RouteMatch? matchByPath(Uri uri, RouteDef config, {String? redirectedFrom}) {
     var parts = _split(config.path);
     var segments = _split(Uri.decodeComponent(uri.path));
 

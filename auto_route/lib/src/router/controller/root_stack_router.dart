@@ -67,7 +67,7 @@ abstract class RootStackRouter extends StackRouter {
   Map<String, PageFactory> get pagesMap => throw UnimplementedError();
 
   /// The list of route entries to match against
-  List<AutoRoute> get routes;
+  List<RouteDef> get routes;
 
   /// The default animation
   RouteType get defaultRouteType => const RouteType.material();

@@ -4,11 +4,11 @@ import '../main_router.dart';
 
 class SimpleRouter extends MainRouter {
   @override
-  final List<AutoRoute> routes = [
-    AutoRoute(page: FirstRoute.page, path: '/'),
-    AutoRoute(page: SecondRoute.page),
-    AutoRoute(page: ThirdRoute.page),
-    AutoRoute(
+  final List<RouteDef> routes = [
+    RouteDef(page: FirstRoute.page, path: '/'),
+    RouteDef(page: SecondRoute.page),
+    RouteDef(page: ThirdRoute.page),
+    RouteDef(
       page: FourthRoute.page,
       guards: [
         AutoRouteGuard.simple((resolver, _) => resolver.next(false)),

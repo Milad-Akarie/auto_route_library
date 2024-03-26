@@ -12,10 +12,12 @@ typedef TitleBuilder = String Function(BuildContext context, RouteData data);
 /// Used in [AutoRoutePage]
 typedef RestorationIdBuilder = String Function(RouteMatch match);
 
+typedef PageBuilder = Widget Function(RouteData data);
+
 /// A route entry configuration used in [RouteMatcher]
 /// to create [RouteMatch]'s from paths and [PageRouteInfo]'s
 @immutable
-class AutoRoute {
+class RouteDef {
   /// The name of page this route should map to
   final String name;
   final String? _path;
@@ -75,7 +77,9 @@ class AutoRoute {
   /// a RedirectRoute() to that path
   final bool initial;
 
-  AutoRoute._({
+  final PageBuilder? _builder;
+
+  RouteDef._({
     required this.name,
     String? path,
     this.usesPathAsKey = false,
@@ -89,14 +93,16 @@ class AutoRoute {
     this.keepHistory = true,
     this.restorationId,
     this.allowSnapshotting = true,
+    PageBuilder? builder,
     this.initial = false,
-    List<AutoRoute>? children,
-  })  : _path = path,
+    List<RouteDef>? children,
+  })  : _builder = builder,
+        _path = path,
         _children = children != null && children.isNotEmpty
             ? RouteCollection.fromList(children)
             : null;
 
-  const AutoRoute._change({
+  const RouteDef._change({
     required this.name,
     required String path,
     required this.usesPathAsKey,
@@ -109,14 +115,16 @@ class AutoRoute {
     required this.title,
     required this.keepHistory,
     required this.restorationId,
+    required PageBuilder? builder,
     required RouteCollection? children,
     required this.initial,
     required this.allowSnapshotting,
-  })  : _path = path,
+  })  : _builder = builder,
+        _path = path,
         _children = children;
 
   /// Builds a default AutoRoute instance with any [type]
-  factory AutoRoute({
+  factory RouteDef({
     required PageInfo page,
     String? path,
     bool usesPathAsKey = false,
@@ -126,14 +134,15 @@ class AutoRoute {
     Map<String, dynamic> meta = const {},
     bool maintainState = true,
     bool fullscreenDialog = false,
-    List<AutoRoute>? children,
+    List<RouteDef>? children,
     TitleBuilder? title,
     RestorationIdBuilder? restorationId,
     bool keepHistory = true,
     bool initial = false,
     bool allowSnapshotting = true,
+    required PageBuilder builder,
   }) {
-    return AutoRoute._(
+    return RouteDef._(
       name: page.name,
       path: path,
       fullMatch: fullMatch,
@@ -145,6 +154,7 @@ class AutoRoute {
       guards: guards,
       restorationId: restorationId,
       children: children,
+      builder: builder,
       title: title,
       keepHistory: keepHistory,
       initial: initial,
@@ -152,43 +162,6 @@ class AutoRoute {
     );
   }
 
-  /// Creates an AutoRoute with a single [AutoRouteGuard]
-  /// callback
-  factory AutoRoute.guarded({
-    required PageInfo page,
-    required OnNavigation onNavigation,
-    String? path,
-    bool usesPathAsKey = false,
-    bool fullMatch = false,
-    RouteType? type,
-    Map<String, dynamic> meta = const {},
-    bool maintainState = true,
-    bool fullscreenDialog = false,
-    List<AutoRoute>? children,
-    TitleBuilder? title,
-    RestorationIdBuilder? restorationId,
-    bool keepHistory = true,
-    bool initial = false,
-    bool allowSnapshotting = true,
-  }) {
-    return AutoRoute._(
-      name: page.name,
-      path: path,
-      fullMatch: fullMatch,
-      maintainState: maintainState,
-      fullscreenDialog: fullscreenDialog,
-      meta: meta,
-      type: type,
-      usesPathAsKey: usesPathAsKey,
-      guards: [AutoRouteGuard.simple(onNavigation)],
-      restorationId: restorationId,
-      children: children,
-      title: title,
-      keepHistory: keepHistory,
-      initial: initial,
-      allowSnapshotting: allowSnapshotting,
-    );
-  }
 
   /// The path defined by user or automatically-added
   /// By [RouteCollection.fromList]
@@ -210,12 +183,12 @@ class AutoRoute {
   /// A simplified copyWith
   ///
   /// Returns a new AutoRoute instance with the provided path
-  AutoRoute changePath(String path) => copyWith(path: path);
+  RouteDef changePath(String path) => copyWith(path: path);
 
   /// A simplified copyWith
   ///
   /// Returns a new AutoRoute instance with the provided details overriding.
-  AutoRoute copyWith({
+  RouteDef copyWith({
     RouteType? type,
     String? name,
     String? path,
@@ -225,15 +198,17 @@ class AutoRoute {
     Map<String, dynamic>? meta,
     bool? maintainState,
     bool? fullscreenDialog,
-    List<AutoRoute>? children,
+    List<RouteDef>? children,
     TitleBuilder? title,
     RestorationIdBuilder? restorationId,
     bool? keepHistory,
     bool? initial,
     bool? allowSnapshotting,
+    PageBuilder? builder,
   }) {
-    return AutoRoute._change(
+    return RouteDef._change(
       type: type ?? this.type,
+      builder: builder ?? _builder,
       name: name ?? this.name,
       path: path ?? this.path,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
@@ -261,7 +236,7 @@ class AutoRoute {
 /// Redirect routes don't map to a page, instead they
 /// Map to an existing route-entry that maps to a page
 @immutable
-class RedirectRoute extends AutoRoute {
+class RedirectRoute extends RouteDef {
   /// The target path which this route should
   /// redirect to
   final String redirectTo;
@@ -276,9 +251,9 @@ class RedirectRoute extends AutoRoute {
         );
 }
 
-/// Builds an [AutoRoute] instance with [RouteType.material] type
+/// Builds an [RouteDef] instance with [RouteType.material] type
 @immutable
-class MaterialRoute extends AutoRoute {
+class MaterialRoute extends RouteDef {
   /// default constructor
   MaterialRoute({
     required PageInfo page,
@@ -301,9 +276,9 @@ class MaterialRoute extends AutoRoute {
         );
 }
 
-/// Builds an [AutoRoute] instance with [RouteType.cupertino] type
+/// Builds an [RouteDef] instance with [RouteType.cupertino] type
 @immutable
-class CupertinoRoute extends AutoRoute {
+class CupertinoRoute extends RouteDef {
   /// Default constructor
   CupertinoRoute({
     required PageInfo page,
@@ -319,13 +294,14 @@ class CupertinoRoute extends AutoRoute {
     super.restorationId,
     super.keepHistory,
     super.initial,
+    super.builder,
     super.allowSnapshotting = true,
   }) : super._(name: page.name, type: const RouteType.cupertino());
 }
 
-/// Builds an [AutoRoute] instance with [RouteType.adaptive] type
+/// Builds an [RouteDef] instance with [RouteType.adaptive] type
 @immutable
-class AdaptiveRoute extends AutoRoute {
+class AdaptiveRoute extends RouteDef {
   /// Default constructor
   AdaptiveRoute({
     required PageInfo page,
@@ -334,6 +310,7 @@ class AdaptiveRoute extends AutoRoute {
     super.fullMatch = false,
     super.initial,
     super.guards,
+    super.builder,
     super.usesPathAsKey = false,
     super.path,
     super.children,
@@ -349,9 +326,9 @@ class AdaptiveRoute extends AutoRoute {
         );
 }
 
-/// Builds an [AutoRoute] instance with [RouteType.custom] type
+/// Builds an [RouteDef] instance with [RouteType.custom] type
 @immutable
-class CustomRoute extends AutoRoute {
+class CustomRoute extends RouteDef {
   /// Default constructor
   CustomRoute({
     required PageInfo page,
@@ -366,6 +343,7 @@ class CustomRoute extends AutoRoute {
     super.path,
     super.keepHistory,
     super.initial,
+    super.builder,
     super.allowSnapshotting = true,
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
@@ -391,9 +369,9 @@ class CustomRoute extends AutoRoute {
         );
 }
 
-/// Builds a simplified [AutoRoute] instance for test
+/// Builds a simplified [RouteDef] instance for test
 @visibleForTesting
-class TestRoute extends AutoRoute {
+class TestRoute extends RouteDef {
   /// Default constructor
   TestRoute(
     String name, {
@@ -405,10 +383,10 @@ class TestRoute extends AutoRoute {
   }) : super._(name: name);
 }
 
-/// Builds a simplified [AutoRoute] instance for internal usage
+/// Builds a simplified [RouteDef] instance for internal usage
 /// Used by [RootStackRouter] as root-node
 @internal
-class DummyRootRoute extends AutoRoute {
+class DummyRootRoute extends RouteDef {
   /// Default constructor
   DummyRootRoute(
     String name, {
@@ -429,7 +407,7 @@ class DummyRootRoute extends AutoRoute {
 ///
 /// Mainly used by [RouteMatcher]
 class RouteCollection {
-  final Map<String, AutoRoute> _routesMap;
+  final Map<String, RouteDef> _routesMap;
 
   /// Default constructor
   RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
@@ -441,14 +419,13 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(List<AutoRoute> routes,
-      {bool root = false}) {
+  factory RouteCollection.fromList(List<RouteDef> routes, {bool root = false}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(routesMarkedInitial.length > 1,
         'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');
 
     final targetInitialPath = root ? '/' : '';
-    var routesMap = <String, AutoRoute>{};
+    var routesMap = <String, RouteDef>{};
     var hasValidInitialPath = false;
     for (var r in routes) {
       var routeToUse = r;
@@ -484,10 +461,10 @@ class RouteCollection {
   }
 
   /// Returns the values of [_routesMap] as iterable
-  Iterable<AutoRoute> get routes => _routesMap.values;
+  Iterable<RouteDef> get routes => _routesMap.values;
 
   /// Helper to get the route-entry corresponding to [key]
-  AutoRoute? operator [](String key) => _routesMap[key];
+  RouteDef? operator [](String key) => _routesMap[key];
 
   /// Helper to check if a route name exists inside of [_routesMap]
   bool containsKey(String key) => _routesMap.containsKey(key);
@@ -507,8 +484,8 @@ class RouteCollection {
   /// adding their parents to stack first
   ///
   /// returns and empty list if the track is not found
-  List<AutoRoute> findPathTo(String routeName) {
-    final track = <AutoRoute>[];
+  List<RouteDef> findPathTo(String routeName) {
+    final track = <RouteDef>[];
     for (final route in routes) {
       if (_findPath(route, routeName, track)) {
         break;
@@ -517,14 +494,14 @@ class RouteCollection {
     return track;
   }
 
-  bool _findPath(AutoRoute node, String routeName, List<AutoRoute> track) {
+  bool _findPath(RouteDef node, String routeName, List<RouteDef> track) {
     if (node.name == routeName) {
       track.add(node);
       return true;
     }
 
     if (node.hasSubTree) {
-      for (AutoRoute child in node.children!.routes) {
+      for (RouteDef child in node.children!.routes) {
         if (_findPath(child, routeName, track)) {
           track.insert(0, node);
           return true;
@@ -545,7 +522,7 @@ class RouteCollection {
   @override
   int get hashCode => const MapEquality().hash(_routesMap);
 
-  static String _generateRoutePath(AutoRoute r, bool root) {
+  static String _generateRoutePath(RouteDef r, bool root) {
     if (r.initial) return root ? '/' : '';
     final kebabCased = toKebabCase(r.name);
     return root ? '/$kebabCased' : kebabCased;

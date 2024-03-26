@@ -26,16 +26,16 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
   }
 
   @override
-  List<AutoRoute> get routes => [
-        AutoRoute(page: MainWebRoute.page, initial: true),
-        AutoRoute(path: '/login', page: WebLoginRoute.page),
-        AutoRoute(path: '/verify', page: WebVerifyRoute.page),
-        AutoRoute(
+  List<RouteDef> get routes => [
+        RouteDef(page: MainWebRoute.page, initial: true),
+        RouteDef(path: '/login', page: WebLoginRoute.page),
+        RouteDef(path: '/verify', page: WebVerifyRoute.page),
+        RouteDef(
           path: '/user/:userID',
           page: UserRoute.page,
           children: [
-            AutoRoute(page: UserProfileRoute.page, initial: true),
-            AutoRoute(
+            RouteDef(page: UserProfileRoute.page, initial: true),
+            RouteDef(
               path: 'posts',
               page: UserPostsRoute.page,
               guards: [
@@ -51,14 +51,13 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
                 )
               ],
               children: [
-                AutoRoute(
-                    path: 'all', page: UserAllPostsRoute.page, initial: true),
-                AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
+                RouteDef(path: 'all', page: UserAllPostsRoute.page, initial: true),
+                RouteDef(path: 'favorite', page: UserFavoritePostsRoute.page),
               ],
             ),
           ],
         ),
-        AutoRoute(path: '*', page: NotFoundRoute.page),
+        RouteDef(path: '*', page: NotFoundRoute.page),
       ];
 }
 

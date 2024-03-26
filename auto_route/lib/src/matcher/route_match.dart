@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
+
 import '../../auto_route.dart';
 
 /// This is the result returned by [RouteMatcher]
@@ -41,7 +42,7 @@ class RouteMatch<T> {
 
   /// The page key to be used in [AutoRoutePage.canUpdate]
   final LocalKey key;
-  final AutoRoute _config;
+  final RouteDef _config;
 
   /// Whether this matched is a result of [RouteMatcher.buildPathTo]
   ///
@@ -62,33 +63,33 @@ class RouteMatch<T> {
   /// Whether is route is a parent route
   bool get isBranch => _config.hasSubTree;
 
-  /// Helper to access [AutoRoute.meta]
+  /// Helper to access [RouteDef.meta]
   Map<String, dynamic> get meta => _config.meta;
 
-  /// Helper to access [AutoRoute.type]
+  /// Helper to access [RouteDef.type]
   RouteType? get type => _config.type;
 
-  /// Helper to access [AutoRoute.keepHistory]
+  /// Helper to access [RouteDef.keepHistory]
   bool get keepHistory => _config.keepHistory;
 
-  /// Helper to access [AutoRoute.fullscreenDialog]
+  /// Helper to access [RouteDef.fullscreenDialog]
   bool get fullscreenDialog => _config.fullscreenDialog;
 
-  /// Helper to access [AutoRoute.allowSnapshotting]
+  /// Helper to access [RouteDef.allowSnapshotting]
   bool get allowSnapshotting => _config.allowSnapshotting;
 
-  /// Helper to access [AutoRoute.maintainState]
+  /// Helper to access [RouteDef.maintainState]
   bool get maintainState => _config.maintainState;
 
-  /// Helper to access [AutoRoute.restorationId]
+  /// Helper to access [RouteDef.restorationId]
   RestorationIdBuilder? get restorationId => _config.restorationId;
 
-  /// Helper to access [AutoRoute.title]
+  /// Helper to access [RouteDef.title]
   TitleBuilder? get titleBuilder => _config.title;
 
   /// Default constructor
   const RouteMatch({
-    required AutoRoute config,
+    required RouteDef config,
     required this.segments,
     required this.stringMatch,
     required this.key,
@@ -143,7 +144,7 @@ class RouteMatch<T> {
     String? redirectedFrom,
     Object? args,
     LocalKey? key,
-    AutoRoute? config,
+    RouteDef? config,
     bool? autoFilled,
   }) {
     return RouteMatch(
