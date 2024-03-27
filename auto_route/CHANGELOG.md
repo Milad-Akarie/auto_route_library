@@ -1,3 +1,7 @@
+## 8.0.1
+
+ - **FIX**: back-gesture does not respect sub-routes.
+
 ## 8.0.0
 
 - **FEAT**: AutoTabsRouter will now use the declared routes if AutoTabsRouter.routes is not
