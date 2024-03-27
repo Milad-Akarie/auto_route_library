@@ -93,7 +93,8 @@ does all that for you and much more.
 dependencies:
   auto_route: [ latest-version ]
 dev_dependencies:
-  auto_route_generator: [ latest-version ] build_runner:  
+  auto_route_generator: [ latest-version ]
+  build_runner: [ latest-version ]
 ```  
 
 ## Setup And Usage
