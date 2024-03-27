@@ -205,7 +205,7 @@ router.navigateNamed('/books');
 // on Web it calls window.history.back();  
 // on Native it navigates you back  
 // to the previous location  
-router.navigateBack();  
+router.back();  
 // adds a list of routes to the pages stack at once  
 router.pushAll([  
  BooksListRoute(), BookDetailsRoute(id: 1),]);  
