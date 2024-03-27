@@ -533,6 +533,18 @@ abstract class RoutingController with ChangeNotifier {
     bool ignorePagelessRoutes = false,
   });
 
+  /// returns true if any child controller can pop
+  bool childrenCanPop({
+    bool ignorePagelessRoutes = false,
+  }) {
+    return _childControllers.any(
+      (c) => c.canPop(
+        ignorePagelessRoutes: ignorePagelessRoutes,
+        ignoreParentRoutes: true,
+      ),
+    );
+  }
+
   /// Collects the top-most visitable current-child of
   /// every top-most nested controller considering this controller as root
   List<RouteMatch> get currentSegments {

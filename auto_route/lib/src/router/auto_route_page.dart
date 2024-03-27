@@ -118,7 +118,17 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
 
   AutoRoutePage get _page => settings as AutoRoutePage;
 
-  List<VoidCallback> scopes = [];
+  @override
+  bool get willHandlePopInternally {
+    /// This fixes the issue of nested navigators back-gesture
+    /// It prevents back-gesture on parent navigator if sub-navigator
+    /// can pop
+    if (isCurrent) {
+      final router = _page.routeData.router;
+      return router.childrenCanPop();
+    }
+    return super.willHandlePopInternally;
+  }
 
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
@@ -339,4 +349,16 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
+
+  @override
+  bool get willHandlePopInternally {
+    /// This fixes the issue of nested navigators back-gesture
+    /// It prevents back-gesture on parent navigator if sub-navigator
+    /// can pop
+    if (isCurrent) {
+      final router = _page.routeData.router;
+      return router.childrenCanPop();
+    }
+    return super.willHandlePopInternally;
+  }
 }
