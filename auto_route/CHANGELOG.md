@@ -1,3 +1,7 @@
+## 8.0.2
+
+ - **FIX**: only disable parent back gesture if the active child can pop.
+
 ## 8.0.1
 
  - **FIX**: back-gesture does not respect sub-routes.
