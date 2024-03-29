@@ -125,7 +125,7 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
     /// can pop
     if (isCurrent) {
       final router = _page.routeData.router;
-      return router.childrenCanPop();
+      return router.activeChildCanPop();
     }
     return super.willHandlePopInternally;
   }
@@ -357,7 +357,7 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
     /// can pop
     if (isCurrent) {
       final router = _page.routeData.router;
-      return router.childrenCanPop();
+      return router.activeChildCanPop();
     }
     return super.willHandlePopInternally;
   }

@@ -545,6 +545,19 @@ abstract class RoutingController with ChangeNotifier {
     );
   }
 
+  /// returns true if the active child controller can pop
+  bool activeChildCanPop({
+    bool ignorePagelessRoutes = false,
+  }) {
+    final innerRouter = _innerControllerOf(currentChild?.key);
+    if (innerRouter != null) {
+      return innerRouter.canPop(
+        ignorePagelessRoutes: ignorePagelessRoutes,
+      );
+    }
+    return false;
+  }
+
   /// Collects the top-most visitable current-child of
   /// every top-most nested controller considering this controller as root
   List<RouteMatch> get currentSegments {
@@ -1147,7 +1160,7 @@ abstract class StackRouter extends RoutingController {
   /// Removes the very last entry from [_pages]
   bool removeLast() => _removeLast();
 
-  /// Removes given [route] and any corresponding controllers or redirect-guards
+  /// Removes given [route] and any corresponding controllers
   ///
   /// finally calls [notifyAll] if notify is true
   void removeRoute(RouteData route, {bool notify = true}) {
