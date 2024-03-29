@@ -648,6 +648,12 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     });
   }
 
+  @override
+  void dispose(){
+    _tabController.dispose();
+    super.dispose();
+  }
+
   void _updateTabController() {
     _tabController = TabController(
       animationDuration: widget.duration,
