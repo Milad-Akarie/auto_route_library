@@ -1,6 +1,7 @@
 ## 8.0.2
 
  - **FIX**: only disable parent back gesture if the active child can pop.
+ - **FIX**: AutoTabsRouterTabBarState was disposed with active Ticker #1910
 
 ## 8.0.1
 
@@ -9,7 +10,7 @@
 ## 8.0.0
 
 - **FEAT**: AutoTabsRouter will now use the declared routes if AutoTabsRouter.routes is not
-  provided, if of any of the tabs has required parameters it will throw an error.
+  provided, if any of the tabs has required parameters it will throw an error.
 - **BREAKING CHANGE**: deep-links with no host e.g scheme://page/sub-page are no longer
   automatically handled, flutter's deep-link handler will treat [page] as host so we end up
   with [/sub-page] as a path which of course not going to match. if your deep-links are hostless
