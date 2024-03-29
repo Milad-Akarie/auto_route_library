@@ -95,7 +95,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
               }
               if (route.settings is AutoRoutePage) {
                 var routeData = (route.settings as AutoRoutePage).routeData;
-                widget.router.removeRoute(routeData);
+                widget.router.onPopPage(route, routeData);
                 widget.didPop?.call(routeData.route, result);
               }
               route.onPopInvoked(true);

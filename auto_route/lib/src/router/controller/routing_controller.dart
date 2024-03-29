@@ -5,7 +5,6 @@ import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/auto_route_config.dart';
 import 'package:auto_route/src/route/errors.dart';
 import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
-import 'package:auto_route/src/router/controller/pageless_routes_observer.dart';
 import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
@@ -1165,6 +1164,13 @@ abstract class StackRouter extends RoutingController {
   /// finally calls [notifyAll] if notify is true
   void removeRoute(RouteData route, {bool notify = true}) {
     _removeRoute(route._match, notify: notify);
+  }
+
+  /// Called when Page route is popped
+  /// this is not called when pageless routes are popped e.g popping a dialog
+  /// that does not use [PageRoute] will not trigger this method
+  void onPopPage(Route<dynamic> route, RouteData data) {
+    removeRoute(data);
   }
 
   void _removeRoute(RouteMatch route, {bool notify = true}) {

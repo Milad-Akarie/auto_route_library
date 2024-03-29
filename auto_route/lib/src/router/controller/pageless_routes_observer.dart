@@ -46,4 +46,9 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   void didReplace({Route? newRoute, Route? oldRoute}) {
     _checkCurrentRoute(newRoute);
   }
+
+  @override
+  void didStartUserGesture(Route route, Route? previousRoute) {
+    _checkCurrentRoute(route);
+  }
 }
