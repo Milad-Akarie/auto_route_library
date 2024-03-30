@@ -22,9 +22,12 @@ class SequenceMatcher {
 
   SequenceMatcher(this.fileResolver);
 
-  Future<Map<String, Set<SequenceMatch>>> locateTopLevelDeclarations(final Uri file, List<Uri> sources,
-      Iterable<Sequence> _sequences,
-      {int depth = 0}) async {
+  Future<Map<String, Set<SequenceMatch>>> locateTopLevelDeclarations(
+    final Uri file,
+    List<Uri> sources,
+    Iterable<Sequence> _sequences, {
+    int depth = 0,
+  }) async {
     if (depth == 0) {
       checkedExports.clear();
     }
@@ -38,13 +41,12 @@ class SequenceMatcher {
 
     for (final source in sources) {
       final resolvedUri = fileResolver.resolve(source, relativeTo: file);
-
       try {
         final notFoundIdentifiers = sequences.map((e) => e.identifier).where((e) => !foundUnique.contains(e)).toSet();
         for (final identifier in notFoundIdentifiers) {
-          if (resolvedTypes[source.toString()]?.contains(identifier) == true) {
+          if (resolvedTypes[resolvedUri.toString()]?.contains(identifier) == true) {
             foundUnique.add(identifier);
-            results[file.path] = {...?results[file.path], SequenceMatch(identifier, 0, 0, identifier)};
+            results[resolvedUri.path] = {...?results[resolvedUri.path], SequenceMatch(identifier, 0, 0, identifier)};
             sequences = sequences.where((e) => e.identifier != identifier);
           }
         }
@@ -52,10 +54,14 @@ class SequenceMatcher {
         if (sequences.isEmpty) break;
         final content = File.fromUri(resolvedUri).readAsBytesSync();
         final matches = findTopLevelSequences(content, [
-          Sequence('export', 'export', terminator: 0x3B),
-          Sequence('export', 'part', terminator: 0x3B),
+          Sequence('export', 'export', takeUntil: 0x3B),
+          Sequence('export', 'part', takeUntil: 0x3B),
           ...sequences,
         ]);
+
+        // if(sequences.any((e) => e.identifier == 'Key')){
+        //   print('Looking For key in ${resolvedUri.toString()}');
+        // }
 
         final identifierMatches = matches.where((e) => e.identifier != 'export');
         if (identifierMatches.isNotEmpty) {
@@ -113,8 +119,10 @@ class SequenceMatcher {
                 depth: depth + 1,
               );
               final foundIdentifiers = subResults.values.expand((e) => e);
-              foundUnique.addAll(foundIdentifiers.map((e) => e.identifier));
-              results[resolvedUri.path] = {...?results[resolvedUri.path], ...foundIdentifiers};
+              if (foundIdentifiers.isNotEmpty) {
+                foundUnique.addAll(foundIdentifiers.map((e) => e.identifier));
+                results[resolvedUri.path] = {...?results[resolvedUri.path], ...foundIdentifiers};
+              }
             }
           }
         }
@@ -128,7 +136,7 @@ class SequenceMatcher {
 
   List<SequenceMatch> findTopLevelSequences(List<int> byteArray, List<Sequence> sequences) {
     List<SequenceMatch> results = [];
-    List<int> enteredScopes = [];
+    List<int> visitedScopes = [];
 
     for (int i = 0; i < byteArray.length; i++) {
       /// if found ',", or ''' skip until the next one
@@ -141,6 +149,7 @@ class SequenceMatcher {
         continue;
       }
 
+      /// if found // skip until the next line
       if (byteArray[i] == 0x2F && i < byteArray.length - 1 && byteArray[i + 1] == 0x2F) {
         i += 2;
         while (i < byteArray.length && byteArray[i] != 0x0A) {
@@ -158,15 +167,15 @@ class SequenceMatcher {
         continue;
       }
 
-      if (enteredScopes.isNotEmpty) {
-        if (byteArray[i] == _scopes[enteredScopes.last]) {
-          enteredScopes.removeLast();
+      if (visitedScopes.isNotEmpty) {
+        if (byteArray[i] == _scopes[visitedScopes.last]) {
+          visitedScopes.removeLast();
         }
         continue;
       }
 
       if (_scopes.containsKey(byteArray[i])) {
-        enteredScopes.add(byteArray[i]);
+        visitedScopes.add(byteArray[i]);
         continue;
       }
 

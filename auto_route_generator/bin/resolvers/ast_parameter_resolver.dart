@@ -70,7 +70,7 @@ class AstParameterResolver {
       isPathParam: pathParamAnnotation != null,
       isInheritedPathParam: isInheritedPathParam,
       isQueryParam: queryParamAnnotation != null,
-      // defaultValueCode: typedParam.defaultValueCode,
+      defaultValueCode: typedParam.defaultValueCode,
     );
   }
 
@@ -81,7 +81,7 @@ class AstParameterResolver {
       returnType: _typeResolver.resolveType(type.returnType),
       params: type.parameters.typedParams.map(resolve).toList(),
       name: typedParam.name,
-      // defaultValueCode: paramType.defaultValueCode,
+      defaultValueCode: typedParam.defaultValueCode,
       isRequired: typedParam.isRequiredNamed,
       isPositional: typedParam.isPositional,
       isOptional: typedParam.isOptional,

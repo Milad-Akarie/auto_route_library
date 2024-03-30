@@ -1,5 +1,5 @@
 const commonNameSpaces = {
-  'package:flutter/material.dart': {
+  'file:///Users/milad/dev/flutter/packages/flutter/lib/material.dart': {
     'VoidCallback',
     'ValueNotifier',
     'ValueChanged',

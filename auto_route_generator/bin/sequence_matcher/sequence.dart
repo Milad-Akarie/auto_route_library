@@ -1,9 +1,15 @@
 class Sequence {
   final String identifier;
   final String pattern;
-  final int? terminator;
+  final int? takeUntil;
+  final List<int> terminators;
 
-  const Sequence(this.identifier, this.pattern, {this.terminator});
+  const Sequence(
+    this.identifier,
+    this.pattern, {
+    this.takeUntil,
+    this.terminators = const [],
+  });
 
   int matches(List<int> byteArray, int startIndex) {
     final chars = pattern.codeUnits;
@@ -23,12 +29,17 @@ class Sequence {
       }
     }
 
-    if (terminator != null) {
-      while (lastConsumedIndex < byteArray.length && byteArray[lastConsumedIndex] != terminator) {
+    if (takeUntil != null) {
+      while (lastConsumedIndex < byteArray.length && byteArray[lastConsumedIndex] != takeUntil) {
         lastConsumedIndex++;
       }
       return lastConsumedIndex + 1;
     }
+
+    if (byteArray.length > lastConsumedIndex && !terminators.contains(byteArray[lastConsumedIndex + 1])) {
+      return -1;
+    }
+
     return lastConsumedIndex;
   }
 }

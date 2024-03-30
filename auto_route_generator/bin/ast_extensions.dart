@@ -99,6 +99,8 @@ class TypedParam {
 
   bool get isThis => param.actual is FieldFormalParameter;
 
+  String? get defaultValueCode =>
+      param is DefaultFormalParameter ? (param as DefaultFormalParameter).defaultValue?.toSource() : null;
   TypedParam(this.param, this.type);
 }
 
@@ -170,4 +172,25 @@ extension TypeAnnotationX on TypeAnnotation? {
 
 extension DirectiveX on UriBasedDirective {
   Uri get pathUri => Uri.parse(uri.stringValue!);
+}
+
+///    compilationUnitMember ::=
+///        [ClassDeclaration]
+///      | [MixinDeclaration]
+///      | [ExtensionDeclaration]
+///      | [EnumDeclaration]
+///      | [TypeAlias]
+///      | [FunctionDeclaration]
+///      | [TopLevelVariableDeclaration]
+extension CompilationUnitMemberX on CompilationUnitMember {
+  String get name => switch (this) {
+        ClassDeclaration c => c.name.lexeme,
+        MixinDeclaration m => m.name.lexeme,
+        ExtensionDeclaration e => e.name?.lexeme ?? '',
+        EnumDeclaration e => e.name.lexeme,
+        TypeAlias t => t.name.lexeme,
+        FunctionDeclaration f => f.name.lexeme,
+        TopLevelVariableDeclaration v => v.variables.variables.first.name.lexeme,
+        _ => '',
+      };
 }

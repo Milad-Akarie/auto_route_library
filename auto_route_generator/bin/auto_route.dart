@@ -10,6 +10,7 @@ import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:collection/collection.dart';
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
+import 'package:path/path.dart' as p;
 
 import 'ast_extensions.dart';
 import 'resolvers/ast_parameter_resolver.dart';
@@ -27,16 +28,26 @@ late final rootPackage = rootPackageName;
 void main() async {
   printBlue('AutoRoute Builder Started...');
   final stopWatch = Stopwatch()..start();
-  late final matcher = SequenceMatcher(PackageFileResolver.forCurrentRoot());
+  final root = Directory.current.uri;
+  // final root = Uri.parse('/Users/milad/AndroidStudioProjects/$rootPackage');
+  late final fileResolver = PackageFileResolver.forRoot(root.path);
+  late final matcher = SequenceMatcher(fileResolver);
   final lastGenerate = _configFile.existsSync() ? int.parse(_configFile.readAsStringSync()) : 0;
   final glob = Glob('**screen.dart');
-  final libDir = Directory.fromUri(Directory.current.uri.resolve('lib'));
+  final libDir = Directory.fromUri(Uri.parse(p.join(root.path, 'lib')));
   final assets = glob.listSync(root: libDir.path, followLinks: true).whereType<File>();
   printYellow('Assets collected in ${stopWatch.elapsedMilliseconds}ms');
+  print(matcher);
   final stopWatch2 = Stopwatch()..start();
-  final routesResult = await Future.wait([
-    for (final asset in assets) _processFile(asset, () => matcher, lastGenerate),
-  ]);
+  // final routesResult = await Future.wait([
+  //   for (final asset in assets) _processFile(asset, () => matcher, lastGenerate),
+  // ]);
+
+  final routesResult = <RouteConfig?>[];
+  for (final asset in assets) {
+    final result = await _processFile(asset, () => matcher, lastGenerate);
+    routesResult.add(result);
+  }
   printYellow('Processing took ${stopWatch2.elapsedMilliseconds}ms');
 
   final routes = routesResult.whereNotNull();
@@ -98,7 +109,7 @@ Future<RouteConfig?> _processFile(File asset, SequenceMatcher Function() matcher
   }.whereNot(dartCoreTypeNames.contains);
 
   final resolvedLibs = {
-    asset.uri.path: {className},
+    asset.uri.path: {for (final declaration in unit.declarations) declaration.name},
   };
   if (identifiersToLookUp.isNotEmpty) {
     final result = await matcher().locateTopLevelDeclarations(
@@ -106,11 +117,16 @@ Future<RouteConfig?> _processFile(File asset, SequenceMatcher Function() matcher
       imports,
       [
         for (final type in identifiersToLookUp) ...[
-          Sequence(type, 'class ${type}'),
-          Sequence(type, 'typedef ${type}'),
+          Sequence(type, 'class ${type}', terminators: [32, 0x3C]),
+          Sequence(type, 'typedef ${type}', terminators: [32, 0x3C]),
         ],
       ],
     );
+    if (result.isNotEmpty) {
+      for (final res in result.entries) {
+        print('Found: ${res.key} => ${res.value.map((e) => e.identifier).toList()}');
+      }
+    }
     resolvedLibs.addAll({
       for (final entry in result.entries) entry.key: entry.value.map((e) => e.identifier).toSet(),
     });

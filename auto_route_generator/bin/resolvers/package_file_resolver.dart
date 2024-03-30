@@ -7,14 +7,17 @@ const packageConfigPath = '.dart_tool/package_config.json';
 const _skyEnginePackage = 'sky_engine';
 
 class PackageFileResolver {
-  static Uri packageConfigUri = Uri.file(p.join(Directory.current.path, packageConfigPath));
   final Map<String, String> packageToPath;
   final Map<String, String> pathToPackage;
 
   PackageFileResolver(this.packageToPath, this.pathToPackage);
 
   factory PackageFileResolver.forCurrentRoot() {
-    final packageConfig = File.fromUri(packageConfigUri);
+    return PackageFileResolver.forRoot(Directory.current.path);
+  }
+
+  factory PackageFileResolver.forRoot(String path) {
+    final packageConfig = File.fromUri(Uri.file(p.join(path, packageConfigPath)));
     final packageConfigJson = jsonDecode(packageConfig.readAsStringSync())['packages'] as List<dynamic>;
     final packageToPath = <String, String>{};
     final pathToPackage = <String, String>{};

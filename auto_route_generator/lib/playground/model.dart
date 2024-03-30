@@ -21,3 +21,4 @@ abstract class Generice<T> {
 
   Generice(this.x);
 }
+

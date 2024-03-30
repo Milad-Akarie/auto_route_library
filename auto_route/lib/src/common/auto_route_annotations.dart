@@ -74,10 +74,14 @@ class RoutePage<T> {
   /// more info https://dart.dev/guides/language/language-tour#deferred-loading
   /// defaults to false
   final bool? deferredLoading;
+  final Type? host;
+  final String? path;
 
   /// default constructor
   const RoutePage({
+    this.path,
     this.name,
+    this.host,
     this.deferredLoading,
   });
 }
@@ -131,3 +135,9 @@ class QueryParam {
 
 /// default QueryParam()
 const queryParam = QueryParam();
+
+class NavGraph {
+  final Type host;
+
+  const NavGraph(this.host);
+}
