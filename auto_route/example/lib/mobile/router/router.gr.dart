@@ -50,7 +50,7 @@ abstract class $RootRouter extends _i9.RootStackRouter {
       );
     },
     HomeRoute.name: (routeData) {
-      return _i9.AutoRoutePage<String>(
+      return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i4.HomePage(),
       );

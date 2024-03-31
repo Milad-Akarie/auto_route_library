@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
 
-@RoutePage<String>()
+@RoutePage()
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
