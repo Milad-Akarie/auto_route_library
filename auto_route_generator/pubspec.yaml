@@ -26,9 +26,12 @@ dependencies:
       ref: main
 
 
+  collection: any
+  yaml: any
 dev_dependencies:
   lints: ^2.0.1
   build_test: ^2.1.3
   source_gen_test:
   test:
 
+  flutter: any

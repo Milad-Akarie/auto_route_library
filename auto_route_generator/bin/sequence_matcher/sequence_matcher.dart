@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 
 import '../auto_route.dart';
 import '../resolvers/package_file_resolver.dart';
+import '../sdt_out_utils.dart';
 import 'common_namespaces.dart';
 import 'export_statement.dart';
 import 'sequence.dart';
@@ -17,7 +18,7 @@ const _scopes = {
 
 class SequenceMatcher {
   final checkedExports = <Uri>{};
-  final resolvedTypes = Map.of(commonNameSpaces);
+  final resolvedIdentifiers = Map.of(commonNameSpaces);
   final PackageFileResolver fileResolver;
 
   SequenceMatcher(this.fileResolver);
@@ -27,12 +28,12 @@ class SequenceMatcher {
     List<Uri> sources,
     Iterable<Sequence> _sequences, {
     int depth = 0,
+    final Uri? root,
   }) async {
     if (depth == 0) {
       checkedExports.clear();
     }
     if (_sequences.isEmpty) return {};
-
     Iterable<Sequence> sequences = _sequences;
     final results = <String, Set<SequenceMatch>>{};
     final targetTotal = sequences.map((e) => e.identifier).toSet();
@@ -41,13 +42,28 @@ class SequenceMatcher {
 
     for (final source in sources) {
       final resolvedUri = fileResolver.resolve(source, relativeTo: file);
+      final rootUri = root ?? resolvedUri;
+
       try {
         final notFoundIdentifiers = sequences.map((e) => e.identifier).where((e) => !foundUnique.contains(e)).toSet();
         for (final identifier in notFoundIdentifiers) {
-          if (resolvedTypes[resolvedUri.toString()]?.contains(identifier) == true) {
+          // print(resolvedIdentifiers.keys);
+          // print(resolvedUri.toString());
+          // print(notFoundIdentifiers);
+          if (resolvedIdentifiers[source.toString()]?.contains(identifier) == true ||
+              resolvedIdentifiers[rootUri.toString()]?.contains(identifier) == true) {
             foundUnique.add(identifier);
-            results[resolvedUri.path] = {...?results[resolvedUri.path], SequenceMatch(identifier, 0, 0, identifier)};
+            if (source != rootUri) {
+              resolvedIdentifiers[rootUri.toString()] = {...?resolvedIdentifiers[rootUri.toString()], identifier};
+            }
+            printRed('resolved: ($identifier) in ${rootUri.toString()}');
+            results[rootUri.toString()] = {
+              ...?results[rootUri.toString()],
+              SequenceMatch(identifier, 0, 0, identifier)
+            };
+
             sequences = sequences.where((e) => e.identifier != identifier);
+            print('sequences: ${sequences.map((e) => e.identifier)}');
           }
         }
 
@@ -65,9 +81,13 @@ class SequenceMatcher {
 
         final identifierMatches = matches.where((e) => e.identifier != 'export');
         if (identifierMatches.isNotEmpty) {
-          resolvedTypes[resolvedUri.toString()] = identifierMatches.map((e) => e.identifier).toSet();
+          resolvedIdentifiers[rootUri.toString()] = {
+            ...?resolvedIdentifiers[rootUri.toString()],
+            ...identifierMatches.map((e) => e.identifier).toSet()
+          };
           foundUnique.addAll(identifierMatches.map((e) => e.identifier));
-          results[resolvedUri.path] = {...?results[resolvedUri.path], ...identifierMatches};
+          printRed('found: ${identifierMatches.map((e) => e.identifier)} in ${resolvedUri.toString()}');
+          results[rootUri.path] = {...?results[rootUri.path], ...identifierMatches};
           sequences = sequences.where((e) => !foundUnique.contains(e.identifier));
         }
         if (foundUnique.length >= targetTotal.length) {
@@ -117,6 +137,7 @@ class SequenceMatcher {
                 exportSources,
                 notFoundIdentifiers,
                 depth: depth + 1,
+                root: rootUri,
               );
               final foundIdentifiers = subResults.values.expand((e) => e);
               if (foundIdentifiers.isNotEmpty) {

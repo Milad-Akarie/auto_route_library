@@ -37,17 +37,21 @@ void main() async {
   final libDir = Directory.fromUri(Uri.parse(p.join(root.path, 'lib')));
   final assets = glob.listSync(root: libDir.path, followLinks: true).whereType<File>();
   printYellow('Assets collected in ${stopWatch.elapsedMilliseconds}ms');
-  print(matcher);
   final stopWatch2 = Stopwatch()..start();
-  // final routesResult = await Future.wait([
-  //   for (final asset in assets) _processFile(asset, () => matcher, lastGenerate),
-  // ]);
 
-  final routesResult = <RouteConfig?>[];
-  for (final asset in assets) {
-    final result = await _processFile(asset, () => matcher, lastGenerate);
-    routesResult.add(result);
-  }
+  final routesResult = await Future.wait([
+    for (final asset in assets) _processFile(asset, () => matcher, lastGenerate),
+  ]);
+  // final port = ReceivePort();
+  // await Isolate.spawn((message) { }, port.sendPort);
+  // port.toList();
+
+  //
+  // final routesResult = <RouteConfig?>[];
+  // for (final asset in assets) {
+  //   final result = await _processFile(asset, () => matcher, lastGenerate);
+  //   routesResult.add(result);
+  // }
   printYellow('Processing took ${stopWatch2.elapsedMilliseconds}ms');
 
   final routes = routesResult.whereNotNull();
@@ -78,7 +82,7 @@ void main() async {
 
 Future<RouteConfig?> _processFile(File asset, SequenceMatcher Function() matcher, int lastGenerate) async {
   // if (asset.lastModifiedSync().millisecondsSinceEpoch < lastGenerate) return null;
-  final bytes = asset.readAsBytesSync();
+  final bytes = await asset.readAsBytes();
   if (!hasRouteAnnotation(bytes)) return null;
 
   final assetContent = utf8.decode(bytes);
@@ -88,7 +92,6 @@ Future<RouteConfig?> _processFile(File asset, SequenceMatcher Function() matcher
   if (routePage == null || !routePage.hasDefaultConstructor) return null;
   final annotation = routePage.routePageAnnotation;
   final className = routePage.name.lexeme;
-
   printBlue('Processing: ${className}');
 
   late final imports = unit.directives
@@ -111,7 +114,10 @@ Future<RouteConfig?> _processFile(File asset, SequenceMatcher Function() matcher
   final resolvedLibs = {
     asset.uri.path: {for (final declaration in unit.declarations) declaration.name},
   };
+  final stopWatch = Stopwatch()..start();
+
   if (identifiersToLookUp.isNotEmpty) {
+    final resolved = matcher().resolvedIdentifiers;
     final result = await matcher().locateTopLevelDeclarations(
       asset.uri,
       imports,
@@ -123,16 +129,18 @@ Future<RouteConfig?> _processFile(File asset, SequenceMatcher Function() matcher
       ],
     );
     if (result.isNotEmpty) {
-      for (final res in result.entries) {
-        print('Found: ${res.key} => ${res.value.map((e) => e.identifier).toList()}');
-      }
+      // for (final res in result.entries) {
+      //   print('Found: ${res.key} => ${res.value.map((e) => e.identifier).toList()}');
+      // }
     }
     resolvedLibs.addAll({
       for (final entry in result.entries) entry.key: entry.value.map((e) => e.identifier).toSet(),
     });
   }
+  printBlue('resolved in ${stopWatch.elapsedMilliseconds}ms');
   final typeResolver = AstTypeResolver(resolvedLibs, matcher().fileResolver);
   final paramResolver = AstParameterResolver(typeResolver);
+  printBlue('Processing Finished: ${className} in ${stopWatch.elapsedMilliseconds}ms');
   return RouteConfig(
     className: className,
     name: className,
