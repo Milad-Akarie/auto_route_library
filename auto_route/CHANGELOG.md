@@ -1,3 +1,7 @@
+## 8.0.3
+
+ - **FIX**: issue related to casting Custom Routes.
+
 ## 8.0.2
 
  - **FIX**: only disable parent back gesture if the active child can pop.
