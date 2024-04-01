@@ -1,9 +1,9 @@
 const commonNameSpaces = {
   'package:flutter/material.dart': {
+    'Key',
     'VoidCallback',
     'ValueNotifier',
     'ValueChanged',
-    'Key',
     'Color',
     'Colors',
     'Text',
@@ -14,6 +14,27 @@ const commonNameSpaces = {
     'BuildContext',
     'Offset',
     'EdgeInsets',
-    'Size'
+    'Size',
+  },
+  'package:auto_route/auto_route.dart': {
+    'AutoRoute',
+    'CustomPage',
+    'PageRouteInfo',
+    'AutoRouter',
+    'AutoRouteGuard',
+    'AutoRoutePage',
+    'RoutePage',
+    'AutoRouteRedirect',
+    'AutoRoutePath',
+  },
+  'package:auto_route/auto_route_annotations.dart': {
+    'RoutePage',
+    'routePage',
+    'QueryParam',
+    'PathParam',
+    'inheritPathParam',
+    'pathParam',
+    'queryParam',
+    'AutoRouterConfig',
   },
 };

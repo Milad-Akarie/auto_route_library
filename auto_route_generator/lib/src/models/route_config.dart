@@ -32,6 +32,10 @@ class RouteConfig {
   /// whether the route is deferred
   final bool? deferredLoading;
 
+  final String source;
+
+  final int hash;
+
   /// Default constructor
   RouteConfig({
     this.name,
@@ -43,7 +47,11 @@ class RouteConfig {
     this.returnType,
     this.hasConstConstructor = false,
     this.deferredLoading,
+    required this.hash,
+    required this.source,
   });
+
+  String get id => '$source@$className';
 
   /// The class name for ArgumentsHolder
   String get argumentsHolderClassName {
@@ -103,9 +111,13 @@ class RouteConfig {
     String? replacementInRouteName,
     bool? hasConstConstructor,
     bool? deferredLoading,
+    int? hash,
+    String? source,
   }) {
     return RouteConfig(
       name: name ?? this.name,
+      hash: hash ?? this.hash,
+      source: source ?? this.source,
       pathParams: pathParams ?? this.pathParams,
       pageType: pageType ?? this.pageType,
       className: className ?? this.className,
@@ -129,6 +141,8 @@ class RouteConfig {
       'hasWrappedRoute': this.hasWrappedRoute,
       'hasConstConstructor': this.hasConstConstructor,
       'deferredLoading': this.deferredLoading,
+      'source': this.source,
+      'hash': this.hash,
     };
   }
 
@@ -151,6 +165,7 @@ class RouteConfig {
     return RouteConfig(
       name: map['name'] as String?,
       pathParams: pathParams,
+      hash: map['hash'] as int,
       pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType']),
       className: map['className'] as String,
       returnType: map['returnType'] == null ? null : ResolvedType.fromJson(map['returnType']),
@@ -158,6 +173,7 @@ class RouteConfig {
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,
       hasConstConstructor: map['hasConstConstructor'] as bool,
       deferredLoading: map['deferredLoading'] as bool?,
+      source: map['source'] as String,
     );
   }
 }

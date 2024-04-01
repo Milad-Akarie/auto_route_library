@@ -9,7 +9,6 @@ import '../models/route_parameter_config.dart';
 import '../resolvers/route_parameter_resolver.dart';
 import '../resolvers/type_resolver.dart';
 
-
 /// extracts route configs from class fields and their meta data
 class RouteConfigResolver {
   final TypeResolver _typeResolver;
@@ -28,8 +27,8 @@ class RouteConfigResolver {
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute = classElement.allSupertypes.any((e) =>
-        e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
+    final hasWrappedRoute =
+        classElement.allSupertypes.any((e) => e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.getDisplayString(withNullability: false);
 
@@ -64,10 +63,8 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs = parameters.where((p) =>
-          (p.isRequired || p.isPositional) &&
-          !p.isPathParam &&
-          !p.isQueryParam);
+      var unParsableRequiredArgs =
+          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
         print(
             '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
@@ -87,6 +84,8 @@ class RouteConfigResolver {
     return RouteConfig(
       className: className,
       name: name,
+      hash: 0,
+      source: pageType.import ?? ' ',
       hasWrappedRoute: hasWrappedRoute,
       parameters: parameters,
       hasConstConstructor: hasConstConstructor,

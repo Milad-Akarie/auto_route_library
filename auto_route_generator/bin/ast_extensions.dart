@@ -44,6 +44,11 @@ extension ClassDeclarationX on ClassDeclaration {
     }
     return params;
   }
+
+  Set<String> get nonCoreIdentifiers => {
+        ...routePageAnnotation.returnIdentifiers,
+        for (final param in defaultConstructorParams) ...?param.type?.identifiers,
+      }.whereNot(dartCoreTypeNames.contains).toSet();
 }
 
 extension FormalParameterListX on FormalParameterList {
@@ -101,6 +106,7 @@ class TypedParam {
 
   String? get defaultValueCode =>
       param is DefaultFormalParameter ? (param as DefaultFormalParameter).defaultValue?.toSource() : null;
+
   TypedParam(this.param, this.type);
 }
 
@@ -193,4 +199,34 @@ extension CompilationUnitMemberX on CompilationUnitMember {
         TopLevelVariableDeclaration v => v.variables.variables.first.name.lexeme,
         _ => '',
       };
+}
+
+extension CompilationUnitX on CompilationUnit {
+  List<ImportDirective> get imports => List.of(directives.whereType<ImportDirective>());
+
+  Iterable<ClassDeclaration> get classes => declarations.whereType<ClassDeclaration>();
+
+  List<Uri> importUris(String rootPackage) => imports.where((e) => e.uri.stringValue != null).map((e) {
+        return Uri.parse(e.uri.stringValue!);
+      }).sortedBy<num>((e) {
+        final package = e.pathSegments.first;
+        if (package == 'flutter') return 1;
+        return !e.hasScheme || package == rootPackage ? -1 : 0;
+      }).toList();
+
+  int calculateUpdatableHash() {
+    var calculatedHash = imports.fold(0, (acc, a) => acc ^ a.toSource().hashCode);
+    for (final clazz in declarations.where((e) => e.metadata.isNotEmpty)) {
+      for (final child in clazz.childEntities.whereType<ClassMember>()) {
+        if (child is ConstructorDeclaration || child is FieldDeclaration) {
+          calculatedHash = calculatedHash ^ child.toSource().hashCode;
+        }
+        final routePageMeta = clazz.metadata.firstWhereOrNull((e) => e.name.name == 'RoutePage');
+        if (routePageMeta != null) {
+          calculatedHash = calculatedHash ^ routePageMeta.toSource().hashCode;
+        }
+      }
+    }
+    return calculatedHash;
+  }
 }

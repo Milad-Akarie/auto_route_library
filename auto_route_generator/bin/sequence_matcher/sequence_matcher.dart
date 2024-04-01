@@ -9,6 +9,7 @@ import 'common_namespaces.dart';
 import 'export_statement.dart';
 import 'sequence.dart';
 import 'sequence_match.dart';
+import 'utils.dart';
 
 const _scopes = {
   0x7B: 0x7D, // {}
@@ -23,12 +24,11 @@ class SequenceMatcher {
 
   SequenceMatcher(this.fileResolver);
 
-  Future<Map<String, Set<SequenceMatch>>> locateTopLevelDeclarations(
-    final Uri file,
+  Future<Map<String, Set<SequenceMatch>>> locateTopLevelDeclarations(Uri file,
     List<Uri> sources,
     Iterable<Sequence> _sequences, {
     int depth = 0,
-    final Uri? root,
+    Uri? root,
   }) async {
     if (depth == 0) {
       checkedExports.clear();
@@ -37,37 +37,33 @@ class SequenceMatcher {
     Iterable<Sequence> sequences = _sequences;
     final results = <String, Set<SequenceMatch>>{};
     final targetTotal = sequences.map((e) => e.identifier).toSet();
-
     final foundUnique = <String>{};
+    bool didResolveAll() => foundUnique.length >= targetTotal.length;
 
     for (final source in sources) {
       final resolvedUri = fileResolver.resolve(source, relativeTo: file);
       final rootUri = root ?? resolvedUri;
-
-      try {
-        final notFoundIdentifiers = sequences.map((e) => e.identifier).where((e) => !foundUnique.contains(e)).toSet();
-        for (final identifier in notFoundIdentifiers) {
-          // print(resolvedIdentifiers.keys);
-          // print(resolvedUri.toString());
-          // print(notFoundIdentifiers);
-          if (resolvedIdentifiers[source.toString()]?.contains(identifier) == true ||
-              resolvedIdentifiers[rootUri.toString()]?.contains(identifier) == true) {
-            foundUnique.add(identifier);
-            if (source != rootUri) {
-              resolvedIdentifiers[rootUri.toString()] = {...?resolvedIdentifiers[rootUri.toString()], identifier};
-            }
-            printRed('resolved: ($identifier) in ${rootUri.toString()}');
-            results[rootUri.toString()] = {
-              ...?results[rootUri.toString()],
-              SequenceMatch(identifier, 0, 0, identifier)
-            };
-
-            sequences = sequences.where((e) => e.identifier != identifier);
-            print('sequences: ${sequences.map((e) => e.identifier)}');
+      final notFoundIdentifiers = sequences.difference(foundUnique);
+      for (final identifier in notFoundIdentifiers) {
+        if (resolvedIdentifiers[source.toString()]?.contains(identifier) == true ||
+            resolvedIdentifiers[rootUri.toString()]?.contains(identifier) == true) {
+          foundUnique.add(identifier);
+          if (source != rootUri) {
+            resolvedIdentifiers.upsert(rootUri.toString(), identifier);
           }
+          printYellow('resolved: ($identifier)');
+          results.upsert(rootUri.toString(), SequenceMatch.from(identifier));
+          sequences = sequences.where((e) => e.identifier != identifier);
         }
+      }
+    }
 
-        if (sequences.isEmpty) break;
+    if (didResolveAll()) return results;
+
+    for (final source in sources) {
+      final resolvedUri = fileResolver.resolve(source, relativeTo: file);
+      final rootUri = root ?? resolvedUri;
+      try {
         final content = File.fromUri(resolvedUri).readAsBytesSync();
         final matches = findTopLevelSequences(content, [
           Sequence('export', 'export', takeUntil: 0x3B),
@@ -75,24 +71,16 @@ class SequenceMatcher {
           ...sequences,
         ]);
 
-        // if(sequences.any((e) => e.identifier == 'Key')){
-        //   print('Looking For key in ${resolvedUri.toString()}');
-        // }
-
         final identifierMatches = matches.where((e) => e.identifier != 'export');
         if (identifierMatches.isNotEmpty) {
-          resolvedIdentifiers[rootUri.toString()] = {
-            ...?resolvedIdentifiers[rootUri.toString()],
-            ...identifierMatches.map((e) => e.identifier).toSet()
-          };
+          resolvedIdentifiers.upsertAll(rootUri.toString(), identifierMatches.map((e) => e.identifier));
           foundUnique.addAll(identifierMatches.map((e) => e.identifier));
-          printRed('found: ${identifierMatches.map((e) => e.identifier)} in ${resolvedUri.toString()}');
+          printRed('found: ${identifierMatches.map((e) => e.identifier)}');
           results[rootUri.path] = {...?results[rootUri.path], ...identifierMatches};
           sequences = sequences.where((e) => !foundUnique.contains(e.identifier));
         }
-        if (foundUnique.length >= targetTotal.length) {
-          break;
-        }
+
+        if (didResolveAll()) break;
         final exportMatches = matches.where((e) => e.identifier == 'export');
         if (exportMatches.isNotEmpty) {
           final notFoundIdentifiers = targetTotal.difference(foundUnique);
@@ -117,20 +105,15 @@ class SequenceMatcher {
               if (exportStatement.shows(identifier)) {
                 foundUnique.add(identifier);
                 sequences = sequences.where((e) => e.identifier != identifier);
-                results[resolvedUri.path] = {
-                  ...?results[resolvedUri.path],
-                  SequenceMatch(identifier, 0, 0, identifier)
-                };
+                results.upsert(resolvedUri.path, SequenceMatch.from(identifier));
               }
               exportStatements.removeAt(i);
             }
           }
-          if (foundUnique.length >= targetTotal.length) {
-            break;
-          }
+          if (didResolveAll()) break;
           if (exportStatements.isNotEmpty) {
             if (foundUnique.length < targetTotal.length) {
-              final notFoundIdentifiers = sequences.where((e) => !foundUnique.contains(e.identifier));
+              final notFoundIdentifiers = sequences.notIn(foundUnique);
               final exportSources = exportStatements.map((e) => e.uri).toList();
               final subResults = await locateTopLevelDeclarations(
                 resolvedUri,
@@ -142,7 +125,7 @@ class SequenceMatcher {
               final foundIdentifiers = subResults.values.expand((e) => e);
               if (foundIdentifiers.isNotEmpty) {
                 foundUnique.addAll(foundIdentifiers.map((e) => e.identifier));
-                results[resolvedUri.path] = {...?results[resolvedUri.path], ...foundIdentifiers};
+                results.upsertAll(resolvedUri.path, foundIdentifiers);
               }
             }
           }

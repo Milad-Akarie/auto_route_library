@@ -6,6 +6,11 @@ class SequenceMatch {
 
   const SequenceMatch(this.identifier, this.start, this.end, this.source);
 
+  const SequenceMatch.from(this.identifier)
+      : start = 0,
+        end = 0,
+        source = identifier;
+
   @override
   String toString() {
     return identifier;
