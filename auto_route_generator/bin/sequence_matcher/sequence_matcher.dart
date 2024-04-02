@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 
 import '../auto_route.dart';
 import '../resolvers/package_file_resolver.dart';
-import '../sdt_out_utils.dart';
 import 'common_namespaces.dart';
 import 'export_statement.dart';
 import 'sequence.dart';
@@ -51,7 +50,7 @@ class SequenceMatcher {
           if (source != rootUri) {
             resolvedIdentifiers.upsert(rootUri.toString(), identifier);
           }
-          printYellow('resolved: ($identifier)');
+          // printYellow('resolved: ($identifier)');
           results.upsert(rootUri.toString(), SequenceMatch.from(identifier));
           sequences = sequences.where((e) => e.identifier != identifier);
         }
@@ -75,7 +74,7 @@ class SequenceMatcher {
         if (identifierMatches.isNotEmpty) {
           resolvedIdentifiers.upsertAll(rootUri.toString(), identifierMatches.map((e) => e.identifier));
           foundUnique.addAll(identifierMatches.map((e) => e.identifier));
-          printRed('found: ${identifierMatches.map((e) => e.identifier)}');
+          // printRed('found: ${identifierMatches.map((e) => e.identifier)}');
           results[rootUri.path] = {...?results[rootUri.path], ...identifierMatches};
           sequences = sequences.where((e) => !foundUnique.contains(e.identifier));
         }

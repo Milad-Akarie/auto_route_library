@@ -36,15 +36,15 @@ class AstParameterResolver {
     var nameOrAlias = paramName;
     var isInheritedPathParam = false;
     if (pathParamAnnotation != null) {
-      isInheritedPathParam = pathParamAnnotation.getBoolValue('_inherited') ?? false;
-      final paramAlias = pathParamAnnotation.getStringValue('name');
+      isInheritedPathParam = pathParamAnnotation.hasNamedConstructor('inherit');
+      final paramAlias = pathParamAnnotation.getPositionalString(0);
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
       }
     }
     var queryParamAnnotation = typedParam.queryParamAnnotation;
     if (queryParamAnnotation != null) {
-      final paramAlias = queryParamAnnotation.getStringValue('name');
+      final paramAlias = queryParamAnnotation.getPositionalString(0);
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
       }

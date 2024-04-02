@@ -25,7 +25,7 @@ const _routePageAnnotation = 'RoutePage';
 extension ClassDeclarationX on ClassDeclaration {
   Iterable<FieldDeclaration> get fields => members.whereType<FieldDeclaration>();
 
-  bool get hasRoutePageAnnotation => metadata.any((e) => e.name.name == _routePageAnnotation);
+  bool get hasRoutePageAnnotation => metadata.any((e) => e.isRoutePage);
 
   Iterable<ConstructorDeclaration> get constructors => members.whereType<ConstructorDeclaration>();
 
@@ -46,7 +46,7 @@ extension ClassDeclarationX on ClassDeclaration {
   }
 
   Set<String> get nonCoreIdentifiers => {
-        ...routePageAnnotation.returnIdentifiers,
+        ...routePageAnnotation.typeArgsIdentifiers,
         for (final param in defaultConstructorParams) ...?param.type?.identifiers,
       }.whereNot(dartCoreTypeNames.contains).toSet();
 }
@@ -63,20 +63,55 @@ extension FormalParameterListX on FormalParameterList {
 extension AnnotationX on Annotation {
   bool get isRoutePage => this.name.name == _routePageAnnotation;
 
-  List<TypeAnnotation> get returnTypeArgs => this.typeArguments?.arguments.toList() ?? const [];
+  List<TypeAnnotation> get typeArgs => [...?this.typeArguments?.arguments];
 
-  Set<String> get returnIdentifiers => {...returnTypeArgs.expand((e) => e.identifiers)};
+  Iterable<Expression> get args => [...?arguments?.arguments.toList()];
 
-  bool? getBoolValue(String name) {
+  Set<String> get typeArgsIdentifiers => {...typeArgs.expand((e) => e.identifiers)};
+
+  Iterable<NamedExpression> get namedArgs => args.whereType<NamedExpression>();
+
+  NamedExpression? getNamedArg(String name) => namedArgs.firstWhereOrNull((e) => e.name.label.name == name);
+
+  bool hasNamedConstructor(String constructorName) {
+    final nameIdentifier = name;
+    if (nameIdentifier is PrefixedIdentifier) {
+      return nameIdentifier.identifier.name == constructorName;
+    }
     return false;
-    // final arg = arguments?.arguments.toList().firstWhereOrNull((e) => e.name?.name == name);
-    // return arg?.value is BooleanLiteral ? (arg!.value as BooleanLiteral).value : null;
   }
 
-  String? getStringValue(String name) {
-    return null;
-    // final arg = arguments?.arguments.toList().firstWhereOrNull((e) => e.name?.name == name);
-    // return arg?.value is StringLiteral ? (arg!.value as StringLiteral).stringValue : null;
+  String? getNamedString(String name) {
+    final arg = getNamedArg(name);
+    if (arg == null) return null;
+    final expression = arg.expression;
+    if (expression is StringLiteral) {
+      return expression.stringValue;
+    } else {
+      throw ArgumentError('[$name] must be a string literal');
+    }
+  }
+
+  String? getPositionalString(int index) {
+    final arg = args.elementAtOrNull(index);
+    if (arg == null) return null;
+    final expression = arg;
+    if (expression is StringLiteral) {
+      return expression.stringValue;
+    } else {
+      throw ArgumentError('Argument [$index] must be a string literal');
+    }
+  }
+
+  bool? getNamedBool(String name) {
+    final arg = getNamedArg(name);
+    if (arg == null) return null;
+    final expression = arg.expression;
+    if (expression is BooleanLiteral) {
+      return expression.value;
+    } else {
+      throw ArgumentError('[$name] must be a boolean literal');
+    }
   }
 }
 
@@ -127,9 +162,15 @@ extension FormalParameterX on FormalParameter {
 
   List<Annotation> get annotations => metadata.toList();
 
-  bool hasAnnotation(String identifier) => annotations.any((e) => e.name.name == identifier);
-
-  Annotation? getAnnotation(String identifier) => annotations.firstWhereOrNull((e) => e.name.name == identifier);
+  Annotation? getAnnotation(String identifier) {
+    return annotations.firstWhereOrNull((e) {
+      return switch (e.name) {
+        SimpleIdentifier s => s.name == identifier,
+        PrefixedIdentifier p => p.prefix.name == identifier,
+        LibraryIdentifier l => l.components.last.name == identifier,
+      };
+    });
+  }
 }
 
 extension FieldDeclarationX on FieldDeclaration {

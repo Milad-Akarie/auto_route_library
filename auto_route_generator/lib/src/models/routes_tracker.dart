@@ -11,27 +11,30 @@ final _cacheFile = File(p.join(Directory.current.path, _cachePath));
 class RoutesTracker {
   int generatedTimeStamp;
   final List<RouteConfig> routes;
-  bool hasChanges = false;
+  bool hasChanges;
 
   RoutesTracker({
     required this.generatedTimeStamp,
     required this.routes,
+    this.hasChanges = false,
   });
 
   RouteConfig? routeByPath(String source) {
     return routes.firstWhereOrNull((e) => e.source == source);
   }
 
+  bool shouldUpdate(File source) {
+    final route = routeByPath(source.path);
+    if (route == null) {
+      return true;
+    }
+    return source.lastModifiedSync().millisecondsSinceEpoch > generatedTimeStamp;
+  }
+
   RouteConfig? routeByIdentity(String source, String className) {
     return routes.firstWhereOrNull((e) => e.id == '$source@$className');
   }
 
-  factory RoutesTracker.fromJson(Map<String, dynamic> json) {
-    return RoutesTracker(
-      generatedTimeStamp: json['generatedTimeStamp'] as int,
-      routes: (json['routes'] as List<dynamic>).map((e) => RouteConfig.fromJson(e as Map<String, dynamic>)).toList(),
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -72,13 +75,27 @@ class RoutesTracker {
     );
   }
 
-  static RoutesTracker load() {
+  static RoutesTracker load(Set<String> assets) {
     if (!_cacheFile.existsSync())
       return RoutesTracker(
         generatedTimeStamp: 0,
         routes: [],
       );
     final json = jsonDecode(_cacheFile.readAsStringSync());
-    return RoutesTracker.fromJson(json);
+    final routes = <RouteConfig>[];
+    bool hasChanges = false;
+    for (var i = 0; i < json['routes'].length; i++) {
+      final route = RouteConfig.fromJson(json['routes'][i]);
+      if (assets.contains(route.source)) {
+        routes.add(route);
+      } else {
+        hasChanges = true;
+      }
+    }
+    return RoutesTracker(
+      generatedTimeStamp: json['generatedTimeStamp'] as int,
+      routes: routes,
+      hasChanges: hasChanges,
+    );
   }
 }

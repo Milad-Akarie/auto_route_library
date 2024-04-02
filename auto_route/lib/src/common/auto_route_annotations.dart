@@ -1,4 +1,4 @@
-import 'package:meta/meta.dart' show optionalTypeArgs;
+import 'package:meta/meta.dart' show literal, optionalTypeArgs;
 import 'package:meta/meta_meta.dart' show Target, TargetKind;
 
 /// Classes annotated with AutoRouteConfig will generate
@@ -74,14 +74,11 @@ class RoutePage<T> {
   /// more info https://dart.dev/guides/language/language-tour#deferred-loading
   /// defaults to false
   final bool? deferredLoading;
-  final Type? host;
-  final String? path;
 
   /// default constructor
+  @literal
   const RoutePage({
-    this.path,
     this.name,
-    this.host,
     this.deferredLoading,
   });
 }
@@ -128,7 +125,6 @@ class QueryParam {
   /// if not provided the name of the parameter will be used
   /// (@QueryParam() String foo); -> name = foo
   final String? name;
-
   /// default constructor
   const QueryParam([this.name]);
 }
@@ -136,8 +132,3 @@ class QueryParam {
 /// default QueryParam()
 const queryParam = QueryParam();
 
-class NavGraph {
-  final Type host;
-
-  const NavGraph(this.host);
-}

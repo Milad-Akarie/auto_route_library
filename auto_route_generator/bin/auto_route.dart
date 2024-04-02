@@ -25,80 +25,82 @@ import 'utils.dart';
 late final rootPackage = rootPackageName;
 
 void main() async {
-  printBlue('AutoRoute Builder Started...');
-  final stopWatch = Stopwatch()..start();
+  printBlue('AutoRoute Builder Started');
+  var milliSecondsTaken = 0;
+  final processWatch = Stopwatch()..start();
   final root = Directory.current.uri;
   // final root = Uri.parse('/Users/milad/AndroidStudioProjects/$rootPackage');
   late final fileResolver = PackageFileResolver.forRoot(root.path);
   late final matcher = SequenceMatcher(fileResolver);
-  final tracker = RoutesTracker.load();
   final glob = Glob('**screen.dart');
 
   final libDir = Directory.fromUri(Uri.parse(p.join(root.path, 'lib')));
   final assets = glob.listSync(root: libDir.path, followLinks: true).whereType<File>();
-  printYellow('Assets collected in ${stopWatch.elapsedMilliseconds}ms');
-  final stopWatch2 = Stopwatch()..start();
-
-  // final routesResult = await Future.wait([
-  //   for (final asset in assets) _processFile(asset, () => matcher, lastGenerate),
-  // ]);
-  // final port = ReceivePort();
-  // await Isolate.spawn((message) { }, port.sendPort);
-  // port.toList();
-
-  //
+  final tracker = RoutesTracker.load(Set.of(assets.map((e) => e.path)));
+  printYellow('Assets collected in ${processWatch.elapsedMilliseconds}ms');
+  milliSecondsTaken += processWatch.elapsedMilliseconds;
+  processWatch.reset();
 
   for (final asset in assets) {
     await _processFile(asset, () => matcher, tracker);
   }
-  printYellow('Processing took ${stopWatch2.elapsedMilliseconds}ms');
-
+  if (tracker.hasChanges) {
+    printYellow('Processing took: ${processWatch.elapsedMilliseconds}ms');
+  } else {
+    printYellow('Detecting changes took: ${processWatch.elapsedMilliseconds}ms');
+  }
+  milliSecondsTaken += processWatch.elapsedMilliseconds;
+  processWatch.reset();
   if (tracker.routes.isNotEmpty) {
     _generateRouterIfNeeded(tracker);
   }
-  printGreen('Build finished in: ${stopWatch.elapsedMilliseconds}ms');
+  printGreen('Build finished in: ${milliSecondsTaken}ms');
 
-  stopWatch.stop();
-  printYellow('Watching for changes inside: lib | ${glob.pattern}');
-  libDir.watch(events: FileSystemEvent.all, recursive: true).listen((event) async {
-    if (glob.matches(event.path)) {
-      final stopWatch = Stopwatch()..start();
-      final asset = File(event.path);
-      await _processFile(asset, () => matcher, tracker);
-      printGreen('Watched file took: ${stopWatch.elapsedMilliseconds}ms');
-      _generateRouterIfNeeded(tracker);
-    }
-  });
+  processWatch.stop();
+  // printTeal('Watching for changes inside: lib | ${glob.pattern}');
+  // libDir.watch(events: FileSystemEvent.all, recursive: true).listen((event) async {
+  //   if (glob.matches(event.path)) {
+  //     final stopWatch = Stopwatch()..start();
+  //     final asset = File(event.path);
+  //     await _processFile(asset, () => matcher, tracker);
+  //     if (tracker.hasChanges) {
+  //       printYellow('Processing took: ${stopWatch.elapsedMilliseconds}ms');
+  //     } else {
+  //       printYellow('Detecting changes took: ${stopWatch.elapsedMilliseconds}ms');
+  //     }
+  //     _generateRouterIfNeeded(tracker);
+  //   }
+  // });
 }
 
 void _generateRouterIfNeeded(RoutesTracker tracker) {
-  final routerConfig = RouterConfig(
-    routerClassName: 'AstRouterTest',
-    path: '/lib/router.dart',
-    cacheHash: 0,
-    generateForDir: ['lib'],
-  );
   if (tracker.hasChanges) {
+    final routerConfig = RouterConfig(
+      routerClassName: 'AstRouterTest',
+      path: '/lib/router.dart',
+      replaceInRouteName: 'Screen,Route',
+      cacheHash: 0,
+      generateForDir: ['lib'],
+    );
     File('router.dart').writeAsStringSync(
       generateLibrary(routerConfig, routes: tracker.routes),
     );
-    printYellow('Generating router file');
+    printPurple('Generating router file');
     tracker.presist();
   }
 }
 
 Future<void> _processFile(File asset, SequenceMatcher Function() matcher, RoutesTracker tracker) async {
-  if (asset.lastModifiedSync().millisecondsSinceEpoch < tracker.generatedTimeStamp) {
+  if (!tracker.shouldUpdate(asset)) {
     return;
   }
-  ;
+
   final bytes = await asset.readAsBytesSync();
 
   if (!hasRouteAnnotation(bytes)) {
     tracker.removeBySource(asset.uri.path);
     return;
   }
-  ;
 
   final assetContent = utf8.decode(bytes);
   final unit = parseString(content: assetContent, throwIfDiagnostics: false).unit;
@@ -106,6 +108,7 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
   final classes = unit.classes;
   final routePage = classes.firstWhereOrNull((e) => e.hasRoutePageAnnotation);
   if (routePage == null || !routePage.hasDefaultConstructor) return null;
+  final annotation = routePage.routePageAnnotation;
 
   final snapshotHash = unit.calculateUpdatableHash();
 
@@ -113,7 +116,7 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
   final existingRoute = tracker.routeByIdentity(asset.uri.path, className);
 
   if (existingRoute?.hash == snapshotHash) {
-    printGreen('No Changes Detected in: ${className}');
+    // printGreen('No Changes Detected in: ${className}');
     return;
   }
   ;
@@ -127,8 +130,6 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
     asset.uri.path: {for (final declaration in unit.declarations) declaration.name},
   };
 
-  final stopWatch = Stopwatch()..start();
-
   if (identifiersToLookUp.isNotEmpty) {
     final result = await matcher().locateTopLevelDeclarations(
       asset.uri,
@@ -137,6 +138,8 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
         for (final type in identifiersToLookUp) ...[
           Sequence(type, 'class ${type}', terminators: [32, 0x3C]),
           Sequence(type, 'typedef ${type}', terminators: [32, 0x3C]),
+          Sequence(type, 'enum ${type}', terminators: [32]),
+          Sequence(type, 'mixin ${type}', terminators: [32, 0x3C]),
         ],
       ],
     );
@@ -152,7 +155,8 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
     RouteConfig(
       className: className,
       source: asset.uri.path,
-      name: className,
+      name: annotation.getNamedString('name'),
+      deferredLoading: annotation.getNamedBool('deferredLoading'),
       hash: snapshotHash,
       pageType: ResolvedType(
         name: className,
