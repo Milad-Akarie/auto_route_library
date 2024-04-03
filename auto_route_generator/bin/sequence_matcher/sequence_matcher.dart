@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 
 import '../auto_route.dart';
 import '../resolvers/package_file_resolver.dart';
+import '../sdt_out_utils.dart';
 import 'common_namespaces.dart';
 import 'export_statement.dart';
 import 'sequence.dart';
@@ -18,12 +19,13 @@ const _scopes = {
 
 class SequenceMatcher {
   final checkedExports = <Uri>{};
-  final resolvedIdentifiers = Map.of(commonNameSpaces);
+  final resolvedIdentifiers = Map<String, Set<String>>.of(commonNameSpaces);
   final PackageFileResolver fileResolver;
 
   SequenceMatcher(this.fileResolver);
 
-  Future<Map<String, Set<SequenceMatch>>> locateTopLevelDeclarations(Uri file,
+  Future<Map<String, ResolvedIdentifiers>> locateTopLevelDeclarations(
+    Uri file,
     List<Uri> sources,
     Iterable<Sequence> _sequences, {
     int depth = 0,
@@ -34,7 +36,7 @@ class SequenceMatcher {
     }
     if (_sequences.isEmpty) return {};
     Iterable<Sequence> sequences = _sequences;
-    final results = <String, Set<SequenceMatch>>{};
+    final results = <String, ResolvedIdentifiers>{};
     final targetTotal = sequences.map((e) => e.identifier).toSet();
     final foundUnique = <String>{};
     bool didResolveAll() => foundUnique.length >= targetTotal.length;
@@ -50,8 +52,11 @@ class SequenceMatcher {
           if (source != rootUri) {
             resolvedIdentifiers.upsert(rootUri.toString(), identifier);
           }
-          // printYellow('resolved: ($identifier)');
-          results.upsert(rootUri.toString(), SequenceMatch.from(identifier));
+          printYellow('resolved: ($identifier)');
+          results.upsert(
+            rootUri.toString(),
+            ResolvedIdentifiers({identifier}, [resolvedUri.toString()]),
+          );
           sequences = sequences.where((e) => e.identifier != identifier);
         }
       }
@@ -61,9 +66,11 @@ class SequenceMatcher {
 
     for (final source in sources) {
       final resolvedUri = fileResolver.resolve(source, relativeTo: file);
+
+      print('checking: ${resolvedUri} $foundUnique $targetTotal');
       final rootUri = root ?? resolvedUri;
       try {
-        final content = File.fromUri(resolvedUri).readAsBytesSync();
+        final content = await File.fromUri(resolvedUri).readAsBytes();
         final matches = findTopLevelSequences(content, [
           Sequence('export', 'export', takeUntil: 0x3B),
           Sequence('export', 'part', takeUntil: 0x3B),
@@ -72,10 +79,13 @@ class SequenceMatcher {
 
         final identifierMatches = matches.where((e) => e.identifier != 'export');
         if (identifierMatches.isNotEmpty) {
+          printRed('found: ${identifierMatches.map((e) => e.identifier)}');
           resolvedIdentifiers.upsertAll(rootUri.toString(), identifierMatches.map((e) => e.identifier));
           foundUnique.addAll(identifierMatches.map((e) => e.identifier));
-          // printRed('found: ${identifierMatches.map((e) => e.identifier)}');
-          results[rootUri.path] = {...?results[rootUri.path], ...identifierMatches};
+          results[rootUri.path] = ResolvedIdentifiers(
+            identifierMatches.map((e) => e.identifier).toSet(),
+            [resolvedUri.toString()],
+          );
           sequences = sequences.where((e) => !foundUnique.contains(e.identifier));
         }
 
@@ -98,18 +108,25 @@ class SequenceMatcher {
           for (final identifier in notFoundIdentifiers) {
             for (var i = 0; i < exportStatements.length; i++) {
               final exportStatement = exportStatements[i];
-              if (exportStatement.show.isEmpty || exportStatement.hides(identifier)) {
+              if (exportStatement.hides(identifier)) {
+                exportStatements.removeAt(i);
                 continue;
               }
               if (exportStatement.shows(identifier)) {
                 foundUnique.add(identifier);
                 sequences = sequences.where((e) => e.identifier != identifier);
-                results.upsert(resolvedUri.path, SequenceMatch.from(identifier));
+                results.upsert(
+                  resolvedUri.path,
+                  ResolvedIdentifiers({identifier}, [resolvedUri.toString()]),
+                );
+                exportStatements.removeAt(i);
               }
-              exportStatements.removeAt(i);
+              if (didResolveAll()) break;
             }
+            if (didResolveAll()) break;
           }
           if (didResolveAll()) break;
+
           if (exportStatements.isNotEmpty) {
             if (foundUnique.length < targetTotal.length) {
               final notFoundIdentifiers = sequences.notIn(foundUnique);
@@ -121,12 +138,15 @@ class SequenceMatcher {
                 depth: depth + 1,
                 root: rootUri,
               );
-              final foundIdentifiers = subResults.values.expand((e) => e);
+              final foundIdentifiers = subResults.values.expand((e) => e.identifiers);
+              foundUnique.addAll(foundIdentifiers);
+              final dependencies = subResults.values.expand((e) => e.dependencies);
+              print(results.keys);
               if (foundIdentifiers.isNotEmpty) {
-                foundUnique.addAll(foundIdentifiers.map((e) => e.identifier));
-                results.upsertAll(resolvedUri.path, foundIdentifiers);
+                results.upsert(resolvedUri.path, ResolvedIdentifiers(foundIdentifiers.toSet(), []));
               }
             }
+            if (didResolveAll()) break;
           }
         }
       } catch (e) {
@@ -203,5 +223,32 @@ class SequenceMatcher {
     }
 
     return results;
+  }
+}
+
+class ResolvedIdentifiers {
+  final Set<String> identifiers;
+  final List<String> dependencies;
+
+  ResolvedIdentifiers(
+    this.identifiers,
+    this.dependencies,
+  );
+
+  ResolvedIdentifiers copyWith({
+    Set<String>? identifiers,
+    List<String>? dependencies,
+  }) {
+    return ResolvedIdentifiers(
+      identifiers ?? this.identifiers,
+      dependencies ?? this.dependencies,
+    );
+  }
+
+  ResolvedIdentifiers merge(ResolvedIdentifiers other) {
+    return ResolvedIdentifiers(
+      identifiers.union(other.identifiers),
+      [...dependencies, ...other.dependencies],
+    );
   }
 }

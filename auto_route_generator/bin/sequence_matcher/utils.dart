@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 
 import 'sequence.dart';
+import 'sequence_matcher.dart';
 
 bool hasRouteAnnotation(List<int> byteArray) {
   List<int> targetSequence = [0x40, 0x52, 0x6F, 0x75, 0x74, 0x65]; // ASCII values for '@Route'
@@ -28,6 +29,13 @@ extension MapX<T> on Map<String, Set<T>> {
   /// Appends a list of values to a set in a map or creates a new set if the key does not exist
   upsertAll(String key, Iterable<T> values) {
     this[key] = {...?this[key], ...values};
+  }
+}
+
+extension IdentifiersMapX on Map<String, ResolvedIdentifiers> {
+  /// Appends a value to a set in a map or creates a new set if the key does not exist
+  upsert(String key, ResolvedIdentifiers value) {
+    this[key] = this[key]?.merge(value) ?? value;
   }
 }
 

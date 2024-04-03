@@ -47,7 +47,7 @@ void main() async {
   if (tracker.hasChanges) {
     printYellow('Processing took: ${processWatch.elapsedMilliseconds}ms');
   } else {
-    printYellow('Detecting changes took: ${processWatch.elapsedMilliseconds}ms');
+    printYellow('Change detection took: ${processWatch.elapsedMilliseconds}ms');
   }
   milliSecondsTaken += processWatch.elapsedMilliseconds;
   processWatch.reset();
@@ -92,7 +92,7 @@ void _generateRouterIfNeeded(RoutesTracker tracker) {
 
 Future<void> _processFile(File asset, SequenceMatcher Function() matcher, RoutesTracker tracker) async {
   if (!tracker.shouldUpdate(asset)) {
-    return;
+    // return;
   }
 
   final bytes = await asset.readAsBytesSync();
@@ -117,7 +117,7 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
 
   if (existingRoute?.hash == snapshotHash) {
     // printGreen('No Changes Detected in: ${className}');
-    return;
+    // return;
   }
   ;
   printBlue('Processing: ${className}');
@@ -144,8 +144,12 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
       ],
     );
     if (result.isNotEmpty) {
+      for (final res in result.entries) {
+        print('Resolved: ${res.key} => ${res.value.identifiers}');
+        for (final dep in res.value.dependencies) print('Dep: $dep');
+      }
       resolvedLibs.addAll({
-        for (final entry in result.entries) entry.key: entry.value.map((e) => e.identifier).toSet(),
+        for (final entry in result.entries) entry.key: entry.value.identifiers,
       });
     }
   }
