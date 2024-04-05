@@ -748,7 +748,7 @@ You could also obtain access to inner-routers from outside their scope without a
 context.innerRouterOf<StackRouter>
 (
 UserRoute.name);
-// or if we're usign an AutoTabsRouter inside of DashboardPage
+// or if we're using an AutoTabsRouter inside of DashboardPage
 context.innerRouterOf<TabsRouter>(
 UserRoute
 .
@@ -826,7 +826,7 @@ class MyApp extends StatefulWidget {
 }
 ```
 
-Now you can access to your router anywhere inside of your App without using context.
+Now you can access your router anywhere inside of your App without using context.
 
 ```dart
 getIt<AppRouter>
@@ -954,7 +954,7 @@ AutoRoute(path: 'review',page: ProductReviewRoute.page),
 )
 ```
 
-Now `ProductReviewScreen` expects a path-param named `id` but, from the above snippet we know that the path corresponding with it. `review` has no path parameters, but we can inherit 'id' form the parent `/product/:id` like follows:
+Now `ProductReviewScreen` expects a path-param named `id` but, from the above snippet we know that the path corresponding with it. `review` has no path parameters, but we can inherit 'id' from the parent `/product/:id` like follows:
 
 ```dart
 @RoutePage()
@@ -1230,7 +1230,7 @@ class MyObserver extends AutoRouterObserver {
 }
 ```
 
-Then we pass our observer to the `<routerName>.config().` **Important:** Notice that `navigatorObservers` property is a builder function that returns a list of observes and the reason for that is a navigator observer instance can only be used by a single router, so unless you're using a single router or you don't want your nested routers to inherit observers, make sure navigatorObservers builder always returns fresh observer instances.
+Then we pass our observer to the `<routerName>.config().` **Important:** Notice that `navigatorObservers` property is a builder function that returns a list of observers and the reason for that is a navigator observer instance can only be used by a single router, so unless you're using a single router or you don't want your nested routers to inherit observers, make sure navigatorObservers builder always returns fresh observer instances.
 
 ```dart
 return MaterialApp.router(
@@ -1411,7 +1411,7 @@ CustomRoute(
 
 To include routes inside of a depended-on package, that package needs to generate an `AutoRouterModule` that will be later consumed by the root router.
 
-To have a package output an `AutoRouterModule` instead of a `RootStackRouter`, we need to use the `AutoRouterConfig.moudle()` annotation like follows
+To have a package output an `AutoRouterModule` instead of a `RootStackRouter`, we need to use the `AutoRouterConfig.module()` annotation like follows
 
 ```dart
 @AutoRouterConfig.module()
