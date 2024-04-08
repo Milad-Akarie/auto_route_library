@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 final _exportParseRegex = RegExp("(export|part)\\s*['|\"](.*?)['|\"]\\s*(;|show|hide)\\s*(.*[^,;])?");
 
 class ExportStatement {
@@ -25,6 +27,18 @@ class ExportStatement {
   bool shows(String identifier) => show.contains(identifier);
 
   bool hides(String identifier) => hide.contains(identifier);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is ExportStatement &&
+        other.uri == uri &&
+        const SetEquality().equals(other.show, other.show) &&
+        const SetEquality().equals(other.hide, other.hide);
+  }
+
+  @override
+  int get hashCode => uri.hashCode ^ const SetEquality().hash(show) ^ const SetEquality().hash(hide);
 
   @override
   String toString() {

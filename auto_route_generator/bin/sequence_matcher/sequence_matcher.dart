@@ -4,7 +4,6 @@ import 'package:collection/collection.dart';
 
 import '../auto_route.dart';
 import '../resolvers/package_file_resolver.dart';
-import '../sdt_out_utils.dart';
 import 'common_namespaces.dart';
 import 'export_statement.dart';
 import 'sequence.dart';
@@ -18,25 +17,24 @@ const _scopes = {
 };
 
 class SequenceMatcher {
-  final checkedExports = <Uri>{};
   final resolvedIdentifiers = Map<String, Set<String>>.of(commonNameSpaces);
   final PackageFileResolver fileResolver;
 
   SequenceMatcher(this.fileResolver);
 
-  Future<Map<String, ResolvedIdentifiers>> locateTopLevelDeclarations(
+  Future<Map<String, ResolveResult>> locateTopLevelDeclarations(
     Uri file,
     List<Uri> sources,
     Iterable<Sequence> _sequences, {
     int depth = 0,
     Uri? root,
+    Set<ExportStatement>? checkedExports,
   }) async {
-    if (depth == 0) {
-      checkedExports.clear();
-    }
     if (_sequences.isEmpty) return {};
+    checkedExports ??= {};
+
     Iterable<Sequence> sequences = _sequences;
-    final results = <String, ResolvedIdentifiers>{};
+    final results = <String, ResolveResult>{};
     final targetTotal = sequences.map((e) => e.identifier).toSet();
     final foundUnique = <String>{};
     bool didResolveAll() => foundUnique.length >= targetTotal.length;
@@ -52,10 +50,10 @@ class SequenceMatcher {
           if (source != rootUri) {
             resolvedIdentifiers.upsert(rootUri.toString(), identifier);
           }
-          printYellow('resolved: ($identifier)');
+          // printYellow('resolved: ($identifier)');
           results.upsert(
             rootUri.toString(),
-            ResolvedIdentifiers({identifier}, [resolvedUri.toString()]),
+            ResolveResult(identifiers: {identifier}),
           );
           sequences = sequences.where((e) => e.identifier != identifier);
         }
@@ -63,14 +61,18 @@ class SequenceMatcher {
     }
 
     if (didResolveAll()) return results;
-
+    final deferredSources = <Uri>[];
     for (final source in sources) {
+      if (source.pathSegments.first == 'flutter' && depth > 0) {
+        deferredSources.add(source);
+        continue;
+      }
       final resolvedUri = fileResolver.resolve(source, relativeTo: file);
 
-      print('checking: ${resolvedUri} $foundUnique $targetTotal');
+      // print('checking: ${resolvedUri} $depth');
       final rootUri = root ?? resolvedUri;
       try {
-        final content = await File.fromUri(resolvedUri).readAsBytes();
+        final content = File.fromUri(resolvedUri).readAsBytesSync();
         final matches = findTopLevelSequences(content, [
           Sequence('export', 'export', takeUntil: 0x3B),
           Sequence('export', 'part', takeUntil: 0x3B),
@@ -79,12 +81,11 @@ class SequenceMatcher {
 
         final identifierMatches = matches.where((e) => e.identifier != 'export');
         if (identifierMatches.isNotEmpty) {
-          printRed('found: ${identifierMatches.map((e) => e.identifier)}');
+          // printRed('found: ${identifierMatches.map((e) => e.identifier)}');
           resolvedIdentifiers.upsertAll(rootUri.toString(), identifierMatches.map((e) => e.identifier));
           foundUnique.addAll(identifierMatches.map((e) => e.identifier));
-          results[rootUri.path] = ResolvedIdentifiers(
-            identifierMatches.map((e) => e.identifier).toSet(),
-            [resolvedUri.toString()],
+          results[rootUri.path] = ResolveResult(
+            identifiers: identifierMatches.map((e) => e.identifier).toSet(),
           );
           sequences = sequences.where((e) => !foundUnique.contains(e.identifier));
         }
@@ -92,11 +93,11 @@ class SequenceMatcher {
         if (didResolveAll()) break;
         final exportMatches = matches.where((e) => e.identifier == 'export');
         if (exportMatches.isNotEmpty) {
-          final notFoundIdentifiers = targetTotal.difference(foundUnique);
+          final remainingIdentifiers = targetTotal.difference(foundUnique);
           final exportStatements = exportMatches
               .map((e) => ExportStatement.parse(e.source))
               .whereType<ExportStatement>()
-              .where((e) => !checkedExports.contains(e.uri))
+              .whereNot(checkedExports.contains)
               .toList()
               .sortedBy<num>((e) {
             final package = e.uri.pathSegments.first;
@@ -104,25 +105,34 @@ class SequenceMatcher {
             return !e.uri.hasScheme || package == rootPackage ? -1 : 0;
           });
 
-          checkedExports.addAll(exportStatements.map((e) => e.uri));
-          for (final identifier in notFoundIdentifiers) {
-            for (var i = 0; i < exportStatements.length; i++) {
-              final exportStatement = exportStatements[i];
+          checkedExports.addAll(exportStatements);
+
+          for (var i = 0; i < exportStatements.length; i++) {
+            bool showsSome = false;
+            final exportStatement = exportStatements[i];
+            if (exportStatement.show.isEmpty && exportStatement.hide.isEmpty) {
+              continue;
+            }
+            for (final identifier in remainingIdentifiers) {
               if (exportStatement.hides(identifier)) {
-                exportStatements.removeAt(i);
                 continue;
               }
+
               if (exportStatement.shows(identifier)) {
+                showsSome = true;
                 foundUnique.add(identifier);
                 sequences = sequences.where((e) => e.identifier != identifier);
                 results.upsert(
                   resolvedUri.path,
-                  ResolvedIdentifiers({identifier}, [resolvedUri.toString()]),
+                  ResolveResult(identifiers: {identifier}),
                 );
-                exportStatements.removeAt(i);
               }
               if (didResolveAll()) break;
             }
+            if (exportStatement.show.isNotEmpty && !showsSome) {
+              exportStatements.removeAt(i);
+            }
+            ;
             if (didResolveAll()) break;
           }
           if (didResolveAll()) break;
@@ -137,13 +147,12 @@ class SequenceMatcher {
                 notFoundIdentifiers,
                 depth: depth + 1,
                 root: rootUri,
+                checkedExports: checkedExports,
               );
               final foundIdentifiers = subResults.values.expand((e) => e.identifiers);
               foundUnique.addAll(foundIdentifiers);
-              final dependencies = subResults.values.expand((e) => e.dependencies);
-              print(results.keys);
               if (foundIdentifiers.isNotEmpty) {
-                results.upsert(resolvedUri.path, ResolvedIdentifiers(foundIdentifiers.toSet(), []));
+                results.upsert(resolvedUri.path, ResolveResult(identifiers: foundIdentifiers.toSet()));
               }
             }
             if (didResolveAll()) break;
@@ -226,29 +235,29 @@ class SequenceMatcher {
   }
 }
 
-class ResolvedIdentifiers {
+class ResolveResult {
   final Set<String> identifiers;
   final List<String> dependencies;
+  final List<Uri> deferredSources;
 
-  ResolvedIdentifiers(
-    this.identifiers,
-    this.dependencies,
-  );
+  ResolveResult({
+    required this.identifiers,
+    this.dependencies = const [],
+    this.deferredSources = const [],
+  });
 
-  ResolvedIdentifiers copyWith({
-    Set<String>? identifiers,
-    List<String>? dependencies,
-  }) {
-    return ResolvedIdentifiers(
-      identifiers ?? this.identifiers,
-      dependencies ?? this.dependencies,
+  ResolveResult merge(ResolveResult other) {
+    return ResolveResult(
+      identifiers: identifiers.union(other.identifiers),
+      dependencies: [...dependencies, ...other.dependencies],
+      deferredSources: [...deferredSources, ...other.deferredSources],
     );
   }
+}
 
-  ResolvedIdentifiers merge(ResolvedIdentifiers other) {
-    return ResolvedIdentifiers(
-      identifiers.union(other.identifiers),
-      [...dependencies, ...other.dependencies],
-    );
-  }
+class DeferredNode {
+  final Uri file;
+  final List<Uri> sources;
+
+  DeferredNode(this.file, this.sources);
 }

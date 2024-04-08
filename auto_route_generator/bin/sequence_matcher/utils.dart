@@ -32,9 +32,9 @@ extension MapX<T> on Map<String, Set<T>> {
   }
 }
 
-extension IdentifiersMapX on Map<String, ResolvedIdentifiers> {
+extension IdentifiersMapX on Map<String, ResolveResult> {
   /// Appends a value to a set in a map or creates a new set if the key does not exist
-  upsert(String key, ResolvedIdentifiers value) {
+  upsert(String key, ResolveResult value) {
     this[key] = this[key]?.merge(value) ?? value;
   }
 }

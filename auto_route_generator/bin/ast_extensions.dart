@@ -247,13 +247,16 @@ extension CompilationUnitX on CompilationUnit {
 
   Iterable<ClassDeclaration> get classes => declarations.whereType<ClassDeclaration>();
 
-  List<Uri> importUris(String rootPackage) => imports.where((e) => e.uri.stringValue != null).map((e) {
-        return Uri.parse(e.uri.stringValue!);
-      }).sortedBy<num>((e) {
-        final package = e.pathSegments.first;
-        if (package == 'flutter') return 1;
-        return !e.hasScheme || package == rootPackage ? -1 : 0;
-      }).toList();
+  List<Uri> importUris(String rootPackage, Iterable<String> identifiersToLookUp) =>
+      imports.where((e) => e.uri.stringValue != null).map((e) => Uri.parse(e.uri.stringValue!)).toList().sortedBy<num>(
+        (e) {
+          final package = e.pathSegments.first;
+          if (package == 'flutter') return 1;
+          final lastSegment = e.pathSegments.last.replaceAll('_', '');
+          if (identifiersToLookUp.any((id) => lastSegment.contains(id.toLowerCase()))) return -1;
+          return 0;
+        },
+      );
 
   int calculateUpdatableHash() {
     var calculatedHash = imports.fold(0, (acc, a) => acc ^ a.toSource().hashCode);

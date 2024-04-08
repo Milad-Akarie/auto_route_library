@@ -44,6 +44,7 @@ void main() async {
   for (final asset in assets) {
     await _processFile(asset, () => matcher, tracker);
   }
+
   if (tracker.hasChanges) {
     printYellow('Processing took: ${processWatch.elapsedMilliseconds}ms');
   } else {
@@ -71,23 +72,6 @@ void main() async {
   //     _generateRouterIfNeeded(tracker);
   //   }
   // });
-}
-
-void _generateRouterIfNeeded(RoutesTracker tracker) {
-  if (tracker.hasChanges) {
-    final routerConfig = RouterConfig(
-      routerClassName: 'AstRouterTest',
-      path: '/lib/router.dart',
-      replaceInRouteName: 'Screen,Route',
-      cacheHash: 0,
-      generateForDir: ['lib'],
-    );
-    File('router.dart').writeAsStringSync(
-      generateLibrary(routerConfig, routes: tracker.routes),
-    );
-    printPurple('Generating router file');
-    tracker.presist();
-  }
 }
 
 Future<void> _processFile(File asset, SequenceMatcher Function() matcher, RoutesTracker tracker) async {
@@ -120,16 +104,16 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
     // return;
   }
   ;
-  printBlue('Processing: ${className}');
+  // printBlue('Processing: ${className}');
 
-  late final imports = unit.importUris(rootPackage);
   final params = routePage.defaultConstructorParams;
-  final identifiersToLookUp = routePage.nonCoreIdentifiers;
+  final declaredInFileIdentifiers = {for (final declaration in unit.declarations) declaration.name};
 
   final resolvedLibs = {
-    asset.uri.path: {for (final declaration in unit.declarations) declaration.name},
+    asset.uri.path: declaredInFileIdentifiers,
   };
-
+  final identifiersToLookUp = routePage.nonCoreIdentifiers.whereNot(declaredInFileIdentifiers.contains);
+  late final imports = unit.importUris(rootPackage, identifiersToLookUp);
   if (identifiersToLookUp.isNotEmpty) {
     final result = await matcher().locateTopLevelDeclarations(
       asset.uri,
@@ -145,8 +129,8 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
     );
     if (result.isNotEmpty) {
       for (final res in result.entries) {
-        print('Resolved: ${res.key} => ${res.value.identifiers}');
-        for (final dep in res.value.dependencies) print('Dep: $dep');
+        // print('Resolved: ${res.key} => ${res.value.identifiers}');
+        // for (final dep in res.value.dependencies) print('Dep: $dep');
       }
       resolvedLibs.addAll({
         for (final entry in result.entries) entry.key: entry.value.identifiers,
@@ -171,4 +155,21 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
       ],
     ),
   );
+}
+
+void _generateRouterIfNeeded(RoutesTracker tracker) {
+  if (tracker.hasChanges) {
+    final routerConfig = RouterConfig(
+      routerClassName: 'AstRouterTest',
+      path: '/lib/router.dart',
+      replaceInRouteName: 'Screen,Route',
+      cacheHash: 0,
+      generateForDir: ['lib'],
+    );
+    File('router.dart').writeAsStringSync(
+      generateLibrary(routerConfig, routes: tracker.routes),
+    );
+    printPurple('Generating router file');
+    tracker.presist();
+  }
 }

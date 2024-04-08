@@ -1,13 +1,13 @@
 void doSomethi() {}
 final x = 1;
 
-abstract class DemoModel extends Object {
+abstract class Model extends Object {
   final x = 'typedef DemoModelX';
 }
 
 //s dfsldflsdjflsdjf
 // dfalsdfkja;sdfjlsdkjflsdjf;sdfjl;sdf
-typedef DemoModelX = DemoModel;
+typedef DemoModelX = Model;
 
 const HEADER = "XXX";
 
