@@ -1035,21 +1035,11 @@ AutoRoute(path: '/books/:id/details', page: BookDetailsRoute.page)
 **AutoRoute** supports wildcard matching to handle invalid or undefined paths.
 
 ```dart
-AutoRoute
-(
-path: '*', page: UnknownRoute.page)
+AutoRoute(path: '*', page: UnknownRoute.page)
 // it could be used with defined prefixes
 AutoRoute(path: '/profile/*', page: ProfileRoute.page)
 // or it could be used with RedirectRoute
-RedirectRoute(path: '*
-'
-,
-redirectTo
-:
-'
-/
-'
-)
+RedirectRoute(path: '*', redirectTo: '/')
 ```
 
 **Note:** Be sure to always add your wildcards at the end of your route list because routes are matched in order.
