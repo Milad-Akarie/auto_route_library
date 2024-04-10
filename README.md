@@ -293,15 +293,7 @@ class BookDetailsPage extends StatelessWidget {
 The generated `BookDetailsRoute` will deliver the same arguments to its corresponding page.
 
 ```dart
-router.push
-(
-BookDetailsRoute
-(
-book
-:
-book
-)
-);
+router.push(BookDetailsRoute(book: book));
 ```
 
 **Note:** All arguments are generated as named parameters regardless of their original type.
@@ -314,21 +306,13 @@ argument the same way you'd pass an object.
 #### 1. Using the `pop` completer
 
 ```dart
-
-var result = await
-router.push
-(
-LoginRoute
-(
-)
-);
+var result = await router.push(LoginRoute());
 ```
 
 then inside of your `LoginPage`, pop with results
 
 ```dart
-router.maybePop
-(true);
+router.maybePop(true);
 ```
 
 as you'd notice we did not specify the result type, we're playing with dynamic values here, which
@@ -345,21 +329,13 @@ class LoginPage extends StatelessWidget {}
 we push and specify the type of results we're expecting
 
 ```dart
-
-var result = await
-router.push<bool>
-(
-LoginRoute
-(
-)
-);
+var result = await router.push<bool>(LoginRoute());
 ```
 
 and of course we pop with the same type
 
 ```dart
-router.maybePop<bool>
-(true);
+router.maybePop<bool>(true);
 ```
 
 #### 2. Passing a callback function as an argument.
@@ -378,15 +354,13 @@ class BookDetailsPage extends StatelessWidget {
 The generated `BookDetailsRoute` will deliver the same arguments to its corresponding page.
 
 ```dart
-context.pushRoute
-(
-BookDetailsRoute(
-book: book,
-onRateBook: (rating) {
-// handle result
-},
-)
-,
+context.pushRoute(
+  BookDetailsRoute(
+    book: book,
+    onRateBook: (rating) {
+      // handle result
+    },
+  ),
 );
 ```
 
@@ -394,8 +368,7 @@ If you're finishing with results, make sure you call the callback function as yo
 
 ```dart
 onRateBook(RESULT);
-context.maybePop
-();
+context.maybePop();
 ```
 
 **Note:** Default values are respected. Required fields are also respected and handled properly.
@@ -462,32 +435,27 @@ class DashboardPage extends StatelessWidget {
 What if want to show one of the child pages at `/dashboard`? We can simply do that by giving the child routes an empty path `''` to make initial or by setting initial to true.
 
 ```dart
-AutoRoute
-(
-path: '/dashboard',
-page: DashboardRoute.page,
-children: [
-AutoRoute(path: '', page: UsersRoute.page),
-AutoRoute(path: 'posts', page: PostsRoute.page
-)
-,
-]
-,
+AutoRoute(
+  path: '/dashboard',
+  page: DashboardRoute.page,
+  children: [
+    AutoRoute(path: '', page: UsersRoute.page),
+    AutoRoute(path: 'posts', page: PostsRoute.page),
+  ],
 )
 ```
 
 or by using a `RedirectRoute`
 
 ```dart
-AutoRoute
-(
-path: '/dashboard',
-page: DashboardRoute.page,
-children: [
-RedirectRoute(path: '', redirectTo: 'users'),
-AutoRoute(path: 'users', page: UsersRoute.page),
-AutoRoute(path: 'posts', page: PostsRoute.page),
-],
+AutoRoute(
+  path: '/dashboard',
+  page: DashboardRoute.page,
+  children: [
+    RedirectRoute(path: '', redirectTo: 'users'),
+    AutoRoute(path: 'users', page: UsersRoute.page),
+    AutoRoute(path: 'posts', page: PostsRoute.page),
+  ],
 )
 ```
 
@@ -590,32 +558,32 @@ class DashboardPage extends StatelessWidget {
 Use the `AutoTabsRouter.pageView` constructor to implement tabs using PageView
 
 ```dart
-AutoTabsRouter.pageView
-(
-routes: [
-BooksTab(),
-ProfileTab(),
-SettingsTab(),
-],
-builder: (context, child, _) {
-final tabsRouter = AutoTabsRouter.of(context);
-return Scaffold(
-appBar: AppBar(
-title: Text(context.topRoute.name),
-leading: AutoLeadingButton()),
-body: child,
-bottomNavigationBar: BottomNavigationBar(
-currentIndex: tabsRouter.activeIndex,
-onTap: tabsRouter.setActiveIndex
-items: [
-BottomNavigationBarItem(label: 'Books', ...),
-BottomNavigationBarItem(label: 'Profile', ...),
-BottomNavigationBarItem(label: 'Settings', ...),
-],
-),
+AutoTabsRouter.pageView(
+  routes: [
+    BooksTab(),
+    ProfileTab(),
+    SettingsTab(),
+  ],
+  builder: (context, child, _) {
+    final tabsRouter = AutoTabsRouter.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: AutoLeadingButton(),
+      ),
+      body: child,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: tabsRouter.activeIndex,
+        onTap: tabsRouter.setActiveIndex,
+        items: [
+          BottomNavigationBarItem(label: 'Books', ...),
+          BottomNavigationBarItem(label: 'Profile', ...),
+          BottomNavigationBarItem(label: 'Settings', ...),
+        ],
+      ),
+    );
+  },
 );
-},
-); 
 ```
 
 ### Using TabBar
@@ -623,40 +591,39 @@ BottomNavigationBarItem(label: 'Settings', ...),
 Use the `AutoTabsRouter.tabBar` constructor to implement tabs using TabBar
 
 ```dart
-AutoTabsRouter.tabBar
-(
-routes: [
-BooksTab(),
-ProfileTab(),
-SettingsTab(),
-],
-builder: (context, child, controller) {
-final tabsRouter = AutoTabsRouter.of(context);
-return Scaffold(
-appBar: AppBar(
-title: Text(context.topRoute.name),
-leading: AutoLeadingButton(),
-bottom: TabBar(
-controller: controller,
-tabs: const [
-Tab(text: '1', icon: Icon(Icons.abc)),
-Tab(text: '2', icon: Icon(Icons.abc)),
-Tab(text: '3', icon: Icon(Icons.abc)),
-],
-),
-),
-body: child,
-bottomNavigationBar: BottomNavigationBar(
-currentIndex: tabsRouter.activeIndex,
-onTap: tabsRouter.setActiveIndex
-items: [
-BottomNavigationBarItem(label: 'Books',...),
-BottomNavigationBarItem(label: 'Profile',...),
-BottomNavigationBarItem(label: 'Settings',...),
-],
-),
-);
-},
+AutoTabsRouter.tabBar(
+  routes: [
+    BooksTab(),
+    ProfileTab(),
+    SettingsTab(),
+  ],
+  builder: (context, child, controller) {
+    final tabsRouter = AutoTabsRouter.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: AutoLeadingButton(),
+        bottom: TabBar(
+          controller: controller,
+          tabs: const [
+            Tab(text: '1', icon: Icon(Icons.abc)),
+            Tab(text: '2', icon: Icon(Icons.abc)),
+            Tab(text: '3', icon: Icon(Icons.abc)),
+          ],
+        ),
+      ),
+      body: child,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: tabsRouter.activeIndex,
+        onTap: tabsRouter.setActiveIndex,
+        items: [
+          BottomNavigationBarItem(label: 'Books',...),
+          BottomNavigationBarItem(label: 'Profile',...),
+          BottomNavigationBarItem(label: 'Settings',...),
+        ],
+      ),
+    );
+  },
 );
 ```
 
@@ -687,16 +654,14 @@ class Dashboard extends StatelessWidget {
 Here's a simple diagram to help visualize this
 
 <p align="center">
-<img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">
+  <img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">
 </p>
 
 As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we have two different routing controllers: `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type.
 
 ```dart
-router.parent<StackRouter>
-() // this returns  the parent router as a Stack Routing controller
-router.parent<TabsRouter>
-() // this returns athe parent router as a Tabs Routing controller
+router.parent<StackRouter>() // this returns  the parent router as a Stack Routing controller
+router.parent<TabsRouter>() // this returns athe parent router as a Tabs Routing controller
 ```
 
 On the other hand, obtaining the root controller does not require type casting because it's always a `StackRouter`.
@@ -745,15 +710,9 @@ You could also obtain access to inner-routers from outside their scope without a
 
 ```dart
 // assuming this's the root router
-context.innerRouterOf<StackRouter>
-(
-UserRoute.name);
+context.innerRouterOf<StackRouter>(UserRoute.name);
 // or if we're usign an AutoTabsRouter inside of DashboardPage
-context.innerRouterOf<TabsRouter>(
-UserRoute
-.
-name
-);
+context.innerRouterOf<TabsRouter>(UserRoute.name);
 ```
 
 Accessing the `DashboardPage` inner router from the previous example.
@@ -829,9 +788,7 @@ class MyApp extends StatefulWidget {
 Now you can access to your router anywhere inside of your App without using context.
 
 ```dart
-getIt<AppRouter>
-().push
-(...);
+getIt<AppRouter>().push(...);
 ```
 
 **Note:** Navigating without context is not recommended in nested navigation unless you use `navigate` instead of `push` and you provide a full hierarchy, e.g `router.navigate(SecondRoute(children: [SubChild2Route()]))`
@@ -885,18 +842,13 @@ Now, receiving this deep-link `/products/123` will add all above routes to the s
 To use declarative navigation with auto_route, you simply use the `AutoRouter.declarative` constructor and return a list of routes based on state.
 
 ```dart
-AutoRouter.declarative
-(
-routes: (handler) => [
-BookListRoute(),
-if(_selectedBook != null)
-BookDetailsRoute(id: _selectedBook
-.
-id
-)
-,
-]
-,
+AutoRouter.declarative(
+  routes: (handler) => [
+    BookListRoute(),
+    if(_selectedBook != null) {
+      BookDetailsRoute(id: _selectedBook.id),
+    }
+  ],
 );
 ```
 
@@ -911,9 +863,7 @@ If you don’t specify a path it’s going to be generated from the page name e.
 When developing a web application or a native app that requires deep-linking, you'd probably need to define paths with clear memorable names, and that's done using the `path` argument in `AutoRoute`.
 
 ```dart
-AutoRoute
-(
-path: '/books', page: BookListPage),
+AutoRoute(path: '/books', page: BookListPage),
 ```
 
 ### Path Parameters (dynamic segments)
@@ -921,9 +871,7 @@ path: '/books', page: BookListPage),
 You can define a dynamic segment by prefixing it with a colon
 
 ```dart
-AutoRoute
-(
-path: '/books/:id', page: BookDetailsPage),
+AutoRoute(path: '/books/:id', page: BookDetailsPage),
 ```
 
 The simplest way to extract path parameters from path and gain access to them is by annotating constructor params with `@PathParam('optional-alias')` with the same alias/name of the segment.
@@ -944,13 +892,12 @@ Now writing `/books/1` in the browser will navigate you to `BookDetailsPage` and
 To inherit a path-parameter from a parent route's path, we need to use `@PathParam.inherit` annotation in the child route's constructor. Let's say we have the following setup:
 
 ```dart
-AutoRoute
-(
-path: '/product/:id',
-page: ProductRoute.page,
-children: [
-AutoRoute(path: 'review',page: ProductReviewRoute.page),
-],
+AutoRoute(
+  path: '/product/:id',
+  page: ProductRoute.page,
+  children: [
+    AutoRoute(path: 'review',page: ProductReviewRoute.page),
+  ],
 )
 ```
 
@@ -972,18 +919,9 @@ Query parameters are accessed the same way, simply annotate the constructor para
 You could also access path/query parameters using the scoped `RouteData` object.
 
 ```dart
-RouteData.of
-(
-context
-)
-.
-pathParams;
+RouteData.of(context).pathParams;
 // or using the extension
-context
-.
-routeData
-.
-queryParams
+context.routeData.queryParams;
 ```
 
 `Tip`: if your parameter name is the same as the path/query parameter, you could use the const `@pathParam` or `@queryParam` and not pass a slug/alias.
@@ -1004,9 +942,8 @@ Paths can be redirected using `RedirectRoute`. The following setup will navigate
 
 ```dart
 <AutoRoute> [
-RedirectRoute(path: '/', redirectTo: '/books'),
-AutoRoute(path: '/books', page: BookListRoute.page)
-,
+  RedirectRoute(path: '/', redirectTo: '/books'),
+  AutoRoute(path: '/books', page: BookListRoute.page),
 ]
 ```
 
@@ -1014,7 +951,7 @@ When redirecting initial routes the above setup can be simplified by setting the
 
 ```dart
 <AutoRoute> [
-AutoRoute(path: '/books', page: BookListRoute.page, initial: true),
+  AutoRoute(path: '/books', page: BookListRoute.page, initial: true),
 ]
 ```
 
@@ -1022,9 +959,8 @@ You can also redirect paths with params like follows:
 
 ```dart
 <AutoRoute> [
-RedirectRoute(path: 'books/:id', redirectTo: '/books/:id/details'),
-AutoRoute(path: '/books/:id/details', page: BookDetailsRoute.page)
-,
+  RedirectRoute(path: 'books/:id', redirectTo: '/books/:id/details'),
+  AutoRoute(path: '/books/:id/details', page: BookDetailsRoute.page),
 ]
 ```
 
@@ -1035,20 +971,19 @@ AutoRoute(path: '/books/:id/details', page: BookDetailsRoute.page)
 **AutoRoute** supports wildcard matching to handle invalid or undefined paths.
 
 ```dart
-AutoRoute
-(
-path: '*', page: UnknownRoute.page)
+AutoRoute(
+  path: '*',
+  page: UnknownRoute.page,
+)
 // it could be used with defined prefixes
-AutoRoute(path: '/profile/*', page: ProfileRoute.page)
+AutoRoute(
+  path: '/profile/*',
+  page: ProfileRoute.page,
+)
 // or it could be used with RedirectRoute
-RedirectRoute(path: '*
-'
-,
-redirectTo
-:
-'
-/
-'
+RedirectRoute(
+  path: '*',
+  redirectTo: '/',
 )
 ```
 
@@ -1094,10 +1029,9 @@ The `NavigationResolver` object contains the guarded route which you can access 
 Now we assign our guard to the routes we want to protect.
 
 ```dart
-AutoRoute
-(
-page: ProfileRoute.page, guards: [AuthGuard()
-]
+AutoRoute(
+  page: ProfileRoute.page,
+  guards: [AuthGuard()],
 );
 ```
 
@@ -1153,11 +1087,10 @@ class AuthProvider extends ChangeNotifier {
 We simply pass an instance of our `AuthProvider` to `reevaluateListenable` inside of `router.config`
 
 ```dart
-MaterialApp.router
-(
-routerConfig: _appRouter.config(
-reevaluateListenable: authProvider,
-),
+MaterialApp.router(
+  routerConfig: _appRouter.config(
+    reevaluateListenable: authProvider,
+  ),
 );
 ```
 
@@ -1234,10 +1167,9 @@ Then we pass our observer to the `<routerName>.config().` **Important:** Notice 
 
 ```dart
 return MaterialApp.router(
-routerConfig: _appRouter.config(
-navigatorObservers: () => [MyObserver()],
-)
-,
+  routerConfig: _appRouter.config(
+    navigatorObservers: () => [MyObserver()],
+  ),
 );
 ```
 
@@ -1379,11 +1311,12 @@ You can of course use your own transitionsBuilder function, as long as it has th
 
 ```dart
 CustomRoute(
-  page: ZoomInScreen, transitionsBuilder:
+  page: ZoomInScreen,
+  transitionsBuilder:
     (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-    // you get an animation object and a widget
-    // make your own transition
-    return ScaleTransition(scale: animation, child: child);
+      // you get an animation object and a widget
+      // make your own transition
+      return ScaleTransition(scale: animation, child: child);
   },
 )
 ```
@@ -1394,7 +1327,8 @@ You can use your own custom route by passing a `CustomRouteBuilder` function to 
 
 ```dart
 CustomRoute(
-  page: CustomPage, customRouteBuilder: (BuildContext context, Widget child, CustomPage<T> page) {
+  page: CustomPage,
+  customRouteBuilder: (BuildContext context, Widget child, CustomPage<T> page) {
     return PageRouteBuilder(
       fullscreenDialog: page.fullscreenDialog,
       // this is important
