@@ -71,18 +71,11 @@
 
 #### What is AutoRoute?
 
-It’s a Flutter navigation package, it allows for strongly-typed arguments passing, effortless
-deep-linking and it uses code generation to simplify routes setup. With that being said, it requires
-a minimal amount of code to generate everything needed for navigation inside of your App.
+It’s a Flutter navigation package, it allows for strongly-typed arguments passing, effortless deep-linking and it uses code generation to simplify routes setup. With that being said, it requires a minimal amount of code to generate everything needed for navigation inside of your App.
 
 #### Why AutoRoute?
 
-If your App requires deep-linking or guarded routes or just a clean routing setup, you'll need to
-use
-named/generated routes and you’ll end up writing a lot of boilerplate code for mediator argument
-classes, checking for required arguments, extracting arguments and a bunch of other stuff. *
-*AutoRoute**
-does all that for you and much more.
+If your App requires deep-linking or guarded routes or just a clean routing setup, you'll need to use named/generated routes and you’ll end up writing a lot of boilerplate code for mediator argument classes, checking for required arguments, extracting arguments and a bunch of other stuff. **AutoRoute** does all that for you and much more.
 
 ## Installation
 
@@ -113,9 +106,7 @@ class AppRouter extends $AppRouter {
 
 ### Using part builder
 
-To generate a part-of file simply add a `part` directive to your `AppRouter` and extend the
-generated private router.
-**Note:** The `deferredLoading` functionality does not work with part-file setup.
+To generate a part-of file simply add a `part` directive to your `AppRouter` and extend the generated private router. **Note:** The `deferredLoading` functionality does not work with part-file setup.
 
 ```dart
 part 'app_router.gr.dart';
@@ -132,8 +123,7 @@ class AppRouter extends _$AppRouter {
 
 ### Generating Routable pages
 
-Routable pages are just simple everyday widgets annotated with `@RoutePage()` which allows them to
-be constructed by the router.
+Routable pages are just simple everyday widgets annotated with `@RoutePage()` which allows them to be constructed by the router.
 
 ```dart
 @RoutePage()
@@ -206,8 +196,7 @@ class BookListRoute extends PageRouteInfo {
 
 ## Navigating Between Screens
 
-`AutoRouter` offers the same known push, pop and friends methods to manipulate the pages stack using
-both the generated `PageRouteInfo` objects and paths.
+`AutoRouter` offers the same known push, pop and friends methods to manipulate the pages stack using both the generated `PageRouteInfo` objects and paths.
 
 ```dart
 // get the scoped router by calling
@@ -244,8 +233,8 @@ router.replaceAll([
   LoginRoute(),
 ]);
 // pops the last page unless blocked or stack has only 1 entry
-context.router.maybPop();
-// popts the most top page of the most top router unless blocked
+context.router.maybePop();
+// pops the most top page of the most top router unless blocked
 // or stack has only 1 entry
 context.router.maybePopTop();
 // keeps popping routes until predicate is satisfied
@@ -300,8 +289,7 @@ router.push(BookDetailsRoute(book: book));
 
 ## Returning Results
 
-You can return results by either using the pop completer or by passing a callback function as an
-argument the same way you'd pass an object.
+You can return results by either using the pop completer or by passing a callback function as an argument the same way you'd pass an object.
 
 #### 1. Using the `pop` completer
 
@@ -315,11 +303,9 @@ then inside of your `LoginPage`, pop with results
 router.maybePop(true);
 ```
 
-as you'd notice we did not specify the result type, we're playing with dynamic values here, which
-can be risky and I personally don't recommend it.
+as you'd notice we did not specify the result type, we're playing with dynamic values here, which can be risky and I personally don't recommend it.
 
-To avoid working with dynamic values, we specify what type of results we expect our page to return,
-which is a `bool` value.
+To avoid working with dynamic values, we specify what type of results we expect our page to return, which is a `bool` value.
 
 ```dart
 @RoutePage<bool>()
@@ -403,8 +389,7 @@ List<AutoRoute> get routes => [
 }
 ```
 
-To render/build nested routes we need an `AutoRouter` widget that works as an outlet or a nested
-router-view inside of our dashboard page.
+To render/build nested routes we need an `AutoRouter` widget that works as an outlet or a nested router-view inside of our dashboard page.
 
 ```dart
 class DashboardPage extends StatelessWidget {
@@ -661,7 +646,7 @@ As you can tell from the above diagram it's possible to access parent routing co
 
 ```dart
 router.parent<StackRouter>() // this returns  the parent router as a Stack Routing controller
-router.parent<TabsRouter>() // this returns athe parent router as a Tabs Routing controller
+router.parent<TabsRouter>() // this returns the parent router as a Tabs Routing controller
 ```
 
 On the other hand, obtaining the root controller does not require type casting because it's always a `StackRouter`.
@@ -711,7 +696,7 @@ You could also obtain access to inner-routers from outside their scope without a
 ```dart
 // assuming this's the root router
 context.innerRouterOf<StackRouter>(UserRoute.name);
-// or if we're usign an AutoTabsRouter inside of DashboardPage
+// or if we're using an AutoTabsRouter inside of DashboardPage
 context.innerRouterOf<TabsRouter>(UserRoute.name);
 ```
 
@@ -748,7 +733,7 @@ class Dashboard extends StatelessWidget {
 To navigate without context you can simply assign your generated router to a global variable
 
 ```dart
-// declare your route as a global vairable
+// declare your route as a global variable
 final appRouter = AppRouter();
 
 class MyApp extends StatefulWidget {
@@ -785,7 +770,7 @@ class MyApp extends StatefulWidget {
 }
 ```
 
-Now you can access to your router anywhere inside of your App without using context.
+Now you can access your router anywhere inside of your app without using context.
 
 ```dart
 getIt<AppRouter>().push(...);
@@ -808,7 +793,7 @@ MaterialApp.router(
   routerConfig: _appRouter.config(
     deepLinkBuilder: (deepLink) {
       if (deepLink.path.startsWith('/products')) {
-        // continute with the platfrom link
+        // continue with the platform link
         return deepLink;
       } else {
         return DeepLink.defaultPath;
@@ -901,7 +886,7 @@ AutoRoute(
 )
 ```
 
-Now `ProductReviewScreen` expects a path-param named `id` but, from the above snippet we know that the path corresponding with it. `review` has no path parameters, but we can inherit 'id' form the parent `/product/:id` like follows:
+Now `ProductReviewScreen` expects a path-param named `id` but, from the above snippet we know that the path corresponding with it. `review` has no path parameters, but we can inherit 'id' from the parent `/product/:id` like follows:
 
 ```dart
 @RoutePage()
@@ -1049,7 +1034,7 @@ class AppRouter extends $AppRouter implements AutoRouteGuard {
       // we continue navigation
       resolver.next();
     } else {
-        // else we navigate to the Login page so we get authenticateed
+        // else we navigate to the Login page so we get authenticated
 
         // tip: use resolver.redirect to have the redirected route
         // automatically removed from the stack when the resolver is completed
@@ -1096,7 +1081,7 @@ MaterialApp.router(
 
 Now, every time `AutoProvider` notifies listeners, the stack will be re-evaluated and `AutoRouteGuard.onNavigation()`. Methods will be re-called on all guards
 
-In the above example, we assigned our `AuthProvider` to `reevaluateListenable` directly, that's because `reevaluateListenable` takes a `Listenable` and AuthProvider extends `ChangeNotifer` which is a `Listenable`, if your auth provider is a stream you can use `reevaluateListenable: ReevaluateListenable.stream(YOUR-STREAM)`
+In the above example, we assigned our `AuthProvider` to `reevaluateListenable` directly, that's because `reevaluateListenable` takes a `Listenable` and AuthProvider extends `ChangeNotifier` which is a `Listenable`, if your auth provider is a stream you can use `reevaluateListenable: ReevaluateListenable.stream(YOUR-STREAM)`
 
 **Note**: When the Stack is re-evaluated, the whole existing hierarchy will be re-pushed, so if you want to stop re-evaluating routes at some point, use `resolver.resolveNext(<options>)` which is like `resolver.next()` but with more options.
 
@@ -1163,7 +1148,7 @@ class MyObserver extends AutoRouterObserver {
 }
 ```
 
-Then we pass our observer to the `<routerName>.config().` **Important:** Notice that `navigatorObservers` property is a builder function that returns a list of observes and the reason for that is a navigator observer instance can only be used by a single router, so unless you're using a single router or you don't want your nested routers to inherit observers, make sure navigatorObservers builder always returns fresh observer instances.
+Then we pass our observer to the `<routerName>.config().` **Important:** Notice that `navigatorObservers` property is a builder function that returns a list of observers and the reason for that is a navigator observer instance can only be used by a single router, so unless you're using a single router or you don't want your nested routers to inherit observers, make sure navigatorObservers builder always returns fresh observer instances.
 
 ```dart
 return MaterialApp.router(
@@ -1345,7 +1330,7 @@ CustomRoute(
 
 To include routes inside of a depended-on package, that package needs to generate an `AutoRouterModule` that will be later consumed by the root router.
 
-To have a package output an `AutoRouterModule` instead of a `RootStackRouter`, we need to use the `AutoRouterConfig.moudle()` annotation like follows
+To have a package output an `AutoRouterModule` instead of a `RootStackRouter`, we need to use the `AutoRouterConfig.module()` annotation like follows
 
 ```dart
 @AutoRouterConfig.module()
