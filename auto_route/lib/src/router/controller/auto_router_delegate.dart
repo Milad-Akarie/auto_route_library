@@ -125,6 +125,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   Future<void> _handleDeepLink(DeepLink deepLink) {
     if (deepLink is _IgnoredDeepLink) return SynchronousFuture(null);
+    if (deepLink is PlatformDeepLink && !deepLink.isValid) {
+      return SynchronousFuture(null);
+    }
 
     throwIf(!deepLink.isValid, 'Can not resolve initial route');
     if (deepLink is PlatformDeepLink) {
@@ -149,14 +152,14 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       topMost.popUntil((route) => route.settings is Page);
     }
 
-    if (configuration.hasSegments) {
-      final platLink = PlatformDeepLink._(configuration, false);
-      final resolvedLink = deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
-      if (rebuildStackOnDeepLink) {
-        controller.popUntil((route) => false);
-      }
-      await _handleDeepLink(resolvedLink);
+    final platLink = PlatformDeepLink._(configuration, false);
+
+    final resolvedLink =
+        deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
+    if (rebuildStackOnDeepLink) {
+      controller.popUntil((route) => false);
     }
+    await _handleDeepLink(resolvedLink);
 
     notifyListeners();
     return SynchronousFuture(null);
