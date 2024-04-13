@@ -2,7 +2,13 @@ part of 'routing_controller.dart';
 
 /// Signature for a function that builds [DeepLink]
 /// [deepLink] is the pre-resolved link coming from platform window
-typedef DeepLinkBuilder = FutureOr<DeepLink> Function(PlatformDeepLink deepLink);
+typedef DeepLinkBuilder = FutureOr<DeepLink> Function(
+    PlatformDeepLink deepLink);
+
+/// Signature for a function that transform the incomming [Uri]
+/// [uri] is the pre-resolved uri coming from platform window
+/// This is call before the [DeepLinkBuilder] to allow to transform the [Uri]
+typedef DeepLinkTransformer = FutureOr<Uri> Function(Uri uri);
 
 /// An auto_route implementation for [RouterDelegate]
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
@@ -125,9 +131,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   Future<void> _handleDeepLink(DeepLink deepLink) {
     if (deepLink is _IgnoredDeepLink) return SynchronousFuture(null);
-    if (deepLink is PlatformDeepLink && !deepLink.isValid) {
-      return SynchronousFuture(null);
-    }
 
     throwIf(!deepLink.isValid, 'Can not resolve initial route');
     if (deepLink is PlatformDeepLink) {
@@ -152,14 +155,15 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       topMost.popUntil((route) => route.settings is Page);
     }
 
-    final platLink = PlatformDeepLink._(configuration, false);
-
-    final resolvedLink =
-        deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
-    if (rebuildStackOnDeepLink) {
-      controller.popUntil((route) => false);
+    if (configuration.hasSegments) {
+      final platLink = PlatformDeepLink._(configuration, false);
+      final resolvedLink =
+          deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
+      if (rebuildStackOnDeepLink) {
+        controller.popUntil((route) => false);
+      }
+      await _handleDeepLink(resolvedLink);
     }
-    await _handleDeepLink(resolvedLink);
 
     notifyListeners();
     return SynchronousFuture(null);
@@ -375,6 +379,19 @@ abstract class DeepLink {
 
   /// Builds an ignored deep link instance
   static const DeepLink none = _IgnoredDeepLink();
+
+  /// Helper function to remove the prefix path of a [Uri]
+  /// You can use this method to remove the prefix of a path
+  /// the prefix must start with a [/]
+  ///
+  /// If not able to parse the resulting Uri, return the original
+  static FutureOr<Uri> prefixStripper(Uri uri, String prefix) {
+    if (!uri.path.startsWith(prefix)) {
+      return uri; // No change if prefix not found
+    }
+
+    return Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri;
+  }
 }
 
 class _PathDeepLink extends DeepLink {

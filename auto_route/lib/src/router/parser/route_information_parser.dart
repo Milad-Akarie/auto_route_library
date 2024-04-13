@@ -17,12 +17,27 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   /// Passed to [RouteMatcher.matchUri]
   final bool includePrefixMatches;
 
+  /// Clients can use this to intercept deep-links
+  /// coming from platform and transform the [Uri].
+  /// Espacially usefull to remove pathPrefixes use in filter-intent on Android
+  /// or applinks on Apple
+  final DeepLinkTransformer? deepLinkTransformer;
+
   /// Default constructor
-  DefaultRouteParser(this._matcher, {this.includePrefixMatches = false});
+  DefaultRouteParser(
+    this._matcher, {
+    this.includePrefixMatches = false,
+    this.deepLinkTransformer,
+  });
 
   @override
-  Future<UrlState> parseRouteInformation(RouteInformation routeInformation) {
-    final resolvedUri = _normalize(routeInformation.uri);
+  Future<UrlState> parseRouteInformation(
+    RouteInformation routeInformation,
+  ) async {
+    final resolvedUri = _normalize(
+        await deepLinkTransformer?.call((routeInformation.uri)) ??
+            routeInformation.uri);
+
     var matches = _matcher.matchUri(resolvedUri,
         includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(
