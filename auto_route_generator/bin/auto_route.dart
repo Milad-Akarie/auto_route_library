@@ -104,7 +104,7 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
     // return;
   }
   ;
-  // printBlue('Processing: ${className}');
+  printBlue('Processing: ${className}');
 
   final params = routePage.defaultConstructorParams;
   final declaredInFileIdentifiers = {for (final declaration in unit.declarations) declaration.name};
@@ -115,7 +115,7 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
   final identifiersToLookUp = routePage.nonCoreIdentifiers.whereNot(declaredInFileIdentifiers.contains);
   late final imports = unit.importUris(rootPackage, identifiersToLookUp);
   if (identifiersToLookUp.isNotEmpty) {
-    final result = await matcher().locateTopLevelDeclarations(
+    final result = await matcher().locateAll(
       asset.uri,
       imports,
       [
@@ -127,13 +127,13 @@ Future<void> _processFile(File asset, SequenceMatcher Function() matcher, Routes
         ],
       ],
     );
-    if (result.isNotEmpty) {
-      for (final res in result.entries) {
-        // print('Resolved: ${res.key} => ${res.value.identifiers}');
-        // for (final dep in res.value.dependencies) print('Dep: $dep');
-      }
+    if (result != null && result.identifiers.isNotEmpty) {
+      // for (final res in result.identifiers.entries) {
+      //   // print('Resolved: ${res.key} => ${res.value.identifiers}');
+      //   // for (final dep in res.value.dependencies) print('Dep: $dep');
+      // }
       resolvedLibs.addAll({
-        for (final entry in result.entries) entry.key: entry.value.identifiers,
+        for (final entry in result.identifiers.entries) entry.key: entry.value,
       });
     }
   }

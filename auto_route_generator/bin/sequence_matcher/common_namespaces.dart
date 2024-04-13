@@ -26,6 +26,7 @@ const commonNameSpaces = {
     'RoutePage',
     'AutoRouteRedirect',
     'AutoRoutePath',
+    'NavigationResolver',
   },
   'package:auto_route/auto_route_annotations.dart': {
     'RoutePage',

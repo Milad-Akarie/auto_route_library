@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 
 import 'sequence.dart';
-import 'sequence_matcher.dart';
 
 bool hasRouteAnnotation(List<int> byteArray) {
   List<int> targetSequence = [0x40, 0x52, 0x6F, 0x75, 0x74, 0x65]; // ASCII values for '@Route'
@@ -20,22 +19,27 @@ bool hasRouteAnnotation(List<int> byteArray) {
   return false;
 }
 
-extension MapX<T> on Map<String, Set<T>> {
+extension MapSetX<T> on Map<Object, Set<T>> {
   /// Appends a value to a set in a map or creates a new set if the key does not exist
-  upsert(String key, T value) {
+  upsert(Object key, T value) {
     this[key] = {...?this[key], value};
   }
 
   /// Appends a list of values to a set in a map or creates a new set if the key does not exist
-  upsertAll(String key, Iterable<T> values) {
+  upsertAll(Object key, Iterable<T> values) {
     this[key] = {...?this[key], ...values};
   }
 }
 
-extension IdentifiersMapX on Map<String, ResolveResult> {
+extension MapListX<T> on Map<Object, List<T>> {
   /// Appends a value to a set in a map or creates a new set if the key does not exist
-  upsert(String key, ResolveResult value) {
-    this[key] = this[key]?.merge(value) ?? value;
+  upsert(Object key, T value) {
+    this[key] = [...?this[key], value];
+  }
+
+  /// Appends a list of values to a set in a map or creates a new set if the key does not exist
+  upsertAll(Object key, Iterable<T> values) {
+    this[key] = [...?this[key], ...values];
   }
 }
 

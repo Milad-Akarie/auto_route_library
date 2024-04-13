@@ -2,9 +2,8 @@
 // import 'package:vertex_auth/vertex_auth.dart';
 // import 'package:auto_route/annotations.dart';
 
-import 'model.dart';
+import 'index_2.dart';
 import 'ui.dart';
-// import 'package:flutter/material.dart';
 
 // ignore_for_file: public_member_api_docs
 
