@@ -8,7 +8,7 @@ typedef DeepLinkBuilder = FutureOr<DeepLink> Function(
 /// Signature for a function that transform the incomming [Uri]
 /// [uri] is the pre-resolved uri coming from platform window
 /// This is call before the [DeepLinkBuilder] to allow to transform the [Uri]
-typedef DeepLinkTransformer = FutureOr<Uri> Function(Uri uri);
+typedef DeepLinkTransformer = Future<Uri> Function(Uri uri);
 
 /// An auto_route implementation for [RouterDelegate]
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
@@ -66,7 +66,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Forces a url update
   static reportUrlChanged(BuildContext context, String url) {
-    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
+    Router.of(context)
+        .routeInformationProvider
+        ?.routerReportsNewRouteInformation(
           RouteInformation(uri: Uri.parse(url)),
           type: RouteInformationReportingType.navigate,
         );
@@ -94,7 +96,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Builds a [_DeclarativeAutoRouterDelegate] which uses
   /// a declarative list of routes to update navigator stack
-  @Deprecated('Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
+  @Deprecated(
+      'Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
   factory AutoRouterDelegate.declarative(
     RootStackRouter controller, {
     required RoutesBuilder routes,
@@ -282,7 +285,8 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     super.deepLinkBuilder,
     this.onPopRoute,
     this.onNavigate,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           router,
           navRestorationScopeId: navRestorationScopeId,
@@ -372,7 +376,8 @@ abstract class DeepLink {
   factory DeepLink.single(PageRouteInfo route) => _RoutesDeepLink([route]);
 
   /// Builds a deep-link form string path
-  const factory DeepLink.path(String path, {bool includePrefixMatches}) = _PathDeepLink;
+  const factory DeepLink.path(String path, {bool includePrefixMatches}) =
+      _PathDeepLink;
 
   /// Builds a deep link with initial path
   static const DeepLink defaultPath = DeepLink.path(Navigator.defaultRouteName);
@@ -385,7 +390,7 @@ abstract class DeepLink {
   /// the prefix must start with a [/]
   ///
   /// If not able to parse the resulting Uri, return the original
-  static FutureOr<Uri> prefixStripper(Uri uri, String prefix) {
+  static Uri prefixStripper(Uri uri, String prefix) {
     if (!uri.path.startsWith(prefix)) {
       return uri; // No change if prefix not found
     }
@@ -398,7 +403,8 @@ class _PathDeepLink extends DeepLink {
   final String path;
   final bool includePrefixMatches;
 
-  const _PathDeepLink(this.path, {this.includePrefixMatches = true}) : super._();
+  const _PathDeepLink(this.path, {this.includePrefixMatches = true})
+      : super._();
 
   @override
   bool get isValid => path.isNotEmpty;

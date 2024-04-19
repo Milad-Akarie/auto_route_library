@@ -1,11 +1,25 @@
+## 8.0.3
+
+- **FEAT**: add deep-link transformer.  Allows parsing he URI for deep links before the
+  route matcher perform a matche on the URI.  Especuially usefull when you use intent-filter
+  prefix on Android to only handle links from e.g com.example/FILTER.
+
+  ```dart
+  RouterConfig `<UrlState>` config({
+  deepLinkTransformer : (uri) async => Deelkink.prefixStripper(uri, 'FILTER'),
+  )
+  ```
+
+  The resulting URI will be : com.example
+
 ## 8.0.2
 
- - **FIX**: only disable parent back gesture if the active child can pop.
- - **FIX**: AutoTabsRouterTabBarState was disposed with active Ticker #1910
+- **FIX**: only disable parent back gesture if the active child can pop.
+- **FIX**: AutoTabsRouterTabBarState was disposed with active Ticker #1910
 
 ## 8.0.1
 
- - **FIX**: back-gesture does not respect sub-routes.
+- **FIX**: back-gesture does not respect sub-routes.
 
 ## 8.0.0
 
@@ -242,7 +256,7 @@ the [Migration guide](https://github.com/Milad-Akarie/auto_route_library/tree/v6
 - Add title builder for AutoRoute(title: (ctx,data){})
 - Docs are changed to reflect the new changes so make sure you re-read them.
 
- ---
+---
 
 ## [5.0.4]
 
@@ -463,7 +477,7 @@ the [Migration guide](https://github.com/Milad-Akarie/auto_route_library/tree/v6
 
 ## [2.1.0] Breaking changes!
 
-- AutoRouteGuard no longer returns a future<bool> and passes in a resolver. [Breaking]
+- AutoRouteGuard no longer returns a future`<bool>` and passes in a resolver. [Breaking]
 - Remove onInitialRoutes from AutoRouterDelegate. [Breaking]
 - Rename RoutingControllerScope to RouterScope. [Breaking]
 - Expose provided navigatorObservers in RouterScope
@@ -598,7 +612,7 @@ the [Migration guide](https://github.com/Milad-Akarie/auto_route_library/tree/v6
 
 - Rebuild auto_route to work with Navigator 2.0
 
------------------------------------------------
+---
 
 ## [0.6.9]
 
@@ -689,7 +703,7 @@ the [Migration guide](https://github.com/Milad-Akarie/auto_route_library/tree/v6
 
 - Add ability to pass initial route arguments to ExtendedNavigator
 - Change single route parameters will have argument holder classes too as requested
-- Fix ExtendedNavigator.ofRouter<T>() returns null in inspector mode
+- Fix ExtendedNavigator.ofRouter`<T>`() returns null in inspector mode
 
 ## [0.4.2]
 

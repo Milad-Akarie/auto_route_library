@@ -100,7 +100,8 @@ abstract class RootStackRouter extends StackRouter {
   AutoRouterDelegate? _lazyRootDelegate;
 
   /// Builds a lazy instance of [AutoRouterDelegate.declarative]
-  @Deprecated('Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
+  @Deprecated(
+      'Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
   AutoRouterDelegate declarativeDelegate({
     required RoutesBuilder routes,
     String? navRestorationScopeId,
@@ -151,7 +152,7 @@ abstract class RootStackRouter extends StackRouter {
       DefaultRouteParser(
         matcher,
         includePrefixMatches: includePrefixMatches,
-        deepLinkTransformer: deepLinkTransformer ?? (uri) => uri,
+        deepLinkTransformer: deepLinkTransformer ?? (uri) async => uri,
       );
 
   AutoRoutePage _pageBuilder(RouteData data) {
