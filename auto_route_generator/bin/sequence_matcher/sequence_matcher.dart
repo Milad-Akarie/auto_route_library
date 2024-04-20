@@ -317,9 +317,3 @@ class ResolveResult {
   bool get hasDeferredSources => deferredSources.isNotEmpty;
 }
 
-class DeferredNode {
-  final Uri file;
-  final List<DeferredNode> sources;
-
-  DeferredNode(this.file, this.sources);
-}
