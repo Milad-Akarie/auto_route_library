@@ -983,7 +983,7 @@ abstract class StackRouter extends RoutingController {
   /// e.g when the user is no longer authenticated
   /// and there are auth-protected routes in the stack
   ///
-  /// this will has no effect if there's a guard in progress
+  /// this will have no effect if there's a guard in progress
   Future<void> reevaluateGuards() async {
     final routes = _composeMatchesForReevaluate();
     if (routes != null) {
