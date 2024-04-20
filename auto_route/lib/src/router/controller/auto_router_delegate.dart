@@ -2,10 +2,9 @@ part of 'routing_controller.dart';
 
 /// Signature for a function that builds [DeepLink]
 /// [deepLink] is the pre-resolved link coming from platform window
-typedef DeepLinkBuilder = FutureOr<DeepLink> Function(
-    PlatformDeepLink deepLink);
+typedef DeepLinkBuilder = FutureOr<DeepLink> Function(PlatformDeepLink deepLink);
 
-/// Signature for a function that transform the incomming [Uri]
+/// Signature for a function that transform the incoming [Uri]
 /// [uri] is the pre-resolved uri coming from platform window
 /// This is call before the [DeepLinkBuilder] to allow to transform the [Uri]
 typedef DeepLinkTransformer = Future<Uri> Function(Uri uri);
@@ -66,9 +65,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Forces a url update
   static reportUrlChanged(BuildContext context, String url) {
-    Router.of(context)
-        .routeInformationProvider
-        ?.routerReportsNewRouteInformation(
+    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
           RouteInformation(uri: Uri.parse(url)),
           type: RouteInformationReportingType.navigate,
         );
@@ -96,8 +93,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Builds a [_DeclarativeAutoRouterDelegate] which uses
   /// a declarative list of routes to update navigator stack
-  @Deprecated(
-      'Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
+  @Deprecated('Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
   factory AutoRouterDelegate.declarative(
     RootStackRouter controller, {
     required RoutesBuilder routes,
@@ -160,8 +156,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
     if (configuration.hasSegments) {
       final platLink = PlatformDeepLink._(configuration, false);
-      final resolvedLink =
-          deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
+      final resolvedLink = deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
       if (rebuildStackOnDeepLink) {
         controller.popUntil((route) => false);
       }
@@ -285,8 +280,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
     super.deepLinkBuilder,
     this.onPopRoute,
     this.onNavigate,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   }) : super(
           router,
           navRestorationScopeId: navRestorationScopeId,
@@ -376,8 +370,7 @@ abstract class DeepLink {
   factory DeepLink.single(PageRouteInfo route) => _RoutesDeepLink([route]);
 
   /// Builds a deep-link form string path
-  const factory DeepLink.path(String path, {bool includePrefixMatches}) =
-      _PathDeepLink;
+  const factory DeepLink.path(String path, {bool includePrefixMatches}) = _PathDeepLink;
 
   /// Builds a deep link with initial path
   static const DeepLink defaultPath = DeepLink.path(Navigator.defaultRouteName);
@@ -387,15 +380,18 @@ abstract class DeepLink {
 
   /// Helper function to remove the prefix path of a [Uri]
   /// You can use this method to remove the prefix of a path
-  /// the prefix must start with a [/]
+  /// the prefix should start with a [/]
   ///
   /// If not able to parse the resulting Uri, return the original
-  static Uri prefixStripper(Uri uri, String prefix) {
-    if (!uri.path.startsWith(prefix)) {
-      return uri; // No change if prefix not found
-    }
-
-    return Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri;
+  static DeepLinkTransformer prefixStripper(String prefix) {
+    return (Uri uri) {
+      if (!uri.path.startsWith(prefix)) {
+        return SynchronousFuture(uri); // No change if prefix not found
+      }
+      return SynchronousFuture(
+         Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri
+      );
+    };
   }
 }
 
@@ -403,8 +399,7 @@ class _PathDeepLink extends DeepLink {
   final String path;
   final bool includePrefixMatches;
 
-  const _PathDeepLink(this.path, {this.includePrefixMatches = true})
-      : super._();
+  const _PathDeepLink(this.path, {this.includePrefixMatches = true}) : super._();
 
   @override
   bool get isValid => path.isNotEmpty;

@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart'
-    show RouteInformation, RouteInformationParser;
+import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
 import '../../matcher/route_matcher.dart';
@@ -19,8 +18,8 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
   /// Clients can use this to intercept deep-links
   /// coming from platform and transform the [Uri].
-  /// Espacially usefull to remove pathPrefixes use in filter-intent on Android
-  /// or applinks on Apple
+  /// Especially useful to remove pathPrefixes use in filter-intent on Android
+  /// or appLinks on Apple
   final DeepLinkTransformer? deepLinkTransformer;
 
   /// Default constructor
@@ -35,14 +34,11 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     RouteInformation routeInformation,
   ) async {
     final resolvedUri = _normalize(
-        await deepLinkTransformer?.call((routeInformation.uri)) ??
-            routeInformation.uri);
-
-    var matches = _matcher.matchUri(resolvedUri,
-        includePrefixMatches: includePrefixMatches);
+      await deepLinkTransformer?.call((routeInformation.uri)) ?? routeInformation.uri,
+    );
+    var matches = _matcher.matchUri(resolvedUri, includePrefixMatches: includePrefixMatches);
     return SynchronousFuture<UrlState>(
-      UrlState(routeInformation.uri, matches ?? const [],
-          pathState: routeInformation.state),
+      UrlState(routeInformation.uri, matches ?? const [], pathState: routeInformation.state),
     );
   }
 
@@ -82,10 +78,7 @@ class AutoRouteInformation extends RouteInformation {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AutoRouteInformation &&
-          runtimeType == other.runtimeType &&
-          uri == other.uri &&
-          state == other.state;
+      other is AutoRouteInformation && runtimeType == other.runtimeType && uri == other.uri && state == other.state;
 
   @override
   int get hashCode => replace.hashCode;
@@ -157,8 +150,7 @@ class UrlState {
   /// With the flattened version of [segments]
   /// e.g if segments = [Match1[Match2[Match3]]]
   /// the result is [Match1,Match2,Match3]
-  UrlState get flatten =>
-      UrlState.fromSegments(segments.last.flattened, state: pathState);
+  UrlState get flatten => UrlState.fromSegments(segments.last.flattened, state: pathState);
 
   @override
   String toString() {
@@ -191,9 +183,7 @@ class UrlState {
 
   /// re
   List<RouteMatch> childrenOfSegmentNamed(String routeName) {
-    return _findSegment(segments, (match) => match.name == routeName)
-            ?.children ??
-        const [];
+    return _findSegment(segments, (match) => match.name == routeName)?.children ?? const [];
   }
 
   static Uri _buildUri(List<RouteMatch> routes) {

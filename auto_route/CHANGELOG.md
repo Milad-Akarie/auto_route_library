@@ -1,12 +1,12 @@
-## 8.0.3
+## 8.1.0
 
 - **FEAT**: add deep-link transformer.  Allows parsing he URI for deep links before the
-  route matcher perform a matche on the URI.  Especuially usefull when you use intent-filter
+  route matcher perform a match on the URI.  Especially useful when you use intent-filter
   prefix on Android to only handle links from e.g com.example/FILTER.
 
   ```dart
   RouterConfig `<UrlState>` config({
-  deepLinkTransformer : (uri) async => Deelkink.prefixStripper(uri, 'FILTER'),
+  deepLinkTransformer : Deelkink.prefixStripper('/filter'),
   )
   ```
 
