@@ -101,7 +101,8 @@ class RouteData {
         return orElse();
       }
     } else if (args is! T) {
-      throw MissingRequiredParameterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw MissingRequiredParameterError(
+          'Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }

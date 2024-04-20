@@ -154,7 +154,8 @@ abstract class _$MainRouter extends RootStackRouter {
 
 /// generated route for
 /// [DeclarativeRouterHostScreen]
-class DeclarativeRouterHostRoute extends PageRouteInfo<DeclarativeRouterHostRouteArgs> {
+class DeclarativeRouterHostRoute
+    extends PageRouteInfo<DeclarativeRouterHostRouteArgs> {
   DeclarativeRouterHostRoute({
     Key? key,
     required ValueNotifier<int> pageNotifier,
@@ -170,7 +171,8 @@ class DeclarativeRouterHostRoute extends PageRouteInfo<DeclarativeRouterHostRout
 
   static const String name = 'DeclarativeRouterHostRoute';
 
-  static const PageInfo<DeclarativeRouterHostRouteArgs> page = PageInfo<DeclarativeRouterHostRouteArgs>(name);
+  static const PageInfo<DeclarativeRouterHostRouteArgs> page =
+      PageInfo<DeclarativeRouterHostRouteArgs>(name);
 }
 
 class DeclarativeRouterHostRouteArgs {

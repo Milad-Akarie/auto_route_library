@@ -29,11 +29,13 @@ extension AutoRouterX on BuildContext {
   /// see [StackRouter.maybePop]
   @optionalTypeArgs
   @Deprecated('Renamed to maybePop to avoid confusion')
-  Future<bool> popRoute<T extends Object?>([T? result]) => router.maybePop<T>(result);
+  Future<bool> popRoute<T extends Object?>([T? result]) =>
+      router.maybePop<T>(result);
 
   /// see [StackRouter.maybePop]
   @optionalTypeArgs
-  Future<bool> maybePop<T extends Object?>([T? result]) => router.maybePop<T>(result);
+  Future<bool> maybePop<T extends Object?>([T? result]) =>
+      router.maybePop<T>(result);
 
   /// see [RoutingController.navigate]
   Future<void> navigateTo(PageRouteInfo route,
