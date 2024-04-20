@@ -10,10 +10,10 @@ class RouteDataScope extends InheritedWidget {
 
   /// Default reconstruct
   const RouteDataScope({
-    Key? key,
+    super.key,
     required this.routeData,
-    required Widget child,
-  }) : super(child: child, key: key);
+    required super.child,
+  });
 
   /// Looks up and returns the scoped [routeData]
   ///

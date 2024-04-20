@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
 
-@RoutePage<String>()
+@RoutePage()
 class HomePage extends StatefulWidget {
   const HomePage({
     Key? key,
@@ -91,11 +91,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             );
           })
         : AutoTabsRouter(
-            routes: [
-              BooksTab(),
-              ProfileTab(),
-              if (_showSettingsTap) SettingsTab(tab: 'tab'),
-            ],
             builder: (context, child) {
               return Scaffold(
                 appBar: AppBar(

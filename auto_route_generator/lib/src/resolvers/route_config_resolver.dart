@@ -9,7 +9,6 @@ import '../models/route_parameter_config.dart';
 import '../resolvers/route_parameter_resolver.dart';
 import '../resolvers/type_resolver.dart';
 
-
 /// extracts route configs from class fields and their meta data
 class RouteConfigResolver {
   final TypeResolver _typeResolver;

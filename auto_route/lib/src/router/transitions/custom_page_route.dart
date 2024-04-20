@@ -9,8 +9,8 @@ class AutoPageRouteBuilder<T> extends PageRoute<T> {
     this.transitionDuration = const Duration(milliseconds: 300),
     this.opaque = true,
     required this.child,
-    bool fullscreenDialog = false,
-  }) : super(fullscreenDialog: fullscreenDialog);
+    super.fullscreenDialog,
+  });
 
   /// See [PageRouteBuilder.transitionBuilder]
   final RouteTransitionsBuilder? transitionBuilder;

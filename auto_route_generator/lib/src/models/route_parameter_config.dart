@@ -20,26 +20,37 @@ const validPathParamTypes = [
 class ParamConfig {
   /// the type of the parameter
   final ResolvedType type;
+
   /// the name of the parameter
   final String name;
+
   /// the alias of the parameter
   final String? alias;
+
   /// whether the parameter is positional
   final bool isPositional;
+
   /// whether the parameter is optional
   final bool isOptional;
+
   /// whether the parameter is required
   final bool hasRequired;
+
   /// whether the parameter is required
   final bool isRequired;
+
   /// whether the parameter is named
   final bool isNamed;
+
   /// whether the parameter is a path param
   final bool isPathParam;
+
   /// whether the parameter is an inherited path param
   final bool isInheritedPathParam;
+
   /// whether the parameter is a query param
   final bool isQueryParam;
+
   /// the default value code of the parameter
   final String? defaultValueCode;
 
@@ -141,6 +152,7 @@ class ParamConfig {
 class FunctionParamConfig extends ParamConfig {
   /// the return type of the function
   final ResolvedType returnType;
+
   /// the list of parameters of the function
   final List<ParamConfig> params;
 
@@ -244,6 +256,7 @@ class FunctionParamConfig extends ParamConfig {
 class PathParamConfig {
   /// The name of the path parameter
   final String name;
+
   /// Whether the path parameter is optional
   final bool isOptional;
 

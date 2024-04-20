@@ -7,15 +7,15 @@ import 'package:example/mobile/screens/profile/routes.dart';
 class RootRouter extends $RootRouter {
   @override
   final List<AutoRoute> routes = [
+    AutoRoute(page: WelcomeRoute.page, initial: true),
     AutoRoute(
       page: HomeRoute.page,
-      path: '/',
+      path: '/home',
       children: [
-        RedirectRoute(path: '', redirectTo: 'books'),
         AutoRoute(
           path: 'books',
           page: BooksTab.page,
-          maintainState: true,
+          initial: true,
           children: [
             AutoRoute(
               path: '',

@@ -31,7 +31,7 @@ class AutoTabsScaffold extends StatelessWidget {
   final AnimatedIndexedStackTransitionBuilder? transitionBuilder;
 
   /// The List of routes to be used as tabs
-  final List<PageRouteInfo> routes;
+  final List<PageRouteInfo>? routes;
 
   /// Duration for each tab-change transition
   final Duration animationDuration;
@@ -131,8 +131,8 @@ class AutoTabsScaffold extends StatelessWidget {
 
   /// Default constructor;
   const AutoTabsScaffold({
-    Key? key,
-    required this.routes,
+    super.key,
+    this.routes,
     this.lazyLoad = true,
     this.homeIndex = -1,
     this.animationDuration = const Duration(milliseconds: 300),
@@ -165,7 +165,7 @@ class AutoTabsScaffold extends StatelessWidget {
     this.extendBodyBehindAppBar = false,
     this.appBarBuilder,
     this.scaffoldKey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

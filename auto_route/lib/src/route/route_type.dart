@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 /// Signature for custom router builder used by
 /// [CustomRouteType]
-typedef CustomRouteBuilder = Route<T> Function<T>(
+typedef CustomRouteBuilder<T> = Route<T> Function(
   BuildContext context,
   Widget child,
   AutoRoutePage<T> page,

@@ -76,15 +76,14 @@ class AutoLeadingButton extends StatefulWidget {
 
   /// Default constructor
   const AutoLeadingButton({
-    Key? key,
+    super.key,
     this.color,
     bool? showIfParentCanPop,
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
     this.builder,
   })  : assert(color == null || builder == null),
-        _showIfParentCanPop = showIfParentCanPop ?? true,
-        super(key: key);
+        _showIfParentCanPop = showIfParentCanPop ?? true;
 
   @override
   State<AutoLeadingButton> createState() => _AutoLeadingButtonState();
@@ -120,17 +119,17 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
         return widget.builder!(
           context,
           useCloseButton ? LeadingType.close : LeadingType.back,
-          scope.controller.popTop,
+          scope.controller.maybePopTop,
         );
       }
       return useCloseButton
           ? CloseButton(
               color: widget.color,
-              onPressed: scope.controller.popTop,
+              onPressed: scope.controller.maybePopTop,
             )
           : BackButton(
               color: widget.color,
-              onPressed: scope.controller.popTop,
+              onPressed: scope.controller.maybePopTop,
             );
     }
     final ScaffoldState? scaffold = Scaffold.maybeOf(context);

@@ -36,7 +36,6 @@ void throwError(String message, {Element? element}) {
   );
 }
 
-
 /// Extension methods for [Iterable]
 extension IterableExtenstion<E> on Iterable<E> {
   /// Returns the first element that satisfies the given predicate [test]

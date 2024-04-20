@@ -37,7 +37,11 @@ class MyBooksPage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => context.back(),
               child: Text('Navigate back'),
-            )
+            ),
+            ElevatedButton(
+              onPressed: () => context.router.root.pushAndPopUntil(HomeRoute(), predicate: (_) => false),
+              child: Text('Pop until /home'),
+            ),
           ],
         ),
       ),

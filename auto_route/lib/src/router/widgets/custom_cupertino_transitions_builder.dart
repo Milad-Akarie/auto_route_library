@@ -5,11 +5,11 @@
 // The adjustments made to this code is to disable unwanted shadow
 // of routes when used as nested routes, e.g inside of a TabsRouter
 
-import 'package:flutter/cupertino.dart' show CupertinoDynamicColor;
+import 'package:flutter/cupertino.dart'
+    show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
 import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -51,238 +51,6 @@ final Animatable<Offset> _kBottomUpTween = Tween<Offset>(
   end: Offset.zero,
 );
 
-/// A mixin that replaces the entire screen with an iOS transition for a
-/// [PageRoute].
-///
-/// {@template flutter.cupertino.cupertinoRouteTransitionMixin}
-/// The page slides in from the right and exits in reverse. The page also shifts
-/// to the left in parallax when another page enters to cover it.
-///
-/// The page slides in from the bottom and exits in reverse with no parallax
-/// effect for fullscreen dialogs.
-/// {@endtemplate}
-///
-/// See also:
-///
-///  * [MaterialRouteTransitionMixin], which is a mixin that provides
-///    platform-appropriate transitions for a [PageRoute].
-///  * [CupertinoPageRoute], which is a [PageRoute] that leverages this mixin.
-mixin CustomCupertinoRouteTransitionMixin<T> on PageRoute<T> {
-  /// Builds the primary contents of the route.
-  @protected
-  Widget buildContent(BuildContext context);
-
-  /// {@template flutter.cupertino.CupertinoRouteTransitionMixin.title}
-  /// A title string for this route.
-  ///
-  /// Used to auto-populate [CupertinoNavigationBar] and
-  /// [CupertinoSliverNavigationBar]'s `middle`/`largeTitle` widgets when
-  /// one is not manually supplied.
-  /// {@endtemplate}
-  String? get title;
-
-  ValueNotifier<String?>? _previousTitle;
-
-  /// The title string of the previous [CupertinoPageRoute].
-  ///
-  /// The [ValueListenable]'s value is readable after the route is installed
-  /// onto a [Navigator]. The [ValueListenable] will also notify its listeners
-  /// if the value changes (such as by replacing the previous route).
-  ///
-  /// The [ValueListenable] itself will be null before the route is installed.
-  /// Its content value will be null if the previous route has no title or
-  /// is not a [CupertinoPageRoute].
-  ///
-  /// See also:
-  ///
-  ///  * [ValueListenableBuilder], which can be used to listen and rebuild
-  ///    widgets based on a ValueListenable.
-  ValueListenable<String?> get previousTitle {
-    assert(
-      _previousTitle != null,
-      'Cannot read the previousTitle for a route that has not yet been installed',
-    );
-    return _previousTitle!;
-  }
-
-  @override
-  void didChangePrevious(Route<dynamic>? previousRoute) {
-    final String? previousTitleString =
-        previousRoute is CustomCupertinoRouteTransitionMixin
-            ? previousRoute.title
-            : null;
-    if (_previousTitle == null) {
-      _previousTitle = ValueNotifier<String?>(previousTitleString);
-    } else {
-      _previousTitle!.value = previousTitleString;
-    }
-    super.didChangePrevious(previousRoute);
-  }
-
-  @override
-  // A relatively rigorous eyeball estimation.
-  Duration get transitionDuration => const Duration(milliseconds: 400);
-
-  @override
-  Color? get barrierColor => null;
-
-  @override
-  String? get barrierLabel => null;
-
-  @override
-  bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
-    // Don't perform outgoing animation if the next route is a fullscreen dialog.
-    return nextRoute is CustomCupertinoRouteTransitionMixin &&
-        !nextRoute.fullscreenDialog;
-  }
-
-  /// True if an iOS-style back swipe pop gesture is currently underway for [route].
-  ///
-  /// This just check the route's [NavigatorState.userGestureInProgress].
-  ///
-  /// See also:
-  ///
-  ///  * [popGestureEnabled], which returns true if a user-triggered pop gesture
-  ///    would be allowed.
-  static bool isPopGestureInProgress(PageRoute<dynamic> route) {
-    return route.navigator!.userGestureInProgress;
-  }
-
-  /// True if an iOS-style back swipe pop gesture is currently underway for this route.
-  ///
-  /// See also:
-  ///
-  ///  * [isPopGestureInProgress], which returns true if a Cupertino pop gesture
-  ///    is currently underway for specific route.
-  ///  * [popGestureEnabled], which returns true if a user-triggered pop gesture
-  ///    would be allowed.
-  bool get popGestureInProgress => isPopGestureInProgress(this);
-
-  /// Whether a pop gesture can be started by the user.
-  ///
-  /// Returns true if the user can edge-swipe to a previous route.
-  ///
-  /// Returns false once [isPopGestureInProgress] is true, but
-  /// [isPopGestureInProgress] can only become true if [popGestureEnabled] was
-  /// true first.
-  ///
-  /// This should only be used between frames, not during build.
-  bool get popGestureEnabled => _isPopGestureEnabled(this);
-
-  static bool _isPopGestureEnabled<T>(PageRoute<T> route) {
-    // If there's nothing to go back to, then obviously we don't support
-    // the back gesture.
-    if (route.isFirst) return false;
-    // If the route wouldn't actually pop if we popped it, then the gesture
-    // would be really confusing (or would skip internal routes), so disallow it.
-    if (route.willHandlePopInternally) return false;
-    // Fullscreen dialogs aren't dismissible by back swipe.
-    if (route.fullscreenDialog) return false;
-    // If we're in an animation already, we cannot be manually swiped.
-    if (route.animation!.status != AnimationStatus.completed) return false;
-    // If we're being popped into, we also cannot be swiped until the pop above
-    // it completes. This translates to our secondary animation being
-    // dismissed.
-    if (route.secondaryAnimation!.status != AnimationStatus.dismissed) {
-      return false;
-    }
-    // If we're in a gesture already, we cannot start another.
-    if (isPopGestureInProgress(route)) return false;
-
-    // Looks like a back gesture would be welcome!
-    return true;
-  }
-
-  @override
-  RoutePopDisposition get popDisposition {
-    if (willHandlePopInternally) {
-      return RoutePopDisposition.pop;
-    }
-    return super.popDisposition;
-  }
-
-  @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
-    final Widget child = buildContent(context);
-    final Widget result = Semantics(
-      scopesRoute: true,
-      explicitChildNodes: true,
-      child: child,
-    );
-
-    return result;
-  }
-
-  // Called by _CupertinoBackGestureDetector when a pop ("back") drag start
-  // gesture is detected. The returned controller handles all of the subsequent
-  // drag events.
-  static _CupertinoBackGestureController<T> _startPopGesture<T>(
-      PageRoute<T> route) {
-    assert(_isPopGestureEnabled(route));
-
-    return _CupertinoBackGestureController<T>(
-      navigator: route.navigator!,
-      controller: route.controller!, // protected access
-    );
-  }
-
-  /// Returns a [CupertinoFullscreenDialogTransition] if [route] is a full
-  /// screen dialog, otherwise a [CupertinoPageTransition] is returned.
-  ///
-  /// Used by [CupertinoPageRoute.buildTransitions].
-  ///
-  /// This method can be applied to any [PageRoute], not just
-  /// [CupertinoPageRoute]. It's typically used to provide a Cupertino style
-  /// horizontal transition for material widgets when the target platform
-  /// is [TargetPlatform.iOS].
-  ///
-  /// See also:
-  ///
-  ///  * [NoShadowCupertinoPageTransitionsBuilder], which uses this method to define a
-  ///    [PageTransitionsBuilder] for the [PageTransitionsTheme].
-  static Widget buildPageTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    // Check if the route has an animation that's currently participating
-    // in a back swipe gesture.
-    //
-    // In the middle of a back gesture drag, let the transition be linear to
-    // match finger motions.
-    final bool linearTransition = isPopGestureInProgress(route);
-    if (route.fullscreenDialog) {
-      return CupertinoFullscreenDialogTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
-        linearTransition: linearTransition,
-        child: child,
-      );
-    } else {
-      return CupertinoPageTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
-        linearTransition: linearTransition,
-        child: _CupertinoBackGestureDetector<T>(
-          enabledCallback: () => _isPopGestureEnabled<T>(route),
-          onStartPopGesture: () => _startPopGesture<T>(route),
-          child: child,
-        ),
-      );
-    }
-  }
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    return buildPageTransitions<T>(
-        this, context, animation, secondaryAnimation, child);
-  }
-}
-
 /// A modal route that replaces the entire screen with an iOS transition.
 ///
 /// {@macro flutter.cupertino.cupertinoRouteTransitionMixin}
@@ -307,7 +75,9 @@ mixin CustomCupertinoRouteTransitionMixin<T> on PageRoute<T> {
 ///    bottom with multiple pages.
 ///  * [CupertinoPage], for a [Page] version of this class.
 class CupertinoPageRoute<T> extends PageRoute<T>
-    with CustomCupertinoRouteTransitionMixin<T> {
+    with
+        CupertinoRouteTransitionMixin<T>,
+        CupertinoRouteTransitionOverrideMixin<T> {
   /// Creates a page route for use in an iOS designed app.
   ///
   /// The [builder], [maintainState], and [fullscreenDialog] arguments must not
@@ -315,13 +85,10 @@ class CupertinoPageRoute<T> extends PageRoute<T>
   CupertinoPageRoute({
     required this.builder,
     this.title,
-    RouteSettings? settings,
+    super.settings,
     this.maintainState = true,
-    bool fullscreenDialog = false,
-  }) : super(
-          settings: settings,
-          fullscreenDialog: fullscreenDialog,
-        ) {
+    super.fullscreenDialog,
+  }) {
     assert(opaque);
   }
 
@@ -341,6 +108,24 @@ class CupertinoPageRoute<T> extends PageRoute<T>
   String get debugLabel => '${super.debugLabel}(${settings.name})';
 }
 
+/// A mixin that implements methods and/or parameters of a [PageRoute].
+///
+/// Meant to be used as an override of methods/parameters implemented in
+/// [CupertinoRouteTransitionMixin].
+mixin CupertinoRouteTransitionOverrideMixin<T> on PageRoute<T> {
+  // fixes https://github.com/flutter/flutter/issues/105738
+  @override
+  Color? get barrierColor => null;
+
+  @override
+  RoutePopDisposition get popDisposition {
+    if (willHandlePopInternally) {
+      return RoutePopDisposition.pop;
+    }
+    return super.popDisposition;
+  }
+}
+
 /// Provides an iOS-style page transition animation.
 ///
 /// The page slides in from the right and exits in reverse. It also shifts to the left in
@@ -355,7 +140,7 @@ class CupertinoPageTransition extends StatelessWidget {
   ///  * `linearTransition` is whether to perform the transitions linearly.
   ///    Used to precisely track back gesture drags.
   CupertinoPageTransition({
-    Key? key,
+    super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
     required this.child,
@@ -388,8 +173,7 @@ class CupertinoPageTransition extends StatelessWidget {
                     parent: primaryRouteAnimation,
                     curve: Curves.linearToEaseOut,
                   ))
-            .drive(_CupertinoEdgeShadowDecoration.tween(linearTransition)),
-        super(key: key);
+            .drive(_CupertinoEdgeShadowDecoration.tween(linearTransition));
 
   // When this page is coming in to cover another page.
   final Animation<Offset> _primaryPositionAnimation;
@@ -435,7 +219,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
   ///  * `linearTransition` is whether to perform the secondary transition linearly.
   ///    Used to precisely track back gesture drags.
   CupertinoFullscreenDialogTransition({
-    Key? key,
+    super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
     required this.child,
@@ -454,8 +238,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
                     curve: Curves.linearToEaseOut,
                     reverseCurve: Curves.easeInToLinear,
                   ))
-            .drive(_kMiddleLeftTween),
-        super(key: key);
+            .drive(_kMiddleLeftTween);
 
   final Animation<Offset> _positionAnimation;
 
@@ -494,11 +277,11 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
 /// detector is associated.
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   const _CupertinoBackGestureDetector({
-    Key? key,
+    super.key,
     required this.enabledCallback,
     required this.onStartPopGesture,
     required this.child,
-  }) : super(key: key);
+  });
 
   final Widget child;
 
@@ -900,8 +683,17 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
 /// A custom cupertino transition builder to fix unwanted shadows in nested navigator
 ///
 /// This fixes the issue referenced here
-// https://stackoverflow.com/questions/53457772/why-there-is-a-shadow-between-nested-navigator
-// https://stackoverflow.com/questions/68986632/rid-of-elevation-of-nested-flutter-navigator-2-0
+/// https://stackoverflow.com/questions/53457772/why-there-is-a-shadow-between-nested-navigator
+/// https://stackoverflow.com/questions/68986632/rid-of-elevation-of-nested-flutter-navigator-2-0
+@Deprecated(
+  'The issue, this builder fixes, was already fixed in the freamework in v3.0.0'
+  '(https://github.com/flutter/flutter/pull/95537, '
+  'https://docs.flutter.dev/release/release-notes/release-notes-3.0.0) '
+  'so there is no more reason to use this builder. '
+  'Will be deleted in the next major release. '
+  'If you still need this builder for other reasons, '
+  'use CupertinoPageTransitionsBuilder instead. as it is completely identic',
+)
 class NoShadowCupertinoPageTransitionsBuilder extends PageTransitionsBuilder {
   /// Constructs a page transition animation that matches the iOS transition.
   const NoShadowCupertinoPageTransitionsBuilder();
@@ -914,7 +706,7 @@ class NoShadowCupertinoPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    return CustomCupertinoRouteTransitionMixin.buildPageTransitions<T>(
+    return CupertinoRouteTransitionMixin.buildPageTransitions<T>(
         route, context, animation, secondaryAnimation, child);
   }
 }

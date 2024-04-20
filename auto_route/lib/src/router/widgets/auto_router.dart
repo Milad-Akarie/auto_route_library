@@ -34,22 +34,20 @@ class AutoRouter extends StatefulWidget {
 
   /// Default constructor
   const AutoRouter({
-    Key? key,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    super.key,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
     this.navigatorKey,
     this.inheritNavigatorObservers = true,
     this.placeholder,
-  }) : super(key: key);
+  });
 
   /// Builds a [_DeclarativeAutoRouter] which uses
   /// a declarative list of routes to update navigator stack
   static Widget declarative({
     Key? key,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
@@ -82,8 +80,7 @@ class AutoRouter extends StatefulWidget {
     var scope = StackRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -155,7 +152,7 @@ class AutoRouterState extends State<AutoRouter> {
       navigatorObservers: _navigatorObservers,
       placeholder: widget.placeholder,
     );
-    final stateHash = controller!.stateHash;
+    final stateHash = _controller!.stateHash;
     return RouterScope(
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
@@ -196,17 +193,15 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final WidgetBuilder? placeholder;
 
   const _DeclarativeAutoRouter({
-    Key? key,
     required this.routes,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.navigatorKey,
     this.navRestorationScopeId,
     this.inheritNavigatorObservers = true,
     this.onNavigate,
     this.placeholder,
-  }) : super(key: key);
+  });
 
   @override
   _DeclarativeAutoRouterState createState() => _DeclarativeAutoRouterState();

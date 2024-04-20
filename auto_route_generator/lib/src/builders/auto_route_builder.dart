@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/src/builders/cache_aware_builder.dart';
-import 'package:auto_route_generator/src/models/routes_list.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
+import 'package:auto_route_generator/src/models/routes_list.dart';
 import 'package:auto_route_generator/src/resolvers/route_config_resolver.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-import 'package:auto_route/annotations.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(RoutePage);
 
@@ -32,7 +33,6 @@ final _cacheResource = Resource<Map<String, RoutesList>>(
 
 /// A [Builder] which generates json route files for annotated pages
 class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
-
   /// Default constructor
   AutoRouteBuilder({super.options})
       : super(

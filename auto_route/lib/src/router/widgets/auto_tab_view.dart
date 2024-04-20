@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/router/widgets/eager_page_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -14,14 +15,14 @@ class AutoTabView extends StatefulWidget {
   /// Creates a page view with one child per tab.
 
   const AutoTabView({
-    Key? key,
+    super.key,
     required this.animatePageTransition,
     required this.controller,
     this.physics,
     required this.router,
     this.scrollDirection = Axis.horizontal,
     this.dragStartBehavior = DragStartBehavior.start,
-  }) : super(key: key);
+  });
 
   /// Whether to use [TabController.animateToPage] or [TabController.jumpToPage]
   final bool animatePageTransition;
@@ -63,6 +64,7 @@ class AutoTabViewState extends State<AutoTabView> {
   late List<Widget> _children;
   int? _currentIndex;
   int _warpUnderwayCount = 0;
+  final _tabKeys = <int, GlobalKey<KeepAliveTabState>>{};
 
   TabsRouter get _router => widget.router;
 
@@ -78,6 +80,15 @@ class AutoTabViewState extends State<AutoTabView> {
     _controller.animation!.addListener(_handleTabControllerAnimationTick);
     _router.addListener(_updateChildren);
     _pageController = PageController(initialPage: _router.activeIndex);
+  }
+
+  /// Preload the page at [index]
+  bool preload(int index) {
+    final didPreload = _tabKeys[index]?.currentState?.preload() == true;
+    if (didPreload) {
+      _updateChildren();
+    }
+    return didPreload;
   }
 
   @override
@@ -108,17 +119,25 @@ class AutoTabViewState extends State<AutoTabView> {
     _children = List.generate(
       stack.length,
       (index) => KeepAliveTab(
-        key: ValueKey(index),
+        key: _tabKeys.putIfAbsent(index, () => GlobalKey()),
+        initiallyLoaded: _router.activeIndex == index,
         page: stack[index],
       ),
     );
+  }
+
+  void _disposeInactiveChildren() {
+    for (int i = 0; i < _tabKeys.length; i++) {
+      if (i != _router.activeIndex) {
+        _tabKeys[i]?.currentState?.unloadIfRequired();
+      }
+    }
   }
 
   void _handleTabControllerAnimationTick() {
     if (_warpUnderwayCount > 0 || !_controller.indexIsChanging) {
       return;
     } // This widget is driving the controller's animation.
-
     if (_controller.index != _currentIndex) {
       _currentIndex = _controller.index;
       _warpToCurrentIndex();
@@ -176,6 +195,9 @@ class AutoTabViewState extends State<AutoTabView> {
 
   // Called when the PageView scrolls
   bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollEndNotification) {
+      _disposeInactiveChildren();
+    }
     if (_warpUnderwayCount > 0) return false;
 
     if (notification.depth != 0) return false;
@@ -187,9 +209,18 @@ class AutoTabViewState extends State<AutoTabView> {
         _controller.index = _pageController.page!.round();
         _currentIndex = _controller.index;
       }
-      _controller.index = _pageController.page!.round();
+      final currentPage = _pageController.page!.round();
+      _controller.index = currentPage;
       _controller.offset =
           (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+      final deltaDx = notification.dragDetails?.delta.dx;
+      if (deltaDx != null) {
+        if (deltaDx > 0 && currentPage > 0) {
+          preload(currentPage - 1);
+        } else if (deltaDx < 0 && currentPage < _children.length) {
+          preload(currentPage + 1);
+        }
+      }
     } else if (notification is ScrollEndNotification) {
       _controller.index = _pageController.page!.round();
       _currentIndex = _controller.index;
@@ -207,7 +238,8 @@ class AutoTabViewState extends State<AutoTabView> {
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
       onNotification: _handleScrollNotification,
-      child: PageView(
+      child: EagerPageView(
+        cacheExtent: _children.length,
         scrollDirection: widget.scrollDirection,
         dragStartBehavior: widget.dragStartBehavior,
         controller: _pageController,

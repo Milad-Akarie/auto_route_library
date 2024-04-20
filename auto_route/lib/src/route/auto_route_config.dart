@@ -33,7 +33,7 @@ class AutoRoute {
   final bool usesPathAsKey;
 
   /// a Map of dynamic data that can be accessed by
-  /// [RouteData.mete] when the route is created
+  /// [RouteData.meta] when the route is created
   final Map<String, dynamic> meta;
 
   /// Indicates what kind of [PageRoute] this route will use
@@ -91,8 +91,7 @@ class AutoRoute {
     this.allowSnapshotting = true,
     this.initial = false,
     List<AutoRoute>? children,
-  })
-      : _path = path,
+  })  : _path = path,
         _children = children != null && children.isNotEmpty
             ? RouteCollection.fromList(children)
             : null;
@@ -113,8 +112,7 @@ class AutoRoute {
     required RouteCollection? children,
     required this.initial,
     required this.allowSnapshotting,
-  })
-      : _path = path,
+  })  : _path = path,
         _children = children;
 
   /// Builds a default AutoRoute instance with any [type]
@@ -273,9 +271,9 @@ class RedirectRoute extends AutoRoute {
     required super.path,
     required this.redirectTo,
   }) : super._(
-    name: 'Redirect#$path',
-    fullMatch: true,
-  );
+          name: 'Redirect#$path',
+          fullMatch: true,
+        );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.material] type
@@ -298,9 +296,9 @@ class MaterialRoute extends AutoRoute {
     super.initial,
     super.allowSnapshotting = true,
   }) : super._(
-    name: page.name,
-    type: const RouteType.material(),
-  );
+          name: page.name,
+          type: const RouteType.material(),
+        );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.cupertino] type
@@ -346,9 +344,9 @@ class AdaptiveRoute extends AutoRoute {
     super.keepHistory,
     super.allowSnapshotting = true,
   }) : super._(
-    name: page.name,
-    type: RouteType.adaptive(opaque: opaque),
-  );
+          name: page.name,
+          type: RouteType.adaptive(opaque: opaque),
+        );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
@@ -379,31 +377,32 @@ class CustomRoute extends AutoRoute {
     super.restorationId,
     Color? barrierColor,
   }) : super._(
-    name: page.name,
-    type: RouteType.custom(
-      transitionsBuilder: transitionsBuilder,
-      customRouteBuilder: customRouteBuilder,
-      durationInMilliseconds: durationInMilliseconds,
-      reverseDurationInMilliseconds: reverseDurationInMilliseconds,
-      opaque: opaque,
-      barrierDismissible: barrierDismissible,
-      barrierLabel: barrierLabel,
-      barrierColor: barrierColor,
-    ),
-  );
+          name: page.name,
+          type: RouteType.custom(
+            transitionsBuilder: transitionsBuilder,
+            customRouteBuilder: customRouteBuilder,
+            durationInMilliseconds: durationInMilliseconds,
+            reverseDurationInMilliseconds: reverseDurationInMilliseconds,
+            opaque: opaque,
+            barrierDismissible: barrierDismissible,
+            barrierLabel: barrierLabel,
+            barrierColor: barrierColor,
+          ),
+        );
 }
 
 /// Builds a simplified [AutoRoute] instance for test
 @visibleForTesting
 class TestRoute extends AutoRoute {
   /// Default constructor
-  TestRoute(String name, {
-    String? path,
+  TestRoute(
+    String name, {
+    super.path,
     super.children,
     super.fullMatch,
     super.restorationId,
     super.initial,
-  }) : super._(name: name, path: path);
+  }) : super._(name: name);
 }
 
 /// Builds a simplified [AutoRoute] instance for internal usage
@@ -411,7 +410,8 @@ class TestRoute extends AutoRoute {
 @internal
 class DummyRootRoute extends AutoRoute {
   /// Default constructor
-  DummyRootRoute(String name, {
+  DummyRootRoute(
+    String name, {
     required String path,
     super.children,
     super.fullMatch,
@@ -431,7 +431,8 @@ class DummyRootRoute extends AutoRoute {
 class RouteCollection {
   final Map<String, AutoRoute> _routesMap;
 
-  RouteCollection._(this._routesMap) : assert(_routesMap.isNotEmpty);
+  /// Default constructor
+  RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
 
   /// Creates a Map of config-entries from [routes]
   ///
@@ -444,8 +445,7 @@ class RouteCollection {
       {bool root = false}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(routesMarkedInitial.length > 1,
-        'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) =>
-        e.name)}');
+        'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');
 
     final targetInitialPath = root ? '/' : '';
     var routesMap = <String, AutoRoute>{};
@@ -480,7 +480,7 @@ class RouteCollection {
         ...routesMap,
       };
     }
-    return RouteCollection._(routesMap);
+    return RouteCollection(routesMap);
   }
 
   /// Returns the values of [_routesMap] as iterable
@@ -538,9 +538,9 @@ class RouteCollection {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is RouteCollection &&
-              runtimeType == other.runtimeType &&
-              const MapEquality().equals(_routesMap, other._routesMap);
+      other is RouteCollection &&
+          runtimeType == other.runtimeType &&
+          const MapEquality().equals(_routesMap, other._routesMap);
 
   @override
   int get hashCode => const MapEquality().hash(_routesMap);

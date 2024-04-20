@@ -24,13 +24,13 @@ class RouterScope extends InheritedWidget {
 
   /// Default constructor
   const RouterScope({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     required this.controller,
     this.navigatorObservers = const [],
     required this.inheritableObserversBuilder,
     required this.stateHash,
-  }) : super(child: child, key: key);
+  });
 
   /// Looks up and returns the scoped [controller]
   ///
@@ -89,11 +89,11 @@ class StackRouterScope extends InheritedWidget {
 
   /// Default constructor
   const StackRouterScope({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     required this.controller,
     required this.stateHash,
-  }) : super(child: child, key: key);
+  });
 
   /// Looks up and returns the scoped [controller]
   ///
@@ -128,11 +128,11 @@ class TabsRouterScope extends InheritedWidget {
 
   /// Default constructor
   const TabsRouterScope({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     required this.stateHash,
     required this.controller,
-  }) : super(child: child, key: key);
+  });
 
   /// Looks up and returns the scoped [controller]
   ///

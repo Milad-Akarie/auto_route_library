@@ -3,6 +3,151 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-03-29
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v8.0.2`](#auto_route---v802)
+ - [`auto_route_generator` - `v8.0.1`](#auto_route_generator---v801)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v8.0.1`
+
+---
+
+#### `auto_route` - `v8.0.2`
+
+ - **FIX**: only disable parent back gesture if the active child can pop.
+
+
+## 2024-03-27
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v8.0.1`](#auto_route---v801)
+ - [`auto_route_generator` - `v8.0.1`](#auto_route_generator---v801)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v8.0.1`
+
+---
+
+#### `auto_route` - `v8.0.1`
+
+ - **FIX**: back-gesture does not respect sub-routes.
+
+
+## 2024-03-23
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.10.0`](#auto_route---v7100)
+ - [`auto_route_generator` - `v7.3.3`](#auto_route_generator---v733)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v7.3.3`
+
+---
+
+#### `auto_route` - `v7.10.0`
+
+ - **FEAT**: AutoTabsRouter will now use the declared routes if AutoTabsRouter.routes is not provided.
+
+
+## 2024-03-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.9.1`](#auto_route---v791)
+ - [`auto_route_generator` - `v7.3.3`](#auto_route_generator---v733)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v7.3.3`
+
+---
+
+#### `auto_route` - `v7.9.1`
+
+ - **FIX**: incorrect top route information when deep-linking into an uninitialized tab route.
+
+
+## 2024-03-12
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v7.9.0`](#auto_route---v790)
+ - [`auto_route_generator` - `v7.3.3`](#auto_route_generator---v733)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v7.3.3`
+
+---
+
+#### `auto_route` - `v7.9.0`
+
+ - **REFACTOR**(example): remove unnecessary pageTransitionsTheme parameter.
+ - **FIX**: unable to get the label for back button(previous route title) and current route title on CupertinoNavigationBar and CupertinoSliverNavigationBar #1795.
+ - **FIX**: CupertinoNavigationBar and CupertinoSliverNavigationBar unable to get route title and previous route title.
+ - **FIX**: docstring typo(RouteData.mete -> RouteData.meta).
+ - **FIX**: keep TabsRouter.homeIndex in sync with AutoTabsRouter.homeIndex.
+ - **FEAT**: add back mixin to AutoRouteAware.
+
+
 ## 2023-10-05
 
 ### Changes

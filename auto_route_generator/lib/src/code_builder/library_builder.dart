@@ -1,21 +1,23 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:path/path.dart' as p;
 
 import '../../utils.dart';
 import '../models/route_config.dart';
 import '../models/router_config.dart';
 import 'deferred_pages_allocator.dart';
-import 'router_config_builder.dart';
 import 'route_info_builder.dart';
-import 'package:path/path.dart' as p;
+import 'router_config_builder.dart';
 
 /// AutoRoute imports
 const autoRouteImport = 'package:auto_route/auto_route.dart';
+
 /// Material imports
 const materialImport = 'package:flutter/material.dart';
 
 /// String type reference
 const Reference stringRefer = Reference('String');
+
 /// PageRouteInfo type reference
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 
@@ -63,7 +65,7 @@ String generateLibrary(
       ..comments.addAll([
         "ignore_for_file: type=lint",
         "coverage:ignore-file",
-         for(final ignore in ignoreForFile) "ignore_for_file: $ignore",
+        for (final ignore in ignoreForFile) "ignore_for_file: $ignore",
       ])
       ..body.addAll([
         buildRouterConfig(router, routes),

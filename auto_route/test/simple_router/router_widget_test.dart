@@ -40,7 +40,7 @@ void main() {
     await pumpRouterApp(tester, router);
     router.push(const SecondRoute());
     await tester.pumpAndSettle();
-    router.pop();
+    router.maybePop();
     await tester.pumpAndSettle();
     expectCurrentPage(router, FirstRoute.name);
     expect(router.urlState.url, '/');

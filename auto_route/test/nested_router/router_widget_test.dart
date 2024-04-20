@@ -40,7 +40,7 @@ void main() {
     router.push(SecondHostRoute());
     await tester.pumpAndSettle();
 
-    router.popTop();
+    router.maybePopTop();
     await tester.pumpAndSettle();
     expectTopPage(router, FirstRoute.name);
     expect(router.urlState.url, '/');
@@ -102,7 +102,7 @@ void main() {
       ],
     ));
     await tester.pumpAndSettle();
-    router.popTop();
+    router.maybePopTop();
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested1Route.name);
     expect(router.urlState.url, '/second');
@@ -116,7 +116,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 1);
     expect(router.urlState.url, '/second');
-    router.pop();
+    router.maybePop();
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 0);
     expect(router.urlState.url, '/');
@@ -133,7 +133,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 2);
     expect(router.urlState.url, '/second');
-    router.pop();
+    router.maybePop();
     await tester.pumpAndSettle();
     expect(router.childControllers.length, 1);
     expect(router.urlState.url, '/second');

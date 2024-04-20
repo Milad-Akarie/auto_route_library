@@ -4,8 +4,10 @@ import 'package:auto_route_generator/src/models/route_config.dart';
 class RoutesList {
   /// The list of [RouteConfig]s
   final List<RouteConfig> routes;
+
   /// The input path
   final String inputPath;
+
   /// The input hash
   final int? inputHash;
 
@@ -15,7 +17,6 @@ class RoutesList {
     required this.inputPath,
     required this.inputHash,
   });
-
 
   /// Serializes this instance to a JSON object.
   Map<String, dynamic> toJson() {

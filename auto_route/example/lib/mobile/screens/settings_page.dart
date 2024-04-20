@@ -10,7 +10,7 @@ class SettingsPage extends StatefulWidget {
 
   SettingsPage({
     Key? key,
-    @pathParam required this.tab,
+    @pathParam this.tab = 'none',
     @queryParam this.query = 'none',
   }) : super(key: key);
 

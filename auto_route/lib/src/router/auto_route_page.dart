@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/router/widgets/custom_cupertino_transitions_builder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,7 @@ import 'package:flutter/material.dart';
 /// Creates a RoutePage based on [routeData.type],
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
-  ///
+  /// The Route Data that's used to build the page
   final RouteData routeData;
   final Widget _child;
 
@@ -88,7 +87,7 @@ class AutoRoutePage<T> extends Page<T> {
     } else if (type is CustomRouteType) {
       final result = buildPage(context);
       if (type.customRouteBuilder != null) {
-        return type.customRouteBuilder!<T>(context, result, this);
+        return type.customRouteBuilder!(context, result, this) as Route<T>;
       }
       return _CustomPageBasedPageRouteBuilder<T>(page: this, routeType: type);
     } else if (type is AdaptiveRouteType) {
@@ -119,7 +118,17 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
 
   AutoRoutePage get _page => settings as AutoRoutePage;
 
-  List<VoidCallback> scopes = [];
+  @override
+  bool get willHandlePopInternally {
+    /// This fixes the issue of nested navigators back-gesture
+    /// It prevents back-gesture on parent navigator if sub-navigator
+    /// can pop
+    if (isCurrent) {
+      final router = _page.routeData.router;
+      return router.activeChildCanPop();
+    }
+    return super.willHandlePopInternally;
+  }
 
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
@@ -313,7 +322,9 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
 }
 
 class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
-    with CustomCupertinoRouteTransitionMixin<T> {
+    with
+        CupertinoRouteTransitionMixin<T>,
+        CupertinoRouteTransitionOverrideMixin<T> {
   _PageBasedCupertinoPageRoute({
     required AutoRoutePage<T> page,
     this.title,
@@ -338,4 +349,16 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
+
+  @override
+  bool get willHandlePopInternally {
+    /// This fixes the issue of nested navigators back-gesture
+    /// It prevents back-gesture on parent navigator if sub-navigator
+    /// can pop
+    if (isCurrent) {
+      final router = _page.routeData.router;
+      return router.activeChildCanPop();
+    }
+    return super.willHandlePopInternally;
+  }
 }

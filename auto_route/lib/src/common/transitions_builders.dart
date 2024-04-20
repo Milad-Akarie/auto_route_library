@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
+
 /// all of the methods in this file map to existing, already-tested flutter widgets
 /// so no-need to include them in test-coverage
 
 // coverage:ignore-file
-import 'package:flutter/material.dart';
-
 /// a class that holds presets of common route transition builder
 class TransitionsBuilders {
   const TransitionsBuilders._();

@@ -96,13 +96,12 @@ class RouteData {
           messages.add(
               'try navigating to ${_match.flattened.map((e) => e.name).join(' -> ')}');
         }
-        throw FlutterError('\n${messages.join('\n')}\n');
+        throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw FlutterError(
-          'Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw MissingRequiredParameterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }

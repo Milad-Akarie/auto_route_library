@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'main_router.dart';
 
 class TestPage extends StatelessWidget {
-  const TestPage({Key? key}) : super(key: key);
+  const TestPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +22,11 @@ class TestPage extends StatelessWidget {
 @RoutePage()
 class SecondHostPage extends StatelessWidget {
   const SecondHostPage({
-    Key? key,
+    super.key,
     this.useCustomLeading = false,
     this.hasDrawer = false,
-  }) : super(key: key);
+  });
+
   final bool useCustomLeading;
   final bool hasDrawer;
 
@@ -60,108 +61,114 @@ class SecondHostPage extends StatelessWidget {
 
 @RoutePage()
 class SecondNested1Page extends TestPage {
-  const SecondNested1Page({Key? key}) : super(key: key);
+  const SecondNested1Page({super.key});
 }
 
 @RoutePage()
 class SecondNested2Page extends TestPage {
-  const SecondNested2Page({Key? key}) : super(key: key);
+  const SecondNested2Page({super.key});
 }
 
 @RoutePage()
 class SecondNested3Page extends TestPage {
-  const SecondNested3Page({Key? key}) : super(key: key);
+  const SecondNested3Page({super.key});
 }
 
 @RoutePage()
 class NotFoundPage extends TestPage {
-  const NotFoundPage({Key? key}) : super(key: key);
+  const NotFoundPage({super.key});
 }
 
 @RoutePage()
 class FirstPage extends TestPage {
-  const FirstPage({Key? key}) : super(key: key);
+  const FirstPage({super.key});
 }
 
 @RoutePage()
 class SecondPage extends TestPage {
-  const SecondPage({Key? key}) : super(key: key);
+  const SecondPage({super.key});
 }
 
 @RoutePage()
 class ThirdPage extends TestPage {
-  const ThirdPage({Key? key}) : super(key: key);
+  const ThirdPage({super.key});
 }
 
 @RoutePage()
 class FourthPage extends TestPage {
-  const FourthPage({Key? key}) : super(key: key);
+  const FourthPage({super.key});
 }
 
 @RoutePage()
 class Tab1Page extends TestPage {
-  const Tab1Page({Key? key}) : super(key: key);
+  const Tab1Page({super.key});
 }
 
 @RoutePage()
 class Tab2Page extends AutoRouter {
-  const Tab2Page({Key? key}) : super(key: key);
+  const Tab2Page({super.key});
 }
 
 @RoutePage()
 class Tab3Page extends AutoRouter {
-  const Tab3Page({Key? key}) : super(key: key);
+  const Tab3Page({super.key});
 }
 
 @RoutePage()
 class Tab2Nested1Page extends TestPage {
-  const Tab2Nested1Page({Key? key}) : super(key: key);
+  const Tab2Nested1Page({super.key});
 }
 
 @RoutePage()
 class Tab2Nested2Page extends TestPage {
-  const Tab2Nested2Page({Key? key}) : super(key: key);
+  const Tab2Nested2Page({super.key});
 }
 
 @RoutePage()
 class Tab3Nested1Page extends TestPage {
-  const Tab3Nested1Page({Key? key}) : super(key: key);
+  const Tab3Nested1Page({super.key});
 }
 
 @RoutePage()
 class Tab3Nested2Page extends TestPage {
-  const Tab3Nested2Page({Key? key}) : super(key: key);
+  const Tab3Nested2Page({super.key});
 }
 
 @RoutePage()
 class TabsHostPage extends StatelessWidget {
   final String tabsType;
+  final bool useDefaultRoutes;
 
-  const TabsHostPage({Key? key, @queryParam this.tabsType = 'IndexedStack'})
-      : super(key: key);
+  const TabsHostPage({
+    super.key,
+    @queryParam this.tabsType = 'IndexedStack',
+    @queryParam this.useDefaultRoutes = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    const routes = [
-      Tab1Route(),
-      Tab2Route(),
-      Tab3Route(),
-    ];
+    final routes = useDefaultRoutes
+        ? null
+        : [
+            const Tab1Route(),
+            const Tab2Route(),
+            const Tab3Route(),
+          ];
 
     if (tabsType == 'IndexedStack') {
-      return const AutoTabsRouter(
+      return AutoTabsRouter(
         routes: routes,
       );
     }
 
     if (tabsType == 'PageView') {
-      return const AutoTabsRouter.pageView(
+      return AutoTabsRouter.pageView(
         routes: routes,
       );
     }
 
     if (tabsType == 'TabBar') {
-      return const AutoTabsRouter.tabBar(
+      return AutoTabsRouter.tabBar(
         routes: routes,
       );
     }
@@ -172,8 +179,8 @@ class TabsHostPage extends StatelessWidget {
 
 @RoutePage()
 class DeclarativeRouterHostScreen extends StatelessWidget {
-  const DeclarativeRouterHostScreen({Key? key, required this.pageNotifier})
-      : super(key: key);
+  const DeclarativeRouterHostScreen({super.key, required this.pageNotifier});
+
   final ValueNotifier<int> pageNotifier;
 
   @override

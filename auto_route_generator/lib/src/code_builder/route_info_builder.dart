@@ -5,7 +5,6 @@ import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
-
 /// Builds a route info class and args class for the given [RouteConfig]
 List<Class> buildRouteInfoAndArgs(
     RouteConfig r, RouterConfig router, DartEmitter emitter) {

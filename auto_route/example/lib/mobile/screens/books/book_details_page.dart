@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/data/db.dart';
 import 'package:flutter/material.dart';
-
-import '../../../data/db.dart';
 
 //ignore_for_file: public_member_api_docs
 @RoutePage(name: 'BookDetailsRoute')
@@ -9,7 +8,7 @@ class BookDetailsPage extends StatefulWidget {
   final int id;
 
   const BookDetailsPage({
-    @pathParam this.id = -1,
+    @pathParam this.id = -3,
   });
 
   @override
@@ -44,6 +43,18 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                         ),
                       ),
                       const SizedBox(height: 32),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.router.root.maybePop();
+                        },
+                        child: Text('Pop root'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.router.maybePop();
+                        },
+                        child: Text('Pop '),
+                      ),
                       FloatingActionButton(
                         heroTag: null,
                         onPressed: () {
