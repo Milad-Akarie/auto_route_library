@@ -572,6 +572,7 @@ abstract class RoutingController with ChangeNotifier {
     if (innerRouter?._activeChildController() != null) {
       return innerRouter!.canPop(
         ignorePagelessRoutes: ignorePagelessRoutes,
+        ignoreParentRoutes: true
       );
     }
     return false;
