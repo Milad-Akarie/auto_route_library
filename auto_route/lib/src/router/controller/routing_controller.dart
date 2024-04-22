@@ -563,26 +563,6 @@ abstract class RoutingController with ChangeNotifier {
     );
   }
 
-  RoutingController? _activeChildController() =>
-      _innerControllerOf(currentChild?.key);
-
-  /// returns true if the active child controller can pop
-  bool activeRouterCanPop({bool ignorePagelessRoutes = false}) {
-    final innerRouter = _activeChildController();
-    if (innerRouter != null) {
-      if (innerRouter._activeChildController() != null) {
-        return innerRouter.activeRouterCanPop(
-          ignorePagelessRoutes: ignorePagelessRoutes,
-        );
-      }
-      return innerRouter.canPop(
-        ignorePagelessRoutes: ignorePagelessRoutes,
-        ignoreParentRoutes: true,
-      );
-    }
-    return false;
-  }
-
   /// Collects the top-most visitable current-child of
   /// every top-most nested controller considering this controller as root
   List<RouteMatch> get currentSegments {

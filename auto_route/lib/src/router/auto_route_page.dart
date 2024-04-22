@@ -124,8 +124,7 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
     /// It prevents back-gesture on parent navigator if sub-router
     /// can pop
     if (isCurrent) {
-      final router = _page.routeData.router;
-      return router.activeRouterCanPop();
+      return false;
     }
     return super.willHandlePopInternally;
   }
@@ -356,8 +355,7 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
     /// It prevents back-gesture on parent navigator if sub-router
     /// can pop
     if (isCurrent) {
-      final router = _page.routeData.router;
-      return router.activeRouterCanPop();
+      return false;
     }
     return super.willHandlePopInternally;
   }
