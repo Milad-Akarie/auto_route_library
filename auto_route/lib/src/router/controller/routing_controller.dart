@@ -577,6 +577,7 @@ abstract class RoutingController with ChangeNotifier {
       }
       return innerRouter.canPop(
         ignorePagelessRoutes: ignorePagelessRoutes,
+        ignoreParentRoutes: true,
       );
     }
     return false;
