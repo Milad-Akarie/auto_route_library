@@ -794,7 +794,7 @@ MaterialApp.router(
     deepLinkTransformer: (uri) {
       if (uri.path.startsWith('/prefix')) {
         return SynchronousFuture(
-           uir.replace(path: uri.path.replaceFirst('/prefix', '')),
+        uri.replace(path: uri.path.replaceFirst('/prefix', '')),
           );
       }  
       return SynchronousFuture(uri);
