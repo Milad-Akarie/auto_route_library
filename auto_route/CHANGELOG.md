@@ -1,3 +1,7 @@
+## 8.1.1
+
+ - **FIX**: Can not swipe back on iOS when using nested navigation #1932.
+
 ## 8.1.0
 
 - **FEAT**: add deep-link transformer.  Allows parsing the URI for deep links before the
