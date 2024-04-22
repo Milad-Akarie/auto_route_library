@@ -1,12 +1,12 @@
 ## 8.1.0
 
-- **FEAT**: add deep-link transformer.  Allows parsing he URI for deep links before the
-  route matcher perform a match on the URI.  Especially useful when you use intent-filter
+- **FEAT**: add deep-link transformer.  Allows parsing the URI for deep links before the
+  route matcher performs a match on the URI.  Especially useful when you use intent-filter
   prefix on Android to only handle links from e.g com.example/FILTER.
 
   ```dart
   RouterConfig `<UrlState>` config({
-  deepLinkTransformer : Deelkink.prefixStripper('/filter'),
+  deepLinkTransformer : Deelkink.prefixStripper('FILTER'),
   )
   ```
 
@@ -28,7 +28,7 @@
 - **BREAKING CHANGE**: deep-links with no host e.g scheme://page/sub-page are no longer
   automatically handled, flutter's deep-link handler will treat [page] as host so we end up
   with [/sub-page] as a path which of course not going to match. if your deep-links are hostless
-  you'll need to handle them manually inside deepLinkBuilder.
+  you'll need to handle them manually inside deepLinkTransformer or deepLinkBuilder.
 
 ## 7.9.2
 

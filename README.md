@@ -226,7 +226,7 @@ router.pushAll([
   BooksListRoute(),
   BookDetailsRoute(id: 1),
 ]);
-// This's like providing a completely new stack as it rebuilds the stack
+// This is like providing a completely new stack as it rebuilds the stack
 // with the list of passed routes
 // entries might just update if already exist
 router.replaceAll([
@@ -364,7 +364,7 @@ context.maybePop();
 Nested navigation means building an inner router inside of a page of another router, for example in the below diagram users page is built inside of dashboard page.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/nested_router_demo.png?raw=true" height="370">
+  <img alt="nested-router-demo"  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/nested_router_demo.png?raw=true" height="370">
 </p>
 
 Defining nested routes is as easy as populating the children field of the parent route. In the following example  `UsersPage`, `PostsPage` and `SettingsPage` are nested children of `DashboardPage`.
@@ -639,7 +639,7 @@ class Dashboard extends StatelessWidget {
 Here's a simple diagram to help visualize this
 
 <p align="center">
-  <img  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">
+  <img  alt="scoped-router-demo" src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/scoped_routers_demo.png" height="570">
 </p>
 
 As you can tell from the above diagram it's possible to access parent routing controllers by calling `router.parent<T>()`, we're using a generic function because we have two different routing controllers: `StackRouter` and `TabsRouter`, one of them could be the parent controller of the current router and that's why we need to specify a type.
@@ -694,7 +694,7 @@ class _DashboardPageState extends State<DashboardPage> {
 You could also obtain access to inner-routers from outside their scope without a global key, as long as they're initiated.
 
 ```dart
-// assuming this's the root router
+// assuming this is the root router
 context.innerRouterOf<StackRouter>(UserRoute.name);
 // or if we're using an AutoTabsRouter inside of DashboardPage
 context.innerRouterOf<TabsRouter>(UserRoute.name);
@@ -782,6 +782,37 @@ getIt<AppRouter>().push(...);
 
 **AutoRoute** will automatically handle deep-links coming from the platform, but native platforms require some setup, see [Deep linking topic](https://docs.flutter.dev/ui/navigation/deep-linking) in flutter documentation.
 
+### Using Deep-link Transformer
+
+Deep link transformer intercepts deep-links before they're processed by the matcher, it's useful for stripping or modifying deep-links before they're matched.
+
+In the following example we will strip a prefix from the deep-link before it's matched.
+
+```dart
+MaterialApp.router(
+  routerConfig: _appRouter.config(
+    deepLinkTransformer: (uri) {
+      if (uri.path.startsWith('/prefix')) {
+        return SynchronousFuture(
+           uir.replace(path: uri.path.replaceFirst('/prefix', '')),
+          );
+      }  
+      return SynchronousFuture(uri);
+    }
+  ),
+);
+```
+**Note** for prefix stripping use the shipped-in `DeepLink.prefixStripper('prefix')`
+
+```dart
+MaterialApp.router(
+  routerConfig: _appRouter.config(
+    deepLinkTransformer: DeepLink.prefixStripper('prefix'),
+  ),
+);
+```
+
+```dart
 ### Using Deep-link Builder
 
 Deep link builder is an interceptor for deep-links where you can validate or override deep-links coming from the platform.
@@ -812,7 +843,7 @@ MaterialApp.router(
 - `/products`
 - `/products/:id`
 
-Now, receiving this deep-link `/products/123` will add all above routes to the stack. This of course requires `includePrefixMatches` to be true in the root config (default is true) or when using `pushNamed`, `navigateNamed` and `replaceNamed`.
+Now, receiving this deep-link `/products/123` will add all above routes to the stack. This of course requires `includePrefixMatches` to be true in the root config (default is `!kWeb`) or when using `pushNamed`, `navigateNamed` and `replaceNamed`.
 
 **Things to keep in mind**:
 

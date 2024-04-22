@@ -396,7 +396,8 @@ abstract class DeepLink {
         return SynchronousFuture(uri); // No change if prefix not found
       }
       return SynchronousFuture(
-          Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri);
+        Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri,
+      );
     };
   }
 }

@@ -21,6 +21,9 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   /// coming from platform and transform the [Uri].
   /// Especially useful to remove pathPrefixes use in filter-intent on Android
   /// or appLinks on Apple
+  ///
+  /// It's recommended to return [SynchronousFuture] of the transformed [Uri]
+  /// if you're doing any async operation in the transformer
   final DeepLinkTransformer? deepLinkTransformer;
 
   /// Default constructor
