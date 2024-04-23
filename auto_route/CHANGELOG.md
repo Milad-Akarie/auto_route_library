@@ -1,6 +1,12 @@
+## 8.1.2
+
+- **FIX**: Fixed back gesture when nested navigator only has one entry #1940
+
+
 ## 8.1.1
 
- - **FIX**: Can not swipe back on iOS when using nested navigation #1932.
+- **FIX**: Can not swipe back on iOS when using nested navigation #1932.
+
 
 ## 8.1.0
 
