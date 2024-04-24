@@ -86,8 +86,9 @@ class AutoRoutePage<T> extends Page<T> {
       return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
     } else if (type is CustomRouteType) {
       final result = buildPage(context);
-      if (type.customRouteBuilder != null) {
-        return type.customRouteBuilder!(context, result, this) as Route<T>;
+      final builder = (type as CustomRouteType<T>).customRouteBuilder;
+      if (builder != null) {
+        return builder(context, result, this);
       }
       return _CustomPageBasedPageRouteBuilder<T>(page: this, routeType: type);
     } else if (type is AdaptiveRouteType) {

@@ -351,7 +351,7 @@ class AdaptiveRoute extends AutoRoute {
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
 @immutable
-class CustomRoute extends AutoRoute {
+class CustomRoute<T> extends AutoRoute {
   /// Default constructor
   CustomRoute({
     required PageInfo page,
@@ -368,7 +368,7 @@ class CustomRoute extends AutoRoute {
     super.initial,
     super.allowSnapshotting = true,
     RouteTransitionsBuilder? transitionsBuilder,
-    CustomRouteBuilder? customRouteBuilder,
+    CustomRouteBuilder<T>? customRouteBuilder,
     int? durationInMilliseconds,
     int? reverseDurationInMilliseconds,
     bool opaque = true,
@@ -378,7 +378,7 @@ class CustomRoute extends AutoRoute {
     Color? barrierColor,
   }) : super._(
           name: page.name,
-          type: RouteType.custom(
+          type: RouteType<T>.custom(
             transitionsBuilder: transitionsBuilder,
             customRouteBuilder: customRouteBuilder,
             durationInMilliseconds: durationInMilliseconds,
