@@ -13,8 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
+
 part 'auto_route_guard.dart';
+
 part 'auto_router_delegate.dart';
+
 part 'root_stack_router.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -544,14 +547,15 @@ abstract class RoutingController with ChangeNotifier {
     );
   }
 
+  RoutingController? _activeChildController() => _innerControllerOf(currentChild?.key);
+
   /// returns true if the active child controller can pop
-  bool activeChildCanPop({
-    bool ignorePagelessRoutes = false,
-  }) {
-    final innerRouter = _innerControllerOf(currentChild?.key);
-    if (innerRouter != null) {
-      return innerRouter.canPop(
+  bool activeRouterCanPop({bool ignorePagelessRoutes = false}) {
+    final innerRouter = _activeChildController();
+    if (innerRouter?._activeChildController() != null) {
+      return innerRouter!.canPop(
         ignorePagelessRoutes: ignorePagelessRoutes,
+        ignoreParentRoutes: true,
       );
     }
     return false;
@@ -983,7 +987,7 @@ abstract class StackRouter extends RoutingController {
   /// e.g when the user is no longer authenticated
   /// and there are auth-protected routes in the stack
   ///
-  /// this will has no effect if there's a guard in progress
+  /// this will have no effect if there's a guard in progress
   Future<void> reevaluateGuards() async {
     final routes = _composeMatchesForReevaluate();
     if (routes != null) {

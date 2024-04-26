@@ -58,7 +58,8 @@ class Parameters {
   String getString(String key, [String? defaultValue]) {
     var val = _params[key] ?? defaultValue;
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [String] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError(
+          'Failed to parse [String] $key value from ${_params[key]}');
     }
     return val;
   }
@@ -81,7 +82,8 @@ class Parameters {
   int getInt(String key, [int? defaultValue]) {
     var val = optInt(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [int] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError(
+          'Failed to parse [int] $key value from ${_params[key]}');
     }
     return val;
   }
@@ -104,7 +106,8 @@ class Parameters {
   double getDouble(String key, [double? defaultValue]) {
     var val = optDouble(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [double] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError(
+          'Failed to parse [double] $key value from ${_params[key]}');
     }
     return val;
   }
@@ -127,7 +130,8 @@ class Parameters {
   num getNum(String key, [num? defaultValue]) {
     var val = optNum(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [num] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError(
+          'Failed to parse [num] $key value from ${_params[key]}');
     }
     return val;
   }
@@ -150,7 +154,8 @@ class Parameters {
   bool getBool(String key, [bool? defaultValue]) {
     var val = optBool(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [bool] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError(
+          'Failed to parse [bool] $key value from ${_params[key]}');
     }
     return val;
   }

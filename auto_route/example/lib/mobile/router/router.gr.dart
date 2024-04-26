@@ -56,7 +56,8 @@ abstract class $RootRouter extends _i9.RootStackRouter {
       );
     },
     LoginRoute.name: (routeData) {
-      final args = routeData.argsAs<LoginRouteArgs>(orElse: () => const LoginRouteArgs());
+      final args = routeData.argsAs<LoginRouteArgs>(
+          orElse: () => const LoginRouteArgs());
       return _i9.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: _i5.LoginPage(
@@ -141,7 +142,8 @@ class BookDetailsRoute extends _i9.PageRouteInfo<BookDetailsRouteArgs> {
 
   static const String name = 'BookDetailsRoute';
 
-  static const _i9.PageInfo<BookDetailsRouteArgs> page = _i9.PageInfo<BookDetailsRouteArgs>(name);
+  static const _i9.PageInfo<BookDetailsRouteArgs> page =
+      _i9.PageInfo<BookDetailsRouteArgs>(name);
 }
 
 class BookDetailsRouteArgs {
@@ -217,7 +219,8 @@ class LoginRoute extends _i9.PageRouteInfo<LoginRouteArgs> {
 
   static const String name = 'LoginRoute';
 
-  static const _i9.PageInfo<LoginRouteArgs> page = _i9.PageInfo<LoginRouteArgs>(name);
+  static const _i9.PageInfo<LoginRouteArgs> page =
+      _i9.PageInfo<LoginRouteArgs>(name);
 }
 
 class LoginRouteArgs {
@@ -258,7 +261,8 @@ class MyBooksRoute extends _i9.PageRouteInfo<MyBooksRouteArgs> {
 
   static const String name = 'MyBooksRoute';
 
-  static const _i9.PageInfo<MyBooksRouteArgs> page = _i9.PageInfo<MyBooksRouteArgs>(name);
+  static const _i9.PageInfo<MyBooksRouteArgs> page =
+      _i9.PageInfo<MyBooksRouteArgs>(name);
 }
 
 class MyBooksRouteArgs {
@@ -327,7 +331,8 @@ class SettingsTab extends _i9.PageRouteInfo<SettingsTabArgs> {
 
   static const String name = 'SettingsTab';
 
-  static const _i9.PageInfo<SettingsTabArgs> page = _i9.PageInfo<SettingsTabArgs>(name);
+  static const _i9.PageInfo<SettingsTabArgs> page =
+      _i9.PageInfo<SettingsTabArgs>(name);
 }
 
 class SettingsTabArgs {

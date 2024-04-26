@@ -121,11 +121,11 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
   @override
   bool get willHandlePopInternally {
     /// This fixes the issue of nested navigators back-gesture
-    /// It prevents back-gesture on parent navigator if sub-navigator
+    /// It prevents back-gesture on parent navigator if sub-router
     /// can pop
     if (isCurrent) {
       final router = _page.routeData.router;
-      return router.activeChildCanPop();
+      return router.activeRouterCanPop();
     }
     return super.willHandlePopInternally;
   }
@@ -353,11 +353,11 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
   @override
   bool get willHandlePopInternally {
     /// This fixes the issue of nested navigators back-gesture
-    /// It prevents back-gesture on parent navigator if sub-navigator
+    /// It prevents back-gesture on parent navigator if sub-router
     /// can pop
     if (isCurrent) {
       final router = _page.routeData.router;
-      return router.activeChildCanPop();
+      return router.activeRouterCanPop();
     }
     return super.willHandlePopInternally;
   }

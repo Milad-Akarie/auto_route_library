@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## 2024-03-31
+## 2024-04-22
 
 ### Changes
 
@@ -15,7 +15,7 @@ Packages with breaking changes:
 
 Packages with other changes:
 
- - [`auto_route` - `v8.0.3`](#auto_route---v803)
+ - [`auto_route` - `v8.1.1`](#auto_route---v811)
  - [`auto_route_generator` - `v8.0.1`](#auto_route_generator---v801)
 
 Packages with dependency updates only:
@@ -26,9 +26,9 @@ Packages with dependency updates only:
 
 ---
 
-#### `auto_route` - `v8.0.3`
+#### `auto_route` - `v8.1.1`
 
- - **FIX**: issue related to casting Custom Routes.
+ - **FIX**: Can not swipe back on iOS when using nested navigation #1932.
 
 
 ## 2024-03-29

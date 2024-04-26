@@ -20,6 +20,7 @@ abstract class RootStackRouter extends StackRouter {
   /// Returns a [RouterConfig] instead to be passed
   /// to [MaterialApp.router]
   RouterConfig<UrlState> config({
+    DeepLinkTransformer? deepLinkTransformer,
     DeepLinkBuilder? deepLinkBuilder,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
@@ -33,6 +34,7 @@ abstract class RootStackRouter extends StackRouter {
     return RouterConfig(
       routeInformationParser: defaultRouteParser(
         includePrefixMatches: includePrefixMatches,
+        deepLinkTransformer: deepLinkTransformer,
       ),
       routeInformationProvider: routeInfoProvider(
         neglectWhen: neglectWhen,
@@ -98,7 +100,8 @@ abstract class RootStackRouter extends StackRouter {
   AutoRouterDelegate? _lazyRootDelegate;
 
   /// Builds a lazy instance of [AutoRouterDelegate.declarative]
-  @Deprecated('Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
+  @Deprecated(
+      'Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
   AutoRouterDelegate declarativeDelegate({
     required RoutesBuilder routes,
     String? navRestorationScopeId,
@@ -142,9 +145,15 @@ abstract class RootStackRouter extends StackRouter {
   }
 
   /// Builds a lazy instance of [DefaultRouteParser]
-  DefaultRouteParser defaultRouteParser(
-          {bool includePrefixMatches = !kIsWeb}) =>
-      DefaultRouteParser(matcher, includePrefixMatches: includePrefixMatches);
+  DefaultRouteParser defaultRouteParser({
+    bool includePrefixMatches = !kIsWeb,
+    DeepLinkTransformer? deepLinkTransformer,
+  }) =>
+      DefaultRouteParser(
+        matcher,
+        includePrefixMatches: includePrefixMatches,
+        deepLinkTransformer: deepLinkTransformer ?? (uri) async => uri,
+      );
 
   AutoRoutePage _pageBuilder(RouteData data) {
     var builder = pagesMap[data.name];
