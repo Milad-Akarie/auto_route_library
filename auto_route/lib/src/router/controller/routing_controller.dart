@@ -13,11 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
-
 part 'auto_route_guard.dart';
-
 part 'auto_router_delegate.dart';
-
 part 'root_stack_router.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -547,13 +544,12 @@ abstract class RoutingController with ChangeNotifier {
     );
   }
 
-  RoutingController? _activeChildController() => _innerControllerOf(currentChild?.key);
 
   /// returns true if the active child controller can pop
   bool activeRouterCanPop({bool ignorePagelessRoutes = false}) {
-    final innerRouter = _activeChildController();
-    if (innerRouter?._activeChildController() != null) {
-      return innerRouter!.canPop(
+    final innerRouter = _innerControllerOf(currentChild?.key);
+    if (innerRouter != null) {
+      return innerRouter.canPop(
         ignorePagelessRoutes: ignorePagelessRoutes,
         ignoreParentRoutes: true,
       );

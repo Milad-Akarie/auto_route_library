@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as p;
+
 import '../../auto_route.dart';
 
 /// This is the result returned by [RouteMatcher]
@@ -117,8 +118,7 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren)
-          ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   /// Joins all segments to a valid path
@@ -244,6 +244,16 @@ class HierarchySegment {
     this.children = const [],
   });
 
+  /// Returns a pretty json output of this hierarchy
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      if (pathParams?.isNotEmpty == true) 'pathParams': pathParams!.rawMap,
+      if (queryParams?.isNotEmpty == true) 'queryParams': queryParams!.rawMap,
+      if (children.isNotEmpty) 'children': children.map((e) => e.toJson()).toList(),
+    };
+  }
+
   @override
   String toString() {
     return '$name: {pathParams: $pathParams, queryParams: $queryParams, children: $children}';
@@ -260,11 +270,7 @@ class HierarchySegment {
           const ListEquality().equals(children, other.children);
 
   @override
-  int get hashCode =>
-      name.hashCode ^
-      pathParams.hashCode ^
-      queryParams.hashCode ^
-      const ListEquality().hash(children);
+  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
 }
 
 /// An extension to create a pretty json output of
@@ -278,10 +284,8 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
     Map toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(segments.map(
         (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true)
-            'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true)
-            'queryParams': e.queryParams!.rawMap,
+          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
+          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
           if (e.children.isNotEmpty) 'children': toMap(e.children),
         }),
       ));
