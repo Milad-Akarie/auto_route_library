@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'navigation_history.dart'
     if (dart.library.io) 'native_navigation_history.dart'
-    if (dart.library.html) 'web_navigation_history.dart';
+    if (dart.library.js_interop) 'web_navigation_history.dart';
 
 /// An abstraction on a navigation history tracker
 /// that utilises browser history on web and mimics it on native
