@@ -23,7 +23,7 @@ abstract class AutoRouteGuard {
   }
 }
    */
-  void onNavigation(
+  FutureOr<void> onNavigation(
     NavigationResolver resolver,
     StackRouter router,
   );
@@ -195,16 +195,27 @@ class NavigationResolver {
     OnNavigationFailure? onFailure,
     bool replace = false,
   }) async {
-    return _router._redirect(
-      route,
-      onFailure: onFailure,
-      replace: replace,
-      onMatch: (scope, match) async {
-        await _completer.future;
-        scope.markUrlStateForReplace();
-        scope._removeRoute(match);
-      },
-    );
+    T? result;
+    try {
+      result = await _router._redirect<T?>(
+        route,
+        onFailure: onFailure,
+        replace: replace,
+        onMatch: (scope, match) {
+          scope.markUrlStateForReplace();
+          scope._removeRoute(match);
+        },
+      );
+    } finally {
+      _completer.complete(
+        const ResolverResult(
+          continueNavigation: false,
+          reevaluateNext: false,
+        ),
+      );
+    }
+
+    return result;
   }
 
   /// Helpful for when you want to revert to the previous

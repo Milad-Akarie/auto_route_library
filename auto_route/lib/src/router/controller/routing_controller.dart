@@ -1599,16 +1599,21 @@ abstract class StackRouter extends RoutingController {
     for (var guard in guards) {
       final completer = Completer<ResolverResult>();
       activeGuardObserver.add(guard);
-      guard.onNavigation(
-        NavigationResolver(
+      try {
+        await guard.onNavigation(
+          NavigationResolver(
+            this,
+            completer,
+            route,
+            pendingRoutes: pendingRoutes,
+            isReevaluating: isReevaluating,
+          ),
           this,
-          completer,
-          route,
-          pendingRoutes: pendingRoutes,
-          isReevaluating: isReevaluating,
-        ),
-        this,
-      );
+        );
+      } catch (_) {
+        activeGuardObserver.remove(guard);
+        rethrow;
+      }
       final result = await completer.future;
       breakOnReevaluate |= result.reevaluateNext;
       if (!result.continueNavigation) {
