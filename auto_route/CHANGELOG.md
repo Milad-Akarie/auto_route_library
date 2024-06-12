@@ -1,3 +1,8 @@
+## 8.2.0
+
+ - **FEAT**: migrate conditional import to js_interop.
+ - **FEAT**: update to web library.
+
 ## 8.1.4
 
  - **FIX**: fix an error when popping a nested route after flutter 3.22.0 #1973.
