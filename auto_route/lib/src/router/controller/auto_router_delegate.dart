@@ -264,6 +264,7 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
         controller: router,
         child: AutoRouteNavigator(
           router: router,
+          key: GlobalObjectKey(widget.router.hashCode),
           placeholder: widget.placeholder,
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: widget.navigatorObservers,
@@ -350,6 +351,7 @@ class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
         stateHash: stateHash,
         child: AutoRouteNavigator(
           router: controller,
+          key: GlobalObjectKey(controller.hashCode),
           declarativeRoutesBuilder: routes,
           navRestorationScopeId: navRestorationScopeId,
           navigatorObservers: _navigatorObservers,
