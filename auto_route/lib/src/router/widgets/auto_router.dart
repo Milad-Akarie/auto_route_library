@@ -151,6 +151,7 @@ class AutoRouterState extends State<AutoRouter> {
     assert(_controller != null);
     var navigator = AutoRouteNavigator(
       router: _controller!,
+      key: GlobalObjectKey(_controller.hashCode),
       navRestorationScopeId: widget.navRestorationScopeId,
       navigatorObservers: _navigatorObservers,
       placeholder: widget.placeholder,
@@ -275,6 +276,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         controller: _heroController,
         child: AutoRouteNavigator(
           router: _controller!,
+          key: GlobalObjectKey(_controller.hashCode),
           declarativeRoutesBuilder: widget.routes,
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: _navigatorObservers,

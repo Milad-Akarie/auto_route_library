@@ -119,15 +119,20 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
   AutoRoutePage get _page => settings as AutoRoutePage;
 
   @override
-  bool get willHandlePopInternally {
+  bool get popGestureEnabled {
     /// This fixes the issue of nested navigators back-gesture
     /// It prevents back-gesture on parent navigator if sub-router
     /// can pop
-    if (isCurrent) {
+    if (super.popGestureEnabled) {
       final router = _page.routeData.router;
-      return router.activeRouterCanPop();
+      final topMostRouter = router.topMostRouter();
+      return (router.isTopMost ||
+          !topMostRouter.canPop(
+            ignoreParentRoutes: true,
+            ignorePagelessRoutes: true,
+          ));
     }
-    return super.willHandlePopInternally;
+    return false;
   }
 
   @override
@@ -351,14 +356,19 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
-  bool get willHandlePopInternally {
+  bool get popGestureEnabled {
     /// This fixes the issue of nested navigators back-gesture
     /// It prevents back-gesture on parent navigator if sub-router
     /// can pop
-    if (isCurrent) {
+    if (super.popGestureEnabled) {
       final router = _page.routeData.router;
-      return router.activeRouterCanPop();
+      final topMostRouter = router.topMostRouter();
+      return (router.isTopMost ||
+          !topMostRouter.canPop(
+            ignoreParentRoutes: true,
+            ignorePagelessRoutes: true,
+          ));
     }
-    return super.willHandlePopInternally;
+    return false;
   }
 }

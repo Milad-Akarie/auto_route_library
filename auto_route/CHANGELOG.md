@@ -1,3 +1,7 @@
+## 8.1.4
+
+ - **FIX**: fix an error when popping a nested route after flutter 3.22.0 #1973.
+
 ## 8.1.3
 
  - **FIX**: Fixed back gesture when nested navigator only has multi nested entries.

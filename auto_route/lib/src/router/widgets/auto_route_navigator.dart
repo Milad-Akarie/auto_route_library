@@ -95,8 +95,10 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
                 widget.router.routeData.restorationId,
             pages: widget.router.stack,
             onPopPage: (route, result) {
-              if (!route.didPop(result)) {
-                return false;
+              if (route.willHandlePopInternally) {
+                final bool popped = route.didPop(result);
+                assert(!popped, 'pop result was not handled by the route');
+                return popped;
               }
               if (route.settings is AutoRoutePage) {
                 var routeData = (route.settings as AutoRoutePage).routeData;
@@ -104,7 +106,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
                 widget.didPop?.call(routeData.route, result);
               }
               route.onPopInvoked(true);
-              return true;
+              return route.didPop(result);
             },
           )
         : widget.placeholder?.call(context) ??

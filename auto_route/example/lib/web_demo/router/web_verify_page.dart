@@ -25,8 +25,6 @@ class WebVerifyPage extends StatelessWidget {
         body: Center(
           child: ElevatedButton(
             onPressed: () {
-              // print('root has Guards: ${context.router.activeGuardObserver.guardInProgress}' );
-              // print('nested has guards: ${context.router.innerRouterOf<StackRouter>(UserRoute.name)?.activeGuardObserver.guardInProgress}' );
               App.of(context).authService.isVerified = true;
               if (onResult != null) {
                 onResult!(true);
