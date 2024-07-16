@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-07-16
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v8.3.0`](#auto_route---v830)
+ - [`auto_route_generator` - `v8.1.0`](#auto_route_generator---v810)
+
+---
+
+#### `auto_route` - `v8.3.0`
+
+ - **FEAT**: add url#fragment support.
+
+#### `auto_route_generator` - `v8.1.0`
+
+ - **FEAT**: add url#fragment support.
+
+
 ## 2024-06-13
 
 ### Changes

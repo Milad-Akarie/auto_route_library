@@ -1,3 +1,7 @@
+## 8.3.0
+
+ - **FEAT**: add url#fragment support.
+
 ## 8.2.0
 
  - **FEAT**: migrate conditional import to js_interop.

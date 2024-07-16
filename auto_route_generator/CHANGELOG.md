@@ -1,3 +1,7 @@
+## 8.1.0
+
+ - **FEAT**: add url#fragment support.
+
 ## 8.0.0
 
 - **FEAT**: AutoTabsRouter will now use the declared routes if AutoTabsRouter.routes is not
