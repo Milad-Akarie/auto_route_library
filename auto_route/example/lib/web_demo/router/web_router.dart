@@ -100,6 +100,7 @@ class _MainWebPageState extends State<MainWebPage> {
                         UserRoute(
                           id: 2,
                           query: const ['value1', 'value2'],
+                          fragment: 'frag',
                         ),
                       );
                     },
@@ -279,11 +280,12 @@ class _UserPostsPageState extends State<UserPostsPage> {
 class UserPage extends StatefulWidget {
   final int id;
   final List<String>? query;
-
+  final String? fragment;
   UserPage({
     Key? key,
     @PathParam('userID') this.id = -1,
     @QueryParam() this.query,
+    @urlFragment this.fragment,
   }) : super(key: key);
 
   @override
@@ -300,7 +302,7 @@ class _UserPageState extends State<UserPage> {
         title: Builder(
           builder: (context) {
             return Text(context.topRouteMatch.name +
-                ' ${widget.id} query: ${widget.query}');
+                ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
           },
         ),
       ),

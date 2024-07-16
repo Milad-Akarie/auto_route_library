@@ -27,8 +27,8 @@ class RouteConfigResolver {
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute = classElement.allSupertypes.any((e) =>
-        e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
+    final hasWrappedRoute =
+        classElement.allSupertypes.any((e) => e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.getDisplayString(withNullability: false);
 
@@ -47,7 +47,7 @@ class RouteConfigResolver {
     var hasConstConstructor = false;
     var params = constructor!.parameters;
     var parameters = <ParamConfig>[];
-    if (params.isNotEmpty == true) {
+    if (params.isNotEmpty) {
       if (constructor.isConst &&
           params.length == 1 &&
           params.first.type.getDisplayString(withNullability: false) == 'Key') {
@@ -60,13 +60,17 @@ class RouteConfigResolver {
       }
     }
 
+    throwIf(
+      parameters.where((e) => e.isUrlFragment).length > 1,
+      'Only one parameter can be annotated with @urlFragment',
+      element: element,
+    );
+
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs = parameters.where((p) =>
-          (p.isRequired || p.isPositional) &&
-          !p.isPathParam &&
-          !p.isQueryParam);
+      var unParsableRequiredArgs =
+          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
         print(
             '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '

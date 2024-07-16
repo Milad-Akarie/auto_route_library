@@ -4,12 +4,14 @@ import '../models/route_config.dart';
 import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
+import 'package:collection/collection.dart';
 
 /// Builds a route info class and args class for the given [RouteConfig]
 List<Class> buildRouteInfoAndArgs(
     RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
   final parameters = r.parameters;
+  final fragmentParam = parameters.firstWhereOrNull((e)=> e.isUrlFragment);
   final nonInheritedParameters =
       parameters.where((p) => !p.isInheritedPathParam).toList();
   final pageInfoRefer = TypeReference(
@@ -105,6 +107,8 @@ List<Class> buildRouteInfoAndArgs(
                             ),
                       ),
                     ),
+                  if(fragmentParam != null)
+                    'fragment': refer(fragmentParam.name),
                   'initialChildren': refer('children'),
                 }).code);
             },

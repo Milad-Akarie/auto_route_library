@@ -140,11 +140,11 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
                                     Map.fromEntries(
                                       nonInheritedParameters
                                           .where((p) =>
-                                              (p.isPathParam || p.isQueryParam))
+                                              (p.isPathParam || p.isQueryParam || p.isUrlFragment))
                                           .map(
                                             (p) => MapEntry(
                                               p.name,
-                                              _getUrlParamAssignment(p),
+                                              _getUrlPartAssignment(p),
                                             ),
                                           ),
                                     ),
@@ -194,23 +194,25 @@ Expression _getPageInstance(RouteConfig r) {
       (p) => MapEntry(
         p.name,
         p.isInheritedPathParam
-            ? _getUrlParamAssignment(p)
+            ? _getUrlPartAssignment(p)
             : refer('args').property(p.name),
       ),
     )),
   );
 }
 
-Expression _getUrlParamAssignment(ParamConfig p) {
+Expression _getUrlPartAssignment(ParamConfig p) {
   if (p.isPathParam) {
     return refer('pathParams').property(p.getterMethodName).call([
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode!),
     ]);
-  } else {
+  }  else if(p.isQueryParam) {
     return refer('queryParams').property(p.getterMethodName).call([
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode!),
     ]);
+  }else{
+    return refer('routeData').property('fragment');
   }
 }

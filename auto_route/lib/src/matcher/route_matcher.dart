@@ -190,7 +190,8 @@ class RouteMatcher {
       final subRoutes = routes.subCollectionOf(route.routeName);
       if (route.hasChildren) {
         for (var childRoute in route.initialChildren!) {
-          var match = _matchByRoute(childRoute, subRoutes);
+          var match = _matchByRoute(
+              childRoute.copyWith(fragment: route.fragment), subRoutes);
           if (match == null) {
             return null;
           } else {
@@ -199,7 +200,14 @@ class RouteMatcher {
         }
       } else {
         // include default matches if exist
-        final defaultMatches = _match(Uri(path: ''), subRoutes);
+        final defaultMatches = _match(
+          Uri(
+            path: '',
+            queryParameters: _normalizeForUri(route.rawQueryParams),
+            fragment: route.fragment,
+          ),
+          subRoutes,
+        );
         if (defaultMatches != null) {
           childMatches.addAll(defaultMatches);
         }
@@ -280,6 +288,14 @@ class RouteMatcher {
       } else {
         queryMap[key] = null;
       }
+    }
+    return queryMap;
+  }
+
+  Map<String, dynamic> _normalizeForUri(Map<String, dynamic> queryParameters) {
+    final queryMap = <String, dynamic>{};
+    for (var key in queryParameters.keys) {
+      queryMap[key] = UrlState.normalizeQueryParamValue(queryParameters[key]);
     }
     return queryMap;
   }

@@ -45,6 +45,8 @@ class ParamConfig {
   /// whether the parameter is a path param
   final bool isPathParam;
 
+  /// whether the parameter is a url fragment
+  final bool isUrlFragment;
   /// whether the parameter is an inherited path param
   final bool isInheritedPathParam;
 
@@ -65,6 +67,7 @@ class ParamConfig {
     required this.isRequired,
     required this.isPathParam,
     required this.isQueryParam,
+    required this.isUrlFragment,
     required this.isInheritedPathParam,
     this.alias,
     this.defaultValueCode,
@@ -98,6 +101,9 @@ class ParamConfig {
         return type.isNullable ? 'optNum' : 'getNum';
       case 'bool':
         return type.isNullable ? 'optBool' : 'getBool';
+
+      case 'List' :
+        return type.isNullable ? 'optList' : 'getList';
       default:
         return 'get';
     }
@@ -118,6 +124,7 @@ class ParamConfig {
       'isRequired': this.isRequired,
       'isNamed': this.isNamed,
       'isPathParam': this.isPathParam,
+      'isUrlFragment': this.isUrlFragment,
       'isInheritedPathParam': this.isInheritedPathParam,
       'isQueryParam': this.isQueryParam,
       'defaultValueCode': this.defaultValueCode,
@@ -142,7 +149,9 @@ class ParamConfig {
       isPathParam: map['isPathParam'] as bool,
       isInheritedPathParam: map['isInheritedPathParam'] as bool,
       isQueryParam: map['isQueryParam'] as bool,
+      isUrlFragment: map['isUrlFragment'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
+
     );
   }
 }
@@ -177,6 +186,7 @@ class FunctionParamConfig extends ParamConfig {
           isQueryParam: false,
           isInheritedPathParam: false,
           isNamed: isNamed,
+          isUrlFragment: false,
           defaultValueCode: defaultValueCode,
           isPositional: isPositional,
           hasRequired: hasRequired,

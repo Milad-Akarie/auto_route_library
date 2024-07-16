@@ -126,6 +126,13 @@ void main() {
     expect(params.getBool('key2'), false);
   });
 
+  test('Calling Parameters.getList on a list value should return a <List>',
+      () {
+    const params = Parameters({'key': ['1', '2']});
+    expect(params.getList('key'), isA<List>());
+    expect(params.optList('key2'), null);
+  });
+
   test(
       'Adding two Parameters together should create a new Parameters instance with both keys and values ',
       () {

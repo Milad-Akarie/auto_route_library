@@ -26,7 +26,7 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
     (WidgetTester tester) async {
       await pumpRouter(tester);
       expectTopPage(router, Tab1Route.name);
-      expect(router.urlState.url, '/');
+      expect(router.urlState.path, '/');
     },
   );
 

@@ -11,12 +11,12 @@ import '../utils.dart';
 /// it also adds a list of [initialChildren] e.g:
 ///
 /// class BookListRoute extends PageRouteInfo {
-//   const BookListRoute({List<PageRouteInfo>? children})
-//    : super(name,initialChildren: children);
-//
-//   static const String name = 'BookListRoute';
-//   static const PageInfo<void> page = PageInfo<void>(name);
-// }
+///   const BookListRoute({List<PageRouteInfo>? children})
+///    : super(name,initialChildren: children);
+///
+///   static const String name = 'BookListRoute';
+///   static const PageInfo<void> page = PageInfo<void>(name);
+/// }
 
 @optionalTypeArgs
 @immutable
@@ -52,6 +52,9 @@ class PageRouteInfo<T> {
   /// this is only populated it's build from match [PageRouteInfo.fromMatch]
   final String? redirectedFrom;
 
+  /// The string match from the [RouteMatch]
+  final String? stringMatch;
+
   /// Default constructor
   const PageRouteInfo(
     this._name, {
@@ -59,10 +62,10 @@ class PageRouteInfo<T> {
     this.args,
     this.rawPathParams = const {},
     this.rawQueryParams = const {},
-    this.fragment = '',
-    String? stringMatch,
+    String? fragment,
+    this.stringMatch,
     this.redirectedFrom,
-  });
+  }) : fragment = fragment ?? '';
 
   /// The name of the route
   String get routeName => _name;

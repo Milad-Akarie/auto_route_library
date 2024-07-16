@@ -131,3 +131,15 @@ class QueryParam {
 
 /// default QueryParam()
 const queryParam = QueryParam();
+
+/// this annotation is used to mark a parameter as a  url fragment
+/// e.g /path#foo
+///
+/// so it can take its value from the url fragment automatically
+@Target({TargetKind.parameter})
+class UrlFragment {
+  const UrlFragment._();
+}
+
+/// default UrlFragment
+const urlFragment = UrlFragment._();

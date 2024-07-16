@@ -64,7 +64,8 @@ abstract class $WebAppRouter extends _i4.RootStackRouter {
                   'userID',
                   -1,
                 ),
-                query: queryParams.get('query'),
+                query: queryParams.optList('query'),
+                fragment: routeData.fragment,
               ));
       return _i4.AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -72,6 +73,7 @@ abstract class $WebAppRouter extends _i4.RootStackRouter {
           key: args.key,
           id: args.id,
           query: args.query,
+          fragment: args.fragment,
         ),
       );
     },
@@ -247,6 +249,7 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
     _i5.Key? key,
     int id = -1,
     List<String>? query,
+    String? fragment,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           UserRoute.name,
@@ -254,9 +257,11 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
             key: key,
             id: id,
             query: query,
+            fragment: fragment,
           ),
           rawPathParams: {'userID': id},
           rawQueryParams: {'query': query},
+          fragment: fragment,
           initialChildren: children,
         );
 
@@ -271,6 +276,7 @@ class UserRouteArgs {
     this.key,
     this.id = -1,
     this.query,
+    this.fragment,
   });
 
   final _i5.Key? key;
@@ -279,9 +285,11 @@ class UserRouteArgs {
 
   final List<String>? query;
 
+  final String? fragment;
+
   @override
   String toString() {
-    return 'UserRouteArgs{key: $key, id: $id, query: $query}';
+    return 'UserRouteArgs{key: $key, id: $id, query: $query, fragment: $fragment}';
   }
 }
 

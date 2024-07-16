@@ -8,13 +8,15 @@ class TestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(context.routeData.name),
-        Text(context.routeData.match),
-        Text(context.router.urlState.url),
-      ],
+    return Scaffold(
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(context.routeData.name),
+          Text(context.routeData.match),
+          Text(context.router.urlState.url),
+        ],
+      ),
     );
   }
 }
