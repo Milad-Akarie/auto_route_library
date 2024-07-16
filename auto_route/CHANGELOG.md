@@ -1,35 +1,35 @@
 ## 8.3.0
 
- - **FEAT**: add url#fragment support.
+- **FEAT**: add url#fragment support.
+- **FIX**: queryParams are not passed to child routes when matching by route name
+- **FIX**: array query params are not parsed correctly.
 
 ## 8.2.0
 
- - **FEAT**: migrate conditional import to js_interop.
- - **FEAT**: update to web library.
+- **FEAT**: migrate conditional import to js_interop.
+- **FEAT**: update to web library.
 
 ## 8.1.4
 
- - **FIX**: fix an error when popping a nested route after flutter 3.22.0 #1973.
+- **FIX**: fix an error when popping a nested route after flutter 3.22.0 #1973.
 
 ## 8.1.3
 
- - **FIX**: Fixed back gesture when nested navigator only has multi nested entries.
- - **FIX**: Can not swipe back on iOS when using nested navigation #1932.
+- **FIX**: Fixed back gesture when nested navigator only has multi nested entries.
+- **FIX**: Can not swipe back on iOS when using nested navigation #1932.
 
 ## 8.1.2
 
 - **FIX**: Fixed back gesture when nested navigator only has one entry #1940
 
-
 ## 8.1.1
 
 - **FIX**: Can not swipe back on iOS when using nested navigation #1932.
 
-
 ## 8.1.0
 
-- **FEAT**: add deep-link transformer.  Allows parsing the URI for deep links before the
-  route matcher performs a match on the URI.  Especially useful when you use intent-filter
+- **FEAT**: add deep-link transformer. Allows parsing the URI for deep links before the
+  route matcher performs a match on the URI. Especially useful when you use intent-filter
   prefix on Android to only handle links from e.g com.example/FILTER.
 
   ```dart

@@ -1,6 +1,6 @@
 ## 8.1.0
-
- - **FEAT**: add url#fragment support.
+- **FEAT**: add url#fragment support.
+- **CHORE**: update auto_route_generator dependencies
 
 ## 8.0.0
 
