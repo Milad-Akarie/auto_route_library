@@ -17,7 +17,9 @@ permissions:
 jobs:
   no-response:
     runs-on: ubuntu-latest
-    if: ${{ github.repository_owner != 'Milad-Akarie' }}
+    if: |
+      github.event.comment.author_association != 'OWNER' &&
+      github.event.comment.author_association != 'COLLABORATOR'
     steps:
       - uses: actions/stale@v9
         with:
