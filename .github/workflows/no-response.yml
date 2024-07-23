@@ -17,23 +17,32 @@ permissions:
 jobs:
   no-response:
     runs-on: ubuntu-latest
-    if: |
-      github.event.comment.author_association != 'OWNER' &&
-      github.event.comment.author_association != 'COLLABORATOR'
     steps:
-      - uses: actions/stale@v9
-        with:
-          # Don't automatically mark inactive issues+PRs as stale.
-          days-before-stale: -1
-          # Close needs-info issues and PRs after 14 days of inactivity.
-          days-before-close: 14
-          stale-issue-label: "needs-info"
-          close-issue-message: >
-            Without additional information we're not able to resolve this issue.
-            Feel free to add more info or respond to any questions above and we
-            can reopen the case. Thanks for your contribution!
-          stale-pr-label: "needs-info"
-          close-pr-message: >
-            Without additional information we're not able to resolve this PR.
-            Feel free to add more info or respond to any questions above.
-            Thanks for your contribution!
+        - name: Check issues where last comment is not by repo owner
+          uses: actions/github-script@v6
+          with:
+            github-token: ${{secrets.GITHUB_TOKEN}}
+            script: |
+              const owner = context.repo.owner;
+              const repo = context.repo.repo;
+              const issues = await github.rest.issues.listForRepo({
+                owner,
+                repo,
+                state: 'open'
+              });
+      
+              for (const issue of issues.data) {
+                const comments = await github.rest.issues.listComments({
+                  owner,
+                  repo,
+                  issue_number: issue.number
+                });
+      
+                if (comments.data.length > 0) {
+                  const lastComment = comments.data[comments.data.length - 1];
+                  if (lastComment.user.login !== owner) {
+                    console.log(`Issue #${issue.number} last commented by ${lastComment.user.login}`);
+                    // Perform your action here, e.g., tagging the issue, adding a comment, etc.
+                  }
+                }
+              }
