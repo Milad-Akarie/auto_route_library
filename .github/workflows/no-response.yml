@@ -7,7 +7,7 @@ name: No Response
 on:
   schedule:
     # Every day at 8am
-    - cron: '0 8 * * *'
+    - cron: '*/5 * * * *'
 
 # All permissions not specified are set to 'none'.
 permissions:
