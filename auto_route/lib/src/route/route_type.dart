@@ -11,7 +11,7 @@ typedef CustomRouteBuilder<T> = Route<T> Function(
 
 /// An abstraction of route types used by
 /// [AutoRoutePage.onCreateRoute] to decide transition animations
-abstract class RouteType {
+abstract class RouteType<T> {
   const RouteType._({this.opaque = true});
 
   /// Whether the target [Route] should be opaque
@@ -40,7 +40,7 @@ abstract class RouteType {
   /// Builds a [CustomRouteType] route type
   const factory RouteType.custom({
     RouteTransitionsBuilder? transitionsBuilder,
-    CustomRouteBuilder? customRouteBuilder,
+    CustomRouteBuilder<T>? customRouteBuilder,
     int? durationInMilliseconds,
     int? reverseDurationInMilliseconds,
     bool opaque,
@@ -51,13 +51,13 @@ abstract class RouteType {
 }
 
 /// Generates a route that uses [MaterialRouteTransitionMixin]
-class MaterialRouteType extends RouteType {
+class MaterialRouteType<T> extends RouteType<T> {
   /// Default constructor
   const MaterialRouteType() : super._(opaque: true);
 }
 
 /// Generates a route that uses [CupertinoRouteTransitionMixin]
-class CupertinoRouteType extends RouteType {
+class CupertinoRouteType<T> extends RouteType<T> {
   /// Default constructor
   const CupertinoRouteType() : super._(opaque: true);
 }
@@ -67,13 +67,13 @@ class CupertinoRouteType extends RouteType {
 /// ios,macos => [CupertinoRouteTransitionMixin]
 /// web => NoTransition
 /// any other platform => [MaterialRouteTransitionMixin]
-class AdaptiveRouteType extends RouteType {
+class AdaptiveRouteType<T> extends RouteType<T> {
   /// Default constructor
   const AdaptiveRouteType({super.opaque}) : super._();
 }
 
 /// Generates a route with user-defined transitions
-class CustomRouteType extends RouteType {
+class CustomRouteType<T> extends RouteType<T> {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
@@ -98,7 +98,7 @@ class CustomRouteType extends RouteType {
   /// this builder function accepts a BuildContext and a CustomPage
   /// that has all the other properties assigned to it
   /// so using them then is totally up to you.
-  final CustomRouteBuilder? customRouteBuilder;
+  final CustomRouteBuilder<T>? customRouteBuilder;
 
   /// route transition duration in milliseconds
   /// is passed to [PageRouteBuilder]
