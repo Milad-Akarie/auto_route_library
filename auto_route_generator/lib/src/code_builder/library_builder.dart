@@ -7,7 +7,6 @@ import '../models/route_config.dart';
 import '../models/router_config.dart';
 import 'deferred_pages_allocator.dart';
 import 'route_info_builder.dart';
-import 'router_config_builder.dart';
 
 /// AutoRoute imports
 const autoRouteImport = 'package:auto_route/auto_route.dart';
@@ -68,7 +67,6 @@ String generateLibrary(
         for (final ignore in ignoreForFile) "ignore_for_file: $ignore",
       ])
       ..body.addAll([
-        buildRouterConfig(router, routes),
         if (routes.isNotEmpty)
           ...routes
               .distinctBy((e) => e.getName(router.replaceInRouteName))

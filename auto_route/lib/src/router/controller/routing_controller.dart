@@ -501,8 +501,6 @@ abstract class RoutingController with ChangeNotifier {
         );
   }
 
-  /// The builder used to build routable pages
-  PageBuilder get pageBuilder;
 
   /// Clients can either pop their own [_pages] stack
   /// or defer the call to a parent controller
@@ -644,8 +642,6 @@ class TabsRouter extends RoutingController {
   @override
   final RouteCollection routeCollection;
   @override
-  final PageBuilder pageBuilder;
-  @override
   final RouteMatcher matcher;
   RouteData _routeData;
   int _activeIndex = 0;
@@ -661,7 +657,6 @@ class TabsRouter extends RoutingController {
   /// Default constructor
   TabsRouter(
       {required this.routeCollection,
-      required this.pageBuilder,
       required this.key,
       required RouteData routeData,
       this.homeIndex = -1,
@@ -786,7 +781,7 @@ class TabsRouter extends RoutingController {
     for (var route in routes) {
       var data = _createRouteData(route, routeData);
       try {
-        _pages.add(pageBuilder(data));
+        _pages.add(data.buildPage())  ;
       } on MissingRequiredParameterError catch (e) {
         if (fromDefault) {
           throw FlutterError(
@@ -800,6 +795,8 @@ class TabsRouter extends RoutingController {
       }
     }
   }
+
+
 
   @override
   List<RouteMatch>? _composeMatchesForReevaluate() {
@@ -867,7 +864,7 @@ class TabsRouter extends RoutingController {
         }
         final data = _createRouteData(mayUpdateRoute, routeData);
 
-        _pages[pageToUpdateIndex] = pageBuilder(data);
+        _pages[pageToUpdateIndex] = data.buildPage();
 
         final hasInitCtrl = _innerControllerOf(mayUpdateRoute.key) != null;
 
@@ -1037,8 +1034,6 @@ abstract class StackRouter extends RoutingController {
   @override
   RouteCollection get routeCollection;
 
-  @override
-  PageBuilder get pageBuilder;
 
   @override
   RouteMatcher get matcher;
@@ -1522,7 +1517,7 @@ abstract class StackRouter extends RoutingController {
       }
       routesToPush.add(match);
       final data = _createRouteData(match, routeData);
-      _pages.add(pageBuilder(data));
+      _pages.add(data.buildPage());
     }
 
     navigationHistory.onNewUrlState(
@@ -1603,16 +1598,14 @@ abstract class StackRouter extends RoutingController {
       _removeRoute(topRoute._match, notify: false);
     }
     final data = _createRouteData(route, routeData);
-    final page = pageBuilder(data);
+    final page = data.buildPage<T>();
     _pages.add(page);
     if (notify) {
       notifyAll();
     }
-    return (page as AutoRoutePage<T>).popped;
+    return page.popped;
   }
 
-  late final AutoRouteGuard? _rootGuard =
-      (root is AutoRouteGuard) ? (root as AutoRouteGuard) : null;
 
   Future<ResolverResult> _canNavigate(
     RouteMatch route, {
@@ -1620,8 +1613,9 @@ abstract class StackRouter extends RoutingController {
     List<RouteMatch> pendingRoutes = const [],
     bool isReevaluating = false,
   }) async {
+
     final guards = <AutoRouteGuard>[
-      if (_rootGuard != null) _rootGuard!,
+       ...root.guards,
       ...route.guards,
     ];
     if (guards.isEmpty) {
@@ -1820,8 +1814,7 @@ class NestedStackRouter extends StackRouter {
   final RouteMatcher matcher;
   @override
   final RouteCollection routeCollection;
-  @override
-  final PageBuilder pageBuilder;
+
   @override
   final bool managedByWidget;
 
@@ -1830,7 +1823,6 @@ class NestedStackRouter extends StackRouter {
   /// Default constructor
   NestedStackRouter({
     required this.routeCollection,
-    required this.pageBuilder,
     required super.key,
     required RouteData routeData,
     this.managedByWidget = false,

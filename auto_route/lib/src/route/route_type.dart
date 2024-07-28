@@ -73,7 +73,7 @@ class AdaptiveRouteType extends RouteType {
 }
 
 /// Generates a route with user-defined transitions
-class CustomRouteType extends RouteType {
+class CustomRouteType<R> extends RouteType {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
@@ -98,7 +98,7 @@ class CustomRouteType extends RouteType {
   /// this builder function accepts a BuildContext and a CustomPage
   /// that has all the other properties assigned to it
   /// so using them then is totally up to you.
-  final CustomRouteBuilder? customRouteBuilder;
+  final CustomRouteBuilder<R>? customRouteBuilder;
 
   /// route transition duration in milliseconds
   /// is passed to [PageRouteBuilder]

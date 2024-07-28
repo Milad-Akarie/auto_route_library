@@ -1,29 +1,38 @@
+
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+
+
+
 //ignore_for_file: public_member_api_docs
 @AutoRouterConfig(generateForDir: ['lib/web_demo'])
-class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
+class WebAppRouter extends RootStackRouter {
   AuthService authService;
 
   WebAppRouter(this.authService);
 
   @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) async {
-    if (authService.isAuthenticated ||
-        resolver.routeName == WebLoginRoute.name) {
-      resolver.next();
-    } else {
-      resolver.redirect(
-        WebLoginRoute(onResult: (didLogin) {
-          resolver.resolveNext(didLogin, reevaluateNext: false);
-        }),
-      );
-    }
-  }
+  late final List<AutoRouteGuard> guards = [
+    AutoRouteGuard.simple(
+      (resolver, scope) {
+        if (authService.isAuthenticated || resolver.routeName == WebLoginRoute.name) {
+          resolver.next();
+        } else {
+          resolver.redirect(
+            WebLoginRoute(onResult: (didLogin) {
+              resolver.resolveNext(didLogin, reevaluateNext: false);
+            }),
+          );
+        }
+      },
+    )
+  ];
+
+
 
   @override
   List<AutoRoute> get routes => [
@@ -44,15 +53,13 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
                     if (authService.isVerified) {
                       resolver.next();
                     } else {
-                      resolver
-                          .redirect(WebVerifyRoute(onResult: resolver.next));
+                      resolver.redirect(WebVerifyRoute(onResult: resolver.next));
                     }
                   },
                 )
               ],
               children: [
-                AutoRoute(
-                    path: 'all', page: UserAllPostsRoute.page, initial: true),
+                AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
                 AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
               ],
             ),
@@ -95,14 +102,17 @@ class _MainWebPageState extends State<MainWebPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: widget.navigate ??
-                    () {
-                      context.pushRoute(
-                        UserRoute(
-                          id: 2,
-                          query: const ['value1', 'value2'],
-                          fragment: 'frag',
-                        ),
-                      );
+                    () async {
+
+                 final x = await MainWebRoute().push<String>(context);
+                 print(x);
+                      // context.pushRoute(
+                      //   UserRoute(
+                      //     id: 2,
+                      //     query: const ['value1', 'value2'],
+                      //     fragment: 'frag',
+                      //   ),
+                      // );
                     },
                 child: Text('Navigate to user/2'),
               ),
@@ -111,7 +121,8 @@ class _MainWebPageState extends State<MainWebPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
-                  App.of(context).authService.isAuthenticated = false;
+                  context.maybePop('String');
+                  // App.of(context).authService.isAuthenticated = false;
                 },
                 child: Text('Logout'),
               ),
@@ -119,8 +130,7 @@ class _MainWebPageState extends State<MainWebPage> {
             if (kIsWeb)
               ElevatedButton(
                 onPressed: () {
-                  final currentState =
-                      ((context.router.pathState as int?) ?? 0);
+                  final currentState = ((context.router.pathState as int?) ?? 0);
                   context.router.pushPathState(currentState + 1);
                 },
                 child: AnimatedBuilder(
@@ -281,6 +291,7 @@ class UserPage extends StatefulWidget {
   final int id;
   final List<String>? query;
   final String? fragment;
+
   UserPage({
     Key? key,
     @PathParam('userID') this.id = -1,
@@ -301,8 +312,8 @@ class _UserPageState extends State<UserPage> {
         leading: AutoLeadingButton(),
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name +
-                ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
+            return Text(
+                context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
           },
         ),
       ),

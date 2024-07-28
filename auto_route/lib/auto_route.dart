@@ -1,5 +1,7 @@
 library auto_route;
 
+import 'package:flutter/material.dart';
+
 export 'src/auto_router_module.dart';
 export 'src/common/common.dart';
 export 'src/matcher/route_match.dart';
@@ -24,3 +26,28 @@ export 'src/router/widgets/auto_tabs_router.dart';
 export 'src/router/widgets/auto_tabs_scaffold.dart';
 export 'src/router/widgets/custom_cupertino_transitions_builder.dart';
 export 'src/router/widgets/deferred_widget.dart';
+
+extension IterableX<T> on Iterable<T>? {
+  bool get isNullOrEmpty => this == null || this!.isEmpty;
+}
+
+extension BoolX on bool? {
+  bool get isTrue => this == true;
+
+  bool get isFalse => this == false;
+}
+
+
+extension StringGuardX on String? {
+  bool get isNullOrEmpty => this == null || this!.isEmpty;
+  bool get isNullOrBlank => this == null || this!.trim().isEmpty;
+
+  T let<T>(T Function(String str) block, T Function() orElse) => isNullOrEmpty ? orElse() : block(this!);
+}
+
+void worker() {
+  String? name;
+  print(name.isNullOrBlank);
+  Widget nameWidget = name.let(Text.new, SizedBox.new);
+}
+

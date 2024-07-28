@@ -12,144 +12,6 @@ part of 'main_router.dart';
 abstract class _$MainRouter extends RootStackRouter {
   // ignore: unused_element
   _$MainRouter({super.navigatorKey});
-
-  @override
-  final Map<String, PageFactory> pagesMap = {
-    DeclarativeRouterHostRoute.name: (routeData) {
-      final args = routeData.argsAs<DeclarativeRouterHostRouteArgs>();
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: DeclarativeRouterHostScreen(
-          key: args.key,
-          pageNotifier: args.pageNotifier,
-        ),
-      );
-    },
-    FirstRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const FirstPage(),
-      );
-    },
-    FourthRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const FourthPage(),
-      );
-    },
-    NotFoundRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const NotFoundPage(),
-      );
-    },
-    SecondHostRoute.name: (routeData) {
-      final args = routeData.argsAs<SecondHostRouteArgs>(
-          orElse: () => const SecondHostRouteArgs());
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: SecondHostPage(
-          key: args.key,
-          useCustomLeading: args.useCustomLeading,
-          hasDrawer: args.hasDrawer,
-        ),
-      );
-    },
-    SecondNested1Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SecondNested1Page(),
-      );
-    },
-    SecondNested2Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SecondNested2Page(),
-      );
-    },
-    SecondNested3Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SecondNested3Page(),
-      );
-    },
-    SecondRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const SecondPage(),
-      );
-    },
-    Tab1Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const Tab1Page(),
-      );
-    },
-    Tab2Nested1Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const Tab2Nested1Page(),
-      );
-    },
-    Tab2Nested2Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const Tab2Nested2Page(),
-      );
-    },
-    Tab2Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const Tab2Page(),
-      );
-    },
-    Tab3Nested1Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const Tab3Nested1Page(),
-      );
-    },
-    Tab3Nested2Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const Tab3Nested2Page(),
-      );
-    },
-    Tab3Route.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const Tab3Page(),
-      );
-    },
-    TabsHostRoute.name: (routeData) {
-      final queryParams = routeData.queryParams;
-      final args = routeData.argsAs<TabsHostRouteArgs>(
-          orElse: () => TabsHostRouteArgs(
-                tabsType: queryParams.getString(
-                  'tabsType',
-                  'IndexedStack',
-                ),
-                useDefaultRoutes: queryParams.getBool(
-                  'useDefaultRoutes',
-                  false,
-                ),
-              ));
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: TabsHostPage(
-          key: args.key,
-          tabsType: args.tabsType,
-          useDefaultRoutes: args.useDefaultRoutes,
-        ),
-      );
-    },
-    ThirdRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const ThirdPage(),
-      );
-    },
-  };
 }
 
 /// generated route for
@@ -171,8 +33,16 @@ class DeclarativeRouterHostRoute
 
   static const String name = 'DeclarativeRouterHostRoute';
 
-  static const PageInfo<DeclarativeRouterHostRouteArgs> page =
-      PageInfo<DeclarativeRouterHostRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<DeclarativeRouterHostRouteArgs>();
+      return DeclarativeRouterHostScreen(
+        key: args.key,
+        pageNotifier: args.pageNotifier,
+      );
+    },
+  );
 }
 
 class DeclarativeRouterHostRouteArgs {
@@ -202,7 +72,12 @@ class FirstRoute extends PageRouteInfo<void> {
 
   static const String name = 'FirstRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const FirstPage();
+    },
+  );
 }
 
 /// generated route for
@@ -216,7 +91,12 @@ class FourthRoute extends PageRouteInfo<void> {
 
   static const String name = 'FourthRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const FourthPage();
+    },
+  );
 }
 
 /// generated route for
@@ -230,7 +110,12 @@ class NotFoundRoute extends PageRouteInfo<void> {
 
   static const String name = 'NotFoundRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const NotFoundPage();
+    },
+  );
 }
 
 /// generated route for
@@ -253,8 +138,18 @@ class SecondHostRoute extends PageRouteInfo<SecondHostRouteArgs> {
 
   static const String name = 'SecondHostRoute';
 
-  static const PageInfo<SecondHostRouteArgs> page =
-      PageInfo<SecondHostRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<SecondHostRouteArgs>(
+          orElse: () => const SecondHostRouteArgs());
+      return SecondHostPage(
+        key: args.key,
+        useCustomLeading: args.useCustomLeading,
+        hasDrawer: args.hasDrawer,
+      );
+    },
+  );
 }
 
 class SecondHostRouteArgs {
@@ -287,7 +182,12 @@ class SecondNested1Route extends PageRouteInfo<void> {
 
   static const String name = 'SecondNested1Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SecondNested1Page();
+    },
+  );
 }
 
 /// generated route for
@@ -301,7 +201,12 @@ class SecondNested2Route extends PageRouteInfo<void> {
 
   static const String name = 'SecondNested2Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SecondNested2Page();
+    },
+  );
 }
 
 /// generated route for
@@ -315,7 +220,12 @@ class SecondNested3Route extends PageRouteInfo<void> {
 
   static const String name = 'SecondNested3Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SecondNested3Page();
+    },
+  );
 }
 
 /// generated route for
@@ -329,7 +239,12 @@ class SecondRoute extends PageRouteInfo<void> {
 
   static const String name = 'SecondRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SecondPage();
+    },
+  );
 }
 
 /// generated route for
@@ -343,7 +258,12 @@ class Tab1Route extends PageRouteInfo<void> {
 
   static const String name = 'Tab1Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const Tab1Page();
+    },
+  );
 }
 
 /// generated route for
@@ -357,7 +277,12 @@ class Tab2Nested1Route extends PageRouteInfo<void> {
 
   static const String name = 'Tab2Nested1Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const Tab2Nested1Page();
+    },
+  );
 }
 
 /// generated route for
@@ -371,7 +296,12 @@ class Tab2Nested2Route extends PageRouteInfo<void> {
 
   static const String name = 'Tab2Nested2Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const Tab2Nested2Page();
+    },
+  );
 }
 
 /// generated route for
@@ -385,7 +315,12 @@ class Tab2Route extends PageRouteInfo<void> {
 
   static const String name = 'Tab2Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const Tab2Page();
+    },
+  );
 }
 
 /// generated route for
@@ -399,7 +334,12 @@ class Tab3Nested1Route extends PageRouteInfo<void> {
 
   static const String name = 'Tab3Nested1Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const Tab3Nested1Page();
+    },
+  );
 }
 
 /// generated route for
@@ -413,7 +353,12 @@ class Tab3Nested2Route extends PageRouteInfo<void> {
 
   static const String name = 'Tab3Nested2Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const Tab3Nested2Page();
+    },
+  );
 }
 
 /// generated route for
@@ -427,7 +372,12 @@ class Tab3Route extends PageRouteInfo<void> {
 
   static const String name = 'Tab3Route';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const Tab3Page();
+    },
+  );
 }
 
 /// generated route for
@@ -454,8 +404,28 @@ class TabsHostRoute extends PageRouteInfo<TabsHostRouteArgs> {
 
   static const String name = 'TabsHostRoute';
 
-  static const PageInfo<TabsHostRouteArgs> page =
-      PageInfo<TabsHostRouteArgs>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final queryParams = data.queryParams;
+      final args = data.argsAs<TabsHostRouteArgs>(
+          orElse: () => TabsHostRouteArgs(
+                tabsType: queryParams.getString(
+                  'tabsType',
+                  'IndexedStack',
+                ),
+                useDefaultRoutes: queryParams.getBool(
+                  'useDefaultRoutes',
+                  false,
+                ),
+              ));
+      return TabsHostPage(
+        key: args.key,
+        tabsType: args.tabsType,
+        useDefaultRoutes: args.useDefaultRoutes,
+      );
+    },
+  );
 }
 
 class TabsHostRouteArgs {
@@ -488,5 +458,10 @@ class ThirdRoute extends PageRouteInfo<void> {
 
   static const String name = 'ThirdRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const ThirdPage();
+    },
+  );
 }

@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web_demo/router/web_router.dart';
+import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
@@ -22,16 +22,19 @@ class AppState extends State<App> {
       setState(() {});
     });
 
-  late final _appRouter = WebAppRouter(authService);
+  late final _router = AutoRouterRoot(
+    routes: [
+      AutoRoute(page: MainWebRoute.page,initial: true),
+    ],
+  );
 
-  List<PageRouteInfo>? urlRoutes;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      routerConfig: _appRouter.config(
+      routerConfig: _router.config(
         reevaluateListenable: authService,
       ),
     );

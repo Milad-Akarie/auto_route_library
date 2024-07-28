@@ -195,7 +195,6 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
         routeCollection: _parentController.routeCollection.subCollectionOf(
           parentRoute.name,
         ),
-        pageBuilder: _parentController.pageBuilder,
       );
       _parentController.attachChildController(_controller!);
       _setupController();
