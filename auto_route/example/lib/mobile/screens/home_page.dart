@@ -55,7 +55,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(context) {
-    print('HomePageState.build');
     // builder will rebuild everytime this router's stack
     // updates
     // we need it to indicate which NavigationRailDestination is active
@@ -67,19 +66,20 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               (d) => context.router.isRouteActive(d.route.routeName),
             );
             // there might be no active route until router is mounted
-            // so we play safe
+            // so we play it safe
             if (activeIndex == -1) {
               activeIndex = 0;
             }
             return Row(
               children: [
                 NavigationRail(
-                  destinations: destinations
-                      .map((item) => NavigationRailDestination(
-                            icon: Icon(item.icon),
-                            label: Text(item.label),
-                          ))
-                      .toList(),
+                  destinations: [
+                    for (final d in destinations)
+                      NavigationRailDestination(
+                        icon: Icon(d.icon),
+                        label: Text(d.label),
+                      )
+                  ],
                   selectedIndex: activeIndex,
                   onDestinationSelected: (index) {
                     // use navigate instead of push so you won't have
