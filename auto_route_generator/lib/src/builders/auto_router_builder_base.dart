@@ -16,7 +16,6 @@ import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
 import '../resolvers/router_config_resolver.dart';
-import '../resolvers/type_resolver.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(AutoRouterConfig);
 
@@ -119,9 +118,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
 
     final usesPartBuilder = _hasPartDirective(clazz);
 
-    final router = RouterConfigResolver(
-      TypeResolver(await buildStep.resolver.libraries.toList()),
-    ).resolve(
+    final router = RouterConfigResolver().resolve(
       annotation,
       buildStep.inputId,
       clazz,

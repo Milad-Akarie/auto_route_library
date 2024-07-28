@@ -1,9 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
-import '../models/resolved_type.dart';
 import '../models/route_config.dart';
 import '../models/route_parameter_config.dart';
 import '../resolvers/route_parameter_resolver.dart';
@@ -31,12 +29,6 @@ class RouteConfigResolver {
         classElement.allSupertypes.any((e) => e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.getDisplayString(withNullability: false);
-
-    var returnType = ResolvedType(name: 'dynamic');
-    var dartType = routePage.objectValue.type;
-    if (dartType is InterfaceType) {
-      returnType = _typeResolver.resolveType(dartType.typeArguments.first);
-    }
 
     var name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
@@ -93,7 +85,6 @@ class RouteConfigResolver {
       hasWrappedRoute: hasWrappedRoute,
       parameters: parameters,
       hasConstConstructor: hasConstConstructor,
-      returnType: returnType,
       pageType: pageType,
       deferredLoading: isDeferred,
     );

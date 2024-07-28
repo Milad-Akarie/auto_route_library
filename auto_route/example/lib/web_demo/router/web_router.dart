@@ -1,12 +1,8 @@
-
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-
-
 
 //ignore_for_file: public_member_api_docs
 @AutoRouterConfig(generateForDir: ['lib/web_demo'])
@@ -19,7 +15,8 @@ class WebAppRouter extends RootStackRouter {
   late final List<AutoRouteGuard> guards = [
     AutoRouteGuard.simple(
       (resolver, scope) {
-        if (authService.isAuthenticated || resolver.routeName == WebLoginRoute.name) {
+        if (authService.isAuthenticated ||
+            resolver.routeName == WebLoginRoute.name) {
           resolver.next();
         } else {
           resolver.redirect(
@@ -31,8 +28,6 @@ class WebAppRouter extends RootStackRouter {
       },
     )
   ];
-
-
 
   @override
   List<AutoRoute> get routes => [
@@ -53,13 +48,15 @@ class WebAppRouter extends RootStackRouter {
                     if (authService.isVerified) {
                       resolver.next();
                     } else {
-                      resolver.redirect(WebVerifyRoute(onResult: resolver.next));
+                      resolver
+                          .redirect(WebVerifyRoute(onResult: resolver.next));
                     }
                   },
                 )
               ],
               children: [
-                AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
+                AutoRoute(
+                    path: 'all', page: UserAllPostsRoute.page, initial: true),
                 AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
               ],
             ),
@@ -103,9 +100,8 @@ class _MainWebPageState extends State<MainWebPage> {
               child: ElevatedButton(
                 onPressed: widget.navigate ??
                     () async {
-
-                 final x = await MainWebRoute().push<String>(context);
-                 print(x);
+                      final x = await MainWebRoute().push<String>(context);
+                      print(x);
                       // context.pushRoute(
                       //   UserRoute(
                       //     id: 2,
@@ -130,7 +126,8 @@ class _MainWebPageState extends State<MainWebPage> {
             if (kIsWeb)
               ElevatedButton(
                 onPressed: () {
-                  final currentState = ((context.router.pathState as int?) ?? 0);
+                  final currentState =
+                      ((context.router.pathState as int?) ?? 0);
                   context.router.pushPathState(currentState + 1);
                 },
                 child: AnimatedBuilder(
@@ -312,8 +309,8 @@ class _UserPageState extends State<UserPage> {
         leading: AutoLeadingButton(),
         title: Builder(
           builder: (context) {
-            return Text(
-                context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
+            return Text(context.topRouteMatch.name +
+                ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
           },
         ),
       ),

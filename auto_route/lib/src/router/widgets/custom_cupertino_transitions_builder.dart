@@ -51,63 +51,6 @@ final Animatable<Offset> _kBottomUpTween = Tween<Offset>(
   end: Offset.zero,
 );
 
-/// A modal route that replaces the entire screen with an iOS transition.
-///
-/// {@macro flutter.cupertino.cupertinoRouteTransitionMixin}
-///
-/// By default, when a modal route is replaced by another, the previous route
-/// remains in memory. To free all the resources when this is not necessary, set
-/// [maintainState] to false.
-///
-/// The type `T` specifies the return type of the route which can be supplied as
-/// the route is popped from the stack via [Navigator.pop] when an optional
-/// `result` can be provided.
-///
-/// See also:
-///
-///  * [CustomCupertinoRouteTransitionMixin], for a mixin that provides iOS transition
-///    for this modal route.
-///  * [MaterialPageRoute], for an adaptive [PageRoute] that uses a
-///    platform-appropriate transition.
-///  * [CupertinoPageScaffold], for applications that have one page with a fixed
-///    navigation bar on top.
-///  * [CupertinoTabScaffold], for applications that have a tab bar at the
-///    bottom with multiple pages.
-///  * [CupertinoPage], for a [Page] version of this class.
-class CupertinoPageRoute<T> extends PageRoute<T>
-    with
-        CupertinoRouteTransitionMixin<T>,
-        CupertinoRouteTransitionOverrideMixin<T> {
-  /// Creates a page route for use in an iOS designed app.
-  ///
-  /// The [builder], [maintainState], and [fullscreenDialog] arguments must not
-  /// be null.
-  CupertinoPageRoute({
-    required this.builder,
-    this.title,
-    super.settings,
-    this.maintainState = true,
-    super.fullscreenDialog,
-  }) {
-    assert(opaque);
-  }
-
-  /// Builds the primary contents of the route.
-  final WidgetBuilder builder;
-
-  @override
-  Widget buildContent(BuildContext context) => builder(context);
-
-  @override
-  final String? title;
-
-  @override
-  final bool maintainState;
-
-  @override
-  String get debugLabel => '${super.debugLabel}(${settings.name})';
-}
-
 /// A mixin that implements methods and/or parameters of a [PageRoute].
 ///
 /// Meant to be used as an override of methods/parameters implemented in
@@ -541,30 +484,32 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
     double t,
   ) {
     if (a == null && b == null) return null;
+    final aColors = a?._colors;
+    final bColors = b?._colors;
     if (a == null) {
-      return b!._colors == null
+      return bColors == null
           ? b
-          : _CupertinoEdgeShadowDecoration._(b._colors!
+          : _CupertinoEdgeShadowDecoration._(bColors
               .map<Color>((Color color) => Color.lerp(null, color, t)!)
               .toList());
     }
     if (b == null) {
-      return a._colors == null
+      return aColors == null
           ? a
-          : _CupertinoEdgeShadowDecoration._(a._colors!
+          : _CupertinoEdgeShadowDecoration._(aColors
               .map<Color>((Color color) => Color.lerp(null, color, 1.0 - t)!)
               .toList());
     }
-    assert(b._colors != null || a._colors != null);
+    assert(bColors != null || aColors != null);
     // If it ever becomes necessary, we could allow decorations with different
     // length' here, similarly to how it is handled in [LinearGradient.lerp].
-    assert(b._colors == null ||
-        a._colors == null ||
-        a._colors!.length == b._colors!.length);
+    assert(bColors == null ||
+       aColors == null ||
+        aColors.length == bColors.length);
     return _CupertinoEdgeShadowDecoration._(
       <Color>[
-        for (int i = 0; i < b._colors!.length; i += 1)
-          Color.lerp(a._colors?[i], b._colors?[i], t)!,
+        for (int i = 0; i < bColors!.length; i += 1)
+          Color.lerp(a._colors?[i], bColors[i], t)!,
       ],
     );
   }
@@ -677,36 +622,5 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
       canvas.drawRect(
           Rect.fromLTWH(x - 1.0, offset.dy, 1.0, shadowHeight), paint);
     }
-  }
-}
-
-/// A custom cupertino transition builder to fix unwanted shadows in nested navigator
-///
-/// This fixes the issue referenced here
-/// https://stackoverflow.com/questions/53457772/why-there-is-a-shadow-between-nested-navigator
-/// https://stackoverflow.com/questions/68986632/rid-of-elevation-of-nested-flutter-navigator-2-0
-@Deprecated(
-  'The issue, this builder fixes, was already fixed in the freamework in v3.0.0'
-  '(https://github.com/flutter/flutter/pull/95537, '
-  'https://docs.flutter.dev/release/release-notes/release-notes-3.0.0) '
-  'so there is no more reason to use this builder. '
-  'Will be deleted in the next major release. '
-  'If you still need this builder for other reasons, '
-  'use CupertinoPageTransitionsBuilder instead. as it is completely identic',
-)
-class NoShadowCupertinoPageTransitionsBuilder extends PageTransitionsBuilder {
-  /// Constructs a page transition animation that matches the iOS transition.
-  const NoShadowCupertinoPageTransitionsBuilder();
-
-  @override
-  Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return CupertinoRouteTransitionMixin.buildPageTransitions<T>(
-        route, context, animation, secondaryAnimation, child);
   }
 }

@@ -60,7 +60,7 @@ class RouteMatcher {
                 match.pathParams.rawMap,
               ),
             ).path),
-            redirectedFrom:  config.path,
+            redirectedFrom: config.path,
           );
         }
 

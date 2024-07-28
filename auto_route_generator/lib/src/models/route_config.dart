@@ -17,8 +17,6 @@ class RouteConfig {
   /// the class name of the route
   final String className;
 
-  /// the return type of the route
-  final ResolvedType? returnType;
 
   /// the parameters of the route
   final List<ParamConfig> parameters;
@@ -40,7 +38,6 @@ class RouteConfig {
     required this.className,
     this.parameters = const [],
     this.hasWrappedRoute,
-    this.returnType,
     this.hasConstConstructor = false,
     this.deferredLoading,
   });
@@ -96,7 +93,6 @@ class RouteConfig {
     bool? fullMatch,
     ResolvedType? pageType,
     String? className,
-    ResolvedType? returnType,
     List<ParamConfig>? parameters,
     String? redirectTo,
     bool? hasWrappedRoute,
@@ -109,7 +105,6 @@ class RouteConfig {
       pathParams: pathParams ?? this.pathParams,
       pageType: pageType ?? this.pageType,
       className: className ?? this.className,
-      returnType: returnType ?? this.returnType,
       parameters: parameters ?? this.parameters,
       hasWrappedRoute: hasWrappedRoute ?? this.hasWrappedRoute,
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
@@ -124,7 +119,6 @@ class RouteConfig {
       'pathParams': this.pathParams.map((e) => e.toJson()).toList(),
       'pageType': this.pageType?.toJson(),
       'className': this.className,
-      'returnType': this.returnType?.toJson(),
       'parameters': this.parameters.map((e) => e.toJson()).toList(),
       'hasWrappedRoute': this.hasWrappedRoute,
       'hasConstConstructor': this.hasConstConstructor,
@@ -153,7 +147,6 @@ class RouteConfig {
       pathParams: pathParams,
       pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType']),
       className: map['className'] as String,
-      returnType: map['returnType'] == null ? null : ResolvedType.fromJson(map['returnType']),
       parameters: parameters,
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,
       hasConstConstructor: map['hasConstConstructor'] as bool,

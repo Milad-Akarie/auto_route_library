@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/router.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(context) {
+    print('HomePageState.build');
     // builder will rebuild everytime this router's stack
     // updates
     // we need it to indicate which NavigationRailDestination is active

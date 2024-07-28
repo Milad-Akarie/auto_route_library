@@ -13,8 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
+
 part 'auto_route_guard.dart';
+
 part 'auto_router_delegate.dart';
+
 part 'root_stack_router.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -501,27 +504,12 @@ abstract class RoutingController with ChangeNotifier {
         );
   }
 
-
   /// Clients can either pop their own [_pages] stack
   /// or defer the call to a parent controller
   ///
   /// see [Navigator.maybePop(context)] for more details
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]);
-
-  /// Clients can either pop their own [_pages] stack
-  /// or defer the call to a parent controller
-  ///
-  /// see [Navigator.maybePop(context)] for more details
-  @optionalTypeArgs
-  @Deprecated(
-      'pop was renamed to maybePop to avoid confusion, if you are looking for the implementation of Navigator.pop user popForced')
-  Future<bool> pop<T extends Object?>([T? result]) => maybePop(result);
-
-  /// Calls [maybePop] on the controller with the top-most visible page
-  @optionalTypeArgs
-  @Deprecated('pop was renamed to maybePopTop')
-  Future<bool> popTop<T extends Object?>([T? result]) => maybePopTop(result);
 
   /// Calls [maybePop] on the controller with the top-most visible page
   @optionalTypeArgs
@@ -781,7 +769,7 @@ class TabsRouter extends RoutingController {
     for (var route in routes) {
       var data = _createRouteData(route, routeData);
       try {
-        _pages.add(data.buildPage())  ;
+        _pages.add(data.buildPage());
       } on MissingRequiredParameterError catch (e) {
         if (fromDefault) {
           throw FlutterError(
@@ -795,8 +783,6 @@ class TabsRouter extends RoutingController {
       }
     }
   }
-
-
 
   @override
   List<RouteMatch>? _composeMatchesForReevaluate() {
@@ -1033,7 +1019,6 @@ abstract class StackRouter extends RoutingController {
 
   @override
   RouteCollection get routeCollection;
-
 
   @override
   RouteMatcher get matcher;
@@ -1606,16 +1591,14 @@ abstract class StackRouter extends RoutingController {
     return page.popped;
   }
 
-
   Future<ResolverResult> _canNavigate(
     RouteMatch route, {
     OnNavigationFailure? onFailure,
     List<RouteMatch> pendingRoutes = const [],
     bool isReevaluating = false,
   }) async {
-
     final guards = <AutoRouteGuard>[
-       ...root.guards,
+      ...root.guards,
       ...route.guards,
     ];
     if (guards.isEmpty) {

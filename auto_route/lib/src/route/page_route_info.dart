@@ -194,3 +194,23 @@ class PageRouteInfo<T> {
       const MapEquality().hash(rawQueryParams) ^
       const ListEquality().hash(initialChildren);
 }
+
+
+/// A proxy Route page that provides a way to create a [PageRouteInfo]
+/// without the need for creating a new Page Widget
+class EmptyShellRoute {
+
+  /// Page name
+  final String name;
+
+  /// Default constructor
+  EmptyShellRoute(this.name);
+
+  /// creates [PageInfo] with an just an [AutoRouter] widget
+  late final page = PageInfo(name, builder: (_) => const AutoRouter());
+
+  /// Creates a new instance with of [PageRouteInfo]
+  PageRouteInfo call({List<PageRouteInfo>? children}) {
+    return PageRouteInfo(name, initialChildren: children);
+  }
+}

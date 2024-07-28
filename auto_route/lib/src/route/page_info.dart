@@ -14,11 +14,13 @@ class PageInfo {
   /// Default constructor
   const PageInfo(this.name, {required this.builder});
 
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PageInfo && runtimeType == other.runtimeType && builder == other.builder && name == other.name;
+      other is PageInfo &&
+          runtimeType == other.runtimeType &&
+          builder == other.builder &&
+          name == other.name;
 
   @override
   int get hashCode => name.hashCode ^ builder.hashCode;
@@ -28,7 +30,6 @@ class PageInfo {
 
   ///  Dummy [PageInfo] used to represent the root route
   static final root = _NoBuilderPageInfo('#Root');
-
 }
 
 /// Dummy [PageInfo] used to represent a redirect route

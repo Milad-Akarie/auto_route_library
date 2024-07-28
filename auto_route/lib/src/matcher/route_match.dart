@@ -89,6 +89,7 @@ class RouteMatch<T> {
 
   /// Helper to access [AutoRoute.buildPage]
   AutoRoutePage<R> buildPage<R>(RouteData data) => _config.buildPage<R>(data);
+
   /// Default constructor
   const RouteMatch({
     required AutoRoute config,

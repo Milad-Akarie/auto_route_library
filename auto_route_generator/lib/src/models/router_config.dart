@@ -1,4 +1,4 @@
-import 'resolved_type.dart';
+
 
 /// RouterConfig
 class RouterConfig {
@@ -23,11 +23,6 @@ class RouterConfig {
   /// The list of directories to generate for
   final List<String> generateForDir;
 
-  /// Whether the router is a module
-  final bool isModule;
-
-  /// The list of modules
-  final List<ResolvedType> modules;
 
   /// Default constructor
   const RouterConfig({
@@ -38,8 +33,6 @@ class RouterConfig {
     required this.path,
     required this.cacheHash,
     required this.generateForDir,
-    this.isModule = false,
-    this.modules = const [],
   });
 
   /// Serializes this instance to a map
@@ -52,8 +45,6 @@ class RouterConfig {
       'path': this.path,
       'cacheHash': this.cacheHash,
       'generateForDir': this.generateForDir,
-      'isModule': this.isModule,
-      'modules': this.modules,
     };
   }
 
@@ -67,10 +58,6 @@ class RouterConfig {
       path: map['path'] as String,
       cacheHash: map['cacheHash'] as int?,
       generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
-      isModule: map['isModule'] as bool,
-      modules: (map['modules'] as List<dynamic>)
-          .map((e) => ResolvedType.fromJson(e))
-          .toList(),
     );
   }
 }

@@ -3,10 +3,6 @@ part of 'routing_controller.dart';
 /// Signature for a function uses [pagesMap] to build an [AutoRoutePage]
 typedef PageBuilder = AutoRoutePage Function(RouteData data);
 
-/// Signature for a function that builds an [AutoRoutePage]
-/// Used by [RoutingController]
-typedef PageFactory = Page<dynamic> Function(RouteData data);
-
 /// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {
   /// Default constructor
@@ -21,7 +17,8 @@ abstract class RootStackRouter extends StackRouter {
     DeepLinkBuilder? deepLinkBuilder,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     bool includePrefixMatches = !kIsWeb,
     bool Function(String? location)? neglectWhen,
     bool rebuildStackOnDeepLink = false,
@@ -61,7 +58,6 @@ abstract class RootStackRouter extends StackRouter {
         pendingChildren: const [],
       );
 
-
   /// The list of route entries to match against
   List<AutoRoute> get routes;
 
@@ -91,36 +87,15 @@ abstract class RootStackRouter extends StackRouter {
     );
   }
 
-
   AutoRouterDelegate? _lazyRootDelegate;
-
-  /// Builds a lazy instance of [AutoRouterDelegate.declarative]
-  @Deprecated('Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
-  AutoRouterDelegate declarativeDelegate({
-    required RoutesBuilder routes,
-    String? navRestorationScopeId,
-    RoutePopCallBack? onPopRoute,
-    OnNavigateCallBack? onNavigate,
-    DeepLinkBuilder? deepLinkBuilder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  }) {
-    return _lazyRootDelegate ??= AutoRouterDelegate.declarative(
-      this,
-      routes: routes,
-      onNavigate: onNavigate,
-      onPopRoute: onPopRoute,
-      navRestorationScopeId: navRestorationScopeId,
-      navigatorObservers: navigatorObservers,
-      deepLinkBuilder: deepLinkBuilder,
-    );
-  }
 
   /// Builds a lazy instance of [AutoRouterDelegate]
   /// _lazyRootDelegate is only built one time
   AutoRouterDelegate delegate({
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     DeepLinkBuilder? deepLinkBuilder,
     bool rebuildStackOnDeepLink = false,
     Listenable? reevaluateListenable,
@@ -159,27 +134,6 @@ abstract class RootStackRouter extends StackRouter {
   NavigationHistory get navigationHistory => _navigationHistory;
 
   @override
-  late final RouteCollection routeCollection = RouteCollection.fromList(routes, root: true);
-}
-
-
-/// A declarative implementation of [RootStackRouter]
-class AutoRouterRoot extends RootStackRouter {
-  @override
-  final List<AutoRoute> routes;
-
-  @override
-  final List<AutoRouteGuard> guards;
-
-  @override
-  final RouteType defaultRouteType;
-
-  /// Default constructor
-   AutoRouterRoot({
-    required this.routes,
-    this.guards = const [],
-    this.defaultRouteType = const RouteType.material(),
-    super.navigatorKey,
-  });
-
+  late final RouteCollection routeCollection =
+      RouteCollection.fromList(routes, root: true);
 }
