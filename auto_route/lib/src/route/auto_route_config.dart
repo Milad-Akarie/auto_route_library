@@ -386,7 +386,7 @@ class CustomRoute<R> extends AutoRoute {
     super.initial,
     super.allowSnapshotting = true,
     RouteTransitionsBuilder? transitionsBuilder,
-    CustomRouteBuilder<R>? customRouteBuilder,
+    CustomRouteBuilder? customRouteBuilder,
     int? durationInMilliseconds,
     int? reverseDurationInMilliseconds,
     bool opaque = true,
@@ -395,7 +395,7 @@ class CustomRoute<R> extends AutoRoute {
     super.restorationId,
     Color? barrierColor,
   }) : super._(
-          type: CustomRouteType<R>(
+          type: RouteType.custom(
             transitionsBuilder: transitionsBuilder,
             customRouteBuilder: customRouteBuilder,
             durationInMilliseconds: durationInMilliseconds,

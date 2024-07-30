@@ -1332,11 +1332,12 @@ CustomRoute(
 
 You can use your own custom route by passing a `CustomRouteBuilder` function to `CustomRoute' and implement the builder function the same way we did with the TransitionsBuilder function, the most important part here is passing the page argument to our custom route.
 
+make sure you pass the return type <T> to your custom route builder function.
 ```dart
 CustomRoute(
   page: CustomPage,
-  customRouteBuilder: (BuildContext context, Widget child, CustomPage<T> page) {
-    return PageRouteBuilder(
+  customRouteBuilder: <T>(BuildContext context, Widget child, AutoRoutePage<T> page) {
+    return PageRouteBuilder<T>(
       fullscreenDialog: page.fullscreenDialog,
       // this is important
       settings: page,

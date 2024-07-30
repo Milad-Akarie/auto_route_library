@@ -1,4 +1,5 @@
 import 'package:example/mobile/router/router.dart';
+import 'package:example/web_demo/router/web_router.dart';
 import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
@@ -21,7 +22,7 @@ class AppState extends State<App> {
       setState(() {});
     });
 
-  late final _router = AppRouter();
+  late final _router = WebAppRouter( authService);
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
