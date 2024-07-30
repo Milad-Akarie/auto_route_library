@@ -1,4 +1,3 @@
-import 'package:example/mobile/router/router.dart';
 import 'package:example/web_demo/router/web_router.dart';
 import 'package:flutter/material.dart';
 
