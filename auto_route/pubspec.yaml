@@ -4,7 +4,7 @@ version: 9.0.0
 homepage: https://github.com/Milad-Akarie/auto_route_library
 screenshots:
   - description: 'Auto Route Logo'
-    path: ../art/auto_route_logo.png
+    path: art/auto_route_logo.png
 topics:
   - Navigation
   - Router
