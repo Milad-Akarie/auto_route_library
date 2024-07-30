@@ -195,11 +195,9 @@ class PageRouteInfo<T> {
       const ListEquality().hash(initialChildren);
 }
 
-
 /// A proxy Route page that provides a way to create a [PageRouteInfo]
 /// without the need for creating a new Page Widget
 class EmptyShellRoute {
-
   /// Page name
   final String name;
 

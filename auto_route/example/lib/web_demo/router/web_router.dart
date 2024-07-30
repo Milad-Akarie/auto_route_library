@@ -66,7 +66,6 @@ class WebAppRouter extends RootStackRouter {
       ];
 }
 
-
 @RoutePage()
 class MainWebPage extends StatefulWidget {
   final VoidCallback? navigate, showUserPosts;

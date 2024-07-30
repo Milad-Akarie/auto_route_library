@@ -31,7 +31,8 @@ class RouteParameterResolver {
 
     var nameOrAlias = paramName;
     var isInheritedPathParam = false;
-    final isUrlFragment = _urlFragmentChecker.hasAnnotationOfExact(parameterElement);
+    final isUrlFragment =
+        _urlFragmentChecker.hasAnnotationOfExact(parameterElement);
 
     if (pathParamAnnotation != null) {
       isInheritedPathParam =
@@ -56,12 +57,15 @@ class RouteParameterResolver {
     }
 
     throwIf(
-       [isUrlFragment, pathParamAnnotation != null, queryParamAnnotation != null].where((e) => e).length > 1,
+      [isUrlFragment, pathParamAnnotation != null, queryParamAnnotation != null]
+              .where((e) => e)
+              .length >
+          1,
       '${parameterElement.name} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
       element: parameterElement,
     );
 
-    if(isUrlFragment){
+    if (isUrlFragment) {
       throwIf(
         type.name != 'String',
         'UrlFragments must be of type String',
@@ -88,7 +92,6 @@ class RouteParameterResolver {
       isQueryParam: queryParamAnnotation != null,
       isUrlFragment: isUrlFragment,
       defaultValueCode: parameterElement.defaultValueCode,
-
     );
   }
 

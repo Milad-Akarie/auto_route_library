@@ -21,7 +21,7 @@ class AppState extends State<App> {
       setState(() {});
     });
 
-  late final _router = WebAppRouter( authService);
+  late final _router = WebAppRouter(authService);
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(

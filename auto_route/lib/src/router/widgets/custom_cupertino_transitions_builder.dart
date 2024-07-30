@@ -503,9 +503,8 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
     assert(bColors != null || aColors != null);
     // If it ever becomes necessary, we could allow decorations with different
     // length' here, similarly to how it is handled in [LinearGradient.lerp].
-    assert(bColors == null ||
-       aColors == null ||
-        aColors.length == bColors.length);
+    assert(
+        bColors == null || aColors == null || aColors.length == bColors.length);
     return _CupertinoEdgeShadowDecoration._(
       <Color>[
         for (int i = 0; i < bColors!.length; i += 1)

@@ -6,7 +6,6 @@ import '../models/router_config.dart';
 
 /// Extracts and holds router configs
 class RouterConfigResolver {
-
   /// Default constructor
   RouterConfigResolver();
 
@@ -18,7 +17,6 @@ class RouterConfigResolver {
     bool usesPartBuilder = false,
     int? cacheHash,
   }) {
-
     final deferredLoading =
         autoRouter.peek('deferredLoading')?.boolValue ?? false;
     var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;

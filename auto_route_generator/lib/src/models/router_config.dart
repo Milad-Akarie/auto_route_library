@@ -1,5 +1,3 @@
-
-
 /// RouterConfig
 class RouterConfig {
   /// The name of the router class
@@ -22,7 +20,6 @@ class RouterConfig {
 
   /// The list of directories to generate for
   final List<String> generateForDir;
-
 
   /// Default constructor
   const RouterConfig({

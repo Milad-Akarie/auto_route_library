@@ -17,7 +17,6 @@ class RouteConfig {
   /// the class name of the route
   final String className;
 
-
   /// the parameters of the route
   final List<ParamConfig> parameters;
 
@@ -58,10 +57,12 @@ class RouteConfig {
   }
 
   /// Returns all the required params
-  Iterable<ParamConfig> get requiredParams => parameters.where((p) => p.isPositional && !p.isOptional);
+  Iterable<ParamConfig> get requiredParams =>
+      parameters.where((p) => p.isPositional && !p.isOptional);
 
   /// Returns all the optional params
-  Iterable<ParamConfig> get positionalParams => parameters.where((p) => p.isPositional);
+  Iterable<ParamConfig> get positionalParams =>
+      parameters.where((p) => p.isPositional);
 
   /// Returns all the named params
   Iterable<ParamConfig> get namedParams => parameters.where((p) => p.isNamed);
@@ -71,7 +72,8 @@ class RouteConfig {
     var nameToUse;
     if (name != null) {
       nameToUse = name;
-    } else if (replacementInRouteName != null && replacementInRouteName.split(',').length == 2) {
+    } else if (replacementInRouteName != null &&
+        replacementInRouteName.split(',').length == 2) {
       var parts = replacementInRouteName.split(',');
       nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
     } else {
@@ -81,8 +83,8 @@ class RouteConfig {
   }
 
   /// Whether this route has arguments that can't be parsed
-  bool get hasUnparsableRequiredArgs =>
-      parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+  bool get hasUnparsableRequiredArgs => parameters.any((p) =>
+      (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
 
   /// Clones the route config with the given parameters
   RouteConfig copyWith({
@@ -145,7 +147,9 @@ class RouteConfig {
     return RouteConfig(
       name: map['name'] as String?,
       pathParams: pathParams,
-      pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType']),
+      pageType: map['pageType'] == null
+          ? null
+          : ResolvedType.fromJson(map['pageType']),
       className: map['className'] as String,
       parameters: parameters,
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,
