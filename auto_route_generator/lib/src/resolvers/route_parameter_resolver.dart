@@ -21,7 +21,7 @@ class RouteParameterResolver {
   /// Resolves a ParameterElement into a consumable [ParamConfig]
   ParamConfig resolve(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
-    if (paramType is FunctionType) {
+    if (paramType is FunctionType && paramType.alias == null) {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);

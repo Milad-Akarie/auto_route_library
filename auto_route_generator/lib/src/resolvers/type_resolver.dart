@@ -1,9 +1,12 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
-import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType, RecordType;
+import 'package:analyzer/dart/element/type.dart'
+    show DartType, ParameterizedType, RecordType;
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:path/path.dart' as p;
 
+
+const _unPreferredImports = {'dart:ui'};
 /// A Helper class that resolves types
 class TypeResolver {
   /// The list of resolved libraries in [BuildStep]
@@ -21,16 +24,22 @@ class TypeResolver {
     if (libs.isEmpty || element?.source == null || _isCoreDartType(element!)) {
       return null;
     }
+
+    final  fallBackImports = <String>{};
     for (var lib in libs) {
       if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames.values.contains(element)) {
         final uri = lib.source.uri;
+         if(_unPreferredImports.contains(uri.toString())){
+          fallBackImports.add(uri.toString());
+          continue;
+         }
         if (uri.scheme == 'asset') {
           return _assetToPackage(lib.source.uri);
         }
         return targetFile == null ? lib.identifier : _relative(uri, targetFile!);
       }
     }
-    return null;
+    return fallBackImports.firstOrNull;
   }
 
   String _assetToPackage(Uri uri) {
@@ -114,19 +123,29 @@ class TypeResolver {
 
   /// Resolves the given [type] to a [ResolvedType]
   ResolvedType resolveType(DartType type) {
-    if (type is RecordType) {
+    final effectiveElement = type.alias?.element ?? type.element;
+    final import = resolveImport(effectiveElement);
+    final typeArgs = <ResolvedType>[];
+    final alias = type.alias;
+    if(alias != null) {
+       typeArgs.addAll(alias.typeArguments.map(resolveType));
+    }else {
+      typeArgs.addAll(_resolveTypeArguments(type));
+    }
+    if (type is RecordType && type.alias == null) {
       return ResolvedType.record(
-        name: type.element?.name ?? 'void',
-        import: resolveImport(type.element),
+        name: effectiveElement?.displayName ?? 'void',
+        import: import,
         isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
-        typeArguments: _resolveTypeArguments(type),
+        typeArguments: typeArgs,
       );
     }
+
     return ResolvedType(
-      name: type.element?.name ?? type.getDisplayString(withNullability: false),
+      name: effectiveElement?.displayName ?? type.getDisplayString(withNullability: false),
       isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
-      import: resolveImport(type.element),
-      typeArguments: _resolveTypeArguments(type),
+      import: import,
+      typeArguments: typeArgs,
     );
   }
 }
