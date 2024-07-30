@@ -1540,7 +1540,7 @@ void initState(){
 
 ## Examples
 
-coming soon
+- [Declarative Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/declarative/declarative.router.dart)
 
 ### Support auto_route
 
