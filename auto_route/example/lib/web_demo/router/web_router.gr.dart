@@ -15,131 +15,13 @@ import 'package:example/web_demo/router/web_verify_page.dart' as _i3;
 import 'package:flutter/foundation.dart' as _i5;
 import 'package:flutter/material.dart' as _i6;
 
-abstract class $WebAppRouter extends _i4.RootStackRouter {
-  $WebAppRouter({super.navigatorKey});
-
-  @override
-  final Map<String, _i4.PageFactory> pagesMap = {
-    MainWebRoute.name: (routeData) {
-      final args = routeData.argsAs<MainWebRouteArgs>(
-          orElse: () => const MainWebRouteArgs());
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.MainWebPage(
-          key: args.key,
-          navigate: args.navigate,
-          showUserPosts: args.showUserPosts,
-        ),
-      );
-    },
-    NotFoundRoute.name: (routeData) {
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.NotFoundScreen(),
-      );
-    },
-    UserAllPostsRoute.name: (routeData) {
-      final args = routeData.argsAs<UserAllPostsRouteArgs>(
-          orElse: () => const UserAllPostsRouteArgs());
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.UserAllPostsPage(
-          key: args.key,
-          navigate: args.navigate,
-        ),
-      );
-    },
-    UserFavoritePostsRoute.name: (routeData) {
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.UserFavoritePostsPage(),
-      );
-    },
-    UserRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final queryParams = routeData.queryParams;
-      final args = routeData.argsAs<UserRouteArgs>(
-          orElse: () => UserRouteArgs(
-                id: pathParams.getInt(
-                  'userID',
-                  -1,
-                ),
-                query: queryParams.optList('query'),
-                fragment: routeData.fragment,
-              ));
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.UserPage(
-          key: args.key,
-          id: args.id,
-          query: args.query,
-          fragment: args.fragment,
-        ),
-      );
-    },
-    UserPostsRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.UserPostsPage(id: pathParams.getInt('userID')),
-      );
-    },
-    UserProfileRoute.name: (routeData) {
-      final pathParams = routeData.inheritedPathParams;
-      final queryParams = routeData.queryParams;
-      final args = routeData.argsAs<UserProfileRouteArgs>(
-          orElse: () => UserProfileRouteArgs(
-                userId: pathParams.getInt(
-                  'userID',
-                  -1,
-                ),
-                likes: queryParams.getInt(
-                  'likes',
-                  0,
-                ),
-              ));
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i1.UserProfilePage(
-          key: args.key,
-          navigate: args.navigate,
-          userId: args.userId,
-          likes: args.likes,
-        ),
-      );
-    },
-    WebLoginRoute.name: (routeData) {
-      final args = routeData.argsAs<WebLoginRouteArgs>(
-          orElse: () => const WebLoginRouteArgs());
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i2.WebLoginPage(
-          key: args.key,
-          onResult: args.onResult,
-        ),
-      );
-    },
-    WebVerifyRoute.name: (routeData) {
-      final args = routeData.argsAs<WebVerifyRouteArgs>(
-          orElse: () => const WebVerifyRouteArgs());
-      return _i4.AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: _i3.WebVerifyPage(
-          key: args.key,
-          onResult: args.onResult,
-        ),
-      );
-    },
-  };
-}
-
 /// generated route for
 /// [_i1.MainWebPage]
 class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
   MainWebRoute({
     _i5.Key? key,
-    void Function()? navigate,
-    void Function()? showUserPosts,
+    _i5.VoidCallback? navigate,
+    _i5.VoidCallback? showUserPosts,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           MainWebRoute.name,
@@ -153,8 +35,18 @@ class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
 
   static const String name = 'MainWebRoute';
 
-  static const _i4.PageInfo<MainWebRouteArgs> page =
-      _i4.PageInfo<MainWebRouteArgs>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      final args =
+          data.argsAs<MainWebRouteArgs>(orElse: () => const MainWebRouteArgs());
+      return _i1.MainWebPage(
+        key: args.key,
+        navigate: args.navigate,
+        showUserPosts: args.showUserPosts,
+      );
+    },
+  );
 }
 
 class MainWebRouteArgs {
@@ -166,9 +58,9 @@ class MainWebRouteArgs {
 
   final _i5.Key? key;
 
-  final void Function()? navigate;
+  final _i5.VoidCallback? navigate;
 
-  final void Function()? showUserPosts;
+  final _i5.VoidCallback? showUserPosts;
 
   @override
   String toString() {
@@ -187,7 +79,12 @@ class NotFoundRoute extends _i4.PageRouteInfo<void> {
 
   static const String name = 'NotFoundRoute';
 
-  static const _i4.PageInfo<void> page = _i4.PageInfo<void>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      return _i1.NotFoundScreen();
+    },
+  );
 }
 
 /// generated route for
@@ -195,7 +92,7 @@ class NotFoundRoute extends _i4.PageRouteInfo<void> {
 class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
   UserAllPostsRoute({
     _i5.Key? key,
-    void Function()? navigate,
+    _i5.VoidCallback? navigate,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           UserAllPostsRoute.name,
@@ -208,8 +105,17 @@ class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
 
   static const String name = 'UserAllPostsRoute';
 
-  static const _i4.PageInfo<UserAllPostsRouteArgs> page =
-      _i4.PageInfo<UserAllPostsRouteArgs>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<UserAllPostsRouteArgs>(
+          orElse: () => const UserAllPostsRouteArgs());
+      return _i1.UserAllPostsPage(
+        key: args.key,
+        navigate: args.navigate,
+      );
+    },
+  );
 }
 
 class UserAllPostsRouteArgs {
@@ -220,7 +126,7 @@ class UserAllPostsRouteArgs {
 
   final _i5.Key? key;
 
-  final void Function()? navigate;
+  final _i5.VoidCallback? navigate;
 
   @override
   String toString() {
@@ -239,7 +145,12 @@ class UserFavoritePostsRoute extends _i4.PageRouteInfo<void> {
 
   static const String name = 'UserFavoritePostsRoute';
 
-  static const _i4.PageInfo<void> page = _i4.PageInfo<void>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      return _i1.UserFavoritePostsPage();
+    },
+  );
 }
 
 /// generated route for
@@ -267,8 +178,28 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
 
   static const String name = 'UserRoute';
 
-  static const _i4.PageInfo<UserRouteArgs> page =
-      _i4.PageInfo<UserRouteArgs>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      final pathParams = data.inheritedPathParams;
+      final queryParams = data.queryParams;
+      final args = data.argsAs<UserRouteArgs>(
+          orElse: () => UserRouteArgs(
+                id: pathParams.getInt(
+                  'userID',
+                  -1,
+                ),
+                query: queryParams.optList('query'),
+                fragment: data.fragment,
+              ));
+      return _i1.UserPage(
+        key: args.key,
+        id: args.id,
+        query: args.query,
+        fragment: args.fragment,
+      );
+    },
+  );
 }
 
 class UserRouteArgs {
@@ -304,7 +235,13 @@ class UserPostsRoute extends _i4.PageRouteInfo<void> {
 
   static const String name = 'UserPostsRoute';
 
-  static const _i4.PageInfo<void> page = _i4.PageInfo<void>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      final pathParams = data.inheritedPathParams;
+      return _i1.UserPostsPage(id: pathParams.getInt('userID'));
+    },
+  );
 }
 
 /// generated route for
@@ -312,7 +249,7 @@ class UserPostsRoute extends _i4.PageRouteInfo<void> {
 class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
   UserProfileRoute({
     _i5.Key? key,
-    void Function()? navigate,
+    _i5.VoidCallback? navigate,
     int userId = -1,
     int likes = 0,
     List<_i4.PageRouteInfo>? children,
@@ -331,8 +268,30 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
 
   static const String name = 'UserProfileRoute';
 
-  static const _i4.PageInfo<UserProfileRouteArgs> page =
-      _i4.PageInfo<UserProfileRouteArgs>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      final pathParams = data.inheritedPathParams;
+      final queryParams = data.queryParams;
+      final args = data.argsAs<UserProfileRouteArgs>(
+          orElse: () => UserProfileRouteArgs(
+                userId: pathParams.getInt(
+                  'userID',
+                  -1,
+                ),
+                likes: queryParams.getInt(
+                  'likes',
+                  0,
+                ),
+              ));
+      return _i1.UserProfilePage(
+        key: args.key,
+        navigate: args.navigate,
+        userId: args.userId,
+        likes: args.likes,
+      );
+    },
+  );
 }
 
 class UserProfileRouteArgs {
@@ -345,7 +304,7 @@ class UserProfileRouteArgs {
 
   final _i5.Key? key;
 
-  final void Function()? navigate;
+  final _i5.VoidCallback? navigate;
 
   final int userId;
 
@@ -362,7 +321,7 @@ class UserProfileRouteArgs {
 class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
   WebLoginRoute({
     _i6.Key? key,
-    void Function(bool)? onResult,
+    _i6.ValueChanged<bool>? onResult,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           WebLoginRoute.name,
@@ -375,8 +334,17 @@ class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
 
   static const String name = 'WebLoginRoute';
 
-  static const _i4.PageInfo<WebLoginRouteArgs> page =
-      _i4.PageInfo<WebLoginRouteArgs>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<WebLoginRouteArgs>(
+          orElse: () => const WebLoginRouteArgs());
+      return _i2.WebLoginPage(
+        key: args.key,
+        onResult: args.onResult,
+      );
+    },
+  );
 }
 
 class WebLoginRouteArgs {
@@ -387,7 +355,7 @@ class WebLoginRouteArgs {
 
   final _i6.Key? key;
 
-  final void Function(bool)? onResult;
+  final _i6.ValueChanged<bool>? onResult;
 
   @override
   String toString() {
@@ -400,7 +368,7 @@ class WebLoginRouteArgs {
 class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
   WebVerifyRoute({
     _i6.Key? key,
-    void Function(bool)? onResult,
+    _i6.ValueChanged<bool>? onResult,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           WebVerifyRoute.name,
@@ -413,8 +381,17 @@ class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
 
   static const String name = 'WebVerifyRoute';
 
-  static const _i4.PageInfo<WebVerifyRouteArgs> page =
-      _i4.PageInfo<WebVerifyRouteArgs>(name);
+  static _i4.PageInfo page = _i4.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<WebVerifyRouteArgs>(
+          orElse: () => const WebVerifyRouteArgs());
+      return _i3.WebVerifyPage(
+        key: args.key,
+        onResult: args.onResult,
+      );
+    },
+  );
 }
 
 class WebVerifyRouteArgs {
@@ -425,7 +402,7 @@ class WebVerifyRouteArgs {
 
   final _i6.Key? key;
 
-  final void Function(bool)? onResult;
+  final _i6.ValueChanged<bool>? onResult;
 
   @override
   String toString() {

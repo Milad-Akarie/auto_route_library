@@ -1,9 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
-import '../models/resolved_type.dart';
 import '../models/route_config.dart';
 import '../models/route_parameter_config.dart';
 import '../resolvers/route_parameter_resolver.dart';
@@ -27,16 +25,10 @@ class RouteConfigResolver {
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute =
-        classElement.allSupertypes.any((e) => e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
+    final hasWrappedRoute = classElement.allSupertypes.any((e) =>
+        e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.getDisplayString(withNullability: false);
-
-    var returnType = ResolvedType(name: 'dynamic');
-    var dartType = routePage.objectValue.type;
-    if (dartType is InterfaceType) {
-      returnType = _typeResolver.resolveType(dartType.typeArguments.first);
-    }
 
     var name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
@@ -69,8 +61,10 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs =
-          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+      var unParsableRequiredArgs = parameters.where((p) =>
+          (p.isRequired || p.isPositional) &&
+          !p.isPathParam &&
+          !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
         print(
             '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
@@ -93,7 +87,6 @@ class RouteConfigResolver {
       hasWrappedRoute: hasWrappedRoute,
       parameters: parameters,
       hasConstConstructor: hasConstConstructor,
-      returnType: returnType,
       pageType: pageType,
       deferredLoading: isDeferred,
     );

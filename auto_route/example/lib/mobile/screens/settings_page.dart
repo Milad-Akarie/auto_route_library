@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/router.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage>
             ElevatedButton(
                 onPressed: () {
                   context.navigateTo(BooksTab(
-                    children: [BookDetailsRoute(id: 2)],
+                    children: [BookDetailsRoute(id: 1)],
                   ));
                 },
                 child: Text('Navigate to book details/1'))

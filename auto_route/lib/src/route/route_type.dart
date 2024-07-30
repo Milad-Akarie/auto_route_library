@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 /// Signature for custom router builder used by
 /// [CustomRouteType]
-typedef CustomRouteBuilder<T> = Route<T> Function(
+typedef CustomRouteBuilder = Route<T> Function<T>(
   BuildContext context,
   Widget child,
   AutoRoutePage<T> page,
@@ -92,12 +92,22 @@ class CustomRouteType extends RouteType {
   ///
   /// I couldn't type this function from here but it should match
   /// typedef [CustomRouteBuilder] = Route Function(BuildContext context, CustomPage page);
-  /// you should only reference the function when passing it so
-  /// the generator can import it into the generated file
   ///
   /// this builder function accepts a BuildContext and a CustomPage
   /// that has all the other properties assigned to it
   /// so using them then is totally up to you.
+  ///
+  /// Make sure you pass the Return Type <T> to the Route<T> function
+  /// ex:
+  ///  CustomRoute(
+  ///     path: '/user/:userID',
+  ///     page: UserRoute.page,
+  ///     customRouteBuilder: <T>(context, child, page) {
+  ///     return PageRouteBuilder<T>(
+  ///     settings: page,
+  ///     pageBuilder: (context, _, __) => child,
+  ///   );
+  ///  },
   final CustomRouteBuilder? customRouteBuilder;
 
   /// route transition duration in milliseconds

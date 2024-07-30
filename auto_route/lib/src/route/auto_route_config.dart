@@ -4,6 +4,9 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
+/// A Signature for a function that passes the [RouteData] and returns a [PageRoute]
+typedef AutoRoutePageBuilder = Widget Function(RouteData data);
+
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
 typedef TitleBuilder = String Function(BuildContext context, RouteData data);
@@ -17,7 +20,7 @@ typedef RestorationIdBuilder = String Function(RouteMatch match);
 @immutable
 class AutoRoute {
   /// The name of page this route should map to
-  final String name;
+  final PageInfo page;
   final String? _path;
 
   /// Weather to match this route's path as fullMatch
@@ -75,9 +78,25 @@ class AutoRoute {
   /// a RedirectRoute() to that path
   final bool initial;
 
+  /// Helper getter to get the name of the page
+  String get name => page.name;
+
+  final AutoRoutePageBuilder _pageBuilder;
+
+  /// Returns the Widget builder function of the page
+  AutoRoutePageBuilder get builder => _pageBuilder;
+
+  /// Builds a [AutoRoutePage] from [RouteData]
+  AutoRoutePage<T> buildPage<T>(RouteData data) {
+    return AutoRoutePage<T>(
+      child: builder(data),
+      routeData: data,
+    );
+  }
+
   AutoRoute._({
-    required this.name,
     String? path,
+    required this.page,
     this.usesPathAsKey = false,
     this.guards = const [],
     this.fullMatch = false,
@@ -92,12 +111,13 @@ class AutoRoute {
     this.initial = false,
     List<AutoRoute>? children,
   })  : _path = path,
+        _pageBuilder = page.builder,
         _children = children != null && children.isNotEmpty
             ? RouteCollection.fromList(children)
             : null;
 
-  const AutoRoute._change({
-    required this.name,
+  AutoRoute._change({
+    required this.page,
     required String path,
     required this.usesPathAsKey,
     required this.guards,
@@ -113,6 +133,7 @@ class AutoRoute {
     required this.initial,
     required this.allowSnapshotting,
   })  : _path = path,
+        _pageBuilder = page.builder,
         _children = children;
 
   /// Builds a default AutoRoute instance with any [type]
@@ -134,7 +155,7 @@ class AutoRoute {
     bool allowSnapshotting = true,
   }) {
     return AutoRoute._(
-      name: page.name,
+      page: page,
       path: path,
       fullMatch: fullMatch,
       maintainState: maintainState,
@@ -172,7 +193,7 @@ class AutoRoute {
     bool allowSnapshotting = true,
   }) {
     return AutoRoute._(
-      name: page.name,
+      page: page,
       path: path,
       fullMatch: fullMatch,
       maintainState: maintainState,
@@ -204,7 +225,7 @@ class AutoRoute {
 
   @override
   String toString() {
-    return 'RouteConfig{name: $name}';
+    return 'AutoRoute{name: ${page.name}}';
   }
 
   /// A simplified copyWith
@@ -217,7 +238,7 @@ class AutoRoute {
   /// Returns a new AutoRoute instance with the provided details overriding.
   AutoRoute copyWith({
     RouteType? type,
-    String? name,
+    PageInfo? page,
     String? path,
     bool? usesPathAsKey,
     List<AutoRouteGuard>? guards,
@@ -234,7 +255,7 @@ class AutoRoute {
   }) {
     return AutoRoute._change(
       type: type ?? this.type,
-      name: name ?? this.name,
+      page: page ?? this.page,
       path: path ?? this.path,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
       guards: guards ?? List.from(this.guards),
@@ -268,10 +289,11 @@ class RedirectRoute extends AutoRoute {
 
   /// Default constructor
   RedirectRoute({
-    required super.path,
+    required String path,
     required this.redirectTo,
   }) : super._(
-          name: 'Redirect#$path',
+          path: path,
+          page: PageInfo.redirect,
           fullMatch: true,
         );
 }
@@ -281,7 +303,7 @@ class RedirectRoute extends AutoRoute {
 class MaterialRoute extends AutoRoute {
   /// default constructor
   MaterialRoute({
-    required PageInfo page,
+    required super.page,
     super.path,
     super.fullscreenDialog,
     super.maintainState,
@@ -296,17 +318,16 @@ class MaterialRoute extends AutoRoute {
     super.initial,
     super.allowSnapshotting = true,
   }) : super._(
-          name: page.name,
           type: const RouteType.material(),
         );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.cupertino] type
 @immutable
-class CupertinoRoute extends AutoRoute {
+class CupertinoRoute<R> extends AutoRoute {
   /// Default constructor
   CupertinoRoute({
-    required PageInfo page,
+    required super.page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -320,15 +341,15 @@ class CupertinoRoute extends AutoRoute {
     super.keepHistory,
     super.initial,
     super.allowSnapshotting = true,
-  }) : super._(name: page.name, type: const RouteType.cupertino());
+  }) : super._(type: const RouteType.cupertino());
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.adaptive] type
 @immutable
-class AdaptiveRoute extends AutoRoute {
+class AdaptiveRoute<R> extends AutoRoute {
   /// Default constructor
   AdaptiveRoute({
-    required PageInfo page,
+    required super.page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -343,18 +364,15 @@ class AdaptiveRoute extends AutoRoute {
     bool opaque = true,
     super.keepHistory,
     super.allowSnapshotting = true,
-  }) : super._(
-          name: page.name,
-          type: RouteType.adaptive(opaque: opaque),
-        );
+  }) : super._(type: RouteType.adaptive(opaque: opaque));
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
 @immutable
-class CustomRoute extends AutoRoute {
+class CustomRoute<R> extends AutoRoute {
   /// Default constructor
   CustomRoute({
-    required PageInfo page,
+    required super.page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -377,7 +395,6 @@ class CustomRoute extends AutoRoute {
     super.restorationId,
     Color? barrierColor,
   }) : super._(
-          name: page.name,
           type: RouteType.custom(
             transitionsBuilder: transitionsBuilder,
             customRouteBuilder: customRouteBuilder,
@@ -402,7 +419,7 @@ class TestRoute extends AutoRoute {
     super.fullMatch,
     super.restorationId,
     super.initial,
-  }) : super._(name: name);
+  }) : super._(page: PageInfo(name, builder: (_) => const SizedBox()));
 }
 
 /// Builds a simplified [AutoRoute] instance for internal usage
@@ -410,13 +427,12 @@ class TestRoute extends AutoRoute {
 @internal
 class DummyRootRoute extends AutoRoute {
   /// Default constructor
-  DummyRootRoute(
-    String name, {
+  DummyRootRoute({
     required String path,
     super.children,
     super.fullMatch,
     super.restorationId,
-  }) : super._(name: name, path: path);
+  }) : super._(page: PageInfo.root, path: path);
 }
 
 /// Holds a single set of config-entries

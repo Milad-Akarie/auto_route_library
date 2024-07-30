@@ -132,9 +132,7 @@ class AutoRouterState extends State<AutoRouter> {
         routeCollection: _parentController.routeCollection.subCollectionOf(
           parentRouteData.name,
         ),
-        pageBuilder: _parentController.pageBuilder,
       );
-
       _parentController.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
     }
@@ -239,16 +237,16 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
       _navigatorObservers = _inheritableObserversBuilder();
       _parentController = parentScope.controller;
       _controller = NestedStackRouter(
-          parent: _parentController,
-          key: parentData.key,
-          routeData: parentData,
-          managedByWidget: true,
-          onNavigate: widget.onNavigate,
-          navigatorKey: widget.navigatorKey,
-          routeCollection: _parentController.routeCollection.subCollectionOf(
-            parentData.name,
-          ),
-          pageBuilder: _parentController.pageBuilder);
+        parent: _parentController,
+        key: parentData.key,
+        routeData: parentData,
+        managedByWidget: true,
+        onNavigate: widget.onNavigate,
+        navigatorKey: widget.navigatorKey,
+        routeCollection: _parentController.routeCollection.subCollectionOf(
+          parentData.name,
+        ),
+      );
       _parentController.attachChildController(_controller!);
     }
   }

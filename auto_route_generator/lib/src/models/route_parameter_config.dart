@@ -47,6 +47,7 @@ class ParamConfig {
 
   /// whether the parameter is a url fragment
   final bool isUrlFragment;
+
   /// whether the parameter is an inherited path param
   final bool isInheritedPathParam;
 
@@ -102,7 +103,7 @@ class ParamConfig {
       case 'bool':
         return type.isNullable ? 'optBool' : 'getBool';
 
-      case 'List' :
+      case 'List':
         return type.isNullable ? 'optList' : 'getList';
       default:
         return 'get';
@@ -151,7 +152,6 @@ class ParamConfig {
       isQueryParam: map['isQueryParam'] as bool,
       isUrlFragment: map['isUrlFragment'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
-
     );
   }
 }

@@ -3,17 +3,10 @@ part of 'routing_controller.dart';
 /// Signature for a function uses [pagesMap] to build an [AutoRoutePage]
 typedef PageBuilder = AutoRoutePage Function(RouteData data);
 
-/// Signature for a function that builds an [AutoRoutePage]
-/// Used by [RoutingController]
-typedef PageFactory = Page<dynamic> Function(RouteData data);
-
 /// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {
   /// Default constructor
-  RootStackRouter({super.navigatorKey})
-      : super(
-          key: const ValueKey('Root'),
-        ) {
+  RootStackRouter({super.navigatorKey}) : super(key: const ValueKey('Root')) {
     _navigationHistory = NavigationHistory.create(this);
   }
 
@@ -57,7 +50,7 @@ abstract class RootStackRouter extends StackRouter {
         type: const RouteType.material(),
         stackKey: _stackKey,
         route: RouteMatch(
-          config: DummyRootRoute('Root', path: ''),
+          config: DummyRootRoute(path: ''),
           segments: const [''],
           stringMatch: '',
           key: const ValueKey('Root'),
@@ -65,11 +58,11 @@ abstract class RootStackRouter extends StackRouter {
         pendingChildren: const [],
       );
 
-  /// The map holding the page names and their factories
-  Map<String, PageFactory> get pagesMap => throw UnimplementedError();
-
   /// The list of route entries to match against
   List<AutoRoute> get routes;
+
+  /// A List of Root router guards
+  List<AutoRouteGuard> get guards => const [];
 
   /// The default animation
   RouteType get defaultRouteType => const RouteType.material();
@@ -94,33 +87,7 @@ abstract class RootStackRouter extends StackRouter {
     );
   }
 
-  @override
-  PageBuilder get pageBuilder => _pageBuilder;
-
   AutoRouterDelegate? _lazyRootDelegate;
-
-  /// Builds a lazy instance of [AutoRouterDelegate.declarative]
-  @Deprecated(
-      'Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
-  AutoRouterDelegate declarativeDelegate({
-    required RoutesBuilder routes,
-    String? navRestorationScopeId,
-    RoutePopCallBack? onPopRoute,
-    OnNavigateCallBack? onNavigate,
-    DeepLinkBuilder? deepLinkBuilder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  }) {
-    return _lazyRootDelegate ??= AutoRouterDelegate.declarative(
-      this,
-      routes: routes,
-      onNavigate: onNavigate,
-      onPopRoute: onPopRoute,
-      navRestorationScopeId: navRestorationScopeId,
-      navigatorObservers: navigatorObservers,
-      deepLinkBuilder: deepLinkBuilder,
-    );
-  }
 
   /// Builds a lazy instance of [AutoRouterDelegate]
   /// _lazyRootDelegate is only built one time
@@ -154,12 +121,6 @@ abstract class RootStackRouter extends StackRouter {
         includePrefixMatches: includePrefixMatches,
         deepLinkTransformer: deepLinkTransformer ?? (uri) async => uri,
       );
-
-  AutoRoutePage _pageBuilder(RouteData data) {
-    var builder = pagesMap[data.name];
-    assert(builder != null);
-    return builder!(data) as AutoRoutePage;
-  }
 
   @override
   void updateRouteData(RouteData data) {

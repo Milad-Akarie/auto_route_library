@@ -87,7 +87,7 @@ class AutoRoutePage<T> extends Page<T> {
     } else if (type is CustomRouteType) {
       final result = buildPage(context);
       if (type.customRouteBuilder != null) {
-        return type.customRouteBuilder!(context, result, this) as Route<T>;
+        return type.customRouteBuilder!.call<T>(context, result, this);
       }
       return _CustomPageBasedPageRouteBuilder<T>(page: this, routeType: type);
     } else if (type is AdaptiveRouteType) {

@@ -7,7 +7,6 @@ import '../models/route_config.dart';
 import '../models/router_config.dart';
 import 'deferred_pages_allocator.dart';
 import 'route_info_builder.dart';
-import 'router_config_builder.dart';
 
 /// AutoRoute imports
 const autoRouteImport = 'package:auto_route/auto_route.dart';
@@ -22,10 +21,11 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 
 /// Builds a list type reference of type [reference]
-TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
-  ..symbol = "List"
-  ..isNullable = nullable
-  ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) =>
+    TypeReference((b) => b
+      ..symbol = "List"
+      ..isNullable = nullable
+      ..types.add(reference));
 
 /// Generates the router library output
 String generateLibrary(
@@ -39,7 +39,9 @@ String generateLibrary(
   );
 
   final emitter = DartEmitter(
-    allocator: router.usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, router.deferredLoading),
+    allocator: router.usesPartBuilder
+        ? Allocator.none
+        : DeferredPagesAllocator(routes, router.deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
@@ -52,7 +54,8 @@ String generateLibrary(
 
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];
-    if (deferredRoutes.any((e) => e.pageType == route.pageType && route.deferredLoading != true)) {
+    if (deferredRoutes.any(
+        (e) => e.pageType == route.pageType && route.deferredLoading != true)) {
       routes[i] = route.copyWith(deferredLoading: true);
     }
   }
@@ -68,7 +71,6 @@ String generateLibrary(
         for (final ignore in ignoreForFile) "ignore_for_file: $ignore",
       ])
       ..body.addAll([
-        buildRouterConfig(router, routes),
         if (routes.isNotEmpty)
           ...routes
               .distinctBy((e) => e.getName(router.replaceInRouteName))

@@ -26,19 +26,19 @@
 ---
 
 - [Introduction](#introduction)
-  - [Installation](#installation)
-  - [Setup and Usage](#setup-and-usage)
+    - [Installation](#installation)
+    - [Setup and Usage](#setup-and-usage)
 - [Generated routes](#generated-routes)
 - [Navigation](#navigating-between-screens)
-  - [Navigating Between Screens](#navigating-between-screens)
-  - [Passing Arguments](#passing-arguments)
-  - [Returning Results](#returning-results)
-  - [Nested navigation](#nested-navigation)
-  - [Tab Navigation](#tab-navigation)
-    - [Using PageView](#using-pageview)
-    - [Using TabBar](#using-tabbar)
-  - [Finding The Right Router](#finding-the-right-router)
-  - [Navigating Without Context](#navigating-without-context)
+    - [Navigating Between Screens](#navigating-between-screens)
+    - [Passing Arguments](#passing-arguments)
+    - [Returning Results](#returning-results)
+    - [Nested navigation](#nested-navigation)
+    - [Tab Navigation](#tab-navigation)
+        - [Using PageView](#using-pageview)
+        - [Using TabBar](#using-tabbar)
+    - [Finding The Right Router](#finding-the-right-router)
+    - [Navigating Without Context](#navigating-without-context)
 - [Deep Linking](#deep-linking)
 - [Declarative Navigation](#declarative-navigation)
 - [Working with Paths](#working-with-paths)
@@ -46,24 +46,25 @@
 - [Wrapping routes](#wrapping-routes)
 - [Navigation Observers](#navigation-observers)
 - [Customization](#customizations)
-  - [Custom Route Transitions](#custom-route-transitions)
-  - [Custom Route Builder](#custom-route-builder)
+    - [Custom Route Transitions](#custom-route-transitions)
+    - [Custom Route Builder](#custom-route-builder)
 - [Others](#others)
-  - [Including Micro/External Packages](#including-microexternal-packages)
-  - [Configuring builders](#configuring-builders)
-    - [Optimizing Generation Time](#optimizing-generation-time)
-    - [Enabling Cached Builds (Experimental)](#enabling-cached-builds)
-  - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
-  - [ActiveGuardObserver](#activeguardobserver)
+    - [Including Micro/External Packages](#including-microexternal-packages)
+    - [Configuring builders](#configuring-builders)
+        - [Optimizing Generation Time](#optimizing-generation-time)
+        - [Enabling Cached Builds (Experimental)](#enabling-cached-builds)
+    - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
+    - [ActiveGuardObserver](#activeguardobserver)
 - [Examples](#examples)
 
+**Note:** [AutoRoute-Helper] is no longer supported.
 
 ## Migration guides
-- [Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
-- [Migrating to v6](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v6.md)
 
-## Old documentation
-- [Pre v9 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v9_README.md)
+- [Migrating to v6](#migrating-to-v6)
+
+## Pre v6 documentation
+
 - [Pre v6 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v6_README.md)
 
 ## Introduction
@@ -89,12 +90,12 @@ dev_dependencies:
 
 ## Setup And Usage
 
-1. Create a router class and annotate it with `@AutoRouterConfig` then extend "RootStackRouter" from The auto_route package
+1. Create a router class and annotate it with `@AutoRouterConfig` then extend "$YourClassName"
 2. Override the routes getter and start adding your routes.
 
  ```dart
 @AutoRouterConfig()
-class AppRouter extends RootStackRouter {
+class AppRouter extends $AppRouter {
 
   @override
   List<AutoRoute> get routes => [
@@ -105,9 +106,20 @@ class AppRouter extends RootStackRouter {
 
 ### Using part builder
 
-To generate a part-of file simply add a `part` directive to your `AppRouter`.
+To generate a part-of file simply add a `part` directive to your `AppRouter` and extend the generated private router. **Note:** The `deferredLoading` functionality does not work with part-file setup.
 
-**Note:** The `deferredLoading` functionality does not work with part-file setup.
+```dart
+part 'app_router.gr.dart';
+
+@AutoRouterConfig()
+class AppRouter extends _$AppRouter {
+
+  @override
+  List<AutoRoute> get routes => [
+    /// routes go here
+  ];
+}
+```
 
 ### Generating Routable pages
 
@@ -135,22 +147,14 @@ dart run build_runner build
 #### Add the generated route to your routes list
 
 ```dart
-@AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
-class AppRouter extends RootStackRouter {
+@AutoRouterConfig(replaceInRouteName: 'Screen,Route')
+class AppRouter extends $AppRouter {
 
-  @override
-  RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
-  
   @override
   List<AutoRoute> get routes => [
     // HomeScreen is generated as HomeRoute because
     // of the replaceInRouteName property
     AutoRoute(page: HomeRoute.page),
-  ];
-
-  @override
-  List<AutoRouteGuard> get guards => [
-    // optionally add root guards here
   ];
 }
 ```
@@ -183,10 +187,10 @@ A `PageRouteInfo` object will be generated for every declared **AutoRoute**. The
 class BookListRoute extends PageRouteInfo {
   const BookListRoute({
     List<PagerouteInfo>? children,
-  }) : super(name, initialChildren: children);
+  }) : super(name, path: '/books', initialChildren: children);
 
   static const String name = 'BookListRoute';
-  static const PageInfo page = PageInfo(name,builder: (...));
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 ```
 
@@ -298,7 +302,17 @@ then inside of your `LoginPage`, pop with results
 ```dart
 router.maybePop(true);
 ```
-Specifying the type of the result is optional, but it's recommended to avoid runtime errors.
+
+as you'd notice we did not specify the result type, we're playing with dynamic values here, which can be risky and I personally don't recommend it.
+
+To avoid working with dynamic values, we specify what type of results we expect our page to return, which is a `bool` value.
+
+```dart
+@RoutePage<bool>()
+class LoginPage extends StatelessWidget {}
+```
+
+we push and specify the type of results we're expecting
 
 ```dart
 var result = await router.push<bool>(LoginRoute());
@@ -357,7 +371,7 @@ Defining nested routes is as easy as populating the children field of the parent
 
 ```dart
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
-class AppRouter extends RootStackRouter {
+class AppRouter extends $AppRouter {
 
 @override
 List<AutoRoute> get routes => [
@@ -393,13 +407,14 @@ class DashboardPage extends StatelessWidget {
         ),
         Expanded(
           // nested routes will be rendered here
-          child: AutoRouter(), // this is important
+          child: AutoRouter(),
         ),
       ],
     );
   }
 }
 ```
+
 **Note** NavLink is just a button that calls router.push(destination). Now if we navigate to `/dashboard/users`, we will be taken to the `DashboardPage` and the `UsersPage` will be shown inside of it.
 
 What if want to show one of the child pages at `/dashboard`? We can simply do that by giving the child routes an empty path `''` to make initial or by setting initial to true.
@@ -414,36 +429,6 @@ AutoRoute(
   ],
 )
 ```
-
-#### Creating Empty Shell routes
-Empty shell routes build a screen that contain the `AutoRouter` widget, which is used to render nested routes.
-So you can build the widget your self like follows:
-```dart
-@RoutePage()
-class MyShellPage extends StatelessWidget {
-  const MyShellPage({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-     /// you can wrap the AutoRouter with any widget you want
-    return  AutoRouter();
-  }
-}
-```
-You can shorten the code above a bit by directly extending the `AutoRouter` Widget.
-```dart
-@RoutePage()
-class MyShellPage extends AutoRouter {
-   const MyShellPage({Key? key}) : super(key: key);  
-}
-```
-
-finally you can create a shell route without code generation using the `EmptyShellRoute` helper
-
-  ```dart
-     final BooksTab = EmptyShellRoute('BooksTab');
-     context.push(BooksTab());
-  ```
-
 
 or by using a `RedirectRoute`
 
@@ -1068,33 +1053,30 @@ AutoRoute(
 
 #### Guarding all stack-routes
 
-You can have all your stack-routes (non-tab-routes) go through a list of global guards by overriding the guards property inside your router class. Lets say you have an app with no public screens, we'd have a global guard that only allows navigation if the user is authenticated or if we're navigating to the LoginRoute.
+You can have all your stack-routes (non-tab-routes) go through a global guard by having your router implement an AutoRouteGuard. Lets say you have an app with no publish screens, we'd have a global guard that only allows navigation if the user is authenticated or if we're navigating to the LoginRoute.
 
 ```dart
 @AutoRouterConfig()
-class AppRouter extends RootStackRouter{
+class AppRouter extends $AppRouter implements AutoRouteGuard {
 
   @override
-  late final List<AutoRouteGuard> guards = [
-    AutoRouteGuard.simple((resolver, router) {
-        if(isAuthenticated || resolver.routeName == LoginRoute.name) {
-          // we continue navigation
-          resolver.next();
-        } else {
-          // else we navigate to the Login page so we get authenticated
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
+    if(isAuthenticated || resolver.route.name == LoginRoute.name) {
+      // we continue navigation
+      resolver.next();
+    } else {
+        // else we navigate to the Login page so we get authenticated
 
-          // tip: use resolver.redirect to have the redirected route
-          // automatically removed from the stack when the resolver is completed
-          resolver.redirect(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
-        }
-      },
-    ),
-    // add more guards here
-  ];
-
-// ..routes[]
+        // tip: use resolver.redirect to have the redirected route
+        // automatically removed from the stack when the resolver is completed
+      resolver.redirect(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
+    }
+  }
+  // ..routes[]
 }
 ```
+
+ 
 
 ### Using a Reevaluate Listenable
 
@@ -1361,12 +1343,11 @@ CustomRoute(
 
 You can use your own custom route by passing a `CustomRouteBuilder` function to `CustomRoute' and implement the builder function the same way we did with the TransitionsBuilder function, the most important part here is passing the page argument to our custom route.
 
-make sure you pass the return type <T> to your custom route builder function.
 ```dart
 CustomRoute(
   page: CustomPage,
-  customRouteBuilder: <T>(BuildContext context, Widget child, AutoRoutePage<T> page) {
-    return PageRouteBuilder<T>(
+  customRouteBuilder: (BuildContext context, Widget child, CustomPage<T> page) {
+    return PageRouteBuilder(
       fullscreenDialog: page.fullscreenDialog,
       // this is important
       settings: page,
@@ -1380,29 +1361,31 @@ CustomRoute(
 
 ### Including Micro/External Packages
 
-To include routes inside of a depended-on package, we generated the routes inside the micro package like normal, then either use the generated routes inside your main router individually,
-or declare them inside your micro router and merge them with the main router.
+To include routes inside of a depended-on package, that package needs to generate an `AutoRouterModule` that will be later consumed by the root router.
+
+To have a package output an `AutoRouterModule` instead of a `RootStackRouter`, we need to use the `AutoRouterConfig.module()` annotation like follows
 
 ```dart
-  final myMicroRouter = MyMicroRouter();
-
-  @override
-  List<AutoRoute> get routes => [
-        AutoRoute(page: HomeRoute.page, initial: true),
-        /// use micro routes individually
-        AutoRoute(page: RouteFromMicroPackage.page),
-        /// or merge all routes from micro router
-        ...myMicroRouter.routes,
-      ];
+@AutoRouterConfig.module()
+class MyPackageModule extends $MyPackageModule {}
 ```
 
-`Tip:` You can add export `MyMicroRouter` to `app_router.dart`, so you only import `app_router.dart` inside of your code.
+Then when setting up our root router we need to tell it to include the generated module.
+
+```dart
+@AutoRouterConfig(modules: [MyPackageModule])
+class AppRouter extends $AppRouter {}
+```
+
+Now you can use `PageRouteInfos` generated inside `MyPackageModule`.
+
+`Tip:` You can add export `MyPackageModule` to `app_router.dart`, so you only import `app_router.dart` inside of your code.
 
 ```dart
 // ...imports
-export 'package:my_package/my_micro_router.dart'
-@AutoRouterConfig()
-class AppRouter extends RootStackRouter {}
+export 'package:my_package/my_package_module.dart'
+@AutoRouterConfig(modules: [MyPackageModule])
+class AppRouter extends $AppRouter {}
 ```
 
 ## Configuring builders
@@ -1537,6 +1520,98 @@ void initState(){
 }
 ```
 
+
+## Migrating to v6
+
+In version 6.0 **AutoRoute** aims for less generated code for more flexibility and less generation time.
+
+#### 1. Instead of using `MaterialAutoRouter`, `CupertinoAutoRouter`, etc,  we now only have one annotation for our router which is `@AutoRouterConfig()` and instead of passing our routes list to the annotation we now pass it to the overridable getter `routes` inside of the generated router class and for the default route type you can override `defaultRouteType`
+
+#### Before
+
+```dart
+// @CupertinoAutoRouter
+// @AdaptiveAutoRouter
+// @CustomAutoRouter
+@MaterialAutoRouter(
+  routes: <AutoRoute>[
+    // routes go here
+  ],
+)
+class $AppRouter {}
+```
+
+#### After
+
+ ```dart
+@AutoRouterConfig()
+class AppRouter extends $AppRouter {
+
+  @override
+  RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
+
+  @override
+  List<AutoRoute> get routes => [
+    // routes go here
+  ];
+}
+```
+
+#### 2. Passing page components as types is changed, now you'd annotate the target page with `@RoutePage()` annotation and pass the generated `result.page` to AutoRoute():
+
+#### Before
+
+```dart
+class ProductDetailsPage extends StatelessWidget {}
+```
+
+```dart
+AutoRoute(page: ProductDetailsPage) // as Type
+```
+
+#### After
+
+```dart
+@RoutePage() // Add this annotation to your routable pages
+class ProductDetailsPage extends StatelessWidget {}
+```
+
+```dart
+AutoRoute(page: ProductDetailsRoute.page) // ProductDetailsRoute is generated
+```
+
+#### 3. `EmptyRoutePage` no longer exists, instead you will now make your own empty pages by extending the `AutoRouter` widget
+
+#### Before
+
+```dart
+AutoRoute(page: EmptyRoutePage, name: 'ProductsRouter') // as Type
+```
+
+#### After
+
+```dart
+@RoutePage(name: 'ProductsRouter')
+class ProductsRouterPage extends AutoRouter {}
+```
+
+```dart
+AutoRoute(page: ProductsRouter.page)
+```
+
+#### 4. Passing route guards is also changed now, instead of passing guards as types you now pass instances.
+
+#### Before
+
+```dart
+AutoRoute(page: ProfilePage, guards:[AuthGuard]) // as Type
+```
+
+#### After
+
+```dart
+AutoRoute(page: ProfilePage, guards:[AuthGuard(<params>)]) // as Instance
+```
 
 ## Examples
 

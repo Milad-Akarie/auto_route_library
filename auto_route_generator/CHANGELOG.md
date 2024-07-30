@@ -1,3 +1,24 @@
+## 9.0.0 [Breaking Changes]
+
+- **BREAKING CHANGE**: No Router class will be generated anymore. Instead, you
+  extend `RootStackRouter` from the `auto_route` package.
+- **BREAKING CHANGE**: Providing return types inside `@RoutePage<Type>()` is no longer needed. you
+  just provide the type as you push the page.
+- **BREAKING CHANGE**: Providing a global route is now done by overriding the `guards` property
+  inside the router. implementing AutoRouteGuard is no longer supported.
+- **BREAKING CHANGE**: `AutoRouterConfig.module` is removed as it's no longer needed. `PageRouteInfos` are now self-contained.
+-
+For more info read the complete migration guide
+[Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
+
+- **FIX**: Fix Aliased types are not generated correctly.
+- **FEAT**: You can now create empty shell routes like follows:
+  ```dart
+     final BooksTab = EmptyShellRoute('BooksTab');
+     context.push(BooksTab());
+  ```
+
+
 ## 8.1.0
 - **FEAT**: add url#fragment support.
 - **CHORE**: update auto_route_generator dependencies

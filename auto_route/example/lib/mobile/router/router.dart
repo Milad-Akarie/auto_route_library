@@ -4,13 +4,12 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
 
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
-class RootRouter extends $RootRouter {
+class AppRouter extends RootStackRouter {
   @override
   final List<AutoRoute> routes = [
-    AutoRoute(page: WelcomeRoute.page, initial: true),
     AutoRoute(
       page: HomeRoute.page,
-      path: '/home',
+      initial: true,
       children: [
         AutoRoute(
           path: 'books',
@@ -38,17 +37,10 @@ class RootRouter extends $RootRouter {
         ),
       ],
     ),
-    AutoRoute(page: LoginRoute.page, path: '/login'),
+    AutoRoute(page: BooksTab.page, path: '/login'),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];
 }
 
-@RoutePage(name: 'BooksTab')
-class BooksTabPage extends AutoRouter {
-  const BooksTabPage({super.key});
-}
-
-@RoutePage(name: 'ProfileTab')
-class ProfileTabPage extends AutoRouter {
-  const ProfileTabPage({super.key});
-}
+final BooksTab = EmptyShellRoute('BooksTab');
+final ProfileTab = EmptyShellRoute('ProfileTab');

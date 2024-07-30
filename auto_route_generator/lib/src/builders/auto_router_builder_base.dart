@@ -16,7 +16,6 @@ import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
 import '../resolvers/router_config_resolver.dart';
-import '../resolvers/type_resolver.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(AutoRouterConfig);
 
@@ -51,11 +50,15 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     for (final clazz in unit.declarations
         .whereType<ClassDeclaration>()
         .where((e) => e.metadata.any((e) => e.name.name == annotationName))) {
-      final routerAnnotation = clazz.metadata.firstWhere((e) => e.name.name == annotationName);
-      final partDirectives =
-          unit.directives.whereType<PartDirective>().fold<int>(0, (acc, a) => acc ^ a.toSource().hashCode);
-      calculatedHash =
-          calculatedHash ^ clazz.name.toString().hashCode ^ routerAnnotation.toSource().hashCode ^ partDirectives;
+      final routerAnnotation =
+          clazz.metadata.firstWhere((e) => e.name.name == annotationName);
+      final partDirectives = unit.directives
+          .whereType<PartDirective>()
+          .fold<int>(0, (acc, a) => acc ^ a.toSource().hashCode);
+      calculatedHash = calculatedHash ^
+          clazz.name.toString().hashCode ^
+          routerAnnotation.toSource().hashCode ^
+          partDirectives;
     }
     return calculatedHash;
   }
@@ -69,7 +72,8 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   }
 
   @override
-  Future<String> onGenerateContent(BuildStep buildStep, RouterConfig item) async {
+  Future<String> onGenerateContent(
+      BuildStep buildStep, RouterConfig item) async {
     final generateForDir = item.generateForDir;
     final generatedResults = <RoutesList>[];
     final routes = <RouteConfig>[];
@@ -104,7 +108,8 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   }
 
   @override
-  Future<RouterConfig?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash) async {
+  Future<RouterConfig?> onResolve(
+      LibraryReader library, BuildStep buildStep, int stepHash) async {
     final annotatedElements = library.annotatedWith(_typeChecker);
     if (annotatedElements.isEmpty) return null;
     final element = annotatedElements.first.element;
@@ -119,9 +124,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
 
     final usesPartBuilder = _hasPartDirective(clazz);
 
-    final router = RouterConfigResolver(
-      TypeResolver(await buildStep.resolver.libraries.toList()),
-    ).resolve(
+    final router = RouterConfigResolver().resolve(
       annotation,
       buildStep.inputId,
       clazz,
@@ -132,7 +135,8 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     return router;
   }
 
-  void _writeRouterFile(BuildStep buildStep, RouterConfig router, {bool toCache = false}) {
+  void _writeRouterFile(BuildStep buildStep, RouterConfig router,
+      {bool toCache = false}) {
     final routerFile = _buildRouterFile(buildStep, toCache: toCache);
     if (!routerFile.existsSync()) {
       routerFile.createSync(recursive: true);

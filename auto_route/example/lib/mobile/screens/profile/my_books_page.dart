@@ -3,7 +3,7 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
-@RoutePage<String>()
+@RoutePage()
 class MyBooksPage extends StatelessWidget {
   final String? filter;
 

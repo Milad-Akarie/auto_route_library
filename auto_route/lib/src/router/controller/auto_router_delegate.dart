@@ -94,20 +94,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     reevaluateListenable?.addListener(controller.reevaluateGuards);
   }
 
-  /// Builds a [_DeclarativeAutoRouterDelegate] which uses
-  /// a declarative list of routes to update navigator stack
-  @Deprecated(
-      'Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
-  factory AutoRouterDelegate.declarative(
-    RootStackRouter controller, {
-    required RoutesBuilder routes,
-    String? navRestorationScopeId,
-    RoutePopCallBack? onPopRoute,
-    OnNavigateCallBack? onNavigate,
-    NavigatorObserversBuilder navigatorObservers,
-    DeepLinkBuilder? deepLinkBuilder,
-  }) = _DeclarativeAutoRouterDelegate;
-
   /// Helper to access current urlState
   UrlState get urlState => controller.navigationHistory.urlState;
 
@@ -268,94 +254,6 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
           placeholder: widget.placeholder,
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: widget.navigatorObservers,
-        ),
-      ),
-    );
-  }
-}
-
-class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
-  final RoutesBuilder routes;
-  final RoutePopCallBack? onPopRoute;
-  final OnNavigateCallBack? onNavigate;
-
-  _DeclarativeAutoRouterDelegate(
-    RootStackRouter router, {
-    required this.routes,
-    String? navRestorationScopeId,
-    super.deepLinkBuilder,
-    this.onPopRoute,
-    this.onNavigate,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  }) : super(
-          router,
-          navRestorationScopeId: navRestorationScopeId,
-          navigatorObservers: navigatorObservers,
-        ) {
-    router._managedByWidget = true;
-  }
-
-  @override
-  Future<void> setInitialRoutePath(UrlState configuration) async {
-    final platformDeepLink = PlatformDeepLink._(configuration, true);
-    if (deepLinkBuilder != null) {
-      final deepLink = await deepLinkBuilder!(platformDeepLink);
-      _handleDeclarativeDeepLink(deepLink);
-    } else if (configuration.hasSegments) {
-      _handleDeclarativeDeepLink(platformDeepLink);
-    }
-    return SynchronousFuture(null);
-  }
-
-  void _handleDeclarativeDeepLink(DeepLink deepLink) {
-    if (deepLink is _IgnoredDeepLink) return;
-    throwIf(!deepLink.isValid, 'Can not resolve initial route');
-    List<PageRouteInfo>? routes;
-    if (deepLink is PlatformDeepLink) {
-      routes = deepLink.matches.map((e) => e.toPageRouteInfo()).toList();
-    } else if (deepLink is _PathDeepLink) {
-      routes = controller.buildPageRoutesStack(deepLink.path);
-    } else if (deepLink is _RoutesDeepLink) {
-      routes = deepLink.routes;
-    }
-    controller.pendingRoutesHandler._setPendingRoutes(routes);
-  }
-
-  @override
-  Future<void> setNewRoutePath(UrlState tree) async {
-    return _onNavigate(tree);
-  }
-
-  Future<void> _onNavigate(UrlState tree) {
-    if (tree.hasSegments) {
-      controller.navigateAll(tree.segments);
-    }
-    if (onNavigate != null) {
-      onNavigate!(tree);
-    }
-
-    return SynchronousFuture(null);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final stateHash = controller.stateHash;
-    return RouterScope(
-      controller: controller,
-      inheritableObserversBuilder: navigatorObservers,
-      stateHash: stateHash,
-      navigatorObservers: _navigatorObservers,
-      child: StackRouterScope(
-        controller: controller,
-        stateHash: stateHash,
-        child: AutoRouteNavigator(
-          router: controller,
-          key: GlobalObjectKey(controller.hashCode),
-          declarativeRoutesBuilder: routes,
-          navRestorationScopeId: navRestorationScopeId,
-          navigatorObservers: _navigatorObservers,
-          didPop: onPopRoute,
         ),
       ),
     );
