@@ -517,7 +517,7 @@ abstract class RoutingController with ChangeNotifier {
   /// see [Navigator.maybePop(context)] for more details
   @optionalTypeArgs
   @Deprecated(
-      'pop was renamed to maybePop to avoid confusion, if you are looking for the implementation of Navigator.pop user popForced')
+      'pop was renamed to maybePop to avoid confusion, if you are looking for the implementation of Navigator.pop use popForced')
   Future<bool> pop<T extends Object?>([T? result]) => maybePop(result);
 
   /// Calls [maybePop] on the controller with the top-most visible page
