@@ -400,7 +400,6 @@ class DashboardPage extends StatelessWidget {
   }
 }
 ```
-
 **Note** NavLink is just a button that calls router.push(destination). Now if we navigate to `/dashboard/users`, we will be taken to the `DashboardPage` and the `UsersPage` will be shown inside of it.
 
 What if want to show one of the child pages at `/dashboard`? We can simply do that by giving the child routes an empty path `''` to make initial or by setting initial to true.
@@ -415,6 +414,36 @@ AutoRoute(
   ],
 )
 ```
+
+#### Creating Empty Shell routes
+Empty shell routes build a screen that contain the `AutoRouter` widget, which is used to render nested routes.
+So you can build the widget your self like follows:
+```dart
+@RoutePage()
+class MyShellPage extends StatelessWidget {
+  const MyShellPage({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+     /// you can wrap the AutoRouter with any widget you want
+    return  AutoRouter();
+  }
+}
+```
+You can shorten the code above a bit by directly extending the `AutoRouter` Widget.
+```dart
+@RoutePage()
+class MyShellPage extends AutoRouter {
+   const MyShellPage({Key? key}) : super(key: key);  
+}
+```
+
+finally you can create a shell route without code generation using the `EmptyShellRoute` helper
+
+  ```dart
+     final BooksTab = EmptyShellRoute('BooksTab');
+     context.push(BooksTab());
+  ```
+
 
 or by using a `RedirectRoute`
 
