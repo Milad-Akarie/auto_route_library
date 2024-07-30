@@ -49,7 +49,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Declarative Navigation Example')),
-      backgroundColor: Colors.grey[200],
       body: ValueListenableBuilder(
         valueListenable: _profileNotifier,
         builder: (context, profile, _) {
