@@ -66,7 +66,6 @@ class WebAppRouter extends RootStackRouter {
       ];
 }
 
-typedef CallBackX<T,E,R> = void Function(T x, E y, R z);
 
 @RoutePage()
 class MainWebPage extends StatefulWidget {
@@ -76,7 +75,6 @@ class MainWebPage extends StatefulWidget {
     Key? key,
     this.navigate,
     this.showUserPosts,
-    CallBackX<int, String, double>? callBackX,
   }) : super(key: key);
 
   @override
