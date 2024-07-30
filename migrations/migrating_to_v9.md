@@ -71,10 +71,13 @@ class AppRouter extends $AppRouter implements AutoRouteGuard {
 ```dart
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter{
+  
   final authGuard = AuthGuard();
+  
   @override
   late final List<AutoRouteGuard> guards = [
-    authGuard, /// guard instance
+    authGuard, ///add  guard instance
+  ///
    /// or use a simple guard wrapper
     AutoRouteGuard.simple((resolver, router) {
         /// guard logic
