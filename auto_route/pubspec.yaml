@@ -6,9 +6,9 @@ screenshots:
   - description: 'Auto Route Logo'
     path: art/auto_route_logo.png
 topics:
-  - Navigation
-  - Router
-  - Flutter Routes
+  - navigation
+  - router
+  - flutter-routes
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
