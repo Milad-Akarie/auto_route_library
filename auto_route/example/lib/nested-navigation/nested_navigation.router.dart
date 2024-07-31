@@ -41,6 +41,7 @@ class HostScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Host Screen'),
+
         /// This will automatically display a back button if the nested router can pop
         leading: AutoLeadingButton(),
       ),

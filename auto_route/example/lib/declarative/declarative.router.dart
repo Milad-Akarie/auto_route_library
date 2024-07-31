@@ -21,8 +21,6 @@ class DecRouter extends RootStackRouter {
           ],
         ),
       ];
-
-
 }
 
 class DeclarativeNavigationExampleApp extends StatelessWidget {
@@ -87,7 +85,8 @@ class _MainScreenState extends State<MainScreen> {
 class NameInputScreen extends StatefulWidget {
   final ValueChanged<String> onNameSubmitted;
 
-  const NameInputScreen({Key? key, required this.onNameSubmitted}) : super(key: key);
+  const NameInputScreen({Key? key, required this.onNameSubmitted})
+      : super(key: key);
 
   @override
   State<NameInputScreen> createState() => _NameInputScreenState();
@@ -112,7 +111,7 @@ class _NameInputScreenState extends State<NameInputScreen> {
           child: Column(
             children: [
               Text('Enter your name'),
-              TextField(controller: _controller,textAlign: TextAlign.center),
+              TextField(controller: _controller, textAlign: TextAlign.center),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -133,7 +132,8 @@ class _NameInputScreenState extends State<NameInputScreen> {
 class AgeInputScreen extends StatefulWidget {
   final ValueChanged<int> onAgeSubmitted;
 
-  const AgeInputScreen({Key? key, required this.onAgeSubmitted}) : super(key: key);
+  const AgeInputScreen({Key? key, required this.onAgeSubmitted})
+      : super(key: key);
 
   @override
   State<AgeInputScreen> createState() => _AgeInputScreenState();
@@ -151,14 +151,14 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-        color: Colors.white,
+      color: Colors.white,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               Text('Enter your age'),
-              TextField(controller: _controller,textAlign: TextAlign.center),
+              TextField(controller: _controller, textAlign: TextAlign.center),
               SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -179,12 +179,13 @@ class ResultScreen extends StatelessWidget {
   final Profile profile;
   final VoidCallback onReset;
 
-  const ResultScreen({Key? key, required this.profile, required this.onReset}) : super(key: key);
+  const ResultScreen({Key? key, required this.profile, required this.onReset})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-        color: Colors.white,
+      color: Colors.white,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),

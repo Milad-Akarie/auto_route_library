@@ -198,7 +198,6 @@ class PageRouteInfo<T> {
 /// A proxy Route page that provides a way to create a [PageRouteInfo]
 /// without the need for creating a new Page Widget
 class EmptyShellRoute extends PageInfo {
-
   /// Default constructor
   const EmptyShellRoute(super.name) : super.emptyShell();
 

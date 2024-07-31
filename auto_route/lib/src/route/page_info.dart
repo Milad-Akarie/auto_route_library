@@ -12,13 +12,12 @@ class PageInfo {
   final AutoRoutePageBuilder builder;
 
   /// Default constructor
-  const PageInfo(this.name, {required this.builder}) ;
+  const PageInfo(this.name, {required this.builder});
 
-/// Builds an empty shell [PageInfo] with a const builder
+  /// Builds an empty shell [PageInfo] with a const builder
   const PageInfo.emptyShell(this.name) : builder = _emptyShellBuilder;
 
-
-  static Widget _emptyShellBuilder(RouteData _){
+  static Widget _emptyShellBuilder(RouteData _) {
     return const AutoRouter();
   }
 
