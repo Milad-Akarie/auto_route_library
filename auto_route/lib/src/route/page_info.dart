@@ -21,31 +21,42 @@ class PageInfo {
     return const AutoRouter();
   }
 
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PageInfo &&
-          runtimeType == other.runtimeType &&
-          builder == other.builder &&
-          name == other.name;
+      other is PageInfo && runtimeType == other.runtimeType && builder == other.builder && name == other.name;
 
   @override
   int get hashCode => name.hashCode ^ builder.hashCode;
 
   /// Dummy [PageInfo] used to represent a redirect route
-  static final redirect = _NoBuilderPageInfo('#Redirect-Route');
+  static const redirect = _NoBuilderPageInfo('#Redirect-Route');
 
   ///  Dummy [PageInfo] used to represent the root route
-  static final root = _NoBuilderPageInfo('#Root');
+  static const root = _NoBuilderPageInfo('#Root');
+
+  /// Creates a new instance of [PageInfo] with the given parameters
+  PageInfo copyWith({
+    String? name,
+    AutoRoutePageBuilder? builder,
+  }) {
+    return PageInfo(
+       name ?? this.name,
+      builder: builder ?? this.builder,
+    );
+  }
 }
 
 /// Dummy [PageInfo] used to represent a redirect route
 class _NoBuilderPageInfo extends PageInfo {
   /// Default constructor
-  _NoBuilderPageInfo(super.name)
+  const _NoBuilderPageInfo(super.name)
       : super(
-          builder: (data) {
-            throw FlutterError('RedirectPageInfo does not have a builder');
-          },
+          builder: _noBuilder,
         );
+
+  static Widget _noBuilder(RouteData _) {
+    throw FlutterError('PageInfo does not have a builder');
+  }
 }
