@@ -20,7 +20,7 @@
 - **FIX**: Fix Aliased types are not generated correctly.
 - **FEAT**: You can now create empty shell routes like follows: 
   ```dart
-     final BooksTab = EmptyShellRoute('BooksTab');
+     const BooksTab = EmptyShellRoute('BooksTab');
      context.push(BooksTab());
   ```
  
