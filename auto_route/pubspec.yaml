@@ -7,8 +7,10 @@ screenshots:
     path: art/auto_route_logo.png
 topics:
   - navigation
-  - router
-  - flutter-routes
+  - routing
+  - auto-route
+  - nested-navigation
+  - deep-linking
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

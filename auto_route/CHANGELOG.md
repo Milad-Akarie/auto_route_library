@@ -1,6 +1,8 @@
 ## 9.0.1
 
  - **FIX**: make EmptyShellRoute() a const.
+ - **Chore**: Add Declarative navigation example link
+ - **Chore**: Add Nested Navigation example link
 
 ## 9.0.0 [Breaking Changes]
 
