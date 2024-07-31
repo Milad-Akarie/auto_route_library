@@ -197,18 +197,17 @@ class PageRouteInfo<T> {
 
 /// A proxy Route page that provides a way to create a [PageRouteInfo]
 /// without the need for creating a new Page Widget
-class EmptyShellRoute {
-  /// Page name
-  final String name;
+class EmptyShellRoute extends PageInfo {
 
   /// Default constructor
-  EmptyShellRoute(this.name);
-
-  /// creates [PageInfo] with an just an [AutoRouter] widget
-  late final page = PageInfo(name, builder: (_) => const AutoRouter());
+  const EmptyShellRoute(super.name) : super.emptyShell();
 
   /// Creates a new instance with of [PageRouteInfo]
   PageRouteInfo call({List<PageRouteInfo>? children}) {
     return PageRouteInfo(name, initialChildren: children);
   }
+
+  /// Creates a new instance with of [PageInfo] with an empty shell builder
+  /// that returns an [AutoRouter] widget
+  PageInfo get page => this;
 }

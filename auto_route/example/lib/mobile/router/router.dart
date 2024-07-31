@@ -42,5 +42,5 @@ class AppRouter extends RootStackRouter {
   ];
 }
 
-final BooksTab = EmptyShellRoute('BooksTab');
-final ProfileTab = EmptyShellRoute('ProfileTab');
+const BooksTab = EmptyShellRoute('BooksTab');
+const ProfileTab = EmptyShellRoute('ProfileTab');

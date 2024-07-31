@@ -415,6 +415,20 @@ AutoRoute(
 )
 ```
 
+or by using a `RedirectRoute`
+
+```dart
+AutoRoute(
+  path: '/dashboard',
+  page: DashboardRoute.page,
+  children: [
+    RedirectRoute(path: '', redirectTo: 'users'),
+    AutoRoute(path: 'users', page: UsersRoute.page),
+    AutoRoute(path: 'posts', page: PostsRoute.page),
+  ],
+)
+```
+
 #### Creating Empty Shell routes
 Empty shell routes build a screen that contain the `AutoRouter` widget, which is used to render nested routes.
 So you can build the widget your self like follows:
@@ -440,24 +454,12 @@ class MyShellPage extends AutoRouter {
 finally you can create a shell route without code generation using the `EmptyShellRoute` helper
 
   ```dart
-     final BooksTab = EmptyShellRoute('BooksTab');
+     const BooksTab = EmptyShellRoute('BooksTab');
      context.push(BooksTab());
   ```
 
 
-or by using a `RedirectRoute`
 
-```dart
-AutoRoute(
-  path: '/dashboard',
-  page: DashboardRoute.page,
-  children: [
-    RedirectRoute(path: '', redirectTo: 'users'),
-    AutoRoute(path: 'users', page: UsersRoute.page),
-    AutoRoute(path: 'posts', page: PostsRoute.page),
-  ],
-)
-```
 
 ### Things to keep in mind when implementing nested navigation
 
@@ -1539,9 +1541,10 @@ void initState(){
 
 
 ## Examples
-
+ 
 - [Declarative Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/declarative/declarative.router.dart)
-
+- [Nested Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/nested-navigation/nested_navigation.router.dart)
+ 
 ### Support auto_route
 
 You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can enhance a certain functionality or by reporting any problems you encounter and of course buying a couple coffees will help speed up the development process

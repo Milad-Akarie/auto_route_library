@@ -9,10 +9,18 @@ class PageInfo {
   final String name;
 
   /// The builder function of the generated [RoutePage]
-  final Widget Function(RouteData data) builder;
+  final AutoRoutePageBuilder builder;
 
   /// Default constructor
-  const PageInfo(this.name, {required this.builder});
+  const PageInfo(this.name, {required this.builder}) ;
+
+/// Builds an empty shell [PageInfo] with a const builder
+  const PageInfo.emptyShell(this.name) : builder = _emptyShellBuilder;
+
+
+  static Widget _emptyShellBuilder(RouteData _){
+    return const AutoRouter();
+  }
 
   @override
   bool operator ==(Object other) =>
