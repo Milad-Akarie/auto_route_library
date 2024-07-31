@@ -115,7 +115,6 @@ class RouteMatcher {
     required Uri redirectTo,
     required String redirectedFrom,
   }) {
-    print(redirectTo);
     return _match(
       redirectTo,
       routesCollection,
