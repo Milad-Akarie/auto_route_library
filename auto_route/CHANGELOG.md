@@ -1,3 +1,7 @@
+## 9.0.1
+
+ - **FIX**: make EmptyShellRoute() a const.
+
 ## 9.0.0 [Breaking Changes]
 
 - **BREAKING CHANGE**: No Router class will be generated anymore. Instead, you
