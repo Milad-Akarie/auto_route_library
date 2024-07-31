@@ -1,3 +1,7 @@
+## 9.1.0
+
+ - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
+
 ## 9.0.1
 
  - **FIX**: make EmptyShellRoute() a const.
