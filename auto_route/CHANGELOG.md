@@ -1,19 +1,16 @@
 ## 9.2.0
 
- - **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
- - **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
- - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
- - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
+- **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
 
 ## 9.1.0
 
- - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
+- **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
 
 ## 9.0.1
 
- - **FIX**: make EmptyShellRoute() a const.
- - **Chore**: Add Declarative navigation example link
- - **Chore**: Add Nested Navigation example link
+- **FIX**: make EmptyShellRoute() a const.
+- **Chore**: Add Declarative navigation example link
+- **Chore**: Add Nested Navigation example link
 
 ## 9.0.0 [Breaking Changes]
 
@@ -22,19 +19,20 @@
 - **BREAKING CHANGE**: Providing return types inside `@RoutePage<Type>()` is no longer needed. you
   just provide the type as you push the page.
 - **BREAKING CHANGE**: Providing a global route is now done by overriding the `guards` property
-  inside the router. implementing AutoRouteGuard is no longer supported. 
-- **BREAKING CHANGE**: `AutoRouterConfig.module` is removed as it's no longer needed. `PageRouteInfos` are now self-contained.
-- 
-  For more info read the complete migration guide
-  [Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
+  inside the router. implementing AutoRouteGuard is no longer supported.
+- **BREAKING CHANGE**: `AutoRouterConfig.module` is removed as it's no longer
+  needed. `PageRouteInfos` are now self-contained.
+-
+For more info read the complete migration guide
+[Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
 
 - **FIX**: Fix Aliased types are not generated correctly.
-- **FEAT**: You can now create empty shell routes like follows: 
+- **FEAT**: You can now create empty shell routes like follows:
   ```dart
      const BooksTab = EmptyShellRoute('BooksTab');
      context.push(BooksTab());
   ```
- 
+
 ## 8.3.0
 
 - **FEAT**: add url#fragment support.
