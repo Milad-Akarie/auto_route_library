@@ -21,11 +21,13 @@ class PageInfo {
     return const AutoRouter();
   }
 
-
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PageInfo && runtimeType == other.runtimeType && builder == other.builder && name == other.name;
+      other is PageInfo &&
+          runtimeType == other.runtimeType &&
+          builder == other.builder &&
+          name == other.name;
 
   @override
   int get hashCode => name.hashCode ^ builder.hashCode;
@@ -42,7 +44,7 @@ class PageInfo {
     AutoRoutePageBuilder? builder,
   }) {
     return PageInfo(
-       name ?? this.name,
+      name ?? this.name,
       builder: builder ?? this.builder,
     );
   }

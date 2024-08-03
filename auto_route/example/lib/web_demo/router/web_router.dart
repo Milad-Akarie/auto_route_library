@@ -15,7 +15,8 @@ class WebAppRouter extends RootStackRouter {
   late final List<AutoRouteGuard> guards = [
     AutoRouteGuard.simple(
       (resolver, scope) {
-        if (authService.isAuthenticated || resolver.routeName == WebLoginRoute.name) {
+        if (authService.isAuthenticated ||
+            resolver.routeName == WebLoginRoute.name) {
           resolver.next();
         } else {
           resolver.redirect(
@@ -49,7 +50,8 @@ class WebAppRouter extends RootStackRouter {
                 }
               },
               children: [
-                AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
+                AutoRoute(
+                    path: 'all', page: UserAllPostsRoute.page, initial: true),
                 AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
               ],
             ),
@@ -119,7 +121,8 @@ class _MainWebPageState extends State<MainWebPage> {
             if (kIsWeb)
               ElevatedButton(
                 onPressed: () {
-                  final currentState = ((context.router.pathState as int?) ?? 0);
+                  final currentState =
+                      ((context.router.pathState as int?) ?? 0);
                   context.router.pushPathState(currentState + 1);
                 },
                 child: AnimatedBuilder(
@@ -301,8 +304,8 @@ class _UserPageState extends State<UserPage> {
         leading: AutoLeadingButton(),
         title: Builder(
           builder: (context) {
-            return Text(
-                context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
+            return Text(context.topRouteMatch.name +
+                ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
           },
         ),
       ),
