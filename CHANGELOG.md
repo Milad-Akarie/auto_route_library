@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2024-08-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v9.2.0`](#auto_route---v920)
+ - [`auto_route_generator` - `v9.0.1`](#auto_route_generator---v901)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v9.0.1`
+
+---
+
+#### `auto_route` - `v9.2.0`
+
+ - **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
+ - **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
+ - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
+ - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
+
+
 ## 2024-07-31
 
 ### Changes

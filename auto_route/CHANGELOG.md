@@ -1,3 +1,10 @@
+## 9.2.0
+
+ - **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
+ - **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
+ - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
+ - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
+
 ## 9.1.0
 
  - **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
