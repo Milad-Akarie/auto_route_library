@@ -1,6 +1,8 @@
+## 9.2.1+1
+ No changes, changelog fix only.
 ## 9.2.1
 
- - **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
+ - **CHORE**: Update web package to 1.0.0
 
 ## 9.2.0
 
