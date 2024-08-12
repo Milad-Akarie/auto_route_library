@@ -20,7 +20,7 @@ dependencies:
   flutter:
     sdk: flutter
   path: ^1.9.0
-  web: ^0.5.1
+  web: ^1.0.0
   collection: ^1.18.0
   meta: ^1.12.0
 
