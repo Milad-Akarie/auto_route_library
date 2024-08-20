@@ -1,8 +1,14 @@
+## 9.2.2
+
+- **FIX**: Redirect route names are getting overridden in route collection.
+
 ## 9.2.1+1
- No changes, changelog fix only.
+
+No changes, changelog fix only.
+
 ## 9.2.1
 
- - **CHORE**: Update web package to 1.0.0
+- **CHORE**: Update web package to 1.0.0
 
 ## 9.2.0
 
@@ -29,6 +35,7 @@
 - **BREAKING CHANGE**: `AutoRouterConfig.module` is removed as it's no longer
   needed. `PageRouteInfos` are now self-contained.
 -
+
 For more info read the complete migration guide
 [Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
 
