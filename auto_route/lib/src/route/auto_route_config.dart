@@ -296,6 +296,9 @@ class RedirectRoute extends AutoRoute {
           page: PageInfo.redirect,
           fullMatch: true,
         );
+
+  @override
+  String get name => "${page.name}-$path-$redirectTo";
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.material] type
