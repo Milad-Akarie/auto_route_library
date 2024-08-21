@@ -161,8 +161,8 @@ class Parameters {
   }
 
   /// returns the value corresponding with [key] as nullable [List<String>]
-  List<String> getList(String key) {
-    var val = _params[key];
+  List<String> getList(String key, [List<String>? defaultValue]) {
+    var val = _params[key] ?? defaultValue;
     if (val == null) {
       throw MissingRequiredParameterError(
           'Failed to parse [List<String>] $key value from ${_params[key]}');
