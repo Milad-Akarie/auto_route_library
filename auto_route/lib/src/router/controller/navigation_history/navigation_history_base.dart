@@ -83,7 +83,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// The root router
   StackRouter get router;
 
-  /// Whether managed history has more then one entries
+  /// Whether managed history has more than one entry
   bool get canNavigateBack;
 
   /// The length of managed history entries
