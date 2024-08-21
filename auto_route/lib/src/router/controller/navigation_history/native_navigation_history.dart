@@ -20,6 +20,12 @@ class NavigationHistoryImpl extends NavigationHistory {
   void onNewUrlState(UrlState newState, {bool notify = true}) {
     super.onNewUrlState(newState, notify: notify);
     if (_currentUrl == newState.url) return;
+    // If the previous url is the same as the new url
+    // then we can infer that the screen was popped and remove the last entry
+    if (_previousUrl == newState.url) {
+      _entries.removeLast();
+      return;
+    }
     _addEntry(newState);
   }
 
@@ -30,6 +36,8 @@ class NavigationHistoryImpl extends NavigationHistory {
   int get length => _entries.length;
 
   String get _currentUrl => _entries.lastOrNull?.url ?? '';
+
+  String? get _previousUrl => _entries.length > 1 ? _entries.elementAtOrNull(_entries.length - 2)?.url : null;
 
   void _addEntry(UrlState urlState) {
     if (!urlState.hasSegments) return;
