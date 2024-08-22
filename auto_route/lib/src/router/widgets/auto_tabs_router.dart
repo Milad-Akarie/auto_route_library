@@ -515,13 +515,7 @@ class _AutoTabsRouterPageViewState
     _updatePageController();
     _didInitTabRoute(_controller!.activeIndex);
     _controller!.addListener(() {
-      var controllerPage = 0;
-      try {
-        controllerPage = _pageController.page!.toInt();
-      } catch (e) {
-        controllerPage = 0;
-      }
-      if (_controller!.activeIndex != controllerPage) {
+      if (_controller!.activeIndex != (_controller?.previousIndex ?? 0)) {
         _didChangeTabRoute(
             _controller!.activeIndex, _controller!.previousIndex!);
       }
