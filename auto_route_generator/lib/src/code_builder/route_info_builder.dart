@@ -11,8 +11,9 @@ List<Class> buildRouteInfoAndArgs(
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
   final parameters = r.parameters;
   final fragmentParam = parameters.where((p) => p.isUrlFragment).firstOrNull;
-  final nonInheritedParameters =
-      parameters.where((p) => !p.isInheritedPathParam).toList();
+  final nonInheritedParameters = parameters
+      .where((p) => !p.isInheritedPathParam && p.name != "key")
+      .toList();
   final pageInfoRefer = refer('PageInfo', autoRouteImport);
   return [
     Class(
@@ -28,7 +29,7 @@ List<Class> buildRouteInfoAndArgs(
             ..types.add(
               (nonInheritedParameters.isNotEmpty)
                   ? argsClassRefer
-                  : refer('void'),
+                  : refer('Null'),
             );
         })
         ..fields.addAll([
@@ -112,6 +113,7 @@ List<Class> buildRouteInfoAndArgs(
       Class(
         (b) => b
           ..name = argsClassRefer.symbol
+          ..extend = refer('BaseRouteArgs', autoRouteImport)
           ..fields.addAll([
             ...nonInheritedParameters.map((param) => Field((b) => b
               ..modifier = FieldModifier.final$
@@ -124,7 +126,11 @@ List<Class> buildRouteInfoAndArgs(
             Constructor((b) => b
               ..constant = true
               ..optionalParameters.addAll(
-                buildArgParams(nonInheritedParameters, emitter),
+                buildArgParams(nonInheritedParameters, emitter).followedBy([
+                  Parameter((b) => b
+                    ..name = 'key'
+                    ..toSuper = true)
+                ]),
               )),
           )
           ..methods.add(

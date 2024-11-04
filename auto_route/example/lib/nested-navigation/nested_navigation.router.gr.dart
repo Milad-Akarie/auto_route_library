@@ -13,7 +13,7 @@ import 'package:example/nested-navigation/nested_navigation.router.dart' as _i1;
 
 /// generated route for
 /// [_i1.FirstScreen]
-class FirstRoute extends _i2.PageRouteInfo<void> {
+class FirstRoute extends _i2.PageRouteInfo<Null> {
   const FirstRoute({List<_i2.PageRouteInfo>? children})
       : super(
           FirstRoute.name,
@@ -32,7 +32,7 @@ class FirstRoute extends _i2.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i1.HostScreen]
-class HostRoute extends _i2.PageRouteInfo<void> {
+class HostRoute extends _i2.PageRouteInfo<Null> {
   const HostRoute({List<_i2.PageRouteInfo>? children})
       : super(
           HostRoute.name,
@@ -51,7 +51,7 @@ class HostRoute extends _i2.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i1.SecondScreen]
-class SecondRoute extends _i2.PageRouteInfo<void> {
+class SecondRoute extends _i2.PageRouteInfo<Null> {
   const SecondRoute({List<_i2.PageRouteInfo>? children})
       : super(
           SecondRoute.name,

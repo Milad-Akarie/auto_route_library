@@ -16,7 +16,6 @@ import 'package:example/mobile/screens/login_page.dart' as _i4;
 import 'package:example/mobile/screens/profile/my_books_page.dart' as _i5;
 import 'package:example/mobile/screens/profile/profile_page.dart' as _i6;
 import 'package:example/mobile/screens/settings_page.dart' as _i7;
-import 'package:flutter/material.dart' as _i9;
 
 /// generated route for
 /// [_i1.BookDetailsPage]
@@ -48,8 +47,11 @@ class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
   );
 }
 
-class BookDetailsRouteArgs {
-  const BookDetailsRouteArgs({this.id = -3});
+class BookDetailsRouteArgs extends _i8.BaseRouteArgs {
+  const BookDetailsRouteArgs({
+    this.id = -3,
+    super.key,
+  });
 
   final int id;
 
@@ -61,7 +63,7 @@ class BookDetailsRouteArgs {
 
 /// generated route for
 /// [_i2.BookListScreen]
-class BookListRoute extends _i8.PageRouteInfo<void> {
+class BookListRoute extends _i8.PageRouteInfo<Null> {
   const BookListRoute({List<_i8.PageRouteInfo>? children})
       : super(
           BookListRoute.name,
@@ -80,7 +82,7 @@ class BookListRoute extends _i8.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.HomePage]
-class HomeRoute extends _i8.PageRouteInfo<void> {
+class HomeRoute extends _i8.PageRouteInfo<Null> {
   const HomeRoute({List<_i8.PageRouteInfo>? children})
       : super(
           HomeRoute.name,
@@ -101,14 +103,12 @@ class HomeRoute extends _i8.PageRouteInfo<void> {
 /// [_i4.LoginPage]
 class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i9.Key? key,
     void Function(bool)? onLoginResult,
     bool showBackButton = true,
     List<_i8.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
-            key: key,
             onLoginResult: onLoginResult,
             showBackButton: showBackButton,
           ),
@@ -131,14 +131,12 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   );
 }
 
-class LoginRouteArgs {
+class LoginRouteArgs extends _i8.BaseRouteArgs {
   const LoginRouteArgs({
-    this.key,
     this.onLoginResult,
     this.showBackButton = true,
+    super.key,
   });
-
-  final _i9.Key? key;
 
   final void Function(bool)? onLoginResult;
 
@@ -146,7 +144,7 @@ class LoginRouteArgs {
 
   @override
   String toString() {
-    return 'LoginRouteArgs{key: $key, onLoginResult: $onLoginResult, showBackButton: $showBackButton}';
+    return 'LoginRouteArgs{onLoginResult: $onLoginResult, showBackButton: $showBackButton}';
   }
 }
 
@@ -154,15 +152,11 @@ class LoginRouteArgs {
 /// [_i5.MyBooksPage]
 class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
   MyBooksRoute({
-    _i9.Key? key,
     String? filter = 'none',
     List<_i8.PageRouteInfo>? children,
   }) : super(
           MyBooksRoute.name,
-          args: MyBooksRouteArgs(
-            key: key,
-            filter: filter,
-          ),
+          args: MyBooksRouteArgs(filter: filter),
           rawQueryParams: {'filter': filter},
           initialChildren: children,
         );
@@ -187,25 +181,23 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
   );
 }
 
-class MyBooksRouteArgs {
+class MyBooksRouteArgs extends _i8.BaseRouteArgs {
   const MyBooksRouteArgs({
-    this.key,
     this.filter = 'none',
+    super.key,
   });
-
-  final _i9.Key? key;
 
   final String? filter;
 
   @override
   String toString() {
-    return 'MyBooksRouteArgs{key: $key, filter: $filter}';
+    return 'MyBooksRouteArgs{filter: $filter}';
   }
 }
 
 /// generated route for
 /// [_i6.ProfilePage]
-class ProfileRoute extends _i8.PageRouteInfo<void> {
+class ProfileRoute extends _i8.PageRouteInfo<Null> {
   const ProfileRoute({List<_i8.PageRouteInfo>? children})
       : super(
           ProfileRoute.name,
@@ -226,14 +218,12 @@ class ProfileRoute extends _i8.PageRouteInfo<void> {
 /// [_i7.SettingsPage]
 class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
   SettingsTab({
-    _i9.Key? key,
     String tab = 'none',
     String query = 'none',
     List<_i8.PageRouteInfo>? children,
   }) : super(
           SettingsTab.name,
           args: SettingsTabArgs(
-            key: key,
             tab: tab,
             query: query,
           ),
@@ -269,14 +259,12 @@ class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
   );
 }
 
-class SettingsTabArgs {
+class SettingsTabArgs extends _i8.BaseRouteArgs {
   const SettingsTabArgs({
-    this.key,
     this.tab = 'none',
     this.query = 'none',
+    super.key,
   });
-
-  final _i9.Key? key;
 
   final String tab;
 
@@ -284,13 +272,13 @@ class SettingsTabArgs {
 
   @override
   String toString() {
-    return 'SettingsTabArgs{key: $key, tab: $tab, query: $query}';
+    return 'SettingsTabArgs{tab: $tab, query: $query}';
   }
 }
 
 /// generated route for
 /// [_i3.WelcomeScreen]
-class WelcomeRoute extends _i8.PageRouteInfo<void> {
+class WelcomeRoute extends _i8.PageRouteInfo<Null> {
   const WelcomeRoute({List<_i8.PageRouteInfo>? children})
       : super(
           WelcomeRoute.name,

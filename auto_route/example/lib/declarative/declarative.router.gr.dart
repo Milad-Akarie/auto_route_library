@@ -16,15 +16,11 @@ import 'package:flutter/material.dart' as _i3;
 /// [_i1.AgeInputScreen]
 class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
   AgeInputRoute({
-    _i3.Key? key,
     required _i3.ValueChanged<int> onAgeSubmitted,
     List<_i2.PageRouteInfo>? children,
   }) : super(
           AgeInputRoute.name,
-          args: AgeInputRouteArgs(
-            key: key,
-            onAgeSubmitted: onAgeSubmitted,
-          ),
+          args: AgeInputRouteArgs(onAgeSubmitted: onAgeSubmitted),
           initialChildren: children,
         );
 
@@ -42,25 +38,23 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
   );
 }
 
-class AgeInputRouteArgs {
+class AgeInputRouteArgs extends _i2.BaseRouteArgs {
   const AgeInputRouteArgs({
-    this.key,
     required this.onAgeSubmitted,
+    super.key,
   });
-
-  final _i3.Key? key;
 
   final _i3.ValueChanged<int> onAgeSubmitted;
 
   @override
   String toString() {
-    return 'AgeInputRouteArgs{key: $key, onAgeSubmitted: $onAgeSubmitted}';
+    return 'AgeInputRouteArgs{onAgeSubmitted: $onAgeSubmitted}';
   }
 }
 
 /// generated route for
 /// [_i1.MainScreen]
-class MainRoute extends _i2.PageRouteInfo<void> {
+class MainRoute extends _i2.PageRouteInfo<Null> {
   const MainRoute({List<_i2.PageRouteInfo>? children})
       : super(
           MainRoute.name,
@@ -81,15 +75,11 @@ class MainRoute extends _i2.PageRouteInfo<void> {
 /// [_i1.NameInputScreen]
 class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
   NameInputRoute({
-    _i3.Key? key,
     required _i3.ValueChanged<String> onNameSubmitted,
     List<_i2.PageRouteInfo>? children,
   }) : super(
           NameInputRoute.name,
-          args: NameInputRouteArgs(
-            key: key,
-            onNameSubmitted: onNameSubmitted,
-          ),
+          args: NameInputRouteArgs(onNameSubmitted: onNameSubmitted),
           initialChildren: children,
         );
 
@@ -107,19 +97,17 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
   );
 }
 
-class NameInputRouteArgs {
+class NameInputRouteArgs extends _i2.BaseRouteArgs {
   const NameInputRouteArgs({
-    this.key,
     required this.onNameSubmitted,
+    super.key,
   });
-
-  final _i3.Key? key;
 
   final _i3.ValueChanged<String> onNameSubmitted;
 
   @override
   String toString() {
-    return 'NameInputRouteArgs{key: $key, onNameSubmitted: $onNameSubmitted}';
+    return 'NameInputRouteArgs{onNameSubmitted: $onNameSubmitted}';
   }
 }
 
@@ -127,14 +115,12 @@ class NameInputRouteArgs {
 /// [_i1.ResultScreen]
 class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
   ResultRoute({
-    _i3.Key? key,
     required _i1.Profile profile,
     required _i3.VoidCallback onReset,
     List<_i2.PageRouteInfo>? children,
   }) : super(
           ResultRoute.name,
           args: ResultRouteArgs(
-            key: key,
             profile: profile,
             onReset: onReset,
           ),
@@ -156,14 +142,12 @@ class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
   );
 }
 
-class ResultRouteArgs {
+class ResultRouteArgs extends _i2.BaseRouteArgs {
   const ResultRouteArgs({
-    this.key,
     required this.profile,
     required this.onReset,
+    super.key,
   });
-
-  final _i3.Key? key;
 
   final _i1.Profile profile;
 
@@ -171,6 +155,6 @@ class ResultRouteArgs {
 
   @override
   String toString() {
-    return 'ResultRouteArgs{key: $key, profile: $profile, onReset: $onReset}';
+    return 'ResultRouteArgs{profile: $profile, onReset: $onReset}';
   }
 }

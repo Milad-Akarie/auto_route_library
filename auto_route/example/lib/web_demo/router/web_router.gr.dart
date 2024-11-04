@@ -19,14 +19,12 @@ import 'package:flutter/material.dart' as _i6;
 /// [_i1.MainWebPage]
 class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
   MainWebRoute({
-    _i5.Key? key,
     _i5.VoidCallback? navigate,
     _i5.VoidCallback? showUserPosts,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           MainWebRoute.name,
           args: MainWebRouteArgs(
-            key: key,
             navigate: navigate,
             showUserPosts: showUserPosts,
           ),
@@ -49,14 +47,12 @@ class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
   );
 }
 
-class MainWebRouteArgs {
+class MainWebRouteArgs extends _i4.BaseRouteArgs {
   const MainWebRouteArgs({
-    this.key,
     this.navigate,
     this.showUserPosts,
+    super.key,
   });
-
-  final _i5.Key? key;
 
   final _i5.VoidCallback? navigate;
 
@@ -64,13 +60,13 @@ class MainWebRouteArgs {
 
   @override
   String toString() {
-    return 'MainWebRouteArgs{key: $key, navigate: $navigate, showUserPosts: $showUserPosts}';
+    return 'MainWebRouteArgs{navigate: $navigate, showUserPosts: $showUserPosts}';
   }
 }
 
 /// generated route for
 /// [_i1.NotFoundScreen]
-class NotFoundRoute extends _i4.PageRouteInfo<void> {
+class NotFoundRoute extends _i4.PageRouteInfo<Null> {
   const NotFoundRoute({List<_i4.PageRouteInfo>? children})
       : super(
           NotFoundRoute.name,
@@ -91,15 +87,11 @@ class NotFoundRoute extends _i4.PageRouteInfo<void> {
 /// [_i1.UserAllPostsPage]
 class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
   UserAllPostsRoute({
-    _i5.Key? key,
     _i5.VoidCallback? navigate,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           UserAllPostsRoute.name,
-          args: UserAllPostsRouteArgs(
-            key: key,
-            navigate: navigate,
-          ),
+          args: UserAllPostsRouteArgs(navigate: navigate),
           initialChildren: children,
         );
 
@@ -118,25 +110,23 @@ class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
   );
 }
 
-class UserAllPostsRouteArgs {
+class UserAllPostsRouteArgs extends _i4.BaseRouteArgs {
   const UserAllPostsRouteArgs({
-    this.key,
     this.navigate,
+    super.key,
   });
-
-  final _i5.Key? key;
 
   final _i5.VoidCallback? navigate;
 
   @override
   String toString() {
-    return 'UserAllPostsRouteArgs{key: $key, navigate: $navigate}';
+    return 'UserAllPostsRouteArgs{navigate: $navigate}';
   }
 }
 
 /// generated route for
 /// [_i1.UserFavoritePostsPage]
-class UserFavoritePostsRoute extends _i4.PageRouteInfo<void> {
+class UserFavoritePostsRoute extends _i4.PageRouteInfo<Null> {
   const UserFavoritePostsRoute({List<_i4.PageRouteInfo>? children})
       : super(
           UserFavoritePostsRoute.name,
@@ -157,7 +147,6 @@ class UserFavoritePostsRoute extends _i4.PageRouteInfo<void> {
 /// [_i1.UserPage]
 class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
   UserRoute({
-    _i5.Key? key,
     int id = -1,
     List<String>? query,
     String? fragment,
@@ -165,7 +154,6 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
   }) : super(
           UserRoute.name,
           args: UserRouteArgs(
-            key: key,
             id: id,
             query: query,
             fragment: fragment,
@@ -202,15 +190,13 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
   );
 }
 
-class UserRouteArgs {
+class UserRouteArgs extends _i4.BaseRouteArgs {
   const UserRouteArgs({
-    this.key,
     this.id = -1,
     this.query,
     this.fragment,
+    super.key,
   });
-
-  final _i5.Key? key;
 
   final int id;
 
@@ -220,13 +206,13 @@ class UserRouteArgs {
 
   @override
   String toString() {
-    return 'UserRouteArgs{key: $key, id: $id, query: $query, fragment: $fragment}';
+    return 'UserRouteArgs{id: $id, query: $query, fragment: $fragment}';
   }
 }
 
 /// generated route for
 /// [_i1.UserPostsPage]
-class UserPostsRoute extends _i4.PageRouteInfo<void> {
+class UserPostsRoute extends _i4.PageRouteInfo<Null> {
   UserPostsRoute({List<_i4.PageRouteInfo>? children})
       : super(
           UserPostsRoute.name,
@@ -248,7 +234,6 @@ class UserPostsRoute extends _i4.PageRouteInfo<void> {
 /// [_i1.UserProfilePage]
 class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
   UserProfileRoute({
-    _i5.Key? key,
     _i5.VoidCallback? navigate,
     int userId = -1,
     int likes = 0,
@@ -256,7 +241,6 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
   }) : super(
           UserProfileRoute.name,
           args: UserProfileRouteArgs(
-            key: key,
             navigate: navigate,
             userId: userId,
             likes: likes,
@@ -294,15 +278,13 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
   );
 }
 
-class UserProfileRouteArgs {
+class UserProfileRouteArgs extends _i4.BaseRouteArgs {
   const UserProfileRouteArgs({
-    this.key,
     this.navigate,
     this.userId = -1,
     this.likes = 0,
+    super.key,
   });
-
-  final _i5.Key? key;
 
   final _i5.VoidCallback? navigate;
 
@@ -312,7 +294,7 @@ class UserProfileRouteArgs {
 
   @override
   String toString() {
-    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, userId: $userId, likes: $likes}';
+    return 'UserProfileRouteArgs{navigate: $navigate, userId: $userId, likes: $likes}';
   }
 }
 
@@ -320,15 +302,11 @@ class UserProfileRouteArgs {
 /// [_i2.WebLoginPage]
 class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
   WebLoginRoute({
-    _i6.Key? key,
     _i6.ValueChanged<bool>? onResult,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           WebLoginRoute.name,
-          args: WebLoginRouteArgs(
-            key: key,
-            onResult: onResult,
-          ),
+          args: WebLoginRouteArgs(onResult: onResult),
           initialChildren: children,
         );
 
@@ -347,19 +325,17 @@ class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
   );
 }
 
-class WebLoginRouteArgs {
+class WebLoginRouteArgs extends _i4.BaseRouteArgs {
   const WebLoginRouteArgs({
-    this.key,
     this.onResult,
+    super.key,
   });
-
-  final _i6.Key? key;
 
   final _i6.ValueChanged<bool>? onResult;
 
   @override
   String toString() {
-    return 'WebLoginRouteArgs{key: $key, onResult: $onResult}';
+    return 'WebLoginRouteArgs{onResult: $onResult}';
   }
 }
 
@@ -367,15 +343,11 @@ class WebLoginRouteArgs {
 /// [_i3.WebVerifyPage]
 class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
   WebVerifyRoute({
-    _i6.Key? key,
     _i6.ValueChanged<bool>? onResult,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           WebVerifyRoute.name,
-          args: WebVerifyRouteArgs(
-            key: key,
-            onResult: onResult,
-          ),
+          args: WebVerifyRouteArgs(onResult: onResult),
           initialChildren: children,
         );
 
@@ -394,18 +366,16 @@ class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
   );
 }
 
-class WebVerifyRouteArgs {
+class WebVerifyRouteArgs extends _i4.BaseRouteArgs {
   const WebVerifyRouteArgs({
-    this.key,
     this.onResult,
+    super.key,
   });
-
-  final _i6.Key? key;
 
   final _i6.ValueChanged<bool>? onResult;
 
   @override
   String toString() {
-    return 'WebVerifyRouteArgs{key: $key, onResult: $onResult}';
+    return 'WebVerifyRouteArgs{onResult: $onResult}';
   }
 }

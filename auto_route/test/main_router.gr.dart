@@ -9,25 +9,16 @@
 
 part of 'main_router.dart';
 
-abstract class _$MainRouter extends RootStackRouter {
-  // ignore: unused_element
-  _$MainRouter({super.navigatorKey});
-}
-
 /// generated route for
 /// [DeclarativeRouterHostScreen]
 class DeclarativeRouterHostRoute
     extends PageRouteInfo<DeclarativeRouterHostRouteArgs> {
   DeclarativeRouterHostRoute({
-    Key? key,
     required ValueNotifier<int> pageNotifier,
     List<PageRouteInfo>? children,
   }) : super(
           DeclarativeRouterHostRoute.name,
-          args: DeclarativeRouterHostRouteArgs(
-            key: key,
-            pageNotifier: pageNotifier,
-          ),
+          args: DeclarativeRouterHostRouteArgs(pageNotifier: pageNotifier),
           initialChildren: children,
         );
 
@@ -45,25 +36,23 @@ class DeclarativeRouterHostRoute
   );
 }
 
-class DeclarativeRouterHostRouteArgs {
+class DeclarativeRouterHostRouteArgs extends BaseRouteArgs {
   const DeclarativeRouterHostRouteArgs({
-    this.key,
     required this.pageNotifier,
+    super.key,
   });
-
-  final Key? key;
 
   final ValueNotifier<int> pageNotifier;
 
   @override
   String toString() {
-    return 'DeclarativeRouterHostRouteArgs{key: $key, pageNotifier: $pageNotifier}';
+    return 'DeclarativeRouterHostRouteArgs{pageNotifier: $pageNotifier}';
   }
 }
 
 /// generated route for
 /// [FirstPage]
-class FirstRoute extends PageRouteInfo<void> {
+class FirstRoute extends PageRouteInfo<Null> {
   const FirstRoute({List<PageRouteInfo>? children})
       : super(
           FirstRoute.name,
@@ -82,7 +71,7 @@ class FirstRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [FourthPage]
-class FourthRoute extends PageRouteInfo<void> {
+class FourthRoute extends PageRouteInfo<Null> {
   const FourthRoute({List<PageRouteInfo>? children})
       : super(
           FourthRoute.name,
@@ -101,7 +90,7 @@ class FourthRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [NotFoundPage]
-class NotFoundRoute extends PageRouteInfo<void> {
+class NotFoundRoute extends PageRouteInfo<Null> {
   const NotFoundRoute({List<PageRouteInfo>? children})
       : super(
           NotFoundRoute.name,
@@ -122,14 +111,12 @@ class NotFoundRoute extends PageRouteInfo<void> {
 /// [SecondHostPage]
 class SecondHostRoute extends PageRouteInfo<SecondHostRouteArgs> {
   SecondHostRoute({
-    Key? key,
     bool useCustomLeading = false,
     bool hasDrawer = false,
     List<PageRouteInfo>? children,
   }) : super(
           SecondHostRoute.name,
           args: SecondHostRouteArgs(
-            key: key,
             useCustomLeading: useCustomLeading,
             hasDrawer: hasDrawer,
           ),
@@ -152,14 +139,12 @@ class SecondHostRoute extends PageRouteInfo<SecondHostRouteArgs> {
   );
 }
 
-class SecondHostRouteArgs {
+class SecondHostRouteArgs extends BaseRouteArgs {
   const SecondHostRouteArgs({
-    this.key,
     this.useCustomLeading = false,
     this.hasDrawer = false,
+    super.key,
   });
-
-  final Key? key;
 
   final bool useCustomLeading;
 
@@ -167,13 +152,13 @@ class SecondHostRouteArgs {
 
   @override
   String toString() {
-    return 'SecondHostRouteArgs{key: $key, useCustomLeading: $useCustomLeading, hasDrawer: $hasDrawer}';
+    return 'SecondHostRouteArgs{useCustomLeading: $useCustomLeading, hasDrawer: $hasDrawer}';
   }
 }
 
 /// generated route for
 /// [SecondNested1Page]
-class SecondNested1Route extends PageRouteInfo<void> {
+class SecondNested1Route extends PageRouteInfo<Null> {
   const SecondNested1Route({List<PageRouteInfo>? children})
       : super(
           SecondNested1Route.name,
@@ -192,7 +177,7 @@ class SecondNested1Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [SecondNested2Page]
-class SecondNested2Route extends PageRouteInfo<void> {
+class SecondNested2Route extends PageRouteInfo<Null> {
   const SecondNested2Route({List<PageRouteInfo>? children})
       : super(
           SecondNested2Route.name,
@@ -211,7 +196,7 @@ class SecondNested2Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [SecondNested3Page]
-class SecondNested3Route extends PageRouteInfo<void> {
+class SecondNested3Route extends PageRouteInfo<Null> {
   const SecondNested3Route({List<PageRouteInfo>? children})
       : super(
           SecondNested3Route.name,
@@ -230,7 +215,7 @@ class SecondNested3Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [SecondPage]
-class SecondRoute extends PageRouteInfo<void> {
+class SecondRoute extends PageRouteInfo<Null> {
   const SecondRoute({List<PageRouteInfo>? children})
       : super(
           SecondRoute.name,
@@ -249,7 +234,7 @@ class SecondRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [Tab1Page]
-class Tab1Route extends PageRouteInfo<void> {
+class Tab1Route extends PageRouteInfo<Null> {
   const Tab1Route({List<PageRouteInfo>? children})
       : super(
           Tab1Route.name,
@@ -268,7 +253,7 @@ class Tab1Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [Tab2Nested1Page]
-class Tab2Nested1Route extends PageRouteInfo<void> {
+class Tab2Nested1Route extends PageRouteInfo<Null> {
   const Tab2Nested1Route({List<PageRouteInfo>? children})
       : super(
           Tab2Nested1Route.name,
@@ -287,7 +272,7 @@ class Tab2Nested1Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [Tab2Nested2Page]
-class Tab2Nested2Route extends PageRouteInfo<void> {
+class Tab2Nested2Route extends PageRouteInfo<Null> {
   const Tab2Nested2Route({List<PageRouteInfo>? children})
       : super(
           Tab2Nested2Route.name,
@@ -306,7 +291,7 @@ class Tab2Nested2Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [Tab2Page]
-class Tab2Route extends PageRouteInfo<void> {
+class Tab2Route extends PageRouteInfo<Null> {
   const Tab2Route({List<PageRouteInfo>? children})
       : super(
           Tab2Route.name,
@@ -325,7 +310,7 @@ class Tab2Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [Tab3Nested1Page]
-class Tab3Nested1Route extends PageRouteInfo<void> {
+class Tab3Nested1Route extends PageRouteInfo<Null> {
   const Tab3Nested1Route({List<PageRouteInfo>? children})
       : super(
           Tab3Nested1Route.name,
@@ -344,7 +329,7 @@ class Tab3Nested1Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [Tab3Nested2Page]
-class Tab3Nested2Route extends PageRouteInfo<void> {
+class Tab3Nested2Route extends PageRouteInfo<Null> {
   const Tab3Nested2Route({List<PageRouteInfo>? children})
       : super(
           Tab3Nested2Route.name,
@@ -363,7 +348,7 @@ class Tab3Nested2Route extends PageRouteInfo<void> {
 
 /// generated route for
 /// [Tab3Page]
-class Tab3Route extends PageRouteInfo<void> {
+class Tab3Route extends PageRouteInfo<Null> {
   const Tab3Route({List<PageRouteInfo>? children})
       : super(
           Tab3Route.name,
@@ -384,14 +369,12 @@ class Tab3Route extends PageRouteInfo<void> {
 /// [TabsHostPage]
 class TabsHostRoute extends PageRouteInfo<TabsHostRouteArgs> {
   TabsHostRoute({
-    Key? key,
     String tabsType = 'IndexedStack',
     bool useDefaultRoutes = false,
     List<PageRouteInfo>? children,
   }) : super(
           TabsHostRoute.name,
           args: TabsHostRouteArgs(
-            key: key,
             tabsType: tabsType,
             useDefaultRoutes: useDefaultRoutes,
           ),
@@ -428,14 +411,12 @@ class TabsHostRoute extends PageRouteInfo<TabsHostRouteArgs> {
   );
 }
 
-class TabsHostRouteArgs {
+class TabsHostRouteArgs extends BaseRouteArgs {
   const TabsHostRouteArgs({
-    this.key,
     this.tabsType = 'IndexedStack',
     this.useDefaultRoutes = false,
+    super.key,
   });
-
-  final Key? key;
 
   final String tabsType;
 
@@ -443,13 +424,13 @@ class TabsHostRouteArgs {
 
   @override
   String toString() {
-    return 'TabsHostRouteArgs{key: $key, tabsType: $tabsType, useDefaultRoutes: $useDefaultRoutes}';
+    return 'TabsHostRouteArgs{tabsType: $tabsType, useDefaultRoutes: $useDefaultRoutes}';
   }
 }
 
 /// generated route for
 /// [ThirdPage]
-class ThirdRoute extends PageRouteInfo<void> {
+class ThirdRoute extends PageRouteInfo<Null> {
   const ThirdRoute({List<PageRouteInfo>? children})
       : super(
           ThirdRoute.name,
