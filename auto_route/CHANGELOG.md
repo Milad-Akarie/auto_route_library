@@ -1,3 +1,5 @@
+## 9.3.0
+- **CHORE**: Resolve some deprecated APIs.
 ## 9.2.2
 
 - **FIX**: Redirect route names are getting overridden in route collection.

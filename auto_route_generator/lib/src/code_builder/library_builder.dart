@@ -79,5 +79,8 @@ String generateLibrary(
       ]),
   );
 
-  return DartFormatter().format(library.accept(emitter).toString());
+  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
+      .format(
+    library.accept(emitter).toString(),
+  );
 }
