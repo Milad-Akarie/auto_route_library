@@ -11,11 +11,11 @@ import '../utils.dart';
 /// it also adds a list of [initialChildren] e.g:
 ///
 /// class BookListRoute extends PageRouteInfo {
-///   const BookListRoute({List<PageRouteInfo>? children})
+///   const BookListRoute({List&lt;PageRouteInfo&gt;? children})
 ///    : super(name,initialChildren: children);
 ///
 ///   static const String name = 'BookListRoute';
-///   static const PageInfo<void> page = PageInfo<void>(name);
+///   static const PageInfo&lt;void&gt; page = PageInfo&lt;void&gt;(name);
 /// }
 
 @optionalTypeArgs
