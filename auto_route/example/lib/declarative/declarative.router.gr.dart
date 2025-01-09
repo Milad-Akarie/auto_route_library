@@ -16,11 +16,15 @@ import 'package:flutter/material.dart' as _i3;
 /// [_i1.AgeInputScreen]
 class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
   AgeInputRoute({
+    _i3.Key? key,
     required _i3.ValueChanged<int> onAgeSubmitted,
     List<_i2.PageRouteInfo>? children,
   }) : super(
           AgeInputRoute.name,
-          args: AgeInputRouteArgs(onAgeSubmitted: onAgeSubmitted),
+          args: AgeInputRouteArgs(
+            key: key,
+            onAgeSubmitted: onAgeSubmitted,
+          ),
           initialChildren: children,
         );
 
@@ -48,7 +52,7 @@ class AgeInputRouteArgs extends _i2.BaseRouteArgs {
 
   @override
   String toString() {
-    return 'AgeInputRouteArgs{onAgeSubmitted: $onAgeSubmitted}';
+    return 'AgeInputRouteArgs{key: $key, onAgeSubmitted: $onAgeSubmitted}';
   }
 }
 
@@ -75,11 +79,15 @@ class MainRoute extends _i2.PageRouteInfo<Null> {
 /// [_i1.NameInputScreen]
 class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
   NameInputRoute({
+    _i3.Key? key,
     required _i3.ValueChanged<String> onNameSubmitted,
     List<_i2.PageRouteInfo>? children,
   }) : super(
           NameInputRoute.name,
-          args: NameInputRouteArgs(onNameSubmitted: onNameSubmitted),
+          args: NameInputRouteArgs(
+            key: key,
+            onNameSubmitted: onNameSubmitted,
+          ),
           initialChildren: children,
         );
 
@@ -107,7 +115,7 @@ class NameInputRouteArgs extends _i2.BaseRouteArgs {
 
   @override
   String toString() {
-    return 'NameInputRouteArgs{onNameSubmitted: $onNameSubmitted}';
+    return 'NameInputRouteArgs{key: $key, onNameSubmitted: $onNameSubmitted}';
   }
 }
 
@@ -115,12 +123,14 @@ class NameInputRouteArgs extends _i2.BaseRouteArgs {
 /// [_i1.ResultScreen]
 class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
   ResultRoute({
+    _i3.Key? key,
     required _i1.Profile profile,
     required _i3.VoidCallback onReset,
     List<_i2.PageRouteInfo>? children,
   }) : super(
           ResultRoute.name,
           args: ResultRouteArgs(
+            key: key,
             profile: profile,
             onReset: onReset,
           ),
@@ -155,6 +165,6 @@ class ResultRouteArgs extends _i2.BaseRouteArgs {
 
   @override
   String toString() {
-    return 'ResultRouteArgs{profile: $profile, onReset: $onReset}';
+    return 'ResultRouteArgs{key: $key, profile: $profile, onReset: $onReset}';
   }
 }

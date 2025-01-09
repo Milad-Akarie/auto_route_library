@@ -16,6 +16,7 @@ import 'package:example/mobile/screens/login_page.dart' as _i4;
 import 'package:example/mobile/screens/profile/my_books_page.dart' as _i5;
 import 'package:example/mobile/screens/profile/profile_page.dart' as _i6;
 import 'package:example/mobile/screens/settings_page.dart' as _i7;
+import 'package:flutter/material.dart' as _i9;
 
 /// generated route for
 /// [_i1.BookDetailsPage]
@@ -103,12 +104,14 @@ class HomeRoute extends _i8.PageRouteInfo<Null> {
 /// [_i4.LoginPage]
 class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
+    _i9.Key? key,
     void Function(bool)? onLoginResult,
     bool showBackButton = true,
     List<_i8.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
+            key: key,
             onLoginResult: onLoginResult,
             showBackButton: showBackButton,
           ),
@@ -144,7 +147,7 @@ class LoginRouteArgs extends _i8.BaseRouteArgs {
 
   @override
   String toString() {
-    return 'LoginRouteArgs{onLoginResult: $onLoginResult, showBackButton: $showBackButton}';
+    return 'LoginRouteArgs{key: $key, onLoginResult: $onLoginResult, showBackButton: $showBackButton}';
   }
 }
 
@@ -152,11 +155,15 @@ class LoginRouteArgs extends _i8.BaseRouteArgs {
 /// [_i5.MyBooksPage]
 class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
   MyBooksRoute({
+    _i9.Key? key,
     String? filter = 'none',
     List<_i8.PageRouteInfo>? children,
   }) : super(
           MyBooksRoute.name,
-          args: MyBooksRouteArgs(filter: filter),
+          args: MyBooksRouteArgs(
+            key: key,
+            filter: filter,
+          ),
           rawQueryParams: {'filter': filter},
           initialChildren: children,
         );
@@ -191,7 +198,7 @@ class MyBooksRouteArgs extends _i8.BaseRouteArgs {
 
   @override
   String toString() {
-    return 'MyBooksRouteArgs{filter: $filter}';
+    return 'MyBooksRouteArgs{key: $key, filter: $filter}';
   }
 }
 
@@ -218,12 +225,14 @@ class ProfileRoute extends _i8.PageRouteInfo<Null> {
 /// [_i7.SettingsPage]
 class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
   SettingsTab({
+    _i9.Key? key,
     String tab = 'none',
     String query = 'none',
     List<_i8.PageRouteInfo>? children,
   }) : super(
           SettingsTab.name,
           args: SettingsTabArgs(
+            key: key,
             tab: tab,
             query: query,
           ),
@@ -272,7 +281,7 @@ class SettingsTabArgs extends _i8.BaseRouteArgs {
 
   @override
   String toString() {
-    return 'SettingsTabArgs{tab: $tab, query: $query}';
+    return 'SettingsTabArgs{key: $key, tab: $tab, query: $query}';
   }
 }
 

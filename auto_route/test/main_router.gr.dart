@@ -14,11 +14,15 @@ part of 'main_router.dart';
 class DeclarativeRouterHostRoute
     extends PageRouteInfo<DeclarativeRouterHostRouteArgs> {
   DeclarativeRouterHostRoute({
+    Key? key,
     required ValueNotifier<int> pageNotifier,
     List<PageRouteInfo>? children,
   }) : super(
           DeclarativeRouterHostRoute.name,
-          args: DeclarativeRouterHostRouteArgs(pageNotifier: pageNotifier),
+          args: DeclarativeRouterHostRouteArgs(
+            key: key,
+            pageNotifier: pageNotifier,
+          ),
           initialChildren: children,
         );
 
@@ -46,7 +50,7 @@ class DeclarativeRouterHostRouteArgs extends BaseRouteArgs {
 
   @override
   String toString() {
-    return 'DeclarativeRouterHostRouteArgs{pageNotifier: $pageNotifier}';
+    return 'DeclarativeRouterHostRouteArgs{key: $key, pageNotifier: $pageNotifier}';
   }
 }
 
@@ -111,12 +115,14 @@ class NotFoundRoute extends PageRouteInfo<Null> {
 /// [SecondHostPage]
 class SecondHostRoute extends PageRouteInfo<SecondHostRouteArgs> {
   SecondHostRoute({
+    Key? key,
     bool useCustomLeading = false,
     bool hasDrawer = false,
     List<PageRouteInfo>? children,
   }) : super(
           SecondHostRoute.name,
           args: SecondHostRouteArgs(
+            key: key,
             useCustomLeading: useCustomLeading,
             hasDrawer: hasDrawer,
           ),
@@ -152,7 +158,7 @@ class SecondHostRouteArgs extends BaseRouteArgs {
 
   @override
   String toString() {
-    return 'SecondHostRouteArgs{useCustomLeading: $useCustomLeading, hasDrawer: $hasDrawer}';
+    return 'SecondHostRouteArgs{key: $key, useCustomLeading: $useCustomLeading, hasDrawer: $hasDrawer}';
   }
 }
 
@@ -369,12 +375,14 @@ class Tab3Route extends PageRouteInfo<Null> {
 /// [TabsHostPage]
 class TabsHostRoute extends PageRouteInfo<TabsHostRouteArgs> {
   TabsHostRoute({
+    Key? key,
     String tabsType = 'IndexedStack',
     bool useDefaultRoutes = false,
     List<PageRouteInfo>? children,
   }) : super(
           TabsHostRoute.name,
           args: TabsHostRouteArgs(
+            key: key,
             tabsType: tabsType,
             useDefaultRoutes: useDefaultRoutes,
           ),
@@ -424,7 +432,7 @@ class TabsHostRouteArgs extends BaseRouteArgs {
 
   @override
   String toString() {
-    return 'TabsHostRouteArgs{tabsType: $tabsType, useDefaultRoutes: $useDefaultRoutes}';
+    return 'TabsHostRouteArgs{key: $key, tabsType: $tabsType, useDefaultRoutes: $useDefaultRoutes}';
   }
 }
 
