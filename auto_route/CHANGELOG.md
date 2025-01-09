@@ -1,3 +1,7 @@
+## 9.3.0+1
+- **CHORE**: Fix some static analysis warnings
+## 9.3.0
+- **CHORE**: Resolve some deprecated APIs.
 ## 9.2.2
 
 - **FIX**: Redirect route names are getting overridden in route collection.

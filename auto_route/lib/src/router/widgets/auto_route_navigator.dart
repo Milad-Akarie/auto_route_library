@@ -25,7 +25,7 @@ class AutoRouteNavigator extends StatefulWidget {
   final List<NavigatorObserver> navigatorObservers;
 
   /// A callback to report popped [AutoRoutePage]s
-  /// Used by [Navigator.onPopPage]
+  /// Used by [Navigator.onDidRemovePage]
   final RoutePopCallBack? didPop;
 
   /// Clients will use this build for declarative routing
@@ -105,7 +105,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
                 widget.router.onPopPage(route, routeData);
                 widget.didPop?.call(routeData.route, result);
               }
-              route.onPopInvoked(true);
+              route.onPopInvokedWithResult(true, result);
               return route.didPop(result);
             },
           )

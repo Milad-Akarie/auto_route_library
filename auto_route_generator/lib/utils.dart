@@ -1,6 +1,7 @@
-// general utils
+/// general utils
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Recase a string to lowerCamelCase
@@ -40,7 +41,7 @@ void throwError(String message, {Element? element}) {
 extension IterableExtenstion<E> on Iterable<E> {
   /// Returns the first element that satisfies the given predicate [test]
   /// or `null` if no element satisfies the predicate.
-  E? firstOrNull(bool test(E element)) {
+  E? firstWhereOrNull(bool test(E element)) {
     for (var e in this) {
       if (test(e)) {
         return e;
@@ -67,5 +68,15 @@ extension IterableExtenstion<E> on Iterable<E> {
       uniqueItems[distinctBy(e)] = e;
     }
     return uniqueItems.values;
+  }
+}
+
+/// Extension helpers for [DartType]
+extension DartTypeX on DartType {
+  /// Returns the display string of this type
+  /// without nullability suffix
+  String get nameWithoutSuffix {
+    final name = getDisplayString();
+    return name.endsWith('?') ? name.substring(0, name.length - 1) : name;
   }
 }

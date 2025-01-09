@@ -1,3 +1,8 @@
+## 9.3.1
+- **CHORE**: Bump analyzer constrains to support (v7).
+## 9.3.0
+- **CHORE**: Bump source_gen (v2), dart_style (v3) versions.
+- **CHORE**: Resolve some deprecated APIs.
 ## 9.0.0 [Breaking Changes]
 
 - **BREAKING CHANGE**: No Router class will be generated anymore. Instead, you

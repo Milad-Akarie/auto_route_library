@@ -78,8 +78,8 @@ class CustomRouteType extends RouteType {
   /// function in [PageRouteBuilder]
   ///
   /// I couldn't type this function from here but it should match
-  /// typedef [RouteTransitionsBuilder] = Widget Function(BuildContext context, Animation<double> animation,
-  /// Animation<double> secondaryAnimation, Widget child);
+  /// typedef [RouteTransitionsBuilder] = Widget Function(BuildContext context, Animation&lt;double&gt; animation,
+  /// Animation&lt;double&gt; secondaryAnimation, Widget child);
   ///
   /// you should only reference the function so
   /// the generator can import it into the generated file
@@ -97,13 +97,13 @@ class CustomRouteType extends RouteType {
   /// that has all the other properties assigned to it
   /// so using them then is totally up to you.
   ///
-  /// Make sure you pass the Return Type <T> to the Route<T> function
+  /// Make sure you pass the Return Type &lt;T&gt; to the Route&lt;T&gt; function
   /// ex:
   ///  CustomRoute(
   ///     path: '/user/:userID',
   ///     page: UserRoute.page,
-  ///     customRouteBuilder: <T>(context, child, page) {
-  ///     return PageRouteBuilder<T>(
+  ///     customRouteBuilder: &lt;T&gt;(context, child, page) {
+  ///     return PageRouteBuilder&lt;T&gt;(
   ///     settings: page,
   ///     pageBuilder: (context, _, __) => child,
   ///   );

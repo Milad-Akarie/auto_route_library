@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -15,10 +16,7 @@ import 'package:example/nested-navigation/nested_navigation.router.dart' as _i1;
 /// [_i1.FirstScreen]
 class FirstRoute extends _i2.PageRouteInfo<Null> {
   const FirstRoute({List<_i2.PageRouteInfo>? children})
-      : super(
-          FirstRoute.name,
-          initialChildren: children,
-        );
+      : super(FirstRoute.name, initialChildren: children);
 
   static const String name = 'FirstRoute';
 
@@ -34,10 +32,7 @@ class FirstRoute extends _i2.PageRouteInfo<Null> {
 /// [_i1.HostScreen]
 class HostRoute extends _i2.PageRouteInfo<Null> {
   const HostRoute({List<_i2.PageRouteInfo>? children})
-      : super(
-          HostRoute.name,
-          initialChildren: children,
-        );
+      : super(HostRoute.name, initialChildren: children);
 
   static const String name = 'HostRoute';
 
@@ -53,10 +48,7 @@ class HostRoute extends _i2.PageRouteInfo<Null> {
 /// [_i1.SecondScreen]
 class SecondRoute extends _i2.PageRouteInfo<Null> {
   const SecondRoute({List<_i2.PageRouteInfo>? children})
-      : super(
-          SecondRoute.name,
-          initialChildren: children,
-        );
+      : super(SecondRoute.name, initialChildren: children);
 
   static const String name = 'SecondRoute';
 

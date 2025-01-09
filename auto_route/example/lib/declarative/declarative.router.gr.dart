@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -21,10 +22,7 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
     List<_i2.PageRouteInfo>? children,
   }) : super(
           AgeInputRoute.name,
-          args: AgeInputRouteArgs(
-            key: key,
-            onAgeSubmitted: onAgeSubmitted,
-          ),
+          args: AgeInputRouteArgs(key: key, onAgeSubmitted: onAgeSubmitted),
           initialChildren: children,
         );
 
@@ -42,11 +40,16 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
   );
 }
 
+
 class AgeInputRouteArgs extends _i2.BaseRouteArgs {
   const AgeInputRouteArgs({
     required this.onAgeSubmitted,
     super.key,
   });
+
+class AgeInputRouteArgs {
+  const AgeInputRouteArgs({this.key, required this.onAgeSubmitted});
+
 
   final _i3.ValueChanged<int> onAgeSubmitted;
 
@@ -60,10 +63,7 @@ class AgeInputRouteArgs extends _i2.BaseRouteArgs {
 /// [_i1.MainScreen]
 class MainRoute extends _i2.PageRouteInfo<Null> {
   const MainRoute({List<_i2.PageRouteInfo>? children})
-      : super(
-          MainRoute.name,
-          initialChildren: children,
-        );
+      : super(MainRoute.name, initialChildren: children);
 
   static const String name = 'MainRoute';
 
@@ -84,10 +84,7 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
     List<_i2.PageRouteInfo>? children,
   }) : super(
           NameInputRoute.name,
-          args: NameInputRouteArgs(
-            key: key,
-            onNameSubmitted: onNameSubmitted,
-          ),
+          args: NameInputRouteArgs(key: key, onNameSubmitted: onNameSubmitted),
           initialChildren: children,
         );
 
@@ -105,11 +102,16 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
   );
 }
 
+
 class NameInputRouteArgs extends _i2.BaseRouteArgs {
   const NameInputRouteArgs({
     required this.onNameSubmitted,
     super.key,
   });
+
+class NameInputRouteArgs {
+  const NameInputRouteArgs({this.key, required this.onNameSubmitted});
+
 
   final _i3.ValueChanged<String> onNameSubmitted;
 
@@ -129,11 +131,7 @@ class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
     List<_i2.PageRouteInfo>? children,
   }) : super(
           ResultRoute.name,
-          args: ResultRouteArgs(
-            key: key,
-            profile: profile,
-            onReset: onReset,
-          ),
+          args: ResultRouteArgs(key: key, profile: profile, onReset: onReset),
           initialChildren: children,
         );
 
