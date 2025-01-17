@@ -649,10 +649,12 @@ class TabsRouter extends RoutingController {
       required RouteData routeData,
       this.homeIndex = -1,
       required this.preload,
-      RoutingController? parent})
+      RoutingController? parent,
+      int activeIndex = 0})
       : matcher = RouteMatcher(routeCollection),
         _parent = parent,
-        _routeData = routeData;
+        _routeData = routeData,
+        _activeIndex = activeIndex;
 
   /// Called to preload a page before other navigation events occur
   /// if it returns true, the page has been preloaded, otherwise we assume it's already loaded

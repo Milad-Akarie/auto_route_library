@@ -67,9 +67,13 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// else pop parent
   final int homeIndex;
 
+  /// The index of the `route` to show on first build
+  final int startIndex;
+
   const AutoTabsRouter._({
     super.key,
     required this.routes,
+    this.startIndex = 0,
     this.homeIndex = -1,
     this.inheritNavigatorObservers = true,
     this.navigatorObservers =
@@ -89,6 +93,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     int homeIndex,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
+    int startIndex,
   }) = _AutoTabsRouterIndexedStack;
 
   /// Builds an [AutoTabsRouter] to uses
@@ -106,6 +111,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     NavigatorObserversBuilder navigatorObservers,
     ScrollPhysics? physics,
     DragStartBehavior dragStartBehavior,
+    int startIndex,
   }) = _AutoTabsRouterPageView;
 
   /// Builds an [AutoTabsRouter] to uses
@@ -123,6 +129,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     NavigatorObserversBuilder navigatorObservers,
     ScrollPhysics? physics,
     DragStartBehavior dragStartBehavior,
+    int startIndex,
   }) = _AutoTabsRouterTabBar;
 
   /// Builds an [AutoTabsRouter] with a custom builder
@@ -137,6 +144,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     int homeIndex,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
+    int startIndex,
   }) = _AutoTabsRouterBuilder;
 
   /// Looks up and returns the scoped [controller]
@@ -195,6 +203,7 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
         routeCollection: _parentController.routeCollection.subCollectionOf(
           parentRoute.name,
         ),
+        activeIndex: widget.startIndex,
       );
       _parentController.attachChildController(_controller!);
       _setupController();
@@ -241,6 +250,7 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
     this.builder,
     this.transitionBuilder = _defaultTransitionBuilder,
     super.homeIndex,
+    super.startIndex,
     super.inheritNavigatorObservers,
     super.navigatorObservers,
   }) : super._();
@@ -487,6 +497,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
     super.routes,
     AutoTabsPageViewBuilder? builder,
     super.homeIndex,
+    super.startIndex,
     this.scrollDirection = Axis.horizontal,
     this.animatePageTransition = true,
     this.duration = kTabScrollDuration,
@@ -617,6 +628,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     this.scrollDirection = Axis.horizontal,
     this.builder,
     super.homeIndex,
+    super.startIndex,
     this.animatePageTransition = true,
     this.duration,
     this.curve = Curves.ease,
@@ -758,6 +770,7 @@ class _AutoTabsRouterBuilder extends AutoTabsRouter {
     super.homeIndex,
     super.inheritNavigatorObservers,
     super.navigatorObservers,
+    super.startIndex,
   }) : super._();
 
   @override
