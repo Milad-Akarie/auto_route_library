@@ -91,7 +91,7 @@ class PathParam {
 const pathParam = PathParam();
 
 /// default PathParam.inherit()
-const inheritPathParam = PathParam();
+const inheritPathParam = PathParam.inherit();
 
 /// this annotation is used to make parameters that's supposed
 /// to take their values from query params of the url
