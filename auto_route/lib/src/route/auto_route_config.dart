@@ -10,6 +10,7 @@ typedef AutoRoutePageBuilder = Widget Function(RouteData data);
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
 typedef TitleBuilder = String Function(BuildContext context, RouteData data);
+typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData data);
 
 /// Signature for a function that builds the page [restorationId]
 /// Used in [AutoRoutePage]
@@ -112,9 +113,7 @@ class AutoRoute {
     List<AutoRoute>? children,
   })  : _path = path,
         _pageBuilder = page.builder,
-        _children = children != null && children.isNotEmpty
-            ? RouteCollection.fromList(children)
-            : null;
+        _children = children != null && children.isNotEmpty ? RouteCollection.fromList(children) : null;
 
   AutoRoute._change({
     required this.page,
@@ -264,9 +263,7 @@ class AutoRoute {
       meta: meta ?? this.meta,
       maintainState: maintainState ?? this.maintainState,
       fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
-      children: children != null
-          ? (children.isEmpty ? null : RouteCollection.fromList(children))
-          : this.children,
+      children: children != null ? (children.isEmpty ? null : RouteCollection.fromList(children)) : this.children,
       //copy
       title: title ?? this.title,
       restorationId: restorationId ?? this.restorationId,
@@ -411,6 +408,75 @@ class CustomRoute<R> extends AutoRoute {
         );
 }
 
+class SimpleRoute extends AutoRoute {
+  SimpleRoute({
+    required String path,
+    String? name,
+    super.fullscreenDialog,
+    super.maintainState,
+    super.fullMatch = false,
+    super.guards,
+    super.usesPathAsKey = false,
+    super.children,
+    super.meta = const {},
+    super.title,
+    super.keepHistory,
+    super.initial,
+    super.allowSnapshotting = true,
+    super.restorationId,
+    super.type,
+    required WidgetBuilderWithData builder,
+  }) : super._(
+          path: path,
+          page: PageInfo.builder(name ?? path, builder: builder),
+        );
+
+  SimpleRoute.guarded({
+    required String path,
+    required OnNavigation onNavigation,
+    super.fullscreenDialog,
+    super.maintainState,
+    super.fullMatch = false,
+    super.usesPathAsKey = false,
+    super.children,
+    super.meta = const {},
+    super.title,
+    super.keepHistory,
+    super.initial,
+    super.allowSnapshotting = true,
+    super.restorationId,
+    super.type,
+    required WidgetBuilderWithData builder,
+  }) : super._(
+          path: path,
+          guards: [AutoRouteGuard.simple(onNavigation)],
+          page: PageInfo.builder(path, builder: builder),
+        );
+
+  SimpleRoute.shell({
+    String? name,
+    required String path,
+    super.fullscreenDialog,
+    super.maintainState,
+    super.fullMatch = false,
+    super.usesPathAsKey = false,
+    required super.children,
+    super.guards,
+    super.meta = const {},
+    super.title,
+    super.keepHistory,
+    super.initial,
+    super.allowSnapshotting = true,
+    super.restorationId,
+    super.type,
+  }) : super._(
+    path: path,
+    page: PageInfo.emptyShell(name ?? path),
+  );
+
+
+}
+
 /// Builds a simplified [AutoRoute] instance for test
 @visibleForTesting
 class TestRoute extends AutoRoute {
@@ -460,8 +526,7 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(List<AutoRoute> routes,
-      {bool root = false}) {
+  factory RouteCollection.fromList(List<AutoRoute> routes, {bool root = false}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(routesMarkedInitial.length > 1,
         'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');

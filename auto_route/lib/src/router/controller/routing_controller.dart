@@ -1770,6 +1770,11 @@ abstract class StackRouter extends RoutingController {
     return SynchronousFuture(null);
   }
 
+  Future<T?> pushPath<T extends Object?>(   String path, {
+    bool includePrefixMatches = false,
+    OnNavigationFailure? onFailure,
+  }) => pushNamed<T>(path, includePrefixMatches: includePrefixMatches, onFailure: onFailure);
+
   /// Helper to pop all routes until route with [name] is found
   /// see [popUntil]
   void popUntilRouteWithName(String name, {bool scoped = true}) {

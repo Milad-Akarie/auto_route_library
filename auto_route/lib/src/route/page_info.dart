@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:path/path.dart';
 
 /// Holds information of the generated [RoutePage] page
 ///
@@ -21,13 +22,19 @@ class PageInfo {
     return const AutoRouter();
   }
 
+  factory PageInfo.builder(String name, {required WidgetBuilderWithData builder}) {
+    return PageInfo(
+      name,
+      builder: (data) => Builder(
+        builder: (context) => builder(context, data),
+      ),
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PageInfo &&
-          runtimeType == other.runtimeType &&
-          builder == other.builder &&
-          name == other.name;
+      other is PageInfo && runtimeType == other.runtimeType && builder == other.builder && name == other.name;
 
   @override
   int get hashCode => name.hashCode ^ builder.hashCode;

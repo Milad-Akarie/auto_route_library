@@ -20,7 +20,7 @@ import '../utils.dart';
 
 @optionalTypeArgs
 @immutable
-class PageRouteInfo<T> {
+class PageRouteInfo<T extends Object?> {
   final String _name;
 
   /// The  typed arguments of the route

@@ -162,6 +162,9 @@ class RouteData {
   /// Helper to access [RouteMatch.pathParams]
   Parameters get pathParams => _match.pathParams;
 
+  /// Helper to access [RouteMatch.pathParams]
+  Parameters get params => _match.pathParams;
+
   /// Helper to access [RouteMatch.queryParams]
   Parameters get queryParams => _match.queryParams;
 
