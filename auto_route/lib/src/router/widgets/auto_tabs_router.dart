@@ -190,7 +190,8 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
         parent: _parentController,
         key: parentRoute.key,
         homeIndex: widget.homeIndex,
-        routeData: parentRoute,
+        routeData: _parentController.currentChildController?.current
+          ?? parentRoute,
         preload: onPreload,
         routeCollection: _parentController.routeCollection.subCollectionOf(
           parentRoute.name,

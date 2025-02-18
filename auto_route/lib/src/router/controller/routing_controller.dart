@@ -57,6 +57,11 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Holds track of the list of attached child controllers
   List<RoutingController> get childControllers => _childControllers;
+
+  RoutingController? get currentChildController => _innerControllerOf(
+    currentChild?.key
+  );
+
   final List<AutoRoutePage> _pages = [];
 
   /// The instance of [NavigationHistory] to be used by this router
@@ -83,6 +88,7 @@ abstract class RoutingController with ChangeNotifier {
     _childControllers.remove(childController);
   }
 
+  /// Returns the last child controller with specified [key].
   RoutingController? _innerControllerOf(Key? key) =>
       _childControllers.lastWhereOrNull(
         (c) => c.key == key,
@@ -747,16 +753,19 @@ class TabsRouter extends RoutingController {
   /// after match validation and deciding initial index
   void setupRoutes(List<PageRouteInfo>? routes) {
     final routesToPush = _resolveRoutes(routes);
+    RouteMatch? preMatchedRoute;
     if (_routeData.hasPendingChildren) {
-      final preMatchedRoute = _routeData.pendingChildren.last;
-      final correspondingRouteIndex = routesToPush.indexWhere(
-        (r) => r.key == preMatchedRoute.key,
-      );
-      if (correspondingRouteIndex != -1) {
-        routesToPush[correspondingRouteIndex] = preMatchedRoute;
-        _previousIndex = _activeIndex;
-        _activeIndex = correspondingRouteIndex;
-      }
+      preMatchedRoute = _routeData.pendingChildren.last;
+    } else {
+      preMatchedRoute = _routeData.route;
+    }
+    final correspondingRouteIndex = routesToPush.indexWhere(
+      (r) => r.key == preMatchedRoute!.key,
+    );
+    if (correspondingRouteIndex != -1) {
+      routesToPush[correspondingRouteIndex] = preMatchedRoute;
+      _previousIndex = _activeIndex;
+      _activeIndex = correspondingRouteIndex;
     }
 
     if (routesToPush.isNotEmpty) {
