@@ -40,10 +40,16 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
   );
 }
 
+
+class AgeInputRouteArgs extends _i2.BaseRouteArgs {
+  const AgeInputRouteArgs({
+    required this.onAgeSubmitted,
+    super.key,
+  });
+
 class AgeInputRouteArgs {
   const AgeInputRouteArgs({this.key, required this.onAgeSubmitted});
 
-  final _i3.Key? key;
 
   final _i3.ValueChanged<int> onAgeSubmitted;
 
@@ -55,7 +61,7 @@ class AgeInputRouteArgs {
 
 /// generated route for
 /// [_i1.MainScreen]
-class MainRoute extends _i2.PageRouteInfo<void> {
+class MainRoute extends _i2.PageRouteInfo<Null> {
   const MainRoute({List<_i2.PageRouteInfo>? children})
       : super(MainRoute.name, initialChildren: children);
 
@@ -96,10 +102,16 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
   );
 }
 
+
+class NameInputRouteArgs extends _i2.BaseRouteArgs {
+  const NameInputRouteArgs({
+    required this.onNameSubmitted,
+    super.key,
+  });
+
 class NameInputRouteArgs {
   const NameInputRouteArgs({this.key, required this.onNameSubmitted});
 
-  final _i3.Key? key;
 
   final _i3.ValueChanged<String> onNameSubmitted;
 
@@ -138,14 +150,12 @@ class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
   );
 }
 
-class ResultRouteArgs {
+class ResultRouteArgs extends _i2.BaseRouteArgs {
   const ResultRouteArgs({
-    this.key,
     required this.profile,
     required this.onReset,
+    super.key,
   });
-
-  final _i3.Key? key;
 
   final _i1.Profile profile;
 

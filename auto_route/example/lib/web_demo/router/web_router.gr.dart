@@ -51,10 +51,10 @@ class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
   );
 }
 
+
 class MainWebRouteArgs {
   const MainWebRouteArgs({this.key, this.navigate, this.showUserPosts});
 
-  final _i5.Key? key;
 
   final _i5.VoidCallback? navigate;
 
@@ -68,7 +68,7 @@ class MainWebRouteArgs {
 
 /// generated route for
 /// [_i1.NotFoundScreen]
-class NotFoundRoute extends _i4.PageRouteInfo<void> {
+class NotFoundRoute extends _i4.PageRouteInfo<Null> {
   const NotFoundRoute({List<_i4.PageRouteInfo>? children})
       : super(NotFoundRoute.name, initialChildren: children);
 
@@ -111,7 +111,6 @@ class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
 class UserAllPostsRouteArgs {
   const UserAllPostsRouteArgs({this.key, this.navigate});
 
-  final _i5.Key? key;
 
   final _i5.VoidCallback? navigate;
 
@@ -123,7 +122,7 @@ class UserAllPostsRouteArgs {
 
 /// generated route for
 /// [_i1.UserFavoritePostsPage]
-class UserFavoritePostsRoute extends _i4.PageRouteInfo<void> {
+class UserFavoritePostsRoute extends _i4.PageRouteInfo<Null> {
   const UserFavoritePostsRoute({List<_i4.PageRouteInfo>? children})
       : super(UserFavoritePostsRoute.name, initialChildren: children);
 
@@ -187,7 +186,6 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
 class UserRouteArgs {
   const UserRouteArgs({this.key, this.id = -1, this.query, this.fragment});
 
-  final _i5.Key? key;
 
   final int id;
 
@@ -203,7 +201,7 @@ class UserRouteArgs {
 
 /// generated route for
 /// [_i1.UserPostsPage]
-class UserPostsRoute extends _i4.PageRouteInfo<void> {
+class UserPostsRoute extends _i4.PageRouteInfo<Null> {
   UserPostsRoute({List<_i4.PageRouteInfo>? children})
       : super(UserPostsRoute.name, initialChildren: children);
 
@@ -263,15 +261,13 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
   );
 }
 
-class UserProfileRouteArgs {
+class UserProfileRouteArgs extends _i4.BaseRouteArgs {
   const UserProfileRouteArgs({
-    this.key,
     this.navigate,
     this.userId = -1,
     this.likes = 0,
+    super.key,
   });
-
-  final _i5.Key? key;
 
   final _i5.VoidCallback? navigate;
 
@@ -311,10 +307,10 @@ class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
   );
 }
 
+
 class WebLoginRouteArgs {
   const WebLoginRouteArgs({this.key, this.onResult});
 
-  final _i6.Key? key;
 
   final _i6.ValueChanged<bool>? onResult;
 
@@ -353,7 +349,6 @@ class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
 class WebVerifyRouteArgs {
   const WebVerifyRouteArgs({this.key, this.onResult});
 
-  final _i6.Key? key;
 
   final _i6.ValueChanged<bool>? onResult;
 

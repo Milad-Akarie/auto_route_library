@@ -28,7 +28,7 @@ List<Class> buildRouteInfoAndArgs(
             ..types.add(
               (nonInheritedParameters.isNotEmpty)
                   ? argsClassRefer
-                  : refer('void'),
+                  : refer('Null'),
             );
         })
         ..fields.addAll([
@@ -112,19 +112,30 @@ List<Class> buildRouteInfoAndArgs(
       Class(
         (b) => b
           ..name = argsClassRefer.symbol
+          ..extend = refer('BaseRouteArgs', autoRouteImport)
           ..fields.addAll([
-            ...nonInheritedParameters.map((param) => Field((b) => b
-              ..modifier = FieldModifier.final$
-              ..name = param.name
-              ..type = param is FunctionParamConfig
-                  ? param.funRefer
-                  : param.type.refer)),
+            ...nonInheritedParameters.where((p) => p.name != "key").map(
+                (param) => Field((b) => b
+                  ..modifier = FieldModifier.final$
+                  ..name = param.name
+                  ..type = param is FunctionParamConfig
+                      ? param.funRefer
+                      : param.type.refer)),
           ])
           ..constructors.add(
             Constructor((b) => b
               ..constant = true
               ..optionalParameters.addAll(
-                buildArgParams(nonInheritedParameters, emitter),
+                buildArgParams(
+                        nonInheritedParameters
+                            .where((p) => p.name != "key")
+                            .toList(),
+                        emitter)
+                    .followedBy([
+                  Parameter((b) => b
+                    ..name = 'key'
+                    ..toSuper = true)
+                ]),
               )),
           )
           ..methods.add(

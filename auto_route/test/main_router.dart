@@ -5,4 +5,4 @@ import 'test_page.dart';
 part 'main_router.gr.dart';
 
 @AutoRouterConfig(generateForDir: ['test'])
-abstract class MainRouter extends _$MainRouter {}
+abstract class MainRouter extends RootStackRouter {}

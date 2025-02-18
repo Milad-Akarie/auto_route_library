@@ -44,8 +44,11 @@ class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
   );
 }
 
-class BookDetailsRouteArgs {
-  const BookDetailsRouteArgs({this.id = -3});
+class BookDetailsRouteArgs extends _i8.BaseRouteArgs {
+  const BookDetailsRouteArgs({
+    this.id = -3,
+    super.key,
+  });
 
   final int id;
 
@@ -57,7 +60,7 @@ class BookDetailsRouteArgs {
 
 /// generated route for
 /// [_i2.BookListScreen]
-class BookListRoute extends _i8.PageRouteInfo<void> {
+class BookListRoute extends _i8.PageRouteInfo<Null> {
   const BookListRoute({List<_i8.PageRouteInfo>? children})
       : super(BookListRoute.name, initialChildren: children);
 
@@ -73,7 +76,7 @@ class BookListRoute extends _i8.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.HomePage]
-class HomeRoute extends _i8.PageRouteInfo<void> {
+class HomeRoute extends _i8.PageRouteInfo<Null> {
   const HomeRoute({List<_i8.PageRouteInfo>? children})
       : super(HomeRoute.name, initialChildren: children);
 
@@ -122,14 +125,12 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   );
 }
 
-class LoginRouteArgs {
+class LoginRouteArgs extends _i8.BaseRouteArgs {
   const LoginRouteArgs({
-    this.key,
     this.onLoginResult,
     this.showBackButton = true,
+    super.key,
   });
-
-  final _i9.Key? key;
 
   final void Function(bool)? onLoginResult;
 
@@ -174,7 +175,6 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
 class MyBooksRouteArgs {
   const MyBooksRouteArgs({this.key, this.filter = 'none'});
 
-  final _i9.Key? key;
 
   final String? filter;
 
@@ -186,7 +186,7 @@ class MyBooksRouteArgs {
 
 /// generated route for
 /// [_i6.ProfilePage]
-class ProfileRoute extends _i8.PageRouteInfo<void> {
+class ProfileRoute extends _i8.PageRouteInfo<Null> {
   const ProfileRoute({List<_i8.PageRouteInfo>? children})
       : super(ProfileRoute.name, initialChildren: children);
 
@@ -237,7 +237,6 @@ class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
 class SettingsTabArgs {
   const SettingsTabArgs({this.key, this.tab = 'none', this.query = 'none'});
 
-  final _i9.Key? key;
 
   final String tab;
 
@@ -251,7 +250,7 @@ class SettingsTabArgs {
 
 /// generated route for
 /// [_i3.WelcomeScreen]
-class WelcomeRoute extends _i8.PageRouteInfo<void> {
+class WelcomeRoute extends _i8.PageRouteInfo<Null> {
   const WelcomeRoute({List<_i8.PageRouteInfo>? children})
       : super(WelcomeRoute.name, initialChildren: children);
 

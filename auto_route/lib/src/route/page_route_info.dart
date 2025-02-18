@@ -177,14 +177,27 @@ class PageRouteInfo<T> {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is PageRouteInfo &&
-          _name == other._name &&
-          fragment == other.fragment &&
-          const ListEquality().equals(initialChildren, other.initialChildren) &&
-          const MapEquality().equals(rawPathParams, other.rawPathParams) &&
-          const MapEquality().equals(rawQueryParams, other.rawQueryParams);
+  bool operator ==(Object other) {
+    // Compares the args of two [PageRouteInfo] instances using their [ValueKey]s.
+    // This is used to check if a route with different args was pushed.
+    bool routeArgsEquality(PageRouteInfo route1, PageRouteInfo route2) {
+      return switch ((route1._argsValueKey, route2._argsValueKey)) {
+        (ValueKey key1, ValueKey key2) => key1 == key2,
+        (ValueKey _, dynamic _) || (dynamic _, ValueKey _) => false,
+        _ => true,
+      };
+    }
+
+    return identical(this, other) ||
+        other is PageRouteInfo &&
+            _name == other._name &&
+            fragment == other.fragment &&
+            const ListEquality()
+                .equals(initialChildren, other.initialChildren) &&
+            const MapEquality().equals(rawPathParams, other.rawPathParams) &&
+            const MapEquality().equals(rawQueryParams, other.rawQueryParams) &&
+            routeArgsEquality(this, other);
+  }
 
   @override
   int get hashCode =>
@@ -192,7 +205,19 @@ class PageRouteInfo<T> {
       fragment.hashCode ^
       const MapEquality().hash(rawPathParams) ^
       const MapEquality().hash(rawQueryParams) ^
-      const ListEquality().hash(initialChildren);
+      const ListEquality().hash(initialChildren) ^
+      (_argsValueKey?.hashCode ?? 0);
+
+  /// If the args of this route have a `ValueKey`, returns it.
+  ValueKey? get _argsValueKey {
+    return switch (args) {
+      BaseRouteArgs args => switch (args.key) {
+          ValueKey key => key,
+          _ => null,
+        },
+      _ => null,
+    };
+  }
 }
 
 /// A proxy Route page that provides a way to create a [PageRouteInfo]
@@ -209,4 +234,13 @@ class EmptyShellRoute extends PageInfo {
   /// Creates a new instance with of [PageInfo] with an empty shell builder
   /// that returns an [AutoRouter] widget
   PageInfo get page => this;
+}
+
+/// A base class for route arguments
+abstract class BaseRouteArgs {
+  /// Default constructor
+  const BaseRouteArgs({this.key});
+
+  /// A key which is used when comparing two routes
+  final Key? key;
 }
