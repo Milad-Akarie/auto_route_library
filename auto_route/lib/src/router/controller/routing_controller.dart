@@ -1146,8 +1146,7 @@ abstract class StackRouter extends RoutingController {
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) async {
     final NavigatorState? navigator = _navigatorKey.currentState;
-    if (navigator == null) return SynchronousFuture<bool>(false);
-    if (await navigator.maybePop<T>(result)) {
+    if (await navigator?.maybePop<T>(result) ?? false) {
       return true;
     } else if (_parent != null) {
       return _parent!.maybePop<T>(result);
