@@ -78,6 +78,9 @@ If your App requires deep-linking or guarded routes or just a clean routing setu
 
 ## Installation
 
+Add the following dependencies to your `pubspec.yaml` file:
+
+
  ```yaml
 dependencies:
   auto_route: [latest-version]
@@ -85,6 +88,10 @@ dependencies:
 dev_dependencies:
   auto_route_generator: [latest-version]
   build_runner:
+```
+
+```terminal
+flutter pub add auto_route dev:auto_route_generator dev:build_runner
 ```
 
 ## Setup And Usage

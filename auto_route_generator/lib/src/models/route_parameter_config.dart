@@ -246,20 +246,31 @@ class FunctionParamConfig extends ParamConfig {
       params.where((p) => p.isPositional && p.isOptional).toList();
 
   /// Returns the list of named parameters
-  List<ParamConfig> get namedParams =>
-      params.where((p) => p.isNamed).toList(growable: false);
+  List<ParamConfig> get namedOptionalParams =>
+      params.where((p) => p.isNamed && p.isOptional).toList(growable: false);
+
+  /// Returns the list of named required parameters
+  List<ParamConfig> get namedRequiredParams =>
+      params.where((p) => p.isNamed && !p.isOptional).toList(growable: false);
 
   /// Returns A function reference of the function type
-  _code.FunctionType get funRefer => _code.FunctionType((b) => b
-    ..returnType = returnType.refer
-    ..requiredParameters.addAll(requiredParams.map((e) => e.type.refer))
-    ..optionalParameters.addAll(optionalParams.map((e) => e.type.refer))
-    ..isNullable = type.isNullable
-    ..namedParameters.addAll(
-      {}..addEntries(namedParams.map(
-          (e) => MapEntry(e.name, e.type.refer),
-        )),
-    ));
+  _code.FunctionType get funRefer => _code.FunctionType(
+        (b) => b
+          ..returnType = returnType.refer
+          ..requiredParameters.addAll(requiredParams.map((e) => e.type.refer))
+          ..optionalParameters.addAll(optionalParams.map((e) => e.type.refer))
+          ..isNullable = type.isNullable
+          ..namedParameters.addAll(
+            {}..addEntries(namedOptionalParams.map(
+                (e) => MapEntry(e.name, e.type.refer),
+              )),
+          )
+          ..namedRequiredParameters.addAll(
+            {}..addEntries(namedRequiredParams.map(
+                (e) => MapEntry(e.name, e.type.refer),
+              )),
+          ),
+      );
 }
 
 /// Holds information about a path parameter
