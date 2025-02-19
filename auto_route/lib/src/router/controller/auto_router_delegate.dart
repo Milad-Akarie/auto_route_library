@@ -126,7 +126,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       _onNewUrlState(deepLink.configuration);
       return controller.navigateAll(deepLink.matches);
     } else if (deepLink is _PathDeepLink) {
-      return controller.pushNamed(
+      return controller.pushPath(
         deepLink.path,
         includePrefixMatches: deepLink.includePrefixMatches,
       );

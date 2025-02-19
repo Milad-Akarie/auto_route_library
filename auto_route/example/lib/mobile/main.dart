@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _rootRouter.config(),
-      theme: ThemeData.dark(),
+      theme: ThemeData.light(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => authService,

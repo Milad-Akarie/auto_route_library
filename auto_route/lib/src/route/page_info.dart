@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:path/path.dart';
 
 /// Holds information of the generated [RoutePage] page
 ///
@@ -22,6 +21,7 @@ class PageInfo {
     return const AutoRouter();
   }
 
+  /// Builds a new instance of [PageInfo] with the given parameters
   factory PageInfo.builder(String name, {required WidgetBuilderWithData builder}) {
     return PageInfo(
       name,

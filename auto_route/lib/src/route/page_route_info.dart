@@ -210,3 +210,21 @@ class EmptyShellRoute extends PageInfo {
   /// that returns an [AutoRouter] widget
   PageInfo get page => this;
 }
+
+/// A named route that can be used to navigate to a named destination
+/// typically built with [NamedRouteDef]
+class NamedRoute extends PageRouteInfo<Object?> {
+  /// Default constructor
+  const NamedRoute(
+    super.name, {
+    List<PageRouteInfo>? children,
+    super.args,
+    Map<String, dynamic> params = const {},
+    Map<String, dynamic> queryParams = const {},
+    super.fragment,
+  }) : super(
+          initialChildren: children,
+          rawPathParams: params,
+          rawQueryParams: queryParams,
+        );
+}

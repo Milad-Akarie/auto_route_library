@@ -11,7 +11,7 @@ part of 'main_router.dart';
 
 abstract class _$MainRouter extends RootStackRouter {
   // ignore: unused_element
-  _$MainRouter({super.navigatorKey});
+  _$MainRouter();
 }
 
 /// generated route for

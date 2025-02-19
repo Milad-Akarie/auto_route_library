@@ -136,4 +136,33 @@ abstract class RootStackRouter extends StackRouter {
   @override
   late final RouteCollection routeCollection =
       RouteCollection.fromList(routes, root: true);
+
+  /// Builds a new instance of [RootStackRouter]
+  /// with the provided parameters
+  factory RootStackRouter.build({
+    required List<AutoRoute> routes,
+    List<AutoRouteGuard> guards,
+    GlobalKey<NavigatorState>? navigatorKey,
+    RouteType defaultRouteType,
+  }) = _RootStackRouterImpl;
+}
+
+
+class _RootStackRouterImpl extends RootStackRouter {
+
+  @override
+  final List<AutoRoute> routes;
+
+  @override
+  final List<AutoRouteGuard> guards;
+
+  @override
+  final RouteType defaultRouteType;
+
+  _RootStackRouterImpl({
+    required this.routes,
+    this.guards = const [],
+    super.navigatorKey,
+    this.defaultRouteType = const RouteType.material(),
+  });
 }

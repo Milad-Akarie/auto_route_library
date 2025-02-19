@@ -10,6 +10,8 @@ typedef AutoRoutePageBuilder = Widget Function(RouteData data);
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
 typedef TitleBuilder = String Function(BuildContext context, RouteData data);
+
+/// Signature for a function that builds a widget with [RouteData]
 typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData data);
 
 /// Signature for a function that builds the page [restorationId]
@@ -317,8 +319,13 @@ class MaterialRoute extends AutoRoute {
     super.restorationId,
     super.initial,
     super.allowSnapshotting = true,
+    bool enablePredictiveBackGesture = false,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) : super._(
-          type: const RouteType.material(),
+          type: RouteType.material(
+            enablePredictiveBackGesture: enablePredictiveBackGesture,
+            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+          ),
         );
 }
 
@@ -364,7 +371,15 @@ class AdaptiveRoute<R> extends AutoRoute {
     bool opaque = true,
     super.keepHistory,
     super.allowSnapshotting = true,
-  }) : super._(type: RouteType.adaptive(opaque: opaque));
+    bool enablePredictiveBackGesture = false,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
+  }) : super._(
+          type: RouteType.adaptive(
+            opaque: opaque,
+            enablePredictiveBackGesture: enablePredictiveBackGesture,
+            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+          ),
+        );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
@@ -394,6 +409,8 @@ class CustomRoute<R> extends AutoRoute {
     String? barrierLabel,
     super.restorationId,
     Color? barrierColor,
+    bool enablePredictiveBackGesture = false,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) : super._(
           type: RouteType.custom(
             transitionsBuilder: transitionsBuilder,
@@ -404,14 +421,21 @@ class CustomRoute<R> extends AutoRoute {
             barrierDismissible: barrierDismissible,
             barrierLabel: barrierLabel,
             barrierColor: barrierColor,
+            enablePredictiveBackGesture: enablePredictiveBackGesture,
+            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
           ),
         );
 }
 
-class SimpleRoute extends AutoRoute {
-  SimpleRoute({
-    required String path,
-    String? name,
+/// Builds an [AutoRoute] instance with a direct page builder
+///
+/// this is meant to be used for simple routes that don't need
+/// code generation
+class NamedRouteDef extends AutoRoute {
+  /// Default constructor
+  NamedRouteDef({
+    super.path,
+    required String name,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -426,13 +450,12 @@ class SimpleRoute extends AutoRoute {
     super.restorationId,
     super.type,
     required WidgetBuilderWithData builder,
-  }) : super._(
-          path: path,
-          page: PageInfo.builder(name ?? path, builder: builder),
-        );
+  }) : super._(page: PageInfo.builder(name, builder: builder));
 
-  SimpleRoute.guarded({
-    required String path,
+  /// Creates a guarded route
+  NamedRouteDef.guarded({
+    super.path,
+    required String name,
     required OnNavigation onNavigation,
     super.fullscreenDialog,
     super.maintainState,
@@ -448,14 +471,14 @@ class SimpleRoute extends AutoRoute {
     super.type,
     required WidgetBuilderWithData builder,
   }) : super._(
-          path: path,
           guards: [AutoRouteGuard.simple(onNavigation)],
-          page: PageInfo.builder(path, builder: builder),
+          page: PageInfo.builder(name, builder: builder),
         );
 
-  SimpleRoute.shell({
-    String? name,
-    required String path,
+  /// Creates a guarded route
+  NamedRouteDef.shell({
+    required String name,
+    super.path,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -469,12 +492,7 @@ class SimpleRoute extends AutoRoute {
     super.allowSnapshotting = true,
     super.restorationId,
     super.type,
-  }) : super._(
-    path: path,
-    page: PageInfo.emptyShell(name ?? path),
-  );
-
-
+  }) : super._(page: PageInfo.emptyShell(name));
 }
 
 /// Builds a simplified [AutoRoute] instance for test
