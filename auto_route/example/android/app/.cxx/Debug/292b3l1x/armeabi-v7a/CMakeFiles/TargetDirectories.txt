@@ -1,0 +1,2 @@
+/Users/milad/StudioProjects/auto_route_library/auto_route/example/android/app/.cxx/Debug/292b3l1x/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/milad/StudioProjects/auto_route_library/auto_route/example/android/app/.cxx/Debug/292b3l1x/armeabi-v7a/CMakeFiles/rebuild_cache.dir
