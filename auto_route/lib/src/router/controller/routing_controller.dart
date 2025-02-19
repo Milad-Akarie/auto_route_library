@@ -598,6 +598,14 @@ abstract class RoutingController with ChangeNotifier {
   String toString() => '${routeData.name} Router';
 
   Future<void> _navigateAll(List<RouteMatch> routes, {OnNavigationFailure? onFailure});
+
+  Future<void> _navigateAllRoutes(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure}) {
+    final matches = _matchAllOrReportFailure(routes, onFailure);
+    if (matches != null) {
+      return _navigateAll(matches, onFailure: onFailure);
+    }
+    return SynchronousFuture(null);
+  }
 }
 
 /// An implementation of a [RoutingController] that handles parallel routeing
@@ -1628,6 +1636,8 @@ abstract class StackRouter extends RoutingController {
   }) {
     return _navigateAll(routes, onFailure: onFailure);
   }
+
+
 
   @override
   Future<void> _navigateAll(
