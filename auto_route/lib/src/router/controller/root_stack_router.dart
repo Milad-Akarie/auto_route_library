@@ -147,9 +147,7 @@ abstract class RootStackRouter extends StackRouter {
   }) = _RootStackRouterImpl;
 }
 
-
 class _RootStackRouterImpl extends RootStackRouter {
-
   @override
   final List<AutoRoute> routes;
 

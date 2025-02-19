@@ -8,7 +8,8 @@ class AppRouter extends RootStackRouter {
   @override
   RouteType get defaultRouteType => RouteType.material(
         enablePredictiveBackGesture: true,
-        predictiveBackPageTransitionsBuilder: (context, animation, secondAnim, child) {
+        predictiveBackPageTransitionsBuilder:
+            (context, animation, secondAnim, child) {
           // A lazy cheap mimic of cupertino back gesture
           return SlideTransition(
             position: Tween<Offset>(
@@ -40,7 +41,7 @@ class AppRouter extends RootStackRouter {
               path: ':id',
               page: BookDetailsRoute.page,
               title: (ctx, data) {
-                return 'Book Details ${data.pathParams.get('id')}';
+                return 'Book Details ${data.params.get('id')}';
               },
             ),
           ],
@@ -59,4 +60,3 @@ class AppRouter extends RootStackRouter {
 
 const BooksTab = EmptyShellRoute('BooksTab');
 const ProfileTab = EmptyShellRoute('ProfileTab');
-

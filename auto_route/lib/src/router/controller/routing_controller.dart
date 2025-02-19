@@ -84,8 +84,8 @@ abstract class RoutingController with ChangeNotifier {
 
   RoutingController? _innerControllerOf(Key? key) {
     return _childControllers.lastWhereOrNull(
-        (c) => c.key == key,
-      );
+      (c) => c.key == key,
+    );
   }
 
   /// Helper to access [NavigationHistory.urlState]
@@ -109,8 +109,6 @@ abstract class RoutingController with ChangeNotifier {
       root.notifyListeners();
     }
   }
-
-
 
   /// Builds a simplified hierarchy of current stacks
   ///
@@ -316,7 +314,6 @@ abstract class RoutingController with ChangeNotifier {
     return _findScope(route)._navigate(route, onFailure: onFailure);
   }
 
-
   /// Pops until given [path], if it already exists in stack
   /// otherwise adds it to the stack
   ///
@@ -327,10 +324,10 @@ abstract class RoutingController with ChangeNotifier {
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
   Future<void> navigatePath(
-      String path, {
-        bool includePrefixMatches = false,
-        OnNavigationFailure? onFailure,
-      }) {
+    String path, {
+    bool includePrefixMatches = false,
+    OnNavigationFailure? onFailure,
+  }) {
     final scope = _findPathScopeOrReportFailure<RoutingController>(
       path,
       includePrefixMatches: includePrefixMatches,
@@ -347,10 +344,10 @@ abstract class RoutingController with ChangeNotifier {
   /// Pops until given [path], if it already exists in stack
   @Deprecated('Use navigatePath instead')
   Future<void> navigateNamed(
-      String path, {
-        bool includePrefixMatches = false,
-        OnNavigationFailure? onFailure,
-      }) =>
+    String path, {
+    bool includePrefixMatches = false,
+    OnNavigationFailure? onFailure,
+  }) =>
       navigatePath(
         path,
         includePrefixMatches: includePrefixMatches,
@@ -1137,11 +1134,20 @@ abstract class StackRouter extends RoutingController {
   /// route in stack or the result of it's willPopScopes
   /// see [Navigator.pop]
   @optionalTypeArgs
-  void popForced<T extends Object?>([T? result]) {
+  void pop<T extends Object?>([T? result]) {
     final NavigatorState? navigator = _navigatorKey.currentState;
     if (navigator != null) {
       navigator.pop(result);
     }
+  }
+
+  /// Pop until given [route] if it exists in stack
+  /// otherwise does nothing
+  /// see [Navigator.pop]
+  @Deprecated('Use pop instead')
+  @optionalTypeArgs
+  void popForced<T extends Object?>([T? result]) {
+    return pop<T>(result);
   }
 
   /// Removes the very last entry from [_pages]
@@ -1710,7 +1716,6 @@ abstract class StackRouter extends RoutingController {
     return SynchronousFuture(null);
   }
 
-
   /// Removes last entry in stack and pushes given [path]
   @Deprecated('Use replacePath instead')
   Future<T?> replaceNamed<T extends Object?>(
@@ -1723,7 +1728,6 @@ abstract class StackRouter extends RoutingController {
         includePrefixMatches: includePrefixMatches,
         onFailure: onFailure,
       );
-
 
   /// Adds corresponding page to given [path] to [_pages] stack
   ///
@@ -1765,10 +1769,6 @@ abstract class StackRouter extends RoutingController {
         includePrefixMatches: includePrefixMatches,
         onFailure: onFailure,
       );
-
-
-
-
 
   /// Helper to pop all routes until route with [name] is found
   /// see [popUntil]

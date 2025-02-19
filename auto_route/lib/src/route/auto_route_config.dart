@@ -12,7 +12,8 @@ typedef AutoRoutePageBuilder = Widget Function(RouteData data);
 typedef TitleBuilder = String Function(BuildContext context, RouteData data);
 
 /// Signature for a function that builds a widget with [RouteData]
-typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData data);
+typedef WidgetBuilderWithData = Widget Function(
+    BuildContext context, RouteData data);
 
 /// Signature for a function that builds the page [restorationId]
 /// Used in [AutoRoutePage]
@@ -115,7 +116,9 @@ class AutoRoute {
     List<AutoRoute>? children,
   })  : _path = path,
         _pageBuilder = page.builder,
-        _children = children != null && children.isNotEmpty ? RouteCollection.fromList(children) : null;
+        _children = children != null && children.isNotEmpty
+            ? RouteCollection.fromList(children)
+            : null;
 
   AutoRoute._change({
     required this.page,
@@ -265,7 +268,9 @@ class AutoRoute {
       meta: meta ?? this.meta,
       maintainState: maintainState ?? this.maintainState,
       fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
-      children: children != null ? (children.isEmpty ? null : RouteCollection.fromList(children)) : this.children,
+      children: children != null
+          ? (children.isEmpty ? null : RouteCollection.fromList(children))
+          : this.children,
       //copy
       title: title ?? this.title,
       restorationId: restorationId ?? this.restorationId,
@@ -324,7 +329,8 @@ class MaterialRoute extends AutoRoute {
   }) : super._(
           type: RouteType.material(
             enablePredictiveBackGesture: enablePredictiveBackGesture,
-            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+            predictiveBackPageTransitionsBuilder:
+                predictiveBackPageTransitionsBuilder,
           ),
         );
 }
@@ -377,7 +383,8 @@ class AdaptiveRoute<R> extends AutoRoute {
           type: RouteType.adaptive(
             opaque: opaque,
             enablePredictiveBackGesture: enablePredictiveBackGesture,
-            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+            predictiveBackPageTransitionsBuilder:
+                predictiveBackPageTransitionsBuilder,
           ),
         );
 }
@@ -422,7 +429,8 @@ class CustomRoute<R> extends AutoRoute {
             barrierLabel: barrierLabel,
             barrierColor: barrierColor,
             enablePredictiveBackGesture: enablePredictiveBackGesture,
-            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+            predictiveBackPageTransitionsBuilder:
+                predictiveBackPageTransitionsBuilder,
           ),
         );
 }
@@ -544,7 +552,8 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(List<AutoRoute> routes, {bool root = false}) {
+  factory RouteCollection.fromList(List<AutoRoute> routes,
+      {bool root = false}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(routesMarkedInitial.length > 1,
         'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');

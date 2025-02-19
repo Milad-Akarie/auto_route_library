@@ -1,5 +1,4 @@
-
-
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -24,8 +23,11 @@ class AppRoutePath {
 
 class AppRouteInformationParser extends RouteInformationParser<AppRoutePath> {
   @override
-  Future<AppRoutePath> parseRouteInformation(RouteInformation routeInformation) async {
-    return routeInformation.uri.toString() == '/details' ? AppRoutePath.details() : AppRoutePath.home();
+  Future<AppRoutePath> parseRouteInformation(
+      RouteInformation routeInformation) async {
+    return routeInformation.uri.toString() == '/details'
+        ? AppRoutePath.details()
+        : AppRoutePath.home();
   }
 
   @override
@@ -40,7 +42,8 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
   bool isHomePage = true;
 
   @override
-  AppRoutePath get currentConfiguration => isHomePage ? AppRoutePath.home() : AppRoutePath.details();
+  AppRoutePath get currentConfiguration =>
+      isHomePage ? AppRoutePath.home() : AppRoutePath.details();
 
   void _goToDetails() {
     isHomePage = false;
@@ -54,15 +57,20 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
 
   @override
   Widget build(BuildContext context) {
+
     return Navigator(
       key: navigatorKey,
       pages: [
-        MaterialPage(key: ValueKey('HomePage'), child: HomePage(onNavigate: _goToDetails)),
-        if (!isHomePage) MaterialPage(key: ValueKey('DetailsPage'), child: DetailsPage(onBack: _goHome)),
+        MaterialPage(
+            key: ValueKey('HomePage'),
+            child: HomePage(onNavigate: _goToDetails)),
+        if (!isHomePage)
+          MaterialPage(
+              key: ValueKey('DetailsPage'),
+              child: DetailsPage(onBack: _goHome)),
       ],
-
       onDidRemovePage: (page) {
-       isHomePage = true;
+        isHomePage = true;
       },
     );
   }
@@ -100,7 +108,7 @@ class DetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Details Page')),
       body: PopScope(
-        onPopInvokedWithResult: (didPop,result){
+        onPopInvokedWithResult: (didPop, result) {
           print('didPop: $didPop, result: $result');
         },
         child: Center(
