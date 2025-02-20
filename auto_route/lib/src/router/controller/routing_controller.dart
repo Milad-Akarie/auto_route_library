@@ -310,7 +310,7 @@ abstract class RoutingController with ChangeNotifier {
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
-  Future<dynamic> navigate(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+  Future<T?> navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
     return _findScope(route)._navigate(route, onFailure: onFailure);
   }
 
@@ -356,7 +356,7 @@ abstract class RoutingController with ChangeNotifier {
 
   void _onNavigate(List<RouteMatch> routes);
 
-  Future<dynamic> _navigate(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+  Future<T?> _navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
     final match = _matchOrReportFailure(route, onFailure);
     if (match != null) {
       return _navigateAll([match], onFailure: onFailure);
@@ -612,7 +612,7 @@ abstract class RoutingController with ChangeNotifier {
   @override
   String toString() => '${routeData.name} Router';
 
-  Future<void> _navigateAll(List<RouteMatch> routes, {OnNavigationFailure? onFailure});
+  Future<T?> _navigateAll<T extends Object?>(List<RouteMatch> routes, {OnNavigationFailure? onFailure});
 
   Future<void> _navigateAllRoutes(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure}) {
     final matches = _matchAllOrReportFailure(routes, onFailure);
@@ -843,7 +843,7 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  Future<void> _navigateAll(List<RouteMatch> routes, {OnNavigationFailure? onFailure}) async {
+  Future<T?> _navigateAll<T extends Object?>(List<RouteMatch> routes, {OnNavigationFailure? onFailure}) async {
     if (routes.isNotEmpty) {
       final mayUpdateRoute = routes.last;
 
@@ -1252,7 +1252,7 @@ abstract class StackRouter extends RoutingController {
     );
   }
 
-  Future<dynamic> _popUntilOrPushAll(List<RouteMatch> routes, {OnNavigationFailure? onFailure}) async {
+  Future<T?> _popUntilOrPushAll<T extends Object?>(List<RouteMatch> routes, {OnNavigationFailure? onFailure}) async {
     final anchor = routes.first;
     final anchorPage = _pages.lastWhereOrNull(
       (p) => p.routeKey == anchor.key,
@@ -1274,7 +1274,6 @@ abstract class StackRouter extends RoutingController {
       routes,
       onFailure: onFailure,
       updateAncestorsPathData: false,
-      returnLastRouteCompleter: false,
     );
   }
 
@@ -1398,7 +1397,8 @@ abstract class StackRouter extends RoutingController {
         _stackKey = UniqueKey();
       }
       markUrlStateForReplace();
-      return _navigateAll(matches);
+      await _navigateAll(matches);
+      return;
     }
     return SynchronousFuture(null);
   }
@@ -1669,13 +1669,14 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  Future<void> _navigateAll(
+  Future<T?> _navigateAll<T extends Object?>(
     List<RouteMatch> routes, {
     OnNavigationFailure? onFailure,
   }) async {
+    Future<T?>? result;
     if (routes.isNotEmpty) {
       if (!managedByWidget) {
-        _popUntilOrPushAll(routes, onFailure: onFailure);
+        result = _popUntilOrPushAll(routes, onFailure: onFailure);
       } else {
         _onNavigate(routes);
       }
@@ -1694,7 +1695,7 @@ abstract class StackRouter extends RoutingController {
     } else if (!managedByWidget) {
       _reset();
     }
-    return SynchronousFuture(null);
+    return await result;
   }
 
   void _reset() {
