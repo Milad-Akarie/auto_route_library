@@ -83,8 +83,8 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    final navigator = widget.router.hasEntries
-        ? Navigator(
+   return widget.router.hasEntries
+        ?  Navigator(
             key: widget.router.navigatorKey,
             observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
             restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
@@ -100,7 +100,5 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
             Container(
               color: Theme.of(context).scaffoldBackgroundColor,
             );
-
-    return navigator;
   }
 }

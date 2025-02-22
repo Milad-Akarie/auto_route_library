@@ -36,6 +36,10 @@ typedef AutoLeadingButtonBuilder = Widget Function(
   VoidCallback? action, // could be popTop, openDrawer or null
 );
 
+/// Signature function to provide nullable leading widget
+/// based on the current router state
+typedef NullableWidgetBuilder = Widget Function(BuildContext context, Widget? leading);
+
 /// An AutoRoute replacement of appBar aut-leading-button
 ///
 /// Unlike the default [BackButton] this button will always
@@ -48,7 +52,7 @@ typedef AutoLeadingButtonBuilder = Widget Function(
 /// - page2
 ///     - sub-page1
 ///     - sub-page2
-/// and Page2 has an  AutoLeadingButton(), clicking
+/// and Page2 has an AutoLeadingButton(), clicking
 /// it will pop sub-page2 then page2
 ///
 class AutoLeadingButton extends StatefulWidget {
@@ -73,6 +77,8 @@ class AutoLeadingButton extends StatefulWidget {
   /// the looks and feels of their leading buttons
   final AutoLeadingButtonBuilder? builder;
 
+  final NullableWidgetBuilder? _nullableBuilder;
+
   /// Default constructor
   const AutoLeadingButton({
     super.key,
@@ -82,6 +88,35 @@ class AutoLeadingButton extends StatefulWidget {
     this.ignorePagelessRoutes = false,
     this.builder,
   })  : assert(color == null || builder == null),
+        _nullableBuilder = null,
+        _showIfParentCanPop = showIfParentCanPop ?? true;
+
+  /// builds a nullable leading widget based on the current router state
+  ///
+  /// This meant to be used above the AppBar so the [leading] property
+  /// is passed to the AppBar's leading property,
+  ///
+  /// e.g
+  /// ```dart
+  ///
+  ///    AutoLeadingButton.builder(
+  ///    builder: (context, leading) {
+  ///     return AppBar(
+  ///            leading: leading,
+  ///            title: Text('My Page'),
+  ///            ),
+  ///        ..
+  ///         ),
+  ///     ),
+  const AutoLeadingButton.builder({
+    super.key,
+    this.color,
+    bool? showIfParentCanPop,
+    this.showIfChildCanPop = true,
+    this.ignorePagelessRoutes = false,
+    required NullableWidgetBuilder builder,
+  })  : _nullableBuilder = builder,
+        builder = null,
         _showIfParentCanPop = showIfParentCanPop ?? true;
 
   @override
@@ -107,6 +142,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
   @override
   Widget build(BuildContext context) {
     final scope = RouterScope.of(context, watch: true);
+    Widget? leading;
     if (scope.controller.canPop(
       ignoreChildRoutes: !widget.showIfChildCanPop,
       ignoreParentRoutes: !widget._showIfParentCanPop,
@@ -121,12 +157,14 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
           scope.controller.maybePopTop,
         );
       }
-      return useCloseButton
+      leading = useCloseButton
           ? CloseButton(
+              key: const ValueKey(LeadingType.close),
               color: widget.color,
               onPressed: scope.controller.maybePopTop,
             )
           : BackButton(
+              key: const ValueKey(LeadingType.back),
               color: widget.color,
               onPressed: scope.controller.maybePopTop,
             );
@@ -140,7 +178,8 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
           _handleDrawerButton,
         );
       }
-      return IconButton(
+      leading = IconButton(
+        key: const ValueKey(LeadingType.drawer),
         icon: const Icon(Icons.menu),
         iconSize: Theme.of(context).iconTheme.size ?? 24,
         onPressed: _handleDrawerButton,
@@ -151,7 +190,13 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
     if (widget.builder != null) {
       return widget.builder!(context, LeadingType.noLeading, null);
     }
-    return const SizedBox.shrink();
+    if (widget._nullableBuilder != null) {
+      return widget._nullableBuilder!(context, leading);
+    }
+    return leading ??
+        const SizedBox.shrink(
+          key: ValueKey(LeadingType.noLeading),
+        );
   }
 
   void _handleDrawerButton() {

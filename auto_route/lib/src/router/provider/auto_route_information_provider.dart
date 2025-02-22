@@ -1,4 +1,5 @@
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -106,9 +107,9 @@ class AutoRouteInformationProvider extends RouteInformationProvider
 
   @override
   Future<bool> didPushRouteInformation(
-      RouteInformation routeInformation) async {
+      RouteInformation routeInformation)  {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
-    return true;
+    return SynchronousFuture<bool>(true);
   }
 }
