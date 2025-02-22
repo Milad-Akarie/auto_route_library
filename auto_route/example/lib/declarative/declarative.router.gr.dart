@@ -21,10 +21,10 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
     required _i3.ValueChanged<int> onAgeSubmitted,
     List<_i2.PageRouteInfo>? children,
   }) : super(
-          AgeInputRoute.name,
-          args: AgeInputRouteArgs(key: key, onAgeSubmitted: onAgeSubmitted),
-          initialChildren: children,
-        );
+         AgeInputRoute.name,
+         args: AgeInputRouteArgs(key: key, onAgeSubmitted: onAgeSubmitted),
+         initialChildren: children,
+       );
 
   static const String name = 'AgeInputRoute';
 
@@ -57,7 +57,7 @@ class AgeInputRouteArgs {
 /// [_i1.MainScreen]
 class MainRoute extends _i2.PageRouteInfo<void> {
   const MainRoute({List<_i2.PageRouteInfo>? children})
-      : super(MainRoute.name, initialChildren: children);
+    : super(MainRoute.name, initialChildren: children);
 
   static const String name = 'MainRoute';
 
@@ -77,10 +77,10 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
     required _i3.ValueChanged<String> onNameSubmitted,
     List<_i2.PageRouteInfo>? children,
   }) : super(
-          NameInputRoute.name,
-          args: NameInputRouteArgs(key: key, onNameSubmitted: onNameSubmitted),
-          initialChildren: children,
-        );
+         NameInputRoute.name,
+         args: NameInputRouteArgs(key: key, onNameSubmitted: onNameSubmitted),
+         initialChildren: children,
+       );
 
   static const String name = 'NameInputRoute';
 
@@ -118,10 +118,10 @@ class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
     required _i3.VoidCallback onReset,
     List<_i2.PageRouteInfo>? children,
   }) : super(
-          ResultRoute.name,
-          args: ResultRouteArgs(key: key, profile: profile, onReset: onReset),
-          initialChildren: children,
-        );
+         ResultRoute.name,
+         args: ResultRouteArgs(key: key, profile: profile, onReset: onReset),
+         initialChildren: children,
+       );
 
   static const String name = 'ResultRoute';
 

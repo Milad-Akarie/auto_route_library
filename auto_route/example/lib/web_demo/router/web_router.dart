@@ -95,15 +95,13 @@ class _MainWebPageState extends State<MainWebPage> {
               child: ElevatedButton(
                 onPressed: widget.navigate ??
                     () async {
-                      final x = await MainWebRoute().push<String>(context);
-                      print(x);
-                      // context.pushRoute(
-                      //   UserRoute(
-                      //     id: 2,
-                      //     query: const ['value1', 'value2'],
-                      //     fragment: 'frag',
-                      //   ),
-                      // );
+                      context.pushRoute(
+                        UserRoute(
+                          id: 2,
+                          query: const ['value1', 'value2'],
+                          fragment: 'frag',
+                        ),
+                      );
                     },
                 child: Text('Navigate to user/2'),
               ),

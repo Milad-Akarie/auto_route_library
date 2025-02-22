@@ -41,9 +41,7 @@ class AutoRoutePage<T> extends Page<T> {
   /// The pop completer that's used in navigation actions
   /// e.g [StackRouter.push]
   /// it completes when the built route is popped
-  Future<T?> get popped => routeData.router.ignorePopCompleters
-      ? SynchronousFuture(null)
-      : _popCompleter.future;
+  Future<T?> get popped => routeData.router.ignorePopCompleters ? SynchronousFuture(null) : _popCompleter.future;
 
   /// The widget passed to the route
   Widget get child => _child;
@@ -52,9 +50,7 @@ class AutoRoutePage<T> extends Page<T> {
   AutoRoutePage({
     required this.routeData,
     required Widget child,
-  })  : _child = child is AutoRouteWrapper
-            ? WrappedRoute(child: child as AutoRouteWrapper)
-            : child,
+  })  : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
         super(
           restorationId: routeData.restorationId,
           name: routeData.name,
@@ -64,9 +60,10 @@ class AutoRoutePage<T> extends Page<T> {
 
   @override
   bool canUpdate(Page<dynamic> other) {
-    return other.runtimeType == runtimeType &&
+    final canUpdate = other.runtimeType == runtimeType &&
         (other as AutoRoutePage).routeKey == routeKey &&
         routeData.stackKey == other.routeData.stackKey;
+    return canUpdate;
   }
 
   /// Builds a the widget that's scoped
@@ -87,8 +84,7 @@ class AutoRoutePage<T> extends Page<T> {
       return _PageBasedMaterialPageRoute<T>(
         page: this,
         enablePredictiveBackGesture: type.enablePredictiveBackGesture,
-        predictiveBackPageTransitionsBuilder:
-            type.predictiveBackPageTransitionsBuilder,
+        predictiveBackPageTransitionsBuilder: type.predictiveBackPageTransitionsBuilder,
       );
     } else if (type is CupertinoRouteType) {
       return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
@@ -101,21 +97,18 @@ class AutoRoutePage<T> extends Page<T> {
         page: this,
         routeType: type,
         enablePredictiveBackGesture: type.enablePredictiveBackGesture,
-        predictiveBackPageTransitionsBuilder:
-            type.predictiveBackPageTransitionsBuilder,
+        predictiveBackPageTransitionsBuilder: type.predictiveBackPageTransitionsBuilder,
       );
     } else if (type is AdaptiveRouteType) {
       if (kIsWeb) {
         return _NoAnimationPageRouteBuilder(page: this);
-      } else if ([TargetPlatform.macOS, TargetPlatform.iOS]
-          .contains(defaultTargetPlatform)) {
+      } else if ([TargetPlatform.macOS, TargetPlatform.iOS].contains(defaultTargetPlatform)) {
         return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
       } else {
         return _PageBasedMaterialPageRoute<T>(
           page: this,
           enablePredictiveBackGesture: type.enablePredictiveBackGesture,
-          predictiveBackPageTransitionsBuilder:
-              type.predictiveBackPageTransitionsBuilder,
+          predictiveBackPageTransitionsBuilder: type.predictiveBackPageTransitionsBuilder,
         );
       }
     }
@@ -174,8 +167,7 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
-  bool canTransitionTo(TransitionRoute nextRoute) =>
-      _canTransitionTo(nextRoute);
+  bool canTransitionTo(TransitionRoute nextRoute) => _canTransitionTo(nextRoute);
 
   @override
   final bool enablePredictiveBackGesture;
@@ -185,20 +177,14 @@ class _PageBasedMaterialPageRoute<T> extends PageRoute<T>
 }
 
 bool _canTransitionTo(TransitionRoute<dynamic> nextRoute) {
-  return (nextRoute is _CustomPageBasedPageRouteBuilder &&
-              !nextRoute.fullscreenDialog ||
-          nextRoute is MaterialRouteTransitionMixin &&
-              !nextRoute.fullscreenDialog) ||
-      (nextRoute is _NoAnimationPageRouteTransitionMixin &&
-          !nextRoute.fullscreenDialog) ||
-      (nextRoute is CupertinoRouteTransitionMixin &&
-          !nextRoute.fullscreenDialog);
+  return (nextRoute is _CustomPageBasedPageRouteBuilder && !nextRoute.fullscreenDialog ||
+          nextRoute is MaterialRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
+      (nextRoute is _NoAnimationPageRouteTransitionMixin && !nextRoute.fullscreenDialog) ||
+      (nextRoute is CupertinoRouteTransitionMixin && !nextRoute.fullscreenDialog);
 }
 
 class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T>
-    with
-        _CustomPageRouteTransitionMixin<T>,
-        _CustomPredictiveBackGestureMixin<T> {
+    with _CustomPageRouteTransitionMixin<T>, _CustomPredictiveBackGestureMixin<T> {
   _CustomPageBasedPageRouteBuilder({
     required AutoRoutePage page,
     required this.routeType,
@@ -225,8 +211,7 @@ class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T>
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
-  bool canTransitionTo(TransitionRoute nextRoute) =>
-      _canTransitionTo(nextRoute);
+  bool canTransitionTo(TransitionRoute nextRoute) => _canTransitionTo(nextRoute);
 
   @override
   final bool enablePredictiveBackGesture;
@@ -235,8 +220,7 @@ class _CustomPageBasedPageRouteBuilder<T> extends PageRoute<T>
   final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
 }
 
-class _NoAnimationPageRouteBuilder<T> extends PageRoute<T>
-    with _NoAnimationPageRouteTransitionMixin<T> {
+class _NoAnimationPageRouteBuilder<T> extends PageRoute<T> with _NoAnimationPageRouteTransitionMixin<T> {
   _NoAnimationPageRouteBuilder({
     required AutoRoutePage page,
   }) : super(settings: page);
@@ -260,8 +244,7 @@ class _NoAnimationPageRouteBuilder<T> extends PageRoute<T>
   Duration get transitionDuration => Duration.zero;
 
   @override
-  bool canTransitionTo(TransitionRoute nextRoute) =>
-      _canTransitionTo(nextRoute);
+  bool canTransitionTo(TransitionRoute nextRoute) => _canTransitionTo(nextRoute);
 }
 
 mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
@@ -283,8 +266,7 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on PageRoute<T> {
   bool get opaque => _page.opaque;
 
   @override
-  bool canTransitionTo(TransitionRoute nextRoute) =>
-      _canTransitionTo(nextRoute);
+  bool canTransitionTo(TransitionRoute nextRoute) => _canTransitionTo(nextRoute);
 
   @override
   Widget buildPage(
@@ -332,8 +314,7 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   bool get opaque => routeType.opaque;
 
   @override
-  bool canTransitionTo(TransitionRoute nextRoute) =>
-      _canTransitionTo(nextRoute);
+  bool canTransitionTo(TransitionRoute nextRoute) => _canTransitionTo(nextRoute);
 
   @override
   Widget buildPage(
@@ -349,26 +330,20 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return child;
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    final transitionsBuilder =
-        routeType.transitionsBuilder ?? _defaultTransitionsBuilder;
+  Widget buildTransitions(
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    final transitionsBuilder = routeType.transitionsBuilder ?? _defaultTransitionsBuilder;
     return transitionsBuilder(context, animation, secondaryAnimation, child);
   }
 }
 
 class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
-    with
-        CupertinoRouteTransitionMixin<T>,
-        CupertinoRouteTransitionOverrideMixin<T> {
+    with CupertinoRouteTransitionMixin<T>, CupertinoRouteTransitionOverrideMixin<T> {
   _PageBasedCupertinoPageRoute({
     required AutoRoutePage<T> page,
     this.title,
@@ -412,15 +387,12 @@ class _PageBasedCupertinoPageRoute<T> extends PageRoute<T>
   }
 }
 
-mixin _CustomPredictiveBackGestureMixin<T> on PageRoute<T>
-    implements PredictiveBackGestureMixin {
+mixin _CustomPredictiveBackGestureMixin<T> on PageRoute<T> implements PredictiveBackGestureMixin {
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    if (!enablePredictiveBackGesture ||
-        Theme.of(context).platform != TargetPlatform.android) {
-      return super
-          .buildTransitions(context, animation, secondaryAnimation, child);
+  Widget buildTransitions(
+      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    if (!enablePredictiveBackGesture || Theme.of(context).platform != TargetPlatform.android) {
+      return super.buildTransitions(context, animation, secondaryAnimation, child);
     }
 
     if (predictiveBackPageTransitionsBuilder == null) {
@@ -436,11 +408,9 @@ mixin _CustomPredictiveBackGestureMixin<T> on PageRoute<T>
       route: this,
       builder: (context) {
         if (popGestureInProgress) {
-          return predictiveBackPageTransitionsBuilder!
-              .call(context, animation, secondaryAnimation, child);
+          return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
         } else {
-          return super
-              .buildTransitions(context, animation, secondaryAnimation, child);
+          return super.buildTransitions(context, animation, secondaryAnimation, child);
         }
       },
     );

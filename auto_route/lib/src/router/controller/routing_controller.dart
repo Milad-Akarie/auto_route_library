@@ -1171,8 +1171,12 @@ abstract class StackRouter extends RoutingController {
   /// Called when Page route is popped
   /// this is not called when pageless routes are popped e.g popping a dialog
   /// that does not use [PageRoute] will not trigger this method
-  void onPopPage(RouteData data) {
-    removeRoute(data);
+  void onPopPage(AutoRoutePage<Object?> page) {
+    _pages.remove(page);
+    _updateSharedPathData(includeAncestors: true);
+    if(isRouteDataActive(page.routeData)) {
+      navigationHistory.rebuildUrl();
+    }
   }
 
   void _removeRoute(RouteMatch route, {bool notify = true}) {
@@ -1225,7 +1229,6 @@ abstract class StackRouter extends RoutingController {
     final anchorPage = _pages.lastWhereOrNull(
       (p) => p.routeKey == anchor.key,
     );
-
     if (anchorPage != null) {
       for (var candidate in List<AutoRoutePage>.unmodifiable(_pages).reversed) {
         _pages.removeLast();
@@ -1389,7 +1392,7 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
   }) {
     final scope = _findStackScope(route);
-    scope.maybePop<TO>(result);
+    scope.pop<TO>(result);
     return scope._push<T>(route, onFailure: onFailure);
   }
 
@@ -1533,7 +1536,7 @@ abstract class StackRouter extends RoutingController {
       );
       if (result.continueNavigation) {
         if (i != (routes.length - 1)) {
-          _addEntry(route, notify: false);
+          _addEntry<T>(route, notify: false);
         } else {
           _updateSharedPathData(
             queryParams: route.queryParams.rawMap,
@@ -1636,8 +1639,6 @@ abstract class StackRouter extends RoutingController {
   }) {
     return _navigateAll(routes, onFailure: onFailure);
   }
-
-
 
   @override
   Future<void> _navigateAll(
