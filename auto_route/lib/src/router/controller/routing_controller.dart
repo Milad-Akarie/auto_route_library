@@ -506,6 +506,21 @@ abstract class RoutingController with ChangeNotifier {
   @optionalTypeArgs
   Future<bool> maybePopTop<T extends Object?>([T? result]) => _topMostRouter().maybePop<T>(result);
 
+  /// Clients can either pop their own [_pages] stack
+  /// or defer the call to a parent controller
+  ///
+  /// see [Navigator.pop(context)] for more details
+  @optionalTypeArgs
+  void pop<T extends Object?>([T? result]);
+
+  /// Calls [pop] on the controller with the top-most visible page
+  @optionalTypeArgs
+  void popTop<T extends Object?>([T? result]) {
+    print(_topMostRouter());
+    _topMostRouter().pop<T>(result);
+  }
+
+
   /// Whether this controller can preform [maybePop]
   ///
   /// if [ignoreChildRoutes] is true
@@ -732,6 +747,17 @@ class TabsRouter extends RoutingController {
     }
   }
 
+
+  @override
+  @optionalTypeArgs
+  void pop<T extends Object?>([T? result]) {
+    if (homeIndex != -1 && _activeIndex != homeIndex) {
+      setActiveIndex(homeIndex);
+    } else if (_parent != null) {
+      _parent!.pop(result);
+    }
+  }
+
   /// Pushes given [routes] to [_pages] stack
   /// after match validation and deciding initial index
   void setupRoutes(List<PageRouteInfo>? routes) {
@@ -884,15 +910,15 @@ class TabsRouter extends RoutingController {
     bool ignoreParentRoutes = false,
     bool ignorePagelessRoutes = false,
   }) {
-    if (ignoreChildRoutes) return false;
-
-    final innerRouter = _innerControllerOf(_activePage?.routeKey);
-    if (innerRouter != null &&
-        innerRouter.canPop(
-          ignorePagelessRoutes: ignorePagelessRoutes,
-          ignoreParentRoutes: true,
-        )) {
-      return true;
+    if(!ignoreChildRoutes){
+      final innerRouter = _innerControllerOf(_activePage?.routeKey);
+      if (innerRouter != null &&
+          innerRouter.canPop(
+            ignorePagelessRoutes: ignorePagelessRoutes,
+            ignoreParentRoutes: true,
+          )) {
+        return true;
+      }
     }
     if (!ignoreParentRoutes && _parent != null) {
       return _parent!.canPop(
@@ -925,6 +951,7 @@ class TabsRouter extends RoutingController {
 
   @override
   bool get managedByWidget => false;
+
 }
 
 /// An implementation of a [RoutingController] that handles stack navigation
@@ -1139,8 +1166,9 @@ abstract class StackRouter extends RoutingController {
   }
 
   /// Pop current route regardless if it's the last
-  /// route in stack or the result of it's willPopScopes
+  /// route in stack or the result of it's PopScopes
   /// see [Navigator.pop]
+  @override
   @optionalTypeArgs
   void pop<T extends Object?>([T? result]) {
     final NavigatorState? navigator = _navigatorKey.currentState;
@@ -1398,7 +1426,7 @@ abstract class StackRouter extends RoutingController {
 
   /// Calls [removeRoute] repeatedly until the predicate returns true.
   ///
-  /// Note: [removeRoute] does not respect willPopScopes
+  /// Note: [removeRoute] does not respect PopScopes
   /// if [scoped] is set to true the predicate will
   /// visit all StackRouters in hierarchy starting from
   /// top until satisfied
@@ -1458,7 +1486,7 @@ abstract class StackRouter extends RoutingController {
 
   /// Removes any route that satisfied the [predicate].
   ///
-  /// Note: [removeRoute] does not respect willPopScopes
+  /// Note: [removeRoute] does not respect PopScopes
   bool removeWhere(RouteDataPredicate predicate, {bool notify = true}) {
     var didRemove = false;
     for (var entry in List<AutoRoutePage>.unmodifiable(_pages)) {
