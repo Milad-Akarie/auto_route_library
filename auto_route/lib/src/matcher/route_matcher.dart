@@ -50,15 +50,18 @@ class RouteMatcher {
         }
         // handle redirects
         if (config is RedirectRoute) {
+          final redirectToUri = Uri.parse(PageRouteInfo.expandPath(
+            config.redirectTo,
+            match.pathParams.rawMap,
+          ));
           return _handleRedirect(
             routesCollection: collection,
             includePrefixMatches: includePrefixMatches,
-            redirectTo: Uri(
-              path: PageRouteInfo.expandPath(
-                config.redirectTo,
-                match.pathParams.rawMap,
-              ),
-              queryParameters: uri.queryParameters,
+            redirectTo: redirectToUri.replace(
+              queryParameters: {
+                ...redirectToUri.queryParametersAll,
+                ...uri.queryParametersAll,
+              },
               fragment: uri.fragment,
             ),
             redirectedFrom: PageRouteInfo.expandPath(
