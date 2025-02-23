@@ -1,5 +1,3 @@
-import 'package:analyzer/dart/analysis/utilities.dart';
-import 'package:analyzer/dart/ast/ast.dart' show TopLevelVariableDeclaration, VariableDeclarationList;
 import 'package:code_builder/code_builder.dart';
 
 import '../models/route_config.dart';
@@ -66,7 +64,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                         nonInheritedParameters.map(
                           (p) => MapEntry(
                             p.name,
-                            refer(p.name),
+                            refer(p.getSafeName()),
                           ),
                         ),
                       ),
@@ -114,7 +112,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
             Constructor((b) => b
               ..constant = true
               ..optionalParameters.addAll(
-                buildArgParams(nonInheritedParameters, emitter),
+                buildArgParams(nonInheritedParameters, emitter,useSafeName: false),
               )),
           )
           ..methods.add(
@@ -134,7 +132,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
 }
 
 /// Builds a list of [Parameter]s from the given [parameters]
-Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter, {bool toThis = true}) {
+Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter, {bool toThis = true, bool useSafeName = true}) {
   return parameters.map(
     (p) => Parameter(
       (b) {
@@ -154,7 +152,7 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emi
           }
         }
         b
-          ..name = p.getSafeName()
+          ..name = useSafeName ? p.getSafeName() : p.name
           ..named = true
           ..toThis = toThis
           ..required = p.isRequired || p.isPositional
