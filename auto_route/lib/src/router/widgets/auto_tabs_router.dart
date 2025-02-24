@@ -561,6 +561,7 @@ class _AutoTabsRouterPageViewState
     final builder = widget._pageViewModeBuilder ?? _defaultPageViewBuilder;
     final stateHash = controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       stateHash: stateHash,
@@ -704,6 +705,7 @@ class _AutoTabsRouterTabBarState
     final builder = widget.builder ?? _defaultPageViewBuilder;
     final stateHash = controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       stateHash: stateHash,
@@ -804,6 +806,7 @@ class _AutoTabsRouterBuilderState
     final builder = widget.builder;
     final stateHash = controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       stateHash: stateHash,

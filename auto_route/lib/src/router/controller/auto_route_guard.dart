@@ -175,8 +175,10 @@ class NavigationResolver {
   ///
   /// Be-aware build context can be null if the navigator is not yet mounted
   /// this happens if you're guarding the first route in the app
-  BuildContext? get context {
-    return _router.navigatorKey.currentContext;
+  BuildContext get context {
+    final context = _router.globalRouterKey.currentContext;
+    assert(context != null, 'Router is not mounted');
+    return context!;
   }
 
   /// default constructor

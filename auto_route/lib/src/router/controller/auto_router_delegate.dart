@@ -248,6 +248,7 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
   Widget build(BuildContext context) {
     final stateHash = router.stateHash;
     return RouterScope(
+      key: router.globalRouterKey,
       controller: router,
       navigatorObservers: widget.navigatorObservers,
       inheritableObserversBuilder: widget.navigatorObserversBuilder,

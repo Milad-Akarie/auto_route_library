@@ -54,6 +54,11 @@ abstract class RoutingController with ChangeNotifier {
     root._ignorePopCompleter = value;
   }
 
+  /// This key is passed to the router scope
+  /// it's used to provide build context inside auto_route guards instead of
+  /// using [navigatorKey.currentContext] because it maybe null at times
+  final globalRouterKey = GlobalObjectKey(UniqueKey());
+
   /// Holds track of the list of attached child controllers
   List<RoutingController> get childControllers => _childControllers;
   final List<AutoRoutePage> _pages = [];
@@ -1847,9 +1852,7 @@ class NestedStackRouter extends StackRouter {
     super.onNavigate,
     super.navigatorKey,
   })  : matcher = RouteMatcher(routeCollection),
-        _routeData = routeData {
-    _pushInitialRoutes();
-  }
+        _routeData = routeData;
 
   @override
   RouteData get routeData => _routeData;
@@ -1862,7 +1865,9 @@ class NestedStackRouter extends StackRouter {
     }
   }
 
-  void _pushInitialRoutes() async {
+  @internal
+  /// pushes the initial routes to the stack
+  void setupInitialRoutes() async {
     if (_routeData.hasPendingChildren) {
       final initialRoutes = List<RouteMatch>.unmodifiable(
         _routeData.pendingChildren,
