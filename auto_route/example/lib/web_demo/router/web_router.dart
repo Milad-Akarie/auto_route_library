@@ -19,7 +19,7 @@ class WebAppRouter extends RootStackRouter {
             resolver.routeName == WebLoginRoute.name) {
           resolver.next();
         } else {
-          resolver.redirect(
+          resolver.redirectUntilResolved(
             WebLoginRoute(onResult: (didLogin) {
               resolver.resolveNext(didLogin, reevaluateNext: false);
             }),
@@ -46,7 +46,7 @@ class WebAppRouter extends RootStackRouter {
                 if (authService.isVerified) {
                   resolver.next();
                 } else {
-                  resolver.redirect(WebVerifyRoute(onResult: resolver.next));
+                  resolver.redirectUntilResolved(WebVerifyRoute(onResult: resolver.next));
                 }
               },
               children: [

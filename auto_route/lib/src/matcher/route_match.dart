@@ -12,7 +12,7 @@ import '../../auto_route.dart';
 class RouteMatch<T> {
   /// The extracted path params either from rawPath or
   /// [PageRouteInfo] implementation
-  final Parameters pathParams;
+  final Parameters params;
 
   /// The extracted path params either from rawPath or
   /// [PageRouteInfo] implementation
@@ -90,6 +90,9 @@ class RouteMatch<T> {
   /// Helper to access [AutoRoute.buildPage]
   AutoRoutePage<R> buildPage<R>(RouteData data) => _config.buildPage<R>(data);
 
+  /// The path parameters of the route
+  @Deprecated('Use the shorthand [params] instead')
+  Parameters get pathParams => params;
   /// Default constructor
   const RouteMatch({
     required AutoRoute config,
@@ -98,7 +101,7 @@ class RouteMatch<T> {
     required this.key,
     this.children,
     this.args,
-    this.pathParams = const Parameters({}),
+    this.params = const Parameters({}),
     this.queryParams = const Parameters({}),
     this.fragment = '',
     this.redirectedFrom,
@@ -121,8 +124,7 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren)
-          ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   /// Joins all segments to a valid path
@@ -155,7 +157,7 @@ class RouteMatch<T> {
       stringMatch: stringMatch ?? this.stringMatch,
       segments: segments ?? this.segments,
       children: children ?? this.children,
-      pathParams: pathParams ?? this.pathParams,
+      params: pathParams ?? this.params,
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
       args: args ?? this.args,
@@ -169,11 +171,10 @@ class RouteMatch<T> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is RouteMatch &&
-          runtimeType == other.runtimeType &&
           path == other.path &&
           name == other.name &&
           stringMatch == other.stringMatch &&
-          pathParams == other.pathParams &&
+          params == other.params &&
           key == other.key &&
           type == other.type &&
           maintainState == other.maintainState &&
@@ -190,7 +191,7 @@ class RouteMatch<T> {
 
   @override
   int get hashCode =>
-      pathParams.hashCode ^
+      params.hashCode ^
       queryParams.hashCode ^
       const ListEquality().hash(children) ^
       const ListEquality().hash(guards) ^
@@ -210,7 +211,7 @@ class RouteMatch<T> {
 
   @override
   String toString() {
-    return 'RouteMatch{ routeName: $name, pathParams: $pathParams, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom,  path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
+    return 'RouteMatch{ routeName: $name, pathParams: $params, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom,  path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
   }
 
   /// Returns a new instance of [PageRouteInfo] from
@@ -254,8 +255,7 @@ class HierarchySegment {
       'name': name,
       if (pathParams?.isNotEmpty == true) 'pathParams': pathParams!.rawMap,
       if (queryParams?.isNotEmpty == true) 'queryParams': queryParams!.rawMap,
-      if (children.isNotEmpty)
-        'children': children.map((e) => e.toJson()).toList(),
+      if (children.isNotEmpty) 'children': children.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -275,11 +275,7 @@ class HierarchySegment {
           const ListEquality().equals(children, other.children);
 
   @override
-  int get hashCode =>
-      name.hashCode ^
-      pathParams.hashCode ^
-      queryParams.hashCode ^
-      const ListEquality().hash(children);
+  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
 }
 
 /// An extension to create a pretty json output of
@@ -293,10 +289,8 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
     Map toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(segments.map(
         (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true)
-            'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true)
-            'queryParams': e.queryParams!.rawMap,
+          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
+          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
           if (e.children.isNotEmpty) 'children': toMap(e.children),
         }),
       ));

@@ -153,18 +153,18 @@ class RouteData {
 
   /// Collects all path params form all previous ancestors
   Parameters get inheritedPathParams {
-    final params = breadcrumbs.map((e) => e.pathParams).reduce(
+    final params = breadcrumbs.map((e) => e.params).reduce(
           (value, element) => value + element,
         );
     return params;
   }
 
-  /// Helper to access [RouteMatch.pathParams]
+  /// Helper to access [RouteMatch.params]
   @Deprecated('use the shorthand (params) instead')
-  Parameters get pathParams => _match.pathParams;
+  Parameters get pathParams => _match.params;
 
-  /// Helper to access [RouteMatch.pathParams]
-  Parameters get params => _match.pathParams;
+  /// Helper to access [RouteMatch.params]
+  Parameters get params => _match.params;
 
   /// Helper to access [RouteMatch.queryParams]
   Parameters get queryParams => _match.queryParams;

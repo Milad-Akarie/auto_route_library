@@ -52,7 +52,7 @@ class RouteMatcher {
         if (config is RedirectRoute) {
           final redirectToUri = Uri.parse(PageRouteInfo.expandPath(
             config.redirectTo,
-            match.pathParams.rawMap,
+            match.params.rawMap,
           ));
           return _handleRedirect(
             routesCollection: collection,
@@ -66,7 +66,7 @@ class RouteMatcher {
             ),
             redirectedFrom: PageRouteInfo.expandPath(
               config.path,
-              match.pathParams.rawMap,
+              match.params.rawMap,
             ),
           );
         }
@@ -171,7 +171,7 @@ class RouteMatcher {
       stringMatch: stringMatch,
       segments: extractedSegments,
       redirectedFrom: redirectedFrom,
-      pathParams: Parameters(pathParams),
+      params: Parameters(pathParams),
       queryParams: Parameters(_normalizeSingleValues(uri.queryParametersAll)),
       fragment: uri.fragment,
     );
@@ -233,7 +233,7 @@ class RouteMatcher {
       fragment: route.fragment,
       redirectedFrom: route.redirectedFrom,
       children: childMatches,
-      pathParams: Parameters(route.rawPathParams),
+      params: Parameters(route.rawPathParams),
       queryParams: Parameters(route.rawQueryParams),
     );
   }
@@ -264,7 +264,7 @@ class RouteMatcher {
             stringMatch: stringMatch,
             fragment: route.fragment,
             redirectedFrom: route.redirectedFrom,
-            pathParams: Parameters(route.rawPathParams),
+            params: Parameters(route.rawPathParams),
             queryParams: Parameters(route.rawQueryParams),
           ),
         );

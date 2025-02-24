@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 @RoutePage(name: 'BookDetailsRoute')
 class BookDetailsPage extends StatefulWidget {
   final int id;
-
+  final Book? book;
   const BookDetailsPage({
     @pathParam this.id = -3,
+    this.book,
   });
 
   @override
@@ -20,8 +21,7 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final booksDb = BooksDBProvider.of(context);
-    final book = booksDb?.findBookById(widget.id);
+  final book = widget.book;
     return book == null
         ? Container(child: Text('Book null'))
         : Scaffold(

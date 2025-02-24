@@ -604,7 +604,7 @@ void main() {
           key: const ValueKey('A'),
           stringMatch: '/a/foo',
           segments: const ['/', 'a', 'foo'],
-          pathParams: const Parameters({'id': 'foo'}),
+          params: const Parameters({'id': 'foo'}),
           redirectedFrom: '/x/foo',
         )
       ];
@@ -636,7 +636,7 @@ void main() {
           key: const ValueKey('A'),
           stringMatch: '/a/1',
           segments: const ['/', 'a', '1'],
-          pathParams: const Parameters({'id': '1'}),
+          params: const Parameters({'id': '1'}),
         )
       ];
       expect(match('/a/1'), expectedMatches);
@@ -650,7 +650,7 @@ void main() {
           key: const ValueKey('B'),
           stringMatch: '/b/1/n/none',
           segments: const ['/', 'b', '1', 'n', 'none'],
-          pathParams: const Parameters({
+          params: const Parameters({
             'id': '1',
             'type': 'none',
           }),
@@ -672,7 +672,7 @@ void main() {
               key: const ValueKey('C1'),
               stringMatch: '1',
               segments: const ['1'],
-              pathParams: const Parameters({'id': '1'}),
+              params: const Parameters({'id': '1'}),
             )
           ],
         )

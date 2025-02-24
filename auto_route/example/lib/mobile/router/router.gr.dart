@@ -10,6 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i8;
+import 'package:example/data/db.dart' as _i9;
 import 'package:example/mobile/screens/books/book_details_page.dart' as _i1;
 import 'package:example/mobile/screens/books/book_list_page.dart' as _i2;
 import 'package:example/mobile/screens/home_page.dart' as _i3;
@@ -17,18 +18,21 @@ import 'package:example/mobile/screens/login_page.dart' as _i4;
 import 'package:example/mobile/screens/profile/my_books_page.dart' as _i5;
 import 'package:example/mobile/screens/profile/profile_page.dart' as _i6;
 import 'package:example/mobile/screens/settings_page.dart' as _i7;
-import 'package:flutter/material.dart' as _i9;
+import 'package:flutter/material.dart' as _i10;
 
 /// generated route for
 /// [_i1.BookDetailsPage]
 class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
-  BookDetailsRoute({int id = -3, List<_i8.PageRouteInfo>? children})
-    : super(
-        BookDetailsRoute.name,
-        args: BookDetailsRouteArgs(id: id),
-        rawPathParams: {'id': id},
-        initialChildren: children,
-      );
+  BookDetailsRoute({
+    int id = -3,
+    _i9.Book? book,
+    List<_i8.PageRouteInfo>? children,
+  }) : super(
+         BookDetailsRoute.name,
+         args: BookDetailsRouteArgs(id: id, book: book),
+         rawPathParams: {'id': id},
+         initialChildren: children,
+       );
 
   static const String name = 'BookDetailsRoute';
 
@@ -39,19 +43,21 @@ class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
       final args = data.argsAs<BookDetailsRouteArgs>(
         orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -3)),
       );
-      return _i1.BookDetailsPage(id: args.id);
+      return _i1.BookDetailsPage(id: args.id, book: args.book);
     },
   );
 }
 
 class BookDetailsRouteArgs {
-  const BookDetailsRouteArgs({this.id = -3});
+  const BookDetailsRouteArgs({this.id = -3, this.book});
 
   final int id;
 
+  final _i9.Book? book;
+
   @override
   String toString() {
-    return 'BookDetailsRouteArgs{id: $id}';
+    return 'BookDetailsRouteArgs{id: $id, book: $book}';
   }
 }
 
@@ -91,7 +97,7 @@ class HomeRoute extends _i8.PageRouteInfo<void> {
 /// [_i4.LoginPage]
 class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i9.Key? key,
+    _i10.Key? key,
     void Function(bool)? onLoginResult,
     bool showBackButton = true,
     List<_i8.PageRouteInfo>? children,
@@ -129,7 +135,7 @@ class LoginRouteArgs {
     this.showBackButton = true,
   });
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
   final void Function(bool)? onLoginResult;
 
@@ -145,7 +151,7 @@ class LoginRouteArgs {
 /// [_i5.MyBooksPage]
 class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
   MyBooksRoute({
-    _i9.Key? key,
+    _i10.Key? key,
     String? filter = 'none',
     List<_i8.PageRouteInfo>? children,
   }) : super(
@@ -175,7 +181,7 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
 class MyBooksRouteArgs {
   const MyBooksRouteArgs({this.key, this.filter = 'none'});
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
   final String? filter;
 
@@ -205,7 +211,7 @@ class ProfileRoute extends _i8.PageRouteInfo<void> {
 /// [_i7.SettingsPage]
 class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
   SettingsTab({
-    _i9.Key? key,
+    _i10.Key? key,
     String tab = 'none',
     String query = 'none',
     List<_i8.PageRouteInfo>? children,
@@ -239,7 +245,7 @@ class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
 class SettingsTabArgs {
   const SettingsTabArgs({this.key, this.tab = 'none', this.query = 'none'});
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
   final String tab;
 

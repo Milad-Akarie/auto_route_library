@@ -515,11 +515,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Calls [pop] on the controller with the top-most visible page
   @optionalTypeArgs
-  void popTop<T extends Object?>([T? result]) {
-    print(_topMostRouter());
-    _topMostRouter().pop<T>(result);
-  }
-
+  void popTop<T extends Object?>([T? result]) => _topMostRouter().pop<T>(result);
 
   /// Whether this controller can preform [maybePop]
   ///
@@ -747,7 +743,6 @@ class TabsRouter extends RoutingController {
     }
   }
 
-
   @override
   @optionalTypeArgs
   void pop<T extends Object?>([T? result]) {
@@ -910,7 +905,7 @@ class TabsRouter extends RoutingController {
     bool ignoreParentRoutes = false,
     bool ignorePagelessRoutes = false,
   }) {
-    if(!ignoreChildRoutes){
+    if (!ignoreChildRoutes) {
       final innerRouter = _innerControllerOf(_activePage?.routeKey);
       if (innerRouter != null &&
           innerRouter.canPop(
@@ -951,7 +946,6 @@ class TabsRouter extends RoutingController {
 
   @override
   bool get managedByWidget => false;
-
 }
 
 /// An implementation of a [RoutingController] that handles stack navigation
@@ -1202,7 +1196,7 @@ abstract class StackRouter extends RoutingController {
   void onPopPage(AutoRoutePage<Object?> page) {
     _pages.remove(page);
     _updateSharedPathData(includeAncestors: true);
-    if(isRouteDataActive(page.routeData)) {
+    if (isRouteDataActive(page.routeData)) {
       navigationHistory.rebuildUrl();
     }
   }
@@ -1301,7 +1295,8 @@ abstract class StackRouter extends RoutingController {
         fragment: route.fragment,
         includeAncestors: true,
       );
-      return _addEntry<T>(match, notify: notify);
+
+      return _addEntry<T>(result.route, notify: notify);
     }
     return null;
   }
@@ -1555,23 +1550,22 @@ abstract class StackRouter extends RoutingController {
     );
 
     for (var i = 0; i < routes.length; i++) {
-      var route = routes[i];
       final result = await _canNavigate(
-        route,
+        routes[i],
         onFailure: onFailure,
         pendingRoutes: routes.whereIndexed((index, element) => index > i).toList(),
         isReevaluating: isReevaluating,
       );
       if (result.continueNavigation) {
         if (i != (routes.length - 1)) {
-          _addEntry<T>(route, notify: false);
+          _addEntry<T>(result.route, notify: false);
         } else {
           _updateSharedPathData(
-            queryParams: route.queryParams.rawMap,
-            fragment: route.fragment,
+            queryParams: result.route.queryParams.rawMap,
+            fragment: result.route.fragment,
             includeAncestors: updateAncestorsPathData,
           );
-          final completer = _addEntry<T>(route, notify: notify);
+          final completer = _addEntry<T>(result.route, notify: notify);
           if (returnLastRouteCompleter) {
             return completer;
           }
@@ -1610,49 +1604,50 @@ abstract class StackRouter extends RoutingController {
     List<RouteMatch> pendingRoutes = const [],
     bool isReevaluating = false,
   }) async {
+    RouteMatch routeToCheck = route;
     final guards = <AutoRouteGuard>[
       ...root.guards,
-      ...route.guards,
+      ...routeToCheck.guards,
     ];
     if (guards.isEmpty) {
       return SynchronousFuture(
-        const ResolverResult(
+        ResolverResult(
           continueNavigation: true,
           reevaluateNext: true,
+          route: routeToCheck,
         ),
       );
     }
     bool breakOnReevaluate = false;
-    for (var guard in guards) {
+    for (final guard in guards) {
       final completer = Completer<ResolverResult>();
       activeGuardObserver.add(guard);
       guard.onNavigation(
         NavigationResolver(
           this,
           completer,
-          route,
+          routeToCheck,
           pendingRoutes: pendingRoutes,
           isReevaluating: isReevaluating,
         ),
         this,
       );
       final result = await completer.future;
+      routeToCheck = result.route;
       breakOnReevaluate |= result.reevaluateNext;
       if (!result.continueNavigation) {
         if (onFailure != null) {
-          onFailure(RejectedByGuardFailure(route, guard));
+          onFailure(RejectedByGuardFailure(routeToCheck, guard));
         }
         activeGuardObserver.remove(guard);
-        return ResolverResult(
-          continueNavigation: false,
-          reevaluateNext: breakOnReevaluate,
-        );
+        return result.copyWith(reevaluateNext: breakOnReevaluate);
       }
       activeGuardObserver.remove(guard);
     }
     return ResolverResult(
       continueNavigation: true,
       reevaluateNext: breakOnReevaluate,
+      route: routeToCheck,
     );
   }
 

@@ -146,7 +146,7 @@ class PageRouteInfo<T extends Object?> {
   factory PageRouteInfo.fromMatch(RouteMatch match) {
     return PageRouteInfo(
       match.name,
-      rawPathParams: match.pathParams.rawMap,
+      rawPathParams: match.params.rawMap,
       rawQueryParams: match.queryParams.rawMap,
       fragment: match.fragment,
       redirectedFrom: match.redirectedFrom,
