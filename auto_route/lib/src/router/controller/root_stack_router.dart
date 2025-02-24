@@ -23,6 +23,7 @@ abstract class RootStackRouter extends StackRouter {
     bool Function(String? location)? neglectWhen,
     bool rebuildStackOnDeepLink = false,
     Listenable? reevaluateListenable,
+    Clip clipBehavior = Clip.hardEdge,
   }) {
     return RouterConfig(
       routeInformationParser: defaultRouteParser(
@@ -40,6 +41,7 @@ abstract class RootStackRouter extends StackRouter {
         navigatorObservers: navigatorObservers,
         placeholder: placeholder,
         deepLinkBuilder: deepLinkBuilder,
+        clipBehavior: clipBehavior,
       ),
     );
   }
@@ -99,6 +101,7 @@ abstract class RootStackRouter extends StackRouter {
     DeepLinkBuilder? deepLinkBuilder,
     bool rebuildStackOnDeepLink = false,
     Listenable? reevaluateListenable,
+    Clip clipBehavior = Clip.hardEdge,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,
@@ -108,6 +111,7 @@ abstract class RootStackRouter extends StackRouter {
       rebuildStackOnDeepLink: rebuildStackOnDeepLink,
       deepLinkBuilder: deepLinkBuilder,
       reevaluateListenable: reevaluateListenable,
+      clipBehavior: clipBehavior,
     );
   }
 

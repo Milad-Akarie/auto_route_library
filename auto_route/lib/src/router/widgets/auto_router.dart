@@ -1,7 +1,7 @@
 
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import '../../../auto_route.dart';
 
 /// A Wrapper for [Navigator] that handles stack-routing
 class AutoRouter extends StatefulWidget {
@@ -33,6 +33,9 @@ class AutoRouter extends StatefulWidget {
   /// an empty page with [Theme.scaffoldBackgroundColor].
   final WidgetBuilder? placeholder;
 
+  /// The clip behavior of the navigator
+  final Clip clipBehavior;
+
   /// Default constructor
   const AutoRouter({
     super.key,
@@ -42,6 +45,7 @@ class AutoRouter extends StatefulWidget {
     this.navigatorKey,
     this.inheritNavigatorObservers = true,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
   });
 
   /// Builds a [_DeclarativeAutoRouter] which uses
@@ -56,6 +60,7 @@ class AutoRouter extends StatefulWidget {
     GlobalKey<NavigatorState>? navigatorKey,
     OnNestedNavigateCallBack? onNavigate,
     WidgetBuilder? placeholder,
+    Clip clipBehavior = Clip.hardEdge,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
@@ -66,6 +71,7 @@ class AutoRouter extends StatefulWidget {
         onNavigate: onNavigate,
         placeholder: placeholder,
         routes: routes,
+        clipBehavior: clipBehavior,
       );
 
   @override
@@ -152,6 +158,7 @@ class AutoRouterState extends State<AutoRouter> {
     assert(_controller != null);
     var navigator = AutoRouteNavigator(
       router: _controller!,
+      clipBehavior: widget.clipBehavior,
       key: GlobalObjectKey(_controller.hashCode),
       navRestorationScopeId: widget.navRestorationScopeId,
       navigatorObservers: _navigatorObservers,
@@ -197,7 +204,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final GlobalKey<NavigatorState>? navigatorKey;
   final OnNestedNavigateCallBack? onNavigate;
   final WidgetBuilder? placeholder;
-
+  final Clip clipBehavior;
   const _DeclarativeAutoRouter({
     required this.routes,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
@@ -207,6 +214,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
     this.inheritNavigatorObservers = true,
     this.onNavigate,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
   });
 
   @override
@@ -269,6 +277,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     assert(_controller != null);
     final stateHash = controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       navigatorObservers: _navigatorObservers,
@@ -277,6 +286,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         controller: _heroController,
         child: AutoRouteNavigator(
           router: _controller!,
+          clipBehavior:   widget.clipBehavior,
           key: GlobalObjectKey(_controller.hashCode),
           declarativeRoutesBuilder: widget.routes,
           navRestorationScopeId: widget.navRestorationScopeId,

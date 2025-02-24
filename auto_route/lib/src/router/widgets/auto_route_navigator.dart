@@ -34,6 +34,9 @@ class AutoRouteNavigator extends StatefulWidget {
   /// by [router] to be finally passed to [Navigator.pages]
   final RoutesBuilder? declarativeRoutesBuilder;
 
+  /// The clip behavior of the navigator
+  final Clip clipBehavior;
+
   /// Default constructor
   const AutoRouteNavigator({
     required this.router,
@@ -42,6 +45,7 @@ class AutoRouteNavigator extends StatefulWidget {
     this.didPop,
     this.declarativeRoutesBuilder,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
     super.key,
   });
 
@@ -86,6 +90,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
    return widget.router.hasEntries
         ?  Navigator(
             key: widget.router.navigatorKey,
+            clipBehavior: widget.clipBehavior,
             observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
             restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
             pages: widget.router.stack,

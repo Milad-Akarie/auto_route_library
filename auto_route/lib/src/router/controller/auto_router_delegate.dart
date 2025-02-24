@@ -50,8 +50,11 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// defaults to false
   final bool rebuildStackOnDeepLink;
 
-  ///
+  /// A listenable that triggers a re-evaluation of the guards
   final Listenable? reevaluateListenable;
+
+  /// The clip behavior of the navigator
+  final Clip clipBehavior;
 
   /// Builds an empty observers list
   static List<NavigatorObserver> defaultNavigatorObserversBuilder() => const [];
@@ -85,6 +88,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     this.deepLinkBuilder,
     this.rebuildStackOnDeepLink = false,
     this.reevaluateListenable,
+    this.clipBehavior = Clip.hardEdge,
   }) {
     _navigatorObservers = navigatorObservers();
     controller.navigationHistory.addListener(_handleRebuild);
@@ -182,6 +186,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
         navigatorObserversBuilder: navigatorObservers,
         navRestorationScopeId: navRestorationScopeId,
         placeholder: placeholder,
+        clipBehavior: clipBehavior,
       );
 
   void _handleRebuild() {
@@ -207,8 +212,10 @@ class _AutoRootRouter extends StatefulWidget {
     this.navigatorObservers = const [],
     required this.navigatorObserversBuilder,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
   });
 
+  final Clip clipBehavior;
   final StackRouter router;
   final String? navRestorationScopeId;
   final List<NavigatorObserver> navigatorObservers;
@@ -258,6 +265,7 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
         controller: router,
         child: AutoRouteNavigator(
           router: router,
+          clipBehavior: widget.clipBehavior,
           key: GlobalObjectKey(widget.router.hashCode),
           placeholder: widget.placeholder,
           navRestorationScopeId: widget.navRestorationScopeId,
@@ -314,6 +322,7 @@ abstract class DeepLink {
 class _PathDeepLink extends DeepLink {
   final String path;
   final bool includePrefixMatches;
+
   /// if false the path will be pushed instead of navigated
   final bool navigate;
 
@@ -329,6 +338,7 @@ class _PathDeepLink extends DeepLink {
 
 class _RoutesDeepLink extends DeepLink {
   final List<PageRouteInfo> routes;
+
   /// if false the routes will be pushed instead of navigated
   final bool navigate;
 
