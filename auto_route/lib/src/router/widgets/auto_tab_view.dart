@@ -78,7 +78,7 @@ class AutoTabViewState extends State<AutoTabView> {
     super.initState();
     _updateChildren();
     _controller.animation!.addListener(_handleTabControllerAnimationTick);
-    _router.addListener(_updateChildren);
+    _router.addListener(_onRouterUpdated);
     _pageController = PageController(initialPage: _router.activeIndex);
   }
 
@@ -105,12 +105,17 @@ class AutoTabViewState extends State<AutoTabView> {
     }
   }
 
+  void _onRouterUpdated() {
+    _disposeInactiveChildren();
+    _updateChildren();
+  }
+
   @override
   void dispose() {
     if (_controllerIsValid) {
       _controller.animation!.removeListener(_handleTabControllerAnimationTick);
     }
-    _router.removeListener(_updateChildren);
+    _router.removeListener(_onRouterUpdated);
     super.dispose();
   }
 
@@ -195,9 +200,10 @@ class AutoTabViewState extends State<AutoTabView> {
 
   // Called when the PageView scrolls
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollEndNotification) {
-      _disposeInactiveChildren();
-    }
+    // if (notification is ScrollEndNotification) {
+    //     print(widget.controller.indexIsChanging);
+    //   _disposeInactiveChildren();
+    // }
     if (_warpUnderwayCount > 0) return false;
 
     if (notification.depth != 0) return false;

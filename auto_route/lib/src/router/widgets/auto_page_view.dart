@@ -85,9 +85,11 @@ class AutoPageViewState extends State<AutoPageView> {
 
   void _routerListener() {
     _updateChildren();
+    _disposeInactiveChildren();
     if (_router.activeIndex != _controller.page!.round()) {
       _warpToCurrentIndex();
     }
+
   }
 
   /// Preload the page at [index]
@@ -165,9 +167,6 @@ class AutoPageViewState extends State<AutoPageView> {
 
   // Called when the PageView scrolls
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollEndNotification) {
-      _disposeInactiveChildren();
-    }
     if (_warpUnderwayCount > 0) return false;
     if (notification.depth != 0) return false;
     _warpUnderwayCount += 1;
