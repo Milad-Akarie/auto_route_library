@@ -197,5 +197,4 @@ class RouteData {
   AutoRoutePage<T> buildPage<T>() {
     return _match.buildPage<T>(this);
   }
-
 }

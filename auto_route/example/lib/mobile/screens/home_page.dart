@@ -31,12 +31,12 @@ class RouteDestination {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final destinations = [
     RouteDestination(
-      route: BooksTab(),
+      route: booksTab(),
       icon: Icons.source,
       label: 'Books',
     ),
     RouteDestination(
-      route: ProfileTab(),
+      route: profileTab(),
       icon: Icons.person,
       label: 'Profile',
     ),

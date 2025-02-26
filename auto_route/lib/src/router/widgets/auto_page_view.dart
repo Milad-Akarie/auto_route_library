@@ -208,7 +208,8 @@ class AutoPageViewState extends State<AutoPageView> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<PageController>('controller', _controller));
+    properties
+        .add(DiagnosticsProperty<PageController>('controller', _controller));
     properties.add(DiagnosticsProperty<TabsRouter>('router', _router));
     properties.add(IntProperty('activeIndex', _router.activeIndex));
     properties.add(IntProperty('previousIndex', _router.previousIndex));

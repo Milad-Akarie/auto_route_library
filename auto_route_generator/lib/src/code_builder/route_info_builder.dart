@@ -288,8 +288,9 @@ Iterable<Parameter> buildArgParams(
           ..toThis = toThis
           ..required = p.isRequired || p.isPositional
           ..defaultTo = defaultCode;
-        if (!toThis)
+        if (!toThis) {
           b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+        }
       },
     ),
   );

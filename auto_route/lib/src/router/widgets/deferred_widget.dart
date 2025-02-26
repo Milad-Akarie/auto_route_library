@@ -88,7 +88,6 @@ class _DeferredWidgetState extends State<DeferredWidget> {
             const DeferredLoadingPlaceholder();
     return _loadedChild ?? placeHolder;
   }
-
 }
 
 /// Displays a progress indicator when the widget is a deferred component

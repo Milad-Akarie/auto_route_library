@@ -28,6 +28,7 @@
 - [Introduction](#introduction)
   - [Installation](#installation)
   - [Setup and Usage](#setup-and-usage)
+  - [Usage without code generation](#usage-without-code-generation)
 - [Generated routes](#generated-routes)
 - [Navigation](#navigating-between-screens)
   - [Navigating Between Screens](#navigating-between-screens)
@@ -181,7 +182,54 @@ class App extends StatelessWidget {
   }
 }
 ```
+## Usage without code generation
+You can use auto_route without code generation by providing an inline `NamedRouteDef` with a page builder function, as name suggests, you must provide a name for the route so you can navigate to it later by name or path.
+### Declaring Named Routes
+```dart
+  NamedRouteDef(
+    name: 'BookDetailsRoute',
+    path: '/books/:id', // optional
+    builder: (context, data) {
+      return BookDetailsPage(id: data.params.getInt('id'));
+    },
+  ),
+```
+`NamedRouteDef` is a wrapper around `AutoRoute` that allows you to provide a page builder function instead of a generated page, it has the same properties as `AutoRoute` except for `page` properties.
 
+### Navigating to Named Routes
+You can either navigate to a named route by using the dynamic `NamedRoute` class to match by name or by using the `pushPath` method to match by path.
+```dart
+ /// match by name
+    router.push(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+    router.replace(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+    router.navigate(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+/// match by path
+     router.pushPath('/books/1');
+     router.replacePath('/books/1');
+     router.navigatePath('/books/1');
+```
+
+*Note:* You can mix and match between named and generated routes.
+
+### Building a router without code generation
+
+You can either extend `RootStackRouter` like you would normally do or use the `RootStackRouter.build` constructor to build a router without code generation.
+```dart
+    final router = RootStackRouter.build(
+      defaultRouteType: ...,
+      guards: [global guards],
+      routes: [
+        NamedRouteDef(
+          name: 'BookDetailsRoute',
+          path: '/books/:id', // optional
+          builder: (context, data) {
+            return BookDetailsPage(id: data.params.getInt('id'));
+          },
+        ),
+         // ... other routes
+      ],
+    );
+ ```
 ## Generated Routes
 
 A `PageRouteInfo` object will be generated for every declared **AutoRoute**. These objects hold strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroids.
@@ -209,17 +257,17 @@ context.router;
 // adds a new entry to the pages stack
 router.push(const BooksListRoute());
 // or by using paths
-router.pushNamed('/books');
+router.pushPath('/books');
 // removes last entry in stack and pushes provided route
 // if last entry == provided route page will just be updated
 router.replace(const BooksListRoute());
 // or by using paths
-router.replaceNamed('/books');
+router.replacePath('/books');
 // pops until provided route, if it already exists in stack
 // else adds it to the stack (good for web Apps).
 router.navigate(const BooksListRoute());
 // or by using paths
-router.navigateNamed('/books');
+router.navigatePath('/books');
 // on Web it calls window.history.back();
 // on Native it navigates you back
 // to the previous location
@@ -235,6 +283,12 @@ router.pushAll([
 router.replaceAll([
   LoginRoute(),
 ]);
+
+// pops the top page even if it's the last entry in stack
+context.router.pop()
+// pops the most top page of the most top router even if it's the last entry in stack
+context.router.popTop();
+
 // pops the last page unless blocked or stack has only 1 entry
 context.router.maybePop();
 // pops the most top page of the most top router unless blocked
@@ -260,9 +314,10 @@ context.router.removeWhere((route) => );
 context.pushRoute(const BooksListRoute());
 context.replaceRoute(const BooksListRoute());
 context.navigateTo(const BooksListRoute());
-context.navigateNamedTo('/books');
+context.navigateToPath('/books');
 context.back();
 context.maybePop();
+context.pop();
 ```
 
 ## Passing Arguments
@@ -1047,9 +1102,9 @@ class AuthGuard extends AutoRouteGuard {
       resolver.next(true);
     } else {
         // we redirect the user to our login page
-        // tip: use resolver.redirect to have the redirected route
+        // tip: use resolver.redirectUntil to have the redirected route
         // automatically removed from the stack when the resolver is completed
-        resolver.redirect(
+        resolver.redirectUntil(
           LoginRoute(onResult: (success) {
             // if success == true the navigation will be resumed
             // else it will be aborted
@@ -1092,9 +1147,9 @@ class AppRouter extends RootStackRouter{
         } else {
           // else we navigate to the Login page so we get authenticated
 
-          // tip: use resolver.redirect to have the redirected route
+          // tip: use resolver.redirectUntil to have the redirected route
           // automatically removed from the stack when the resolver is completed
-          resolver.redirect(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
+          resolver.redirectUntil(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
         }
       },
     ),
@@ -1107,7 +1162,7 @@ class AppRouter extends RootStackRouter{
 
 ### Using a Reevaluate Listenable
 
-Route guards can prevent users from accessing private pages until they're logged in for example, but auth state may change when the user is already navigated to the private page, to make sure private pages are only accessed by logged-in users all the time, we need a listenable that tells the router that the auth state has changed and you need to re-evaluate your stack.
+Route guards can prevent users from accessing private pages until they're logged in, but auth state may change when the user is already navigated to the private page, to make sure private pages are only accessed by logged-in users all the time, we need a listenable that tells the router that the auth state has changed and you need to re-evaluate your stack.
 
 The following auth provider mock will act as our re-valuate listenable
 
@@ -1139,7 +1194,7 @@ MaterialApp.router(
 );
 ```
 
-Now, every time `AutoProvider` notifies listeners, the stack will be re-evaluated and `AutoRouteGuard.onNavigation()`. Methods will be re-called on all guards
+Now, every time `AuthProvider` notifies listeners, the stack will be re-evaluated and `AutoRouteGuard.onNavigation()`. Methods will be re-called on all guards
 
 In the above example, we assigned our `AuthProvider` to `reevaluateListenable` directly, that's because `reevaluateListenable` takes a `Listenable` and AuthProvider extends `ChangeNotifier` which is a `Listenable`, if your auth provider is a stream you can use `reevaluateListenable: ReevaluateListenable.stream(YOUR-STREAM)`
 
@@ -1151,10 +1206,12 @@ void onNavigation(NavigationResolver resolver, StackRouter router) async {
   if (authProvider.isAuthenticated) {
     resolver.next();
   } else {
-    resolver.redirect(
+    resolver.redirectUntil(
       WebLoginRoute(
+        /// this part is optional if you're not using reevaluateListenable as this method will 
+        /// be called again and if the condition is satisfied the resolver will be completed
         onResult: (didLogin) {
-          // stop re-pushing any pending routes after current
+          /// stop re-pushing any pending routes after current
           resolver.resolveNext(didLogin, reevaluateNext: false);
         },
       ),
@@ -1178,7 +1235,6 @@ class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
   ...
 }
 ```
-
 
 
 ## Navigation Observers
@@ -1526,6 +1582,20 @@ targets:
 AppBar(
   title: Text(context.topRoute.name),
   leading: AutoLeadingButton(),
+)
+```
+you can also use `AutoBackButton.builder` above your Scaffold for example to provide a nullable leading widget to prevent AppBar.leadingWidth when there's no leading to show
+
+```dart
+AutoBackButton.builder(
+  builder: (BuildContext context, Widget? leading) {
+    return  Scaffold(
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: leading,
+      ),
+    );
+  },
 )
 ```
 

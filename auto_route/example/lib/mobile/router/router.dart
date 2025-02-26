@@ -12,7 +12,7 @@ class AppRouter extends RootStackRouter {
       children: [
         AutoRoute(
           path: 'books',
-          page: BooksTab.page,
+          page: booksTab.page,
           initial: true,
           children: [
             AutoRoute(
@@ -29,17 +29,17 @@ class AppRouter extends RootStackRouter {
             ),
           ],
         ),
-        profileTab,
+        profileRoute,
         AutoRoute(
           path: 'settings/:tab',
           page: SettingsTab.page,
         ),
       ],
     ),
-    AutoRoute(page: BooksTab.page, path: '/login'),
+    AutoRoute(page: booksTab.page, path: '/login'),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];
 }
 
-const BooksTab = EmptyShellRoute('BooksTab');
-const ProfileTab = EmptyShellRoute('ProfileTab');
+const booksTab = EmptyShellRoute('BooksTab');
+const profileTab = EmptyShellRoute('ProfileTab');

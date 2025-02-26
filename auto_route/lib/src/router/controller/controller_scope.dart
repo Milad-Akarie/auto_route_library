@@ -48,7 +48,8 @@ class RouterScope extends InheritedWidget {
     }
     assert(() {
       if (scope == null) {
-        throw FlutterError('RouterScope operation requested with a context that does not include a RouterScope.\n'
+        throw FlutterError(
+            'RouterScope operation requested with a context that does not include a RouterScope.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of a RouterScope widget.');
       }
@@ -77,9 +78,10 @@ class RouterScope extends InheritedWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<RoutingController>('controller', controller));
-    properties.add(
-        DiagnosticsProperty<NavigatorObserversBuilder>('inheritableObserversBuilder', inheritableObserversBuilder));
+    properties
+        .add(DiagnosticsProperty<RoutingController>('controller', controller));
+    properties.add(DiagnosticsProperty<NavigatorObserversBuilder>(
+        'inheritableObserversBuilder', inheritableObserversBuilder));
     properties.add(DiagnosticsProperty<int>('stateHash', stateHash));
   }
 }
@@ -125,7 +127,8 @@ class StackRouterScope extends InheritedWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<RoutingController>('controller', controller));
+    properties
+        .add(DiagnosticsProperty<RoutingController>('controller', controller));
     properties.add(DiagnosticsProperty<int>('stateHash', stateHash));
   }
 }
@@ -171,7 +174,8 @@ class TabsRouterScope extends InheritedWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<RoutingController>('controller', controller));
+    properties
+        .add(DiagnosticsProperty<RoutingController>('controller', controller));
     properties.add(DiagnosticsProperty<int>('stateHash', stateHash));
   }
 }

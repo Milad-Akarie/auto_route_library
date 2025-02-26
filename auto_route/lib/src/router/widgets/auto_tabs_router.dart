@@ -159,8 +159,6 @@ abstract class AutoTabsRouter extends StatefulWidget {
     }());
     return scope!.controller;
   }
-
-
 }
 
 /// The state implementation of [AutoTabsRouter]
@@ -226,11 +224,11 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<TabsRouter>('controller', _controller));
-    properties.add(DiagnosticsProperty<RoutingController>('parentController', _parentController));
+    properties.add(DiagnosticsProperty<RoutingController>(
+        'parentController', _parentController));
     properties.add(DiagnosticsProperty<List<NavigatorObserver>>(
         'navigatorObservers', _navigatorObservers));
   }
-
 }
 
 // -----------------------------------------------------------

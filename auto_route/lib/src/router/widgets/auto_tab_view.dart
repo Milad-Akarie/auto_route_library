@@ -257,10 +257,12 @@ class AutoTabViewState extends State<AutoTabView> {
       ),
     );
   }
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<TabController>('controller', _controller));
+    properties
+        .add(DiagnosticsProperty<TabController>('controller', _controller));
     properties.add(DiagnosticsProperty<TabsRouter>('router', _router));
     properties.add(IntProperty('activeIndex', _router.activeIndex));
     properties.add(IntProperty('previousIndex', _router.previousIndex));

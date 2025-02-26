@@ -2071,6 +2071,10 @@ class ActiveGuardObserver extends ValueNotifier<List<GuardEntry>> {
 
   /// Whether there's a guard  pending completion
   bool get guardInProgress => value.isNotEmpty;
+
+  /// returns a list of active guards
+  List<AutoRouteGuard> get activeGuards =>
+      List.unmodifiable(value.map((e) => e.guard));
 }
 
 /// A class that holds a guard and it's corresponding resolver

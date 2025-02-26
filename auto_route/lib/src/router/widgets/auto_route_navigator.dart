@@ -68,7 +68,8 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   void _updateDeclarativeRoutes() {
     final delegate = AutoRouterDelegate.of(context);
-    var newRoutes = widget.declarativeRoutesBuilder!(widget.router.pendingRoutesHandler);
+    var newRoutes =
+        widget.declarativeRoutesBuilder!(widget.router.pendingRoutesHandler);
     if (!const ListEquality().equals(newRoutes, _routesSnapshot)) {
       _routesSnapshot = newRoutes;
       widget.router.updateDeclarativeRoutes(newRoutes);
@@ -92,8 +93,12 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         ? Navigator(
             key: widget.router.navigatorKey,
             clipBehavior: widget.clipBehavior,
-            observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
-            restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
+            observers: [
+              widget.router.pagelessRoutesObserver,
+              ...widget.navigatorObservers
+            ],
+            restorationScopeId: widget.navRestorationScopeId ??
+                widget.router.routeData.restorationId,
             pages: widget.router.stack,
             onDidRemovePage: (page) {
               if (page is AutoRoutePage) {
@@ -112,11 +117,17 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<StackRouter>('router', widget.router));
-    properties.add(IterableProperty<NavigatorObserver>('navigatorObservers', widget.navigatorObservers));
-    properties.add(DiagnosticsProperty<RoutesBuilder>('declarativeRoutesBuilder', widget.declarativeRoutesBuilder));
-    properties.add(DiagnosticsProperty<WidgetBuilder>('placeholder', widget.placeholder));
-    properties.add(DiagnosticsProperty<Clip>('clipBehavior', widget.clipBehavior));
-    properties.add(DiagnosticsProperty<String?>('navRestorationScopeId', widget.navRestorationScopeId));
-    properties.add(DiagnosticsProperty<RoutePopCallBack>('didPop', widget.didPop));
+    properties.add(IterableProperty<NavigatorObserver>(
+        'navigatorObservers', widget.navigatorObservers));
+    properties.add(DiagnosticsProperty<RoutesBuilder>(
+        'declarativeRoutesBuilder', widget.declarativeRoutesBuilder));
+    properties.add(
+        DiagnosticsProperty<WidgetBuilder>('placeholder', widget.placeholder));
+    properties
+        .add(DiagnosticsProperty<Clip>('clipBehavior', widget.clipBehavior));
+    properties.add(DiagnosticsProperty<String?>(
+        'navRestorationScopeId', widget.navRestorationScopeId));
+    properties
+        .add(DiagnosticsProperty<RoutePopCallBack>('didPop', widget.didPop));
   }
 }
