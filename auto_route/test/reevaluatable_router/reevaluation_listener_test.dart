@@ -41,12 +41,14 @@ void main() {
       ..ignorePopCompleters = true;
   });
 
-  testWidgets('Initial route should be ${FirstRoute.name}', (WidgetTester tester) async {
+  testWidgets('Initial route should be ${FirstRoute.name}',
+      (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     expect(find.text(FirstRoute.name), findsOneWidget);
   });
 
-  testWidgets('Reevaluation should call the guard', (WidgetTester tester) async {
+  testWidgets('Reevaluation should call the guard',
+      (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.navigate(const SecondRoute());
     await tester.pumpAndSettle();
@@ -56,8 +58,10 @@ void main() {
     verify(mockListener(captureAny, router)).called(1);
   });
 
-  testWidgets('Reevaluation should call the guard', (WidgetTester tester) async {
-    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
+  testWidgets('Reevaluation should call the guard',
+      (WidgetTester tester) async {
+    await pumpRouterApp(tester, router,
+        reevaluationNotifier: reevaluationNotifier);
     router.navigate(const SecondRoute());
     await tester.pumpAndSettle();
     verify(mockListener(captureAny, router)).called(1);
@@ -66,23 +70,29 @@ void main() {
     verify(mockListener(captureAny, router)).called(1);
   });
 
-  testWidgets('Reevaluation with true should navigate to the third route', (WidgetTester tester) async {
-    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
+  testWidgets('Reevaluation with true should navigate to the third route',
+      (WidgetTester tester) async {
+    await pumpRouterApp(tester, router,
+        reevaluationNotifier: reevaluationNotifier);
     router.push(const ThirdRoute());
     await tester.pumpAndSettle();
-    final resolver = verify(mockListener(captureAny, router)).captured[0] as NavigationResolver;
+    final resolver = verify(mockListener(captureAny, router)).captured[0]
+        as NavigationResolver;
     expect(resolver.isReevaluating, false);
     verifyNever(mockListener(captureAny, router));
     reevaluationNotifier.value = true;
     await tester.pumpAndSettle();
-    final resolver2 = verify(mockListener(captureAny, router)).captured[0] as NavigationResolver;
+    final resolver2 = verify(mockListener(captureAny, router)).captured[0]
+        as NavigationResolver;
     expect(resolver2.isReevaluating, true);
     await tester.pumpAndSettle();
     verifyNever(mockListener(captureAny, router));
     expectTopPage(router, ThirdRoute.name);
   });
 
-  testWidgets('Reevaluation should call the guard and navigate to protected page', (WidgetTester tester) async {
+  testWidgets(
+      'Reevaluation should call the guard and navigate to protected page',
+      (WidgetTester tester) async {
     final router = RootStackRouter.build(routes: [
       AutoRoute(
         initial: true,
@@ -98,7 +108,8 @@ void main() {
       ),
     ])
       ..ignorePopCompleters = true;
-    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
+    await pumpRouterApp(tester, router,
+        reevaluationNotifier: reevaluationNotifier);
     verify(mockListener(captureAny, router)).called(1);
     reevaluationNotifier.value = true;
     await tester.pumpAndSettle();
@@ -107,9 +118,11 @@ void main() {
     verifyNever(mockListener(captureAny, router));
   });
 
-  testWidgets('Reevaluation with false should remove the route', (WidgetTester tester) async {
+  testWidgets('Reevaluation with false should remove the route',
+      (WidgetTester tester) async {
     reevaluationNotifier.value = true;
-    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
+    await pumpRouterApp(tester, router,
+        reevaluationNotifier: reevaluationNotifier);
     await router.push(const ThirdRoute());
     await tester.pumpAndSettle();
     expectTopPage(router, ThirdRoute.name);
@@ -118,7 +131,8 @@ void main() {
     expect(router.current.name, FirstRoute.name);
   });
 
-  testWidgets('Reevaluation should call the guard and navigate to protected page [with TabRouter]',
+  testWidgets(
+      'Reevaluation should call the guard and navigate to protected page [with TabRouter]',
       (WidgetTester tester) async {
     final tab2Router = EmptyShellRoute('Tab2Router');
     final router = RootStackRouter.build(routes: [

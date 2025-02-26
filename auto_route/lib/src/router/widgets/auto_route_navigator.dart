@@ -67,7 +67,8 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   void _updateDeclarativeRoutes() {
     final delegate = AutoRouterDelegate.of(context);
-    var newRoutes = widget.declarativeRoutesBuilder!(widget.router.pendingRoutesHandler);
+    var newRoutes =
+        widget.declarativeRoutesBuilder!(widget.router.pendingRoutesHandler);
     if (!const ListEquality().equals(newRoutes, _routesSnapshot)) {
       _routesSnapshot = newRoutes;
       widget.router.updateDeclarativeRoutes(newRoutes);
@@ -87,12 +88,16 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   Widget build(BuildContext context) {
-   return widget.router.hasEntries
-        ?  Navigator(
+    return widget.router.hasEntries
+        ? Navigator(
             key: widget.router.navigatorKey,
             clipBehavior: widget.clipBehavior,
-            observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
-            restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
+            observers: [
+              widget.router.pagelessRoutesObserver,
+              ...widget.navigatorObservers
+            ],
+            restorationScopeId: widget.navRestorationScopeId ??
+                widget.router.routeData.restorationId,
             pages: widget.router.stack,
             onDidRemovePage: (page) {
               if (page is AutoRoutePage) {

@@ -10,8 +10,8 @@ void main() {
       stringMatch: '/',
       key: ValueKey('Test'),
       args: "Args",
-      params: Parameters({"id":1}),
-      queryParams: Parameters({"foo":"bar"}),
+      params: Parameters({"id": 1}),
+      queryParams: Parameters({"foo": "bar"}),
       fragment: 'fragment',
       redirectedFrom: 'redirectedFrom',
       autoFilled: false,
@@ -22,8 +22,8 @@ void main() {
           stringMatch: '/',
           key: ValueKey('Test'),
           args: "Args",
-          params: Parameters({"id":1}),
-          queryParams: Parameters({"foo":"bar"}),
+          params: Parameters({"id": 1}),
+          queryParams: Parameters({"foo": "bar"}),
           fragment: 'fragment',
           redirectedFrom: 'redirectedFrom',
           autoFilled: false,
@@ -34,27 +34,24 @@ void main() {
     expect(match, equals(match.copyWith()));
   });
 
-
-  test('Test PageRouteInfo Equality',(){
+  test('Test PageRouteInfo Equality', () {
     final pageRouteInfo = PageRouteInfo(
-       'Test',
-        args: "Args",
-        rawPathParams: {"id":1},
-        rawQueryParams: {"foo":"bar"},
-        initialChildren: [
-          PageRouteInfo(
-            'Test',
-            args: "Args",
-            rawPathParams: {"id":1},
-            rawQueryParams: {"foo":"bar"},
-          )
-        ],
+      'Test',
+      args: "Args",
+      rawPathParams: {"id": 1},
+      rawQueryParams: {"foo": "bar"},
+      initialChildren: [
+        PageRouteInfo(
+          'Test',
+          args: "Args",
+          rawPathParams: {"id": 1},
+          rawQueryParams: {"foo": "bar"},
+        )
+      ],
       fragment: 'fragment',
     );
 
     expect(pageRouteInfo, equals(pageRouteInfo));
     expect(pageRouteInfo, equals(pageRouteInfo.copyWith()));
   });
-
 }
-

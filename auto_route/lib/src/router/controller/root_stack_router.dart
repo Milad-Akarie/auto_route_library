@@ -8,7 +8,8 @@ const _kRootKey = ValueKey('%__Root__%');
 /// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {
   /// Default constructor
-  RootStackRouter({super.navigatorKey}) : super(key: _kRootKey, matchId: _kRootKey) {
+  RootStackRouter({super.navigatorKey})
+      : super(key: _kRootKey, matchId: _kRootKey) {
     _navigationHistory = NavigationHistory.create(this);
   }
 
@@ -19,7 +20,8 @@ abstract class RootStackRouter extends StackRouter {
     DeepLinkBuilder? deepLinkBuilder,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     bool includePrefixMatches = !kIsWeb,
     bool Function(String? location)? neglectWhen,
     bool rebuildStackOnDeepLink = false,
@@ -97,7 +99,8 @@ abstract class RootStackRouter extends StackRouter {
   AutoRouterDelegate delegate({
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers =
+        AutoRouterDelegate.defaultNavigatorObserversBuilder,
     DeepLinkBuilder? deepLinkBuilder,
     bool rebuildStackOnDeepLink = false,
     Listenable? reevaluateListenable,
@@ -138,7 +141,8 @@ abstract class RootStackRouter extends StackRouter {
   NavigationHistory get navigationHistory => _navigationHistory;
 
   @override
-  late final RouteCollection routeCollection = RouteCollection.fromList(routes, root: true);
+  late final RouteCollection routeCollection =
+      RouteCollection.fromList(routes, root: true);
 
   /// Builds a new instance of [RootStackRouter]
   /// with the provided parameters

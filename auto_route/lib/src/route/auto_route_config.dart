@@ -579,7 +579,7 @@ class RouteCollection {
         );
       }
       hasValidInitialPath |= routeToUse.path == targetInitialPath;
-      if(routesMap.containsKey(r.name)){
+      if (routesMap.containsKey(r.name)) {
         throw ArgumentError.value(r.name, 'name', 'Route name must be unique');
       }
       routesMap[r.name] = routeToUse;

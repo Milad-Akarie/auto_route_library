@@ -38,7 +38,8 @@ typedef AutoLeadingButtonBuilder = Widget Function(
 
 /// Signature function to provide nullable leading widget
 /// based on the current router state
-typedef NullableWidgetBuilder = Widget Function(BuildContext context, Widget? leading);
+typedef NullableWidgetBuilder = Widget Function(
+    BuildContext context, Widget? leading);
 
 /// An AutoRoute replacement of appBar aut-leading-button
 ///

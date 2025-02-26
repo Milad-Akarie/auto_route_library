@@ -6,7 +6,7 @@ Future<void> pumpRouterApp(
   WidgetTester tester,
   RootStackRouter router, {
   String? initialLink,
-      Listenable? reevaluationNotifier,
+  Listenable? reevaluationNotifier,
   NavigatorObserversBuilder observers =
       AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {

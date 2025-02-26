@@ -30,7 +30,6 @@ class AutoRouterConfig {
   /// defaults = const ['lib']
   final List<String> generateForDir;
 
-
   /// Whether to generate equality operator and hashCode for route args
   final bool argsEquality;
 

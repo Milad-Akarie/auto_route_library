@@ -94,24 +94,25 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           })
         : AutoTabsRouter(
             builder: (context, child) {
-              return  Scaffold(
-                  appBar: AppBar(
-                    leading: AutoLeadingButton(),
-                    title: Text(context.topRoute.title(context)),
-                    // leading: AutoLeadingButton(ignorePagelessRoutes: true),
-                    // bottom: TabBar(
-                    //   controller: controller,
-                    //   tabs: [
-                    //     for (final d in destinations)
-                    //       Tab(
-                    //         child: Text(d.label),
-                    //       )
-                    //   ],
-                    // ),
-                  ),
-                  body: child,
-                  bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
-                );
+              return Scaffold(
+                appBar: AppBar(
+                  leading: AutoLeadingButton(),
+                  title: Text(context.topRoute.title(context)),
+                  // leading: AutoLeadingButton(ignorePagelessRoutes: true),
+                  // bottom: TabBar(
+                  //   controller: controller,
+                  //   tabs: [
+                  //     for (final d in destinations)
+                  //       Tab(
+                  //         child: Text(d.label),
+                  //       )
+                  //   ],
+                  // ),
+                ),
+                body: child,
+                bottomNavigationBar:
+                    buildBottomNav(context, context.tabsRouter),
+              );
             },
           );
   }
@@ -167,4 +168,3 @@ class WelcomeScreen extends StatelessWidget {
     });
   }
 }
-

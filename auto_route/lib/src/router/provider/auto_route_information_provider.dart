@@ -106,8 +106,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   }
 
   @override
-  Future<bool> didPushRouteInformation(
-      RouteInformation routeInformation)  {
+  Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
     return SynchronousFuture<bool>(true);

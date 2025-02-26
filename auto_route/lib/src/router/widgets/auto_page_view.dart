@@ -89,7 +89,6 @@ class AutoPageViewState extends State<AutoPageView> {
     if (_router.activeIndex != _controller.page!.round()) {
       _warpToCurrentIndex();
     }
-
   }
 
   /// Preload the page at [index]
