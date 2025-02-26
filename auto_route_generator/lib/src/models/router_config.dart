@@ -24,7 +24,6 @@ class RouterConfig {
   /// Whether to generate equality operator and hashCode for route args
   final bool argsEquality;
 
-
   /// Default constructor
   const RouterConfig({
     required this.routerClassName,
@@ -40,14 +39,14 @@ class RouterConfig {
   /// Serializes this instance to a map
   Map<String, dynamic> toJson() {
     return {
-      'routerClassName': this.routerClassName,
-      'replaceInRouteName': this.replaceInRouteName,
-      'deferredLoading': this.deferredLoading,
-      'usesPartBuilder': this.usesPartBuilder,
-      'path': this.path,
-      'cacheHash': this.cacheHash,
-      'generateForDir': this.generateForDir,
-      'argsEquality': this.argsEquality,
+      'routerClassName': routerClassName,
+      'replaceInRouteName': replaceInRouteName,
+      'deferredLoading': deferredLoading,
+      'usesPartBuilder': usesPartBuilder,
+      'path': path,
+      'cacheHash': cacheHash,
+      'generateForDir': generateForDir,
+      'argsEquality': argsEquality,
     };
   }
 

@@ -1,4 +1,5 @@
-import 'package:code_builder/code_builder.dart' show TypeReference, RecordType, Reference;
+import 'package:code_builder/code_builder.dart'
+    show TypeReference, RecordType, Reference;
 
 /// A class that represents a resolved type.
 ///
@@ -61,10 +62,15 @@ class ResolvedType {
           ..url = import
           ..isNullable = isNullable
           ..positionalFieldTypes.addAll(
-            typeArguments.where((e) => !e.isNamedRecordField).map((e) => e.refer),
+            typeArguments
+                .where((e) => !e.isNamedRecordField)
+                .map((e) => e.refer),
           )
           ..namedFieldTypes.addAll({
-            for (final entry in [...typeArguments.where((e) => e.isNamedRecordField)]) entry.nameInRecord!: entry.refer
+            for (final entry in [
+              ...typeArguments.where((e) => e.isNamedRecordField)
+            ])
+              entry.nameInRecord!: entry.refer
           }),
       );
     }
@@ -82,7 +88,10 @@ class ResolvedType {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is ResolvedType && runtimeType == other.runtimeType && identity == other.identity;
+      identical(this, other) ||
+      other is ResolvedType &&
+          runtimeType == other.runtimeType &&
+          identity == other.identity;
 
   @override
   int get hashCode => import.hashCode ^ name.hashCode;
@@ -90,12 +99,13 @@ class ResolvedType {
   /// serializes the type to json
   Map<String, dynamic> toJson() {
     return {
-      'import': this.import,
-      'name': this.name,
-      'isNullable': this.isNullable,
-      'isRecordType': this._isRecordType,
-      if (nameInRecord != null) 'nameInRecord': this.nameInRecord,
-      if (typeArguments.isNotEmpty) 'typeArguments': this.typeArguments.map((e) => e.toJson()).toList(),
+      'import': import,
+      'name': name,
+      'isNullable': isNullable,
+      'isRecordType': _isRecordType,
+      if (nameInRecord != null) 'nameInRecord': nameInRecord,
+      if (typeArguments.isNotEmpty)
+        'typeArguments': typeArguments.map((e) => e.toJson()).toList(),
     };
   }
 

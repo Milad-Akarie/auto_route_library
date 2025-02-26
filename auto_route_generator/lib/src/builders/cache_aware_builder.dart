@@ -41,13 +41,12 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   /// Default constructor
   CacheAwareBuilder({
-    String generatedExtension = '.g.dart',
+    this.generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
     this.allowSyntaxErrors = false,
     required this.annotationName,
     this.options,
-  })  : this.generatedExtension = generatedExtension,
-        buildExtensions = validatedBuildExtensionsFrom(
+  }) : buildExtensions = validatedBuildExtensionsFrom(
             options != null ? Map.of(options.config) : null, {
           '.dart': [
             generatedExtension,
@@ -145,7 +144,7 @@ source formatter.''',
 
   @override
   String toString() =>
-      'Generating $generatedExtension: ${this.runtimeType.toString()}';
+      'Generating $generatedExtension: ${runtimeType.toString()}';
 
   /// Checks if the current compilation unit has any top level annotations
   Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep,
@@ -154,8 +153,9 @@ source formatter.''',
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];
     for (var directive in parsed.directives) {
-      if (directive.metadata.any((e) => e.name.name == annotationName))
+      if (directive.metadata.any((e) => e.name.name == annotationName)) {
         return true;
+      }
       if (directive is PartDirective) {
         partIds.add(
           AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input),
@@ -163,8 +163,9 @@ source formatter.''',
       }
     }
     for (var declaration in parsed.declarations) {
-      if (declaration.metadata.any((e) => e.name.name == annotationName))
+      if (declaration.metadata.any((e) => e.name.name == annotationName)) {
         return true;
+      }
     }
     for (var partId in partIds) {
       if (await hasAnyTopLevelAnnotations(partId, buildStep)) {

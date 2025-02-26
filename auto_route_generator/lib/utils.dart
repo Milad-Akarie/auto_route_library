@@ -1,5 +1,3 @@
-/// general utils
-
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
@@ -41,7 +39,7 @@ void throwError(String message, {Element? element}) {
 extension IterableExtenstion<E> on Iterable<E> {
   /// Returns the first element that satisfies the given predicate [test]
   /// or `null` if no element satisfies the predicate.
-  E? firstWhereOrNull(bool test(E element)) {
+  E? firstWhereOrNull(bool Function(E element) test) {
     for (var e in this) {
       if (test(e)) {
         return e;
@@ -52,7 +50,7 @@ extension IterableExtenstion<E> on Iterable<E> {
 
   /// Returns the last element that satisfies the given predicate [test]
   /// or `null` if no element satisfies the predicate.
-  E? lastOrNull(bool test(E element)) {
+  E? lastOrNull(bool Function(E element) test) {
     for (var i = length - 1; i >= 0; i--) {
       if (test(elementAt(i))) {
         return elementAt(i);
