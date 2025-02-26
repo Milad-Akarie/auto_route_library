@@ -217,6 +217,7 @@ class RouteMatch<T> {
           maintainState == other.maintainState &&
           fullscreenDialog == other.fullscreenDialog &&
           keepHistory == other.keepHistory &&
+          args == other.args &&
           const ListEquality().equals(guards, other.guards) &&
           queryParams == other.queryParams &&
           const ListEquality().equals(children, other.children) &&
@@ -243,6 +244,7 @@ class RouteMatch<T> {
       keepHistory.hashCode ^
       type.hashCode ^
       autoFilled.hashCode ^
+      args.hashCode ^
       const ListEquality().hash(segments) ^
       const MapEquality().hash(meta);
 

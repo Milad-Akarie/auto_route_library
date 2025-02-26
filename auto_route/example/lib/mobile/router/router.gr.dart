@@ -73,25 +73,48 @@ class BookListRoute extends _i8.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.HomePage]
-class HomeRoute extends _i8.PageRouteInfo<void> {
-  const HomeRoute({List<_i8.PageRouteInfo>? children})
-    : super(HomeRoute.name, initialChildren: children);
+class HomeRoute extends _i8.PageRouteInfo<HomeRouteArgs> {
+  HomeRoute({
+    _i9.Key? key,
+    _i9.VoidCallback? callback,
+    List<_i8.PageRouteInfo>? children,
+  }) : super(
+         HomeRoute.name,
+         args: HomeRouteArgs(key: key, callback: callback),
+         initialChildren: children,
+       );
 
   static const String name = 'HomeRoute';
 
   static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return const _i3.HomePage();
+      final args = data.argsAs<HomeRouteArgs>(
+        orElse: () => const HomeRouteArgs(),
+      );
+      return _i3.HomePage(key: args.key, callback: args.callback);
     },
   );
+}
+
+class HomeRouteArgs {
+  const HomeRouteArgs({this.key, this.callback});
+
+  final _i9.Key? key;
+
+  final _i9.VoidCallback? callback;
+
+  @override
+  String toString() {
+    return 'HomeRouteArgs{key: $key, callback: $callback}';
+  }
 }
 
 /// generated route for
 /// [_i4.LoginPage]
 class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i9.Key? key,
+    _i10.Key? key,
     void Function(bool)? onLoginResult,
     bool showBackButton = true,
     List<_i8.PageRouteInfo>? children,
@@ -129,7 +152,7 @@ class LoginRouteArgs {
     this.showBackButton = true,
   });
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
   final void Function(bool)? onLoginResult;
 
@@ -145,7 +168,7 @@ class LoginRouteArgs {
 /// [_i5.MyBooksPage]
 class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
   MyBooksRoute({
-    _i9.Key? key,
+    _i10.Key? key,
     String? filter = 'none',
     List<_i8.PageRouteInfo>? children,
   }) : super(
@@ -175,7 +198,7 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
 class MyBooksRouteArgs {
   const MyBooksRouteArgs({this.key, this.filter = 'none'});
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
   final String? filter;
 
@@ -205,7 +228,7 @@ class ProfileRoute extends _i8.PageRouteInfo<void> {
 /// [_i7.SettingsPage]
 class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
   SettingsTab({
-    _i9.Key? key,
+    _i10.Key? key,
     String tab = 'none',
     String query = 'none',
     List<_i8.PageRouteInfo>? children,
@@ -239,7 +262,7 @@ class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
 class SettingsTabArgs {
   const SettingsTabArgs({this.key, this.tab = 'none', this.query = 'none'});
 
-  final _i9.Key? key;
+  final _i10.Key? key;
 
   final String tab;
 

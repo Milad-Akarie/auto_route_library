@@ -21,6 +21,10 @@ class RouterConfig {
   /// The list of directories to generate for
   final List<String> generateForDir;
 
+  /// Whether to generate equality operator and hashCode for route args
+  final bool argsEquality;
+
+
   /// Default constructor
   const RouterConfig({
     required this.routerClassName,
@@ -30,6 +34,7 @@ class RouterConfig {
     required this.path,
     required this.cacheHash,
     required this.generateForDir,
+    this.argsEquality = false,
   });
 
   /// Serializes this instance to a map
@@ -42,6 +47,7 @@ class RouterConfig {
       'path': this.path,
       'cacheHash': this.cacheHash,
       'generateForDir': this.generateForDir,
+      'argsEquality': this.argsEquality,
     };
   }
 
@@ -55,6 +61,7 @@ class RouterConfig {
       path: map['path'] as String,
       cacheHash: map['cacheHash'] as int?,
       generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
+      argsEquality: map['argsEquality'] as bool,
     );
   }
 }

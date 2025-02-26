@@ -52,6 +52,16 @@ class DeclarativeRouterHostRouteArgs {
   String toString() {
     return 'DeclarativeRouterHostRouteArgs{key: $key, pageNotifier: $pageNotifier}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! DeclarativeRouterHostRouteArgs) return false;
+    return key == other.key && pageNotifier == other.pageNotifier;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ pageNotifier.hashCode;
 }
 
 /// generated route for
@@ -154,6 +164,19 @@ class SecondHostRouteArgs {
   String toString() {
     return 'SecondHostRouteArgs{key: $key, useCustomLeading: $useCustomLeading, hasDrawer: $hasDrawer}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SecondHostRouteArgs) return false;
+    return key == other.key &&
+        useCustomLeading == other.useCustomLeading &&
+        hasDrawer == other.hasDrawer;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ useCustomLeading.hashCode ^ hasDrawer.hashCode;
 }
 
 /// generated route for
@@ -393,6 +416,19 @@ class TabsHostRouteArgs {
   String toString() {
     return 'TabsHostRouteArgs{key: $key, tabsType: $tabsType, useDefaultRoutes: $useDefaultRoutes}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! TabsHostRouteArgs) return false;
+    return key == other.key &&
+        tabsType == other.tabsType &&
+        useDefaultRoutes == other.useDefaultRoutes;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ tabsType.hashCode ^ useDefaultRoutes.hashCode;
 }
 
 /// generated route for
