@@ -399,7 +399,7 @@ abstract class RoutingController with ChangeNotifier {
   });
 
   /// Takes a state snapshot of the current segments
-  int get stateHash => const ListEquality().hash(_addedSegments);
+  int get stateHash => const ListEquality().hash(_addedSegments) ^ pageCount;
 
   /// The Identifier key of this routing controller
   Key get key;
