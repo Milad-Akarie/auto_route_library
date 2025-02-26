@@ -55,7 +55,7 @@ class AutoRoutePage<T> extends Page<T> {
           restorationId: routeData.restorationId,
           name: routeData.name,
           arguments: routeData.route.args,
-          key: ValueKey(routeData.hashCode),
+          key: routeData.matchId,
         );
 
   @override

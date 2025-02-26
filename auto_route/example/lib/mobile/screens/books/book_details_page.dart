@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 @RoutePage(name: 'BookDetailsRoute')
 class BookDetailsPage extends StatefulWidget {
   final int id;
+
   const BookDetailsPage({
     @pathParam this.id = -1,
   });

@@ -152,7 +152,10 @@ class NavigationResolver {
 
   /// Whether the navigation event is triggered
   /// by [StackRouter.reevaluateGuards]
-  final bool isReevaluating;
+   bool get isReevaluating => _isReevaluating;
+
+   bool _isReevaluating = false;
+
 
   /// The route being processing by the guard
   final RouteMatch route;
@@ -187,8 +190,8 @@ class NavigationResolver {
     this._completer,
     this.route, {
     this.pendingRoutes = const [],
-    this.isReevaluating = false,
-  });
+    bool isReevaluating = false,
+  }): _isReevaluating = isReevaluating;
 
   /// Completes [_completer] with either true to continue navigation
   /// or false to abort navigation
@@ -238,19 +241,37 @@ class NavigationResolver {
     );
   }
 
-  /// Keeps track of the navigated-to route
-  /// To be auto-removed when [completer] is resolved
-  Future<T?> redirectUntilResolved<T extends Object?>(
+  bool _isRedirecting = false;
+
+  /// Temporary redirect to another route until the [_completer] is resolved
+  ///
+  /// Calling resolver.next() or resolver.resolveNext()
+  /// will remove the redirected route and mark it for replace
+  /// in browser history
+  ///
+  /// This is typically used like follows
+  ///
+  /// onNavigation(resolver, router) {
+  ///    if (isAuthenticated) {
+  ///      resolver.next();
+  ///    } else {
+  ///      resolver.redirectUntil(LoginRoute());
+  ///    }
+  ///  }
+  Future<T?> redirectUntil<T extends Object?>(
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
     bool replace = false,
   }) async {
+    if (_isRedirecting)  return null;
+    _isRedirecting = true;
     return _router._redirect(
       route,
       onFailure: onFailure,
       replace: replace,
       onMatch: (scope, match) async {
         await _completer.future;
+        _isRedirecting = false;
         scope.markUrlStateForReplace();
         scope._removeRoute(match);
       },
@@ -259,13 +280,13 @@ class NavigationResolver {
 
   /// Keeps track of the navigated-to route
   /// To be auto-removed when [completer] is resolved
-  @Deprecated('Renamed to "redirectUntilResolved" to avoid confusion')
+  @Deprecated('Renamed to "redirectUntil" to avoid confusion')
   Future<T?> redirect<T extends Object?>(
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
     bool replace = false,
   }) {
-    return redirectUntilResolved<T>(
+    return redirectUntil<T>(
       route,
       onFailure: onFailure,
       replace: replace,
@@ -284,6 +305,9 @@ class NavigationResolver {
   /// Whether [_completer] is completed
   /// see [Completer.isCompleted]
   bool get isResolved => _completer.isCompleted;
+
+  /// The future that will be completed by [resolveNext]
+  Future<ResolverResult> get future => _completer.future;
 }
 
 /// Holds overridable route values

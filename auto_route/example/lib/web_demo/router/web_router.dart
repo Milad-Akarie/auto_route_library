@@ -12,26 +12,22 @@ class WebAppRouter extends RootStackRouter {
   WebAppRouter(this.authService);
 
   @override
-  late final List<AutoRouteGuard> guards = [
-    AutoRouteGuard.simple(
-      (resolver, scope) {
-        if (authService.isAuthenticated ||
-            resolver.routeName == WebLoginRoute.name) {
-          resolver.next();
-        } else {
-          resolver.redirectUntilResolved(
-            WebLoginRoute(onResult: (didLogin) {
-              resolver.resolveNext(didLogin, reevaluateNext: false);
-            }),
-          );
-        }
-      },
-    )
-  ];
-
-  @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: MainWebRoute.page, initial: true),
+        AutoRoute(
+          initial: true,
+          page: MainWebRoute.page,
+          guards: [
+            AutoRouteGuard.simple(
+              (resolver, _) {
+                if (authService.isAuthenticated) {
+                  resolver.next();
+                } else {
+                  resolver.redirectUntil(WebLoginRoute());
+                }
+              },
+            ),
+          ],
+        ),
         AutoRoute(path: '/login', page: WebLoginRoute.page),
         AutoRoute(path: '/verify', page: WebVerifyRoute.page),
         AutoRoute(
@@ -39,19 +35,23 @@ class WebAppRouter extends RootStackRouter {
           page: UserRoute.page,
           children: [
             AutoRoute(page: UserProfileRoute.page, initial: true),
-            AutoRoute.guarded(
+            AutoRoute(
               path: 'posts',
               page: UserPostsRoute.page,
-              onNavigation: (resolver, scope) {
-                if (authService.isVerified) {
-                  resolver.next();
-                } else {
-                  resolver.redirectUntilResolved(WebVerifyRoute(onResult: resolver.next));
-                }
-              },
+              guards: [
+                AutoRouteGuard.simple(
+                  (resolver, scope) {
+                    print('Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
+                    if (authService.isVerified) {
+                      resolver.next();
+                    } else {
+                      resolver.redirectUntil(WebVerifyRoute());
+                    }
+                  },
+                )
+              ],
               children: [
-                AutoRoute(
-                    path: 'all', page: UserAllPostsRoute.page, initial: true),
+                AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
                 AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
               ],
             ),
@@ -110,8 +110,7 @@ class _MainWebPageState extends State<MainWebPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
-                  context.maybePop('String');
-                  // App.of(context).authService.isAuthenticated = false;
+                  App.of(context).authService.isAuthenticated = false;
                 },
                 child: Text('Logout'),
               ),
@@ -119,8 +118,7 @@ class _MainWebPageState extends State<MainWebPage> {
             if (kIsWeb)
               ElevatedButton(
                 onPressed: () {
-                  final currentState =
-                      ((context.router.pathState as int?) ?? 0);
+                  final currentState = ((context.router.pathState as int?) ?? 0);
                   context.router.pushPathState(currentState + 1);
                 },
                 child: AnimatedBuilder(
@@ -302,8 +300,8 @@ class _UserPageState extends State<UserPage> {
         leading: AutoLeadingButton(),
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name +
-                ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
+            return Text(
+                context.topRouteMatch.name + ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
           },
         ),
       ),

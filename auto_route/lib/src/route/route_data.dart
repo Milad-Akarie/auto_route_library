@@ -143,6 +143,8 @@ class RouteData {
   /// Helper to access [RouteMatch.stringMatch]
   String get match => _match.stringMatch;
 
+  /// Helper to access [RouteMatch.id]
+  LocalKey get matchId => _match.id;
   /// The track to the very first ancestor match
   ///
   /// This can be used to render visual breadcrumbs in UI

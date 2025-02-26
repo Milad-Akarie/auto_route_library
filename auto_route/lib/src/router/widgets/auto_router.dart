@@ -131,6 +131,7 @@ class AutoRouterState extends State<AutoRouter> {
       _controller = NestedStackRouter(
         parent: _parentController,
         key: parentRouteData.key,
+        matchId: parentRouteData.matchId,
         routeData: parentRouteData,
         navigatorKey: widget.navigatorKey,
         routeCollection: _parentController.routeCollection.subCollectionOf(
@@ -250,6 +251,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
       _controller = NestedStackRouter(
         parent: _parentController,
         key: parentData.key,
+        matchId: parentData.matchId,
         routeData: parentData,
         managedByWidget: true,
         onNavigate: widget.onNavigate,

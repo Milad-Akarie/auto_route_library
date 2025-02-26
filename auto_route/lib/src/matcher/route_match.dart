@@ -42,6 +42,7 @@ class RouteMatch<T> {
 
   /// The page key to be used in [AutoRoutePage.canUpdate]
   final LocalKey key;
+
   final AutoRoute _config;
 
   /// Whether this matched is a result of [RouteMatcher.buildPathTo]
@@ -90,11 +91,26 @@ class RouteMatch<T> {
   /// Helper to access [AutoRoute.buildPage]
   AutoRoutePage<R> buildPage<R>(RouteData data) => _config.buildPage<R>(data);
 
+  /// The unique key of this match
+  ///
+  /// this key survives cloning
+  /// it's used to link Routing controllers to their matches
+  final LocalKey id;
+
   /// The path parameters of the route
   @Deprecated('Use the shorthand [params] instead')
   Parameters get pathParams => params;
+
+  final List<AutoRouteGuard> _evaluatedGuards;
+
+  /// Holds a list of already evaluated guards for this match
+  /// before it enter guard process
+  ///
+  /// it is used to prevent re-evaluating guards
+  List<AutoRouteGuard> get evaluatedGuards => _evaluatedGuards;
+
   /// Default constructor
-  const RouteMatch({
+  RouteMatch({
     required AutoRoute config,
     required this.segments,
     required this.stringMatch,
@@ -106,7 +122,25 @@ class RouteMatch<T> {
     this.fragment = '',
     this.redirectedFrom,
     this.autoFilled = false,
-  }) : _config = config;
+  })  : _config = config,
+        _evaluatedGuards = const [],
+        id = UniqueKey();
+
+  const RouteMatch._internal({
+    required AutoRoute config,
+    required this.segments,
+    required this.stringMatch,
+    required this.key,
+    this.children,
+    this.args,
+    this.params = const Parameters({}),
+    this.queryParams = const Parameters({}),
+    this.fragment = '',
+    this.redirectedFrom,
+    this.autoFilled = false,
+    required this.id,
+    List<AutoRouteGuard> evaluatedGuards = const [],
+  }) : _config = config, _evaluatedGuards = evaluatedGuards;
 
   /// Whether this match has nested child-matches
   bool get hasChildren => children?.isNotEmpty == true;
@@ -151,8 +185,9 @@ class RouteMatch<T> {
     LocalKey? key,
     AutoRoute? config,
     bool? autoFilled,
+    List<AutoRouteGuard>? evaluatedGuards,
   }) {
-    return RouteMatch(
+    return RouteMatch._internal(
       config: config ?? this._config,
       stringMatch: stringMatch ?? this.stringMatch,
       segments: segments ?? this.segments,
@@ -164,6 +199,8 @@ class RouteMatch<T> {
       key: key ?? this.key,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
       autoFilled: autoFilled ?? this.autoFilled,
+      id: id,
+      evaluatedGuards: evaluatedGuards ?? this._evaluatedGuards,
     );
   }
 
