@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// A Wrapper for [Navigator] that handles stack-routing
@@ -195,6 +196,12 @@ class AutoRouterState extends State<AutoRouter> {
       _controller = null;
     }
   }
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<StackRouter>('controller', controller));
+  }
 }
 
 class _DeclarativeAutoRouter extends StatefulWidget {
@@ -300,5 +307,11 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         ),
       ),
     );
+  }
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<StackRouter>('controller', controller));
   }
 }

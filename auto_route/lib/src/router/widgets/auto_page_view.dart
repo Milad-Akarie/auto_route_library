@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -202,5 +203,15 @@ class AutoPageViewState extends State<AutoPageView> {
         children: _children,
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<PageController>('controller', _controller));
+    properties.add(DiagnosticsProperty<TabsRouter>('router', _router));
+    properties.add(IntProperty('activeIndex', _router.activeIndex));
+    properties.add(IntProperty('previousIndex', _router.previousIndex));
+    properties.add(IntProperty('childrenCount', _children.length));
   }
 }

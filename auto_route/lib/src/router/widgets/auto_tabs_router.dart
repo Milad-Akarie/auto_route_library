@@ -1,5 +1,6 @@
 import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -158,6 +159,8 @@ abstract class AutoTabsRouter extends StatefulWidget {
     }());
     return scope!.controller;
   }
+
+
 }
 
 /// The state implementation of [AutoTabsRouter]
@@ -218,6 +221,16 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
     }
     super.dispose();
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<TabsRouter>('controller', _controller));
+    properties.add(DiagnosticsProperty<RoutingController>('parentController', _parentController));
+    properties.add(DiagnosticsProperty<List<NavigatorObserver>>(
+        'navigatorObservers', _navigatorObservers));
+  }
+
 }
 
 // -----------------------------------------------------------
