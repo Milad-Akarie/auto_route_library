@@ -1301,6 +1301,14 @@ abstract class StackRouter extends RoutingController {
     );
   }
 
+  /// Inserts the corresponding page to given [route] to the [_pages] stack
+  ///
+  /// if [onFailure] callback is provided, navigation errors will be passed to it
+  /// otherwise they'll be thrown
+  Future<void> insert(PageRouteInfo route, {int index = 0, OnNavigationFailure? onFailure}) {
+    return _findStackScope(route)._push(route, onFailure: onFailure, insertAt: index);
+  }
+
   Future<dynamic> _popUntilOrPushAll(
     List<RouteMatch> routes, {
     OnNavigationFailure? onFailure,
@@ -1338,6 +1346,7 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool notify = true,
     ValueChanged<RouteMatch>? onMatch,
+    int? insertAt,
   }) async {
     assert(
       !managedByWidget,
@@ -1356,7 +1365,11 @@ abstract class StackRouter extends RoutingController {
         includeAncestors: true,
       );
 
-      return _addEntry<T>(result.route, notify: notify);
+      return _addEntry<T>(
+        result.route,
+        notify: notify,
+        index: insertAt,
+      );
     }
     return null;
   }
@@ -1643,6 +1656,7 @@ abstract class StackRouter extends RoutingController {
   Future<T?> _addEntry<T extends Object?>(
     RouteMatch route, {
     bool notify = true,
+    int? index,
   }) {
     final topRoute = _pages.lastOrNull?.routeData;
     if (topRoute != null && topRoute._match.keepHistory == false) {
@@ -1651,7 +1665,11 @@ abstract class StackRouter extends RoutingController {
     }
     final data = _createRouteData(route, routeData);
     final page = data.buildPage<T>();
-    _pages.add(page);
+    if (index != null) {
+      _pages.insert(index, page);
+    } else {
+      _pages.add(page);
+    }
     if (notify) {
       notifyAll();
     }
@@ -1736,7 +1754,7 @@ abstract class StackRouter extends RoutingController {
   }) async {
     if (routes.isNotEmpty) {
       if (!managedByWidget) {
-       await _popUntilOrPushAll(
+        await _popUntilOrPushAll(
           routes,
           onFailure: onFailure,
           isReevaluating: isReevaluating,
