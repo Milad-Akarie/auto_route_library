@@ -3,14 +3,14 @@ description: AutoRoute is a declarative routing solution, where everything neede
 version: 10.0.0
 homepage: https://github.com/Milad-Akarie/auto_route_library
 environment:
-  sdk: ">=3.3.0 <4.0.0"
+  sdk: ">=3.4.0 <4.0.0"
 
 dependencies:
   build: ^2.4.2
   source_gen: ^2.0.0
   analyzer: ">=6.0.0 <8.0.0"
   path: ^1.9.0
-  build_runner: ^2.4.15
+  build_runner: ^2.4.11
   code_builder: ^4.10.1
   dart_style: ^3.0.1
   xml: ^6.5.0
