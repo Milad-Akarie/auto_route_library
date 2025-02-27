@@ -1,3 +1,5 @@
+## 10.0.1
+- **CHORE**: change build_runner constrains to ^2.4.11
 ## 10.0.0 [Minor Breaking Changes]
 - **BREAKING CHANGE**: DeepLink and DeepLink.path will now use 'navigate' instead of push unless specified
 - **FEAT**: add support for using auto_route with out code generation using NamedRouteDef and NamedRoute
