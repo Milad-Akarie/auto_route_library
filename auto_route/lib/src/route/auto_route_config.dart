@@ -409,8 +409,12 @@ class CustomRoute<R> extends AutoRoute {
     super.allowSnapshotting = true,
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
+    @Deprecated('Use duration instead')
     int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead')
     int? reverseDurationInMilliseconds,
+    Duration? duration,
+    Duration? reverseDuration,
     bool opaque = true,
     bool barrierDismissible = true,
     String? barrierLabel,
@@ -422,8 +426,14 @@ class CustomRoute<R> extends AutoRoute {
           type: RouteType.custom(
             transitionsBuilder: transitionsBuilder,
             customRouteBuilder: customRouteBuilder,
-            durationInMilliseconds: durationInMilliseconds,
-            reverseDurationInMilliseconds: reverseDurationInMilliseconds,
+            duration: duration ??
+                (durationInMilliseconds != null
+                    ? Duration(milliseconds: durationInMilliseconds)
+                    : null),
+            reverseDuration: reverseDuration ??
+                (reverseDurationInMilliseconds != null
+                    ? Duration(milliseconds: reverseDurationInMilliseconds)
+                    : null),
             opaque: opaque,
             barrierDismissible: barrierDismissible,
             barrierLabel: barrierLabel,

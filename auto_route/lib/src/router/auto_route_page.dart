@@ -311,14 +311,12 @@ mixin _CustomPageRouteTransitionMixin<T> on PageRoute<T> {
   Widget buildContent(BuildContext context);
 
   @override
-  Duration get transitionDuration => Duration(
-        milliseconds: routeType.durationInMilliseconds ?? 300,
-      );
+  Duration get transitionDuration =>
+      routeType.duration ?? const Duration(milliseconds: 300);
 
   @override
-  Duration get reverseTransitionDuration => Duration(
-        milliseconds: routeType.reverseDurationInMilliseconds ?? 300,
-      );
+  Duration get reverseTransitionDuration =>
+      routeType.reverseDuration ?? const Duration(milliseconds: 300);
 
   @override
   bool get barrierDismissible => routeType.barrierDismissible;
