@@ -3,6 +3,7 @@
 - **BREAKING CHANGE**: ActiveGuardObserver.value will now return a GuardEntry instead of an AutoRouteGuard, use 'activeGuards' to get the list of active guards
 - **FEAT**: add support for using auto_route with out code generation using NamedRouteDef and NamedRoute
   otherwise.
+- **FEAT**: add support for android's predictive back gesture
 - **FEAT**: optional args equality by setting AutoRouterConfig(argsEquality: true)
 - **FEAT**: insert route method to StackRouter
 - **FIX**: guard reevaluation was re-implemented to fix previous issues

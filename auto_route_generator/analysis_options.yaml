@@ -1,5 +1,8 @@
 include: package:lints/recommended.yaml
 
+formatter:
+  page_width: 120
+
 linter:
   rules:
     public_member_api_docs: true

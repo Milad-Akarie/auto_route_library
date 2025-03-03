@@ -20,10 +20,7 @@ abstract class RouteType {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RouteType &&
-          runtimeType == other.runtimeType &&
-          opaque == other.opaque;
+      identical(this, other) || other is RouteType && runtimeType == other.runtimeType && opaque == other.opaque;
 
   @override
   int get hashCode => opaque.hashCode;
@@ -48,10 +45,8 @@ abstract class RouteType {
   factory RouteType.custom({
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
-    @Deprecated('Use duration instead')
-    int? durationInMilliseconds,
-    @Deprecated('Use reverseDuration instead')
-    int? reverseDurationInMilliseconds,
+    @Deprecated('Use duration instead') int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
     Duration? duration,
     Duration? reverseDuration,
     bool opaque,
@@ -183,20 +178,21 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
     this.barrierDismissible = false,
     this.enablePredictiveBackGesture = false,
     this.predictiveBackPageTransitionsBuilder,
-    @Deprecated('Use duration instead')
-    int? durationInMilliseconds,
-    @Deprecated('Use reverseDuration instead')
-    int? reverseDurationInMilliseconds,
+    @Deprecated('Use duration instead') int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
     Duration? duration,
     Duration? reverseDuration,
-  })  : duration = duration ??
-            (durationInMilliseconds != null
-                ? Duration(milliseconds: durationInMilliseconds)
-                : null),
+  })  : assert(
+          durationInMilliseconds == null || duration == null,
+          'Use either duration or durationInMilliseconds',
+        ),
+        assert(
+          reverseDurationInMilliseconds == null || reverseDuration == null,
+          'Use either reverseDuration or reverseDurationInMilliseconds',
+        ),
+        duration = duration ?? (durationInMilliseconds != null ? Duration(milliseconds: durationInMilliseconds) : null),
         reverseDuration = reverseDuration ??
-            (reverseDurationInMilliseconds != null
-                ? Duration(milliseconds: reverseDurationInMilliseconds)
-                : null),
+            (reverseDurationInMilliseconds != null ? Duration(milliseconds: reverseDurationInMilliseconds) : null),
         super._();
 
   @override
