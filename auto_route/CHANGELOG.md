@@ -1,12 +1,6 @@
 ## 10.0.1
-
  - **REFACTOR**(custom_route): update route duration type from int to Duration.
- - **FIX**: guard reevaluation issues  #1993 #2151 #2100.
- - **FIX**: Exposing clipBehavior for nested navigation #2082.
- - **FIX**: When use AutoTabsRouter.tabBar, maintainState: false and TabBar together, fails to load routes in some cases #2113.
- - **FIX**: Unexpected null value issue with context in provider model and AutoRouteGuard #1707.
- - **FIX**: Unexpected null value issue with context in provider model and AutoRouteGuard #1707.
-
+ - **FEAT**: add onGeneratePath callback to RootStackRouter to allow custom path generation.
 ## 10.0.0 [Minor Breaking Changes]
 - **BREAKING CHANGE**: DeepLink and DeepLink.path will now use 'navigate' instead of push unless specified
 - **BREAKING CHANGE**: ActiveGuardObserver.value will now return a GuardEntry instead of an AutoRouteGuard, use 'activeGuards' to get the list of active guards
