@@ -8,8 +8,7 @@ const _kRootKey = ValueKey('%__Root__%');
 /// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {
   /// Default constructor
-  RootStackRouter({super.navigatorKey})
-      : super(key: _kRootKey, matchId: _kRootKey) {
+  RootStackRouter({super.navigatorKey}) : super(key: _kRootKey, matchId: _kRootKey) {
     _navigationHistory = NavigationHistory.create(this);
   }
 
@@ -20,8 +19,7 @@ abstract class RootStackRouter extends StackRouter {
     DeepLinkBuilder? deepLinkBuilder,
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     bool includePrefixMatches = !kIsWeb,
     bool Function(String? location)? neglectWhen,
     bool rebuildStackOnDeepLink = false,
@@ -99,8 +97,7 @@ abstract class RootStackRouter extends StackRouter {
   AutoRouterDelegate delegate({
     String? navRestorationScopeId,
     WidgetBuilder? placeholder,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     DeepLinkBuilder? deepLinkBuilder,
     bool rebuildStackOnDeepLink = false,
     Listenable? reevaluateListenable,
@@ -142,7 +139,20 @@ abstract class RootStackRouter extends StackRouter {
 
   @override
   late final RouteCollection routeCollection =
-      RouteCollection.fromList(routes, root: true);
+      RouteCollection.fromList(routes, root: true, onGeneratePath: onGeneratePath);
+
+  /// Generates a path for a route with the provided [name]
+  ///
+  /// routes with defined path will use the defined path
+  /// and will not use this method
+  ///
+  /// routes marked with [initial] will use either '/' or an empty string
+  /// for such routes
+  ///
+  /// use [isRoot] to determine if the route needs to start with '/'
+  String onGeneratePath(AutoRoute route) {
+    return RouteCollection.defaultPathGenerator(route);
+  }
 
   /// Builds a new instance of [RootStackRouter]
   /// with the provided parameters
@@ -164,10 +174,18 @@ class _RootStackRouterImpl extends RootStackRouter {
   @override
   final RouteType defaultRouteType;
 
+  final OnGeneratePath _onGeneratePath;
+
   _RootStackRouterImpl({
     required this.routes,
     this.guards = const [],
     super.navigatorKey,
     this.defaultRouteType = const RouteType.material(),
-  });
+    OnGeneratePath? onGeneratePath,
+  }) : _onGeneratePath = onGeneratePath ?? RouteCollection.defaultPathGenerator;
+
+  @override
+  String onGeneratePath(AutoRoute route) {
+    return _onGeneratePath(route);
+  }
 }

@@ -28,7 +28,9 @@ class AutoRoute {
 
   /// Weather to match this route's path as fullMatch
   final bool fullMatch;
-  final RouteCollection? _children;
+
+  /// The list of [AutoRoute] children of this route
+  final List<AutoRoute>? children;
 
   /// The list of [AutoRouteGuard]'s the matched route
   /// will go through before being presented
@@ -112,10 +114,9 @@ class AutoRoute {
     this.restorationId,
     this.allowSnapshotting = true,
     this.initial = false,
-    List<AutoRoute>? children,
+    this.children,
   })  : _path = path,
-        _pageBuilder = page.builder,
-        _children = children != null && children.isNotEmpty ? RouteCollection.fromList(children) : null;
+        _pageBuilder = page.builder;
 
   AutoRoute._change({
     required this.page,
@@ -130,12 +131,11 @@ class AutoRoute {
     required this.title,
     required this.keepHistory,
     required this.restorationId,
-    required RouteCollection? children,
+    required this.children,
     required this.initial,
     required this.allowSnapshotting,
   })  : _path = path,
-        _pageBuilder = page.builder,
-        _children = children;
+        _pageBuilder = page.builder;
 
   /// Builds a default AutoRoute instance with any [type]
   factory AutoRoute({
@@ -217,12 +217,7 @@ class AutoRoute {
   String get path => _path ?? '';
 
   /// Whether is route is a parent route
-  bool get hasSubTree => _children != null;
-
-  /// The nested child-entries of this route
-  ///
-  /// returns null if this route has no child-entries
-  RouteCollection? get children => _children;
+  bool get hasSubTree => children != null && children!.isNotEmpty;
 
   @override
   String toString() {
@@ -265,7 +260,7 @@ class AutoRoute {
       meta: meta ?? this.meta,
       maintainState: maintainState ?? this.maintainState,
       fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
-      children: children != null ? (children.isEmpty ? null : RouteCollection.fromList(children)) : this.children,
+      children: children ?? this.children,
       //copy
       title: title ?? this.title,
       restorationId: restorationId ?? this.restorationId,
@@ -533,6 +528,9 @@ class DummyRootRoute extends AutoRoute {
   }) : super._(page: PageInfo.root, path: path);
 }
 
+/// Signature for a function that generates a path for a route name
+typedef OnGeneratePath = String Function(AutoRoute route);
+
 /// Holds a single set of config-entries
 ///
 /// it makes accessing routes by name easier
@@ -544,9 +542,10 @@ class DummyRootRoute extends AutoRoute {
 /// Mainly used by [RouteMatcher]
 class RouteCollection {
   final Map<String, AutoRoute> _routesMap;
+  final Map<String, RouteCollection> _subCollections;
 
   /// Default constructor
-  RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
+  RouteCollection(this._routesMap, [this._subCollections = const {}]) : assert(_routesMap.isNotEmpty);
 
   /// Creates a Map of config-entries from [routes]
   ///
@@ -555,15 +554,24 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(List<AutoRoute> routes, {bool root = false}) {
+  factory RouteCollection.fromList(List<AutoRoute> routes,
+      {bool root = false, OnGeneratePath onGeneratePath = defaultPathGenerator}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(routesMarkedInitial.length > 1,
         'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');
 
     final targetInitialPath = root ? '/' : '';
     var routesMap = <String, AutoRoute>{};
+    final subCollections = <String, RouteCollection>{};
     var hasValidInitialPath = false;
     for (var r in routes) {
+      if (r.hasSubTree) {
+        subCollections[r.name] = RouteCollection.fromList(
+          r.children!,
+          onGeneratePath: onGeneratePath,
+        );
+      }
+
       var routeToUse = r;
       if (r._path != null) {
         throwIf(
@@ -576,9 +584,16 @@ class RouteCollection {
         );
         routeToUse = r;
       } else {
-        routeToUse = r.changePath(
-          _generateRoutePath(r, root),
-        );
+        final String generatedPath;
+        if (r.initial) {
+          generatedPath = root ? '/' : '';
+        } else {
+          final path = onGeneratePath(r);
+          assert(!path.startsWith('/'),
+              '"/" is added automatically based on route level, generated path should not have a leading "/"');
+          generatedPath = root ? '/$path' : path;
+        }
+        routeToUse = r.changePath(generatedPath);
       }
       hasValidInitialPath |= routeToUse.path == targetInitialPath;
       if (routesMap.containsKey(r.name)) {
@@ -596,7 +611,7 @@ class RouteCollection {
         ...routesMap,
       };
     }
-    return RouteCollection(routesMap);
+    return RouteCollection(routesMap, subCollections);
   }
 
   /// Returns the values of [_routesMap] as iterable
@@ -612,8 +627,8 @@ class RouteCollection {
   ///
   /// Throws and error if corresponding route has not children
   RouteCollection subCollectionOf(String key) {
-    assert(this[key]?.children != null, "$key does not have children");
-    return this[key]!.children!;
+    assert(_subCollections[key] != null, "$key does not have children");
+    return _subCollections[key]!;
   }
 
   /// Finds the track to a certain route in the routes-tree
@@ -640,7 +655,7 @@ class RouteCollection {
     }
 
     if (node.hasSubTree) {
-      for (AutoRoute child in node.children!.routes) {
+      for (AutoRoute child in node.children!) {
         if (_findPath(child, routeName, track)) {
           track.insert(0, node);
           return true;
@@ -661,9 +676,8 @@ class RouteCollection {
   @override
   int get hashCode => const MapEquality().hash(_routesMap);
 
-  static String _generateRoutePath(AutoRoute r, bool root) {
-    if (r.initial) return root ? '/' : '';
-    final kebabCased = toKebabCase(r.name);
-    return root ? '/$kebabCased' : kebabCased;
+  /// Default path generator
+  static String defaultPathGenerator(AutoRoute r) {
+    return toKebabCase(r.name);
   }
 }
