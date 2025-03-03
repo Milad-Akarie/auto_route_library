@@ -56,6 +56,7 @@
     - [Enabling Cached Builds (Experimental)](#enabling-cached-builds)
   - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
   - [ActiveGuardObserver](#activeguardobserver)
+  - [Android Predictive Back](#android-predictive-back)
 - [Examples](#examples)
 
 
@@ -1615,7 +1616,26 @@ void initState(){
   });
 }
 ```
+### Android Predictive Back
+`auto_route` **v10** supports Android predictive back, which is a feature that allows the user to take a peek at the previous route by swiping from the edge of the screen before committing to the back action.
 
+For now this feature needs to be enabled in manifest file, it also has some flutter considerations, see [Android Predictive Back](https://docs.flutter.dev/release/breaking-changes/android-predictive-back) for more information.
+
+after you've enabled the feature in your manifest file, you can simply create predictive-back enabled routes by setting `enablePredictiveBackGesture` to true in your route type, you can also provide a custom `predictiveBackPageTransitionsBuilder` to customize the transitions.
+
+```dart
+  RouteType.material(
+      enablePredictiveBackGesture: true,
+       // optionally provide a custom transitions builder
+      predictiveBackPageTransitionsBuilder: (context,animation,secondaryAnimation,child) {
+       // return preferred transitions
+      },
+    )
+```
+
+you can enable predictive back for all routes by overriding `defaultRouteType` in your router, all route types that apply on android support this feature.
+
+ 
 
 ## Examples
  
