@@ -1,6 +1,10 @@
+## 10.0.2
+- **FIX**: enable args equality by default to avoid the need of migrating to `argsEquality: true`
+
 ## 10.0.1
- - **REFACTOR**(custom_route): update route duration type from int to Duration.
- - **FEAT**: add onGeneratePath callback to RootStackRouter to allow custom path generation.
+- **REFACTOR**(custom_route): update route duration type from int to Duration.
+- **FEAT**: add onGeneratePath callback to RootStackRouter to allow custom path generation.
+
 ## 10.0.0 [Minor Breaking Changes]
 - **BREAKING CHANGE**: DeepLink and DeepLink.path will now use 'navigate' instead of push unless specified
 - **BREAKING CHANGE**: ActiveGuardObserver.value will now return a GuardEntry instead of an AutoRouteGuard, use 'activeGuards' to get the list of active guards
