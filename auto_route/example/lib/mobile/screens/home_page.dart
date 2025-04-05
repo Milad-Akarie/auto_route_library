@@ -31,12 +31,12 @@ class RouteDestination {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final destinations = [
     RouteDestination(
-      route: BooksTab(),
+      route: booksTab(),
       icon: Icons.source,
       label: 'Books',
     ),
     RouteDestination(
-      route: ProfileTab(),
+      route: profileTab(),
       icon: Icons.person,
       label: 'Profile',
     ),
@@ -96,8 +96,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             builder: (context, child) {
               return Scaffold(
                 appBar: AppBar(
+                  leading: AutoLeadingButton(),
                   title: Text(context.topRoute.title(context)),
-                  leading: AutoLeadingButton(ignorePagelessRoutes: true),
+                  // leading: AutoLeadingButton(ignorePagelessRoutes: true),
                   // bottom: TabBar(
                   //   controller: controller,
                   //   tabs: [
@@ -148,15 +149,22 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          child: Text('Dashboard'),
-          onPressed: () {
-            context.pushRoute(HomeRoute());
-          },
+    return AutoLeadingButton.builder(builder: (context, leading) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: leading,
+          title: Text('Welcome'),
+          centerTitle: false,
         ),
-      ),
-    );
+        body: Center(
+          child: ElevatedButton(
+            child: Text('Dashboard'),
+            onPressed: () {
+              context.pushRoute(HomeRoute());
+            },
+          ),
+        ),
+      );
+    });
   }
 }

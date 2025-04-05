@@ -1,3 +1,4 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -38,8 +39,9 @@ class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
   static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
-      final args =
-          data.argsAs<MainWebRouteArgs>(orElse: () => const MainWebRouteArgs());
+      final args = data.argsAs<MainWebRouteArgs>(
+        orElse: () => const MainWebRouteArgs(),
+      );
       return _i1.MainWebPage(
         key: args.key,
         navigate: args.navigate,
@@ -50,11 +52,7 @@ class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
 }
 
 class MainWebRouteArgs {
-  const MainWebRouteArgs({
-    this.key,
-    this.navigate,
-    this.showUserPosts,
-  });
+  const MainWebRouteArgs({this.key, this.navigate, this.showUserPosts});
 
   final _i5.Key? key;
 
@@ -72,10 +70,7 @@ class MainWebRouteArgs {
 /// [_i1.NotFoundScreen]
 class NotFoundRoute extends _i4.PageRouteInfo<void> {
   const NotFoundRoute({List<_i4.PageRouteInfo>? children})
-      : super(
-          NotFoundRoute.name,
-          initialChildren: children,
-        );
+      : super(NotFoundRoute.name, initialChildren: children);
 
   static const String name = 'NotFoundRoute';
 
@@ -96,10 +91,7 @@ class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
     List<_i4.PageRouteInfo>? children,
   }) : super(
           UserAllPostsRoute.name,
-          args: UserAllPostsRouteArgs(
-            key: key,
-            navigate: navigate,
-          ),
+          args: UserAllPostsRouteArgs(key: key, navigate: navigate),
           initialChildren: children,
         );
 
@@ -109,20 +101,15 @@ class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<UserAllPostsRouteArgs>(
-          orElse: () => const UserAllPostsRouteArgs());
-      return _i1.UserAllPostsPage(
-        key: args.key,
-        navigate: args.navigate,
+        orElse: () => const UserAllPostsRouteArgs(),
       );
+      return _i1.UserAllPostsPage(key: args.key, navigate: args.navigate);
     },
   );
 }
 
 class UserAllPostsRouteArgs {
-  const UserAllPostsRouteArgs({
-    this.key,
-    this.navigate,
-  });
+  const UserAllPostsRouteArgs({this.key, this.navigate});
 
   final _i5.Key? key;
 
@@ -138,10 +125,7 @@ class UserAllPostsRouteArgs {
 /// [_i1.UserFavoritePostsPage]
 class UserFavoritePostsRoute extends _i4.PageRouteInfo<void> {
   const UserFavoritePostsRoute({List<_i4.PageRouteInfo>? children})
-      : super(
-          UserFavoritePostsRoute.name,
-          initialChildren: children,
-        );
+      : super(UserFavoritePostsRoute.name, initialChildren: children);
 
   static const String name = 'UserFavoritePostsRoute';
 
@@ -184,14 +168,12 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
       final pathParams = data.inheritedPathParams;
       final queryParams = data.queryParams;
       final args = data.argsAs<UserRouteArgs>(
-          orElse: () => UserRouteArgs(
-                id: pathParams.getInt(
-                  'userID',
-                  -1,
-                ),
-                query: queryParams.optList('query'),
-                fragment: data.fragment,
-              ));
+        orElse: () => UserRouteArgs(
+          id: pathParams.getInt('userID', -1),
+          query: queryParams.optList('query'),
+          fragment: data.fragment,
+        ),
+      );
       return _i1.UserPage(
         key: args.key,
         id: args.id,
@@ -203,12 +185,7 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
 }
 
 class UserRouteArgs {
-  const UserRouteArgs({
-    this.key,
-    this.id = -1,
-    this.query,
-    this.fragment,
-  });
+  const UserRouteArgs({this.key, this.id = -1, this.query, this.fragment});
 
   final _i5.Key? key;
 
@@ -228,10 +205,7 @@ class UserRouteArgs {
 /// [_i1.UserPostsPage]
 class UserPostsRoute extends _i4.PageRouteInfo<void> {
   UserPostsRoute({List<_i4.PageRouteInfo>? children})
-      : super(
-          UserPostsRoute.name,
-          initialChildren: children,
-        );
+      : super(UserPostsRoute.name, initialChildren: children);
 
   static const String name = 'UserPostsRoute';
 
@@ -274,16 +248,11 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
       final pathParams = data.inheritedPathParams;
       final queryParams = data.queryParams;
       final args = data.argsAs<UserProfileRouteArgs>(
-          orElse: () => UserProfileRouteArgs(
-                userId: pathParams.getInt(
-                  'userID',
-                  -1,
-                ),
-                likes: queryParams.getInt(
-                  'likes',
-                  0,
-                ),
-              ));
+        orElse: () => UserProfileRouteArgs(
+          userId: pathParams.getInt('userID', -1),
+          likes: queryParams.getInt('likes', 0),
+        ),
+      );
       return _i1.UserProfilePage(
         key: args.key,
         navigate: args.navigate,
@@ -325,10 +294,7 @@ class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
     List<_i4.PageRouteInfo>? children,
   }) : super(
           WebLoginRoute.name,
-          args: WebLoginRouteArgs(
-            key: key,
-            onResult: onResult,
-          ),
+          args: WebLoginRouteArgs(key: key, onResult: onResult),
           initialChildren: children,
         );
 
@@ -338,20 +304,15 @@ class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<WebLoginRouteArgs>(
-          orElse: () => const WebLoginRouteArgs());
-      return _i2.WebLoginPage(
-        key: args.key,
-        onResult: args.onResult,
+        orElse: () => const WebLoginRouteArgs(),
       );
+      return _i2.WebLoginPage(key: args.key, onResult: args.onResult);
     },
   );
 }
 
 class WebLoginRouteArgs {
-  const WebLoginRouteArgs({
-    this.key,
-    this.onResult,
-  });
+  const WebLoginRouteArgs({this.key, this.onResult});
 
   final _i6.Key? key;
 
@@ -372,10 +333,7 @@ class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
     List<_i4.PageRouteInfo>? children,
   }) : super(
           WebVerifyRoute.name,
-          args: WebVerifyRouteArgs(
-            key: key,
-            onResult: onResult,
-          ),
+          args: WebVerifyRouteArgs(key: key, onResult: onResult),
           initialChildren: children,
         );
 
@@ -385,20 +343,15 @@ class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<WebVerifyRouteArgs>(
-          orElse: () => const WebVerifyRouteArgs());
-      return _i3.WebVerifyPage(
-        key: args.key,
-        onResult: args.onResult,
+        orElse: () => const WebVerifyRouteArgs(),
       );
+      return _i3.WebVerifyPage(key: args.key, onResult: args.onResult);
     },
   );
 }
 
 class WebVerifyRouteArgs {
-  const WebVerifyRouteArgs({
-    this.key,
-    this.onResult,
-  });
+  const WebVerifyRouteArgs({this.key, this.onResult});
 
   final _i6.Key? key;
 

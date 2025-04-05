@@ -99,13 +99,13 @@ class ResolvedType {
   /// serializes the type to json
   Map<String, dynamic> toJson() {
     return {
-      'import': this.import,
-      'name': this.name,
-      'isNullable': this.isNullable,
-      'isRecordType': this._isRecordType,
-      if (nameInRecord != null) 'nameInRecord': this.nameInRecord,
+      'import': import,
+      'name': name,
+      'isNullable': isNullable,
+      'isRecordType': _isRecordType,
+      if (nameInRecord != null) 'nameInRecord': nameInRecord,
       if (typeArguments.isNotEmpty)
-        'typeArguments': this.typeArguments.map((e) => e.toJson()).toList(),
+        'typeArguments': typeArguments.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -126,4 +126,16 @@ class ResolvedType {
       typeArguments: typedArgs,
     );
   }
+
+  /// whether the type is a list
+  bool get isList => name == 'List';
+
+  /// whether the type is a map
+  bool get isMap => name == 'Map';
+
+  /// whether the type is a set
+  bool get isSet => name == 'Set';
+
+  /// whether the type is a iterable
+  bool get isIterable => name == 'Iterable';
 }

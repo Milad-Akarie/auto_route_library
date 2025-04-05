@@ -20,40 +20,57 @@ abstract class RouteType {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RouteType &&
-          runtimeType == other.runtimeType &&
-          opaque == other.opaque;
+      identical(this, other) || other is RouteType && runtimeType == other.runtimeType && opaque == other.opaque;
 
   @override
   int get hashCode => opaque.hashCode;
 
   /// Builds a [MaterialRouteType] route type
-  const factory RouteType.material() = MaterialRouteType;
+  const factory RouteType.material({
+    bool enablePredictiveBackGesture,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
+  }) = MaterialRouteType;
 
   /// Builds a [CupertinoRouteType] route type
   const factory RouteType.cupertino() = CupertinoRouteType;
 
   /// Builds a [AdaptiveRouteType] route type
-  const factory RouteType.adaptive({bool opaque}) = AdaptiveRouteType;
+  const factory RouteType.adaptive({
+    bool opaque,
+    bool enablePredictiveBackGesture,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
+  }) = AdaptiveRouteType;
 
   /// Builds a [CustomRouteType] route type
-  const factory RouteType.custom({
+  factory RouteType.custom({
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
-    int? durationInMilliseconds,
-    int? reverseDurationInMilliseconds,
+    @Deprecated('Use duration instead') int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
+    Duration? duration,
+    Duration? reverseDuration,
     bool opaque,
     bool barrierDismissible,
     String? barrierLabel,
     Color? barrierColor,
+    bool enablePredictiveBackGesture,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) = CustomRouteType;
 }
 
 /// Generates a route that uses [MaterialRouteTransitionMixin]
-class MaterialRouteType extends RouteType {
+class MaterialRouteType extends RouteType with PredictiveBackGestureMixin {
   /// Default constructor
-  const MaterialRouteType() : super._(opaque: true);
+  const MaterialRouteType({
+    this.enablePredictiveBackGesture = false,
+    this.predictiveBackPageTransitionsBuilder,
+  }) : super._(opaque: true);
+
+  @override
+  final bool enablePredictiveBackGesture;
+
+  @override
+  final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
 }
 
 /// Generates a route that uses [CupertinoRouteTransitionMixin]
@@ -67,19 +84,29 @@ class CupertinoRouteType extends RouteType {
 /// ios,macos => [CupertinoRouteTransitionMixin]
 /// web => NoTransition
 /// any other platform => [MaterialRouteTransitionMixin]
-class AdaptiveRouteType extends RouteType {
+class AdaptiveRouteType extends RouteType with PredictiveBackGestureMixin {
   /// Default constructor
-  const AdaptiveRouteType({super.opaque}) : super._();
+  const AdaptiveRouteType({
+    this.enablePredictiveBackGesture = false,
+    this.predictiveBackPageTransitionsBuilder,
+    super.opaque,
+  }) : super._();
+
+  @override
+  final bool enablePredictiveBackGesture;
+
+  @override
+  final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
 }
 
 /// Generates a route with user-defined transitions
-class CustomRouteType extends RouteType {
+class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
   /// I couldn't type this function from here but it should match
-  /// typedef [RouteTransitionsBuilder] = Widget Function(BuildContext context, Animation<double> animation,
-  /// Animation<double> secondaryAnimation, Widget child);
+  /// typedef [RouteTransitionsBuilder] = Widget Function(BuildContext context, Animation&lt;double&gt; animation,
+  /// Animation&lt;double&gt; secondaryAnimation, Widget child);
   ///
   /// you should only reference the function so
   /// the generator can import it into the generated file
@@ -97,28 +124,28 @@ class CustomRouteType extends RouteType {
   /// that has all the other properties assigned to it
   /// so using them then is totally up to you.
   ///
-  /// Make sure you pass the Return Type <T> to the Route<T> function
+  /// Make sure you pass the Return Type &lt;T&gt; to the Route&lt;T&gt; function
   /// ex:
   ///  CustomRoute(
   ///     path: '/user/:userID',
   ///     page: UserRoute.page,
-  ///     customRouteBuilder: <T>(context, child, page) {
-  ///     return PageRouteBuilder<T>(
+  ///     customRouteBuilder: &lt;T&gt;(context, child, page) {
+  ///     return PageRouteBuilder&lt;T&gt;(
   ///     settings: page,
   ///     pageBuilder: (context, _, __) => child,
   ///   );
   ///  },
   final CustomRouteBuilder? customRouteBuilder;
 
-  /// route transition duration in milliseconds
+  /// route transition duration
   /// is passed to [PageRouteBuilder]
   /// this property is ignored unless a [transitionBuilder] is provided
-  final int? durationInMilliseconds;
+  final Duration? duration;
 
-  /// route reverse transition duration in milliseconds
+  /// route reverse transition duration
   /// is passed to [PageRouteBuilder]
   /// this property is ignored unless a [transitionBuilder] is provided
-  final int? reverseDurationInMilliseconds;
+  final Duration? reverseDuration;
 
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   ///
@@ -135,17 +162,38 @@ class CustomRouteType extends RouteType {
   /// see [PageRouteBuilder.barrierColor] for more details
   final Color? barrierColor;
 
+  @override
+  final bool enablePredictiveBackGesture;
+
+  @override
+  final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
+
   /// Default constructor
-  const CustomRouteType({
+  CustomRouteType({
     this.customRouteBuilder,
     this.barrierLabel,
     this.barrierColor,
     this.transitionsBuilder,
-    this.durationInMilliseconds,
-    this.reverseDurationInMilliseconds,
     super.opaque,
     this.barrierDismissible = false,
-  }) : super._();
+    this.enablePredictiveBackGesture = false,
+    this.predictiveBackPageTransitionsBuilder,
+    @Deprecated('Use duration instead') int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
+    Duration? duration,
+    Duration? reverseDuration,
+  })  : assert(
+          durationInMilliseconds == null || duration == null,
+          'Use either duration or durationInMilliseconds',
+        ),
+        assert(
+          reverseDurationInMilliseconds == null || reverseDuration == null,
+          'Use either reverseDuration or reverseDurationInMilliseconds',
+        ),
+        duration = duration ?? (durationInMilliseconds != null ? Duration(milliseconds: durationInMilliseconds) : null),
+        reverseDuration = reverseDuration ??
+            (reverseDurationInMilliseconds != null ? Duration(milliseconds: reverseDurationInMilliseconds) : null),
+        super._();
 
   @override
   bool operator ==(Object other) =>
@@ -155,9 +203,8 @@ class CustomRouteType extends RouteType {
           runtimeType == other.runtimeType &&
           transitionsBuilder == other.transitionsBuilder &&
           customRouteBuilder == other.customRouteBuilder &&
-          durationInMilliseconds == other.durationInMilliseconds &&
-          reverseDurationInMilliseconds ==
-              other.reverseDurationInMilliseconds &&
+          duration == other.duration &&
+          reverseDuration == other.reverseDuration &&
           barrierDismissible == other.barrierDismissible &&
           barrierLabel == other.barrierLabel &&
           barrierColor == other.barrierColor;
@@ -167,9 +214,27 @@ class CustomRouteType extends RouteType {
       super.hashCode ^
       transitionsBuilder.hashCode ^
       customRouteBuilder.hashCode ^
-      durationInMilliseconds.hashCode ^
-      reverseDurationInMilliseconds.hashCode ^
+      duration.hashCode ^
+      reverseDuration.hashCode ^
       barrierDismissible.hashCode ^
       barrierLabel.hashCode ^
       barrierColor.hashCode;
+}
+
+/// A mixin that allows you to configure predictive back gesture for a route
+mixin PredictiveBackGestureMixin {
+  /// Whether to enable predictive back gesture on Android
+  ///
+  /// Make sure your app supports Android API 33 or higher, as predictive back won't work on older versions of Android.
+  /// Then, set the flag android:enableOnBackInvokedCallback="true" in android/app/src/main/AndroidManifest.xml.
+  /// read more here https://docs.flutter.dev/platform-integration/android/predictive-back
+  ///
+  /// make sure to also opt-in into this feature in your device settings
+  /// Settings => System => Developer => Predictive back animations
+  ///
+  /// defaults to false
+  bool get enablePredictiveBackGesture;
+
+  /// The transitions builder to use for when the predictive back gesture is in progress
+  RouteTransitionsBuilder? get predictiveBackPageTransitionsBuilder;
 }

@@ -69,9 +69,9 @@ class RouteConfig {
 
   /// Resolves the route name
   String getName([String? replacementInRouteName]) {
-    var nameToUse;
+    String nameToUse;
     if (name != null) {
-      nameToUse = name;
+      nameToUse = name!;
     } else if (replacementInRouteName != null &&
         replacementInRouteName.split(',').length == 2) {
       var parts = replacementInRouteName.split(',');
@@ -117,14 +117,14 @@ class RouteConfig {
   /// Serializes the route config to json
   Map<String, dynamic> toJson() {
     return {
-      'name': this.name,
-      'pathParams': this.pathParams.map((e) => e.toJson()).toList(),
-      'pageType': this.pageType?.toJson(),
-      'className': this.className,
-      'parameters': this.parameters.map((e) => e.toJson()).toList(),
-      'hasWrappedRoute': this.hasWrappedRoute,
-      'hasConstConstructor': this.hasConstConstructor,
-      'deferredLoading': this.deferredLoading,
+      'name': name,
+      'pathParams': pathParams.map((e) => e.toJson()).toList(),
+      'pageType': pageType?.toJson(),
+      'className': className,
+      'parameters': parameters.map((e) => e.toJson()).toList(),
+      'hasWrappedRoute': hasWrappedRoute,
+      'hasConstConstructor': hasConstConstructor,
+      'deferredLoading': deferredLoading,
     };
   }
 

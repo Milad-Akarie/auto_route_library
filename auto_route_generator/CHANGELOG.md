@@ -1,3 +1,36 @@
+## 10.0.1
+- **CHORE**: change build_runner constrains to ^2.4.11
+## 10.0.0 [Minor Breaking Changes]
+- **BREAKING CHANGE**: DeepLink and DeepLink.path will now use 'navigate' instead of push unless specified
+- **FEAT**: add support for using auto_route with out code generation using NamedRouteDef and NamedRoute
+  otherwise.
+- **FEAT**: optional args equality by setting AutoRouterConfig(argsEquality: true)
+- **FEAT**: insert route method to StackRouter
+- **FIX**: guard reevaluation was re-implemented to fix previous issues
+- **FEAT**: expose Navigator.clipBehavior in both AutoRouterDelegate and AutoRouter
+- **FIX**: using AutoTabsRouter.tabBar with maintainState: false and TabBar together, fails to load
+  routes in some cases #2113
+- **FEAT**: safe build context can now be accessed in AutoRouteGuard.onNavigation ->
+  NavigationResolver.context
+- **FEAT**: add a new way to override guarded routes using
+  NavigationResolver.overrideNext
+- **FIX**: AutoLeadingButton is not showing anything on a screen that combines
+  AutoTabsScaffold and NestedRoute #2141
+- **FIX**: redirect route doesn't pass query params the to redirectTo path
+- **FIX**: generated PageRouteInfo breaks if widget tagged with @RoutePage parameter named
+  children. #2149
+- **FEAT**: add an AutoLeadingButton.builder to enable passing of nullable leading widget
+- **FIX**: Fix a couple internal issues and migrate to using didRemovePage api
+- **FEAT**: Parameters.getList now supports a default value
+- **FIX**: Add required keyword to named required parameters in function parameters' arguments
+- **FIX**: fix inheritPathParam didn't use the .inherit constructor
+- **REFACTOR** rename a couple of apis (popForced -> pop, pushNamed -> pushPath, replaceNamed -> replacePath, navigateNamed -> navigatePath, pathParams -> params)
+
+## 9.3.1
+- **CHORE**: Bump analyzer constrains to support (v7).
+## 9.3.0
+- **CHORE**: Bump source_gen (v2), dart_style (v3) versions.
+- **CHORE**: Resolve some deprecated APIs.
 ## 9.0.0 [Breaking Changes]
 
 - **BREAKING CHANGE**: No Router class will be generated anymore. Instead, you

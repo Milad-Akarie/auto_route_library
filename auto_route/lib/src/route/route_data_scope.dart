@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../auto_route.dart';
@@ -35,5 +36,11 @@ class RouteDataScope extends InheritedWidget {
   @override
   bool updateShouldNotify(covariant RouteDataScope oldWidget) {
     return routeData.route != oldWidget.routeData.route;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<RouteData>('routeData', routeData));
   }
 }

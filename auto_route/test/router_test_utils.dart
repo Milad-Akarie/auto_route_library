@@ -6,6 +6,7 @@ Future<void> pumpRouterApp(
   WidgetTester tester,
   RootStackRouter router, {
   String? initialLink,
+  Listenable? reevaluationNotifier,
   NavigatorObserversBuilder observers =
       AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {
@@ -14,6 +15,7 @@ Future<void> pumpRouterApp(
         MaterialApp.router(
           routeInformationParser: router.defaultRouteParser(),
           routerDelegate: router.delegate(
+            reevaluateListenable: reevaluationNotifier,
             deepLinkBuilder: (link) =>
                 initialLink == null ? link : DeepLink.path(initialLink),
             navigatorObservers: observers,

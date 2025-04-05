@@ -21,6 +21,17 @@ class PageInfo {
     return const AutoRouter();
   }
 
+  /// Builds a new instance of [PageInfo] with the given parameters
+  factory PageInfo.builder(String name,
+      {required WidgetBuilderWithData builder}) {
+    return PageInfo(
+      name,
+      builder: (data) => Builder(
+        builder: (context) => builder(context, data),
+      ),
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

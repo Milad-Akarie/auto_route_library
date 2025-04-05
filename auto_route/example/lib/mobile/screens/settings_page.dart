@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage>
             ),
             ElevatedButton(
                 onPressed: () {
-                  context.navigateTo(BooksTab(
+                  context.navigateTo(booksTab(
                     children: [BookDetailsRoute(id: 1)],
                   ));
                 },

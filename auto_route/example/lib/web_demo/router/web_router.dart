@@ -12,26 +12,22 @@ class WebAppRouter extends RootStackRouter {
   WebAppRouter(this.authService);
 
   @override
-  late final List<AutoRouteGuard> guards = [
-    AutoRouteGuard.simple(
-      (resolver, scope) {
-        if (authService.isAuthenticated ||
-            resolver.routeName == WebLoginRoute.name) {
-          resolver.next();
-        } else {
-          resolver.redirect(
-            WebLoginRoute(onResult: (didLogin) {
-              resolver.resolveNext(didLogin, reevaluateNext: false);
-            }),
-          );
-        }
-      },
-    )
-  ];
-
-  @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: MainWebRoute.page, initial: true),
+        AutoRoute(
+          initial: true,
+          page: MainWebRoute.page,
+          guards: [
+            AutoRouteGuard.simple(
+              (resolver, _) {
+                if (authService.isAuthenticated) {
+                  resolver.next();
+                } else {
+                  resolver.redirectUntil(WebLoginRoute());
+                }
+              },
+            ),
+          ],
+        ),
         AutoRoute(path: '/login', page: WebLoginRoute.page),
         AutoRoute(path: '/verify', page: WebVerifyRoute.page),
         AutoRoute(
@@ -39,16 +35,22 @@ class WebAppRouter extends RootStackRouter {
           page: UserRoute.page,
           children: [
             AutoRoute(page: UserProfileRoute.page, initial: true),
-            AutoRoute.guarded(
+            AutoRoute(
               path: 'posts',
               page: UserPostsRoute.page,
-              onNavigation: (resolver, scope) {
-                if (authService.isVerified) {
-                  resolver.next();
-                } else {
-                  resolver.redirect(WebVerifyRoute(onResult: resolver.next));
-                }
-              },
+              guards: [
+                AutoRouteGuard.simple(
+                  (resolver, scope) {
+                    print(
+                        'Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
+                    if (authService.isVerified) {
+                      resolver.next();
+                    } else {
+                      resolver.redirectUntil(WebVerifyRoute());
+                    }
+                  },
+                )
+              ],
               children: [
                 AutoRoute(
                     path: 'all', page: UserAllPostsRoute.page, initial: true),
@@ -95,15 +97,13 @@ class _MainWebPageState extends State<MainWebPage> {
               child: ElevatedButton(
                 onPressed: widget.navigate ??
                     () async {
-                      final x = await MainWebRoute().push<String>(context);
-                      print(x);
-                      // context.pushRoute(
-                      //   UserRoute(
-                      //     id: 2,
-                      //     query: const ['value1', 'value2'],
-                      //     fragment: 'frag',
-                      //   ),
-                      // );
+                      context.pushRoute(
+                        UserRoute(
+                          id: 2,
+                          query: const ['value1', 'value2'],
+                          fragment: 'frag',
+                        ),
+                      );
                     },
                 child: Text('Navigate to user/2'),
               ),
@@ -112,8 +112,7 @@ class _MainWebPageState extends State<MainWebPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
-                  context.maybePop('String');
-                  // App.of(context).authService.isAuthenticated = false;
+                  App.of(context).authService.isAuthenticated = false;
                 },
                 child: Text('Logout'),
               ),

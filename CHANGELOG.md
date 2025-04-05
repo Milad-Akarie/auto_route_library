@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-03-03
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v10.0.1`](#auto_route---v1001)
+ - [`auto_route_generator` - `v10.0.2`](#auto_route_generator---v1002)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v10.0.2`
+
+---
+
+#### `auto_route` - `v10.0.1`
+
+ - **REFACTOR**(custom_route): update route duration type from int to Duration.
+ - **FIX**: guard reevaluation issues  #1993 #2151 #2100.
+ - **FIX**: Exposing clipBehavior for nested navigation #2082.
+ - **FIX**: When use AutoTabsRouter.tabBar, maintainState: false and TabBar together, fails to load routes in some cases #2113.
+ - **FIX**: Unexpected null value issue with context in provider model and AutoRouteGuard #1707.
+ - **FIX**: Unexpected null value issue with context in provider model and AutoRouteGuard #1707.
+
+
 ## 2024-08-12
 
 ### Changes

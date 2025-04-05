@@ -31,6 +31,10 @@ extension AutoRouterX on BuildContext {
   Future<bool> maybePop<T extends Object?>([T? result]) =>
       router.maybePop<T>(result);
 
+  /// see [StackRouter.pop]
+  @optionalTypeArgs
+  void pop<T extends Object?>([T? result]) => router.pop<T>(result);
+
   /// see [RoutingController.navigate]
   Future<void> navigateTo(PageRouteInfo route,
           {OnNavigationFailure? onFailure}) =>
@@ -42,11 +46,22 @@ extension AutoRouterX on BuildContext {
   /// see [RoutingController.back]
   void back() => RouterScope.of(this).controller.back();
 
-  /// see [RoutingController.navigateNamed]
+  /// see [RoutingController.navigatePath]
+  @Deprecated('Use navigateToPath instead')
   Future<void> navigateNamedTo(String path,
           {bool includePrefixMatches = false,
           OnNavigationFailure? onFailure}) =>
-      RouterScope.of(this).controller.navigateNamed(
+      RouterScope.of(this).controller.navigatePath(
+            path,
+            includePrefixMatches: includePrefixMatches,
+            onFailure: onFailure,
+          );
+
+  /// see [RoutingController.navigatePath]
+  Future<void> navigateToPath(String path,
+          {bool includePrefixMatches = false,
+          OnNavigationFailure? onFailure}) =>
+      RouterScope.of(this).controller.navigatePath(
             path,
             includePrefixMatches: includePrefixMatches,
             onFailure: onFailure,

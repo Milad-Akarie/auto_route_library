@@ -19,16 +19,16 @@ class RouteConfigResolver {
     var isDeferred = routePage.peek('deferredLoading')?.boolValue;
     throwIf(
       element is! ClassElement,
-      '${element.getDisplayString(withNullability: false)} is not a class element',
+      '${element.getDisplayString()} is not a class element',
       element: element,
     );
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute = classElement.allSupertypes.any((e) =>
-        e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
+    final hasWrappedRoute = classElement.allSupertypes
+        .any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
-    var className = page.getDisplayString(withNullability: false);
+    var className = page.nameWithoutSuffix;
 
     var name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
@@ -42,7 +42,7 @@ class RouteConfigResolver {
     if (params.isNotEmpty) {
       if (constructor.isConst &&
           params.length == 1 &&
-          params.first.type.getDisplayString(withNullability: false) == 'Key') {
+          params.first.type.nameWithoutSuffix == 'Key') {
         hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);

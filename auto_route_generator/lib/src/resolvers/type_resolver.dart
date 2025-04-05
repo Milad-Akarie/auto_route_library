@@ -4,6 +4,7 @@ import 'package:analyzer/dart/element/nullability_suffix.dart'
 import 'package:analyzer/dart/element/type.dart'
     show DartType, ParameterizedType, RecordType;
 import 'package:auto_route_generator/src/models/resolved_type.dart';
+import 'package:auto_route_generator/utils.dart';
 import 'package:path/path.dart' as p;
 
 const _unPreferredImports = {'dart:ui'};
@@ -152,8 +153,7 @@ class TypeResolver {
     }
 
     return ResolvedType(
-      name: effectiveElement?.displayName ??
-          type.getDisplayString(withNullability: false),
+      name: effectiveElement?.displayName ?? type.nameWithoutSuffix,
       isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
       import: import,
       typeArguments: typeArgs,

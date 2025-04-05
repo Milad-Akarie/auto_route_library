@@ -11,16 +11,16 @@ import '../utils.dart';
 /// it also adds a list of [initialChildren] e.g:
 ///
 /// class BookListRoute extends PageRouteInfo {
-///   const BookListRoute({List<PageRouteInfo>? children})
+///   const BookListRoute({List&lt;PageRouteInfo&gt;? children})
 ///    : super(name,initialChildren: children);
 ///
 ///   static const String name = 'BookListRoute';
-///   static const PageInfo<void> page = PageInfo<void>(name);
+///   static const PageInfo&lt;void&gt; page = PageInfo&lt;void&gt;(name);
 /// }
 
 @optionalTypeArgs
 @immutable
-class PageRouteInfo<T> {
+class PageRouteInfo<T extends Object?> {
   final String _name;
 
   /// The  typed arguments of the route
@@ -146,7 +146,7 @@ class PageRouteInfo<T> {
   factory PageRouteInfo.fromMatch(RouteMatch match) {
     return PageRouteInfo(
       match.name,
-      rawPathParams: match.pathParams.rawMap,
+      rawPathParams: match.params.rawMap,
       rawQueryParams: match.queryParams.rawMap,
       fragment: match.fragment,
       redirectedFrom: match.redirectedFrom,
@@ -182,6 +182,7 @@ class PageRouteInfo<T> {
       other is PageRouteInfo &&
           _name == other._name &&
           fragment == other.fragment &&
+          args == other.args &&
           const ListEquality().equals(initialChildren, other.initialChildren) &&
           const MapEquality().equals(rawPathParams, other.rawPathParams) &&
           const MapEquality().equals(rawQueryParams, other.rawQueryParams);
@@ -190,6 +191,7 @@ class PageRouteInfo<T> {
   int get hashCode =>
       _name.hashCode ^
       fragment.hashCode ^
+      args.hashCode ^
       const MapEquality().hash(rawPathParams) ^
       const MapEquality().hash(rawQueryParams) ^
       const ListEquality().hash(initialChildren);
@@ -209,4 +211,22 @@ class EmptyShellRoute extends PageInfo {
   /// Creates a new instance with of [PageInfo] with an empty shell builder
   /// that returns an [AutoRouter] widget
   PageInfo get page => this;
+}
+
+/// A named route that can be used to navigate to a named destination
+/// typically built with [NamedRouteDef]
+class NamedRoute extends PageRouteInfo<Object?> {
+  /// Default constructor
+  const NamedRoute(
+    super.name, {
+    List<PageRouteInfo>? children,
+    super.args,
+    Map<String, dynamic> params = const {},
+    Map<String, dynamic> queryParams = const {},
+    super.fragment,
+  }) : super(
+          initialChildren: children,
+          rawPathParams: params,
+          rawQueryParams: queryParams,
+        );
 }

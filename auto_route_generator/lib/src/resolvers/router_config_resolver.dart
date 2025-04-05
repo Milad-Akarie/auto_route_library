@@ -19,7 +19,9 @@ class RouterConfigResolver {
   }) {
     final deferredLoading =
         autoRouter.peek('deferredLoading')?.boolValue ?? false;
-    var replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
+    final replaceInRouteName =
+        autoRouter.peek('replaceInRouteName')?.stringValue;
+    final argsEquality = autoRouter.peek('argsEquality')?.boolValue ?? false;
     final generateForDir = autoRouter
         .read('generateForDir')
         .listValue
@@ -33,6 +35,7 @@ class RouterConfigResolver {
       path: input.path,
       cacheHash: cacheHash,
       generateForDir: List.of(generateForDir),
+      argsEquality: argsEquality,
     );
   }
 }
