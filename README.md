@@ -38,6 +38,7 @@ r<p align="center">
   - [Tab Navigation](#tab-navigation)
     - [Using PageView](#using-pageview)
     - [Using TabBar](#using-tabbar)
+    - [Popping Using AutoTabsRouter](#popping-using-auto-tabs-router)
   - [Finding The Right Router](#finding-the-right-router)
   - [Navigating Without Context](#navigating-without-context)
 - [Deep Linking](#deep-linking)
@@ -296,13 +297,13 @@ context.router.maybePop();
 // or stack has only 1 entry
 context.router.maybePopTop();
 // keeps popping routes until predicate is satisfied
-context.router.popUntil((route) => route.settings.name == 'HomeRoute');
+context.router.((route) => route.settings.name == 'HomeRoute');
 // a simplified version of the above line
-context.router.popUntilRouteWithName('HomeRoute');
+context.router.RouteWithName('HomeRoute');
 // keeps popping routes until route with provided path is found
-context.router.popUntilRouteWithPath('/some-path');
+context.router.RouteWithPath('/some-path');
 // pops all routes down to the root
-context.router.popUntilRoot();
+context.router.Root();
 // removes the top most page in stack even if it's the last
 // remove != pop, it doesn't respect WillPopScopes it just
 // removes the entry.
@@ -692,7 +693,7 @@ AutoTabsRouter.tabBar(
 );
 ```
 
-## Popping using AutoTabsRouter
+### Popping Using AutoTabsRouter
 
 Handling navigation inside the tab router (i.e. popping back to a specific route within a tab) requires using the inner router's navigator, not the root navigator.
 
