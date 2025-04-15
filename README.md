@@ -38,7 +38,7 @@ r<p align="center">
   - [Tab Navigation](#tab-navigation)
     - [Using PageView](#using-pageview)
     - [Using TabBar](#using-tabbar)
-    - [Popping Using AutoTabsRouter](#popping-using-auto-tabs-router)
+    - [Popping Using AutoTabsRouter](#popping-using-autotabsrouter)
   - [Finding The Right Router](#finding-the-right-router)
   - [Navigating Without Context](#navigating-without-context)
 - [Deep Linking](#deep-linking)
