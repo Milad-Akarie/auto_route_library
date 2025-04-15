@@ -297,13 +297,13 @@ context.router.maybePop();
 // or stack has only 1 entry
 context.router.maybePopTop();
 // keeps popping routes until predicate is satisfied
-context.router.((route) => route.settings.name == 'HomeRoute');
+context.router.popUntil((route) => route.settings.name == 'HomeRoute');
 // a simplified version of the above line
-context.router.RouteWithName('HomeRoute');
+context.router.popUntilRouteWithName('HomeRoute');
 // keeps popping routes until route with provided path is found
-context.router.RouteWithPath('/some-path');
+context.router.popUntilRouteWithPath('/some-path');
 // pops all routes down to the root
-context.router.Root();
+context.router.popUntilRoot();
 // removes the top most page in stack even if it's the last
 // remove != pop, it doesn't respect WillPopScopes it just
 // removes the entry.
