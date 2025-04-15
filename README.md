@@ -1,4 +1,4 @@
-r<p align="center">
+<p align="center">
   <img src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/auto_route_logo.svg" height="170" alt="auto_route_logo">
 </p>
 
