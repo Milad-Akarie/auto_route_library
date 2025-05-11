@@ -28,6 +28,7 @@
 - [Introduction](#introduction)
   - [Installation](#installation)
   - [Setup and Usage](#setup-and-usage)
+  - [Usage without code generation](#usage-without-code-generation)
 - [Generated routes](#generated-routes)
 - [Navigation](#navigating-between-screens)
   - [Navigating Between Screens](#navigating-between-screens)
@@ -55,16 +56,16 @@
     - [Enabling Cached Builds (Experimental)](#enabling-cached-builds)
   - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
   - [ActiveGuardObserver](#activeguardobserver)
+  - [Android Predictive Back](#android-predictive-back)
 - [Examples](#examples)
 
-**Note:** [AutoRoute-Helper] is no longer supported.
 
 ## Migration guides
+- [Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
+- [Migrating to v6](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v6.md)
 
-- [Migrating to v6](#migrating-to-v6)
-
-## Pre v6 documentation
-
+## Old documentation
+- [Pre v9 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v9_README.md)
 - [Pre v6 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v6_README.md)
 
 ## Introduction
@@ -79,6 +80,9 @@ If your App requires deep-linking or guarded routes or just a clean routing setu
 
 ## Installation
 
+Add the following dependencies to your `pubspec.yaml` file:
+
+
  ```yaml
 dependencies:
   auto_route: [latest-version]
@@ -88,14 +92,18 @@ dev_dependencies:
   build_runner:
 ```
 
+```terminal
+flutter pub add auto_route dev:auto_route_generator dev:build_runner
+```
+
 ## Setup And Usage
 
-1. Create a router class and annotate it with `@AutoRouterConfig` then extend "$YourClassName"
+1. Create a router class and annotate it with `@AutoRouterConfig` then extend "RootStackRouter" from The auto_route package
 2. Override the routes getter and start adding your routes.
 
  ```dart
 @AutoRouterConfig()
-class AppRouter extends $AppRouter {
+class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
@@ -106,20 +114,9 @@ class AppRouter extends $AppRouter {
 
 ### Using part builder
 
-To generate a part-of file simply add a `part` directive to your `AppRouter` and extend the generated private router. **Note:** The `deferredLoading` functionality does not work with part-file setup.
+To generate a part-of file simply add a `part` directive to your `AppRouter`.
 
-```dart
-part 'app_router.gr.dart';
-
-@AutoRouterConfig()
-class AppRouter extends _$AppRouter {
-
-  @override
-  List<AutoRoute> get routes => [
-    /// routes go here
-  ];
-}
-```
+**Note:** The `deferredLoading` functionality does not work with part-file setup.
 
 ### Generating Routable pages
 
@@ -147,14 +144,22 @@ dart run build_runner build
 #### Add the generated route to your routes list
 
 ```dart
-@AutoRouterConfig(replaceInRouteName: 'Screen,Route')
-class AppRouter extends $AppRouter {
+@AutoRouterConfig(replaceInRouteName: 'Screen|Page,Route')
+class AppRouter extends RootStackRouter {
 
+  @override
+  RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
+  
   @override
   List<AutoRoute> get routes => [
     // HomeScreen is generated as HomeRoute because
     // of the replaceInRouteName property
     AutoRoute(page: HomeRoute.page),
+  ];
+
+  @override
+  List<AutoRouteGuard> get guards => [
+    // optionally add root guards here
   ];
 }
 ```
@@ -178,7 +183,54 @@ class App extends StatelessWidget {
   }
 }
 ```
+## Usage without code generation
+You can use auto_route without code generation by providing an inline `NamedRouteDef` with a page builder function, as name suggests, you must provide a name for the route so you can navigate to it later by name or path.
+### Declaring Named Routes
+```dart
+  NamedRouteDef(
+    name: 'BookDetailsRoute',
+    path: '/books/:id', // optional
+    builder: (context, data) {
+      return BookDetailsPage(id: data.params.getInt('id'));
+    },
+  ),
+```
+`NamedRouteDef` is a wrapper around `AutoRoute` that allows you to provide a page builder function instead of a generated page, it has the same properties as `AutoRoute` except for `page` properties.
 
+### Navigating to Named Routes
+You can either navigate to a named route by using the dynamic `NamedRoute` class to match by name or by using the `pushPath` method to match by path.
+```dart
+ /// match by name
+    router.push(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+    router.replace(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+    router.navigate(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+/// match by path
+     router.pushPath('/books/1');
+     router.replacePath('/books/1');
+     router.navigatePath('/books/1');
+```
+
+*Note:* You can mix and match between named and generated routes.
+
+### Building a router without code generation
+
+You can either extend `RootStackRouter` like you would normally do or use the `RootStackRouter.build` constructor to build a router without code generation.
+```dart
+    final router = RootStackRouter.build(
+      defaultRouteType: ...,
+      guards: [global guards],
+      routes: [
+        NamedRouteDef(
+          name: 'BookDetailsRoute',
+          path: '/books/:id', // optional
+          builder: (context, data) {
+            return BookDetailsPage(id: data.params.getInt('id'));
+          },
+        ),
+         // ... other routes
+      ],
+    );
+ ```
 ## Generated Routes
 
 A `PageRouteInfo` object will be generated for every declared **AutoRoute**. These objects hold strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroids.
@@ -187,10 +239,10 @@ A `PageRouteInfo` object will be generated for every declared **AutoRoute**. The
 class BookListRoute extends PageRouteInfo {
   const BookListRoute({
     List<PagerouteInfo>? children,
-  }) : super(name, path: '/books', initialChildren: children);
+  }) : super(name, initialChildren: children);
 
   static const String name = 'BookListRoute';
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo page = PageInfo(name,builder: (...));
 }
 ```
 
@@ -206,17 +258,17 @@ context.router;
 // adds a new entry to the pages stack
 router.push(const BooksListRoute());
 // or by using paths
-router.pushNamed('/books');
+router.pushPath('/books');
 // removes last entry in stack and pushes provided route
 // if last entry == provided route page will just be updated
 router.replace(const BooksListRoute());
 // or by using paths
-router.replaceNamed('/books');
+router.replacePath('/books');
 // pops until provided route, if it already exists in stack
 // else adds it to the stack (good for web Apps).
 router.navigate(const BooksListRoute());
 // or by using paths
-router.navigateNamed('/books');
+router.navigatePath('/books');
 // on Web it calls window.history.back();
 // on Native it navigates you back
 // to the previous location
@@ -232,6 +284,12 @@ router.pushAll([
 router.replaceAll([
   LoginRoute(),
 ]);
+
+// pops the top page even if it's the last entry in stack
+context.router.pop()
+// pops the most top page of the most top router even if it's the last entry in stack
+context.router.popTop();
+
 // pops the last page unless blocked or stack has only 1 entry
 context.router.maybePop();
 // pops the most top page of the most top router unless blocked
@@ -257,9 +315,10 @@ context.router.removeWhere((route) => );
 context.pushRoute(const BooksListRoute());
 context.replaceRoute(const BooksListRoute());
 context.navigateTo(const BooksListRoute());
-context.navigateNamedTo('/books');
+context.navigateToPath('/books');
 context.back();
 context.maybePop();
+context.pop();
 ```
 
 ## Passing Arguments
@@ -302,17 +361,7 @@ then inside of your `LoginPage`, pop with results
 ```dart
 router.maybePop(true);
 ```
-
-as you'd notice we did not specify the result type, we're playing with dynamic values here, which can be risky and I personally don't recommend it.
-
-To avoid working with dynamic values, we specify what type of results we expect our page to return, which is a `bool` value.
-
-```dart
-@RoutePage<bool>()
-class LoginPage extends StatelessWidget {}
-```
-
-we push and specify the type of results we're expecting
+Specifying the type of the result is optional, but it's recommended to avoid runtime errors.
 
 ```dart
 var result = await router.push<bool>(LoginRoute());
@@ -371,7 +420,7 @@ Defining nested routes is as easy as populating the children field of the parent
 
 ```dart
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
-class AppRouter extends $AppRouter {
+class AppRouter extends RootStackRouter {
 
 @override
 List<AutoRoute> get routes => [
@@ -407,14 +456,13 @@ class DashboardPage extends StatelessWidget {
         ),
         Expanded(
           // nested routes will be rendered here
-          child: AutoRouter(),
+          child: AutoRouter(), // this is important
         ),
       ],
     );
   }
 }
 ```
-
 **Note** NavLink is just a button that calls router.push(destination). Now if we navigate to `/dashboard/users`, we will be taken to the `DashboardPage` and the `UsersPage` will be shown inside of it.
 
 What if want to show one of the child pages at `/dashboard`? We can simply do that by giving the child routes an empty path `''` to make initial or by setting initial to true.
@@ -443,6 +491,38 @@ AutoRoute(
   ],
 )
 ```
+
+#### Creating Empty Shell routes
+Empty shell routes build a screen that contain the `AutoRouter` widget, which is used to render nested routes.
+So you can build the widget your self like follows:
+```dart
+@RoutePage()
+class MyShellPage extends StatelessWidget {
+  const MyShellPage({Key? key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+     /// you can wrap the AutoRouter with any widget you want
+    return  AutoRouter();
+  }
+}
+```
+You can shorten the code above a bit by directly extending the `AutoRouter` Widget.
+```dart
+@RoutePage()
+class MyShellPage extends AutoRouter {
+   const MyShellPage({Key? key}) : super(key: key);  
+}
+```
+
+finally you can create a shell route without code generation using the `EmptyShellRoute` helper
+
+  ```dart
+     const BooksTab = EmptyShellRoute('BooksTab');
+     context.push(BooksTab());
+  ```
+
+
+
 
 ### Things to keep in mind when implementing nested navigation
 
@@ -1023,9 +1103,9 @@ class AuthGuard extends AutoRouteGuard {
       resolver.next(true);
     } else {
         // we redirect the user to our login page
-        // tip: use resolver.redirect to have the redirected route
+        // tip: use resolver.redirectUntil to have the redirected route
         // automatically removed from the stack when the resolver is completed
-        resolver.redirect(
+        resolver.redirectUntil(
           LoginRoute(onResult: (success) {
             // if success == true the navigation will be resumed
             // else it will be aborted
@@ -1053,32 +1133,37 @@ AutoRoute(
 
 #### Guarding all stack-routes
 
-You can have all your stack-routes (non-tab-routes) go through a global guard by having your router implement an AutoRouteGuard. Lets say you have an app with no publish screens, we'd have a global guard that only allows navigation if the user is authenticated or if we're navigating to the LoginRoute.
+You can have all your stack-routes (non-tab-routes) go through a list of global guards by overriding the guards property inside your router class. Lets say you have an app with no public screens, we'd have a global guard that only allows navigation if the user is authenticated or if we're navigating to the LoginRoute.
 
 ```dart
 @AutoRouterConfig()
-class AppRouter extends $AppRouter implements AutoRouteGuard {
+class AppRouter extends RootStackRouter{
 
   @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if(isAuthenticated || resolver.route.name == LoginRoute.name) {
-      // we continue navigation
-      resolver.next();
-    } else {
-        // else we navigate to the Login page so we get authenticated
+  late final List<AutoRouteGuard> guards = [
+    AutoRouteGuard.simple((resolver, router) {
+        if(isAuthenticated || resolver.routeName == LoginRoute.name) {
+          // we continue navigation
+          resolver.next();
+        } else {
+          // else we navigate to the Login page so we get authenticated
 
-        // tip: use resolver.redirect to have the redirected route
-        // automatically removed from the stack when the resolver is completed
-      resolver.redirect(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
-    }
-  }
-  // ..routes[]
+          // tip: use resolver.redirectUntil to have the redirected route
+          // automatically removed from the stack when the resolver is completed
+          resolver.redirectUntil(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
+        }
+      },
+    ),
+    // add more guards here
+  ];
+
+// ..routes[]
 }
 ```
 
 ### Using a Reevaluate Listenable
 
-Route guards can prevent users from accessing private pages until they're logged in for example, but auth state may change when the user is already navigated to the private page, to make sure private pages are only accessed by logged-in users all the time, we need a listenable that tells the router that the auth state has changed and you need to re-evaluate your stack.
+Route guards can prevent users from accessing private pages until they're logged in, but auth state may change when the user is already navigated to the private page, to make sure private pages are only accessed by logged-in users all the time, we need a listenable that tells the router that the auth state has changed and you need to re-evaluate your stack.
 
 The following auth provider mock will act as our re-valuate listenable
 
@@ -1110,7 +1195,7 @@ MaterialApp.router(
 );
 ```
 
-Now, every time `AutoProvider` notifies listeners, the stack will be re-evaluated and `AutoRouteGuard.onNavigation()`. Methods will be re-called on all guards
+Now, every time `AuthProvider` notifies listeners, the stack will be re-evaluated and `AutoRouteGuard.onNavigation()`. Methods will be re-called on all guards
 
 In the above example, we assigned our `AuthProvider` to `reevaluateListenable` directly, that's because `reevaluateListenable` takes a `Listenable` and AuthProvider extends `ChangeNotifier` which is a `Listenable`, if your auth provider is a stream you can use `reevaluateListenable: ReevaluateListenable.stream(YOUR-STREAM)`
 
@@ -1122,10 +1207,12 @@ void onNavigation(NavigationResolver resolver, StackRouter router) async {
   if (authProvider.isAuthenticated) {
     resolver.next();
   } else {
-    resolver.redirect(
+    resolver.redirectUntil(
       WebLoginRoute(
+        /// this part is optional if you're not using reevaluateListenable as this method will 
+        /// be called again and if the condition is satisfied the resolver will be completed
         onResult: (didLogin) {
-          // stop re-pushing any pending routes after current
+          /// stop re-pushing any pending routes after current
           resolver.resolveNext(didLogin, reevaluateNext: false);
         },
       ),
@@ -1149,7 +1236,6 @@ class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
   ...
 }
 ```
-
 
 
 ## Navigation Observers
@@ -1317,7 +1403,7 @@ CustomRoute(
   page: LoginRoute.page,
   // TransitionsBuilders class contains a preset of common transitions builders.
   transitionsBuilder: TransitionsBuilders.slideBottom,
-  durationInMilliseconds: 400,
+  duration: Duration(milliseconds: 400),
 )
 ```
 
@@ -1341,11 +1427,12 @@ CustomRoute(
 
 You can use your own custom route by passing a `CustomRouteBuilder` function to `CustomRoute' and implement the builder function the same way we did with the TransitionsBuilder function, the most important part here is passing the page argument to our custom route.
 
+make sure you pass the return type <T> to your custom route builder function.
 ```dart
 CustomRoute(
   page: CustomPage,
-  customRouteBuilder: (BuildContext context, Widget child, CustomPage<T> page) {
-    return PageRouteBuilder(
+  customRouteBuilder: <T>(BuildContext context, Widget child, AutoRoutePage<T> page) {
+    return PageRouteBuilder<T>(
       fullscreenDialog: page.fullscreenDialog,
       // this is important
       settings: page,
@@ -1359,31 +1446,29 @@ CustomRoute(
 
 ### Including Micro/External Packages
 
-To include routes inside of a depended-on package, that package needs to generate an `AutoRouterModule` that will be later consumed by the root router.
-
-To have a package output an `AutoRouterModule` instead of a `RootStackRouter`, we need to use the `AutoRouterConfig.module()` annotation like follows
-
-```dart
-@AutoRouterConfig.module()
-class MyPackageModule extends $MyPackageModule {}
-```
-
-Then when setting up our root router we need to tell it to include the generated module.
+To include routes inside of a depended-on package, we generated the routes inside the micro package like normal, then either use the generated routes inside your main router individually,
+or declare them inside your micro router and merge them with the main router.
 
 ```dart
-@AutoRouterConfig(modules: [MyPackageModule])
-class AppRouter extends $AppRouter {}
+  final myMicroRouter = MyMicroRouter();
+
+  @override
+  List<AutoRoute> get routes => [
+        AutoRoute(page: HomeRoute.page, initial: true),
+        /// use micro routes individually
+        AutoRoute(page: RouteFromMicroPackage.page),
+        /// or merge all routes from micro router
+        ...myMicroRouter.routes,
+      ];
 ```
 
-Now you can use `PageRouteInfos` generated inside `MyPackageModule`.
-
-`Tip:` You can add export `MyPackageModule` to `app_router.dart`, so you only import `app_router.dart` inside of your code.
+`Tip:` You can add export `MyMicroRouter` to `app_router.dart`, so you only import `app_router.dart` inside of your code.
 
 ```dart
 // ...imports
-export 'package:my_package/my_package_module.dart'
-@AutoRouterConfig(modules: [MyPackageModule])
-class AppRouter extends $AppRouter {}
+export 'package:my_package/my_micro_router.dart'
+@AutoRouterConfig()
+class AppRouter extends RootStackRouter {}
 ```
 
 ## Configuring builders
@@ -1500,6 +1585,20 @@ AppBar(
   leading: AutoLeadingButton(),
 )
 ```
+you can also use `AutoBackButton.builder` above your Scaffold for example to provide a nullable leading widget to prevent AppBar.leadingWidth when there's no leading to show
+
+```dart
+AutoBackButton.builder(
+  builder: (BuildContext context, Widget? leading) {
+    return  Scaffold(
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: leading,
+      ),
+    );
+  },
+)
+```
 
 ### ActiveGuardObserver
 
@@ -1517,104 +1616,32 @@ void initState(){
   });
 }
 ```
+### Android Predictive Back
+`auto_route` **v10** supports Android predictive back, which is a feature that allows the user to take a peek at the previous route by swiping from the edge of the screen before committing to the back action.
 
+For now this feature needs to be enabled in manifest file, it also has some flutter considerations, see [Android Predictive Back](https://docs.flutter.dev/release/breaking-changes/android-predictive-back) for more information.
 
-## Migrating to v6
-
-In version 6.0 **AutoRoute** aims for less generated code for more flexibility and less generation time.
-
-#### 1. Instead of using `MaterialAutoRouter`, `CupertinoAutoRouter`, etc,  we now only have one annotation for our router which is `@AutoRouterConfig()` and instead of passing our routes list to the annotation we now pass it to the overridable getter `routes` inside of the generated router class and for the default route type you can override `defaultRouteType`
-
-#### Before
+after you've enabled the feature in your manifest file, you can simply create predictive-back enabled routes by setting `enablePredictiveBackGesture` to true in your route type, you can also provide a custom `predictiveBackPageTransitionsBuilder` to customize the transitions.
 
 ```dart
-// @CupertinoAutoRouter
-// @AdaptiveAutoRouter
-// @CustomAutoRouter
-@MaterialAutoRouter(
-  routes: <AutoRoute>[
-    // routes go here
-  ],
-)
-class $AppRouter {}
+  RouteType.material(
+      enablePredictiveBackGesture: true,
+       // optionally provide a custom transitions builder
+      predictiveBackPageTransitionsBuilder: (context,animation,secondaryAnimation,child) {
+       // return preferred transitions
+      },
+    )
 ```
 
-#### After
+you can enable predictive back for all routes by overriding `defaultRouteType` in your router, all route types that apply on android support this feature.
 
- ```dart
-@AutoRouterConfig()
-class AppRouter extends $AppRouter {
-
-  @override
-  RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
-
-  @override
-  List<AutoRoute> get routes => [
-    // routes go here
-  ];
-}
-```
-
-#### 2. Passing page components as types is changed, now you'd annotate the target page with `@RoutePage()` annotation and pass the generated `result.page` to AutoRoute():
-
-#### Before
-
-```dart
-class ProductDetailsPage extends StatelessWidget {}
-```
-
-```dart
-AutoRoute(page: ProductDetailsPage) // as Type
-```
-
-#### After
-
-```dart
-@RoutePage() // Add this annotation to your routable pages
-class ProductDetailsPage extends StatelessWidget {}
-```
-
-```dart
-AutoRoute(page: ProductDetailsRoute.page) // ProductDetailsRoute is generated
-```
-
-#### 3. `EmptyRoutePage` no longer exists, instead you will now make your own empty pages by extending the `AutoRouter` widget
-
-#### Before
-
-```dart
-AutoRoute(page: EmptyRoutePage, name: 'ProductsRouter') // as Type
-```
-
-#### After
-
-```dart
-@RoutePage(name: 'ProductsRouter')
-class ProductsRouterPage extends AutoRouter {}
-```
-
-```dart
-AutoRoute(page: ProductsRouter.page)
-```
-
-#### 4. Passing route guards is also changed now, instead of passing guards as types you now pass instances.
-
-#### Before
-
-```dart
-AutoRoute(page: ProfilePage, guards:[AuthGuard]) // as Type
-```
-
-#### After
-
-```dart
-AutoRoute(page: ProfilePage, guards:[AuthGuard(<params>)]) // as Instance
-```
+ 
 
 ## Examples
-
-coming soon
-
+ 
+- [Declarative Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/declarative/declarative.router.dart)
+- [Nested Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/nested-navigation/nested_navigation.router.dart)
+ 
 ### Support auto_route
 
 You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can enhance a certain functionality or by reporting any problems you encounter and of course buying a couple coffees will help speed up the development process

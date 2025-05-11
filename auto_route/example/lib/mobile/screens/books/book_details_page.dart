@@ -8,7 +8,7 @@ class BookDetailsPage extends StatefulWidget {
   final int id;
 
   const BookDetailsPage({
-    @pathParam this.id = -3,
+    @pathParam this.id = -1,
   });
 
   @override
@@ -43,12 +43,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.router.root.maybePop();
-                        },
-                        child: Text('Pop root'),
-                      ),
                       ElevatedButton(
                         onPressed: () {
                           context.router.maybePop();

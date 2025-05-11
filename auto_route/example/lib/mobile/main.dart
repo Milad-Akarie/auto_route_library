@@ -15,13 +15,13 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final authService = AuthService();
 
-  final _rootRouter = RootRouter();
+  final _rootRouter = AppRouter();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _rootRouter.config(),
-      theme: ThemeData.dark(),
+      theme: ThemeData.light(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => authService,

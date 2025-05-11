@@ -1,5 +1,3 @@
-import 'resolved_type.dart';
-
 /// RouterConfig
 class RouterConfig {
   /// The name of the router class
@@ -23,11 +21,8 @@ class RouterConfig {
   /// The list of directories to generate for
   final List<String> generateForDir;
 
-  /// Whether the router is a module
-  final bool isModule;
-
-  /// The list of modules
-  final List<ResolvedType> modules;
+  /// Whether to generate equality operator and hashCode for route args
+  final bool argsEquality;
 
   /// Default constructor
   const RouterConfig({
@@ -38,22 +33,20 @@ class RouterConfig {
     required this.path,
     required this.cacheHash,
     required this.generateForDir,
-    this.isModule = false,
-    this.modules = const [],
+    this.argsEquality = false,
   });
 
   /// Serializes this instance to a map
   Map<String, dynamic> toJson() {
     return {
-      'routerClassName': this.routerClassName,
-      'replaceInRouteName': this.replaceInRouteName,
-      'deferredLoading': this.deferredLoading,
-      'usesPartBuilder': this.usesPartBuilder,
-      'path': this.path,
-      'cacheHash': this.cacheHash,
-      'generateForDir': this.generateForDir,
-      'isModule': this.isModule,
-      'modules': this.modules,
+      'routerClassName': routerClassName,
+      'replaceInRouteName': replaceInRouteName,
+      'deferredLoading': deferredLoading,
+      'usesPartBuilder': usesPartBuilder,
+      'path': path,
+      'cacheHash': cacheHash,
+      'generateForDir': generateForDir,
+      'argsEquality': argsEquality,
     };
   }
 
@@ -67,10 +60,7 @@ class RouterConfig {
       path: map['path'] as String,
       cacheHash: map['cacheHash'] as int?,
       generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
-      isModule: map['isModule'] as bool,
-      modules: (map['modules'] as List<dynamic>)
-          .map((e) => ResolvedType.fromJson(e))
-          .toList(),
+      argsEquality: map['argsEquality'] as bool,
     );
   }
 }

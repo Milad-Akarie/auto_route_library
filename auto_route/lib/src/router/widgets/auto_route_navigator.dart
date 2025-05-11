@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
@@ -25,7 +26,7 @@ class AutoRouteNavigator extends StatefulWidget {
   final List<NavigatorObserver> navigatorObservers;
 
   /// A callback to report popped [AutoRoutePage]s
-  /// Used by [Navigator.onPopPage]
+  /// Used by [Navigator.onDidRemovePage]
   final RoutePopCallBack? didPop;
 
   /// Clients will use this build for declarative routing
@@ -33,6 +34,9 @@ class AutoRouteNavigator extends StatefulWidget {
   /// it returns a list of [PageRouteInfo]s that's handled
   /// by [router] to be finally passed to [Navigator.pages]
   final RoutesBuilder? declarativeRoutesBuilder;
+
+  /// The clip behavior of the navigator
+  final Clip clipBehavior;
 
   /// Default constructor
   const AutoRouteNavigator({
@@ -42,6 +46,7 @@ class AutoRouteNavigator extends StatefulWidget {
     this.didPop,
     this.declarativeRoutesBuilder,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
     super.key,
   });
 
@@ -84,9 +89,10 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    final navigator = widget.router.hasEntries
+    return widget.router.hasEntries
         ? Navigator(
             key: widget.router.navigatorKey,
+            clipBehavior: widget.clipBehavior,
             observers: [
               widget.router.pagelessRoutesObserver,
               ...widget.navigatorObservers
@@ -94,24 +100,34 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
             restorationScopeId: widget.navRestorationScopeId ??
                 widget.router.routeData.restorationId,
             pages: widget.router.stack,
-            onPopPage: (route, result) {
-              if (!route.didPop(result)) {
-                return false;
+            onDidRemovePage: (page) {
+              if (page is AutoRoutePage) {
+                widget.router.onPopPage(page);
+                widget.didPop?.call(page.routeData.route, page);
               }
-              if (route.settings is AutoRoutePage) {
-                var routeData = (route.settings as AutoRoutePage).routeData;
-                widget.router.onPopPage(route, routeData);
-                widget.didPop?.call(routeData.route, result);
-              }
-              route.onPopInvoked(true);
-              return true;
             },
           )
         : widget.placeholder?.call(context) ??
             Container(
               color: Theme.of(context).scaffoldBackgroundColor,
             );
+  }
 
-    return navigator;
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<StackRouter>('router', widget.router));
+    properties.add(IterableProperty<NavigatorObserver>(
+        'navigatorObservers', widget.navigatorObservers));
+    properties.add(DiagnosticsProperty<RoutesBuilder>(
+        'declarativeRoutesBuilder', widget.declarativeRoutesBuilder));
+    properties.add(
+        DiagnosticsProperty<WidgetBuilder>('placeholder', widget.placeholder));
+    properties
+        .add(DiagnosticsProperty<Clip>('clipBehavior', widget.clipBehavior));
+    properties.add(DiagnosticsProperty<String?>(
+        'navRestorationScopeId', widget.navRestorationScopeId));
+    properties
+        .add(DiagnosticsProperty<RoutePopCallBack>('didPop', widget.didPop));
   }
 }

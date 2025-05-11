@@ -51,8 +51,11 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// defaults to false
   final bool rebuildStackOnDeepLink;
 
-  ///
+  /// A listenable that triggers a re-evaluation of the guards
   final Listenable? reevaluateListenable;
+
+  /// The clip behavior of the navigator
+  final Clip clipBehavior;
 
   /// Builds an empty observers list
   static List<NavigatorObserver> defaultNavigatorObserversBuilder() => const [];
@@ -88,25 +91,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     this.deepLinkBuilder,
     this.rebuildStackOnDeepLink = false,
     this.reevaluateListenable,
+    this.clipBehavior = Clip.hardEdge,
   }) {
     _navigatorObservers = navigatorObservers();
     controller.navigationHistory.addListener(_handleRebuild);
     reevaluateListenable?.addListener(controller.reevaluateGuards);
   }
-
-  /// Builds a [_DeclarativeAutoRouterDelegate] which uses
-  /// a declarative list of routes to update navigator stack
-  @Deprecated(
-      'Declarative Root routing is not longer supported, Use route guards to conditionally navigate')
-  factory AutoRouterDelegate.declarative(
-    RootStackRouter controller, {
-    required RoutesBuilder routes,
-    String? navRestorationScopeId,
-    RoutePopCallBack? onPopRoute,
-    OnNavigateCallBack? onNavigate,
-    NavigatorObserversBuilder navigatorObservers,
-    DeepLinkBuilder? deepLinkBuilder,
-  }) = _DeclarativeAutoRouterDelegate;
 
   /// Helper to access current urlState
   UrlState get urlState => controller.navigationHistory.urlState;
@@ -140,12 +130,23 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       _onNewUrlState(deepLink.configuration);
       return controller.navigateAll(deepLink.matches);
     } else if (deepLink is _PathDeepLink) {
-      return controller.pushNamed(
-        deepLink.path,
-        includePrefixMatches: deepLink.includePrefixMatches,
-      );
+      if (deepLink.navigate) {
+        return controller.navigatePath(
+          deepLink.path,
+          includePrefixMatches: deepLink.includePrefixMatches,
+        );
+      } else {
+        return controller.pushPath(
+          deepLink.path,
+          includePrefixMatches: deepLink.includePrefixMatches,
+        );
+      }
     } else if (deepLink is _RoutesDeepLink) {
-      return controller.pushAll(deepLink.routes);
+      if (deepLink.navigate) {
+        return controller._navigateAllRoutes(deepLink.routes);
+      } else {
+        return controller.pushAll(deepLink.routes);
+      }
     } else {
       throw FlutterError('Unsupported DeepLink ${deepLink.runtimeType}');
     }
@@ -189,6 +190,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
         navigatorObserversBuilder: navigatorObservers,
         navRestorationScopeId: navRestorationScopeId,
         placeholder: placeholder,
+        clipBehavior: clipBehavior,
       );
 
   void _handleRebuild() {
@@ -214,8 +216,10 @@ class _AutoRootRouter extends StatefulWidget {
     this.navigatorObservers = const [],
     required this.navigatorObserversBuilder,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
   });
 
+  final Clip clipBehavior;
   final StackRouter router;
   final String? navRestorationScopeId;
   final List<NavigatorObserver> navigatorObservers;
@@ -255,6 +259,7 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
   Widget build(BuildContext context) {
     final stateHash = router.stateHash;
     return RouterScope(
+      key: router.globalRouterKey,
       controller: router,
       navigatorObservers: widget.navigatorObservers,
       inheritableObserversBuilder: widget.navigatorObserversBuilder,
@@ -264,96 +269,11 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
         controller: router,
         child: AutoRouteNavigator(
           router: router,
+          clipBehavior: widget.clipBehavior,
+          key: GlobalObjectKey(widget.router.hashCode),
           placeholder: widget.placeholder,
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: widget.navigatorObservers,
-        ),
-      ),
-    );
-  }
-}
-
-class _DeclarativeAutoRouterDelegate extends AutoRouterDelegate {
-  final RoutesBuilder routes;
-  final RoutePopCallBack? onPopRoute;
-  final OnNavigateCallBack? onNavigate;
-
-  _DeclarativeAutoRouterDelegate(
-    RootStackRouter router, {
-    required this.routes,
-    String? navRestorationScopeId,
-    super.deepLinkBuilder,
-    this.onPopRoute,
-    this.onNavigate,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  }) : super(
-          router,
-          navRestorationScopeId: navRestorationScopeId,
-          navigatorObservers: navigatorObservers,
-        ) {
-    router._managedByWidget = true;
-  }
-
-  @override
-  Future<void> setInitialRoutePath(UrlState configuration) async {
-    final platformDeepLink = PlatformDeepLink._(configuration, true);
-    if (deepLinkBuilder != null) {
-      final deepLink = await deepLinkBuilder!(platformDeepLink);
-      _handleDeclarativeDeepLink(deepLink);
-    } else if (configuration.hasSegments) {
-      _handleDeclarativeDeepLink(platformDeepLink);
-    }
-    return SynchronousFuture(null);
-  }
-
-  void _handleDeclarativeDeepLink(DeepLink deepLink) {
-    if (deepLink is _IgnoredDeepLink) return;
-    throwIf(!deepLink.isValid, 'Can not resolve initial route');
-    List<PageRouteInfo>? routes;
-    if (deepLink is PlatformDeepLink) {
-      routes = deepLink.matches.map((e) => e.toPageRouteInfo()).toList();
-    } else if (deepLink is _PathDeepLink) {
-      routes = controller.buildPageRoutesStack(deepLink.path);
-    } else if (deepLink is _RoutesDeepLink) {
-      routes = deepLink.routes;
-    }
-    controller.pendingRoutesHandler._setPendingRoutes(routes);
-  }
-
-  @override
-  Future<void> setNewRoutePath(UrlState tree) async {
-    return _onNavigate(tree);
-  }
-
-  Future<void> _onNavigate(UrlState tree) {
-    if (tree.hasSegments) {
-      controller.navigateAll(tree.segments);
-    }
-    if (onNavigate != null) {
-      onNavigate!(tree);
-    }
-
-    return SynchronousFuture(null);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final stateHash = controller.stateHash;
-    return RouterScope(
-      controller: controller,
-      inheritableObserversBuilder: navigatorObservers,
-      stateHash: stateHash,
-      navigatorObservers: _navigatorObservers,
-      child: StackRouterScope(
-        controller: controller,
-        stateHash: stateHash,
-        child: AutoRouteNavigator(
-          router: controller,
-          declarativeRoutesBuilder: routes,
-          navRestorationScopeId: navRestorationScopeId,
-          navigatorObservers: _navigatorObservers,
-          didPop: onPopRoute,
         ),
       ),
     );
@@ -370,14 +290,17 @@ abstract class DeepLink {
   bool get isValid;
 
   /// Builds a deep-link from a list of [PageRouteInf]s
-  const factory DeepLink(List<PageRouteInfo> routes) = _RoutesDeepLink;
+  const factory DeepLink(List<PageRouteInfo> routes, {bool navigate}) =
+      _RoutesDeepLink;
 
   /// Builds a deep-link from a single [PageRouteInf]
-  factory DeepLink.single(PageRouteInfo route) => _RoutesDeepLink([route]);
+  factory DeepLink.single(PageRouteInfo route, {bool navigate = true}) {
+    return _RoutesDeepLink([route], navigate: navigate);
+  }
 
   /// Builds a deep-link form string path
-  const factory DeepLink.path(String path, {bool includePrefixMatches}) =
-      _PathDeepLink;
+  const factory DeepLink.path(String path,
+      {bool includePrefixMatches, bool navigate}) = _PathDeepLink;
 
   /// Builds a deep link with initial path
   static const DeepLink defaultPath = DeepLink.path(Navigator.defaultRouteName);
@@ -406,8 +329,14 @@ class _PathDeepLink extends DeepLink {
   final String path;
   final bool includePrefixMatches;
 
-  const _PathDeepLink(this.path, {this.includePrefixMatches = true})
-      : super._();
+  /// if false the path will be pushed instead of navigated
+  final bool navigate;
+
+  const _PathDeepLink(
+    this.path, {
+    this.includePrefixMatches = true,
+    this.navigate = true,
+  }) : super._();
 
   @override
   bool get isValid => path.isNotEmpty;
@@ -416,7 +345,13 @@ class _PathDeepLink extends DeepLink {
 class _RoutesDeepLink extends DeepLink {
   final List<PageRouteInfo> routes;
 
-  const _RoutesDeepLink(this.routes) : super._();
+  /// if false the routes will be pushed instead of navigated
+  final bool navigate;
+
+  const _RoutesDeepLink(
+    this.routes, {
+    this.navigate = true,
+  }) : super._();
 
   @override
   bool get isValid => routes.isNotEmpty;

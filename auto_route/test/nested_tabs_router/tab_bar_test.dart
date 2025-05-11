@@ -36,12 +36,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(scrollController.index, 1);
       expectTopPage(router, Tab2Nested1Route.name);
-      expect(router.urlState.url, '/tab2');
+      expect(router.urlState.path, '/tab2');
       await tester.drag(pageViewFinder, const Offset(-200, 0.0));
       await tester.pumpAndSettle();
       expect(scrollController.index, 2);
       expectTopPage(router, Tab3Nested1Route.name);
-      expect(router.urlState.url, '/tab3');
+      expect(router.urlState.path, '/tab3');
       addTearDown(tester.view.resetPhysicalSize);
     },
   );

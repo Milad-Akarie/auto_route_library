@@ -108,6 +108,37 @@ void main() {
       expect(collection.routes, expectedRoutes);
     });
 
+    test('RouteCollection.fromList root should not remove multiple redirects',
+        () {
+      final routeCollection = RouteCollection.fromList(
+        [
+          TestRoute('A', path: '/'),
+          TestRoute('B', path: '/b'),
+          RedirectRoute(path: '/c', redirectTo: '/b'),
+          TestRoute('D', path: '/d'),
+          RedirectRoute(path: '*', redirectTo: '/'),
+        ],
+        root: true,
+      );
+      expect(routeCollection.routes.length, 5);
+    });
+
+    test(
+        'RouteCollection.fromList non root should not remove multiple redirects',
+        () {
+      final routeCollection = RouteCollection.fromList(
+        [
+          TestRoute('A', path: 'a'),
+          TestRoute('B', path: 'b'),
+          RedirectRoute(path: 'c', redirectTo: 'b'),
+          TestRoute('D', path: 'd'),
+          RedirectRoute(path: '*', redirectTo: 'a'),
+        ],
+        root: false,
+      );
+      expect(routeCollection.routes.length, 5);
+    });
+
     test('Calling findPathTo to C1 should return a list of route trails[C,C1]',
         () {
       expect(collection.findPathTo('C1'), [routeC, subRouteC1]);
@@ -450,7 +481,6 @@ void main() {
   group('Testing redirect routes', () {
     final routeA = TestRoute('A', path: '/a');
     final routeARedirect = RedirectRoute(path: '/', redirectTo: '/a');
-
     final subRouteC1 = TestRoute('C1', path: 'c1');
     final subRouteC1Redirect = RedirectRoute(path: '', redirectTo: 'c1');
 
@@ -533,6 +563,53 @@ void main() {
       ];
       expect(match2('/a/r'), expectedMatches);
     });
+
+    test('Should redirect to [/A?foo=bar]', () {
+      final match = RouteMatcher(
+        RouteCollection.fromList(
+          [
+            RedirectRoute(path: '/', redirectTo: '/a?foo=bar'),
+            routeA,
+          ],
+          root: true,
+        ),
+      ).match;
+      final expectedMatches = [
+        RouteMatch(
+          config: routeA,
+          key: const ValueKey('A'),
+          stringMatch: '/a',
+          segments: const ['/', 'a'],
+          queryParams: const Parameters({'foo': 'bar'}),
+          redirectedFrom: '/',
+        )
+      ];
+      expect(match('/?foo=bar'), expectedMatches);
+    });
+
+    test('Should redirect to [/A/:id]', () {
+      final routeA = TestRoute('A', path: '/a/:id');
+      final match = RouteMatcher(
+        RouteCollection.fromList(
+          [
+            RedirectRoute(path: '/x/:id', redirectTo: '/a/:id'),
+            routeA,
+          ],
+          root: true,
+        ),
+      ).match;
+      final expectedMatches = [
+        RouteMatch(
+          config: routeA,
+          key: const ValueKey('A'),
+          stringMatch: '/a/foo',
+          segments: const ['/', 'a', 'foo'],
+          params: const Parameters({'id': 'foo'}),
+          redirectedFrom: '/x/foo',
+        )
+      ];
+      expect(match('/x/foo'), expectedMatches);
+    });
   });
 
   group('Testing Path parameters parsing', () {
@@ -559,7 +636,7 @@ void main() {
           key: const ValueKey('A'),
           stringMatch: '/a/1',
           segments: const ['/', 'a', '1'],
-          pathParams: const Parameters({'id': '1'}),
+          params: const Parameters({'id': '1'}),
         )
       ];
       expect(match('/a/1'), expectedMatches);
@@ -573,7 +650,7 @@ void main() {
           key: const ValueKey('B'),
           stringMatch: '/b/1/n/none',
           segments: const ['/', 'b', '1', 'n', 'none'],
-          pathParams: const Parameters({
+          params: const Parameters({
             'id': '1',
             'type': 'none',
           }),
@@ -595,7 +672,7 @@ void main() {
               key: const ValueKey('C1'),
               stringMatch: '1',
               segments: const ['1'],
-              pathParams: const Parameters({'id': '1'}),
+              params: const Parameters({'id': '1'}),
             )
           ],
         )
@@ -695,6 +772,107 @@ void main() {
       ];
 
       expect(match('/a?foo=bar&foo=baz'), expectedMatches);
+    });
+  });
+
+  group(
+      'Testing matching of nested routes with a wildcard redirect and other redirects at the root',
+      () {
+    final cSubRoute = TestRoute(
+      'C1',
+      path: '',
+    );
+    final aRoute = TestRoute(
+      'A',
+      path: '',
+    );
+    final bRoute = TestRoute(
+      'B',
+      path: 'b',
+    );
+    final cRoute = TestRoute(
+      'C',
+      path: 'c',
+      children: [
+        cSubRoute,
+      ],
+    );
+    final root = TestRoute(
+      'Root',
+      path: '/',
+      initial: true,
+      children: [
+        aRoute,
+        bRoute,
+        RedirectRoute(
+          path: 'd',
+          redirectTo: 'b',
+        ),
+        cRoute,
+        RedirectRoute(path: '*', redirectTo: ''),
+      ],
+    );
+
+    final routeCollection = RouteCollection.fromList(
+      [root],
+      root: true,
+    );
+
+    final match = RouteMatcher(routeCollection).match;
+
+    test('Should return correct match for /c', () {
+      final expectedMatches = [
+        RouteMatch(
+            config: root,
+            key: const ValueKey('Root'),
+            stringMatch: '/',
+            segments: const [
+              '/'
+            ],
+            children: [
+              RouteMatch(
+                config: cRoute,
+                key: const ValueKey('C'),
+                stringMatch: 'c',
+                segments: const ['c'],
+                children: [
+                  RouteMatch(
+                    config: cSubRoute,
+                    key: const ValueKey('C1'),
+                    stringMatch: '',
+                    segments: const [],
+                  ),
+                ],
+              )
+            ])
+      ];
+      expect(match('/c'), expectedMatches);
+    });
+
+    test('Should return correct match for /d', () {
+      final expectedMatches = [
+        RouteMatch(
+            config: root,
+            key: const ValueKey('Root'),
+            stringMatch: '/',
+            segments: const [
+              '/'
+            ],
+            children: [
+              RouteMatch(
+                config: bRoute,
+                key: const ValueKey('B'),
+                stringMatch: 'b',
+                redirectedFrom: 'd',
+                segments: const ['b'],
+              )
+            ])
+      ];
+      expect(match('/d'), expectedMatches);
+    });
+
+    test('Should return a redirect match for bogus url /adsfadsg', () {
+      expect(match('/adsfadsg')?.first.children?.first.redirectedFrom, '*');
     });
   });
 }

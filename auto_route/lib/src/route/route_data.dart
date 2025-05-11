@@ -143,6 +143,9 @@ class RouteData {
   /// Helper to access [RouteMatch.stringMatch]
   String get match => _match.stringMatch;
 
+  /// Helper to access [RouteMatch.id]
+  LocalKey get matchId => _match.id;
+
   /// The track to the very first ancestor match
   ///
   /// This can be used to render visual breadcrumbs in UI
@@ -153,14 +156,18 @@ class RouteData {
 
   /// Collects all path params form all previous ancestors
   Parameters get inheritedPathParams {
-    final params = breadcrumbs.map((e) => e.pathParams).reduce(
+    final params = breadcrumbs.map((e) => e.params).reduce(
           (value, element) => value + element,
         );
     return params;
   }
 
-  /// Helper to access [RouteMatch.pathParams]
-  Parameters get pathParams => _match.pathParams;
+  /// Helper to access [RouteMatch.params]
+  @Deprecated('use the shorthand (params) instead')
+  Parameters get pathParams => _match.params;
+
+  /// Helper to access [RouteMatch.params]
+  Parameters get params => _match.params;
 
   /// Helper to access [RouteMatch.queryParams]
   Parameters get queryParams => _match.queryParams;
@@ -184,5 +191,10 @@ class RouteData {
       return _getTopMatch(pendingChildren.last);
     }
     return _match;
+  }
+
+  /// Builds the [AutoRoutePage] page
+  AutoRoutePage<T> buildPage<T>() {
+    return _match.buildPage<T>(this);
   }
 }

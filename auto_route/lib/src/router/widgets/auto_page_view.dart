@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -85,6 +86,7 @@ class AutoPageViewState extends State<AutoPageView> {
 
   void _routerListener() {
     _updateChildren();
+    _disposeInactiveChildren();
     if (_router.activeIndex != _controller.page!.round()) {
       _warpToCurrentIndex();
     }
@@ -165,9 +167,6 @@ class AutoPageViewState extends State<AutoPageView> {
 
   // Called when the PageView scrolls
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollEndNotification) {
-      _disposeInactiveChildren();
-    }
     if (_warpUnderwayCount > 0) return false;
     if (notification.depth != 0) return false;
     _warpUnderwayCount += 1;
@@ -204,5 +203,16 @@ class AutoPageViewState extends State<AutoPageView> {
         children: _children,
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+        .add(DiagnosticsProperty<PageController>('controller', _controller));
+    properties.add(DiagnosticsProperty<TabsRouter>('router', _router));
+    properties.add(IntProperty('activeIndex', _router.activeIndex));
+    properties.add(IntProperty('previousIndex', _router.previousIndex));
+    properties.add(IntProperty('childrenCount', _children.length));
   }
 }

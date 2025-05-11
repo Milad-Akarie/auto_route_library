@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.navigateNamedTo('settings/tab1');
+                context.navigateToPath('settings/tab1');
               },
               child: Text('Navigate to settings/tab1'),
             ),

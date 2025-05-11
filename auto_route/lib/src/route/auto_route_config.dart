@@ -4,9 +4,15 @@ import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
+/// A Signature for a function that passes the [RouteData] and returns a [PageRoute]
+typedef AutoRoutePageBuilder = Widget Function(RouteData data);
+
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
 typedef TitleBuilder = String Function(BuildContext context, RouteData data);
+
+/// Signature for a function that builds a widget with [RouteData]
+typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData data);
 
 /// Signature for a function that builds the page [restorationId]
 /// Used in [AutoRoutePage]
@@ -17,12 +23,14 @@ typedef RestorationIdBuilder = String Function(RouteMatch match);
 @immutable
 class AutoRoute {
   /// The name of page this route should map to
-  final String name;
+  final PageInfo page;
   final String? _path;
 
   /// Weather to match this route's path as fullMatch
   final bool fullMatch;
-  final RouteCollection? _children;
+
+  /// The list of [AutoRoute] children of this route
+  final List<AutoRoute>? children;
 
   /// The list of [AutoRouteGuard]'s the matched route
   /// will go through before being presented
@@ -75,9 +83,25 @@ class AutoRoute {
   /// a RedirectRoute() to that path
   final bool initial;
 
+  /// Helper getter to get the name of the page
+  String get name => page.name;
+
+  final AutoRoutePageBuilder _pageBuilder;
+
+  /// Returns the Widget builder function of the page
+  AutoRoutePageBuilder get builder => _pageBuilder;
+
+  /// Builds a [AutoRoutePage] from [RouteData]
+  AutoRoutePage<T> buildPage<T>(RouteData data) {
+    return AutoRoutePage<T>(
+      child: builder(data),
+      routeData: data,
+    );
+  }
+
   AutoRoute._({
-    required this.name,
     String? path,
+    required this.page,
     this.usesPathAsKey = false,
     this.guards = const [],
     this.fullMatch = false,
@@ -90,14 +114,12 @@ class AutoRoute {
     this.restorationId,
     this.allowSnapshotting = true,
     this.initial = false,
-    List<AutoRoute>? children,
+    this.children,
   })  : _path = path,
-        _children = children != null && children.isNotEmpty
-            ? RouteCollection.fromList(children)
-            : null;
+        _pageBuilder = page.builder;
 
-  const AutoRoute._change({
-    required this.name,
+  AutoRoute._change({
+    required this.page,
     required String path,
     required this.usesPathAsKey,
     required this.guards,
@@ -109,11 +131,11 @@ class AutoRoute {
     required this.title,
     required this.keepHistory,
     required this.restorationId,
-    required RouteCollection? children,
+    required this.children,
     required this.initial,
     required this.allowSnapshotting,
   })  : _path = path,
-        _children = children;
+        _pageBuilder = page.builder;
 
   /// Builds a default AutoRoute instance with any [type]
   factory AutoRoute({
@@ -134,7 +156,7 @@ class AutoRoute {
     bool allowSnapshotting = true,
   }) {
     return AutoRoute._(
-      name: page.name,
+      page: page,
       path: path,
       fullMatch: fullMatch,
       maintainState: maintainState,
@@ -172,7 +194,7 @@ class AutoRoute {
     bool allowSnapshotting = true,
   }) {
     return AutoRoute._(
-      name: page.name,
+      page: page,
       path: path,
       fullMatch: fullMatch,
       maintainState: maintainState,
@@ -195,16 +217,11 @@ class AutoRoute {
   String get path => _path ?? '';
 
   /// Whether is route is a parent route
-  bool get hasSubTree => _children != null;
-
-  /// The nested child-entries of this route
-  ///
-  /// returns null if this route has no child-entries
-  RouteCollection? get children => _children;
+  bool get hasSubTree => children != null && children!.isNotEmpty;
 
   @override
   String toString() {
-    return 'RouteConfig{name: $name}';
+    return 'AutoRoute{name: ${page.name}}';
   }
 
   /// A simplified copyWith
@@ -217,7 +234,7 @@ class AutoRoute {
   /// Returns a new AutoRoute instance with the provided details overriding.
   AutoRoute copyWith({
     RouteType? type,
-    String? name,
+    PageInfo? page,
     String? path,
     bool? usesPathAsKey,
     List<AutoRouteGuard>? guards,
@@ -234,7 +251,7 @@ class AutoRoute {
   }) {
     return AutoRoute._change(
       type: type ?? this.type,
-      name: name ?? this.name,
+      page: page ?? this.page,
       path: path ?? this.path,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
       guards: guards ?? List.from(this.guards),
@@ -243,9 +260,7 @@ class AutoRoute {
       meta: meta ?? this.meta,
       maintainState: maintainState ?? this.maintainState,
       fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
-      children: children != null
-          ? (children.isEmpty ? null : RouteCollection.fromList(children))
-          : this.children,
+      children: children ?? this.children,
       //copy
       title: title ?? this.title,
       restorationId: restorationId ?? this.restorationId,
@@ -268,12 +283,16 @@ class RedirectRoute extends AutoRoute {
 
   /// Default constructor
   RedirectRoute({
-    required super.path,
+    required String path,
     required this.redirectTo,
   }) : super._(
-          name: 'Redirect#$path',
+          path: path,
+          page: PageInfo.redirect,
           fullMatch: true,
         );
+
+  @override
+  String get name => "${page.name}-$path-$redirectTo";
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.material] type
@@ -281,7 +300,7 @@ class RedirectRoute extends AutoRoute {
 class MaterialRoute extends AutoRoute {
   /// default constructor
   MaterialRoute({
-    required PageInfo page,
+    required super.page,
     super.path,
     super.fullscreenDialog,
     super.maintainState,
@@ -295,18 +314,22 @@ class MaterialRoute extends AutoRoute {
     super.restorationId,
     super.initial,
     super.allowSnapshotting = true,
+    bool enablePredictiveBackGesture = false,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) : super._(
-          name: page.name,
-          type: const RouteType.material(),
+          type: RouteType.material(
+            enablePredictiveBackGesture: enablePredictiveBackGesture,
+            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+          ),
         );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.cupertino] type
 @immutable
-class CupertinoRoute extends AutoRoute {
+class CupertinoRoute<R> extends AutoRoute {
   /// Default constructor
   CupertinoRoute({
-    required PageInfo page,
+    required super.page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -320,15 +343,15 @@ class CupertinoRoute extends AutoRoute {
     super.keepHistory,
     super.initial,
     super.allowSnapshotting = true,
-  }) : super._(name: page.name, type: const RouteType.cupertino());
+  }) : super._(type: const RouteType.cupertino());
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.adaptive] type
 @immutable
-class AdaptiveRoute extends AutoRoute {
+class AdaptiveRoute<R> extends AutoRoute {
   /// Default constructor
   AdaptiveRoute({
-    required PageInfo page,
+    required super.page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -343,18 +366,23 @@ class AdaptiveRoute extends AutoRoute {
     bool opaque = true,
     super.keepHistory,
     super.allowSnapshotting = true,
+    bool enablePredictiveBackGesture = false,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) : super._(
-          name: page.name,
-          type: RouteType.adaptive(opaque: opaque),
+          type: RouteType.adaptive(
+            opaque: opaque,
+            enablePredictiveBackGesture: enablePredictiveBackGesture,
+            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+          ),
         );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
 @immutable
-class CustomRoute extends AutoRoute {
+class CustomRoute<R> extends AutoRoute {
   /// Default constructor
   CustomRoute({
-    required PageInfo page,
+    required super.page,
     super.fullscreenDialog,
     super.maintainState,
     super.fullMatch = false,
@@ -369,26 +397,108 @@ class CustomRoute extends AutoRoute {
     super.allowSnapshotting = true,
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
-    int? durationInMilliseconds,
-    int? reverseDurationInMilliseconds,
+    @Deprecated('Use duration instead') int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
+    Duration? duration,
+    Duration? reverseDuration,
     bool opaque = true,
     bool barrierDismissible = true,
     String? barrierLabel,
     super.restorationId,
     Color? barrierColor,
-  }) : super._(
-          name: page.name,
+    bool enablePredictiveBackGesture = false,
+    RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
+  })  : assert(durationInMilliseconds == null || duration == null, 'Use duration instead of durationInMilliseconds'),
+        assert(reverseDurationInMilliseconds == null || reverseDuration == null,
+            'Use reverseDuration instead of reverseDurationInMilliseconds'),
+        super._(
           type: RouteType.custom(
             transitionsBuilder: transitionsBuilder,
             customRouteBuilder: customRouteBuilder,
+            duration: duration,
+            reverseDuration: reverseDuration,
+            // todo: remove deprecated members
+            // ignore: deprecated_member_use_from_same_package
             durationInMilliseconds: durationInMilliseconds,
+            // todo: remove deprecated members
+            // ignore: deprecated_member_use_from_same_package
             reverseDurationInMilliseconds: reverseDurationInMilliseconds,
             opaque: opaque,
             barrierDismissible: barrierDismissible,
             barrierLabel: barrierLabel,
             barrierColor: barrierColor,
+            enablePredictiveBackGesture: enablePredictiveBackGesture,
+            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
           ),
         );
+}
+
+/// Builds an [AutoRoute] instance with a direct page builder
+///
+/// this is meant to be used for simple routes that don't need
+/// code generation
+class NamedRouteDef extends AutoRoute {
+  /// Default constructor
+  NamedRouteDef({
+    super.path,
+    required String name,
+    super.fullscreenDialog,
+    super.maintainState,
+    super.fullMatch = false,
+    super.guards,
+    super.usesPathAsKey = false,
+    super.children,
+    super.meta = const {},
+    super.title,
+    super.keepHistory,
+    super.initial,
+    super.allowSnapshotting = true,
+    super.restorationId,
+    super.type,
+    required WidgetBuilderWithData builder,
+  }) : super._(page: PageInfo.builder(name, builder: builder));
+
+  /// Creates a guarded route
+  NamedRouteDef.guarded({
+    super.path,
+    required String name,
+    required OnNavigation onNavigation,
+    super.fullscreenDialog,
+    super.maintainState,
+    super.fullMatch = false,
+    super.usesPathAsKey = false,
+    super.children,
+    super.meta = const {},
+    super.title,
+    super.keepHistory,
+    super.initial,
+    super.allowSnapshotting = true,
+    super.restorationId,
+    super.type,
+    required WidgetBuilderWithData builder,
+  }) : super._(
+          guards: [AutoRouteGuard.simple(onNavigation)],
+          page: PageInfo.builder(name, builder: builder),
+        );
+
+  /// Creates a guarded route
+  NamedRouteDef.shell({
+    required String name,
+    super.path,
+    super.fullscreenDialog,
+    super.maintainState,
+    super.fullMatch = false,
+    super.usesPathAsKey = false,
+    required super.children,
+    super.guards,
+    super.meta = const {},
+    super.title,
+    super.keepHistory,
+    super.initial,
+    super.allowSnapshotting = true,
+    super.restorationId,
+    super.type,
+  }) : super._(page: PageInfo.emptyShell(name));
 }
 
 /// Builds a simplified [AutoRoute] instance for test
@@ -402,7 +512,7 @@ class TestRoute extends AutoRoute {
     super.fullMatch,
     super.restorationId,
     super.initial,
-  }) : super._(name: name);
+  }) : super._(page: PageInfo(name, builder: (_) => const SizedBox()));
 }
 
 /// Builds a simplified [AutoRoute] instance for internal usage
@@ -410,14 +520,16 @@ class TestRoute extends AutoRoute {
 @internal
 class DummyRootRoute extends AutoRoute {
   /// Default constructor
-  DummyRootRoute(
-    String name, {
+  DummyRootRoute({
     required String path,
     super.children,
     super.fullMatch,
     super.restorationId,
-  }) : super._(name: name, path: path);
+  }) : super._(page: PageInfo.root, path: path);
 }
+
+/// Signature for a function that generates a path for a route name
+typedef OnGeneratePath = String Function(AutoRoute route);
 
 /// Holds a single set of config-entries
 ///
@@ -430,9 +542,10 @@ class DummyRootRoute extends AutoRoute {
 /// Mainly used by [RouteMatcher]
 class RouteCollection {
   final Map<String, AutoRoute> _routesMap;
+  final Map<String, RouteCollection> _subCollections;
 
   /// Default constructor
-  RouteCollection(this._routesMap) : assert(_routesMap.isNotEmpty);
+  RouteCollection(this._routesMap, [this._subCollections = const {}]) : assert(_routesMap.isNotEmpty);
 
   /// Creates a Map of config-entries from [routes]
   ///
@@ -442,15 +555,23 @@ class RouteCollection {
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
   factory RouteCollection.fromList(List<AutoRoute> routes,
-      {bool root = false}) {
+      {bool root = false, OnGeneratePath onGeneratePath = defaultPathGenerator}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(routesMarkedInitial.length > 1,
         'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');
 
     final targetInitialPath = root ? '/' : '';
     var routesMap = <String, AutoRoute>{};
+    final subCollections = <String, RouteCollection>{};
     var hasValidInitialPath = false;
     for (var r in routes) {
+      if (r.hasSubTree) {
+        subCollections[r.name] = RouteCollection.fromList(
+          r.children!,
+          onGeneratePath: onGeneratePath,
+        );
+      }
+
       var routeToUse = r;
       if (r._path != null) {
         throwIf(
@@ -463,11 +584,21 @@ class RouteCollection {
         );
         routeToUse = r;
       } else {
-        routeToUse = r.changePath(
-          _generateRoutePath(r, root),
-        );
+        final String generatedPath;
+        if (r.initial) {
+          generatedPath = root ? '/' : '';
+        } else {
+          final path = onGeneratePath(r);
+          assert(!path.startsWith('/'),
+              '"/" is added automatically based on route level, generated path should not have a leading "/"');
+          generatedPath = root ? '/$path' : path;
+        }
+        routeToUse = r.changePath(generatedPath);
       }
       hasValidInitialPath |= routeToUse.path == targetInitialPath;
+      if (routesMap.containsKey(r.name)) {
+        throw ArgumentError.value(r.name, 'name', 'Route name must be unique');
+      }
       routesMap[r.name] = routeToUse;
     }
     if (!hasValidInitialPath && routesMarkedInitial.isNotEmpty) {
@@ -480,7 +611,7 @@ class RouteCollection {
         ...routesMap,
       };
     }
-    return RouteCollection(routesMap);
+    return RouteCollection(routesMap, subCollections);
   }
 
   /// Returns the values of [_routesMap] as iterable
@@ -496,8 +627,8 @@ class RouteCollection {
   ///
   /// Throws and error if corresponding route has not children
   RouteCollection subCollectionOf(String key) {
-    assert(this[key]?.children != null, "$key does not have children");
-    return this[key]!.children!;
+    assert(_subCollections[key] != null, "$key does not have children");
+    return _subCollections[key]!;
   }
 
   /// Finds the track to a certain route in the routes-tree
@@ -524,7 +655,7 @@ class RouteCollection {
     }
 
     if (node.hasSubTree) {
-      for (AutoRoute child in node.children!.routes) {
+      for (AutoRoute child in node.children!) {
         if (_findPath(child, routeName, track)) {
           track.insert(0, node);
           return true;
@@ -545,9 +676,8 @@ class RouteCollection {
   @override
   int get hashCode => const MapEquality().hash(_routesMap);
 
-  static String _generateRoutePath(AutoRoute r, bool root) {
-    if (r.initial) return root ? '/' : '';
-    final kebabCased = toKebabCase(r.name);
-    return root ? '/$kebabCased' : kebabCased;
+  /// Default path generator
+  static String defaultPathGenerator(AutoRoute r) {
+    return toKebabCase(r.name);
   }
 }

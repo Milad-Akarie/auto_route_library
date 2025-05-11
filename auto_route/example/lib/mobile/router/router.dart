@@ -1,20 +1,18 @@
-//ignore_for_file: public_member_api_docs
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
 
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
-class RootRouter extends $RootRouter {
+class AppRouter extends RootStackRouter {
   @override
   final List<AutoRoute> routes = [
-    AutoRoute(page: WelcomeRoute.page, initial: true),
     AutoRoute(
       page: HomeRoute.page,
-      path: '/home',
+      initial: true,
       children: [
         AutoRoute(
           path: 'books',
-          page: BooksTab.page,
+          page: booksTab.page,
           initial: true,
           children: [
             AutoRoute(
@@ -26,29 +24,22 @@ class RootRouter extends $RootRouter {
               path: ':id',
               page: BookDetailsRoute.page,
               title: (ctx, data) {
-                return 'Book Details ${data.pathParams.get('id')}';
+                return 'Book Details ${data.params.get('id')}';
               },
             ),
           ],
         ),
-        profileTab,
+        profileRoute,
         AutoRoute(
           path: 'settings/:tab',
           page: SettingsTab.page,
         ),
       ],
     ),
-    AutoRoute(page: LoginRoute.page, path: '/login'),
+    AutoRoute(page: booksTab.page, path: '/login'),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];
 }
 
-@RoutePage(name: 'BooksTab')
-class BooksTabPage extends AutoRouter {
-  const BooksTabPage({super.key});
-}
-
-@RoutePage(name: 'ProfileTab')
-class ProfileTabPage extends AutoRouter {
-  const ProfileTabPage({super.key});
-}
+const booksTab = EmptyShellRoute('BooksTab');
+const profileTab = EmptyShellRoute('ProfileTab');

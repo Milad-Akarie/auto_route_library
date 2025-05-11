@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
+
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:auto_route_generator/utils.dart';
@@ -8,6 +9,7 @@ import 'package:source_gen/source_gen.dart';
 
 final _pathParamChecker = TypeChecker.fromRuntime(PathParam);
 final _queryParamChecker = TypeChecker.fromRuntime(QueryParam);
+final _urlFragmentChecker = TypeChecker.fromRuntime(UrlFragment);
 
 /// Resolves route parameters
 class RouteParameterResolver {
@@ -19,7 +21,7 @@ class RouteParameterResolver {
   /// Resolves a ParameterElement into a consumable [ParamConfig]
   ParamConfig resolve(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
-    if (paramType is FunctionType) {
+    if (paramType is FunctionType && paramType.alias == null) {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
@@ -29,6 +31,9 @@ class RouteParameterResolver {
 
     var nameOrAlias = paramName;
     var isInheritedPathParam = false;
+    final isUrlFragment =
+        _urlFragmentChecker.hasAnnotationOfExact(parameterElement);
+
     if (pathParamAnnotation != null) {
       isInheritedPathParam =
           pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
@@ -52,10 +57,26 @@ class RouteParameterResolver {
     }
 
     throwIf(
-      pathParamAnnotation != null && queryParamAnnotation != null,
-      '${parameterElement.name} can not be both a pathParam and a queryParam!',
+      [isUrlFragment, pathParamAnnotation != null, queryParamAnnotation != null]
+              .where((e) => e)
+              .length >
+          1,
+      '${parameterElement.name} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
       element: parameterElement,
     );
+
+    if (isUrlFragment) {
+      throwIf(
+        type.name != 'String',
+        'UrlFragments must be of type String',
+        element: parameterElement,
+      );
+      throwIf(
+        !type.isNullable && !parameterElement.hasDefaultValue,
+        'UrlFragments must be nullable or have default value',
+        element: parameterElement,
+      );
+    }
 
     return ParamConfig(
       type: type,
@@ -69,6 +90,7 @@ class RouteParameterResolver {
       isPathParam: pathParamAnnotation != null,
       isInheritedPathParam: isInheritedPathParam,
       isQueryParam: queryParamAnnotation != null,
+      isUrlFragment: isUrlFragment,
       defaultValueCode: parameterElement.defaultValueCode,
     );
   }

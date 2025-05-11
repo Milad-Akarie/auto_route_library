@@ -1,5 +1,6 @@
 import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -189,13 +190,13 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
       _controller = TabsRouter(
         parent: _parentController,
         key: parentRoute.key,
+        matchId: parentRoute.matchId,
         homeIndex: widget.homeIndex,
         routeData: parentRoute,
         preload: onPreload,
         routeCollection: _parentController.routeCollection.subCollectionOf(
           parentRoute.name,
         ),
-        pageBuilder: _parentController.pageBuilder,
       );
       _parentController.attachChildController(_controller!);
       _setupController();
@@ -217,6 +218,16 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
       _controller = null;
     }
     super.dispose();
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<TabsRouter>('controller', _controller));
+    properties.add(DiagnosticsProperty<RoutingController>(
+        'parentController', _parentController));
+    properties.add(DiagnosticsProperty<List<NavigatorObserver>>(
+        'navigatorObservers', _navigatorObservers));
   }
 }
 
@@ -562,6 +573,7 @@ class _AutoTabsRouterPageViewState
     final builder = widget._pageViewModeBuilder ?? _defaultPageViewBuilder;
     final stateHash = controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       stateHash: stateHash,
@@ -705,6 +717,7 @@ class _AutoTabsRouterTabBarState
     final builder = widget.builder ?? _defaultPageViewBuilder;
     final stateHash = controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       stateHash: stateHash,
@@ -805,6 +818,7 @@ class _AutoTabsRouterBuilderState
     final builder = widget.builder;
     final stateHash = controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       stateHash: stateHash,

@@ -21,9 +21,9 @@ class RoutesList {
   /// Serializes this instance to a JSON object.
   Map<String, dynamic> toJson() {
     return {
-      'routes': List.unmodifiable(this.routes.map((e) => e.toJson())),
-      'inputPath': this.inputPath,
-      'inputHash': this.inputHash,
+      'routes': List.unmodifiable(routes.map((e) => e.toJson())),
+      'inputPath': inputPath,
+      'inputHash': inputHash,
     };
   }
 

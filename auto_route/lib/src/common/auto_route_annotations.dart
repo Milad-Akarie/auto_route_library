@@ -30,41 +30,25 @@ class AutoRouterConfig {
   /// defaults = const ['lib']
   final List<String> generateForDir;
 
-  /// Indicates whether the package using the annotation
-  /// is a module, in that case a different
-  /// output will be generated.
-  // ignore: unused_field
-  final bool _isModule;
-
-  /// A List of modules to be added to the RootRouter.
-  final List<Type>? modules;
+  /// Whether to generate equality operator and hashCode for route args
+  final bool argsEquality;
 
   /// default constructor
   const AutoRouterConfig({
     this.replaceInRouteName = 'Page|Screen,Route',
     this.deferredLoading = false,
     this.generateForDir = const ['lib'],
-    this.modules,
-  }) : _isModule = false;
-
-  /// default constructor
-  const AutoRouterConfig.module({
-    this.replaceInRouteName = 'Page|Screen,Route',
-    this.deferredLoading = false,
-    this.generateForDir = const ['lib'],
-  })  : _isModule = true,
-        modules = null;
+    this.argsEquality = false,
+  });
 }
 
 /// This annotation is used to mark flutter widgets as routable pages
 /// by enabling the router to construct them.
 ///
-/// [T] is the results type returned
-/// from this page route e.g MaterialPageRoute<T>()
 /// defaults to dynamic
 @optionalTypeArgs
 @Target({TargetKind.classType})
-class RoutePage<T> {
+class RoutePage {
   /// The name of the generated route
   /// if not provided, a name will be generated from class name
   /// and maybe altered by [replaceInRouteName]
@@ -111,7 +95,7 @@ class PathParam {
 const pathParam = PathParam();
 
 /// default PathParam.inherit()
-const inheritPathParam = PathParam();
+const inheritPathParam = PathParam.inherit();
 
 /// this annotation is used to make parameters that's supposed
 /// to take their values from query params of the url
@@ -132,6 +116,20 @@ class QueryParam {
 /// default QueryParam()
 const queryParam = QueryParam();
 
+
 class RoutePage {
   const RoutePage();
 }
+
+/// this annotation is used to mark a parameter as a  url fragment
+/// e.g /path#foo
+///
+/// so it can take its value from the url fragment automatically
+@Target({TargetKind.parameter})
+class UrlFragment {
+  const UrlFragment._();
+}
+
+/// default UrlFragment
+const urlFragment = UrlFragment._();
+

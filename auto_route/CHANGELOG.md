@@ -1,22 +1,122 @@
+## 10.0.1
+ - **REFACTOR**(custom_route): update route duration type from int to Duration.
+ - **FEAT**: add onGeneratePath callback to RootStackRouter to allow custom path generation.
+## 10.0.0 [Minor Breaking Changes]
+- **BREAKING CHANGE**: DeepLink and DeepLink.path will now use 'navigate' instead of push unless specified
+- **BREAKING CHANGE**: ActiveGuardObserver.value will now return a GuardEntry instead of an AutoRouteGuard, use 'activeGuards' to get the list of active guards
+- **FEAT**: add support for using auto_route with out code generation using NamedRouteDef and NamedRoute
+  otherwise.
+- **FEAT**: add support for android's predictive back gesture
+- **FEAT**: optional args equality by setting AutoRouterConfig(argsEquality: true)
+- **FEAT**: insert route method to StackRouter
+- **FIX**: guard reevaluation was re-implemented to fix previous issues
+- **FEAT**: expose Navigator.clipBehavior in both AutoRouterDelegate and AutoRouter
+- **FIX**: using AutoTabsRouter.tabBar with maintainState: false and TabBar together, fails to load
+  routes in some cases #2113
+- **FEAT**: safe build context can now be accessed in AutoRouteGuard.onNavigation ->
+  NavigationResolver.context
+- **FEAT**: add a new way to override guarded routes using
+  NavigationResolver.overrideNext
+- **FIX**: AutoLeadingButton is not showing anything on a screen that combines
+  AutoTabsScaffold and NestedRoute #2141
+- **FIX**: redirect route doesn't pass query params the to redirectTo path
+- **FIX**: generated PageRouteInfo breaks if widget tagged with @RoutePage parameter named
+  children. #2149
+- **FEAT**: add an AutoLeadingButton.builder to enable passing of nullable leading widget
+- **FIX**: Fix a couple internal issues and migrate to using didRemovePage api
+- **FEAT**: Parameters.getList now supports a default value
+- **FIX**: Add required keyword to named required parameters in function parameters' arguments
+- **FIX**: fix inheritPathParam didn't use the .inherit constructor
+- **REFACTOR** rename a couple of apis (popForced -> pop, pushNamed -> pushPath, replaceNamed -> replacePath, navigateNamed -> navigatePath, pathParams -> params)
+
+## 9.3.0+1
+
+- **CHORE**: Fix some static analysis warnings
+
+## 9.3.0
+
+- **CHORE**: Resolve some deprecated APIs.
+
+## 9.2.2
+
+- **FIX**: Redirect route names are getting overridden in route collection.
+
+## 9.2.1+1
+
+No changes, changelog fix only.
+
+## 9.2.1
+
+- **CHORE**: Update web package to 1.0.0
+
+## 9.2.0
+
+- **FIX**: revert web package back to version ^0.5.1 because it's pinned in a lot of other packages.
+
+## 9.1.0
+
+- **FEAT**: Add query params options to redirectTo in RedirectRoute #1721.
+
+## 9.0.1
+
+- **FIX**: make EmptyShellRoute() a const.
+- **Chore**: Add Declarative navigation example link
+- **Chore**: Add Nested Navigation example link
+
+## 9.0.0 [Breaking Changes]
+
+- **BREAKING CHANGE**: No Router class will be generated anymore. Instead, you
+  extend `RootStackRouter` from the `auto_route` package.
+- **BREAKING CHANGE**: Providing return types inside `@RoutePage<Type>()` is no longer needed. you
+  just provide the type as you push the page.
+- **BREAKING CHANGE**: Providing a global route is now done by overriding the `guards` property
+  inside the router. implementing AutoRouteGuard is no longer supported.
+- **BREAKING CHANGE**: `AutoRouterConfig.module` is removed as it's no longer
+  needed. `PageRouteInfos` are now self-contained.
+-
+
+For more info read the complete migration guide
+[Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
+
+- **FIX**: Fix Aliased types are not generated correctly.
+- **FEAT**: You can now create empty shell routes like follows:
+  ```dart
+     const BooksTab = EmptyShellRoute('BooksTab');
+     context.push(BooksTab());
+  ```
+
+## 8.3.0
+
+- **FEAT**: add url#fragment support.
+- **FIX**: queryParams are not passed to child routes when matching by route name
+- **FIX**: array query params are not parsed correctly.
+
+## 8.2.0
+
+- **FEAT**: migrate conditional import to js_interop.
+- **FEAT**: update to web library.
+
+## 8.1.4
+
+- **FIX**: fix an error when popping a nested route after flutter 3.22.0 #1973.
+
 ## 8.1.3
 
- - **FIX**: Fixed back gesture when nested navigator only has multi nested entries.
- - **FIX**: Can not swipe back on iOS when using nested navigation #1932.
+- **FIX**: Fixed back gesture when nested navigator only has multi nested entries.
+- **FIX**: Can not swipe back on iOS when using nested navigation #1932.
 
 ## 8.1.2
 
 - **FIX**: Fixed back gesture when nested navigator only has one entry #1940
 
-
 ## 8.1.1
 
 - **FIX**: Can not swipe back on iOS when using nested navigation #1932.
 
-
 ## 8.1.0
 
-- **FEAT**: add deep-link transformer.  Allows parsing the URI for deep links before the
-  route matcher performs a match on the URI.  Especially useful when you use intent-filter
+- **FEAT**: add deep-link transformer. Allows parsing the URI for deep links before the
+  route matcher performs a match on the URI. Especially useful when you use intent-filter
   prefix on Android to only handle links from e.g com.example/FILTER.
 
   ```dart

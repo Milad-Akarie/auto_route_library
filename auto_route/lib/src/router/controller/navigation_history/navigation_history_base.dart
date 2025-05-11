@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'navigation_history.dart'
     if (dart.library.io) 'native_navigation_history.dart'
-    if (dart.library.html) 'web_navigation_history.dart';
+    if (dart.library.js_interop) 'web_navigation_history.dart';
 
 /// An abstraction on a navigation history tracker
 /// that utilises browser history on web and mimics it on native
@@ -83,7 +83,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// The root router
   StackRouter get router;
 
-  /// Whether managed history has more then one entries
+  /// Whether managed history has more than one entry
   bool get canNavigateBack;
 
   /// The length of managed history entries

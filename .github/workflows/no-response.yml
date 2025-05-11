@@ -1,0 +1,80 @@
+name: No Response
+
+# Run as a daily cron.
+on:
+  schedule:
+    # Every day at 8am
+    - cron: '0 8 * * *'
+
+# All permissions not specified are set to 'none'.
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  no-response:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Close issues with no auther response
+          uses: actions/github-script@v7
+          with:
+            github-token: ${{secrets.GITHUB_TOKEN}}
+            script: |
+                const owner = context.repo.owner;
+                const repo = context.repo.repo;
+                const currentDate = new Date(); // Define currentDate
+                const daysToMilliseconds = days => days * 24 * 60 * 60 * 1000; 
+
+                try {
+                    const issues = await github.rest.issues.listForRepo({
+                      owner,
+                      repo,
+                      state: 'open'
+                    });
+                  
+                    for (const issue of issues.data) {
+                      try {
+                        const comments = await github.rest.issues.listComments({
+                          owner,
+                          repo,
+                          issue_number: issue.number
+                        });
+                  
+                        if (comments.data.length > 0) {
+                          const lastComment = comments.data[comments.data.length - 1];
+                          const lastCommentDate = new Date(lastComment.created_at);
+                          const dateDifference = currentDate - lastCommentDate;
+                  
+                          if (lastComment.user.login === owner && dateDifference > daysToMilliseconds(12)) {
+                            console.log(`Closing issue #${issue.number} as the last comment by the owner is older than 12 days.`);
+                            // Add a closing comment before closing the issue
+                            await github.rest.issues.createComment({
+                              owner,
+                              repo,
+                              issue_number: issue.number,
+                              body: 'Without further information, we are unable to resolve this issue. Please feel free to provide additional details or respond to any questions above, and we will be happy to reopen the case. Thank you for your contribution!'
+                            });
+
+                             // Add a label 'no-reply' to the issue
+                              await github.rest.issues.addLabels({
+                                owner,
+                                repo,
+                                issue_number: issue.number,
+                                labels: ['no-reply']
+                              });
+                            // Now close the issue
+                            await github.rest.issues.update({
+                              owner,
+                              repo,
+                              issue_number: issue.number,
+                              state: 'closed'
+                            });
+                          }
+                        }
+                      } catch (error) {
+                        console.error(`Error processing issue #${issue.number}: ${error}`);
+                      }
+                    }
+                  } catch (error) {
+                    console.error(`Error listing issues for ${owner}/${repo}: ${error}`);
+                  }

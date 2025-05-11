@@ -1,9 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../utils.dart';
-import '../models/resolved_type.dart';
 import '../models/route_config.dart';
 import '../models/route_parameter_config.dart';
 import '../resolvers/route_parameter_resolver.dart';
@@ -21,22 +19,16 @@ class RouteConfigResolver {
     var isDeferred = routePage.peek('deferredLoading')?.boolValue;
     throwIf(
       element is! ClassElement,
-      '${element.getDisplayString(withNullability: false)} is not a class element',
+      '${element.getDisplayString()} is not a class element',
       element: element,
     );
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute = classElement.allSupertypes.any((e) =>
-        e.getDisplayString(withNullability: false) == 'AutoRouteWrapper');
+    final hasWrappedRoute = classElement.allSupertypes
+        .any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
-    var className = page.getDisplayString(withNullability: false);
-
-    var returnType = ResolvedType(name: 'dynamic');
-    var dartType = routePage.objectValue.type;
-    if (dartType is InterfaceType) {
-      returnType = _typeResolver.resolveType(dartType.typeArguments.first);
-    }
+    var className = page.nameWithoutSuffix;
 
     var name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
@@ -47,10 +39,10 @@ class RouteConfigResolver {
     var hasConstConstructor = false;
     var params = constructor!.parameters;
     var parameters = <ParamConfig>[];
-    if (params.isNotEmpty == true) {
+    if (params.isNotEmpty) {
       if (constructor.isConst &&
           params.length == 1 &&
-          params.first.type.getDisplayString(withNullability: false) == 'Key') {
+          params.first.type.nameWithoutSuffix == 'Key') {
         hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);
@@ -59,6 +51,12 @@ class RouteConfigResolver {
         }
       }
     }
+
+    throwIf(
+      parameters.where((e) => e.isUrlFragment).length > 1,
+      'Only one parameter can be annotated with @urlFragment',
+      element: element,
+    );
 
     var pathParameters = parameters.where((element) => element.isPathParam);
 
@@ -89,7 +87,6 @@ class RouteConfigResolver {
       hasWrappedRoute: hasWrappedRoute,
       parameters: parameters,
       hasConstConstructor: hasConstConstructor,
-      returnType: returnType,
       pageType: pageType,
       deferredLoading: isDeferred,
     );

@@ -64,7 +64,7 @@ void main() {
       'Navigating to a none-declared path should call onFailure(<RouteNotFoundFailure>)',
       () async {
     final mockListener = MockOnNavigationFailureListener();
-    await router.navigateNamed('/none-declared', onFailure: mockListener.call);
+    await router.navigatePath('/none-declared', onFailure: mockListener.call);
     expect(verify(mockListener(captureAny)).captured.single,
         isA<RouteNotFoundFailure>());
   });

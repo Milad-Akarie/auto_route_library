@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/router.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,12 +31,12 @@ class RouteDestination {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final destinations = [
     RouteDestination(
-      route: BooksTab(),
+      route: booksTab(),
       icon: Icons.source,
       label: 'Books',
     ),
     RouteDestination(
-      route: ProfileTab(),
+      route: profileTab(),
       icon: Icons.person,
       label: 'Profile',
     ),
@@ -65,19 +66,20 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
               (d) => context.router.isRouteActive(d.route.routeName),
             );
             // there might be no active route until router is mounted
-            // so we play safe
+            // so we play it safe
             if (activeIndex == -1) {
               activeIndex = 0;
             }
             return Row(
               children: [
                 NavigationRail(
-                  destinations: destinations
-                      .map((item) => NavigationRailDestination(
-                            icon: Icon(item.icon),
-                            label: Text(item.label),
-                          ))
-                      .toList(),
+                  destinations: [
+                    for (final d in destinations)
+                      NavigationRailDestination(
+                        icon: Icon(d.icon),
+                        label: Text(d.label),
+                      )
+                  ],
                   selectedIndex: activeIndex,
                   onDestinationSelected: (index) {
                     // use navigate instead of push so you won't have
@@ -94,8 +96,9 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             builder: (context, child) {
               return Scaffold(
                 appBar: AppBar(
+                  leading: AutoLeadingButton(),
                   title: Text(context.topRoute.title(context)),
-                  leading: AutoLeadingButton(ignorePagelessRoutes: true),
+                  // leading: AutoLeadingButton(ignorePagelessRoutes: true),
                   // bottom: TabBar(
                   //   controller: controller,
                   //   tabs: [
@@ -146,15 +149,22 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          child: Text('Dashboard'),
-          onPressed: () {
-            context.pushRoute(HomeRoute());
-          },
+    return AutoLeadingButton.builder(builder: (context, leading) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: leading,
+          title: Text('Welcome'),
+          centerTitle: false,
         ),
-      ),
-    );
+        body: Center(
+          child: ElevatedButton(
+            child: Text('Dashboard'),
+            onPressed: () {
+              context.pushRoute(HomeRoute());
+            },
+          ),
+        ),
+      );
+    });
   }
 }

@@ -53,7 +53,8 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     var path = uri.path.isEmpty ? '/' : uri.path;
     return Uri(
       path: p.normalize(path),
-      queryParameters: uri.queryParameters.isEmpty ? null : uri.queryParameters,
+      queryParameters:
+          uri.queryParameters.isEmpty ? null : uri.queryParametersAll,
       fragment: uri.fragment.isEmpty ? null : uri.fragment,
     );
   }
@@ -214,9 +215,8 @@ class UrlState {
     Map<String, dynamic> queryParams = {};
     if (lastSegment.queryParams.isNotEmpty) {
       var queries = lastSegment.queryParams.rawMap;
-
       for (var key in queries.keys) {
-        var value = _normalizeQueryParamValue(queries[key]);
+        var value = normalizeQueryParamValue(queries[key]);
         if (value != null) {
           queryParams[key] = value;
         }
@@ -234,7 +234,8 @@ class UrlState {
     );
   }
 
-  static dynamic _normalizeQueryParamValue(dynamic value) {
+  /// Stringify query param value
+  static dynamic normalizeQueryParamValue(dynamic value) {
     if (value == null) {
       return null;
     }

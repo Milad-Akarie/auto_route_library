@@ -159,4 +159,32 @@ class Parameters {
     }
     return val;
   }
+
+  /// returns the value corresponding with [key] as nullable [List<String>]
+  List<String> getList(String key, [List<String>? defaultValue]) {
+    var val = _params[key] ?? defaultValue;
+    if (val == null) {
+      throw MissingRequiredParameterError(
+          'Failed to parse [List<String>] $key value from ${_params[key]}');
+    }
+    if (val is List) {
+      return val.map((e) => e.toString()).toList();
+    } else {
+      return [val.toString()];
+    }
+  }
+
+  /// returns the value corresponding with [key] as nullable [List<String>]
+  /// if null returns [defaultValue]
+  List<String>? optList(String key, [List<String>? defaultValue]) {
+    var val = _params[key];
+    if (val == null) {
+      return defaultValue;
+    }
+    if (val is List) {
+      return val.map((e) => e.toString()).toList();
+    } else {
+      return [val.toString()];
+    }
+  }
 }

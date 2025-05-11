@@ -6,28 +6,28 @@ import 'package:flutter/material.dart';
 
 //ignore_for_file: public_member_api_docs
 @AutoRouterConfig(generateForDir: ['lib/web_demo'])
-class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
+class WebAppRouter extends RootStackRouter {
   AuthService authService;
 
   WebAppRouter(this.authService);
 
   @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) async {
-    if (authService.isAuthenticated ||
-        resolver.routeName == WebLoginRoute.name) {
-      resolver.next();
-    } else {
-      resolver.redirect(
-        WebLoginRoute(onResult: (didLogin) {
-          resolver.resolveNext(didLogin, reevaluateNext: false);
-        }),
-      );
-    }
-  }
-
-  @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: MainWebRoute.page, initial: true),
+        AutoRoute(
+          initial: true,
+          page: MainWebRoute.page,
+          guards: [
+            AutoRouteGuard.simple(
+              (resolver, _) {
+                if (authService.isAuthenticated) {
+                  resolver.next();
+                } else {
+                  resolver.redirectUntil(WebLoginRoute());
+                }
+              },
+            ),
+          ],
+        ),
         AutoRoute(path: '/login', page: WebLoginRoute.page),
         AutoRoute(path: '/verify', page: WebVerifyRoute.page),
         AutoRoute(
@@ -41,11 +41,12 @@ class WebAppRouter extends $WebAppRouter implements AutoRouteGuard {
               guards: [
                 AutoRouteGuard.simple(
                   (resolver, scope) {
+                    print(
+                        'Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
                     if (authService.isVerified) {
                       resolver.next();
                     } else {
-                      resolver
-                          .redirect(WebVerifyRoute(onResult: resolver.next));
+                      resolver.redirectUntil(WebVerifyRoute());
                     }
                   },
                 )
@@ -95,11 +96,12 @@ class _MainWebPageState extends State<MainWebPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: widget.navigate ??
-                    () {
+                    () async {
                       context.pushRoute(
                         UserRoute(
                           id: 2,
                           query: const ['value1', 'value2'],
+                          fragment: 'frag',
                         ),
                       );
                     },
@@ -279,11 +281,13 @@ class _UserPostsPageState extends State<UserPostsPage> {
 class UserPage extends StatefulWidget {
   final int id;
   final List<String>? query;
+  final String? fragment;
 
   UserPage({
     Key? key,
     @PathParam('userID') this.id = -1,
     @QueryParam() this.query,
+    @urlFragment this.fragment,
   }) : super(key: key);
 
   @override
@@ -300,7 +304,7 @@ class _UserPageState extends State<UserPage> {
         title: Builder(
           builder: (context) {
             return Text(context.topRouteMatch.name +
-                ' ${widget.id} query: ${widget.query}');
+                ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
           },
         ),
       ),

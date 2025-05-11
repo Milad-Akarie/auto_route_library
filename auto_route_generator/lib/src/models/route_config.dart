@@ -17,9 +17,6 @@ class RouteConfig {
   /// the class name of the route
   final String className;
 
-  /// the return type of the route
-  final ResolvedType? returnType;
-
   /// the parameters of the route
   final List<ParamConfig> parameters;
 
@@ -40,7 +37,6 @@ class RouteConfig {
     required this.className,
     this.parameters = const [],
     this.hasWrappedRoute,
-    this.returnType,
     this.hasConstConstructor = false,
     this.deferredLoading,
   });
@@ -61,20 +57,23 @@ class RouteConfig {
   }
 
   /// Returns all the required params
-  Iterable<ParamConfig> get requiredParams => parameters.where((p) => p.isPositional && !p.isOptional);
+  Iterable<ParamConfig> get requiredParams =>
+      parameters.where((p) => p.isPositional && !p.isOptional);
 
   /// Returns all the optional params
-  Iterable<ParamConfig> get positionalParams => parameters.where((p) => p.isPositional);
+  Iterable<ParamConfig> get positionalParams =>
+      parameters.where((p) => p.isPositional);
 
   /// Returns all the named params
   Iterable<ParamConfig> get namedParams => parameters.where((p) => p.isNamed);
 
   /// Resolves the route name
   String getName([String? replacementInRouteName]) {
-    var nameToUse;
+    String nameToUse;
     if (name != null) {
-      nameToUse = name;
-    } else if (replacementInRouteName != null && replacementInRouteName.split(',').length == 2) {
+      nameToUse = name!;
+    } else if (replacementInRouteName != null &&
+        replacementInRouteName.split(',').length == 2) {
       var parts = replacementInRouteName.split(',');
       nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
     } else {
@@ -84,8 +83,8 @@ class RouteConfig {
   }
 
   /// Whether this route has arguments that can't be parsed
-  bool get hasUnparsableRequiredArgs =>
-      parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+  bool get hasUnparsableRequiredArgs => parameters.any((p) =>
+      (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
 
   /// Clones the route config with the given parameters
   RouteConfig copyWith({
@@ -96,7 +95,6 @@ class RouteConfig {
     bool? fullMatch,
     ResolvedType? pageType,
     String? className,
-    ResolvedType? returnType,
     List<ParamConfig>? parameters,
     String? redirectTo,
     bool? hasWrappedRoute,
@@ -109,7 +107,6 @@ class RouteConfig {
       pathParams: pathParams ?? this.pathParams,
       pageType: pageType ?? this.pageType,
       className: className ?? this.className,
-      returnType: returnType ?? this.returnType,
       parameters: parameters ?? this.parameters,
       hasWrappedRoute: hasWrappedRoute ?? this.hasWrappedRoute,
       hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
@@ -120,15 +117,14 @@ class RouteConfig {
   /// Serializes the route config to json
   Map<String, dynamic> toJson() {
     return {
-      'name': this.name,
-      'pathParams': this.pathParams.map((e) => e.toJson()).toList(),
-      'pageType': this.pageType?.toJson(),
-      'className': this.className,
-      'returnType': this.returnType?.toJson(),
-      'parameters': this.parameters.map((e) => e.toJson()).toList(),
-      'hasWrappedRoute': this.hasWrappedRoute,
-      'hasConstConstructor': this.hasConstConstructor,
-      'deferredLoading': this.deferredLoading,
+      'name': name,
+      'pathParams': pathParams.map((e) => e.toJson()).toList(),
+      'pageType': pageType?.toJson(),
+      'className': className,
+      'parameters': parameters.map((e) => e.toJson()).toList(),
+      'hasWrappedRoute': hasWrappedRoute,
+      'hasConstConstructor': hasConstConstructor,
+      'deferredLoading': deferredLoading,
     };
   }
 
@@ -151,9 +147,10 @@ class RouteConfig {
     return RouteConfig(
       name: map['name'] as String?,
       pathParams: pathParams,
-      pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType']),
+      pageType: map['pageType'] == null
+          ? null
+          : ResolvedType.fromJson(map['pageType']),
       className: map['className'] as String,
-      returnType: map['returnType'] == null ? null : ResolvedType.fromJson(map['returnType']),
       parameters: parameters,
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,
       hasConstConstructor: map['hasConstConstructor'] as bool,

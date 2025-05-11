@@ -1,7 +1,7 @@
-import 'package:auto_route/auto_route.dart';
+import 'dart:js_interop';
 
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:auto_route/auto_route.dart';
+import 'package:web/web.dart';
 
 import 'navigation_history_base.dart';
 
@@ -14,7 +14,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   @override
   final StackRouter router;
 
-  final _history = html.window.history;
+  final _history = window.history;
 
   @override
   void back() {
@@ -22,7 +22,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   }
 
   int get _currentIndex {
-    final state = _history.state;
+    final state = _history.state.dartify();
     if (state is Map) {
       return state['serialCount'] ?? 0;
     }

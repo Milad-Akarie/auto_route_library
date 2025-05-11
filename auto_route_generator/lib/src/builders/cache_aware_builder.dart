@@ -5,7 +5,9 @@ import 'package:build/build.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
 
-final _formatter = DartFormatter(fixes: [StyleFix.singleCascadeStatements]);
+/// A comment configuring `dart_style` to use the default code width so no
+/// configuration discovery is required.
+const dartFormatWidth = '// dart format width=80';
 
 /// A [Builder] which skips resolving cached files
 abstract class CacheAwareBuilder<T> extends Builder {
@@ -21,8 +23,15 @@ abstract class CacheAwareBuilder<T> extends Builder {
   /// Whether to enable cache
   bool get cacheEnabled;
 
+  String _defaultFormatOutput(String code) {
+    code = '$dartFormatWidth\n$code';
+    return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
+        .format(code);
+  }
+
   /// Custom ignore for file rules passed from the options
-  Set<String> get ignoreForFile => options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
+  Set<String> get ignoreForFile =>
+      options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
 
   @override
   final Map<String, List<String>> buildExtensions;
@@ -32,13 +41,12 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   /// Default constructor
   CacheAwareBuilder({
-    String generatedExtension = '.g.dart',
+    this.generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
     this.allowSyntaxErrors = false,
     required this.annotationName,
     this.options,
-  })  : this.generatedExtension = generatedExtension,
-        buildExtensions = validatedBuildExtensionsFrom(
+  }) : buildExtensions = validatedBuildExtensionsFrom(
             options != null ? Map.of(options.config) : null, {
           '.dart': [
             generatedExtension,
@@ -108,7 +116,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   /// Validates the generated content and prepares it for writing
   String validateAndFormatDartCode(BuildStep buildStep, String generated) {
     try {
-      return _formatter.format(generated);
+      return _defaultFormatOutput(generated);
     } catch (e, stack) {
       log.severe(
         '''
@@ -136,7 +144,7 @@ source formatter.''',
 
   @override
   String toString() =>
-      'Generating $generatedExtension: ${this.runtimeType.toString()}';
+      'Generating $generatedExtension: ${runtimeType.toString()}';
 
   /// Checks if the current compilation unit has any top level annotations
   Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep,
@@ -145,8 +153,9 @@ source formatter.''',
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];
     for (var directive in parsed.directives) {
-      if (directive.metadata.any((e) => e.name.name == annotationName))
+      if (directive.metadata.any((e) => e.name.name == annotationName)) {
         return true;
+      }
       if (directive is PartDirective) {
         partIds.add(
           AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input),
@@ -154,8 +163,9 @@ source formatter.''',
       }
     }
     for (var declaration in parsed.declarations) {
-      if (declaration.metadata.any((e) => e.name.name == annotationName))
+      if (declaration.metadata.any((e) => e.name.name == annotationName)) {
         return true;
+      }
     }
     for (var partId in partIds) {
       if (await hasAnyTopLevelAnnotations(partId, buildStep)) {

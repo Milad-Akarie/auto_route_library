@@ -124,11 +124,28 @@ class ResolverResult {
   /// Whether to re-push pending routes on [StackRouter.reevaluateGuards]
   final bool reevaluateNext;
 
+  /// Holds the route to be used in the navigation event
+  final RouteMatch route;
+
   /// Default constructor
   const ResolverResult({
     required this.continueNavigation,
     required this.reevaluateNext,
+    required this.route,
   });
+
+  //// clones this instance with the provided values
+  ResolverResult copyWith({
+    bool? continueNavigation,
+    bool? reevaluateNext,
+    RouteMatch? route,
+  }) {
+    return ResolverResult(
+      continueNavigation: continueNavigation ?? this.continueNavigation,
+      reevaluateNext: reevaluateNext ?? this.reevaluateNext,
+      route: route ?? this.route,
+    );
+  }
 }
 
 /// Represents a guarded navigation event
@@ -140,7 +157,9 @@ class NavigationResolver {
 
   /// Whether the navigation event is triggered
   /// by [StackRouter.reevaluateGuards]
-  final bool isReevaluating;
+  bool get isReevaluating => _isReevaluating;
+
+  bool _isReevaluating = false;
 
   /// The route being processing by the guard
   final RouteMatch route;
@@ -159,14 +178,24 @@ class NavigationResolver {
   /// when we process  Rout2 next pending routes will contain [Route3] only
   final List<RouteMatch> pendingRoutes;
 
+  /// returns the navigator context
+  ///
+  /// Be-aware build context can be null if the navigator is not yet mounted
+  /// this happens if you're guarding the first route in the app
+  BuildContext get context {
+    final context = _router.globalRouterKey.currentContext;
+    assert(context != null, 'Router is not mounted');
+    return context!;
+  }
+
   /// default constructor
   NavigationResolver(
     this._router,
     this._completer,
     this.route, {
     this.pendingRoutes = const [],
-    this.isReevaluating = false,
-  });
+    bool isReevaluating = false,
+  }) : _isReevaluating = isReevaluating;
 
   /// Completes [_completer] with either true to continue navigation
   /// or false to abort navigation
@@ -184,26 +213,88 @@ class NavigationResolver {
       ResolverResult(
         continueNavigation: continueNavigation,
         reevaluateNext: reevaluateNext,
+        route: route,
       ),
     );
   }
 
-  /// Keeps track of the navigated-to route
-  /// To be auto-removed when [completer] is resolved
-  Future<T?> redirect<T extends Object?>(
+  /// Overrides the current route with the provided values
+  ///
+  /// overridden routes will not be processed by the same guard again
+  /// in the same navigation event
+  void overrideNext({
+    List<PageRouteInfo>? children,
+    Object? args,
+    Map<String, dynamic>? queryParams,
+    String? fragment,
+    bool reevaluateNext = true,
+  }) {
+    assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
+    final overrides = RouteOverrides(
+      children: children,
+      args: args,
+      queryParams: queryParams,
+      fragment: fragment,
+    );
+    final overriddenRoute = overrides.override(route, _router.matcher);
+    _completer.complete(
+      ResolverResult(
+        continueNavigation: true,
+        reevaluateNext: reevaluateNext,
+        route: overriddenRoute,
+      ),
+    );
+  }
+
+  bool _isRedirecting = false;
+
+  /// Temporary redirect to another route until the [_completer] is resolved
+  ///
+  /// Calling resolver.next() or resolver.resolveNext()
+  /// will remove the redirected route and mark it for replace
+  /// in browser history
+  ///
+  /// This is typically used like follows
+  ///
+  /// onNavigation(resolver, router) {
+  ///    if (isAuthenticated) {
+  ///      resolver.next();
+  ///    } else {
+  ///      resolver.redirectUntil(LoginRoute());
+  ///    }
+  ///  }
+  Future<T?> redirectUntil<T extends Object?>(
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
     bool replace = false,
   }) async {
+    if (_isRedirecting) return null;
+    _isRedirecting = true;
     return _router._redirect(
       route,
       onFailure: onFailure,
       replace: replace,
       onMatch: (scope, match) async {
         await _completer.future;
+        _isRedirecting = false;
         scope.markUrlStateForReplace();
         scope._removeRoute(match);
       },
+    );
+  }
+
+  /// Keeps track of the navigated-to route
+  /// To be auto-removed when [completer] is resolved
+  @Deprecated('Renamed to "redirectUntil" to avoid confusion')
+  Future<T?> redirect<T extends Object?>(
+    PageRouteInfo route, {
+    OnNavigationFailure? onFailure,
+    bool replace = false,
+  }) {
+    return redirectUntil<T>(
+      route,
+      onFailure: onFailure,
+      replace: replace,
     );
   }
 
@@ -219,4 +310,56 @@ class NavigationResolver {
   /// Whether [_completer] is completed
   /// see [Completer.isCompleted]
   bool get isResolved => _completer.isCompleted;
+
+  /// The future that will be completed by [resolveNext]
+  Future<ResolverResult> get future => _completer.future;
+}
+
+/// Holds overridable route values
+class RouteOverrides {
+  /// The override value of [PageRouteInfo.children]
+  final List<PageRouteInfo>? children;
+
+  /// The override value of [PageRouteInfo.args]
+  ///
+  /// it must be the same args type generated by the corresponding page's constructor
+  final Object? args;
+
+  /// The override value of [PageRouteInfo.queryParams]
+  final Map<String, dynamic>? queryParams;
+
+  /// The override value of [PageRouteInfo.fragment]
+  final String? fragment;
+
+  /// Default constructor
+  const RouteOverrides({
+    this.children,
+    this.args,
+    this.queryParams,
+    this.fragment,
+  });
+
+  /// Builds a new [PageRouteInfo] with the provided overrides
+  RouteMatch override(RouteMatch route, RouteMatcher matcher) {
+    final matches = <RouteMatch>[];
+    if (children != null) {
+      final coll = matcher.collection.subCollectionOf(route.name);
+      final subMatcher = RouteMatcher(coll);
+      for (final child in children!) {
+        final match = subMatcher.matchByRoute(child);
+        if (match == null) {
+          throw FlutterError(
+            "Failed to navigate to overridden child ${child.routeName}.\nPlease make sure the route is declared as a child of ${route.name}",
+          );
+        }
+        matches.add(match);
+      }
+    }
+    return route.copyWith(
+      args: args,
+      queryParams: queryParams == null ? null : Parameters(queryParams),
+      children: matches.isEmpty ? null : matches,
+      fragment: fragment,
+    );
+  }
 }
