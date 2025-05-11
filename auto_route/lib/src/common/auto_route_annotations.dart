@@ -131,3 +131,7 @@ class QueryParam {
 
 /// default QueryParam()
 const queryParam = QueryParam();
+
+class RoutePage {
+  const RoutePage();
+}
