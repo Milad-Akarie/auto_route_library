@@ -63,6 +63,7 @@ abstract class RoutingController with ChangeNotifier {
   /// Holds track of the list of attached child controllers
   List<RoutingController> get childControllers => _childControllers;
   final List<AutoRoutePage> _pages = [];
+  final List<AutoRoutePage> _oldPages = [];
 
   /// The instance of [NavigationHistory] to be used by this router
   ///
@@ -1053,8 +1054,10 @@ abstract class StackRouter extends RoutingController {
     final matches = await _composeMatchesForReevaluate();
     if (matches.isNotEmpty && !_isReevaluating) {
       _isReevaluating = true;
+      _oldPages.addAll(_pages);
       _pages.clear();
       await _navigateAll(matches, isReevaluating: true);
+      _oldPages.clear();
       _isReevaluating = false;
     }
   }
@@ -1697,13 +1700,29 @@ abstract class StackRouter extends RoutingController {
     bool notify = true,
     int? index,
   }) {
+    final oldPage = _oldPages.firstWhereIndexedOrNull(
+      (index, page) {
+        bool equalsType<Z, Y>() => Z == Y;
+
+        late final mustRestoreGenericType =
+            equalsType<T, Object?>() && page.runtimeType != AutoRoutePage<T>;
+        final routeEqual = route.key == page.routeKey &&
+            page.routeData.stackKey == _stackKey &&
+            mustRestoreGenericType;
+        if (routeEqual) {
+          _oldPages.removeAt(index);
+        }
+        return routeEqual;
+      },
+    ) as AutoRoutePage<T>?;
+
     final topRoute = _pages.lastOrNull?.routeData;
     if (topRoute != null && topRoute._match.keepHistory == false) {
       markUrlStateForReplace();
       _removeRoute(topRoute._match, notify: false);
     }
     final data = _createRouteData(route, routeData);
-    final page = data.buildPage<T>();
+    final page = oldPage ?? data.buildPage<T>();
     if (index != null) {
       _pages.insert(index, page);
     } else {
@@ -1809,11 +1828,17 @@ abstract class StackRouter extends RoutingController {
         if (mayUpdateController.managedByWidget) {
           mayUpdateController._onNavigate(newChildren);
         }
-        return mayUpdateController._navigateAll(
-          newChildren,
-          onFailure: onFailure,
-          isReevaluating: isReevaluating,
-        );
+
+        mayUpdateController._oldPages.addAll(mayUpdateController._pages);
+        return mayUpdateController
+            ._navigateAll(
+              newChildren,
+              onFailure: onFailure,
+              isReevaluating: isReevaluating,
+            )
+            .whenComplete(
+              () => mayUpdateController._oldPages.clear(),
+            );
       }
     } else if (!managedByWidget) {
       _reset();
