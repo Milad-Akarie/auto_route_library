@@ -1,5 +1,6 @@
 ## 10.0.2
 - **FIX**: Fix tab routes observing issue where initiating tabs can be reported twice.
+- **FIX**: Generated code is not properly formatted #2174
 ## 10.0.1
  - **REFACTOR**(custom_route): update route duration type from int to Duration.
  - **FEAT**: add onGeneratePath callback to RootStackRouter to allow custom path generation.
