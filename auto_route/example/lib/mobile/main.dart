@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:example/data/db.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.dart';
@@ -20,7 +21,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      routerConfig: _rootRouter.config(),
+      routerConfig: _rootRouter.config(
+        navigatorObservers: () => [
+          AutoRouteObserver(),
+        ],
+      ),
       theme: ThemeData.light(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
