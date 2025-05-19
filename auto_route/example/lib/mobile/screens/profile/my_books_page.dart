@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class MyBooksPage extends StatelessWidget {
   final String? filter;
 
-  MyBooksPage({Key? key, @queryParam this.filter = 'none'}) : super(key: key);
+  MyBooksPage({Key? key, @queryParam this.filter = 'none2'}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +39,7 @@ class MyBooksPage extends StatelessWidget {
               child: Text('Navigate back'),
             ),
             ElevatedButton(
-              onPressed: () => context.router.root
-                  .pushAndPopUntil(HomeRoute(), predicate: (_) => false),
+              onPressed: () => context.router.root.pushAndPopUntil(HomeRoute(), predicate: (_) => false),
               child: Text('Pop until /home'),
             ),
           ],
