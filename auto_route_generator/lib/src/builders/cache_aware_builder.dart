@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
@@ -25,13 +26,11 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   String _defaultFormatOutput(String code) {
     code = '$dartFormatWidth\n$code';
-    return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
-        .format(code);
+    return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion, pageWidth: 80).format(code);
   }
 
   /// Custom ignore for file rules passed from the options
-  Set<String> get ignoreForFile =>
-      options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
+  Set<String> get ignoreForFile => options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
 
   @override
   final Map<String, List<String>> buildExtensions;
@@ -46,8 +45,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     this.allowSyntaxErrors = false,
     required this.annotationName,
     this.options,
-  }) : buildExtensions = validatedBuildExtensionsFrom(
-            options != null ? Map.of(options.config) : null, {
+  }) : buildExtensions = validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
           '.dart': [
             generatedExtension,
             ...additionalOutputExtensions,
@@ -77,8 +75,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
       buildStep.inputId,
       allowSyntaxErrors: allowSyntaxErrors,
     );
-    if (!(await hasAnyTopLevelAnnotations(
-        buildStep.inputId, buildStep, unit))) {
+    if (!(await hasAnyTopLevelAnnotations(buildStep.inputId, buildStep, unit))) {
       return;
     }
 
@@ -110,8 +107,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<String> onGenerateContent(BuildStep buildStep, T item);
 
   /// Resolves the current compilation unit
-  Future<T?> onResolve(
-      LibraryReader library, BuildStep buildStep, int stepHash);
+  Future<T?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash);
 
   /// Validates the generated content and prepares it for writing
   String validateAndFormatDartCode(BuildStep buildStep, String generated) {
@@ -143,12 +139,10 @@ source formatter.''',
   }
 
   @override
-  String toString() =>
-      'Generating $generatedExtension: ${runtimeType.toString()}';
+  String toString() => 'Generating $generatedExtension: ${runtimeType.toString()}';
 
   /// Checks if the current compilation unit has any top level annotations
-  Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep,
-      [CompilationUnit? unit]) async {
+  Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep, [CompilationUnit? unit]) async {
     if (!await buildStep.canRead(input)) return false;
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];

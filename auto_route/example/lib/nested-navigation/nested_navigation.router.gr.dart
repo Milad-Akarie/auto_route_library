@@ -1,4 +1,4 @@
-// dart format width=80
+// dart format width=120
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************

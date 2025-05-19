@@ -1,4 +1,4 @@
-// dart format width=80
+// dart format width=120
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -16,11 +16,11 @@ import 'package:flutter/material.dart' as _i3;
 /// generated route for
 /// [_i1.AgeInputScreen]
 class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
-  AgeInputRoute({
-    _i3.Key? key,
-    required _i3.ValueChanged<int> onAgeSubmitted,
-    List<_i2.PageRouteInfo>? children,
-  }) : super(
+  AgeInputRoute(
+      {_i3.Key? key,
+      required _i3.ValueChanged<int> onAgeSubmitted,
+      List<_i2.PageRouteInfo>? children})
+      : super(
           AgeInputRoute.name,
           args: AgeInputRouteArgs(key: key, onAgeSubmitted: onAgeSubmitted),
           initialChildren: children,
@@ -33,9 +33,7 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
     builder: (data) {
       final args = data.argsAs<AgeInputRouteArgs>();
       return _i1.AgeInputScreen(
-        key: args.key,
-        onAgeSubmitted: args.onAgeSubmitted,
-      );
+          key: args.key, onAgeSubmitted: args.onAgeSubmitted);
     },
   );
 }
@@ -72,11 +70,11 @@ class MainRoute extends _i2.PageRouteInfo<void> {
 /// generated route for
 /// [_i1.NameInputScreen]
 class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
-  NameInputRoute({
-    _i3.Key? key,
-    required _i3.ValueChanged<String> onNameSubmitted,
-    List<_i2.PageRouteInfo>? children,
-  }) : super(
+  NameInputRoute(
+      {_i3.Key? key,
+      required _i3.ValueChanged<String> onNameSubmitted,
+      List<_i2.PageRouteInfo>? children})
+      : super(
           NameInputRoute.name,
           args: NameInputRouteArgs(key: key, onNameSubmitted: onNameSubmitted),
           initialChildren: children,
@@ -89,9 +87,7 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
     builder: (data) {
       final args = data.argsAs<NameInputRouteArgs>();
       return _i1.NameInputScreen(
-        key: args.key,
-        onNameSubmitted: args.onNameSubmitted,
-      );
+          key: args.key, onNameSubmitted: args.onNameSubmitted);
     },
   );
 }
@@ -130,20 +126,14 @@ class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
     builder: (data) {
       final args = data.argsAs<ResultRouteArgs>();
       return _i1.ResultScreen(
-        key: args.key,
-        profile: args.profile,
-        onReset: args.onReset,
-      );
+          key: args.key, profile: args.profile, onReset: args.onReset);
     },
   );
 }
 
 class ResultRouteArgs {
-  const ResultRouteArgs({
-    this.key,
-    required this.profile,
-    required this.onReset,
-  });
+  const ResultRouteArgs(
+      {this.key, required this.profile, required this.onReset});
 
   final _i3.Key? key;
 

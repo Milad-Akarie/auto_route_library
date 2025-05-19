@@ -1,4 +1,4 @@
-// dart format width=80
+// dart format width=120
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
@@ -98,10 +98,9 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(
-            key: key,
-            onLoginResult: onLoginResult,
-            showBackButton: showBackButton,
-          ),
+              key: key,
+              onLoginResult: onLoginResult,
+              showBackButton: showBackButton),
           initialChildren: children,
         );
 
@@ -110,24 +109,19 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<LoginRouteArgs>(
-        orElse: () => const LoginRouteArgs(),
-      );
+      final args =
+          data.argsAs<LoginRouteArgs>(orElse: () => const LoginRouteArgs());
       return _i4.LoginPage(
-        key: args.key,
-        onLoginResult: args.onLoginResult,
-        showBackButton: args.showBackButton,
-      );
+          key: args.key,
+          onLoginResult: args.onLoginResult,
+          showBackButton: args.showBackButton);
     },
   );
 }
 
 class LoginRouteArgs {
-  const LoginRouteArgs({
-    this.key,
-    this.onLoginResult,
-    this.showBackButton = true,
-  });
+  const LoginRouteArgs(
+      {this.key, this.onLoginResult, this.showBackButton = true});
 
   final _i9.Key? key;
 
@@ -144,11 +138,11 @@ class LoginRouteArgs {
 /// generated route for
 /// [_i5.MyBooksPage]
 class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
-  MyBooksRoute({
-    _i9.Key? key,
-    String? filter = 'none',
-    List<_i8.PageRouteInfo>? children,
-  }) : super(
+  MyBooksRoute(
+      {_i9.Key? key,
+      String? filter = 'none',
+      List<_i8.PageRouteInfo>? children})
+      : super(
           MyBooksRoute.name,
           args: MyBooksRouteArgs(key: key, filter: filter),
           rawQueryParams: {'filter': filter},
@@ -162,9 +156,8 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
     builder: (data) {
       final queryParams = data.queryParams;
       final args = data.argsAs<MyBooksRouteArgs>(
-        orElse: () => MyBooksRouteArgs(
-          filter: queryParams.optString('filter', 'none'),
-        ),
+        orElse: () =>
+            MyBooksRouteArgs(filter: queryParams.optString('filter', 'none')),
       );
       return _i5.MyBooksPage(key: args.key, filter: args.filter);
     },
@@ -203,12 +196,12 @@ class ProfileRoute extends _i8.PageRouteInfo<void> {
 /// generated route for
 /// [_i7.SettingsPage]
 class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
-  SettingsTab({
-    _i9.Key? key,
-    String tab = 'none',
-    String query = 'none',
-    List<_i8.PageRouteInfo>? children,
-  }) : super(
+  SettingsTab(
+      {_i9.Key? key,
+      String tab = 'none',
+      String query = 'none',
+      List<_i8.PageRouteInfo>? children})
+      : super(
           SettingsTab.name,
           args: SettingsTabArgs(key: key, tab: tab, query: query),
           rawPathParams: {'tab': tab},
