@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:auto_route_generator/utils.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
@@ -24,9 +24,9 @@ abstract class CacheAwareBuilder<T> extends Builder {
   /// Whether to enable cache
   bool get cacheEnabled;
 
-  String _defaultFormatOutput(String code) {
+  String _defaultFormatOutput(LibraryLanguageVersion libVersion, String code) {
     code = '$dartFormatWidth\n$code';
-    return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion, pageWidth: 80).format(code);
+    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format(code);
   }
 
   /// Custom ignore for file rules passed from the options
@@ -84,7 +84,8 @@ abstract class CacheAwareBuilder<T> extends Builder {
       cacheHash = calculateUpdatableHash(unit);
       final cached = await loadFromCache(buildStep, cacheHash);
       if (cached != null) {
-        return _writeContent(buildStep, cached);
+        final lib = await buildStep.inputLibrary;
+        return _writeContent(buildStep, lib.languageVersion, cached);
       }
     }
 
@@ -94,7 +95,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     );
     var generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return;
-    return _writeContent(buildStep, generated);
+    return _writeContent(buildStep, lib.languageVersion, generated);
   }
 
   /// Loads the cached content from the cache
@@ -110,9 +111,9 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<T?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash);
 
   /// Validates the generated content and prepares it for writing
-  String validateAndFormatDartCode(BuildStep buildStep, String generated) {
+  String validateAndFormatDartCode(BuildStep buildStep, LibraryLanguageVersion libVersion, String generated) {
     try {
-      return _defaultFormatOutput(generated);
+      return _defaultFormatOutput(libVersion, generated);
     } catch (e, stack) {
       log.severe(
         '''
@@ -129,11 +130,11 @@ source formatter.''',
     }
   }
 
-  Future<void> _writeContent(BuildStep buildStep, generated) async {
+  Future<void> _writeContent(BuildStep buildStep, LibraryLanguageVersion libVersion, generated) async {
     var output = await onGenerateContent(buildStep, generated);
     final outputId = buildStep.allowedOutputs.first;
     if (outputId.extension.endsWith('.dart')) {
-      output = validateAndFormatDartCode(buildStep, output);
+      output = validateAndFormatDartCode(buildStep, libVersion, output);
     }
     return buildStep.writeAsString(outputId, output);
   }
