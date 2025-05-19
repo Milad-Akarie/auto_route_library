@@ -59,12 +59,13 @@
   - [Android Predictive Back](#android-predictive-back)
 - [Examples](#examples)
 
-
 ## Migration guides
+
 - [Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
 - [Migrating to v6](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v6.md)
 
 ## Old documentation
+
 - [Pre v9 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v9_README.md)
 - [Pre v6 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v6_README.md)
 
@@ -101,7 +102,7 @@ flutter pub add auto_route dev:auto_route_generator dev:build_runner
 1. Create a router class and annotate it with `@AutoRouterConfig` then extend "RootStackRouter" from The auto_route package
 2. Override the routes getter and start adding your routes.
 
- ```dart
+```dart
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
 
@@ -149,7 +150,7 @@ class AppRouter extends RootStackRouter {
 
   @override
   RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
-  
+
   @override
   List<AutoRoute> get routes => [
     // HomeScreen is generated as HomeRoute because
@@ -361,6 +362,7 @@ then inside of your `LoginPage`, pop with results
 ```dart
 router.maybePop(true);
 ```
+
 Specifying the type of the result is optional, but it's recommended to avoid runtime errors.
 
 ```dart
@@ -374,6 +376,7 @@ router.maybePop<bool>(true);
 ```
 
 #### 2. Passing a callback function as an argument.
+
 We only have to add a callback function as a parameter to our page constructor like follows:
 
 ```dart
@@ -416,7 +419,7 @@ Nested navigation means building an inner router inside of a page of another rou
   <img alt="nested-router-demo"  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/nested_router_demo.png?raw=true" height="370">
 </p>
 
-Defining nested routes is as easy as populating the children field of the parent route. In the following example  `UsersPage`, `PostsPage` and `SettingsPage` are nested children of `DashboardPage`.
+Defining nested routes is as easy as populating the children field of the parent route. In the following example `UsersPage`, `PostsPage` and `SettingsPage` are nested children of `DashboardPage`.
 
 ```dart
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
@@ -463,6 +466,7 @@ class DashboardPage extends StatelessWidget {
   }
 }
 ```
+
 **Note** NavLink is just a button that calls router.push(destination). Now if we navigate to `/dashboard/users`, we will be taken to the `DashboardPage` and the `UsersPage` will be shown inside of it.
 
 What if want to show one of the child pages at `/dashboard`? We can simply do that by giving the child routes an empty path `''` to make initial or by setting initial to true.
@@ -493,8 +497,10 @@ AutoRoute(
 ```
 
 #### Creating Empty Shell routes
+
 Empty shell routes build a screen that contain the `AutoRouter` widget, which is used to render nested routes.
 So you can build the widget your self like follows:
+
 ```dart
 @RoutePage()
 class MyShellPage extends StatelessWidget {
@@ -506,23 +512,22 @@ class MyShellPage extends StatelessWidget {
   }
 }
 ```
+
 You can shorten the code above a bit by directly extending the `AutoRouter` Widget.
+
 ```dart
 @RoutePage()
 class MyShellPage extends AutoRouter {
-   const MyShellPage({Key? key}) : super(key: key);  
+   const MyShellPage({Key? key}) : super(key: key);
 }
 ```
 
 finally you can create a shell route without code generation using the `EmptyShellRoute` helper
 
-  ```dart
-     const BooksTab = EmptyShellRoute('BooksTab');
-     context.push(BooksTab());
-  ```
-
-
-
+```dart
+   const BooksTab = EmptyShellRoute('BooksTab');
+   context.push(BooksTab());
+```
 
 ### Things to keep in mind when implementing nested navigation
 
@@ -876,12 +881,13 @@ MaterialApp.router(
         return SynchronousFuture(
         uri.replace(path: uri.path.replaceFirst('/prefix', '')),
           );
-      }  
+      }
       return SynchronousFuture(uri);
     }
   ),
 );
 ```
+
 **Note** for prefix stripping use the shipped-in `DeepLink.prefixStripper('prefix')`
 
 ```dart
@@ -892,7 +898,6 @@ MaterialApp.router(
 );
 ```
 
-```dart
 ### Using Deep-link Builder
 
 Deep link builder is an interceptor for deep-links where you can validate or override deep-links coming from the platform.
@@ -919,6 +924,7 @@ MaterialApp.router(
 ### Deep Linking to non-nested Routes
 
 **AutoRoute** can build a stack from a linear route list as long as they're ordered properly and can be matched as prefix, e.g `/` is a prefix match of `/products`, and `/products` is prefix match of `/products/:id`. Then we have a setup that looks something like this:
+
 - `/`
 - `/products`
 - `/products/:id`
@@ -1118,7 +1124,7 @@ class AuthGuard extends AutoRouteGuard {
 }
 ```
 
-**Important**:  `resolver.next()` should only be called once.
+**Important**: `resolver.next()` should only be called once.
 
 The `NavigationResolver` object contains the guarded route which you can access by calling the property `resolver.route` and a list of pending routes (if there are any) accessed by calling `resolver.pendingRoutes`.
 
@@ -1228,7 +1234,7 @@ In some cases we want to wrap our screen with a parent widget, usually to provid
 ```dart
 @RoutePage()
 class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
-  
+
   @override
   Widget wrappedRoute(BuildContext context) {
     return Provider(create: (ctx) => ProductsBloc(), child: this);
@@ -1236,7 +1242,6 @@ class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
   ...
 }
 ```
-
 
 ## Navigation Observers
 
@@ -1379,7 +1384,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAwareStateMixin<Bo
   // only override if this is a stack page
   @override
   void didPopNext() {}
-  
+
   // only override if this is a stack page
   @override
   void didPushNext() {}
@@ -1391,7 +1396,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAwareStateMixin<Bo
 ##### MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter
 
 | Property                    | Default value         | Definition                                                                        |
-|-----------------------------|-----------------------|-----------------------------------------------------------------------------------|
+| --------------------------- | --------------------- | --------------------------------------------------------------------------------- |
 | replaceInRouteName [String] | Page&#124Screen,Route | Used to replace conventional words in generated route name (pattern, replacement) |
 
 ## Custom Route Transitions
@@ -1428,6 +1433,7 @@ CustomRoute(
 You can use your own custom route by passing a `CustomRouteBuilder` function to `CustomRoute' and implement the builder function the same way we did with the TransitionsBuilder function, the most important part here is passing the page argument to our custom route.
 
 make sure you pass the return type <T> to your custom route builder function.
+
 ```dart
 CustomRoute(
   page: CustomPage,
@@ -1472,6 +1478,7 @@ class AppRouter extends RootStackRouter {}
 ```
 
 ## Configuring builders
+
 To pass builder configuration to `auto_route_generator` we need to add `build.yaml` file next to `pubspec.yaml` if not already added.
 
 ```yaml
@@ -1485,6 +1492,7 @@ targets:
 ```
 
 ### Passing custom ignore_for_file rules
+
 You can pass custom ignore_for_file rules to the generated router by adding the following:
 
 ```yaml
@@ -1499,6 +1507,7 @@ targets:
 ```
 
 ### Optimizing generation time
+
 The first thing you want to do to reduce generation time, is specifying the files build_runner should process and we do that by using [globs](https://pub.dev/packages/glob). Globs are kind of regex patterns with little differences that's used to match file names. **Note:** for this to work on file level you need to follow a naming convention
 
 ```
@@ -1514,7 +1523,7 @@ let's say we have the following files tree
 By default, the builder will process all of these files to check for a page with `@RoutePage()`
 annotation, we can help by letting it know what files we need processed, e.g only process the files
 inside the ui folder:
-**Note** (**) matches everything including '/';
+**Note** (\*\*) matches everything including '/';
 
 ```yaml
 targets:
@@ -1635,13 +1644,11 @@ after you've enabled the feature in your manifest file, you can simply create pr
 
 you can enable predictive back for all routes by overriding `defaultRouteType` in your router, all route types that apply on android support this feature.
 
- 
-
 ## Examples
- 
+
 - [Declarative Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/declarative/declarative.router.dart)
 - [Nested Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/nested-navigation/nested_navigation.router.dart)
- 
+
 ### Support auto_route
 
 You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can enhance a certain functionality or by reporting any problems you encounter and of course buying a couple coffees will help speed up the development process
