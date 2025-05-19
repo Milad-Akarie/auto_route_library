@@ -32,6 +32,7 @@ class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
             showUserPosts: showUserPosts,
           ),
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'MainWebRoute';
@@ -70,7 +71,8 @@ class MainWebRouteArgs {
 /// [_i1.NotFoundScreen]
 class NotFoundRoute extends _i4.PageRouteInfo<void> {
   const NotFoundRoute({List<_i4.PageRouteInfo>? children})
-      : super(NotFoundRoute.name, initialChildren: children);
+      : super(NotFoundRoute.name,
+            initialChildren: children, argsEquality: false);
 
   static const String name = 'NotFoundRoute';
 
@@ -93,6 +95,7 @@ class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
           UserAllPostsRoute.name,
           args: UserAllPostsRouteArgs(key: key, navigate: navigate),
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'UserAllPostsRoute';
@@ -125,7 +128,11 @@ class UserAllPostsRouteArgs {
 /// [_i1.UserFavoritePostsPage]
 class UserFavoritePostsRoute extends _i4.PageRouteInfo<void> {
   const UserFavoritePostsRoute({List<_i4.PageRouteInfo>? children})
-      : super(UserFavoritePostsRoute.name, initialChildren: children);
+      : super(
+          UserFavoritePostsRoute.name,
+          initialChildren: children,
+          argsEquality: false,
+        );
 
   static const String name = 'UserFavoritePostsRoute';
 
@@ -158,6 +165,7 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
           rawQueryParams: {'query': query},
           fragment: fragment,
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'UserRoute';
@@ -205,7 +213,11 @@ class UserRouteArgs {
 /// [_i1.UserPostsPage]
 class UserPostsRoute extends _i4.PageRouteInfo<void> {
   UserPostsRoute({List<_i4.PageRouteInfo>? children})
-      : super(UserPostsRoute.name, initialChildren: children);
+      : super(
+          UserPostsRoute.name,
+          initialChildren: children,
+          argsEquality: false,
+        );
 
   static const String name = 'UserPostsRoute';
 
@@ -238,6 +250,7 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
           rawPathParams: {'userID': userId},
           rawQueryParams: {'likes': likes},
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'UserProfileRoute';
@@ -296,6 +309,7 @@ class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
           WebLoginRoute.name,
           args: WebLoginRouteArgs(key: key, onResult: onResult),
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'WebLoginRoute';
@@ -335,6 +349,7 @@ class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
           WebVerifyRoute.name,
           args: WebVerifyRouteArgs(key: key, onResult: onResult),
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'WebVerifyRoute';

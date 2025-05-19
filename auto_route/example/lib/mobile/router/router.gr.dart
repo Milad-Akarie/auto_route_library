@@ -28,6 +28,7 @@ class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
           args: BookDetailsRouteArgs(id: id),
           rawPathParams: {'id': id},
           initialChildren: children,
+          argsEquality: true,
         );
 
   static const String name = 'BookDetailsRoute';
@@ -53,13 +54,24 @@ class BookDetailsRouteArgs {
   String toString() {
     return 'BookDetailsRouteArgs{id: $id}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! BookDetailsRouteArgs) return false;
+    return id == other.id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 /// generated route for
 /// [_i2.BookListScreen]
 class BookListRoute extends _i8.PageRouteInfo<void> {
   const BookListRoute({List<_i8.PageRouteInfo>? children})
-      : super(BookListRoute.name, initialChildren: children);
+      : super(BookListRoute.name,
+            initialChildren: children, argsEquality: true);
 
   static const String name = 'BookListRoute';
 
@@ -75,7 +87,7 @@ class BookListRoute extends _i8.PageRouteInfo<void> {
 /// [_i3.HomePage]
 class HomeRoute extends _i8.PageRouteInfo<void> {
   const HomeRoute({List<_i8.PageRouteInfo>? children})
-      : super(HomeRoute.name, initialChildren: children);
+      : super(HomeRoute.name, initialChildren: children, argsEquality: true);
 
   static const String name = 'HomeRoute';
 
@@ -103,6 +115,7 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
             showBackButton: showBackButton,
           ),
           initialChildren: children,
+          argsEquality: true,
         );
 
   static const String name = 'LoginRoute';
@@ -139,6 +152,16 @@ class LoginRouteArgs {
   String toString() {
     return 'LoginRouteArgs{key: $key, onLoginResult: $onLoginResult, showBackButton: $showBackButton}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! LoginRouteArgs) return false;
+    return key == other.key && showBackButton == other.showBackButton;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ showBackButton.hashCode;
 }
 
 /// generated route for
@@ -153,6 +176,7 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
           args: MyBooksRouteArgs(key: key, filter: filter),
           rawQueryParams: {'filter': filter},
           initialChildren: children,
+          argsEquality: true,
         );
 
   static const String name = 'MyBooksRoute';
@@ -182,13 +206,23 @@ class MyBooksRouteArgs {
   String toString() {
     return 'MyBooksRouteArgs{key: $key, filter: $filter}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! MyBooksRouteArgs) return false;
+    return key == other.key && filter == other.filter;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ filter.hashCode;
 }
 
 /// generated route for
 /// [_i6.ProfilePage]
 class ProfileRoute extends _i8.PageRouteInfo<void> {
   const ProfileRoute({List<_i8.PageRouteInfo>? children})
-      : super(ProfileRoute.name, initialChildren: children);
+      : super(ProfileRoute.name, initialChildren: children, argsEquality: true);
 
   static const String name = 'ProfileRoute';
 
@@ -214,6 +248,7 @@ class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
           rawPathParams: {'tab': tab},
           rawQueryParams: {'query': query},
           initialChildren: children,
+          argsEquality: true,
         );
 
   static const String name = 'SettingsTab';
@@ -247,13 +282,23 @@ class SettingsTabArgs {
   String toString() {
     return 'SettingsTabArgs{key: $key, tab: $tab, query: $query}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SettingsTabArgs) return false;
+    return key == other.key && tab == other.tab && query == other.query;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ tab.hashCode ^ query.hashCode;
 }
 
 /// generated route for
 /// [_i3.WelcomeScreen]
 class WelcomeRoute extends _i8.PageRouteInfo<void> {
   const WelcomeRoute({List<_i8.PageRouteInfo>? children})
-      : super(WelcomeRoute.name, initialChildren: children);
+      : super(WelcomeRoute.name, initialChildren: children, argsEquality: true);
 
   static const String name = 'WelcomeRoute';
 

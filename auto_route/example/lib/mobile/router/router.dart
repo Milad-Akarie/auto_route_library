@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
 
-@AutoRouterConfig(generateForDir: ['lib/mobile'])
+@AutoRouterConfig(generateForDir: ['lib/mobile'], argsEquality: true)
 class AppRouter extends RootStackRouter {
   @override
   final List<AutoRoute> routes = [

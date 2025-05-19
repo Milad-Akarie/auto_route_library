@@ -24,6 +24,7 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
           AgeInputRoute.name,
           args: AgeInputRouteArgs(key: key, onAgeSubmitted: onAgeSubmitted),
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'AgeInputRoute';
@@ -57,7 +58,7 @@ class AgeInputRouteArgs {
 /// [_i1.MainScreen]
 class MainRoute extends _i2.PageRouteInfo<void> {
   const MainRoute({List<_i2.PageRouteInfo>? children})
-      : super(MainRoute.name, initialChildren: children);
+      : super(MainRoute.name, initialChildren: children, argsEquality: false);
 
   static const String name = 'MainRoute';
 
@@ -80,6 +81,7 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
           NameInputRoute.name,
           args: NameInputRouteArgs(key: key, onNameSubmitted: onNameSubmitted),
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'NameInputRoute';
@@ -121,6 +123,7 @@ class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
           ResultRoute.name,
           args: ResultRouteArgs(key: key, profile: profile, onReset: onReset),
           initialChildren: children,
+          argsEquality: false,
         );
 
   static const String name = 'ResultRoute';

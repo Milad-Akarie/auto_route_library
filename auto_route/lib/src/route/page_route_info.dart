@@ -65,7 +65,13 @@ class PageRouteInfo<T extends Object?> {
     String? fragment,
     this.stringMatch,
     this.redirectedFrom,
+    this.argsEquality = false,
   }) : fragment = fragment ?? '';
+
+  /// Whether the equality check should include [args]
+  ///
+  /// default is false
+  final bool argsEquality;
 
   /// The name of the route
   String get routeName => _name;
@@ -182,7 +188,7 @@ class PageRouteInfo<T extends Object?> {
       other is PageRouteInfo &&
           _name == other._name &&
           fragment == other.fragment &&
-          args == other.args &&
+          (argsEquality ? args == other.args : true) &&
           const ListEquality().equals(initialChildren, other.initialChildren) &&
           const MapEquality().equals(rawPathParams, other.rawPathParams) &&
           const MapEquality().equals(rawQueryParams, other.rawQueryParams);
