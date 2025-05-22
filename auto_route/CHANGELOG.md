@@ -1,7 +1,7 @@
-## 10.0.2
+## 10.1.0
 - **FIX**: Fix tab routes observing issue where initiating tabs can be reported twice.
 - **FIX**: Generated code is not properly formatted #2174
-- **FIX**: Fixed PageRouteInfo equality check regression introduced in v10.0.1 when using code generation with argsEquality: false. The equality operator no longer compares args by default unless argsEquality: true is explicitly set in AutoRouterConfig. This restores compatibility with previous versions and prevents navigation test failures due to custom argument classes lacking a proper == override.
+- **FIX**: Fixed PageRouteInfo equality check regression introduced in v10.0.1 when using code generation with argsEquality: false, which now defaults to true. The equality operator no longer compares args by default unless argsEquality: true is explicitly set in AutoRouterConfig. This restores compatibility with previous versions and prevents navigation test failures due to custom argument classes lacking a proper == override.
 ## 10.0.1
  - **REFACTOR**(custom_route): update route duration type from int to Duration.
  - **FEAT**: add onGeneratePath callback to RootStackRouter to allow custom path generation.

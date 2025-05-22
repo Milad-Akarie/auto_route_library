@@ -28,7 +28,6 @@ class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
           args: BookDetailsRouteArgs(id: id),
           rawPathParams: {'id': id},
           initialChildren: children,
-          argsEquality: true,
         );
 
   static const String name = 'BookDetailsRoute';
@@ -70,8 +69,7 @@ class BookDetailsRouteArgs {
 /// [_i2.BookListScreen]
 class BookListRoute extends _i8.PageRouteInfo<void> {
   const BookListRoute({List<_i8.PageRouteInfo>? children})
-      : super(BookListRoute.name,
-            initialChildren: children, argsEquality: true);
+      : super(BookListRoute.name, initialChildren: children);
 
   static const String name = 'BookListRoute';
 
@@ -87,7 +85,7 @@ class BookListRoute extends _i8.PageRouteInfo<void> {
 /// [_i3.HomePage]
 class HomeRoute extends _i8.PageRouteInfo<void> {
   const HomeRoute({List<_i8.PageRouteInfo>? children})
-      : super(HomeRoute.name, initialChildren: children, argsEquality: true);
+      : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
@@ -115,7 +113,6 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
             showBackButton: showBackButton,
           ),
           initialChildren: children,
-          argsEquality: true,
         );
 
   static const String name = 'LoginRoute';
@@ -176,7 +173,6 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
           args: MyBooksRouteArgs(key: key, filter: filter),
           rawQueryParams: {'filter': filter},
           initialChildren: children,
-          argsEquality: true,
         );
 
   static const String name = 'MyBooksRoute';
@@ -222,7 +218,7 @@ class MyBooksRouteArgs {
 /// [_i6.ProfilePage]
 class ProfileRoute extends _i8.PageRouteInfo<void> {
   const ProfileRoute({List<_i8.PageRouteInfo>? children})
-      : super(ProfileRoute.name, initialChildren: children, argsEquality: true);
+      : super(ProfileRoute.name, initialChildren: children);
 
   static const String name = 'ProfileRoute';
 
@@ -248,7 +244,6 @@ class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
           rawPathParams: {'tab': tab},
           rawQueryParams: {'query': query},
           initialChildren: children,
-          argsEquality: true,
         );
 
   static const String name = 'SettingsTab';
@@ -298,7 +293,7 @@ class SettingsTabArgs {
 /// [_i3.WelcomeScreen]
 class WelcomeRoute extends _i8.PageRouteInfo<void> {
   const WelcomeRoute({List<_i8.PageRouteInfo>? children})
-      : super(WelcomeRoute.name, initialChildren: children, argsEquality: true);
+      : super(WelcomeRoute.name, initialChildren: children);
 
   static const String name = 'WelcomeRoute';
 

@@ -99,7 +99,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                       ),
                     if (fragmentParam != null) 'fragment': refer(fragmentParam.name),
                     'initialChildren': refer('children'),
-                    'argsEquality': literalBool(router.argsEquality),
+                    if (!router.argsEquality) 'argsEquality': literalBool(false),
                   }).code);
               },
             ),

@@ -24,7 +24,6 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
           AgeInputRoute.name,
           args: AgeInputRouteArgs(key: key, onAgeSubmitted: onAgeSubmitted),
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'AgeInputRoute';
@@ -52,13 +51,23 @@ class AgeInputRouteArgs {
   String toString() {
     return 'AgeInputRouteArgs{key: $key, onAgeSubmitted: $onAgeSubmitted}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! AgeInputRouteArgs) return false;
+    return key == other.key && onAgeSubmitted == other.onAgeSubmitted;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onAgeSubmitted.hashCode;
 }
 
 /// generated route for
 /// [_i1.MainScreen]
 class MainRoute extends _i2.PageRouteInfo<void> {
   const MainRoute({List<_i2.PageRouteInfo>? children})
-      : super(MainRoute.name, initialChildren: children, argsEquality: false);
+      : super(MainRoute.name, initialChildren: children);
 
   static const String name = 'MainRoute';
 
@@ -81,7 +90,6 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
           NameInputRoute.name,
           args: NameInputRouteArgs(key: key, onNameSubmitted: onNameSubmitted),
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'NameInputRoute';
@@ -109,6 +117,16 @@ class NameInputRouteArgs {
   String toString() {
     return 'NameInputRouteArgs{key: $key, onNameSubmitted: $onNameSubmitted}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! NameInputRouteArgs) return false;
+    return key == other.key && onNameSubmitted == other.onNameSubmitted;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onNameSubmitted.hashCode;
 }
 
 /// generated route for
@@ -123,7 +141,6 @@ class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
           ResultRoute.name,
           args: ResultRouteArgs(key: key, profile: profile, onReset: onReset),
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'ResultRoute';
@@ -158,4 +175,16 @@ class ResultRouteArgs {
   String toString() {
     return 'ResultRouteArgs{key: $key, profile: $profile, onReset: $onReset}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ResultRouteArgs) return false;
+    return key == other.key &&
+        profile == other.profile &&
+        onReset == other.onReset;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ profile.hashCode ^ onReset.hashCode;
 }

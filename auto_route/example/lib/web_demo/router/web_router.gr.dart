@@ -10,11 +10,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:auto_route/auto_route.dart' as _i4;
+import 'package:collection/collection.dart' as _i6;
 import 'package:example/web_demo/router/web_login_page.dart' as _i2;
 import 'package:example/web_demo/router/web_router.dart' as _i1;
 import 'package:example/web_demo/router/web_verify_page.dart' as _i3;
 import 'package:flutter/foundation.dart' as _i5;
-import 'package:flutter/material.dart' as _i6;
+import 'package:flutter/material.dart' as _i7;
 
 /// generated route for
 /// [_i1.MainWebPage]
@@ -32,7 +33,6 @@ class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
             showUserPosts: showUserPosts,
           ),
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'MainWebRoute';
@@ -65,14 +65,25 @@ class MainWebRouteArgs {
   String toString() {
     return 'MainWebRouteArgs{key: $key, navigate: $navigate, showUserPosts: $showUserPosts}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! MainWebRouteArgs) return false;
+    return key == other.key &&
+        navigate == other.navigate &&
+        showUserPosts == other.showUserPosts;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ navigate.hashCode ^ showUserPosts.hashCode;
 }
 
 /// generated route for
 /// [_i1.NotFoundScreen]
 class NotFoundRoute extends _i4.PageRouteInfo<void> {
   const NotFoundRoute({List<_i4.PageRouteInfo>? children})
-      : super(NotFoundRoute.name,
-            initialChildren: children, argsEquality: false);
+      : super(NotFoundRoute.name, initialChildren: children);
 
   static const String name = 'NotFoundRoute';
 
@@ -95,7 +106,6 @@ class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
           UserAllPostsRoute.name,
           args: UserAllPostsRouteArgs(key: key, navigate: navigate),
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'UserAllPostsRoute';
@@ -122,17 +132,23 @@ class UserAllPostsRouteArgs {
   String toString() {
     return 'UserAllPostsRouteArgs{key: $key, navigate: $navigate}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! UserAllPostsRouteArgs) return false;
+    return key == other.key && navigate == other.navigate;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ navigate.hashCode;
 }
 
 /// generated route for
 /// [_i1.UserFavoritePostsPage]
 class UserFavoritePostsRoute extends _i4.PageRouteInfo<void> {
   const UserFavoritePostsRoute({List<_i4.PageRouteInfo>? children})
-      : super(
-          UserFavoritePostsRoute.name,
-          initialChildren: children,
-          argsEquality: false,
-        );
+      : super(UserFavoritePostsRoute.name, initialChildren: children);
 
   static const String name = 'UserFavoritePostsRoute';
 
@@ -165,7 +181,6 @@ class UserRoute extends _i4.PageRouteInfo<UserRouteArgs> {
           rawQueryParams: {'query': query},
           fragment: fragment,
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'UserRoute';
@@ -207,17 +222,30 @@ class UserRouteArgs {
   String toString() {
     return 'UserRouteArgs{key: $key, id: $id, query: $query, fragment: $fragment}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! UserRouteArgs) return false;
+    return key == other.key &&
+        id == other.id &&
+        const _i6.ListEquality().equals(query, other.query) &&
+        fragment == other.fragment;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^
+      id.hashCode ^
+      const _i6.ListEquality().hash(query) ^
+      fragment.hashCode;
 }
 
 /// generated route for
 /// [_i1.UserPostsPage]
 class UserPostsRoute extends _i4.PageRouteInfo<void> {
   UserPostsRoute({List<_i4.PageRouteInfo>? children})
-      : super(
-          UserPostsRoute.name,
-          initialChildren: children,
-          argsEquality: false,
-        );
+      : super(UserPostsRoute.name, initialChildren: children);
 
   static const String name = 'UserPostsRoute';
 
@@ -250,7 +278,6 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
           rawPathParams: {'userID': userId},
           rawQueryParams: {'likes': likes},
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'UserProfileRoute';
@@ -296,20 +323,33 @@ class UserProfileRouteArgs {
   String toString() {
     return 'UserProfileRouteArgs{key: $key, navigate: $navigate, userId: $userId, likes: $likes}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! UserProfileRouteArgs) return false;
+    return key == other.key &&
+        navigate == other.navigate &&
+        userId == other.userId &&
+        likes == other.likes;
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^ navigate.hashCode ^ userId.hashCode ^ likes.hashCode;
 }
 
 /// generated route for
 /// [_i2.WebLoginPage]
 class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
   WebLoginRoute({
-    _i6.Key? key,
-    _i6.ValueChanged<bool>? onResult,
+    _i7.Key? key,
+    _i7.ValueChanged<bool>? onResult,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           WebLoginRoute.name,
           args: WebLoginRouteArgs(key: key, onResult: onResult),
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'WebLoginRoute';
@@ -328,28 +368,37 @@ class WebLoginRoute extends _i4.PageRouteInfo<WebLoginRouteArgs> {
 class WebLoginRouteArgs {
   const WebLoginRouteArgs({this.key, this.onResult});
 
-  final _i6.Key? key;
+  final _i7.Key? key;
 
-  final _i6.ValueChanged<bool>? onResult;
+  final _i7.ValueChanged<bool>? onResult;
 
   @override
   String toString() {
     return 'WebLoginRouteArgs{key: $key, onResult: $onResult}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! WebLoginRouteArgs) return false;
+    return key == other.key && onResult == other.onResult;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onResult.hashCode;
 }
 
 /// generated route for
 /// [_i3.WebVerifyPage]
 class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
   WebVerifyRoute({
-    _i6.Key? key,
-    _i6.ValueChanged<bool>? onResult,
+    _i7.Key? key,
+    _i7.ValueChanged<bool>? onResult,
     List<_i4.PageRouteInfo>? children,
   }) : super(
           WebVerifyRoute.name,
           args: WebVerifyRouteArgs(key: key, onResult: onResult),
           initialChildren: children,
-          argsEquality: false,
         );
 
   static const String name = 'WebVerifyRoute';
@@ -368,12 +417,22 @@ class WebVerifyRoute extends _i4.PageRouteInfo<WebVerifyRouteArgs> {
 class WebVerifyRouteArgs {
   const WebVerifyRouteArgs({this.key, this.onResult});
 
-  final _i6.Key? key;
+  final _i7.Key? key;
 
-  final _i6.ValueChanged<bool>? onResult;
+  final _i7.ValueChanged<bool>? onResult;
 
   @override
   String toString() {
     return 'WebVerifyRouteArgs{key: $key, onResult: $onResult}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! WebVerifyRouteArgs) return false;
+    return key == other.key && onResult == other.onResult;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ onResult.hashCode;
 }

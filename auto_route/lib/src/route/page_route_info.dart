@@ -65,12 +65,12 @@ class PageRouteInfo<T extends Object?> {
     String? fragment,
     this.stringMatch,
     this.redirectedFrom,
-    this.argsEquality = false,
+    this.argsEquality = true,
   }) : fragment = fragment ?? '';
 
   /// Whether the equality check should include [args]
   ///
-  /// default is false
+  /// default is true
   final bool argsEquality;
 
   /// The name of the route
