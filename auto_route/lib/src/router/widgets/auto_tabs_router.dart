@@ -468,7 +468,17 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
             _initializedPagesTracker[index] = false;
           }
           final isInitialized = _initializedPagesTracker[index] == true;
-          return isInitialized ? widget.itemBuilder(context, index) : _dummyWidget;
+          final child = isInitialized ? widget.itemBuilder(context, index) : _dummyWidget;
+          final isInactive = index != widget.activeIndex;
+
+          // Always wrap with ExcludeSemantics and ExcludeFocus but control with excluding property
+          return ExcludeSemantics(
+            excluding: isInactive,
+            child: ExcludeFocus(
+              excluding: isInactive,
+              child: child,
+            ),
+          );
         },
       ),
     );

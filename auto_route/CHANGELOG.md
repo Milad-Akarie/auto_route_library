@@ -1,5 +1,6 @@
 ## 10.1.1
 - **FEAT**: expose routeTraversalEdgeBehavior property from the underlying Navigator to allow customization of navigation stack edge behavior.
+- **FIX**: improve focus and semantics handling in AutoTabsRouter IndexedStack to exclude inactive tabs from focus traversal and semantics tree while preserving widget state.
 ## 10.1.0
 - **FIX**: Fix tab routes observing issue where initiating tabs can be reported twice.
 - **FIX**: Generated code is not properly formatted #2174
