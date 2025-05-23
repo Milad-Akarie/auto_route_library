@@ -1,3 +1,6 @@
+## 10.1.1
+- **FEAT**: expose routeTraversalEdgeBehavior property from the underlying Navigator to allow customization of navigation stack edge behavior.
+- **FIX**: improve focus and semantics handling in AutoTabsRouter IndexedStack to exclude inactive tabs from focus traversal and semantics tree while preserving widget state.
 ## 10.1.0
 - **FIX**: Fix tab routes observing issue where initiating tabs can be reported twice.
 - **FIX**: Generated code is not properly formatted #2174
@@ -77,7 +80,6 @@ No changes, changelog fix only.
   inside the router. implementing AutoRouteGuard is no longer supported.
 - **BREAKING CHANGE**: `AutoRouterConfig.module` is removed as it's no longer
   needed. `PageRouteInfos` are now self-contained.
--
 
 For more info read the complete migration guide
 [Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
