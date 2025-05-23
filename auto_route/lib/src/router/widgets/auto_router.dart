@@ -35,25 +35,27 @@ class AutoRouter extends StatefulWidget {
   /// The clip behavior of the navigator
   final Clip clipBehavior;
 
+  /// The traversal edge behavior of the navigator
+  final TraversalEdgeBehavior? traversalEdgeBehavior;
+
   /// Default constructor
   const AutoRouter({
     super.key,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
     this.navigatorKey,
     this.inheritNavigatorObservers = true,
     this.placeholder,
     this.clipBehavior = Clip.hardEdge,
+    this.traversalEdgeBehavior,
   });
 
   /// Builds a [_DeclarativeAutoRouter] which uses
   /// a declarative list of routes to update navigator stack
   static Widget declarative({
     Key? key,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
@@ -62,6 +64,7 @@ class AutoRouter extends StatefulWidget {
     OnNestedNavigateCallBack? onNavigate,
     WidgetBuilder? placeholder,
     Clip clipBehavior = Clip.hardEdge,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
@@ -73,6 +76,7 @@ class AutoRouter extends StatefulWidget {
         placeholder: placeholder,
         routes: routes,
         clipBehavior: clipBehavior,
+        traversalEdgeBehavior: traversalEdgeBehavior,
       );
 
   @override
@@ -88,8 +92,7 @@ class AutoRouter extends StatefulWidget {
     var scope = StackRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -166,6 +169,7 @@ class AutoRouterState extends State<AutoRouter> {
       navRestorationScopeId: widget.navRestorationScopeId,
       navigatorObservers: _navigatorObservers,
       placeholder: widget.placeholder,
+      routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
     );
     final stateHash = _controller!.stateHash;
     return RouterScope(
@@ -214,10 +218,10 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final OnNestedNavigateCallBack? onNavigate;
   final WidgetBuilder? placeholder;
   final Clip clipBehavior;
+  final TraversalEdgeBehavior? traversalEdgeBehavior;
   const _DeclarativeAutoRouter({
     required this.routes,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.navigatorKey,
     this.navRestorationScopeId,
@@ -225,6 +229,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
     this.onNavigate,
     this.placeholder,
     this.clipBehavior = Clip.hardEdge,
+    this.traversalEdgeBehavior,
   });
 
   @override
@@ -304,6 +309,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           navigatorObservers: _navigatorObservers,
           didPop: widget.onPopRoute,
           placeholder: widget.placeholder,
+          routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
         ),
       ),
     );
