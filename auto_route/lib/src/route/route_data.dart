@@ -208,10 +208,14 @@ class RouteData<R> {
 
   bool _isReevaluating = false;
 
-  void _onDoneReevaluating(RouteMatch newMatch) {
-    _isReevaluating = false;
+  void _onStartReevaluating(RouteMatch newMatch) {
+    _isReevaluating = true;
     _updateRoute(newMatch);
     _pendingChildren = newMatch.children ?? const [];
+  }
+
+  void _onEndReevaluating(RouteMatch newMatch) {
+    _isReevaluating = false;
   }
 
   /// Completes the pop completer with the given result

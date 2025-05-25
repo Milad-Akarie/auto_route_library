@@ -817,23 +817,23 @@ class TabsRouter extends RoutingController {
     final matches = <ReevaluatableRouteMatch>[];
     for (final page in stack) {
       final match = page.routeData._match;
-      page.routeData._isReevaluating = true;
+      final ReevaluatableRouteMatch reMatch;
       final childCtrl = _innerControllerOfMatch(match.id);
       if (childCtrl != null) {
-        final reMatch = ReevaluatableRouteMatch(
+        reMatch = ReevaluatableRouteMatch(
           currentPage: page,
           originalMatch: match.copyWith(
             children: await childCtrl._composeMatchesForReevaluate(),
           ),
         );
-        matches.add(reMatch);
       } else {
-        final reMatch = ReevaluatableRouteMatch(
+        reMatch = ReevaluatableRouteMatch(
           currentPage: page,
           originalMatch: match.copyWith(children: const []),
         );
-        matches.add(reMatch);
       }
+      page.routeData._onStartReevaluating(reMatch.originalMatch);
+      matches.add(reMatch);
     }
     return matches;
   }
@@ -902,7 +902,7 @@ class TabsRouter extends RoutingController {
 
         if (mayUpdateRoute is ReevaluatableRouteMatch) {
           _pages[pageToUpdateIndex] = mayUpdateRoute.currentPage;
-          mayUpdateRoute.currentPage.routeData._onDoneReevaluating(routeToBeUpdated);
+          mayUpdateRoute.currentPage.routeData._onEndReevaluating(routeToBeUpdated);
         } else {
           final data = _createRouteData(routeToBeUpdated, routeData);
           _pages[pageToUpdateIndex] = data.buildPage();
@@ -1078,7 +1078,6 @@ abstract class StackRouter extends RoutingController {
 
     final matches = <ReevaluatableRouteMatch>[];
     for (var page in stack) {
-      page.routeData._isReevaluating = true;
       var match = page.routeData._match;
       if (alreadyEvaluated.containsKey(match.id)) {
         match = match.copyWith(evaluatedGuards: alreadyEvaluated[match.id]);
@@ -1088,6 +1087,7 @@ abstract class StackRouter extends RoutingController {
         final childMatches = await childCtrl._composeMatchesForReevaluate();
         match = match.copyWith(children: childMatches);
       }
+      page.routeData._onStartReevaluating(match);
 
       /// the route maybe removed from stack at this point
       if (stackData.any((e) => e._match.id == match.id)) {
@@ -1699,7 +1699,7 @@ abstract class StackRouter extends RoutingController {
 
   void _addReevaluatedPage(ReevaluatableRouteMatch match, {bool notify = true}) {
     final page = match.currentPage;
-    page.routeData._onDoneReevaluating(match.originalMatch);
+    page.routeData._onEndReevaluating(match.originalMatch);
     _pages.add(page);
     if (notify) {
       notifyAll();
