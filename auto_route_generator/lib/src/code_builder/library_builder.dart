@@ -21,11 +21,10 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 
 /// Builds a list type reference of type [reference]
-TypeReference listRefer(Reference reference, {bool nullable = false}) =>
-    TypeReference((b) => b
-      ..symbol = "List"
-      ..isNullable = nullable
-      ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
+  ..symbol = "List"
+  ..isNullable = nullable
+  ..types.add(reference));
 
 /// Generates the router library output
 String generateLibrary(
@@ -39,9 +38,7 @@ String generateLibrary(
   );
 
   final emitter = DartEmitter(
-    allocator: router.usesPartBuilder
-        ? Allocator.none
-        : DeferredPagesAllocator(routes, router.deferredLoading),
+    allocator: router.usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, router.deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
@@ -54,8 +51,7 @@ String generateLibrary(
 
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];
-    if (deferredRoutes.any(
-        (e) => e.pageType == route.pageType && route.deferredLoading != true)) {
+    if (deferredRoutes.any((e) => e.pageType == route.pageType && route.deferredLoading != true)) {
       routes[i] = route.copyWith(deferredLoading: true);
     }
   }
@@ -79,8 +75,7 @@ String generateLibrary(
       ]),
   );
 
-  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
-      .format(
+  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion).format(
     library.accept(emitter).toString(),
   );
 }

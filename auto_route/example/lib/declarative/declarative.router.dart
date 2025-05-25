@@ -85,8 +85,7 @@ class _MainScreenState extends State<MainScreen> {
 class NameInputScreen extends StatefulWidget {
   final ValueChanged<String> onNameSubmitted;
 
-  const NameInputScreen({Key? key, required this.onNameSubmitted})
-      : super(key: key);
+  const NameInputScreen({Key? key, required this.onNameSubmitted}) : super(key: key);
 
   @override
   State<NameInputScreen> createState() => _NameInputScreenState();
@@ -132,8 +131,7 @@ class _NameInputScreenState extends State<NameInputScreen> {
 class AgeInputScreen extends StatefulWidget {
   final ValueChanged<int> onAgeSubmitted;
 
-  const AgeInputScreen({Key? key, required this.onAgeSubmitted})
-      : super(key: key);
+  const AgeInputScreen({Key? key, required this.onAgeSubmitted}) : super(key: key);
 
   @override
   State<AgeInputScreen> createState() => _AgeInputScreenState();
@@ -179,8 +177,7 @@ class ResultScreen extends StatelessWidget {
   final Profile profile;
   final VoidCallback onReset;
 
-  const ResultScreen({Key? key, required this.profile, required this.onReset})
-      : super(key: key);
+  const ResultScreen({Key? key, required this.profile, required this.onReset}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

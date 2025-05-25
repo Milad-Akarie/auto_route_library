@@ -17,15 +17,10 @@ class RouterConfigResolver {
     bool usesPartBuilder = false,
     int? cacheHash,
   }) {
-    final deferredLoading =
-        autoRouter.peek('deferredLoading')?.boolValue ?? false;
-    final replaceInRouteName =
-        autoRouter.peek('replaceInRouteName')?.stringValue;
+    final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
+    final replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
     final argsEquality = autoRouter.peek('argsEquality')?.boolValue ?? false;
-    final generateForDir = autoRouter
-        .read('generateForDir')
-        .listValue
-        .map((e) => e.toStringValue()!);
+    final generateForDir = autoRouter.read('generateForDir').listValue.map((e) => e.toStringValue()!);
 
     return RouterConfig(
       routerClassName: clazz.displayName,

@@ -25,8 +25,7 @@ class RouteConfigResolver {
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute = classElement.allSupertypes
-        .any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
+    final hasWrappedRoute = classElement.allSupertypes.any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.nameWithoutSuffix;
 
@@ -40,9 +39,7 @@ class RouteConfigResolver {
     var params = constructor!.parameters;
     var parameters = <ParamConfig>[];
     if (params.isNotEmpty) {
-      if (constructor.isConst &&
-          params.length == 1 &&
-          params.first.type.nameWithoutSuffix == 'Key') {
+      if (constructor.isConst && params.length == 1 && params.first.type.nameWithoutSuffix == 'Key') {
         hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);
@@ -61,10 +58,8 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs = parameters.where((p) =>
-          (p.isRequired || p.isPositional) &&
-          !p.isPathParam &&
-          !p.isQueryParam);
+      var unParsableRequiredArgs =
+          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
       if (unParsableRequiredArgs.isNotEmpty) {
         print(
             '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '

@@ -6,14 +6,7 @@ const _reservedVarNames = ['children'];
 
 /// A list of valid path param types
 /// that can be parsed from a path string
-const validPathParamTypes = [
-  'String',
-  'int',
-  'double',
-  'num',
-  'bool',
-  'dynamic'
-];
+const validPathParamTypes = ['String', 'int', 'double', 'num', 'bool', 'dynamic'];
 
 /// holds constructor parameter info to be used
 /// in generating route parameters.
@@ -230,20 +223,16 @@ class FunctionParamConfig extends ParamConfig {
   }
 
   /// Returns the list of required parameters
-  List<ParamConfig> get requiredParams =>
-      params.where((p) => p.isPositional && !p.isOptional).toList();
+  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList();
 
   /// Returns the list of optional parameters
-  List<ParamConfig> get optionalParams =>
-      params.where((p) => p.isPositional && p.isOptional).toList();
+  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList();
 
   /// Returns the list of named parameters
-  List<ParamConfig> get namedOptionalParams =>
-      params.where((p) => p.isNamed && p.isOptional).toList(growable: false);
+  List<ParamConfig> get namedOptionalParams => params.where((p) => p.isNamed && p.isOptional).toList(growable: false);
 
   /// Returns the list of named required parameters
-  List<ParamConfig> get namedRequiredParams =>
-      params.where((p) => p.isNamed && !p.isOptional).toList(growable: false);
+  List<ParamConfig> get namedRequiredParams => params.where((p) => p.isNamed && !p.isOptional).toList(growable: false);
 
   /// Returns A function reference of the function type
   cb.FunctionType get funRefer => cb.FunctionType(

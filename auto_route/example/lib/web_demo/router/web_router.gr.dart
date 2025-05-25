@@ -70,9 +70,7 @@ class MainWebRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! MainWebRouteArgs) return false;
-    return key == other.key &&
-        navigate == other.navigate &&
-        showUserPosts == other.showUserPosts;
+    return key == other.key && navigate == other.navigate && showUserPosts == other.showUserPosts;
   }
 
   @override
@@ -82,8 +80,7 @@ class MainWebRouteArgs {
 /// generated route for
 /// [_i1.NotFoundScreen]
 class NotFoundRoute extends _i4.PageRouteInfo<void> {
-  const NotFoundRoute({List<_i4.PageRouteInfo>? children})
-      : super(NotFoundRoute.name, initialChildren: children);
+  const NotFoundRoute({List<_i4.PageRouteInfo>? children}) : super(NotFoundRoute.name, initialChildren: children);
 
   static const String name = 'NotFoundRoute';
 
@@ -234,18 +231,13 @@ class UserRouteArgs {
   }
 
   @override
-  int get hashCode =>
-      key.hashCode ^
-      id.hashCode ^
-      const _i6.ListEquality().hash(query) ^
-      fragment.hashCode;
+  int get hashCode => key.hashCode ^ id.hashCode ^ const _i6.ListEquality().hash(query) ^ fragment.hashCode;
 }
 
 /// generated route for
 /// [_i1.UserPostsPage]
 class UserPostsRoute extends _i4.PageRouteInfo<void> {
-  UserPostsRoute({List<_i4.PageRouteInfo>? children})
-      : super(UserPostsRoute.name, initialChildren: children);
+  UserPostsRoute({List<_i4.PageRouteInfo>? children}) : super(UserPostsRoute.name, initialChildren: children);
 
   static const String name = 'UserPostsRoute';
 
@@ -328,15 +320,11 @@ class UserProfileRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! UserProfileRouteArgs) return false;
-    return key == other.key &&
-        navigate == other.navigate &&
-        userId == other.userId &&
-        likes == other.likes;
+    return key == other.key && navigate == other.navigate && userId == other.userId && likes == other.likes;
   }
 
   @override
-  int get hashCode =>
-      key.hashCode ^ navigate.hashCode ^ userId.hashCode ^ likes.hashCode;
+  int get hashCode => key.hashCode ^ navigate.hashCode ^ userId.hashCode ^ likes.hashCode;
 }
 
 /// generated route for

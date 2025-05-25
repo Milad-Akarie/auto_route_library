@@ -26,24 +26,20 @@ class RouteParameterResolver {
     }
     var type = _typeResolver.resolveType(paramType);
     final paramName = parameterElement.name.replaceFirst("_", '');
-    var pathParamAnnotation =
-        _pathParamChecker.firstAnnotationOfExact(parameterElement);
+    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
 
     var nameOrAlias = paramName;
     var isInheritedPathParam = false;
-    final isUrlFragment =
-        _urlFragmentChecker.hasAnnotationOfExact(parameterElement);
+    final isUrlFragment = _urlFragmentChecker.hasAnnotationOfExact(parameterElement);
 
     if (pathParamAnnotation != null) {
-      isInheritedPathParam =
-          pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
+      isInheritedPathParam = pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
       final paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
       }
     }
-    var queryParamAnnotation =
-        _queryParamChecker.firstAnnotationOfExact(parameterElement);
+    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
     if (queryParamAnnotation != null) {
       final paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {
@@ -57,10 +53,7 @@ class RouteParameterResolver {
     }
 
     throwIf(
-      [isUrlFragment, pathParamAnnotation != null, queryParamAnnotation != null]
-              .where((e) => e)
-              .length >
-          1,
+      [isUrlFragment, pathParamAnnotation != null, queryParamAnnotation != null].where((e) => e).length > 1,
       '${parameterElement.name} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
       element: parameterElement,
     );

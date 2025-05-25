@@ -1,17 +1,31 @@
 ## 10.1.0
-- **FEAT**: expose routeTraversalEdgeBehavior property from the underlying Navigator to allow customization of navigation stack edge behavior.
-- **FIX**: improve focus and semantics handling in AutoTabsRouter IndexedStack to exclude inactive tabs from focus traversal and semantics tree while preserving widget state.
+
+- **FEAT**: Expose routeTraversalEdgeBehavior property from the underlying Navigator to allow
+  customization of navigation stack edge behavior.
+- **FIX**: Improve focus and semantics handling in AutoTabsRouter IndexedStack to exclude inactive
+  tabs from focus traversal and semantics tree while preserving widget state.
 - **FIX**: Fix tab routes observing issue where initiating tabs can be reported twice.
-- **FIX**: Fix a couple reevaluation issues.
+- **FIX**: Fix a couple core reevaluation issues.
 - **FIX**: Generated code is not properly formatted #2174
-- **FIX**: Fixed PageRouteInfo equality check regression introduced in v10.0.1 when using code generation with argsEquality: false, which now defaults to true. The equality operator no longer compares args by default unless argsEquality: true is explicitly set in AutoRouterConfig. This restores compatibility with previous versions and prevents navigation test failures due to custom argument classes lacking a proper == override.
+- **FIX**: Fixed PageRouteInfo equality check regression introduced in v10.0.1 when using code
+  generation with argsEquality: false, which now defaults to true. The equality operator no longer
+  compares args by default unless argsEquality: true is explicitly set in AutoRouterConfig. This
+  restores compatibility with previous versions and prevents navigation test failures due to custom
+  argument classes lacking a proper == override.
+
 ## 10.0.1
- - **REFACTOR**(custom_route): update route duration type from int to Duration.
- - **FEAT**: add onGeneratePath callback to RootStackRouter to allow custom path generation.
+
+- **REFACTOR**(custom_route): update route duration type from int to Duration.
+- **FEAT**: add onGeneratePath callback to RootStackRouter to allow custom path generation.
+
 ## 10.0.0 [Minor Breaking Changes]
-- **BREAKING CHANGE**: DeepLink and DeepLink.path will now use 'navigate' instead of push unless specified
-- **BREAKING CHANGE**: ActiveGuardObserver.value will now return a GuardEntry instead of an AutoRouteGuard, use 'activeGuards' to get the list of active guards
-- **FEAT**: add support for using auto_route with out code generation using NamedRouteDef and NamedRoute
+
+- **BREAKING CHANGE**: DeepLink and DeepLink.path will now use 'navigate' instead of push unless
+  specified
+- **BREAKING CHANGE**: ActiveGuardObserver.value will now return a GuardEntry instead of an
+  AutoRouteGuard, use 'activeGuards' to get the list of active guards
+- **FEAT**: add support for using auto_route with out code generation using NamedRouteDef and
+  NamedRoute
   otherwise.
 - **FEAT**: add support for android's predictive back gesture
 - **FEAT**: optional args equality by setting AutoRouterConfig(argsEquality: true)
@@ -34,7 +48,8 @@
 - **FEAT**: Parameters.getList now supports a default value
 - **FIX**: Add required keyword to named required parameters in function parameters' arguments
 - **FIX**: fix inheritPathParam didn't use the .inherit constructor
-- **REFACTOR** rename a couple of apis (popForced -> pop, pushNamed -> pushPath, replaceNamed -> replacePath, navigateNamed -> navigatePath, pathParams -> params)
+- **REFACTOR** rename a couple of apis (popForced -> pop, pushNamed -> pushPath, replaceNamed ->
+  replacePath, navigateNamed -> navigatePath, pathParams -> params)
 
 ## 9.3.0+1
 

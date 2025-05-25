@@ -1,8 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/nullability_suffix.dart'
-    show NullabilitySuffix;
-import 'package:analyzer/dart/element/type.dart'
-    show DartType, ParameterizedType, RecordType;
+import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
+import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType, RecordType;
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:auto_route_generator/utils.dart';
 import 'package:path/path.dart' as p;
@@ -29,8 +27,7 @@ class TypeResolver {
 
     final fallBackImports = <String>{};
     for (var lib in libs) {
-      if (!_isCoreDartType(lib) &&
-          lib.exportNamespace.definedNames.values.contains(element)) {
+      if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames.values.contains(element)) {
         final uri = lib.source.uri;
         if (_unPreferredImports.contains(uri.toString())) {
           fallBackImports.add(uri.toString());
@@ -39,9 +36,7 @@ class TypeResolver {
         if (uri.scheme == 'asset') {
           return _assetToPackage(lib.source.uri);
         }
-        return targetFile == null
-            ? lib.identifier
-            : _relative(uri, targetFile!);
+        return targetFile == null ? lib.identifier : _relative(uri, targetFile!);
       }
     }
     return fallBackImports.firstOrNull;
@@ -66,16 +61,12 @@ class TypeResolver {
 
   String _relative(Uri fileUri, Uri to) {
     var libName = to.pathSegments.first;
-    if ((to.scheme == 'package' &&
-            fileUri.scheme == 'package' &&
-            fileUri.pathSegments.first == libName) ||
+    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.first == libName) ||
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
         return fileUri.pathSegments.last;
       } else {
-        return p.posix
-            .relative(fileUri.path, from: to.path)
-            .replaceFirst('../', '');
+        return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
       }
     } else {
       return fileUri.toString();
@@ -93,8 +84,7 @@ class TypeResolver {
         types.add(ResolvedType(
           name: recordField.type.element?.name ?? 'void',
           import: resolveImport(recordField.type.element),
-          isNullable:
-              recordField.type.nullabilitySuffix == NullabilitySuffix.question,
+          isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
           typeArguments: _resolveTypeArguments(recordField.type),
         ));
       }
@@ -102,8 +92,7 @@ class TypeResolver {
         types.add(ResolvedType(
           name: recordField.type.element?.name ?? 'void',
           import: resolveImport(recordField.type.element),
-          isNullable:
-              recordField.type.nullabilitySuffix == NullabilitySuffix.question,
+          isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
           typeArguments: _resolveTypeArguments(recordField.type),
           nameInRecord: recordField.name,
         ));

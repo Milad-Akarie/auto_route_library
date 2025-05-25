@@ -35,9 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context
-                    .findRootAncestorStateOfType<HomePageState>()
-                    ?.toggleSettingsTap();
+                context.findRootAncestorStateOfType<HomePageState>()?.toggleSettingsTap();
               },
               child: Text('Toggle Settings Tab'),
             ),
