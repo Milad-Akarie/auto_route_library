@@ -13,10 +13,8 @@ import 'package:flutter/widgets.dart';
 /// [SystemNavigator.selectMultiEntryHistory] method is also called. This
 /// overrides the initialization behavior of
 /// [Navigator.reportsRouteUpdateToEngine].
-class AutoRouteInformationProvider extends RouteInformationProvider
-    with WidgetsBindingObserver, ChangeNotifier {
-  AutoRouteInformationProvider._(
-      {required RouteInformation initialRouteInformation, this.neglectIf})
+class AutoRouteInformationProvider extends RouteInformationProvider with WidgetsBindingObserver, ChangeNotifier {
+  AutoRouteInformationProvider._({required RouteInformation initialRouteInformation, this.neglectIf})
       : _value = initialRouteInformation;
 
   /// if true is return the route will be
@@ -28,12 +26,10 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   /// Use the [initialRouteInformation] to set the default route information for this
   /// provider.
   factory AutoRouteInformationProvider(
-      {RouteInformation? initialRouteInformation,
-      bool Function(String? location)? neglectWhen}) {
+      {RouteInformation? initialRouteInformation, bool Function(String? location)? neglectWhen}) {
     final initialRouteInfo = initialRouteInformation ??
         RouteInformation(
-          uri: Uri.parse(
-              WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+          uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
         );
 
     return AutoRouteInformationProvider._(
@@ -44,8 +40,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider
 
   @override
   void routerReportsNewRouteInformation(RouteInformation routeInformation,
-      {RouteInformationReportingType type =
-          RouteInformationReportingType.none}) {
+      {RouteInformationReportingType type = RouteInformationReportingType.none}) {
     if (neglectIf != null && neglectIf!(routeInformation.uri.toString())) {
       return;
     }
@@ -72,9 +67,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider
   RouteInformation get value => _value;
   RouteInformation _value;
 
-  RouteInformation _valueInEngine = RouteInformation(
-      uri: Uri.parse(
-          WidgetsBinding.instance.platformDispatcher.defaultRouteName));
+  RouteInformation _valueInEngine =
+      RouteInformation(uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName));
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
     if (_value == routeInformation) return;

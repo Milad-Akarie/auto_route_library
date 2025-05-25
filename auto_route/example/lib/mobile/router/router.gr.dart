@@ -102,16 +102,11 @@ class HomeRoute extends _i8.PageRouteInfo<void> {
 class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
     _i9.Key? key,
-    void Function(bool)? onLoginResult,
     bool showBackButton = true,
     List<_i8.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
-          args: LoginRouteArgs(
-            key: key,
-            onLoginResult: onLoginResult,
-            showBackButton: showBackButton,
-          ),
+          args: LoginRouteArgs(key: key, showBackButton: showBackButton),
           initialChildren: children,
         );
 
@@ -123,31 +118,21 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
       final args = data.argsAs<LoginRouteArgs>(
         orElse: () => const LoginRouteArgs(),
       );
-      return _i4.LoginPage(
-        key: args.key,
-        onLoginResult: args.onLoginResult,
-        showBackButton: args.showBackButton,
-      );
+      return _i4.LoginPage(key: args.key, showBackButton: args.showBackButton);
     },
   );
 }
 
 class LoginRouteArgs {
-  const LoginRouteArgs({
-    this.key,
-    this.onLoginResult,
-    this.showBackButton = true,
-  });
+  const LoginRouteArgs({this.key, this.showBackButton = true});
 
   final _i9.Key? key;
-
-  final void Function(bool)? onLoginResult;
 
   final bool showBackButton;
 
   @override
   String toString() {
-    return 'LoginRouteArgs{key: $key, onLoginResult: $onLoginResult, showBackButton: $showBackButton}';
+    return 'LoginRouteArgs{key: $key, showBackButton: $showBackButton}';
   }
 
   @override
@@ -182,9 +167,8 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
     builder: (data) {
       final queryParams = data.queryParams;
       final args = data.argsAs<MyBooksRouteArgs>(
-        orElse: () => MyBooksRouteArgs(
-          filter: queryParams.optString('filter', 'none2'),
-        ),
+        orElse: () =>
+            MyBooksRouteArgs(filter: queryParams.optString('filter', 'none2')),
       );
       return _i5.MyBooksPage(key: args.key, filter: args.filter);
     },

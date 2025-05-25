@@ -43,12 +43,6 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
                         ),
                       ),
                       const SizedBox(height: 32),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.router.maybePop();
-                        },
-                        child: Text('Pop '),
-                      ),
                       FloatingActionButton(
                         heroTag: null,
                         onPressed: () {

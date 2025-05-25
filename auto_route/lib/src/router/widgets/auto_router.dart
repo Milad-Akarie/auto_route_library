@@ -162,7 +162,7 @@ class AutoRouterState extends State<AutoRouter> {
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    var navigator = AutoRouteNavigator(
+    final navigator = AutoRouteNavigator(
       router: _controller!,
       clipBehavior: widget.clipBehavior,
       key: GlobalObjectKey(_controller.hashCode),

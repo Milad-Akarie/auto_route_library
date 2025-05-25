@@ -16,12 +16,13 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final authService = AuthService();
 
-  final _rootRouter = AppRouter();
+  late final _rootRouter = AppRouter(authService);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _rootRouter.config(
+        reevaluateListenable: authService,
         navigatorObservers: () => [
           AutoRouteObserver(),
         ],

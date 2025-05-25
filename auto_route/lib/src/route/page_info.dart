@@ -22,8 +22,7 @@ class PageInfo {
   }
 
   /// Builds a new instance of [PageInfo] with the given parameters
-  factory PageInfo.builder(String name,
-      {required WidgetBuilderWithData builder}) {
+  factory PageInfo.builder(String name, {required WidgetBuilderWithData builder}) {
     return PageInfo(
       name,
       builder: (data) => Builder(
@@ -35,10 +34,7 @@ class PageInfo {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PageInfo &&
-          runtimeType == other.runtimeType &&
-          builder == other.builder &&
-          name == other.name;
+      other is PageInfo && runtimeType == other.runtimeType && builder == other.builder && name == other.name;
 
   @override
   int get hashCode => name.hashCode ^ builder.hashCode;

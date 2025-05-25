@@ -13,8 +13,7 @@ void main() {
     router = NestedRouter();
   });
 
-  testWidgets(
-      'Pushing ${SecondHostRoute.name} with no children should present [$SecondNested1Route]',
+  testWidgets('Pushing ${SecondHostRoute.name} with no children should present [$SecondNested1Route]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.push(SecondHostRoute());
@@ -33,8 +32,7 @@ void main() {
     expect(router.urlState.url, '/second');
   });
 
-  testWidgets(
-      'Pushing ${SecondHostRoute.name} then popping-top should present [$FirstPage]',
+  testWidgets('Pushing ${SecondHostRoute.name} then popping-top should present [$FirstPage]',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.push(SecondHostRoute());
@@ -108,8 +106,7 @@ void main() {
     expect(router.urlState.url, '/second');
   });
 
-  testWidgets(
-      'Pushing $SecondHostRoute should add a child router then popping it should remove it',
+  testWidgets('Pushing $SecondHostRoute should add a child router then popping it should remove it',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.push(SecondHostRoute());
@@ -239,8 +236,7 @@ void main() {
       await pumpRouterApp(tester, router);
       router.push(SecondHostRoute(children: const [SecondNested1Route()]));
       await tester.pumpAndSettle();
-      expect(
-          router.topMostRouter(), router.innerRouterOf(SecondHostRoute.name));
+      expect(router.topMostRouter(), router.innerRouterOf(SecondHostRoute.name));
     },
   );
 
@@ -268,10 +264,8 @@ void main() {
       router.pushWidget(const Text('Test'));
       await tester.pumpAndSettle();
       final secondHostRouter = router.innerRouterOf(SecondHostRoute.name)!;
-      expect(
-          router.topMostRouter(ignorePagelessRoutes: true), secondHostRouter);
-      expect(secondHostRouter.topMostRouter(ignorePagelessRoutes: true),
-          secondHostRouter);
+      expect(router.topMostRouter(ignorePagelessRoutes: true), secondHostRouter);
+      expect(secondHostRouter.topMostRouter(ignorePagelessRoutes: true), secondHostRouter);
     },
   );
 }

@@ -159,8 +159,7 @@ class RouteMatch<T> {
   List<String> allSegments({bool includeEmpty = false}) => [
         if (segments.isEmpty && includeEmpty) '',
         ...segments,
-        if (hasChildren)
-          ...children!.last.allSegments(includeEmpty: includeEmpty)
+        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
       ];
 
   /// Joins all segments to a valid path
@@ -260,6 +259,72 @@ class RouteMatch<T> {
   PageRouteInfo toPageRouteInfo() => PageRouteInfo.fromMatch(this);
 }
 
+/// When a route is re-evaluated this class is used
+/// to hold [currentPage] instance which will be used in-case there's no need
+/// to create a new one
+@immutable
+class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
+  /// The current page instance
+  final AutoRoutePage<R> currentPage;
+
+  /// The original match that was used to create this instance
+  final RouteMatch originalMatch;
+
+  /// Creates a new instance of [ReevaluatableRouteMatch]
+  ReevaluatableRouteMatch({
+    required this.currentPage,
+    required this.originalMatch,
+  }) : super._internal(
+          config: originalMatch._config,
+          stringMatch: originalMatch.stringMatch,
+          segments: originalMatch.segments,
+          key: originalMatch.key,
+          params: originalMatch.params,
+          queryParams: originalMatch.queryParams,
+          fragment: originalMatch.fragment,
+          redirectedFrom: originalMatch.redirectedFrom,
+          autoFilled: originalMatch.autoFilled,
+          id: originalMatch.id,
+          children: originalMatch.children,
+          evaluatedGuards: originalMatch.evaluatedGuards,
+          args: originalMatch.args,
+        );
+
+  @override
+  ReevaluatableRouteMatch<T, R> copyWith({
+    String? stringMatch,
+    Parameters? pathParams,
+    Parameters? queryParams,
+    List<RouteMatch>? children,
+    String? fragment,
+    List<String>? segments,
+    String? redirectedFrom,
+    Object? args,
+    LocalKey? key,
+    AutoRoute? config,
+    bool? autoFilled,
+    List<AutoRouteGuard>? evaluatedGuards,
+  }) {
+    return ReevaluatableRouteMatch<T, R>(
+      currentPage: currentPage,
+      originalMatch: super.copyWith(
+        stringMatch: stringMatch,
+        pathParams: pathParams,
+        queryParams: queryParams,
+        children: children,
+        fragment: fragment,
+        segments: segments,
+        redirectedFrom: redirectedFrom,
+        args: args,
+        key: key,
+        config: config ?? _config,
+        autoFilled: autoFilled ?? this.autoFilled,
+        evaluatedGuards: evaluatedGuards ?? _evaluatedGuards,
+      ),
+    );
+  }
+}
+
 /// An abstract representation of a [RouteMatch]
 ///
 /// This is meant to be used in testing to verify
@@ -296,8 +361,7 @@ class HierarchySegment {
       'name': name,
       if (pathParams?.isNotEmpty == true) 'pathParams': pathParams!.rawMap,
       if (queryParams?.isNotEmpty == true) 'queryParams': queryParams!.rawMap,
-      if (children.isNotEmpty)
-        'children': children.map((e) => e.toJson()).toList(),
+      if (children.isNotEmpty) 'children': children.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -317,11 +381,7 @@ class HierarchySegment {
           const ListEquality().equals(children, other.children);
 
   @override
-  int get hashCode =>
-      name.hashCode ^
-      pathParams.hashCode ^
-      queryParams.hashCode ^
-      const ListEquality().hash(children);
+  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
 }
 
 /// An extension to create a pretty json output of
@@ -335,10 +395,8 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
     Map toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(segments.map(
         (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true)
-            'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true)
-            'queryParams': e.queryParams!.rawMap,
+          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
+          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
           if (e.children.isNotEmpty) 'children': toMap(e.children),
         }),
       ));

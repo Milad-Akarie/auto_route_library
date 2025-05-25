@@ -7,9 +7,10 @@ part of '../router/controller/routing_controller.dart';
 /// e.g RouteData.of(context).name
 ///
 /// It also tracks ancestors by taking in a parent-route
-class RouteData {
+class RouteData<R> {
   RouteMatch _match;
   RouteData? _parent;
+  final Completer<R?>? _popCompleter;
 
   /// The router this instance was created by
   final RoutingController router;
@@ -36,45 +37,57 @@ class RouteData {
   RouteData({
     required RouteMatch route,
     required this.router,
+    Completer<R?>? popCompleter,
     RouteData? parent,
     required this.stackKey,
     required List<RouteMatch> pendingChildren,
     required this.type,
   })  : _match = route,
+        _popCompleter = popCompleter,
         _parent = parent,
-        pendingChildren = List<RouteMatch>.from(pendingChildren);
+        _pendingChildren = List<RouteMatch>.from(pendingChildren);
 
   /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
   /// where it can be used by [CupertinoNavigationBar]
   ///
   /// it can also be used manually by calling [RouteData.title] inside widgets
-  String Function(BuildContext context) get title => _match.titleBuilder == null
-      ? (_) => _match.name
-      : (context) => _match.titleBuilder!(context, this);
+  String Function(BuildContext context) get title =>
+      _match.titleBuilder == null ? (_) => _match.name : (context) => _match.titleBuilder!(context, this);
 
   /// Builds a String value that that's passed to
   /// [AutoRoutePage.restorationId]
   @internal
-  String get restorationId => _match.restorationId == null
-      ? _match.name
-      : _match.restorationId!(_match);
-
-  /// The pre-matched sub-routes of this route
-  ///
-  /// These are consumed by the sub-router once it's created
-  final List<RouteMatch> pendingChildren;
+  String get restorationId => _match.restorationId == null ? _match.name : _match.restorationId!(_match);
 
   /// Whether is route is in the visible url-segments
   bool get isActive => router.isRouteActive(name);
 
   /// Whether this route has pending children
-  bool get hasPendingChildren => pendingChildren.isNotEmpty;
+  bool get hasPendingChildren => _pendingChildren.isNotEmpty;
+
+  List<RouteMatch> _pendingChildren;
+
+  /// The pre-matched sub-routes of this route
+  ///
+  /// These are consumed by the sub-router once it's created
+  List<RouteMatch> get pendingChildren => _pendingChildren;
 
   /// Looks up and returns the scoped instance
   ///
   /// throws an error if it does not find it
   static RouteData of(BuildContext context) {
     return RouteDataScope.of(context).routeData;
+  }
+
+  /// The pop completer that's used in navigation actions
+  /// e.g [StackRouter.push]
+  /// it completes when the built route is popped
+  Future<R?> get popped {
+    if (router.ignorePopCompleters || _popCompleter == null) {
+      return SynchronousFuture(null);
+    } else {
+      return _popCompleter!.future;
+    }
   }
 
   /// Validates and returns [args] casted as [T]
@@ -85,24 +98,19 @@ class RouteData {
     final args = _match.args;
     if (args == null) {
       if (orElse == null) {
-        final messages = [
-          '${T.toString()} can not be null because the corresponding page has a required parameter'
-        ];
+        final messages = ['${T.toString()} can not be null because the corresponding page has a required parameter'];
         if (_match.autoFilled) {
-          messages.add(
-              '${_match.name} is an auto created ancestor of target route ${_match.flattened.last.name}');
+          messages.add('${_match.name} is an auto created ancestor of target route ${_match.flattened.last.name}');
           messages.add(
               'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first');
-          messages.add(
-              'try navigating to ${_match.flattened.map((e) => e.name).join(' -> ')}');
+          messages.add('try navigating to ${_match.flattened.map((e) => e.name).join(' -> ')}');
         }
         throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
       } else {
         return orElse();
       }
     } else if (args is! T) {
-      throw MissingRequiredParameterError(
-          'Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw MissingRequiredParameterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
     } else {
       return args;
     }
@@ -196,5 +204,55 @@ class RouteData {
   /// Builds the [AutoRoutePage] page
   AutoRoutePage<T> buildPage<T>() {
     return _match.buildPage<T>(this);
+  }
+
+  bool _isReevaluating = false;
+
+  void _onDoneReevaluating(RouteMatch newMatch) {
+    _isReevaluating = false;
+    _updateRoute(newMatch);
+    _pendingChildren = newMatch.children ?? const [];
+  }
+
+  /// Completes the pop completer with the given result
+  void onPopInvoked(R? result) {
+    if (_isReevaluating || router.ignorePopCompleters) {
+      // if the route is re-evaluating or pop completers are ignored
+      // we don't complete the pop completer
+      return;
+    }
+    if (_popCompleter != null && !_popCompleter!.isCompleted) {
+      _popCompleter?.complete(result);
+    }
+  }
+
+  Animation<dynamic>? _animation;
+
+  /// The main animation that is used by the Route
+  void setAnimation(Animation<dynamic>? animation) {
+    _animation = animation;
+  }
+
+  /// Returns the current animation completion future
+  /// if the current route is animating
+  ///
+  /// If the current route is not animating, it returns null
+  Future<void>? get animationCompletion {
+    if (_animation case final animation?) {
+      if (animation.isAnimating) {
+        // if the current route is animating, we wait for it to complete
+        final completer = Completer<void>();
+        void listener(AnimationStatus status) {
+          if (!animation.isAnimating) {
+            completer.complete();
+            animation.removeStatusListener(listener);
+          }
+        }
+
+        animation.addStatusListener(listener);
+        return completer.future;
+      }
+    }
+    return null;
   }
 }

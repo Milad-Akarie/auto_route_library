@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 //ignore_for_file: public_member_api_docs
 @RoutePage(name: 'SettingsTab')
@@ -19,8 +21,7 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage>
-    with AutoRouteAwareStateMixin<SettingsPage> {
+class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMixin<SettingsPage> {
   var queryUpdateCont = 0;
 
   @override
@@ -45,12 +46,19 @@ class _SettingsPageState extends State<SettingsPage>
               child: Text('Update Query $queryUpdateCont'),
             ),
             ElevatedButton(
-                onPressed: () {
-                  context.navigateTo(booksTab(
-                    children: [BookDetailsRoute(id: 1)],
-                  ));
-                },
-                child: Text('Navigate to book details/1'))
+              onPressed: () {
+                context.navigateTo(booksTab(
+                  children: [BookDetailsRoute(id: 1)],
+                ));
+              },
+              child: Text('Navigate to book details/1'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.read<AuthService>().logout();
+              },
+              child: Text('Logout'),
+            ),
           ],
         ),
       ),

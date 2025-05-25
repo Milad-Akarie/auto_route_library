@@ -2,8 +2,7 @@ part of 'routing_controller.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
 /// Signature for on navigation function used by [AutoRouteGuard]
-typedef OnNavigation = Function(
-    NavigationResolver resolver, StackRouter router);
+typedef OnNavigation = Function(NavigationResolver resolver, StackRouter router);
 
 /// A middleware for stacked routes where clients
 /// can either resume or abort the navigation event
@@ -29,17 +28,14 @@ abstract class AutoRouteGuard {
   );
 
   /// Builds a simple instance that takes in the [OnNavigation] callback
-  factory AutoRouteGuard.simple(OnNavigation onNavigation) =
-      AutoRouteGuardCallback;
+  factory AutoRouteGuard.simple(OnNavigation onNavigation) = AutoRouteGuardCallback;
 
   /// Builds a simple instance that returns either a redirect-to route or null for no redirect
-  factory AutoRouteGuard.redirect(
-          PageRouteInfo? Function(NavigationResolver resolver) redirect) =
+  factory AutoRouteGuard.redirect(PageRouteInfo? Function(NavigationResolver resolver) redirect) =
       _AutoRouteGuardRedirectCallback;
 
   /// Builds a simple instance that returns either a redirect-to path or null for no redirect
-  factory AutoRouteGuard.redirectPath(
-          String? Function(NavigationResolver resolver) redirect) =
+  factory AutoRouteGuard.redirectPath(String? Function(NavigationResolver resolver) redirect) =
       _AutoRouteGuardRedirectPathCallback;
 }
 
@@ -81,8 +77,7 @@ abstract class ReevaluateListenable extends ChangeNotifier {
   ReevaluateListenable();
 
   /// Builds [ReevaluateListenable] from a stream
-  factory ReevaluateListenable.stream(Stream stream) =
-      _StreamReevaluateListenable;
+  factory ReevaluateListenable.stream(Stream stream) = _StreamReevaluateListenable;
 }
 
 class _StreamReevaluateListenable extends ReevaluateListenable {
@@ -199,8 +194,7 @@ class NavigationResolver {
 
   /// Completes [_completer] with either true to continue navigation
   /// or false to abort navigation
-  void next([bool continueNavigation = true]) =>
-      resolveNext(continueNavigation);
+  void next([bool continueNavigation = true]) => resolveNext(continueNavigation);
 
   /// Completes [_completer] with either true to continue navigation
   /// or false to abort navigation
@@ -270,17 +264,23 @@ class NavigationResolver {
   }) async {
     if (_isRedirecting) return null;
     _isRedirecting = true;
-    return _router._redirect(
+    final result = await _router._redirect<T>(
       route,
       onFailure: onFailure,
       replace: replace,
       onMatch: (scope, match) async {
         await _completer.future;
         _isRedirecting = false;
-        scope.markUrlStateForReplace();
-        scope._removeRoute(match);
+        if (scope.stackData.any((e) => e.matchId == match.id)) {
+          scope.markUrlStateForReplace();
+          scope._removeRoute(match);
+        }
       },
     );
+    if (!_completer.isCompleted) {
+      next(false);
+    }
+    return result;
   }
 
   /// Keeps track of the navigated-to route

@@ -24,8 +24,7 @@ import 'package:mockito/mockito.dart' as _i1;
 /// A class which mocks [AutoRouterObserver].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAutoRouterObserver extends _i1.Mock
-    implements _i2.AutoRouterObserver {
+class MockAutoRouterObserver extends _i1.Mock implements _i2.AutoRouterObserver {
   @override
   void didInitTabRoute(
     _i2.TabPageRoute? route,
@@ -47,15 +46,13 @@ class MockAutoRouterObserver extends _i1.Mock
       );
 
   @override
-  void didPush(_i3.Route<dynamic>? route, _i3.Route<dynamic>? previousRoute) =>
-      super.noSuchMethod(
+  void didPush(_i3.Route<dynamic>? route, _i3.Route<dynamic>? previousRoute) => super.noSuchMethod(
         Invocation.method(#didPush, [route, previousRoute]),
         returnValueForMissingStub: null,
       );
 
   @override
-  void didPop(_i3.Route<dynamic>? route, _i3.Route<dynamic>? previousRoute) =>
-      super.noSuchMethod(
+  void didPop(_i3.Route<dynamic>? route, _i3.Route<dynamic>? previousRoute) => super.noSuchMethod(
         Invocation.method(#didPop, [route, previousRoute]),
         returnValueForMissingStub: null,
       );

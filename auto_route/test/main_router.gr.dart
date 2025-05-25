@@ -12,8 +12,7 @@ part of 'main_router.dart';
 
 /// generated route for
 /// [DeclarativeRouterHostScreen]
-class DeclarativeRouterHostRoute
-    extends PageRouteInfo<DeclarativeRouterHostRouteArgs> {
+class DeclarativeRouterHostRoute extends PageRouteInfo<DeclarativeRouterHostRouteArgs> {
   DeclarativeRouterHostRoute({
     Key? key,
     required ValueNotifier<int> pageNotifier,
@@ -67,8 +66,7 @@ class DeclarativeRouterHostRouteArgs {
 /// generated route for
 /// [FirstPage]
 class FirstRoute extends PageRouteInfo<void> {
-  const FirstRoute({List<PageRouteInfo>? children})
-      : super(FirstRoute.name, initialChildren: children);
+  const FirstRoute({List<PageRouteInfo>? children}) : super(FirstRoute.name, initialChildren: children);
 
   static const String name = 'FirstRoute';
 
@@ -83,8 +81,7 @@ class FirstRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [FourthPage]
 class FourthRoute extends PageRouteInfo<void> {
-  const FourthRoute({List<PageRouteInfo>? children})
-      : super(FourthRoute.name, initialChildren: children);
+  const FourthRoute({List<PageRouteInfo>? children}) : super(FourthRoute.name, initialChildren: children);
 
   static const String name = 'FourthRoute';
 
@@ -99,8 +96,7 @@ class FourthRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [NotFoundPage]
 class NotFoundRoute extends PageRouteInfo<void> {
-  const NotFoundRoute({List<PageRouteInfo>? children})
-      : super(NotFoundRoute.name, initialChildren: children);
+  const NotFoundRoute({List<PageRouteInfo>? children}) : super(NotFoundRoute.name, initialChildren: children);
 
   static const String name = 'NotFoundRoute';
 
@@ -169,21 +165,17 @@ class SecondHostRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! SecondHostRouteArgs) return false;
-    return key == other.key &&
-        useCustomLeading == other.useCustomLeading &&
-        hasDrawer == other.hasDrawer;
+    return key == other.key && useCustomLeading == other.useCustomLeading && hasDrawer == other.hasDrawer;
   }
 
   @override
-  int get hashCode =>
-      key.hashCode ^ useCustomLeading.hashCode ^ hasDrawer.hashCode;
+  int get hashCode => key.hashCode ^ useCustomLeading.hashCode ^ hasDrawer.hashCode;
 }
 
 /// generated route for
 /// [SecondNested1Page]
 class SecondNested1Route extends PageRouteInfo<void> {
-  const SecondNested1Route({List<PageRouteInfo>? children})
-      : super(SecondNested1Route.name, initialChildren: children);
+  const SecondNested1Route({List<PageRouteInfo>? children}) : super(SecondNested1Route.name, initialChildren: children);
 
   static const String name = 'SecondNested1Route';
 
@@ -198,8 +190,7 @@ class SecondNested1Route extends PageRouteInfo<void> {
 /// generated route for
 /// [SecondNested2Page]
 class SecondNested2Route extends PageRouteInfo<void> {
-  const SecondNested2Route({List<PageRouteInfo>? children})
-      : super(SecondNested2Route.name, initialChildren: children);
+  const SecondNested2Route({List<PageRouteInfo>? children}) : super(SecondNested2Route.name, initialChildren: children);
 
   static const String name = 'SecondNested2Route';
 
@@ -214,8 +205,7 @@ class SecondNested2Route extends PageRouteInfo<void> {
 /// generated route for
 /// [SecondNested3Page]
 class SecondNested3Route extends PageRouteInfo<void> {
-  const SecondNested3Route({List<PageRouteInfo>? children})
-      : super(SecondNested3Route.name, initialChildren: children);
+  const SecondNested3Route({List<PageRouteInfo>? children}) : super(SecondNested3Route.name, initialChildren: children);
 
   static const String name = 'SecondNested3Route';
 
@@ -230,8 +220,7 @@ class SecondNested3Route extends PageRouteInfo<void> {
 /// generated route for
 /// [SecondPage]
 class SecondRoute extends PageRouteInfo<void> {
-  const SecondRoute({List<PageRouteInfo>? children})
-      : super(SecondRoute.name, initialChildren: children);
+  const SecondRoute({List<PageRouteInfo>? children}) : super(SecondRoute.name, initialChildren: children);
 
   static const String name = 'SecondRoute';
 
@@ -246,8 +235,7 @@ class SecondRoute extends PageRouteInfo<void> {
 /// generated route for
 /// [Tab1Page]
 class Tab1Route extends PageRouteInfo<void> {
-  const Tab1Route({List<PageRouteInfo>? children})
-      : super(Tab1Route.name, initialChildren: children);
+  const Tab1Route({List<PageRouteInfo>? children}) : super(Tab1Route.name, initialChildren: children);
 
   static const String name = 'Tab1Route';
 
@@ -262,8 +250,7 @@ class Tab1Route extends PageRouteInfo<void> {
 /// generated route for
 /// [Tab2Nested1Page]
 class Tab2Nested1Route extends PageRouteInfo<void> {
-  const Tab2Nested1Route({List<PageRouteInfo>? children})
-      : super(Tab2Nested1Route.name, initialChildren: children);
+  const Tab2Nested1Route({List<PageRouteInfo>? children}) : super(Tab2Nested1Route.name, initialChildren: children);
 
   static const String name = 'Tab2Nested1Route';
 
@@ -278,8 +265,7 @@ class Tab2Nested1Route extends PageRouteInfo<void> {
 /// generated route for
 /// [Tab2Nested2Page]
 class Tab2Nested2Route extends PageRouteInfo<void> {
-  const Tab2Nested2Route({List<PageRouteInfo>? children})
-      : super(Tab2Nested2Route.name, initialChildren: children);
+  const Tab2Nested2Route({List<PageRouteInfo>? children}) : super(Tab2Nested2Route.name, initialChildren: children);
 
   static const String name = 'Tab2Nested2Route';
 
@@ -294,8 +280,7 @@ class Tab2Nested2Route extends PageRouteInfo<void> {
 /// generated route for
 /// [Tab2Page]
 class Tab2Route extends PageRouteInfo<void> {
-  const Tab2Route({List<PageRouteInfo>? children})
-      : super(Tab2Route.name, initialChildren: children);
+  const Tab2Route({List<PageRouteInfo>? children}) : super(Tab2Route.name, initialChildren: children);
 
   static const String name = 'Tab2Route';
 
@@ -310,8 +295,7 @@ class Tab2Route extends PageRouteInfo<void> {
 /// generated route for
 /// [Tab3Nested1Page]
 class Tab3Nested1Route extends PageRouteInfo<void> {
-  const Tab3Nested1Route({List<PageRouteInfo>? children})
-      : super(Tab3Nested1Route.name, initialChildren: children);
+  const Tab3Nested1Route({List<PageRouteInfo>? children}) : super(Tab3Nested1Route.name, initialChildren: children);
 
   static const String name = 'Tab3Nested1Route';
 
@@ -326,8 +310,7 @@ class Tab3Nested1Route extends PageRouteInfo<void> {
 /// generated route for
 /// [Tab3Nested2Page]
 class Tab3Nested2Route extends PageRouteInfo<void> {
-  const Tab3Nested2Route({List<PageRouteInfo>? children})
-      : super(Tab3Nested2Route.name, initialChildren: children);
+  const Tab3Nested2Route({List<PageRouteInfo>? children}) : super(Tab3Nested2Route.name, initialChildren: children);
 
   static const String name = 'Tab3Nested2Route';
 
@@ -342,8 +325,7 @@ class Tab3Nested2Route extends PageRouteInfo<void> {
 /// generated route for
 /// [Tab3Page]
 class Tab3Route extends PageRouteInfo<void> {
-  const Tab3Route({List<PageRouteInfo>? children})
-      : super(Tab3Route.name, initialChildren: children);
+  const Tab3Route({List<PageRouteInfo>? children}) : super(Tab3Route.name, initialChildren: children);
 
   static const String name = 'Tab3Route';
 
@@ -420,21 +402,17 @@ class TabsHostRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! TabsHostRouteArgs) return false;
-    return key == other.key &&
-        tabsType == other.tabsType &&
-        useDefaultRoutes == other.useDefaultRoutes;
+    return key == other.key && tabsType == other.tabsType && useDefaultRoutes == other.useDefaultRoutes;
   }
 
   @override
-  int get hashCode =>
-      key.hashCode ^ tabsType.hashCode ^ useDefaultRoutes.hashCode;
+  int get hashCode => key.hashCode ^ tabsType.hashCode ^ useDefaultRoutes.hashCode;
 }
 
 /// generated route for
 /// [ThirdPage]
 class ThirdRoute extends PageRouteInfo<void> {
-  const ThirdRoute({List<PageRouteInfo>? children})
-      : super(ThirdRoute.name, initialChildren: children);
+  const ThirdRoute({List<PageRouteInfo>? children}) : super(ThirdRoute.name, initialChildren: children);
 
   static const String name = 'ThirdRoute';
 

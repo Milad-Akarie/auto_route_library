@@ -12,13 +12,7 @@ class BookListScreen extends StatefulWidget {
   State<BookListScreen> createState() => _BookListScreenState();
 }
 
-class _BookListScreenState extends State<BookListScreen>
-    with AutoRouteAwareStateMixin<BookListScreen> {
-  @override
-  void didPushNext() {
-    print('didPushNext');
-  }
-
+class _BookListScreenState extends State<BookListScreen> {
   @override
   Widget build(BuildContext context) {
     var booksDb = BooksDBProvider.of(context);
@@ -30,8 +24,10 @@ class _BookListScreenState extends State<BookListScreen>
             child: ListTile(
               title: Text(book.name),
               subtitle: Text(book.genre),
-              onTap: () {
-                context.pushRoute(BookDetailsRoute(id: book.id));
+              onTap: () async {
+                final result = await context
+                    .pushRoute<String>(BookDetailsRoute(id: book.id));
+                print('BookDetailsRoute result: $result');
               },
             ),
           ),

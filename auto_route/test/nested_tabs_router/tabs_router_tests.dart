@@ -50,7 +50,7 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
       final tabsRouter = router.innerRouterOf<TabsRouter>(TabsHostRoute.name);
       expect(tabsRouter, isNotNull);
       tabsRouter!.setActiveIndex(2);
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(Duration(milliseconds: 400));
       expectTopPage(router, Tab3Nested1Route.name);
       expect(router.urlState.url, '/tab3');
     },
@@ -107,8 +107,7 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
   testWidgets(
     'Initializing router App with deep-link "/tab3/tab3Nested2" should present FirstRoute/Tab3Route/Tab3Nested2Route',
     (WidgetTester tester) async {
-      await pumpRouterApp(tester, router,
-          initialLink: '/tab3/tab3Nested2?tabsType=$tabsType');
+      await pumpRouterApp(tester, router, initialLink: '/tab3/tab3Nested2?tabsType=$tabsType');
       expectTopPage(router, Tab3Nested2Route.name);
       expect(router.urlState.path, '/tab3/tab3Nested2');
     },
@@ -117,8 +116,7 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
   testWidgets(
     'Initializing router App with invalid deep-link should present FirstRoute/Tab1Route',
     (WidgetTester tester) async {
-      await pumpRouterApp(tester, router,
-          initialLink: '/invalid-deep-link?tabsType=$tabsType');
+      await pumpRouterApp(tester, router, initialLink: '/invalid-deep-link?tabsType=$tabsType');
       expectTopPage(router, Tab1Route.name);
       expect(router.urlState.path, '/');
     },

@@ -1,5 +1,4 @@
-import 'package:auto_route/src/router/controller/routing_controller.dart'
-    show StackRouter;
+import 'package:auto_route/src/router/controller/routing_controller.dart' show StackRouter;
 
 import 'navigation_history_base.dart';
 

@@ -39,8 +39,7 @@ typedef AutoLeadingButtonBuilder = Widget Function(
 
 /// Signature function to provide nullable leading widget
 /// based on the current router state
-typedef NullableWidgetBuilder = Widget Function(
-    BuildContext context, Widget? leading);
+typedef NullableWidgetBuilder = Widget Function(BuildContext context, Widget? leading);
 
 /// An AutoRoute replacement of appBar aut-leading-button
 ///
@@ -212,20 +211,13 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<AutoLeadingButtonBuilder?>(
-        'builder', widget.builder));
-    properties.add(DiagnosticsProperty<NullableWidgetBuilder?>(
-        'nullableBuilder', widget._nullableBuilder));
-    properties.add(DiagnosticsProperty<bool>(
-        'showIfChildCanPop', widget.showIfChildCanPop));
-    properties.add(DiagnosticsProperty<bool>(
-        'ignorePagelessRoutes', widget.ignorePagelessRoutes));
-    properties.add(DiagnosticsProperty<bool>(
-        'showIfParentCanPop', widget._showIfParentCanPop));
+    properties.add(DiagnosticsProperty<AutoLeadingButtonBuilder?>('builder', widget.builder));
+    properties.add(DiagnosticsProperty<NullableWidgetBuilder?>('nullableBuilder', widget._nullableBuilder));
+    properties.add(DiagnosticsProperty<bool>('showIfChildCanPop', widget.showIfChildCanPop));
+    properties.add(DiagnosticsProperty<bool>('ignorePagelessRoutes', widget.ignorePagelessRoutes));
+    properties.add(DiagnosticsProperty<bool>('showIfParentCanPop', widget._showIfParentCanPop));
     properties.add(DiagnosticsProperty<Color?>('color', widget.color));
-    properties.add(
-        DiagnosticsProperty<RouterScope>('scope', RouterScope.of(context)));
-    properties.add(DiagnosticsProperty<PagelessRoutesObserver>(
-        'pagelessRoutesObserver', _pagelessRoutesObserver));
+    properties.add(DiagnosticsProperty<RouterScope>('scope', RouterScope.of(context)));
+    properties.add(DiagnosticsProperty<PagelessRoutesObserver>('pagelessRoutesObserver', _pagelessRoutesObserver));
   }
 }

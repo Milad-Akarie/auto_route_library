@@ -1,8 +1,8 @@
-## 10.1.1
+## 10.1.0
 - **FEAT**: expose routeTraversalEdgeBehavior property from the underlying Navigator to allow customization of navigation stack edge behavior.
 - **FIX**: improve focus and semantics handling in AutoTabsRouter IndexedStack to exclude inactive tabs from focus traversal and semantics tree while preserving widget state.
-## 10.1.0
 - **FIX**: Fix tab routes observing issue where initiating tabs can be reported twice.
+- **FIX**: Fix a couple reevaluation issues.
 - **FIX**: Generated code is not properly formatted #2174
 - **FIX**: Fixed PageRouteInfo equality check regression introduced in v10.0.1 when using code generation with argsEquality: false, which now defaults to true. The equality operator no longer compares args by default unless argsEquality: true is explicitly set in AutoRouterConfig. This restores compatibility with previous versions and prevents navigation test failures due to custom argument classes lacking a proper == override.
 ## 10.0.1
