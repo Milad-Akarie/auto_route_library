@@ -1,45 +1,32 @@
-import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
-import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType, RecordType;
-import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
+import 'package:lean_builder/builder.dart';
+
+import 'package:lean_builder/type.dart';
 import 'package:path/path.dart' as p;
 
-const _unPreferredImports = {'dart:ui'};
-
 /// A Helper class that resolves types
-class TypeResolver {
-  /// The list of resolved libraries in [BuildStep]
-  final List<LibraryElement> libs;
-
+class LeanTypeResolver {
   /// The target file to resolve relative paths to
   final Uri? targetFile;
+  final Resolver _resolver;
 
   /// Default constructor
-  TypeResolver(this.libs, [this.targetFile]);
+  LeanTypeResolver(this._resolver, [this.targetFile]);
 
   /// Resolved the import path of the given [element]
-  String? resolveImport(Element? element) {
-    // return early if source is null or element is a core type
-    if (libs.isEmpty || element?.source == null || _isCoreDartType(element!)) {
+  String? resolveImport(DartType? type) {
+    // return early if source is null
+    if (type == null || type is! NamedDartType) {
       return null;
     }
+    final uri = _resolver.uriForAsset(type.declarationRef.providerId);
+    // return early if the element is from core dart library
+    if (_isCoreDartType(uri)) return null;
 
-    final fallBackImports = <String>{};
-    for (var lib in libs) {
-      if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames.values.contains(element)) {
-        final uri = lib.source.uri;
-        if (_unPreferredImports.contains(uri.toString())) {
-          fallBackImports.add(uri.toString());
-          continue;
-        }
-        if (uri.scheme == 'asset') {
-          return _assetToPackage(lib.source.uri);
-        }
-        return targetFile == null ? lib.identifier : _relative(uri, targetFile!);
-      }
+    if (uri.scheme == 'asset') {
+      return _assetToPackage(uri);
     }
-    return fallBackImports.firstOrNull;
+    return targetFile == null ? uri.toString() : _relative(uri, targetFile!);
   }
 
   String _assetToPackage(Uri uri) {
@@ -73,8 +60,8 @@ class TypeResolver {
     }
   }
 
-  bool _isCoreDartType(Element element) {
-    return element.source?.fullName == 'dart:core';
+  bool _isCoreDartType(Uri uri) {
+    return uri.scheme == 'dart' && uri.pathSegments.firstOrNull == 'core';
   }
 
   List<ResolvedType> _resolveTypeArguments(DartType typeToCheck) {
@@ -82,17 +69,17 @@ class TypeResolver {
     if (typeToCheck is RecordType) {
       for (final recordField in typeToCheck.positionalFields) {
         types.add(ResolvedType(
-          name: recordField.type.element?.name ?? 'void',
-          import: resolveImport(recordField.type.element),
-          isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
+          name: recordField.type.name ?? 'void',
+          import: resolveImport(recordField.type),
+          isNullable: recordField.type.isNullable,
           typeArguments: _resolveTypeArguments(recordField.type),
         ));
       }
       for (final recordField in typeToCheck.namedFields) {
         types.add(ResolvedType(
-          name: recordField.type.element?.name ?? 'void',
-          import: resolveImport(recordField.type.element),
-          isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
+          name: recordField.type.name ?? 'void',
+          import: resolveImport(recordField.type),
+          isNullable: recordField.type.isNullable,
           typeArguments: _resolveTypeArguments(recordField.type),
           nameInRecord: recordField.name,
         ));
@@ -102,17 +89,17 @@ class TypeResolver {
         if (type is RecordType) {
           types.add(ResolvedType.record(
             name: type.name ?? 'void',
-            import: resolveImport(type.element),
-            isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+            import: resolveImport(type),
+            isNullable: type.isNullable,
             typeArguments: _resolveTypeArguments(type),
           ));
-        } else if (type.element is TypeParameterElement) {
+        } else if (type.element is TypeParameterType) {
           types.add(ResolvedType(name: 'dynamic'));
         } else {
           types.add(ResolvedType(
             name: type.element?.name ?? 'void',
-            import: resolveImport(type.element),
-            isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+            import: resolveImport(type),
+            isNullable: type.isNullable,
             typeArguments: _resolveTypeArguments(type),
           ));
         }
@@ -123,27 +110,22 @@ class TypeResolver {
 
   /// Resolves the given [type] to a [ResolvedType]
   ResolvedType resolveType(DartType type) {
-    final effectiveElement = type.alias?.element ?? type.element;
-    final import = resolveImport(effectiveElement);
+    final import = resolveImport(type);
     final typeArgs = <ResolvedType>[];
-    final alias = type.alias;
-    if (alias != null) {
-      typeArgs.addAll(alias.typeArguments.map(resolveType));
-    } else {
-      typeArgs.addAll(_resolveTypeArguments(type));
-    }
-    if (type is RecordType && type.alias == null) {
+    typeArgs.addAll(_resolveTypeArguments(type));
+
+    if (type is RecordType) {
       return ResolvedType.record(
-        name: effectiveElement?.displayName ?? 'void',
+        name: type.name ?? 'void',
         import: import,
-        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        isNullable: type.isNullable,
         typeArguments: typeArgs,
       );
     }
 
     return ResolvedType(
-      name: effectiveElement?.displayName ?? type.nameWithoutSuffix,
-      isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+      name: type.name ?? 'void',
+      isNullable: type.isNullable,
       import: import,
       typeArguments: typeArgs,
     );

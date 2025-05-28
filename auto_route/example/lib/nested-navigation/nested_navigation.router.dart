@@ -36,6 +36,8 @@ class NestedRouter extends RootStackRouter {
 
 @RoutePage()
 class HostScreen extends StatelessWidget {
+  const HostScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +54,8 @@ class HostScreen extends StatelessWidget {
 
 @RoutePage()
 class FirstScreen extends StatelessWidget {
+  const FirstScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,6 +71,8 @@ class FirstScreen extends StatelessWidget {
 
 @RoutePage()
 class SecondScreen extends StatelessWidget {
+  const SecondScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

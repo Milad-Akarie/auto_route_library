@@ -5,17 +5,16 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-//ignore_for_file: public_member_api_docs
 @RoutePage(name: 'SettingsTab')
 class SettingsPage extends StatefulWidget {
   final String tab;
   final String query;
 
-  SettingsPage({
-    Key? key,
+  const SettingsPage({
+    super.key,
     @pathParam this.tab = 'none',
     @queryParam this.query = 'none',
-  }) : super(key: key);
+  });
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -47,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
             ),
             ElevatedButton(
               onPressed: () {
-                context.navigateTo(booksTab(
+                context.navigateTo(BooksTab(
                   children: [BookDetailsRoute(id: 1)],
                 ));
               },

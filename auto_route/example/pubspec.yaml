@@ -12,10 +12,11 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  provider: ^6.1.2
+  provider: ^6.1.5
   auto_route:
 
 
+  collection: any
 dev_dependencies:
   build_runner: ^2.4.15
   flutter_test:

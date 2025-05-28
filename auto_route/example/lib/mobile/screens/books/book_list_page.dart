@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 //ignore_for_file: public_member_api_docs
 @RoutePage()
 class BookListScreen extends StatefulWidget {
-  const BookListScreen();
+  const BookListScreen({super.key});
 
   @override
   State<BookListScreen> createState() => _BookListScreenState();

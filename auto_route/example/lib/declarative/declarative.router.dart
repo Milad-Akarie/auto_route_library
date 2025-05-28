@@ -26,6 +26,8 @@ class DecRouter extends RootStackRouter {
 class DeclarativeNavigationExampleApp extends StatelessWidget {
   final _router = DecRouter();
 
+  DeclarativeNavigationExampleApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
@@ -36,6 +38,8 @@ class DeclarativeNavigationExampleApp extends StatelessWidget {
 
 @RoutePage()
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
@@ -85,7 +89,7 @@ class _MainScreenState extends State<MainScreen> {
 class NameInputScreen extends StatefulWidget {
   final ValueChanged<String> onNameSubmitted;
 
-  const NameInputScreen({Key? key, required this.onNameSubmitted}) : super(key: key);
+  const NameInputScreen({super.key, required this.onNameSubmitted});
 
   @override
   State<NameInputScreen> createState() => _NameInputScreenState();
@@ -131,7 +135,7 @@ class _NameInputScreenState extends State<NameInputScreen> {
 class AgeInputScreen extends StatefulWidget {
   final ValueChanged<int> onAgeSubmitted;
 
-  const AgeInputScreen({Key? key, required this.onAgeSubmitted}) : super(key: key);
+  const AgeInputScreen({super.key, required this.onAgeSubmitted});
 
   @override
   State<AgeInputScreen> createState() => _AgeInputScreenState();
@@ -177,7 +181,7 @@ class ResultScreen extends StatelessWidget {
   final Profile profile;
   final VoidCallback onReset;
 
-  const ResultScreen({Key? key, required this.profile, required this.onReset}) : super(key: key);
+  const ResultScreen({super.key, required this.profile, required this.onReset});
 
   @override
   Widget build(BuildContext context) {

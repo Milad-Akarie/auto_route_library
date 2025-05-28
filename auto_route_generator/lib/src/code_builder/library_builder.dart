@@ -32,10 +32,10 @@ String generateLibrary(
   required List<RouteConfig> routes,
   Set<String> ignoreForFile = const {},
 }) {
-  throwIf(
-    router.usesPartBuilder && router.deferredLoading,
-    'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
-  );
+  if (router.usesPartBuilder && router.deferredLoading) {
+    throw ArgumentError(
+        'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!');
+  }
 
   final emitter = DartEmitter(
     allocator: router.usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, router.deferredLoading),
@@ -44,10 +44,12 @@ String generateLibrary(
   );
 
   final deferredRoutes = routes.where((r) => r.deferredLoading == true);
-  throwIf(
-    router.usesPartBuilder && deferredRoutes.isNotEmpty,
-    'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports! ${deferredRoutes.map((e) => e.name)}',
-  );
+
+  if (router.usesPartBuilder && deferredRoutes.isNotEmpty) {
+    throw ArgumentError(
+      'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports! ${deferredRoutes.map((e) => e.name)}',
+    );
+  }
 
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];

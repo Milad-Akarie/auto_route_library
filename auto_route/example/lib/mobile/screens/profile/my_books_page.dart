@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class MyBooksPage extends StatelessWidget {
   final String? filter;
 
-  MyBooksPage({Key? key, @queryParam this.filter = 'none2'}) : super(key: key);
+  const MyBooksPage({super.key, @queryParam this.filter = 'none2'});
 
   @override
   Widget build(BuildContext context) {

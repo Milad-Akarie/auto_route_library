@@ -7,20 +7,18 @@ import 'package:flutter/material.dart';
 class WebVerifyPage extends StatelessWidget {
   final ValueChanged<bool>? onResult;
 
-  const WebVerifyPage({Key? key, this.onResult}) : super(key: key);
+  const WebVerifyPage({super.key, this.onResult});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              App.of(context).authService.isVerified = true;
-            },
-            child: Text('verify'),
-          ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            App.of(context).authService.isVerified = true;
+          },
+          child: Text('verify'),
         ),
       ),
     );

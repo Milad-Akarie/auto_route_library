@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/annotations.dart';
+import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/builders/auto_route_builder.dart';
 import 'package:auto_route_generator/src/builders/cache_aware_builder.dart';
 import 'package:auto_route_generator/src/code_builder/library_builder.dart';
@@ -14,7 +15,6 @@ import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:source_gen/source_gen.dart';
 
-import '../../utils.dart';
 import '../resolvers/router_config_resolver.dart';
 
 const _typeChecker = TypeChecker.fromRuntime(AutoRouterConfig);

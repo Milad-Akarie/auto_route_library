@@ -8,14 +8,15 @@ class BookDetailsPage extends StatefulWidget {
   final int id;
 
   const BookDetailsPage({
+    super.key,
     @pathParam this.id = -1,
   });
 
   @override
-  _BookDetailsPageState createState() => _BookDetailsPageState();
+  BookDetailsPageState createState() => BookDetailsPageState();
 }
 
-class _BookDetailsPageState extends State<BookDetailsPage> {
+class BookDetailsPageState extends State<BookDetailsPage> {
   int counter = 1;
 
   @override
@@ -23,9 +24,9 @@ class _BookDetailsPageState extends State<BookDetailsPage> {
     final booksDb = BooksDBProvider.of(context);
     final book = booksDb?.findBookById(widget.id);
     return book == null
-        ? Container(child: Text('Book null'))
+        ? Text('Book null')
         : Scaffold(
-            body: Container(
+            body: SizedBox(
               width: double.infinity,
               child: Hero(
                 tag: 'Hero${book.id}',

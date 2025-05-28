@@ -35,7 +35,7 @@ class BooksDB {
 class BooksDBProvider extends InheritedWidget {
   final booksDb = BooksDB();
 
-  BooksDBProvider({required Widget child}) : super(child: child);
+  BooksDBProvider({super.key, required super.child});
 
   @override
   bool updateShouldNotify(_) {
@@ -86,7 +86,7 @@ class User {
 class UsersDBProvider extends InheritedWidget {
   final usersDB = UsersDB();
 
-  UsersDBProvider({required Widget child}) : super(child: child);
+  UsersDBProvider({super.key, required super.child});
 
   @override
   bool updateShouldNotify(_) {

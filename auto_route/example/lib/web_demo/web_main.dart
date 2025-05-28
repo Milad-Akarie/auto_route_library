@@ -7,6 +7,8 @@ void main() {
 }
 
 class App extends StatefulWidget {
+  const App({super.key});
+
   @override
   AppState createState() => AppState();
 
@@ -35,39 +37,37 @@ class AppState extends State<App> {
 }
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Login to continue'),
-        ),
-        body: Center(
-          child: Column(
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  App.of(context).authService.isAuthenticated = true;
-                },
-                child: Text('Login'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  App.of(context).authService.isVerified = true;
-                },
-                child: Text('Verify'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  final authService = App.of(context).authService;
-                  authService.loginAndVerify();
-                },
-                child: Text('Login & Verify'),
-              ),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Login to continue'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                App.of(context).authService.isAuthenticated = true;
+              },
+              child: Text('Login'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                App.of(context).authService.isVerified = true;
+              },
+              child: Text('Verify'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final authService = App.of(context).authService;
+                authService.loginAndVerify();
+              },
+              child: Text('Login & Verify'),
+            ),
+          ],
         ),
       ),
     );

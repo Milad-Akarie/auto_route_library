@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class WebLoginPage extends StatelessWidget {
   final ValueChanged<bool>? onResult;
 
-  const WebLoginPage({Key? key, this.onResult}) : super(key: key);
+  const WebLoginPage({super.key, this.onResult});
 
   @override
   Widget build(BuildContext context) {

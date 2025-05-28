@@ -1,3 +1,6 @@
+
+## 10.2.0
+- **FEAT**: Add experimental support for lean_builder
 ## 10.1.0
 
 - **FEAT**: Expose routeTraversalEdgeBehavior property from the underlying Navigator to allow

@@ -1,48 +1,48 @@
-import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
-
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
-import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
-import 'package:source_gen/source_gen.dart';
+import 'package:lean_builder/builder.dart';
+import 'package:lean_builder/element.dart';
+import 'package:lean_builder/type.dart';
 
-import '../../build_utils.dart';
-
-final _pathParamChecker = TypeChecker.fromRuntime(PathParam);
-final _queryParamChecker = TypeChecker.fromRuntime(QueryParam);
-final _urlFragmentChecker = TypeChecker.fromRuntime(UrlFragment);
+import '../build_utils.dart';
+import 'lean_type_resolver.dart';
 
 /// Resolves route parameters
-class RouteParameterResolver {
-  final TypeResolver _typeResolver;
+class LeanRouteParameterResolver {
+  final LeanTypeResolver _typeResolver;
+  final Resolver _resolver;
+
+  late final _pathParamChecker = _resolver.typeCheckerOf<PathParam>();
+  late final _queryParamChecker = _resolver.typeCheckerOf<QueryParam>();
+  late final _urlFragmentChecker = _resolver.typeCheckerOf<UrlFragment>();
 
   /// Default constructor
-  RouteParameterResolver(this._typeResolver);
+  LeanRouteParameterResolver(this._resolver, this._typeResolver);
 
   /// Resolves a ParameterElement into a consumable [ParamConfig]
   ParamConfig resolve(ParameterElement parameterElement) {
     final paramType = parameterElement.type;
-    if (paramType is FunctionType && paramType.alias == null) {
+    if (paramType is FunctionType) {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
     final paramName = parameterElement.name.replaceFirst("_", '');
-    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
+    var pathParamObj = _pathParamChecker.firstAnnotationOfExact(parameterElement)?.constant as ConstObject?;
 
     var nameOrAlias = paramName;
     var isInheritedPathParam = false;
     final isUrlFragment = _urlFragmentChecker.hasAnnotationOfExact(parameterElement);
 
-    if (pathParamAnnotation != null) {
-      isInheritedPathParam = pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
-      final paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
+    if (pathParamObj != null) {
+      isInheritedPathParam = pathParamObj.getBool('_inherited')?.value == true;
+      final paramAlias = pathParamObj.getString('name')?.value;
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
       }
     }
-    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
-    if (queryParamAnnotation != null) {
-      final paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
+    var queryParamObj = _queryParamChecker.firstAnnotationOfExact(parameterElement)?.constant as ConstObject?;
+    if (queryParamObj != null) {
+      final paramAlias = queryParamObj.getString('name')?.value;
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
       }
@@ -54,7 +54,7 @@ class RouteParameterResolver {
     }
 
     throwIf(
-      [isUrlFragment, pathParamAnnotation != null, queryParamAnnotation != null].where((e) => e).length > 1,
+      [isUrlFragment, pathParamObj != null, queryParamObj != null].where((e) => e).length > 1,
       '${parameterElement.name} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
       element: parameterElement,
     );
@@ -81,9 +81,9 @@ class RouteParameterResolver {
       isRequired: parameterElement.isRequiredNamed,
       isOptional: parameterElement.isOptional,
       isNamed: parameterElement.isNamed,
-      isPathParam: pathParamAnnotation != null,
+      isPathParam: pathParamObj != null,
       isInheritedPathParam: isInheritedPathParam,
-      isQueryParam: queryParamAnnotation != null,
+      isQueryParam: queryParamObj != null,
       isUrlFragment: isUrlFragment,
       defaultValueCode: parameterElement.defaultValueCode,
     );

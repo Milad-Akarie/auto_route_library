@@ -1,35 +1,37 @@
-import 'package:analyzer/dart/element/element.dart';
-import 'package:source_gen/source_gen.dart';
+import 'package:auto_route_generator/src/models/route_config.dart';
+import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:lean_builder/builder.dart';
+import 'package:lean_builder/element.dart';
 
-import '../../build_utils.dart';
-import '../models/route_config.dart';
-import '../models/route_parameter_config.dart';
-import '../resolvers/route_parameter_resolver.dart';
-import '../resolvers/type_resolver.dart';
+import '../build_utils.dart';
+import 'lean_route_parameter_resolver.dart';
+import 'lean_type_resolver.dart';
 
 /// extracts route configs from class fields and their meta data
-class RouteConfigResolver {
-  final TypeResolver _typeResolver;
+class LeanRouteConfigResolver {
+  final Resolver _resolver;
+  final LeanTypeResolver _typeResolver;
 
   /// Default constructor
-  RouteConfigResolver(this._typeResolver);
+  LeanRouteConfigResolver(this._resolver, this._typeResolver);
 
   /// Resolves a [ClassElement] into a consumable [RouteConfig]
-  RouteConfig resolve(Element element, ConstantReader routePage) {
-    var isDeferred = routePage.peek('deferredLoading')?.boolValue;
+  RouteConfig resolve(Element element, ConstObject routePage) {
+    var isDeferred = routePage.getBool('deferredLoading')?.value;
     throwIf(
       element is! ClassElement,
-      '${element.getDisplayString()} is not a class element',
+      '${element.name} is not a class element',
       element: element,
     );
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute = classElement.allSupertypes.any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
+    // final autoRouteWrapperChecker = _resolver.typeCheckerOf<AutoRouteWrapper>();
+    final hasWrappedRoute = false; //autoRouteWrapperChecker.isAssignableFrom(classElement);
     var pageType = _typeResolver.resolveType(page);
-    var className = page.nameWithoutSuffix;
+    var className = page.name;
 
-    var name = routePage.peek('name')?.stringValue;
+    var name = routePage.getString('name')?.value;
     final constructor = classElement.unnamedConstructor;
     throwIf(
       constructor == null,
@@ -39,10 +41,10 @@ class RouteConfigResolver {
     var params = constructor!.parameters;
     var parameters = <ParamConfig>[];
     if (params.isNotEmpty) {
-      if (constructor.isConst && params.length == 1 && params.first.type.nameWithoutSuffix == 'Key') {
+      if (constructor.isConst && params.length == 1 && params.first.type.name == 'Key') {
         hasConstConstructor = true;
       } else {
-        final paramResolver = RouteParameterResolver(_typeResolver);
+        final paramResolver = LeanRouteParameterResolver(_resolver, _typeResolver);
         for (ParameterElement p in constructor.parameters) {
           parameters.add(paramResolver.resolve(p));
         }

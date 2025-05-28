@@ -1,7 +1,3 @@
-import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart';
-import 'package:source_gen/source_gen.dart';
-
 /// Recase a string to lowerCamelCase
 String toLowerCamelCase(String s) {
   if (s.length < 2) return s.toLowerCase();
@@ -17,21 +13,6 @@ String capitalize(String s) {
 /// Recase a string to kabab-case
 String toKababCase(String s) {
   return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
-}
-
-/// Helper to through flutter errors if [condition] is true
-void throwIf(bool condition, String message, {Element? element}) {
-  if (condition) {
-    throwError(message, element: element);
-  }
-}
-
-/// Helper to through flutter errors
-void throwError(String message, {Element? element}) {
-  throw InvalidGenerationSourceError(
-    message,
-    element: element,
-  );
 }
 
 /// Extension methods for [Iterable]
@@ -65,15 +46,5 @@ extension IterableExtenstion<E> on Iterable<E> {
       uniqueItems[distinctBy(e)] = e;
     }
     return uniqueItems.values;
-  }
-}
-
-/// Extension helpers for [DartType]
-extension DartTypeX on DartType {
-  /// Returns the display string of this type
-  /// without nullability suffix
-  String get nameWithoutSuffix {
-    final name = getDisplayString();
-    return name.endsWith('?') ? name.substring(0, name.length - 1) : name;
   }
 }

@@ -3,10 +3,13 @@ import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
 
+// ignore_for_file: constant_identifier_names
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
 class AppRouter extends RootStackRouter {
   final AuthService authService;
+
   AppRouter(this.authService);
+
   @override
   late final List<AutoRoute> routes = [
     AutoRoute(
@@ -15,7 +18,7 @@ class AppRouter extends RootStackRouter {
       children: [
         AutoRoute(
           path: 'books',
-          page: booksTab.page,
+          page: BooksTab.page,
           initial: true,
           children: [
             AutoRoute(
@@ -51,5 +54,5 @@ class AppRouter extends RootStackRouter {
   ];
 }
 
-const booksTab = EmptyShellRoute('BooksTab');
-const profileTab = EmptyShellRoute('ProfileTab');
+const BooksTab = EmptyShellRoute('BooksTab');
+const ProfileTab = EmptyShellRoute('ProfileTab');
