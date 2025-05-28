@@ -1,3 +1,5 @@
+## 10.2.2
+- **FIX**: Fix files with no @RoutePage annotation should not generate empty output when using lean_builder;
 ## 10.2.1
 - **FEAT**: Add experimental support for lean_builder
 ## 10.2.0 - skip

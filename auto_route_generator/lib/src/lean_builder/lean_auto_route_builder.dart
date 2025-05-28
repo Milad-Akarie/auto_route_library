@@ -56,6 +56,8 @@ class LeanAutoRouteBuilder extends Builder {
       routes.add(route);
     }
 
+    if (routes.isEmpty) return;
+
     final routeList = RoutesList(
       routes: routes,
       inputPath: buildStep.asset.shortUri.toString(),
