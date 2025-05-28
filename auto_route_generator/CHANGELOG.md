@@ -1,8 +1,7 @@
-
-## 10.2.0
+## 10.2.1
 - **FEAT**: Add experimental support for lean_builder
+## 10.2.0 - skip
 ## 10.1.0
-
 - **FEAT**: Expose routeTraversalEdgeBehavior property from the underlying Navigator to allow
   customization of navigation stack edge behavior.
 - **FIX**: Improve focus and semantics handling in AutoTabsRouter IndexedStack to exclude inactive
