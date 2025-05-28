@@ -59,6 +59,39 @@
   - [Android Predictive Back](#android-predictive-back)
 - [Examples](#examples)
 
+## LeanBuilder support (Experimental)
+- auto_route_generator: (10.2.3+) now supports [LeanBuilder](https://pub.dev/packages/lean_builder) for super-fast incremental builds.
+
+to use lean_builder instead of build_runner, simply add it to your dev_dependencies:
+
+```yaml
+dev_dependencies:
+  auto_route_generator: <latest-version>
+  lean_builder: <latest-version>
+```
+
+and then run the builder using:
+
+```terminal
+# for one-time build
+dart run lean_builder build
+
+# for watching files and rebuilding on changes
+dart run lean_builder watch
+```
+
+to disable auto_route_generator from using build_runner, you can add the following to your `build.yaml` file:
+
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator:
+        enabled: false
+      auto_route_generator:auto_router_generator:
+        enabled: false
+```
+
 ## Migration guides
 
 - [Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
