@@ -48,7 +48,7 @@ class LeanAutoRouteBuilder extends Builder {
     final library = resolver.resolveLibrary(buildStep.asset);
     final typeChecker = resolver.typeCheckerOf<RoutePage>();
 
-    for (var annotatedElement in library.annotatedWith(typeChecker)) {
+    for (var annotatedElement in library.annotatedWithExact(typeChecker)) {
       final route = routeResolver.resolve(
         annotatedElement.element,
         annotatedElement.annotation.constant as ConstObject,

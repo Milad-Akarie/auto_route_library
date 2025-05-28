@@ -1,3 +1,5 @@
+## 10.2.3
+- **FIX**: Fix collecting config files takes a bit too long (Optimization).
 ## 10.2.2
 - **FIX**: Fix files with no @RoutePage annotation should not generate empty output when using lean_builder;
 ## 10.2.1

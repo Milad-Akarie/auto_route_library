@@ -7,11 +7,12 @@ import 'package:auto_route_generator/src/lean_builder/resolvers/lean_router_conf
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:auto_route_generator/src/models/routes_list.dart';
-import 'package:glob/glob.dart';
 import 'package:lean_builder/builder.dart';
 import 'package:lean_builder/element.dart';
 
 import 'build_utils.dart';
+
+const _configFilesDirectory = '.dart_tool/lean_build/generated';
 
 /// Base class for [AutoRouterBuilder] and [AutoRouterModuleBuilder]
 @LeanBuilder(registerTypes: {AutoRouterConfig})
@@ -44,7 +45,7 @@ class LeanAutoRouterBuilder extends Builder {
     final resolver = buildStep.resolver;
     final typeChecker = resolver.typeCheckerOf<AutoRouterConfig>();
     final library = resolver.resolveLibrary(buildStep.asset);
-    final annotatedElements = library.annotatedWith(typeChecker);
+    final annotatedElements = library.annotatedWithExact(typeChecker);
     if (annotatedElements.isEmpty) return null;
 
     final element = annotatedElements.first.element;
@@ -65,8 +66,9 @@ class LeanAutoRouterBuilder extends Builder {
       clazz,
       usesPartBuilder: usesPartBuilder,
     );
+
     final content = await onGenerateContent(buildStep, router);
-    return buildStep.writeAsString(content, extension: '.gr.dart');
+    await buildStep.writeAsString(content, extension: '.gr.dart');
   }
 
   /// Returns a set of strings to include in the 'ignore_for_file' directive
@@ -83,11 +85,15 @@ class LeanAutoRouterBuilder extends Builder {
     final generateForDir = config.generateForDir;
     final generatedResults = <RoutesList>[];
     final routes = <RouteConfig>[];
-    for (final asset in buildStep.findAssets(Glob("**.route.ln.json"))) {
+    final assets = buildStep.findAssets(
+      PathMatcher.regex(r".route.ln.json$", dotAll: false),
+      subDir: _configFilesDirectory,
+    );
+    for (final asset in assets) {
       final jsonRes = jsonDecode(asset.readAsStringSync());
       final generatedRes = RoutesList.fromJson(jsonRes);
       // the location anchor is the path to the root package
-      final locationAnchor = 'lean_build/generated/${buildStep.resolver.fileResolver.rootPackage}/';
+      final locationAnchor = '$_configFilesDirectory/${buildStep.resolver.fileResolver.rootPackage}/';
       generatedResults.add(generatedRes);
       final location = asset.uri.path.split(locationAnchor).lastOrNull ?? '';
       if (generateForDir.any((dir) => location.startsWith(dir))) {
@@ -104,10 +110,9 @@ class LeanAutoRouterBuilder extends Builder {
 
 const _header = '''
 // GENERATED CODE - DO NOT MODIFY BY HAND
+$dartFormatWidth
 
 // **************************************************************************
 // AutoRouterGenerator
 // **************************************************************************
-
-$dartFormatWidth
 ''';
