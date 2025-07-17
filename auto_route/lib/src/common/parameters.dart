@@ -131,15 +131,30 @@ class Parameters {
   }
 
   /// returns the value corresponding with [key] as nullable [bool]
-  /// if null returns [defaultValue]
+  /// if null returns [defaultValue]. If the value is an int or double,
+  /// it will be interpreted as true if greater than 0. this matches the
+  /// behavior of the Dart language.
   bool? optBool(String key, [bool? defaultValue]) {
-    switch (_params[key]?.toLowerCase()) {
-      case 'true':
-        return true;
-      case 'false':
-        return false;
-      default:
-        return defaultValue;
+    var param = _params[key];
+
+    if (param == null) {
+      return defaultValue;
+    } else if (param is int) {
+      return param > 0;
+    } else if (param is double) {
+      return param > 0.0;
+    } else if (param is bool) {
+      return param;
+    } else {
+      //parse as string
+      switch (_params[key]?.toLowerCase()) {
+        case 'true':
+          return true;
+        case 'false':
+          return false;
+        default:
+          return defaultValue;
+      }
     }
   }
 
