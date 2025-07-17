@@ -139,15 +139,15 @@ class Parameters {
 
     if (param == null) {
       return defaultValue;
+    } else if (param is bool) {
+      return param;
     } else if (param is int) {
       return param > 0;
     } else if (param is double) {
       return param > 0.0;
-    } else if (param is bool) {
-      return param;
     } else {
       //parse as string
-      switch (_params[key]?.toLowerCase()) {
+      switch (param.toLowerCase()) {
         case 'true':
           return true;
         case 'false':
