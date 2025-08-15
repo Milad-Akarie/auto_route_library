@@ -457,29 +457,32 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
 
   @override
   Widget build(BuildContext context) {
-    return IndexedStack(
-      key: ValueKey(widget.tabsHash),
-      index: widget.activeIndex,
-      sizing: StackFit.expand,
-      children: List.generate(
-        widget.stack.length,
-        (index) {
-          if (!widget.stack[index].maintainState && index != widget.activeIndex) {
-            _initializedPagesTracker[index] = false;
-          }
-          final isInitialized = _initializedPagesTracker[index] == true;
-          final child = isInitialized ? widget.itemBuilder(context, index) : _dummyWidget;
-          final isInactive = index != widget.activeIndex;
+    return Semantics(
+      container: true,
+      child: IndexedStack(
+        key: ValueKey(widget.tabsHash),
+        index: widget.activeIndex,
+        sizing: StackFit.expand,
+        children: List.generate(
+          widget.stack.length,
+          (index) {
+            if (!widget.stack[index].maintainState && index != widget.activeIndex) {
+              _initializedPagesTracker[index] = false;
+            }
+            final isInitialized = _initializedPagesTracker[index] == true;
+            final child = isInitialized ? widget.itemBuilder(context, index) : _dummyWidget;
+            final isInactive = index != widget.activeIndex;
 
-          // Always wrap with ExcludeSemantics and ExcludeFocus but control with excluding property
-          return ExcludeSemantics(
-            excluding: isInactive,
-            child: ExcludeFocus(
+            // Always wrap with ExcludeSemantics and ExcludeFocus but control with excluding property
+            return ExcludeSemantics(
               excluding: isInactive,
-              child: child,
-            ),
-          );
-        },
+              child: ExcludeFocus(
+                excluding: isInactive,
+                child: child,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
