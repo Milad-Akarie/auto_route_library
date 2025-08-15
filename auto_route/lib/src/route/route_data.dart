@@ -220,9 +220,8 @@ class RouteData<R> {
 
   /// Completes the pop completer with the given result
   void onPopInvoked(R? result) {
-    if (_isReevaluating || router.ignorePopCompleters) {
-      // if the route is re-evaluating or pop completers are ignored
-      // we don't complete the pop completer
+    if (router.ignorePopCompleters) {
+      // if pop completers are ignored then we don't complete the pop completer
       return;
     }
     if (_popCompleter != null && !_popCompleter!.isCompleted) {
