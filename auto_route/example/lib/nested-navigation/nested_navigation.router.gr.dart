@@ -1,10 +1,9 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
 // AutoRouterGenerator
 // **************************************************************************
-
-// // dart format width=80
 
 // ignore_for_file: type=lint
 // coverage:ignore-file
@@ -16,14 +15,15 @@ import 'package:example/nested-navigation/nested_navigation.router.dart' as _i1;
 /// generated route for
 /// [_i1.FirstScreen]
 class FirstRoute extends _i2.PageRouteInfo<void> {
-  const FirstRoute({List<_i2.PageRouteInfo>? children}) : super(FirstRoute.name, initialChildren: children);
+  const FirstRoute({List<_i2.PageRouteInfo>? children})
+      : super(FirstRoute.name, initialChildren: children);
 
   static const String name = 'FirstRoute';
 
   static _i2.PageInfo page = _i2.PageInfo(
     name,
     builder: (data) {
-      return _i1.FirstScreen();
+      return const _i1.FirstScreen();
     },
   );
 }
@@ -31,14 +31,15 @@ class FirstRoute extends _i2.PageRouteInfo<void> {
 /// generated route for
 /// [_i1.HostScreen]
 class HostRoute extends _i2.PageRouteInfo<void> {
-  const HostRoute({List<_i2.PageRouteInfo>? children}) : super(HostRoute.name, initialChildren: children);
+  const HostRoute({List<_i2.PageRouteInfo>? children})
+      : super(HostRoute.name, initialChildren: children);
 
   static const String name = 'HostRoute';
 
   static _i2.PageInfo page = _i2.PageInfo(
     name,
     builder: (data) {
-      return _i1.HostScreen();
+      return const _i1.HostScreen();
     },
   );
 }
@@ -46,14 +47,15 @@ class HostRoute extends _i2.PageRouteInfo<void> {
 /// generated route for
 /// [_i1.SecondScreen]
 class SecondRoute extends _i2.PageRouteInfo<void> {
-  const SecondRoute({List<_i2.PageRouteInfo>? children}) : super(SecondRoute.name, initialChildren: children);
+  const SecondRoute({List<_i2.PageRouteInfo>? children})
+      : super(SecondRoute.name, initialChildren: children);
 
   static const String name = 'SecondRoute';
 
   static _i2.PageInfo page = _i2.PageInfo(
     name,
     builder: (data) {
-      return _i1.SecondScreen();
+      return const _i1.SecondScreen();
     },
   );
 }

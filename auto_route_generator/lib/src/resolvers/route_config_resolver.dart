@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:source_gen/source_gen.dart';
 
 import '../../build_utils.dart';
@@ -14,36 +14,36 @@ class RouteConfigResolver {
   /// Default constructor
   RouteConfigResolver(this._typeResolver);
 
-  /// Resolves a [ClassElement] into a consumable [RouteConfig]
-  RouteConfig resolve(Element element, ConstantReader routePage) {
+  /// Resolves a [ClassElement2] into a consumable [RouteConfig]
+  RouteConfig resolve(Element2 element, ConstantReader routePage) {
     var isDeferred = routePage.peek('deferredLoading')?.boolValue;
     throwIf(
-      element is! ClassElement,
-      '${element.getDisplayString()} is not a class element',
+      element is! ClassElement2,
+      '${element.displayName} is not a class element',
       element: element,
     );
 
-    final classElement = element as ClassElement;
+    final classElement = element as ClassElement2;
     final page = classElement.thisType;
     final hasWrappedRoute = classElement.allSupertypes.any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
     var pageType = _typeResolver.resolveType(page);
     var className = page.nameWithoutSuffix;
 
     var name = routePage.peek('name')?.stringValue;
-    final constructor = classElement.unnamedConstructor;
+    final constructor = classElement.unnamedConstructor2;
     throwIf(
       constructor == null,
       'Route pages must have an unnamed constructor',
     );
     var hasConstConstructor = false;
-    var params = constructor!.parameters;
+    var params = constructor!.formalParameters;
     var parameters = <ParamConfig>[];
     if (params.isNotEmpty) {
       if (constructor.isConst && params.length == 1 && params.first.type.nameWithoutSuffix == 'Key') {
         hasConstConstructor = true;
       } else {
         final paramResolver = RouteParameterResolver(_typeResolver);
-        for (ParameterElement p in constructor.parameters) {
+        for (final p in params) {
           parameters.add(paramResolver.resolve(p));
         }
       }

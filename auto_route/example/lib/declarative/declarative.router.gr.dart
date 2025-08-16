@@ -1,10 +1,9 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
 // AutoRouterGenerator
 // **************************************************************************
-
-// // dart format width=80
 
 // ignore_for_file: type=lint
 // coverage:ignore-file
@@ -67,14 +66,15 @@ class AgeInputRouteArgs {
 /// generated route for
 /// [_i1.MainScreen]
 class MainRoute extends _i2.PageRouteInfo<void> {
-  const MainRoute({List<_i2.PageRouteInfo>? children}) : super(MainRoute.name, initialChildren: children);
+  const MainRoute({List<_i2.PageRouteInfo>? children})
+      : super(MainRoute.name, initialChildren: children);
 
   static const String name = 'MainRoute';
 
   static _i2.PageInfo page = _i2.PageInfo(
     name,
     builder: (data) {
-      return _i1.MainScreen();
+      return const _i1.MainScreen();
     },
   );
 }
@@ -180,7 +180,9 @@ class ResultRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! ResultRouteArgs) return false;
-    return key == other.key && profile == other.profile && onReset == other.onReset;
+    return key == other.key &&
+        profile == other.profile &&
+        onReset == other.onReset;
   }
 
   @override

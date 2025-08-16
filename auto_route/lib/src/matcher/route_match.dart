@@ -189,11 +189,11 @@ class RouteMatch<T> {
     List<AutoRouteGuard>? evaluatedGuards,
   }) {
     return RouteMatch._internal(
-      config: config ?? this._config,
+      config: config ?? _config,
       stringMatch: stringMatch ?? this.stringMatch,
       segments: segments ?? this.segments,
       children: children ?? this.children,
-      params: pathParams ?? this.params,
+      params: pathParams ?? params,
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
       args: args ?? this.args,
@@ -201,7 +201,7 @@ class RouteMatch<T> {
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
       autoFilled: autoFilled ?? this.autoFilled,
       id: id,
-      evaluatedGuards: evaluatedGuards ?? this._evaluatedGuards,
+      evaluatedGuards: evaluatedGuards ?? _evaluatedGuards,
     );
   }
 

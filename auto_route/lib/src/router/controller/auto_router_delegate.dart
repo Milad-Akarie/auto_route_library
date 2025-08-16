@@ -70,7 +70,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   /// Forces a url update
-  static reportUrlChanged(BuildContext context, String url) {
+  static void reportUrlChanged(BuildContext context, String url) {
     Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
           RouteInformation(uri: Uri.parse(url)),
           type: RouteInformationReportingType.navigate,

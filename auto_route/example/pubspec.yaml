@@ -23,7 +23,7 @@ dev_dependencies:
     sdk: flutter
   auto_route_generator:
     path: ../../auto_route_generator
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 dependency_overrides:
   auto_route:

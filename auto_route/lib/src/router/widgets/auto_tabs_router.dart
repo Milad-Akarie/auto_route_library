@@ -236,7 +236,7 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
   final Curve curve;
   final bool lazyLoad;
 
-  static Widget _defaultTransitionBuilder(_, Widget child, Animation<double> animation) {
+  static Widget _defaultTransitionBuilder(BuildContext _, Widget child, Animation<double> animation) {
     return FadeTransition(opacity: animation, child: child);
   }
 
@@ -376,7 +376,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
     );
   }
 
-  Widget _defaultBuilder(_, child) {
+  Widget _defaultBuilder(BuildContext _, Widget child) {
     return child;
   }
 }
@@ -601,7 +601,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
     );
   }
 
-  Widget _defaultPageViewBuilder(_, Widget child, __) {
+  Widget _defaultPageViewBuilder(BuildContext _, Widget child, PageController __) {
     return child;
   }
 
@@ -747,7 +747,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     );
   }
 
-  Widget _defaultPageViewBuilder(_, Widget child, __) {
+  Widget _defaultPageViewBuilder(BuildContext _, Widget child, TabController __) {
     return child;
   }
 

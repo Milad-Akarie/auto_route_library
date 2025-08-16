@@ -1,10 +1,9 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
 // AutoRouterGenerator
 // **************************************************************************
-
-// // dart format width=80
 
 // ignore_for_file: type=lint
 // coverage:ignore-file
@@ -23,10 +22,13 @@ import 'package:flutter/material.dart' as _i9;
 /// generated route for
 /// [_i1.BookDetailsPage]
 class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
-  BookDetailsRoute({int id = -1, List<_i8.PageRouteInfo>? children})
-      : super(
+  BookDetailsRoute({
+    _i9.Key? key,
+    int id = -1,
+    List<_i8.PageRouteInfo>? children,
+  }) : super(
           BookDetailsRoute.name,
-          args: BookDetailsRouteArgs(id: id),
+          args: BookDetailsRouteArgs(key: key, id: id),
           rawPathParams: {'id': id},
           initialChildren: children,
         );
@@ -40,43 +42,46 @@ class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
       final args = data.argsAs<BookDetailsRouteArgs>(
         orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -1)),
       );
-      return _i1.BookDetailsPage(id: args.id);
+      return _i1.BookDetailsPage(key: args.key, id: args.id);
     },
   );
 }
 
 class BookDetailsRouteArgs {
-  const BookDetailsRouteArgs({this.id = -1});
+  const BookDetailsRouteArgs({this.key, this.id = -1});
+
+  final _i9.Key? key;
 
   final int id;
 
   @override
   String toString() {
-    return 'BookDetailsRouteArgs{id: $id}';
+    return 'BookDetailsRouteArgs{key: $key, id: $id}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! BookDetailsRouteArgs) return false;
-    return id == other.id;
+    return key == other.key && id == other.id;
   }
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode => key.hashCode ^ id.hashCode;
 }
 
 /// generated route for
 /// [_i2.BookListScreen]
 class BookListRoute extends _i8.PageRouteInfo<void> {
-  const BookListRoute({List<_i8.PageRouteInfo>? children}) : super(BookListRoute.name, initialChildren: children);
+  const BookListRoute({List<_i8.PageRouteInfo>? children})
+      : super(BookListRoute.name, initialChildren: children);
 
   static const String name = 'BookListRoute';
 
   static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return _i2.BookListScreen();
+      return const _i2.BookListScreen();
     },
   );
 }
@@ -84,7 +89,8 @@ class BookListRoute extends _i8.PageRouteInfo<void> {
 /// generated route for
 /// [_i3.HomePage]
 class HomeRoute extends _i8.PageRouteInfo<void> {
-  const HomeRoute({List<_i8.PageRouteInfo>? children}) : super(HomeRoute.name, initialChildren: children);
+  const HomeRoute({List<_i8.PageRouteInfo>? children})
+      : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
@@ -166,7 +172,8 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
     builder: (data) {
       final queryParams = data.queryParams;
       final args = data.argsAs<MyBooksRouteArgs>(
-        orElse: () => MyBooksRouteArgs(filter: queryParams.optString('filter', 'none2')),
+        orElse: () =>
+            MyBooksRouteArgs(filter: queryParams.optString('filter', 'none2')),
       );
       return _i5.MyBooksPage(key: args.key, filter: args.filter);
     },
@@ -199,14 +206,15 @@ class MyBooksRouteArgs {
 /// generated route for
 /// [_i6.ProfilePage]
 class ProfileRoute extends _i8.PageRouteInfo<void> {
-  const ProfileRoute({List<_i8.PageRouteInfo>? children}) : super(ProfileRoute.name, initialChildren: children);
+  const ProfileRoute({List<_i8.PageRouteInfo>? children})
+      : super(ProfileRoute.name, initialChildren: children);
 
   static const String name = 'ProfileRoute';
 
   static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return _i6.ProfilePage();
+      return const _i6.ProfilePage();
     },
   );
 }
@@ -273,7 +281,8 @@ class SettingsTabArgs {
 /// generated route for
 /// [_i3.WelcomeScreen]
 class WelcomeRoute extends _i8.PageRouteInfo<void> {
-  const WelcomeRoute({List<_i8.PageRouteInfo>? children}) : super(WelcomeRoute.name, initialChildren: children);
+  const WelcomeRoute({List<_i8.PageRouteInfo>? children})
+      : super(WelcomeRoute.name, initialChildren: children);
 
   static const String name = 'WelcomeRoute';
 

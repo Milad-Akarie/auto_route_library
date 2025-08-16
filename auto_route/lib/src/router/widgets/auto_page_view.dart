@@ -113,7 +113,7 @@ class AutoPageViewState extends State<AutoPageView> {
     );
   }
 
-  _disposeInactiveChildren() {
+  void _disposeInactiveChildren() {
     for (int i = 0; i < _tabKeys.length; i++) {
       if (i != _router.activeIndex) {
         _tabKeys[i]?.currentState?.unloadIfRequired();

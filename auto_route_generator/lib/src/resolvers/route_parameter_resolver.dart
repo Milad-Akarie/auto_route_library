@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
 
@@ -8,9 +8,9 @@ import 'package:source_gen/source_gen.dart';
 
 import '../../build_utils.dart';
 
-final _pathParamChecker = TypeChecker.fromRuntime(PathParam);
-final _queryParamChecker = TypeChecker.fromRuntime(QueryParam);
-final _urlFragmentChecker = TypeChecker.fromRuntime(UrlFragment);
+final _pathParamChecker = TypeChecker.typeNamed(PathParam, inPackage: 'auto_route');
+final _queryParamChecker = TypeChecker.typeNamed(QueryParam, inPackage: 'auto_route');
+final _urlFragmentChecker = TypeChecker.typeNamed(UrlFragment, inPackage: 'auto_route');
 
 /// Resolves route parameters
 class RouteParameterResolver {
@@ -20,13 +20,13 @@ class RouteParameterResolver {
   RouteParameterResolver(this._typeResolver);
 
   /// Resolves a ParameterElement into a consumable [ParamConfig]
-  ParamConfig resolve(ParameterElement parameterElement) {
+  ParamConfig resolve(FormalParameterElement parameterElement) {
     final paramType = parameterElement.type;
     if (paramType is FunctionType && paramType.alias == null) {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
-    final paramName = parameterElement.name.replaceFirst("_", '');
+    final paramName = parameterElement.displayName.replaceFirst("_", '');
     var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
 
     var nameOrAlias = paramName;
@@ -55,7 +55,7 @@ class RouteParameterResolver {
 
     throwIf(
       [isUrlFragment, pathParamAnnotation != null, queryParamAnnotation != null].where((e) => e).length > 1,
-      '${parameterElement.name} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
+      '${parameterElement.displayName} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
       element: parameterElement,
     );
 
@@ -77,7 +77,7 @@ class RouteParameterResolver {
       name: paramName,
       alias: nameOrAlias,
       isPositional: parameterElement.isPositional,
-      hasRequired: parameterElement.hasRequired,
+      hasRequired: parameterElement.isRequired,
       isRequired: parameterElement.isRequiredNamed,
       isOptional: parameterElement.isOptional,
       isNamed: parameterElement.isNamed,
@@ -89,17 +89,17 @@ class RouteParameterResolver {
     );
   }
 
-  ParamConfig _resolveFunctionType(ParameterElement paramElement) {
+  ParamConfig _resolveFunctionType(FormalParameterElement paramElement) {
     var type = paramElement.type as FunctionType;
     return FunctionParamConfig(
         returnType: _typeResolver.resolveType(type.returnType),
         type: _typeResolver.resolveType(type),
-        params: type.parameters.map(resolve).toList(),
-        name: paramElement.name,
+        params: type.formalParameters.map(resolve).toList(),
+        name: paramElement.displayName,
         defaultValueCode: paramElement.defaultValueCode,
         isRequired: paramElement.isRequiredNamed,
         isPositional: paramElement.isPositional,
-        hasRequired: paramElement.hasRequired,
+        hasRequired: paramElement.isRequired,
         isOptional: paramElement.isOptional,
         isNamed: paramElement.isNamed);
   }

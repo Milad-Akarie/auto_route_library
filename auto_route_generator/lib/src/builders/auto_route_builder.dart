@@ -13,7 +13,7 @@ import 'package:auto_route_generator/utils.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
-const _typeChecker = TypeChecker.fromRuntime(RoutePage);
+const _typeChecker = TypeChecker.typeNamed(RoutePage, inPackage: 'auto_route');
 
 /// Default location of the routes cache file
 final routesCacheFile = File('.dart_tool/build/cache/auto_routes_cache.json');

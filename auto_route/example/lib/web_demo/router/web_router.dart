@@ -288,10 +288,10 @@ class UserPage extends StatefulWidget {
   });
 
   @override
-  _UserPageState createState() => _UserPageState();
+  UserPageState createState() => UserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

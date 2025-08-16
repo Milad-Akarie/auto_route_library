@@ -1,10 +1,9 @@
+// dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 // **************************************************************************
 // AutoRouterGenerator
 // **************************************************************************
-
-// // dart format width=80
 
 // ignore_for_file: type=lint
 // coverage:ignore-file
@@ -71,7 +70,9 @@ class MainWebRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! MainWebRouteArgs) return false;
-    return key == other.key && navigate == other.navigate && showUserPosts == other.showUserPosts;
+    return key == other.key &&
+        navigate == other.navigate &&
+        showUserPosts == other.showUserPosts;
   }
 
   @override
@@ -81,14 +82,15 @@ class MainWebRouteArgs {
 /// generated route for
 /// [_i1.NotFoundScreen]
 class NotFoundRoute extends _i4.PageRouteInfo<void> {
-  const NotFoundRoute({List<_i4.PageRouteInfo>? children}) : super(NotFoundRoute.name, initialChildren: children);
+  const NotFoundRoute({List<_i4.PageRouteInfo>? children})
+      : super(NotFoundRoute.name, initialChildren: children);
 
   static const String name = 'NotFoundRoute';
 
   static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
-      return _i1.NotFoundScreen();
+      return const _i1.NotFoundScreen();
     },
   );
 }
@@ -153,7 +155,7 @@ class UserFavoritePostsRoute extends _i4.PageRouteInfo<void> {
   static _i4.PageInfo page = _i4.PageInfo(
     name,
     builder: (data) {
-      return _i1.UserFavoritePostsPage();
+      return const _i1.UserFavoritePostsPage();
     },
   );
 }
@@ -232,13 +234,22 @@ class UserRouteArgs {
   }
 
   @override
-  int get hashCode => key.hashCode ^ id.hashCode ^ const _i6.ListEquality().hash(query) ^ fragment.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      id.hashCode ^
+      const _i6.ListEquality().hash(query) ^
+      fragment.hashCode;
 }
 
 /// generated route for
 /// [_i1.UserPostsPage]
-class UserPostsRoute extends _i4.PageRouteInfo<void> {
-  UserPostsRoute({List<_i4.PageRouteInfo>? children}) : super(UserPostsRoute.name, initialChildren: children);
+class UserPostsRoute extends _i4.PageRouteInfo<UserPostsRouteArgs> {
+  UserPostsRoute({_i5.Key? key, List<_i4.PageRouteInfo>? children})
+      : super(
+          UserPostsRoute.name,
+          args: UserPostsRouteArgs(key: key),
+          initialChildren: children,
+        );
 
   static const String name = 'UserPostsRoute';
 
@@ -246,9 +257,33 @@ class UserPostsRoute extends _i4.PageRouteInfo<void> {
     name,
     builder: (data) {
       final pathParams = data.inheritedPathParams;
-      return _i1.UserPostsPage(id: pathParams.getInt('userID'));
+      final args = data.argsAs<UserPostsRouteArgs>(
+        orElse: () => UserPostsRouteArgs(),
+      );
+      return _i1.UserPostsPage(key: args.key, id: pathParams.getInt('userID'));
     },
   );
+}
+
+class UserPostsRouteArgs {
+  const UserPostsRouteArgs({this.key});
+
+  final _i5.Key? key;
+
+  @override
+  String toString() {
+    return 'UserPostsRouteArgs{key: $key}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! UserPostsRouteArgs) return false;
+    return key == other.key;
+  }
+
+  @override
+  int get hashCode => key.hashCode;
 }
 
 /// generated route for
@@ -321,11 +356,15 @@ class UserProfileRouteArgs {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! UserProfileRouteArgs) return false;
-    return key == other.key && navigate == other.navigate && userId == other.userId && likes == other.likes;
+    return key == other.key &&
+        navigate == other.navigate &&
+        userId == other.userId &&
+        likes == other.likes;
   }
 
   @override
-  int get hashCode => key.hashCode ^ navigate.hashCode ^ userId.hashCode ^ likes.hashCode;
+  int get hashCode =>
+      key.hashCode ^ navigate.hashCode ^ userId.hashCode ^ likes.hashCode;
 }
 
 /// generated route for

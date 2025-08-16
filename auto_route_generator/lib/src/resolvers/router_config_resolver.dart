@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -9,11 +9,11 @@ class RouterConfigResolver {
   /// Default constructor
   RouterConfigResolver();
 
-  /// Resolves a [ClassElement] into a consumable [RouterConfig]
+  /// Resolves a [ClassElement2] into a consumable [RouterConfig]
   RouterConfig resolve(
     ConstantReader autoRouter,
     AssetId input,
-    ClassElement clazz, {
+    ClassElement2 clazz, {
     bool usesPartBuilder = false,
     int? cacheHash,
   }) {

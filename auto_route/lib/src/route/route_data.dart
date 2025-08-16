@@ -206,6 +206,7 @@ class RouteData<R> {
     return _match.buildPage<T>(this);
   }
 
+  // ignore: unused_field
   bool _isReevaluating = false;
 
   void _onStartReevaluating(RouteMatch newMatch) {

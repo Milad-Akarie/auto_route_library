@@ -13,7 +13,7 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   /// Whether the top-most route is a pageless route
   bool get hasPagelessTopRoute => _hasPagelessTopRoute;
 
-  set hasPagelessTopRoute(value) {
+  set hasPagelessTopRoute(bool value) {
     if (value != _hasPagelessTopRoute) {
       _hasPagelessTopRoute = value;
       notifyListeners();

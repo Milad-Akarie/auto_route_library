@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/builders/auto_route_builder.dart';
@@ -17,7 +18,7 @@ import 'package:source_gen/source_gen.dart';
 
 import '../resolvers/router_config_resolver.dart';
 
-const _typeChecker = TypeChecker.fromRuntime(AutoRouterConfig);
+const _typeChecker = TypeChecker.typeNamed(AutoRouterConfig, inPackage: 'auto_route');
 
 /// Base class for [AutoRouterBuilder] and [AutoRouterModuleBuilder]
 abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
@@ -59,12 +60,13 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     return calculatedHash;
   }
 
-  bool _hasPartDirective(ClassElement clazz) {
-    final fileName = clazz.source.uri.pathSegments.last;
+  bool _hasPartDirective(ClassElement2 clazz) {
+    final fileName = clazz.library2.uri.pathSegments.last;
     final part = fileName.replaceAll('.dart', generatedExtension);
-    return clazz.library.definingCompilationUnit.parts.any(
-      (e) => e.toString().endsWith(part),
-    );
+    final uriIncludes = clazz.library2.firstFragment.partIncludes.map((e) => e.uri);
+    return uriIncludes.whereType<DirectiveUriWithSource>().any(
+          (e) => e.source.fullName.endsWith(part),
+        );
   }
 
   @override
@@ -110,11 +112,11 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     final annotation = annotatedElements.first.annotation;
 
     throwIf(
-      element is! ClassElement,
-      '${element.name} is not a class element',
+      element is! ClassElement2,
+      '${element.displayName} is not a class element',
       element: element,
     );
-    final clazz = element as ClassElement;
+    final clazz = element as ClassElement2;
 
     final usesPartBuilder = _hasPartDirective(clazz);
 
