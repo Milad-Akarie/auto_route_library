@@ -1,3 +1,7 @@
+## 10.2.4
+- **CHORE**: tidy up dependencies and sync with updated analyzer version.
+- **FIX**: Add indexed stack semantics
+- **FIX**: Allow PopCompleter to complete during route reevaluation when pop-completers are disabled
 ## 10.2.3
 - **FIX**: Fix collecting config files takes a bit too long (Optimization).
 ## 10.2.2

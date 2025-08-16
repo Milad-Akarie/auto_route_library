@@ -1,4 +1,7 @@
-
+## 10.1.1
+- **CHORE**: tidy up dependencies and sync with updated analyzer version.
+- **FIX**: Add indexed stack semantics
+- **FIX**: Allow PopCompleter to complete during route reevaluation when pop-completers are disabled
 ## 10.1.0+1
 - **FEAT**: Add experimental support for lean_builder
 ## 10.1.0
