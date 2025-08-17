@@ -1,3 +1,5 @@
+## 10.1.2
+- **FIX**: routing_controller.dart missing meta import
 ## 10.1.1
 - **CHORE**: tidy up dependencies and sync with updated analyzer version.
 - **FIX**: Add indexed stack semantics
