@@ -11,14 +11,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
-
 part 'auto_route_guard.dart';
-
 part 'auto_router_delegate.dart';
-
 part 'root_stack_router.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -1510,7 +1506,23 @@ abstract class StackRouter extends RoutingController {
     _navigatorKey.currentState?.popUntil((route) => route.isFirst);
   }
 
-  /// Pop the current route off the navigator and push the given [route] in its place.
+  /// Pop the whole stack except for the first entry and push [route]
+  ///
+  /// This method combines [popUntilRoot] and [push] operations
+  /// to clear the navigation stack and start fresh with a new route
+  ///
+  /// if [onFailure] callback is provided, navigation errors will be passed to it
+  /// otherwise they'll be thrown
+  @optionalTypeArgs
+  Future<T?> popUntilRootAndPush<T extends Object?>(
+    PageRouteInfo route, {
+    OnNavigationFailure? onFailure,
+  }) {
+    popUntilRoot();
+    return _push<T>(route, onFailure: onFailure);
+  }
+
+  /// Pop current route and Push [route]
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
