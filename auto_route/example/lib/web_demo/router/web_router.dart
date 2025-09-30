@@ -12,26 +12,22 @@ class WebAppRouter extends RootStackRouter {
   WebAppRouter(this.authService);
 
   @override
-  late final List<AutoRouteGuard> guards = [
-    AutoRouteGuard.simple(
-      (resolver, scope) {
-        if (authService.isAuthenticated ||
-            resolver.routeName == WebLoginRoute.name) {
-          resolver.next();
-        } else {
-          resolver.redirect(
-            WebLoginRoute(onResult: (didLogin) {
-              resolver.resolveNext(didLogin, reevaluateNext: false);
-            }),
-          );
-        }
-      },
-    )
-  ];
-
-  @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: MainWebRoute.page, initial: true),
+        AutoRoute(
+          initial: true,
+          page: MainWebRoute.page,
+          guards: [
+            AutoRouteGuard.simple(
+              (resolver, _) {
+                if (authService.isAuthenticated) {
+                  resolver.next();
+                } else {
+                  resolver.redirectUntil(WebLoginRoute());
+                }
+              },
+            ),
+          ],
+        ),
         AutoRoute(path: '/login', page: WebLoginRoute.page),
         AutoRoute(path: '/verify', page: WebVerifyRoute.page),
         AutoRoute(
@@ -39,19 +35,23 @@ class WebAppRouter extends RootStackRouter {
           page: UserRoute.page,
           children: [
             AutoRoute(page: UserProfileRoute.page, initial: true),
-            AutoRoute.guarded(
+            AutoRoute(
               path: 'posts',
               page: UserPostsRoute.page,
-              onNavigation: (resolver, scope) {
-                if (authService.isVerified) {
-                  resolver.next();
-                } else {
-                  resolver.redirect(WebVerifyRoute(onResult: resolver.next));
-                }
-              },
+              guards: [
+                AutoRouteGuard.simple(
+                  (resolver, scope) {
+                    print('Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
+                    if (authService.isVerified) {
+                      resolver.next();
+                    } else {
+                      resolver.redirectUntil(WebVerifyRoute());
+                    }
+                  },
+                )
+              ],
               children: [
-                AutoRoute(
-                    path: 'all', page: UserAllPostsRoute.page, initial: true),
+                AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
                 AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
               ],
             ),
@@ -66,10 +66,10 @@ class MainWebPage extends StatefulWidget {
   final VoidCallback? navigate, showUserPosts;
 
   const MainWebPage({
-    Key? key,
+    super.key,
     this.navigate,
     this.showUserPosts,
-  }) : super(key: key);
+  });
 
   @override
   State<MainWebPage> createState() => _MainWebPageState();
@@ -110,8 +110,7 @@ class _MainWebPageState extends State<MainWebPage> {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
-                  context.maybePop('String');
-                  // App.of(context).authService.isAuthenticated = false;
+                  App.of(context).authService.isAuthenticated = false;
                 },
                 child: Text('Logout'),
               ),
@@ -119,8 +118,7 @@ class _MainWebPageState extends State<MainWebPage> {
             if (kIsWeb)
               ElevatedButton(
                 onPressed: () {
-                  final currentState =
-                      ((context.router.pathState as int?) ?? 0);
+                  final currentState = ((context.router.pathState as int?) ?? 0);
                   context.router.pushPathState(currentState + 1);
                 },
                 child: AnimatedBuilder(
@@ -138,9 +136,9 @@ class _MainWebPageState extends State<MainWebPage> {
 
 class QueryPage extends StatelessWidget {
   const QueryPage({
-    Key? key,
+    super.key,
     @pathParam this.id = '-',
-  }) : super(key: key);
+  });
   final String id;
 
   @override
@@ -160,11 +158,11 @@ class UserProfilePage extends StatefulWidget {
   final int userId;
 
   const UserProfilePage({
-    Key? key,
+    super.key,
     this.navigate,
     @PathParam('userID') this.userId = -1,
     @queryParam this.likes = 0,
-  }) : super(key: key);
+  });
 
   @override
   State<UserProfilePage> createState() => _UserProfilePageState();
@@ -229,13 +227,13 @@ class _UserProfilePageState extends State<UserProfilePage> {
 class UserPostsPage extends StatefulWidget {
   final int id;
 
-  const UserPostsPage({@PathParam.inherit('userID') required this.id});
+  const UserPostsPage({super.key, @PathParam.inherit('userID') required this.id});
 
   @override
-  _UserPostsPageState createState() => _UserPostsPageState();
+  UserPostsPageState createState() => UserPostsPageState();
 }
 
-class _UserPostsPageState extends State<UserPostsPage> {
+class UserPostsPageState extends State<UserPostsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -282,18 +280,18 @@ class UserPage extends StatefulWidget {
   final List<String>? query;
   final String? fragment;
 
-  UserPage({
-    Key? key,
+  const UserPage({
+    super.key,
     @PathParam('userID') this.id = -1,
     @QueryParam() this.query,
     @urlFragment this.fragment,
-  }) : super(key: key);
+  });
 
   @override
-  _UserPageState createState() => _UserPageState();
+  UserPageState createState() => UserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -302,8 +300,8 @@ class _UserPageState extends State<UserPage> {
         leading: AutoLeadingButton(),
         title: Builder(
           builder: (context) {
-            return Text(context.topRouteMatch.name +
-                ' ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
+            return Text(
+                '${context.topRouteMatch.name} ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
           },
         ),
       ),
@@ -314,6 +312,8 @@ class _UserPageState extends State<UserPage> {
 
 @RoutePage()
 class NotFoundScreen extends StatelessWidget {
+  const NotFoundScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -331,7 +331,7 @@ class NotFoundScreen extends StatelessWidget {
 class UserAllPostsPage extends StatelessWidget {
   final VoidCallback? navigate;
 
-  const UserAllPostsPage({Key? key, this.navigate}) : super(key: key);
+  const UserAllPostsPage({super.key, this.navigate});
 
   @override
   Widget build(BuildContext context) {
@@ -365,6 +365,8 @@ class UserAllPostsPage extends StatelessWidget {
 
 @RoutePage()
 class UserFavoritePostsPage extends StatelessWidget {
+  const UserFavoritePostsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

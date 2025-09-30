@@ -65,7 +65,13 @@ class PageRouteInfo<T extends Object?> {
     String? fragment,
     this.stringMatch,
     this.redirectedFrom,
+    this.argsEquality = true,
   }) : fragment = fragment ?? '';
+
+  /// Whether the equality check should include [args]
+  ///
+  /// default is true
+  final bool argsEquality;
 
   /// The name of the route
   String get routeName => _name;
@@ -146,7 +152,7 @@ class PageRouteInfo<T extends Object?> {
   factory PageRouteInfo.fromMatch(RouteMatch match) {
     return PageRouteInfo(
       match.name,
-      rawPathParams: match.pathParams.rawMap,
+      rawPathParams: match.params.rawMap,
       rawQueryParams: match.queryParams.rawMap,
       fragment: match.fragment,
       redirectedFrom: match.redirectedFrom,
@@ -182,6 +188,7 @@ class PageRouteInfo<T extends Object?> {
       other is PageRouteInfo &&
           _name == other._name &&
           fragment == other.fragment &&
+          (argsEquality ? args == other.args : true) &&
           const ListEquality().equals(initialChildren, other.initialChildren) &&
           const MapEquality().equals(rawPathParams, other.rawPathParams) &&
           const MapEquality().equals(rawQueryParams, other.rawQueryParams);
@@ -190,6 +197,7 @@ class PageRouteInfo<T extends Object?> {
   int get hashCode =>
       _name.hashCode ^
       fragment.hashCode ^
+      args.hashCode ^
       const MapEquality().hash(rawPathParams) ^
       const MapEquality().hash(rawQueryParams) ^
       const ListEquality().hash(initialChildren);

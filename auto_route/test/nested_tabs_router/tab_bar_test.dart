@@ -29,8 +29,7 @@ void main() {
       tester.view.physicalSize = const Size(500, 1500);
       await pumpRouter(tester);
       final pageViewFinder = find.byType(AutoTabView);
-      final scrollController =
-          (tester.widget<AutoTabView>(pageViewFinder)).controller;
+      final scrollController = (tester.widget<AutoTabView>(pageViewFinder)).controller;
       expect(scrollController.index, 0);
       await tester.drag(pageViewFinder, const Offset(-200, 0.0));
       await tester.pumpAndSettle();

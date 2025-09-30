@@ -51,8 +51,7 @@ mixin class AutoRouteAware {
 
 /// a helper mixin to utilises [AutoRouteAware] in a better manner
 /// and reduce boilerplate code
-mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
-    implements AutoRouteAware {
+mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T> implements AutoRouteAware {
   AutoRouteObserver? _observer;
 
   @override
@@ -60,8 +59,8 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
     super.didChangeDependencies();
     // RouterScope exposes the list of provided observers
     // including inherited observers
-    _observer =
-        RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    _observer = RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+
     if (_observer != null) {
       // we subscribe to the observer by passing our
       // AutoRouteAware state and the scoped routeData
@@ -103,8 +102,7 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
 /// will inform subscribed [AutoRouteAware]s whenever the user navigates away from
 /// the current page route to another page route.
 class AutoRouteObserver extends AutoRouterObserver {
-  final Map<LocalKey, Set<AutoRouteAware>> _listeners =
-      <LocalKey, Set<AutoRouteAware>>{};
+  final Map<LocalKey, Set<AutoRouteAware>> _listeners = <LocalKey, Set<AutoRouteAware>>{};
 
   /// Subscribe [AutoRouteAware] to be informed about changes to [route].
   ///
@@ -112,11 +110,20 @@ class AutoRouteObserver extends AutoRouterObserver {
   /// to [route], e.g. when [route] is covered by another route or when [route]
   /// is popped off the [Navigator] stack.
   void subscribe(AutoRouteAware routeAware, RouteData route) {
-    final Set<AutoRouteAware> subscribers =
-        _listeners.putIfAbsent(route.key, () => <AutoRouteAware>{});
+    final Set<AutoRouteAware> subscribers = _listeners.putIfAbsent(route.key, () => <AutoRouteAware>{});
     if (subscribers.add(routeAware)) {
-      if (route.router is TabsRouter) {
-        routeAware.didInitTabRoute(null);
+      final router = route.router;
+      if (router is TabsRouter) {
+        final previousIndex = router.previousIndex;
+        if (previousIndex != null && previousIndex >= 0 && previousIndex < router.stackData.length) {
+          final previousRoute = TabPageRoute(
+            routeInfo: router.stackData[previousIndex].route,
+            index: previousIndex,
+          );
+          routeAware.didInitTabRoute(previousRoute);
+        } else {
+          routeAware.didInitTabRoute(null);
+        }
       } else {
         routeAware.didPush();
       }
@@ -137,8 +144,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
-    final List<AutoRouteAware>? subscribers =
-        _listeners[route.routeInfo.key]?.toList();
+    final List<AutoRouteAware>? subscribers = _listeners[route.routeInfo.key]?.toList();
     if (subscribers != null) {
       for (final AutoRouteAware routeAware in subscribers) {
         routeAware.didInitTabRoute(previousRoute);
@@ -148,8 +154,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
-    final List<AutoRouteAware>? subscribers =
-        _listeners[route.routeInfo.key]?.toList();
+    final List<AutoRouteAware>? subscribers = _listeners[route.routeInfo.key]?.toList();
     if (subscribers != null) {
       for (final AutoRouteAware routeAware in subscribers) {
         routeAware.didChangeTabRoute(previousRoute);
@@ -159,11 +164,9 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    if (route.settings is AutoRoutePage &&
-        previousRoute?.settings is AutoRoutePage) {
+    if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
-      final List<AutoRouteAware>? previousSubscribers =
-          _listeners[previousKey]?.toList();
+      final List<AutoRouteAware>? previousSubscribers = _listeners[previousKey]?.toList();
 
       if (previousSubscribers != null) {
         for (final AutoRouteAware routeAware in previousSubscribers) {
@@ -184,8 +187,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    if (route.settings is AutoRoutePage &&
-        previousRoute?.settings is AutoRoutePage) {
+    if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
       final Set<AutoRouteAware>? previousSubscribers = _listeners[previousKey];
 

@@ -2,19 +2,16 @@ part of '../auto_route_page.dart';
 
 /// This is the exact copy of the original file from the flutter repository
 class _PredictiveBackGestureDetector extends StatefulWidget {
-  const _PredictiveBackGestureDetector(
-      {required this.route, required this.builder});
+  const _PredictiveBackGestureDetector({required this.route, required this.builder});
 
   final WidgetBuilder builder;
   final PredictiveBackRoute route;
 
   @override
-  State<_PredictiveBackGestureDetector> createState() =>
-      _PredictiveBackGestureDetectorState();
+  State<_PredictiveBackGestureDetector> createState() => _PredictiveBackGestureDetectorState();
 }
 
-class _PredictiveBackGestureDetectorState
-    extends State<_PredictiveBackGestureDetector> with WidgetsBindingObserver {
+class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDetector> with WidgetsBindingObserver {
   /// True when the predictive back gesture is enabled.
   bool get _isEnabled {
     return widget.route.isCurrent && widget.route.popGestureEnabled;
@@ -60,8 +57,7 @@ class _PredictiveBackGestureDetectorState
 
   @override
   void handleUpdateBackGestureProgress(PredictiveBackEvent backEvent) {
-    widget.route
-        .handleUpdateBackGestureProgress(progress: 1 - backEvent.progress);
+    widget.route.handleUpdateBackGestureProgress(progress: 1 - backEvent.progress);
     currentBackEvent = backEvent;
   }
 

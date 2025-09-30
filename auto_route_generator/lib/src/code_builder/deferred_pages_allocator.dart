@@ -33,11 +33,9 @@ class DeferredPagesAllocator implements Allocator {
   Iterable<Directive> get imports => _imports.keys.map(
         (importPath) {
           if (routes.isDeferred(importPath, defaultDeferredLoading)) {
-            return Directive.importDeferredAs(
-                importPath, '_i${_imports[importPath]}');
+            return Directive.importDeferredAs(importPath, '_i${_imports[importPath]}');
           } else {
-            return Directive.import(importPath,
-                as: '_i${_imports[importPath]}');
+            return Directive.import(importPath, as: '_i${_imports[importPath]}');
           }
         },
       );
@@ -45,17 +43,15 @@ class DeferredPagesAllocator implements Allocator {
 
 extension _RouteConfigList on List<RouteConfig> {
   bool isDeferred(String importPath, bool defaultDeferredLoading) {
-    return mapRouteToDeferredType(importPath, defaultDeferredLoading) ==
-        _DeferredStatus.Deferred;
+    return mapRouteToDeferredType(importPath, defaultDeferredLoading) == _DeferredStatus.deferred;
   }
 
-  _DeferredStatus mapRouteToDeferredType(
-      String importPath, bool defaultDeferredLoading) {
+  _DeferredStatus mapRouteToDeferredType(String importPath, bool defaultDeferredLoading) {
     for (RouteConfig routeConfig in this) {
       if (routeConfig.pageType?.import == importPath) {
         return (routeConfig.deferredLoading ?? defaultDeferredLoading)
-            ? _DeferredStatus.Deferred
-            : _DeferredStatus.None;
+            ? _DeferredStatus.deferred
+            : _DeferredStatus.none;
       }
       //todo handle this
       // if (routeConfig.childRouterConfig == null) {
@@ -72,8 +68,8 @@ extension _RouteConfigList on List<RouteConfig> {
       //   }
       // }
     }
-    return _DeferredStatus.NotFound;
+    return _DeferredStatus.notFound;
   }
 }
 
-enum _DeferredStatus { NotFound, Deferred, None }
+enum _DeferredStatus { notFound, deferred, none }

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// AppBar Leading button types
@@ -205,5 +206,18 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
 
   void _handleRebuild() {
     setState(() {});
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<AutoLeadingButtonBuilder?>('builder', widget.builder));
+    properties.add(DiagnosticsProperty<NullableWidgetBuilder?>('nullableBuilder', widget._nullableBuilder));
+    properties.add(DiagnosticsProperty<bool>('showIfChildCanPop', widget.showIfChildCanPop));
+    properties.add(DiagnosticsProperty<bool>('ignorePagelessRoutes', widget.ignorePagelessRoutes));
+    properties.add(DiagnosticsProperty<bool>('showIfParentCanPop', widget._showIfParentCanPop));
+    properties.add(DiagnosticsProperty<Color?>('color', widget.color));
+    properties.add(DiagnosticsProperty<RouterScope>('scope', RouterScope.of(context)));
+    properties.add(DiagnosticsProperty<PagelessRoutesObserver>('pagelessRoutesObserver', _pagelessRoutesObserver));
   }
 }

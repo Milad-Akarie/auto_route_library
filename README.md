@@ -28,6 +28,7 @@
 - [Introduction](#introduction)
   - [Installation](#installation)
   - [Setup and Usage](#setup-and-usage)
+  - [Usage without code generation](#usage-without-code-generation)
 - [Generated routes](#generated-routes)
 - [Navigation](#navigating-between-screens)
   - [Navigating Between Screens](#navigating-between-screens)
@@ -55,14 +56,49 @@
     - [Enabling Cached Builds (Experimental)](#enabling-cached-builds)
   - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
   - [ActiveGuardObserver](#activeguardobserver)
+  - [Android Predictive Back](#android-predictive-back)
 - [Examples](#examples)
 
+## LeanBuilder support (Experimental) ⚡
+auto_route_generator: (10.2.3+) now supports [LeanBuilder](https://pub.dev/packages/lean_builder) for super-fast incremental builds.
+
+to use lean_builder instead of build_runner, simply add it to your dev_dependencies:
+
+```yaml
+dev_dependencies:
+  auto_route_generator: <latest-version>
+  lean_builder: <latest-version>
+```
+
+and then run the builder using:
+for one-time build
+```terminal
+dart run lean_builder build
+```
+for watching files and rebuilding on changes
+```terminal
+dart run lean_builder watch
+```
+
+to disable `auto_route_generator` from using build_runner, you can add the following to your `build.yaml` file:
+
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_route_generator:
+        enabled: false
+      auto_route_generator:auto_router_generator:
+        enabled: false
+```
 
 ## Migration guides
+
 - [Migrating to v9](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v9.md)
 - [Migrating to v6](https://github.com/Milad-Akarie/auto_route_library/blob/master/migrations/migrating_to_v6.md)
 
 ## Old documentation
+
 - [Pre v9 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v9_README.md)
 - [Pre v6 documentation](https://github.com/Milad-Akarie/auto_route_library/blob/master/old/pre_v6_README.md)
 
@@ -99,7 +135,7 @@ flutter pub add auto_route dev:auto_route_generator dev:build_runner
 1. Create a router class and annotate it with `@AutoRouterConfig` then extend "RootStackRouter" from The auto_route package
 2. Override the routes getter and start adding your routes.
 
- ```dart
+```dart
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
 
@@ -147,7 +183,7 @@ class AppRouter extends RootStackRouter {
 
   @override
   RouteType get defaultRouteType => RouteType.material(); //.cupertino, .adaptive ..etc
-  
+
   @override
   List<AutoRoute> get routes => [
     // HomeScreen is generated as HomeRoute because
@@ -181,7 +217,54 @@ class App extends StatelessWidget {
   }
 }
 ```
+## Usage without code generation
+You can use auto_route without code generation by providing an inline `NamedRouteDef` with a page builder function, as name suggests, you must provide a name for the route so you can navigate to it later by name or path.
+### Declaring Named Routes
+```dart
+  NamedRouteDef(
+    name: 'BookDetailsRoute',
+    path: '/books/:id', // optional
+    builder: (context, data) {
+      return BookDetailsPage(id: data.params.getInt('id'));
+    },
+  ),
+```
+`NamedRouteDef` is a wrapper around `AutoRoute` that allows you to provide a page builder function instead of a generated page, it has the same properties as `AutoRoute` except for `page` properties.
 
+### Navigating to Named Routes
+You can either navigate to a named route by using the dynamic `NamedRoute` class to match by name or by using the `pushPath` method to match by path.
+```dart
+ /// match by name
+    router.push(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+    router.replace(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+    router.navigate(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+/// match by path
+     router.pushPath('/books/1');
+     router.replacePath('/books/1');
+     router.navigatePath('/books/1');
+```
+
+*Note:* You can mix and match between named and generated routes.
+
+### Building a router without code generation
+
+You can either extend `RootStackRouter` like you would normally do or use the `RootStackRouter.build` constructor to build a router without code generation.
+```dart
+    final router = RootStackRouter.build(
+      defaultRouteType: ...,
+      guards: [global guards],
+      routes: [
+        NamedRouteDef(
+          name: 'BookDetailsRoute',
+          path: '/books/:id', // optional
+          builder: (context, data) {
+            return BookDetailsPage(id: data.params.getInt('id'));
+          },
+        ),
+         // ... other routes
+      ],
+    );
+ ```
 ## Generated Routes
 
 A `PageRouteInfo` object will be generated for every declared **AutoRoute**. These objects hold strongly-typed page arguments which are extracted from the page's default constructor. Think of them as string path segments on steroids.
@@ -209,17 +292,17 @@ context.router;
 // adds a new entry to the pages stack
 router.push(const BooksListRoute());
 // or by using paths
-router.pushNamed('/books');
+router.pushPath('/books');
 // removes last entry in stack and pushes provided route
 // if last entry == provided route page will just be updated
 router.replace(const BooksListRoute());
 // or by using paths
-router.replaceNamed('/books');
+router.replacePath('/books');
 // pops until provided route, if it already exists in stack
 // else adds it to the stack (good for web Apps).
 router.navigate(const BooksListRoute());
 // or by using paths
-router.navigateNamed('/books');
+router.navigatePath('/books');
 // on Web it calls window.history.back();
 // on Native it navigates you back
 // to the previous location
@@ -235,6 +318,12 @@ router.pushAll([
 router.replaceAll([
   LoginRoute(),
 ]);
+
+// pops the top page even if it's the last entry in stack
+context.router.pop()
+// pops the most top page of the most top router even if it's the last entry in stack
+context.router.popTop();
+
 // pops the last page unless blocked or stack has only 1 entry
 context.router.maybePop();
 // pops the most top page of the most top router unless blocked
@@ -260,9 +349,10 @@ context.router.removeWhere((route) => );
 context.pushRoute(const BooksListRoute());
 context.replaceRoute(const BooksListRoute());
 context.navigateTo(const BooksListRoute());
-context.navigateNamedTo('/books');
+context.navigateToPath('/books');
 context.back();
 context.maybePop();
+context.pop();
 ```
 
 ## Passing Arguments
@@ -305,6 +395,7 @@ then inside of your `LoginPage`, pop with results
 ```dart
 router.maybePop(true);
 ```
+
 Specifying the type of the result is optional, but it's recommended to avoid runtime errors.
 
 ```dart
@@ -318,6 +409,7 @@ router.maybePop<bool>(true);
 ```
 
 #### 2. Passing a callback function as an argument.
+
 We only have to add a callback function as a parameter to our page constructor like follows:
 
 ```dart
@@ -360,7 +452,7 @@ Nested navigation means building an inner router inside of a page of another rou
   <img alt="nested-router-demo"  src="https://raw.githubusercontent.com/Milad-Akarie/auto_route_library/master/art/nested_router_demo.png?raw=true" height="370">
 </p>
 
-Defining nested routes is as easy as populating the children field of the parent route. In the following example  `UsersPage`, `PostsPage` and `SettingsPage` are nested children of `DashboardPage`.
+Defining nested routes is as easy as populating the children field of the parent route. In the following example `UsersPage`, `PostsPage` and `SettingsPage` are nested children of `DashboardPage`.
 
 ```dart
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
@@ -407,6 +499,7 @@ class DashboardPage extends StatelessWidget {
   }
 }
 ```
+
 **Note** NavLink is just a button that calls router.push(destination). Now if we navigate to `/dashboard/users`, we will be taken to the `DashboardPage` and the `UsersPage` will be shown inside of it.
 
 What if want to show one of the child pages at `/dashboard`? We can simply do that by giving the child routes an empty path `''` to make initial or by setting initial to true.
@@ -437,8 +530,10 @@ AutoRoute(
 ```
 
 #### Creating Empty Shell routes
+
 Empty shell routes build a screen that contain the `AutoRouter` widget, which is used to render nested routes.
 So you can build the widget your self like follows:
+
 ```dart
 @RoutePage()
 class MyShellPage extends StatelessWidget {
@@ -450,23 +545,22 @@ class MyShellPage extends StatelessWidget {
   }
 }
 ```
+
 You can shorten the code above a bit by directly extending the `AutoRouter` Widget.
+
 ```dart
 @RoutePage()
 class MyShellPage extends AutoRouter {
-   const MyShellPage({Key? key}) : super(key: key);  
+   const MyShellPage({Key? key}) : super(key: key);
 }
 ```
 
 finally you can create a shell route without code generation using the `EmptyShellRoute` helper
 
-  ```dart
-     const BooksTab = EmptyShellRoute('BooksTab');
-     context.push(BooksTab());
-  ```
-
-
-
+```dart
+   const BooksTab = EmptyShellRoute('BooksTab');
+   context.push(BooksTab());
+```
 
 ### Things to keep in mind when implementing nested navigation
 
@@ -820,12 +914,13 @@ MaterialApp.router(
         return SynchronousFuture(
         uri.replace(path: uri.path.replaceFirst('/prefix', '')),
           );
-      }  
+      }
       return SynchronousFuture(uri);
     }
   ),
 );
 ```
+
 **Note** for prefix stripping use the shipped-in `DeepLink.prefixStripper('prefix')`
 
 ```dart
@@ -836,7 +931,6 @@ MaterialApp.router(
 );
 ```
 
-```dart
 ### Using Deep-link Builder
 
 Deep link builder is an interceptor for deep-links where you can validate or override deep-links coming from the platform.
@@ -863,6 +957,7 @@ MaterialApp.router(
 ### Deep Linking to non-nested Routes
 
 **AutoRoute** can build a stack from a linear route list as long as they're ordered properly and can be matched as prefix, e.g `/` is a prefix match of `/products`, and `/products` is prefix match of `/products/:id`. Then we have a setup that looks something like this:
+
 - `/`
 - `/products`
 - `/products/:id`
@@ -1047,9 +1142,9 @@ class AuthGuard extends AutoRouteGuard {
       resolver.next(true);
     } else {
         // we redirect the user to our login page
-        // tip: use resolver.redirect to have the redirected route
+        // tip: use resolver.redirectUntil to have the redirected route
         // automatically removed from the stack when the resolver is completed
-        resolver.redirect(
+        resolver.redirectUntil(
           LoginRoute(onResult: (success) {
             // if success == true the navigation will be resumed
             // else it will be aborted
@@ -1062,7 +1157,7 @@ class AuthGuard extends AutoRouteGuard {
 }
 ```
 
-**Important**:  `resolver.next()` should only be called once.
+**Important**: `resolver.next()` should only be called once.
 
 The `NavigationResolver` object contains the guarded route which you can access by calling the property `resolver.route` and a list of pending routes (if there are any) accessed by calling `resolver.pendingRoutes`.
 
@@ -1092,9 +1187,9 @@ class AppRouter extends RootStackRouter{
         } else {
           // else we navigate to the Login page so we get authenticated
 
-          // tip: use resolver.redirect to have the redirected route
+          // tip: use resolver.redirectUntil to have the redirected route
           // automatically removed from the stack when the resolver is completed
-          resolver.redirect(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
+          resolver.redirectUntil(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
         }
       },
     ),
@@ -1107,7 +1202,7 @@ class AppRouter extends RootStackRouter{
 
 ### Using a Reevaluate Listenable
 
-Route guards can prevent users from accessing private pages until they're logged in for example, but auth state may change when the user is already navigated to the private page, to make sure private pages are only accessed by logged-in users all the time, we need a listenable that tells the router that the auth state has changed and you need to re-evaluate your stack.
+Route guards can prevent users from accessing private pages until they're logged in, but auth state may change when the user is already navigated to the private page, to make sure private pages are only accessed by logged-in users all the time, we need a listenable that tells the router that the auth state has changed and you need to re-evaluate your stack.
 
 The following auth provider mock will act as our re-valuate listenable
 
@@ -1139,7 +1234,7 @@ MaterialApp.router(
 );
 ```
 
-Now, every time `AutoProvider` notifies listeners, the stack will be re-evaluated and `AutoRouteGuard.onNavigation()`. Methods will be re-called on all guards
+Now, every time `AuthProvider` notifies listeners, the stack will be re-evaluated and `AutoRouteGuard.onNavigation()`. Methods will be re-called on all guards
 
 In the above example, we assigned our `AuthProvider` to `reevaluateListenable` directly, that's because `reevaluateListenable` takes a `Listenable` and AuthProvider extends `ChangeNotifier` which is a `Listenable`, if your auth provider is a stream you can use `reevaluateListenable: ReevaluateListenable.stream(YOUR-STREAM)`
 
@@ -1151,10 +1246,12 @@ void onNavigation(NavigationResolver resolver, StackRouter router) async {
   if (authProvider.isAuthenticated) {
     resolver.next();
   } else {
-    resolver.redirect(
+    resolver.redirectUntil(
       WebLoginRoute(
+        /// this part is optional if you're not using reevaluateListenable as this method will 
+        /// be called again and if the condition is satisfied the resolver will be completed
         onResult: (didLogin) {
-          // stop re-pushing any pending routes after current
+          /// stop re-pushing any pending routes after current
           resolver.resolveNext(didLogin, reevaluateNext: false);
         },
       ),
@@ -1170,7 +1267,7 @@ In some cases we want to wrap our screen with a parent widget, usually to provid
 ```dart
 @RoutePage()
 class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
-  
+
   @override
   Widget wrappedRoute(BuildContext context) {
     return Provider(create: (ctx) => ProductsBloc(), child: this);
@@ -1178,8 +1275,6 @@ class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
   ...
 }
 ```
-
-
 
 ## Navigation Observers
 
@@ -1322,7 +1417,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAwareStateMixin<Bo
   // only override if this is a stack page
   @override
   void didPopNext() {}
-  
+
   // only override if this is a stack page
   @override
   void didPushNext() {}
@@ -1334,7 +1429,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAwareStateMixin<Bo
 ##### MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter
 
 | Property                    | Default value         | Definition                                                                        |
-|-----------------------------|-----------------------|-----------------------------------------------------------------------------------|
+| --------------------------- | --------------------- | --------------------------------------------------------------------------------- |
 | replaceInRouteName [String] | Page&#124Screen,Route | Used to replace conventional words in generated route name (pattern, replacement) |
 
 ## Custom Route Transitions
@@ -1346,7 +1441,7 @@ CustomRoute(
   page: LoginRoute.page,
   // TransitionsBuilders class contains a preset of common transitions builders.
   transitionsBuilder: TransitionsBuilders.slideBottom,
-  durationInMilliseconds: 400,
+  duration: Duration(milliseconds: 400),
 )
 ```
 
@@ -1371,6 +1466,7 @@ CustomRoute(
 You can use your own custom route by passing a `CustomRouteBuilder` function to `CustomRoute' and implement the builder function the same way we did with the TransitionsBuilder function, the most important part here is passing the page argument to our custom route.
 
 make sure you pass the return type <T> to your custom route builder function.
+
 ```dart
 CustomRoute(
   page: CustomPage,
@@ -1415,6 +1511,7 @@ class AppRouter extends RootStackRouter {}
 ```
 
 ## Configuring builders
+
 To pass builder configuration to `auto_route_generator` we need to add `build.yaml` file next to `pubspec.yaml` if not already added.
 
 ```yaml
@@ -1428,6 +1525,7 @@ targets:
 ```
 
 ### Passing custom ignore_for_file rules
+
 You can pass custom ignore_for_file rules to the generated router by adding the following:
 
 ```yaml
@@ -1442,6 +1540,7 @@ targets:
 ```
 
 ### Optimizing generation time
+
 The first thing you want to do to reduce generation time, is specifying the files build_runner should process and we do that by using [globs](https://pub.dev/packages/glob). Globs are kind of regex patterns with little differences that's used to match file names. **Note:** for this to work on file level you need to follow a naming convention
 
 ```
@@ -1457,7 +1556,7 @@ let's say we have the following files tree
 By default, the builder will process all of these files to check for a page with `@RoutePage()`
 annotation, we can help by letting it know what files we need processed, e.g only process the files
 inside the ui folder:
-**Note** (**) matches everything including '/';
+**Note** (\*\*) matches everything including '/';
 
 ```yaml
 targets:
@@ -1528,6 +1627,20 @@ AppBar(
   leading: AutoLeadingButton(),
 )
 ```
+you can also use `AutoBackButton.builder` above your Scaffold for example to provide a nullable leading widget to prevent AppBar.leadingWidth when there's no leading to show
+
+```dart
+AutoBackButton.builder(
+  builder: (BuildContext context, Widget? leading) {
+    return  Scaffold(
+      appBar: AppBar(
+        title: Text(context.topRoute.name),
+        leading: leading,
+      ),
+    );
+  },
+)
+```
 
 ### ActiveGuardObserver
 
@@ -1545,13 +1658,30 @@ void initState(){
   });
 }
 ```
+### Android Predictive Back
+`auto_route` **v10** supports Android predictive back, which is a feature that allows the user to take a peek at the previous route by swiping from the edge of the screen before committing to the back action.
 
+For now this feature needs to be enabled in manifest file, it also has some flutter considerations, see [Android Predictive Back](https://docs.flutter.dev/release/breaking-changes/android-predictive-back) for more information.
+
+after you've enabled the feature in your manifest file, you can simply create predictive-back enabled routes by setting `enablePredictiveBackGesture` to true in your route type, you can also provide a custom `predictiveBackPageTransitionsBuilder` to customize the transitions.
+
+```dart
+  RouteType.material(
+      enablePredictiveBackGesture: true,
+       // optionally provide a custom transitions builder
+      predictiveBackPageTransitionsBuilder: (context,animation,secondaryAnimation,child) {
+       // return preferred transitions
+      },
+    )
+```
+
+you can enable predictive back for all routes by overriding `defaultRouteType` in your router, all route types that apply on android support this feature.
 
 ## Examples
- 
+
 - [Declarative Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/declarative/declarative.router.dart)
 - [Nested Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/nested-navigation/nested_navigation.router.dart)
- 
+
 ### Support auto_route
 
 You can support auto_route by liking it on Pub and staring it on Github, sharing ideas on how we can enhance a certain functionality or by reporting any problems you encounter and of course buying a couple coffees will help speed up the development process

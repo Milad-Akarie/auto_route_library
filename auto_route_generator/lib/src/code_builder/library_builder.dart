@@ -21,11 +21,10 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 
 /// Builds a list type reference of type [reference]
-TypeReference listRefer(Reference reference, {bool nullable = false}) =>
-    TypeReference((b) => b
-      ..symbol = "List"
-      ..isNullable = nullable
-      ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
+  ..symbol = "List"
+  ..isNullable = nullable
+  ..types.add(reference));
 
 /// Generates the router library output
 String generateLibrary(
@@ -33,29 +32,28 @@ String generateLibrary(
   required List<RouteConfig> routes,
   Set<String> ignoreForFile = const {},
 }) {
-  throwIf(
-    router.usesPartBuilder && router.deferredLoading,
-    'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
-  );
+  if (router.usesPartBuilder && router.deferredLoading) {
+    throw ArgumentError(
+        'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!');
+  }
 
   final emitter = DartEmitter(
-    allocator: router.usesPartBuilder
-        ? Allocator.none
-        : DeferredPagesAllocator(routes, router.deferredLoading),
+    allocator: router.usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, router.deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
 
   final deferredRoutes = routes.where((r) => r.deferredLoading == true);
-  throwIf(
-    router.usesPartBuilder && deferredRoutes.isNotEmpty,
-    'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports! ${deferredRoutes.map((e) => e.name)}',
-  );
+
+  if (router.usesPartBuilder && deferredRoutes.isNotEmpty) {
+    throw ArgumentError(
+      'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports! ${deferredRoutes.map((e) => e.name)}',
+    );
+  }
 
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];
-    if (deferredRoutes.any(
-        (e) => e.pageType == route.pageType && route.deferredLoading != true)) {
+    if (deferredRoutes.any((e) => e.pageType == route.pageType && route.deferredLoading != true)) {
       routes[i] = route.copyWith(deferredLoading: true);
     }
   }
@@ -79,8 +77,7 @@ String generateLibrary(
       ]),
   );
 
-  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
-      .format(
+  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion).format(
     library.accept(emitter).toString(),
   );
 }

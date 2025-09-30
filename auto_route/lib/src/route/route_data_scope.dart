@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../auto_route.dart';
@@ -22,8 +23,7 @@ class RouteDataScope extends InheritedWidget {
     var scope = context.findAncestorWidgetOfExactType<RouteDataScope>();
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'RouteData operation requested with a context that does not include an RouteData.\n'
+        throw FlutterError('RouteData operation requested with a context that does not include an RouteData.\n'
             'The context used to retrieve the RouteData must be that of a widget that '
             'is a descendant of a AutoRoutePage.');
       }
@@ -35,5 +35,11 @@ class RouteDataScope extends InheritedWidget {
   @override
   bool updateShouldNotify(covariant RouteDataScope oldWidget) {
     return routeData.route != oldWidget.routeData.route;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<RouteData>('routeData', routeData));
   }
 }

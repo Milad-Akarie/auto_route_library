@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../auto_route.dart';
@@ -34,6 +35,12 @@ class AutoRouteNavigator extends StatefulWidget {
   /// by [router] to be finally passed to [Navigator.pages]
   final RoutesBuilder? declarativeRoutesBuilder;
 
+  /// The clip behavior of the navigator
+  final Clip clipBehavior;
+
+  /// The traversal edge behavior of the navigator
+  final TraversalEdgeBehavior? routeTraversalEdgeBehavior;
+
   /// Default constructor
   const AutoRouteNavigator({
     required this.router,
@@ -42,6 +49,8 @@ class AutoRouteNavigator extends StatefulWidget {
     this.didPop,
     this.declarativeRoutesBuilder,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
+    this.routeTraversalEdgeBehavior,
     super.key,
   });
 
@@ -83,9 +92,11 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   Widget build(BuildContext context) {
-   return widget.router.hasEntries
-        ?  Navigator(
+    return widget.router.hasEntries
+        ? Navigator(
             key: widget.router.navigatorKey,
+            clipBehavior: widget.clipBehavior,
+            routeTraversalEdgeBehavior: widget.routeTraversalEdgeBehavior ?? kDefaultRouteTraversalEdgeBehavior,
             observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
             restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
             pages: widget.router.stack,
@@ -100,5 +111,17 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
             Container(
               color: Theme.of(context).scaffoldBackgroundColor,
             );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<StackRouter>('router', widget.router));
+    properties.add(IterableProperty<NavigatorObserver>('navigatorObservers', widget.navigatorObservers));
+    properties.add(DiagnosticsProperty<RoutesBuilder>('declarativeRoutesBuilder', widget.declarativeRoutesBuilder));
+    properties.add(DiagnosticsProperty<WidgetBuilder>('placeholder', widget.placeholder));
+    properties.add(DiagnosticsProperty<Clip>('clipBehavior', widget.clipBehavior));
+    properties.add(DiagnosticsProperty<String?>('navRestorationScopeId', widget.navRestorationScopeId));
+    properties.add(DiagnosticsProperty<RoutePopCallBack>('didPop', widget.didPop));
   }
 }

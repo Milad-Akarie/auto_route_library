@@ -3,15 +3,12 @@ import 'package:example/mobile/router/router.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 //ignore_for_file: public_member_api_docs
 
 @RoutePage()
 class HomePage extends StatefulWidget {
-  const HomePage({
-    Key? key,
-  }) : super(key: key);
+  const HomePage({super.key});
 
   @override
   HomePageState createState() => HomePageState();
@@ -95,24 +92,18 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           })
         : AutoTabsRouter(
             builder: (context, child) {
-              return  Scaffold(
-                  appBar: AppBar(
-                    leading: AutoLeadingButton(),
-                    title: Text(context.topRoute.title(context)),
-                    // leading: AutoLeadingButton(ignorePagelessRoutes: true),
-                    // bottom: TabBar(
-                    //   controller: controller,
-                    //   tabs: [
-                    //     for (final d in destinations)
-                    //       Tab(
-                    //         child: Text(d.label),
-                    //       )
-                    //   ],
-                    // ),
-                  ),
-                  body: child,
-                  bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
-                );
+              return Scaffold(
+                appBar: AppBar(
+                  leading: AutoLeadingButton(),
+                  title: Text(context.topRoute.title(context)),
+                  // bottom: TabBar(
+                  //   controller: controller,
+                  //   tabs: [for (final d in destinations) Tab(child: Text(d.label))],
+                  // ),
+                ),
+                body: child,
+                bottomNavigationBar: buildBottomNav(context, context.tabsRouter),
+              );
             },
           );
   }
@@ -145,7 +136,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
 @RoutePage()
 class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+  const WelcomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -168,4 +159,3 @@ class WelcomeScreen extends StatelessWidget {
     });
   }
 }
-

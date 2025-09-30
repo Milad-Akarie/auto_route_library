@@ -1,6 +1,6 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-import '../../../auto_route.dart';
 
 /// A Wrapper for [Navigator] that handles stack-routing
 class AutoRouter extends StatefulWidget {
@@ -32,24 +32,30 @@ class AutoRouter extends StatefulWidget {
   /// an empty page with [Theme.scaffoldBackgroundColor].
   final WidgetBuilder? placeholder;
 
+  /// The clip behavior of the navigator
+  final Clip clipBehavior;
+
+  /// The traversal edge behavior of the navigator
+  final TraversalEdgeBehavior? traversalEdgeBehavior;
+
   /// Default constructor
   const AutoRouter({
     super.key,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
     this.navRestorationScopeId,
     this.navigatorKey,
     this.inheritNavigatorObservers = true,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
+    this.traversalEdgeBehavior,
   });
 
   /// Builds a [_DeclarativeAutoRouter] which uses
   /// a declarative list of routes to update navigator stack
   static Widget declarative({
     Key? key,
-    NavigatorObserversBuilder navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     required RoutesBuilder routes,
     RoutePopCallBack? onPopRoute,
     String? navRestorationScopeId,
@@ -57,6 +63,8 @@ class AutoRouter extends StatefulWidget {
     GlobalKey<NavigatorState>? navigatorKey,
     OnNestedNavigateCallBack? onNavigate,
     WidgetBuilder? placeholder,
+    Clip clipBehavior = Clip.hardEdge,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
   }) =>
       _DeclarativeAutoRouter(
         onPopRoute: onPopRoute,
@@ -67,6 +75,8 @@ class AutoRouter extends StatefulWidget {
         onNavigate: onNavigate,
         placeholder: placeholder,
         routes: routes,
+        clipBehavior: clipBehavior,
+        traversalEdgeBehavior: traversalEdgeBehavior,
       );
 
   @override
@@ -82,8 +92,7 @@ class AutoRouter extends StatefulWidget {
     var scope = StackRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
-        throw FlutterError(
-            'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
             'The context used to retrieve the Router must be that of a widget that '
             'is a descendant of an AutoRouter widget.');
       }
@@ -100,7 +109,7 @@ class AutoRouter extends StatefulWidget {
 
 /// State implementation of [AutoRouter]
 class AutoRouterState extends State<AutoRouter> {
-  StackRouter? _controller;
+  NestedStackRouter? _controller;
 
   /// The StackRouter controlling this router widget
   StackRouter? get controller => _controller;
@@ -127,6 +136,7 @@ class AutoRouterState extends State<AutoRouter> {
       _controller = NestedStackRouter(
         parent: _parentController,
         key: parentRouteData.key,
+        matchId: parentRouteData.matchId,
         routeData: parentRouteData,
         navigatorKey: widget.navigatorKey,
         routeCollection: _parentController.routeCollection.subCollectionOf(
@@ -135,6 +145,11 @@ class AutoRouterState extends State<AutoRouter> {
       );
       _parentController.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
+      // defer the setup of initial routes to the next frame
+      // so that we can have access to the context inside guards
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _controller!.setupInitialRoutes();
+      });
     }
   }
 
@@ -147,15 +162,18 @@ class AutoRouterState extends State<AutoRouter> {
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    var navigator = AutoRouteNavigator(
+    final navigator = AutoRouteNavigator(
       router: _controller!,
+      clipBehavior: widget.clipBehavior,
       key: GlobalObjectKey(_controller.hashCode),
       navRestorationScopeId: widget.navRestorationScopeId,
       navigatorObservers: _navigatorObservers,
       placeholder: widget.placeholder,
+      routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
     );
     final stateHash = _controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       navigatorObservers: _navigatorObservers,
@@ -182,6 +200,12 @@ class AutoRouterState extends State<AutoRouter> {
       _controller = null;
     }
   }
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<StackRouter>('controller', controller));
+  }
 }
 
 class _DeclarativeAutoRouter extends StatefulWidget {
@@ -193,17 +217,19 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final GlobalKey<NavigatorState>? navigatorKey;
   final OnNestedNavigateCallBack? onNavigate;
   final WidgetBuilder? placeholder;
-
+  final Clip clipBehavior;
+  final TraversalEdgeBehavior? traversalEdgeBehavior;
   const _DeclarativeAutoRouter({
     required this.routes,
-    this.navigatorObservers =
-        AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.navigatorKey,
     this.navRestorationScopeId,
     this.inheritNavigatorObservers = true,
     this.onNavigate,
     this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
+    this.traversalEdgeBehavior,
   });
 
   @override
@@ -239,6 +265,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
       _controller = NestedStackRouter(
         parent: _parentController,
         key: parentData.key,
+        matchId: parentData.matchId,
         routeData: parentData,
         managedByWidget: true,
         onNavigate: widget.onNavigate,
@@ -266,6 +293,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     assert(_controller != null);
     final stateHash = controller!.stateHash;
     return RouterScope(
+      key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       navigatorObservers: _navigatorObservers,
@@ -274,14 +302,22 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         controller: _heroController,
         child: AutoRouteNavigator(
           router: _controller!,
+          clipBehavior: widget.clipBehavior,
           key: GlobalObjectKey(_controller.hashCode),
           declarativeRoutesBuilder: widget.routes,
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: _navigatorObservers,
           didPop: widget.onPopRoute,
           placeholder: widget.placeholder,
+          routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
         ),
       ),
     );
+  }
+
+  @override
+  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<StackRouter>('controller', controller));
   }
 }

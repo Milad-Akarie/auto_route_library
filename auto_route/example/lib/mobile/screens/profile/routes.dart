@@ -3,7 +3,7 @@ import 'package:example/mobile/router/router.dart';
 import 'package:example/mobile/router/router.gr.dart';
 
 //ignore_for_file: public_member_api_docs
-final profileTab = AutoRoute(
+final profileRoute = AutoRoute(
   path: 'profile',
   page: ProfileTab.page,
   children: [

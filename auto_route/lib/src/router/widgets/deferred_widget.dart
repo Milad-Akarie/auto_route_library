@@ -61,8 +61,7 @@ class _DeferredWidgetState extends State<DeferredWidget> {
     if (DeferredWidget._loadedModules.contains(widget.libraryLoader)) {
       _onLibraryLoaded();
     } else {
-      DeferredWidget._preload(widget.libraryLoader)
-          .then((dynamic _) => _onLibraryLoaded());
+      DeferredWidget._preload(widget.libraryLoader).then((dynamic _) => _onLibraryLoaded());
     }
     super.initState();
   }
@@ -83,9 +82,7 @@ class _DeferredWidgetState extends State<DeferredWidget> {
       _loadedChild = _loadedCreator!();
     }
 
-    final placeHolder =
-        AutoRouterDelegate.of(context).placeholder?.call(context) ??
-            const DeferredLoadingPlaceholder();
+    final placeHolder = AutoRouterDelegate.of(context).placeholder?.call(context) ?? const DeferredLoadingPlaceholder();
     return _loadedChild ?? placeHolder;
   }
 }

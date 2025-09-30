@@ -8,7 +8,7 @@ import 'data_collector.dart';
 class UserDataPage extends StatelessWidget {
   final Function(UserData data)? onResult;
 
-  const UserDataPage({Key? key, this.onResult}) : super(key: key);
+  const UserDataPage({super.key, this.onResult});
 
   @override
   Widget build(BuildContext context) {

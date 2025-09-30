@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -85,6 +86,7 @@ class AutoPageViewState extends State<AutoPageView> {
 
   void _routerListener() {
     _updateChildren();
+    _disposeInactiveChildren();
     if (_router.activeIndex != _controller.page!.round()) {
       _warpToCurrentIndex();
     }
@@ -111,7 +113,7 @@ class AutoPageViewState extends State<AutoPageView> {
     );
   }
 
-  _disposeInactiveChildren() {
+  void _disposeInactiveChildren() {
     for (int i = 0; i < _tabKeys.length; i++) {
       if (i != _router.activeIndex) {
         _tabKeys[i]?.currentState?.unloadIfRequired();
@@ -129,8 +131,7 @@ class AutoPageViewState extends State<AutoPageView> {
     if ((_router.activeIndex - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
       if (animatePageTransition) {
-        await _controller.animateToPage(_router.activeIndex,
-            duration: duration, curve: Curves.ease);
+        await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
       } else {
         _controller.jumpToPage(_router.activeIndex);
       }
@@ -138,9 +139,7 @@ class AutoPageViewState extends State<AutoPageView> {
       return Future<void>.value();
     }
     assert((_router.activeIndex - previousIndex).abs() > 1);
-    final int initialPage = _router.activeIndex > previousIndex
-        ? _router.activeIndex - 1
-        : _router.activeIndex + 1;
+    final int initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
     _disposeInactiveChildren();
     setState(() {
       _warpUnderwayCount += 1;
@@ -152,8 +151,7 @@ class AutoPageViewState extends State<AutoPageView> {
     _controller.jumpToPage(initialPage);
 
     if (animatePageTransition) {
-      await _controller.animateToPage(_router.activeIndex,
-          duration: duration, curve: Curves.ease);
+      await _controller.animateToPage(_router.activeIndex, duration: duration, curve: Curves.ease);
     } else {
       _controller.jumpToPage(_router.activeIndex);
     }
@@ -165,9 +163,6 @@ class AutoPageViewState extends State<AutoPageView> {
 
   // Called when the PageView scrolls
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollEndNotification) {
-      _disposeInactiveChildren();
-    }
     if (_warpUnderwayCount > 0) return false;
     if (notification.depth != 0) return false;
     _warpUnderwayCount += 1;
@@ -204,5 +199,15 @@ class AutoPageViewState extends State<AutoPageView> {
         children: _children,
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<PageController>('controller', _controller));
+    properties.add(DiagnosticsProperty<TabsRouter>('router', _router));
+    properties.add(IntProperty('activeIndex', _router.activeIndex));
+    properties.add(IntProperty('previousIndex', _router.previousIndex));
+    properties.add(IntProperty('childrenCount', _children.length));
   }
 }

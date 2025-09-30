@@ -5,8 +5,7 @@
 // The adjustments made to this code is to disable unwanted shadow
 // of routes when used as nested routes, e.g inside of a TabsRouter
 
-import 'package:flutter/cupertino.dart'
-    show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
+import 'package:flutter/cupertino.dart' show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
 import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
@@ -233,12 +232,10 @@ class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   final ValueGetter<_CupertinoBackGestureController<T>> onStartPopGesture;
 
   @override
-  _CupertinoBackGestureDetectorState<T> createState() =>
-      _CupertinoBackGestureDetectorState<T>();
+  _CupertinoBackGestureDetectorState<T> createState() => _CupertinoBackGestureDetectorState<T>();
 }
 
-class _CupertinoBackGestureDetectorState<T>
-    extends State<_CupertinoBackGestureDetector<T>> {
+class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureDetector<T>> {
   _CupertinoBackGestureController<T>? _backGestureController;
 
   late HorizontalDragGestureRecognizer _recognizer;
@@ -268,15 +265,13 @@ class _CupertinoBackGestureDetectorState<T>
   void _handleDragUpdate(DragUpdateDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController!.dragUpdate(
-        _convertToLogical(details.primaryDelta! / context.size!.width));
+    _backGestureController!.dragUpdate(_convertToLogical(details.primaryDelta! / context.size!.width));
   }
 
   void _handleDragEnd(DragEndDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController!.dragEnd(_convertToLogical(
-        details.velocity.pixelsPerSecond.dx / context.size!.width));
+    _backGestureController!.dragEnd(_convertToLogical(details.velocity.pixelsPerSecond.dx / context.size!.width));
     _backGestureController = null;
   }
 
@@ -387,14 +382,11 @@ class _CupertinoBackGestureController<T> {
       // We want to cap the animation time, but we want to use a linear curve
       // to determine it.
       final int droppedPageForwardAnimationTime = min(
-        lerpDouble(
-                _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)!
-            .floor(),
+        lerpDouble(_kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)!.floor(),
         _kMaxPageBackAnimationTime,
       );
       controller.animateTo(1.0,
-          duration: Duration(milliseconds: droppedPageForwardAnimationTime),
-          curve: animationCurve);
+          duration: Duration(milliseconds: droppedPageForwardAnimationTime), curve: animationCurve);
     } else {
       // This route is destined to pop at this point. Reuse navigator's pop.
       navigator.pop();
@@ -402,12 +394,10 @@ class _CupertinoBackGestureController<T> {
       // The popping may have finished inline if already at the target destination.
       if (controller.isAnimating) {
         // Otherwise, use a custom popping animation duration and curve.
-        final int droppedPageBackAnimationTime = lerpDouble(
-                0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)!
-            .floor();
+        final int droppedPageBackAnimationTime =
+            lerpDouble(0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)!.floor();
         controller.animateBack(0.0,
-            duration: Duration(milliseconds: droppedPageBackAnimationTime),
-            curve: animationCurve);
+            duration: Duration(milliseconds: droppedPageBackAnimationTime), curve: animationCurve);
       }
     }
 
@@ -434,8 +424,7 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
   const _CupertinoEdgeShadowDecoration._([this._colors]);
 
   static DecorationTween tween(bool withShadow) => DecorationTween(
-        begin: const _CupertinoEdgeShadowDecoration
-            ._(), // No decoration initially.
+        begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
         end: _CupertinoEdgeShadowDecoration._(
           // Eyeballed gradient used to mimic a drop shadow on the start side only.
           withShadow
@@ -489,26 +478,21 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
     if (a == null) {
       return bColors == null
           ? b
-          : _CupertinoEdgeShadowDecoration._(bColors
-              .map<Color>((Color color) => Color.lerp(null, color, t)!)
-              .toList());
+          : _CupertinoEdgeShadowDecoration._(bColors.map<Color>((Color color) => Color.lerp(null, color, t)!).toList());
     }
     if (b == null) {
       return aColors == null
           ? a
-          : _CupertinoEdgeShadowDecoration._(aColors
-              .map<Color>((Color color) => Color.lerp(null, color, 1.0 - t)!)
-              .toList());
+          : _CupertinoEdgeShadowDecoration._(
+              aColors.map<Color>((Color color) => Color.lerp(null, color, 1.0 - t)!).toList());
     }
     assert(bColors != null || aColors != null);
     // If it ever becomes necessary, we could allow decorations with different
     // length' here, similarly to how it is handled in [LinearGradient.lerp].
-    assert(
-        bColors == null || aColors == null || aColors.length == bColors.length);
+    assert(bColors == null || aColors == null || aColors.length == bColors.length);
     return _CupertinoEdgeShadowDecoration._(
       <Color>[
-        for (int i = 0; i < bColors!.length; i += 1)
-          Color.lerp(a._colors?[i], bColors[i], t)!,
+        for (int i = 0; i < bColors!.length; i += 1) Color.lerp(a._colors?[i], bColors[i], t)!,
       ],
     );
   }
@@ -615,11 +599,9 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
         bandColorIndex += 1;
       }
       final Paint paint = Paint()
-        ..color = Color.lerp(colors[bandColorIndex], colors[bandColorIndex + 1],
-            (dx % bandWidth) / bandWidth)!;
+        ..color = Color.lerp(colors[bandColorIndex], colors[bandColorIndex + 1], (dx % bandWidth) / bandWidth)!;
       final double x = start + shadowDirection * dx;
-      canvas.drawRect(
-          Rect.fromLTWH(x - 1.0, offset.dy, 1.0, shadowHeight), paint);
+      canvas.drawRect(Rect.fromLTWH(x - 1.0, offset.dy, 1.0, shadowHeight), paint);
     }
   }
 }

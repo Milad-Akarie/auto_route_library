@@ -22,13 +22,16 @@ import 'package:flutter/material.dart' as _i9;
 /// generated route for
 /// [_i1.BookDetailsPage]
 class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
-  BookDetailsRoute({int id = -3, List<_i8.PageRouteInfo>? children})
-    : super(
-        BookDetailsRoute.name,
-        args: BookDetailsRouteArgs(id: id),
-        rawPathParams: {'id': id},
-        initialChildren: children,
-      );
+  BookDetailsRoute({
+    _i9.Key? key,
+    int id = -1,
+    List<_i8.PageRouteInfo>? children,
+  }) : super(
+          BookDetailsRoute.name,
+          args: BookDetailsRouteArgs(key: key, id: id),
+          rawPathParams: {'id': id},
+          initialChildren: children,
+        );
 
   static const String name = 'BookDetailsRoute';
 
@@ -37,36 +40,48 @@ class BookDetailsRoute extends _i8.PageRouteInfo<BookDetailsRouteArgs> {
     builder: (data) {
       final pathParams = data.inheritedPathParams;
       final args = data.argsAs<BookDetailsRouteArgs>(
-        orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -3)),
+        orElse: () => BookDetailsRouteArgs(id: pathParams.getInt('id', -1)),
       );
-      return _i1.BookDetailsPage(id: args.id);
+      return _i1.BookDetailsPage(key: args.key, id: args.id);
     },
   );
 }
 
 class BookDetailsRouteArgs {
-  const BookDetailsRouteArgs({this.id = -3});
+  const BookDetailsRouteArgs({this.key, this.id = -1});
+
+  final _i9.Key? key;
 
   final int id;
 
   @override
   String toString() {
-    return 'BookDetailsRouteArgs{id: $id}';
+    return 'BookDetailsRouteArgs{key: $key, id: $id}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! BookDetailsRouteArgs) return false;
+    return key == other.key && id == other.id;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ id.hashCode;
 }
 
 /// generated route for
 /// [_i2.BookListScreen]
 class BookListRoute extends _i8.PageRouteInfo<void> {
   const BookListRoute({List<_i8.PageRouteInfo>? children})
-    : super(BookListRoute.name, initialChildren: children);
+      : super(BookListRoute.name, initialChildren: children);
 
   static const String name = 'BookListRoute';
 
   static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return _i2.BookListScreen();
+      return const _i2.BookListScreen();
     },
   );
 }
@@ -75,7 +90,7 @@ class BookListRoute extends _i8.PageRouteInfo<void> {
 /// [_i3.HomePage]
 class HomeRoute extends _i8.PageRouteInfo<void> {
   const HomeRoute({List<_i8.PageRouteInfo>? children})
-    : super(HomeRoute.name, initialChildren: children);
+      : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
@@ -92,18 +107,13 @@ class HomeRoute extends _i8.PageRouteInfo<void> {
 class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
     _i9.Key? key,
-    void Function(bool)? onLoginResult,
     bool showBackButton = true,
     List<_i8.PageRouteInfo>? children,
   }) : super(
-         LoginRoute.name,
-         args: LoginRouteArgs(
-           key: key,
-           onLoginResult: onLoginResult,
-           showBackButton: showBackButton,
-         ),
-         initialChildren: children,
-       );
+          LoginRoute.name,
+          args: LoginRouteArgs(key: key, showBackButton: showBackButton),
+          initialChildren: children,
+        );
 
   static const String name = 'LoginRoute';
 
@@ -113,32 +123,32 @@ class LoginRoute extends _i8.PageRouteInfo<LoginRouteArgs> {
       final args = data.argsAs<LoginRouteArgs>(
         orElse: () => const LoginRouteArgs(),
       );
-      return _i4.LoginPage(
-        key: args.key,
-        onLoginResult: args.onLoginResult,
-        showBackButton: args.showBackButton,
-      );
+      return _i4.LoginPage(key: args.key, showBackButton: args.showBackButton);
     },
   );
 }
 
 class LoginRouteArgs {
-  const LoginRouteArgs({
-    this.key,
-    this.onLoginResult,
-    this.showBackButton = true,
-  });
+  const LoginRouteArgs({this.key, this.showBackButton = true});
 
   final _i9.Key? key;
-
-  final void Function(bool)? onLoginResult;
 
   final bool showBackButton;
 
   @override
   String toString() {
-    return 'LoginRouteArgs{key: $key, onLoginResult: $onLoginResult, showBackButton: $showBackButton}';
+    return 'LoginRouteArgs{key: $key, showBackButton: $showBackButton}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! LoginRouteArgs) return false;
+    return key == other.key && showBackButton == other.showBackButton;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ showBackButton.hashCode;
 }
 
 /// generated route for
@@ -146,14 +156,14 @@ class LoginRouteArgs {
 class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
   MyBooksRoute({
     _i9.Key? key,
-    String? filter = 'none',
+    String? filter = 'none2',
     List<_i8.PageRouteInfo>? children,
   }) : super(
-         MyBooksRoute.name,
-         args: MyBooksRouteArgs(key: key, filter: filter),
-         rawQueryParams: {'filter': filter},
-         initialChildren: children,
-       );
+          MyBooksRoute.name,
+          args: MyBooksRouteArgs(key: key, filter: filter),
+          rawQueryParams: {'filter': filter},
+          initialChildren: children,
+        );
 
   static const String name = 'MyBooksRoute';
 
@@ -162,10 +172,8 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
     builder: (data) {
       final queryParams = data.queryParams;
       final args = data.argsAs<MyBooksRouteArgs>(
-        orElse:
-            () => MyBooksRouteArgs(
-              filter: queryParams.optString('filter', 'none'),
-            ),
+        orElse: () =>
+            MyBooksRouteArgs(filter: queryParams.optString('filter', 'none2')),
       );
       return _i5.MyBooksPage(key: args.key, filter: args.filter);
     },
@@ -173,7 +181,7 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
 }
 
 class MyBooksRouteArgs {
-  const MyBooksRouteArgs({this.key, this.filter = 'none'});
+  const MyBooksRouteArgs({this.key, this.filter = 'none2'});
 
   final _i9.Key? key;
 
@@ -183,20 +191,30 @@ class MyBooksRouteArgs {
   String toString() {
     return 'MyBooksRouteArgs{key: $key, filter: $filter}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! MyBooksRouteArgs) return false;
+    return key == other.key && filter == other.filter;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ filter.hashCode;
 }
 
 /// generated route for
 /// [_i6.ProfilePage]
 class ProfileRoute extends _i8.PageRouteInfo<void> {
   const ProfileRoute({List<_i8.PageRouteInfo>? children})
-    : super(ProfileRoute.name, initialChildren: children);
+      : super(ProfileRoute.name, initialChildren: children);
 
   static const String name = 'ProfileRoute';
 
   static _i8.PageInfo page = _i8.PageInfo(
     name,
     builder: (data) {
-      return _i6.ProfilePage();
+      return const _i6.ProfilePage();
     },
   );
 }
@@ -210,12 +228,12 @@ class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
     String query = 'none',
     List<_i8.PageRouteInfo>? children,
   }) : super(
-         SettingsTab.name,
-         args: SettingsTabArgs(key: key, tab: tab, query: query),
-         rawPathParams: {'tab': tab},
-         rawQueryParams: {'query': query},
-         initialChildren: children,
-       );
+          SettingsTab.name,
+          args: SettingsTabArgs(key: key, tab: tab, query: query),
+          rawPathParams: {'tab': tab},
+          rawQueryParams: {'query': query},
+          initialChildren: children,
+        );
 
   static const String name = 'SettingsTab';
 
@@ -225,11 +243,10 @@ class SettingsTab extends _i8.PageRouteInfo<SettingsTabArgs> {
       final pathParams = data.inheritedPathParams;
       final queryParams = data.queryParams;
       final args = data.argsAs<SettingsTabArgs>(
-        orElse:
-            () => SettingsTabArgs(
-              tab: pathParams.getString('tab', 'none'),
-              query: queryParams.getString('query', 'none'),
-            ),
+        orElse: () => SettingsTabArgs(
+          tab: pathParams.getString('tab', 'none'),
+          query: queryParams.getString('query', 'none'),
+        ),
       );
       return _i7.SettingsPage(key: args.key, tab: args.tab, query: args.query);
     },
@@ -249,13 +266,23 @@ class SettingsTabArgs {
   String toString() {
     return 'SettingsTabArgs{key: $key, tab: $tab, query: $query}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! SettingsTabArgs) return false;
+    return key == other.key && tab == other.tab && query == other.query;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ tab.hashCode ^ query.hashCode;
 }
 
 /// generated route for
 /// [_i3.WelcomeScreen]
 class WelcomeRoute extends _i8.PageRouteInfo<void> {
   const WelcomeRoute({List<_i8.PageRouteInfo>? children})
-    : super(WelcomeRoute.name, initialChildren: children);
+      : super(WelcomeRoute.name, initialChildren: children);
 
   static const String name = 'WelcomeRoute';
 

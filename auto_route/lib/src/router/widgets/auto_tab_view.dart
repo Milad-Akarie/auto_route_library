@@ -4,6 +4,7 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/eager_page_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -78,7 +79,7 @@ class AutoTabViewState extends State<AutoTabView> {
     super.initState();
     _updateChildren();
     _controller.animation!.addListener(_handleTabControllerAnimationTick);
-    _router.addListener(_updateChildren);
+    _router.addListener(_onRouterUpdated);
     _pageController = PageController(initialPage: _router.activeIndex);
   }
 
@@ -95,8 +96,7 @@ class AutoTabViewState extends State<AutoTabView> {
   void didUpdateWidget(AutoTabView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
-      oldWidget.controller.animation
-          ?.removeListener(_handleTabControllerAnimationTick);
+      oldWidget.controller.animation?.removeListener(_handleTabControllerAnimationTick);
       _controller.animation?.addListener(_handleTabControllerAnimationTick);
       _updateChildren();
 
@@ -105,12 +105,17 @@ class AutoTabViewState extends State<AutoTabView> {
     }
   }
 
+  void _onRouterUpdated() {
+    _disposeInactiveChildren();
+    _updateChildren();
+  }
+
   @override
   void dispose() {
     if (_controllerIsValid) {
       _controller.animation!.removeListener(_handleTabControllerAnimationTick);
     }
-    _router.removeListener(_updateChildren);
+    _router.removeListener(_onRouterUpdated);
     super.dispose();
   }
 
@@ -159,8 +164,7 @@ class AutoTabViewState extends State<AutoTabView> {
     if ((_currentIndex! - previousIndex).abs() == 1) {
       _warpUnderwayCount += 1;
       if (animatePageTransition) {
-        await _pageController.animateToPage(_currentIndex!,
-            duration: duration, curve: Curves.ease);
+        await _pageController.animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
       } else {
         _pageController.jumpToPage(_currentIndex!);
       }
@@ -169,9 +173,7 @@ class AutoTabViewState extends State<AutoTabView> {
     }
 
     assert((_currentIndex! - previousIndex).abs() > 1);
-    final int initialPage = _currentIndex! > previousIndex
-        ? _currentIndex! - 1
-        : _currentIndex! + 1;
+    final int initialPage = _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
     setState(() {
       _warpUnderwayCount += 1;
       _children = List<Widget>.of(_children, growable: false);
@@ -182,8 +184,7 @@ class AutoTabViewState extends State<AutoTabView> {
     _pageController.jumpToPage(initialPage);
 
     if (animatePageTransition) {
-      await _pageController.animateToPage(_currentIndex!,
-          duration: duration, curve: Curves.ease);
+      await _pageController.animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
     } else {
       _pageController.jumpToPage(_currentIndex!);
     }
@@ -195,24 +196,23 @@ class AutoTabViewState extends State<AutoTabView> {
 
   // Called when the PageView scrolls
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollEndNotification) {
-      _disposeInactiveChildren();
-    }
+    // if (notification is ScrollEndNotification) {
+    //     print(widget.controller.indexIsChanging);
+    //   _disposeInactiveChildren();
+    // }
     if (_warpUnderwayCount > 0) return false;
 
     if (notification.depth != 0) return false;
 
     _warpUnderwayCount += 1;
-    if (notification is ScrollUpdateNotification &&
-        !_controller.indexIsChanging) {
+    if (notification is ScrollUpdateNotification && !_controller.indexIsChanging) {
       if ((_pageController.page! - _controller.index).abs() > 1.0) {
         _controller.index = _pageController.page!.round();
         _currentIndex = _controller.index;
       }
       final currentPage = _pageController.page!.round();
       _controller.index = currentPage;
-      _controller.offset =
-          (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+      _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
       final deltaDx = notification.dragDetails?.delta.dx;
       if (deltaDx != null) {
         if (deltaDx > 0 && currentPage > 0) {
@@ -225,8 +225,7 @@ class AutoTabViewState extends State<AutoTabView> {
       _controller.index = _pageController.page!.round();
       _currentIndex = _controller.index;
       if (!_controller.indexIsChanging) {
-        _controller.offset =
-            (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
+        _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
       }
     }
     _warpUnderwayCount -= 1;
@@ -249,5 +248,15 @@ class AutoTabViewState extends State<AutoTabView> {
         children: _children,
       ),
     );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<TabController>('controller', _controller));
+    properties.add(DiagnosticsProperty<TabsRouter>('router', _router));
+    properties.add(IntProperty('activeIndex', _router.activeIndex));
+    properties.add(IntProperty('previousIndex', _router.previousIndex));
+    properties.add(IntProperty('childrenCount', _children.length));
   }
 }

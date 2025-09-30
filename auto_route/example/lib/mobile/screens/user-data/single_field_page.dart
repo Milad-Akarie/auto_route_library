@@ -7,17 +7,17 @@ class SingleFieldPage extends StatefulWidget {
   final void Function(String)? onNext;
 
   const SingleFieldPage({
-    Key? key,
+    super.key,
     this.message = '',
     this.willPopMessage = '',
     this.onNext,
-  }) : super(key: key);
+  });
 
   @override
-  _SingleFieldPageState createState() => _SingleFieldPageState();
+  SingleFieldPageState createState() => SingleFieldPageState();
 }
 
-class _SingleFieldPageState extends State<SingleFieldPage> {
+class SingleFieldPageState extends State<SingleFieldPage> {
   String _text = '';
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -47,12 +47,12 @@ class _SingleFieldPageState extends State<SingleFieldPage> {
               ),
             ),
             ElevatedButton(
-                child: Text('Next'),
                 onPressed: _text.isEmpty
                     ? null
                     : () {
                         widget.onNext?.call(_text);
-                      })
+                      },
+                child: Text('Next'))
           ],
         ),
       ),

@@ -30,11 +30,17 @@ class AutoRouterConfig {
   /// defaults = const ['lib']
   final List<String> generateForDir;
 
+  /// Whether to generate equality operator and hashCode for route args
+  ///
+  /// defaults to true
+  final bool argsEquality;
+
   /// default constructor
   const AutoRouterConfig({
     this.replaceInRouteName = 'Page|Screen,Route',
     this.deferredLoading = false,
     this.generateForDir = const ['lib'],
+    this.argsEquality = true,
   });
 }
 

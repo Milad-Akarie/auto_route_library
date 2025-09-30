@@ -21,6 +21,9 @@ class RouterConfig {
   /// The list of directories to generate for
   final List<String> generateForDir;
 
+  /// Whether to generate equality operator and hashCode for route args
+  final bool argsEquality;
+
   /// Default constructor
   const RouterConfig({
     required this.routerClassName,
@@ -30,18 +33,20 @@ class RouterConfig {
     required this.path,
     required this.cacheHash,
     required this.generateForDir,
+    this.argsEquality = false,
   });
 
   /// Serializes this instance to a map
   Map<String, dynamic> toJson() {
     return {
-      'routerClassName': this.routerClassName,
-      'replaceInRouteName': this.replaceInRouteName,
-      'deferredLoading': this.deferredLoading,
-      'usesPartBuilder': this.usesPartBuilder,
-      'path': this.path,
-      'cacheHash': this.cacheHash,
-      'generateForDir': this.generateForDir,
+      'routerClassName': routerClassName,
+      'replaceInRouteName': replaceInRouteName,
+      'deferredLoading': deferredLoading,
+      'usesPartBuilder': usesPartBuilder,
+      'path': path,
+      'cacheHash': cacheHash,
+      'generateForDir': generateForDir,
+      'argsEquality': argsEquality,
     };
   }
 
@@ -55,6 +60,7 @@ class RouterConfig {
       path: map['path'] as String,
       cacheHash: map['cacheHash'] as int?,
       generateForDir: (map['generateForDir'] as List<dynamic>).cast<String>(),
+      argsEquality: map['argsEquality'] as bool,
     );
   }
 }

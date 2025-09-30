@@ -1,4 +1,7 @@
-include: package:lints/lints.yaml
+include: package:lints/recommended.yaml
+
+formatter:
+  page_width: 120
 
 linter:
   rules:

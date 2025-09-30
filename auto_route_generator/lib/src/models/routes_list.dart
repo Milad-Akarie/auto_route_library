@@ -21,17 +21,16 @@ class RoutesList {
   /// Serializes this instance to a JSON object.
   Map<String, dynamic> toJson() {
     return {
-      'routes': List.unmodifiable(this.routes.map((e) => e.toJson())),
-      'inputPath': this.inputPath,
-      'inputHash': this.inputHash,
+      'routes': List.unmodifiable(routes.map((e) => e.toJson())),
+      'inputPath': inputPath,
+      'inputHash': inputHash,
     };
   }
 
   /// Deserializes this instance from a JSON object.
   factory RoutesList.fromJson(Map<String, dynamic> map) {
     return RoutesList(
-      routes: List.unmodifiable(
-          (map['routes'] as List<dynamic>).map((e) => RouteConfig.fromJson(e))),
+      routes: List.unmodifiable((map['routes'] as List<dynamic>).map((e) => RouteConfig.fromJson(e))),
       inputPath: map['inputPath'] as String,
       inputHash: map['inputHash'] as int?,
     );

@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:code_builder/code_builder.dart';
 
 import '../models/route_config.dart';
@@ -5,12 +7,15 @@ import '../models/route_parameter_config.dart';
 import '../models/router_config.dart';
 import 'library_builder.dart';
 
+const _collectionsImport = 'package:collection/collection.dart';
+
 /// Builds a route info class and args class for the given [RouteConfig]
 List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
   final parameters = r.parameters;
   final fragmentParam = parameters.where((p) => p.isUrlFragment).firstOrNull;
   final nonInheritedParameters = parameters.where((p) => !p.isInheritedPathParam).toList();
+  final equatableParams = nonInheritedParameters.where((p) => (p is! FunctionParamConfig)).toList();
   final pageInfoRefer = refer('PageInfo', autoRouteImport);
   return [
     Class(
@@ -42,60 +47,63 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..assignment = pageInfoRefer.newInstance([refer('name')], {'builder': _buildMethod(r, router)}).code,
           ),
         ])
-        ..constructors.add(
-          Constructor(
-            (b) {
-              b
-                ..constant = parameters.isEmpty
-                ..optionalParameters.addAll([
-                  ...buildArgParams(nonInheritedParameters, emitter, toThis: false),
-                  Parameter((b) => b
-                    ..named = true
-                    ..name = 'children'
-                    ..type = listRefer(pageRouteType, nullable: true)),
-                ])
-                ..initializers.add(refer('super').call([
-                  refer(r.getName(router.replaceInRouteName)).property('name')
-                ], {
-                  if (nonInheritedParameters.isNotEmpty)
-                    'args': argsClassRefer.call(
-                      [],
-                      Map.fromEntries(
-                        nonInheritedParameters.map(
-                          (p) => MapEntry(
-                            p.name,
-                            refer(p.getSafeName()),
+        ..constructors.addAll(
+          [
+            Constructor(
+              (b) {
+                b
+                  ..constant = parameters.isEmpty
+                  ..optionalParameters.addAll([
+                    ...buildArgParams(nonInheritedParameters, emitter, toThis: false),
+                    Parameter((b) => b
+                      ..named = true
+                      ..name = 'children'
+                      ..type = listRefer(pageRouteType, nullable: true)),
+                  ])
+                  ..initializers.add(refer('super').call([
+                    refer(r.getName(router.replaceInRouteName)).property('name')
+                  ], {
+                    if (nonInheritedParameters.isNotEmpty)
+                      'args': argsClassRefer.call(
+                        [],
+                        Map.fromEntries(
+                          nonInheritedParameters.map(
+                            (p) => MapEntry(
+                              p.name,
+                              refer(p.getSafeName()),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  if (nonInheritedParameters.any((p) => p.isPathParam))
-                    'rawPathParams': literalMap(
-                      Map.fromEntries(
-                        nonInheritedParameters.where((p) => p.isPathParam).map(
-                              (p) => MapEntry(
-                                p.paramName,
-                                refer(p.name),
+                    if (nonInheritedParameters.any((p) => p.isPathParam))
+                      'rawPathParams': literalMap(
+                        Map.fromEntries(
+                          nonInheritedParameters.where((p) => p.isPathParam).map(
+                                (p) => MapEntry(
+                                  p.paramName,
+                                  refer(p.name),
+                                ),
                               ),
-                            ),
+                        ),
                       ),
-                    ),
-                  if (parameters.any((p) => p.isQueryParam))
-                    'rawQueryParams': literalMap(
-                      Map.fromEntries(
-                        parameters.where((p) => p.isQueryParam).map(
-                              (p) => MapEntry(
-                                p.paramName,
-                                refer(p.name),
+                    if (parameters.any((p) => p.isQueryParam))
+                      'rawQueryParams': literalMap(
+                        Map.fromEntries(
+                          parameters.where((p) => p.isQueryParam).map(
+                                (p) => MapEntry(
+                                  p.paramName,
+                                  refer(p.name),
+                                ),
                               ),
-                            ),
+                        ),
                       ),
-                    ),
-                  if (fragmentParam != null) 'fragment': refer(fragmentParam.name),
-                  'initialChildren': refer('children'),
-                }).code);
-            },
-          ),
+                    if (fragmentParam != null) 'fragment': refer(fragmentParam.name),
+                    'initialChildren': refer('children'),
+                    if (!router.argsEquality) 'argsEquality': literalBool(false),
+                  }).code);
+              },
+            ),
+          ],
         ),
     ),
     if (nonInheritedParameters.isNotEmpty)
@@ -112,10 +120,10 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
             Constructor((b) => b
               ..constant = true
               ..optionalParameters.addAll(
-                buildArgParams(nonInheritedParameters, emitter,useSafeName: false),
+                buildArgParams(nonInheritedParameters, emitter, useSafeName: false),
               )),
           )
-          ..methods.add(
+          ..methods.addAll([
             Method(
               (b) => b
                 ..name = 'toString'
@@ -126,22 +134,128 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                   '${r.getName(router.replaceInRouteName)}Args{${nonInheritedParameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
                 ).returned.statement,
             ),
-          ),
+            if (router.argsEquality)
+              Method(
+                (b) => b
+                  ..name = 'operator =='
+                  ..lambda = false
+                  ..annotations.add(refer('override'))
+                  ..returns = refer('bool')
+                  ..requiredParameters.add(
+                    Parameter((b) => b
+                      ..name = 'other'
+                      ..type = refer('Object')),
+                  )
+                  ..body = Block(
+                    (b) => b
+                      ..statements.addAll([
+                        Code('if (identical(this, other)) return true;'),
+                        Code('if (other is! ${argsClassRefer.symbol}) return false;'),
+                        Code('return '),
+                        ...[
+                          for (final p in equatableParams)
+                            if (p.type.isList)
+                              refer('ListEquality', _collectionsImport)
+                                  .constInstance([])
+                                  .property('equals')
+                                  .call([
+                                    refer(p.name),
+                                    refer('other').property(p.name),
+                                  ])
+                                  .code
+                            else if (p.type.isSet)
+                              refer('SetEquality', _collectionsImport)
+                                  .constInstance([])
+                                  .property('equals')
+                                  .call([
+                                    refer(p.name),
+                                    refer('other').property(p.name),
+                                  ])
+                                  .code
+                            else if (p.type.isMap)
+                              refer('MapEquality', _collectionsImport)
+                                  .constInstance([])
+                                  .property('equals')
+                                  .call([
+                                    refer(p.name),
+                                    refer('other').property(p.name),
+                                  ])
+                                  .code
+                            else if (p.type.isIterable)
+                              refer('IterableEquality', _collectionsImport)
+                                  .constInstance([])
+                                  .property('equals')
+                                  .call([
+                                    refer(p.name),
+                                    refer('other').property(p.name),
+                                  ])
+                                  .code
+                            else
+                              Code('${p.name} == other.${p.name}'),
+                        ].insertBetween(Code(' && ')),
+                        Code(';'),
+                      ]),
+                  ),
+              ),
+            if (router.argsEquality)
+              Method(
+                (b) => b
+                  ..name = 'hashCode'
+                  ..type = MethodType.getter
+                  ..annotations.add(refer('override'))
+                  ..returns = refer('int')
+                  ..lambda = true
+                  ..body = Block(
+                    (b) => b.statements.addAll([
+                      for (final p in equatableParams)
+                        if (p.type.isList)
+                          refer('ListEquality', _collectionsImport)
+                              .constInstance([])
+                              .property('hash')
+                              .call([refer(p.name)])
+                              .code
+                        else if (p.type.isSet)
+                          refer('SetEquality', _collectionsImport)
+                              .constInstance([])
+                              .property('hash')
+                              .call([refer(p.name)])
+                              .code
+                        else if (p.type.isMap)
+                          refer('MapEquality', _collectionsImport)
+                              .constInstance([])
+                              .property('hash')
+                              .call([refer(p.name)])
+                              .code
+                        else if (p.type.isIterable)
+                          refer('IterableEquality', _collectionsImport)
+                              .constInstance([])
+                              .property('hash')
+                              .call([refer(p.name)])
+                              .code
+                        else
+                          Code('${p.name}.hashCode')
+                    ].insertBetween(
+                      Code(' ^ '),
+                    )),
+                  ),
+              )
+          ]),
       )
   ];
 }
 
 /// Builds a list of [Parameter]s from the given [parameters]
-Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter, {bool toThis = true, bool useSafeName = true}) {
+Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter,
+    {bool toThis = true, bool useSafeName = true}) {
   return parameters.map(
     (p) => Parameter(
       (b) {
-        var defaultCode;
+        Code? defaultCode;
         if (p.defaultValueCode != null) {
           if (p.defaultValueCode!.contains('const')) {
-            if(p.defaultValueCode!.contains('[]')) {
+            if (p.defaultValueCode!.contains('[]')) {
               defaultCode = Code('const []');
-            } else if(p.defaultValueCode!.contains('{}')){
+            } else if (p.defaultValueCode!.contains('{}')) {
               defaultCode = Code('const {}');
             } else {
               defaultCode = Code(
@@ -157,7 +271,9 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emi
           ..toThis = toThis
           ..required = p.isRequired || p.isPositional
           ..defaultTo = defaultCode;
-        if (!toThis) b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+        if (!toThis) {
+          b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+        }
       },
     ),
   );
@@ -263,5 +379,18 @@ Expression _getUrlPartAssignment(ParamConfig p) {
     ]);
   } else {
     return refer('data').property('fragment');
+  }
+}
+
+extension _IterableX<T> on Iterable<T> {
+  Iterable<T> insertBetween(T element) sync* {
+    final iterator = this.iterator;
+    if (iterator.moveNext()) {
+      yield iterator.current;
+      while (iterator.moveNext()) {
+        yield element;
+        yield iterator.current;
+      }
+    }
   }
 }

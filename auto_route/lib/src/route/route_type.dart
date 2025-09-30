@@ -20,10 +20,7 @@ abstract class RouteType {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RouteType &&
-          runtimeType == other.runtimeType &&
-          opaque == other.opaque;
+      identical(this, other) || other is RouteType && runtimeType == other.runtimeType && opaque == other.opaque;
 
   @override
   int get hashCode => opaque.hashCode;
@@ -45,11 +42,13 @@ abstract class RouteType {
   }) = AdaptiveRouteType;
 
   /// Builds a [CustomRouteType] route type
-  const factory RouteType.custom({
+  factory RouteType.custom({
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
-    int? durationInMilliseconds,
-    int? reverseDurationInMilliseconds,
+    @Deprecated('Use duration instead') int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
+    Duration? duration,
+    Duration? reverseDuration,
     bool opaque,
     bool barrierDismissible,
     String? barrierLabel,
@@ -138,15 +137,15 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
   ///  },
   final CustomRouteBuilder? customRouteBuilder;
 
-  /// route transition duration in milliseconds
+  /// route transition duration
   /// is passed to [PageRouteBuilder]
   /// this property is ignored unless a [transitionBuilder] is provided
-  final int? durationInMilliseconds;
+  final Duration? duration;
 
-  /// route reverse transition duration in milliseconds
+  /// route reverse transition duration
   /// is passed to [PageRouteBuilder]
   /// this property is ignored unless a [transitionBuilder] is provided
-  final int? reverseDurationInMilliseconds;
+  final Duration? reverseDuration;
 
   /// passed to the barrierDismissible property in [PageRouteBuilder]
   ///
@@ -170,18 +169,31 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
   final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
 
   /// Default constructor
-  const CustomRouteType({
+  CustomRouteType({
     this.customRouteBuilder,
     this.barrierLabel,
     this.barrierColor,
     this.transitionsBuilder,
-    this.durationInMilliseconds,
-    this.reverseDurationInMilliseconds,
     super.opaque,
     this.barrierDismissible = false,
     this.enablePredictiveBackGesture = false,
     this.predictiveBackPageTransitionsBuilder,
-  }) : super._();
+    @Deprecated('Use duration instead') int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
+    Duration? duration,
+    Duration? reverseDuration,
+  })  : assert(
+          durationInMilliseconds == null || duration == null,
+          'Use either duration or durationInMilliseconds',
+        ),
+        assert(
+          reverseDurationInMilliseconds == null || reverseDuration == null,
+          'Use either reverseDuration or reverseDurationInMilliseconds',
+        ),
+        duration = duration ?? (durationInMilliseconds != null ? Duration(milliseconds: durationInMilliseconds) : null),
+        reverseDuration = reverseDuration ??
+            (reverseDurationInMilliseconds != null ? Duration(milliseconds: reverseDurationInMilliseconds) : null),
+        super._();
 
   @override
   bool operator ==(Object other) =>
@@ -191,9 +203,8 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
           runtimeType == other.runtimeType &&
           transitionsBuilder == other.transitionsBuilder &&
           customRouteBuilder == other.customRouteBuilder &&
-          durationInMilliseconds == other.durationInMilliseconds &&
-          reverseDurationInMilliseconds ==
-              other.reverseDurationInMilliseconds &&
+          duration == other.duration &&
+          reverseDuration == other.reverseDuration &&
           barrierDismissible == other.barrierDismissible &&
           barrierLabel == other.barrierLabel &&
           barrierColor == other.barrierColor;
@@ -203,8 +214,8 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
       super.hashCode ^
       transitionsBuilder.hashCode ^
       customRouteBuilder.hashCode ^
-      durationInMilliseconds.hashCode ^
-      reverseDurationInMilliseconds.hashCode ^
+      duration.hashCode ^
+      reverseDuration.hashCode ^
       barrierDismissible.hashCode ^
       barrierLabel.hashCode ^
       barrierColor.hashCode;

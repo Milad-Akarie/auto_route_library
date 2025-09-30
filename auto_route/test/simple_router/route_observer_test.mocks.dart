@@ -24,36 +24,35 @@ import 'package:mockito/mockito.dart' as _i1;
 /// A class which mocks [AutoRouterObserver].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAutoRouterObserver extends _i1.Mock
-    implements _i2.AutoRouterObserver {
+class MockAutoRouterObserver extends _i1.Mock implements _i2.AutoRouterObserver {
   @override
   void didInitTabRoute(
     _i2.TabPageRoute? route,
     _i2.TabPageRoute? previousRoute,
-  ) => super.noSuchMethod(
-    Invocation.method(#didInitTabRoute, [route, previousRoute]),
-    returnValueForMissingStub: null,
-  );
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(#didInitTabRoute, [route, previousRoute]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didChangeTabRoute(
     _i2.TabPageRoute? route,
     _i2.TabPageRoute? previousRoute,
-  ) => super.noSuchMethod(
-    Invocation.method(#didChangeTabRoute, [route, previousRoute]),
-    returnValueForMissingStub: null,
-  );
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(#didChangeTabRoute, [route, previousRoute]),
+        returnValueForMissingStub: null,
+      );
 
   @override
-  void didPush(_i3.Route<dynamic>? route, _i3.Route<dynamic>? previousRoute) =>
-      super.noSuchMethod(
+  void didPush(_i3.Route<dynamic>? route, _i3.Route<dynamic>? previousRoute) => super.noSuchMethod(
         Invocation.method(#didPush, [route, previousRoute]),
         returnValueForMissingStub: null,
       );
 
   @override
-  void didPop(_i3.Route<dynamic>? route, _i3.Route<dynamic>? previousRoute) =>
-      super.noSuchMethod(
+  void didPop(_i3.Route<dynamic>? route, _i3.Route<dynamic>? previousRoute) => super.noSuchMethod(
         Invocation.method(#didPop, [route, previousRoute]),
         returnValueForMissingStub: null,
       );
@@ -62,44 +61,48 @@ class MockAutoRouterObserver extends _i1.Mock
   void didRemove(
     _i3.Route<dynamic>? route,
     _i3.Route<dynamic>? previousRoute,
-  ) => super.noSuchMethod(
-    Invocation.method(#didRemove, [route, previousRoute]),
-    returnValueForMissingStub: null,
-  );
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(#didRemove, [route, previousRoute]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didReplace({
     _i3.Route<dynamic>? newRoute,
     _i3.Route<dynamic>? oldRoute,
-  }) => super.noSuchMethod(
-    Invocation.method(#didReplace, [], {
-      #newRoute: newRoute,
-      #oldRoute: oldRoute,
-    }),
-    returnValueForMissingStub: null,
-  );
+  }) =>
+      super.noSuchMethod(
+        Invocation.method(#didReplace, [], {
+          #newRoute: newRoute,
+          #oldRoute: oldRoute,
+        }),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didChangeTop(
     _i3.Route<dynamic>? topRoute,
     _i3.Route<dynamic>? previousTopRoute,
-  ) => super.noSuchMethod(
-    Invocation.method(#didChangeTop, [topRoute, previousTopRoute]),
-    returnValueForMissingStub: null,
-  );
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(#didChangeTop, [topRoute, previousTopRoute]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didStartUserGesture(
     _i3.Route<dynamic>? route,
     _i3.Route<dynamic>? previousRoute,
-  ) => super.noSuchMethod(
-    Invocation.method(#didStartUserGesture, [route, previousRoute]),
-    returnValueForMissingStub: null,
-  );
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(#didStartUserGesture, [route, previousRoute]),
+        returnValueForMissingStub: null,
+      );
 
   @override
   void didStopUserGesture() => super.noSuchMethod(
-    Invocation.method(#didStopUserGesture, []),
-    returnValueForMissingStub: null,
-  );
+        Invocation.method(#didStopUserGesture, []),
+        returnValueForMissingStub: null,
+      );
 }

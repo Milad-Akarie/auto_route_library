@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
@@ -23,15 +24,13 @@ abstract class CacheAwareBuilder<T> extends Builder {
   /// Whether to enable cache
   bool get cacheEnabled;
 
-  String _defaultFormatOutput(String code) {
+  String _defaultFormatOutput(LibraryLanguageVersion libVersion, String code) {
     code = '$dartFormatWidth\n$code';
-    return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
-        .format(code);
+    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format(code);
   }
 
   /// Custom ignore for file rules passed from the options
-  Set<String> get ignoreForFile =>
-      options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
+  Set<String> get ignoreForFile => options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
 
   @override
   final Map<String, List<String>> buildExtensions;
@@ -41,14 +40,12 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   /// Default constructor
   CacheAwareBuilder({
-    String generatedExtension = '.g.dart',
+    this.generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
     this.allowSyntaxErrors = false,
     required this.annotationName,
     this.options,
-  })  : this.generatedExtension = generatedExtension,
-        buildExtensions = validatedBuildExtensionsFrom(
-            options != null ? Map.of(options.config) : null, {
+  }) : buildExtensions = validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
           '.dart': [
             generatedExtension,
             ...additionalOutputExtensions,
@@ -78,8 +75,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
       buildStep.inputId,
       allowSyntaxErrors: allowSyntaxErrors,
     );
-    if (!(await hasAnyTopLevelAnnotations(
-        buildStep.inputId, buildStep, unit))) {
+    if (!(await hasAnyTopLevelAnnotations(buildStep.inputId, buildStep, unit))) {
       return;
     }
 
@@ -88,7 +84,8 @@ abstract class CacheAwareBuilder<T> extends Builder {
       cacheHash = calculateUpdatableHash(unit);
       final cached = await loadFromCache(buildStep, cacheHash);
       if (cached != null) {
-        return _writeContent(buildStep, cached);
+        final lib = await buildStep.inputLibrary;
+        return _writeContent(buildStep, lib.languageVersion, cached);
       }
     }
 
@@ -98,7 +95,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     );
     var generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return;
-    return _writeContent(buildStep, generated);
+    return _writeContent(buildStep, lib.languageVersion, generated);
   }
 
   /// Loads the cached content from the cache
@@ -111,13 +108,12 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<String> onGenerateContent(BuildStep buildStep, T item);
 
   /// Resolves the current compilation unit
-  Future<T?> onResolve(
-      LibraryReader library, BuildStep buildStep, int stepHash);
+  Future<T?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash);
 
   /// Validates the generated content and prepares it for writing
-  String validateAndFormatDartCode(BuildStep buildStep, String generated) {
+  String validateAndFormatDartCode(BuildStep buildStep, LibraryLanguageVersion libVersion, String generated) {
     try {
-      return _defaultFormatOutput(generated);
+      return _defaultFormatOutput(libVersion, generated);
     } catch (e, stack) {
       log.severe(
         '''
@@ -134,28 +130,27 @@ source formatter.''',
     }
   }
 
-  Future<void> _writeContent(BuildStep buildStep, generated) async {
+  Future<void> _writeContent(BuildStep buildStep, LibraryLanguageVersion libVersion, generated) async {
     var output = await onGenerateContent(buildStep, generated);
     final outputId = buildStep.allowedOutputs.first;
     if (outputId.extension.endsWith('.dart')) {
-      output = validateAndFormatDartCode(buildStep, output);
+      output = validateAndFormatDartCode(buildStep, libVersion, output);
     }
     return buildStep.writeAsString(outputId, output);
   }
 
   @override
-  String toString() =>
-      'Generating $generatedExtension: ${this.runtimeType.toString()}';
+  String toString() => 'Generating $generatedExtension: ${runtimeType.toString()}';
 
   /// Checks if the current compilation unit has any top level annotations
-  Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep,
-      [CompilationUnit? unit]) async {
+  Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep, [CompilationUnit? unit]) async {
     if (!await buildStep.canRead(input)) return false;
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];
     for (var directive in parsed.directives) {
-      if (directive.metadata.any((e) => e.name.name == annotationName))
+      if (directive.metadata.any((e) => e.name.name == annotationName)) {
         return true;
+      }
       if (directive is PartDirective) {
         partIds.add(
           AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input),
@@ -163,8 +158,9 @@ source formatter.''',
       }
     }
     for (var declaration in parsed.declarations) {
-      if (declaration.metadata.any((e) => e.name.name == annotationName))
+      if (declaration.metadata.any((e) => e.name.name == annotationName)) {
         return true;
+      }
     }
     for (var partId in partIds) {
       if (await hasAnyTopLevelAnnotations(partId, buildStep)) {

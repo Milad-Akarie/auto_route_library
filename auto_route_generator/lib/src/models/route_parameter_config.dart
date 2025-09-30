@@ -1,4 +1,4 @@
-import 'package:code_builder/code_builder.dart' as _code;
+import 'package:code_builder/code_builder.dart' as cb;
 
 import 'resolved_type.dart';
 
@@ -6,14 +6,7 @@ const _reservedVarNames = ['children'];
 
 /// A list of valid path param types
 /// that can be parsed from a path string
-const validPathParamTypes = [
-  'String',
-  'int',
-  'double',
-  'num',
-  'bool',
-  'dynamic'
-];
+const validPathParamTypes = ['String', 'int', 'double', 'num', 'bool', 'dynamic'];
 
 /// holds constructor parameter info to be used
 /// in generating route parameters.
@@ -82,7 +75,7 @@ class ParamConfig {
   /// otherwise return the name as is
   String getSafeName() {
     if (_reservedVarNames.contains(name)) {
-      return name + "0";
+      return "${name}0";
     } else {
       return name;
     }
@@ -116,19 +109,19 @@ class ParamConfig {
   /// Serializes the parameter to a json map
   Map<String, dynamic> toJson() {
     return {
-      'type': this.type.toJson(),
-      'name': this.name,
-      'alias': this.alias,
-      'isPositional': this.isPositional,
-      'isOptional': this.isOptional,
-      'hasRequired': this.hasRequired,
-      'isRequired': this.isRequired,
-      'isNamed': this.isNamed,
-      'isPathParam': this.isPathParam,
-      'isUrlFragment': this.isUrlFragment,
-      'isInheritedPathParam': this.isInheritedPathParam,
-      'isQueryParam': this.isQueryParam,
-      'defaultValueCode': this.defaultValueCode,
+      'type': type.toJson(),
+      'name': name,
+      'alias': alias,
+      'isPositional': isPositional,
+      'isOptional': isOptional,
+      'hasRequired': hasRequired,
+      'isRequired': isRequired,
+      'isNamed': isNamed,
+      'isPathParam': isPathParam,
+      'isUrlFragment': isUrlFragment,
+      'isInheritedPathParam': isInheritedPathParam,
+      'isQueryParam': isQueryParam,
+      'defaultValueCode': defaultValueCode,
     };
   }
 
@@ -169,48 +162,40 @@ class FunctionParamConfig extends ParamConfig {
   FunctionParamConfig({
     required this.returnType,
     this.params = const [],
-    required ResolvedType type,
-    required String name,
-    String? alias,
-    required bool isPositional,
-    required bool hasRequired,
-    required bool isOptional,
-    required bool isNamed,
-    required bool isRequired,
-    String? defaultValueCode,
+    required super.type,
+    required super.name,
+    super.alias,
+    required super.isPositional,
+    required super.hasRequired,
+    required super.isOptional,
+    required super.isNamed,
+    required super.isRequired,
+    super.defaultValueCode,
   }) : super(
-          type: type,
-          name: name,
-          alias: alias,
           isPathParam: false,
           isQueryParam: false,
           isInheritedPathParam: false,
-          isNamed: isNamed,
           isUrlFragment: false,
-          defaultValueCode: defaultValueCode,
-          isPositional: isPositional,
-          hasRequired: hasRequired,
-          isRequired: isRequired,
-          isOptional: isOptional,
         );
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       // used for deserialization
       'isFunctionParam': true,
-      'type': this.type.toJson(),
-      'returnType': this.returnType.toJson(),
-      'name': this.name,
-      'alias': this.alias,
-      'isPositional': this.isPositional,
-      'isOptional': this.isOptional,
-      'hasRequired': this.hasRequired,
-      'isRequired': this.isRequired,
-      'isNamed': this.isNamed,
-      'isPathParam': this.isPathParam,
-      'isQueryParam': this.isQueryParam,
-      'defaultValueCode': this.defaultValueCode,
-      'params': this.params.map((e) => e.toJson()).toList(),
+      'type': type.toJson(),
+      'returnType': returnType.toJson(),
+      'name': name,
+      'alias': alias,
+      'isPositional': isPositional,
+      'isOptional': isOptional,
+      'hasRequired': hasRequired,
+      'isRequired': isRequired,
+      'isNamed': isNamed,
+      'isPathParam': isPathParam,
+      'isQueryParam': isQueryParam,
+      'defaultValueCode': defaultValueCode,
+      'params': params.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -238,23 +223,19 @@ class FunctionParamConfig extends ParamConfig {
   }
 
   /// Returns the list of required parameters
-  List<ParamConfig> get requiredParams =>
-      params.where((p) => p.isPositional && !p.isOptional).toList();
+  List<ParamConfig> get requiredParams => params.where((p) => p.isPositional && !p.isOptional).toList();
 
   /// Returns the list of optional parameters
-  List<ParamConfig> get optionalParams =>
-      params.where((p) => p.isPositional && p.isOptional).toList();
+  List<ParamConfig> get optionalParams => params.where((p) => p.isPositional && p.isOptional).toList();
 
   /// Returns the list of named parameters
-  List<ParamConfig> get namedOptionalParams =>
-      params.where((p) => p.isNamed && p.isOptional).toList(growable: false);
+  List<ParamConfig> get namedOptionalParams => params.where((p) => p.isNamed && p.isOptional).toList(growable: false);
 
   /// Returns the list of named required parameters
-  List<ParamConfig> get namedRequiredParams =>
-      params.where((p) => p.isNamed && !p.isOptional).toList(growable: false);
+  List<ParamConfig> get namedRequiredParams => params.where((p) => p.isNamed && !p.isOptional).toList(growable: false);
 
   /// Returns A function reference of the function type
-  _code.FunctionType get funRefer => _code.FunctionType(
+  cb.FunctionType get funRefer => cb.FunctionType(
         (b) => b
           ..returnType = returnType.refer
           ..requiredParameters.addAll(requiredParams.map((e) => e.type.refer))
@@ -287,8 +268,8 @@ class PathParamConfig {
   /// Serializes the path parameter to a json map
   Map<String, dynamic> toJson() {
     return {
-      'name': this.name,
-      'isOptional': this.isOptional,
+      'name': name,
+      'isOptional': isOptional,
     };
   }
 
