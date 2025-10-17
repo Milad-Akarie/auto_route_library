@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-10-17
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v10.2.0`](#auto_route---v1020)
+ - [`auto_route_generator` - `v10.2.5`](#auto_route_generator---v1025)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v10.2.5`
+
+---
+
+#### `auto_route` - `v10.2.0`
+
+ - **REFACTOR**: update element references and improve method signatures for clarity.
+ - **REFACTOR**: remove redundant formatting in generated code.
+ - **REFACTOR**: Improve tab navigation and observer logic.
+ - **FIX**: respect page.opaque for transparent route.
+ - **FIX**: meta import.
+ - **FIX**: Allow PopCompleter to complete during route reevaluation.
+ - **FIX**(reevaluate): ensure _isReevaluating is reset after reevaluation.
+ - **FIX**: improve focus and semantics handling in AutoTabsRouter.
+ - **FIX**: default argsEquality to true for route args and update related documentation.
+ - **FIX**: respect argsEquality config in PageRouteInfo == operator.
+ - **FIX**: Generated code is not properly formatted.
+ - **FEAT**: Add experimental support for lean_builder.
+ - **FEAT**: expose routeTraversalEdgeBehavior.
+ - **DOCS**: improve LeanBuilder section in README.
+ - **DOCS**: improve LeanBuilder section in README.
+
+
 ## 2025-03-03
 
 ### Changes

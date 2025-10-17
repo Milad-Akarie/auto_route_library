@@ -1,3 +1,21 @@
+## 10.2.0
+
+ - **REFACTOR**: update element references and improve method signatures for clarity.
+ - **REFACTOR**: remove redundant formatting in generated code.
+ - **REFACTOR**: Improve tab navigation and observer logic.
+ - **FIX**: respect page.opaque for transparent route.
+ - **FIX**: meta import.
+ - **FIX**: Allow PopCompleter to complete during route reevaluation.
+ - **FIX**(reevaluate): ensure _isReevaluating is reset after reevaluation.
+ - **FIX**: improve focus and semantics handling in AutoTabsRouter.
+ - **FIX**: default argsEquality to true for route args and update related documentation.
+ - **FIX**: respect argsEquality config in PageRouteInfo == operator.
+ - **FIX**: Generated code is not properly formatted.
+ - **FEAT**: Add experimental support for lean_builder.
+ - **FEAT**: expose routeTraversalEdgeBehavior.
+ - **DOCS**: improve LeanBuilder section in README.
+ - **DOCS**: improve LeanBuilder section in README.
+
 ## 10.1.2
 - **FIX**: routing_controller.dart missing meta import
 ## 10.1.1
