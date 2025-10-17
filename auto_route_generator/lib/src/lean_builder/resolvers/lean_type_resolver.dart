@@ -22,6 +22,10 @@ class LeanTypeResolver {
     final uri = _resolver.uriForAsset(type.declarationRef.providerId);
     // return early if the element is from core dart library
     if (_isCoreDartType(uri)) return null;
+    // handles dart:xxx.xxx.dart imports
+    if (uri.scheme == 'dart' && uri.pathSegments.length > 1) {
+      return 'dart:${uri.pathSegments.first}';
+    }
 
     if (uri.scheme == 'asset') {
       return _assetToPackage(uri);
