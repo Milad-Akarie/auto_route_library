@@ -330,6 +330,9 @@ abstract class _PageRoute<T> extends PageRoute<T> {
   bool get allowSnapshotting => _page.allowSnapshotting;
 
   @override
+  bool get opaque => _page.opaque;
+
+  @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';
 
   @override
