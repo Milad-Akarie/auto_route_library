@@ -1,3 +1,10 @@
+## 10.2.5
+- **FIX**: respect page.opaque for transparent route.
+- **FIX**: handle dart:xxx.xxx.dart imports in type resolution (af60d79) when using lean_builder
+- **REFACTOR**: introduce _genericRef function for improved type reference handling (d5ecf13)
+- **FIX**: respect page.opaque for transparent route (52b71b7)
+- **FIX**: Use immutable array for pending child routes, fixes #2210 (beb3ce0)
+- **CHORE**:: extend support to analyzer 8 (b2cb61d)
 ## 10.2.4
 - **CHORE**: tidy up dependencies and sync with updated analyzer version.
 - **FIX**: Add indexed stack semantics
