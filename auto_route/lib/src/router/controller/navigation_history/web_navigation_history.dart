@@ -24,7 +24,10 @@ class NavigationHistoryImpl extends NavigationHistory {
   int get _currentIndex {
     final state = _history.state.dartify();
     if (state is Map) {
-      return state['serialCount'] ?? 0;
+      final serialCount = state['serialCount'];
+      if (serialCount is num) {
+        return serialCount.toInt();
+      }
     }
     return 0;
   }
