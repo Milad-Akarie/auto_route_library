@@ -26,7 +26,10 @@ class LeanRouteParameterResolver {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
-    final paramName = parameterElement.name.replaceFirst("_", '');
+    var paramName = parameterElement.name;
+    if (paramName.startsWith('_')) {
+      paramName = paramName.replaceFirst("_", '');
+    }
     var pathParamObj = _pathParamChecker.firstAnnotationOfExact(parameterElement)?.constant as ConstObject?;
 
     var nameOrAlias = paramName;
