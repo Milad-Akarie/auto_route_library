@@ -1,3 +1,5 @@
+## 10.2.6
+- **FIX**: correctly handle parameter names by removing leading underscores
 ## 10.2.5
 - **FIX**: respect page.opaque for transparent route.
 - **FIX**: handle dart:xxx.xxx.dart imports in type resolution (af60d79) when using lean_builder

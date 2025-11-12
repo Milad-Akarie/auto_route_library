@@ -1,3 +1,7 @@
+## 10.2.1
+- **FIX**: correctly handle parameter names by removing leading underscores
+- **Enhance**: appBarBuilder in AutoTabsScaffold can return null now
+- **FIX**: Fix WASM type mismatch.
 ## 10.2.0
  - **FIX**: respect page.opaque for transparent route.
  - **FIX**: handle dart:xxx.xxx.dart imports in type resolution (af60d79) when using lean_builder
