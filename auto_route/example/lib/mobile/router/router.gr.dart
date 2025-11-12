@@ -73,8 +73,7 @@ class BookDetailsRouteArgs {
 /// generated route for
 /// [_i2.BookListScreen]
 class BookListRoute extends _i8.PageRouteInfo<void> {
-  const BookListRoute({List<_i8.PageRouteInfo>? children})
-      : super(BookListRoute.name, initialChildren: children);
+  const BookListRoute({List<_i8.PageRouteInfo>? children}) : super(BookListRoute.name, initialChildren: children);
 
   static const String name = 'BookListRoute';
 
@@ -89,8 +88,7 @@ class BookListRoute extends _i8.PageRouteInfo<void> {
 /// generated route for
 /// [_i3.HomePage]
 class HomeRoute extends _i8.PageRouteInfo<void> {
-  const HomeRoute({List<_i8.PageRouteInfo>? children})
-      : super(HomeRoute.name, initialChildren: children);
+  const HomeRoute({List<_i8.PageRouteInfo>? children}) : super(HomeRoute.name, initialChildren: children);
 
   static const String name = 'HomeRoute';
 
@@ -172,8 +170,7 @@ class MyBooksRoute extends _i8.PageRouteInfo<MyBooksRouteArgs> {
     builder: (data) {
       final queryParams = data.queryParams;
       final args = data.argsAs<MyBooksRouteArgs>(
-        orElse: () =>
-            MyBooksRouteArgs(filter: queryParams.optString('filter', 'none2')),
+        orElse: () => MyBooksRouteArgs(filter: queryParams.optString('filter', 'none2')),
       );
       return _i5.MyBooksPage(key: args.key, filter: args.filter);
     },
@@ -206,8 +203,7 @@ class MyBooksRouteArgs {
 /// generated route for
 /// [_i6.ProfilePage]
 class ProfileRoute extends _i8.PageRouteInfo<void> {
-  const ProfileRoute({List<_i8.PageRouteInfo>? children})
-      : super(ProfileRoute.name, initialChildren: children);
+  const ProfileRoute({List<_i8.PageRouteInfo>? children}) : super(ProfileRoute.name, initialChildren: children);
 
   static const String name = 'ProfileRoute';
 
@@ -281,8 +277,7 @@ class SettingsTabArgs {
 /// generated route for
 /// [_i3.WelcomeScreen]
 class WelcomeRoute extends _i8.PageRouteInfo<void> {
-  const WelcomeRoute({List<_i8.PageRouteInfo>? children})
-      : super(WelcomeRoute.name, initialChildren: children);
+  const WelcomeRoute({List<_i8.PageRouteInfo>? children}) : super(WelcomeRoute.name, initialChildren: children);
 
   static const String name = 'WelcomeRoute';
 
