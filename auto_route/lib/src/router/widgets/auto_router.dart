@@ -162,14 +162,17 @@ class AutoRouterState extends State<AutoRouter> {
   @override
   Widget build(BuildContext context) {
     assert(_controller != null);
-    final navigator = AutoRouteNavigator(
-      router: _controller!,
-      clipBehavior: widget.clipBehavior,
-      key: GlobalObjectKey(_controller.hashCode),
-      navRestorationScopeId: widget.navRestorationScopeId,
-      navigatorObservers: _navigatorObservers,
-      placeholder: widget.placeholder,
-      routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
+    final navigator = NavigatorPopHandler(
+      enabled: _controller!.hasEntries,
+      child: AutoRouteNavigator(
+        router: _controller!,
+        clipBehavior: widget.clipBehavior,
+        key: GlobalObjectKey(_controller.hashCode),
+        navRestorationScopeId: widget.navRestorationScopeId,
+        navigatorObservers: _navigatorObservers,
+        placeholder: widget.placeholder,
+        routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
+      ),
     );
     final stateHash = _controller!.stateHash;
     return RouterScope(
