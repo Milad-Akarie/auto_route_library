@@ -1,3 +1,8 @@
+## 10.2.2
+
+ - **FIX**: predictive back gesture known issues.
+ - **FIX**: update predictive_back_page_detector.dart to resolve predictive back and swipe issues.
+
 ## 10.2.1
 - **FIX**: correctly handle parameter names by removing leading underscores
 - **Enhance**: appBarBuilder in AutoTabsScaffold can return null now

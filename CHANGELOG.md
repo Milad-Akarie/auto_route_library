@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-11-13
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`auto_route` - `v10.2.2`](#auto_route---v1022)
+ - [`auto_route_generator` - `v10.2.7`](#auto_route_generator---v1027)
+
+Packages with dependency updates only:
+
+> Packages listed below depend on other packages in this workspace that have had changes. Their versions have been incremented to bump the minimum dependency versions of the packages they depend upon in this project.
+
+ - `auto_route_generator` - `v10.2.7`
+
+---
+
+#### `auto_route` - `v10.2.2`
+
+ - **FIX**: predictive back gesture known issues.
+ - **FIX**: update predictive_back_page_detector.dart to resolve predictive back and swipe issues.
+
+
 ## 2025-10-17
 
 ### Changes
