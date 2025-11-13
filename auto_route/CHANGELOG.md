@@ -1,7 +1,7 @@
 ## 10.2.2
 
- - **FIX**: predictive back gesture known issues.
- - **FIX**: update predictive_back_page_detector.dart to resolve predictive back and swipe issues.
+ - **FIX**: known predictive back gesture issues.
+- **FIX**: add meta import to routing_controller.dart because some flutter versions require it.
 
 ## 10.2.1
 - **FIX**: correctly handle parameter names by removing leading underscores
