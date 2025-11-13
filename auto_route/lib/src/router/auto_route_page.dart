@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PredictiveBackEvent;
+import 'package:flutter/services.dart' show PredictiveBackEvent, SwipeEdge;
 
 part 'transitions/predictive_back_page_detector.dart';
 
@@ -279,7 +279,12 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
     }
     return _PredictiveBackGestureDetector(
       route: this,
-      builder: (context) {
+      builder: (
+        BuildContext context,
+        _PredictiveBackPhase phase,
+        PredictiveBackEvent? startBackEvent,
+        PredictiveBackEvent? currentBackEvent,
+      ) {
         if (popGestureInProgress) {
           return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
         } else {
