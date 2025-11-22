@@ -9,9 +9,13 @@ import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+
+// keep meta import, some users complain it's causing issues with
+// older flutter versions
+// ignore: unnecessary_import
+import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
 

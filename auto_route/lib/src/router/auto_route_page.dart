@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show PredictiveBackEvent;
+import 'package:flutter/services.dart' show PredictiveBackEvent, SwipeEdge;
 
 part 'transitions/predictive_back_page_detector.dart';
 
@@ -261,6 +261,7 @@ class _PageBasedCupertinoPageRoute<T> extends _PageRoute<T>
 }
 
 mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements PredictiveBackGestureMixin {
+  late final _predictiveBackPageTransitionsBuilder = const PredictiveBackPageTransitionsBuilder();
   @override
   Widget buildTransitions(
       BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
@@ -269,7 +270,7 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
     }
 
     if (predictiveBackPageTransitionsBuilder == null) {
-      return const PredictiveBackPageTransitionsBuilder().buildTransitions(
+      return _predictiveBackPageTransitionsBuilder.buildTransitions(
         this,
         context,
         animation,
@@ -279,7 +280,12 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
     }
     return _PredictiveBackGestureDetector(
       route: this,
-      builder: (context) {
+      builder: (
+        BuildContext context,
+        _PredictiveBackPhase phase,
+        PredictiveBackEvent? startBackEvent,
+        PredictiveBackEvent? currentBackEvent,
+      ) {
         if (popGestureInProgress) {
           return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
         } else {
@@ -328,6 +334,9 @@ abstract class _PageRoute<T> extends PageRoute<T> {
 
   @override
   bool get allowSnapshotting => _page.allowSnapshotting;
+
+  @override
+  bool get opaque => _page.opaque;
 
   @override
   String get debugLabel => '${super.debugLabel}(${_page.name})';

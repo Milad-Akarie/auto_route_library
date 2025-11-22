@@ -1,3 +1,20 @@
+## 10.2.2
+
+ - **FIX**: known predictive back gesture issues.
+- **FIX**: add meta import to routing_controller.dart because some flutter versions require it.
+
+## 10.2.1
+- **FIX**: correctly handle parameter names by removing leading underscores
+- **Enhance**: appBarBuilder in AutoTabsScaffold can return null now
+- **FIX**: Fix WASM type mismatch.
+## 10.2.0
+ - **FIX**: respect page.opaque for transparent route.
+ - **FIX**: handle dart:xxx.xxx.dart imports in type resolution (af60d79) when using lean_builder
+ - **REFACTOR**: introduce _genericRef function for improved type reference handling (d5ecf13)
+ - **FIX**: respect page.opaque for transparent route (52b71b7)
+- **FIX**: Use immutable array for pending child routes, fixes #2210 (beb3ce0)
+- **CHORE**:: extend support to analyzer 8 (b2cb61d)
+
 ## 10.1.2
 - **FIX**: routing_controller.dart missing meta import
 ## 10.1.1

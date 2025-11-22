@@ -12,6 +12,8 @@ abstract class RootStackRouter extends StackRouter {
     _navigationHistory = NavigationHistory.create(this);
   }
 
+  final _rootBackButtonDispatcher = RootBackButtonDispatcher();
+
   /// Returns a [RouterConfig] instead to be passed
   /// to [MaterialApp.router]
   RouterConfig<UrlState> config({
@@ -34,7 +36,7 @@ abstract class RootStackRouter extends StackRouter {
       routeInformationProvider: routeInfoProvider(
         neglectWhen: neglectWhen,
       ),
-      backButtonDispatcher: RootBackButtonDispatcher(),
+      backButtonDispatcher: _rootBackButtonDispatcher,
       routerDelegate: delegate(
         reevaluateListenable: reevaluateListenable,
         rebuildStackOnDeepLink: rebuildStackOnDeepLink,

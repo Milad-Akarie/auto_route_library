@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:code_builder/code_builder.dart';
 
 import '../models/route_config.dart';
@@ -8,6 +9,16 @@ import '../models/router_config.dart';
 import 'library_builder.dart';
 
 const _collectionsImport = 'package:collection/collection.dart';
+
+/// Builds a generic type reference with the given [symbol] and [args]
+TypeReference _genericRef(String symbol, List<ResolvedType> args, [String? url]) {
+  return TypeReference((b) {
+    b
+      ..symbol = symbol
+      ..url = url
+      ..types.addAll(args.map((t) => t.refer));
+  });
+}
 
 /// Builds a route info class and args class for the given [RouteConfig]
 List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
@@ -155,7 +166,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                         ...[
                           for (final p in equatableParams)
                             if (p.type.isList)
-                              refer('ListEquality', _collectionsImport)
+                              _genericRef('ListEquality', p.type.typeArguments, _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([
@@ -164,7 +175,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                                   ])
                                   .code
                             else if (p.type.isSet)
-                              refer('SetEquality', _collectionsImport)
+                              _genericRef('SetEquality', p.type.typeArguments, _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([
@@ -173,7 +184,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                                   ])
                                   .code
                             else if (p.type.isMap)
-                              refer('MapEquality', _collectionsImport)
+                              _genericRef('MapEquality', p.type.typeArguments, _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([
@@ -182,7 +193,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                                   ])
                                   .code
                             else if (p.type.isIterable)
-                              refer('IterableEquality', _collectionsImport)
+                              _genericRef('IterableEquality', p.type.typeArguments, _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
                                   .call([
@@ -209,25 +220,25 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                     (b) => b.statements.addAll([
                       for (final p in equatableParams)
                         if (p.type.isList)
-                          refer('ListEquality', _collectionsImport)
+                          _genericRef('ListEquality', p.type.typeArguments, _collectionsImport)
                               .constInstance([])
                               .property('hash')
                               .call([refer(p.name)])
                               .code
                         else if (p.type.isSet)
-                          refer('SetEquality', _collectionsImport)
+                          _genericRef('SetEquality', p.type.typeArguments, _collectionsImport)
                               .constInstance([])
                               .property('hash')
                               .call([refer(p.name)])
                               .code
                         else if (p.type.isMap)
-                          refer('MapEquality', _collectionsImport)
+                          _genericRef('MapEquality', p.type.typeArguments, _collectionsImport)
                               .constInstance([])
                               .property('hash')
                               .call([refer(p.name)])
                               .code
                         else if (p.type.isIterable)
-                          refer('IterableEquality', _collectionsImport)
+                          _genericRef('IterableEquality', p.type.typeArguments, _collectionsImport)
                               .constInstance([])
                               .property('hash')
                               .call([refer(p.name)])

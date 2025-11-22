@@ -212,7 +212,7 @@ class RouteData<R> {
   void _onStartReevaluating(RouteMatch newMatch) {
     _isReevaluating = true;
     _updateRoute(newMatch);
-    _pendingChildren = newMatch.children ?? const [];
+    _pendingChildren = newMatch.children ?? [];
   }
 
   void _onEndReevaluating(RouteMatch newMatch) {
