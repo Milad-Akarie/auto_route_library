@@ -62,6 +62,13 @@ class AutoRoutePage<T> extends Page<T> {
     return (didPop, result) {
       if (didPop) {
         routeData.onPopInvoked(result);
+        final router = routeData.router;
+        // a workaround to fix pop flicker issue
+        // Todo: remove this workaround after flutter issue is fixed
+        // https://github.com/flutter/flutter/issues/178570
+        if (router is StackRouter) {
+          router.onPopPage(this);
+        }
       }
     };
   }

@@ -1286,7 +1286,7 @@ abstract class StackRouter extends RoutingController {
   /// this is not called when pageless routes are popped e.g popping a dialog
   /// that does not use [PageRoute] will not trigger this method
   void onPopPage(AutoRoutePage<Object?> page) {
-    _pages.remove(page);
+    if (!_pages.remove(page)) return;
     _updateSharedPathData(includeAncestors: true);
     if (isRouteDataActive(page.routeData)) {
       navigationHistory.rebuildUrl();
