@@ -205,6 +205,26 @@ class RouteMatch<T> {
     );
   }
 
+  /// Returns a new instance of [RouteMatch]
+  /// with the overridden id
+  RouteMatch withId(LocalKey newId) {
+    return RouteMatch._internal(
+      id: newId,
+      config: _config,
+      stringMatch: stringMatch,
+      segments: segments,
+      children: children,
+      params: params,
+      queryParams: queryParams,
+      fragment: fragment,
+      args: args,
+      key: key,
+      redirectedFrom: redirectedFrom,
+      autoFilled: autoFilled,
+      evaluatedGuards: _evaluatedGuards,
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -285,7 +305,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
           redirectedFrom: originalMatch.redirectedFrom,
           autoFilled: originalMatch.autoFilled,
           id: originalMatch.id,
-          children: originalMatch.children,
+          children: originalMatch.children == null ? null : List.of(originalMatch.children!),
           evaluatedGuards: originalMatch.evaluatedGuards,
           args: originalMatch.args,
         );

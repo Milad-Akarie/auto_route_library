@@ -883,21 +883,7 @@ class TabsRouter extends RoutingController {
       if (pageToUpdateIndex != -1) {
         RouteMatch routeToBeUpdated = _pages[pageToUpdateIndex].routeData._match;
         final bool shouldNotify = mayUpdateRoute != routeToBeUpdated;
-
-        routeToBeUpdated = routeToBeUpdated.copyWith(
-          children: mayUpdateRoute.children ?? const [],
-          queryParams: mayUpdateRoute.queryParams,
-          fragment: mayUpdateRoute.fragment,
-          pathParams: mayUpdateRoute.params,
-          segments: mayUpdateRoute.segments,
-          stringMatch: mayUpdateRoute.stringMatch,
-          redirectedFrom: mayUpdateRoute.redirectedFrom,
-          args: mayUpdateRoute.args,
-          key: mayUpdateRoute.key,
-          autoFilled: mayUpdateRoute.autoFilled,
-          evaluatedGuards: mayUpdateRoute.evaluatedGuards,
-        );
-
+        routeToBeUpdated = mayUpdateRoute.withId(routeToBeUpdated.id);
         for (final ctr in _childControllers) {
           if (ctr.matchId == _pages[pageToUpdateIndex].routeData.matchId) {
             ctr._markedForDataUpdate = true;
@@ -1286,7 +1272,7 @@ abstract class StackRouter extends RoutingController {
   /// this is not called when pageless routes are popped e.g popping a dialog
   /// that does not use [PageRoute] will not trigger this method
   void onPopPage(AutoRoutePage<Object?> page) {
-    _pages.remove(page);
+    if (!_pages.remove(page)) return;
     _updateSharedPathData(includeAncestors: true);
     if (isRouteDataActive(page.routeData)) {
       navigationHistory.rebuildUrl();
@@ -1359,8 +1345,10 @@ abstract class StackRouter extends RoutingController {
       for (var candidate in List<AutoRoutePage>.unmodifiable(_pages).reversed) {
         _pages.removeLast();
         if (candidate.routeKey == anchorPage.routeKey) {
+          // use the existing match id to avoid breaking child controllers
+          matches[0] = matches[0].withId(anchorPage.routeData.matchId);
           for (final ctr in _childControllers) {
-            if (ctr.routeData == candidate.routeData) {
+            if (ctr.matchId == candidate.routeData.matchId) {
               ctr._markedForDataUpdate = true;
             }
           }
