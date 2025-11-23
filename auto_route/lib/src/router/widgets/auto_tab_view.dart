@@ -65,6 +65,7 @@ class AutoTabViewState extends State<AutoTabView> {
   late List<Widget> _children;
   int? _currentIndex;
   int _warpUnderwayCount = 0;
+  int _scrollUnderwayCount = 0;
   final _tabKeys = <int, GlobalKey<KeepAliveTabState>>{};
 
   TabsRouter get _router => widget.router;
@@ -107,7 +108,11 @@ class AutoTabViewState extends State<AutoTabView> {
 
   void _onRouterUpdated() {
     _disposeInactiveChildren();
-    _updateChildren();
+    if (mounted) {
+      setState(() {
+        _updateChildren();
+      });
+    }
   }
 
   @override
@@ -140,7 +145,7 @@ class AutoTabViewState extends State<AutoTabView> {
   }
 
   void _handleTabControllerAnimationTick() {
-    if (_warpUnderwayCount > 0 || !_controller.indexIsChanging) {
+    if (_scrollUnderwayCount > 0 || !_controller.indexIsChanging) {
       return;
     } // This widget is driving the controller's animation.
     if (_controller.index != _currentIndex) {
@@ -150,61 +155,84 @@ class AutoTabViewState extends State<AutoTabView> {
   }
 
   Future<void> _warpToCurrentIndex() async {
-    if (!mounted) return Future<void>.value();
-
-    if (_pageController.page == _currentIndex!.toDouble()) {
-      return Future<void>.value();
+    if (!mounted || _pageController.page == _currentIndex!.toDouble()) {
+      return;
+    }
+    _disposeInactiveChildren();
+    final bool adjacentDestination = (_currentIndex! - _controller.previousIndex).abs() == 1;
+    if (adjacentDestination) {
+      await _warpToAdjacentTab(_controller.animationDuration);
+    } else {
+      await _warpToNonAdjacentTab(_controller.animationDuration);
     }
 
-    final Duration duration = _controller.animationDuration;
-    final bool animatePageTransition = widget.animatePageTransition;
+    if (mounted) {
+      setState(() {
+        _updateChildren();
+      });
+    }
+  }
 
+  void _jumpToPage(int page) {
+    _warpUnderwayCount += 1;
+    _pageController.jumpToPage(page);
+    _warpUnderwayCount -= 1;
+  }
+
+  Future<void> _animateToPage(int page, {required Duration duration, required Curve curve}) async {
+    _warpUnderwayCount += 1;
+    await _pageController.animateToPage(page, duration: duration, curve: curve);
+    _warpUnderwayCount -= 1;
+  }
+
+  Future<void> _warpToAdjacentTab(Duration duration) async {
+    if (duration == Duration.zero) {
+      _jumpToPage(_currentIndex!);
+    } else {
+      await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+    }
+
+    return Future<void>.value();
+  }
+
+  Future<void> _warpToNonAdjacentTab(Duration duration) async {
     final int previousIndex = _controller.previousIndex;
-
-    if ((_currentIndex! - previousIndex).abs() == 1) {
-      _warpUnderwayCount += 1;
-      if (animatePageTransition) {
-        await _pageController.animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
-      } else {
-        _pageController.jumpToPage(_currentIndex!);
-      }
-      _warpUnderwayCount -= 1;
-      return Future<void>.value();
-    }
-
     assert((_currentIndex! - previousIndex).abs() > 1);
+
+    // initialPage defines which page is shown when starting the animation.
+    // This page is adjacent to the destination page.
     final int initialPage = _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
+
     setState(() {
-      _warpUnderwayCount += 1;
+      // Needed for `RenderSliverMultiBoxAdaptor.move` and kept alive children.
+      // For motivation, see https://github.com/flutter/flutter/pull/29188 and
+      // https://github.com/flutter/flutter/issues/27010#issuecomment-486475152.
       _children = List<Widget>.of(_children, growable: false);
       final Widget temp = _children[initialPage];
       _children[initialPage] = _children[previousIndex];
       _children[previousIndex] = temp;
     });
-    _pageController.jumpToPage(initialPage);
 
-    if (animatePageTransition) {
-      await _pageController.animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
+    // Make a first jump to the adjacent page.
+    _jumpToPage(initialPage);
+
+    // Jump or animate to the destination page.
+    if (duration == Duration.zero) {
+      _jumpToPage(_currentIndex!);
     } else {
-      _pageController.jumpToPage(_currentIndex!);
+      await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
     }
-    if (!mounted) return Future<void>.value();
-    setState(() {
-      _warpUnderwayCount -= 1;
-    });
   }
 
   // Called when the PageView scrolls
   bool _handleScrollNotification(ScrollNotification notification) {
-    // if (notification is ScrollEndNotification) {
-    //     print(widget.controller.indexIsChanging);
-    //   _disposeInactiveChildren();
-    // }
-    if (_warpUnderwayCount > 0) return false;
+    if (_warpUnderwayCount > 0 || _scrollUnderwayCount > 0) {
+      return false;
+    }
 
     if (notification.depth != 0) return false;
 
-    _warpUnderwayCount += 1;
+    _scrollUnderwayCount += 1;
     if (notification is ScrollUpdateNotification && !_controller.indexIsChanging) {
       if ((_pageController.page! - _controller.index).abs() > 1.0) {
         _controller.index = _pageController.page!.round();
@@ -228,7 +256,7 @@ class AutoTabViewState extends State<AutoTabView> {
         _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
       }
     }
-    _warpUnderwayCount -= 1;
+    _scrollUnderwayCount -= 1;
 
     return false;
   }

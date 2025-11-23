@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -343,7 +345,10 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
             animation: _animation,
             navigatorObservers: _navigatorObservers,
             itemBuilder: (BuildContext context, int index) {
-              return stack[index].buildPage(context);
+              return KeepAliveTab(
+                key: ValueKey(index),
+                page: stack[index],
+              );
             },
             stack: stack,
           );
@@ -922,7 +927,10 @@ class KeepAliveTabState extends State<KeepAliveTab> with AutomaticKeepAliveClien
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return _load ? widget.page.buildPage(context) : const SizedBox.shrink();
+    return Semantics(
+      role: SemanticsRole.tabPanel,
+      child: _load ? widget.page.buildPage(context) : const SizedBox.shrink(),
+    );
   }
 
   @override
