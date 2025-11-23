@@ -1,6 +1,12 @@
+## 10.2.3
+
+- **REFACTOR**: Preserve match ID on route updates to prevent breaking child controllers during route updates or when replacing a route, fixes #2294
+- **FIX**: AutoTabsRouter.tabBar: Switching non-adjacent tabs shows the initial tab briefly when tapping a tab then swiping, instead of the tab you're swiping toward, fixes #2283
+- **REFACTOR**: Simplify PagelessRoutesObserver and address pop flicker by using the more efficient `didChangeTop` callback
+
 ## 10.2.2
 
- - **FIX**: known predictive back gesture issues.
+- **FIX**: known predictive back gesture issues.
 - **FIX**: add meta import to routing_controller.dart because some flutter versions require it.
 
 ## 10.2.1
