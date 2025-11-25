@@ -26,7 +26,10 @@ class RouteParameterResolver {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
-    final paramName = parameterElement.displayName.replaceFirst("_", '');
+    var paramName = parameterElement.name;
+    if (paramName.startsWith('_')) {
+      paramName = paramName.replaceFirst("_", '');
+    }
     var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
 
     var nameOrAlias = paramName;
