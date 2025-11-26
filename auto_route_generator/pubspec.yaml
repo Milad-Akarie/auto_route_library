@@ -13,10 +13,7 @@ dependencies:
   code_builder: ^4.10.1
   dart_style: ^3.0.0
   glob: ^2.1.3
-  lean_builder: #^0.1.3
-    git:
-      url: https://github.com/Carapacik/lean_builder
-      ref: 49dbec4865e1278093131150ad18d748e77c1249
+  lean_builder: ^0.1.4
   auto_route: ^10.2.0
 
 dev_dependencies:
