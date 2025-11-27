@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
 
@@ -26,7 +26,7 @@ class RouteParameterResolver {
       return _resolveFunctionType(parameterElement);
     }
     var type = _typeResolver.resolveType(paramType);
-    var paramName = parameterElement.name;
+    var paramName = parameterElement.name ?? '';
     if (paramName.startsWith('_')) {
       paramName = paramName.replaceFirst("_", '');
     }

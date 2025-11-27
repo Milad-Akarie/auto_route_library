@@ -1,3 +1,10 @@
+## 10.3.0
+- **FEAT**: Correct back-navigation behavior with proper state tracking
+- **FEAT**: Add async support and debug labels to `AutoRouteGuard`
+- **FEAT**: Add `checkGuard` method to `NavigationResolver` for sequential guard execution
+- **FEAT**: Implement comprehensive navigation history tracking with proper state management
+- **FEAT**: Prevent duplicate consecutive entries in navigation history
+
 ## 10.2.3
 
 - **REFACTOR**: Preserve match ID on route updates to prevent breaking child controllers during route updates or when replacing a route, fixes #2294
