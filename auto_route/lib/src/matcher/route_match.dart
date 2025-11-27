@@ -305,7 +305,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
           redirectedFrom: originalMatch.redirectedFrom,
           autoFilled: originalMatch.autoFilled,
           id: originalMatch.id,
-          children: originalMatch.children == null ? null : List.of(originalMatch.children!),
+          children: originalMatch.children,
           evaluatedGuards: originalMatch.evaluatedGuards,
           args: originalMatch.args,
         );

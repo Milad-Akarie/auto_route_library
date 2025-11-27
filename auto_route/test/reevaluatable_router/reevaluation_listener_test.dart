@@ -162,4 +162,41 @@ void main() {
     await tester.pumpAndSettle();
     verifyNever(mockListener(captureAny, router));
   });
+
+// testing resolver.redirectUntil
+  testWidgets('Reevaluation with redirectUntil should navigate accordingly', (WidgetTester tester) async {
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: FirstRoute.page, initial: true),
+        AutoRoute.guarded(
+          page: SecondRoute.page,
+          onNavigation: (resolver, router) async {
+            mockListener.call(resolver, router);
+            if (reevaluationNotifier.value) {
+              resolver.next(true);
+            } else {
+              resolver.redirectUntil(ThirdRoute());
+            }
+          },
+        ),
+        AutoRoute(page: ThirdRoute.page),
+      ],
+      defaultRouteType: RouteType.custom(
+        reverseDuration: Duration.zero,
+        duration: Duration.zero,
+      ),
+    );
+    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
+    expectTopPage(router, FirstRoute.name);
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
+    verify(mockListener(captureAny, router)).called(1);
+    await tester.pumpAndSettle(Duration(milliseconds: 800));
+    expectTopPage(router, ThirdRoute.name);
+    reevaluationNotifier.value = true;
+    await tester.pumpAndSettle();
+    final resolver = verify(mockListener(captureAny, router)).captured[0] as NavigationResolver;
+    expect(resolver.isReevaluating, true);
+    expectTopPage(router, SecondRoute.name);
+  });
 }

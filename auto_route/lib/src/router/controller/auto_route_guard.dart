@@ -2,7 +2,7 @@ part of 'routing_controller.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
 /// Signature for on navigation function used by [AutoRouteGuard]
-typedef OnNavigation = Function(NavigationResolver resolver, StackRouter router);
+typedef OnNavigation = FutureOr<void> Function(NavigationResolver resolver, StackRouter router);
 
 /// A middleware for stacked routes where clients
 /// can either resume or abort the navigation event
@@ -22,13 +22,13 @@ abstract class AutoRouteGuard {
   }
 }
    */
-  void onNavigation(
+  FutureOr<void> onNavigation(
     NavigationResolver resolver,
     StackRouter router,
   );
 
   /// Builds a simple instance that takes in the [OnNavigation] callback
-  factory AutoRouteGuard.simple(OnNavigation onNavigation) = AutoRouteGuardCallback;
+  factory AutoRouteGuard.simple(OnNavigation onNavigation, {String? debugLabel}) = AutoRouteGuardCallback;
 
   /// Builds a simple instance that returns either a redirect-to route or null for no redirect
   factory AutoRouteGuard.redirect(PageRouteInfo? Function(NavigationResolver resolver) redirect) =
@@ -102,13 +102,19 @@ class AutoRouteGuardCallback extends AutoRouteGuard {
   /// The callback called by [AutoRouteGuard.onNavigation]
   final OnNavigation onNavigate;
 
+  /// An optional debug name for easier identification
+  final String? debugLabel;
+
   /// Default constructor
-  const AutoRouteGuardCallback(this.onNavigate);
+  const AutoRouteGuardCallback(this.onNavigate, {this.debugLabel});
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     onNavigate(resolver, router);
   }
+
+  @override
+  String toString() => 'AutoRouteGuardCallback(${debugLabel ?? hashCode})';
 }
 
 /// Holds [NavigationResolver.resolveNext] values
@@ -313,6 +319,25 @@ class NavigationResolver {
 
   /// The future that will be completed by [resolveNext]
   Future<ResolverResult> get future => _completer.future;
+
+  Completer<void>? _waitingCompleter;
+
+  /// Checks the provided [guard] and waits for it to complete
+  ///
+  /// If there's an ongoing guard check, it waits for it to complete first
+  /// before checking the provided [guard]
+  /// returns the [ResolverResult] of the guard check
+  Future<ResolverResult> checkGuard(AutoRouteGuard guard, StackRouter router) async {
+    if (_waitingCompleter != null) {
+      await _waitingCompleter!.future;
+      _waitingCompleter = null;
+      if (isResolved) return future;
+    }
+    _waitingCompleter = Completer<void>();
+    await guard.onNavigation(this, router);
+    _waitingCompleter!.complete();
+    return future;
+  }
 }
 
 /// Holds overridable route values

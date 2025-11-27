@@ -25,6 +25,7 @@ class WebAppRouter extends RootStackRouter {
                   resolver.redirectUntil(WebLoginRoute());
                 }
               },
+              debugLabel: 'AuthGuard',
             ),
           ],
         ),
@@ -48,6 +49,7 @@ class WebAppRouter extends RootStackRouter {
                       resolver.redirectUntil(WebVerifyRoute());
                     }
                   },
+                  debugLabel: 'VerifyGuard',
                 )
               ],
               children: [

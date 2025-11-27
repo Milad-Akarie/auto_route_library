@@ -1059,8 +1059,8 @@ abstract class StackRouter extends RoutingController {
       final resolver = entry._resolver;
       if (resolver.isResolved) continue;
       resolver._isReevaluating = true;
-      entry.guard.onNavigation(resolver, this);
-      final result = await resolver._completer.future;
+
+      final result = await resolver.checkGuard(entry.guard, this);
       if (result.continueNavigation) {
         alreadyEvaluated.putIfAbsent(result.route.id, () => []).add(entry.guard);
       }
@@ -1654,7 +1654,6 @@ abstract class StackRouter extends RoutingController {
         pendingRoutes: routes.whereIndexed((index, element) => index > i).toList(),
         isReevaluating: isReevaluating,
       );
-
       final match = result.route;
       if (result.continueNavigation) {
         if (i != (routes.length - 1)) {
@@ -1741,11 +1740,11 @@ abstract class StackRouter extends RoutingController {
         ),
       );
     }
-    bool breakOnReevaluate = false;
+    bool reevaluateNext = true;
     for (final guard in guards) {
       if (routeToCheck.evaluatedGuards.contains(guard)) {
         routeToCheck = routeToCheck.copyWith(
-          evaluatedGuards: routeToCheck.evaluatedGuards.where((e) => e != guard).toList(),
+          evaluatedGuards: List.from(routeToCheck.evaluatedGuards.where((e) => e != guard)),
         );
         continue;
       }
@@ -1759,22 +1758,23 @@ abstract class StackRouter extends RoutingController {
       );
       final guardEntry = GuardEntry(guard, resolver);
       activeGuardObserver._add(guardEntry);
-      guard.onNavigation(resolver, this);
-      final result = await completer.future;
+      final result = await resolver.checkGuard(guard, this);
       routeToCheck = result.route;
-      breakOnReevaluate |= result.reevaluateNext;
+      if (!result.reevaluateNext) {
+        reevaluateNext = false;
+      }
       if (!result.continueNavigation) {
         if (onFailure != null) {
           onFailure(RejectedByGuardFailure(routeToCheck, guard));
         }
         activeGuardObserver._remove(guardEntry);
-        return result.copyWith(reevaluateNext: breakOnReevaluate);
+        return result;
       }
       activeGuardObserver._remove(guardEntry);
     }
     return ResolverResult(
       continueNavigation: true,
-      reevaluateNext: breakOnReevaluate,
+      reevaluateNext: reevaluateNext,
       route: routeToCheck,
     );
   }
