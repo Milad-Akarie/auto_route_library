@@ -1,3 +1,6 @@
+## 10.3.0
+- **CHORE**: add support for analyzer 9.x.x
+- **CHORE**: update dependencies
 ## 10.2.6
 - **FIX**: correctly handle parameter names by removing leading underscores
 ## 10.2.5
