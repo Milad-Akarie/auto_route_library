@@ -97,7 +97,7 @@ class _MainWebPageState extends State<MainWebPage> {
               child: ElevatedButton(
                 onPressed: widget.navigate ??
                     () async {
-                      context.pushRoute(
+                      await context.pushRoute(
                         UserRoute(
                           id: 2,
                           query: const ['value1', 'value2'],

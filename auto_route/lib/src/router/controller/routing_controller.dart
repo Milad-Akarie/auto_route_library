@@ -356,19 +356,6 @@ abstract class RoutingController with ChangeNotifier {
     return SynchronousFuture(null);
   }
 
-  /// Pops until given [path], if it already exists in stack
-  @Deprecated('Use navigatePath instead')
-  Future<void> navigateNamed(
-    String path, {
-    bool includePrefixMatches = false,
-    OnNavigationFailure? onFailure,
-  }) =>
-      navigatePath(
-        path,
-        includePrefixMatches: includePrefixMatches,
-        onFailure: onFailure,
-      );
-
   void _onNavigate(List<RouteMatch> routes);
 
   Future<dynamic> _navigate(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
@@ -1249,15 +1236,6 @@ abstract class StackRouter extends RoutingController {
     }
   }
 
-  /// Pop until given [route] if it exists in stack
-  /// otherwise does nothing
-  /// see [Navigator.pop]
-  @Deprecated('Use pop instead')
-  @optionalTypeArgs
-  void popForced<T extends Object?>([T? result]) {
-    return pop<T>(result);
-  }
-
   /// Removes the very last entry from [_pages]
   bool removeLast() => _removeLast();
 
@@ -1887,19 +1865,6 @@ abstract class StackRouter extends RoutingController {
     return SynchronousFuture(null);
   }
 
-  /// Removes last entry in stack and pushes given [path]
-  @Deprecated('Use replacePath instead')
-  Future<T?> replaceNamed<T extends Object?>(
-    String path, {
-    bool includePrefixMatches = false,
-    OnNavigationFailure? onFailure,
-  }) =>
-      replacePath<T>(
-        path,
-        includePrefixMatches: includePrefixMatches,
-        onFailure: onFailure,
-      );
-
   /// Adds corresponding page to given [path] to [_pages] stack
   ///
   /// if [includePrefixMatches] is true prefixed-matches
@@ -1927,19 +1892,6 @@ abstract class StackRouter extends RoutingController {
     }
     return SynchronousFuture(null);
   }
-
-  /// Adds corresponding page to given [path] to [_pages] stack
-  @Deprecated('Use pushPath instead')
-  Future<T?> pushNamed<T extends Object?>(
-    String path, {
-    bool includePrefixMatches = false,
-    OnNavigationFailure? onFailure,
-  }) =>
-      pushPath<T>(
-        path,
-        includePrefixMatches: includePrefixMatches,
-        onFailure: onFailure,
-      );
 
   /// Helper to pop all routes until route with [name] is found
   /// see [popUntil]

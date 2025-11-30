@@ -45,15 +45,6 @@ extension AutoRouterX on BuildContext {
   void back() => RouterScope.of(this).controller.back();
 
   /// see [RoutingController.navigatePath]
-  @Deprecated('Use navigateToPath instead')
-  Future<void> navigateNamedTo(String path, {bool includePrefixMatches = false, OnNavigationFailure? onFailure}) =>
-      RouterScope.of(this).controller.navigatePath(
-            path,
-            includePrefixMatches: includePrefixMatches,
-            onFailure: onFailure,
-          );
-
-  /// see [RoutingController.navigatePath]
   Future<void> navigateToPath(String path, {bool includePrefixMatches = false, OnNavigationFailure? onFailure}) =>
       RouterScope.of(this).controller.navigatePath(
             path,

@@ -63,7 +63,7 @@ class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, router) {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
-      router.pushNamed(redirectTo);
+      router.pushPath(redirectTo);
     }
     resolver.next(redirectTo == null);
   }
