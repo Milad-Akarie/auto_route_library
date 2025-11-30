@@ -1,3 +1,5 @@
+## 10.3.1
+- **REFACTOR**: Update analyzer dependency and migrate from `element2` to `element`
 ## 10.3.0
 - **CHORE**: add support for analyzer 9.x.x
 - **CHORE**: update dependencies

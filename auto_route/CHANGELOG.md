@@ -1,4 +1,14 @@
+## 11.0.0 [Breaking Changes]
+
+- **BREAKING CHANGE**: The `redirectUntil` method now returns `void` instead of `Future<T?>` and
+  handles the completion of the pop completer internally
+- **BREAKING CHANGE**: The `redirect` method in `AutoRouteGuard` has been renamed to `redirectUntil`
+  to better reflect its behavior and avoid confusion
+- **BREAKING CHANGE**: Removed deprecated APIs: `navigateNamed`, `popForced`, `replaceNamed`,
+  `pushNamed`, and `navigateNamedTo`. Use `navigatePath`, `pop`, `replacePath`, `pushPath` instead
+
 ## 10.3.0
+
 - **FEAT**: Correct back-navigation behavior with proper state tracking
 - **FEAT**: Add async support and debug labels to `AutoRouteGuard`
 - **FEAT**: Add `checkGuard` method to `NavigationResolver` for sequential guard execution
@@ -7,9 +17,12 @@
 
 ## 10.2.3
 
-- **REFACTOR**: Preserve match ID on route updates to prevent breaking child controllers during route updates or when replacing a route, fixes #2294
-- **FIX**: AutoTabsRouter.tabBar: Switching non-adjacent tabs shows the initial tab briefly when tapping a tab then swiping, instead of the tab you're swiping toward, fixes #2283
-- **REFACTOR**: Simplify PagelessRoutesObserver and address pop flicker by using the more efficient `didChangeTop` callback
+- **REFACTOR**: Preserve match ID on route updates to prevent breaking child controllers during
+  route updates or when replacing a route, fixes #2294
+- **FIX**: AutoTabsRouter.tabBar: Switching non-adjacent tabs shows the initial tab briefly when
+  tapping a tab then swiping, instead of the tab you're swiping toward, fixes #2283
+- **REFACTOR**: Simplify PagelessRoutesObserver and address pop flicker by using the more efficient
+  `didChangeTop` callback
 
 ## 10.2.2
 
@@ -17,26 +30,36 @@
 - **FIX**: add meta import to routing_controller.dart because some flutter versions require it.
 
 ## 10.2.1
+
 - **FIX**: correctly handle parameter names by removing leading underscores
 - **Enhance**: appBarBuilder in AutoTabsScaffold can return null now
 - **FIX**: Fix WASM type mismatch.
+
 ## 10.2.0
- - **FIX**: respect page.opaque for transparent route.
- - **FIX**: handle dart:xxx.xxx.dart imports in type resolution (af60d79) when using lean_builder
- - **REFACTOR**: introduce _genericRef function for improved type reference handling (d5ecf13)
- - **FIX**: respect page.opaque for transparent route (52b71b7)
+
+- **FIX**: respect page.opaque for transparent route.
+- **FIX**: handle dart:xxx.xxx.dart imports in type resolution (af60d79) when using lean_builder
+- **REFACTOR**: introduce _genericRef function for improved type reference handling (d5ecf13)
+- **FIX**: respect page.opaque for transparent route (52b71b7)
 - **FIX**: Use immutable array for pending child routes, fixes #2210 (beb3ce0)
 - **CHORE**:: extend support to analyzer 8 (b2cb61d)
 
 ## 10.1.2
+
 - **FIX**: routing_controller.dart missing meta import
+
 ## 10.1.1
+
 - **CHORE**: tidy up dependencies and sync with updated analyzer version.
 - **FIX**: Add indexed stack semantics
 - **FIX**: Allow PopCompleter to complete during route reevaluation when pop-completers are disabled
+
 ## 10.1.0+1
+
 - **FEAT**: Add experimental support for lean_builder
+
 ## 10.1.0
+
 - **FEAT**: Expose routeTraversalEdgeBehavior property from the underlying Navigator to allow
   customization of navigation stack edge behavior.
 - **FIX**: Improve focus and semantics handling in AutoTabsRouter IndexedStack to exclude inactive
