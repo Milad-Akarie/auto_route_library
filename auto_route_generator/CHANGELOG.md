@@ -1,3 +1,5 @@
+## 10.4.0
+-- **Chore**: update auto_route constrains to ^11.0.0
 ## 10.3.1
 - **REFACTOR**: Update analyzer dependency and migrate from `element2` to `element`
 ## 10.3.0
