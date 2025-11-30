@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:auto_route/annotations.dart';
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/builders/auto_route_builder.dart';
@@ -59,10 +59,10 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     return calculatedHash;
   }
 
-  bool _hasPartDirective(ClassElement2 clazz) {
-    final fileName = clazz.library2.uri.pathSegments.last;
+  bool _hasPartDirective(ClassElement clazz) {
+    final fileName = clazz.library.uri.pathSegments.last;
     final part = fileName.replaceAll('.dart', generatedExtension);
-    final uriIncludes = clazz.library2.firstFragment.partIncludes.map((e) => e.uri);
+    final uriIncludes = clazz.library.firstFragment.partIncludes.map((e) => e.uri);
     return uriIncludes.whereType<DirectiveUriWithSource>().any(
           (e) => e.source.fullName.endsWith(part),
         );
@@ -111,11 +111,11 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     final annotation = annotatedElements.first.annotation;
 
     throwIf(
-      element is! ClassElement2,
+      element is! ClassElement,
       '${element.displayName} is not a class element',
       element: element,
     );
-    final clazz = element as ClassElement2;
+    final clazz = element as ClassElement;
 
     final usesPartBuilder = _hasPartDirective(clazz);
 

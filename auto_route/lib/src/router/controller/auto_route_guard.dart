@@ -263,45 +263,32 @@ class NavigationResolver {
   ///      resolver.redirectUntil(LoginRoute());
   ///    }
   ///  }
-  Future<T?> redirectUntil<T extends Object?>(
+  void redirectUntil(
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
     bool replace = false,
   }) async {
     if (_isRedirecting) return null;
     _isRedirecting = true;
-    final result = await _router._redirect<T>(
+    await _router._redirect(
       route,
       onFailure: onFailure,
       replace: replace,
       onMatch: (scope, match) async {
         await _completer.future;
         _isRedirecting = false;
-        if (scope.stackData.any((e) => e.matchId == match.id)) {
+        final routeData = scope.stackData.firstWhereOrNull((e) => e.matchId == match.id);
+        if (routeData != null) {
           scope.markUrlStateForReplace();
           scope._removeRoute(match);
+          // complete the pop completer with null result
+          routeData.onPopInvoked(null);
         }
       },
     );
     if (!_completer.isCompleted) {
       next(false);
     }
-    return result;
-  }
-
-  /// Keeps track of the navigated-to route
-  /// To be auto-removed when [completer] is resolved
-  @Deprecated('Renamed to "redirectUntil" to avoid confusion')
-  Future<T?> redirect<T extends Object?>(
-    PageRouteInfo route, {
-    OnNavigationFailure? onFailure,
-    bool replace = false,
-  }) {
-    return redirectUntil<T>(
-      route,
-      onFailure: onFailure,
-      replace: replace,
-    );
   }
 
   /// Helpful for when you want to revert to the previous

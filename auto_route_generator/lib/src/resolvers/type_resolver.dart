@@ -1,4 +1,4 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
 import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType, RecordType;
 import 'package:auto_route_generator/build_utils.dart';
@@ -10,7 +10,7 @@ const _unPreferredImports = {'dart:ui'};
 /// A Helper class that resolves types
 class TypeResolver {
   /// The list of resolved libraries in [BuildStep]
-  final List<LibraryElement2> libs;
+  final List<LibraryElement> libs;
 
   /// The target file to resolve relative paths to
   final Uri? targetFile;
@@ -19,9 +19,9 @@ class TypeResolver {
   TypeResolver(this.libs, [this.targetFile]);
 
   /// Resolved the import path of the given [element]
-  String? resolveImport(Element2? element) {
+  String? resolveImport(Element? element) {
     // return early if source is null or element is a core type
-    if (libs.isEmpty || element?.library2?.uri == null || _isCoreDartType(element!)) {
+    if (libs.isEmpty || element?.library?.uri == null || _isCoreDartType(element!)) {
       return null;
     }
 
@@ -73,8 +73,8 @@ class TypeResolver {
     }
   }
 
-  bool _isCoreDartType(Element2 element) {
-    return element.library2?.uri.toString() == 'dart:core';
+  bool _isCoreDartType(Element element) {
+    return element.library?.uri.toString() == 'dart:core';
   }
 
   List<ResolvedType> _resolveTypeArguments(DartType typeToCheck) {
@@ -82,16 +82,16 @@ class TypeResolver {
     if (typeToCheck is RecordType) {
       for (final recordField in typeToCheck.positionalFields) {
         types.add(ResolvedType(
-          name: recordField.type.element3?.displayName ?? 'void',
-          import: resolveImport(recordField.type.element3),
+          name: recordField.type.element?.displayName ?? 'void',
+          import: resolveImport(recordField.type.element),
           isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
           typeArguments: _resolveTypeArguments(recordField.type),
         ));
       }
       for (final recordField in typeToCheck.namedFields) {
         types.add(ResolvedType(
-          name: recordField.type.element3?.displayName ?? 'void',
-          import: resolveImport(recordField.type.element3),
+          name: recordField.type.element?.displayName ?? 'void',
+          import: resolveImport(recordField.type.element),
           isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
           typeArguments: _resolveTypeArguments(recordField.type),
           nameInRecord: recordField.name,
@@ -106,12 +106,12 @@ class TypeResolver {
             isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
             typeArguments: _resolveTypeArguments(type),
           ));
-        } else if (type.element3 is TypeParameterElement2) {
+        } else if (type.element is TypeParameterElement) {
           types.add(ResolvedType(name: 'dynamic'));
         } else {
           types.add(ResolvedType(
-            name: type.element3?.displayName ?? 'void',
-            import: resolveImport(type.element3),
+            name: type.element?.displayName ?? 'void',
+            import: resolveImport(type.element),
             isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
             typeArguments: _resolveTypeArguments(type),
           ));
@@ -123,7 +123,7 @@ class TypeResolver {
 
   /// Resolves the given [type] to a [ResolvedType]
   ResolvedType resolveType(DartType type) {
-    final effectiveElement = type.alias?.element2 ?? type.element3;
+    final effectiveElement = type.alias?.element ?? type.element;
     final import = resolveImport(effectiveElement);
     final typeArgs = <ResolvedType>[];
     final alias = type.alias;

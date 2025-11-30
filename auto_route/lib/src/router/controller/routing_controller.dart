@@ -1280,7 +1280,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   void _removeRoute(RouteMatch route, {bool notify = true}) {
-    var pageIndex = _pages.lastIndexWhere((p) => p.routeKey == route.key);
+    var pageIndex = _pages.lastIndexWhere((p) => p.routeData.matchId == route.id);
     if (pageIndex != -1) {
       _pages.removeAt(pageIndex);
     }

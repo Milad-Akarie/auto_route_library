@@ -226,12 +226,12 @@ class UserRouteArgs {
     if (other is! UserRouteArgs) return false;
     return key == other.key &&
         id == other.id &&
-        const _i6.ListEquality().equals(query, other.query) &&
+        const _i6.ListEquality<String>().equals(query, other.query) &&
         fragment == other.fragment;
   }
 
   @override
-  int get hashCode => key.hashCode ^ id.hashCode ^ const _i6.ListEquality().hash(query) ^ fragment.hashCode;
+  int get hashCode => key.hashCode ^ id.hashCode ^ const _i6.ListEquality<String>().hash(query) ^ fragment.hashCode;
 }
 
 /// generated route for

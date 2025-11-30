@@ -17,6 +17,9 @@ class WebLoginPage extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {
             App.of(context).authService.isAuthenticated = true;
+            if (onResult != null) {
+              onResult!(true);
+            }
           },
           child: Text('Login'),
         ),

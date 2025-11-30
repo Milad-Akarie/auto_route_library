@@ -1,16 +1,16 @@
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Helper to through flutter errors if [condition] is true
-void throwIf(bool condition, String message, {Element2? element}) {
+void throwIf(bool condition, String message, {Element? element}) {
   if (condition) {
     throwError(message, element: element);
   }
 }
 
 /// Helper to through flutter errors
-void throwError(String message, {Element2? element}) {
+void throwError(String message, {Element? element}) {
   throw InvalidGenerationSourceError(
     message,
     element: element,
