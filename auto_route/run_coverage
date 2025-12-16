@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Navigate to the script's directory (root of auto_route package)
+cd "$(dirname "$0")"
+
+# Run tests with coverage
+flutter test --coverage
+
+# Check if genhtml is installed to generate HTML report
+if command -v genhtml &> /dev/null; then
+    genhtml coverage/lcov.info -o coverage/html
+    echo "Coverage report generated at coverage/html/index.html"
+    open coverage/html/index.html
+else
+    echo "genhtml not found. Install lcov to generate HTML report."
+fi
