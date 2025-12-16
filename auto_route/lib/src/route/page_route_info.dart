@@ -182,6 +182,14 @@ class PageRouteInfo<T extends Object?> {
     return context.router.match(this);
   }
 
+  /// Creates a new instance of a named route
+  const factory PageRouteInfo.named(String name,
+      {List<PageRouteInfo>? children,
+      T? args,
+      Map<String, dynamic> params,
+      Map<String, dynamic> queryParams,
+      String? fragment}) = NamedRoute<T>;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -221,7 +229,7 @@ class EmptyShellRoute extends PageInfo {
 
 /// A named route that can be used to navigate to a named destination
 /// typically built with [NamedRouteDef]
-class NamedRoute extends PageRouteInfo<Object?> {
+class NamedRoute<A extends Object?> extends PageRouteInfo<A> {
   /// Default constructor
   const NamedRoute(
     super.name, {

@@ -212,6 +212,42 @@ class AutoRoute {
     );
   }
 
+  /// .named redirect to NamedRouteDef
+  factory AutoRoute.named(
+    String name,
+    WidgetBuilderWithData builder, {
+    String? path,
+    bool usesPathAsKey = false,
+    bool fullMatch = false,
+    RouteType? type,
+    Map<String, dynamic> meta = const {},
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    List<AutoRoute>? children,
+    TitleBuilder? title,
+    RestorationIdBuilder? restorationId,
+    bool keepHistory = true,
+    bool initial = false,
+    bool allowSnapshotting = true,
+  }) =>
+      NamedRouteDef(
+        name: name,
+        builder: builder,
+        path: path,
+        usesPathAsKey: usesPathAsKey,
+        fullMatch: fullMatch,
+        type: type,
+        meta: meta,
+        maintainState: maintainState,
+        fullscreenDialog: fullscreenDialog,
+        children: children,
+        title: title,
+        restorationId: restorationId,
+        keepHistory: keepHistory,
+        initial: initial,
+        allowSnapshotting: allowSnapshotting,
+      );
+
   /// The path defined by user or automatically-added
   /// By [RouteCollection.fromList]
   String get path => _path ?? '';
