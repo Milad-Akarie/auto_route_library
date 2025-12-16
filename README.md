@@ -231,6 +231,14 @@ You can use auto_route without code generation by providing an inline `NamedRout
 ```
 `NamedRouteDef` is a wrapper around `AutoRoute` that allows you to provide a page builder function instead of a generated page, it has the same properties as `AutoRoute` except for `page` properties.
 
+**Tip:** use the shorthand version of NamedRouteRef for a cleaner look
+```dart
+   routes: [
+     .named('HomeRoute', (ctx, data) => HomePage()),
+     .named('BookListRoute', (ctx, data) => BookListPage()),
+    ];
+```
+
 ### Navigating to Named Routes
 You can either navigate to a named route by using the dynamic `NamedRoute` class to match by name or by using the `pushPath` method to match by path.
 ```dart
@@ -238,6 +246,9 @@ You can either navigate to a named route by using the dynamic `NamedRoute` class
     router.push(NamedRoute('BookDetailsRoute', params: {'id': 1}));
     router.replace(NamedRoute('BookDetailsRoute', params: {'id': 1}));
     router.navigate(NamedRoute('BookDetailsRoute', params: {'id': 1}));
+ /// or use the shorthand version
+    router.push(.named('BookDetailsRoute',) params: {'id': 1}));
+    
 /// match by path
      router.pushPath('/books/1');
      router.replacePath('/books/1');

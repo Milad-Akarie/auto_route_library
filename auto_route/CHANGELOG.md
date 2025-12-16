@@ -1,3 +1,8 @@
+## 11.1.0
+- **CHORE:** deprecate animatePageTransition #2301
+- **Enhance:** add .named constructor to PageRouteInfo and AutoRoute to enable usage for shorthand
+  named routes without code generation.
+
 ## 11.0.0 [Breaking Changes]
 
 - **BREAKING CHANGE**: The `redirectUntil` method now returns `void` instead of `Future<T?>` and
