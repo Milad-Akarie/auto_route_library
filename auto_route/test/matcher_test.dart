@@ -826,4 +826,47 @@ void main() {
       expect(match('/adsfadsg')?.first.children?.first.redirectedFrom, '*');
     });
   });
+
+  group('Testing buildPathTo', () {
+    final subRouteC1 = TestRoute('C1', path: 'c1');
+    final routeC = TestRoute(
+      'C',
+      path: '/c',
+      children: [subRouteC1],
+    );
+    final routeA = TestRoute('A', path: '/');
+
+    final routeCollection = RouteCollection.fromList(
+      [routeA, routeC],
+      root: true,
+    );
+
+    final matcher = RouteMatcher(routeCollection);
+
+    test('Should build path to root route', () {
+      final routeInfo = PageRouteInfo('A');
+      final result = matcher.buildPathTo(routeInfo);
+      expect(result, isNotNull);
+      expect(result!.name, 'A');
+      expect(result.autoFilled, isFalse);
+      expect(result.children, isNull);
+    });
+
+    test('Should build path to nested route', () {
+      final routeInfo = PageRouteInfo('C1', rawPathParams: {'id': '123'});
+      final result = matcher.buildPathTo(routeInfo);
+      expect(result, isNotNull);
+      expect(result!.name, 'C');
+      expect(result.autoFilled, isTrue);
+      expect(result.children, hasLength(1));
+      expect(result.children!.first.name, 'C1');
+      expect(result.children!.first.params.rawMap, {'id': '123'});
+    });
+
+    test('Should return null for non-existing route', () {
+      final routeInfo = PageRouteInfo('NonExisting');
+      final result = matcher.buildPathTo(routeInfo);
+      expect(result, isNull);
+    });
+  });
 }
