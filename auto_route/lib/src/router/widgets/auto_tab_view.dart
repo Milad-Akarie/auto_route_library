@@ -17,16 +17,12 @@ class AutoTabView extends StatefulWidget {
 
   const AutoTabView({
     super.key,
-    required this.animatePageTransition,
     required this.controller,
     this.physics,
     required this.router,
     this.scrollDirection = Axis.horizontal,
     this.dragStartBehavior = DragStartBehavior.start,
   });
-
-  /// Whether to use [TabController.animateToPage] or [TabController.jumpToPage]
-  final bool animatePageTransition;
 
   /// The scroll direction of the [PageView]
   /// see [PageView.scrollDirection]

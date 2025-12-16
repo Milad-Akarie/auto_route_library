@@ -117,7 +117,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     List<PageRouteInfo>? routes,
     AutoTabsTabBarBuilder? builder,
     int homeIndex,
-    bool animatePageTransition,
+    @Deprecated('Set Duration to zero to disable animation') bool animatePageTransition,
     Duration? duration,
     Axis scrollDirection,
     Curve curve,
@@ -632,14 +632,15 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     this.scrollDirection = Axis.horizontal,
     this.builder,
     super.homeIndex,
-    this.animatePageTransition = true,
-    this.duration,
+    @Deprecated('Set Duration to zero to disable animation') this.animatePageTransition = true,
+    Duration? duration,
     this.curve = Curves.ease,
     super.inheritNavigatorObservers,
     super.navigatorObservers,
     this.physics,
     this.dragStartBehavior = DragStartBehavior.start,
-  }) : super._();
+  })  : duration = duration ?? (animatePageTransition ? null : Duration.zero),
+        super._();
 
   @override
   _AutoTabsRouterTabBarState createState() => _AutoTabsRouterTabBarState();
@@ -738,7 +739,6 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
                 context,
                 AutoTabView(
                   key: _tabViewKey,
-                  animatePageTransition: widget.animatePageTransition,
                   scrollDirection: widget.scrollDirection,
                   physics: widget.physics,
                   dragStartBehavior: widget.dragStartBehavior,
