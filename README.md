@@ -38,6 +38,7 @@
   - [Tab Navigation](#tab-navigation)
     - [Using PageView](#using-pageview)
     - [Using TabBar](#using-tabbar)
+    - [Popping Using AutoTabsRouter](#popping-using-autotabsrouter)
   - [Finding The Right Router](#finding-the-right-router)
   - [Navigating Without Context](#navigating-without-context)
 - [Deep Linking](#deep-linking)
@@ -739,6 +740,20 @@ AutoTabsRouter.tabBar(
     );
   },
 );
+```
+
+### Popping Using AutoTabsRouter
+
+Handling navigation inside the tab router (i.e. popping back to a specific route within a tab) requires using the inner router's navigator, not the root navigator.
+
+You can get the current `AutoTabsRouter` stack using `innerRouterOf`.
+
+```dart
+final tabsRouter = AutoTabsRouter.of(context);
+
+final currentRouter = tabsRouter.innerRouterOf<StackRouter>(tabsRouter.current.name);
+
+currentRouter?.popUntil((route) => route.settings.name == 'YourRouteInsideTabsRouter');
 ```
 
 ## Finding The Right Router
