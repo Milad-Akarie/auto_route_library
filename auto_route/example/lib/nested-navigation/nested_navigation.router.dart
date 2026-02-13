@@ -23,15 +23,15 @@ class NestedNavigationApp extends StatelessWidget {
 class NestedRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(
-          initial: true,
-          page: HostRoute.page,
-          children: [
-            AutoRoute(page: FirstRoute.page, initial: true),
-            AutoRoute(page: SecondRoute.page),
-          ],
-        ),
-      ];
+    AutoRoute(
+      initial: true,
+      page: HostRoute.page,
+      children: [
+        AutoRoute(page: FirstRoute.page, initial: true),
+        AutoRoute(page: SecondRoute.page),
+      ],
+    ),
+  ];
 }
 
 @RoutePage()

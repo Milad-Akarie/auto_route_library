@@ -54,7 +54,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
       final partDirectives =
           unit.directives.whereType<PartDirective>().fold<int>(0, (acc, a) => acc ^ a.toSource().hashCode);
       calculatedHash =
-          calculatedHash ^ clazz.name.toString().hashCode ^ routerAnnotation.toSource().hashCode ^ partDirectives;
+          calculatedHash ^ clazz.namePart.toString().hashCode ^ routerAnnotation.toSource().hashCode ^ partDirectives;
     }
     return calculatedHash;
   }

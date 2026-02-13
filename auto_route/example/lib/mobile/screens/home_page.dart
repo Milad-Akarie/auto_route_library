@@ -46,8 +46,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   ];
 
   void toggleSettingsTap() => setState(() {
-        _showSettingsTap = !_showSettingsTap;
-      });
+    _showSettingsTap = !_showSettingsTap;
+  });
 
   bool _showSettingsTap = true;
 
@@ -57,39 +57,41 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
     // updates
     // we need it to indicate which NavigationRailDestination is active
     return kIsWeb
-        ? AutoRouter(builder: (context, child) {
-            // we check for active route index by using
-            // router.isRouteActive method
-            var activeIndex = destinations.indexWhere(
-              (d) => context.router.isRouteActive(d.route.routeName),
-            );
-            // there might be no active route until router is mounted
-            // so we play it safe
-            if (activeIndex == -1) {
-              activeIndex = 0;
-            }
-            return Row(
-              children: [
-                NavigationRail(
-                  destinations: [
-                    for (final d in destinations)
-                      NavigationRailDestination(
-                        icon: Icon(d.icon),
-                        label: Text(d.label),
-                      )
-                  ],
-                  selectedIndex: activeIndex,
-                  onDestinationSelected: (index) {
-                    // use navigate instead of push so you won't have
-                    // many useless route stacks
-                    context.navigateTo(destinations[index].route);
-                  },
-                ),
-                // child is the rendered route stack
-                Expanded(child: child)
-              ],
-            );
-          })
+        ? AutoRouter(
+            builder: (context, child) {
+              // we check for active route index by using
+              // router.isRouteActive method
+              var activeIndex = destinations.indexWhere(
+                (d) => context.router.isRouteActive(d.route.routeName),
+              );
+              // there might be no active route until router is mounted
+              // so we play it safe
+              if (activeIndex == -1) {
+                activeIndex = 0;
+              }
+              return Row(
+                children: [
+                  NavigationRail(
+                    destinations: [
+                      for (final d in destinations)
+                        NavigationRailDestination(
+                          icon: Icon(d.icon),
+                          label: Text(d.label),
+                        ),
+                    ],
+                    selectedIndex: activeIndex,
+                    onDestinationSelected: (index) {
+                      // use navigate instead of push so you won't have
+                      // many useless route stacks
+                      context.navigateTo(destinations[index].route);
+                    },
+                  ),
+                  // child is the rendered route stack
+                  Expanded(child: child),
+                ],
+              );
+            },
+          )
         : AutoTabsRouter(
             builder: (context, child) {
               return Scaffold(
@@ -140,22 +142,24 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AutoLeadingButton.builder(builder: (context, leading) {
-      return Scaffold(
-        appBar: AppBar(
-          leading: leading,
-          title: Text('Welcome'),
-          centerTitle: false,
-        ),
-        body: Center(
-          child: ElevatedButton(
-            child: Text('Dashboard'),
-            onPressed: () {
-              context.pushRoute(HomeRoute());
-            },
+    return AutoLeadingButton.builder(
+      builder: (context, leading) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: leading,
+            title: Text('Welcome'),
+            centerTitle: false,
           ),
-        ),
-      );
-    });
+          body: Center(
+            child: ElevatedButton(
+              child: Text('Dashboard'),
+              onPressed: () {
+                context.pushRoute(HomeRoute());
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 }

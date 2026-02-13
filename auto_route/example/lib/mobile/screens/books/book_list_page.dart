@@ -17,20 +17,22 @@ class _BookListScreenState extends State<BookListScreen> {
   Widget build(BuildContext context) {
     var booksDb = BooksDBProvider.of(context);
     return Scaffold(
-      body: ListView(children: [
-        for (final book in [...?booksDb?.books])
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: ListTile(
-              title: Text(book.name),
-              subtitle: Text(book.genre),
-              onTap: () async {
-                final result = await context.pushRoute<String>(BookDetailsRoute(id: book.id));
-                print('BookDetailsRoute result: $result');
-              },
+      body: ListView(
+        children: [
+          for (final book in [...?booksDb?.books])
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: ListTile(
+                title: Text(book.name),
+                subtitle: Text(book.genre),
+                onTap: () async {
+                  final result = await context.pushRoute<String>(BookDetailsRoute(id: book.id));
+                  print('BookDetailsRoute result: $result');
+                },
+              ),
             ),
-          ),
-      ]),
+        ],
+      ),
     );
   }
 }

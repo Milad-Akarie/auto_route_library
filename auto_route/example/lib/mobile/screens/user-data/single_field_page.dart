@@ -24,7 +24,7 @@ class SingleFieldPageState extends State<SingleFieldPage> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      onPopInvokedWithResult: (_, __) async {
+      onPopInvokedWithResult: (_, _) async {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(widget.willPopMessage)),
         );
@@ -47,12 +47,13 @@ class SingleFieldPageState extends State<SingleFieldPage> {
               ),
             ),
             ElevatedButton(
-                onPressed: _text.isEmpty
-                    ? null
-                    : () {
-                        widget.onNext?.call(_text);
-                      },
-                child: Text('Next'))
+              onPressed: _text.isEmpty
+                  ? null
+                  : () {
+                      widget.onNext?.call(_text);
+                    },
+              child: Text('Next'),
+            ),
           ],
         ),
       ),

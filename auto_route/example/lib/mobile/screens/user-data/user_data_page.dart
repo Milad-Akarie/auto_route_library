@@ -31,7 +31,7 @@ class UserDataPage extends StatelessWidget {
                 context.router.maybePopTop(userData);
               },
               child: Text('Done'),
-            )
+            ),
           ],
         ),
       ),

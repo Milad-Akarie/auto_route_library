@@ -13,54 +13,54 @@ class WebAppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
+    AutoRoute(
+      initial: true,
+      page: MainWebRoute.page,
+      guards: [
+        AutoRouteGuard.simple(
+          (resolver, _) {
+            if (authService.isAuthenticated) {
+              resolver.next();
+            } else {
+              resolver.redirectUntil(WebLoginRoute());
+            }
+          },
+          debugLabel: 'AuthGuard',
+        ),
+      ],
+    ),
+    AutoRoute(path: '/login', page: WebLoginRoute.page),
+    AutoRoute(path: '/verify', page: WebVerifyRoute.page),
+    AutoRoute(
+      path: '/user/:userID',
+      page: UserRoute.page,
+      children: [
+        AutoRoute(page: UserProfileRoute.page, initial: true),
         AutoRoute(
-          initial: true,
-          page: MainWebRoute.page,
+          path: 'posts',
+          page: UserPostsRoute.page,
           guards: [
             AutoRouteGuard.simple(
-              (resolver, _) {
-                if (authService.isAuthenticated) {
+              (resolver, scope) {
+                print('Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
+                if (authService.isVerified) {
                   resolver.next();
                 } else {
-                  resolver.redirectUntil(WebLoginRoute());
+                  resolver.redirectUntil(WebVerifyRoute());
                 }
               },
-              debugLabel: 'AuthGuard',
+              debugLabel: 'VerifyGuard',
             ),
           ],
-        ),
-        AutoRoute(path: '/login', page: WebLoginRoute.page),
-        AutoRoute(path: '/verify', page: WebVerifyRoute.page),
-        AutoRoute(
-          path: '/user/:userID',
-          page: UserRoute.page,
           children: [
-            AutoRoute(page: UserProfileRoute.page, initial: true),
-            AutoRoute(
-              path: 'posts',
-              page: UserPostsRoute.page,
-              guards: [
-                AutoRouteGuard.simple(
-                  (resolver, scope) {
-                    print('Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
-                    if (authService.isVerified) {
-                      resolver.next();
-                    } else {
-                      resolver.redirectUntil(WebVerifyRoute());
-                    }
-                  },
-                  debugLabel: 'VerifyGuard',
-                )
-              ],
-              children: [
-                AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
-                AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
-              ],
-            ),
+            AutoRoute(path: 'all', page: UserAllPostsRoute.page, initial: true),
+            AutoRoute(path: 'favorite', page: UserFavoritePostsRoute.page),
           ],
         ),
-        AutoRoute(path: '*', page: NotFoundRoute.page),
-      ];
+      ],
+    ),
+    AutoRoute(path: '*', page: NotFoundRoute.page),
+  ];
 }
 
 @RoutePage()
@@ -95,7 +95,8 @@ class _MainWebPageState extends State<MainWebPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
-                onPressed: widget.navigate ??
+                onPressed:
+                    widget.navigate ??
                     () async {
                       await context.pushRoute(
                         UserRoute(
@@ -124,10 +125,11 @@ class _MainWebPageState extends State<MainWebPage> {
                   context.router.pushPathState(currentState + 1);
                 },
                 child: AnimatedBuilder(
-                    animation: context.router.navigationHistory,
-                    builder: (context, _) {
-                      return Text('Update State: ${context.router.pathState}');
-                    }),
+                  animation: context.router.navigationHistory,
+                  builder: (context, _) {
+                    return Text('Update State: ${context.router.pathState}');
+                  },
+                ),
               ),
           ],
         ),
@@ -191,7 +193,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
             const SizedBox(height: 16),
             MaterialButton(
               color: Colors.red,
-              onPressed: widget.navigate ??
+              onPressed:
+                  widget.navigate ??
                   () {
                     context.pushRoute(UserFavoritePostsRoute());
                   },
@@ -247,16 +250,17 @@ class UserPostsPageState extends State<UserPostsPage> {
               style: TextStyle(fontSize: 30),
             ),
             ElevatedButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    useRootNavigator: true,
-                    builder: (_) => AlertDialog(
-                      title: Text('Alert'),
-                    ),
-                  );
-                },
-                child: Text('Show Dialog')),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  useRootNavigator: true,
+                  builder: (_) => AlertDialog(
+                    title: Text('Alert'),
+                  ),
+                );
+              },
+              child: Text('Show Dialog'),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: ElevatedButton(
@@ -268,7 +272,7 @@ class UserPostsPageState extends State<UserPostsPage> {
             ),
             Expanded(
               child: AutoRouter(),
-            )
+            ),
           ],
         ),
       ),
@@ -303,7 +307,8 @@ class UserPageState extends State<UserPage> {
         title: Builder(
           builder: (context) {
             return Text(
-                '${context.topRouteMatch.name} ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}');
+              '${context.topRouteMatch.name} ${widget.id} query: ${widget.query}, fragment: ${widget.fragment}',
+            );
           },
         ),
       ),
@@ -347,7 +352,8 @@ class UserAllPostsPage extends StatelessWidget {
             ),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate ??
+              onPressed:
+                  navigate ??
                   () {
                     context.pushRoute(UserFavoritePostsRoute());
                   },

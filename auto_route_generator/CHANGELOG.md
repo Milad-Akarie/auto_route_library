@@ -1,3 +1,5 @@
+## 10.5.0
+- **CHORE**: update analyzer constrains to include version 10.0.0
 ## 10.4.0
 -- **Chore**: update auto_route constrains to ^11.0.0
 ## 10.3.1

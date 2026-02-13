@@ -11,16 +11,16 @@ void main() {
 class DecRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(
-          page: MainRoute.page,
-          initial: true,
-          children: [
-            AutoRoute(page: NameInputRoute.page),
-            AutoRoute(page: AgeInputRoute.page),
-            AutoRoute(page: ResultRoute.page),
-          ],
-        ),
-      ];
+    AutoRoute(
+      page: MainRoute.page,
+      initial: true,
+      children: [
+        AutoRoute(page: NameInputRoute.page),
+        AutoRoute(page: AgeInputRoute.page),
+        AutoRoute(page: ResultRoute.page),
+      ],
+    ),
+  ];
 }
 
 class DeclarativeNavigationExampleApp extends StatelessWidget {

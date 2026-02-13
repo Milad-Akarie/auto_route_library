@@ -37,18 +37,22 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
                 setState(() {
                   queryUpdateCont++;
                 });
-                context.navigateTo(SettingsTab(
-                  tab: 'Updated Path param $queryUpdateCont',
-                  query: 'updated Query $queryUpdateCont',
-                ));
+                context.navigateTo(
+                  SettingsTab(
+                    tab: 'Updated Path param $queryUpdateCont',
+                    query: 'updated Query $queryUpdateCont',
+                  ),
+                );
               },
               child: Text('Update Query $queryUpdateCont'),
             ),
             ElevatedButton(
               onPressed: () {
-                context.navigateTo(BooksTab(
-                  children: [BookDetailsRoute(id: 1)],
-                ));
+                context.navigateTo(
+                  BooksTab(
+                    children: [BookDetailsRoute(id: 1)],
+                  ),
+                );
               },
               child: Text('Navigate to book details/1'),
             ),

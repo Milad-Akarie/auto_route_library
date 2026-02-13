@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 // ignore_for_file: constant_identifier_names
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
@@ -56,3 +58,16 @@ class AppRouter extends RootStackRouter {
 
 const BooksTab = EmptyShellRoute('BooksTab');
 const ProfileTab = EmptyShellRoute('ProfileTab');
+
+abstract class RouteDef {
+  final String name;
+  final String? path;
+
+  RouteDef(this.name, {this.path});
+
+  Widget build(BuildContext context, RouteData data);
+
+  RouteDef buildFromData(RouteData data) {
+    return this;
+  }
+}

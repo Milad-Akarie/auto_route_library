@@ -92,7 +92,7 @@ class ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height: 24),
                         Text('Favorite book: ${userData!.favoriteBook}'),
                       ],
-                    )
+                    ),
             ],
           ),
         ),
