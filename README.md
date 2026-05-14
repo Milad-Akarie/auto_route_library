@@ -1082,6 +1082,57 @@ class BookDetailsPage extends StatelessWidget {
 }
 ```
 
+### Custom Parameter Converters
+
+Out of the box `@PathParam` and `@QueryParam` support `String`, `int`, `double`, `num`, `bool`, and `List<String>`. For any other type (enums, `DateTime`, custom value types), supply a `ParamConverter<T>`. It handles both directions: `fromParam` parses an incoming URL, `toParam` serializes the typed value when a route is built in code.
+
+#### Enums (auto-detected)
+
+If the parameter type is an `enum`, **AutoRoute** generates a converter automatically. No extra annotation argument is needed.
+
+```dart
+enum Filter { all, active, archived }
+
+@RoutePage()
+class TasksPage extends StatelessWidget {
+  const TasksPage({@queryParam this.filter = Filter.all});
+  final Filter filter;
+}
+```
+
+Matching is by `Enum.name` in both directions: `TasksRoute(filter: Filter.active)` writes `?filter=active`, and `/tasks?filter=active` parses back to `Filter.active`.
+
+#### Custom types
+
+For non-enum types, extend `ParamConverter<T>`, implement both `fromParam` and `toParam`, and pass a top-level `const` instance to the annotation:
+
+```dart
+class DateConverter extends ParamConverter<DateTime> {
+  const DateConverter();
+
+  @override
+  DateTime fromParam(String? value) => DateTime.parse(value!);
+
+  @override
+  String toParam(DateTime value) =>
+      '${value.year.toString().padLeft(4, '0')}-'
+      '${value.month.toString().padLeft(2, '0')}-'
+      '${value.day.toString().padLeft(2, '0')}';
+}
+
+const dateConverter = DateConverter();
+
+@RoutePage()
+class EventPage extends StatelessWidget {
+  const EventPage({
+    @QueryParam('date', dateConverter) this.date,
+  });
+  final DateTime? date;
+}
+```
+
+`toParam` must be the inverse of `fromParam` so URLs round-trip. Returning `null` (or passing `null` for a nullable param) drops the key from the outgoing URL. The converter must be a top-level `const` variable; inline `const` expressions are rejected by the generator. Parsing errors fall back to the `defaultValue` (matching `optInt`/`optDouble` behaviour), so malformed URLs do not crash navigation.
+
 ### Redirecting Paths
 
 Paths can be redirected using `RedirectRoute`. The following setup will navigate us to `/books` when `/` is matched.

@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
 
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/src/resolvers/converter_resolver.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -75,6 +76,19 @@ class RouteParameterResolver {
       );
     }
 
+    // resolve explicit `converter:` arg, or auto-detect enum types
+    final hasParamAnnotation = pathParamAnnotation != null || queryParamAnnotation != null;
+    final converterInfo = hasParamAnnotation
+        ? resolveConverter(
+            converterObject:
+                pathParamAnnotation?.getField('converter') ?? queryParamAnnotation?.getField('converter'),
+            parameterElement: parameterElement,
+            parameterType: type,
+            rawParamType: paramType,
+            typeResolver: _typeResolver,
+          )
+        : null;
+
     return ParamConfig(
       type: type,
       name: paramName,
@@ -89,6 +103,7 @@ class RouteParameterResolver {
       isQueryParam: queryParamAnnotation != null,
       isUrlFragment: isUrlFragment,
       defaultValueCode: parameterElement.defaultValueCode,
+      converterInfo: converterInfo,
     );
   }
 

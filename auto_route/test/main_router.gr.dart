@@ -11,6 +11,58 @@
 part of 'main_router.dart';
 
 /// generated route for
+/// [DatePage]
+class DateRoute extends PageRouteInfo<DateRouteArgs> {
+  DateRoute({Key? key, TestDate? date, List<PageRouteInfo>? children})
+      : super(
+          DateRoute.name,
+          args: DateRouteArgs(key: key, date: date),
+          rawQueryParams: {
+            'date': date == null ? null : testDateConverter.toParam(date),
+          },
+          initialChildren: children,
+        );
+
+  static const String name = 'DateRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final queryParams = data.queryParams;
+      final args = data.argsAs<DateRouteArgs>(
+        orElse: () => DateRouteArgs(
+          date: queryParams.optTyped<TestDate>('date', testDateConverter),
+        ),
+      );
+      return DatePage(key: args.key, date: args.date);
+    },
+  );
+}
+
+class DateRouteArgs {
+  const DateRouteArgs({this.key, this.date});
+
+  final Key? key;
+
+  final TestDate? date;
+
+  @override
+  String toString() {
+    return 'DateRouteArgs{key: $key, date: $date}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! DateRouteArgs) return false;
+    return key == other.key && date == other.date;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ date.hashCode;
+}
+
+/// generated route for
 /// [DeclarativeRouterHostScreen]
 class DeclarativeRouterHostRoute extends PageRouteInfo<DeclarativeRouterHostRouteArgs> {
   DeclarativeRouterHostRoute({
@@ -61,6 +113,116 @@ class DeclarativeRouterHostRouteArgs {
 
   @override
   int get hashCode => key.hashCode ^ pageNotifier.hashCode;
+}
+
+/// generated route for
+/// [EnumPathPage]
+class EnumPathRoute extends PageRouteInfo<EnumPathRouteArgs> {
+  EnumPathRoute({
+    Key? key,
+    TestColor color = TestColor.red,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EnumPathRoute.name,
+          args: EnumPathRouteArgs(key: key, color: color),
+          rawPathParams: {'color': color.name},
+          initialChildren: children,
+        );
+
+  static const String name = 'EnumPathRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final pathParams = data.inheritedPathParams;
+      final args = data.argsAs<EnumPathRouteArgs>(
+        orElse: () => EnumPathRouteArgs(
+          color: pathParams.getTyped<TestColor>(
+            'color',
+            const EnumParamConverter<TestColor>(TestColor.values),
+            TestColor.red,
+          ),
+        ),
+      );
+      return EnumPathPage(key: args.key, color: args.color);
+    },
+  );
+}
+
+class EnumPathRouteArgs {
+  const EnumPathRouteArgs({this.key, this.color = TestColor.red});
+
+  final Key? key;
+
+  final TestColor color;
+
+  @override
+  String toString() {
+    return 'EnumPathRouteArgs{key: $key, color: $color}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! EnumPathRouteArgs) return false;
+    return key == other.key && color == other.color;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ color.hashCode;
+}
+
+/// generated route for
+/// [EnumQueryPage]
+class EnumQueryRoute extends PageRouteInfo<EnumQueryRouteArgs> {
+  EnumQueryRoute({Key? key, TestColor? color, List<PageRouteInfo>? children})
+      : super(
+          EnumQueryRoute.name,
+          args: EnumQueryRouteArgs(key: key, color: color),
+          rawQueryParams: {'color': color == null ? null : color.name},
+          initialChildren: children,
+        );
+
+  static const String name = 'EnumQueryRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final queryParams = data.queryParams;
+      final args = data.argsAs<EnumQueryRouteArgs>(
+        orElse: () => EnumQueryRouteArgs(
+          color: queryParams.optTyped<TestColor>(
+            'color',
+            const EnumParamConverter<TestColor>(TestColor.values),
+          ),
+        ),
+      );
+      return EnumQueryPage(key: args.key, color: args.color);
+    },
+  );
+}
+
+class EnumQueryRouteArgs {
+  const EnumQueryRouteArgs({this.key, this.color});
+
+  final Key? key;
+
+  final TestColor? color;
+
+  @override
+  String toString() {
+    return 'EnumQueryRouteArgs{key: $key, color: $color}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! EnumQueryRouteArgs) return false;
+    return key == other.key && color == other.color;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ color.hashCode;
 }
 
 /// generated route for

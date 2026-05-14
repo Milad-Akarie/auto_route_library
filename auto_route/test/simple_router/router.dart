@@ -14,5 +14,8 @@ class SimpleRouter extends MainRouter {
         AutoRouteGuard.simple((resolver, _) => resolver.next(false)),
       ],
     ),
+    AutoRoute(page: EnumPathRoute.page, path: '/color/:color'),
+    AutoRoute(page: EnumQueryRoute.page, path: '/enum-query'),
+    AutoRoute(page: DateRoute.page, path: '/date'),
   ];
 }

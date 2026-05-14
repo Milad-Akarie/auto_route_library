@@ -1,3 +1,6 @@
+## Unreleased
+- **FEAT**: read `converter:` on `@PathParam` / `@QueryParam` and auto-detect enums; emit `getTyped<T>` / `optTyped<T>` for incoming URLs and `toParam(...)` in `rawPathParams` / `rawQueryParams` for outgoing routes. #2148
+
 ## 10.5.0
 - **CHORE**: update analyzer constrains to include version 10.0.0
 ## 10.4.0
