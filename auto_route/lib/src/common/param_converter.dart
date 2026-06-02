@@ -32,8 +32,6 @@
 /// for [Enum] types the generator auto-injects [EnumParamConverter], so
 /// no explicit converter is required on the annotation
 abstract class ParamConverter<T> {
-  /// const constructor; subclasses must invoke this so instances can be used
-  /// in annotations
   const ParamConverter();
 
   /// converts a raw URL string [value] (or `null` when absent) into a value
@@ -63,7 +61,6 @@ class EnumParamConverter<T extends Enum> extends ParamConverter<T> {
   /// full list of enum values for [T]; pass `Foo.values`
   final List<T> values;
 
-  /// default const constructor
   const EnumParamConverter(this.values) : super();
 
   /// shared name -> value lookup, keyed by [values] identity so different

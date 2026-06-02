@@ -29,7 +29,6 @@ class ConverterInfo {
   /// `getTyped<T>` / `optTyped<T>` calls
   final ResolvedType convertedType;
 
-  /// default const constructor
   const ConverterInfo({
     required this.convertedType,
     this.variableName,
