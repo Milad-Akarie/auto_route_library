@@ -280,8 +280,7 @@ class _EagerPageViewState extends State<EagerPageView> {
         scrollBehavior: widget.scrollBehavior ?? ScrollConfiguration.of(context).copyWith(scrollbars: false),
         viewportBuilder: (BuildContext context, ViewportOffset position) {
           return Viewport(
-            cacheExtent: widget.cacheExtent.toDouble(),
-            cacheExtentStyle: CacheExtentStyle.viewport,
+            scrollCacheExtent: ScrollCacheExtent.viewport(widget.cacheExtent.toDouble()),
             axisDirection: axisDirection,
             offset: position,
             clipBehavior: widget.clipBehavior,

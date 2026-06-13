@@ -1,3 +1,7 @@
+## 10.6.0
+- **CHORE**: update analyzer constraints to support versions >=10.0.0 <14.0.0
+- **CHORE**: update lean_builder dependency to ^1.2.0
+
 ## 10.5.0
 - **CHORE**: update analyzer constrains to include version 10.0.0
 ## 10.4.0
