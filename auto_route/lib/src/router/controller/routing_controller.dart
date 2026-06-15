@@ -1252,9 +1252,7 @@ abstract class StackRouter extends RoutingController {
   void onPopPage(AutoRoutePage<Object?> page) {
     if (!_pages.remove(page)) return;
     _updateSharedPathData(includeAncestors: true);
-    if (isRouteDataActive(page.routeData)) {
-      navigationHistory.rebuildUrl();
-    }
+    notifyAll(forceUrlRebuild: true);
   }
 
   void _removeRoute(RouteMatch route, {bool notify = true}) {
