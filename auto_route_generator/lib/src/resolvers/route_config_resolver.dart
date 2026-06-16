@@ -70,8 +70,10 @@ class RouteConfigResolver {
     if (pathParameters.isNotEmpty) {
       for (var pParam in pathParameters) {
         throwIf(
-          !validPathParamTypes.contains(pParam.type.name),
-          "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
+          !validPathParamTypes.contains(pParam.type.name) && !pParam.hasConverter,
+          "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\n"
+          "valid types: $validPathParamTypes.\n"
+          "For other types provide a ParamConverter via @PathParam(name, myConverter) (enums are auto-detected).",
         );
       }
     }

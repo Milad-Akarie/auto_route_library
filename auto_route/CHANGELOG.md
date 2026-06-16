@@ -1,3 +1,6 @@
+## Unreleased
+- **FEAT**: bi-directional custom `@PathParam` / `@QueryParam` conversion via `ParamConverter<T>` (`fromParam` + `toParam`); enum params auto-detected and round-trip by `Enum.name`. #2148
+
 ## 11.1.0
 - **CHORE:** deprecate animatePageTransition #2301
 - **Enhance:** add .named constructor to PageRouteInfo and AutoRoute to enable usage for shorthand

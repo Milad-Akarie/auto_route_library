@@ -43,16 +43,31 @@ void main() {
     test('default constructor', () {
       const param = PathParam();
       expect(param.name, null);
+      expect(param.converter, null);
     });
 
     test('named constructor', () {
       const param = PathParam('id');
       expect(param.name, 'id');
+      expect(param.converter, null);
     });
 
     test('inherit constructor', () {
       const param = PathParam.inherit('id');
       expect(param.name, 'id');
+      expect(param.converter, null);
+    });
+
+    test('constructor with converter', () {
+      const param = PathParam('color', _colorConverter);
+      expect(param.name, 'color');
+      expect(param.converter, same(_colorConverter));
+    });
+
+    test('inherit constructor with converter', () {
+      const param = PathParam.inherit('color', _colorConverter);
+      expect(param.name, 'color');
+      expect(param.converter, same(_colorConverter));
     });
   });
 
@@ -60,11 +75,19 @@ void main() {
     test('default constructor', () {
       const param = QueryParam();
       expect(param.name, null);
+      expect(param.converter, null);
     });
 
     test('named constructor', () {
       const param = QueryParam('foo');
       expect(param.name, 'foo');
+      expect(param.converter, null);
+    });
+
+    test('constructor with converter', () {
+      const param = QueryParam('color', _colorConverter);
+      expect(param.name, 'color');
+      expect(param.converter, same(_colorConverter));
     });
   });
 
@@ -75,3 +98,7 @@ void main() {
     });
   });
 }
+
+enum _Color { red, green, blue }
+
+const _colorConverter = EnumParamConverter<_Color>(_Color.values);

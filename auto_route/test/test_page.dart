@@ -201,3 +201,64 @@ class DeclarativeRouterHostScreen extends StatelessWidget {
     );
   }
 }
+
+/// sample enum exercising the auto-detected enum converter code path
+enum TestColor { red, green, blue }
+
+@RoutePage()
+class EnumPathPage extends TestPage {
+  const EnumPathPage({super.key, @pathParam this.color = TestColor.red});
+
+  final TestColor color;
+}
+
+@RoutePage()
+class EnumQueryPage extends TestPage {
+  const EnumQueryPage({super.key, @queryParam this.color});
+
+  final TestColor? color;
+}
+
+/// custom value type used by [DatePage]
+class TestDate {
+  final int year;
+  final int month;
+  final int day;
+  const TestDate(this.year, this.month, this.day);
+
+  @override
+  bool operator ==(Object other) => other is TestDate && other.year == year && other.month == month && other.day == day;
+
+  @override
+  int get hashCode => Object.hash(year, month, day);
+}
+
+/// user-supplied [ParamConverter] used by [DatePage]
+class TestDateConverter extends ParamConverter<TestDate> {
+  const TestDateConverter();
+
+  @override
+  TestDate fromParam(String? value) {
+    final parts = value!.split('-');
+    return TestDate(
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+      int.parse(parts[2]),
+    );
+  }
+
+  @override
+  String toParam(TestDate value) => '${value.year}-${value.month}-${value.day}';
+}
+
+const testDateConverter = TestDateConverter();
+
+@RoutePage()
+class DatePage extends TestPage {
+  const DatePage({
+    super.key,
+    @QueryParam('date', testDateConverter) this.date,
+  });
+
+  final TestDate? date;
+}

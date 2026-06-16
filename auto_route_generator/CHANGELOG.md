@@ -1,3 +1,6 @@
+## Unreleased
+- **FEAT**: read `converter:` on `@PathParam` / `@QueryParam` and auto-detect enums; emit `getTyped<T>` / `optTyped<T>` for incoming URLs and `toParam(...)` in `rawPathParams` / `rawQueryParams` for outgoing routes. #2148
+
 ## 10.6.0
 - **CHORE**: update analyzer constraints to support versions >=10.0.0 <14.0.0
 - **CHORE**: update lean_builder dependency to ^1.2.0
