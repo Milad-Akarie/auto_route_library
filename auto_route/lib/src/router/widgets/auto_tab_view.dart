@@ -6,7 +6,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/eager_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// The adjustments made to this code from [TabView] is to fix children not
 /// updating in sync with TabRouter changes

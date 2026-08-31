@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// A custom error class for missing required parameters
 class MissingRequiredParameterError extends FlutterError {

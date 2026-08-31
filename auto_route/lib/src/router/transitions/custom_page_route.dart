@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A default implementation of [PageRoute]
 /// used by [StackRouter.pushWidget]

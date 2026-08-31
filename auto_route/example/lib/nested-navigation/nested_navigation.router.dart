@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:example/nested-navigation/nested_navigation.router.gr.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   runApp(NestedNavigationApp());

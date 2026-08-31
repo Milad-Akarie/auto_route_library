@@ -25,6 +25,8 @@ dependencies:
   meta: ^1.16.0
 
 
+  material_ui: any
+  cupertino_ui: any
 dev_dependencies:
   build_runner:
   mockito: ^5.6.1

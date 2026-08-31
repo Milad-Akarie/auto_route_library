@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Signature for a function that takes in [BuildContext] and [TabsRouter]
 /// and returns a PreferredSizeWidget usually an AppBar

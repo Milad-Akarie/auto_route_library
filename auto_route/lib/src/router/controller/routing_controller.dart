@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 // older flutter versions
 // ignore: unnecessary_import
 import 'package:meta/meta.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/scheduler.dart';
 
 part '../../route/route_data.dart';

@@ -1,5 +1,5 @@
 import 'package:auto_route/src/router/controller/routing_controller.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../main_router.dart';
