@@ -92,7 +92,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                           nonInheritedParameters.where((p) => p.isPathParam).map(
                                 (p) => MapEntry(
                                   p.paramName,
-                                  refer(p.name),
+                                  _rawParamValue(p),
                                 ),
                               ),
                         ),
@@ -103,7 +103,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                           parameters.where((p) => p.isQueryParam).map(
                                 (p) => MapEntry(
                                   p.paramName,
-                                  refer(p.name),
+                                  _rawParamValue(p),
                                 ),
                               ),
                         ),
@@ -378,19 +378,62 @@ Expression _getPageInstance(RouteConfig r) {
 }
 
 Expression _getUrlPartAssignment(ParamConfig p) {
-  if (p.isPathParam) {
-    return refer('pathParams').property(p.getterMethodName).call([
-      literalString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode!),
-    ]);
-  } else if (p.isQueryParam) {
-    return refer('queryParams').property(p.getterMethodName).call([
-      literalString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode!),
-    ]);
-  } else {
+  if (p.isUrlFragment || (!p.isPathParam && !p.isQueryParam)) {
     return refer('data').property('fragment');
   }
+  final paramsRef = p.isPathParam ? refer('pathParams') : refer('queryParams');
+  final args = <Expression>[
+    literalString(p.paramName),
+    if (p.hasConverter) _buildConverterRef(p),
+    if (p.defaultValueCode != null) refer(p.defaultValueCode!),
+  ];
+
+  final methodRef = paramsRef.property(p.getterMethodName); // e.g. queryParams.getTyped
+  if (p.hasConverter) {
+    // T is always non-nullable; optTyped<T> already returns T?
+    return InvokeExpression.newOf(
+      methodRef,
+      args,
+      const {},
+      [_nonNullableRefer(p.type)],
+    );
+  }
+  return methodRef.call(args);
+}
+
+TypeReference _nonNullableRefer(ResolvedType type) => TypeReference((b) => b
+  ..symbol = type.name
+  ..url = type.import
+  ..types.addAll(type.typeArguments.map((e) => e.refer)));
+
+/// Builds the value expression for [p] in `rawPathParams` / `rawQueryParams`
+Expression _rawParamValue(ParamConfig p) {
+  if (!p.hasConverter) return refer(p.name);
+  final valueRef = refer(p.name);
+  // auto-enums inline `value.name` to avoid building a throwaway converter
+  final serialized = p.converterInfo!.isEnumAuto
+      ? valueRef.property('name')
+      : _buildConverterRef(p).property('toParam').call([valueRef]);
+  if (p.type.isNullable) {
+    return valueRef.equalTo(literalNull).conditional(literalNull, serialized);
+  }
+  return serialized;
+}
+
+Expression _buildConverterRef(ParamConfig p) {
+  final info = p.converterInfo!;
+  if (info.isEnumAuto) {
+    return TypeReference((b) => b
+      ..symbol = 'EnumParamConverter'
+      ..url = 'package:auto_route/auto_route.dart'
+      ..types.add(_nonNullableRefer(info.convertedType))).constInstance([
+      refer(
+        '${info.convertedType.name}.values',
+        info.convertedType.import,
+      ),
+    ]);
+  }
+  return refer(info.variableName!, info.import);
 }
 
 extension _IterableX<T> on Iterable<T> {

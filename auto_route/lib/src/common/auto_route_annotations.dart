@@ -1,6 +1,8 @@
 import 'package:meta/meta.dart' show optionalTypeArgs;
 import 'package:meta/meta_meta.dart' show Target, TargetKind;
 
+import 'param_converter.dart';
+
 /// Classes annotated with AutoRouteConfig will generate
 /// an abstract class that extends [RootStackRouter] that
 /// can be extended by the annotated class to be used as the RootRouter of the App
@@ -82,15 +84,22 @@ class PathParam {
   /// (@PathParam() int id); -> name = id
   final String? name;
 
+  /// optional [ParamConverter] used to convert the raw path segment into
+  /// the parameter's typed value (and back when the route is built in code)
+  ///
+  /// required for non-primitive, non-enum types; must reference a top-level
+  /// `const` variable (inline `const` expressions are rejected)
+  final ParamConverter? converter;
+
   // ignore: unused_field
   final bool _inherited;
 
   /// default constructor
-  const PathParam([this.name]) : _inherited = false;
+  const PathParam([this.name, this.converter]) : _inherited = false;
 
   /// Use this constructor to inherit a dynamic-segment
   /// from a parent path
-  const PathParam.inherit([this.name]) : _inherited = true;
+  const PathParam.inherit([this.name, this.converter]) : _inherited = true;
 }
 
 /// default PathParam()
@@ -111,8 +120,15 @@ class QueryParam {
   /// (@QueryParam() String foo); -> name = foo
   final String? name;
 
+  /// optional [ParamConverter] used to convert the raw query string into
+  /// the parameter's typed value (and back when the route is built in code)
+  ///
+  /// required for non-primitive, non-enum types; must reference a top-level
+  /// `const` variable (inline `const` expressions are rejected)
+  final ParamConverter? converter;
+
   /// default constructor
-  const QueryParam([this.name]);
+  const QueryParam([this.name, this.converter]);
 }
 
 /// default QueryParam()

@@ -1,6 +1,8 @@
 import 'package:auto_route/src/route/errors.dart';
 import 'package:collection/collection.dart';
 
+import 'param_converter.dart';
+
 /// This class helps read typed data from
 /// raw maps, it's used for both path-parameters and query-parameters
 class Parameters {
@@ -149,6 +151,30 @@ class Parameters {
     var val = optBool(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [bool] $key value from ${_params[key]}');
+    }
+    return val;
+  }
+
+  /// returns the value corresponding with [key] converted via [converter]
+  /// as nullable [T]
+  /// if null or the converter throws, returns [defaultValue]
+  T? optTyped<T>(String key, ParamConverter<T> converter, [T? defaultValue]) {
+    final raw = _params[key];
+    if (raw == null) return defaultValue;
+    try {
+      return converter.fromParam(raw.toString());
+    } catch (_) {
+      return defaultValue;
+    }
+  }
+
+  /// returns the value corresponding with [key] converted via [converter]
+  /// as [T]
+  /// if null returns [defaultValue]
+  T getTyped<T>(String key, ParamConverter<T> converter, [T? defaultValue]) {
+    final val = optTyped<T>(key, converter, defaultValue);
+    if (val == null) {
+      throw MissingRequiredParameterError('Failed to parse [$T] $key value from ${_params[key]}');
     }
     return val;
   }

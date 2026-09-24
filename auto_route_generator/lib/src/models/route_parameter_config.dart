@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart' as cb;
 
+import '../resolvers/converter_resolver.dart';
 import 'resolved_type.dart';
 
 const _reservedVarNames = ['children'];
@@ -50,6 +51,15 @@ class ParamConfig {
   /// the default value code of the parameter
   final String? defaultValueCode;
 
+  /// info about a [ParamConverter] used to convert this parameter to/from the
+  /// URL; set from the `converter:` annotation arg or auto-synthesised for
+  /// enum types
+  final ConverterInfo? converterInfo;
+
+  /// true when read through a custom or auto-enum [ParamConverter] rather
+  /// than a built-in primitive getter
+  bool get hasConverter => converterInfo != null;
+
   /// Default constructor
   ParamConfig({
     required this.type,
@@ -65,6 +75,7 @@ class ParamConfig {
     required this.isInheritedPathParam,
     this.alias,
     this.defaultValueCode,
+    this.converterInfo,
   });
 
   /// If the parameter name conflicts with a reserved name
@@ -84,6 +95,9 @@ class ParamConfig {
   /// Return the getter function name
   /// based on the type of the parameter
   String get getterMethodName {
+    if (hasConverter) {
+      return type.isNullable ? 'optTyped' : 'getTyped';
+    }
     switch (type.name) {
       case 'String':
         return type.isNullable ? 'optString' : 'getString';
@@ -122,6 +136,7 @@ class ParamConfig {
       'isInheritedPathParam': isInheritedPathParam,
       'isQueryParam': isQueryParam,
       'defaultValueCode': defaultValueCode,
+      if (converterInfo != null) 'converterInfo': converterInfo!.toJson(),
     };
   }
 
@@ -145,6 +160,9 @@ class ParamConfig {
       isQueryParam: map['isQueryParam'] as bool,
       isUrlFragment: map['isUrlFragment'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
+      converterInfo: map['converterInfo'] != null
+          ? ConverterInfo.fromJson((map['converterInfo'] as Map).cast<String, dynamic>())
+          : null,
     );
   }
 }
