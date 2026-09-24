@@ -2,8 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/data/db.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
+
 //ignore_for_file: public_member_api_docs
 
 void main() => runApp(MyApp());

@@ -4,7 +4,7 @@ import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../auto_route.dart';
 

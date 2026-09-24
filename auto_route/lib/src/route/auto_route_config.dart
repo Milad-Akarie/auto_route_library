@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:meta/meta.dart';
 
 /// A Signature for a function that passes the [RouteData] and returns a [PageRoute]

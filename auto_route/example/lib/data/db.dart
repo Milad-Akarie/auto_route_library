@@ -1,5 +1,5 @@
 //ignore_for_file: public_member_api_docs
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 
 class Book {
   final int id;

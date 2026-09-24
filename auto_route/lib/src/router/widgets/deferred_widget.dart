@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Signature for a function that returns a void future
 /// Used in [DeferredWidget] to load deferred libraries
