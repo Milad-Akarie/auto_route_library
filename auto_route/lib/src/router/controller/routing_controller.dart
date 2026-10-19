@@ -743,7 +743,11 @@ class TabsRouter extends RoutingController {
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) {
     if (homeIndex != -1 && _activeIndex != homeIndex) {
-      setActiveIndex(homeIndex);
+      if(previousIndex != null && previousIndex != homeIndex) {
+        setActiveIndex(previousIndex!);
+      } else {
+        setActiveIndex(homeIndex);
+      }
       return SynchronousFuture<bool>(true);
     } else if (_parent != null) {
       return _parent!.maybePop<T>(result);
