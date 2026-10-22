@@ -315,14 +315,18 @@ class NavigationResolver {
   /// before checking the provided [guard]
   /// returns the [ResolverResult] of the guard check
   Future<ResolverResult> checkGuard(AutoRouteGuard guard, StackRouter router) async {
-    if (_waitingCompleter != null) {
+    // Several reevaluations can wait for the same check; each takes its own turn.
+    while (_waitingCompleter != null) {
       await _waitingCompleter!.future;
-      _waitingCompleter = null;
       if (isResolved) return future;
     }
-    _waitingCompleter = Completer<void>();
-    await guard.onNavigation(this, router);
-    _waitingCompleter!.complete();
+    final waiting = _waitingCompleter = Completer<void>();
+    try {
+      await guard.onNavigation(this, router);
+    } finally {
+      _waitingCompleter = null;
+      waiting.complete();
+    }
     return future;
   }
 }

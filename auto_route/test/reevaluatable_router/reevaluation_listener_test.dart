@@ -199,4 +199,38 @@ void main() {
     expect(resolver.isReevaluating, true);
     expectTopPage(router, SecondRoute.name);
   });
+
+  testWidgets('Overlapping reevaluations wait for a running guard without crashing', (WidgetTester tester) async {
+    var calls = 0;
+    final router = RootStackRouter.build(routes: [
+      AutoRoute(page: FirstRoute.page, initial: true),
+      AutoRoute(
+        page: SecondRoute.page,
+        guards: [
+          AutoRouteGuard.simple((resolver, router) async {
+            calls++;
+            await Future<void>.delayed(const Duration(milliseconds: 50));
+            if (reevaluationNotifier.value) resolver.next(true);
+          }),
+        ],
+      ),
+    ])
+      ..ignorePopCompleters = true;
+    await pumpRouterApp(tester, router);
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
+    expect(calls, 1);
+
+    // Three passes reach the same pending resolver while the first one's guard runs.
+    router.reevaluateGuards();
+    router.reevaluateGuards();
+    router.reevaluateGuards();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(calls, 4);
+
+    reevaluationNotifier.value = true;
+    router.reevaluateGuards();
+    await tester.pumpAndSettle();
+    expectTopPage(router, SecondRoute.name);
+  });
 }
