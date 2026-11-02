@@ -351,6 +351,83 @@ void main() {
     await tester.pumpAndSettle();
     expectTopPage(router, SecondRoute.name);
   });
+
+  // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/2338
+  // Steps: one guard on HomeRoute (initial) and LoginRoute sends a logged-out
+  // user from HomeRoute to LoginRoute with redirectUntil; reevaluateListenable
+  // is the auth store. Start logged in, tap Increment three times, tap Log out,
+  // then tap Log in.
+  // Happens (reported on 11.1.0): HomeRoute comes back with its counter at 0.
+  // Should happen: HomeRoute comes back with its counter still at 3.
+  testWidgets('Logging out and back in should keep the state of the guarded home page (#2338)',
+      (WidgetTester tester) async {
+    final authStore = _AuthStore();
+    final authGuard = AutoRouteGuard.simple((resolver, router) {
+      final isHome = resolver.route.name == _HomePage.routeName;
+      if (!isHome || authStore.isLoggedIn) {
+        resolver.next();
+      } else {
+        resolver.redirectUntil(const PageRouteInfo(_LoginPage.routeName));
+      }
+    });
+    final router = RootStackRouter.build(routes: [
+      AutoRoute(
+        initial: true,
+        page: PageInfo(_HomePage.routeName, builder: (_) => _HomePage(authStore)),
+        guards: [authGuard],
+      ),
+      AutoRoute(
+        page: PageInfo(_LoginPage.routeName, builder: (_) => _LoginPage(authStore)),
+        guards: [authGuard],
+      ),
+    ]);
+    await pumpRouterApp(tester, router, reevaluationNotifier: authStore);
+    for (var i = 0; i < 3; i++) {
+      await tester.tap(find.text('Increment'));
+      await tester.pump();
+    }
+    expect(find.text('Counter 3'), findsOneWidget);
+    await tester.tap(find.text('Log out'));
+    await tester.pumpAndSettle();
+    expect(router.topRoute.name, _LoginPage.routeName);
+    await tester.tap(find.text('Log in'));
+    await tester.pumpAndSettle();
+    expect(router.topRoute.name, _HomePage.routeName);
+    expect(find.text('Counter 3'), findsOneWidget);
+  });
+
+  // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/2327
+  // Steps: with no guards at all, a button calls push(SecondRoute) and then
+  // fires reevaluateListenable in the same callback.
+  // Happens (reported): the push is skipped or never becomes visible.
+  // Should happen: SecondRoute is pushed and shown.
+  // Skipped until #2327 is fixed: the stack stays [FirstRoute].
+  testWidgets('Push followed by reevaluation in the same callback should still push (#2327)',
+      (WidgetTester tester) async {
+    final router = RootStackRouter.build(routes: [
+      AutoRoute(
+        initial: true,
+        page: PageInfo(
+          FirstRoute.name,
+          builder: (_) => Builder(
+            builder: (context) => GestureDetector(
+              onTap: () {
+                context.router.push(const SecondRoute());
+                reevaluationNotifier.value = !reevaluationNotifier.value;
+              },
+              child: const Text('Push and reevaluate'),
+            ),
+          ),
+        ),
+      ),
+      AutoRoute(page: SecondRoute.page),
+    ]);
+    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
+    await tester.tap(find.text('Push and reevaluate'));
+    await tester.pumpAndSettle();
+    expect(router.stack.map((e) => e.name), [FirstRoute.name, SecondRoute.name]);
+    expectTopPage(router, SecondRoute.name);
+  }, skip: true);
 }
 
 class _CounterPage extends StatefulWidget {
@@ -368,6 +445,61 @@ class _CounterPageState extends State<_CounterPage> {
     return GestureDetector(
       onTap: () => setState(() => counter++),
       child: Text('${context.routeData.name} $counter'),
+    );
+  }
+}
+
+class _AuthStore extends ChangeNotifier {
+  bool isLoggedIn = true;
+
+  void logIn() {
+    isLoggedIn = true;
+    notifyListeners();
+  }
+
+  void logOut() {
+    isLoggedIn = false;
+    notifyListeners();
+  }
+}
+
+class _HomePage extends StatefulWidget {
+  static const routeName = 'HomeRoute';
+
+  const _HomePage(this.authStore);
+
+  final _AuthStore authStore;
+
+  @override
+  State<_HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<_HomePage> {
+  int counter = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text('Counter $counter'),
+        GestureDetector(onTap: () => setState(() => counter++), child: const Text('Increment')),
+        GestureDetector(onTap: widget.authStore.logOut, child: const Text('Log out')),
+      ],
+    );
+  }
+}
+
+class _LoginPage extends StatelessWidget {
+  static const routeName = 'LoginRoute';
+
+  const _LoginPage(this.authStore);
+
+  final _AuthStore authStore;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(onTap: authStore.logIn, child: const Text('Log in')),
     );
   }
 }
