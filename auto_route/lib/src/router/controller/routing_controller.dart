@@ -327,7 +327,7 @@ abstract class RoutingController with ChangeNotifier {
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
-  Future<dynamic> navigate(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+  Future<T?> navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
     return _findScope(route)._navigate(route, onFailure: onFailure);
   }
 
@@ -358,7 +358,7 @@ abstract class RoutingController with ChangeNotifier {
 
   void _onNavigate(List<RouteMatch> routes);
 
-  Future<dynamic> _navigate(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+  Future<T?> _navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
     final match = _matchOrReportFailure(route, onFailure);
     if (match != null) {
       return _navigateAll([match], onFailure: onFailure);
@@ -613,7 +613,7 @@ abstract class RoutingController with ChangeNotifier {
   @override
   String toString() => '${routeData.name} Router';
 
-  Future<void> _navigateAll(
+  Future<T?> _navigateAll<T extends Object?>(
     List<RouteMatch> routes, {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
@@ -856,7 +856,7 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  Future<void> _navigateAll(
+  Future<T?> _navigateAll<T extends Object?>(
     List<RouteMatch> routes, {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
@@ -1312,7 +1312,7 @@ abstract class StackRouter extends RoutingController {
     return _findStackScope(route)._push(route, onFailure: onFailure, insertAt: index);
   }
 
-  Future<dynamic> _popUntilOrPushAll(
+  Future<T?> _popUntilOrPushAll<T extends Object?>(
     List<RouteMatch> matches, {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
@@ -1340,7 +1340,6 @@ abstract class StackRouter extends RoutingController {
       matches,
       onFailure: onFailure,
       updateAncestorsPathData: false,
-      returnLastRouteCompleter: false,
       isReevaluating: isReevaluating,
     );
   }
@@ -1471,7 +1470,8 @@ abstract class StackRouter extends RoutingController {
         _stackKey = UniqueKey();
       }
       markUrlStateForReplace();
-      return _navigateAll(matches);
+      await _navigateAll(matches);
+      return;
     }
     return SynchronousFuture(null);
   }
@@ -1778,7 +1778,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  Future<void> _navigateAll(
+  Future<T?> _navigateAll<T extends Object?>(
     List<RouteMatch> routes, {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
@@ -1786,9 +1786,10 @@ abstract class StackRouter extends RoutingController {
     if (isReevaluating) {
       _pages.clear();
     }
+    T? result;
     if (routes.isNotEmpty) {
       if (!managedByWidget) {
-        await _popUntilOrPushAll(
+        result = await _popUntilOrPushAll<T>(
           routes,
           onFailure: onFailure,
           isReevaluating: isReevaluating,
@@ -1812,7 +1813,7 @@ abstract class StackRouter extends RoutingController {
     } else if (!managedByWidget) {
       _reset();
     }
-    return SynchronousFuture(null);
+    return result;
   }
 
   void _reset() {
