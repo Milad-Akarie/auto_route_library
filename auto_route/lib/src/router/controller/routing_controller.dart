@@ -1660,6 +1660,9 @@ abstract class StackRouter extends RoutingController {
           break;
         }
       } else {
+        if (match is ReevaluatableRouteMatch) {
+          _pages.remove(match.currentPage);
+        }
         break;
       }
     }
@@ -1669,7 +1672,10 @@ abstract class StackRouter extends RoutingController {
   void _addReevaluatedPage(ReevaluatableRouteMatch match, {bool notify = true}) {
     final page = match.currentPage;
     page.routeData._onEndReevaluating(match.originalMatch);
-    _pages.add(page);
+    // the page may have been kept in the stack while a guard was redirecting
+    if (!_pages.contains(page)) {
+      _pages.add(page);
+    }
     if (notify) {
       notifyAll();
     }

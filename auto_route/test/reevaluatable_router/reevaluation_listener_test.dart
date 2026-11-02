@@ -199,4 +199,79 @@ void main() {
     expect(resolver.isReevaluating, true);
     expectTopPage(router, SecondRoute.name);
   });
+
+  testWidgets('Reevaluation with redirectUntil should keep the state of the reevaluated page',
+      (WidgetTester tester) async {
+    final isLoggedIn = ValueNotifier(true);
+    final router = RootStackRouter.build(routes: [
+      AutoRoute.guarded(
+        initial: true,
+        page: PageInfo(FirstRoute.name, builder: (_) => const _CounterPage()),
+        onNavigation: (resolver, router) {
+          if (isLoggedIn.value) {
+            resolver.next();
+          } else {
+            resolver.redirectUntil(const SecondRoute());
+          }
+        },
+      ),
+      AutoRoute(page: SecondRoute.page),
+    ]);
+    await pumpRouterApp(tester, router, reevaluationNotifier: isLoggedIn);
+    await tester.tap(find.text('${FirstRoute.name} 0'));
+    await tester.pump();
+    isLoggedIn.value = false;
+    await tester.pumpAndSettle();
+    expect(router.stack.map((e) => e.name), [FirstRoute.name, SecondRoute.name]);
+    isLoggedIn.value = true;
+    await tester.pumpAndSettle();
+    expect(router.stack.map((e) => e.name), [FirstRoute.name]);
+    expect(find.text('${FirstRoute.name} 1'), findsOneWidget);
+  });
+
+  testWidgets('Reevaluation with redirectUntil should remove the reevaluated page when rejected',
+      (WidgetTester tester) async {
+    final router = RootStackRouter.build(routes: [
+      AutoRoute(page: FirstRoute.page, initial: true),
+      AutoRoute.guarded(
+        page: SecondRoute.page,
+        onNavigation: (resolver, router) {
+          if (reevaluationNotifier.value) {
+            resolver.redirectUntil(const ThirdRoute());
+          } else {
+            resolver.next();
+          }
+        },
+      ),
+      AutoRoute(page: ThirdRoute.page),
+    ]);
+    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
+    reevaluationNotifier.value = true;
+    await tester.pumpAndSettle();
+    expect(router.stack.map((e) => e.name), [FirstRoute.name, SecondRoute.name, ThirdRoute.name]);
+    router.maybePop();
+    await tester.pumpAndSettle();
+    expectTopPage(router, FirstRoute.name);
+  });
+}
+
+class _CounterPage extends StatefulWidget {
+  const _CounterPage();
+
+  @override
+  State<_CounterPage> createState() => _CounterPageState();
+}
+
+class _CounterPageState extends State<_CounterPage> {
+  int counter = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => setState(() => counter++),
+      child: Text('${context.routeData.name} $counter'),
+    );
+  }
 }
