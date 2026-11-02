@@ -155,4 +155,33 @@ void main() {
     expectCurrentPage(router, FirstRoute.name);
     expect(completed, isTrue);
   });
+
+  // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/2154
+  // Steps: await router.navigate(SecondRoute()), then pop SecondPage with a result.
+  // Happens: the navigate() future completes right away with null, before the page is popped.
+  // Should: it completes only when the page is popped, with the popped result, as push() does.
+  testWidgets(
+    'navigate() should complete with the result the opened page is popped with',
+    (WidgetTester tester) async {
+      await pumpRouterApp(tester, router);
+      var completed = false;
+      Object? result;
+      router.navigate(const SecondRoute()).then((value) {
+        completed = true;
+        result = value;
+      });
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, SecondRoute.name);
+      expect(
+        completed,
+        isFalse,
+        reason: 'navigate() completed before the page was popped',
+      );
+
+      router.pop('done');
+      await tester.pumpAndSettle();
+      expect(completed, isTrue);
+      expect(result, 'done');
+    },
+  );
 }
