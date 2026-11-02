@@ -294,4 +294,27 @@ void main() {
     expectTopPage(router, FirstRoute.name);
     expect(router.childControllers, isEmpty);
   });
+
+  // Reproduction for https://github.com/Milad-Akarie/auto_route_library/issues/2309
+  // Steps: push SecondHostRoute (it holds a nested AutoRouter), then push a
+  // second page into that nested router, then call maybePop on the root router.
+  // Happens: maybePop returns true but SecondHostRoute stays on screen.
+  // Should happen: SecondHostRoute is popped from the root stack.
+  testWidgets('root maybePop with a child pushed in a nested router should pop the host route',
+      skip: true, // #2309 is not fixed yet
+      (WidgetTester tester) async {
+    await pumpRouterApp(tester, router);
+    router.push(SecondHostRoute());
+    await tester.pumpAndSettle();
+    router.innerRouterOf<StackRouter>(SecondHostRoute.name)!.push(const SecondNested2Route());
+    await tester.pumpAndSettle();
+    expectTopPage(router, SecondNested2Route.name);
+
+    final result = await router.maybePop();
+    await tester.pumpAndSettle();
+
+    expect(result, isTrue);
+    expectTopPage(router, FirstRoute.name);
+    expect(router.childControllers, isEmpty);
+  });
 }
