@@ -199,4 +199,44 @@ void main() {
     expect(resolver.isReevaluating, true);
     expectTopPage(router, SecondRoute.name);
   });
+
+  // Reproduces https://github.com/Milad-Akarie/auto_route_library/pull/2318
+  // Steps: show a tabs page whose second tab hosts its own AutoTabsRouter and
+  // has not been opened yet, fire reevaluateListenable, then open that tab.
+  // Happens: opening the tab crashes with "Unsupported operation: Cannot clear
+  // an unmodifiable list", because the reevaluation gave the unopened tab a
+  // const list of pending children that TabsRouter.setupRoutes later clears.
+  // Should happen: the tab opens and shows its first nested page.
+  testWidgets('Opening a nested tabs page after reevaluation should not crash', (WidgetTester tester) async {
+    const innerTabsName = 'InnerTabsRoute';
+    final router = RootStackRouter.build(routes: [
+      AutoRoute(
+        initial: true,
+        page: TabsHostRoute.page,
+        children: [
+          AutoRoute(page: Tab1Route.page),
+          AutoRoute(
+            page: PageInfo(innerTabsName, builder: (_) => const AutoTabsRouter()),
+            children: [
+              AutoRoute(page: Tab2Nested1Route.page),
+              AutoRoute(page: Tab2Nested2Route.page),
+            ],
+          ),
+        ],
+      ),
+    ]);
+    await pumpRouterConfigApp(
+      tester,
+      router.config(
+        reevaluateListenable: reevaluationNotifier,
+        deepLinkBuilder: (_) => DeepLink.single(TabsHostRoute(useDefaultRoutes: true)),
+      ),
+    );
+    expectTopPage(router, Tab1Route.name);
+    reevaluationNotifier.value = true;
+    await tester.pumpAndSettle();
+    router.innerRouterOf<TabsRouter>(TabsHostRoute.name)!.setActiveIndex(1);
+    await tester.pumpAndSettle();
+    expectTopPage(router, Tab2Nested1Route.name);
+  });
 }
