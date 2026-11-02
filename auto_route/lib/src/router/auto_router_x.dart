@@ -35,7 +35,7 @@ extension AutoRouterX on BuildContext {
   void pop<T extends Object?>([T? result]) => router.pop<T>(result);
 
   /// see [RoutingController.navigate]
-  Future<void> navigateTo(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
+  Future<T?> navigateTo<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
       RouterScope.of(this).controller.navigate(
             route,
             onFailure: onFailure,
