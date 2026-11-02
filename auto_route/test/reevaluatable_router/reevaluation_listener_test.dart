@@ -310,6 +310,47 @@ void main() {
     await tester.pumpAndSettle();
     expectTopPage(router, FirstRoute.name);
   });
+
+  // Reproduces https://github.com/Milad-Akarie/auto_route_library/pull/2341
+  // Steps: push a page whose async guard is still pending, then call
+  // reevaluateGuards three times before the first guard check finishes.
+  // Happens: the waiting reevaluations each complete the same completer and
+  // throw "Bad state: Future already completed".
+  // Should happen: each reevaluation waits its turn, the guard runs once per
+  // reevaluation, and the page shows once the guard passes.
+  testWidgets('Overlapping reevaluations wait for a running guard without crashing', (WidgetTester tester) async {
+    var calls = 0;
+    final router = RootStackRouter.build(routes: [
+      AutoRoute(page: FirstRoute.page, initial: true),
+      AutoRoute(
+        page: SecondRoute.page,
+        guards: [
+          AutoRouteGuard.simple((resolver, router) async {
+            calls++;
+            await Future<void>.delayed(const Duration(milliseconds: 50));
+            if (reevaluationNotifier.value) resolver.next(true);
+          }),
+        ],
+      ),
+    ])
+      ..ignorePopCompleters = true;
+    await pumpRouterApp(tester, router);
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
+    expect(calls, 1);
+
+    // Three passes reach the same pending resolver while the first one's guard runs.
+    router.reevaluateGuards();
+    router.reevaluateGuards();
+    router.reevaluateGuards();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(calls, 4);
+
+    reevaluationNotifier.value = true;
+    router.reevaluateGuards();
+    await tester.pumpAndSettle();
+    expectTopPage(router, SecondRoute.name);
+  });
 }
 
 class _CounterPage extends StatefulWidget {
