@@ -270,6 +270,11 @@ class NavigationResolver {
   }) async {
     if (_isRedirecting) return null;
     _isRedirecting = true;
+    // keep the page being reevaluated under the redirect route so its state is preserved
+    final reevaluatedRoute = this.route;
+    if (reevaluatedRoute is ReevaluatableRouteMatch && !_router._pages.contains(reevaluatedRoute.currentPage)) {
+      _router._pages.add(reevaluatedRoute.currentPage);
+    }
     await _router._redirect(
       route,
       onFailure: onFailure,
