@@ -268,4 +268,30 @@ void main() {
       expect(secondHostRouter.topMostRouter(ignorePagelessRoutes: true), secondHostRouter);
     },
   );
+
+  // Reproduction for https://github.com/Milad-Akarie/auto_route_library/pull/2086
+  // Steps: push SecondHostRoute (its nested router shows SecondNested1Route),
+  // remove that last nested page so the nested router has no pages left,
+  // then call maybePop on the nested router (what a back press does).
+  // Happens: maybePop returns false and SecondHostRoute stays on screen, so a
+  // back press would close the app.
+  // Should happen: the nested router has nothing to pop, so the parent pops
+  // SecondHostRoute, maybePop returns true and the root shows FirstRoute.
+  testWidgets('maybePop on a nested router with no pages left should pop the parent router',
+      (WidgetTester tester) async {
+    await pumpRouterApp(tester, router);
+    router.push(SecondHostRoute());
+    await tester.pumpAndSettle();
+    final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!;
+    nested.removeLast();
+    await tester.pumpAndSettle();
+    expect(nested.stack, isEmpty);
+
+    final popped = await nested.maybePop();
+    await tester.pumpAndSettle();
+
+    expect(popped, isTrue);
+    expectTopPage(router, FirstRoute.name);
+    expect(router.childControllers, isEmpty);
+  });
 }
