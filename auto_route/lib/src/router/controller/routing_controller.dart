@@ -1780,10 +1780,10 @@ abstract class StackRouter extends RoutingController {
     if (isReevaluating) {
       _pages.clear();
     }
-    Future<T?>? result;
+    T? result;
     if (routes.isNotEmpty) {
       if (!managedByWidget) {
-        result = await _popUntilOrPushAll(
+        result = await _popUntilOrPushAll<T>(
           routes,
           onFailure: onFailure,
           isReevaluating: isReevaluating,
@@ -1807,7 +1807,7 @@ abstract class StackRouter extends RoutingController {
     } else if (!managedByWidget) {
       _reset();
     }
-    return await result;
+    return result;
   }
 
   void _reset() {
