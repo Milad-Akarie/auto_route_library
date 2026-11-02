@@ -132,4 +132,27 @@ void main() {
     expect(guardResumed, isTrue);
     expectCurrentPage(guardedRouter, FourthRoute.name);
   });
+
+  // Reproduction for https://github.com/Milad-Akarie/auto_route_library/issues/2251
+  // Steps: page A pushes page B and awaits its result; page B is replaced with
+  // page C; page C is popped, which returns to page A.
+  // Happens: the future returned by A's push() never completes.
+  // Should happen: it completes when C is popped, as it did in 10.0.1.
+  testWidgets('Popping a route that replaced the pushed route should complete the original push future',
+      (tester) async {
+    await pumpRouterApp(tester, router);
+    var completed = false;
+    router.push<String>(const SecondRoute()).then((_) => completed = true);
+    await tester.pumpAndSettle();
+
+    router.replace(const ThirdRoute());
+    await tester.pumpAndSettle();
+    expectCurrentPage(router, ThirdRoute.name);
+
+    router.pop();
+    await tester.pumpAndSettle();
+
+    expectCurrentPage(router, FirstRoute.name);
+    expect(completed, isTrue);
+  });
 }
