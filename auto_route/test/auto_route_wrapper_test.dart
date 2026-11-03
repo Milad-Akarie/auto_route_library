@@ -41,6 +41,87 @@ void main() {
       expect(find.descendant(of: columnFinder, matching: find.text('Page Content')), findsOneWidget);
     },
   );
+
+  // https://github.com/Milad-Akarie/auto_route_library/issues/1713
+  // Steps: ParentRoute is an AutoRouter that implements AutoRouteWrapper and
+  // provides a state above its nested router, which shows ARoute. A child
+  // widget of ARoute, not ARoute itself, calls context.router.push(BRoute()).
+  // Reported: wrappedRoute runs again and a new provided state is created.
+  // Should: BRoute is pushed in the nested router; the provided state stays.
+  // Pushing the absolute path '/parent/b' from the root instead pushes a
+  // second ParentRoute with its own wrapper, as the issue's comments explain.
+  testWidgets(
+    'Pushing a sibling route from a child widget keeps the wrapper of the host route',
+    (WidgetTester tester) async {
+      _ProvidedState.created = 0;
+      final router = RootStackRouter.build(routes: [
+        AutoRoute(path: '/parent', initial: true, page: _ParentRoute.page, children: [
+          AutoRoute(path: 'a', initial: true, page: _aPage),
+          AutoRoute(path: 'b', page: PageInfo('BRoute', builder: (_) => const Text('BRoute'))),
+        ]),
+      ]);
+      await pumpRouterApp(tester, router);
+      expect(find.text('Push B'), findsOneWidget);
+      expect(_ProvidedState.created, 1);
+
+      await tester.tap(find.text('Push B'));
+      await tester.pumpAndSettle();
+      expect(router.topRoute.name, 'BRoute');
+      expect(router.stack.map((page) => page.name), [_ParentRoute.name]);
+      expect(_ProvidedState.created, 1);
+    },
+  );
+}
+
+class _ParentRoute extends PageRouteInfo<void> {
+  const _ParentRoute() : super(name);
+
+  static const String name = 'ParentRoute';
+  static PageInfo page = PageInfo(name, builder: (_) => const _ParentPage());
+}
+
+class _ParentPage extends AutoRouter implements AutoRouteWrapper {
+  const _ParentPage();
+
+  @override
+  Widget wrappedRoute(BuildContext context) => _Provided(child: this);
+}
+
+/// Stands for a BlocProvider: counts the states it creates.
+class _Provided extends StatefulWidget {
+  const _Provided({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_Provided> createState() => _ProvidedState();
+}
+
+class _ProvidedState extends State<_Provided> {
+  static int created = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    created++;
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
+PageInfo _aPage = PageInfo('ARoute', builder: (_) => const Scaffold(body: _AChild()));
+
+class _AChild extends StatelessWidget {
+  const _AChild();
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => context.router.push(const NamedRoute('BRoute')),
+      child: const Text('Push B'),
+    );
+  }
 }
 
 // Router Configuration
