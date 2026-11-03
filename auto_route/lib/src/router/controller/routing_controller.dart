@@ -162,8 +162,9 @@ abstract class RoutingController with ChangeNotifier {
       final childCtrl = _topInnerControllerOf(data.key);
       final childSegments = <HierarchySegment>[];
       if (childCtrl?.hasEntries == true) {
-        childSegments.addAll(_getCurrentHierarchy(
-          childCtrl!.stackData,
+        // The child router looks up its own nested routers.
+        childSegments.addAll(childCtrl!._getCurrentHierarchy(
+          childCtrl.stackData,
           asPath: asPath,
           ignorePending: ignorePending,
           ignoreParams: ignoreParams,
