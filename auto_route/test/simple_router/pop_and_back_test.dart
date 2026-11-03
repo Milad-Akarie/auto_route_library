@@ -1,9 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../main_router.dart';
 import '../router_test_utils.dart';
 import 'router.dart';
 
+// These tests check the native history, whose length shrinks when an entry is
+// dropped. On web the history is the browser's own, which keeps every entry and
+// isn't connected in the default headless test setup, so they're skipped there;
+// test/web/pop_and_back_web_test.dart covers #1839 against the real browser history.
 void main() {
   late SimpleRouter router;
   setUp(() {
@@ -49,7 +54,7 @@ void main() {
     expect(router.navigationHistory.length, 1);
     expect(router.urlState.url, '/');
     expect(router.canNavigateBack, isFalse);
-  });
+  }, skip: kIsWeb);
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1839
   // pushAll records only the last page, so after popping it the page now on top
@@ -72,5 +77,5 @@ void main() {
     expectCurrentPage(router, FirstRoute.name);
     expect(router.stack.map((p) => p.name), [FirstRoute.name]);
     expect(router.navigationHistory.length, 1);
-  });
+  }, skip: kIsWeb);
 }

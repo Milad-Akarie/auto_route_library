@@ -32,8 +32,10 @@ abstract class NavigationHistory with ChangeNotifier {
   /// that page as a new entry, as [rebuildUrl] would, leaves the popped page's
   /// entry in the history, so a later [back] returns to the page that was just
   /// popped. The native history instead drops the popped page's entry and
-  /// keeps one entry for the page now on top. The web history keeps the
-  /// browser's entries as they are and behaves like [rebuildUrl].
+  /// keeps one entry for the page now on top. The web history cannot delete
+  /// browser entries: when the entry before holds the page now on top, it steps
+  /// the browser back to it (see [consumeOwnBrowserMove]); otherwise it gives
+  /// the popped page's entry to the page now on top.
   ///
   /// Like [rebuildUrl], notifies listeners only if the url changed, which it
   /// does not when the popped page was not part of the visible url.

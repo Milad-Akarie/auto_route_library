@@ -34,6 +34,18 @@ Future<void> pumpRouterApp(
   await tester.pumpAndSettle();
 }
 
+/// Shows [router] through its own [RootStackRouter.config], as apps do, and
+/// waits for its first page.
+///
+/// Opens at '/' like [pumpRouterApp], but hands later links, such as the
+/// browser's back steps on web, to the router unchanged.
+Future<void> pumpRouterAppWithConfig(WidgetTester tester, RootStackRouter router) {
+  return pumpRouterConfigApp(
+    tester,
+    router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.path('/') : link),
+  );
+}
+
 /// Shows [config] in a [MaterialApp] and waits for its first page.
 Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> config) async {
   await tester.pumpWidget(MaterialApp.router(routerConfig: config));
