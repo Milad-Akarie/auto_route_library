@@ -38,6 +38,7 @@ import 'push_futures_test.dart' as push_futures;
 import 'query_params_on_pop_test.dart' as query_params_on_pop;
 import 'rapid_pops_test.dart' as rapid_pops;
 import 'redirect_history_test.dart' as redirect_history;
+import 'redirect_lifecycle_test.dart' as redirect_lifecycle;
 import 'redirect_loop_test.dart' as redirect_loop;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
@@ -97,6 +98,7 @@ void main() {
   group('query params on pop', query_params_on_pop.main);
   group('rapid pops', rapid_pops.main);
   group('redirect history', redirect_history.main);
+  group('redirect lifecycle', redirect_lifecycle.main);
   group('redirect loop', redirect_loop.main);
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
