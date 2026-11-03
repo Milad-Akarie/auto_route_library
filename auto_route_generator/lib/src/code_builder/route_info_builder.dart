@@ -270,10 +270,10 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emi
               defaultCode = Code('const {}');
             } else {
               defaultCode = Code(
-                  'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.type.import).accept(emitter).toString()}');
+                  'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.defaultValueImport ?? p.type.import).accept(emitter).toString()}');
             }
           } else {
-            defaultCode = refer(p.defaultValueCode!, p.type.import).code;
+            defaultCode = refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import).code;
           }
         }
         b
@@ -381,12 +381,12 @@ Expression _getUrlPartAssignment(ParamConfig p) {
   if (p.isPathParam) {
     return refer('pathParams').property(p.getterMethodName).call([
       literalString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode!),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import),
     ]);
   } else if (p.isQueryParam) {
     return refer('queryParams').property(p.getterMethodName).call([
       literalString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode!),
+      if (p.defaultValueCode != null) refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import),
     ]);
   } else {
     return refer('data').property('fragment');

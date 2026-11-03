@@ -1,3 +1,4 @@
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
@@ -92,6 +93,7 @@ class RouteParameterResolver {
       isQueryParam: queryParamAnnotation != null,
       isUrlFragment: isUrlFragment,
       defaultValueCode: parameterElement.defaultValueCode,
+      defaultValueImport: _resolveDefaultValueImport(parameterElement),
     );
   }
 
@@ -103,11 +105,26 @@ class RouteParameterResolver {
         params: type.formalParameters.map(resolve).toList(),
         name: paramElement.displayName,
         defaultValueCode: paramElement.defaultValueCode,
+        defaultValueImport: _resolveDefaultValueImport(paramElement),
         isRequired: paramElement.isRequiredNamed,
         isPositional: paramElement.isPositional,
         hasRequired: paramElement.isRequired,
         isOptional: paramElement.isOptional,
         isNamed: paramElement.isNamed);
+  }
+
+  /// Resolves the import of the declaration a default value names: a
+  /// top-level function or constant such as `defaultTitleResolver`, or the
+  /// class or enum in `Colors.red`. Returns `null` for any other value.
+  String? _resolveDefaultValueImport(FormalParameterElement parameterElement) {
+    final initializer = parameterElement.constantInitializer;
+    final element = switch (initializer) {
+      SimpleIdentifier() => initializer.element,
+      PrefixedIdentifier() => initializer.prefix.element,
+      _ => null,
+    };
+    if (element == null || element.enclosingElement is! LibraryElement) return null;
+    return _typeResolver.resolveImport(element);
   }
 
   /// Extracts path parameters from a route path

@@ -50,6 +50,10 @@ class ParamConfig {
   /// the default value code of the parameter
   final String? defaultValueCode;
 
+  /// the import of the declaration the default value names, such as a
+  /// function or a constant from another library
+  final String? defaultValueImport;
+
   /// Default constructor
   ParamConfig({
     required this.type,
@@ -65,6 +69,7 @@ class ParamConfig {
     required this.isInheritedPathParam,
     this.alias,
     this.defaultValueCode,
+    this.defaultValueImport,
   });
 
   /// If the parameter name conflicts with a reserved name
@@ -122,6 +127,7 @@ class ParamConfig {
       'isInheritedPathParam': isInheritedPathParam,
       'isQueryParam': isQueryParam,
       'defaultValueCode': defaultValueCode,
+      'defaultValueImport': defaultValueImport,
     };
   }
 
@@ -145,6 +151,7 @@ class ParamConfig {
       isQueryParam: map['isQueryParam'] as bool,
       isUrlFragment: map['isUrlFragment'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
+      defaultValueImport: map['defaultValueImport'] as String?,
     );
   }
 }
@@ -171,6 +178,7 @@ class FunctionParamConfig extends ParamConfig {
     required super.isNamed,
     required super.isRequired,
     super.defaultValueCode,
+    super.defaultValueImport,
   }) : super(
           isPathParam: false,
           isQueryParam: false,
@@ -195,6 +203,7 @@ class FunctionParamConfig extends ParamConfig {
       'isPathParam': isPathParam,
       'isQueryParam': isQueryParam,
       'defaultValueCode': defaultValueCode,
+      'defaultValueImport': defaultValueImport,
       'params': params.map((e) => e.toJson()).toList(),
     };
   }
@@ -219,6 +228,7 @@ class FunctionParamConfig extends ParamConfig {
       isRequired: map['isRequired'] as bool,
       isNamed: map['isNamed'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
+      defaultValueImport: map['defaultValueImport'] as String?,
     );
   }
 

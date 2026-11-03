@@ -120,4 +120,31 @@ required this.url,
       expect(result.source, contains("queryParams.optInt('page')"));
     });
   });
+
+  // #1968: a default value naming a function from another library, as in
+  // `this.titleResolver = defaultTitleResolver`, was written into the route
+  // without that library's import: "Undefined name 'defaultTitleResolver'".
+  group('a default value from another library (#1968)', () {
+    test('is imported', () async {
+      final result = await generateRouter({
+        'lib/defaults.dart': '''
+String defaultTitleResolver() => 'Home screen';
+
+const firstPage = 1;
+''',
+        'lib/home_screen.dart': _page(
+          'HomeScreen',
+          imports: "import 'defaults.dart';",
+          parameters: 'this.titleResolver = defaultTitleResolver, @QueryParam() this.page = firstPage',
+          fields: '''
+  final String Function() titleResolver;
+  final int page;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, matches(RegExp(r'titleResolver = _i\d+\.defaultTitleResolver')));
+      expect(result.source, matches(RegExp(r"queryParams.getInt\('page', _i\d+\.firstPage\)")));
+    });
+  });
 }
