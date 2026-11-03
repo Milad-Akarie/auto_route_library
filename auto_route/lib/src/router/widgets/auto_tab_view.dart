@@ -97,11 +97,12 @@ class AutoTabViewState extends State<AutoTabView> {
       oldWidget.controller.animation?.removeListener(_handleTabControllerAnimationTick);
       _controller.animation?.addListener(_handleTabControllerAnimationTick);
       _updateChildren();
+      // Load the active tab, it may not have been opened yet.
+      _tabKeyAt(_router.activeIndex)?.currentState?.preload();
 
-      // The routes changed. A new page controller starts on the active page
-      // once the new pages are laid out; a jump now would land among the old ones.
+      // The routes changed: show the new pages on the active one.
       _currentIndex = _controller.index;
-      _pageController = PageController(initialPage: _currentIndex!);
+      correctToPage(_pageController, _currentIndex!);
     }
   }
 

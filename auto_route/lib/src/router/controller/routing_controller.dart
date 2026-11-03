@@ -1005,7 +1005,11 @@ class TabsRouter extends RoutingController {
     if (targetIndex == -1) {
       targetIndex = homeIndex == -1 ? 0 : homeIndex;
     }
-    setActiveIndex(targetIndex, notify: false);
+    // Set directly, not through setActiveIndex: the old index points into the
+    // old routes, so it can't be preloaded or reported to observers as the
+    // previous tab. Each tabs view loads the active tab when it rebuilds with
+    // the new routes.
+    _activeIndex = targetIndex;
   }
 
   bool _isSameTab(RouteMatch a, RouteMatch b) =>

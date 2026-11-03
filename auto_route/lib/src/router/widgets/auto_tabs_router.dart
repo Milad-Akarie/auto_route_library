@@ -590,7 +590,6 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes, _controller!.activeIndex);
       _tabsHash = const ListEquality().hash(widget.routes);
-      _updatePageController();
     }
   }
 

@@ -57,8 +57,6 @@ class AutoPageView extends StatefulWidget {
 
 /// State implementation of [AutoPageView]
 class AutoPageViewState extends State<AutoPageView> {
-  // Read from the widget: when the routes change, the parent hands a new
-  // controller that starts on the active page.
   PageController get _controller => widget.controller;
   late final TabsRouter _router = widget.router;
   late List<Widget> _children;
@@ -66,6 +64,8 @@ class AutoPageViewState extends State<AutoPageView> {
   int _scrollUnderwayCount = 0;
   // Keyed by tab, not index, so a tab moved by a routes change keeps its state.
   final _tabKeys = <LocalKey, GlobalKey<KeepAliveTabState>>{};
+  // The tabs [_children] were built for, to tell when the routes change.
+  var _matchIds = <LocalKey>[];
 
   @override
   void initState() {
@@ -77,9 +77,12 @@ class AutoPageViewState extends State<AutoPageView> {
   @override
   void didUpdateWidget(AutoPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.controller != oldWidget.controller) {
-      // The routes changed: show the new pages.
+    if (!listEquals(_router.stack.map((page) => page.routeData.matchId).toList(), _matchIds)) {
+      // The routes changed: show the new pages on the active one, and load
+      // it, it may not have been opened yet.
       _updateChildren();
+      _tabKeyAt(_router.activeIndex)?.currentState?.preload();
+      correctToPage(_controller, _router.activeIndex);
     }
   }
 
@@ -116,8 +119,8 @@ class AutoPageViewState extends State<AutoPageView> {
 
   void _updateChildren() {
     final stack = widget.router.stack;
-    final matchIds = {for (final page in stack) page.routeData.matchId};
-    _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
+    _matchIds = [for (final page in stack) page.routeData.matchId];
+    _tabKeys.removeWhere((matchId, _) => !_matchIds.contains(matchId));
     _children = List.generate(
       stack.length,
       (index) => KeepAliveTab(
