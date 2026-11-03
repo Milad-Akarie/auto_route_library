@@ -66,6 +66,31 @@ void main() {
     },
   );
 
+  // https://github.com/Milad-Akarie/auto_route_library/issues/2315
+  // Steps: no tabs or nested routers. The app hands the observer through
+  // `config(navigatorObservers: () => [AutoRouteObserver()])`, and the first
+  // page's state uses AutoRouteAwareStateMixin. Push a page, then pop it.
+  // Reported: didPushNext and didPopNext never fire.
+  // Should: both fire. They do when the observer is an AutoRouteObserver; the
+  // mixin finds no other kind of observer, so a plain NavigatorObserver or
+  // AutoRouterObserver tells it nothing.
+  testWidgets(
+    'AutoRouteAwareStateMixin hears push and pop with the observer given to config()',
+    (WidgetTester tester) async {
+      await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [AutoRouteObserver()]));
+      final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
+      expect(state.didPushCalled, isTrue);
+
+      router.push(const SecondRoute());
+      await tester.pumpAndSettle();
+      expect(state.didPushNextCalled, isTrue);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(state.didPopNextCalled, isTrue);
+    },
+  );
+
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/1774
   // Steps: FirstRoute has AutoRouteAwareStateMixin. Push ConfirmRoute, open a
   // dialog there, and tap its button, which closes the dialog with
