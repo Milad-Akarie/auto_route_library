@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'app_smoke_test.dart' as app_smoke;
+import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'login_state_test.dart' as login_state;
 import 'navigate_awaits_test.dart' as navigate_awaits;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
@@ -17,6 +18,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('app smoke', app_smoke.main);
+  group('empty nested router', empty_nested_router.main);
   group('login state', login_state.main);
   group('navigate awaits', navigate_awaits.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
