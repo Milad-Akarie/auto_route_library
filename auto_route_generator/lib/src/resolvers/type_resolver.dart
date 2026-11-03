@@ -1,6 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
-import 'package:analyzer/dart/element/type.dart' show DartType, ParameterizedType, RecordType;
+import 'package:analyzer/dart/element/type.dart' show DartType, FunctionType, ParameterizedType, RecordType;
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 import 'package:path/path.dart' as p;
@@ -94,9 +94,39 @@ class TypeResolver {
     return types;
   }
 
-  /// Resolves a type argument or a record field, which may be a record itself.
+  /// Resolves a type argument or a record field, which may be a record or a
+  /// function type itself.
   ResolvedType _resolveNestedType(DartType type, {String? nameInRecord}) {
-    if (type is RecordType) {
+    if (type is FunctionType && type.alias == null) {
+      return ResolvedType.function(
+        parts: FunctionTypeParts(
+          returnType: _resolveNestedType(type.returnType),
+          requiredParameters: [
+            for (final p in type.formalParameters.where((p) => p.isRequiredPositional)) _resolveNestedType(p.type),
+          ],
+          optionalParameters: [
+            for (final p in type.formalParameters.where((p) => p.isOptionalPositional)) _resolveNestedType(p.type),
+          ],
+          namedParameters: {
+            for (final p in type.formalParameters.where((p) => p.isOptionalNamed)) p.name!: _resolveNestedType(p.type),
+          },
+          namedRequiredParameters: {
+            for (final p in type.formalParameters.where((p) => p.isRequiredNamed)) p.name!: _resolveNestedType(p.type),
+          },
+        ),
+        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        nameInRecord: nameInRecord,
+      );
+    } else if (type is FunctionType) {
+      final alias = type.alias!;
+      return ResolvedType(
+        name: alias.element.displayName,
+        import: resolveImport(alias.element),
+        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        typeArguments: alias.typeArguments.map(resolveType).toList(),
+        nameInRecord: nameInRecord,
+      );
+    } else if (type is RecordType) {
       return ResolvedType.record(
         name: type.nameWithoutSuffix,
         import: resolveImport(type.element),

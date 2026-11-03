@@ -52,4 +52,49 @@ void main() {
       expect(result.compileErrors, isEmpty);
     });
   });
+
+  // #2106: a function type inside a type argument, such as
+  // `Option<void Function(String url)>`, came out as `Option<void>`, so the
+  // generated route did not compile.
+  group('a function type inside a type argument (#2106)', () {
+    test('keeps its parameters and their imports', () async {
+      final result = await generateRouter({
+        'lib/option.dart': '''
+class Option<T> {
+  const Option.none();
+}
+
+class UrlChange {}
+
+typedef UrlCallback = void Function(String url);
+''',
+        'lib/web_view_page.dart': _page(
+          'AppWebViewListenerPage',
+          imports: "import 'option.dart';",
+          parameters: '''
+required this.url,
+    this.onUrlChange = const Option.none(),
+    this.onPageFinished = const Option.none(),
+    this.onRequest = const Option.none(),
+    this.onPageStarted = const Option.none(),
+    this.onFrame = const Option.none(),''',
+          fields: '''
+  final String url;
+  final Option<void Function(UrlChange change)> onUrlChange;
+  final Option<void Function(String url)?> onPageFinished;
+  final Option<bool Function(String url, [int? code])> onRequest;
+  final Option<void Function({required bool isMainFrame, int? code})> onFrame;
+  final Option<UrlCallback> onPageStarted;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      final source = result.source!.replaceAll(RegExp(r'_i\d+\.'), '');
+      expect(source, contains('Option<void Function(UrlChange)> onUrlChange'));
+      expect(source, contains('Option<void Function(String)?> onPageFinished'));
+      expect(source, contains('Option<bool Function(String, [int?])> onRequest'));
+      expect(source, contains('Option<void Function({required bool isMainFrame, int? code})> onFrame'));
+      expect(source, contains('Option<UrlCallback> onPageStarted'));
+    });
+  });
 }

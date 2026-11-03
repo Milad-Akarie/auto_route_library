@@ -1,4 +1,4 @@
-import 'package:code_builder/code_builder.dart' show TypeReference, RecordType, Reference;
+import 'package:code_builder/code_builder.dart' show FunctionType, TypeReference, RecordType, Reference;
 
 /// A class that represents a resolved type.
 ///
@@ -20,6 +20,9 @@ class ResolvedType {
   /// the name of the field in the record
   final String? nameInRecord;
 
+  /// the parts of a function type, `null` for any other type
+  final FunctionTypeParts? functionParts;
+
   ResolvedType._({
     required this.name,
     this.import,
@@ -27,6 +30,7 @@ class ResolvedType {
     this.isNullable = false,
     required bool isRecordType,
     this.nameInRecord,
+    this.functionParts,
   }) : _isRecordType = isRecordType;
 
   /// Default constructor
@@ -36,7 +40,8 @@ class ResolvedType {
     this.typeArguments = const [],
     this.isNullable = false,
     this.nameInRecord,
-  }) : _isRecordType = false;
+  })  : _isRecordType = false,
+        functionParts = null;
 
   /// Constructor for a record types
   ResolvedType.record({
@@ -45,7 +50,20 @@ class ResolvedType {
     this.typeArguments = const [],
     this.isNullable = false,
     this.nameInRecord,
-  }) : _isRecordType = true;
+  })  : _isRecordType = true,
+        functionParts = null;
+
+  /// Constructor for a function type, such as `void Function(String url)`,
+  /// when it is a type argument or a record field
+  ResolvedType.function({
+    required FunctionTypeParts parts,
+    this.isNullable = false,
+    this.nameInRecord,
+  })  : name = 'Function',
+        import = null,
+        typeArguments = const [],
+        _isRecordType = false,
+        functionParts = parts;
 
   /// the unique identity of the type
   String get identity => "$import#$name";
@@ -55,6 +73,22 @@ class ResolvedType {
 
   /// Creates a [TypeReference] from the type
   Reference get refer {
+    final functionParts = this.functionParts;
+    if (functionParts != null) {
+      return FunctionType(
+        (b) => b
+          ..isNullable = isNullable
+          ..returnType = functionParts.returnType.refer
+          ..requiredParameters.addAll(functionParts.requiredParameters.map((e) => e.refer))
+          ..optionalParameters.addAll(functionParts.optionalParameters.map((e) => e.refer))
+          ..namedParameters.addAll({
+            for (final entry in functionParts.namedParameters.entries) entry.key: entry.value.refer,
+          })
+          ..namedRequiredParameters.addAll({
+            for (final entry in functionParts.namedRequiredParameters.entries) entry.key: entry.value.refer,
+          }),
+      );
+    }
     if (_isRecordType) {
       return RecordType(
         (b) => b
@@ -96,6 +130,7 @@ class ResolvedType {
       'isRecordType': _isRecordType,
       if (nameInRecord != null) 'nameInRecord': nameInRecord,
       if (typeArguments.isNotEmpty) 'typeArguments': typeArguments.map((e) => e.toJson()).toList(),
+      if (functionParts != null) 'functionParts': functionParts!.toJson(),
     };
   }
 
@@ -114,6 +149,7 @@ class ResolvedType {
       isRecordType: map['isRecordType'] as bool,
       nameInRecord: map['nameInRecord'] as String?,
       typeArguments: typedArgs,
+      functionParts: map['functionParts'] == null ? null : FunctionTypeParts.fromJson(map['functionParts']),
     );
   }
 
@@ -128,4 +164,59 @@ class ResolvedType {
 
   /// whether the type is a iterable
   bool get isIterable => name == 'Iterable';
+}
+
+/// The return type and parameter types of a function type.
+class FunctionTypeParts {
+  /// the return type
+  final ResolvedType returnType;
+
+  /// the types of the required positional parameters
+  final List<ResolvedType> requiredParameters;
+
+  /// the types of the optional positional parameters
+  final List<ResolvedType> optionalParameters;
+
+  /// the types of the optional named parameters, by name
+  final Map<String, ResolvedType> namedParameters;
+
+  /// the types of the required named parameters, by name
+  final Map<String, ResolvedType> namedRequiredParameters;
+
+  /// Default constructor
+  const FunctionTypeParts({
+    required this.returnType,
+    this.requiredParameters = const [],
+    this.optionalParameters = const [],
+    this.namedParameters = const {},
+    this.namedRequiredParameters = const {},
+  });
+
+  /// serializes the parts to json
+  Map<String, dynamic> toJson() {
+    return {
+      'returnType': returnType.toJson(),
+      'requiredParameters': requiredParameters.map((e) => e.toJson()).toList(),
+      'optionalParameters': optionalParameters.map((e) => e.toJson()).toList(),
+      'namedParameters': namedParameters.map((k, v) => MapEntry(k, v.toJson())),
+      'namedRequiredParameters': namedRequiredParameters.map((k, v) => MapEntry(k, v.toJson())),
+    };
+  }
+
+  /// deserializes the parts from json
+  factory FunctionTypeParts.fromJson(Map<String, dynamic> map) {
+    List<ResolvedType> list(String key) => [
+          for (final e in map[key] as List<dynamic>) ResolvedType.fromJson(e),
+        ];
+    Map<String, ResolvedType> named(String key) => {
+          for (final e in (map[key] as Map<String, dynamic>).entries) e.key: ResolvedType.fromJson(e.value),
+        };
+    return FunctionTypeParts(
+      returnType: ResolvedType.fromJson(map['returnType']),
+      requiredParameters: list('requiredParameters'),
+      optionalParameters: list('optionalParameters'),
+      namedParameters: named('namedParameters'),
+      namedRequiredParameters: named('namedRequiredParameters'),
+    );
+  }
 }
