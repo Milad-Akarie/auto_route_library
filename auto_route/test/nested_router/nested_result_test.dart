@@ -8,6 +8,7 @@ void main() {
   late RootStackRouter router;
   setUp(() {
     router = RootStackRouter.build(routes: [
+      AutoRoute(path: '/other', page: _OtherRoute.page),
       AutoRoute(
         path: '/home',
         page: _HomeRoute.page,
@@ -33,10 +34,9 @@ void main() {
     expect(router.urlState.url, '/home/content/1');
   });
 
-  // The push future belongs to the route pushed. A full path is matched from
-  // the root, so it pushes a new /home holding the content page; pushing the
-  // content route itself, or its path relative to /home, puts it in the
-  // existing home's stack, and popping it completes the push with true.
+  // The push future belongs to the route pushed. Pushing the content route
+  // itself, or its path relative to /home, puts it in the existing home's
+  // stack, and popping it completes the push with true.
   for (final (how, push) in [
     ('push()', (StackRouter root) => root.push<bool>(_ContentRoute('1'))),
     (
@@ -66,10 +66,57 @@ void main() {
       expect(result, isTrue);
     });
   }
+
+  testWidgets("pushPath('/home/content/1') with the home on top returns the content's bool", (tester) async {
+    await pumpRouterConfigApp(tester, router.config());
+    bool? result;
+    router.pushPath<bool>('/home/content/1').then((value) => result = value);
+    await tester.pumpAndSettle();
+    expect(router.stack.map((page) => page.name), ['HomeRoute']);
+
+    await tester.tap(find.byIcon(Icons.arrow_back));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(result, isTrue);
+  });
+
+  // When the parent is the page on top, its router takes the content page, so
+  // the push future belongs to the content page as in the tests above. When
+  // another page is on top, no open parent can take it and the full path
+  // pushes a new /home holding the content page, the same as pushing the
+  // parent with its children: the future then belongs to that new /home,
+  // which is what that push names, and popping the content page leaves it
+  // pending. That is intended; the content page alone is pushed with
+  // push(_ContentRoute) or the path relative to the home's router.
+  for (final (how, push) in [
+    ("pushPath('/home/content/1')", (StackRouter root) => root.pushPath<bool>('/home/content/1')),
+    (
+      'push(HomeRoute(children: [ContentRoute]))',
+      (StackRouter root) => root.push<bool>(_HomeRoute(children: [_ContentRoute('1')])),
+    ),
+  ]) {
+    testWidgets('$how with another page on top pushes a new parent whose future waits for the parent', (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      router.push(const _OtherRoute());
+      await tester.pumpAndSettle();
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'OtherRoute']);
+      var completed = false;
+      push(router).then((_) => completed = true);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'OtherRoute', 'HomeRoute']);
+      expect(find.text('Content 1'), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(completed, isFalse);
+    });
+  }
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
-  const _HomeRoute() : super(name);
+  const _HomeRoute({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(
@@ -96,4 +143,11 @@ class _ContentRoute extends PageRouteInfo<void> {
       ),
     ),
   );
+}
+
+class _OtherRoute extends PageRouteInfo<void> {
+  const _OtherRoute() : super(name);
+
+  static const String name = 'OtherRoute';
+  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Other')));
 }
