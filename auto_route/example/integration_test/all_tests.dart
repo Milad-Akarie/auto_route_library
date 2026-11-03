@@ -36,6 +36,7 @@ import 'pop_and_push_from_animating_modal_test.dart' as pop_and_push_from_animat
 import 'pop_scope_once_test.dart' as pop_scope_once;
 import 'pop_scope_test.dart' as pop_scope;
 import 'pop_while_reevaluating_test.dart' as pop_while_reevaluating;
+import 'popped_args_released_test.dart' as popped_args_released;
 import 'push_all_nested_routes_test.dart' as push_all_nested_routes;
 import 'push_and_pop_until_test.dart' as push_and_pop_until;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
@@ -104,6 +105,7 @@ void main() {
   group('pop scope', pop_scope.main);
   group('pop scope once', pop_scope_once.main);
   group('pop while reevaluating', pop_while_reevaluating.main);
+  group('popped args released', popped_args_released.main);
   group('push all nested routes', push_all_nested_routes.main);
   group('push and pop until', push_and_pop_until.main);
   group('push and reevaluate', push_and_reevaluate.main);
