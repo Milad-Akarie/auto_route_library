@@ -18,6 +18,7 @@ import 'query_params_on_pop_test.dart' as query_params_on_pop;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
 import 'replaced_push_future_test.dart' as replaced_push_future;
+import 'required_args_test.dart' as required_args;
 import 'tab_rebuild_test.dart' as tab_rebuild;
 import 'tab_routes_change_test.dart' as tab_routes_change;
 import 'url_on_pop_test.dart' as url_on_pop;
@@ -45,6 +46,7 @@ void main() {
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
   group('replaced push future', replaced_push_future.main);
+  group('required args', required_args.main);
   group('tab rebuild', tab_rebuild.main);
   group('tab routes change', tab_routes_change.main);
   group('url on pop', url_on_pop.main);

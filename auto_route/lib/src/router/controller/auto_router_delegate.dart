@@ -164,7 +164,11 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
 
     if (configuration.hasSegments) {
-      final platLink = PlatformDeepLink._(configuration, false);
+      final entryRoutes = controller.navigationHistory.routesOfBrowserEntry(configuration);
+      final platLink = PlatformDeepLink._(
+        entryRoutes == null ? configuration : configuration.copyWith(segments: entryRoutes),
+        false,
+      );
       final resolvedLink = deepLinkBuilder == null ? platLink : await deepLinkBuilder!(platLink);
       if (rebuildStackOnDeepLink) {
         controller.popUntil((route) => false);

@@ -17,10 +17,13 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   final _history = window.history;
 
-  // The url state of each browser entry this history has seen, by serial count.
-  // The browser exposes only its current entry, so an earlier entry is known
-  // only if it was current while the app navigated away from it.
+  // The url state of each browser entry, by the engine's serial count. The
+  // browser exposes only its current entry, so each entry is recorded when the
+  // app writes it and checked again whenever the browser shows it.
   final _entries = <int, UrlState>{};
+
+  // The serial count of the entry that holds the app's current url, as far as known.
+  int? _appIndex;
 
   // The url of the entry this history moved the browser to, until the browser reports it.
   String? _ownMoveUrl;
@@ -29,10 +32,26 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   @override
   void onNewUrlState(UrlState newState, {bool notify = true}) {
+    final browserIndex = _currentIndex;
+    final browserPath = ui_web.urlStrategy?.getPath();
     _recordCurrentEntry();
+    final isNewUrl = !_isSameUrl(urlState.url, newState.url);
     // While stepping back, the browser reports the new url once it gets there;
     // a notification now would make the router write it as a new entry.
     super.onNewUrlState(newState, notify: notify && !_isSteppingBack);
+    if (!isNewUrl || _isSteppingBack) return;
+    if (_isSameUrl(browserPath, newState.url)) {
+      // The browser moved first, by its own buttons or the address bar.
+      _entries[browserIndex] = newState;
+      _appIndex = browserIndex;
+    } else if (notify) {
+      // The router writes the new url after this frame: over the current entry
+      // for a replace, otherwise as a new entry, which drops those after it.
+      final index = (_appIndex ?? browserIndex) + (newState.shouldReplace ? 0 : 1);
+      _entries.removeWhere((key, _) => key >= index);
+      _entries[index] = newState;
+      _appIndex = index;
+    }
   }
 
   @override
@@ -53,6 +72,7 @@ class NavigationHistoryImpl extends NavigationHistory {
       } finally {
         _isSteppingBack = false;
       }
+      _appIndex = index - 1;
       _ownMoveUrl = newUrl;
       _history.back();
       return;
@@ -70,16 +90,20 @@ class NavigationHistoryImpl extends NavigationHistory {
     return ownMoveUrl != null && _isSameUrl(configuration.url, ownMoveUrl);
   }
 
-  // Records the current url state for the current browser entry, if the
-  // browser has caught up with it.
+  @override
+  List<RouteMatch>? routesOfBrowserEntry(UrlState configuration) {
+    final entry = _entries[_currentIndex];
+    if (entry == null || !entry.hasSegments || !_isSameUrl(entry.url, configuration.url)) return null;
+    return [UrlState.toHierarchy(entry.segments)];
+  }
+
+  // Records the app's current url state for the current browser entry, if
+  // the browser shows that url.
   void _recordCurrentEntry() {
-    final path = ui_web.urlStrategy?.getPath();
-    if (path == null) return;
-    if (_isSameUrl(path, urlState.url)) {
-      _entries[_currentIndex] = urlState;
-    } else {
-      _entries.remove(_currentIndex);
-    }
+    if (!_isSameUrl(ui_web.urlStrategy?.getPath(), urlState.url)) return;
+    final index = _currentIndex;
+    _entries[index] = urlState;
+    _appIndex = index;
   }
 
   bool _isSameUrl(String? a, String b) {

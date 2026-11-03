@@ -1,3 +1,4 @@
+import 'package:auto_route/src/matcher/route_match.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/widgets.dart';
@@ -58,6 +59,22 @@ abstract class NavigationHistory with ChangeNotifier {
   /// history never moves on its own.
   @internal
   bool consumeOwnBrowserMove(UrlState configuration) => false;
+
+  /// The routes the app showed when it wrote the browser entry that
+  /// [configuration], a route the platform just reported, came from.
+  ///
+  /// A browser entry holds only a url, so a page reopened from it by the
+  /// browser's back or forward button would lose the arguments the url can't
+  /// carry. The web history remembers the routes of each entry it wrote, with
+  /// their arguments, and [AutoRouterDelegate.setNewRoutePath] navigates to
+  /// those instead of the routes parsed from the url.
+  ///
+  /// Returns a single route holding its children, as [UrlState.toHierarchy]
+  /// builds it, or null when the current entry wasn't written by this history
+  /// or now holds a different url, such as one typed into the address bar.
+  /// Always null on native platforms.
+  @internal
+  List<RouteMatch>? routesOfBrowserEntry(UrlState configuration) => null;
 
   /// Pushes a new browser entry with given state
   ///
