@@ -67,7 +67,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   RouteInformation restoreRouteInformation(UrlState configuration) {
     final uri = configuration.url.isEmpty ? Uri(path: '/') : configuration.uri;
     return AutoRouteInformation._(
-      uri: kIsWeb ? escapeForWebEngine(uri) : uri,
+      uri: kIsWeb ? _WebEngineUri(uri) : uri,
       appUri: uri,
       replace: configuration.shouldReplace,
       state: configuration.savedRoutes == null
@@ -86,6 +86,134 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 /// escaping every '%' once more makes it give back [uri] as it was.
 @internal
 Uri escapeForWebEngine(Uri uri) => Uri.parse(uri.toString().replaceAll('%', '%25'));
+
+/// [uri] as the web engine needs it: its string is escaped for the engine, as
+/// [escapeForWebEngine] does, and its parts are [uri]'s own.
+///
+/// The engine gets the string. Flutter's own route information provider
+/// compares the parts with those of the uri the engine reported, so a report
+/// of the url the browser shows replaces its entry instead of adding one.
+class _WebEngineUri implements Uri {
+  _WebEngineUri(this._uri);
+
+  final Uri _uri;
+
+  late final String _escaped = escapeForWebEngine(_uri).toString();
+
+  @override
+  String toString() => _escaped;
+
+  @override
+  bool operator ==(Object other) => _uri == (other is _WebEngineUri ? other._uri : other);
+
+  @override
+  int get hashCode => _uri.hashCode;
+
+  @override
+  String get scheme => _uri.scheme;
+
+  @override
+  String get authority => _uri.authority;
+
+  @override
+  String get userInfo => _uri.userInfo;
+
+  @override
+  String get host => _uri.host;
+
+  @override
+  int get port => _uri.port;
+
+  @override
+  String get path => _uri.path;
+
+  @override
+  String get query => _uri.query;
+
+  @override
+  String get fragment => _uri.fragment;
+
+  @override
+  List<String> get pathSegments => _uri.pathSegments;
+
+  @override
+  Map<String, String> get queryParameters => _uri.queryParameters;
+
+  @override
+  Map<String, List<String>> get queryParametersAll => _uri.queryParametersAll;
+
+  @override
+  bool get isAbsolute => _uri.isAbsolute;
+
+  @override
+  bool get hasScheme => _uri.hasScheme;
+
+  @override
+  bool get hasAuthority => _uri.hasAuthority;
+
+  @override
+  bool get hasPort => _uri.hasPort;
+
+  @override
+  bool get hasQuery => _uri.hasQuery;
+
+  @override
+  bool get hasFragment => _uri.hasFragment;
+
+  @override
+  bool get hasEmptyPath => _uri.hasEmptyPath;
+
+  @override
+  bool get hasAbsolutePath => _uri.hasAbsolutePath;
+
+  @override
+  String get origin => _uri.origin;
+
+  @override
+  bool isScheme(String scheme) => _uri.isScheme(scheme);
+
+  @override
+  String toFilePath({bool? windows}) => _uri.toFilePath(windows: windows);
+
+  @override
+  UriData? get data => _uri.data;
+
+  @override
+  Uri replace({
+    String? scheme,
+    String? userInfo,
+    String? host,
+    int? port,
+    String? path,
+    Iterable<String>? pathSegments,
+    String? query,
+    Map<String, dynamic>? queryParameters,
+    String? fragment,
+  }) =>
+      _uri.replace(
+        scheme: scheme,
+        userInfo: userInfo,
+        host: host,
+        port: port,
+        path: path,
+        pathSegments: pathSegments,
+        query: query,
+        queryParameters: queryParameters,
+        fragment: fragment,
+      );
+
+  @override
+  Uri removeFragment() => _uri.removeFragment();
+
+  @override
+  Uri resolve(String reference) => _uri.resolve(reference);
+
+  @override
+  Uri resolveUri(Uri reference) => _uri.resolveUri(reference);
+
+  @override
+  Uri normalizePath() => _uri.normalizePath();
+}
 
 /// An extended type of [RouteInformation] that holds
 /// an extra property [replace] which forces the current

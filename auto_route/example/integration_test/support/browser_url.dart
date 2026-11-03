@@ -12,3 +12,7 @@ void pressBrowserForward() => throw UnsupportedError('Only the web has a browser
 
 /// Types a url into the browser's address bar; only the web has one.
 void typeBrowserUrl(String path) => throw UnsupportedError('Only the web has an address bar.');
+
+/// Makes the browser's current entry hold [path], as when the app is opened at
+/// a deep link; only the web has one.
+void openBrowserAt(String path) => throw UnsupportedError('Only the web has an address bar.');

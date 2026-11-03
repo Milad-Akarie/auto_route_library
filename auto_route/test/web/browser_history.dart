@@ -2,6 +2,7 @@ import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' show Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web/web.dart' show WindowEventGetters, window;
 
@@ -74,3 +75,30 @@ Future<void> browserMove(WidgetTester tester, VoidCallback move) async {
 
 /// Presses the browser's back button and settles.
 Future<void> pressBrowserBack(WidgetTester tester) => browserMove(tester, () => window.history.back());
+
+/// Makes the browser's current entry hold [path], as when the app is opened at
+/// a deep link, and makes [path] the app's initial route.
+///
+/// The entry keeps the engine's serial number, so [browserSerialCount] stays
+/// where it was. Clears the initial route when the test ends.
+void openBrowserAt(WidgetTester tester, String path) {
+  final dispatcher = tester.binding.platformDispatcher;
+  addTearDown(dispatcher.clearDefaultRouteNameTestValue);
+  dispatcher.defaultRouteNameTestValue = path;
+  window.history.replaceState(window.history.state, '', '#$path');
+}
+
+/// Shows [app] the way runApp starts an app, and settles.
+///
+/// runApp builds the widget tree before the first frame, and the frame comes
+/// after the pending microtasks, so the Router reports the route of the
+/// finished initial navigation. In a test the tree is already there, and
+/// [WidgetTester.pumpWidget] builds the app inside a frame, so the Router
+/// first reports the empty route of the unfinished navigation, as no app
+/// started by runApp does.
+Future<void> pumpAsRunApp(WidgetTester tester, Widget app) async {
+  tester.binding.attachRootWidget(tester.binding.wrapWithDefaultView(app));
+  tester.binding.buildOwner!.buildScope(tester.binding.rootElement!);
+  await Future<void>.delayed(Duration.zero);
+  await settleBrowser(tester);
+}

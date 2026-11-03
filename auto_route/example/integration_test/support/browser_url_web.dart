@@ -10,6 +10,7 @@ extension type _History(JSObject _) implements JSObject {
   external void back();
   external void forward();
   external JSAny? get state;
+  external void replaceState(JSAny? data, String unused, String url);
 }
 
 /// The serial number the engine gives the browser's current history entry.
@@ -26,6 +27,12 @@ void pressBrowserBack() => _history.back();
 
 /// Presses the browser's forward button: moves the browser one entry forward.
 void pressBrowserForward() => _history.forward();
+
+/// Makes the browser's current entry hold [path], as when the app is opened at
+/// a deep link.
+///
+/// The entry keeps its serial number, so [browserEntryIndex] stays the same.
+void openBrowserAt(String path) => _history.replaceState(_history.state, '', '#$path');
 
 /// Types [path] into the address bar and presses enter.
 ///

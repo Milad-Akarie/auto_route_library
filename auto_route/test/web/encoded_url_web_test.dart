@@ -74,6 +74,31 @@ void main() {
     expect(find.text('id 1, query a&b=c/d?e#f'), findsOneWidget);
     expect(browserPath, encoded);
   });
+
+  // https://github.com/Milad-Akarie/auto_route_library/issues/1812
+  // With Flutter's own route information provider, open the app at a deep
+  // link whose path param holds an encoded '#'. The browser should keep one
+  // history entry for it, as for a link without one; with a second entry, the
+  // first back would show the same page again.
+  testWidgets('On web, a deep link to an encoded url adds no history entry with Flutter\'s route information provider',
+      (tester) async {
+    for (final (link, id) in [('/seconds/12', '12'), ('/seconds/1%232', '1#2')]) {
+      await rewindBrowserHistory();
+      openBrowserAt(tester, link);
+      final linkedRouter = RootStackRouter.build(routes: router.routes);
+      await pumpAsRunApp(
+        tester,
+        MaterialApp.router(
+          routeInformationParser: linkedRouter.defaultRouteParser(),
+          routerDelegate: linkedRouter.delegate(),
+        ),
+      );
+      expect(find.text('id $id, query null'), findsOneWidget);
+      expect(browserPath, link);
+      expect(browserSerialCount, 0, reason: link);
+      await tester.pumpWidget(const SizedBox());
+    }
+  });
 }
 
 class _SecondsRoute extends PageRouteInfo<void> {

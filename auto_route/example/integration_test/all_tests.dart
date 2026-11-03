@@ -19,6 +19,7 @@ import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
 import 'disposed_nested_router_test.dart' as disposed_nested_router;
 import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'encoded_path_params_test.dart' as encoded_path_params;
+import 'encoded_deep_link_test.dart' as encoded_deep_link;
 import 'encoded_url_test.dart' as encoded_url;
 import 'enum_query_param_test.dart' as enum_query_param;
 import 'hero_nested_router_test.dart' as hero_nested_router;
@@ -138,6 +139,7 @@ void main() {
   group('disposed nested router', disposed_nested_router.main);
   group('empty nested router', empty_nested_router.main);
   group('encoded path params', encoded_path_params.main);
+  group('encoded deep link', encoded_deep_link.main);
   group('encoded url', encoded_url.main);
   group('enum query param', enum_query_param.main);
   group('hero nested router', hero_nested_router.main);
