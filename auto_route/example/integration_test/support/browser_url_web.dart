@@ -8,6 +8,7 @@ external _History get _history;
 
 extension type _History(JSObject _) implements JSObject {
   external void back();
+  external void forward();
   external JSAny? get state;
 }
 
@@ -23,8 +24,18 @@ int? browserEntryIndex() {
 /// Presses the browser's back button: moves the browser one entry back.
 void pressBrowserBack() => _history.back();
 
+/// Presses the browser's forward button: moves the browser one entry forward.
+void pressBrowserForward() => _history.forward();
+
+/// Types [path] into the address bar and presses enter.
+///
+/// The app keeps its url after '#', so the browser opens the new entry
+/// without reloading the page.
+void typeBrowserUrl(String path) => _location.hash = path;
+
 extension type _Location(JSObject _) implements JSObject {
   external String get hash;
+  external set hash(String value);
   external String get pathname;
   external String get search;
 }

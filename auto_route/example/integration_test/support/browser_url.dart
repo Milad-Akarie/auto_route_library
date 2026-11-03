@@ -6,3 +6,9 @@ int? browserEntryIndex() => null;
 
 /// Presses the browser's back button; only the web has one.
 void pressBrowserBack() => throw UnsupportedError('Only the web has a browser back button.');
+
+/// Presses the browser's forward button; only the web has one.
+void pressBrowserForward() => throw UnsupportedError('Only the web has a browser forward button.');
+
+/// Types a url into the browser's address bar; only the web has one.
+void typeBrowserUrl(String path) => throw UnsupportedError('Only the web has an address bar.');
