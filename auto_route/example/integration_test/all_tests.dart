@@ -16,6 +16,7 @@ import 'optional_args_on_back_test.dart' as optional_args_on_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_scope_test.dart' as pop_scope;
+import 'push_and_pop_until_test.dart' as push_and_pop_until;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
 import 'push_futures_test.dart' as push_futures;
 import 'query_params_on_pop_test.dart' as query_params_on_pop;
@@ -48,6 +49,7 @@ void main() {
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('pop and back', pop_and_back.main);
   group('pop scope', pop_scope.main);
+  group('push and pop until', push_and_pop_until.main);
   group('push and reevaluate', push_and_reevaluate.main);
   group('push futures', push_futures.main);
   group('query params on pop', query_params_on_pop.main);
