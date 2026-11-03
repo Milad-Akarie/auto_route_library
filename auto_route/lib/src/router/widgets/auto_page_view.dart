@@ -66,6 +66,8 @@ class AutoPageViewState extends State<AutoPageView> {
   final _tabKeys = <LocalKey, GlobalKey<KeepAliveTabState>>{};
   // The tabs [_children] were built for, to tell when the routes change.
   var _matchIds = <LocalKey>[];
+  // Tabs a drag loaded before they were opened; observers have not heard of them.
+  final _draggedInTabs = <LocalKey>{};
 
   @override
   void initState() {
@@ -104,26 +106,42 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   /// Preload the page at [index]
+  ///
+  /// Returns true when this opens the tab for the first time, also when a
+  /// drag already loaded it.
   bool preload(int index) {
+    final draggedIn = _draggedInTabs.remove(_matchIdAt(index));
     final didPreload = _tabKeyAt(index)?.currentState?.preload() == true;
     if (didPreload && mounted) {
       setState(() {
         _updateChildren();
       });
     }
-    return didPreload;
+    return didPreload || draggedIn;
   }
 
-  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) {
+  // Loads the tab a drag is uncovering, without opening it.
+  void _preloadDraggedIn(int index) {
+    if (_tabKeyAt(index)?.currentState?.preload() != true) return;
+    _draggedInTabs.add(_matchIdAt(index)!);
+    if (mounted) {
+      setState(_updateChildren);
+    }
+  }
+
+  LocalKey? _matchIdAt(int index) {
     final stack = _router.stack;
     if (index < 0 || index >= stack.length) return null;
-    return _tabKeys[stack[index].routeData.matchId];
+    return stack[index].routeData.matchId;
   }
+
+  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) => _tabKeys[_matchIdAt(index)];
 
   void _updateChildren() {
     final stack = widget.router.stack;
     _matchIds = [for (final page in stack) page.routeData.matchId];
     _tabKeys.removeWhere((matchId, _) => !_matchIds.contains(matchId));
+    _draggedInTabs.retainAll(_matchIds);
     _children = List.generate(stack.length, (index) {
       final isActive = _router.activeIndex == index;
       // The page view keeps every tab laid out beside the active one; a screen
@@ -225,9 +243,9 @@ class AutoPageViewState extends State<AutoPageView> {
       final deltaDx = notification.dragDetails?.delta.dx;
       if (deltaDx != null) {
         if (deltaDx > 0 && currentPage > 0) {
-          preload(currentPage - 1);
+          _preloadDraggedIn(currentPage - 1);
         } else if (deltaDx < 0 && currentPage < _children.length) {
-          preload(currentPage + 1);
+          _preloadDraggedIn(currentPage + 1);
         }
       }
     }

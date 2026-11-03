@@ -87,6 +87,7 @@ import 'restore_stack_test.dart' as restore_stack;
 import 'restore_tabs_test.dart' as restore_tabs;
 import 'root_bottom_sheet_aware_test.dart' as root_bottom_sheet_aware;
 import 'route_aware_mixin_test.dart' as route_aware_mixin;
+import 'swipe_init_tab_test.dart' as swipe_init_tab;
 import 'tab_bar_dispose_test.dart' as tab_bar_dispose;
 import 'tab_bar_indicator_test.dart' as tab_bar_indicator;
 import 'tab_cached_context_test.dart' as tab_cached_context;
@@ -202,6 +203,7 @@ void main() {
   group('restore tabs', restore_tabs.main);
   group('root bottom sheet aware', root_bottom_sheet_aware.main);
   group('route aware mixin', route_aware_mixin.main);
+  group('swipe init tab', swipe_init_tab.main);
   group('tab bar dispose', tab_bar_dispose.main);
   group('tab bar indicator', tab_bar_indicator.main);
   group('tab cached context', tab_cached_context.main);
