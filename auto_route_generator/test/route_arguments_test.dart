@@ -179,4 +179,48 @@ const firstPage = 1;
       );
     });
   });
+
+  // A default value is a const expression when its code starts with `const`.
+  // One that only contains the text, such as the constant `constTitle`, was
+  // written into the args class as `const Title`: "Undefined class 'Title'".
+  group('a default value named after const', () {
+    test('is written as it is', () async {
+      final result = await generateRouter({
+        'lib/defaults.dart': '''
+const constTitle = 'Home';
+''',
+        'lib/home_screen.dart': _page(
+          'HomeScreen',
+          imports: "import 'defaults.dart';",
+          parameters: 'this.title = constTitle',
+          fields: '  final String title;',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, matches(RegExp(r'this\.title = _i\d+\.constTitle')));
+    });
+
+    test('keeps a const value const', () async {
+      final result = await generateRouter({
+        'lib/defaults.dart': '''
+class Range {
+  final int low;
+  const Range(this.low);
+}
+''',
+        'lib/home_screen.dart': _page(
+          'HomeScreen',
+          imports: "import 'defaults.dart';",
+          parameters: 'this.range = const Range(1), this.tags = const <String>[]',
+          fields: '''
+  final Range range;
+  final List<String> tags;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, matches(RegExp(r'this\.range = const _i\d+\.Range\(1\)')));
+    });
+  });
 }

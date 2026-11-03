@@ -255,6 +255,10 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
   ];
 }
 
+/// The `const` keyword opening a default value's code, not a name that
+/// contains the text, such as `constTitle`.
+final _constKeyword = RegExp(r'^const\b');
+
 /// Builds a list of [Parameter]s from the given [parameters]
 Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter,
     {bool toThis = true, bool useSafeName = true}) {
@@ -263,14 +267,14 @@ Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emi
       (b) {
         Code? defaultCode;
         if (p.defaultValueCode != null) {
-          if (p.defaultValueCode!.contains('const')) {
+          if (_constKeyword.hasMatch(p.defaultValueCode!)) {
             if (p.defaultValueCode!.contains('[]')) {
               defaultCode = Code('const []');
             } else if (p.defaultValueCode!.contains('{}')) {
               defaultCode = Code('const {}');
             } else {
               defaultCode = Code(
-                  'const ${refer(p.defaultValueCode!.replaceAll('const', ''), p.defaultValueImport ?? p.type.import).accept(emitter).toString()}');
+                  'const ${refer(p.defaultValueCode!.replaceFirst(_constKeyword, ''), p.defaultValueImport ?? p.type.import).accept(emitter).toString()}');
             }
           } else {
             defaultCode = refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import).code;
