@@ -206,6 +206,19 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
 
   void _setupController();
 
+  // One key per tab, not per index, so a tab moved by a routes change keeps
+  // its state. Global, because IndexedStack wraps each child in a widget
+  // without a key, so a local key can't take the tab's state to its new index.
+  final _tabKeys = <LocalKey, GlobalKey>{};
+
+  GlobalKey _tabKeyOf(AutoRoutePage page) {
+    if (_tabKeys.length > _controller!.pageCount) {
+      final matchIds = {for (final page in _controller!.stack) page.routeData.matchId};
+      _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
+    }
+    return _tabKeys.putIfAbsent(page.routeData.matchId, GlobalKey.new);
+  }
+
   /// A callback that is called before a tab activates
   /// subclasses can override this to preload the widget
   /// associated with the tab
@@ -346,7 +359,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
             navigatorObservers: _navigatorObservers,
             itemBuilder: (BuildContext context, int index) {
               return KeepAliveTab(
-                key: ValueKey(index),
+                key: _tabKeyOf(stack[index]),
                 page: stack[index],
               );
             },
@@ -847,7 +860,7 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
             List.generate(
               stack.length,
               (index) => KeepAliveTab(
-                key: ValueKey(index),
+                key: _tabKeyOf(stack[index]),
                 page: stack[index],
               ),
             ),

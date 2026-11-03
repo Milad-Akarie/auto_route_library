@@ -57,12 +57,15 @@ class AutoPageView extends StatefulWidget {
 
 /// State implementation of [AutoPageView]
 class AutoPageViewState extends State<AutoPageView> {
-  late final PageController _controller = widget.controller;
+  // Read from the widget: when the routes change, the parent hands a new
+  // controller that starts on the active page.
+  PageController get _controller => widget.controller;
   late final TabsRouter _router = widget.router;
   late List<Widget> _children;
   int _warpUnderwayCount = 0;
   int _scrollUnderwayCount = 0;
-  final _tabKeys = <int, GlobalKey<KeepAliveTabState>>{};
+  // Keyed by tab, not index, so a tab moved by a routes change keeps its state.
+  final _tabKeys = <LocalKey, GlobalKey<KeepAliveTabState>>{};
 
   @override
   void initState() {
@@ -75,7 +78,8 @@ class AutoPageViewState extends State<AutoPageView> {
   void didUpdateWidget(AutoPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
-      _controller.jumpToPage(_router.activeIndex);
+      // The routes changed: show the new pages.
+      _updateChildren();
     }
   }
 
@@ -95,7 +99,7 @@ class AutoPageViewState extends State<AutoPageView> {
 
   /// Preload the page at [index]
   bool preload(int index) {
-    final didPreload = _tabKeys[index]?.currentState?.preload() == true;
+    final didPreload = _tabKeyAt(index)?.currentState?.preload() == true;
     if (didPreload && mounted) {
       setState(() {
         _updateChildren();
@@ -104,12 +108,20 @@ class AutoPageViewState extends State<AutoPageView> {
     return didPreload;
   }
 
+  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) {
+    final stack = _router.stack;
+    if (index < 0 || index >= stack.length) return null;
+    return _tabKeys[stack[index].routeData.matchId];
+  }
+
   void _updateChildren() {
     final stack = widget.router.stack;
+    final matchIds = {for (final page in stack) page.routeData.matchId};
+    _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
     _children = List.generate(
       stack.length,
       (index) => KeepAliveTab(
-        key: _tabKeys.putIfAbsent(index, () => GlobalKey()),
+        key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, () => GlobalKey()),
         initiallyLoaded: _router.activeIndex == index,
         page: stack[index],
       ),
@@ -117,9 +129,10 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   void _disposeInactiveChildren() {
-    for (int i = 0; i < _tabKeys.length; i++) {
+    final stack = _router.stack;
+    for (int i = 0; i < stack.length; i++) {
       if (i != _router.activeIndex) {
-        _tabKeys[i]?.currentState?.unloadIfRequired();
+        _tabKeys[stack[i].routeData.matchId]?.currentState?.unloadIfRequired();
       }
     }
   }

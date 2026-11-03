@@ -62,7 +62,8 @@ class AutoTabViewState extends State<AutoTabView> {
   int? _currentIndex;
   int _warpUnderwayCount = 0;
   int _scrollUnderwayCount = 0;
-  final _tabKeys = <int, GlobalKey<KeepAliveTabState>>{};
+  // Keyed by tab, not index, so a tab moved by a routes change keeps its state.
+  final _tabKeys = <LocalKey, GlobalKey<KeepAliveTabState>>{};
 
   TabsRouter get _router => widget.router;
 
@@ -82,7 +83,7 @@ class AutoTabViewState extends State<AutoTabView> {
 
   /// Preload the page at [index]
   bool preload(int index) {
-    final didPreload = _tabKeys[index]?.currentState?.preload() == true;
+    final didPreload = _tabKeyAt(index)?.currentState?.preload() == true;
     if (didPreload) {
       _updateChildren();
     }
@@ -97,8 +98,10 @@ class AutoTabViewState extends State<AutoTabView> {
       _controller.animation?.addListener(_handleTabControllerAnimationTick);
       _updateChildren();
 
+      // The routes changed. A new page controller starts on the active page
+      // once the new pages are laid out; a jump now would land among the old ones.
       _currentIndex = _controller.index;
-      _pageController.jumpToPage(_currentIndex!);
+      _pageController = PageController(initialPage: _currentIndex!);
     }
   }
 
@@ -120,12 +123,20 @@ class AutoTabViewState extends State<AutoTabView> {
     super.dispose();
   }
 
+  GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) {
+    final stack = _router.stack;
+    if (index < 0 || index >= stack.length) return null;
+    return _tabKeys[stack[index].routeData.matchId];
+  }
+
   void _updateChildren() {
     final stack = _router.stack;
+    final matchIds = {for (final page in stack) page.routeData.matchId};
+    _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
     _children = List.generate(
       stack.length,
       (index) => KeepAliveTab(
-        key: _tabKeys.putIfAbsent(index, () => GlobalKey()),
+        key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, () => GlobalKey()),
         initiallyLoaded: _router.activeIndex == index,
         page: stack[index],
       ),
@@ -133,9 +144,10 @@ class AutoTabViewState extends State<AutoTabView> {
   }
 
   void _disposeInactiveChildren() {
-    for (int i = 0; i < _tabKeys.length; i++) {
+    final stack = _router.stack;
+    for (int i = 0; i < stack.length; i++) {
       if (i != _router.activeIndex) {
-        _tabKeys[i]?.currentState?.unloadIfRequired();
+        _tabKeys[stack[i].routeData.matchId]?.currentState?.unloadIfRequired();
       }
     }
   }
