@@ -9,6 +9,7 @@ This repository is its own product: a maintained fork of the auto_route package.
 4. A new issue found along the way goes to its own chat, on a model that fits its difficulty, with these rules passed on. First check that no chat is on it already.
 5. Before solving an issue, check whether other issues are similar or rest on the same groundwork. Do the groundwork first, in its own commit, then each issue on top, one commit each.
 6. No pull requests and no new issues upstream. `Co-authored-by` trailers for code taken from others stay.
+7. Before changing code for an issue, reproduce exactly the bug that was reported: the reporter's setup, platform, steps and, when they matter, versions. Read every comment on the issue, including the comments it links to. If the reproduction or the comments show it is intended behavior, a misuse or already answered, change no code. Commit a test that documents the behavior, or none, and say why in the report. This keeps us from fixing something that should not be fixed.
 
 Also: never push (the maintainer merges into `dev` and pushes), format only the lines you add, American English, made-up names in code and fixtures.
 
@@ -30,7 +31,7 @@ Also: never push (the maintainer merges into `dev` and pushes), format only the 
    flutter test --platform chrome
    ```
 
-   Then from `auto_route/example/` for the integration tests, on macOS, the Pixel_9 emulator and the iOS simulator:
+   The integration tests run on all four platforms at the same time, not one after another: each platform runs from its own worktree so the builds don't clash, and a run waits only for a device that another chat's run is using. Give each chat its own ChromeDriver port (`--port=<n>` and `flutter drive --driver-port=<n>`), and use `Pixel_9_Pro_Fold` (`-port 5556`, so `emulator-5556`) when `Pixel_9` is busy. From `auto_route/example/`, on macOS, the Pixel_9 emulator and the iOS simulator:
 
    ```bash
    flutter test integration_test/all_tests.dart -d macos
