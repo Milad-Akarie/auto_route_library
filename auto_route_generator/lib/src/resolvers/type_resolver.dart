@@ -81,44 +81,39 @@ class TypeResolver {
     final types = <ResolvedType>[];
     if (typeToCheck is RecordType) {
       for (final recordField in typeToCheck.positionalFields) {
-        types.add(ResolvedType(
-          name: recordField.type.element?.displayName ?? 'void',
-          import: resolveImport(recordField.type.element),
-          isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
-          typeArguments: _resolveTypeArguments(recordField.type),
-        ));
+        types.add(_resolveNestedType(recordField.type));
       }
       for (final recordField in typeToCheck.namedFields) {
-        types.add(ResolvedType(
-          name: recordField.type.element?.displayName ?? 'void',
-          import: resolveImport(recordField.type.element),
-          isNullable: recordField.type.nullabilitySuffix == NullabilitySuffix.question,
-          typeArguments: _resolveTypeArguments(recordField.type),
-          nameInRecord: recordField.name,
-        ));
+        types.add(_resolveNestedType(recordField.type, nameInRecord: recordField.name));
       }
     } else if (typeToCheck is ParameterizedType) {
       for (DartType type in typeToCheck.typeArguments) {
-        if (type is RecordType) {
-          types.add(ResolvedType.record(
-            name: type.nameWithoutSuffix,
-            import: resolveImport(type.element),
-            isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
-            typeArguments: _resolveTypeArguments(type),
-          ));
-        } else if (type.element is TypeParameterElement) {
-          types.add(ResolvedType(name: 'dynamic'));
-        } else {
-          types.add(ResolvedType(
-            name: type.element?.displayName ?? 'void',
-            import: resolveImport(type.element),
-            isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
-            typeArguments: _resolveTypeArguments(type),
-          ));
-        }
+        types.add(_resolveNestedType(type));
       }
     }
     return types;
+  }
+
+  /// Resolves a type argument or a record field, which may be a record itself.
+  ResolvedType _resolveNestedType(DartType type, {String? nameInRecord}) {
+    if (type is RecordType) {
+      return ResolvedType.record(
+        name: type.nameWithoutSuffix,
+        import: resolveImport(type.element),
+        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        typeArguments: _resolveTypeArguments(type),
+        nameInRecord: nameInRecord,
+      );
+    } else if (type.element is TypeParameterElement) {
+      return ResolvedType(name: 'dynamic', nameInRecord: nameInRecord);
+    }
+    return ResolvedType(
+      name: type.element?.displayName ?? 'void',
+      import: resolveImport(type.element),
+      isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+      typeArguments: _resolveTypeArguments(type),
+      nameInRecord: nameInRecord,
+    );
   }
 
   /// Resolves the given [type] to a [ResolvedType]
