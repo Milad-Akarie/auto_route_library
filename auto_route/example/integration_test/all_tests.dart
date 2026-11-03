@@ -83,6 +83,7 @@ import 'replace_rejected_test.dart' as replace_rejected;
 import 'replaced_push_future_test.dart' as replaced_push_future;
 import 'required_args_test.dart' as required_args;
 import 'restore_args_test.dart' as restore_args;
+import 'restore_history_test.dart' as restore_history;
 import 'restore_stack_test.dart' as restore_stack;
 import 'restore_tabs_test.dart' as restore_tabs;
 import 'root_bottom_sheet_aware_test.dart' as root_bottom_sheet_aware;
@@ -201,6 +202,7 @@ void main() {
   group('replaced push future', replaced_push_future.main);
   group('required args', required_args.main);
   group('restore args', restore_args.main);
+  group('restore history', restore_history.main);
   group('restore stack', restore_stack.main);
   group('restore tabs', restore_tabs.main);
   group('root bottom sheet aware', root_bottom_sheet_aware.main);

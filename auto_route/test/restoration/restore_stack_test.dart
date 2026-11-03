@@ -111,6 +111,40 @@ void main() {
       expect(find.text(expected), findsOneWidget);
     }
   }, skip: kIsWeb);
+  // https://github.com/Milad-Akarie/auto_route_library/issues/2253
+  // With restorationScopeId on the app and a restorationId on each page,
+  // go Home, Products, ProductDetails, then let the platform end and
+  // restore the app. ProductDetails should show, and back should return to
+  // Products, then Home, instead of closing the app. The routes keep the
+  // paths the generator gives them, which don't nest, so the restored url
+  // alone can't bring the pages before it back.
+  testWidgets('back after restoration returns through the pages before it', (tester) async {
+    RootStackRouter buildShopRouter() => RootStackRouter.build(routes: [
+          AutoRoute(page: page('HomeRoute'), restorationId: (match) => match.name, initial: true),
+          AutoRoute(page: page('ProductsRoute'), restorationId: (match) => match.name),
+          AutoRoute(page: page('ProductDetailsRoute'), restorationId: (match) => match.name),
+        ]);
+    await tester.pumpWidget(RestorableRouterApp(buildShopRouter));
+    await tester.pumpAndSettle();
+    RestorableRouterApp.router.push(const NamedRoute('ProductsRoute'));
+    await tester.pumpAndSettle();
+    RestorableRouterApp.router.push(const NamedRoute('ProductDetailsRoute'));
+    await tester.pumpAndSettle();
+
+    await tester.restartAndRestore();
+    await tester.pumpAndSettle();
+    final router = RestorableRouterApp.router;
+    expect(find.text('ProductDetailsRoute'), findsOneWidget);
+    expect(router.stack.map((page) => page.name), ['HomeRoute', 'ProductsRoute', 'ProductDetailsRoute']);
+
+    expect(await tester.binding.handlePopRoute(), isTrue);
+    await tester.pumpAndSettle();
+    expect(find.text('ProductsRoute'), findsOneWidget);
+    expect(await tester.binding.handlePopRoute(), isTrue);
+    await tester.pumpAndSettle();
+    expect(find.text('HomeRoute'), findsOneWidget);
+    expect(router.canPop(), isFalse);
+  }, skip: kIsWeb);
 }
 
 final itemPage = PageInfo('ItemRoute', builder: (data) => Text('Item ${data.inheritedPathParams.getString('id')}'));
