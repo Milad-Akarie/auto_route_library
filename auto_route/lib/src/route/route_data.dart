@@ -43,6 +43,8 @@ class RouteData<R> {
     required List<RouteMatch> pendingChildren,
     required this.type,
   })  : _match = route,
+        _ownQueryParams = route.queryParams,
+        _ownFragment = route.fragment,
         _popCompleter = popCompleter,
         _parent = parent,
         _pendingChildren = List<RouteMatch>.from(pendingChildren);
@@ -115,6 +117,12 @@ class RouteData<R> {
       return args;
     }
   }
+
+  // The query params and fragment this route was opened with. A route pushed
+  // on top shares its own with every route in the stack, so these are kept
+  // apart to be shared again once that route is popped.
+  Parameters _ownQueryParams;
+  String _ownFragment;
 
   void _updateRoute(RouteMatch value) {
     if (_match != value) {
@@ -212,6 +220,8 @@ class RouteData<R> {
   void _onStartReevaluating(RouteMatch newMatch) {
     _isReevaluating = true;
     _updateRoute(newMatch);
+    _ownQueryParams = newMatch.queryParams;
+    _ownFragment = newMatch.fragment;
     _pendingChildren = List<RouteMatch>.from(newMatch.children ?? []);
   }
 

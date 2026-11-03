@@ -1290,7 +1290,7 @@ abstract class StackRouter extends RoutingController {
   /// that does not use [PageRoute] will not trigger this method
   void onPopPage(AutoRoutePage<Object?> page) {
     if (!_pages.remove(page)) return;
-    _updateSharedPathData(includeAncestors: true);
+    _shareTopPathData();
     notifyListeners();
     navigationHistory.rebuildUrlAfterPop();
   }
@@ -1302,10 +1302,21 @@ abstract class StackRouter extends RoutingController {
       // Removed pages may be disposed without a pop callback from Navigator.
       page.routeData.onPopInvoked(null);
     }
-    _updateSharedPathData(includeAncestors: true);
+    _shareTopPathData();
     if (notify) {
       notifyAll(forceUrlRebuild: true);
     }
+  }
+
+  // Shares the query params and fragment the page now on top was opened with,
+  // after the page above it was removed.
+  void _shareTopPathData() {
+    final top = _pages.lastOrNull?.routeData;
+    _updateSharedPathData(
+      queryParams: top?._ownQueryParams.rawMap ?? const {},
+      fragment: top?._ownFragment ?? '',
+      includeAncestors: true,
+    );
   }
 
   @override

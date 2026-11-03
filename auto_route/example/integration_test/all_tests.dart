@@ -13,6 +13,7 @@ import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
 import 'push_futures_test.dart' as push_futures;
+import 'query_params_on_pop_test.dart' as query_params_on_pop;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
 import 'replaced_push_future_test.dart' as replaced_push_future;
@@ -38,6 +39,7 @@ void main() {
   group('pop and back', pop_and_back.main);
   group('push and reevaluate', push_and_reevaluate.main);
   group('push futures', push_futures.main);
+  group('query params on pop', query_params_on_pop.main);
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
   group('replaced push future', replaced_push_future.main);
