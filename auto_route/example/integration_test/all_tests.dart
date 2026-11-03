@@ -30,6 +30,7 @@ import 'nested_route_aware_test.dart' as nested_route_aware;
 import 'optional_args_on_back_test.dart' as optional_args_on_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'page_view_swipe_back_test.dart' as page_view_swipe_back;
+import 'pageless_push_rebuild_test.dart' as pageless_push_rebuild;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_and_push_all_test.dart' as pop_and_push_all;
 import 'pop_and_push_from_animating_modal_test.dart' as pop_and_push_from_animating_modal;
@@ -102,6 +103,7 @@ void main() {
   group('optional args on back', optional_args_on_back.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('page view swipe back', page_view_swipe_back.main);
+  group('pageless push rebuild', pageless_push_rebuild.main);
   group('pop and back', pop_and_back.main);
   group('pop and push all', pop_and_push_all.main);
   group('pop and push from animating modal', pop_and_push_from_animating_modal.main);
