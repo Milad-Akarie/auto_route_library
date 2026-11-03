@@ -45,6 +45,55 @@ class HomePage extends StatelessWidget {
     expect(result.compileErrors, isEmpty);
     expect(result.source, contains("import 'package:app/home_page.dart' as _i"));
   });
+
+  // #1870: a page whose name `replaceInRouteName` does not change, such as
+  // `CostsTab`, got a route with the page's own name. In a part file that
+  // route is declared in the library that imports the page, so it shadowed
+  // the page and the build left a router that does not compile.
+  group('a page the default replacement does not rename (#1870)', () {
+    String router({required bool part}) => '''
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
+
+import 'costs_tab.dart';
+${part ? "\npart 'router.gr.dart';\n" : ''}
+@AutoRouterConfig()
+class AppRouter extends RootStackRouter {
+  @override
+  List<AutoRoute> get routes => [];
+}
+''';
+
+    test('fails the build with the fix in a part file', () async {
+      final result = await generateRouter({
+        'lib/router.dart': router(part: true),
+        'lib/costs_tab.dart': _page('CostsTab'),
+      });
+      expect(result.errors, hasLength(1));
+      expect(result.errors.single, contains('CostsTab'));
+      expect(result.errors.single, contains("@RoutePage(name: 'CostsTabRoute')"));
+    });
+
+    test('compiles in a part file once the page is named', () async {
+      final result = await generateRouter({
+        'lib/router.dart': router(part: true),
+        'lib/costs_tab.dart': _page('CostsTab').replaceFirst('@RoutePage()', "@RoutePage(name: 'CostsTabRoute')"),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, contains('class CostsTabRoute extends'));
+    });
+
+    test('compiles in its own library, where the page is imported with a prefix', () async {
+      final result = await generateRouter({
+        'lib/router.dart': router(part: false),
+        'lib/costs_tab.dart': _page('CostsTab'),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, contains('class CostsTab extends'));
+    });
+  });
 }
 
 String _page(String name) => '''

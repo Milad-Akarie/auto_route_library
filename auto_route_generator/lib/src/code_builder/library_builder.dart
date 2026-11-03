@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as p;
 
+import '../../build_utils.dart';
 import '../../utils.dart';
 import '../models/route_config.dart';
 import '../models/router_config.dart';
@@ -26,6 +27,25 @@ TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeRef
   ..isNullable = nullable
   ..types.add(reference));
 
+/// Throws when a route in a part file gets the name of a page class.
+///
+/// A part file shares the router's library, where the page is imported
+/// without a prefix, so the route would hide the page and the page could no
+/// longer be built. That happens to a page `replaceInRouteName` does not
+/// change, such as `CostsTab`, unless its `@RoutePage` names the route.
+void _throwOnRouteNamedLikePage(RouterConfig router, List<RouteConfig> routes) {
+  final pageNames = routes.map((r) => r.className).toSet();
+  final clashes = routes.where((r) => pageNames.contains(r.getName(router.replaceInRouteName))).toList();
+  if (clashes.isEmpty) return;
+  throwError(
+    'A route in the part file ${router.path} gets the name of a page, which hides the page. '
+    'Give the page a route name of its own:\n${clashes.map((r) {
+      final name = r.getName(router.replaceInRouteName);
+      return "  @RoutePage(name: '${name}Route') on ${r.className}";
+    }).join('\n')}',
+  );
+}
+
 /// Generates the router library output
 ///
 /// [outputPath] is where the output is written, next to the router by
@@ -46,6 +66,10 @@ String generateLibrary(
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
+
+  if (router.usesPartBuilder) {
+    _throwOnRouteNamedLikePage(router, routes);
+  }
 
   final deferredRoutes = routes.where((r) => r.deferredLoading == true);
 
