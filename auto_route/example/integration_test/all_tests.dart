@@ -67,6 +67,7 @@ import 'redirect_path_param_test.dart' as redirect_path_param;
 import 'reevaluate_deep_link_test.dart' as reevaluate_deep_link;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
+import 'reload_guard_test.dart' as reload_guard;
 import 'reload_hero_test.dart' as reload_hero;
 import 'remove_where_same_route_test.dart' as remove_where_same_route;
 import 'replace_all_from_deep_stack_test.dart' as replace_all_from_deep_stack;
@@ -173,6 +174,7 @@ void main() {
   group('reevaluate deep link', reevaluate_deep_link.main);
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
+  group('reload guard', reload_guard.main);
   group('reload hero', reload_hero.main);
   group('remove where same route', remove_where_same_route.main);
   group('replace all from deep stack', replace_all_from_deep_stack.main);
