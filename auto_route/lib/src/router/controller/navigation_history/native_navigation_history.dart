@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart' show RouteMatch, RoutingController, StackRouter, UrlState;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -15,11 +17,22 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   final _entries = <_HistoryEntry>[];
   bool _isNavigatingBack = false;
+  // The url back() navigates to, until the router reports it.
+  String? _backTargetUrl;
+  int _backCount = 0;
   bool _isRebuildingAfterPop = false;
 
   @override
   void onNewUrlState(UrlState newState, {bool notify = true}) {
     super.onNewUrlState(newState, notify: notify);
+    if (_isNavigatingBack && newState.url == _backTargetUrl) {
+      // Ends after the current call, so a back() called right after one that
+      // reports its url synchronously still waits for it.
+      final backCount = _backCount;
+      scheduleMicrotask(() {
+        if (backCount == _backCount) _stopNavigatingBack();
+      });
+    }
     if (_isLastEntry(newState)) return;
 
     // Don't add entries during back navigation to prevent duplicates
@@ -111,9 +124,21 @@ class NavigationHistoryImpl extends NavigationHistory {
       // above it first.
       final last = _entries.last;
       final holder = _controllerOf(router, last.pageId);
+      // navigateAll completes only when the page it lands on is popped, which may
+      // be during a later back(), so back navigation ends once the router reports
+      // the entry's url, or when this navigation completes, if it is still the latest.
+      final backCount = ++_backCount;
+      _backTargetUrl = last.url;
       if (holder is StackRouter) holder.removeUntil((data) => data.route.id == last.pageId);
-      router.navigateAll([last.route]).whenComplete(() => _isNavigatingBack = false);
+      router.navigateAll([last.route]).whenComplete(() {
+        if (backCount == _backCount) _stopNavigatingBack();
+      });
     }
+  }
+
+  void _stopNavigatingBack() {
+    _isNavigatingBack = false;
+    _backTargetUrl = null;
   }
 
   @override
