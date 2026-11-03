@@ -38,13 +38,16 @@ void main() {
     );
     await pumpRouterApp(tester, router, navigatorObservers: () => [_TabChangeObserver(tabChanges)]);
     final tabsRouter = router.innerRouterOf<TabsRouter>('TabsRoute')!;
+    // Each swipe covers three quarters of a page, so it changes the page even
+    // when the swipe's speed reads zero, as after a slow frame on CI.
+    final swipe = tester.getSize(find.ancestor(of: find.text('Tab1Route'), matching: find.byType(Center))).width * 0.75;
 
-    await tester.fling(find.text('Tab1Route'), const Offset(-400, 0), 1000);
+    await tester.drag(find.text('Tab1Route'), Offset(-swipe, 0));
     await tester.pumpAndSettle();
     expect(tabsRouter.activeIndex, 1);
 
     tabChanges.clear();
-    await tester.fling(find.text('Tab2Route'), const Offset(400, 0), 1000);
+    await tester.drag(find.text('Tab2Route'), Offset(swipe, 0));
     await tester.pumpAndSettle();
     expect(tabsRouter.activeIndex, 0);
     expect(tabChanges, ['Tab1Route from Tab2Route']);
