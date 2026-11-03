@@ -162,16 +162,20 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Rebuilds the pages of every router from [UrlState.savedRoutes] when the
   /// app is restored, guards included; without them, opens the restored url.
+  ///
+  /// A page that can't be built without the args it was opened with is left
+  /// out, since args aren't saved.
   @override
   Future<void> setRestoredRoutePath(UrlState configuration) {
     final routes = _restoredRoutes(configuration.savedRoutes);
     final matches = routes == null || routes.isEmpty || controller.hasEntries
         ? null
         : controller._matchAllOrReportFailure(routes, (_) {});
-    if (matches == null) {
+    final buildable = matches == null ? const <RouteMatch>[] : _buildableMatches(matches, controller);
+    if (buildable.isEmpty) {
       return setNewRoutePath(configuration);
     }
-    return controller.navigateAll(matches);
+    return controller.navigateAll(buildable);
   }
 
   @override

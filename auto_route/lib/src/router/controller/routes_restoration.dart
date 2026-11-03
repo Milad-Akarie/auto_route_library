@@ -94,3 +94,26 @@ List<PageRouteInfo>? _restoredRoutes(Object? saved) {
   }
   return routes;
 }
+
+// The restored routes, less those whose page can't be built without the
+// args it was opened with, which aren't saved, and less the routes nested
+// in those. Builds each page once to find out, as the router will.
+List<RouteMatch> _buildableMatches(List<RouteMatch> matches, RoutingController router) {
+  final buildable = <RouteMatch>[];
+  for (final match in matches) {
+    try {
+      RouteData(
+        route: match,
+        router: router,
+        stackKey: UniqueKey(),
+        pendingChildren: const [],
+        type: match.type ?? router.root.defaultRouteType,
+      ).buildPage();
+    } on MissingRequiredParameterError {
+      continue;
+    }
+    final children = match.children;
+    buildable.add(children == null ? match : match.copyWith(children: _buildableMatches(children, router)));
+  }
+  return buildable;
+}
