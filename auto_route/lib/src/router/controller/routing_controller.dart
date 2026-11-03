@@ -1354,6 +1354,7 @@ abstract class StackRouter extends RoutingController {
     List<RouteMatch> matches, {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
+    Completer<void>? pushed,
   }) async {
     final anchor = matches.first;
     final anchorPage = _pages.lastWhereOrNull(
@@ -1379,6 +1380,7 @@ abstract class StackRouter extends RoutingController {
       onFailure: onFailure,
       updateAncestorsPathData: false,
       isReevaluating: isReevaluating,
+      pushed: pushed,
     );
   }
 
@@ -1659,6 +1661,7 @@ abstract class StackRouter extends RoutingController {
     bool updateAncestorsPathData = true,
     bool returnLastRouteCompleter = true,
     bool isReevaluating = false,
+    Completer<void>? pushed,
   }) async {
     assert(
       !managedByWidget,
@@ -1690,6 +1693,7 @@ abstract class StackRouter extends RoutingController {
             _addReevaluatedPage(match, notify: notify);
           } else {
             final completer = _addNewPage<T>(match, notify: notify);
+            if (pushed != null && !pushed.isCompleted) pushed.complete();
             if (returnLastRouteCompleter) {
               return completer;
             }
@@ -1831,14 +1835,19 @@ abstract class StackRouter extends RoutingController {
       pushedMeanwhile.addAll(_pages.where((page) => !reevaluatedPages.contains(page)));
       _pages.clear();
     }
-    T? result;
+    Future<T?>? popped;
     if (routes.isNotEmpty) {
       if (!managedByWidget) {
-        result = await _popUntilOrPushAll<T>(
+        // The future of a pushed page completes when the page is popped, so wait only until
+        // the page is added, to keep updating nested routers right away.
+        final pushed = Completer<void>();
+        popped = _popUntilOrPushAll<T>(
           routes,
           onFailure: onFailure,
           isReevaluating: isReevaluating,
+          pushed: pushed,
         );
+        await Future.any([pushed.future, popped]);
         if (isReevaluating) {
           // put pages pushed before or during the reevaluation back on top of the reevaluated ones
           final pushedDuring = _pages.where((page) => !reevaluatedPages.contains(page)).toList();
@@ -1865,7 +1874,7 @@ abstract class StackRouter extends RoutingController {
     } else if (!managedByWidget) {
       _reset();
     }
-    return result;
+    return popped;
   }
 
   void _reset() {

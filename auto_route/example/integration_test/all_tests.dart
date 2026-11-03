@@ -6,6 +6,7 @@ import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'host_back_button_test.dart' as host_back_button;
 import 'login_state_test.dart' as login_state;
 import 'navigate_awaits_test.dart' as navigate_awaits;
+import 'navigate_nested_update_test.dart' as navigate_nested_update;
 import 'nested_back_test.dart' as nested_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'pop_and_back_test.dart' as pop_and_back;
@@ -29,6 +30,7 @@ void main() {
   group('host back button', host_back_button.main);
   group('login state', login_state.main);
   group('navigate awaits', navigate_awaits.main);
+  group('navigate nested update', navigate_nested_update.main);
   group('nested back', nested_back.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('pop and back', pop_and_back.main);

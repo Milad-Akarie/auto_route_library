@@ -348,6 +348,25 @@ void main() {
     expect(router.current.name, _PopScopeHostRoute.name);
     expectTopPage(router, SecondNested1Route.name);
   });
+
+  // Regression of the #2154 fix (navigate() waits for the route it opens).
+  // Steps: navigate to SecondHostRoute, push SecondNested2Route in its inner router, then
+  // navigate to SecondHostRoute with children [SecondNested1Route].
+  // Happened: the inner router was only updated once the host page was popped.
+  // Should: the inner router shows SecondNested1Route right away.
+  testWidgets('navigate() to an open host route should update its nested router right away',
+      (WidgetTester tester) async {
+    await pumpRouterApp(tester, router);
+    router.navigate(SecondHostRoute());
+    await tester.pumpAndSettle();
+    router.innerRouterOf<StackRouter>(SecondHostRoute.name)!.push(const SecondNested2Route());
+    await tester.pumpAndSettle();
+    expectTopPage(router, SecondNested2Route.name);
+
+    router.navigate(SecondHostRoute(children: const [SecondNested1Route()]));
+    await tester.pumpAndSettle();
+    expectTopPage(router, SecondNested1Route.name);
+  });
 }
 
 class _PopScopeHostRouter extends MainRouter {
