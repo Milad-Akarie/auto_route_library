@@ -401,7 +401,6 @@ void main() {
   // fires reevaluateListenable in the same callback.
   // Happens (reported): the push is skipped or never becomes visible.
   // Should happen: SecondRoute is pushed and shown.
-  // Skipped until #2327 is fixed: the stack stays [FirstRoute].
   testWidgets('Push followed by reevaluation in the same callback should still push (#2327)',
       (WidgetTester tester) async {
     final router = RootStackRouter.build(routes: [
@@ -427,7 +426,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(router.stack.map((e) => e.name), [FirstRoute.name, SecondRoute.name]);
     expectTopPage(router, SecondRoute.name);
-  }, skip: true);
+  });
 }
 
 class _CounterPage extends StatefulWidget {

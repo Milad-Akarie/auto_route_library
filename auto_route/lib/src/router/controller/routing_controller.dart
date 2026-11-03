@@ -1792,7 +1792,14 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
   }) async {
+    // pages pushed after the stack was composed for reevaluation are not in [routes]
+    final reevaluatedPages = {
+      for (final route in routes)
+        if (route is ReevaluatableRouteMatch) route.currentPage,
+    };
+    final pushedMeanwhile = <AutoRoutePage>[];
     if (isReevaluating) {
+      pushedMeanwhile.addAll(_pages.where((page) => !reevaluatedPages.contains(page)));
       _pages.clear();
     }
     T? result;
@@ -1803,6 +1810,13 @@ abstract class StackRouter extends RoutingController {
           onFailure: onFailure,
           isReevaluating: isReevaluating,
         );
+        if (isReevaluating) {
+          // put pages pushed before or during the reevaluation back on top of the reevaluated ones
+          final pushedDuring = _pages.where((page) => !reevaluatedPages.contains(page)).toList();
+          _pages
+            ..removeWhere((page) => !reevaluatedPages.contains(page))
+            ..addAll([...pushedMeanwhile, ...pushedDuring]);
+        }
       } else {
         _onNavigate(routes);
       }
