@@ -66,6 +66,47 @@ void main() {
     },
   );
 
+  // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/1774
+  // Steps: FirstRoute has AutoRouteAwareStateMixin. Push ConfirmRoute, open a
+  // dialog there, and tap its button, which closes the dialog with
+  // `await context.maybePop()` and then calls `context.navigateTo(FirstRoute())`.
+  // Happens: ConfirmRoute is removed and FirstRoute shows, but FirstRoute's
+  // didPopNext doesn't fire; the observer gets didRemove, not didPop.
+  // Should: FirstRoute gets didPopNext, as when going back without the dialog.
+  testWidgets(
+    'navigateTo() back to a page right after closing a dialog tells that page didPopNext',
+    (WidgetTester tester) async {
+      await pumpRouter(tester);
+      final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
+      router.push(const ConfirmRoute());
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Open dialog'));
+      await tester.pumpAndSettle();
+      expect(state.didPopNextCalled, isFalse);
+
+      await tester.tap(find.text('Close and go back'));
+      await tester.pumpAndSettle();
+      expect(router.stack.map((page) => page.name), [FirstRoute.name]);
+      expect(state.didPopNextCalled, isTrue);
+    },
+  );
+
+  // Same as above, but replace() removes the page over FirstRoute and pushes
+  // another one in its place: FirstRoute stays covered and hears nothing.
+  testWidgets(
+    'replacing the page over a page does not tell that page didPopNext',
+    (WidgetTester tester) async {
+      await pumpRouter(tester);
+      final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
+      router.push(const SecondRoute());
+      await tester.pumpAndSettle();
+      router.replace(const ConfirmRoute());
+      await tester.pumpAndSettle();
+      expect(router.stack.map((page) => page.name), [FirstRoute.name, ConfirmRoute.name]);
+      expect(state.didPopNextCalled, isFalse);
+    },
+  );
+
   testWidgets(
     'AutoRouteObserver should unsubscribe when widget is disposed',
     (WidgetTester tester) async {
@@ -140,6 +181,7 @@ class ObserverRouter extends RootStackRouter {
   List<AutoRoute> get routes => [
         AutoRoute(page: FirstRoute.page, initial: true),
         AutoRoute(page: SecondRoute.page),
+        AutoRoute(page: ConfirmRoute.page),
         AutoRoute(
           page: TabsRoute.page,
           children: [
@@ -167,6 +209,36 @@ class SecondRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) => const Scaffold(body: Text('Second Page')),
+  );
+}
+
+class ConfirmRoute extends PageRouteInfo<void> {
+  const ConfirmRoute({List<PageRouteInfo>? children}) : super(ConfirmRoute.name, initialChildren: children);
+
+  static const String name = 'ConfirmRoute';
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) => Scaffold(
+      body: Builder(
+        builder: (context) => TextButton(
+          onPressed: () => showDialog<void>(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await dialogContext.maybePop();
+                    if (context.mounted) context.navigateTo(const FirstRoute());
+                  },
+                  child: const Text('Close and go back'),
+                ),
+              ],
+            ),
+          ),
+          child: const Text('Open dialog'),
+        ),
+      ),
+    ),
   );
 }
 

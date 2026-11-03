@@ -16,6 +16,7 @@ import 'keep_history_test.dart' as keep_history;
 import 'leading_button_drawer_test.dart' as leading_button_drawer;
 import 'leading_button_pop_test.dart' as leading_button_pop;
 import 'login_state_test.dart' as login_state;
+import 'navigate_after_dialog_test.dart' as navigate_after_dialog;
 import 'navigate_awaits_test.dart' as navigate_awaits;
 import 'navigate_inherited_path_params_test.dart' as navigate_inherited_path_params;
 import 'navigate_nested_update_test.dart' as navigate_nested_update;
@@ -80,6 +81,7 @@ void main() {
   group('leading button drawer', leading_button_drawer.main);
   group('leading button pop', leading_button_pop.main);
   group('login state', login_state.main);
+  group('navigate after dialog', navigate_after_dialog.main);
   group('navigate awaits', navigate_awaits.main);
   group('navigate inherited path params', navigate_inherited_path_params.main);
   group('navigate nested update', navigate_nested_update.main);
