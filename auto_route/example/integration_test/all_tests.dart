@@ -41,6 +41,7 @@ import 'push_all_nested_routes_test.dart' as push_all_nested_routes;
 import 'push_and_pop_until_test.dart' as push_and_pop_until;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
 import 'push_futures_test.dart' as push_futures;
+import 'query_param_rebuild_test.dart' as query_param_rebuild;
 import 'query_params_on_pop_test.dart' as query_params_on_pop;
 import 'rapid_pops_test.dart' as rapid_pops;
 import 'redirect_history_test.dart' as redirect_history;
@@ -112,6 +113,7 @@ void main() {
   group('push and pop until', push_and_pop_until.main);
   group('push and reevaluate', push_and_reevaluate.main);
   group('push futures', push_futures.main);
+  group('query param rebuild', query_param_rebuild.main);
   group('query params on pop', query_params_on_pop.main);
   group('rapid pops', rapid_pops.main);
   group('redirect history', redirect_history.main);
