@@ -25,6 +25,8 @@ part 'auto_router_delegate.dart';
 
 part 'root_stack_router.dart';
 
+part 'routes_restoration.dart';
+
 // ignore_for_file: deprecated_member_use_from_same_package
 /// Signature of a predicate to select [RouteData]
 typedef RouteDataPredicate = bool Function(RouteData route);
@@ -121,7 +123,10 @@ abstract class RoutingController with ChangeNotifier {
     notifyListeners();
     if (forceUrlRebuild || !isRouteDataActive(current)) {
       navigationHistory.rebuildUrl();
-    } else if (!isRoot) {
+    }
+    // The root hears of every change, to save the pages of nested routers
+    // for state restoration even when the url stays the same.
+    if (!isRoot) {
       root.notifyListeners();
     }
   }

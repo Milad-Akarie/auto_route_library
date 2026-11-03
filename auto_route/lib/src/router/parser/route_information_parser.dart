@@ -40,8 +40,15 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
       await deepLinkTransformer?.call((routeInformation.uri)) ?? routeInformation.uri,
     );
     var matches = _matcher.matchUri(resolvedUri, includePrefixMatches: includePrefixMatches);
+    final state = routeInformation.state;
+    final savedRoutes = state is Map ? state[UrlState._savedRoutesKey] : null;
     return SynchronousFuture<UrlState>(
-      UrlState(routeInformation.uri, matches ?? const [], pathState: routeInformation.state),
+      UrlState(
+        routeInformation.uri,
+        matches ?? const [],
+        pathState: savedRoutes == null ? state : (state as Map)[UrlState._pathStateKey],
+        savedRoutes: savedRoutes,
+      ),
     );
   }
 
@@ -59,7 +66,12 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     return AutoRouteInformation(
       uri: configuration.url.isEmpty ? Uri(path: '/') : configuration.uri,
       replace: configuration.shouldReplace,
-      state: configuration.pathState,
+      state: configuration.savedRoutes == null
+          ? configuration.pathState
+          : {
+              UrlState._savedRoutesKey: configuration.savedRoutes,
+              UrlState._pathStateKey: configuration.pathState,
+            },
     );
   }
 }
@@ -104,13 +116,38 @@ class UrlState {
   /// Holds instance of browser entry-state
   final Object? pathState;
 
+  /// The pages of every router, saved for state restoration
+  ///
+  /// [RootStackRouter] fills it off the web, where Flutter's state
+  /// restoration runs, and rebuilds its pages from it when the app is
+  /// restored. [DefaultRouteParser] keeps it in [RouteInformation.state],
+  /// which [Router] saves, next to [pathState]; it's not sent to the
+  /// platform.
+  @internal
+  final Object? savedRoutes;
+
+  static const _savedRoutesKey = 'autoRouteSavedRoutes';
+  static const _pathStateKey = 'pathState';
+
   /// Default constructor
   const UrlState(
     this.uri,
     this.segments, {
     this.shouldReplace = false,
     this.pathState,
+    @internal this.savedRoutes,
   });
+
+  /// Returns the part of a [RouteInformation.state] built by
+  /// [DefaultRouteParser] that's meant for the platform: [state] without
+  /// the saved routes, which are only for state restoration.
+  @internal
+  static Object? platformState(Object? state) {
+    if (state is Map && state.containsKey(_savedRoutesKey)) {
+      return state[_pathStateKey];
+    }
+    return state;
+  }
 
   /// Returns a fully decoded [uri]
   String get url => Uri.decodeFull(uri.toString());
@@ -258,12 +295,14 @@ class UrlState {
     Uri? uri,
     bool? shouldReplace,
     Object? pathState,
+    @internal Object? savedRoutes,
   }) {
     return UrlState(
       uri ?? this.uri,
       segments ?? this.segments,
       shouldReplace: shouldReplace ?? this.shouldReplace,
       pathState: pathState ?? this.pathState,
+      savedRoutes: savedRoutes ?? this.savedRoutes,
     );
   }
 }

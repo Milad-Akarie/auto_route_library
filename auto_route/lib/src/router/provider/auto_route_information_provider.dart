@@ -45,10 +45,12 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
       return;
     }
 
+    // The routes saved for state restoration stay with the Router.
+    final state = UrlState.platformState(routeInformation.state);
     var replace = type == RouteInformationReportingType.neglect ||
         (type == RouteInformationReportingType.none &&
             _valueInEngine.uri == routeInformation.uri &&
-            _valueInEngine.state == routeInformation.state);
+            UrlState.platformState(_valueInEngine.state) == state);
 
     if (!replace && routeInformation is AutoRouteInformation) {
       replace = routeInformation.replace;
@@ -56,7 +58,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
     SystemNavigator.selectMultiEntryHistory();
     SystemNavigator.routeInformationUpdated(
       uri: routeInformation.uri,
-      state: routeInformation.state,
+      state: state,
       replace: replace,
     );
     _value = routeInformation;

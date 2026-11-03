@@ -97,13 +97,20 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     _navigatorObservers = navigatorObservers();
     controller.navigationHistory.addListener(_handleRebuild);
     reevaluateListenable?.addListener(controller.reevaluateGuards);
+    if (!kIsWeb) {
+      // Pages can change without the url changing; the Router saves them
+      // through currentConfiguration.
+      controller.addListener(notifyListeners);
+    }
   }
 
   /// Helper to access current urlState
   UrlState get urlState => controller.navigationHistory.urlState;
 
+  /// The current [urlState]; off the web it also holds the pages of every
+  /// router, which the [Router] saves for state restoration.
   @override
-  UrlState? get currentConfiguration => urlState;
+  UrlState? get currentConfiguration => kIsWeb ? urlState : urlState.copyWith(savedRoutes: controller._savedRoutes());
 
   @override
   Future<void> setInitialRoutePath(UrlState configuration) async {
@@ -247,6 +254,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     super.dispose();
     removeListener(_handleRebuild);
     reevaluateListenable?.removeListener(controller.reevaluateGuards);
+    controller.removeListener(notifyListeners);
     controller.dispose();
   }
 
