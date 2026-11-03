@@ -9,6 +9,7 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'package:auto_route/auto_route.dart' as _i8;
 import 'package:example/mobile/screens/books/book_details_page.dart' as _i1;
 import 'package:example/mobile/screens/books/book_list_page.dart' as _i2;
@@ -17,7 +18,7 @@ import 'package:example/mobile/screens/login_page.dart' as _i4;
 import 'package:example/mobile/screens/profile/my_books_page.dart' as _i5;
 import 'package:example/mobile/screens/profile/profile_page.dart' as _i6;
 import 'package:example/mobile/screens/settings_page.dart' as _i7;
-import 'package:flutter/material.dart' as _i9;
+import 'package:material_ui/material_ui.dart' as _i9;
 
 /// generated route for
 /// [_i1.BookDetailsPage]

@@ -9,13 +9,14 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'package:auto_route/auto_route.dart' as _i4;
 import 'package:collection/collection.dart' as _i6;
 import 'package:example/web_demo/router/web_login_page.dart' as _i2;
 import 'package:example/web_demo/router/web_router.dart' as _i1;
 import 'package:example/web_demo/router/web_verify_page.dart' as _i3;
 import 'package:flutter/foundation.dart' as _i5;
-import 'package:flutter/material.dart' as _i7;
+import 'package:material_ui/material_ui.dart' as _i7;
 
 /// generated route for
 /// [_i1.MainWebPage]
