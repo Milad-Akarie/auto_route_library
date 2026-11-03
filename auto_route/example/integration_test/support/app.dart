@@ -97,6 +97,20 @@ Future<void> systemBack(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+/// Whether Android sends back to Flutter, or null off Android.
+///
+/// From Android 13, back reaches Flutter only while Flutter says it handles
+/// back; while this is false, Android closes the app on back instead. Use it
+/// where the app should close, since [systemBack] fails the test there. Pump
+/// the app with [pumpRouterApp] or [pumpRouterConfigApp] first, as for
+/// [systemBack].
+Future<bool?> androidSendsBackToFlutter() async {
+  if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return null;
+  // Flutter tells Android through a separate platform message; give it time to arrive.
+  await Future<void>.delayed(const Duration(milliseconds: 300));
+  return const MethodChannel('auto_route_example/system_back').invokeMethod<bool>('sendsBackToFlutter');
+}
+
 /// Swipes from the left edge of the screen, the iOS back gesture.
 Future<void> swipeBack(WidgetTester tester) async {
   final size = tester.view.physicalSize / tester.view.devicePixelRatio;

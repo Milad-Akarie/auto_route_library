@@ -13,14 +13,20 @@ class MainActivity : FlutterActivity() {
         // can't inject a real key press into itself (INJECT_EVENTS).
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "auto_route_example/system_back")
             .setMethodCallHandler { call, result ->
+                // From Android 13 the system sends back to Flutter only while
+                // Flutter has said it handles back; otherwise Android closes
+                // the app itself.
+                val sendsBackToFlutter = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || getBackCallbackState()
+                if (call.method == "sendsBackToFlutter") {
+                    result.success(sendsBackToFlutter)
+                    return@setMethodCallHandler
+                }
                 if (call.method != "pressBack") {
                     result.notImplemented()
                     return@setMethodCallHandler
                 }
-                // From Android 13 the system sends back to Flutter only while
-                // Flutter has said it handles back; otherwise Android closes
-                // the app itself. Report that instead of closing the app.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !getBackCallbackState()) {
+                // Report the case instead of closing the app.
+                if (!sendsBackToFlutter) {
                     result.error("appWouldClose", "Flutter told Android it doesn't handle back", null)
                     return@setMethodCallHandler
                 }
