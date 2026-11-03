@@ -231,12 +231,17 @@ void main() {
       );
     }, skip: _webSupportsIt);
 
-    test('Should mark and unmark URL state for replace', () {
+    test('Should mark and unmark URL state for replace', () async {
       expect(history.isUrlStateMarkedForReplace, false);
 
       history.markUrlStateForReplace();
       expect(history.isUrlStateMarkedForReplace, true);
 
+      // An empty stack has no url to record, so the mark waits for the next one (#2331).
+      history.rebuildUrl();
+      expect(history.isUrlStateMarkedForReplace, true);
+
+      await router.push(const FirstRoute());
       history.rebuildUrl();
       expect(history.isUrlStateMarkedForReplace, false);
     });

@@ -18,12 +18,18 @@ abstract class NavigationHistory with ChangeNotifier {
 
   /// Forces url to rebuild if generated state
   /// is different from current
+  ///
+  /// An empty stack has no url to record, so a replace mark is kept for the
+  /// url that follows, such as the guarded page that takes the place of a
+  /// [NavigationResolver.redirectUntil] page.
   void rebuildUrl() {
     final newState = UrlState.fromSegments(
       router.currentSegments,
       shouldReplace: _isUrlStateMarkedForReplace,
     );
-    _unMarkUrlStateForReplace();
+    if (newState.hasSegments) {
+      _unMarkUrlStateForReplace();
+    }
     onNewUrlState(newState);
   }
 

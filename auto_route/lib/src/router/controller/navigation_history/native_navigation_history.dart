@@ -70,6 +70,8 @@ class NavigationHistoryImpl extends NavigationHistory {
     }
     if (urlState.shouldReplace && length > 0) {
       _entries.removeLast();
+      // The entry before may already hold this url, e.g. the page a redirect was shown for.
+      if (_entries.lastOrNull?.url == urlState.url) return;
     }
     _entries.add(newEntry);
   }
