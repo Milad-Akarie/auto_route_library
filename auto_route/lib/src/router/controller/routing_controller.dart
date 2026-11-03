@@ -1047,9 +1047,7 @@ class TabsRouter extends RoutingController {
   }) async {
     final routesToProcess = isReevaluating ? routes : routes.reversed.take(1);
     for (final mayUpdateRoute in routesToProcess) {
-      final pageToUpdateIndex = _pages.indexWhere(
-        (p) => p.routeKey == mayUpdateRoute.key,
-      );
+      final pageToUpdateIndex = _tabIndexOf(mayUpdateRoute);
 
       if (pageToUpdateIndex != -1) {
         RouteMatch routeToBeUpdated = _pages[pageToUpdateIndex].routeData._match;
@@ -1069,7 +1067,8 @@ class TabsRouter extends RoutingController {
           _pages[pageToUpdateIndex] = data.buildPage();
         }
 
-        final hasInitCtrl = _topInnerControllerOf(routeToBeUpdated.key) != null;
+        // By match id: a tab sharing its route with another has its own nested router.
+        final mayUpdateController = _innerControllerOfMatch(routeToBeUpdated.id);
 
         if (!isReevaluating && _activeIndex != pageToUpdateIndex) {
           setActiveIndex(pageToUpdateIndex);
@@ -1077,16 +1076,13 @@ class TabsRouter extends RoutingController {
           notifyAll();
         }
 
-        if (hasInitCtrl) {
-          final mayUpdateController = _topInnerControllerOf(routeToBeUpdated.key);
-          if (mayUpdateController != null) {
-            final newRoutes = routeToBeUpdated.children ?? const [];
-            mayUpdateController._navigateAll(
-              newRoutes,
-              onFailure: onFailure,
-              isReevaluating: isReevaluating,
-            );
-          }
+        if (mayUpdateController != null) {
+          final newRoutes = routeToBeUpdated.children ?? const [];
+          mayUpdateController._navigateAll(
+            newRoutes,
+            onFailure: onFailure,
+            isReevaluating: isReevaluating,
+          );
         }
       }
       if (!isReevaluating && _activeIndex != pageToUpdateIndex) {
@@ -1099,6 +1095,29 @@ class TabsRouter extends RoutingController {
     }
 
     return SynchronousFuture(null);
+  }
+
+  // The tab [route] opens, or -1. Two tabs share a route when both are
+  // children of the same parent route, each with its own nested router; the
+  // one meant holds the route's first child, open or waiting to open.
+  int _tabIndexOf(RouteMatch route) {
+    final tabs = [
+      for (var i = 0; i < _pages.length; i++)
+        if (_pages[i].routeKey == route.key) i,
+    ];
+    if (tabs.length < 2) return tabs.firstOrNull ?? -1;
+    final childName = route.children?.firstOrNull?.name;
+    bool holdsChild(int index) {
+      final data = _pages[index].routeData;
+      final pageNames = _innerControllerOfMatch(data.matchId)?.stackData.map((d) => d.name) ??
+          data.route.children?.map((c) => c.name) ??
+          const <String>[];
+      return pageNames.contains(childName);
+    }
+
+    final holding = tabs.where(holdsChild).toList();
+    final meant = holding.isEmpty ? tabs : holding;
+    return meant.contains(_activeIndex) ? _activeIndex : meant.first;
   }
 
   /// If page corresponding with [index]
