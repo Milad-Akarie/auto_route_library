@@ -149,6 +149,9 @@ class ResolverResult {
   }
 }
 
+// The resolver whose redirectUntil() opened a route, by the route's match id.
+final _redirectingResolvers = Expando<NavigationResolver>('redirectingResolvers');
+
 /// Represents a guarded navigation event
 /// which can be either continued or aborted
 /// used in [AutoRouteGuard.onNavigation]
@@ -269,6 +272,28 @@ class NavigationResolver {
     bool replace = false,
   }) async {
     if (_isRedirecting) return null;
+    // This route was opened by the redirect of a guard still waiting; sending it to itself again never ends.
+    final redirectedBy = _redirectingResolvers[this.route.id];
+    if (redirectedBy != null && !redirectedBy.isResolved && route.routeName == this.route.name) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: FlutterError.fromParts([
+            ErrorSummary('A guard redirected ${route.routeName} to itself.'),
+            ErrorDescription(
+              '${route.routeName} was opened by the redirectUntil() of a guard still waiting, and a guard '
+              'redirected it to ${route.routeName} again, which would repeat without end.',
+            ),
+            ErrorHint(
+              'A guard in RootStackRouter.guards runs for every route, including the one it redirects to. '
+              'Let that route through, e.g. call resolver.next() when resolver.routeName is ${route.routeName}.',
+            ),
+          ]),
+          library: 'auto_route',
+        ),
+      );
+      next(false);
+      return;
+    }
     _isRedirecting = true;
     // keep the page being reevaluated under the redirect route so its state is preserved
     final reevaluatedRoute = this.route;
@@ -280,6 +305,7 @@ class NavigationResolver {
       onFailure: onFailure,
       replace: replace,
       onMatch: (scope, match) async {
+        _redirectingResolvers[match.id] = this;
         await _completer.future;
         _isRedirecting = false;
         final routeData = scope.stackData.firstWhereOrNull((e) => e.matchId == match.id);
