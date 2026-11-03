@@ -2,6 +2,8 @@
 # request: the headless tests on the Dart VM and in Chrome, then the example
 # app's integration tests (auto_route/example/integration_test) on an Android
 # emulator, an iOS simulator, web through `flutter drive`, and macOS desktop.
+# Every job stops after 15 minutes. The macOS jobs run on arm64 runners;
+# Intel macOS isn't supported.
 name: tests
 
 on:
@@ -22,7 +24,7 @@ jobs:
   analyze-and-headless:
     name: Analyze and headless tests (VM)
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
@@ -48,7 +50,7 @@ jobs:
   headless-chrome:
     name: Headless tests in Chrome
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
@@ -68,7 +70,7 @@ jobs:
   android:
     name: Integration tests on Android
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-java@v6.1.0
@@ -97,7 +99,7 @@ jobs:
   ios:
     name: Integration tests on iOS
     runs-on: macos-26
-    timeout-minutes: 45
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
@@ -123,7 +125,7 @@ jobs:
   web:
     name: Integration tests on web
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
@@ -149,7 +151,7 @@ jobs:
   macos:
     name: Integration tests on macOS
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
