@@ -10,7 +10,12 @@ This repository is its own product: a maintained fork of the auto_route package.
 5. Before solving an issue, check whether other issues are similar or rest on the same groundwork. Do the groundwork first, in its own commit, then each issue on top, one commit each.
 6. No pull requests and no new issues upstream. `Co-authored-by` trailers for code taken from others stay.
 
-Also: never push (the maintainer merges into `master` and pushes), format only the lines you add, American English, made-up names in code and fixtures.
+Also: never push (the maintainer merges into `dev` and pushes), format only the lines you add, American English, made-up names in code and fixtures.
+
+## Branches
+- `dev` is where work happens. Branch every piece of work from `dev`; finished work lands on `dev`.
+- `master` holds stable releases. Only the maintainer moves it, when `dev` reaches a new stable.
+- CI runs on every push to any branch.
 
 ## Proving a fix
 1. A headless test in `auto_route/test/` that fails before the fix and passes after it. Its comment names the issue and the steps.
@@ -53,7 +58,7 @@ Also: never push (the maintainer merges into `master` and pushes), format only t
    pkill -f "chromedriver --port=4444"
    ```
 
-4. The local runs in step 3 must pass before merge. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, the headless tests on the VM and in Chrome, and the integration tests on Android, iOS, web and macOS. A CI failure on `master` is fixed as its own issue.
+4. The local runs in step 3 must pass before merge. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, the headless tests on the VM and in Chrome, and the integration tests on Android, iOS, web and macOS. A CI failure on `dev` or `master` is fixed as its own issue.
 
 If a test fails on one platform because of a real bug, skip it on that platform only, with a comment naming the issue and the platform, and give that bug its own chat (rule 4).
 
@@ -82,4 +87,4 @@ If a test fails on one platform because of a real bug, skip it on that platform 
   git checkout -- auto_route/example/ios/Flutter/ephemeral/flutter_native_integration.env auto_route/example/macos/Flutter/ephemeral
   ```
 
-- Test files on master aren't formatter-clean. Format only the files you add: `dart format <file>`.
+- The existing test files aren't formatter-clean. Format only the files you add: `dart format <file>`.
