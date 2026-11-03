@@ -102,6 +102,7 @@ import 'tab_shared_parent_url_test.dart' as tab_shared_parent_url;
 import 'tabs_deep_link_test.dart' as tabs_deep_link;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
 import 'tabs_scaffold_build_count_test.dart' as tabs_scaffold_build_count;
+import 'tabs_url_without_initial_test.dart' as tabs_url_without_initial;
 import 'theme_change_test.dart' as theme_change;
 import 'theme_page_transitions_test.dart' as theme_page_transitions;
 import 'typed_url_test.dart' as typed_url;
@@ -218,6 +219,7 @@ void main() {
   group('tabs deep link', tabs_deep_link.main);
   group('tabs pop scope', tabs_pop_scope.main);
   group('tabs scaffold build count', tabs_scaffold_build_count.main);
+  group('tabs url without initial', tabs_url_without_initial.main);
   group('theme change', theme_change.main);
   group('theme page transitions', theme_page_transitions.main);
   group('typed url', typed_url.main);

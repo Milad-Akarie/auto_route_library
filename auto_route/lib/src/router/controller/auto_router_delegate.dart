@@ -291,6 +291,19 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Force this delegate to rebuild
   void notifyUrlChanged() => _handleRebuild();
+
+  // Reports the current url over the browser entry the Router wrote last,
+  // without rebuilding the pages, as a notification would.
+  void _reportUrlInPlace() {
+    final context = controller.navigatorKey.currentContext;
+    final router = context == null ? null : Router.maybeOf(context);
+    final routeInformation = router?.routeInformationParser?.restoreRouteInformation(currentConfiguration);
+    if (routeInformation == null) return;
+    router!.routeInformationProvider?.routerReportsNewRouteInformation(
+      routeInformation,
+      type: RouteInformationReportingType.neglect,
+    );
+  }
 }
 
 class _AutoRootRouter extends StatefulWidget {

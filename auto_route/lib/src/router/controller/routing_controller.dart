@@ -922,6 +922,22 @@ class TabsRouter extends RoutingController {
       _pushAll(routesToPush, fromDefault: routes == null);
     }
     _routeData.pendingChildren.clear();
+    // A host opened by a url that names no tab, such as '/tabs' when no tab is
+    // initial, shows its first tab. The url names that tab too, in place of
+    // the host's own entry, so going back to that entry shows it. The router
+    // is set up while the app builds, after the Router took the frame's url
+    // to report, so the new url is reported on its own after the frame.
+    if (_pages.isNotEmpty &&
+        navigationHistory.isRouteDataActive(routeData) &&
+        !navigationHistory.isRouteDataActive(current)) {
+      navigationHistory.onNewUrlState(
+        UrlState.fromSegments(root.currentSegments, shouldReplace: true),
+        notify: false,
+      );
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        root._lazyRootDelegate?._reportUrlInPlace();
+      });
+    }
   }
 
   // When a widget above AutoTabsRouter rebuilds it from scratch, the new
