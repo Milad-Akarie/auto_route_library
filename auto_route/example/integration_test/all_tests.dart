@@ -90,6 +90,7 @@ import 'tab_routes_index_test.dart' as tab_routes_index;
 import 'tab_semantics_test.dart' as tab_semantics;
 import 'tab_shared_parent_url_test.dart' as tab_shared_parent_url;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
+import 'tabs_deep_link_test.dart' as tabs_deep_link;
 import 'tabs_scaffold_build_count_test.dart' as tabs_scaffold_build_count;
 import 'theme_change_test.dart' as theme_change;
 import 'universal_link_test.dart' as universal_link;
@@ -193,6 +194,7 @@ void main() {
   group('tab semantics', tab_semantics.main);
   group('tab shared parent url', tab_shared_parent_url.main);
   group('tabs pop scope', tabs_pop_scope.main);
+  group('tabs deep link', tabs_deep_link.main);
   group('tabs scaffold build count', tabs_scaffold_build_count.main);
   group('theme change', theme_change.main);
   group('universal link', universal_link.main);
