@@ -20,6 +20,7 @@ Also: never push (the maintainer merges into `dev` and pushes), format only the 
 
 ## Proving a fix
 1. A headless test in `auto_route/test/` that fails before the fix and passes after it. Its comment names the issue and the steps.
+   For a fix in the code generator, the test goes in `auto_route_generator/test/` instead, built on `test/support/generate.dart`, which runs both builders on source strings and reports whether the generated router compiles. Run it from `auto_route_generator/` with `dart test`. The committed `.gr.dart` files must then regenerate the same as before, except where the fix means to change them.
 2. An integration test in `auto_route/example/integration_test/`, one file per fix, that drives the example app through the same steps. Add the file to `integration_test/all_tests.dart`; that file runs every test in one app launch.
 3. Run here, from `auto_route/` for the headless tests:
 
@@ -59,7 +60,7 @@ Also: never push (the maintainer merges into `dev` and pushes), format only the 
    pkill -f "chromedriver --port=4444"
    ```
 
-4. The local runs in step 3 must pass before merge. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, the headless tests on the VM and in Chrome, and the integration tests on Android, iOS, web and macOS. A CI failure on `dev` or `master` is fixed as its own issue.
+4. The local runs in step 3 must pass before merge. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, the headless tests on the VM and in Chrome, the generator's tests, and the integration tests on Android, iOS, web and macOS. A CI failure on `dev` or `master` is fixed as its own issue.
 
 If a test fails on one platform because of a real bug, skip it on that platform only, with a comment naming the issue and the platform, and give that bug its own chat (rule 4).
 

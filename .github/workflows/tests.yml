@@ -1,7 +1,8 @@
 # Proves every fix in this fork on each platform, on every push and pull
-# request: the headless tests on the Dart VM and in Chrome, then the example
-# app's integration tests (auto_route/example/integration_test) on an Android
-# emulator, an iOS simulator, web through `flutter drive`, and macOS desktop.
+# request: the headless tests on the Dart VM and in Chrome, the code
+# generator's tests, then the example app's integration tests
+# (auto_route/example/integration_test) on an Android emulator, an iOS
+# simulator, web through `flutter drive`, and macOS desktop.
 # Every job stops after 15 minutes. The macOS jobs run on arm64 runners;
 # Intel macOS isn't supported.
 name: tests
@@ -48,6 +49,14 @@ jobs:
         if: failure()
         working-directory: auto_route
         run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
+      - name: Analyze the generator
+        if: success() || failure()
+        working-directory: auto_route_generator
+        run: flutter pub get && dart analyze
+      - name: Generator tests
+        if: success() || failure()
+        working-directory: auto_route_generator
+        run: dart test --reporter github
 
   headless-chrome:
     name: Headless tests in Chrome
