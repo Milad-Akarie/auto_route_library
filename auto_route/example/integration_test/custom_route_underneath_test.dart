@@ -26,19 +26,26 @@ void main() {
     );
     await pumpRouterApp(tester, router);
     final restingX = tester.getTopLeft(find.text('Home')).dx;
+    // Offstage widgets count: once the Menu page covers Home, Home is offstage.
+    final home = find.text('Home', skipOffstage: false);
+    final menu = find.text('Menu', skipOffstage: false);
 
-    Future<void> expectHomeInPlaceHalfway(void Function() action) async {
+    // On a device the animation runs on the real clock, so a slow machine can
+    // finish it between two frames. Read Home on every frame until the Menu
+    // page is open or gone instead of at one moment.
+    Future<void> expectHomeInPlaceUntil({required bool menuOpen, required void Function() action}) async {
       action();
-      await tester.pump();
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 16));
-      expect(tester.getTopLeft(find.text('Home')).dx, restingX);
-      await tester.pumpAndSettle();
+      for (var frame = 0; frame < 300; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        expect(tester.getTopLeft(home).dx, restingX);
+        if (menu.evaluate().isNotEmpty == menuOpen && !tester.binding.hasScheduledFrame) return;
+      }
+      fail('The Menu page did not ${menuOpen ? 'open' : 'close'} within 300 frames.');
     }
 
-    await expectHomeInPlaceHalfway(() => unawaited(router.push(const PageRouteInfo('Menu'))));
+    await expectHomeInPlaceUntil(menuOpen: true, action: () => unawaited(router.push(const PageRouteInfo('Menu'))));
     expect(find.text('Menu'), findsOneWidget);
-    await expectHomeInPlaceHalfway(() => unawaited(router.maybePop()));
+    await expectHomeInPlaceUntil(menuOpen: false, action: () => unawaited(router.maybePop()));
     expect(find.text('Menu'), findsNothing);
   });
 }
