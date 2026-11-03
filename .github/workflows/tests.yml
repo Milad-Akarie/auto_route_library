@@ -38,18 +38,12 @@ jobs:
         run: flutter analyze
       - name: Headless tests on the VM
         working-directory: auto_route
-        run: flutter test
+        run: flutter test --reporter github
 
   headless-chrome:
     name: Headless tests in Chrome
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-    # Known failures, reported on 2026-11-03 and not fixed yet, so this job
-    # can't fail the run: the 17 tests in navigation_history_test.dart assume
-    # the native history and fail with the browser's, and the 2 tests in
-    # simple_router/pop_and_back_test.dart are the web half of #1839. Remove
-    # this line once they pass.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
@@ -59,7 +53,7 @@ jobs:
           cache: true
       - name: Headless tests in Chrome
         working-directory: auto_route
-        run: flutter test --platform chrome
+        run: flutter test --reporter github --platform chrome
 
   android:
     name: Integration tests on Android
@@ -88,7 +82,7 @@ jobs:
           target: google_apis
           arch: x86_64
           working-directory: auto_route/example
-          script: flutter test integration_test/all_tests.dart -d emulator-5554
+          script: flutter test --reporter github integration_test/all_tests.dart -d emulator-5554
 
   ios:
     name: Integration tests on iOS
@@ -114,7 +108,7 @@ jobs:
           echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
       - name: Integration tests on the iOS simulator
         working-directory: auto_route/example
-        run: flutter test integration_test/all_tests.dart -d "$SIMULATOR_UDID"
+        run: flutter test --reporter github integration_test/all_tests.dart -d "$SIMULATOR_UDID"
 
   web:
     name: Integration tests on web
@@ -155,4 +149,4 @@ jobs:
           cache: true
       - name: Integration tests on macOS desktop
         working-directory: auto_route/example
-        run: flutter test integration_test/all_tests.dart -d macos
+        run: flutter test --reporter github integration_test/all_tests.dart -d macos
