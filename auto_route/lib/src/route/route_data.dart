@@ -229,6 +229,16 @@ class RouteData<R> {
     _isReevaluating = false;
   }
 
+  bool _isPoppedByNavigator = false;
+
+  /// Records that the navigator popped this route's page, e.g. through
+  /// [StackRouter.pop] or the back button, rather than the router removing it.
+  ///
+  /// A guard reevaluation that collected the stack before the pop does not
+  /// add the page back.
+  @internal
+  void onPoppedByNavigator() => _isPoppedByNavigator = true;
+
   /// Completes the pop completer with the given result
   void onPopInvoked(R? result) {
     if (router.ignorePopCompleters) {

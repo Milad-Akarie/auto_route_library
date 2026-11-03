@@ -80,7 +80,9 @@ class AutoRoutePage<T> extends Page<T> {
   PopInvokedWithResultCallback<T> get onPopInvoked {
     return (didPop, result) {
       if (didPop) {
-        routeData.onPopInvoked(result);
+        routeData
+          ..onPoppedByNavigator()
+          ..onPopInvoked(result);
         final router = routeData.router;
         // a workaround to fix pop flicker issue
         // Todo: remove this workaround after flutter issue is fixed

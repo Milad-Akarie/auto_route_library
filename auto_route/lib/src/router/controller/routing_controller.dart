@@ -1803,7 +1803,11 @@ abstract class StackRouter extends RoutingController {
       'Pages stack can be managed by either the Widget (AutoRouter.declarative) or Router',
     );
 
+    // A page popped since the stack was collected for reevaluation stays closed, with the pages above it.
+    bool wasPopped(RouteMatch match) =>
+        match is ReevaluatableRouteMatch && match.currentPage.routeData._isPoppedByNavigator;
     for (var i = 0; i < routes.length; i++) {
+      if (wasPopped(routes[i])) break;
       final result = await _canNavigate(
         routes[i],
         onFailure: onFailure,
@@ -1811,6 +1815,7 @@ abstract class StackRouter extends RoutingController {
         isReevaluating: isReevaluating,
       );
       final match = result.route;
+      if (wasPopped(match)) break;
       if (result.continueNavigation) {
         if (i != (routes.length - 1)) {
           if (match is ReevaluatableRouteMatch) {
