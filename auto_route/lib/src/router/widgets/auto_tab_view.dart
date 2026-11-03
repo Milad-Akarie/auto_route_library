@@ -134,14 +134,22 @@ class AutoTabViewState extends State<AutoTabView> {
     final stack = _router.stack;
     final matchIds = {for (final page in stack) page.routeData.matchId};
     _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
-    _children = List.generate(
-      stack.length,
-      (index) => KeepAliveTab(
-        key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, () => GlobalKey()),
-        initiallyLoaded: _router.activeIndex == index,
-        page: stack[index],
-      ),
-    );
+    _children = List.generate(stack.length, (index) {
+      final isActive = _router.activeIndex == index;
+      // The page view keeps every tab laid out beside the active one; a screen
+      // reader or the keyboard must not reach those.
+      return ExcludeSemantics(
+        excluding: !isActive,
+        child: ExcludeFocus(
+          excluding: !isActive,
+          child: KeepAliveTab(
+            key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, () => GlobalKey()),
+            initiallyLoaded: isActive,
+            page: stack[index],
+          ),
+        ),
+      );
+    });
   }
 
   void _disposeInactiveChildren() {

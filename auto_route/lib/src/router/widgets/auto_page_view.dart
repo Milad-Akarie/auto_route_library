@@ -93,7 +93,10 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   void _routerListener() {
-    _updateChildren();
+    if (mounted) {
+      // Rebuilds so only the new active tab is reachable.
+      setState(_updateChildren);
+    }
     _disposeInactiveChildren();
     if (_router.activeIndex != _controller.page!.round()) {
       _warpToCurrentIndex();
@@ -121,14 +124,22 @@ class AutoPageViewState extends State<AutoPageView> {
     final stack = widget.router.stack;
     _matchIds = [for (final page in stack) page.routeData.matchId];
     _tabKeys.removeWhere((matchId, _) => !_matchIds.contains(matchId));
-    _children = List.generate(
-      stack.length,
-      (index) => KeepAliveTab(
-        key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, () => GlobalKey()),
-        initiallyLoaded: _router.activeIndex == index,
-        page: stack[index],
-      ),
-    );
+    _children = List.generate(stack.length, (index) {
+      final isActive = _router.activeIndex == index;
+      // The page view keeps every tab laid out beside the active one; a screen
+      // reader or the keyboard must not reach those.
+      return ExcludeSemantics(
+        excluding: !isActive,
+        child: ExcludeFocus(
+          excluding: !isActive,
+          child: KeepAliveTab(
+            key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, () => GlobalKey()),
+            initiallyLoaded: isActive,
+            page: stack[index],
+          ),
+        ),
+      );
+    });
   }
 
   void _disposeInactiveChildren() {

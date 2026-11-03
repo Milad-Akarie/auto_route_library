@@ -78,6 +78,7 @@ import 'tab_rebuild_test.dart' as tab_rebuild;
 import 'tab_removed_test.dart' as tab_removed;
 import 'tab_routes_change_test.dart' as tab_routes_change;
 import 'tab_routes_index_test.dart' as tab_routes_index;
+import 'tab_semantics_test.dart' as tab_semantics;
 import 'tab_shared_parent_url_test.dart' as tab_shared_parent_url;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
 import 'tabs_scaffold_build_count_test.dart' as tabs_scaffold_build_count;
@@ -169,6 +170,7 @@ void main() {
   group('tab removed', tab_removed.main);
   group('tab routes change', tab_routes_change.main);
   group('tab routes index', tab_routes_index.main);
+  group('tab semantics', tab_semantics.main);
   group('tab shared parent url', tab_shared_parent_url.main);
   group('tabs pop scope', tabs_pop_scope.main);
   group('tabs scaffold build count', tabs_scaffold_build_count.main);
