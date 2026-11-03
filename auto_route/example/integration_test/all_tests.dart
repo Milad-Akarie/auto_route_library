@@ -27,6 +27,7 @@ import 'optional_args_on_back_test.dart' as optional_args_on_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_and_push_all_test.dart' as pop_and_push_all;
+import 'pop_and_push_from_animating_modal_test.dart' as pop_and_push_from_animating_modal;
 import 'pop_scope_once_test.dart' as pop_scope_once;
 import 'pop_scope_test.dart' as pop_scope;
 import 'push_all_nested_routes_test.dart' as push_all_nested_routes;
@@ -79,6 +80,7 @@ void main() {
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('pop and back', pop_and_back.main);
   group('pop and push all', pop_and_push_all.main);
+  group('pop and push from animating modal', pop_and_push_from_animating_modal.main);
   group('pop scope', pop_scope.main);
   group('pop scope once', pop_scope_once.main);
   group('push all nested routes', push_all_nested_routes.main);
