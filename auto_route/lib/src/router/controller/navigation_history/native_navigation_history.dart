@@ -1,4 +1,4 @@
-import 'package:auto_route/auto_route.dart' show RouteMatch, StackRouter, UrlState;
+import 'package:auto_route/auto_route.dart' show RouteMatch, RoutingController, StackRouter, UrlState;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
@@ -20,14 +20,14 @@ class NavigationHistoryImpl extends NavigationHistory {
   @override
   void onNewUrlState(UrlState newState, {bool notify = true}) {
     super.onNewUrlState(newState, notify: notify);
-    if (_currentUrl == newState.url) return;
+    if (_isLastEntry(newState)) return;
 
     // Don't add entries during back navigation to prevent duplicates
     if (_isNavigatingBack) return;
 
     if (_isRebuildingAfterPop) {
       // The last entry belongs to the popped page; drop it so back() can't return to it.
-      // If the page now on top is the entry before, _addEntry skips it as a duplicate.
+      // If the page now on top is the entry before, _addEntry skips it as the same page.
       if (_entries.isNotEmpty) _entries.removeLast();
       _addEntry(newState.copyWith(shouldReplace: false));
       return;
@@ -52,16 +52,35 @@ class NavigationHistoryImpl extends NavigationHistory {
   @override
   int get length => _entries.length;
 
-  String get _currentUrl => _entries.lastOrNull?.url ?? '';
+  // Whether [urlState] shows the page of the last entry.
+  bool _isLastEntry(UrlState urlState) {
+    final last = _entries.lastOrNull;
+    return last != null && last.url == urlState.url && last.pageId == urlState.topMatch?.id;
+  }
+
+  // The controller, [controller] or one nested in it, whose stack holds the page with [pageId].
+  RoutingController? _controllerOf(RoutingController controller, LocalKey pageId) {
+    if (controller.stackData.any((data) => data.route.id == pageId)) return controller;
+    for (final child in controller.childControllers) {
+      final holder = _controllerOf(child, pageId);
+      if (holder != null) return holder;
+    }
+    return null;
+  }
 
   void _addEntry(UrlState urlState) {
     if (!urlState.hasSegments) return;
     final route = UrlState.toHierarchy(urlState.segments);
-    final newEntry = _HistoryEntry(route, urlState.url);
+    final newEntry = _HistoryEntry(route, urlState.url, urlState.topMatch!.id);
 
-    // Prevent adding duplicate consecutive entries
-    if (_entries.isNotEmpty && _entries.last.url == urlState.url) {
-      return;
+    if (_isLastEntry(urlState)) return;
+    // A page with the same url as the last entry's is a new entry only while the
+    // last entry's page stays in a stack under it, as when the same route is
+    // pushed twice. Otherwise it took that page's place, as navigate() does with
+    // new arguments, or the router rebuilt its pages, so it takes the entry.
+    final last = _entries.lastOrNull;
+    if (last != null && last.url == urlState.url && _controllerOf(router, last.pageId) == null) {
+      _entries.removeLast();
     }
 
     // limit history registration to 20 entries
@@ -87,7 +106,13 @@ class NavigationHistoryImpl extends NavigationHistory {
         return;
       }
 
-      router.navigateAll([_entries.last.route]).whenComplete(() => _isNavigatingBack = false);
+      // The entry's page may still be under the current one with the same route
+      // name, which navigateAll alone would update in place; remove the pages
+      // above it first.
+      final last = _entries.last;
+      final holder = _controllerOf(router, last.pageId);
+      if (holder is StackRouter) holder.removeUntil((data) => data.route.id == last.pageId);
+      router.navigateAll([last.route]).whenComplete(() => _isNavigatingBack = false);
     }
   }
 
@@ -109,7 +134,10 @@ class _HistoryEntry {
   final RouteMatch route;
   final String url;
 
-  const _HistoryEntry(this.route, this.url);
+  // The id of the page on top, which tells apart two pages with the same url.
+  final LocalKey pageId;
+
+  const _HistoryEntry(this.route, this.url, this.pageId);
 
   @override
   bool operator ==(Object other) =>

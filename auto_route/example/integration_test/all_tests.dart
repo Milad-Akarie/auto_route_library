@@ -5,6 +5,7 @@ import 'ancestor_path_params_test.dart' as ancestor_path_params;
 import 'android_back_in_app_test.dart' as android_back_in_app;
 import 'app_smoke_test.dart' as app_smoke;
 import 'back_in_tabs_test.dart' as back_in_tabs;
+import 'back_same_url_test.dart' as back_same_url;
 import 'camel_case_path_test.dart' as camel_case_path;
 import 'current_hierarchy_test.dart' as current_hierarchy;
 import 'current_url_test.dart' as current_url;
@@ -116,6 +117,7 @@ void main() {
   group('android back in app', android_back_in_app.main);
   group('app smoke', app_smoke.main);
   group('back in tabs', back_in_tabs.main);
+  group('back same url', back_same_url.main);
   group('camel case path', camel_case_path.main);
   group('current hierarchy', current_hierarchy.main);
   group('current url', current_url.main);
