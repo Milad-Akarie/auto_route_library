@@ -149,7 +149,16 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     );
   }
 
+  // The pages handed to the Navigator by the previous build.
+  List<AutoRoutePage> _shownPages = const [];
+
   Widget _buildNavigator(BuildContext context) {
+    // Each page of the previous build now holds a route; mark it before the
+    // Navigator matches the new pages to its routes.
+    for (final page in _shownPages) {
+      page.markShown();
+    }
+    _shownPages = widget.router.hasEntries ? widget.router.stack : const [];
     return widget.router.hasEntries
         ? Navigator(
             key: widget.router.navigatorKey,

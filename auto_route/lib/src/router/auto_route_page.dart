@@ -6,6 +6,9 @@ import 'package:flutter/services.dart' show PredictiveBackEvent, SwipeEdge;
 
 part 'transitions/predictive_back_page_detector.dart';
 
+// The pages a navigator has shown; see [AutoRoutePage.markShown].
+final _shownPages = Expando<bool>();
+
 /// Creates a RoutePage based on [routeData.type],
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
@@ -49,11 +52,27 @@ class AutoRoutePage<T> extends Page<T> {
           key: routeData.matchId,
         );
 
+  /// Records that the [Navigator] has shown this page, so it now holds a
+  /// route of its own.
+  ///
+  /// Called by [AutoRouteNavigator] for the pages of its previous build. A
+  /// shown page only updates its own route in [canUpdate].
+  @internal
+  void markShown() => _shownPages[this] = true;
+
+  /// Whether this page can take over the route that [other] is showing.
+  ///
+  /// A new page takes over the route of a page with the same [routeKey] in the
+  /// same stack, so replacing a route with itself updates the page in place.
+  /// A page the navigator already shows keeps its own route: when a page with
+  /// the same [routeKey] is removed from below it, the page must not take the
+  /// removed page's route and leave its own to be popped.
   @override
   bool canUpdate(Page<dynamic> other) {
     final canUpdate = other.runtimeType == runtimeType &&
         (other as AutoRoutePage).routeKey == routeKey &&
-        routeData.stackKey == other.routeData.stackKey;
+        routeData.stackKey == other.routeData.stackKey &&
+        (_shownPages[this] != true || other.key == key);
     return canUpdate;
   }
 
