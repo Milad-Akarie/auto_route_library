@@ -312,12 +312,37 @@ abstract class RoutingController with ChangeNotifier {
     for (var route in routes) {
       var match = _matchOrReportFailure(route, onFailure);
       if (match != null) {
-        matches.add(match);
+        // Only a stack opens listed routes one above the other; a tabs router
+        // shows each listed route as its own tab.
+        final merged = this is StackRouter && matches.isNotEmpty ? _mergeIntoParent(matches.last, match) : null;
+        if (merged != null) {
+          matches.last = merged;
+        } else {
+          matches.add(match);
+        }
       } else {
         return null;
       }
     }
     return matches;
+  }
+
+  // A route of a nested router that isn't open comes inside the parents made
+  // up for it. When [next]'s made-up parent is the route [previous] opens, its
+  // children join [previous]'s, so routes listed together open in one nested
+  // router instead of each in its own copy of the parent.
+  RouteMatch? _mergeIntoParent(RouteMatch previous, RouteMatch next) {
+    if (!next.autoFilled || next.name != previous.name) return null;
+    final children = [...?previous.children];
+    for (final child in next.children ?? const <RouteMatch>[]) {
+      final merged = children.isEmpty ? null : _mergeIntoParent(children.last, child);
+      if (merged != null) {
+        children.last = merged;
+      } else {
+        children.add(child);
+      }
+    }
+    return previous.copyWith(children: children);
   }
 
   /// Whether is router is used by a declarative-routing widget

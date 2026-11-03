@@ -28,6 +28,7 @@ import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_and_push_all_test.dart' as pop_and_push_all;
 import 'pop_scope_once_test.dart' as pop_scope_once;
 import 'pop_scope_test.dart' as pop_scope;
+import 'push_all_nested_routes_test.dart' as push_all_nested_routes;
 import 'push_and_pop_until_test.dart' as push_and_pop_until;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
 import 'push_futures_test.dart' as push_futures;
@@ -76,6 +77,7 @@ void main() {
   group('pop and push all', pop_and_push_all.main);
   group('pop scope', pop_scope.main);
   group('pop scope once', pop_scope_once.main);
+  group('push all nested routes', push_all_nested_routes.main);
   group('push and pop until', push_and_pop_until.main);
   group('push and reevaluate', push_and_reevaluate.main);
   group('push futures', push_futures.main);
