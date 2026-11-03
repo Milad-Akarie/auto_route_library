@@ -72,6 +72,27 @@ void main() {
     expect(find.text('Book some-id'), findsOneWidget);
     await expectBrowserUrl('/book');
   });
+
+  // Steps: push Book with bookId 'some-id', push Book again with bookId
+  // 'some-id-2', press the browser's back button, then its forward button.
+  // Should: the second Book, 'some-id-2', back on top of the first.
+  // Web only: only the browser has a forward button.
+  testWidgets('The browser forward button returns to a page pushed over one with the same url', (tester) async {
+    await pushTwoBooks(tester);
+    final secondBookEntry = browserEntryIndex()!;
+    pressBrowserBack();
+    await expectBrowserEntry(secondBookEntry - 1);
+    await tester.pumpAndSettle();
+    expect(find.text('Book some-id'), findsOneWidget);
+
+    pressBrowserForward();
+    await expectBrowserEntry(secondBookEntry);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Book some-id-2'), findsOneWidget);
+    expect(router.stack.length, 3);
+    await expectBrowserUrl('/book');
+  }, skip: !kIsWeb);
 }
 
 class _BookArgs {

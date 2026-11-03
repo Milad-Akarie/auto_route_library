@@ -202,7 +202,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       topMost.popUntil((route) => route.settings is Page);
     }
 
-    if (configuration.hasSegments) {
+    final pageToPush = history.pageToPushForBrowserEntry(configuration);
+    if (pageToPush != null) {
+      final (stack, page) = pageToPush;
+      // The future completes when the page is popped.
+      unawaited(stack._pushAllGuarded([page]));
+    } else if (configuration.hasSegments) {
       final entryRoutes = controller.navigationHistory.routesOfBrowserEntry(configuration);
       final platLink = PlatformDeepLink._(
         entryRoutes == null ? configuration : configuration.copyWith(segments: entryRoutes),

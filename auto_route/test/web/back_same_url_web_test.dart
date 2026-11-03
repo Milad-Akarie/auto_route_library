@@ -78,6 +78,24 @@ void main() {
     expect(browserPath, '/');
   });
 
+  // After going back from the second Book to the first, the browser's forward
+  // button puts the second Book back on top of the first. The first Book used
+  // to take the second one's arguments in place, so back() then left for Home.
+  testWidgets('The browser forward button returns to a page pushed over one with the same url', (tester) async {
+    await pushTwoBooks(tester);
+    await pressBrowserBack(tester);
+    expect(find.text('Book some-id'), findsOneWidget);
+
+    await pressBrowserForward(tester);
+    expect(find.text('Book some-id-2'), findsOneWidget);
+    expect(router.stack.length, 3);
+    expect(browserSerialCount, 2);
+
+    await browserMove(tester, router.back);
+    expect(find.text('Book some-id'), findsOneWidget);
+    expect(router.stack.length, 2);
+  });
+
   // navigate() to the page on top with other arguments replaces it in place,
   // so it keeps the one browser entry.
   testWidgets('navigate() to the page on top with other arguments adds no browser entry', (tester) async {

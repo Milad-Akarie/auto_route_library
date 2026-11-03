@@ -43,7 +43,8 @@ class NavigationHistoryImpl extends NavigationHistory {
     final isNewUrl = !_isSameUrl(urlState.url, newState.url);
     // A page pushed over one with the same url gets a browser entry of its own,
     // so that going back returns to the page under it.
-    final isPushedOverSameUrl = !isNewUrl && !_isSteppingBack && _isPushedOverSameUrl(newState);
+    final isPushedOverSameUrl =
+        !isNewUrl && !_isSteppingBack && !_isPageOfEntry(browserIndex, newState) && _isPushedOverSameUrl(newState);
     _addsEntryWithSameUrl = notify && isPushedOverSameUrl;
     try {
       // While stepping back, the browser reports the new url once it gets there;
@@ -128,6 +129,20 @@ class NavigationHistoryImpl extends NavigationHistory {
   }
 
   @override
+  (StackRouter, RouteMatch)? pageToPushForBrowserEntry(UrlState configuration) {
+    final appIndex = _appIndex;
+    final index = _currentIndex;
+    final entry = _entries[index];
+    final page = entry?.topMatch;
+    final currentPageId = urlState.topMatch?.id;
+    if (appIndex == null || index != appIndex + 1 || page == null || currentPageId == null) return null;
+    if (!_isSameUrl(entry!.url, configuration.url) || !_isSameUrl(urlState.url, entry.url)) return null;
+    if (page.id == currentPageId || controllerOfPage(page.id) != null) return null;
+    final holder = controllerOfPage(currentPageId);
+    return holder is StackRouter ? (holder, page) : null;
+  }
+
+  @override
   bool get isBrowserBehindApp {
     final appIndex = _appIndex;
     return appIndex != null && _currentIndex < appIndex;
@@ -150,6 +165,14 @@ class NavigationHistoryImpl extends NavigationHistory {
     if (_appIndex != null && _appIndex != index) return;
     _entries[index] = urlState;
     _appIndex = index;
+  }
+
+  // Whether the browser entry at [index], which the browser moved to, holds the
+  // page on top of [state], as when its forward button reopens a page pushed
+  // over one with the same url.
+  bool _isPageOfEntry(int index, UrlState state) {
+    final pageId = state.topMatch?.id;
+    return index != _appIndex && pageId != null && _entries[index]?.topMatch?.id == pageId;
   }
 
   // Whether [newState] shows a page pushed over the app's current page with the

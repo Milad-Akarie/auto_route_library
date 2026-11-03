@@ -102,3 +102,6 @@ Future<void> pumpAsRunApp(WidgetTester tester, Widget app) async {
   await Future<void>.delayed(Duration.zero);
   await settleBrowser(tester);
 }
+
+/// Presses the browser's forward button and settles.
+Future<void> pressBrowserForward(WidgetTester tester) => browserMove(tester, () => window.history.forward());

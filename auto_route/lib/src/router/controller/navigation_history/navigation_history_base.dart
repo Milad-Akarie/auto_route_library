@@ -82,6 +82,19 @@ abstract class NavigationHistory with ChangeNotifier {
   @internal
   List<RouteMatch>? routesOfBrowserEntry(UrlState configuration) => null;
 
+  /// The page to push, and the stack to push it on, to follow the browser to
+  /// the entry that [configuration], a route the platform just reported, came
+  /// from, when that entry is the next one after the app's and holds a page
+  /// that was pushed over the app's current page with the same url.
+  ///
+  /// The browser's forward button reopens such an entry after going back
+  /// between two pages with the same url. Navigating to its routes would
+  /// update the current page in place instead, since it has the same route
+  /// name, so [AutoRouterDelegate.setNewRoutePath] pushes this page instead.
+  /// Null otherwise, and always on native platforms.
+  @internal
+  (StackRouter, RouteMatch)? pageToPushForBrowserEntry(UrlState configuration) => null;
+
   /// Whether the browser now shows an entry before the one holding the app's
   /// url, as after its back button, while the app hasn't followed yet.
   ///
