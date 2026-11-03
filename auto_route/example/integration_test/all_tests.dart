@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'ancestor_path_params_test.dart' as ancestor_path_params;
 import 'android_back_in_app_test.dart' as android_back_in_app;
 import 'app_smoke_test.dart' as app_smoke;
 import 'back_in_tabs_test.dart' as back_in_tabs;
@@ -99,6 +100,7 @@ import 'wrapper_push_from_child_test.dart' as wrapper_push_from_child;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  group('ancestor path params', ancestor_path_params.main);
   group('android back in app', android_back_in_app.main);
   group('app smoke', app_smoke.main);
   group('back in tabs', back_in_tabs.main);

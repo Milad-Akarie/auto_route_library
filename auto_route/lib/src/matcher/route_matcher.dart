@@ -241,7 +241,13 @@ class RouteMatcher {
     for (var i = 0; i < configs.length; i++) {
       final config = configs[i];
       if (i == configs.length - 1) {
-        // last match should take route's info
+        // last match should take route's info, and the default children it
+        // gets when matched by route from its own level, which carry its query
+        var routes = collection;
+        for (final ancestor in configs.take(i)) {
+          routes = routes.subCollectionOf(ancestor.name);
+        }
+        final children = _matchByRoute(route, routes)?.children;
         final stringMatch = PageRouteInfo.expandPath(config.path, route.rawPathParams);
         matches.add(
           RouteMatch(
@@ -254,15 +260,24 @@ class RouteMatcher {
             redirectedFrom: route.redirectedFrom,
             params: Parameters(route.rawPathParams),
             queryParams: Parameters(route.rawQueryParams),
+            children: children == null || children.isEmpty ? null : children,
           ),
         );
       } else {
+        // A path param of the route can belong to an ancestor's path, as with a
+        // page at '' under 'books/:id'; fill it in there too.
+        final ancestorParams = {
+          for (final entry in route.rawPathParams.entries)
+            if (_split(config.path).contains(':${entry.key}')) entry.key: entry.value,
+        };
+        final stringMatch = PageRouteInfo.expandPath(config.path, ancestorParams);
         matches.add(
           RouteMatch(
             config: config,
-            segments: _split(config.path),
-            key: ValueKey(config.usesPathAsKey ? config.path : config.name),
-            stringMatch: config.path,
+            segments: _split(stringMatch),
+            key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),
+            stringMatch: stringMatch,
+            params: Parameters(ancestorParams),
             autoFilled: true,
           ),
         );
