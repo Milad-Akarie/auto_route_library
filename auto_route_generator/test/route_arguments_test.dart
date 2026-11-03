@@ -97,4 +97,27 @@ required this.url,
       expect(source, contains('Option<UrlCallback> onPageStarted'));
     });
   });
+
+  // #2053: a path parameter typed by a typedef of `int` failed the build with
+  // "Parameter [inboxMessageId] must be of a type that can be parsed from a
+  // [String]": the generator checked the typedef's name, not its type.
+  group('a url parameter typed by a typedef (#2053)', () {
+    test('is parsed by the type the typedef stands for', () async {
+      final result = await generateRouter({
+        'lib/types.dart': 'typedef TypedefParameter = int;',
+        'lib/inbox_page.dart': _page(
+          'InboxMessageDetailsPage',
+          imports: "import 'types.dart';",
+          parameters: '@PathParam() required this.inboxMessageId, @QueryParam() this.page',
+          fields: '''
+  final TypedefParameter inboxMessageId;
+  final TypedefParameter? page;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, contains("pathParams.getInt('inboxMessageId')"));
+      expect(result.source, contains("queryParams.optInt('page')"));
+    });
+  });
 }

@@ -25,16 +25,20 @@ class RouteParameterResolver {
     if (paramType is FunctionType && paramType.alias == null) {
       return _resolveFunctionType(parameterElement);
     }
-    var type = _typeResolver.resolveType(paramType);
     var paramName = parameterElement.name ?? '';
     if (paramName.startsWith('_')) {
       paramName = paramName.replaceFirst("_", '');
     }
     var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
+    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
 
     var nameOrAlias = paramName;
     var isInheritedPathParam = false;
     final isUrlFragment = _urlFragmentChecker.hasAnnotationOfExact(parameterElement);
+
+    // A value parsed from the url is parsed by the type a typedef stands for.
+    final isParsedFromUrl = pathParamAnnotation != null || queryParamAnnotation != null || isUrlFragment;
+    var type = _typeResolver.resolveType(paramType, skipAlias: isParsedFromUrl);
 
     if (pathParamAnnotation != null) {
       isInheritedPathParam = pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
@@ -43,7 +47,6 @@ class RouteParameterResolver {
         nameOrAlias = paramAlias;
       }
     }
-    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
     if (queryParamAnnotation != null) {
       final paramAlias = queryParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {

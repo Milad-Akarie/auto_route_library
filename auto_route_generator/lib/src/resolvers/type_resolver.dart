@@ -147,17 +147,20 @@ class TypeResolver {
   }
 
   /// Resolves the given [type] to a [ResolvedType]
-  ResolvedType resolveType(DartType type) {
-    final effectiveElement = type.alias?.element ?? type.element;
+  ///
+  /// A type named by a typedef resolves to the typedef, unless [skipAlias]
+  /// is true: then it resolves to the type the typedef stands for.
+  ResolvedType resolveType(DartType type, {bool skipAlias = false}) {
+    final alias = skipAlias ? null : type.alias;
+    final effectiveElement = alias?.element ?? type.element;
     final import = resolveImport(effectiveElement);
     final typeArgs = <ResolvedType>[];
-    final alias = type.alias;
     if (alias != null) {
       typeArgs.addAll(alias.typeArguments.map(resolveType));
     } else {
       typeArgs.addAll(_resolveTypeArguments(type));
     }
-    if (type is RecordType && type.alias == null) {
+    if (type is RecordType && alias == null) {
       return ResolvedType.record(
         name: effectiveElement?.displayName ?? 'void',
         import: import,
