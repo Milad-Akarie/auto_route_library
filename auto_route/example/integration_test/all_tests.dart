@@ -10,6 +10,7 @@ import 'login_state_test.dart' as login_state;
 import 'navigate_awaits_test.dart' as navigate_awaits;
 import 'navigate_nested_update_test.dart' as navigate_nested_update;
 import 'nested_back_test.dart' as nested_back;
+import 'nested_browser_back_test.dart' as nested_browser_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_scope_test.dart' as pop_scope;
@@ -39,6 +40,7 @@ void main() {
   group('navigate awaits', navigate_awaits.main);
   group('navigate nested update', navigate_nested_update.main);
   group('nested back', nested_back.main);
+  group('nested browser back', nested_browser_back.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('pop and back', pop_and_back.main);
   group('pop scope', pop_scope.main);
