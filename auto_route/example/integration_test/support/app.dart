@@ -21,6 +21,7 @@ Future<void> pumpRouterApp(
   Listenable? reevaluationNotifier,
   ThemeData? theme,
 }) async {
+  _bringAppToForeground(tester);
   await tester.pumpWidget(
     MaterialApp.router(
       theme: theme,
@@ -48,8 +49,16 @@ Future<void> pumpRouterAppWithConfig(WidgetTester tester, RootStackRouter router
 
 /// Shows [config] in a [MaterialApp] and waits for its first page.
 Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> config) async {
+  _bringAppToForeground(tester);
   await tester.pumpWidget(MaterialApp.router(routerConfig: config));
   await tester.pumpAndSettle();
+}
+
+// The test binding forgets the app's lifecycle state after each test, and
+// while it's unknown Flutter stops telling Android whether it handles back
+// (see systemBack). A running app is in the foreground.
+void _bringAppToForeground(WidgetTester tester) {
+  tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
 }
 
 void expectCurrentPage(StackRouter router, String name) {
@@ -66,12 +75,20 @@ void expectTopPage(StackRouter router, String name) {
 ///
 /// On Android this calls the activity's back handler through the app's
 /// MainActivity, the handler Android's back gesture and back key call, so
-/// the back reaches Flutter through the Android embedding. Other platforms
-/// have no back key, so this sends the 'popRoute' message the engine sends
-/// for one.
+/// the back reaches Flutter through the Android embedding. From Android 13
+/// Android calls it only while Flutter says it handles back, and otherwise
+/// closes the app; the test then fails. Flutter says so only while the app is
+/// in the foreground, so pump the app with [pumpRouterApp] or
+/// [pumpRouterConfigApp]. Other platforms have no back key,
+/// so this sends the 'popRoute' message the engine sends for one.
 Future<void> systemBack(WidgetTester tester) async {
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-    await const MethodChannel('auto_route_example/system_back').invokeMethod<void>('pressBack');
+    try {
+      await const MethodChannel('auto_route_example/system_back').invokeMethod<void>('pressBack');
+    } on PlatformException catch (error) {
+      if (error.code != 'appWouldClose') rethrow;
+      fail('Android would close the app on back: ${error.message}');
+    }
     // The back reaches Flutter as a separate platform message; give it time to arrive.
     await Future<void>.delayed(const Duration(milliseconds: 300));
   } else {
