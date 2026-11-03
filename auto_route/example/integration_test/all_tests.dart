@@ -6,6 +6,7 @@ import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'login_state_test.dart' as login_state;
 import 'navigate_awaits_test.dart' as navigate_awaits;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
+import 'pop_and_back_test.dart' as pop_and_back;
 import 'push_futures_test.dart' as push_futures;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
@@ -23,6 +24,7 @@ void main() {
   group('login state', login_state.main);
   group('navigate awaits', navigate_awaits.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
+  group('pop and back', pop_and_back.main);
   group('push futures', push_futures.main);
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
