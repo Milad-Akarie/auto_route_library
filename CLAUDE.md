@@ -1,6 +1,6 @@
 # auto_route fork: rules and how a fix is proven
 
-This repository is its own product: a maintained fork of the auto_route package. It sends no pull requests and opens no issues upstream. A fix is merged only once tests prove it, here and on every platform in CI.
+This repository is its own product: a maintained fork of the auto_route package. It sends no pull requests and opens no issues upstream. A fix is merged only once tests prove it here, on every platform; CI runs them again on every push.
 
 ## Rules
 1. One issue is one commit. Its tests and its fix land together in a single commit named after the issue, `fix: <what users see> (#N)`, with the cause in the body. An integration test added later for an issue already fixed is its own commit: `test: integration test for <what> (#N)`.
@@ -39,12 +39,26 @@ Also: never push (the maintainer merges into `master` and pushes), format only t
    flutter test integration_test/all_tests.dart -d 7E32A93E-FD30-46D1-9315-AA51401A9ABA
    ```
 
-4. CI (`.github/workflows/tests.yml`) must pass before merge: analyze, the headless tests on the VM and in Chrome, and the integration tests on Android, iOS, web and macOS. Web integration runs only in CI, since it needs ChromeDriver.
+   And on web, in headless Chrome through ChromeDriver (see Devices). Start ChromeDriver, run the tests, then stop it:
+
+   ```bash
+   ~/.cache/chromedriver/156.0.8078.80/chromedriver-mac-arm64/chromedriver --port=4444 &
+   ```
+
+   ```bash
+   flutter drive --driver=test_driver/integration_test.dart --target=integration_test/all_tests.dart -d web-server --browser-name=chrome --headless
+   ```
+
+   ```bash
+   pkill -f "chromedriver --port=4444"
+   ```
+
+4. The local runs in step 3 must pass before merge. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, the headless tests on the VM and in Chrome, and the integration tests on Android, iOS, web and macOS. A CI failure on `master` is fixed as its own issue.
 
 If a test fails on one platform because of a real bug, skip it on that platform only, with a comment naming the issue and the platform, and give that bug its own chat (rule 4).
 
 ## Devices
-- Always pass `-d` with an emulator, simulator, `macos` or `chrome`. Never use a plugged-in phone. List devices with `flutter devices`.
+- Always pass `-d` with an emulator, simulator, `macos`, `chrome` or `web-server`. Never use a plugged-in phone. List devices with `flutter devices`.
 - Android: the shared `Pixel_9`, `Pixel_9_Pro_Fold` and `Wear_OS` emulators. Never create one. Before booting one, check nothing else drives it: `pgrep -fl qemu-system` prints nothing. Boot it, then shut it down when done:
 
   ```bash
@@ -56,6 +70,7 @@ If a test fails on one platform because of a real bug, skip it on that platform 
   ```
 
 - iOS: use the simulator that is already booted (`xcrun simctl list devices booted`) and leave it running. Never create one.
+- Web: ChromeDriver 156.0.8078.80 for mac-arm64, from Google's Chrome for Testing, is at `~/.cache/chromedriver/156.0.8078.80/chromedriver-mac-arm64/chromedriver`. Its version must match the installed Chrome's; when Chrome updates itself, the matching ChromeDriver is a new download, which needs Phil's OK. Before starting it, check nothing else uses port 4444: `pgrep -f "chromedriver --port=4444"` prints nothing. Stop it when done.
 
 ## Traps
 - Run `integration_test/all_tests.dart`, not the folder. On macOS the second file fails to relaunch the app, and `flutter drive` on web takes one target.
