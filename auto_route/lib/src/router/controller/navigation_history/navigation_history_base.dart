@@ -1,6 +1,7 @@
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'navigation_history.dart'
     if (dart.library.io) 'native_navigation_history.dart'
@@ -24,6 +25,20 @@ abstract class NavigationHistory with ChangeNotifier {
     _unMarkUrlStateForReplace();
     onNewUrlState(newState);
   }
+
+  /// Rebuilds the url after a page was popped from one of [router]'s stacks.
+  ///
+  /// A pop leaves the page that was under the popped one on top. Recording
+  /// that page as a new entry, as [rebuildUrl] would, leaves the popped page's
+  /// entry in the history, so a later [back] returns to the page that was just
+  /// popped. The native history instead drops the popped page's entry and
+  /// keeps one entry for the page now on top. The web history keeps the
+  /// browser's entries as they are and behaves like [rebuildUrl].
+  ///
+  /// Like [rebuildUrl], notifies listeners only if the url changed, which it
+  /// does not when the popped page was not part of the visible url.
+  @internal
+  void rebuildUrlAfterPop() => rebuildUrl();
 
   /// Pushes a new browser entry with given state
   ///

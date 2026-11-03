@@ -15,6 +15,7 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   final _entries = <_HistoryEntry>[];
   bool _isNavigatingBack = false;
+  bool _isRebuildingAfterPop = false;
 
   @override
   void onNewUrlState(UrlState newState, {bool notify = true}) {
@@ -24,7 +25,25 @@ class NavigationHistoryImpl extends NavigationHistory {
     // Don't add entries during back navigation to prevent duplicates
     if (_isNavigatingBack) return;
 
+    if (_isRebuildingAfterPop) {
+      // The last entry belongs to the popped page; drop it so back() can't return to it.
+      // If the page now on top is the entry before, _addEntry skips it as a duplicate.
+      if (_entries.isNotEmpty) _entries.removeLast();
+      _addEntry(newState.copyWith(shouldReplace: false));
+      return;
+    }
+
     _addEntry(newState);
+  }
+
+  @override
+  void rebuildUrlAfterPop() {
+    _isRebuildingAfterPop = true;
+    try {
+      rebuildUrl();
+    } finally {
+      _isRebuildingAfterPop = false;
+    }
   }
 
   @override
