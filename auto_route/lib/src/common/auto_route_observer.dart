@@ -234,6 +234,7 @@ class AutoRouteObserver extends AutoRouterObserver {
           routeAware.didPop();
         }
       }
+      _notifyNested(key, (routeAware) => routeAware.didPop());
     }
   }
 

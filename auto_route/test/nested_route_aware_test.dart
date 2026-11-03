@@ -147,4 +147,28 @@ void main() {
     expect(find.text('sheet'), findsNothing);
     expect(_events, ['Something.didPopNext']);
   });
+
+  // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/1863
+  // The report gives no setup; this is the one where didPop never fired on
+  // dev: the page is inside a nested router and its host route is popped.
+  // Steps: Home, then route A that hosts a nested router showing route B, all
+  // with AutoRouteAwareStateMixin. Pop A.
+  // Happens: B gets didPush when it shows, but never didPop.
+  // Should: B gets didPop, as a page popped in its own router does.
+  testWidgets('A page in a nested router hears didPop when its host route is popped', (tester) async {
+    final router = await _pumpApp(tester, [
+      AutoRoute(path: '/', page: _awarePage('Home')),
+      AutoRoute(path: '/a', page: _stackHost('A'), children: [
+        AutoRoute(path: '', page: _awarePage('B')),
+      ]),
+    ]);
+    router.push(const _Route('A'));
+    await tester.pumpAndSettle();
+    expect(_events, ['Home.didPushNext', 'B.didPush']);
+
+    _events.clear();
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(_events, ['Home.didPopNext', 'B.didPop']);
+  });
 }
