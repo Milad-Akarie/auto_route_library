@@ -1618,12 +1618,34 @@ abstract class StackRouter extends RoutingController {
   }) async {
     final matches = _matchAllOrReportFailure(routes, onFailure);
     if (matches != null) {
+      // A guard can reject the new routes; the whole batch is then rejected and the stack restored.
+      final previousPages = List.of(_pages);
+      final previousStackKey = _stackKey;
+      var rejected = false;
       _pages.clear();
       if (!updateExistingRoutes) {
         _stackKey = UniqueKey();
       }
       markUrlStateForReplace();
-      await _navigateAll(matches);
+      await _navigateAll(
+        matches,
+        onFailure: (failure) {
+          if (failure is RejectedByGuardFailure && matches.any((match) => match.id == failure.route.id)) {
+            rejected = true;
+          }
+        },
+      );
+      if (rejected) {
+        for (final page in _pages.where((page) => !previousPages.contains(page))) {
+          page.routeData.onPopInvoked(null);
+        }
+        _pages
+          ..clear()
+          ..addAll(previousPages);
+        _stackKey = previousStackKey;
+        markUrlStateForReplace();
+        notifyAll(forceUrlRebuild: true);
+      }
       return;
     }
     return SynchronousFuture(null);
