@@ -100,6 +100,15 @@ abstract class RoutingController with ChangeNotifier {
     );
   }
 
+  // The nested router of the page [data] belongs to. Found by the page's
+  // match id first, because two pages can share a route: two AutoTabsRouter
+  // tabs do when both are children of the same parent route. Then by route
+  // key, for a nested router kept when its page was replaced.
+  RoutingController? _innerControllerOfPage(RouteData? data) {
+    if (data == null) return null;
+    return _innerControllerOfMatch(data.matchId) ?? _topInnerControllerOf(data.key);
+  }
+
   RoutingController? _innerControllerOfMatch(Key key) {
     return _childControllers.lastWhereOrNull(
       (c) => c.matchId == key,
@@ -164,7 +173,7 @@ abstract class RoutingController with ChangeNotifier {
     final hierarchy = <HierarchySegment>[];
     for (final data in stack) {
       final segmentName = asPath ? data.match : data.name;
-      final childCtrl = _topInnerControllerOf(data.key);
+      final childCtrl = _innerControllerOfPage(data);
       final childSegments = <HierarchySegment>[];
       if (childCtrl?.hasEntries == true) {
         // The child router looks up its own nested routers.
@@ -678,7 +687,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// returns true if the active child controller can pop
   bool activeRouterCanPop({bool ignorePagelessRoutes = false}) {
-    final innerRouter = _topInnerControllerOf(currentChild?.key);
+    final innerRouter = _innerControllerOfPage(currentChild);
     if (innerRouter != null) {
       return innerRouter.canPop(
         ignorePagelessRoutes: ignorePagelessRoutes,
@@ -695,7 +704,7 @@ abstract class RoutingController with ChangeNotifier {
     final segments = <RouteMatch>[];
     if (currentData != null) {
       segments.add(currentData.route);
-      final childCtrl = _topInnerControllerOf(currentData.key);
+      final childCtrl = _innerControllerOfPage(currentData);
       if (childCtrl?.hasEntries == true) {
         segments.addAll(childCtrl!.currentSegments);
       } else if (currentData.hasPendingChildren) {
@@ -714,7 +723,7 @@ abstract class RoutingController with ChangeNotifier {
     final segments = <RouteMatch>[];
     if (currentData != null) {
       segments.add(currentData.route);
-      final childCtrl = _topInnerControllerOf(currentData.key);
+      final childCtrl = _innerControllerOfPage(currentData);
       if (childCtrl?.hasEntries == true) {
         segments.addAll(childCtrl!._addedSegments);
       }
@@ -853,8 +862,7 @@ class TabsRouter extends RoutingController {
 
   @override
   RoutingController _topMostRouter({bool ignorePagelessRoutes = false}) {
-    var key = _activePage?.routeData.key;
-    final innerRouter = _topInnerControllerOf(key);
+    final innerRouter = _innerControllerOfPage(_activePage?.routeData);
     if (innerRouter != null) {
       return innerRouter._topMostRouter(
         ignorePagelessRoutes: ignorePagelessRoutes,
@@ -1100,7 +1108,7 @@ class TabsRouter extends RoutingController {
     bool ignorePagelessRoutes = false,
   }) {
     if (!ignoreChildRoutes) {
-      final innerRouter = _topInnerControllerOf(_activePage?.routeKey);
+      final innerRouter = _innerControllerOfPage(_activePage?.routeData);
       if (innerRouter != null &&
           innerRouter.canPop(
             ignorePagelessRoutes: ignorePagelessRoutes,
@@ -1273,7 +1281,7 @@ abstract class StackRouter extends RoutingController {
     }
 
     if (!ignoreChildRoutes && _pages.isNotEmpty) {
-      final innerRouter = _topInnerControllerOf(_pages.last.routeData.key);
+      final innerRouter = _innerControllerOfPage(_pages.last.routeData);
       if (innerRouter != null &&
           innerRouter.canPop(
             ignoreParentRoutes: true,
@@ -1340,8 +1348,7 @@ abstract class StackRouter extends RoutingController {
   @override
   RoutingController _topMostRouter({bool ignorePagelessRoutes = false}) {
     if (_childControllers.isNotEmpty && (ignorePagelessRoutes || !hasPagelessTopRoute)) {
-      var topRouteKey = currentChild?.key;
-      final innerRouter = _topInnerControllerOf(topRouteKey);
+      final innerRouter = _innerControllerOfPage(currentChild);
       if (innerRouter != null) {
         return innerRouter._topMostRouter(
           ignorePagelessRoutes: ignorePagelessRoutes,
