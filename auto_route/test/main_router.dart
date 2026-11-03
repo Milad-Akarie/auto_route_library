@@ -4,5 +4,7 @@ import 'test_page.dart';
 
 part 'main_router.gr.dart';
 
-@AutoRouterConfig(generateForDir: ['test'])
+// Only test_page.dart: the test routers of other folders, such as
+// enum_query_param, name their routes with their own settings.
+@AutoRouterConfig(generateForDir: ['test/test_page'])
 abstract class MainRouter extends RootStackRouter {}
