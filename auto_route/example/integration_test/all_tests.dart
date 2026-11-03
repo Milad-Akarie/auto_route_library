@@ -35,6 +35,7 @@ import 'push_and_pop_until_test.dart' as push_and_pop_until;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
 import 'push_futures_test.dart' as push_futures;
 import 'query_params_on_pop_test.dart' as query_params_on_pop;
+import 'rapid_pops_test.dart' as rapid_pops;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
 import 'remove_where_same_route_test.dart' as remove_where_same_route;
@@ -88,6 +89,7 @@ void main() {
   group('push and reevaluate', push_and_reevaluate.main);
   group('push futures', push_futures.main);
   group('query params on pop', query_params_on_pop.main);
+  group('rapid pops', rapid_pops.main);
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
   group('remove where same route', remove_where_same_route.main);
