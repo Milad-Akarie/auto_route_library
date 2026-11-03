@@ -34,6 +34,7 @@ import 'nested_did_pop_test.dart' as nested_did_pop;
 import 'nested_route_aware_test.dart' as nested_route_aware;
 import 'nested_shell_back_test.dart' as nested_shell_back;
 import 'nested_tab_bar_reevaluation_test.dart' as nested_tab_bar_reevaluation;
+import 'non_ascii_url_test.dart' as non_ascii_url;
 import 'optional_args_on_back_test.dart' as optional_args_on_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'page_view_swipe_back_test.dart' as page_view_swipe_back;
@@ -127,6 +128,7 @@ void main() {
   group('nested route aware', nested_route_aware.main);
   group('nested shell back', nested_shell_back.main);
   group('nested tab bar reevaluation', nested_tab_bar_reevaluation.main);
+  group('non-ASCII url', non_ascii_url.main);
   group('optional args on back', optional_args_on_back.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('page view swipe back', page_view_swipe_back.main);

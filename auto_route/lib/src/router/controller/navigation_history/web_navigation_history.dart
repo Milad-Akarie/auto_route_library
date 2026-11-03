@@ -122,7 +122,9 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   bool _isSameUrl(String? a, String b) {
     if (a == null) return false;
-    String normalize(String url) => url.isEmpty ? '/' : Uri.decodeFull(url);
+    // Uri.decodeFull throws on a letter outside ASCII, which a decoded url can
+    // hold; parsing first encodes it again.
+    String normalize(String url) => url.isEmpty ? '/' : Uri.decodeFull(Uri.parse(url).toString());
     return normalize(a) == normalize(b);
   }
 
