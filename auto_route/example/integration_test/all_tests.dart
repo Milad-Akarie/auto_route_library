@@ -63,6 +63,7 @@ import 'tab_routes_change_test.dart' as tab_routes_change;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
 import 'theme_change_test.dart' as theme_change;
 import 'url_on_pop_test.dart' as url_on_pop;
+import 'window_resize_test.dart' as window_resize;
 
 // Runs every integration test file in one app launch. Run this file, not the
 // folder: desktop runners fail to relaunch the app for a second file, and
@@ -132,4 +133,5 @@ void main() {
   group('tabs pop scope', tabs_pop_scope.main);
   group('theme change', theme_change.main);
   group('url on pop', url_on_pop.main);
+  group('window resize', window_resize.main);
 }
