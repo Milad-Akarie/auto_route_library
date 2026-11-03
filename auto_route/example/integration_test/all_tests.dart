@@ -36,6 +36,7 @@ import 'query_params_on_pop_test.dart' as query_params_on_pop;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
 import 'remove_where_same_route_test.dart' as remove_where_same_route;
+import 'replace_all_from_deep_stack_test.dart' as replace_all_from_deep_stack;
 import 'replace_all_on_reevaluation_test.dart' as replace_all_on_reevaluation;
 import 'replaced_push_future_test.dart' as replaced_push_future;
 import 'required_args_test.dart' as required_args;
@@ -86,6 +87,7 @@ void main() {
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
   group('remove where same route', remove_where_same_route.main);
+  group('replace all from deep stack', replace_all_from_deep_stack.main);
   group('replace all on reevaluation', replace_all_on_reevaluation.main);
   group('replaced push future', replaced_push_future.main);
   group('required args', required_args.main);
