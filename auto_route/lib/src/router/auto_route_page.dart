@@ -60,6 +60,13 @@ class AutoRoutePage<T> extends Page<T> {
   @internal
   void markShown() => _shownPages[this] = true;
 
+  /// Builds a new page of the same type for [routeData], e.g. after its args
+  /// changed.
+  ///
+  /// The new page has the same key, so it takes over this page's route.
+  @internal
+  AutoRoutePage<T> rebuild() => routeData.buildPage<T>();
+
   /// Whether this page can take over the route that [other] is showing.
   ///
   /// A new page takes over the route of a page with the same [routeKey] in the

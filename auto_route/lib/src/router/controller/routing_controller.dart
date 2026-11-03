@@ -1961,11 +1961,20 @@ abstract class StackRouter extends RoutingController {
   }
 
   void _addReevaluatedPage(ReevaluatableRouteMatch match, {bool notify = true}) {
-    final page = match.currentPage;
-    page.routeData._onEndReevaluating(match.originalMatch);
+    var page = match.currentPage;
+    final data = page.routeData;
+    data._onEndReevaluating(match.originalMatch);
+    // args a guard set are shown by a page built with them, which keeps the route and its state
+    if (match.args != data.args) {
+      data._updateRoute(match.originalMatch);
+      page = page.rebuild();
+    }
     // the page may have been kept in the stack while a guard was redirecting
-    if (!_pages.contains(page)) {
+    final index = _pages.indexOf(match.currentPage);
+    if (index == -1) {
       _pages.add(page);
+    } else {
+      _pages[index] = page;
     }
     if (notify) {
       notifyAll();
@@ -2072,14 +2081,16 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
   }) async {
-    // pages pushed after the stack was composed for reevaluation are not in [routes]
-    final reevaluatedPages = {
+    // pages pushed after the stack was composed for reevaluation are not in [routes];
+    // a reevaluated page may be rebuilt, so it's known by its route data
+    final reevaluatedRoutes = {
       for (final route in routes)
-        if (route is ReevaluatableRouteMatch) route.currentPage,
+        if (route is ReevaluatableRouteMatch) route.currentPage.routeData,
     };
+    bool wasReevaluated(AutoRoutePage page) => reevaluatedRoutes.contains(page.routeData);
     final pushedMeanwhile = <AutoRoutePage>[];
     if (isReevaluating) {
-      pushedMeanwhile.addAll(_pages.where((page) => !reevaluatedPages.contains(page)));
+      pushedMeanwhile.addAll(_pages.whereNot(wasReevaluated));
       _pages.clear();
     }
     Future<T?>? popped;
@@ -2100,9 +2111,9 @@ abstract class StackRouter extends RoutingController {
         await Future.any([pushed.future, popped]);
         if (isReevaluating) {
           // put pages pushed before or during the reevaluation back on top of the reevaluated ones
-          final pushedDuring = _pages.where((page) => !reevaluatedPages.contains(page)).toList();
+          final pushedDuring = _pages.whereNot(wasReevaluated).toList();
           _pages
-            ..removeWhere((page) => !reevaluatedPages.contains(page))
+            ..removeWhere((page) => !wasReevaluated(page))
             ..addAll([...pushedMeanwhile, ...pushedDuring]);
         }
       } else {
