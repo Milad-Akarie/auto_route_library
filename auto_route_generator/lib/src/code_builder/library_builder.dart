@@ -27,10 +27,14 @@ TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeRef
   ..types.add(reference));
 
 /// Generates the router library output
+///
+/// [outputPath] is where the output is written, next to the router by
+/// default, so a part file can name the router relative to it.
 String generateLibrary(
   RouterConfig router, {
   required List<RouteConfig> routes,
   Set<String> ignoreForFile = const {},
+  String? outputPath,
 }) {
   if (router.usesPartBuilder && router.deferredLoading) {
     throw ArgumentError(
@@ -61,7 +65,8 @@ String generateLibrary(
   final library = Library(
     (b) => b
       ..directives.addAll([
-        if (router.usesPartBuilder) Directive.partOf(p.basename(router.path)),
+        if (router.usesPartBuilder)
+          Directive.partOf(p.posix.relative(router.path, from: p.posix.dirname(outputPath ?? router.path))),
       ])
       ..comments.addAll([
         "ignore_for_file: type=lint",

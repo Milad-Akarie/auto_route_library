@@ -172,6 +172,12 @@ source formatter.''',
 }
 
 /// Validates the build extensions
+///
+/// Reads the `build_extensions` option, which maps an input pattern to its
+/// output, such as `{'^lib/{{}}.dart': 'lib/generated/{{}}.gr.dart'}`, and
+/// returns [defaultExtensions] when it is not set. Each output must end like
+/// the default one: in `.dart` for a Dart output, or in the full extension
+/// otherwise, such as `.route.json`.
 Map<String, List<String>> validatedBuildExtensionsFrom(
   Map<String, dynamic>? optionsMap,
   Map<String, List<String>> defaultExtensions,
@@ -179,7 +185,35 @@ Map<String, List<String>> validatedBuildExtensionsFrom(
   final extensionsOption = optionsMap?.remove('build_extensions');
   if (extensionsOption == null) return defaultExtensions;
 
-  throw ArgumentError(
-    'Configured build_extensions should be a map from inputs to outputs.',
-  );
+  if (extensionsOption is! Map) {
+    throw ArgumentError(
+      'Configured build_extensions should be a map from inputs to outputs.',
+    );
+  }
+
+  final defaultOutput = defaultExtensions.values.first.first;
+  final outputSuffix = defaultOutput.endsWith('.dart') ? '.dart' : defaultOutput;
+  final result = <String, List<String>>{};
+  for (final entry in extensionsOption.entries) {
+    final input = entry.key;
+    if (input is! String || !input.endsWith('.dart')) {
+      throw ArgumentError(
+        'Invalid key in build_extensions option: `$input` should be a string ending with `.dart`',
+      );
+    }
+    // One output, given as a string or as a list of one string.
+    final value = entry.value;
+    final output = value is List && value.length == 1 ? value.single : value;
+    if (output is! String || !output.endsWith(outputSuffix)) {
+      throw ArgumentError(
+        'Invalid output extension `$value`. It should be a string ending with `$outputSuffix`',
+      );
+    }
+    result[input] = [output];
+  }
+
+  if (result.isEmpty) {
+    throw ArgumentError('Configured build_extensions must not be empty.');
+  }
+  return result;
 }

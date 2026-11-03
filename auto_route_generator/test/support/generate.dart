@@ -60,10 +60,16 @@ class GeneratedRouter {
 /// [sources] maps paths inside the `app` package (`lib/home_page.dart`) to
 /// their content. When none of them holds `router.dart`, [defaultRouterSource]
 /// is added as `lib/router.dart`.
+///
+/// [options] go to both builders, as `build.yaml` options of the package;
+/// [routerOptions] go to the router builder alone. [outputPath] is where the
+/// router builder writes, next to the router by default.
 Future<GeneratedRouter> generateRouter(
   Map<String, String> sources, {
   Map<String, Object> options = const {},
+  Map<String, Object> routerOptions = const {},
   String routerPath = 'lib/router.dart',
+  String? outputPath,
 }) async {
   final packages = await _loadPackages();
   final readerWriter = TestReaderWriter(rootPackage: testPackage);
@@ -74,16 +80,20 @@ Future<GeneratedRouter> generateRouter(
     for (final entry in sources.entries) '$testPackage|${entry.key}': entry.value,
     if (!sources.containsKey(routerPath)) '$testPackage|$routerPath': defaultRouterSource,
   };
-  final builderOptions = BuilderOptions(options);
+  outputPath ??= routerPath.replaceFirst(RegExp(r'\.dart$'), '.gr.dart');
   final result = await testBuilders(
-    [autoRouteBuilder(builderOptions), autoRouterBuilder(builderOptions), _CompileCheckBuilder(routerPath)],
+    [
+      autoRouteBuilder(BuilderOptions(options)),
+      autoRouterBuilder(BuilderOptions({...options, ...routerOptions})),
+      _CompileCheckBuilder(routerPath, outputPath),
+    ],
     assets,
     rootPackage: testPackage,
     readerWriter: readerWriter,
     flattenOutput: true,
   );
   final files = result.readerWriter.testing;
-  final outputId = AssetId(testPackage, routerPath.replaceFirst(RegExp(r'\.dart$'), '.gr.dart'));
+  final outputId = AssetId(testPackage, outputPath);
   final checkId = AssetId(testPackage, routerPath.replaceFirst(RegExp(r'\.dart$'), _compileErrorsExtension));
   return GeneratedRouter(
     files.exists(outputId) ? files.readString(outputId) : null,
@@ -99,8 +109,9 @@ const _compileErrorsExtension = '.compile_errors.txt';
 /// errors in them, one per line.
 class _CompileCheckBuilder implements Builder {
   final String routerPath;
+  final String outputPath;
 
-  _CompileCheckBuilder(this.routerPath);
+  _CompileCheckBuilder(this.routerPath, this.outputPath);
 
   @override
   Map<String, List<String>> get buildExtensions => const {
@@ -111,7 +122,7 @@ class _CompileCheckBuilder implements Builder {
   Future<void> build(BuildStep buildStep) async {
     if (buildStep.inputId.path != routerPath) return;
     final libraries = [buildStep.inputId];
-    final outputId = buildStep.inputId.changeExtension('.gr.dart');
+    final outputId = AssetId(buildStep.inputId.package, outputPath);
     if (await buildStep.canRead(outputId) && await buildStep.resolver.isLibrary(outputId)) {
       libraries.add(outputId);
     }

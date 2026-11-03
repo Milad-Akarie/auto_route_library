@@ -1517,6 +1517,22 @@ targets:
            - custom_rule_2
 ```
 
+### Writing the router somewhere else
+
+By default the router is generated next to the file that holds `@AutoRouterConfig`. To write it to another folder, map the input to the output with `build_extensions`:
+
+```yaml
+targets:
+  $default:
+    builders:
+      auto_route_generator:auto_router_generator:
+        options:
+          build_extensions:
+            '^lib/{{}}.dart': 'lib/generated/{{}}.gr.dart'
+```
+
+Then point the router at that file, with `part 'generated/router.gr.dart';` or `import 'generated/router.gr.dart';`.
+
 ### Optimizing generation time
 
 The first thing you want to do to reduce generation time, is specifying the files build_runner should process and we do that by using [globs](https://pub.dev/packages/glob). Globs are kind of regex patterns with little differences that's used to match file names. **Note:** for this to work on file level you need to follow a naming convention

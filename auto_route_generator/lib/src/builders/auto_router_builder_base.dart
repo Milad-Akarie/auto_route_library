@@ -59,12 +59,10 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     return calculatedHash;
   }
 
-  bool _hasPartDirective(ClassElement clazz) {
-    final fileName = clazz.library.uri.pathSegments.last;
-    final part = fileName.replaceAll('.dart', generatedExtension);
+  bool _hasPartDirective(ClassElement clazz, AssetId output) {
     final uriIncludes = clazz.library.firstFragment.partIncludes.map((e) => e.uri);
     return uriIncludes.whereType<DirectiveUriWithSource>().any(
-          (e) => e.source.fullName.endsWith(part),
+          (e) => e.source.fullName.endsWith(output.path),
         );
   }
 
@@ -100,6 +98,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
       item,
       routes: routes..sort((a, b) => a.className.compareTo(b.className)),
       ignoreForFile: ignoreForFile,
+      outputPath: buildStep.allowedOutputs.first.path,
     )}';
   }
 
@@ -117,7 +116,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     );
     final clazz = element as ClassElement;
 
-    final usesPartBuilder = _hasPartDirective(clazz);
+    final usesPartBuilder = _hasPartDirective(clazz, buildStep.allowedOutputs.first);
 
     final router = RouterConfigResolver().resolve(
       annotation,
