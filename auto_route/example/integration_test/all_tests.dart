@@ -79,6 +79,7 @@ import 'tab_routes_change_test.dart' as tab_routes_change;
 import 'tab_routes_index_test.dart' as tab_routes_index;
 import 'tab_shared_parent_url_test.dart' as tab_shared_parent_url;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
+import 'tabs_scaffold_build_count_test.dart' as tabs_scaffold_build_count;
 import 'theme_change_test.dart' as theme_change;
 import 'url_on_pop_test.dart' as url_on_pop;
 import 'window_resize_test.dart' as window_resize;
@@ -168,6 +169,7 @@ void main() {
   group('tab routes index', tab_routes_index.main);
   group('tab shared parent url', tab_shared_parent_url.main);
   group('tabs pop scope', tabs_pop_scope.main);
+  group('tabs scaffold build count', tabs_scaffold_build_count.main);
   group('theme change', theme_change.main);
   group('url on pop', url_on_pop.main);
   group('window resize', window_resize.main);
