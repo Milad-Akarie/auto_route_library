@@ -3,20 +3,29 @@
 Reads the results file that `flutter test --file-reporter json:<path>` writes
 and prints one `::error` line per failed or errored test, load errors and
 setUpAll/tearDownAll errors included, with the first lines of each error.
-Writes the same list to the job summary when $GITHUB_STEP_SUMMARY is set.
-Annotations and the summary can be read without signing in, unlike the logs.
+When no test failed, as when the app didn't build, it prints the last lines
+of the run's saved output instead. Writes the same to the job summary when
+$GITHUB_STEP_SUMMARY is set. Annotations and the summary can be read without
+signing in, unlike the logs.
 
-Usage: python3 report_failed_tests.py <results.json> [<root>]
+Usage: python3 report_failed_tests.py <results.json> [<root> [<output.txt>]]
 Run it from the directory `flutter test` ran in. Test files are named
-relative to <root>, the current directory by default.
+relative to <root>, the current directory by default. <output.txt> is what
+the run printed, saved with `| tee`.
 """
 
 import json
 import os
+import re
 import sys
 
 # How many lines of each error the annotation keeps.
 ERROR_LINES = 8
+
+# How many of the run's last output lines the annotation keeps when no test failed.
+OUTPUT_LINES = 40
+
+ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 
 
 def escape_data(text):
@@ -64,18 +73,38 @@ def read_failures(path):
     return failures
 
 
+def report_output(results_path, output_path, root):
+    """Names a run that failed outside any test by the last lines it printed."""
+    if not output_path or not os.path.exists(output_path):
+        # Tests didn't run, for example because an earlier step failed.
+        print(f"No failed test found in {results_path}, and no saved output.")
+        return
+    with open(output_path, encoding="utf-8", errors="replace") as output:
+        lines = [ANSI_ESCAPE.sub("", line.rstrip()) for line in output]
+    last_lines = "\n".join(lines[-OUTPUT_LINES:]).replace(root + os.sep, "")
+    title = "No test failed: the build or the run did. Its last lines"
+    print(f"::error title={escape_property(title)}::{escape_data(last_lines)}")
+    write_summary(["## The build or the run failed", "", "````text", last_lines, "````", ""])
+
+
+def write_summary(lines):
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if summary_path:
+        with open(summary_path, "a", encoding="utf-8") as out:
+            out.write("\n".join(lines) + "\n")
+
+
 def main():
-    if len(sys.argv) not in (2, 3):
+    if not 2 <= len(sys.argv) <= 4:
         sys.exit(__doc__)
     path = sys.argv[1]
-    root = os.path.abspath(sys.argv[2] if len(sys.argv) == 3 else ".")
-    if not os.path.exists(path):
-        # Tests didn't run, for example because an earlier step failed.
-        print(f"No test results at {path}.")
-        return
-    failures = read_failures(path)
+    root = os.path.abspath(sys.argv[2] if len(sys.argv) >= 3 else ".")
+    output_path = sys.argv[3] if len(sys.argv) == 4 else None
+    # A missing or empty results file means no test ran: the app didn't build,
+    # or the device never started.
+    failures = read_failures(path) if os.path.exists(path) else []
     if not failures:
-        print(f"::error title=Tests failed::No failed test found in {path}; the run failed outside a test.")
+        report_output(path, output_path, root)
         return
     summary = ["## Failed tests", ""]
     for file, name, error in failures:
@@ -86,10 +115,7 @@ def main():
         first_lines = "\n".join(error.splitlines()[:ERROR_LINES]).replace(root + os.sep, "")
         print(f"::error title={escape_property(title)}::{escape_data(first_lines)}")
         summary += [f"### {title}", "", "````text", first_lines, "````", ""]
-    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
-    if summary_path:
-        with open(summary_path, "a", encoding="utf-8") as out:
-            out.write("\n".join(summary) + "\n")
+    write_summary(summary)
 
 
 if __name__ == "__main__":

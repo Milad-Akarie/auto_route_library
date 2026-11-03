@@ -40,12 +40,14 @@ jobs:
         run: flutter analyze
       - name: Headless tests on the VM
         working-directory: auto_route
-        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json"
+        # bash adds pipefail, so the step fails with the tests despite tee.
+        shell: bash
+        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
         working-directory: auto_route
-        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE"
+        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   headless-chrome:
     name: Headless tests in Chrome
@@ -60,12 +62,13 @@ jobs:
           cache: true
       - name: Headless tests in Chrome
         working-directory: auto_route
-        run: flutter test --reporter github --platform chrome --file-reporter "json:$RUNNER_TEMP/test-results.json"
+        shell: bash
+        run: flutter test --reporter github --platform chrome --file-reporter "json:$RUNNER_TEMP/test-results.json" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
         working-directory: auto_route
-        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE"
+        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   android:
     name: Integration tests on Android
@@ -94,7 +97,13 @@ jobs:
           target: google_apis
           arch: x86_64
           working-directory: auto_route/example
-          script: flutter test --reporter github integration_test/all_tests.dart -d emulator-5554
+          # The action runs each line with sh; bash adds pipefail, so the step fails with the tests despite tee.
+          script: bash -o pipefail -c 'flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart -d emulator-5554 2>&1 | tee "$RUNNER_TEMP/test-output.txt"'
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route/example
+        run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   ios:
     name: Integration tests on iOS
@@ -120,7 +129,13 @@ jobs:
           echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
       - name: Integration tests on the iOS simulator
         working-directory: auto_route/example
-        run: flutter test --reporter github integration_test/all_tests.dart -d "$SIMULATOR_UDID"
+        shell: bash
+        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart -d "$SIMULATOR_UDID" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route/example
+        run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   web:
     name: Integration tests on web
@@ -140,13 +155,19 @@ jobs:
           sleep 2
       - name: Integration tests in headless Chrome
         working-directory: auto_route/example
+        shell: bash
         run: >-
           flutter drive
           --driver=test_driver/integration_test.dart
           --target=integration_test/all_tests.dart
           -d web-server
           --browser-name=chrome
-          --headless
+          --headless 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+      # flutter drive writes no results file, so this names the failure by its last lines.
+      - name: Name the failure
+        if: failure()
+        working-directory: auto_route/example
+        run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   macos:
     name: Integration tests on macOS
@@ -161,4 +182,10 @@ jobs:
           cache: true
       - name: Integration tests on macOS desktop
         working-directory: auto_route/example
-        run: flutter test --reporter github integration_test/all_tests.dart -d macos
+        shell: bash
+        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart -d macos 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route/example
+        run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
