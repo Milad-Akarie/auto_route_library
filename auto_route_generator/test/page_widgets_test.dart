@@ -63,4 +63,52 @@ class AppRouter extends RootStackRouter {
     expect(source, contains('class ContributionsRoute extends PageRouteInfo<void>'));
     expect(source, contains('return const ContributionsPage();'));
   });
+
+  // #2083: a page whose only parameter is `super.key` gets a route without a
+  // `key` parameter. This is by design: a const constructor whose one
+  // parameter is the key lets the route build the page with `const` and be
+  // const itself (`PageRouteInfo<void>`). A page that needs its key passed
+  // drops `const` from its constructor and its route takes the key.
+  group('a page whose only parameter is the key (#2083)', () {
+    test('gets a const route without the key when its constructor is const', () async {
+      final result = await generateRouter({
+        'lib/screen.dart': _keyOnlyScreen(isConst: true),
+      });
+      expect(result.compileErrors, isEmpty);
+      final source = _flatten(result.source!);
+      expect(source, contains('class InitializationInvitationMissingRoute extends PageRouteInfo<void>'));
+      expect(source, contains('const InitializationInvitationMissingRoute({List<PageRouteInfo>? children,})'));
+      expect(source, contains('return const InitializationInvitationMissingScreen();'));
+    });
+
+    test('gets a route that takes the key when its constructor is not const', () async {
+      final result = await generateRouter({
+        'lib/screen.dart': _keyOnlyScreen(isConst: false),
+      });
+      expect(result.compileErrors, isEmpty);
+      final source = _flatten(result.source!);
+      expect(source, contains('InitializationInvitationMissingRoute({Key? key, List<PageRouteInfo>? children,})'));
+      expect(source, contains('return InitializationInvitationMissingScreen(key: args.key);'));
+    });
+  });
 }
+
+String _keyOnlyScreen({required bool isConst}) => '''
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
+
+@RoutePage()
+class InitializationInvitationMissingScreen extends StatelessWidget {
+  ${isConst ? 'const ' : ''}InitializationInvitationMissingScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+''';
+
+/// [source] without import prefixes, and with each run of whitespace made
+/// one space and none after an opening or before a closing bracket.
+String _flatten(String source) => source
+    .replaceAll(RegExp(r'_i\d+\.'), '')
+    .replaceAll(RegExp(r'\s+'), ' ')
+    .replaceAllMapped(RegExp(r'([({\[]) | ([)}\]])'), (m) => m[1] ?? m[2]!);
