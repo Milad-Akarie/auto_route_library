@@ -128,7 +128,8 @@ class RouteMatcher {
   /// returns null if not match is found
   RouteMatch? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
     var parts = _split(config.path);
-    var segments = _split(Uri.decodeComponent(uri.path));
+    // Split before decoding, so an encoded '/' stays inside its segment.
+    var segments = _split(uri.path);
 
     if (parts.length > segments.length) {
       return null;
@@ -143,8 +144,8 @@ class RouteMatcher {
       var segment = segments[index];
       var part = parts[index];
       if (part.startsWith(':')) {
-        pathParams[part.substring(1)] = segment;
-      } else if (segment != part && part != "*") {
+        pathParams[part.substring(1)] = Uri.decodeComponent(segment);
+      } else if (Uri.decodeComponent(segment) != part && part != "*") {
         return null;
       }
     }

@@ -101,7 +101,10 @@ class PageRouteInfo<T extends Object?> {
     }
     var paramsRegex = RegExp(":(${params.keys.join('|')})");
     var path = template.replaceAllMapped(paramsRegex, (match) {
-      return params[match.group(1)]?.toString() ?? '';
+      final value = params[match.group(1)]?.toString();
+      // Encoded as a path segment, so a '/', '?' or '#' in the value stays part of it.
+      // The leading empty segment keeps a ':' in the value from being escaped as a scheme.
+      return value == null ? '' : Uri(pathSegments: ['', value]).path.substring(1);
     });
     return path;
   }
