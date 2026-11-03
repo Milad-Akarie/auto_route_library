@@ -766,8 +766,10 @@ class TabsRouter extends RoutingController {
   /// after match validation and deciding initial index
   void setupRoutes(List<PageRouteInfo>? routes) {
     final routesToPush = _resolveRoutes(routes);
-    if (_routeData.hasPendingChildren) {
-      final preMatchedRoute = _routeData.pendingChildren.last;
+    final preMatchedRoute = _routeData.hasPendingChildren
+        ? _routeData.pendingChildren.last
+        : _outgoingTabsRouter()?._activePage?.routeData.route;
+    if (preMatchedRoute != null) {
       final correspondingRouteIndex = routesToPush.indexWhere(
         (r) => r.key == preMatchedRoute.key,
       );
@@ -782,6 +784,15 @@ class TabsRouter extends RoutingController {
       _pushAll(routesToPush, fromDefault: routes == null);
     }
     _routeData.pendingChildren.clear();
+  }
+
+  // When a widget above AutoTabsRouter rebuilds it from scratch, the new
+  // router is set up before the outgoing one with the same key is disposed,
+  // so the outgoing router still knows which tab was active.
+  TabsRouter? _outgoingTabsRouter() {
+    return _parent?.childControllers.whereType<TabsRouter>().lastWhereOrNull(
+          (c) => c != this && c.key == key,
+        );
   }
 
   void _pushAll(List<RouteMatch> routes, {required bool fromDefault}) {
