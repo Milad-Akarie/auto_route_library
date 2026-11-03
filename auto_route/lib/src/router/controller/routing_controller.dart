@@ -445,6 +445,28 @@ abstract class RoutingController with ChangeNotifier {
   /// Whether this controller has the top-most visible page
   bool get isTopMost => this == _topMostRouter();
 
+  /// Whether every tabs router above this controller shows the tab that
+  /// holds it.
+  ///
+  /// The router of a tab that isn't active stays mounted but hidden, and
+  /// back must not reach it.
+  @internal
+  bool get isInActiveTabs {
+    RoutingController child = this;
+    for (var parent = _parent; parent != null; parent = parent._parent) {
+      if (parent is TabsRouter && parent.currentChild?.key != child.key) return false;
+      child = parent;
+    }
+    return true;
+  }
+
+  /// The tabs routers above this controller, nearest first.
+  @internal
+  List<TabsRouter> get ancestorTabsRouters => [
+        for (var parent = _parent; parent != null; parent = parent._parent)
+          if (parent is TabsRouter) parent,
+      ];
+
   /// Casts parent controller to [T]
   ///
   /// returns null if [_parent]

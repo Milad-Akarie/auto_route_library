@@ -61,6 +61,40 @@ class AutoRouteNavigator extends StatefulWidget {
 /// State of [AutoRouteNavigator]
 class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   List<PageRouteInfo>? _routesSnapshot;
+  List<TabsRouter> _ancestorTabs = const [];
+  late bool _inActiveTabs = widget.router.isInActiveTabs;
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToAncestorTabs();
+  }
+
+  // A tab switch above this navigator decides whether it takes back.
+  void _listenToAncestorTabs() {
+    for (final tabs in _ancestorTabs) {
+      tabs.removeListener(_handleAncestorTabsChanged);
+    }
+    _ancestorTabs = widget.router.isRoot ? const [] : widget.router.ancestorTabsRouters;
+    for (final tabs in _ancestorTabs) {
+      tabs.addListener(_handleAncestorTabsChanged);
+    }
+  }
+
+  void _handleAncestorTabsChanged() {
+    final inActiveTabs = widget.router.isInActiveTabs;
+    if (mounted && inActiveTabs != _inActiveTabs) {
+      setState(() => _inActiveTabs = inActiveTabs);
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final tabs in _ancestorTabs) {
+      tabs.removeListener(_handleAncestorTabsChanged);
+    }
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
@@ -85,6 +119,10 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   @override
   void didUpdateWidget(covariant AutoRouteNavigator oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.router != oldWidget.router) {
+      _listenToAncestorTabs();
+      _inActiveTabs = widget.router.isInActiveTabs;
+    }
     if (widget.declarativeRoutesBuilder != null) {
       _updateDeclarativeRoutes();
     }
@@ -97,11 +135,17 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     // A nested navigator sits on a page of its parent's navigator. While it
     // can take back itself, NavigatorPopHandler turns off that page's back
     // swipe, keeps Android sending back to Flutter, and passes the page's
-    // pops down to it.
-    return NavigatorPopHandler<Object?>(
-      enabled: widget.router.hasEntries,
-      onPopWithResult: (result) => widget.router.navigatorKey.currentState?.maybePop(result),
-      child: navigator,
+    // pops down to it. A hidden tab's navigator does none of that: the tabs
+    // share one page, and back belongs to the tab on screen. Its navigator
+    // still tells NavigatorPopHandler whether it can take back, for when the
+    // tab shows again, but not the app.
+    return NotificationListener<NavigationNotification>(
+      onNotification: (_) => !_inActiveTabs,
+      child: NavigatorPopHandler<Object?>(
+        enabled: widget.router.hasEntries && _inActiveTabs,
+        onPopWithResult: (result) => widget.router.navigatorKey.currentState?.maybePop(result),
+        child: navigator,
+      ),
     );
   }
 

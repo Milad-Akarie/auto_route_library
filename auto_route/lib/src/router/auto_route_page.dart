@@ -317,6 +317,9 @@ abstract class _PageRoute<T> extends PageRoute<T> {
     /// can pop
     if (super.popGestureEnabled) {
       final router = _page.routeData.router;
+      // A page in a hidden tab stays mounted, and its predictive back
+      // detector still listens; the gesture belongs to the tab on screen.
+      if (!router.isInActiveTabs) return false;
       final topMostRouter = router.topMostRouter();
       return (router.isTopMost ||
           !topMostRouter.canPop(
