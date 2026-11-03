@@ -33,6 +33,7 @@ void main() {
 
   // A recovery link opens the app, which calls pushAndPopUntil(SignInRoute)
   // and, from a listener on that page, pushAndPopUntil(VerifyRoute) at once.
+  // The second call removes SignInRoute too, though it has not shown yet (#1797).
   testWidgets('pushAndPopUntil twice in a row', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     router.push(const PageRouteInfo('ShoppingCartRoute'));
@@ -42,7 +43,7 @@ void main() {
     router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(stackNames(), ['SignInRoute', 'VerifyRoute']);
+    expect(stackNames(), ['VerifyRoute']);
   });
 
   // The user taps through two screens quickly, each tap calling pushAndPopUntil

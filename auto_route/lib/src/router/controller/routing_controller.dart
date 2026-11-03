@@ -2133,8 +2133,19 @@ abstract class StackRouter extends RoutingController {
     _childControllers.clear();
   }
 
-  /// Push the given [route] onto the navigator, and then [maybePop] all the previous
-  /// routes until the [predicate] returns true.
+  /// Pushes the given [route] and removes the routes below it until the
+  /// [predicate] returns true, as [Navigator.pushAndRemoveUntil] does.
+  ///
+  /// The [predicate] is asked about the routes from the top down, dialogs
+  /// and other pageless routes included. The routes it rejects are removed,
+  /// not popped, so they never show while [route] slides in: navigator
+  /// observers hear [NavigatorObserver.didRemove] for them, their PopScope
+  /// is not asked, and their push futures complete with null. They are
+  /// removed only once the guards of [route] let it through; a rejected
+  /// [route] leaves the stack as it was.
+  ///
+  /// if [scopedPopUntil] is false the [predicate] visits all StackRouters
+  /// in hierarchy starting from the top-most one until satisfied
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
@@ -2145,14 +2156,58 @@ abstract class StackRouter extends RoutingController {
     bool scopedPopUntil = true,
     OnNavigationFailure? onFailure,
   }) {
-    if (!scopedPopUntil) {
-      popUntil(predicate, scoped: false);
-    }
     final scope = _findStackScope(route);
-    if (scopedPopUntil) {
-      scope.popUntil(predicate);
+    return scope._push<T>(
+      route,
+      onFailure: onFailure,
+      onAccepted: () {
+        if (scopedPopUntil) {
+          scope._removeUntilRoute(predicate);
+          return;
+        }
+        for (final router in _topMostRouter()._buildRoutersHierarchy().whereType<StackRouter>()) {
+          // the push notifies its own scope
+          if (router._removeUntilRoute(predicate, notify: router != scope)) break;
+        }
+      },
+    );
+  }
+
+  // Removes the routes from the top down until [predicate] accepts one, and
+  // returns whether one did.
+  bool _removeUntilRoute(RoutePredicate predicate, {bool notify = false}) {
+    // Pageless routes, such as dialogs, sit above the top page.
+    while (hasPagelessTopRoute) {
+      final top = pagelessRoutesObserver.current!;
+      if (predicate(top)) return true;
+      top.navigator?.removeRoute(top);
+      if (pagelessRoutesObserver.current == top) break;
     }
-    return scope._push<T>(route, onFailure: onFailure);
+    var accepted = false;
+    for (final page in List.of(_pages.reversed)) {
+      final shownRoute = pagelessRoutesObserver.routeOf(page);
+      if (shownRoute != null) {
+        accepted = predicate(shownRoute);
+      } else {
+        // a page pushed in this frame has no route yet
+        final unshownRoute = _UnshownPageRoute(page);
+        accepted = predicate(unshownRoute);
+        unshownRoute.release();
+      }
+      if (accepted) break;
+      _removeLast(notify: false);
+      if (shownRoute != null) {
+        // drops the removed page's history entry, as a pop does
+        navigationHistory.rebuildUrlAfterPop();
+      } else {
+        // the browser never showed its url; the next page takes its entry
+        markUrlStateForReplace();
+      }
+    }
+    if (notify) {
+      notifyAll(forceUrlRebuild: true);
+    }
+    return accepted;
   }
 
   /// Removes last entry in stack and pushes given [path]
@@ -2398,4 +2453,12 @@ class GuardEntry {
 
   /// Default constructor
   const GuardEntry(this.guard, this._resolver);
+}
+
+// Stands in for the route of a page the navigator has not built yet, so a
+// [RoutePredicate] can still be asked about the page.
+class _UnshownPageRoute extends Route<Object?> {
+  _UnshownPageRoute(Page<Object?> page) : super(settings: page);
+
+  void release() => dispose();
 }

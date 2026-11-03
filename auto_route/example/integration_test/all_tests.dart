@@ -61,6 +61,7 @@ import 'popped_args_released_test.dart' as popped_args_released;
 import 'prefix_matches_nested_test.dart' as prefix_matches_nested;
 import 'prefix_matches_tabs_test.dart' as prefix_matches_tabs;
 import 'push_all_nested_routes_test.dart' as push_all_nested_routes;
+import 'push_and_pop_until_flash_test.dart' as push_and_pop_until_flash;
 import 'push_and_pop_until_test.dart' as push_and_pop_until;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
 import 'push_futures_test.dart' as push_futures;
@@ -181,6 +182,7 @@ void main() {
   group('prefix matches nested', prefix_matches_nested.main);
   group('prefix matches tabs', prefix_matches_tabs.main);
   group('push all nested routes', push_all_nested_routes.main);
+  group('push and pop until flash', push_and_pop_until_flash.main);
   group('push and pop until', push_and_pop_until.main);
   group('push and reevaluate', push_and_reevaluate.main);
   group('push futures', push_futures.main);

@@ -36,7 +36,8 @@ void main() {
 
   // Steps: call pushAndPopUntil(SignInRoute) and pushAndPopUntil(VerifyRoute)
   // at once, then pushAndPopUntil(MainRoute) while VerifyRoute animates in.
-  // Should: no error; the stack is [SignInRoute, VerifyRoute], then [MainRoute].
+  // Should: no error; the stack is [VerifyRoute], then [MainRoute]. The second
+  // call removes SignInRoute too, though it has not shown yet (#1797).
   testWidgets('pushAndPopUntil twice in a row, then again while animating', (tester) async {
     await pumpRouterApp(tester, router);
     unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
@@ -46,7 +47,7 @@ void main() {
     unawaited(router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(stackNames(), ['SignInRoute', 'VerifyRoute']);
+    expect(stackNames(), ['VerifyRoute']);
 
     unawaited(router.pushAndPopUntil(const PageRouteInfo('ShoppingCartRoute'), predicate: (_) => false));
     await tester.pump(const Duration(milliseconds: 50));

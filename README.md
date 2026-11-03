@@ -315,6 +315,10 @@ context.router.popUntilRouteWithName('HomeRoute');
 context.router.popUntilRouteWithPath('/some-path');
 // pops all routes down to the root
 context.router.popUntilRoot();
+// pushes a page and removes the routes below it until predicate is satisfied,
+// like Navigator.pushAndRemoveUntil. The removed routes are not popped:
+// observers hear didRemove, PopScopes are not asked, and they never show
+context.router.pushAndPopUntil(const HomeRoute(), predicate: (route) => route.isFirst);
 // removes the top most page in stack even if it's the last
 // remove != pop, it doesn't respect WillPopScopes it just
 // removes the entry.

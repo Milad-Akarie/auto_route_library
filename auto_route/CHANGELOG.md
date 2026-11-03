@@ -1,3 +1,10 @@
+## Unreleased
+- **BEHAVIOR CHANGE**: `pushAndPopUntil` now removes the routes below the new page instead of
+  popping them, like `Navigator.pushAndRemoveUntil`, so they no longer flash while the new page
+  slides in. Navigator observers get `didRemove` for those routes, not `didPop`; the PopScope of
+  the removed routes is not asked; their push futures complete with null. They are removed only
+  once the new page's guards let it through, so a rejected push leaves the stack as it was,
+  fixes #1797
 ## 11.2.0
 - **CHORE:** Migrate to material_ui and cupertino_ui packages
 ## 11.1.0
