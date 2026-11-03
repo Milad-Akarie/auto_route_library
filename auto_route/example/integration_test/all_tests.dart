@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'app_smoke_test.dart' as app_smoke;
 import 'push_futures_test.dart' as push_futures;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
+import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
 import 'replaced_push_future_test.dart' as replaced_push_future;
 
 // Runs every integration test file in one app launch. Run this file, not the
@@ -15,5 +16,6 @@ void main() {
   group('app smoke', app_smoke.main);
   group('push futures', push_futures.main);
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
+  group('reevaluation redirect', reevaluation_redirect.main);
   group('replaced push future', replaced_push_future.main);
 }
