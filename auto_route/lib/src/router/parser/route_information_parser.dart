@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -173,8 +175,54 @@ class UrlState {
     return state;
   }
 
-  /// Returns a fully decoded [uri]
-  String get url => Uri.decodeFull(uri.toString());
+  /// Returns [uri] as a readable string, such as '/books/café?q=a b'
+  ///
+  /// Escapes are decoded, except those of characters that would change what
+  /// the url means: '/', '?', '#' and '%' in the path, and '&', '=', '+', '#'
+  /// and '%' in the query, so a param such as 'a&b' reads back whole.
+  String get url => _readable(uri.toString());
+
+  static final _escapes = RegExp(r'(?:%[0-9A-Fa-f]{2})+');
+
+  static String _readable(String encoded) {
+    final queryStart = encoded.indexOf('?');
+    final fragmentStart = encoded.indexOf('#');
+    final pathEnd = queryStart >= 0 ? queryStart : (fragmentStart >= 0 ? fragmentStart : encoded.length);
+    final queryEnd = fragmentStart >= 0 ? fragmentStart : encoded.length;
+    return _decodeExcept(encoded.substring(0, pathEnd), '/?#%') +
+        _decodeExcept(encoded.substring(pathEnd, queryEnd), '&=+#%') +
+        _decodeExcept(encoded.substring(queryEnd), '%');
+  }
+
+  // Decodes the escapes in [part], keeping the ASCII characters in [keep]
+  // encoded, and any bytes that aren't valid UTF-8.
+  static String _decodeExcept(String part, String keep) {
+    return part.replaceAllMapped(_escapes, (match) {
+      final run = match[0]!;
+      final bytes = [for (var i = 0; i < run.length; i += 3) int.parse(run.substring(i + 1, i + 3), radix: 16)];
+      final out = StringBuffer();
+      var i = 0;
+      while (i < bytes.length) {
+        if (bytes[i] < 0x80) {
+          final char = String.fromCharCode(bytes[i]);
+          out.write(keep.contains(char) ? run.substring(i * 3, i * 3 + 3) : char);
+          i++;
+          continue;
+        }
+        var end = i + 1;
+        while (end < bytes.length && bytes[end] >= 0x80) {
+          end++;
+        }
+        try {
+          out.write(utf8.decode(bytes.sublist(i, end)));
+        } on FormatException {
+          out.write(run.substring(i * 3, end * 3));
+        }
+        i = end;
+      }
+      return out.toString();
+    });
+  }
 
   /// Returns the path of [uri]
   String get path => uri.path;
