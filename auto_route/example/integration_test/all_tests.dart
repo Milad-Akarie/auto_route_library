@@ -8,6 +8,7 @@ import 'current_hierarchy_test.dart' as current_hierarchy;
 import 'custom_route_query_params_test.dart' as custom_route_query_params;
 import 'custom_route_transition_test.dart' as custom_route_transition;
 import 'custom_route_underneath_test.dart' as custom_route_underneath;
+import 'declarative_routes_update_test.dart' as declarative_routes_update;
 import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
 import 'theme_page_transitions_test.dart' as theme_page_transitions;
 import 'empty_nested_router_test.dart' as empty_nested_router;
@@ -84,6 +85,7 @@ void main() {
   group('custom route query params', custom_route_query_params.main);
   group('custom route transition', custom_route_transition.main);
   group('custom route underneath', custom_route_underneath.main);
+  group('declarative routes update', declarative_routes_update.main);
   group('dialog then page pop', dialog_then_page_pop.main);
   group('theme page transitions', theme_page_transitions.main);
   group('empty nested router', empty_nested_router.main);
