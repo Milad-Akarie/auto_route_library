@@ -97,6 +97,20 @@ class NavigationHistoryImpl extends NavigationHistory {
     return [UrlState.toHierarchy(entry.segments)];
   }
 
+  @override
+  bool get isBrowserBehindApp {
+    final appIndex = _appIndex;
+    return appIndex != null && _currentIndex < appIndex;
+  }
+
+  @override
+  void returnBrowserToApp() {
+    final appIndex = _appIndex;
+    if (appIndex == null || _currentIndex >= appIndex) return;
+    _ownMoveUrl = urlState.url;
+    _history.go(appIndex - _currentIndex);
+  }
+
   // Records the app's current url state for the current browser entry, if
   // the browser shows that url.
   void _recordCurrentEntry() {

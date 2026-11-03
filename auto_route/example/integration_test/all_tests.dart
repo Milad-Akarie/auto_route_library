@@ -12,6 +12,7 @@ import 'navigate_nested_update_test.dart' as navigate_nested_update;
 import 'nested_back_test.dart' as nested_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'pop_and_back_test.dart' as pop_and_back;
+import 'pop_scope_test.dart' as pop_scope;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
 import 'push_futures_test.dart' as push_futures;
 import 'query_params_on_pop_test.dart' as query_params_on_pop;
@@ -40,6 +41,7 @@ void main() {
   group('nested back', nested_back.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('pop and back', pop_and_back.main);
+  group('pop scope', pop_scope.main);
   group('push and reevaluate', push_and_reevaluate.main);
   group('push futures', push_futures.main);
   group('query params on pop', query_params_on_pop.main);

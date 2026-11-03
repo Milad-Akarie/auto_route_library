@@ -76,6 +76,25 @@ abstract class NavigationHistory with ChangeNotifier {
   @internal
   List<RouteMatch>? routesOfBrowserEntry(UrlState configuration) => null;
 
+  /// Whether the browser now shows an entry before the one holding the app's
+  /// url, as after its back button, while the app hasn't followed yet.
+  ///
+  /// [AutoRouterDelegate.setNewRoutePath] asks this before following a route
+  /// the browser reported, so that a page that refuses to be popped, through
+  /// a PopScope or a WillPopScope, can refuse the browser's back button too.
+  /// Always false on native platforms, which have no browser.
+  @internal
+  bool get isBrowserBehindApp => false;
+
+  /// Moves the browser forward again to the entry holding the app's url,
+  /// after the app refused to follow a back step the browser made.
+  ///
+  /// The browser reports that entry when it gets there, and
+  /// [consumeOwnBrowserMove] matches that report. Does nothing on native
+  /// platforms, or when [isBrowserBehindApp] is false.
+  @internal
+  void returnBrowserToApp() {}
+
   /// Pushes a new browser entry with given state
   ///
   /// only works for web

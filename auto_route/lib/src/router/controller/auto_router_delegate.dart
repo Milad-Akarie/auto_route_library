@@ -155,8 +155,13 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(UrlState configuration) async {
-    if (controller.navigationHistory.consumeOwnBrowserMove(configuration)) {
+    final history = controller.navigationHistory;
+    if (history.consumeOwnBrowserMove(configuration)) {
       return SynchronousFuture(null);
+    }
+    if (history.isBrowserBehindApp && await _topRouteRefusesPop()) {
+      history.returnBrowserToApp();
+      return;
     }
     final topMost = controller.topMostRouter();
     if (topMost is StackRouter && topMost.hasPagelessTopRoute) {
@@ -178,6 +183,30 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
     notifyListeners();
     return SynchronousFuture(null);
+  }
+
+  // Whether the route on top of the top-most navigator refuses to be popped,
+  // through a PopScope or a WillPopScope; asks it the way Navigator.maybePop
+  // does, so it hears of the attempt.
+  Future<bool> _topRouteRefusesPop() async {
+    final topMost = controller.topMostRouter();
+    if (topMost is! StackRouter) return false;
+    Route<Object?>? topRoute;
+    // The predicate stops at the first route it's given, the top one, so nothing is popped.
+    topMost.navigatorKey.currentState?.popUntil((route) {
+      topRoute = route;
+      return true;
+    });
+    final route = topRoute;
+    if (route == null) return false;
+    // WillPopScope answers only through the deprecated willPop.
+    // ignore: deprecated_member_use
+    if (await route.willPop() == RoutePopDisposition.doNotPop) return true;
+    if (route.popDisposition == RoutePopDisposition.doNotPop) {
+      route.onPopInvokedWithResult(false, null);
+      return true;
+    }
+    return false;
   }
 
   void _onNewUrlState(UrlState state) {
