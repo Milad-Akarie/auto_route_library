@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'android_back_in_app_test.dart' as android_back_in_app;
 import 'app_smoke_test.dart' as app_smoke;
 import 'back_in_tabs_test.dart' as back_in_tabs;
+import 'theme_page_transitions_test.dart' as theme_page_transitions;
 import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
@@ -46,6 +47,7 @@ void main() {
   group('android back in app', android_back_in_app.main);
   group('app smoke', app_smoke.main);
   group('back in tabs', back_in_tabs.main);
+  group('theme page transitions', theme_page_transitions.main);
   group('empty nested router', empty_nested_router.main);
   group('hero nested router', hero_nested_router.main);
   group('home index back', home_index_back.main);
