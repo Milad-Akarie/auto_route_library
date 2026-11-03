@@ -155,6 +155,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(UrlState configuration) async {
+    if (controller.navigationHistory.consumeOwnBrowserMove(configuration)) {
+      return SynchronousFuture(null);
+    }
     final topMost = controller.topMostRouter();
     if (topMost is StackRouter && topMost.hasPagelessTopRoute) {
       topMost.popUntil((route) => route.settings is Page);

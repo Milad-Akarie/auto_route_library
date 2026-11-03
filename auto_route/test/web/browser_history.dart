@@ -1,0 +1,76 @@
+import 'dart:js_interop';
+import 'dart:ui_web' as ui_web;
+
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:web/web.dart' show WindowEventGetters, window;
+
+// Helpers for headless tests that run against the real browser history in Chrome.
+
+/// Connects the test app to the browser's own history for the calling test file.
+///
+/// Call it first in `main()` of a file marked `@TestOn('browser')`. By default,
+/// widget tests on web run with the engine ignoring platform messages and keeping
+/// history in memory, so routes never reach `window.history`; this turns both off.
+/// The engine handles navigation messages one after another, and on the default
+/// fake clock a message still waiting when a test ends blocks every later one, so
+/// this also switches the file to [LiveTestWidgetsFlutterBinding], which runs on
+/// the real clock.
+void useRealBrowserHistory() {
+  LiveTestWidgetsFlutterBinding.ensureInitialized();
+  ui_web.TestEnvironment.setUp(
+    const ui_web.TestEnvironment(forceTestFonts: true, disableFontFallbacks: true, keepSemanticsDisabledOnUpdate: true),
+  );
+  ui_web.debugDefaultUrlStrategyOverride = const ui_web.HashUrlStrategy();
+  // The test page's url carries the runner's metadata; start the app at '/'.
+  window.history.replaceState(null, '', '#/');
+}
+
+/// Moves the browser back to its first entry, which holds '/', so a test starts there.
+///
+/// Call it from `setUp`. Entries after the first stay as forward entries until the
+/// next navigation replaces them.
+Future<void> rewindBrowserHistory() async {
+  final stepsBack = browserSerialCount;
+  if (stepsBack <= 0) return;
+  final popped = window.onPopState.first;
+  window.history.go(-stepsBack);
+  await popped;
+}
+
+/// The serial number the engine gives the current browser history entry.
+///
+/// Counts from 0 for the first entry the app wrote; -1 before the app wrote any.
+int get browserSerialCount {
+  final state = window.history.state.dartify();
+  return state is Map ? (state['serialCount'] as num).toInt() : -1;
+}
+
+/// The app path the current browser history entry holds, such as '/second-route'.
+String get browserPath => ui_web.urlStrategy!.getPath();
+
+/// Pumps until the router settles and every route it reported is in the
+/// browser history, repeating while that schedules another frame.
+Future<void> settleBrowser(WidgetTester tester) async {
+  do {
+    await tester.pumpAndSettle();
+    // The engine handles navigation messages one after another, so its reply
+    // to this one comes once every route reported before it is written.
+    await SystemNavigator.selectMultiEntryHistory();
+  } while (tester.binding.hasScheduledFrame);
+}
+
+/// Runs [move], which moves the browser through its history, waits for the
+/// browser's popstate event, and settles.
+///
+/// [move] is a back step from the app, such as `router.back`, or the browser's
+/// own, such as `() => window.history.back()`, the call the back button makes.
+Future<void> browserMove(WidgetTester tester, VoidCallback move) async {
+  final popped = window.onPopState.first;
+  move();
+  await popped;
+  await settleBrowser(tester);
+}
+
+/// Presses the browser's back button and settles.
+Future<void> pressBrowserBack(WidgetTester tester) => browserMove(tester, () => window.history.back());

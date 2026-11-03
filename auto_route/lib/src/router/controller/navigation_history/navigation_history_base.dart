@@ -40,6 +40,23 @@ abstract class NavigationHistory with ChangeNotifier {
   @internal
   void rebuildUrlAfterPop() => rebuildUrl();
 
+  /// Whether [configuration], a route the platform just reported, only
+  /// confirms a move through the browser history that this history made itself.
+  ///
+  /// The web history sometimes moves the browser on its own, for example to
+  /// step back over a page that was popped in the app. The browser then reports
+  /// the entry it lands on like any navigation by the user, although the app
+  /// already shows that route. [AutoRouterDelegate.setNewRoutePath] skips such a
+  /// report instead of handling it as a deep link, which would close dialogs,
+  /// rerun the deep link builder and rebuild the stack.
+  ///
+  /// Each call consumes the expected move, matched or not: only the first
+  /// report after the move can match, and a report for a different url returns
+  /// false and is handled as usual. Always false on native platforms, where the
+  /// history never moves on its own.
+  @internal
+  bool consumeOwnBrowserMove(UrlState configuration) => false;
+
   /// Pushes a new browser entry with given state
   ///
   /// only works for web
