@@ -58,8 +58,9 @@ class GeneratedRouter {
 /// way `build_runner` runs them in an app, and returns the generated router.
 ///
 /// [sources] maps paths inside the `app` package (`lib/home_page.dart`) to
-/// their content. When none of them holds `router.dart`, [defaultRouterSource]
-/// is added as `lib/router.dart`.
+/// their content; a path in another package names it first, as in
+/// `skeleton|lib/login_page.dart`. When none of them holds `router.dart`,
+/// [defaultRouterSource] is added as `lib/router.dart`.
 ///
 /// [options] go to both builders, as `build.yaml` options of the package;
 /// [routerOptions] go to the router builder alone. [outputPath] is where the
@@ -77,7 +78,7 @@ Future<GeneratedRouter> generateRouter(
     readerWriter.testing.writeBytes(id, packages.testing.readBytes(id));
   }
   final assets = {
-    for (final entry in sources.entries) '$testPackage|${entry.key}': entry.value,
+    for (final entry in sources.entries) entry.key.contains('|') ? entry.key : '$testPackage|${entry.key}': entry.value,
     if (!sources.containsKey(routerPath)) '$testPackage|$routerPath': defaultRouterSource,
   };
   outputPath ??= routerPath.replaceFirst(RegExp(r'\.dart$'), '.gr.dart');
