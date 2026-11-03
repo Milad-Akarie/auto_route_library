@@ -117,9 +117,8 @@ class AutoRoutePage<T> extends Page<T> {
     } else if (type is CupertinoRouteType) {
       return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
     } else if (type is CustomRouteType) {
-      final result = buildPage(context);
       if (type.customRouteBuilder != null) {
-        return type.customRouteBuilder!.call<T>(context, result, this);
+        return type.customRouteBuilder!.call<T>(context, _CurrentPageChild(page: this), this);
       }
       return _CustomPageBasedPageRouteBuilder<T>(
         page: this,
@@ -146,6 +145,49 @@ class AutoRoutePage<T> extends Page<T> {
   @override
   Route<T> createRoute(BuildContext context) {
     return onCreateRoute(context);
+  }
+}
+
+/// The child handed to [CustomRouteType.customRouteBuilder].
+///
+/// The route that builder returns keeps this child for its whole life, while
+/// the navigator gives the route a new page whenever its data changes, for
+/// example new query params. So this builds the page the route holds now, and
+/// rebuilds whenever the page's router changes.
+class _CurrentPageChild extends StatefulWidget {
+  const _CurrentPageChild({required this.page});
+
+  /// The page the route was created with.
+  final AutoRoutePage page;
+
+  @override
+  State<_CurrentPageChild> createState() => _CurrentPageChildState();
+}
+
+class _CurrentPageChildState extends State<_CurrentPageChild> {
+  late final RoutingController _router = widget.page.routeData.router;
+
+  @override
+  void initState() {
+    super.initState();
+    _router.addListener(_onRouterChanged);
+  }
+
+  @override
+  void dispose() {
+    _router.removeListener(_onRouterChanged);
+    super.dispose();
+  }
+
+  void _onRouterChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = ModalRoute.of(context)?.settings;
+    final page = settings is AutoRoutePage ? settings : widget.page;
+    return page.buildPage(context);
   }
 }
 

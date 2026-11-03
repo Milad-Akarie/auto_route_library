@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'android_back_in_app_test.dart' as android_back_in_app;
 import 'app_smoke_test.dart' as app_smoke;
 import 'back_in_tabs_test.dart' as back_in_tabs;
+import 'custom_route_query_params_test.dart' as custom_route_query_params;
 import 'custom_route_transition_test.dart' as custom_route_transition;
 import 'custom_route_underneath_test.dart' as custom_route_underneath;
 import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
@@ -71,6 +72,7 @@ void main() {
   group('android back in app', android_back_in_app.main);
   group('app smoke', app_smoke.main);
   group('back in tabs', back_in_tabs.main);
+  group('custom route query params', custom_route_query_params.main);
   group('custom route transition', custom_route_transition.main);
   group('custom route underneath', custom_route_underneath.main);
   group('dialog then page pop', dialog_then_page_pop.main);
