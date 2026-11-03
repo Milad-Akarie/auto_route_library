@@ -23,6 +23,7 @@ import 'nested_back_test.dart' as nested_back;
 import 'nested_browser_back_test.dart' as nested_browser_back;
 import 'nested_pop_scope_first_page_test.dart' as nested_pop_scope_first_page;
 import 'nested_pop_scope_step_test.dart' as nested_pop_scope_step;
+import 'nested_route_aware_test.dart' as nested_route_aware;
 import 'optional_args_on_back_test.dart' as optional_args_on_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'pop_and_back_test.dart' as pop_and_back;
@@ -84,6 +85,7 @@ void main() {
   group('nested browser back', nested_browser_back.main);
   group('nested pop scope first page', nested_pop_scope_first_page.main);
   group('nested pop scope step', nested_pop_scope_step.main);
+  group('nested route aware', nested_route_aware.main);
   group('optional args on back', optional_args_on_back.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
   group('pop and back', pop_and_back.main);
