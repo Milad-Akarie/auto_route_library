@@ -91,6 +91,7 @@ import 'tab_shared_parent_url_test.dart' as tab_shared_parent_url;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
 import 'tabs_scaffold_build_count_test.dart' as tabs_scaffold_build_count;
 import 'theme_change_test.dart' as theme_change;
+import 'unmatched_deep_link_test.dart' as unmatched_deep_link;
 import 'url_on_pop_test.dart' as url_on_pop;
 import 'window_resize_test.dart' as window_resize;
 import 'wrapper_push_from_child_test.dart' as wrapper_push_from_child;
@@ -191,6 +192,7 @@ void main() {
   group('tabs pop scope', tabs_pop_scope.main);
   group('tabs scaffold build count', tabs_scaffold_build_count.main);
   group('theme change', theme_change.main);
+  group('unmatched deep link', unmatched_deep_link.main);
   group('url on pop', url_on_pop.main);
   group('window resize', window_resize.main);
   group('wrapper push from child', wrapper_push_from_child.main);

@@ -126,14 +126,14 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     } else if (platformDeepLink.isValid) {
       return _handleDeepLink(platformDeepLink);
     } else {
-      throw FlutterError("Can not resolve initial route");
+      throw FlutterError(_unresolvedMessage(platformDeepLink));
     }
   }
 
   Future<void> _handleDeepLink(DeepLink deepLink) {
     if (deepLink is _IgnoredDeepLink) return SynchronousFuture(null);
 
-    throwIf(!deepLink.isValid, 'Can not resolve initial route');
+    throwIf(!deepLink.isValid, _unresolvedMessage(deepLink));
     if (deepLink is PlatformDeepLink) {
       _onNewUrlState(deepLink.configuration);
       return controller.navigateAll(deepLink.matches);
@@ -176,6 +176,15 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return setNewRoutePath(configuration);
     }
     return controller.navigateAll(buildable);
+  }
+
+  // Names the link no route matched, which on a phone can come from another
+  // app, so the error says what to look for.
+  static String _unresolvedMessage(DeepLink deepLink) {
+    if (deepLink is! PlatformDeepLink) return 'Can not resolve initial route';
+    return 'Can not resolve initial route: no route matches "${deepLink.uri}". '
+        'Add RedirectRoute(path: \'*\', redirectTo: \'/\') last in your routes to open '
+        'links no route matches on your initial page.';
   }
 
   @override
