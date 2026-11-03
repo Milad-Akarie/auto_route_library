@@ -98,4 +98,53 @@ void main() {
     await tester.pumpAndSettle();
     expect(_events, ['B2.didPopNext', 'C.didPop']);
   });
+
+  // https://github.com/Milad-Akarie/auto_route_library/issues/2306
+  // Steps: AppRoute hosts tabs [Dashboard, Settings]; the Settings tab hosts
+  // a nested router showing Something, a page with AutoRouteAware. Open the
+  // Settings tab, push BottomSheetRoute, a CustomRoute that builds a
+  // ModalBottomSheetRoute, on the root router, then close the sheet.
+  // Happened: Something heard the sheet open only when the sheet was declared
+  // in its own router; declared at the root, it heard neither open nor close.
+  // Should: Something gets didPushNext, then didPopNext; the inactive
+  // Dashboard tab hears nothing. The #1954 fix covers this.
+  testWidgets('A page in a tab hears a root bottom sheet open and close over it', (tester) async {
+    final router = await _pumpApp(tester, [
+      AutoRoute(
+        path: '/',
+        page: PageInfo('AppRoute',
+            builder: (_) => const AutoTabsRouter(routes: [_Route('Dashboard'), _Route('Settings')])),
+        children: [
+          AutoRoute(path: 'dashboard', page: _awarePage('Dashboard')),
+          AutoRoute(path: 'settings', page: _stackHost('Settings'), children: [
+            AutoRoute(path: '', page: _awarePage('Something')),
+          ]),
+        ],
+      ),
+      CustomRoute(
+        path: '/bottom-sheet',
+        page: PageInfo('BottomSheetRoute', builder: (_) => const Text('sheet')),
+        customRouteBuilder: <T>(context, child, page) => ModalBottomSheetRoute<T>(
+          settings: page,
+          isScrollControlled: true,
+          builder: (_) => child,
+        ),
+      ),
+    ]);
+    router.innerRouterOf<TabsRouter>('AppRoute')!.setActiveIndex(1);
+    await tester.pumpAndSettle();
+    expect(find.text('Something'), findsOneWidget);
+
+    _events.clear();
+    router.root.push(const _Route('BottomSheetRoute'));
+    await tester.pumpAndSettle();
+    expect(find.text('sheet'), findsOneWidget);
+    expect(_events, ['Something.didPushNext']);
+
+    _events.clear();
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.text('sheet'), findsNothing);
+    expect(_events, ['Something.didPopNext']);
+  });
 }

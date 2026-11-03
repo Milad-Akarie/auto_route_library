@@ -51,6 +51,7 @@ import 'replace_all_rejected_test.dart' as replace_all_rejected;
 import 'replace_rejected_test.dart' as replace_rejected;
 import 'replaced_push_future_test.dart' as replaced_push_future;
 import 'required_args_test.dart' as required_args;
+import 'root_bottom_sheet_aware_test.dart' as root_bottom_sheet_aware;
 import 'tab_rebuild_test.dart' as tab_rebuild;
 import 'tab_routes_change_test.dart' as tab_routes_change;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
@@ -113,6 +114,7 @@ void main() {
   group('replace rejected', replace_rejected.main);
   group('replaced push future', replaced_push_future.main);
   group('required args', required_args.main);
+  group('root bottom sheet aware', root_bottom_sheet_aware.main);
   group('tab rebuild', tab_rebuild.main);
   group('tab routes change', tab_routes_change.main);
   group('tabs pop scope', tabs_pop_scope.main);
