@@ -101,7 +101,17 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       // Pages can change without the url changing; the Router saves them
       // through currentConfiguration.
       controller.addListener(notifyListeners);
+    } else {
+      // A deep link's url is set before its page is in, while
+      // currentConfiguration is still null; the Router hears of it here.
+      controller.addListener(_reportFirstPage);
     }
+  }
+
+  void _reportFirstPage() {
+    if (!controller.hasEntries) return;
+    controller.removeListener(_reportFirstPage);
+    _handleRebuild();
   }
 
   /// Helper to access current urlState
@@ -109,8 +119,20 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// The current [urlState]; off the web it also holds the pages of every
   /// router, which the [Router] saves for state restoration.
+  ///
+  /// Null until the first navigation has put a page in the root router: the
+  /// [Router] reports nothing for null, while the empty [urlState] would
+  /// reach the browser as '/' before the deep link the app opens.
   @override
-  UrlState? get currentConfiguration => kIsWeb ? urlState : urlState.copyWith(savedRoutes: controller._savedRoutes());
+  UrlState? get currentConfiguration {
+    // Only before the first page: later the stack can be empty for a moment,
+    // as in pushAndPopUntil, and the url must still be reported.
+    _hadPage = _hadPage || controller.hasEntries;
+    if (!_hadPage) return null;
+    return kIsWeb ? urlState : urlState.copyWith(savedRoutes: controller._savedRoutes());
+  }
+
+  var _hadPage = false;
 
   @override
   Future<void> setInitialRoutePath(UrlState configuration) async {
@@ -291,6 +313,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     removeListener(_handleRebuild);
     reevaluateListenable?.removeListener(controller.reevaluateGuards);
     controller.removeListener(notifyListeners);
+    controller.removeListener(_reportFirstPage);
     controller.dispose();
   }
 

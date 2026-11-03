@@ -80,12 +80,23 @@ Future<void> pressBrowserBack(WidgetTester tester) => browserMove(tester, () => 
 /// a deep link, and makes [path] the app's initial route.
 ///
 /// The entry keeps the engine's serial number, so [browserSerialCount] stays
-/// where it was. Clears the initial route when the test ends.
+/// where it was, and is marked as the browser's until the app writes it; see
+/// [appWroteBrowserEntry]. Clears the initial route when the test ends.
 void openBrowserAt(WidgetTester tester, String path) {
   final dispatcher = tester.binding.platformDispatcher;
   addTearDown(dispatcher.clearDefaultRouteNameTestValue);
   dispatcher.defaultRouteNameTestValue = path;
-  window.history.replaceState(window.history.state, '', '#$path');
+  final serialCount = browserSerialCount < 0 ? 0 : browserSerialCount;
+  window.history.replaceState({'serialCount': serialCount, 'state': _openedByBrowser}.jsify(), '', '#$path');
+}
+
+const _openedByBrowser = 'opened by the browser';
+
+/// Whether the app has written the browser's current entry since
+/// [openBrowserAt] made it, as it does when it reports its route.
+bool get appWroteBrowserEntry {
+  final state = window.history.state.dartify();
+  return !(state is Map && state['state'] == _openedByBrowser);
 }
 
 /// Shows [app] the way runApp starts an app, and settles.

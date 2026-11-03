@@ -56,6 +56,39 @@ Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> con
   await tester.pumpAndSettle();
 }
 
+/// Starts [app] at the deep link [link] the way runApp starts an app, and
+/// waits for its first page.
+///
+/// runApp builds the widget tree before the first frame. In a test the tree
+/// is already there, so pumpWidget builds the app inside a frame, where the
+/// Router reports its empty route before the link's page is in. On web the
+/// browser's current entry holds [link], as when the browser opens it, and
+/// keeps its [browserEntryIndex]. [link] is the app's initial route until the
+/// test ends.
+Future<void> pumpAppAtDeepLink(WidgetTester tester, String link, Widget app) async {
+  final dispatcher = tester.binding.platformDispatcher;
+  addTearDown(dispatcher.clearDefaultRouteNameTestValue);
+  dispatcher.defaultRouteNameTestValue = link;
+  if (kIsWeb) browser.openBrowserAt(link);
+  _bringAppToForeground(tester);
+  tester.binding.attachRootWidget(tester.binding.wrapWithDefaultView(app));
+  tester.binding.buildOwner!.buildScope(tester.binding.rootElement!);
+  await tester.pumpAndSettle();
+}
+
+/// Waits until the engine has written every route reported so far to the
+/// browser, then checks the app wrote the deep link's entry that
+/// [pumpAppAtDeepLink] opened, still at [index], and added none after it.
+///
+/// Does nothing off the web, where there is no browser history.
+Future<void> expectAppWroteDeepLinkEntry(int index) async {
+  if (!kIsWeb) return;
+  // The engine answers once it has written every route reported before.
+  await SystemNavigator.selectMultiEntryHistory();
+  expect(browser.browserEntryIndex(), index, reason: 'the browser history entry');
+  expect(browser.appWroteBrowserEntry(), isTrue, reason: 'the app reported its route');
+}
+
 // The test binding forgets the app's lifecycle state after each test, and
 // while it's unknown Flutter stops telling Android whether it handles back
 // (see systemBack). A running app is in the foreground.

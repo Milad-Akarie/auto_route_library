@@ -16,3 +16,7 @@ void typeBrowserUrl(String path) => throw UnsupportedError('Only the web has an 
 /// Makes the browser's current entry hold [path], as when the app is opened at
 /// a deep link; only the web has one.
 void openBrowserAt(String path) => throw UnsupportedError('Only the web has an address bar.');
+
+/// Whether the app has written the browser's current entry since [openBrowserAt] made it;
+/// only the web has one.
+bool appWroteBrowserEntry() => throw UnsupportedError('Only the web has a browser history.');

@@ -31,8 +31,22 @@ void pressBrowserForward() => _history.forward();
 /// Makes the browser's current entry hold [path], as when the app is opened at
 /// a deep link.
 ///
-/// The entry keeps its serial number, so [browserEntryIndex] stays the same.
-void openBrowserAt(String path) => _history.replaceState(_history.state, '', '#$path');
+/// The entry keeps its serial number, so [browserEntryIndex] stays the same,
+/// and is marked as the browser's until the app writes it; see
+/// [appWroteBrowserEntry].
+void openBrowserAt(String path) {
+  final serialCount = browserEntryIndex() ?? 0;
+  _history.replaceState({'serialCount': serialCount, 'state': _openedByBrowser}.jsify(), '', '#$path');
+}
+
+const _openedByBrowser = 'opened by the browser';
+
+/// Whether the app has written the browser's current entry since
+/// [openBrowserAt] made it, as it does when it reports its route.
+bool appWroteBrowserEntry() {
+  final state = _history.state.dartify();
+  return !(state is Map && state['state'] == _openedByBrowser);
+}
 
 /// Types [path] into the address bar and presses enter.
 ///

@@ -28,6 +28,7 @@ import 'host_back_button_test.dart' as host_back_button;
 import 'inherited_id_child_test.dart' as inherited_id_child;
 import 'inherited_order_id_test.dart' as inherited_order_id;
 import 'keep_history_test.dart' as keep_history;
+import 'late_router_deep_link_test.dart' as late_router_deep_link;
 import 'leading_button_drawer_test.dart' as leading_button_drawer;
 import 'leading_button_pop_test.dart' as leading_button_pop;
 import 'login_state_test.dart' as login_state;
@@ -151,6 +152,7 @@ void main() {
   group('inherited id child', inherited_id_child.main);
   group('inherited order id', inherited_order_id.main);
   group('keep history', keep_history.main);
+  group('late router deep link', late_router_deep_link.main);
   group('leading button drawer', leading_button_drawer.main);
   group('leading button pop', leading_button_pop.main);
   group('login state', login_state.main);
