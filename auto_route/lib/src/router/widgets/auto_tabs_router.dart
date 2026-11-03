@@ -454,8 +454,18 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
   void didUpdateWidget(_IndexedStackBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.tabsHash != oldWidget.tabsHash) {
+      final initializedPages = {
+        for (final entry in _initializedPagesTracker.entries)
+          if (entry.value && entry.key < oldWidget.stack.length) oldWidget.stack[entry.key],
+      };
       _initializedPagesTracker.clear();
       _setup();
+      // Tabs kept across the routes change stay loaded.
+      for (var i = 0; i < widget.stack.length; ++i) {
+        if (initializedPages.contains(widget.stack[i])) {
+          _initializedPagesTracker[i] = true;
+        }
+      }
       return;
     }
   }
@@ -465,7 +475,6 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
     return Semantics(
       container: true,
       child: IndexedStack(
-        key: ValueKey(widget.tabsHash),
         index: widget.activeIndex,
         sizing: StackFit.expand,
         children: List.generate(
@@ -480,6 +489,8 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
 
             // Always wrap with ExcludeSemantics and ExcludeFocus but control with excluding property
             return ExcludeSemantics(
+              // Keyed by page so a tab kept across a routes change keeps its state
+              key: ObjectKey(widget.stack[index]),
               excluding: isInactive,
               child: ExcludeFocus(
                 excluding: isInactive,

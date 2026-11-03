@@ -855,16 +855,31 @@ class TabsRouter extends RoutingController {
   void replaceAll(List<PageRouteInfo>? routes, int previousIndex) {
     final routesToPush = _resolveRoutes(routes);
     final previousActiveRoute = stackData[previousIndex];
+    final previousPages = List.of(_pages);
 
     _pages.clear();
-    _childControllers.clear();
-    _pushAll(routesToPush, fromDefault: routes == null);
+    for (final route in routesToPush) {
+      // A tab whose route is unchanged keeps its page, so its widget state
+      // and nested router survive.
+      final keptPage = previousPages.firstWhereOrNull((p) => _isSameTab(p.routeData.route, route));
+      if (keptPage != null) {
+        previousPages.remove(keptPage);
+        _pages.add(keptPage);
+      } else {
+        _pushAll([route], fromDefault: routes == null);
+      }
+    }
+    final keptMatchIds = _pages.map((p) => p.routeData.matchId).toSet();
+    _childControllers.removeWhere((c) => !keptMatchIds.contains(c.matchId));
     var targetIndex = routesToPush.indexWhere((r) => r.name == previousActiveRoute.name);
     if (targetIndex == -1) {
       targetIndex = homeIndex == -1 ? 0 : homeIndex;
     }
     setActiveIndex(targetIndex, notify: false);
   }
+
+  bool _isSameTab(RouteMatch a, RouteMatch b) =>
+      a.key == b.key && a.args == b.args && a.params == b.params && a.queryParams == b.queryParams;
 
   @override
   Future<T?> _navigateAll<T extends Object?>(
