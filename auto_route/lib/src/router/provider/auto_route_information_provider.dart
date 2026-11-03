@@ -45,11 +45,20 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
       return;
     }
 
+    // On web DefaultRouteParser hands over the uri escaped for the engine;
+    // compare and keep the app's own uri, and escape one that skipped it.
+    final appRouteInformation = routeInformation is AutoRouteInformation && routeInformation.appUri != null
+        ? RouteInformation(uri: routeInformation.appUri, state: routeInformation.state)
+        : routeInformation;
+    final reportedUri = identical(appRouteInformation, routeInformation) && kIsWeb
+        ? escapeForWebEngine(routeInformation.uri)
+        : routeInformation.uri;
+
     // The routes saved for state restoration stay with the Router.
     final state = UrlState.platformState(routeInformation.state);
     var replace = type == RouteInformationReportingType.neglect ||
         (type == RouteInformationReportingType.none &&
-            _valueInEngine.uri == routeInformation.uri &&
+            _valueInEngine.uri == appRouteInformation.uri &&
             UrlState.platformState(_valueInEngine.state) == state);
 
     if (!replace && routeInformation is AutoRouteInformation) {
@@ -57,12 +66,12 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
     }
     SystemNavigator.selectMultiEntryHistory();
     SystemNavigator.routeInformationUpdated(
-      uri: routeInformation.uri,
+      uri: reportedUri,
       state: state,
       replace: replace,
     );
-    _value = routeInformation;
-    _valueInEngine = routeInformation;
+    _value = appRouteInformation;
+    _valueInEngine = appRouteInformation;
   }
 
   @override

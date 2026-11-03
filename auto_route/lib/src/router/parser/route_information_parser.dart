@@ -63,8 +63,10 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
   @override
   RouteInformation restoreRouteInformation(UrlState configuration) {
-    return AutoRouteInformation(
-      uri: configuration.url.isEmpty ? Uri(path: '/') : configuration.uri,
+    final uri = configuration.url.isEmpty ? Uri(path: '/') : configuration.uri;
+    return AutoRouteInformation._(
+      uri: kIsWeb ? escapeForWebEngine(uri) : uri,
+      appUri: uri,
       replace: configuration.shouldReplace,
       state: configuration.savedRoutes == null
           ? configuration.pathState
@@ -76,6 +78,13 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   }
 }
 
+/// Escapes [uri] for the web engine, which decodes the uri the router reports
+/// with Uri.decodeComponent before it writes it to the browser. That decode
+/// turns an encoded '#', '&' or '/' inside a param into a real delimiter;
+/// escaping every '%' once more makes it give back [uri] as it was.
+@internal
+Uri escapeForWebEngine(Uri uri) => Uri.parse(uri.toString().replaceAll('%', '%25'));
+
 /// An extended type of [RouteInformation] that holds
 /// an extra property [replace] which forces the current
 /// route to be replaced
@@ -83,9 +92,24 @@ class AutoRouteInformation extends RouteInformation {
   /// forces the current location to be replaced with this location
   final bool replace;
 
+  /// The app's own uri, when [uri] is escaped for the web engine
+  ///
+  /// [DefaultRouteParser] escapes the uri it restores on web, so every route
+  /// information provider reports it whole; comparisons with the uri the
+  /// platform reports use this one.
+  @internal
+  final Uri? appUri;
+
   /// Default constructor
   const AutoRouteInformation({
     required Uri super.uri,
+    super.state,
+    this.replace = true,
+  }) : appUri = null;
+
+  const AutoRouteInformation._({
+    required Uri super.uri,
+    required Uri this.appUri,
     super.state,
     this.replace = true,
   });

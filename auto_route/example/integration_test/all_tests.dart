@@ -13,6 +13,7 @@ import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
 import 'disposed_nested_router_test.dart' as disposed_nested_router;
 import 'theme_page_transitions_test.dart' as theme_page_transitions;
 import 'empty_nested_router_test.dart' as empty_nested_router;
+import 'encoded_url_test.dart' as encoded_url;
 import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
 import 'host_back_button_test.dart' as host_back_button;
@@ -105,6 +106,7 @@ void main() {
   group('disposed nested router', disposed_nested_router.main);
   group('theme page transitions', theme_page_transitions.main);
   group('empty nested router', empty_nested_router.main);
+  group('encoded url', encoded_url.main);
   group('hero nested router', hero_nested_router.main);
   group('home index back', home_index_back.main);
   group('host back button', host_back_button.main);
