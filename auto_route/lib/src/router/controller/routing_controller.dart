@@ -1538,12 +1538,15 @@ abstract class StackRouter extends RoutingController {
 
   /// Pop the current route off the navigator and push all given [routes] in its place.
   ///
+  /// Like [popAndPush], the pop is forced: it happens before the push, even
+  /// when the current route is the only one in its router.
+  ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
   Future<void> popAndPushAll(List<PageRouteInfo> routes, {onFailure}) {
     assert(routes.isNotEmpty);
     final scope = _findStackScope(routes.first);
-    scope.maybePop();
+    scope.pop();
     return scope._pushAll(routes, onFailure: onFailure, notify: true);
   }
 
