@@ -58,6 +58,7 @@ import 'rapid_pops_test.dart' as rapid_pops;
 import 'redirect_history_test.dart' as redirect_history;
 import 'redirect_lifecycle_test.dart' as redirect_lifecycle;
 import 'redirect_loop_test.dart' as redirect_loop;
+import 'redirect_path_param_test.dart' as redirect_path_param;
 import 'reevaluate_deep_link_test.dart' as reevaluate_deep_link;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
@@ -154,6 +155,7 @@ void main() {
   group('redirect history', redirect_history.main);
   group('redirect lifecycle', redirect_lifecycle.main);
   group('redirect loop', redirect_loop.main);
+  group('redirect path param', redirect_path_param.main);
   group('reevaluate deep link', reevaluate_deep_link.main);
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
