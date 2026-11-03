@@ -108,10 +108,9 @@ class AutoRouteGuardCallback extends AutoRouteGuard {
   /// Default constructor
   const AutoRouteGuardCallback(this.onNavigate, {this.debugLabel});
 
+  // Returns the callback's future, so a guard re-check can wait for an async callback.
   @override
-  void onNavigation(NavigationResolver resolver, StackRouter router) {
-    onNavigate(resolver, router);
-  }
+  FutureOr<void> onNavigation(NavigationResolver resolver, StackRouter router) => onNavigate(resolver, router);
 
   @override
   String toString() => 'AutoRouteGuardCallback(${debugLabel ?? hashCode})';
