@@ -10,6 +10,7 @@ import 'custom_route_transition_test.dart' as custom_route_transition;
 import 'custom_route_underneath_test.dart' as custom_route_underneath;
 import 'declarative_routes_update_test.dart' as declarative_routes_update;
 import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
+import 'disposed_nested_router_test.dart' as disposed_nested_router;
 import 'theme_page_transitions_test.dart' as theme_page_transitions;
 import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'hero_nested_router_test.dart' as hero_nested_router;
@@ -87,6 +88,7 @@ void main() {
   group('custom route underneath', custom_route_underneath.main);
   group('declarative routes update', declarative_routes_update.main);
   group('dialog then page pop', dialog_then_page_pop.main);
+  group('disposed nested router', disposed_nested_router.main);
   group('theme page transitions', theme_page_transitions.main);
   group('empty nested router', empty_nested_router.main);
   group('hero nested router', hero_nested_router.main);

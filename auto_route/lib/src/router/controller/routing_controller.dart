@@ -1148,9 +1148,14 @@ abstract class StackRouter extends RoutingController {
 
   @override
   void dispose() {
+    _disposed = true;
     super.dispose();
     pagelessRoutesObserver.dispose();
   }
+
+  // Whether [dispose] was called; a navigation that resumes after awaiting a
+  // guard stops here, since the router's page left the stack meanwhile.
+  bool _disposed = false;
 
   /// Whether a reevaluation is in progress
   bool _isReevaluating = false;
@@ -1162,6 +1167,7 @@ abstract class StackRouter extends RoutingController {
   /// and there are auth-protected routes in the stack
   Future<void> reevaluateGuards() async {
     final composed = await _composeMatchesForReevaluate();
+    if (_disposed) return;
     // A page removed while the stack was composed, e.g. by a replaceAll called
     // right after the listenable changed, stays removed.
     final matches = composed.where((match) => _pages.contains(match.currentPage)).toList();
@@ -1170,6 +1176,7 @@ abstract class StackRouter extends RoutingController {
       await _navigateAll(matches, isReevaluating: true);
       _isReevaluating = false;
     }
+    if (_disposed) return;
     notifyAll();
   }
 
@@ -1527,6 +1534,7 @@ abstract class StackRouter extends RoutingController {
     }
     onMatch?.call(match);
     final result = await _canNavigate(match, onFailure: onFailure);
+    if (_disposed) return null;
     if (result.continueNavigation) {
       onAccepted?.call();
       _updateSharedPathData(
@@ -1842,6 +1850,7 @@ abstract class StackRouter extends RoutingController {
         pendingRoutes: routes.whereIndexed((index, element) => index > i).toList(),
         isReevaluating: isReevaluating,
       );
+      if (_disposed) break;
       final match = result.route;
       if (wasPopped(match)) break;
       if (result.continueNavigation) {
