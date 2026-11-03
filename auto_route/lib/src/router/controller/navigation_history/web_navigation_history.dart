@@ -126,9 +126,13 @@ class NavigationHistoryImpl extends NavigationHistory {
     return normalize(a) == normalize(b);
   }
 
+  /// Steps the browser back one entry, unless the app's first entry is current.
+  ///
+  /// The tab may hold pages from before the app, such as the site the user
+  /// came from; stepping back from the app's first entry would leave the app.
   @override
   void back() {
-    _history.back();
+    if (canNavigateBack) _history.back();
   }
 
   int get _currentIndex {
@@ -148,8 +152,12 @@ class NavigationHistoryImpl extends NavigationHistory {
   @override
   void forward() => _history.forward();
 
+  /// The number of the app's browser entries up to and including the current one.
+  ///
+  /// Counts by the engine's serial count, which starts at the app's first entry,
+  /// so pages from before the app and entries ahead of the current one are left out.
   @override
-  int get length => _history.length;
+  int get length => _currentIndex + 1;
 
   @override
   void pushPathState(Object? state) {
