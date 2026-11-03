@@ -153,6 +153,39 @@ abstract class NavigationHistory with ChangeNotifier {
     return RegExp(pattern).hasMatch(urlState.path);
   }
 
+  /// The controller, [router] or one nested in it, whose stack holds the page
+  /// with [pageId], or null when no stack holds it any more.
+  @protected
+  RoutingController? controllerOfPage(LocalKey pageId, [RoutingController? controller]) {
+    controller ??= router;
+    if (controller.stackData.any((data) => data.route.id == pageId)) return controller;
+    for (final child in controller.childControllers) {
+      final holder = controllerOfPage(pageId, child);
+      if (holder != null) return holder;
+    }
+    return null;
+  }
+
+  /// Removes the pages above the page with [pageId] from the stack that holds it.
+  ///
+  /// Going back to a page that is still under the current one with the same
+  /// route name, as when the same route was pushed twice, needs this first:
+  /// navigating to it alone would update the current page in place.
+  @protected
+  void removePagesAbove(LocalKey pageId) {
+    final holder = controllerOfPage(pageId);
+    if (holder is StackRouter) holder.removeUntil((data) => data.route.id == pageId);
+  }
+
+  /// Whether the change being reported now opens a new browser entry although
+  /// its url equals the current one, as when the same route is pushed twice.
+  ///
+  /// The router reports a url equal to the current one as a replace of the
+  /// browser's entry; [AutoRouterDelegate] reports this change as a navigation
+  /// instead. Always false on native platforms, which have no browser.
+  @internal
+  bool get addsEntryWithSameUrl => false;
+
   /// Helper to access current [_urlState]
   UrlState get urlState => _urlState;
 

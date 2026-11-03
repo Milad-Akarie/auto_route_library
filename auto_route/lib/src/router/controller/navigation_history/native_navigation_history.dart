@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:auto_route/auto_route.dart' show RouteMatch, RoutingController, StackRouter, UrlState;
+import 'package:auto_route/auto_route.dart' show RouteMatch, StackRouter, UrlState;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
@@ -71,16 +71,6 @@ class NavigationHistoryImpl extends NavigationHistory {
     return last != null && last.url == urlState.url && last.pageId == urlState.topMatch?.id;
   }
 
-  // The controller, [controller] or one nested in it, whose stack holds the page with [pageId].
-  RoutingController? _controllerOf(RoutingController controller, LocalKey pageId) {
-    if (controller.stackData.any((data) => data.route.id == pageId)) return controller;
-    for (final child in controller.childControllers) {
-      final holder = _controllerOf(child, pageId);
-      if (holder != null) return holder;
-    }
-    return null;
-  }
-
   void _addEntry(UrlState urlState) {
     if (!urlState.hasSegments) return;
     final route = UrlState.toHierarchy(urlState.segments);
@@ -92,7 +82,7 @@ class NavigationHistoryImpl extends NavigationHistory {
     // pushed twice. Otherwise it took that page's place, as navigate() does with
     // new arguments, or the router rebuilt its pages, so it takes the entry.
     final last = _entries.lastOrNull;
-    if (last != null && last.url == urlState.url && _controllerOf(router, last.pageId) == null) {
+    if (last != null && last.url == urlState.url && controllerOfPage(last.pageId) == null) {
       _entries.removeLast();
     }
 
@@ -119,17 +109,13 @@ class NavigationHistoryImpl extends NavigationHistory {
         return;
       }
 
-      // The entry's page may still be under the current one with the same route
-      // name, which navigateAll alone would update in place; remove the pages
-      // above it first.
       final last = _entries.last;
-      final holder = _controllerOf(router, last.pageId);
       // navigateAll completes only when the page it lands on is popped, which may
       // be during a later back(), so back navigation ends once the router reports
       // the entry's url, or when this navigation completes, if it is still the latest.
       final backCount = ++_backCount;
       _backTargetUrl = last.url;
-      if (holder is StackRouter) holder.removeUntil((data) => data.route.id == last.pageId);
+      removePagesAbove(last.pageId);
       router.navigateAll([last.route]).whenComplete(() {
         if (backCount == _backCount) _stopNavigatingBack();
       });

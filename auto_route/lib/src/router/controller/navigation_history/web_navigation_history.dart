@@ -30,21 +30,35 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   bool _isSteppingBack = false;
 
+  bool _addsEntryWithSameUrl = false;
+
+  @override
+  bool get addsEntryWithSameUrl => _addsEntryWithSameUrl;
+
   @override
   void onNewUrlState(UrlState newState, {bool notify = true}) {
     final browserIndex = _currentIndex;
     final browserPath = ui_web.urlStrategy?.getPath();
     _recordCurrentEntry();
     final isNewUrl = !_isSameUrl(urlState.url, newState.url);
-    // While stepping back, the browser reports the new url once it gets there;
-    // a notification now would make the router write it as a new entry.
-    super.onNewUrlState(newState, notify: notify && !_isSteppingBack);
-    if (!isNewUrl || _isSteppingBack) return;
-    if (_isSameUrl(browserPath, newState.url)) {
-      // The browser moved first, by its own buttons or the address bar.
+    // A page pushed over one with the same url gets a browser entry of its own,
+    // so that going back returns to the page under it.
+    final isPushedOverSameUrl = !isNewUrl && !_isSteppingBack && _isPushedOverSameUrl(newState);
+    _addsEntryWithSameUrl = notify && isPushedOverSameUrl;
+    try {
+      // While stepping back, the browser reports the new url once it gets there;
+      // a notification now would make the router write it as a new entry.
+      super.onNewUrlState(newState, notify: notify && !_isSteppingBack);
+    } finally {
+      _addsEntryWithSameUrl = false;
+    }
+    if (_isSteppingBack) return;
+    if (!isPushedOverSameUrl && _isSameUrl(browserPath, newState.url) && (isNewUrl || browserIndex != _appIndex)) {
+      // The browser moved first, by its own buttons or the address bar; with
+      // the same url, to the entry of another page that has it.
       _entries[browserIndex] = newState;
       _appIndex = browserIndex;
-    } else if (notify) {
+    } else if (notify && (isNewUrl || isPushedOverSameUrl)) {
       // The router writes the new url after this frame: over the current entry
       // for a replace, otherwise as a new entry, which drops those after it.
       final index = (_appIndex ?? browserIndex) + (newState.shouldReplace ? 0 : 1);
@@ -56,16 +70,22 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   @override
   void rebuildUrlAfterPop() {
-    final poppedUrl = urlState.url;
-    final newUrl = UrlState.fromSegments(router.currentSegments).url;
-    if (newUrl == poppedUrl) {
-      rebuildUrl();
-      return;
-    }
+    final popped = urlState;
+    final newState = UrlState.fromSegments(router.currentSegments);
+    final newUrl = newState.url;
+    final isSameUrl = newUrl == popped.url;
     _recordCurrentEntry();
     final index = _currentIndex;
-    final isPoppedPageCurrent = _isSameUrl(_entries[index]?.url, poppedUrl);
-    if (index > 0 && isPoppedPageCurrent && _isSameUrl(_entries[index - 1]?.url, newUrl)) {
+    // Whether the entry at index i holds the page on top of [state]; two
+    // pages with the same url, pushed one over the other, are told apart by page.
+    bool holds(int i, UrlState state) {
+      final entry = _entries[i];
+      return entry != null &&
+          _isSameUrl(entry.url, state.url) &&
+          (!isSameUrl || entry.topMatch?.id == state.topMatch?.id);
+    }
+
+    if (index > 0 && holds(index, popped) && holds(index - 1, newState)) {
       _isSteppingBack = true;
       try {
         rebuildUrl();
@@ -75,6 +95,11 @@ class NavigationHistoryImpl extends NavigationHistory {
       _appIndex = index - 1;
       _ownMoveUrl = newUrl;
       _history.back();
+      return;
+    }
+    if (isSameUrl) {
+      // The popped page wasn't part of the url, or had no entry of its own.
+      rebuildUrl();
       return;
     }
     // The entry before belongs to another page, so the page now on top takes
@@ -94,6 +119,11 @@ class NavigationHistoryImpl extends NavigationHistory {
   List<RouteMatch>? routesOfBrowserEntry(UrlState configuration) {
     final entry = _entries[_currentIndex];
     if (entry == null || !entry.hasSegments || !_isSameUrl(entry.url, configuration.url)) return null;
+    final pageId = entry.topMatch?.id;
+    // The entry's page may still be under the current one with the same url,
+    // as when the same route was pushed twice; navigating to it alone would
+    // update the current page in place.
+    if (pageId != null && _isSameUrl(urlState.url, entry.url)) removePagesAbove(pageId);
     return [UrlState.toHierarchy(entry.segments)];
   }
 
@@ -112,12 +142,21 @@ class NavigationHistoryImpl extends NavigationHistory {
   }
 
   // Records the app's current url state for the current browser entry, if
-  // the browser shows that url.
+  // the browser shows that url and, as far as known, the app's entry: an entry
+  // the browser moved to may hold another page with the same url.
   void _recordCurrentEntry() {
     if (!_isSameUrl(ui_web.urlStrategy?.getPath(), urlState.url)) return;
     final index = _currentIndex;
+    if (_appIndex != null && _appIndex != index) return;
     _entries[index] = urlState;
     _appIndex = index;
+  }
+
+  // Whether [newState] shows a page pushed over the app's current page with the
+  // same url, which stays in a stack under it.
+  bool _isPushedOverSameUrl(UrlState newState) {
+    final currentPageId = urlState.topMatch?.id;
+    return currentPageId != null && newState.topMatch?.id != currentPageId && controllerOfPage(currentPageId) != null;
   }
 
   bool _isSameUrl(String? a, String b) {

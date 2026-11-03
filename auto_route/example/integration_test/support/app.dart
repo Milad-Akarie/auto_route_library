@@ -131,3 +131,16 @@ Future<void> expectBrowserUrl(String expected) async {
   }
   expect(browser.browserUrl(), expected, reason: 'the browser address bar');
 }
+
+/// Waits until the browser's current history entry is [expected], as
+/// [browser.browserEntryIndex] counts them, then checks it.
+///
+/// Does nothing off the web. Use it where the url stays the same, such as
+/// going back between two pages with the same url.
+Future<void> expectBrowserEntry(int expected) async {
+  if (!kIsWeb) return;
+  for (var i = 0; i < 20 && browser.browserEntryIndex() != expected; i++) {
+    await Future<void>.delayed(const Duration(milliseconds: 100));
+  }
+  expect(browser.browserEntryIndex(), expected, reason: 'the browser history entry');
+}

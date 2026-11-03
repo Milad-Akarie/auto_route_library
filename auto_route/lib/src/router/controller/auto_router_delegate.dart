@@ -271,6 +271,10 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       // AutoRouteInformation.replace; it replaces the browser entry only when
       // the router reports the change as neglected.
       Router.neglect(context, notifyListeners);
+    } else if (controller.navigationHistory.addsEntryWithSameUrl && context != null) {
+      // The router reports a url equal to the browser's as a replace of its
+      // entry unless told the change is a navigation.
+      Router.navigate(context, notifyListeners);
     } else {
       notifyListeners();
     }
