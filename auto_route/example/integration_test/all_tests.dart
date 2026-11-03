@@ -5,6 +5,7 @@ import 'android_back_in_app_test.dart' as android_back_in_app;
 import 'app_smoke_test.dart' as app_smoke;
 import 'back_in_tabs_test.dart' as back_in_tabs;
 import 'empty_nested_router_test.dart' as empty_nested_router;
+import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
 import 'host_back_button_test.dart' as host_back_button;
 import 'keep_history_test.dart' as keep_history;
@@ -46,6 +47,7 @@ void main() {
   group('app smoke', app_smoke.main);
   group('back in tabs', back_in_tabs.main);
   group('empty nested router', empty_nested_router.main);
+  group('hero nested router', hero_nested_router.main);
   group('home index back', home_index_back.main);
   group('host back button', host_back_button.main);
   group('keep history', keep_history.main);

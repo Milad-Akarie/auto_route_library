@@ -145,11 +145,17 @@ class AutoRouterState extends State<AutoRouter> {
       );
       _parentController.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
-      // defer the setup of initial routes to the next frame
-      // so that we can have access to the context inside guards
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _controller!.setupInitialRoutes();
-      });
+      if (_controller!.setupInitialRoutesSynchronously()) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _controller?.notifyAll();
+        });
+      } else {
+        // defer the setup of initial routes to the next frame
+        // so that we can have access to the context inside guards
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _controller!.setupInitialRoutes();
+        });
+      }
     }
   }
 

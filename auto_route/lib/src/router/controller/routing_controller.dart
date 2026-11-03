@@ -2088,6 +2088,40 @@ class NestedStackRouter extends StackRouter {
     }
   }
 
+  /// Adds the initial routes to the stack right away, so the first page of
+  /// this router is part of the frame that builds it.
+  ///
+  /// This lets a [Hero] on the page that opened this router's page fly to a
+  /// [Hero] on its first page: Flutter starts the flight right after the frame
+  /// of the push, and looks for the destination [Hero] in what is built then.
+  ///
+  /// Returns false and adds nothing when the routes have to wait for
+  /// [setupInitialRoutes], which runs guards with a context.
+  @internal
+  bool setupInitialRoutesSynchronously() {
+    if (managedByWidget || root.guards.isNotEmpty) {
+      return false;
+    }
+    final hasPendingChildren = _routeData.hasPendingChildren;
+    final initialRoutes =
+        hasPendingChildren ? List<RouteMatch>.unmodifiable(_routeData.pendingChildren) : matcher.match('');
+    if (initialRoutes == null || initialRoutes.isEmpty || initialRoutes.any((route) => route.guards.isNotEmpty)) {
+      return false;
+    }
+    for (final route in initialRoutes) {
+      _addNewPage(route, notify: false);
+    }
+    _updateSharedPathData(
+      queryParams: initialRoutes.last.queryParams.rawMap,
+      fragment: initialRoutes.last.fragment,
+      includeAncestors: true,
+    );
+    if (hasPendingChildren) {
+      _routeData.pendingChildren.clear();
+    }
+    return true;
+  }
+
   @internal
 
   /// pushes the initial routes to the stack
