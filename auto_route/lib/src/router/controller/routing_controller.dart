@@ -1221,6 +1221,20 @@ abstract class StackRouter extends RoutingController {
     }
   }
 
+  /// Pops the top route of this router's navigator, unless a [PopScope] or
+  /// a nested router takes the pop, and otherwise defers to the parent router.
+  ///
+  /// Works through [Navigator.maybePop], so [PopScope]s are respected. When
+  /// the top page holds an [AutoRouter] with more than one page, that nested
+  /// router pops its own top page instead, and the page holding it stays.
+  /// This is the same order system back uses.
+  ///
+  /// When this router's navigator has nothing to pop, or no navigator is
+  /// mounted because the router has no pages, the call goes to the parent
+  /// router. [result] is passed to the popped route.
+  ///
+  /// Completes with `true` when a route was popped or a [PopScope] handled
+  /// the pop, and `false` when no router up to the root could pop.
   @override
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) async {

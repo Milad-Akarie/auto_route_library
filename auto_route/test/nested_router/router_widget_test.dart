@@ -1,4 +1,4 @@
-import 'package:auto_route/src/router/controller/routing_controller.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -298,10 +298,16 @@ void main() {
   // Reproduction for https://github.com/Milad-Akarie/auto_route_library/issues/2309
   // Steps: push SecondHostRoute (it holds a nested AutoRouter), then push a
   // second page into that nested router, then call maybePop on the root router.
-  // Happens: maybePop returns true but SecondHostRoute stays on screen.
-  // Should happen: SecondHostRoute is popped from the root stack.
-  testWidgets('root maybePop with a child pushed in a nested router should pop the host route',
-      skip: true, // #2309 is not fixed yet
+  // Happens: maybePop returns true but nothing pops; SecondNested2Route stays
+  // on screen.
+  // Should happen: the first maybePop returns true and pops SecondNested2Route
+  // from the nested router; the second returns true and pops SecondHostRoute.
+  // The reporter expected the first call to pop SecondHostRoute at once. This
+  // test expects the nested page first instead, the same order system back
+  // uses (see back_gesture_test.dart) and the one Flutter's
+  // NavigatorPopHandler is built for. Popping the host at once would also
+  // override a PopScope the app puts on the host page.
+  testWidgets('root maybePop with a child pushed in a nested router should pop the child, then the host route',
       (WidgetTester tester) async {
     await pumpRouterApp(tester, router);
     router.push(SecondHostRoute());
@@ -310,11 +316,56 @@ void main() {
     await tester.pumpAndSettle();
     expectTopPage(router, SecondNested2Route.name);
 
-    final result = await router.maybePop();
+    expect(await router.maybePop(), isTrue);
     await tester.pumpAndSettle();
+    expectTopPage(router, SecondNested1Route.name);
+    expect(router.urlState.url, '/second');
 
-    expect(result, isTrue);
+    expect(await router.maybePop(), isTrue);
+    await tester.pumpAndSettle();
     expectTopPage(router, FirstRoute.name);
     expect(router.childControllers, isEmpty);
   });
+
+  // Guard for the #2309 fix (https://github.com/Milad-Akarie/auto_route_library/issues/2309):
+  // the fix lets a blocked root pop reach the nested router, and it must not
+  // override a PopScope the app puts on the host page.
+  // Steps: push a host route whose page is PopScope(canPop: false) around an
+  // AutoRouter that shows one page, then call maybePop on the root router.
+  // Should happen: the host page's PopScope blocks the pop; the host route
+  // and its nested page stay on screen.
+  testWidgets('root maybePop should respect a PopScope on the host page when the nested router has one page',
+      (WidgetTester tester) async {
+    final router = _PopScopeHostRouter();
+    await pumpRouterApp(tester, router);
+    router.push(const _PopScopeHostRoute());
+    await tester.pumpAndSettle();
+    expectTopPage(router, SecondNested1Route.name);
+
+    await router.maybePop();
+    await tester.pumpAndSettle();
+
+    expect(router.current.name, _PopScopeHostRoute.name);
+    expectTopPage(router, SecondNested1Route.name);
+  });
+}
+
+class _PopScopeHostRouter extends MainRouter {
+  @override
+  final List<AutoRoute> routes = [
+    AutoRoute(path: '/', page: FirstRoute.page),
+    AutoRoute(path: '/host', page: _PopScopeHostRoute.page, children: [
+      AutoRoute(path: '', page: SecondNested1Route.page),
+    ]),
+  ];
+}
+
+class _PopScopeHostRoute extends PageRouteInfo<void> {
+  const _PopScopeHostRoute() : super(_PopScopeHostRoute.name);
+
+  static const String name = 'PopScopeHostRoute';
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const PopScope(canPop: false, child: AutoRouter()),
+  );
 }

@@ -164,6 +164,7 @@ class AutoRouterState extends State<AutoRouter> {
     assert(_controller != null);
     final navigator = NavigatorPopHandler(
       enabled: _controller!.hasEntries,
+      onPopWithResult: (result) => _controller!.navigatorKey.currentState?.maybePop(result),
       child: AutoRouteNavigator(
         router: _controller!,
         clipBehavior: widget.clipBehavior,
