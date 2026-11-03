@@ -109,6 +109,8 @@ jobs:
     name: Integration tests on iOS
     runs-on: macos-26
     timeout-minutes: 15
+    # GitHub never picked up an arm64 macOS runner in five runs; the maintainer's Mac runs iOS and macOS before every merge.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
@@ -173,6 +175,8 @@ jobs:
     name: Integration tests on macOS
     runs-on: macos-26
     timeout-minutes: 15
+    # GitHub never picked up an arm64 macOS runner in five runs; the maintainer's Mac runs iOS and macOS before every merge.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
