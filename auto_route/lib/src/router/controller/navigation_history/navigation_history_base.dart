@@ -139,7 +139,9 @@ abstract class NavigationHistory with ChangeNotifier {
   /// Notifies [AutoRouteDelegate] of url configuration changed
   /// if [newState] is different from current
   void onNewUrlState(UrlState newState, {bool notify = true}) {
-    if (_urlState != newState) {
+    // Two pages of the same route with equal arguments have equal url states;
+    // only the page on top tells them apart.
+    if (_urlState != newState || _urlState.topMatch?.id != newState.topMatch?.id) {
       _urlState = newState;
       if (notify) {
         notifyListeners();
@@ -155,9 +157,12 @@ abstract class NavigationHistory with ChangeNotifier {
   }
 
   /// Whether this route-data is in the visible urlState-segments
+  ///
+  /// Compares the page too, since the same route can be pushed twice with
+  /// equal arguments.
   bool isRouteDataActive(RouteData data) {
     return urlState.segments.any(
-      (route) => route == data.route,
+      (route) => route == data.route && route.id == data.route.id,
     );
   }
 

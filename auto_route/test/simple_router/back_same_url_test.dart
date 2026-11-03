@@ -12,6 +12,7 @@ void main() {
     router = RootStackRouter.build(routes: [
       AutoRoute(page: FirstRoute.page, path: '/'),
       AutoRoute(page: _BookRoute.page, path: '/book'),
+      AutoRoute(page: SecondRoute.page, path: '/second'),
     ]);
   });
 
@@ -34,6 +35,24 @@ void main() {
     expect(find.text('Book some-id'), findsOneWidget);
     expect(router.stack.length, 2);
     expect(router.urlState.url, '/book');
+  }, skip: kIsWeb);
+
+  // Push a route without arguments twice, then call back(). The two pages'
+  // routes compare equal, so the url was never rebuilt for the second page,
+  // which got no history entry, and back() went straight to Home.
+  testWidgets('back() returns to the same route pushed with equal arguments', (tester) async {
+    await pumpRouterConfigApp(tester, router.config());
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
+    expect(router.stack.length, 3);
+    expect(router.navigationHistory.length, 3);
+
+    router.back();
+    await tester.pumpAndSettle();
+    expect(router.current.name, SecondRoute.name);
+    expect(router.stack.length, 2);
   }, skip: kIsWeb);
 
   // navigate() to the page on top with other arguments replaces that page in

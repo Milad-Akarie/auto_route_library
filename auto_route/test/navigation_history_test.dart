@@ -45,16 +45,19 @@ void main() {
       expect(history.canNavigateBack, true);
     }, skip: _webBackMovesBrowser);
 
-    test('Should prevent duplicate consecutive entries', () async {
+    // Rebuilding the url of the same page adds no entry, but pushing the same
+    // route again does: the second page is a page of its own, and back()
+    // returns to the first one, as maybePop() does.
+    test('Should prevent duplicate consecutive entries for the same page only', () async {
       await router.push(const FirstRoute());
       final firstLength = history.length;
 
-      // Try to add the same route again
-      await router.push(const FirstRoute());
-
-      // Length should remain the same due to duplicate prevention
+      history.rebuildUrl();
       expect(history.length, firstLength);
-    });
+
+      await router.push(const FirstRoute());
+      expect(history.length, firstLength + 1);
+    }, skip: _webCountsBrowserEntries);
 
     test('Should allow same route if not consecutive', () async {
       await router.push(const FirstRoute());

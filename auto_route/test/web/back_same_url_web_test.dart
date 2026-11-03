@@ -18,6 +18,7 @@ void main() {
       routes: [
         AutoRoute(page: FirstRoute.page, path: '/'),
         AutoRoute(page: _BookRoute.page, path: '/book'),
+        AutoRoute(page: SecondRoute.page, path: '/second'),
       ],
     );
     await rewindBrowserHistory();
@@ -94,6 +95,24 @@ void main() {
     await browserMove(tester, router.back);
     expect(find.text('Book some-id'), findsOneWidget);
     expect(router.stack.length, 2);
+  });
+
+  // Pushing a route without arguments twice gives the second page a browser
+  // entry of its own too, although the two pages' routes compare equal.
+  testWidgets('Going back on web returns to the same route pushed with equal arguments', (tester) async {
+    await pumpRouterConfigApp(tester, router.config());
+    await settleBrowser(tester);
+    router.push(const SecondRoute());
+    await settleBrowser(tester);
+    router.push(const SecondRoute());
+    await settleBrowser(tester);
+    expect(router.stack.length, 3);
+    expect(browserSerialCount, 2);
+
+    await pressBrowserBack(tester);
+    expect(router.current.name, SecondRoute.name);
+    expect(router.stack.length, 2);
+    expect(browserPath, '/second');
   });
 
   // navigate() to the page on top with other arguments replaces it in place,
