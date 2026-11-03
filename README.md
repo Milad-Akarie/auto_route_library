@@ -57,6 +57,7 @@
   - [AutoLeadingButton-BackButton](#autoleadingbutton-backbutton)
   - [ActiveGuardObserver](#activeguardobserver)
   - [Android Predictive Back](#android-predictive-back)
+  - [State Restoration](#state-restoration)
 - [Examples](#examples)
 
 ## Migration guides
@@ -1674,6 +1675,26 @@ after you've enabled the feature in your manifest file, you can simply create pr
 ```
 
 you can enable predictive back for all routes by overriding `defaultRouteType` in your router, all route types that apply on android support this feature.
+
+### State Restoration
+
+When the platform ends an app in the background and opens it again, Flutter's state restoration can bring it back as it was. `auto_route` saves every page of every stack and tab, with their path and query params, so the user lands on the same page and back goes through the same pages.
+
+Turn it on by giving your app a `restorationScopeId`:
+
+```dart
+MaterialApp.router(
+  restorationScopeId: 'app',
+  routerConfig: _appRouter.config(),
+)
+```
+
+Things to keep in mind:
+
+- Arguments that aren't path or query params, such as objects passed to a page, can't be saved. A page that can't be built without them is left out when the app comes back, so pass what a page needs to come back as path or query params.
+- Flutter restores apps on Android and iOS, not on the web, where a refresh opens the url in the address bar.
+- On iOS, the app's `FlutterViewController` needs a restoration ID, or nothing is saved. In Xcode, open `ios/Runner/Base.lproj/Main.storyboard`, select the Flutter View Controller, and enter an ID under Restoration ID in the Identity inspector. In the storyboard's source this is `restorationIdentifier="FlutterViewController"` on its `viewController`.
+- Android needs nothing more. To try it, turn on "Don't keep activities" in the developer options, then send the app to the background and open it again.
 
 ## Examples
 
