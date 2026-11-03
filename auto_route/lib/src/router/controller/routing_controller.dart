@@ -264,9 +264,44 @@ abstract class RoutingController with ChangeNotifier {
           throw FlutterError("Failed to navigate to ${route.routeName}");
         }
       } else {
-        return match;
+        return _reuseOpenAncestors(match);
       }
     }
+  }
+
+  // [RouteMatcher.buildPathTo] makes up the ancestors of a route nested deeper
+  // than this router, with no path params or args. Where the same ancestor is
+  // already open, or about to open, take its params and args, so navigating
+  // to the route keeps the parent that holds the path params it inherits.
+  RouteMatch _reuseOpenAncestors(RouteMatch built) {
+    final chain = built.flattened;
+    RoutingController? controller = this;
+    var pending = const <RouteMatch>[];
+    for (var i = 0; i < chain.length - 1; i++) {
+      final name = chain[i].name;
+      RouteMatch? open;
+      if (controller != null) {
+        final data = controller.stackData.lastWhereOrNull((d) => d.name == name);
+        open = data?.route;
+        if (data != null) {
+          // A nested router that isn't built yet holds its routes as pending children.
+          pending = data.pendingChildren;
+          controller = controller._innerControllerOfMatch(data.matchId);
+        }
+      } else {
+        open = pending.lastWhereOrNull((m) => m.name == name);
+        pending = open?.children ?? const [];
+      }
+      if (open == null) break;
+      chain[i] = chain[i].copyWith(
+        stringMatch: open.stringMatch,
+        segments: open.segments,
+        pathParams: open.params,
+        args: open.args,
+        key: open.key,
+      );
+    }
+    return UrlState.toHierarchy(chain);
   }
 
   List<RouteMatch>? _matchAllOrReportFailure(
