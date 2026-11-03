@@ -38,6 +38,7 @@ import 'required_args_test.dart' as required_args;
 import 'tab_rebuild_test.dart' as tab_rebuild;
 import 'tab_routes_change_test.dart' as tab_routes_change;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
+import 'theme_change_test.dart' as theme_change;
 import 'url_on_pop_test.dart' as url_on_pop;
 
 // Runs every integration test file in one app launch. Run this file, not the
@@ -83,5 +84,6 @@ void main() {
   group('tab rebuild', tab_rebuild.main);
   group('tab routes change', tab_routes_change.main);
   group('tabs pop scope', tabs_pop_scope.main);
+  group('theme change', theme_change.main);
   group('url on pop', url_on_pop.main);
 }
