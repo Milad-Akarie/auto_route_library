@@ -20,6 +20,7 @@ Future<void> pumpRouterApp(
   String initialLink = '/',
   Listenable? reevaluationNotifier,
   ThemeData? theme,
+  NavigatorObserversBuilder navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) async {
   _bringAppToForeground(tester);
   await tester.pumpWidget(
@@ -29,6 +30,7 @@ Future<void> pumpRouterApp(
       routerDelegate: router.delegate(
         reevaluateListenable: reevaluationNotifier,
         deepLinkBuilder: (_) => DeepLink.path(initialLink),
+        navigatorObservers: navigatorObservers,
       ),
     ),
   );

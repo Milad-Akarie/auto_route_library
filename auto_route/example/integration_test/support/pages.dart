@@ -17,6 +17,48 @@ class TestPage extends StatelessWidget {
   }
 }
 
+/// Each call a [RouteAwarePage] gets from its [AutoRouteObserver], as
+/// `'<route name>.<call>'`, in order. Tests clear it before the steps they check.
+final routeAwareEvents = <String>[];
+
+/// Shows the route's name like [TestPage], and records in [routeAwareEvents]
+/// each [AutoRouteAware] call it gets.
+class RouteAwarePage extends StatefulWidget {
+  const RouteAwarePage({super.key});
+
+  @override
+  State<RouteAwarePage> createState() => _RouteAwarePageState();
+}
+
+class _RouteAwarePageState extends State<RouteAwarePage> with AutoRouteAwareStateMixin<RouteAwarePage> {
+  late final String _name = context.routeData.name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(child: Text(context.routeData.name)),
+    );
+  }
+
+  @override
+  void didPush() => routeAwareEvents.add('$_name.didPush');
+
+  @override
+  void didPop() => routeAwareEvents.add('$_name.didPop');
+
+  @override
+  void didPushNext() => routeAwareEvents.add('$_name.didPushNext');
+
+  @override
+  void didPopNext() => routeAwareEvents.add('$_name.didPopNext');
+
+  @override
+  void didInitTabRoute(TabPageRoute? previousRoute) => routeAwareEvents.add('$_name.didInitTabRoute');
+
+  @override
+  void didChangeTabRoute(TabPageRoute previousRoute) => routeAwareEvents.add('$_name.didChangeTabRoute');
+}
+
 class FirstRoute extends PageRouteInfo<void> {
   const FirstRoute() : super(name);
 
