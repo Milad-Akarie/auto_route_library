@@ -38,7 +38,12 @@ jobs:
         run: flutter analyze
       - name: Headless tests on the VM
         working-directory: auto_route
-        run: flutter test --reporter github
+        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route
+        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE"
 
   headless-chrome:
     name: Headless tests in Chrome
@@ -53,7 +58,12 @@ jobs:
           cache: true
       - name: Headless tests in Chrome
         working-directory: auto_route
-        run: flutter test --reporter github --platform chrome
+        run: flutter test --reporter github --platform chrome --file-reporter "json:$RUNNER_TEMP/test-results.json"
+      # The job logs need a sign-in; annotations and the summary don't.
+      - name: Name each failed test
+        if: failure()
+        working-directory: auto_route
+        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE"
 
   android:
     name: Integration tests on Android
