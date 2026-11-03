@@ -92,6 +92,20 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   Widget build(BuildContext context) {
+    final navigator = _buildNavigator(context);
+    if (widget.router.isRoot) return navigator;
+    // A nested navigator sits on a page of its parent's navigator. While it
+    // can take back itself, NavigatorPopHandler turns off that page's back
+    // swipe, keeps Android sending back to Flutter, and passes the page's
+    // pops down to it.
+    return NavigatorPopHandler<Object?>(
+      enabled: widget.router.hasEntries,
+      onPopWithResult: (result) => widget.router.navigatorKey.currentState?.maybePop(result),
+      child: navigator,
+    );
+  }
+
+  Widget _buildNavigator(BuildContext context) {
     return widget.router.hasEntries
         ? Navigator(
             key: widget.router.navigatorKey,

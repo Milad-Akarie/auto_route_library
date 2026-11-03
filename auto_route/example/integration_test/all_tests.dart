@@ -12,6 +12,7 @@ import 'navigate_inherited_path_params_test.dart' as navigate_inherited_path_par
 import 'navigate_nested_update_test.dart' as navigate_nested_update;
 import 'nested_back_test.dart' as nested_back;
 import 'nested_browser_back_test.dart' as nested_browser_back;
+import 'nested_pop_scope_first_page_test.dart' as nested_pop_scope_first_page;
 import 'nested_pop_scope_step_test.dart' as nested_pop_scope_step;
 import 'optional_args_on_back_test.dart' as optional_args_on_back;
 import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
@@ -28,6 +29,7 @@ import 'replaced_push_future_test.dart' as replaced_push_future;
 import 'required_args_test.dart' as required_args;
 import 'tab_rebuild_test.dart' as tab_rebuild;
 import 'tab_routes_change_test.dart' as tab_routes_change;
+import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
 import 'url_on_pop_test.dart' as url_on_pop;
 
 // Runs every integration test file in one app launch. Run this file, not the
@@ -47,6 +49,7 @@ void main() {
   group('navigate nested update', navigate_nested_update.main);
   group('nested back', nested_back.main);
   group('nested browser back', nested_browser_back.main);
+  group('nested pop scope first page', nested_pop_scope_first_page.main);
   group('nested pop scope step', nested_pop_scope_step.main);
   group('optional args on back', optional_args_on_back.main);
   group('overlapping reevaluation', overlapping_reevaluation.main);
@@ -63,5 +66,6 @@ void main() {
   group('required args', required_args.main);
   group('tab rebuild', tab_rebuild.main);
   group('tab routes change', tab_routes_change.main);
+  group('tabs pop scope', tabs_pop_scope.main);
   group('url on pop', url_on_pop.main);
 }
