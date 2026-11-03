@@ -719,7 +719,11 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes, _tabController.index);
       _tabsHash = const ListEquality().hash(widget.routes);
+      final oldTabController = _tabController;
       _updateTabController();
+      // Stops its animation, whose listener would otherwise reach this router
+      // after it is disposed.
+      oldTabController.dispose();
     }
   }
 

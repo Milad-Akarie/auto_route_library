@@ -68,6 +68,7 @@ import 'restore_stack_test.dart' as restore_stack;
 import 'restore_tabs_test.dart' as restore_tabs;
 import 'root_bottom_sheet_aware_test.dart' as root_bottom_sheet_aware;
 import 'route_aware_mixin_test.dart' as route_aware_mixin;
+import 'tab_bar_dispose_test.dart' as tab_bar_dispose;
 import 'tab_rebuild_test.dart' as tab_rebuild;
 import 'tab_removed_test.dart' as tab_removed;
 import 'tab_routes_change_test.dart' as tab_routes_change;
@@ -151,6 +152,7 @@ void main() {
   group('restore tabs', restore_tabs.main);
   group('root bottom sheet aware', root_bottom_sheet_aware.main);
   group('route aware mixin', route_aware_mixin.main);
+  group('tab bar dispose', tab_bar_dispose.main);
   group('tab rebuild', tab_rebuild.main);
   group('tab removed', tab_removed.main);
   group('tab routes change', tab_routes_change.main);
