@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'android_back_in_app_test.dart' as android_back_in_app;
 import 'app_smoke_test.dart' as app_smoke;
 import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'host_back_button_test.dart' as host_back_button;
@@ -38,6 +39,7 @@ import 'url_on_pop_test.dart' as url_on_pop;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  group('android back in app', android_back_in_app.main);
   group('app smoke', app_smoke.main);
   group('empty nested router', empty_nested_router.main);
   group('host back button', host_back_button.main);
