@@ -1517,6 +1517,7 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
     Completer<void>? pushed,
+    ValueChanged<RouteMatch>? onLastRouteAdded,
   }) async {
     final anchor = matches.first;
     final anchorPage = _pages.lastWhereOrNull(
@@ -1543,6 +1544,7 @@ abstract class StackRouter extends RoutingController {
       updateAncestorsPathData: false,
       isReevaluating: isReevaluating,
       pushed: pushed,
+      onLastRouteAdded: onLastRouteAdded,
     );
   }
 
@@ -1864,6 +1866,7 @@ abstract class StackRouter extends RoutingController {
     bool returnLastRouteCompleter = true,
     bool isReevaluating = false,
     Completer<void>? pushed,
+    ValueChanged<RouteMatch>? onLastRouteAdded,
   }) async {
     assert(
       !managedByWidget,
@@ -1897,6 +1900,7 @@ abstract class StackRouter extends RoutingController {
             fragment: match.fragment,
             includeAncestors: updateAncestorsPathData,
           );
+          onLastRouteAdded?.call(match);
           if (match is ReevaluatableRouteMatch) {
             _addReevaluatedPage(match, notify: notify);
           } else {
@@ -2045,6 +2049,7 @@ abstract class StackRouter extends RoutingController {
     }
     Future<T?>? popped;
     if (routes.isNotEmpty) {
+      var mayUpdateRoute = routes.last;
       if (!managedByWidget) {
         // The future of a pushed page completes when the page is popped, so wait only until
         // the page is added, to keep updating nested routers right away.
@@ -2054,6 +2059,8 @@ abstract class StackRouter extends RoutingController {
           onFailure: onFailure,
           isReevaluating: isReevaluating,
           pushed: pushed,
+          // a guard may have overridden the route, e.g. its children
+          onLastRouteAdded: (match) => mayUpdateRoute = match,
         );
         await Future.any([pushed.future, popped]);
         if (isReevaluating) {
@@ -2066,17 +2073,18 @@ abstract class StackRouter extends RoutingController {
       } else {
         _onNavigate(routes);
       }
-      final mayUpdateRoute = routes.last;
       final mayUpdateController = _topInnerControllerOf(mayUpdateRoute.key);
       if (mayUpdateController != null) {
         final newChildren = mayUpdateRoute.children ?? const [];
         if (mayUpdateController.managedByWidget) {
           mayUpdateController._onNavigate(newChildren);
         }
+        // children a guard set while reevaluating are new routes, not pages being reevaluated
+        final childrenOverridden = newChildren.any((child) => child is! ReevaluatableRouteMatch);
         return mayUpdateController._navigateAll(
           newChildren,
           onFailure: onFailure,
-          isReevaluating: isReevaluating,
+          isReevaluating: isReevaluating && !childrenOverridden,
         );
       }
     } else if (!managedByWidget) {
