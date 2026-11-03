@@ -23,6 +23,9 @@ class ResolvedType {
   /// the parts of a function type, `null` for any other type
   final FunctionTypeParts? functionParts;
 
+  /// whether the type is an enum
+  final bool isEnum;
+
   ResolvedType._({
     required this.name,
     this.import,
@@ -31,6 +34,7 @@ class ResolvedType {
     required bool isRecordType,
     this.nameInRecord,
     this.functionParts,
+    this.isEnum = false,
   }) : _isRecordType = isRecordType;
 
   /// Default constructor
@@ -40,6 +44,7 @@ class ResolvedType {
     this.typeArguments = const [],
     this.isNullable = false,
     this.nameInRecord,
+    this.isEnum = false,
   })  : _isRecordType = false,
         functionParts = null;
 
@@ -51,7 +56,8 @@ class ResolvedType {
     this.isNullable = false,
     this.nameInRecord,
   })  : _isRecordType = true,
-        functionParts = null;
+        functionParts = null,
+        isEnum = false;
 
   /// Constructor for a function type, such as `void Function(String url)`,
   /// when it is a type argument or a record field
@@ -63,7 +69,8 @@ class ResolvedType {
         import = null,
         typeArguments = const [],
         _isRecordType = false,
-        functionParts = parts;
+        functionParts = parts,
+        isEnum = false;
 
   /// the unique identity of the type
   String get identity => "$import#$name";
@@ -131,6 +138,7 @@ class ResolvedType {
       if (nameInRecord != null) 'nameInRecord': nameInRecord,
       if (typeArguments.isNotEmpty) 'typeArguments': typeArguments.map((e) => e.toJson()).toList(),
       if (functionParts != null) 'functionParts': functionParts!.toJson(),
+      if (isEnum) 'isEnum': true,
     };
   }
 
@@ -150,6 +158,7 @@ class ResolvedType {
       nameInRecord: map['nameInRecord'] as String?,
       typeArguments: typedArgs,
       functionParts: map['functionParts'] == null ? null : FunctionTypeParts.fromJson(map['functionParts']),
+      isEnum: map['isEnum'] == true,
     );
   }
 

@@ -147,4 +147,36 @@ const firstPage = 1;
       expect(result.source, matches(RegExp(r"queryParams.getInt\('page', _i\d+\.firstPage\)")));
     });
   });
+
+  // #2148: an enum query parameter was read with `queryParams.get('type')`,
+  // which hands the url's string ('rm' from /cart?type=rm) to the enum
+  // argument and throws a type error. It was also written into the url with
+  // toString(), as `MfUserCartTypes.rm`. It is now written and read by name.
+  group('an enum query parameter (#2148)', () {
+    test('is read and written by its name', () async {
+      final result = await generateRouter({
+        'lib/types.dart': 'enum MfUserCartTypes { rm, mf }',
+        'lib/cart_page.dart': _page(
+          'MfUserCartView',
+          imports: "import 'types.dart';",
+          parameters: "@QueryParam('type') required this.userCartType, @QueryParam() this.sort = MfUserCartTypes.mf",
+          fields: '''
+  final MfUserCartTypes? userCartType;
+  final MfUserCartTypes sort;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      final source = result.source!
+          .replaceAll(RegExp(r'_i\d+\.'), '')
+          .replaceAll(RegExp(r'\s+'), '')
+          .replaceAll(RegExp(r',(?=[)}\]])'), '');
+      expect(source, contains("rawQueryParams:{'type':userCartType?.name,'sort':sort.name}"));
+      expect(source, contains("userCartType:MfUserCartTypes.values.asNameMap()[queryParams.optString('type')]"));
+      expect(
+        source,
+        contains("sort:MfUserCartTypes.values.asNameMap()[queryParams.optString('sort')]??MfUserCartTypes.mf"),
+      );
+    });
+  });
 }

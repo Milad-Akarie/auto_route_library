@@ -103,7 +103,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                           parameters.where((p) => p.isQueryParam).map(
                                 (p) => MapEntry(
                                   p.paramName,
-                                  refer(p.name),
+                                  _getUrlPartValue(p),
                                 ),
                               ),
                         ),
@@ -383,6 +383,14 @@ Expression _getUrlPartAssignment(ParamConfig p) {
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import),
     ]);
+  } else if (p.isQueryParam && p.type.isEnum) {
+    // An enum is read by its name, the form [_getUrlPartValue] writes.
+    final value = refer(p.type.name, p.type.import)
+        .property('values')
+        .property('asNameMap')
+        .call([]).index(refer('queryParams').property('optString').call([literalString(p.paramName)]));
+    if (p.defaultValueCode == null) return value;
+    return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
   } else if (p.isQueryParam) {
     return refer('queryParams').property(p.getterMethodName).call([
       literalString(p.paramName),
@@ -391,6 +399,14 @@ Expression _getUrlPartAssignment(ParamConfig p) {
   } else {
     return refer('data').property('fragment');
   }
+}
+
+/// The value a url parameter puts in the url: an enum by its name, any other
+/// value as it is.
+Expression _getUrlPartValue(ParamConfig p) {
+  final value = refer(p.name);
+  if (!p.type.isEnum) return value;
+  return p.type.isNullable ? value.nullSafeProperty('name') : value.property('name');
 }
 
 extension _IterableX<T> on Iterable<T> {

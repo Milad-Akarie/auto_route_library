@@ -174,6 +174,7 @@ class TypeResolver {
       isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
       import: import,
       typeArguments: typeArgs,
+      isEnum: effectiveElement is EnumElement,
     );
   }
 }

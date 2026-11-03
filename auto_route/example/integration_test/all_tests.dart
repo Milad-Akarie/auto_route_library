@@ -18,6 +18,7 @@ import 'theme_page_transitions_test.dart' as theme_page_transitions;
 import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'encoded_path_params_test.dart' as encoded_path_params;
 import 'encoded_url_test.dart' as encoded_url;
+import 'enum_query_param_test.dart' as enum_query_param;
 import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
 import 'host_back_button_test.dart' as host_back_button;
@@ -128,6 +129,7 @@ void main() {
   group('empty nested router', empty_nested_router.main);
   group('encoded path params', encoded_path_params.main);
   group('encoded url', encoded_url.main);
+  group('enum query param', enum_query_param.main);
   group('hero nested router', hero_nested_router.main);
   group('home index back', home_index_back.main);
   group('host back button', host_back_button.main);
