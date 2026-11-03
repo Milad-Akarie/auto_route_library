@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'app_smoke_test.dart' as app_smoke;
+import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'push_futures_test.dart' as push_futures;
 import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
@@ -14,6 +15,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('app smoke', app_smoke.main);
+  group('overlapping reevaluation', overlapping_reevaluation.main);
   group('push futures', push_futures.main);
   group('reevaluation nested tabs', reevaluation_nested_tabs.main);
   group('reevaluation redirect', reevaluation_redirect.main);
