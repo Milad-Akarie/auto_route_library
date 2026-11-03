@@ -63,6 +63,7 @@ import 'replace_all_rejected_test.dart' as replace_all_rejected;
 import 'replace_rejected_test.dart' as replace_rejected;
 import 'replaced_push_future_test.dart' as replaced_push_future;
 import 'required_args_test.dart' as required_args;
+import 'restore_stack_test.dart' as restore_stack;
 import 'root_bottom_sheet_aware_test.dart' as root_bottom_sheet_aware;
 import 'route_aware_mixin_test.dart' as route_aware_mixin;
 import 'tab_rebuild_test.dart' as tab_rebuild;
@@ -141,6 +142,7 @@ void main() {
   group('replace rejected', replace_rejected.main);
   group('replaced push future', replaced_push_future.main);
   group('required args', required_args.main);
+  group('restore stack', restore_stack.main);
   group('root bottom sheet aware', root_bottom_sheet_aware.main);
   group('route aware mixin', route_aware_mixin.main);
   group('tab rebuild', tab_rebuild.main);

@@ -58,8 +58,16 @@ class RouteData<R> {
 
   /// Builds a String value that that's passed to
   /// [AutoRoutePage.restorationId]
+  ///
+  /// It's [AutoRoute.restorationId], or the route name, and unique among the
+  /// pages of [router]: the pages of a Navigator can't share a restoration
+  /// id, so a second page with the same one gets '#1' appended, a third '#2'.
   @internal
-  String get restorationId => _match.restorationId == null ? _match.name : _match.restorationId!(_match);
+  String get restorationId => _restorationId ?? _baseRestorationId;
+
+  String get _baseRestorationId => _match.restorationId == null ? _match.name : _match.restorationId!(_match);
+
+  String? _restorationId;
 
   /// Whether is route is in the visible url-segments
   bool get isActive => router.isRouteActive(name);

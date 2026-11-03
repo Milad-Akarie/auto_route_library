@@ -160,6 +160,20 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
   }
 
+  /// Rebuilds the pages of every router from [UrlState.savedRoutes] when the
+  /// app is restored, guards included; without them, opens the restored url.
+  @override
+  Future<void> setRestoredRoutePath(UrlState configuration) {
+    final routes = _restoredRoutes(configuration.savedRoutes);
+    final matches = routes == null || routes.isEmpty || controller.hasEntries
+        ? null
+        : controller._matchAllOrReportFailure(routes, (_) {});
+    if (matches == null) {
+      return setNewRoutePath(configuration);
+    }
+    return controller.navigateAll(matches);
+  }
+
   @override
   Future<void> setNewRoutePath(UrlState configuration) async {
     final history = controller.navigationHistory;

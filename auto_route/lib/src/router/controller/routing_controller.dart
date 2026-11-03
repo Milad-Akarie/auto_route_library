@@ -237,6 +237,15 @@ abstract class RoutingController with ChangeNotifier {
       pendingChildren: route.children ?? [],
       type: route.type ?? root.defaultRouteType,
     );
+    final takenRestorationIds = {
+      for (final page in _pages)
+        if (page.routeData.matchId != routeData.matchId) page.restorationId,
+    };
+    final restorationId = routeData._baseRestorationId;
+    routeData._restorationId = restorationId;
+    for (var i = 1; takenRestorationIds.contains(routeData._restorationId); i++) {
+      routeData._restorationId = '$restorationId#$i';
+    }
     for (final ctr in _childControllers) {
       if (ctr._markedForDataUpdate && ctr.key == routeData.key) {
         ctr.updateRouteData(routeData);

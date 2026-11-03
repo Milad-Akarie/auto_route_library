@@ -1,6 +1,6 @@
 part of 'routing_controller.dart';
 
-// Saves the pages of every router for state restoration.
+// Saves the pages of every router for state restoration, and reads them back.
 //
 // Flutter's Router saves only the route information, so the pages are saved
 // in its state: a list with one map per page, holding plain values the
@@ -63,4 +63,34 @@ Map<String, Object?> _plainValues(Map<String, dynamic> values) {
         _ => value.toString(),
       };
   return {for (final entry in values.entries) entry.key: plain(entry.value)};
+}
+
+// Reads back the routes saved by _savedRoutes; null if [saved] isn't such a list.
+List<PageRouteInfo>? _restoredRoutes(Object? saved) {
+  if (saved is! List) return null;
+  final routes = <PageRouteInfo>[];
+  for (final item in saved) {
+    if (item is! Map) return null;
+    final name = item['name'];
+    final path = item['path'];
+    final query = item['query'];
+    final fragment = item['fragment'];
+    final children = item['children'];
+    if (name is! String ||
+        (path != null && path is! Map) ||
+        (query != null && query is! Map) ||
+        (fragment != null && fragment is! String)) {
+      return null;
+    }
+    final restoredChildren = children == null ? null : _restoredRoutes(children);
+    if (children != null && restoredChildren == null) return null;
+    routes.add(PageRouteInfo(
+      name,
+      rawPathParams: path == null ? const {} : Map<String, dynamic>.from(path as Map),
+      rawQueryParams: query == null ? const {} : Map<String, dynamic>.from(query as Map),
+      fragment: fragment as String?,
+      initialChildren: restoredChildren,
+    ));
+  }
+  return routes;
 }
