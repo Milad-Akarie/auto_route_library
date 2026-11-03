@@ -1133,7 +1133,10 @@ abstract class StackRouter extends RoutingController {
   /// e.g when the user is no longer authenticated
   /// and there are auth-protected routes in the stack
   Future<void> reevaluateGuards() async {
-    final matches = await _composeMatchesForReevaluate();
+    final composed = await _composeMatchesForReevaluate();
+    // A page removed while the stack was composed, e.g. by a replaceAll called
+    // right after the listenable changed, stays removed.
+    final matches = composed.where((match) => _pages.contains(match.currentPage)).toList();
     if (matches.isNotEmpty && !_isReevaluating) {
       _isReevaluating = true;
       await _navigateAll(matches, isReevaluating: true);
