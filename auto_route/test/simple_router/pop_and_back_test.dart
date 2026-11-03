@@ -50,4 +50,27 @@ void main() {
     expect(router.urlState.url, '/');
     expect(router.canNavigateBack, isFalse);
   });
+
+  // https://github.com/Milad-Akarie/auto_route_library/issues/1839
+  // pushAll records only the last page, so after popping it the page now on top
+  // has no history entry yet; it must take the popped page's entry, not follow it.
+  testWidgets('Popping a page pushed with pushAll then going back should not return to it', (tester) async {
+    await pumpRouterApp(tester, router);
+    router.pushAll([const SecondRoute(), const ThirdRoute()]);
+    await tester.pumpAndSettle();
+    expectCurrentPage(router, ThirdRoute.name);
+    expect(router.navigationHistory.length, 2);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expectCurrentPage(router, SecondRoute.name);
+    expect(router.navigationHistory.length, 2);
+    expect(router.urlState.url, '/second-route');
+
+    router.back();
+    await tester.pumpAndSettle();
+    expectCurrentPage(router, FirstRoute.name);
+    expect(router.stack.map((p) => p.name), [FirstRoute.name]);
+    expect(router.navigationHistory.length, 1);
+  });
 }
