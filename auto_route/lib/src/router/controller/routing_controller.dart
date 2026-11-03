@@ -355,6 +355,12 @@ abstract class RoutingController with ChangeNotifier {
 
   _RouterScopeResult<T>? _findPathScopeOrReportFailure<T extends RoutingController>(String path,
       {bool includePrefixMatches = false, OnNavigationFailure? onFailure}) {
+    if (path.startsWith('/')) {
+      final scope = root._absolutePathScope(path, includePrefixMatches: includePrefixMatches);
+      if (scope != null && scope.router is T) {
+        return _RouterScopeResult<T>(scope.router as T, scope.matches);
+      }
+    }
     final routers = _topMostRouter(ignorePagelessRoutes: true)._buildRoutersHierarchy().whereType<T>();
 
     for (var router in routers) {
@@ -374,6 +380,27 @@ abstract class RoutingController with ChangeNotifier {
       throw FlutterError('Can not navigate to $path');
     }
     return null;
+  }
+
+  // Matches an absolute path from this router, the root, the way a deep link
+  // is matched: a nested router's relative paths never see the leading '/',
+  // so only its wild-card would take it. Then follows the open stack routers
+  // whose top page is the next match, and returns the deepest of them with
+  // the matches left for it.
+  _RouterScopeResult<RoutingController>? _absolutePathScope(String path, {required bool includePrefixMatches}) {
+    var matches = matcher.match(path, includePrefixMatches: includePrefixMatches);
+    if (matches == null) return null;
+    RoutingController router = this;
+    while (matches!.length == 1 && matches.single.hasChildren) {
+      final match = matches.single;
+      final top = router.stackData.lastOrNull;
+      if (top == null || top.name != match.name || top.match != match.stringMatch) break;
+      final child = router._topInnerControllerOf(top.key);
+      if (child is! StackRouter) break;
+      router = child;
+      matches = match.children;
+    }
+    return _RouterScopeResult(router, matches);
   }
 
   RoutingController _findScope<T extends RoutingController>(PageRouteInfo route) {
