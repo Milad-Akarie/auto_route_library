@@ -890,6 +890,12 @@ class TabsRouter extends RoutingController {
   /// after match validation and deciding initial index
   void setupRoutes(List<PageRouteInfo>? routes) {
     final routesToPush = _resolveRoutes(routes);
+    // Tabs restored after the app was ended each come with their own stack;
+    // the last pending one is the active tab.
+    for (final pending in _routeData.pendingChildren) {
+      final index = routesToPush.indexWhere((r) => r.key == pending.key);
+      if (index != -1) routesToPush[index] = pending;
+    }
     final preMatchedRoute = _routeData.hasPendingChildren
         ? _routeData.pendingChildren.last
         : _outgoingTabsRouter()?._activePage?.routeData.route;
