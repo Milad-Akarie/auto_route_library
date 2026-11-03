@@ -1486,6 +1486,7 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool notify = true,
     ValueChanged<RouteMatch>? onMatch,
+    VoidCallback? onAccepted,
     int? insertAt,
   }) async {
     assert(
@@ -1499,6 +1500,7 @@ abstract class StackRouter extends RoutingController {
     onMatch?.call(match);
     final result = await _canNavigate(match, onFailure: onFailure);
     if (result.continueNavigation) {
+      onAccepted?.call();
       _updateSharedPathData(
         queryParams: route.rawQueryParams,
         fragment: route.fragment,
@@ -1517,6 +1519,9 @@ abstract class StackRouter extends RoutingController {
   /// Removes last entry in stack and pushes given [route]
   /// if last entry == [route] page will just be updated
   ///
+  /// The last entry is removed only once the guards of [route] let it
+  /// through; a rejected [route] leaves the stack as it was.
+  ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
   @optionalTypeArgs
@@ -1525,9 +1530,18 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
   }) {
     final scope = _findStackScope(route);
-    scope._removeLast(notify: false);
-    markUrlStateForReplace();
-    return scope._push<T>(route, onFailure: onFailure);
+    final replaced = scope._pages.lastOrNull?.routeData;
+    return scope._push<T>(
+      route,
+      onFailure: onFailure,
+      onAccepted: () {
+        // a guard may have removed it already, e.g. with redirectUntil(replace: true)
+        if (replaced != null && scope._pages.any((page) => page.routeData == replaced)) {
+          scope._removeRoute(replaced._match, notify: false);
+        }
+        markUrlStateForReplace();
+      },
+    );
   }
 
   Future<T?> _redirect<T extends Object?>(

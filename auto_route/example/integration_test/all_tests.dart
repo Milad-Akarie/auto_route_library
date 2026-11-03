@@ -41,6 +41,7 @@ import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
 import 'remove_where_same_route_test.dart' as remove_where_same_route;
 import 'replace_all_from_deep_stack_test.dart' as replace_all_from_deep_stack;
 import 'replace_all_on_reevaluation_test.dart' as replace_all_on_reevaluation;
+import 'replace_rejected_test.dart' as replace_rejected;
 import 'replaced_push_future_test.dart' as replaced_push_future;
 import 'required_args_test.dart' as required_args;
 import 'tab_rebuild_test.dart' as tab_rebuild;
@@ -95,6 +96,7 @@ void main() {
   group('remove where same route', remove_where_same_route.main);
   group('replace all from deep stack', replace_all_from_deep_stack.main);
   group('replace all on reevaluation', replace_all_on_reevaluation.main);
+  group('replace rejected', replace_rejected.main);
   group('replaced push future', replaced_push_future.main);
   group('required args', required_args.main);
   group('tab rebuild', tab_rebuild.main);
