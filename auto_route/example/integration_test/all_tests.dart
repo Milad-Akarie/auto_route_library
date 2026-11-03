@@ -4,6 +4,7 @@ import 'package:integration_test/integration_test.dart';
 import 'app_smoke_test.dart' as app_smoke;
 import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'host_back_button_test.dart' as host_back_button;
+import 'keep_history_test.dart' as keep_history;
 import 'leading_button_pop_test.dart' as leading_button_pop;
 import 'login_state_test.dart' as login_state;
 import 'navigate_awaits_test.dart' as navigate_awaits;
@@ -30,6 +31,7 @@ void main() {
   group('app smoke', app_smoke.main);
   group('empty nested router', empty_nested_router.main);
   group('host back button', host_back_button.main);
+  group('keep history', keep_history.main);
   group('leading button pop', leading_button_pop.main);
   group('login state', login_state.main);
   group('navigate awaits', navigate_awaits.main);

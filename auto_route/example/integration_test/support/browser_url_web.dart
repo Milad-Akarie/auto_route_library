@@ -8,6 +8,16 @@ external _History get _history;
 
 extension type _History(JSObject _) implements JSObject {
   external void back();
+  external JSAny? get state;
+}
+
+/// The serial number the engine gives the browser's current history entry.
+///
+/// Counts up by one for each entry the app pushes, and stays the same when the
+/// app replaces the current entry. Null before the app wrote any entry.
+int? browserEntryIndex() {
+  final state = _history.state.dartify();
+  return state is Map ? (state['serialCount'] as num).toInt() : null;
 }
 
 /// Presses the browser's back button: moves the browser one entry back.

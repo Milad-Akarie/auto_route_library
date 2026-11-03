@@ -198,7 +198,15 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       );
 
   void _handleRebuild() {
-    notifyListeners();
+    final context = controller.navigatorKey.currentContext;
+    if (urlState.shouldReplace && context != null) {
+      // Flutter's default route information provider ignores
+      // AutoRouteInformation.replace; it replaces the browser entry only when
+      // the router reports the change as neglected.
+      Router.neglect(context, notifyListeners);
+    } else {
+      notifyListeners();
+    }
   }
 
   @override
