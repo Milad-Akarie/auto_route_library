@@ -303,8 +303,76 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
     }
   }
 
+  // Flutter tells Android whether the app takes back from the root
+  // navigator's stack alone; while it says no, Android closes the app
+  // itself. A tabs router away from its home tab takes back too: it shows
+  // the home tab (TabsRouter.maybePop). So this corrects the value, and sends
+  // it again after a tab switch, which the navigator never reports.
+  bool? _reportedCanHandlePop;
+  bool _tabsTookBack = false;
+  bool _reportScheduled = false;
+
+  bool _tabsTakeBack() {
+    for (RoutingController? r = router.topMostRouter(); r != null; r = r.parent()) {
+      if (r is TabsRouter && r.homeIndex != -1 && r.activeIndex != r.homeIndex) return true;
+    }
+    return false;
+  }
+
+  bool _handleNavigationNotification(NavigationNotification notification) {
+    _tabsTookBack = _tabsTakeBack();
+    if (notification.canHandlePop || !_tabsTookBack) {
+      _reportedCanHandlePop = notification.canHandlePop;
+      return false;
+    }
+    _report(true);
+    return true;
+  }
+
+  void _report(bool canHandlePop) {
+    _reportedCanHandlePop = canHandlePop;
+    NavigationNotification(canHandlePop: canHandlePop).dispatch(context);
+  }
+
+  void _scheduleTabsReport() {
+    if (_reportScheduled) return;
+    _reportScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _reportScheduled = false;
+      if (!mounted) return;
+      final tabsTakeBack = _tabsTakeBack();
+      if (tabsTakeBack == _tabsTookBack) return;
+      _tabsTookBack = tabsTakeBack;
+      final canHandlePop = tabsTakeBack || _rootNavigatorTakesBack();
+      if (canHandlePop != _reportedCanHandlePop) _report(canHandlePop);
+    }, debugLabel: 'AutoRootRouter.reportTabsBack');
+  }
+
+  // What the root navigator reports: whether it can pop, or its top route
+  // refuses the pop.
+  bool _rootNavigatorTakesBack() {
+    final navigator = router.navigatorKey.currentState;
+    if (navigator == null) return false;
+    if (navigator.canPop()) return true;
+    Route<Object?>? topRoute;
+    // The predicate stops at the first route it's given, the top one, so nothing is popped.
+    navigator.popUntil((route) {
+      topRoute = route;
+      return true;
+    });
+    return topRoute?.popDisposition == RoutePopDisposition.doNotPop;
+  }
+
   @override
   Widget build(BuildContext context) {
+    _scheduleTabsReport();
+    return NotificationListener<NavigationNotification>(
+      onNotification: _handleNavigationNotification,
+      child: _buildRouterScope(),
+    );
+  }
+
+  Widget _buildRouterScope() {
     final stateHash = router.stateHash;
     return RouterScope(
       key: router.globalRouterKey,
