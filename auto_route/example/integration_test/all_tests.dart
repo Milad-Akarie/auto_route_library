@@ -19,6 +19,7 @@ import 'encoded_url_test.dart' as encoded_url;
 import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
 import 'host_back_button_test.dart' as host_back_button;
+import 'inherited_id_child_test.dart' as inherited_id_child;
 import 'keep_history_test.dart' as keep_history;
 import 'leading_button_drawer_test.dart' as leading_button_drawer;
 import 'leading_button_pop_test.dart' as leading_button_pop;
@@ -116,6 +117,7 @@ void main() {
   group('hero nested router', hero_nested_router.main);
   group('home index back', home_index_back.main);
   group('host back button', host_back_button.main);
+  group('inherited id child', inherited_id_child.main);
   group('keep history', keep_history.main);
   group('leading button drawer', leading_button_drawer.main);
   group('leading button pop', leading_button_pop.main);
