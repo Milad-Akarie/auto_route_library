@@ -141,42 +141,51 @@ class PageRouteInfo<T extends Object?> {
   /// Returns a new instance with the provided
   /// overrides
   ///
-  /// Every field not overridden is kept, [fragment], [stringMatch],
-  /// [redirectedFrom] and [argsEquality] included. [path] and [match] are
-  /// ignored: a [PageRouteInfo] holds neither, and they stay only so existing
-  /// calls keep compiling.
-  // The parameter names are public API (`children` for `initialChildren`,
-  // `params` for `rawPathParams`); renaming them is the maintainer's call.
-  // ignore: avoid-incomplete-copy-with
+  /// Every field not overridden is kept. Each parameter is named after the
+  /// field it sets; the old names [params], [queryParams] and [children] still
+  /// work and lose to the new ones when both are passed. [path] and [match]
+  /// are ignored: a [PageRouteInfo] holds neither.
   PageRouteInfo copyWith({
     String? name,
-    String? path,
     T? args,
-    RouteMatch<dynamic>? match,
-    Map<String, dynamic>? params,
-    Map<String, dynamic>? queryParams,
-    List<PageRouteInfo>? children,
+    Map<String, dynamic>? rawPathParams,
+    Map<String, dynamic>? rawQueryParams,
+    List<PageRouteInfo>? initialChildren,
     String? fragment,
+    String? stringMatch,
+    String? redirectedFrom,
+    bool? argsEquality,
+    @Deprecated('Use rawPathParams instead') Map<String, dynamic>? params,
+    @Deprecated('Use rawQueryParams instead') Map<String, dynamic>? queryParams,
+    @Deprecated('Use initialChildren instead') List<PageRouteInfo>? children,
+    @Deprecated('A PageRouteInfo holds no path; this is ignored') String? path,
+    @Deprecated('A PageRouteInfo holds no match; this is ignored') RouteMatch<dynamic>? match,
   }) {
+    final newPathParams = rawPathParams ?? params;
+    final newQueryParams = rawQueryParams ?? queryParams;
+    final newChildren = initialChildren ?? children;
     if ((name == null || identical(name, _name)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
-        (params == null || identical(params, rawPathParams)) &&
-        (queryParams == null || identical(queryParams, rawQueryParams)) &&
-        (children == null || identical(children, initialChildren))) {
+        (newPathParams == null || identical(newPathParams, this.rawPathParams)) &&
+        (newQueryParams == null || identical(newQueryParams, this.rawQueryParams)) &&
+        (newChildren == null || identical(newChildren, this.initialChildren)) &&
+        (stringMatch == null || identical(stringMatch, this.stringMatch)) &&
+        (redirectedFrom == null || identical(redirectedFrom, this.redirectedFrom)) &&
+        (argsEquality == null || argsEquality == this.argsEquality)) {
       return this;
     }
 
     return PageRouteInfo(
       name ?? _name,
       args: args ?? this.args,
-      rawPathParams: params ?? rawPathParams,
-      rawQueryParams: queryParams ?? rawQueryParams,
-      initialChildren: children ?? initialChildren,
+      rawPathParams: newPathParams ?? this.rawPathParams,
+      rawQueryParams: newQueryParams ?? this.rawQueryParams,
+      initialChildren: newChildren ?? this.initialChildren,
       fragment: fragment ?? this.fragment,
-      stringMatch: stringMatch,
-      redirectedFrom: redirectedFrom,
-      argsEquality: argsEquality,
+      stringMatch: stringMatch ?? this.stringMatch,
+      redirectedFrom: redirectedFrom ?? this.redirectedFrom,
+      argsEquality: argsEquality ?? this.argsEquality,
     );
   }
 

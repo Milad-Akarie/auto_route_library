@@ -1,4 +1,8 @@
 ## Unreleased
+- **DEPRECATION**: `copyWith` takes each field's own name. On `PageRouteInfo`, write `rawPathParams`,
+  `rawQueryParams` and `initialChildren` instead of `params`, `queryParams` and `children`, and drop
+  `path` and `match`, which did nothing; it can now also set `stringMatch`, `redirectedFrom` and
+  `argsEquality`. On `RouteMatch`, write `params` instead of `pathParams`; it can now also set `id`.
 - **BREAKING CHANGE**: `CupertinoRoute`, `AdaptiveRoute` and `CustomRoute` no longer take a type
   argument, which they never used. Write `CustomRoute(...)` instead of `CustomRoute<void>(...)`.
 - **BREAKING CHANGE**: `OnNavigationChanged` is `void Function(TabsRouter)`, and `popAndPushAll`'s

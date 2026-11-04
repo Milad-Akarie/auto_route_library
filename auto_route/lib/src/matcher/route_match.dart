@@ -171,11 +171,13 @@ class RouteMatch<T> {
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden values
-  // Its parameter names are public API; renaming them is the maintainer's call.
-  // ignore: avoid-incomplete-copy-with
+  ///
+  /// Each parameter is named after the field it sets; the old name
+  /// [pathParams] still works and loses to [params] when both are passed.
   RouteMatch<dynamic> copyWith({
     String? stringMatch,
-    Parameters? pathParams,
+    Parameters? params,
+    @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
     List<RouteMatch<dynamic>>? children,
     String? fragment,
@@ -186,20 +188,21 @@ class RouteMatch<T> {
     AutoRoute? config,
     bool? autoFilled,
     List<AutoRouteGuard>? evaluatedGuards,
+    LocalKey? id,
   }) {
     return RouteMatch._internal(
       config: config ?? _config,
       stringMatch: stringMatch ?? this.stringMatch,
       segments: segments ?? this.segments,
       children: children ?? this.children,
-      params: pathParams ?? params,
+      params: params ?? pathParams ?? this.params,
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
       args: args ?? this.args,
       key: key ?? this.key,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,
       autoFilled: autoFilled ?? this.autoFilled,
-      id: id,
+      id: id ?? this.id,
       evaluatedGuards: evaluatedGuards ?? _evaluatedGuards,
     );
   }
@@ -311,11 +314,13 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   final RouteMatch<dynamic> originalMatch;
 
   @override
-  // Its parameter names are public API; renaming them is the maintainer's call.
+  // An override of RouteMatch.copyWith: it changes the original match and keeps the page being
+  // reevaluated, so currentPage and originalMatch are not its to set.
   // ignore: avoid-incomplete-copy-with
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
-    Parameters? pathParams,
+    Parameters? params,
+    @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
     List<RouteMatch<dynamic>>? children,
     String? fragment,
@@ -326,12 +331,13 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
     AutoRoute? config,
     bool? autoFilled,
     List<AutoRouteGuard>? evaluatedGuards,
+    LocalKey? id,
   }) {
     return ReevaluatableRouteMatch<T, R>(
       currentPage: currentPage,
       originalMatch: super.copyWith(
         stringMatch: stringMatch,
-        pathParams: pathParams,
+        params: params ?? pathParams,
         queryParams: queryParams,
         children: children,
         fragment: fragment,
@@ -342,6 +348,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
         config: config ?? _config,
         autoFilled: autoFilled ?? this.autoFilled,
         evaluatedGuards: evaluatedGuards ?? _evaluatedGuards,
+        id: id,
       ),
     );
   }
