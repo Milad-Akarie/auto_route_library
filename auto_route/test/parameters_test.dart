@@ -111,7 +111,7 @@ void main() {
     const params = Parameters({
       'key': ['1', '2'],
     });
-    expect(params.getList('key'), isA<List>());
+    expect(params.getList('key'), isA<List<dynamic>>());
     expect(params.optList('key2'), null);
   });
 

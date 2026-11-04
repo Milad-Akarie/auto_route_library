@@ -27,10 +27,10 @@ class Parameters {
       identical(this, other) ||
       other is Parameters &&
           runtimeType == other.runtimeType &&
-          const MapEquality(values: DeepCollectionEquality()).equals(_params, other._params);
+          const MapEquality<dynamic, dynamic>(values: DeepCollectionEquality()).equals(_params, other._params);
 
   @override
-  int get hashCode => const MapEquality().hash(_params);
+  int get hashCode => const MapEquality<dynamic, dynamic>().hash(_params);
 
   /// Helper getter to [_params.isNotEmpty]
   bool get isNotEmpty => _params.isNotEmpty;

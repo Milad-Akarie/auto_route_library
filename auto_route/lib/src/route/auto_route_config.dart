@@ -5,18 +5,18 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:meta/meta.dart';
 
 /// A Signature for a function that passes the [RouteData] and returns a [PageRoute]
-typedef AutoRoutePageBuilder = Widget Function(RouteData data);
+typedef AutoRoutePageBuilder = Widget Function(RouteData<dynamic> data);
 
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
-typedef TitleBuilder = String Function(BuildContext context, RouteData data);
+typedef TitleBuilder = String Function(BuildContext context, RouteData<dynamic> data);
 
 /// Signature for a function that builds a widget with [RouteData]
-typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData data);
+typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData<dynamic> data);
 
 /// Signature for a function that builds the page [restorationId]
 /// Used in [AutoRoutePage]
-typedef RestorationIdBuilder = String Function(RouteMatch match);
+typedef RestorationIdBuilder = String Function(RouteMatch<dynamic> match);
 
 /// A route entry configuration used in [RouteMatcher]
 /// to create [RouteMatch]'s from paths and [PageRouteInfo]'s
@@ -238,7 +238,7 @@ class AutoRoute {
   AutoRoutePageBuilder get builder => _pageBuilder;
 
   /// Builds a [AutoRoutePage] from [RouteData]
-  AutoRoutePage<T> buildPage<T>(RouteData data) {
+  AutoRoutePage<T> buildPage<T>(RouteData<dynamic> data) {
     return AutoRoutePage<T>(child: builder(data), routeData: data);
   }
 
@@ -681,10 +681,10 @@ class RouteCollection {
       identical(this, other) ||
       other is RouteCollection &&
           runtimeType == other.runtimeType &&
-          const MapEquality().equals(_routesMap, other._routesMap);
+          const MapEquality<dynamic, dynamic>().equals(_routesMap, other._routesMap);
 
   @override
-  int get hashCode => const MapEquality().hash(_routesMap);
+  int get hashCode => const MapEquality<dynamic, dynamic>().hash(_routesMap);
 
   /// Default path generator
   static String defaultPathGenerator(AutoRoute r) {

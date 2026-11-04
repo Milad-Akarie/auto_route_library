@@ -239,7 +239,7 @@ class UrlState {
 
   /// Builds UrlState from list of
   /// route matches instead of uri
-  factory UrlState.fromSegments(List<RouteMatch> routes, {bool shouldReplace = false, Object? state}) {
+  factory UrlState.fromSegments(List<RouteMatch<dynamic>> routes, {bool shouldReplace = false, Object? state}) {
     return UrlState(_buildUri(routes), routes, shouldReplace: shouldReplace, pathState: state);
   }
 
@@ -247,7 +247,7 @@ class UrlState {
   final Uri uri;
 
   /// The list of segments representing the current [uri]
-  final List<RouteMatch> segments;
+  final List<RouteMatch<dynamic>> segments;
 
   /// This is passed to [AutoRouteInformation.replace]
   /// when location is restored
@@ -336,7 +336,7 @@ class UrlState {
   /// to a hierarchy of routes
   /// e.g [Match1,Match2,Match3]
   /// will be [Match1[Match2[Match3]]]
-  static RouteMatch toHierarchy(List<RouteMatch> segments) {
+  static RouteMatch<dynamic> toHierarchy(List<RouteMatch<dynamic>> segments) {
     if (segments.length == 1) {
       return segments.first;
     }
@@ -359,9 +359,12 @@ class UrlState {
 
   /// Returns to topMost item in the segments list
   /// Witch is the last
-  RouteMatch? get topMatch => hasSegments ? segments.last : null;
+  RouteMatch<dynamic>? get topMatch => hasSegments ? segments.last : null;
 
-  RouteMatch? _findSegment(List<RouteMatch> segments, bool Function(RouteMatch segment) predicate) {
+  RouteMatch<dynamic>? _findSegment(
+    List<RouteMatch<dynamic>> segments,
+    bool Function(RouteMatch<dynamic> segment) predicate,
+  ) {
     for (final segment in segments) {
       if (predicate(segment)) {
         return segment;
@@ -376,11 +379,11 @@ class UrlState {
   }
 
   /// re
-  List<RouteMatch> childrenOfSegmentNamed(String routeName) {
+  List<RouteMatch<dynamic>> childrenOfSegmentNamed(String routeName) {
     return _findSegment(segments, (match) => match.name == routeName)?.children ?? const [];
   }
 
-  static Uri _buildUri(List<RouteMatch> routes) {
+  static Uri _buildUri(List<RouteMatch<dynamic>> routes) {
     var fullPath = '/';
     if (routes.isEmpty) {
       return Uri(path: fullPath);
@@ -429,15 +432,15 @@ class UrlState {
       other is UrlState &&
           runtimeType == other.runtimeType &&
           pathState == other.pathState &&
-          const ListEquality().equals(segments, other.segments);
+          const ListEquality<dynamic>().equals(segments, other.segments);
 
   @override
-  int get hashCode => const ListEquality().hash(segments) ^ pathState.hashCode;
+  int get hashCode => const ListEquality<dynamic>().hash(segments) ^ pathState.hashCode;
 
   /// Returns a new [UrlState] instance
   /// with replaced properties
   UrlState copyWith({
-    List<RouteMatch>? segments,
+    List<RouteMatch<dynamic>>? segments,
     Uri? uri,
     bool? shouldReplace,
     Object? pathState,

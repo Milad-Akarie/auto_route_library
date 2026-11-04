@@ -40,7 +40,7 @@ void main() {
           usesPathAsKey: true,
           children: [
             AutoRoute(page: _PageRoute.addPage, path: 'add'),
-            CustomRoute(
+            CustomRoute<dynamic>(
               page: _PageRoute.controllerPage,
               path: ':id/controller',
               transitionsBuilder: recording('slideTop'),

@@ -116,7 +116,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   }
 
   @override
-  List<RouteMatch>? routesOfBrowserEntry(UrlState configuration) {
+  List<RouteMatch<dynamic>>? routesOfBrowserEntry(UrlState configuration) {
     final entry = _entries[_currentIndex];
     if (entry == null || !entry.hasSegments || !_isSameUrl(entry.url, configuration.url)) return null;
     final pageId = entry.topMatch?.id;
@@ -128,7 +128,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   }
 
   @override
-  (StackRouter, RouteMatch)? pageToPushForBrowserEntry(UrlState configuration) {
+  (StackRouter, RouteMatch<dynamic>)? pageToPushForBrowserEntry(UrlState configuration) {
     final appIndex = _appIndex;
     final index = _currentIndex;
     final entry = _entries[index];

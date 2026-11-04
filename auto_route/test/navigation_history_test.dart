@@ -76,7 +76,7 @@ void main() {
       expect(history.length, 3);
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10)); // Give time for navigation
+      await Future<void>.delayed(const Duration(milliseconds: 10)); // Give time for navigation
 
       expect(history.length, 2);
     }, skip: _webBackMovesBrowser);
@@ -86,7 +86,7 @@ void main() {
       await router.push(const SecondRoute());
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
       expect(router.current.name, FirstRoute.name);
     }, skip: _webBackMovesBrowser);
@@ -164,11 +164,11 @@ void main() {
       expect(history.length, 3);
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       expect(history.length, 2);
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       expect(history.length, 1);
 
       expect(history.canNavigateBack, false);
@@ -326,7 +326,7 @@ void main() {
       expect(history.length, 3);
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
       expect(history.length, 2);
     }, skip: _webCountsBrowserEntries);
   });
@@ -344,7 +344,7 @@ void main() {
       await router.push(const FirstRoute());
 
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
       // History should handle being empty after back navigation
       expect(() => history.length, returnsNormally);
@@ -356,7 +356,7 @@ void main() {
 
       history.back();
       history.back();
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
 
       expect(() => history.length, returnsNormally);
     });
@@ -376,7 +376,7 @@ void main() {
       final canNavigateDuringBack = history.canNavigateBack;
       history.back(); // This should be blocked
 
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
 
       // Should only go back once, not twice
       expect(history.length, 2);
@@ -392,7 +392,7 @@ void main() {
 
       // First back
       history.back();
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
       expect(history.length, 2);
 
       // Should be able to navigate back again after first completes
@@ -400,7 +400,7 @@ void main() {
 
       // Second back
       history.back();
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
       expect(history.length, 1);
     }, skip: _webBackMovesBrowser);
 
@@ -414,7 +414,7 @@ void main() {
 
       // Try to push during back navigation - the navigation callback might trigger
       // This simulates the scenario where onNewUrlState is called during back
-      await Future.delayed(const Duration(milliseconds: 20));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
 
       expect(history.length, 1);
       expect(router.current.name, FirstRoute.name);
@@ -429,7 +429,7 @@ void main() {
       history.back();
       expect(history.canNavigateBack, false); // Blocked during navigation
 
-      await Future.delayed(const Duration(milliseconds: 50));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
 
       // If there's still one entry left, should be false (can't go back from single entry)
       // The flag should be reset, but canNavigateBack depends on having 2+ entries
@@ -441,7 +441,7 @@ void main() {
       await router.push(const FirstRoute());
       await router.push(const SecondRoute());
       history.back();
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await router.push(const ThirdRoute());
       await router.push(const SecondRoute());

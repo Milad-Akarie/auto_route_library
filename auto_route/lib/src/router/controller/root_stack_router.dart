@@ -1,7 +1,7 @@
 part of 'routing_controller.dart';
 
 /// Signature for a function uses [pagesMap] to build an [AutoRoutePage]
-typedef PageBuilder = AutoRoutePage Function(RouteData data);
+typedef PageBuilder = AutoRoutePage<dynamic> Function(RouteData<dynamic> data);
 
 const ValueKey<String> _kRootKey = ValueKey('%__Root__%');
 
@@ -57,7 +57,7 @@ abstract class RootStackRouter extends StackRouter {
   }
 
   @override
-  RouteData get routeData => .new(
+  RouteData<dynamic> get routeData => .new(
     router: this,
     type: const RouteType.material(),
     stackKey: _stackKey,
@@ -135,7 +135,7 @@ abstract class RootStackRouter extends StackRouter {
   );
 
   @override
-  void updateRouteData(RouteData data) {
+  void updateRouteData(RouteData<dynamic> data) {
     throw FlutterError('Root RouteData should not update');
   }
 

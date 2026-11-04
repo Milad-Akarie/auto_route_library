@@ -17,7 +17,7 @@ extension on RoutingController {
     return [for (final data in pages) _savedRoute(data)];
   }
 
-  Map<String, Object?> _savedRoute(RouteData data) {
+  Map<String, Object?> _savedRoute(RouteData<dynamic> data) {
     final child = _innerControllerOfMatch(data.matchId);
     final List<Object?>? children;
     if (child != null) {
@@ -34,14 +34,14 @@ extension on RoutingController {
 }
 
 Map<String, Object?> _savedMatch(
-  RouteMatch match, {
+  RouteMatch<dynamic> match, {
   Parameters? queryParams,
   String? fragment,
   List<Object?>? children,
 }) {
   queryParams ??= match.queryParams;
   fragment ??= match.fragment;
-  children ??= [for (final child in match.children ?? const <RouteMatch>[]) _savedMatch(child)];
+  children ??= [for (final child in match.children ?? const <RouteMatch<dynamic>>[]) _savedMatch(child)];
   return {
     'name': match.name,
     if (match.params.isNotEmpty) 'path': _plainValues(match.params.rawMap),
@@ -95,11 +95,11 @@ List<PageRouteInfo>? _restoredRoutes(Object? saved) {
 // The restored routes, less those whose page can't be built without the
 // args it was opened with, which aren't saved, and less the routes nested
 // in those. Builds each page once to find out, as the router will.
-List<RouteMatch> _buildableMatches(List<RouteMatch> matches, RoutingController router) {
-  final buildable = <RouteMatch>[];
+List<RouteMatch<dynamic>> _buildableMatches(List<RouteMatch<dynamic>> matches, RoutingController router) {
+  final buildable = <RouteMatch<dynamic>>[];
   for (final match in matches) {
     try {
-      RouteData(
+      RouteData<dynamic>(
         route: match,
         router: router,
         stackKey: UniqueKey(),

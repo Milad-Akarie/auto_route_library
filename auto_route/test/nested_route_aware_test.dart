@@ -131,7 +131,7 @@ void main() {
           ),
         ],
       ),
-      CustomRoute(
+      CustomRoute<dynamic>(
         path: '/bottom-sheet',
         page: PageInfo('BottomSheetRoute', builder: (_) => const Text('sheet')),
         customRouteBuilder: <T>(context, child, page) =>

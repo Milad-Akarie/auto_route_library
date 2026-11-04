@@ -9,7 +9,7 @@ class RouteDataScope extends InheritedWidget {
   const RouteDataScope({super.key, required this.routeData, required super.child});
 
   /// The route data to be scoped
-  final RouteData routeData;
+  final RouteData<dynamic> routeData;
 
   /// Looks up and returns the scoped [routeData]
   ///
@@ -37,6 +37,6 @@ class RouteDataScope extends InheritedWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<RouteData>('routeData', routeData));
+    properties.add(DiagnosticsProperty<RouteData<dynamic>>('routeData', routeData));
   }
 }

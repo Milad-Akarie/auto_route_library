@@ -12,7 +12,7 @@ class RouteMatcher {
   final RouteCollection collection;
 
   /// Parses a [Uri] from [rawPath] then maps call to [_match]
-  List<RouteMatch>? match(String rawPath, {bool includePrefixMatches = false}) {
+  List<RouteMatch<dynamic>>? match(String rawPath, {bool includePrefixMatches = false}) {
     return _match(Uri.parse(rawPath), collection, includePrefixMatches: includePrefixMatches, root: true);
   }
 
@@ -22,11 +22,11 @@ class RouteMatcher {
   /// will be included in the return list
   ///
   /// returns null if not match is found
-  List<RouteMatch>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
+  List<RouteMatch<dynamic>>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
     return _match(uri, collection, includePrefixMatches: includePrefixMatches, root: true);
   }
 
-  List<RouteMatch>? _match(
+  List<RouteMatch<dynamic>>? _match(
     Uri uri,
     RouteCollection collection, {
     bool includePrefixMatches = false,
@@ -34,7 +34,7 @@ class RouteMatcher {
     String? redirectedFrom,
   }) {
     final pathSegments = _split(uri.path);
-    final matches = <RouteMatch>[];
+    final matches = <RouteMatch<dynamic>>[];
     for (final config in collection.routes) {
       var match = matchByPath(uri, config, redirectedFrom: redirectedFrom);
       if (match != null) {
@@ -92,7 +92,7 @@ class RouteMatcher {
     return matches;
   }
 
-  List<RouteMatch>? _handleRedirect({
+  List<RouteMatch<dynamic>>? _handleRedirect({
     required RouteCollection routesCollection,
     required bool includePrefixMatches,
     required Uri redirectTo,
@@ -112,7 +112,7 @@ class RouteMatcher {
   /// and returns a single match result
   ///
   /// returns null if not match is found
-  RouteMatch? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
+  RouteMatch<dynamic>? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
     final parts = _split(config.path);
     // Split before decoding, so an encoded '/' stays inside its segment.
     final segments = _split(uri.path);
@@ -160,16 +160,16 @@ class RouteMatcher {
   /// and it does not care about paths
   ///
   /// returns null if not match is found
-  RouteMatch? matchByRoute(PageRouteInfo route) {
+  RouteMatch<dynamic>? matchByRoute(PageRouteInfo route) {
     return _matchByRoute(route, collection);
   }
 
-  RouteMatch? _matchByRoute(PageRouteInfo route, RouteCollection routes) {
+  RouteMatch<dynamic>? _matchByRoute(PageRouteInfo route, RouteCollection routes) {
     final config = routes[route.routeName];
     if (config == null) {
       return null;
     }
-    final childMatches = <RouteMatch>[];
+    final childMatches = <RouteMatch<dynamic>>[];
     if (config.hasSubTree) {
       final subRoutes = routes.subCollectionOf(route.routeName);
       if (route.hasChildren) {
@@ -215,10 +215,10 @@ class RouteMatcher {
   /// adding their parents to stack first
   ///
   /// returns null if no track is found
-  RouteMatch? buildPathTo(PageRouteInfo<dynamic> route) {
+  RouteMatch<dynamic>? buildPathTo(PageRouteInfo<dynamic> route) {
     final configs = collection.findPathTo(route.routeName);
     if (configs.isEmpty) return null;
-    final matches = <RouteMatch>[];
+    final matches = <RouteMatch<dynamic>>[];
     for (var i = 0; i < configs.length; i++) {
       final config = configs[i];
       if (i == configs.length - 1) {

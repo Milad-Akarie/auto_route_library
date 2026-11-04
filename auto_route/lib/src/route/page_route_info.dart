@@ -34,7 +34,7 @@ class PageRouteInfo<T extends Object?> {
   }) : fragment = fragment ?? '';
 
   /// Creates a new instance form [RouteMatch]
-  factory PageRouteInfo.fromMatch(RouteMatch match) {
+  factory PageRouteInfo.fromMatch(RouteMatch<dynamic> match) {
     return PageRouteInfo(
       match.name,
       rawPathParams: match.params.rawMap,
@@ -144,7 +144,7 @@ class PageRouteInfo<T extends Object?> {
     String? name,
     String? path,
     T? args,
-    RouteMatch? match,
+    RouteMatch<dynamic>? match,
     Map<String, dynamic>? params,
     Map<String, dynamic>? queryParams,
     List<PageRouteInfo>? children,
@@ -185,7 +185,7 @@ class PageRouteInfo<T extends Object?> {
 
   /// Returns the match result of this route
   /// which internally calls [router.matcher.matchByRoute]
-  RouteMatch? match(BuildContext context) {
+  RouteMatch<dynamic>? match(BuildContext context) {
     return context.router.match(this);
   }
 
@@ -196,18 +196,18 @@ class PageRouteInfo<T extends Object?> {
           _name == other._name &&
           fragment == other.fragment &&
           (!argsEquality || args == other.args) &&
-          const ListEquality().equals(initialChildren, other.initialChildren) &&
-          const MapEquality().equals(rawPathParams, other.rawPathParams) &&
-          const MapEquality().equals(rawQueryParams, other.rawQueryParams);
+          const ListEquality<dynamic>().equals(initialChildren, other.initialChildren) &&
+          const MapEquality<dynamic, dynamic>().equals(rawPathParams, other.rawPathParams) &&
+          const MapEquality<dynamic, dynamic>().equals(rawQueryParams, other.rawQueryParams);
 
   @override
   int get hashCode =>
       _name.hashCode ^
       fragment.hashCode ^
       args.hashCode ^
-      const MapEquality().hash(rawPathParams) ^
-      const MapEquality().hash(rawQueryParams) ^
-      const ListEquality().hash(initialChildren);
+      const MapEquality<dynamic, dynamic>().hash(rawPathParams) ^
+      const MapEquality<dynamic, dynamic>().hash(rawQueryParams) ^
+      const ListEquality<dynamic>().hash(initialChildren);
 }
 
 /// A proxy Route page that provides a way to create a [PageRouteInfo]

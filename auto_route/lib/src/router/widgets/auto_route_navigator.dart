@@ -106,7 +106,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   void _updateDeclarativeRoutes() {
     final delegate = AutoRouterDelegate.of(context);
     final newRoutes = widget.declarativeRoutesBuilder!(widget.router.pendingRoutesHandler);
-    if (!const ListEquality().equals(newRoutes, _routesSnapshot)) {
+    if (!const ListEquality<dynamic>().equals(newRoutes, _routesSnapshot)) {
       _routesSnapshot = newRoutes;
       widget.router.updateDeclarativeRoutes(newRoutes);
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -149,7 +149,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   }
 
   // The pages handed to the Navigator by the previous build.
-  List<AutoRoutePage> _shownPages = const [];
+  List<AutoRoutePage<dynamic>> _shownPages = const [];
 
   Widget _buildNavigator(BuildContext context) {
     // Each page of the previous build now holds a route; mark it before the

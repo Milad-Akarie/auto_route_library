@@ -71,14 +71,14 @@ abstract class ReevaluateListenable extends ChangeNotifier {
   ReevaluateListenable();
 
   /// Builds [ReevaluateListenable] from a stream
-  factory ReevaluateListenable.stream(Stream stream) = _StreamReevaluateListenable;
+  factory ReevaluateListenable.stream(Stream<dynamic> stream) = _StreamReevaluateListenable;
 }
 
 class _StreamReevaluateListenable extends ReevaluateListenable {
-  _StreamReevaluateListenable(Stream stream) {
+  _StreamReevaluateListenable(Stream<dynamic> stream) {
     _streamSub = stream.listen((_) => notifyListeners());
   }
-  late final StreamSubscription _streamSub;
+  late final StreamSubscription<dynamic> _streamSub;
 
   @override
   void dispose() {
@@ -121,10 +121,10 @@ class ResolverResult {
   final bool reevaluateNext;
 
   /// Holds the route to be used in the navigation event
-  final RouteMatch route;
+  final RouteMatch<dynamic> route;
 
   //// clones this instance with the provided values
-  ResolverResult copyWith({bool? continueNavigation, bool? reevaluateNext, RouteMatch? route}) {
+  ResolverResult copyWith({bool? continueNavigation, bool? reevaluateNext, RouteMatch<dynamic>? route}) {
     return ResolverResult(
       continueNavigation: continueNavigation ?? this.continueNavigation,
       reevaluateNext: reevaluateNext ?? this.reevaluateNext,
@@ -158,7 +158,7 @@ class NavigationResolver {
   bool _isReevaluating = false;
 
   /// The route being processing by the guard
-  final RouteMatch route;
+  final RouteMatch<dynamic> route;
 
   /// Helper to get [RouteMatch.name]
   String get routeName => route.name;
@@ -172,7 +172,7 @@ class NavigationResolver {
   /// and pending routes will contain [Route2, Route3]
   ///
   /// when we process  Rout2 next pending routes will contain [Route3] only
-  final List<RouteMatch> pendingRoutes;
+  final List<RouteMatch<dynamic>> pendingRoutes;
 
   /// returns the navigator context
   ///
@@ -353,8 +353,8 @@ class RouteOverrides {
   final String? fragment;
 
   /// Builds a new [PageRouteInfo] with the provided overrides
-  RouteMatch override(RouteMatch route, RouteMatcher matcher) {
-    final matches = <RouteMatch>[];
+  RouteMatch<dynamic> override(RouteMatch<dynamic> route, RouteMatcher matcher) {
+    final matches = <RouteMatch<dynamic>>[];
     if (children != null) {
       final coll = matcher.collection.subCollectionOf(route.name);
       final subMatcher = RouteMatcher(coll);

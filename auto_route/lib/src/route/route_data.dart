@@ -10,19 +10,19 @@ part of '../router/controller/routing_controller.dart';
 class RouteData<R> {
   /// Default constructor
   RouteData({
-    required RouteMatch route,
+    required RouteMatch<dynamic> route,
     required this.router,
     this._popCompleter,
     this._parent,
     required this.stackKey,
-    required List<RouteMatch> pendingChildren,
+    required List<RouteMatch<dynamic>> pendingChildren,
     required this.type,
   }) : _match = route,
        _ownQueryParams = route.queryParams,
        _ownFragment = route.fragment,
-       _pendingChildren = List<RouteMatch>.from(pendingChildren);
-  RouteMatch _match;
-  RouteData? _parent;
+       _pendingChildren = List<RouteMatch<dynamic>>.from(pendingChildren);
+  RouteMatch<dynamic> _match;
+  RouteData<dynamic>? _parent;
   final Completer<R?>? _popCompleter;
 
   /// The router this instance was created by
@@ -72,17 +72,17 @@ class RouteData<R> {
   /// Whether this route has pending children
   bool get hasPendingChildren => _pendingChildren.isNotEmpty;
 
-  List<RouteMatch> _pendingChildren;
+  List<RouteMatch<dynamic>> _pendingChildren;
 
   /// The pre-matched sub-routes of this route
   ///
   /// These are consumed by the sub-router once it's created
-  List<RouteMatch> get pendingChildren => _pendingChildren;
+  List<RouteMatch<dynamic>> get pendingChildren => _pendingChildren;
 
   /// Looks up and returns the scoped instance
   ///
   /// throws an error if it does not find it
-  static RouteData of(BuildContext context) {
+  static RouteData<dynamic> of(BuildContext context) {
     return RouteDataScope.of(context).routeData;
   }
 
@@ -127,18 +127,18 @@ class RouteData<R> {
   Parameters _ownQueryParams;
   String _ownFragment;
 
-  void _updateRoute(RouteMatch value) {
+  void _updateRoute(RouteMatch<dynamic> value) {
     if (_match != value) {
       _match = value;
     }
   }
 
-  void _updateParentData(RouteData value) {
+  void _updateParentData(RouteData<dynamic> value) {
     _parent = value;
   }
 
   /// Reruns the raw [RouteMatch]
-  RouteMatch get route => _match;
+  RouteMatch<dynamic> get route => _match;
 
   /// Helper to access [RouteMatch.name]
   String get name => _match.name;
@@ -149,7 +149,7 @@ class RouteData<R> {
   /// Returns the parent [RouteData] of this instance
   ///
   /// Returns null if this is a root entry
-  RouteData? get parent => _parent;
+  RouteData<dynamic>? get parent => _parent;
 
   /// Helper to access [RouteMatch.meta]
   Map<String, dynamic> get meta => _match.meta;
@@ -168,7 +168,7 @@ class RouteData<R> {
   /// The track to the very first ancestor match
   ///
   /// This can be used to render visual breadcrumbs in UI
-  List<RouteMatch> get breadcrumbs => .unmodifiable([if (_parent != null) ..._parent!.breadcrumbs, _match]);
+  List<RouteMatch<dynamic>> get breadcrumbs => .unmodifiable([if (_parent != null) ..._parent!.breadcrumbs, _match]);
 
   /// Collects all path params form all previous ancestors
   Parameters get inheritedPathParams {
@@ -189,7 +189,7 @@ class RouteData<R> {
   /// Helper to access [RouteMatch.fragment]
   String get fragment => _match.fragment;
 
-  RouteMatch _getTopMatch(RouteMatch routeMatch) {
+  RouteMatch<dynamic> _getTopMatch(RouteMatch<dynamic> routeMatch) {
     if (routeMatch.hasChildren) {
       return _getTopMatch(routeMatch.children!.last);
     }
@@ -199,7 +199,7 @@ class RouteData<R> {
   /// Returns the top most [RouteMatch] in the
   /// pending children, if it has not pending children
   /// this [_match] is returned
-  RouteMatch get topMatch {
+  RouteMatch<dynamic> get topMatch {
     if (hasPendingChildren) {
       return _getTopMatch(pendingChildren.last);
     }
@@ -214,15 +214,15 @@ class RouteData<R> {
   // ignore: unused_field
   bool _isReevaluating = false;
 
-  void _onStartReevaluating(RouteMatch newMatch) {
+  void _onStartReevaluating(RouteMatch<dynamic> newMatch) {
     _isReevaluating = true;
     _updateRoute(newMatch);
     _ownQueryParams = newMatch.queryParams;
     _ownFragment = newMatch.fragment;
-    _pendingChildren = List<RouteMatch>.from(newMatch.children ?? []);
+    _pendingChildren = List<RouteMatch<dynamic>>.from(newMatch.children ?? []);
   }
 
-  void _onEndReevaluating(RouteMatch newMatch) {
+  void _onEndReevaluating(RouteMatch<dynamic> newMatch) {
     _isReevaluating = false;
   }
 

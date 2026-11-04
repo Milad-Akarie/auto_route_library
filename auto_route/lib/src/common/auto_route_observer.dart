@@ -7,7 +7,7 @@ extension RouteX<T> on Route<T> {
   /// Returns RouteData of this page if
   /// it's an [AutoRoutePage] otherwise it
   /// returns null
-  RouteData? get data {
+  RouteData<dynamic>? get data {
     if (settings is AutoRoutePage) {
       return (settings as AutoRoutePage).routeData;
     }
@@ -106,7 +106,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   // Subscribers of routes inside nested routers, keyed by the route in this
   // observer's navigator that hosts them, each with the route it subscribed to.
-  final Map<LocalKey, Map<AutoRouteAware, RouteData>> _nestedListeners = {};
+  final Map<LocalKey, Map<AutoRouteAware, RouteData<dynamic>>> _nestedListeners = {};
 
   // The observers of ancestor navigators each subscriber was added to.
   final Map<AutoRouteAware, Set<AutoRouteObserver>> _ancestorObservers = {};
@@ -120,7 +120,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   /// When [route] is inside a nested router, [AutoRouteAware] is also informed
   /// while [route] shows inside its host route, when the host route is covered,
   /// uncovered or popped in an ancestor navigator that has an [AutoRouteObserver].
-  void subscribe(AutoRouteAware routeAware, RouteData route) {
+  void subscribe(AutoRouteAware routeAware, RouteData<dynamic> route) {
     final subscribers = _listeners.putIfAbsent(route.key, () => <AutoRouteAware>{});
     if (subscribers.add(routeAware)) {
       _subscribeToAncestors(routeAware, route);
@@ -158,7 +158,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   // Adds [routeAware] to the observers of the navigators that hold the host
   // routes of [route], so it hears when one of them is covered or uncovered.
-  void _subscribeToAncestors(AutoRouteAware routeAware, RouteData route) {
+  void _subscribeToAncestors(AutoRouteAware routeAware, RouteData<dynamic> route) {
     // The root router's own route data has no parent and no navigator around it.
     for (var host = route.parent; host != null && host.parent != null; host = host.parent) {
       final router = host.router;
@@ -183,8 +183,8 @@ class AutoRouteObserver extends AutoRouterObserver {
     }
   }
 
-  static bool _showsInHost(RouteData route, LocalKey hostKey) {
-    for (RouteData? data = route; data != null && data.key != hostKey; data = data.parent) {
+  static bool _showsInHost(RouteData<dynamic> route, LocalKey hostKey) {
+    for (RouteData<dynamic>? data = route; data != null && data.key != hostKey; data = data.parent) {
       if (data.router.currentChild?.matchId != data.matchId) return false;
     }
     return true;
@@ -270,7 +270,7 @@ class TabPageRoute {
   const TabPageRoute({required this.routeInfo, required this.index});
 
   /// match information of the target tab
-  final RouteMatch routeInfo;
+  final RouteMatch<dynamic> routeInfo;
 
   /// index of the target tab
   final int index;

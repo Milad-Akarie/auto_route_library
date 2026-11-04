@@ -11,7 +11,7 @@ void main() {
       defaultRouteType: const RouteType.adaptive(),
       routes: [
         AutoRoute(path: '/', page: _First1Route.page),
-        CustomRoute(path: '/', page: _Modal1Route.page, customRouteBuilder: _modalSheetBuilder),
+        CustomRoute<dynamic>(path: '/', page: _Modal1Route.page, customRouteBuilder: _modalSheetBuilder),
       ],
     );
   });

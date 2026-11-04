@@ -181,7 +181,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     final matches = routes == null || routes.isEmpty || controller.hasEntries
         ? null
         : controller._matchAllOrReportFailure(routes, (_) {});
-    final buildable = matches == null ? const <RouteMatch>[] : _buildableMatches(matches, controller);
+    final buildable = matches == null ? const <RouteMatch<dynamic>>[] : _buildableMatches(matches, controller);
     if (buildable.isEmpty) {
       return setNewRoutePath(configuration);
     }
@@ -550,7 +550,7 @@ class PlatformDeepLink extends DeepLink {
   final bool initial;
 
   /// The pre-matched routes from the row path
-  List<RouteMatch> get matches => configuration.segments;
+  List<RouteMatch<dynamic>> get matches => configuration.segments;
 
   @override
   bool get isValid => configuration.hasSegments;

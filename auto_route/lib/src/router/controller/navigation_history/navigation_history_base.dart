@@ -76,7 +76,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// or now holds a different url, such as one typed into the address bar.
   /// Always null on native platforms.
   @internal
-  List<RouteMatch>? routesOfBrowserEntry(UrlState configuration) => null;
+  List<RouteMatch<dynamic>>? routesOfBrowserEntry(UrlState configuration) => null;
 
   /// The page to push, and the stack to push it on, to follow the browser to
   /// the entry that [configuration], a route the platform just reported, came
@@ -89,7 +89,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// name, so [AutoRouterDelegate.setNewRoutePath] pushes this page instead.
   /// Null otherwise, and always on native platforms.
   @internal
-  (StackRouter, RouteMatch)? pageToPushForBrowserEntry(UrlState configuration) => null;
+  (StackRouter, RouteMatch<dynamic>)? pageToPushForBrowserEntry(UrlState configuration) => null;
 
   /// Whether the browser now shows an entry before the one holding the app's
   /// url, as after its back button, while the app hasn't followed yet.
@@ -154,7 +154,7 @@ abstract class NavigationHistory with ChangeNotifier {
   ///
   /// Compares the page too, since the same route can be pushed twice with
   /// equal arguments.
-  bool isRouteDataActive(RouteData data) {
+  bool isRouteDataActive(RouteData<dynamic> data) {
     return urlState.segments.any((route) => route == data.route && route.id == data.route.id);
   }
 

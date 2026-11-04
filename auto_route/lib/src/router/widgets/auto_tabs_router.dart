@@ -192,7 +192,7 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
   // without a key, so a local key can't take the tab's state to its new index.
   final _tabKeys = <LocalKey, GlobalKey>{};
 
-  GlobalKey _tabKeyOf(AutoRoutePage page) {
+  GlobalKey _tabKeyOf(AutoRoutePage<dynamic> page) {
     if (_tabKeys.length > _controller!.pageCount) {
       final matchIds = {for (final page in _controller!.stack) page.routeData.matchId};
       _tabKeys.removeWhere((matchId, _) => !matchIds.contains(matchId));
@@ -268,7 +268,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _animationController, curve: widget.curve));
-    _tabsHash = const ListEquality().hash(widget.routes);
+    _tabsHash = const ListEquality<dynamic>().hash(widget.routes);
   }
 
   @override
@@ -307,9 +307,9 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
   @override
   void didUpdateWidget(covariant _AutoTabsRouterIndexedStack oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality<dynamic>().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes, _index);
-      _tabsHash = const ListEquality().hash(widget.routes);
+      _tabsHash = const ListEquality<dynamic>().hash(widget.routes);
       setState(() {
         _index = _controller!.activeIndex;
       });
@@ -384,7 +384,7 @@ class _IndexedStackBuilder extends StatefulWidget {
   final int activeIndex;
   final IndexedWidgetBuilder itemBuilder;
   final bool lazyLoad;
-  final List<AutoRoutePage> stack;
+  final List<AutoRoutePage<dynamic>> stack;
   final List<NavigatorObserver> navigatorObservers;
   final int tabsHash;
   final Animation<double> animation;
@@ -411,7 +411,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
   }
 
   @override
-  List<RouteMatch> get routes => widget.stack.map((e) => e.routeData.route).toList();
+  List<RouteMatch<dynamic>> get routes => widget.stack.map((e) => e.routeData.route).toList();
 
   @override
   List<NavigatorObserver> get observers => widget.navigatorObservers;
@@ -542,14 +542,14 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
     return didPreload;
   }
 
-  late int _tabsHash = const ListEquality().hash(widget.routes);
+  late int _tabsHash = const ListEquality<dynamic>().hash(widget.routes);
 
   @override
   void didUpdateWidget(covariant _AutoTabsRouterPageView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality<dynamic>().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes, _controller!.activeIndex);
-      _tabsHash = const ListEquality().hash(widget.routes);
+      _tabsHash = const ListEquality<dynamic>().hash(widget.routes);
     }
   }
 
@@ -598,7 +598,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
   List<NavigatorObserver> get observers => _navigatorObservers;
 
   @override
-  List<RouteMatch> get routes => _controller!.stackData.map((e) => e.route).toList();
+  List<RouteMatch<dynamic>> get routes => _controller!.stackData.map((e) => e.route).toList();
 }
 
 class _AutoTabsRouterTabBar extends AutoTabsRouter {
@@ -633,7 +633,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     with _RouteAwareTabsMixin<_AutoTabsRouterTabBar>, TickerProviderStateMixin {
   late TabController _tabController;
   final _tabViewKey = GlobalKey<AutoTabViewState>();
-  late int _tabsHash = const ListEquality().hash(widget.routes);
+  late int _tabsHash = const ListEquality<dynamic>().hash(widget.routes);
 
   @override
   void _setupController() {
@@ -673,9 +673,9 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
   @override
   void didUpdateWidget(covariant _AutoTabsRouterTabBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality<dynamic>().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes, _tabController.index);
-      _tabsHash = const ListEquality().hash(widget.routes);
+      _tabsHash = const ListEquality<dynamic>().hash(widget.routes);
       final oldTabController = _tabController;
       _updateTabController();
       // Stops its animation, whose listener would otherwise reach this router
@@ -745,7 +745,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
   List<NavigatorObserver> get observers => _navigatorObservers;
 
   @override
-  List<RouteMatch> get routes => _controller!.stackData.map((e) => e.route).toList();
+  List<RouteMatch<dynamic>> get routes => _controller!.stackData.map((e) => e.route).toList();
 }
 
 class _AutoTabsRouterBuilder extends AutoTabsRouter {
@@ -793,7 +793,7 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
   @override
   void didUpdateWidget(covariant _AutoTabsRouterBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!const ListEquality().equals(widget.routes, oldWidget.routes)) {
+    if (!const ListEquality<dynamic>().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes, _controller!.activeIndex);
       widget.onNavigate?.call(_controller!);
     }
@@ -831,13 +831,13 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
   List<NavigatorObserver> get observers => _navigatorObservers;
 
   @override
-  List<RouteMatch> get routes => _controller!.stackData.map((e) => e.route).toList();
+  List<RouteMatch<dynamic>> get routes => _controller!.stackData.map((e) => e.route).toList();
 }
 
 mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
   List<NavigatorObserver> get observers;
 
-  List<RouteMatch> get routes;
+  List<RouteMatch<dynamic>> get routes;
 
   void _didInitTabRoute(int index, [int previous = -1]) {
     observers.whereType<AutoRouterObserver>().forEach((observer) {
@@ -868,7 +868,7 @@ class KeepAliveTab extends StatefulWidget {
   final bool initiallyLoaded;
 
   /// The tab page to keep-alive
-  final AutoRoutePage page;
+  final AutoRoutePage<dynamic> page;
 
   @override
   State<KeepAliveTab> createState() => KeepAliveTabState();

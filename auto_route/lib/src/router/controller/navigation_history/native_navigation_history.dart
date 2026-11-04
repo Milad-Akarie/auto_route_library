@@ -142,7 +142,7 @@ class NavigationHistoryImpl extends NavigationHistory {
 
 class _HistoryEntry {
   const _HistoryEntry(this.route, this.url, this.pageId);
-  final RouteMatch route;
+  final RouteMatch<dynamic> route;
   final String url;
 
   // The id of the page on top, which tells apart two pages with the same url.

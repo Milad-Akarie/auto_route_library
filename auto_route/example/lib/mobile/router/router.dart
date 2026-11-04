@@ -62,9 +62,9 @@ abstract class RouteDef {
   final String name;
   final String? path;
 
-  Widget build(BuildContext context, RouteData data);
+  Widget build(BuildContext context, RouteData<dynamic> data);
 
-  RouteDef buildFromData(RouteData data) {
+  RouteDef buildFromData(RouteData<dynamic> data) {
     return this;
   }
 }

@@ -50,7 +50,7 @@ class RouteMatch<T> {
   final Parameters queryParams;
 
   /// The list of child matches of this match
-  final List<RouteMatch>? children;
+  final List<RouteMatch<dynamic>>? children;
 
   /// The url fragment form [Uri.fragment]
   final String fragment;
@@ -120,7 +120,7 @@ class RouteMatch<T> {
   TitleBuilder? get titleBuilder => _config.title;
 
   /// Helper to access [AutoRoute.buildPage]
-  AutoRoutePage<R> buildPage<R>(RouteData data) => _config.buildPage<R>(data);
+  AutoRoutePage<R> buildPage<R>(RouteData<dynamic> data) => _config.buildPage<R>(data);
 
   /// The unique key of this match
   ///
@@ -165,17 +165,17 @@ class RouteMatch<T> {
   /// Returns a flattened list of this match and it's sub-matches
   /// e.g if we have = RouteMatch1[RouteMatch2[RouteMatch3]]
   /// the result is [RouteMatch1,RouteMatch2,RouteMatch3]
-  List<RouteMatch> get flattened {
+  List<RouteMatch<dynamic>> get flattened {
     return [this, if (hasChildren) ...children!.last.flattened];
   }
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden values
-  RouteMatch copyWith({
+  RouteMatch<dynamic> copyWith({
     String? stringMatch,
     Parameters? pathParams,
     Parameters? queryParams,
-    List<RouteMatch>? children,
+    List<RouteMatch<dynamic>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -204,7 +204,7 @@ class RouteMatch<T> {
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden id
-  RouteMatch withId(LocalKey newId) {
+  RouteMatch<dynamic> withId(LocalKey newId) {
     return RouteMatch._internal(
       id: newId,
       config: _config,
@@ -236,21 +236,21 @@ class RouteMatch<T> {
           fullscreenDialog == other.fullscreenDialog &&
           keepHistory == other.keepHistory &&
           args == other.args &&
-          const ListEquality().equals(guards, other.guards) &&
+          const ListEquality<dynamic>().equals(guards, other.guards) &&
           queryParams == other.queryParams &&
-          const ListEquality().equals(children, other.children) &&
+          const ListEquality<dynamic>().equals(children, other.children) &&
           fragment == other.fragment &&
           redirectedFrom == other.redirectedFrom &&
           autoFilled == other.autoFilled &&
-          const ListEquality().equals(segments, other.segments) &&
-          const MapEquality().equals(meta, other.meta);
+          const ListEquality<dynamic>().equals(segments, other.segments) &&
+          const MapEquality<dynamic, dynamic>().equals(meta, other.meta);
 
   @override
   int get hashCode =>
       params.hashCode ^
       queryParams.hashCode ^
-      const ListEquality().hash(children) ^
-      const ListEquality().hash(guards) ^
+      const ListEquality<dynamic>().hash(children) ^
+      const ListEquality<dynamic>().hash(guards) ^
       fragment.hashCode ^
       redirectedFrom.hashCode ^
       path.hashCode ^
@@ -263,8 +263,8 @@ class RouteMatch<T> {
       type.hashCode ^
       autoFilled.hashCode ^
       args.hashCode ^
-      const ListEquality().hash(segments) ^
-      const MapEquality().hash(meta);
+      const ListEquality<dynamic>().hash(segments) ^
+      const MapEquality<dynamic, dynamic>().hash(meta);
 
   @override
   String toString() {
@@ -303,14 +303,14 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   final AutoRoutePage<R> currentPage;
 
   /// The original match that was used to create this instance
-  final RouteMatch originalMatch;
+  final RouteMatch<dynamic> originalMatch;
 
   @override
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
     Parameters? pathParams,
     Parameters? queryParams,
-    List<RouteMatch>? children,
+    List<RouteMatch<dynamic>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -388,10 +388,11 @@ class HierarchySegment {
           name == other.name &&
           pathParams == other.pathParams &&
           queryParams == other.queryParams &&
-          const ListEquality().equals(children, other.children);
+          const ListEquality<dynamic>().equals(children, other.children);
 
   @override
-  int get hashCode => name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality().hash(children);
+  int get hashCode =>
+      name.hashCode ^ pathParams.hashCode ^ queryParams.hashCode ^ const ListEquality<dynamic>().hash(children);
 }
 
 /// An extension to create a pretty json output of
@@ -402,7 +403,7 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
   String get prettyMap {
     const encoder = JsonEncoder.withIndent('  ');
 
-    Map toMap(List<HierarchySegment> segments) {
+    Map<dynamic, dynamic> toMap(List<HierarchySegment> segments) {
       return Map.fromEntries(
         segments.map(
           (e) => MapEntry(e.name, {
