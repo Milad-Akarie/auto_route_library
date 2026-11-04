@@ -1067,14 +1067,14 @@ To use declarative navigation with auto_route, you simply use the `AutoRouter.de
 AutoRouter.declarative(
   routes: (handler) => [
     BookListRoute(),
-    if(_selectedBook != null) {
-      BookDetailsRoute(id: _selectedBook.id),
-    }
+    if (_selectedBook != null) BookDetailsRoute(id: _selectedBook.id),
   ],
 );
 ```
 
 **Note:** The handler contains a temp-list of pending initial routes which can be read only once.
+
+`AutoRouter.declarative` builds the stack of a nested router, inside a page. The root router can't be declarative, there's no `AutoRouterDelegate.declarative`. For screens that depend on state at the root, such as the signed-in and signed-out parts of an app, use [route guards](#route-guards): a guard can `await` the state before it answers, and a [reevaluate listenable](#using-a-reevaluate-listenable) runs the guards again when the state changes. To skip the page transition when the screen changes, give those routes `RouteType.custom(transitionsBuilder: TransitionsBuilders.noTransition)`.
 
 ## Working with Paths
 
