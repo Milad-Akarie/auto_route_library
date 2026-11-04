@@ -130,6 +130,7 @@ import 'route_aware_mixin_test.dart' as route_aware_mixin;
 import 'route_aware_pop_order_test.dart' as route_aware_pop_order;
 import 'set_query_param_test.dart' as set_query_param;
 import 'simultaneous_taps_test.dart' as simultaneous_taps;
+import 'state_after_reload_test.dart' as state_after_reload;
 import 'swipe_init_tab_test.dart' as swipe_init_tab;
 import 'tab_bar_dispose_test.dart' as tab_bar_dispose;
 import 'tab_bar_indicator_test.dart' as tab_bar_indicator;
@@ -298,6 +299,7 @@ void main() {
   group('route aware pop order', route_aware_pop_order.main);
   group('set query param', set_query_param.main);
   group('simultaneous taps', simultaneous_taps.main);
+  group('state after reload', state_after_reload.main);
   group('swipe init tab', swipe_init_tab.main);
   group('tab bar dispose', tab_bar_dispose.main);
   group('tab bar indicator', tab_bar_indicator.main);

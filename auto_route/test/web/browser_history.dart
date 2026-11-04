@@ -87,16 +87,22 @@ void openBrowserAt(WidgetTester tester, String path) {
   addTearDown(dispatcher.clearDefaultRouteNameTestValue);
   dispatcher.defaultRouteNameTestValue = path;
   final serialCount = browserSerialCount < 0 ? 0 : browserSerialCount;
-  window.history.replaceState({'serialCount': serialCount, 'state': _openedByBrowser}.jsify(), '', '#$path');
+  window.history.replaceState(
+    {'serialCount': serialCount, 'state': null, _openedByBrowser: true}.jsify(),
+    '',
+    '#$path',
+  );
 }
 
-const _openedByBrowser = 'opened by the browser';
+// Kept beside the engine's own keys: the app reads the engine's 'state' of
+// the entry it starts at as the state it saved there.
+const _openedByBrowser = 'openedByBrowser';
 
 /// Whether the app has written the browser's current entry since
 /// [openBrowserAt] made it, as it does when it reports its route.
 bool get appWroteBrowserEntry {
   final state = window.history.state.dartify();
-  return !(state is Map && state['state'] == _openedByBrowser);
+  return !(state is Map && state[_openedByBrowser] == true);
 }
 
 /// Shows [app] the way runApp starts an app, and settles.

@@ -36,16 +36,25 @@ void pressBrowserForward() => _history.forward();
 /// [appWroteBrowserEntry].
 void openBrowserAt(String path) {
   final serialCount = browserEntryIndex() ?? 0;
-  _history.replaceState({'serialCount': serialCount, 'state': _openedByBrowser}.jsify(), '', '#$path');
+  _history.replaceState({'serialCount': serialCount, 'state': null, _openedByBrowser: true}.jsify(), '', '#$path');
 }
 
-const _openedByBrowser = 'opened by the browser';
+// Kept beside the engine's own keys: the app reads the engine's 'state' of
+// the entry it starts at as the state it saved there.
+/// Makes the browser's current entry hold [path] and [state] as the engine
+/// keeps a state the app saved there, at serial number 0, as when the user
+/// comes back to the app's entry from another site.
+void saveBrowserEntryState(String path, Object state) {
+  _history.replaceState({'serialCount': 0, 'state': state}.jsify(), '', '#$path');
+}
+
+const _openedByBrowser = 'openedByBrowser';
 
 /// Whether the app has written the browser's current entry since
 /// [openBrowserAt] made it, as it does when it reports its route.
 bool appWroteBrowserEntry() {
   final state = _history.state.dartify();
-  return !(state is Map && state['state'] == _openedByBrowser);
+  return !(state is Map && state[_openedByBrowser] == true);
 }
 
 /// Types [path] into the address bar and presses enter.

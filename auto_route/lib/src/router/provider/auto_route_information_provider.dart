@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
+import 'package:auto_route/src/router/provider/browser_entry_state.dart'
+    if (dart.library.js_interop) 'package:auto_route/src/router/provider/browser_entry_state_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -24,9 +26,16 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
     RouteInformation? initialRouteInformation,
     bool Function(String? location)? neglectWhen,
   }) {
+    // On web the engine starts the app with no state, even when the browser
+    // entry it opens at holds the state the app saved there, as when the
+    // user comes back to the app from another site (flutter/flutter#108697);
+    // so the state is read from the entry itself.
     final initialRouteInfo =
         initialRouteInformation ??
-        RouteInformation(uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName));
+        RouteInformation(
+          uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+          state: browserEntryState(),
+        );
 
     return AutoRouteInformationProvider._(initialRouteInformation: initialRouteInfo, neglectIf: neglectWhen);
   }
@@ -76,8 +85,10 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   RouteInformation get value => _value;
   RouteInformation _value;
 
+  // The browser entry the app starts at holds the state saved in it, too.
   RouteInformation _valueInEngine = RouteInformation(
     uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+    state: browserEntryState(),
   );
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
