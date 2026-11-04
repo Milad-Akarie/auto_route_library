@@ -22,3 +22,9 @@ dev_dependencies:
   build_test: ^3.5.23
   test: ^1.28.0
   very_good_analysis: ^11.0.0
+
+# The generator is outside the workspace (see the root pubspec.yaml), so this
+# keeps its tests on the local auto_route rather than the one on pub.dev.
+dependency_overrides:
+  auto_route:
+    path: ../auto_route
