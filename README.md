@@ -1291,6 +1291,22 @@ AutoRoute(
 );
 ```
 
+#### Guarding tab routes
+
+Guards on the routes of an `AutoTabsRouter`'s tabs are asked each time their tab is about to become the active one: from `setActiveIndex`, a swipe in `AutoTabsRouter.pageView` or `AutoTabsRouter.tabBar`, `navigate`, back to the `homeIndex` tab, or a url. The tab shows once its guards call `resolver.next()`. Until then, and when they reject, the current tab stays, and so does the url. A guard that redirects, for example with `resolver.redirectUntil(LoginRoute())`, shows the tab once it resolves with `true`.
+
+```dart
+AutoRoute(
+  page: HomeRoute.page,
+  children: [
+    AutoRoute(page: FeedRoute.page),
+    AutoRoute(page: ProfileRoute.page, guards: [AuthGuard()]),
+  ],
+);
+```
+
+When the tabs open, the first tab shows without asking its guards, since the tabs must show one; guard the route that holds the tabs to keep them all out. A url that names a tab whose guards reject opens the first tab instead. The global guards below are for stack routes only, so they aren't asked for tabs.
+
 #### Guarding all stack-routes
 
 You can have all your stack-routes (non-tab-routes) go through a list of global guards by overriding the guards property inside your router class. Lets say you have an app with no public screens, we'd have a global guard that only allows navigation if the user is authenticated or if we're navigating to the LoginRoute.

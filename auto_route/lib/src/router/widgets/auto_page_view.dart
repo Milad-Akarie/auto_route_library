@@ -120,8 +120,10 @@ class AutoPageViewState extends State<AutoPageView> {
     return didPreload || draggedIn;
   }
 
-  // Loads the tab a drag is uncovering, without opening it.
+  // Loads the tab a drag is uncovering, without opening it. A guarded tab
+  // loads only once its guards let it in.
   void _preloadDraggedIn(int index) {
+    if (_router.stack.elementAtOrNull(index)?.routeData.route.guards.isNotEmpty ?? false) return;
     if (_tabKeyAt(index)?.currentState?.preload() != true) return;
     _draggedInTabs.add(_matchIdAt(index)!);
     if (mounted) {
@@ -191,8 +193,7 @@ class AutoPageViewState extends State<AutoPageView> {
     return Future<void>.value();
   }
 
-  Future<void> _warpToNonAdjacentTab() async {
-    final int previousIndex = _router.previousIndex ?? 0;
+  Future<void> _warpToNonAdjacentTab(int previousIndex) async {
     assert((_router.activeIndex - previousIndex).abs() > 1);
     final int initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
 
@@ -215,13 +216,15 @@ class AutoPageViewState extends State<AutoPageView> {
     if (!mounted) return Future<void>.value();
 
     _disposeInactiveChildren();
-    final int previousIndex = _router.previousIndex ?? 0;
+    // From the page on screen: it's the tab before the active one, or the
+    // tab a swipe reached when its guards kept it out.
+    final int previousIndex = _controller.page!.round();
 
     final bool adjacentDestination = (_router.activeIndex - previousIndex).abs() == 1;
     if (adjacentDestination) {
       await _warpToAdjacentTab();
     } else {
-      await _warpToNonAdjacentTab();
+      await _warpToNonAdjacentTab(previousIndex);
     }
     if (mounted) {
       setState(() {

@@ -100,6 +100,7 @@ import 'swipe_init_tab_test.dart' as swipe_init_tab;
 import 'tab_bar_dispose_test.dart' as tab_bar_dispose;
 import 'tab_bar_indicator_test.dart' as tab_bar_indicator;
 import 'tab_cached_context_test.dart' as tab_cached_context;
+import 'tab_guards_test.dart' as tab_guards;
 import 'tab_inner_router_test.dart' as tab_inner_router;
 import 'tab_navigate_path_query_test.dart' as tab_navigate_path_query;
 import 'tab_rebuild_test.dart' as tab_rebuild;
@@ -227,6 +228,7 @@ void main() {
   group('tab bar dispose', tab_bar_dispose.main);
   group('tab bar indicator', tab_bar_indicator.main);
   group('tab cached context', tab_cached_context.main);
+  group('tab guards', tab_guards.main);
   group('tab inner router', tab_inner_router.main);
   group('tab navigate path query', tab_navigate_path_query.main);
   group('tab rebuild', tab_rebuild.main);

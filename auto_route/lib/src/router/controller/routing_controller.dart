@@ -859,28 +859,135 @@ class TabsRouter extends RoutingController {
   int? get previousIndex => _previousIndex;
 
   /// Updates [_activeIndex] and triggers a rebuild
+  ///
+  /// The tab at [index] shows only once the guards of its route let it in.
+  /// When a guard decides later, the current tab stays active until then,
+  /// and the change always notifies once it happens.
   void setActiveIndex(int index, {bool notify = true}) {
     assert(index >= 0 && index < _pages.length);
     _changeTab(index, notify: notify);
   }
 
+  // The latest change of the active tab, and the tab of one whose guards are
+  // still deciding, with whether it happens.
+  int _tabChanges = 0;
+  int? _pendingTab;
+  Future<_TabChange>? _pendingChange;
+
   // Every change of the active tab goes through here: setActiveIndex, which
   // the tabs views call too, back to the home tab, and navigating to a tab.
-  void _changeTab(int index, {bool notify = true}) {
-    if (_activeIndex != index) {
-      final didPreload = preload(index);
-      _previousIndex = _activeIndex;
-      _activeIndex = index;
-      if (notify) {
-        if (didPreload && SchedulerBinding.instance.schedulerPhase != SchedulerPhase.idle) {
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            notifyAll();
-          });
-        } else {
+  //
+  // The tab shows once the guards of its route let it in. [route] is the
+  // route a navigation opens the tab with; the tab's page is then updated
+  // with it, and its nested router navigates to its children. Answers how
+  // the change ended: at once when every guard answers at once, otherwise
+  // once they have. A change to another tab made meanwhile replaces one
+  // still waiting for its guards.
+  FutureOr<_TabChange> _changeTab(
+    int index, {
+    bool notify = true,
+    RouteMatch? route,
+    OnNavigationFailure? onFailure,
+  }) {
+    if (_activeIndex == index) return _TabChange.done;
+    // A view asks again for the tab it moved to while its guards decide.
+    if (route == null && _pendingTab == index) return _pendingChange!;
+    final change = ++_tabChanges;
+    final match = route ?? _pages[index].routeData._match;
+    final checked = _checkTabGuards(match, onFailure: onFailure);
+    if (checked is ResolverResult) {
+      return _endTabChange(change, index, match, checked, notify: notify, update: route != null, onFailure: onFailure);
+    }
+    _pendingTab = index;
+    // A view that moved to the tab, e.g. a page view swiped to it, shows the
+    // active one until the guards let the tab in.
+    if (notify) notifyListeners();
+    return _pendingChange = checked.then(
+      (result) => _endTabChange(change, index, match, result, update: route != null, onFailure: onFailure),
+    );
+  }
+
+  _TabChange _endTabChange(
+    int change,
+    int index,
+    RouteMatch match,
+    ResolverResult result, {
+    bool notify = true,
+    bool update = false,
+    OnNavigationFailure? onFailure,
+  }) {
+    if (_disposed || change != _tabChanges) return _TabChange.replaced;
+    _pendingTab = null;
+    _pendingChange = null;
+    if (!result.continueNavigation) {
+      // A view that moved to the tab goes back to the active one.
+      if (notify) notifyListeners();
+      return _TabChange.rejected;
+    }
+    // A guard may have overridden the route, e.g. its args.
+    final updated = update || !identical(result.route, match) ? _updateTabPage(index, result.route) : null;
+    final didPreload = preload(index);
+    _previousIndex = _activeIndex;
+    _activeIndex = index;
+    if (notify) {
+      if (didPreload && SchedulerBinding.instance.schedulerPhase != SchedulerPhase.idle) {
+        SchedulerBinding.instance.addPostFrameCallback((_) {
           notifyAll();
-        }
+        });
+      } else {
+        notifyAll();
       }
     }
+    if (updated != null) _navigateInsideTab(updated, onFailure: onFailure);
+    return _TabChange.done;
+  }
+
+  // Asks the guards of the tab [route] opens whether it may show, the way a
+  // stack asks before it shows a page. The app's global guards, in
+  // RootStackRouter.guards, are for stack routes only. Answers at once when
+  // every guard does, so a tab change that no guard delays stays
+  // synchronous.
+  FutureOr<ResolverResult> _checkTabGuards(RouteMatch route, {OnNavigationFailure? onFailure, int from = 0}) {
+    final guards = route.guards;
+    if (from == guards.length) {
+      return ResolverResult(continueNavigation: true, reevaluateNext: true, route: route);
+    }
+    final guard = guards[from];
+    final router = _guardRouter;
+    final resolver = NavigationResolver(router, Completer<ResolverResult>(), route);
+    final entry = GuardEntry(guard, resolver);
+    router.activeGuardObserver._add(entry);
+    FutureOr<ResolverResult> onResult(ResolverResult result) {
+      router.activeGuardObserver._remove(entry);
+      if (!result.continueNavigation) {
+        onFailure?.call(RejectedByGuardFailure(result.route, guard));
+        return result;
+      }
+      return _checkTabGuards(result.route, onFailure: onFailure, from: from + 1);
+    }
+
+    final checking = resolver.checkGuard(guard, router);
+    if (resolver._result case final result?) {
+      checking.ignore();
+      return onResult(result);
+    }
+    return checking.then(onResult);
+  }
+
+  // The stack router guards of the tabs get, the nearest one above them.
+  StackRouter get _guardRouter {
+    for (var parent = _parent; parent != null; parent = parent._parent) {
+      if (parent is StackRouter) return parent;
+    }
+    return root;
+  }
+
+  bool _disposed = false;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 
   @override
@@ -905,9 +1012,18 @@ class TabsRouter extends RoutingController {
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) {
     if (homeIndex != -1 && _activeIndex != homeIndex) {
-      _changeTab(homeIndex);
-      return SynchronousFuture<bool>(true);
-    } else if (_parent != null) {
+      // When the guards of the home tab keep it out, back goes on as it
+      // would from the home tab.
+      Future<bool> popOrParent(_TabChange change) =>
+          change == _TabChange.rejected ? _maybePopParent<T>(result) : SynchronousFuture<bool>(true);
+      final change = _changeTab(homeIndex);
+      return change is _TabChange ? popOrParent(change) : change.then(popOrParent);
+    }
+    return _maybePopParent<T>(result);
+  }
+
+  Future<bool> _maybePopParent<T extends Object?>(T? result) {
+    if (_parent != null) {
       return _parent!.maybePop<T>(result);
     } else {
       return SynchronousFuture<bool>(false);
@@ -918,7 +1034,18 @@ class TabsRouter extends RoutingController {
   @optionalTypeArgs
   void pop<T extends Object?>([T? result]) {
     if (homeIndex != -1 && _activeIndex != homeIndex) {
-      _changeTab(homeIndex);
+      // When the guards of the home tab keep it out, back goes on as it
+      // would from the home tab.
+      void popParent(_TabChange change) {
+        if (change == _TabChange.rejected) _parent?.pop(result);
+      }
+
+      final change = _changeTab(homeIndex);
+      if (change is _TabChange) {
+        popParent(change);
+      } else {
+        unawaited(change.then(popParent));
+      }
     } else if (_parent != null) {
       _parent!.pop(result);
     }
@@ -937,12 +1064,23 @@ class TabsRouter extends RoutingController {
     final preMatchedRoute = _routeData.hasPendingChildren
         ? _routeData.pendingChildren.last
         : _outgoingTabsRouter()?._activePage?.routeData.route;
+    var guardedIndex = -1;
+    Future<ResolverResult>? guarding;
     if (preMatchedRoute != null) {
       final correspondingRouteIndex = routesToPush.indexWhere(
         (r) => r.key == preMatchedRoute.key,
       );
-      if (correspondingRouteIndex != -1) {
-        routesToPush[correspondingRouteIndex] = preMatchedRoute;
+      // A tab named by a url, a navigation or a restore shows once the guards
+      // of its route let it in, and the first tab shows meanwhile or instead.
+      // The first tab shows without asking its guards: the tabs must show
+      // one, so it's kept out by guarding the route that holds the tabs.
+      final checked =
+          correspondingRouteIndex <= 0 || !_routeData.hasPendingChildren ? null : _checkTabGuards(preMatchedRoute);
+      if (checked is Future<ResolverResult>) {
+        guardedIndex = correspondingRouteIndex;
+        guarding = checked;
+      } else if (correspondingRouteIndex != -1 && checked?.continueNavigation != false) {
+        routesToPush[correspondingRouteIndex] = checked?.route ?? preMatchedRoute;
         _previousIndex = _activeIndex;
         _activeIndex = correspondingRouteIndex;
       }
@@ -952,6 +1090,17 @@ class TabsRouter extends RoutingController {
       _pushAll(routesToPush, fromDefault: routes == null);
     }
     _routeData.pendingChildren.clear();
+    if (guarding != null) {
+      final index = guardedIndex;
+      final match = preMatchedRoute!;
+      final change = ++_tabChanges;
+      _pendingTab = index;
+      _pendingChange = guarding.then((result) {
+        // The tab takes the first one's place in the url.
+        if (result.continueNavigation && change == _tabChanges) markUrlStateForReplace();
+        return _endTabChange(change, index, match, result, update: true);
+      });
+    }
     // A host opened by a url that names no tab, such as '/tabs' when no tab is
     // initial, shows its first tab. The url names that tab too, in place of
     // the host's own entry, so going back to that entry shows it. The router
@@ -1080,42 +1229,18 @@ class TabsRouter extends RoutingController {
       final pageToUpdateIndex = _tabIndexOf(mayUpdateRoute);
 
       if (pageToUpdateIndex != -1) {
-        RouteMatch routeToBeUpdated = _pages[pageToUpdateIndex].routeData._match;
-        final bool shouldNotify = mayUpdateRoute != routeToBeUpdated;
-        routeToBeUpdated = mayUpdateRoute.withId(routeToBeUpdated.id);
-        for (final ctr in _childControllers) {
-          if (ctr.matchId == _pages[pageToUpdateIndex].routeData.matchId) {
-            ctr._markedForDataUpdate = true;
-          }
-        }
-
-        if (mayUpdateRoute is ReevaluatableRouteMatch) {
-          _pages[pageToUpdateIndex] = mayUpdateRoute.currentPage;
-          mayUpdateRoute.currentPage.routeData._onEndReevaluating(routeToBeUpdated);
-        } else {
-          final data = _createRouteData(routeToBeUpdated, routeData);
-          _pages[pageToUpdateIndex] = data.buildPage();
-        }
-
-        // By match id: a tab sharing its route with another has its own nested router.
-        final mayUpdateController = _innerControllerOfMatch(routeToBeUpdated.id);
-
         if (!isReevaluating && _activeIndex != pageToUpdateIndex) {
-          _changeTab(pageToUpdateIndex);
-        } else if (shouldNotify) {
-          notifyAll();
-        }
-
-        if (mayUpdateController != null) {
-          final newRoutes = routeToBeUpdated.children ?? const [];
-          mayUpdateController._navigateAll(
-            newRoutes,
-            onFailure: onFailure,
-            isReevaluating: isReevaluating,
-          );
+          _changeTab(pageToUpdateIndex, route: mayUpdateRoute, onFailure: onFailure);
+        } else {
+          final bool shouldNotify = mayUpdateRoute != _pages[pageToUpdateIndex].routeData._match;
+          final routeToBeUpdated = _updateTabPage(pageToUpdateIndex, mayUpdateRoute);
+          if (shouldNotify) {
+            notifyAll();
+          }
+          _navigateInsideTab(routeToBeUpdated, onFailure: onFailure, isReevaluating: isReevaluating);
         }
       }
-      if (!isReevaluating && _activeIndex != pageToUpdateIndex) {
+      if (!isReevaluating && pageToUpdateIndex == -1) {
         _updateSharedPathData(
           queryParams: mayUpdateRoute.queryParams.rawMap,
           fragment: mayUpdateRoute.fragment,
@@ -1125,6 +1250,40 @@ class TabsRouter extends RoutingController {
     }
 
     return SynchronousFuture(null);
+  }
+
+  // Puts [mayUpdateRoute] in the page of the tab at [index], and answers the
+  // route the page now holds.
+  RouteMatch _updateTabPage(int index, RouteMatch mayUpdateRoute) {
+    final routeToBeUpdated = mayUpdateRoute.withId(_pages[index].routeData._match.id);
+    for (final ctr in _childControllers) {
+      if (ctr.matchId == _pages[index].routeData.matchId) {
+        ctr._markedForDataUpdate = true;
+      }
+    }
+
+    if (mayUpdateRoute is ReevaluatableRouteMatch) {
+      _pages[index] = mayUpdateRoute.currentPage;
+      mayUpdateRoute.currentPage.routeData._onEndReevaluating(routeToBeUpdated);
+    } else {
+      final data = _createRouteData(routeToBeUpdated, routeData);
+      _pages[index] = data.buildPage();
+    }
+    return routeToBeUpdated;
+  }
+
+  // Navigates the nested router of the tab holding [route] to its children.
+  void _navigateInsideTab(RouteMatch route, {OnNavigationFailure? onFailure, bool isReevaluating = false}) {
+    // By match id: a tab sharing its route with another has its own nested router.
+    final mayUpdateController = _innerControllerOfMatch(route.id);
+    if (mayUpdateController != null) {
+      final newRoutes = route.children ?? const [];
+      mayUpdateController._navigateAll(
+        newRoutes,
+        onFailure: onFailure,
+        isReevaluating: isReevaluating,
+      );
+    }
   }
 
   // The tab [route] opens, or -1. Two tabs share a route when both are
@@ -2441,6 +2600,10 @@ class NestedStackRouter extends StackRouter {
     }
   }
 }
+
+// How a change of the active tab ended: the tab is active, its guards kept
+// it out, or a later change replaced it while its guards decided.
+enum _TabChange { done, rejected, replaced }
 
 class _RouterScopeResult<T extends RoutingController> {
   final T router;

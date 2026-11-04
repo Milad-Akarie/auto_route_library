@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/eager_page_view.dart';
 import 'package:flutter/foundation.dart';
@@ -96,11 +98,20 @@ class AutoTabViewState extends State<AutoTabView> {
     return didPreload || draggedIn;
   }
 
-  // Loads the tab a drag is uncovering, without opening it.
+  // Loads the tab a drag is uncovering, without opening it. A guarded tab
+  // loads only once its guards let it in.
   void _preloadDraggedIn(int index) {
+    if (_isGuarded(index)) return;
     if (_tabKeyAt(index)?.currentState?.preload() != true) return;
     _draggedInTabs.add(_matchIdAt(index)!);
     _updateChildren();
+  }
+
+  // Whether the tab at [index] is not the active one and has guards, which
+  // are asked once a drag to it ends rather than as it passes.
+  bool _isGuarded(int index) {
+    if (index == _router.activeIndex) return false;
+    return _router.stack.elementAtOrNull(index)?.routeData.route.guards.isNotEmpty ?? false;
   }
 
   @override
@@ -272,7 +283,9 @@ class AutoTabViewState extends State<AutoTabView> {
         _currentIndex = _controller.index;
       }
       final currentPage = _pageController.page!.round();
-      _controller.index = currentPage;
+      if (!_isGuarded(currentPage)) {
+        _controller.index = currentPage;
+      }
       _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);
       final deltaDx = notification.dragDetails?.delta.dx;
       if (deltaDx != null) {
@@ -283,7 +296,23 @@ class AutoTabViewState extends State<AutoTabView> {
         }
       }
     } else if (notification is ScrollEndNotification) {
-      _controller.index = _pageController.page!.round();
+      final currentPage = _pageController.page!.round();
+      if (_isGuarded(currentPage)) {
+        _router.setActiveIndex(currentPage);
+        // Until its guards let the tab in, the active one shows. The scroll
+        // that ended settles first.
+        if (_router.activeIndex != currentPage) {
+          _controller.offset = 0;
+          scheduleMicrotask(() {
+            if (mounted) {
+              _animateToPage(_router.activeIndex, duration: _controller.animationDuration, curve: Curves.ease);
+            }
+          });
+          _scrollUnderwayCount -= 1;
+          return false;
+        }
+      }
+      _controller.index = currentPage;
       _currentIndex = _controller.index;
       if (!_controller.indexIsChanging) {
         _controller.offset = (_pageController.page! - _controller.index).clamp(-1.0, 1.0);

@@ -211,13 +211,22 @@ class NavigationResolver {
   /// to stack on [RoutingController.reevaluateGuards]
   void resolveNext(bool continueNavigation, {bool reevaluateNext = true}) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
-    _completer.complete(
+    _complete(
       ResolverResult(
         continueNavigation: continueNavigation,
         reevaluateNext: reevaluateNext,
         route: route,
       ),
     );
+  }
+
+  // The result the guard resolved with, known at once, before [future]
+  // completes, so a tab change a guard decides at once stays synchronous.
+  ResolverResult? _result;
+
+  void _complete(ResolverResult result) {
+    _result = result;
+    _completer.complete(result);
   }
 
   /// Overrides the current route with the provided values
@@ -239,7 +248,7 @@ class NavigationResolver {
       fragment: fragment,
     );
     final overriddenRoute = overrides.override(route, _router.matcher);
-    _completer.complete(
+    _complete(
       ResolverResult(
         continueNavigation: true,
         reevaluateNext: reevaluateNext,

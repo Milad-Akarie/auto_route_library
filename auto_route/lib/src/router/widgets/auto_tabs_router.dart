@@ -682,7 +682,8 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     _updateTabController();
     _didInitTabRoute(_controller!.activeIndex);
     _controller!.addListener(() {
-      if (_controller!.activeIndex != _controller!.previousIndex) {
+      // Also brings the tab bar back from a tab whose guards kept it out.
+      if (_tabController.index != _controller!.activeIndex) {
         _tabController.animateTo(
           _controller!.activeIndex,
           duration: widget.duration,
