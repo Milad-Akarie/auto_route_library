@@ -416,4 +416,23 @@ class Range {
       expect(result.source, matches(RegExp(r'final _i\d+\.Color\? color;')));
     });
   }
+
+  // flutter/flutter#135591: go_router_builder cast a required
+  // `List<({int id, String? name})>` extra to `List<({int id, String name})>`,
+  // dropping the inner `?`, and the cast threw when the route opened.
+  // auto_route doesn't cast an argument; its type is written as declared.
+  test('a list of records with a nullable field keeps the field nullable (flutter/flutter#135591)', () async {
+    final result = await generateRouter({
+      'lib/items_page.dart': _page(
+        'ItemsPage',
+        parameters: 'required this.items',
+        fields: '  final List<({int id, String? name})> items;',
+      ),
+    });
+    expect(result.errors, isEmpty);
+    expect(result.compileErrors, isEmpty);
+    expect(result.source, contains('required List<({int id, String? name})> items'));
+    expect(result.source, contains('final List<({int id, String? name})> items;'));
+    expect(result.source, contains('data.argsAs<ItemsRouteArgs>()'));
+  });
 }
