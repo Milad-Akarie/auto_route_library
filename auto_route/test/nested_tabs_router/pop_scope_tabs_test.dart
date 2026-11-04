@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -65,7 +67,7 @@ void main() {
           await tester.pumpAndSettle();
         }
         if (pushInTab) {
-          tabsRouter.innerRouterOf<StackRouter>(_stackTab.name)!.push(const _Route('StackPage2'));
+          unawaited(tabsRouter.innerRouterOf<StackRouter>(_stackTab.name)!.push(const _Route('StackPage2')));
           await tester.pumpAndSettle();
         }
         final page = router.topRoute.name;

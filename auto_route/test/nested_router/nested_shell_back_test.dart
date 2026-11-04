@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -74,7 +76,7 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
     await tester.tap(find.text('Open cashless'));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('CashlessHistoryRoute'));
+    unawaited(router.push(const NamedRoute('CashlessHistoryRoute')));
     await tester.pumpAndSettle();
     expect(find.text('CashlessHistoryRoute'), findsOneWidget);
 

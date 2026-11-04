@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -32,9 +34,9 @@ void main() {
     await settleBrowser(tester);
     final start = browserSerialCount;
 
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
-    router.navigate(const ThirdRoute());
+    unawaited(router.navigate(const ThirdRoute()));
     await settleBrowser(tester);
     expectCurrentPage(router, ThirdRoute.name);
     expect(browserSerialCount, start + 2);
@@ -58,7 +60,7 @@ void main() {
     await settleBrowser(tester);
     final start = browserSerialCount;
 
-    router.pushAll([const SecondRoute(), const ThirdRoute()]);
+    unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));
     await settleBrowser(tester);
     expect(browserSerialCount, start + 1);
 
@@ -78,10 +80,10 @@ void main() {
     await settleBrowser(tester);
     final start = browserSerialCount;
 
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
     String? result;
-    router.push<String>(const ThirdRoute()).then((value) => result = value);
+    unawaited(router.push<String>(const ThirdRoute()).then((value) => result = value));
     await settleBrowser(tester);
 
     router.pop<String>('picked');
@@ -99,7 +101,7 @@ void main() {
     await settleBrowser(tester);
     final start = browserSerialCount;
 
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
     showDialog<void>(context: router.navigatorKey.currentContext!, builder: (_) => const Text('Dialog'));
     await settleBrowser(tester);
@@ -118,9 +120,9 @@ void main() {
     await settleBrowser(tester);
     final start = browserSerialCount;
 
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
-    router.navigate(const ThirdRoute());
+    unawaited(router.navigate(const ThirdRoute()));
     await settleBrowser(tester);
 
     // The browser reports the step back to SecondRoute only after this frame.
@@ -137,13 +139,13 @@ void main() {
     await pumpRouterConfigApp(tester, tabsRouter.config());
     await settleBrowser(tester);
 
-    tabsRouter.navigate(const Tab2Route());
+    unawaited(tabsRouter.navigate(const Tab2Route()));
     await settleBrowser(tester);
     final tab2Router = tabsRouter.innerRouterOf<TabsRouter>(TabsHostRoute.name)!.stackRouterOfIndex(1)!;
-    tab2Router.push(const Tab2Nested2Route());
+    unawaited(tab2Router.push(const Tab2Nested2Route()));
     await settleBrowser(tester);
     expect(browserPath, '/tab2/tab2Nested2');
-    tabsRouter.navigate(const Tab1Route());
+    unawaited(tabsRouter.navigate(const Tab1Route()));
     await settleBrowser(tester);
     final serialCount = browserSerialCount;
     expect(browserPath, '/');
@@ -162,10 +164,10 @@ void main() {
     await settleBrowser(tester);
     final start = browserSerialCount;
 
-    nestedRouter.navigate(SecondHostRoute());
+    unawaited(nestedRouter.navigate(SecondHostRoute()));
     await settleBrowser(tester);
     final hostRouter = nestedRouter.innerRouterOf<StackRouter>(SecondHostRoute.name)!;
-    hostRouter.push(const SecondNested2Route());
+    unawaited(hostRouter.push(const SecondNested2Route()));
     await settleBrowser(tester);
     expect(browserPath, '/second/nested2');
     expect(browserSerialCount, start + 2);
@@ -190,9 +192,9 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
     final start = browserSerialCount;
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await settleBrowser(tester);
-    router.push(const ThirdRoute());
+    unawaited(router.push(const ThirdRoute()));
     await settleBrowser(tester);
 
     await router.maybePop();
@@ -209,9 +211,9 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
     final start = browserSerialCount;
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
-    router.navigate(const ThirdRoute());
+    unawaited(router.navigate(const ThirdRoute()));
     await settleBrowser(tester);
 
     // The press lands before the browser reports the pop's own step back.
@@ -229,9 +231,9 @@ void main() {
   testWidgets('Popping on web with rebuildStackOnDeepLink keeps the stack', (tester) async {
     await pumpRouterConfigApp(tester, router.config(rebuildStackOnDeepLink: true));
     await settleBrowser(tester);
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
-    router.navigate(const ThirdRoute());
+    unawaited(router.navigate(const ThirdRoute()));
     await settleBrowser(tester);
 
     router.pop();
@@ -253,9 +255,9 @@ void main() {
       ),
     );
     await settleBrowser(tester);
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
-    router.navigate(const ThirdRoute());
+    unawaited(router.navigate(const ThirdRoute()));
     await settleBrowser(tester);
     final buildsBeforePop = deepLinkBuilds;
 

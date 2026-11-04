@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -53,17 +55,17 @@ void main() {
   testWidgets('A replaceAll rejected by a guard keeps the stack (#2299)', (tester) async {
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const NamedRoute('FooRoute'));
+    unawaited(router.push(const NamedRoute('FooRoute')));
     await tester.pumpAndSettle();
 
-    router.replaceAll([const NamedRoute('ProtectedRoute')]);
+    unawaited(router.replaceAll([const NamedRoute('ProtectedRoute')]));
     await tester.pumpAndSettle();
     expect(namesOf(router), ['InitialRoute', 'FooRoute']);
     expectTopPage(router, 'FooRoute');
     expect(router.urlState.url, '/foo');
 
     // The next push opens on top of the kept stack, not as the only page.
-    router.push(const NamedRoute('OtherRoute'));
+    unawaited(router.push(const NamedRoute('OtherRoute')));
     await tester.pumpAndSettle();
     expect(namesOf(router), ['InitialRoute', 'FooRoute', 'OtherRoute']);
   });
@@ -72,7 +74,7 @@ void main() {
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
 
-    router.replaceAll([const NamedRoute('OtherRoute'), const NamedRoute('ProtectedRoute')]);
+    unawaited(router.replaceAll([const NamedRoute('OtherRoute'), const NamedRoute('ProtectedRoute')]));
     await tester.pumpAndSettle();
     expect(namesOf(router), ['InitialRoute']);
     expectTopPage(router, 'InitialRoute');
@@ -82,10 +84,10 @@ void main() {
     isAllowed = true;
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const NamedRoute('FooRoute'));
+    unawaited(router.push(const NamedRoute('FooRoute')));
     await tester.pumpAndSettle();
 
-    router.replaceAll([const NamedRoute('ProtectedRoute')]);
+    unawaited(router.replaceAll([const NamedRoute('ProtectedRoute')]));
     await tester.pumpAndSettle();
     expect(namesOf(router), ['ProtectedRoute']);
     expectTopPage(router, 'ProtectedRoute');
@@ -94,13 +96,13 @@ void main() {
   testWidgets('A replaceAll rejected by a guard in a nested router keeps the nested stack (#2299)', (tester) async {
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const NamedRoute('ShellRoute'));
+    unawaited(router.push(const NamedRoute('ShellRoute')));
     await tester.pumpAndSettle();
     final nested = router.innerRouterOf<StackRouter>('ShellRoute')!;
-    nested.push(const NamedRoute('NestedFooRoute'));
+    unawaited(nested.push(const NamedRoute('NestedFooRoute')));
     await tester.pumpAndSettle();
 
-    nested.replaceAll([const NamedRoute('NestedProtectedRoute')]);
+    unawaited(nested.replaceAll([const NamedRoute('NestedProtectedRoute')]));
     await tester.pumpAndSettle();
     expect(namesOf(nested), ['NestedInitialRoute', 'NestedFooRoute']);
     expectTopPage(router, 'NestedFooRoute');

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -30,12 +32,12 @@ void main() {
   // instead of the pop closing the page that holds the nested router.
   testWidgets('popAndPushAll from the only page of a nested router replaces that page', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const _AppRouterRoute());
+    unawaited(router.push(const _AppRouterRoute()));
     await tester.pumpAndSettle();
     final appRouter = router.innerRouterOf<StackRouter>(_AppRouterRoute.name)!;
     expect(appRouter.stack.map((p) => p.name), [_HomeRoute.name]);
 
-    appRouter.popAndPushAll([const _TestRoute()]);
+    unawaited(appRouter.popAndPushAll([const _TestRoute()]));
     await tester.pumpAndSettle();
     expect(router.stack.map((p) => p.name), [_SplashRoute.name, _AppRouterRoute.name]);
     expect(appRouter.stack.map((p) => p.name), [_TestRoute.name]);
@@ -48,13 +50,13 @@ void main() {
   // page and pushes the routes in its place.
   testWidgets('popAndPushAll pops the top page and pushes the routes in its place', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const _AppRouterRoute());
+    unawaited(router.push(const _AppRouterRoute()));
     await tester.pumpAndSettle();
     final appRouter = router.innerRouterOf<StackRouter>(_AppRouterRoute.name)!;
-    appRouter.push(const _OtherRoute());
+    unawaited(appRouter.push(const _OtherRoute()));
     await tester.pumpAndSettle();
 
-    appRouter.popAndPushAll([const _TestRoute()]);
+    unawaited(appRouter.popAndPushAll([const _TestRoute()]));
     await tester.pumpAndSettle();
     expect(appRouter.stack.map((p) => p.name), [_HomeRoute.name, _TestRoute.name]);
     expect(find.text('Test'), findsOneWidget);

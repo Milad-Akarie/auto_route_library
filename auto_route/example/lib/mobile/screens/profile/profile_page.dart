@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/home_page.dart';
@@ -30,7 +32,7 @@ class ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
-                  context.router.push(MyBooksRoute());
+                  unawaited(context.router.push(MyBooksRoute()));
                 },
                 child: const Text('My Books'),
               ),
@@ -49,21 +51,23 @@ class ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
-                  context.navigateToPath('settings/tab1');
+                  unawaited(context.navigateToPath('settings/tab1'));
                 },
                 child: const Text('Navigate to settings/tab1'),
               ),
               ElevatedButton(
                 onPressed: () {
-                  context.router.replaceAll(
-                    [
-                      HomeRoute(
-                        children: [
-                          SettingsTab(tab: 'Replaced'),
-                        ],
-                      ),
-                    ],
-                    updateExistingRoutes: false,
+                  unawaited(
+                    context.router.replaceAll(
+                      [
+                        HomeRoute(
+                          children: [
+                            SettingsTab(tab: 'Replaced'),
+                          ],
+                        ),
+                      ],
+                      updateExistingRoutes: false,
+                    ),
                   );
                 },
                 child: const Text('ReplaceAll'),

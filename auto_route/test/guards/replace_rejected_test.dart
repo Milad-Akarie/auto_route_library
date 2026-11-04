@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -52,10 +54,10 @@ void main() {
 
   testWidgets('A replace rejected by a guard keeps the page it would replace (#2046)', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const NamedRoute('DetailsRoute'));
+    unawaited(router.push(const NamedRoute('DetailsRoute')));
     await tester.pumpAndSettle();
 
-    router.replace(const NamedRoute('ForbiddenRoute'));
+    unawaited(router.replace(const NamedRoute('ForbiddenRoute')));
     await tester.pumpAndSettle();
 
     expect(stackNames(), ['HomeRoute', 'DetailsRoute']);
@@ -66,10 +68,10 @@ void main() {
     tester,
   ) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const NamedRoute('DetailsRoute'));
+    unawaited(router.push(const NamedRoute('DetailsRoute')));
     await tester.pumpAndSettle();
 
-    router.replace(const NamedRoute('ProtectedRoute'));
+    unawaited(router.replace(const NamedRoute('ProtectedRoute')));
     await tester.pumpAndSettle();
     expect(stackNames(), ['HomeRoute', 'DetailsRoute', 'LoginRoute']);
 
@@ -83,10 +85,10 @@ void main() {
   testWidgets('A replace accepted by its guard swaps the top page (#2046)', (tester) async {
     isAllowed = true;
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const NamedRoute('DetailsRoute'));
+    unawaited(router.push(const NamedRoute('DetailsRoute')));
     await tester.pumpAndSettle();
 
-    router.replace(const NamedRoute('ProtectedRoute'));
+    unawaited(router.replace(const NamedRoute('ProtectedRoute')));
     await tester.pumpAndSettle();
 
     expect(stackNames(), ['HomeRoute', 'ProtectedRoute']);

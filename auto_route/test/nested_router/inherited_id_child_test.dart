@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -33,11 +35,11 @@ void main() {
   // from null.
   testWidgets('A child route reads the id it inherits when pushed from its parent', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(_ListDetailRouter(children: [_ListDetailRoute(id: 'l-1')]));
+    unawaited(router.navigate(_ListDetailRouter(children: [_ListDetailRoute(id: 'l-1')])));
     await tester.pumpAndSettle();
     final detail = tester.element(find.text('List l-1'));
 
-    detail.router.push(_CreateListItemsRoute(familyId: 'f-1'));
+    unawaited(detail.router.push(_CreateListItemsRoute(familyId: 'f-1')));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Create f-1 in l-1'), findsOneWidget);
@@ -48,10 +50,10 @@ void main() {
   // The same through router.navigate() from the root router.
   testWidgets('A child route reads the id it inherits when navigated to from the root', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(_ListDetailRouter(children: [_ListDetailRoute(id: 'l-1')]));
+    unawaited(router.navigate(_ListDetailRouter(children: [_ListDetailRoute(id: 'l-1')])));
     await tester.pumpAndSettle();
 
-    router.navigate(_CreateListItemsRoute(familyId: 'f-2'));
+    unawaited(router.navigate(_CreateListItemsRoute(familyId: 'f-2')));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Create f-2 in l-1'), findsOneWidget);

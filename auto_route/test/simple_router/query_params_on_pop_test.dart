@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import '../main_router.dart';
@@ -17,7 +19,7 @@ void main() {
     await pumpRouterApp(tester, router, initialLink: '/?search=shoes');
     expect(router.urlState.url, '/?search=shoes');
 
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(router.urlState.url, '/second-route');
 
@@ -30,7 +32,7 @@ void main() {
 
   testWidgets('Popping a page with its own query params restores those of the page underneath', (tester) async {
     await pumpRouterApp(tester, router, initialLink: '/?search=shoes#top');
-    router.pushPath('/second-route?page=2');
+    unawaited(router.pushPath('/second-route?page=2'));
     await tester.pumpAndSettle();
     expect(router.urlState.url, '/second-route?page=2');
 
@@ -41,7 +43,7 @@ void main() {
 
   testWidgets('Removing the top page restores the query params of the page underneath', (tester) async {
     await pumpRouterApp(tester, router, initialLink: '/?search=shoes');
-    router.pushPath('/second-route?page=2');
+    unawaited(router.pushPath('/second-route?page=2'));
     await tester.pumpAndSettle();
 
     router.removeLast();

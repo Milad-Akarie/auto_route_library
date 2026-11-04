@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -59,7 +61,7 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    router.navigate(const _Test2Route());
+    unawaited(router.navigate(const _Test2Route()));
     await tester.pumpAndSettle();
     expect(tabsRouter.activeIndex, 1);
     expect(find.text(_Test2Route.name), findsOneWidget);
@@ -77,7 +79,7 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    router.navigate(const _Test1Route());
+    unawaited(router.navigate(const _Test1Route()));
     await tester.pumpAndSettle();
     expect(tabsRouter.activeIndex, 0);
     expect(find.text(_Test1Route.name), findsOneWidget);

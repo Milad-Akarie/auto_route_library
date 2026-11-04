@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,7 +48,7 @@ void main() {
       Future<void> openHost(WidgetTester tester, {ThemeData? theme}) async {
         await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
         await tester.pumpAndSettle();
-        router.push(const _HostRoute());
+        unawaited(router.push(const _HostRoute()));
         await tester.pumpAndSettle();
         expectTopPage(router, _GuardedRoute.name);
       }

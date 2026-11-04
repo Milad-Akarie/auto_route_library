@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.dart';
 import 'package:example/mobile/router/router.gr.dart';
@@ -80,7 +82,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onDestinationSelected: (index) {
                       // use navigate instead of push so you won't have
                       // many useless route stacks
-                      context.navigateTo(destinations[index].route);
+                      unawaited(context.navigateTo(destinations[index].route));
                     },
                   ),
                   // child is the rendered route stack
@@ -151,7 +153,7 @@ class WelcomeScreen extends StatelessWidget {
             child: ElevatedButton(
               child: const Text('Dashboard'),
               onPressed: () {
-                context.pushRoute(const HomeRoute());
+                unawaited(context.pushRoute(const HomeRoute()));
               },
             ),
           ),

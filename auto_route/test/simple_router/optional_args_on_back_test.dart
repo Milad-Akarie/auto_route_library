@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,10 +31,10 @@ void main() {
   ]) {
     testWidgets('Going back with $how keeps the optional argument of the page underneath', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
-      router.push(_BookRoute(bookId: 'some-id'));
+      unawaited(router.push(_BookRoute(bookId: 'some-id')));
       await tester.pumpAndSettle();
       expect(find.text('Book some-id'), findsOneWidget);
-      router.push(_ChapterRoute(bookId: 'some-id-2'));
+      unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
       await tester.pumpAndSettle();
       expect(find.text('Chapter some-id-2'), findsOneWidget);
 

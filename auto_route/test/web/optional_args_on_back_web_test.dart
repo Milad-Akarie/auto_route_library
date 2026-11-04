@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -35,10 +37,10 @@ void main() {
     testWidgets('Going back on web with $how keeps the optional argument of the page underneath', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       await settleBrowser(tester);
-      router.push(_BookRoute(bookId: 'some-id'));
+      unawaited(router.push(_BookRoute(bookId: 'some-id')));
       await settleBrowser(tester);
       expect(find.text('Book some-id'), findsOneWidget);
-      router.push(_ChapterRoute(bookId: 'some-id-2'));
+      unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
       await settleBrowser(tester);
       expect(find.text('Chapter some-id-2'), findsOneWidget);
 

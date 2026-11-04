@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -24,7 +26,7 @@ void main() {
   for (final name in ['reports/2024', 'what?', 'part#2', '100%', 'a b', 'café', '12:30']) {
     testWidgets('A path param "$name" is encoded in the url and reads back whole', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
-      router.push(_FileRoute(name: name));
+      unawaited(router.push(_FileRoute(name: name)));
       await tester.pumpAndSettle();
       expect(find.text('File $name'), findsOneWidget);
       final url = router.urlState.uri;

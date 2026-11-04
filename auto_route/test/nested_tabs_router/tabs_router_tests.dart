@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -46,7 +48,7 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
     tester,
   ) async {
     await pumpRouter(tester);
-    router.navigate(const Tab2Route());
+    unawaited(router.navigate(const Tab2Route()));
     await tester.pumpAndSettle();
     expectTopPage(router, Tab2Nested1Route.name);
     expect(router.urlState.url, '/tab2');
@@ -56,7 +58,7 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
     tester,
   ) async {
     await pumpRouter(tester);
-    router.navigate(const Tab3Route());
+    unawaited(router.navigate(const Tab3Route()));
     await tester.pumpAndSettle();
     expectTopPage(router, Tab3Nested1Route.name);
     expect(router.urlState.url, '/tab3');
@@ -66,7 +68,7 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
     'Navigating to Tab3Route with children [Tab3Nested2Route] using root router should present FirstRoute/Tab3Route/Tab3Nested2Route',
     (tester) async {
       await pumpRouter(tester);
-      router.navigate(const Tab3Route(children: [Tab3Nested2Route()]));
+      unawaited(router.navigate(const Tab3Route(children: [Tab3Nested2Route()])));
       await tester.pumpAndSettle();
       expectTopPage(router, Tab3Nested2Route.name);
       expect(router.urlState.url, '/tab3/tab3Nested2');
@@ -77,12 +79,12 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
     'Navigating from un-maintainedState route FirstRoute/Tab3Route/Tab3Nested2Route and going back should present FirstRoute/Tab3Route/Tab3Nested1Route',
     (tester) async {
       await pumpRouter(tester);
-      router.navigate(const Tab3Route(children: [Tab3Nested2Route()]));
+      unawaited(router.navigate(const Tab3Route(children: [Tab3Nested2Route()])));
       await tester.pumpAndSettle();
       expectTopPage(router, Tab3Nested2Route.name);
-      router.navigate(const Tab1Route());
+      unawaited(router.navigate(const Tab1Route()));
       await tester.pumpAndSettle();
-      router.navigate(const Tab3Route());
+      unawaited(router.navigate(const Tab3Route()));
       await tester.pumpAndSettle();
       expect(router.urlState.url, '/tab3');
     },

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -25,9 +27,9 @@ void main() {
 
   Future<void> pushSecondThenThird(WidgetTester tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
-    router.push(const ThirdRoute());
+    unawaited(router.push(const ThirdRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
     expect(router.navigationHistory.length, 3);
@@ -58,7 +60,7 @@ void main() {
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
 
-    router.push(const ThirdRoute());
+    unawaited(router.push(const ThirdRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
     expect(router.navigationHistory.length, 3);

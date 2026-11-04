@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -30,7 +32,7 @@ void main() {
     final start = browserSerialCount;
     expect(browserPath, '/?search=shoes');
 
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await settleBrowser(tester);
     expect(browserPath, '/second-route');
 

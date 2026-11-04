@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -66,7 +68,7 @@ void main() {
       AutoRoute(path: '/c', page: _awarePage('C')),
     ]);
 
-    router.push(const _Route('C'));
+    unawaited(router.push(const _Route('C')));
     await tester.pumpAndSettle();
     expect(_events, ['B.didPushNext', 'C.didPush']);
 
@@ -90,12 +92,12 @@ void main() {
       ),
       AutoRoute(path: '/c', page: _awarePage('C')),
     ]);
-    router.innerRouterOf<StackRouter>('A')!.push(const _Route('B2'));
+    unawaited(router.innerRouterOf<StackRouter>('A')!.push(const _Route('B2')));
     await tester.pumpAndSettle();
     expect(_events, ['B1.didPushNext', 'B2.didPush']);
 
     _events.clear();
-    router.push(const _Route('C'));
+    unawaited(router.push(const _Route('C')));
     await tester.pumpAndSettle();
     expect(_events, ['B2.didPushNext', 'C.didPush']);
 
@@ -143,7 +145,7 @@ void main() {
     expect(find.text('Something'), findsOneWidget);
 
     _events.clear();
-    router.root.push(const _Route('BottomSheetRoute'));
+    unawaited(router.root.push(const _Route('BottomSheetRoute')));
     await tester.pumpAndSettle();
     expect(find.text('sheet'), findsOneWidget);
     expect(_events, ['Something.didPushNext']);
@@ -171,7 +173,7 @@ void main() {
         children: [AutoRoute(path: '', page: _awarePage('B'))],
       ),
     ]);
-    router.push(const _Route('A'));
+    unawaited(router.push(const _Route('A')));
     await tester.pumpAndSettle();
     expect(_events, ['Home.didPushNext', 'B.didPush']);
 

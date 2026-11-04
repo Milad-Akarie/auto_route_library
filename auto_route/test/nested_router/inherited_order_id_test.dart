@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -29,10 +31,10 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router, initialLink: '/orders');
-    tester.element(find.text('Orders')).navigateTo(_OrderRoute(orderId: 'o-1'));
+    unawaited(tester.element(find.text('Orders')).navigateTo(_OrderRoute(orderId: 'o-1')));
     await tester.pumpAndSettle();
 
-    tester.element(find.text('Order o-1')).navigateTo(const _OrderPaymentProofRoute());
+    unawaited(tester.element(find.text('Order o-1')).navigateTo(const _OrderPaymentProofRoute()));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Payment proof of o-1'), findsOneWidget);

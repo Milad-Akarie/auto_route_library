@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -45,11 +47,11 @@ void main() {
     await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
     await tester.pumpAndSettle();
     if (nested) {
-      router.push(const _HostRoute());
+      unawaited(router.push(const _HostRoute()));
       await tester.pumpAndSettle();
-      router.innerRouterOf<StackRouter>(_HostRoute.name)!.push(const _CountedRoute());
+      unawaited(router.innerRouterOf<StackRouter>(_HostRoute.name)!.push(const _CountedRoute()));
     } else {
-      router.push(const _CountedRoute());
+      unawaited(router.push(const _CountedRoute()));
     }
     await tester.pumpAndSettle();
     expect(router.topRoute.name, _CountedRoute.name);

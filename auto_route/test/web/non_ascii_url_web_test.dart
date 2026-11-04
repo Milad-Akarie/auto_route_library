@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -30,7 +32,7 @@ void main() {
   testWidgets('On web, a url with a letter outside ASCII follows the pages', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(const _CafeRoute());
+    unawaited(router.push(const _CafeRoute()));
     await settleBrowser(tester);
     expect(tester.takeException(), isNull);
     expect(router.urlState.uri.toString(), '/caf%C3%A9');

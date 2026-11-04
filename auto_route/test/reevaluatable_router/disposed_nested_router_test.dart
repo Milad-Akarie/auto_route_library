@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -40,7 +42,7 @@ void main() {
   testWidgets('a reevaluation stops when its nested router is disposed meanwhile', (tester) async {
     final reevaluate = ValueNotifier(0);
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluate);
-    router.push(const NamedRoute('WalletRoute'));
+    unawaited(router.push(const NamedRoute('WalletRoute')));
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
     expect(router.currentPath, '/wallet');
@@ -48,7 +50,7 @@ void main() {
     reevaluate.value++;
     // The reevaluation reaches the wallet's guard.
     await tester.pump(const Duration(milliseconds: 50));
-    router.replaceAll([const NamedRoute('SignInRoute')]);
+    unawaited(router.replaceAll([const NamedRoute('SignInRoute')]));
     await pumpPastTheGuard(tester);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
@@ -61,9 +63,9 @@ void main() {
   // router, and the shell is replaced while the wallet's guard runs.
   testWidgets('a push stops when its nested router is disposed while its guard runs', (tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const NamedRoute('WalletRoute'));
+    unawaited(router.push(const NamedRoute('WalletRoute')));
     await tester.pump(const Duration(milliseconds: 50));
-    router.replaceAll([const NamedRoute('SignInRoute')]);
+    unawaited(router.replaceAll([const NamedRoute('SignInRoute')]));
     await pumpPastTheGuard(tester);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);

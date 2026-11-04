@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -53,7 +55,7 @@ void main() {
   // Should: the home page shows again.
   testWidgets('AutoLeadingButton on a page holding a nested router goes back to the previous page', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const _UserRoute());
+    unawaited(router.push(const _UserRoute()));
     await tester.pumpAndSettle();
     expect(find.text(_ProfileRoute.name), findsOneWidget);
 
@@ -69,7 +71,7 @@ void main() {
   // Should: the first tap shows the user page, the second the home page.
   testWidgets('AutoLeadingButton goes back to the previous page after a guard redirect was popped', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const _UserRoute());
+    unawaited(router.push(const _UserRoute()));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Posts'));

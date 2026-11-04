@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:material_ui/material_ui.dart';
@@ -26,8 +28,10 @@ class MyBooksPage extends StatelessWidget {
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
-                context.navigateTo(
-                  SettingsTab(tab: 'newSegment', query: 'newQuery'),
+                unawaited(
+                  context.navigateTo(
+                    SettingsTab(tab: 'newSegment', query: 'newQuery'),
+                  ),
                 );
               },
               child: const Text('navigate to /settings/newSegment'),

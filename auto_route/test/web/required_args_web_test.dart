@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -31,10 +33,10 @@ void main() {
   testWidgets('The browser back button on web returns to a page with its required argument', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(_SignInRoute(email: 'sam@example.com'));
+    unawaited(router.push(_SignInRoute(email: 'sam@example.com')));
     await settleBrowser(tester);
     expect(find.text('Sign in as sam@example.com'), findsOneWidget);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await settleBrowser(tester);
 
     await pressBrowserBack(tester);
@@ -47,7 +49,7 @@ void main() {
   testWidgets('The browser forward button on web reopens a page with its required argument', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(_SignInRoute(email: 'sam@example.com'));
+    unawaited(router.push(_SignInRoute(email: 'sam@example.com')));
     await settleBrowser(tester);
     await pressBrowserBack(tester);
     expectCurrentPage(router, FirstRoute.name);

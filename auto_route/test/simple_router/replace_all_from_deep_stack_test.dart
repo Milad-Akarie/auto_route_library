@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -29,13 +31,13 @@ void main() {
     testWidgets('replaceAll from ${pushed.last} leaves only the new page', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
       for (final name in pushed) {
-        router.push(PageRouteInfo(name));
+        unawaited(router.push(PageRouteInfo(name)));
         await tester.pumpAndSettle();
       }
       expectCurrentPage(router, pushed.last);
 
       final topContext = tester.element(find.text(pushed.last));
-      topContext.router.replaceAll([const PageRouteInfo('LoginRoute')]);
+      unawaited(topContext.router.replaceAll([const PageRouteInfo('LoginRoute')]));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(router.stack.map((p) => p.name), ['LoginRoute']);

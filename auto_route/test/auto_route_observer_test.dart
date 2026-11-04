@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -19,7 +21,7 @@ void main() {
     await pumpRouter(tester);
     final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
 
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
 
     expect(state.didPushNextCalled, isTrue);
@@ -33,7 +35,7 @@ void main() {
 
   testWidgets('AutoRouteObserver should notify subscribers of tab events', (tester) async {
     await pumpRouter(tester);
-    router.push(const TabsRoute());
+    unawaited(router.push(const TabsRoute()));
     await tester.pumpAndSettle();
 
     final activeTabState = tester.state<AutoRouteAwareTestPageState>(find.byKey(const ValueKey('tab1')));
@@ -67,7 +69,7 @@ void main() {
     final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
     expect(state.didPushCalled, isTrue);
 
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(state.didPushNextCalled, isTrue);
 
@@ -86,7 +88,7 @@ void main() {
   testWidgets('navigateTo() back to a page right after closing a dialog tells that page didPopNext', (tester) async {
     await pumpRouter(tester);
     final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
-    router.push(const ConfirmRoute());
+    unawaited(router.push(const ConfirmRoute()));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Open dialog'));
     await tester.pumpAndSettle();
@@ -103,9 +105,9 @@ void main() {
   testWidgets('replacing the page over a page does not tell that page didPopNext', (tester) async {
     await pumpRouter(tester);
     final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
-    router.replace(const ConfirmRoute());
+    unawaited(router.replace(const ConfirmRoute()));
     await tester.pumpAndSettle();
     expect(router.stack.map((page) => page.name), [FirstRoute.name, ConfirmRoute.name]);
     expect(state.didPopNextCalled, isFalse);
@@ -115,7 +117,7 @@ void main() {
     await pumpRouter(tester);
     expect(find.byType(AutoRouteAwareTestPage), findsOneWidget);
 
-    router.replace(const SecondRoute());
+    unawaited(router.replace(const SecondRoute()));
     await tester.pumpAndSettle();
 
     expect(find.byType(AutoRouteAwareTestPage), findsNothing);
@@ -221,7 +223,7 @@ class ConfirmRoute extends PageRouteInfo<void> {
                 TextButton(
                   onPressed: () async {
                     await dialogContext.maybePop();
-                    if (context.mounted) context.navigateTo(const FirstRoute());
+                    if (context.mounted) unawaited(context.navigateTo(const FirstRoute()));
                   },
                   child: const Text('Close and go back'),
                 ),

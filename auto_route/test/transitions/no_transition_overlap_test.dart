@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -48,7 +50,7 @@ void main() {
       await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => const DeepLink.path('/dashboard/home')));
       expect(find.text('Home'), findsOneWidget);
 
-      router.navigatePath('/dashboard/brands');
+      unawaited(router.navigatePath('/dashboard/brands'));
       await tester.pump();
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));

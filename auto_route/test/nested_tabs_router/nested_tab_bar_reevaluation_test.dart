@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -36,7 +38,7 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluateNotifier);
-    router.replace(const _HomeWrapperRoute(children: [_MyProfileRoute()]));
+    unawaited(router.replace(const _HomeWrapperRoute(children: [_MyProfileRoute()])));
     await tester.pumpAndSettle();
     expect(find.text(_MyProfileRoute.name), findsOneWidget);
 

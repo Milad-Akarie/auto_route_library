@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -59,11 +61,11 @@ void main() {
     // The removed pages' push futures complete, and so does the new one's.
     var completed = 0;
     for (final future in pushed) {
-      future.then((_) => completed++);
+      unawaited(future.then((_) => completed++));
     }
     Object? resultOfD = 'unset';
-    pushedD.then((result) => resultOfD = result);
-    router.maybePop('done');
+    unawaited(pushedD.then((result) => resultOfD = result));
+    unawaited(router.maybePop('done'));
     await tester.pumpAndSettle();
     expect(completed, 2);
     expect(resultOfD, 'done');
@@ -75,7 +77,7 @@ void main() {
   testWidgets('Observers hear the pages pushAndPopUntil removes as removed', (tester) async {
     await openHomeBC(tester, []);
 
-    router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome);
+    unawaited(router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome));
     await tester.pumpAndSettle();
     expect(observed, containsAll(['push D', 'remove B', 'remove C']));
     expect(observed.where((event) => event.startsWith('pop')), isEmpty);
@@ -86,7 +88,7 @@ void main() {
   testWidgets('router.back() after pushAndPopUntil skips the pages it removed', (tester) async {
     await openHomeBC(tester, []);
 
-    router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome);
+    unawaited(router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome));
     await tester.pumpAndSettle();
     router.back();
     await tester.pumpAndSettle();
@@ -107,15 +109,15 @@ void main() {
     );
     await tester.pumpAndSettle();
     Object? dialogResult = 'unset';
-    dialog.then((result) => dialogResult = result);
+    unawaited(dialog.then((result) => dialogResult = result));
 
-    router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome);
+    unawaited(router.pushAndPopUntil(const PageRouteInfo('D'), predicate: isHome));
     await tester.pumpAndSettle();
     expect(find.text('Dialog'), findsNothing);
     expect(dialogResult, isNull);
     expect(router.stack.map((page) => page.name), ['Home', 'D']);
 
-    router.maybePop();
+    unawaited(router.maybePop());
     await tester.pumpAndSettle();
     expectCurrentPage(router, 'Home');
     expect(find.text('Dialog'), findsNothing);

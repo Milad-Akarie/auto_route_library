@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/screens/user-data/data_collector.dart';
 import 'package:material_ui/material_ui.dart';
@@ -25,7 +27,7 @@ class UserDataPage extends StatelessWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
-                context.router.maybePopTop(userData);
+                unawaited(context.router.maybePopTop(userData));
               },
               child: const Text('Done'),
             ),

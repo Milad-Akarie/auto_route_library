@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
@@ -38,7 +40,7 @@ void main() {
     expect(router.navigationHistory.length, 1);
     expect(router.canNavigateBack, isFalse);
 
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
     expect(router.navigationHistory.length, 2);
     expect(router.canNavigateBack, isTrue);

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -65,7 +67,7 @@ void main() {
   }
 
   Future<void> pushInTab(WidgetTester tester, TabsRouter tabs, int index, String name) async {
-    tabs.stackRouterOfIndex(index)!.push(_Route(name));
+    unawaited(tabs.stackRouterOfIndex(index)!.push(_Route(name)));
     await tester.pumpAndSettle();
   }
 

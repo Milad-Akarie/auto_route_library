@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -31,7 +33,7 @@ void main() {
                 body: Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      context.router.push(const SecondRoute());
+                      unawaited(context.router.push(const SecondRoute()));
                       reevaluationNotifier.value = !reevaluationNotifier.value;
                     },
                     child: const Text('Push and reevaluate'),

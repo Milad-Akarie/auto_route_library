@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:developer';
 
 import 'package:auto_route/auto_route.dart';
@@ -56,7 +58,7 @@ void main() {
         // ignore: prefer_const_constructors
         final route = NamedRoute<_DetailArgs>('DetailRoute', args: _DetailArgs(42));
         args = WeakReference(route.args!);
-        router.push(route);
+        unawaited(router.push(route));
       }();
       await tester.pumpAndSettle();
       expect(find.text('Detail 42'), findsOneWidget);

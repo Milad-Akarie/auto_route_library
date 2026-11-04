@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -31,7 +33,7 @@ void main() {
   testWidgets('On web, a "#" in a path param survives a refresh', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789'));
+    unawaited(router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')));
     await settleBrowser(tester);
     expect(find.text('id 123#456#789, query 123#456#789'), findsOneWidget);
     expect(browserPath, '/seconds/123%23456%23789?query=123%23456%23789');
@@ -52,7 +54,7 @@ void main() {
   ) async {
     await pumpRouterApp(tester, router);
     await settleBrowser(tester);
-    router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789'));
+    unawaited(router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')));
     await settleBrowser(tester);
     expect(browserPath, '/seconds/123%23456%23789?query=123%23456%23789');
   });
@@ -64,11 +66,11 @@ void main() {
   testWidgets('On web, a query param keeps its reserved characters encoded after the back button', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(_SecondsRoute(id: '1', query: 'a&b=c/d?e#f'));
+    unawaited(router.push(_SecondsRoute(id: '1', query: 'a&b=c/d?e#f')));
     await settleBrowser(tester);
     const encoded = '/seconds/1?query=a%26b%3Dc%2Fd%3Fe%23f';
     expect(browserPath, encoded);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await settleBrowser(tester);
 
     await pressBrowserBack(tester);

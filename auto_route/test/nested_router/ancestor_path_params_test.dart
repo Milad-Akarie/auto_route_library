@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -22,7 +24,7 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router, initialLink: '/acme');
-    tester.element(find.text('Business acme')).navigateTo(const _FinishOrderingRoute());
+    unawaited(tester.element(find.text('Business acme')).navigateTo(const _FinishOrderingRoute()));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('New order at acme'), findsOneWidget);
@@ -56,7 +58,7 @@ void main() {
       ],
     );
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(_BookRoute(id: 1, someQueryParam: 1234));
+    unawaited(router.navigate(_BookRoute(id: 1, someQueryParam: 1234)));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Book 1, query 1234'), findsOneWidget);

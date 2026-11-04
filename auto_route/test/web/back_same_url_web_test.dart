@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,9 +29,9 @@ void main() {
   Future<void> pushTwoBooks(WidgetTester tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(_BookRoute(bookId: 'some-id'));
+    unawaited(router.push(_BookRoute(bookId: 'some-id')));
     await settleBrowser(tester);
-    router.push(_BookRoute(bookId: 'some-id-2'));
+    unawaited(router.push(_BookRoute(bookId: 'some-id-2')));
     await settleBrowser(tester);
     expect(find.text('Book some-id-2'), findsOneWidget);
   }
@@ -70,7 +72,7 @@ void main() {
   ) async {
     await pushTwoBooks(tester);
 
-    router.maybePop();
+    unawaited(router.maybePop());
     await settleBrowser(tester);
     expect(find.text('Book some-id'), findsOneWidget);
     expect(browserSerialCount, 1);
@@ -103,9 +105,9 @@ void main() {
   testWidgets('Going back on web returns to the same route pushed with equal arguments', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await settleBrowser(tester);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await settleBrowser(tester);
     expect(router.stack.length, 3);
     expect(browserSerialCount, 2);
@@ -121,9 +123,9 @@ void main() {
   testWidgets('navigate() to the page on top with other arguments adds no browser entry', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.navigate(_BookRoute(bookId: 'some-id'));
+    unawaited(router.navigate(_BookRoute(bookId: 'some-id')));
     await settleBrowser(tester);
-    router.navigate(_BookRoute(bookId: 'some-id-2'));
+    unawaited(router.navigate(_BookRoute(bookId: 'some-id-2')));
     await settleBrowser(tester);
     expect(find.text('Book some-id-2'), findsOneWidget);
     expect(router.stack.length, 2);

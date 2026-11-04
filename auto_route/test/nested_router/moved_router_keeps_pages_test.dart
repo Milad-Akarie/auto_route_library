@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -87,7 +89,7 @@ void main() {
       await setWidth(tester, 900);
       await pumpRouterConfigApp(tester, router.config());
 
-      router.navigatePath('/mail/drafts/3');
+      unawaited(router.navigatePath('/mail/drafts/3'));
       await tester.pumpAndSettle();
       expect(find.text('Showing draft 3'), findsOneWidget);
       expect(guardChecks, 1);

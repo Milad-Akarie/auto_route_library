@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -104,7 +106,7 @@ void main() {
     expect(router.topRoute.name, _HomeRoute.name);
 
     reset = true;
-    router.navigate(const _DashboardRoute(children: [_ProfileRoute()]));
+    unawaited(router.navigate(const _DashboardRoute(children: [_ProfileRoute()])));
     await tester.pumpAndSettle();
 
     expect(router.topRoute.name, _HomeRoute.name);

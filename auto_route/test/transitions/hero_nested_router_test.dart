@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -29,7 +31,7 @@ void main() {
 
     testWidgets('when the nested router page is pushed without children', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
-      router.push(const _ShellRoute());
+      unawaited(router.push(const _ShellRoute()));
       await _pumpUntilFlight(tester);
       _expectHeroInFlight(tester);
       await tester.pumpAndSettle();
@@ -38,7 +40,7 @@ void main() {
 
     testWidgets('when the nested router page is pushed with its first page', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
-      router.push(const _ShellRoute(children: [_ToRoute()]));
+      unawaited(router.push(const _ShellRoute(children: [_ToRoute()])));
       await _pumpUntilFlight(tester);
       _expectHeroInFlight(tester);
       await tester.pumpAndSettle();
@@ -47,7 +49,7 @@ void main() {
 
     testWidgets('when the nested router page is opened by its path', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
-      router.pushPath('/shell');
+      unawaited(router.pushPath('/shell'));
       await _pumpUntilFlight(tester);
       _expectHeroInFlight(tester);
       await tester.pumpAndSettle();
@@ -80,7 +82,7 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
     expect(find.text('from'), findsOneWidget);
 
-    router.push(const _ShellRoute());
+    unawaited(router.push(const _ShellRoute()));
     await _pumpUntilFlight(tester);
     _expectHeroInFlight(tester);
     await tester.pumpAndSettle();
@@ -96,7 +98,7 @@ void main() {
       ],
     );
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const _ToRoute());
+    unawaited(router.push(const _ToRoute()));
     await _pumpUntilFlight(tester);
     _expectHeroInFlight(tester);
     await tester.pumpAndSettle();
@@ -123,7 +125,7 @@ void main() {
       ],
     );
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const _ShellRoute());
+    unawaited(router.push(const _ShellRoute()));
     await tester.pumpAndSettle();
     expect(find.text('to'), findsOneWidget);
     expect(router.topRoute.name, _ToRoute.name);

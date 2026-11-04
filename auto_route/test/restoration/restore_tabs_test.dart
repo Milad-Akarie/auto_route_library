@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -52,9 +54,9 @@ void main() {
   testWidgets('a tab that is not active keeps its stack after restoration', (tester) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.replace(const NamedRoute('BottomNavigationRoute'));
+    unawaited(RestorableRouterApp.router.replace(const NamedRoute('BottomNavigationRoute')));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.push(const NamedRoute('InternalRoute'));
+    unawaited(RestorableRouterApp.router.push(const NamedRoute('InternalRoute')));
     await tester.pumpAndSettle();
     expect(find.text('InternalRoute'), findsOneWidget);
     await selectTab(tester, 1);
@@ -78,14 +80,14 @@ void main() {
   testWidgets('every tab keeps its stack after restoration', (tester) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.replace(const NamedRoute('BottomNavigationRoute'));
+    unawaited(RestorableRouterApp.router.replace(const NamedRoute('BottomNavigationRoute')));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.push(const NamedRoute('InternalRoute'));
+    unawaited(RestorableRouterApp.router.push(const NamedRoute('InternalRoute')));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.push(const NamedRoute('InternalRoute'));
+    unawaited(RestorableRouterApp.router.push(const NamedRoute('InternalRoute')));
     await tester.pumpAndSettle();
     await selectTab(tester, 1);
-    RestorableRouterApp.router.push(const NamedRoute('TransitionDetailsRoute'));
+    unawaited(RestorableRouterApp.router.push(const NamedRoute('TransitionDetailsRoute')));
     await tester.pumpAndSettle();
     await selectTab(tester, 2);
 

@@ -1,4 +1,6 @@
 @GenerateNiceMocks([MockSpec<AutoRouterObserver>()])
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -21,15 +23,15 @@ void main() {
     await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [mockObserver]));
     expect(verify(mockObserver.didPush(captureAny, any)).captured.single.settings.name, FirstRoute.name);
 
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(verify(mockObserver.didPush(captureAny, any)).captured.single.settings.name, SecondRoute.name);
 
-    router.maybePop();
+    unawaited(router.maybePop());
     await tester.pumpAndSettle();
     expect(verify(mockObserver.didPop(captureAny, any)).captured.single.settings.name, SecondRoute.name);
 
-    router.replace(const SecondRoute());
+    unawaited(router.replace(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(verify(mockObserver.didRemove(captureAny, any)).captured.single.settings.name, FirstRoute.name);
     expect(verify(mockObserver.didPush(captureAny, any)).captured.single.settings.name, SecondRoute.name);

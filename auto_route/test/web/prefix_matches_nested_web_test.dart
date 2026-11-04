@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web/web.dart' show window;
 
@@ -24,9 +26,9 @@ void main() {
     final router = NestedTabsRouter();
     await pumpRouterConfigApp(tester, router.config(includePrefixMatches: true));
     await settleBrowser(tester);
-    router.navigate(const Tab2Route());
+    unawaited(router.navigate(const Tab2Route()));
     await settleBrowser(tester);
-    router.navigate(const Tab3Route());
+    unawaited(router.navigate(const Tab3Route()));
     await settleBrowser(tester);
     expect(browserPath, '/tab3');
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.dart';
@@ -36,10 +38,12 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
                 setState(() {
                   queryUpdateCont++;
                 });
-                context.navigateTo(
-                  SettingsTab(
-                    tab: 'Updated Path param $queryUpdateCont',
-                    query: 'updated Query $queryUpdateCont',
+                unawaited(
+                  context.navigateTo(
+                    SettingsTab(
+                      tab: 'Updated Path param $queryUpdateCont',
+                      query: 'updated Query $queryUpdateCont',
+                    ),
                   ),
                 );
               },
@@ -47,9 +51,11 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
             ),
             ElevatedButton(
               onPressed: () {
-                context.navigateTo(
-                  BooksTab(
-                    children: [BookDetailsRoute(id: 1)],
+                unawaited(
+                  context.navigateTo(
+                    BooksTab(
+                      children: [BookDetailsRoute(id: 1)],
+                    ),
                   ),
                 );
               },

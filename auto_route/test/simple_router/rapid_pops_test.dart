@@ -38,11 +38,11 @@ void main() {
   // The second call removes SignInRoute too, though it has not shown yet (#1797).
   testWidgets('pushAndPopUntil twice in a row', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const PageRouteInfo('ShoppingCartRoute'));
+    unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
     await tester.pumpAndSettle();
 
-    router.pushAndPopUntil(const PageRouteInfo('SignInRoute'), predicate: (_) => false);
-    router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false);
+    unawaited(router.pushAndPopUntil(const PageRouteInfo('SignInRoute'), predicate: (_) => false));
+    unawaited(router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['VerifyRoute']);
@@ -52,15 +52,15 @@ void main() {
   // while the previous page is still animating.
   testWidgets('pushAndPopUntil while the previous one animates', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const PageRouteInfo('ShoppingCartRoute'));
+    unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
     await tester.pumpAndSettle();
 
-    router.pushAndPopUntil(const PageRouteInfo('SignInRoute'), predicate: (_) => false);
+    unawaited(router.pushAndPopUntil(const PageRouteInfo('SignInRoute'), predicate: (_) => false));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
-    router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false);
+    unawaited(router.pushAndPopUntil(const PageRouteInfo('VerifyRoute'), predicate: (_) => false));
     await tester.pump(const Duration(milliseconds: 50));
-    router.pushAndPopUntil(const PageRouteInfo('MainRoute'), predicate: (_) => false);
+    unawaited(router.pushAndPopUntil(const PageRouteInfo('MainRoute'), predicate: (_) => false));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['MainRoute']);
@@ -71,7 +71,7 @@ void main() {
   testWidgets('popUntilRouteWithName, push, then popUntilRouteWithName again', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     for (final name in ['ShoppingCartRoute', 'OrderSummaryRoute', 'PaymentTerminationRoute']) {
-      router.push(PageRouteInfo(name));
+      unawaited(router.push(PageRouteInfo(name)));
       await tester.pumpAndSettle();
     }
 
@@ -88,8 +88,8 @@ void main() {
   // switching tabs quickly calls it on each tap.
   testWidgets('popUntilRoot twice while pages animate in', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const PageRouteInfo('ShoppingCartRoute'));
-    router.push(const PageRouteInfo('OrderSummaryRoute'));
+    unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
+    unawaited(router.push(const PageRouteInfo('OrderSummaryRoute')));
     await tester.pump(const Duration(milliseconds: 10));
 
     router.popUntilRoot();
@@ -104,11 +104,11 @@ void main() {
   // animating in.
   testWidgets('popAndPushAll while the page it pops animates in', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const PageRouteInfo('CustomStackFlow'));
+    unawaited(router.push(const PageRouteInfo('CustomStackFlow')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 150));
 
-    router.popAndPushAll(const [PageRouteInfo('FirstRoute'), PageRouteInfo('SecondRoute')]);
+    unawaited(router.popAndPushAll(const [PageRouteInfo('FirstRoute'), PageRouteInfo('SecondRoute')]));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(stackNames(), ['MainRoute', 'FirstRoute', 'SecondRoute']);

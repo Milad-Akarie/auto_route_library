@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -24,11 +26,11 @@ void main() {
   testWidgets('removeWhere removes the matching page, not the top page of the same route', (tester) async {
     const loaderKey = ValueKey('loader');
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const _FormRoute());
+    unawaited(router.push(const _FormRoute()));
     await tester.pumpAndSettle();
-    router.replace(_InfoRoute(key: loaderKey, title: 'Processing'));
+    unawaited(router.replace(_InfoRoute(key: loaderKey, title: 'Processing')));
     await tester.pumpAndSettle();
-    router.push(_InfoRoute(title: 'Success'));
+    unawaited(router.push(_InfoRoute(title: 'Success')));
     await tester.pumpAndSettle();
     expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name, _InfoRoute.name]);
 
@@ -47,9 +49,9 @@ void main() {
   // from below it.
   testWidgets('removeWhere below the top page keeps the top page state', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(_InfoRoute(title: 'Processing'));
+    unawaited(router.push(_InfoRoute(title: 'Processing')));
     await tester.pumpAndSettle();
-    router.push(_InfoRoute(title: 'Success'));
+    unawaited(router.push(_InfoRoute(title: 'Success')));
     await tester.pumpAndSettle();
     final topState = tester.state(find.byType(_InfoPage));
 

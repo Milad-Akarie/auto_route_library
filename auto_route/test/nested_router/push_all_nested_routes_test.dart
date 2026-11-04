@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -29,7 +31,7 @@ void main() {
 
   Future<StackRouter> openDashboard(WidgetTester tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.replaceAll([const _DashboardRoute()]);
+    unawaited(router.replaceAll([const _DashboardRoute()]));
     await tester.pumpAndSettle();
     expectTopPage(router, _MetricsRoute.name);
     return router.innerRouterOf<StackRouter>(_DashboardRoute.name)!;
@@ -44,7 +46,7 @@ void main() {
   testWidgets('replaceAll with two routes of a nested router opens both in one nested router', (tester) async {
     final dashboard = await openDashboard(tester);
 
-    dashboard.replaceAll([const _UsersRoute(), const _UserRoute(userId: 1)]);
+    unawaited(dashboard.replaceAll([const _UsersRoute(), const _UserRoute(userId: 1)]));
     await tester.pumpAndSettle();
     expect(dashboard.stack.map((p) => p.name), [_usersShell]);
     final shell = dashboard.innerRouterOf<StackRouter>(_usersShell)!;
@@ -62,7 +64,7 @@ void main() {
   testWidgets('pushAll with two routes of a nested router opens both in one nested router', (tester) async {
     final dashboard = await openDashboard(tester);
 
-    dashboard.pushAll([const _UsersRoute(), const _UserRoute(userId: 1)]);
+    unawaited(dashboard.pushAll([const _UsersRoute(), const _UserRoute(userId: 1)]));
     await tester.pumpAndSettle();
     expect(dashboard.stack.map((p) => p.name), [_MetricsRoute.name, _usersShell]);
     final shell = dashboard.innerRouterOf<StackRouter>(_usersShell)!;
@@ -75,10 +77,12 @@ void main() {
   testWidgets('pushAll keeps a parent the caller names for each route', (tester) async {
     final dashboard = await openDashboard(tester);
 
-    dashboard.pushAll([
-      const PageRouteInfo(_usersShell, initialChildren: [_UsersRoute()]),
-      const PageRouteInfo(_usersShell, initialChildren: [_UserRoute(userId: 1)]),
-    ]);
+    unawaited(
+      dashboard.pushAll([
+        const PageRouteInfo(_usersShell, initialChildren: [_UsersRoute()]),
+        const PageRouteInfo(_usersShell, initialChildren: [_UserRoute(userId: 1)]),
+      ]),
+    );
     await tester.pumpAndSettle();
     expect(dashboard.stack.map((p) => p.name), [_MetricsRoute.name, _usersShell, _usersShell]);
   });

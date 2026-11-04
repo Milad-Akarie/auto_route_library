@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import '../main_router.dart';
@@ -25,12 +27,12 @@ void main() {
     final start = browserSerialCount;
     expect(browserPath, '/');
 
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
     expect(browserPath, '/second-route');
     expect(browserSerialCount, start + 1);
 
-    router.navigate(const ThirdRoute());
+    unawaited(router.navigate(const ThirdRoute()));
     await settleBrowser(tester);
     expect(browserPath, '/third-route');
     expect(browserSerialCount, start + 2);
@@ -41,9 +43,9 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
     final start = browserSerialCount;
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await settleBrowser(tester);
-    router.navigate(const ThirdRoute());
+    unawaited(router.navigate(const ThirdRoute()));
     await settleBrowser(tester);
 
     await browserMove(tester, router.back);

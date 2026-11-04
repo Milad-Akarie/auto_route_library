@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,7 +29,7 @@ void main() {
   // is not a subtype of type 'AutoRoutePage<bool>' in type cast".
   testWidgets('Pushing a nested route by its full path awaiting a bool shows it', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.pushPath<bool>('/home/content/1');
+    unawaited(router.pushPath<bool>('/home/content/1'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Content 1'), findsOneWidget);
@@ -48,10 +50,12 @@ void main() {
       await pumpRouterConfigApp(tester, router.config());
       bool? result;
       var completed = false;
-      push(router).then((value) {
-        result = value;
-        completed = true;
-      });
+      unawaited(
+        push(router).then((value) {
+          result = value;
+          completed = true;
+        }),
+      );
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(find.text('Content 1'), findsOneWidget);
@@ -70,7 +74,7 @@ void main() {
   testWidgets("pushPath('/home/content/1') with the home on top returns the content's bool", (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     bool? result;
-    router.pushPath<bool>('/home/content/1').then((value) => result = value);
+    unawaited(router.pushPath<bool>('/home/content/1').then((value) => result = value));
     await tester.pumpAndSettle();
     expect(router.stack.map((page) => page.name), ['HomeRoute']);
 
@@ -97,11 +101,11 @@ void main() {
   ]) {
     testWidgets('$how with another page on top pushes a new parent whose future waits for the parent', (tester) async {
       await pumpRouterConfigApp(tester, router.config());
-      router.push(const _OtherRoute());
+      unawaited(router.push(const _OtherRoute()));
       await tester.pumpAndSettle();
       expect(router.stack.map((page) => page.name), ['HomeRoute', 'OtherRoute']);
       var completed = false;
-      push(router).then((_) => completed = true);
+      unawaited(push(router).then((_) => completed = true));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(router.stack.map((page) => page.name), ['HomeRoute', 'OtherRoute', 'HomeRoute']);

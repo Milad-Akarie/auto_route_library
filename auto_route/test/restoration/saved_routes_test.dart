@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -64,13 +66,13 @@ void main() {
   // path and query params, even when the url doesn't change.
   testWidgets('the configuration holds every page of the stacks', (tester) async {
     await pumpApp(tester);
-    router.pushPath('/books/7?edition=2');
+    unawaited(router.pushPath('/books/7?edition=2'));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('ShelfRoute'));
+    unawaited(router.push(const NamedRoute('ShelfRoute')));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('ShelfItemRoute'));
+    unawaited(router.push(const NamedRoute('ShelfItemRoute')));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('ShelfItemRoute'));
+    unawaited(router.push(const NamedRoute('ShelfItemRoute')));
     await tester.pumpAndSettle();
     expect(router.currentPath, '/shelf/item');
 
@@ -94,9 +96,9 @@ void main() {
 
   testWidgets('a tabs router saves every tab, the active one last', (tester) async {
     await pumpApp(tester);
-    router.navigate(const NamedRoute('TabsRoute', children: [NamedRoute('FeedTabRoute')]));
+    unawaited(router.navigate(const NamedRoute('TabsRoute', children: [NamedRoute('FeedTabRoute')])));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('PostRoute'));
+    unawaited(router.push(const NamedRoute('PostRoute')));
     await tester.pumpAndSettle();
     router.innerRouterOf<TabsRouter>('TabsRoute')!.setActiveIndex(1);
     await tester.pumpAndSettle();
@@ -121,7 +123,7 @@ void main() {
 
   testWidgets('the saved pages are not sent to the platform', (tester) async {
     await pumpApp(tester);
-    router.pushPath('/books/7');
+    unawaited(router.pushPath('/books/7'));
     await tester.pumpAndSettle();
     expect(platformStates, isNotEmpty);
     expect(platformStates, everyElement(isNull));

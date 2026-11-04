@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -34,7 +36,7 @@ void main() {
                 return;
               }
               resolver.next(false);
-              router.replaceAll([const _LoginRoute()]);
+              unawaited(router.replaceAll([const _LoginRoute()]));
             }),
           ],
         ),
@@ -91,7 +93,7 @@ class _LoginRoute extends PageRouteInfo<void> {
         body: FilledButton(
           onPressed: () {
             authRepo.login();
-            context.router.replaceAll([const _HomeRoute()]);
+            unawaited(context.router.replaceAll([const _HomeRoute()]));
           },
           child: const Text('Log In'),
         ),

@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -44,7 +46,7 @@ void main() {
         'includePrefixMatches: $includePrefixMatches', (tester) async {
       await pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));
       await settleBrowser(tester);
-      router.navigate(const _TabsRoute());
+      unawaited(router.navigate(const _TabsRoute()));
       await settleBrowser(tester);
       expect(browserPath, '/tabs/tab-1');
       expect(find.text('Tab 1'), findsOneWidget);

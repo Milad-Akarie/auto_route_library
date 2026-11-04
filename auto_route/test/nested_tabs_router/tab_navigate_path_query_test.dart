@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -116,7 +118,7 @@ class _SettingsPage extends StatelessWidget {
                 '/dashboard/settings?query=path_3',
                 includePrefixMatches: false,
               );
-              if (route != null) context.router.navigate(route);
+              if (route != null) unawaited(context.router.navigate(route));
             },
             child: const Text('buildPageRoute'),
           ),

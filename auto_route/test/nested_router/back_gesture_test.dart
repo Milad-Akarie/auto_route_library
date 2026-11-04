@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -66,10 +68,10 @@ void main() {
   // topMostRouter.canPop instead.
   group('with a sub-route pushed in a nested router', () {
     Future<StackRouter> pushSubRoute(WidgetTester tester) async {
-      router.push(SecondHostRoute());
+      unawaited(router.push(SecondHostRoute()));
       await tester.pumpAndSettle();
       final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!;
-      nested.push(const SecondNested3Route());
+      unawaited(nested.push(const SecondNested3Route()));
       await tester.pumpAndSettle();
       expectTopPage(router, SecondNested3Route.name);
       return nested;
@@ -113,12 +115,12 @@ void main() {
   // Tab2Nested2Route. Each back pops only the top-most route.
   group('with two levels of nested routers', () {
     Future<void> pushDeepRoutes(WidgetTester tester) async {
-      router.push(SecondHostRoute());
+      unawaited(router.push(SecondHostRoute()));
       await tester.pumpAndSettle();
       final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!;
-      nested.push(const Tab2Route());
+      unawaited(nested.push(const Tab2Route()));
       await tester.pumpAndSettle();
-      nested.innerRouterOf<StackRouter>(Tab2Route.name)!.push(const Tab2Nested2Route());
+      unawaited(nested.innerRouterOf<StackRouter>(Tab2Route.name)!.push(const Tab2Nested2Route()));
       await tester.pumpAndSettle();
       expectTopPage(router, Tab2Nested2Route.name);
     }

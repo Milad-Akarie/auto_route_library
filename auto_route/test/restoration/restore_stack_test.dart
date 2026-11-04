@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,11 +34,11 @@ void main() {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
     var router = RestorableRouterApp.router;
-    router.replace(const NamedRoute('ExternalRoute'));
+    unawaited(router.replace(const NamedRoute('ExternalRoute')));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('ExternalRoute'));
+    unawaited(router.push(const NamedRoute('ExternalRoute')));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('ExternalRoute'));
+    unawaited(router.push(const NamedRoute('ExternalRoute')));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
 
@@ -64,9 +66,9 @@ void main() {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
     var router = RestorableRouterApp.router;
-    router.push(const NamedRoute('SettingsRoute'));
+    unawaited(router.push(const NamedRoute('SettingsRoute')));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('ExternalRoute'));
+    unawaited(router.push(const NamedRoute('ExternalRoute')));
     await tester.pumpAndSettle();
 
     await tester.restartAndRestore();
@@ -84,13 +86,13 @@ void main() {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
     var router = RestorableRouterApp.router;
-    router.push(const NamedRoute('SettingsRoute'));
+    unawaited(router.push(const NamedRoute('SettingsRoute')));
     await tester.pumpAndSettle();
-    router.push(const NamedRoute('ShelfRoute'));
+    unawaited(router.push(const NamedRoute('ShelfRoute')));
     await tester.pumpAndSettle();
-    router.pushPath('item/7');
+    unawaited(router.pushPath('item/7'));
     await tester.pumpAndSettle();
-    router.pushPath('item/8');
+    unawaited(router.pushPath('item/8'));
     await tester.pumpAndSettle();
     expect(find.text('Item 8'), findsOneWidget);
     expect(router.currentPath, '/shelf-route/item/8');
@@ -132,9 +134,9 @@ void main() {
     );
     await tester.pumpWidget(RestorableRouterApp(buildShopRouter));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.push(const NamedRoute('ProductsRoute'));
+    unawaited(RestorableRouterApp.router.push(const NamedRoute('ProductsRoute')));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.push(const NamedRoute('ProductDetailsRoute'));
+    unawaited(RestorableRouterApp.router.push(const NamedRoute('ProductDetailsRoute')));
     await tester.pumpAndSettle();
 
     await tester.restartAndRestore();

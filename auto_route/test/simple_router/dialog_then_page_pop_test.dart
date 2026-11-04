@@ -24,7 +24,7 @@ void main() {
   // the page should close, without the '!_debugLocked' assertion.
   testWidgets('maybePop on the page after popping a dialog with maybePop closes the page', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const _FormRoute());
+    unawaited(router.push(const _FormRoute()));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Close form'));
@@ -80,7 +80,7 @@ class _FormPage extends StatelessWidget {
           unawaited(_callAsyncCubitMethod());
 
           if (result == true && context.mounted) {
-            context.router.maybePop(true);
+            unawaited(context.router.maybePop(true));
           }
         },
       ),

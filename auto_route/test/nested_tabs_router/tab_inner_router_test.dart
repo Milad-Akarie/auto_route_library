@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -42,7 +44,7 @@ void main() {
       );
       await pumpRouterConfigApp(tester, router.config());
       final tabsRouter = router.innerRouterOf<TabsRouter>(_HostRoute.name)!;
-      tabsRouter.innerRouterOf<StackRouter>(_NestedHostRoute.name)!.push(const _NestedSecondRoute());
+      unawaited(tabsRouter.innerRouterOf<StackRouter>(_NestedHostRoute.name)!.push(const _NestedSecondRoute()));
       await tester.pumpAndSettle();
       expect(find.text(_NestedSecondRoute.name), findsOneWidget);
 

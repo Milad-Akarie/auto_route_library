@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -58,7 +60,7 @@ void main() {
         'includePrefixMatches: $includePrefixMatches', (tester) async {
       final router = _router();
       await pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));
-      router.navigate(const _Route('TabsRoute'));
+      unawaited(router.navigate(const _Route('TabsRoute')));
       await tester.pumpAndSettle();
       expect(find.text('Tab 1'), findsOneWidget);
       expect(router.currentUrl, '/tabs/tab-1');

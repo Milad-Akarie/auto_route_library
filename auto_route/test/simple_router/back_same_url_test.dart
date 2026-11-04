@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,9 +27,9 @@ void main() {
   // straight to Home. On web, back() moves the browser's own history.
   testWidgets('back() returns to a page with the same url as the current one', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(_BookRoute(bookId: 'some-id'));
+    unawaited(router.push(_BookRoute(bookId: 'some-id')));
     await tester.pumpAndSettle();
-    router.push(_BookRoute(bookId: 'some-id-2'));
+    unawaited(router.push(_BookRoute(bookId: 'some-id-2')));
     await tester.pumpAndSettle();
     expect(find.text('Book some-id-2'), findsOneWidget);
     expect(router.navigationHistory.length, 3);
@@ -44,9 +46,9 @@ void main() {
   // which got no history entry, and back() went straight to Home.
   testWidgets('back() returns to the same route pushed with equal arguments', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(router.stack.length, 3);
     expect(router.navigationHistory.length, 3);
@@ -62,9 +64,9 @@ void main() {
   // before, like maybePop().
   testWidgets('back() after navigate() replaced a page in place goes to the page before', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(_BookRoute(bookId: 'some-id'));
+    unawaited(router.navigate(_BookRoute(bookId: 'some-id')));
     await tester.pumpAndSettle();
-    router.navigate(_BookRoute(bookId: 'some-id-2'));
+    unawaited(router.navigate(_BookRoute(bookId: 'some-id-2')));
     await tester.pumpAndSettle();
     expect(find.text('Book some-id-2'), findsOneWidget);
     expect(router.stack.length, 2);
@@ -79,7 +81,7 @@ void main() {
   // Rebuilding the url of the page on top adds no entry.
   testWidgets('Rebuilding the url of the same page adds no history entry', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.push(_BookRoute(bookId: 'some-id'));
+    unawaited(router.push(_BookRoute(bookId: 'some-id')));
     await tester.pumpAndSettle();
     router.navigationHistory.rebuildUrl();
     await tester.pumpAndSettle();

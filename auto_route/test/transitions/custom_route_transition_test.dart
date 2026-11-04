@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -54,11 +56,11 @@ void main() {
 
   testWidgets('A CustomRoute pushed in a nested router uses its own transitionsBuilder', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigatePath('/devices/add');
+    unawaited(router.navigatePath('/devices/add'));
     await tester.pumpAndSettle();
     used.clear();
 
-    router.navigatePath('/devices/1/controller');
+    unawaited(router.navigatePath('/devices/1/controller'));
     await tester.pumpAndSettle();
 
     expect(find.text('Controller'), findsOneWidget);
@@ -70,7 +72,7 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
     used.clear();
 
-    router.navigatePath('/devices/1/controller');
+    unawaited(router.navigatePath('/devices/1/controller'));
     await tester.pumpAndSettle();
 
     expect(find.text('Controller'), findsOneWidget);

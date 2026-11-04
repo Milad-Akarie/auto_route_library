@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -22,9 +24,9 @@ void main() {
     final router = NestedRouter();
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.navigate(SecondHostRoute());
+    unawaited(router.navigate(SecondHostRoute()));
     await settleBrowser(tester);
-    router.innerRouterOf<StackRouter>(SecondHostRoute.name)!.push(const SecondNested2Route());
+    unawaited(router.innerRouterOf<StackRouter>(SecondHostRoute.name)!.push(const SecondNested2Route()));
     await settleBrowser(tester);
     expectTopPage(router, SecondNested2Route.name);
 
@@ -41,11 +43,13 @@ void main() {
     final router = NestedTabsRouter();
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.navigate(const Tab2Route());
+    unawaited(router.navigate(const Tab2Route()));
     await settleBrowser(tester);
-    router.innerRouterOf<TabsRouter>(TabsHostRoute.name)!.stackRouterOfIndex(1)!.push(const Tab2Nested2Route());
+    unawaited(
+      router.innerRouterOf<TabsRouter>(TabsHostRoute.name)!.stackRouterOfIndex(1)!.push(const Tab2Nested2Route()),
+    );
     await settleBrowser(tester);
-    router.navigate(const Tab3Route());
+    unawaited(router.navigate(const Tab3Route()));
     await settleBrowser(tester);
     expect(browserPath, '/tab3');
 

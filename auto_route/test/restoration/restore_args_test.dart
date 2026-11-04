@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,7 +27,7 @@ void main() {
   testWidgets('a page whose required argument was not saved is left out on restoration', (tester) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.push(_ManufacturersByLetterRoute(letter: const _Letter('M')));
+    unawaited(RestorableRouterApp.router.push(_ManufacturersByLetterRoute(letter: const _Letter('M'))));
     await tester.pumpAndSettle();
     expect(find.text('Manufacturers by M'), findsOneWidget);
 
@@ -41,7 +43,7 @@ void main() {
   testWidgets('a page that takes its value from a path param comes back', (tester) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
-    RestorableRouterApp.router.push(_BookRoute(id: 7));
+    unawaited(RestorableRouterApp.router.push(_BookRoute(id: 7)));
     await tester.pumpAndSettle();
     expect(find.text('Book 7'), findsOneWidget);
 

@@ -39,7 +39,7 @@ void main() {
         ],
       );
       await pumpRouterApp(tester, router, reevaluationNotifier: user);
-      router.push(const NamedRoute('DialogRoute'));
+      unawaited(router.push(const NamedRoute('DialogRoute')));
       await tester.pumpAndSettle();
       expectTopPage(router, 'DialogRoute');
 
@@ -80,7 +80,7 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router, reevaluationNotifier: user);
-    router.push(const NamedRoute('DialogRoute'));
+    unawaited(router.push(const NamedRoute('DialogRoute')));
     await tester.pumpAndSettle();
     expectTopPage(router, 'DialogRoute');
 
@@ -116,7 +116,7 @@ void main() {
             AutoRouteGuard.simple((resolver, router) {
               resolver.next();
               if (isAppGuarded && !router.isRouteActive('AppGuardRoute')) {
-                router.push(const NamedRoute('AppGuardRoute'));
+                unawaited(router.push(const NamedRoute('AppGuardRoute')));
               }
             }),
           ],

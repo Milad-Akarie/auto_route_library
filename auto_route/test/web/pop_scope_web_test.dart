@@ -36,7 +36,7 @@ void main() {
   testWidgets('PopScope on web blocks the browser back button', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(const _FormRoute());
+    unawaited(router.push(const _FormRoute()));
     await settleBrowser(tester);
     final formEntry = browserSerialCount;
 
@@ -57,7 +57,7 @@ void main() {
   testWidgets('WillPopScope on web blocks the browser back button', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     await settleBrowser(tester);
-    router.push(const _LegacyFormRoute());
+    unawaited(router.push(const _LegacyFormRoute()));
     await settleBrowser(tester);
     final formEntry = browserSerialCount;
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -38,9 +40,9 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router, reevaluationNotifier: auth);
-    router.push(_ProfileRoute(userId: 'u-1'));
+    unawaited(router.push(_ProfileRoute(userId: 'u-1')));
     await tester.pumpAndSettle();
-    router.push(const _SettingsRoute());
+    unawaited(router.push(const _SettingsRoute()));
     await tester.pumpAndSettle();
 
     auth.value++;

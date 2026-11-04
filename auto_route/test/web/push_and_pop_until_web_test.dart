@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import '../main_router.dart';
@@ -30,12 +32,12 @@ void main() {
     await settleBrowser(tester);
     final start = browserSerialCount;
 
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await settleBrowser(tester);
-    router.push(const ThirdRoute());
+    unawaited(router.push(const ThirdRoute()));
     await settleBrowser(tester);
 
-    router.pushAndPopUntil(const FirstRoute(), predicate: (_) => false);
+    unawaited(router.pushAndPopUntil(const FirstRoute(), predicate: (_) => false));
     await settleBrowser(tester);
     expect(router.stack.map((p) => p.name), [FirstRoute.name]);
     expect(browserPath, '/');

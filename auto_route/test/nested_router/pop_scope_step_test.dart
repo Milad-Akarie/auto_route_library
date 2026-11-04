@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -46,9 +48,9 @@ void main() {
   Future<void> openIdNumberForm(WidgetTester tester, {ThemeData? theme}) async {
     await tester.pumpWidget(MaterialApp.router(theme: theme, routerConfig: router.config()));
     await tester.pumpAndSettle();
-    router.push(const _OnboardingRoute());
+    unawaited(router.push(const _OnboardingRoute()));
     await tester.pumpAndSettle();
-    router.innerRouterOf<StackRouter>(_OnboardingRoute.name)!.push(const _IdStepRoute());
+    unawaited(router.innerRouterOf<StackRouter>(_OnboardingRoute.name)!.push(const _IdStepRoute()));
     await tester.pumpAndSettle();
     await tester.tap(find.text(_chooseType));
     await tester.pumpAndSettle();

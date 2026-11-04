@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -53,7 +55,7 @@ void main() {
   testWidgets('Changing the theme keeps the page that is open on top of the tabs', (tester) async {
     await tester.pumpWidget(app(.light));
     await tester.pumpAndSettle();
-    router.pushPath('/f');
+    unawaited(router.pushPath('/f'));
     await tester.pumpAndSettle();
     expect(find.text('F'), findsOneWidget);
 
@@ -69,7 +71,7 @@ void main() {
     await tester.pumpWidget(app(.light));
     await tester.pumpAndSettle();
     expect(router.topRoute.name, 'A');
-    router.navigatePath('/dashboardView/empty/b');
+    unawaited(router.navigatePath('/dashboardView/empty/b'));
     await tester.pumpAndSettle();
     expect(router.topRoute.name, 'B');
 

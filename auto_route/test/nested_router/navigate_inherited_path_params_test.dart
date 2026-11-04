@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -41,20 +43,22 @@ void main() {
   // 'vendor-id', not fail to parse it from null at '/dashboard/vendors/:vendor-id/branches'.
   testWidgets('navigate() from outside the nested router keeps the inherited path params', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(
-      _DashboardRoute(
-        children: [
-          _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
-        ],
+    unawaited(
+      router.navigate(
+        _DashboardRoute(
+          children: [
+            _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
+          ],
+        ),
       ),
     );
     await tester.pumpAndSettle();
     expect(router.urlState.url, '/dashboard/vendors/v-42');
-    router.push(const _SettingsRoute());
+    unawaited(router.push(const _SettingsRoute()));
     await tester.pumpAndSettle();
     expect(find.text('Settings'), findsOneWidget);
 
-    router.navigate(const _VendorBranchesRoute());
+    unawaited(router.navigate(const _VendorBranchesRoute()));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Branches of v-42'), findsOneWidget);
@@ -67,11 +71,13 @@ void main() {
   // under vendor 'v-42'.
   testWidgets('navigate() before the parent is built keeps the inherited path params', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(
-      _DashboardRoute(
-        children: [
-          _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
-        ],
+    unawaited(
+      router.navigate(
+        _DashboardRoute(
+          children: [
+            _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
+          ],
+        ),
       ),
     );
     // Let the router add the vendor page, which it does after checking guards.
@@ -79,7 +85,7 @@ void main() {
       await Future.microtask(() {});
     }
 
-    router.navigate(const _VendorBranchesRoute());
+    unawaited(router.navigate(const _VendorBranchesRoute()));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Branches of v-42'), findsOneWidget);

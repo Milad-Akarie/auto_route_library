@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -44,17 +46,17 @@ void main() {
 
   testWidgets('Reevaluation should call the guard', (tester) async {
     await pumpRouterApp(tester, router);
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await tester.pumpAndSettle();
     verify(mockListener(captureAny, router)).called(1);
-    router.reevaluateGuards();
+    unawaited(router.reevaluateGuards());
     await tester.pumpAndSettle();
     verify(mockListener(captureAny, router)).called(1);
   });
 
   testWidgets('Reevaluation should call the guard', (tester) async {
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await tester.pumpAndSettle();
     verify(mockListener(captureAny, router)).called(1);
     reevaluationNotifier.value = true;
@@ -64,7 +66,7 @@ void main() {
 
   testWidgets('Reevaluation with true should navigate to the third route', (tester) async {
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
-    router.push(const ThirdRoute());
+    unawaited(router.push(const ThirdRoute()));
     await tester.pumpAndSettle();
     final resolver = verify(mockListener(captureAny, router)).captured[0] as NavigationResolver;
     expect(resolver.isReevaluating, false);
@@ -186,7 +188,7 @@ void main() {
     );
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
     expectTopPage(router, FirstRoute.name);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     verify(mockListener(captureAny, router)).called(1);
     await tester.pumpAndSettle(const Duration(milliseconds: 800));
@@ -303,12 +305,12 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     reevaluationNotifier.value = true;
     await tester.pumpAndSettle();
     expect(router.stack.map((e) => e.name), [FirstRoute.name, SecondRoute.name, ThirdRoute.name]);
-    router.maybePop();
+    unawaited(router.maybePop());
     await tester.pumpAndSettle();
     expectTopPage(router, FirstRoute.name);
   });
@@ -338,19 +340,19 @@ void main() {
       ],
     )..ignorePopCompleters = true;
     await pumpRouterApp(tester, router);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(calls, 1);
 
     // Three passes reach the same pending resolver while the first one's guard runs.
-    router.reevaluateGuards();
-    router.reevaluateGuards();
-    router.reevaluateGuards();
+    unawaited(router.reevaluateGuards());
+    unawaited(router.reevaluateGuards());
+    unawaited(router.reevaluateGuards());
     await tester.pump(const Duration(milliseconds: 200));
     expect(calls, 4);
 
     reevaluationNotifier.value = true;
-    router.reevaluateGuards();
+    unawaited(router.reevaluateGuards());
     await tester.pumpAndSettle();
     expectTopPage(router, SecondRoute.name);
   });
@@ -415,7 +417,7 @@ void main() {
             builder: (_) => Builder(
               builder: (context) => GestureDetector(
                 onTap: () {
-                  context.router.push(const SecondRoute());
+                  unawaited(context.router.push(const SecondRoute()));
                   reevaluationNotifier.value = !reevaluationNotifier.value;
                 },
                 child: const Text('Push and reevaluate'),

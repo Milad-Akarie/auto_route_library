@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -35,11 +37,11 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, router);
-    router.push(const NamedRoute('ProductsRoute', queryParams: {'page': '1'}));
+    unawaited(router.push(const NamedRoute('ProductsRoute', queryParams: {'page': '1'})));
     await tester.pumpAndSettle();
     expect(find.text('Products page 1'), findsOneWidget);
 
-    router.replace(const NamedRoute('ProductsRoute', queryParams: {'page': '2'}));
+    unawaited(router.replace(const NamedRoute('ProductsRoute', queryParams: {'page': '2'})));
     await tester.pumpAndSettle();
     expect(router.urlState.url, '/products?page=2');
     expect(find.text('Products page 2'), findsOneWidget);

@@ -81,7 +81,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    router.navigatePath('/nested1/nested2?param=true');
+    unawaited(router.navigatePath('/nested1/nested2?param=true'));
     await tester.pumpAndSettle();
     expect(find.text('param true'), findsOneWidget);
     expect(_ParamPageState.created, 1);

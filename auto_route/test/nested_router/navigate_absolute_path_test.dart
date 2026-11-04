@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -59,7 +61,7 @@ void main() {
   // A path that only the not-found route takes still opens it.
   testWidgets('navigatePath() with an unknown absolute path opens the not-found page', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigatePath('/unknown/page');
+    unawaited(router.navigatePath('/unknown/page'));
     await tester.pumpAndSettle();
     expect(find.text('NotFoundRoute'), findsOneWidget);
   });

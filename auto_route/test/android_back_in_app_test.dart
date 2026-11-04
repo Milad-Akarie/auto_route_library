@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -49,16 +51,16 @@ void main() {
       await tester.pumpAndSettle();
       expect(frameworkHandlesBack.last, isFalse);
 
-      router.push(const _Route('LoginRoute'));
+      unawaited(router.push(const _Route('LoginRoute')));
       await tester.pumpAndSettle();
       expect(frameworkHandlesBack.last, isTrue);
       await back(tester);
       expectTopPage(router, 'WelcomeRoute');
 
-      router.replaceAll([const _Route('AuthorizedRoute')]);
+      unawaited(router.replaceAll([const _Route('AuthorizedRoute')]));
       await tester.pumpAndSettle();
       expectTopPage(router, 'HomeRoute');
-      router.innerRouterOf<StackRouter>('AuthorizedRoute')!.push(const _Route('ActivityRoute'));
+      unawaited(router.innerRouterOf<StackRouter>('AuthorizedRoute')!.push(const _Route('ActivityRoute')));
       await tester.pumpAndSettle();
       expect(frameworkHandlesBack.last, isTrue);
 

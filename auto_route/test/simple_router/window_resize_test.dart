@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -36,7 +38,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('HomeRoute 1200'), findsOneWidget);
 
-    router.push(const NamedRoute('HostRoute'));
+    unawaited(router.push(const NamedRoute('HostRoute')));
     await tester.pumpAndSettle();
     tester.view.physicalSize = const Size(900, 600);
     await tester.pumpAndSettle();

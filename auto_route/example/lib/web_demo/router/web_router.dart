@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 import 'package:example/web_demo/web_main.dart';
@@ -192,7 +194,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onPressed:
                   widget.navigate ??
                   () {
-                    context.pushRoute(const UserFavoritePostsRoute());
+                    unawaited(context.pushRoute(const UserFavoritePostsRoute()));
                   },
               child: const Text('Posts -> '),
             ),
@@ -347,7 +349,7 @@ class UserAllPostsPage extends StatelessWidget {
               onPressed:
                   navigate ??
                   () {
-                    context.pushRoute(const UserFavoritePostsRoute());
+                    unawaited(context.pushRoute(const UserFavoritePostsRoute()));
                   },
               child: const Text('Favorite'),
             ),

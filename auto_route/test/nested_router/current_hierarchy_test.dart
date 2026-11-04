@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -30,11 +32,11 @@ void main() {
       ],
     );
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(const NamedRoute('child1'));
+    unawaited(router.navigate(const NamedRoute('child1')));
     await tester.pumpAndSettle();
-    router.navigate(const NamedRoute('child3'));
+    unawaited(router.navigate(const NamedRoute('child3')));
     await tester.pumpAndSettle();
-    router.navigate(const NamedRoute('child4'));
+    unawaited(router.navigate(const NamedRoute('child4')));
     await tester.pumpAndSettle();
 
     expect(find.text('child4'), findsOneWidget);

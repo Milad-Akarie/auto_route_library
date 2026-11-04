@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -157,7 +159,7 @@ RootStackRouter _buildRouter(_Tabs kind, AutoRouteGuard guard) {
                   TextButton(
                     onPressed: () {
                       _signedIn = true;
-                      data.router.root.reevaluateGuards();
+                      unawaited(data.router.root.reevaluateGuards());
                     },
                     child: const Text('Sign in'),
                   ),

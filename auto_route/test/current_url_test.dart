@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -26,16 +28,16 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
     expect(router.currentUrl, '/random-page');
 
-    router.replace(_RedirectingRoute('FirstRoute', redirectTo: router.currentUrl));
+    unawaited(router.replace(_RedirectingRoute('FirstRoute', redirectTo: router.currentUrl)));
     await tester.pumpAndSettle();
     expect(router.currentUrl, '/first-page?redirectTo=/random-page');
 
-    router.replace(_RedirectingRoute('SecondRoute', redirectTo: router.currentUrl));
+    unawaited(router.replace(_RedirectingRoute('SecondRoute', redirectTo: router.currentUrl)));
     await tester.pumpAndSettle();
     expect(router.currentUrl, '/second-page?redirectTo=/first-page?redirectTo%3D/random-page');
     expect(find.text('SecondRoute to /first-page?redirectTo=/random-page'), findsOneWidget);
 
-    router.navigatePath(router.currentUrl);
+    unawaited(router.navigatePath(router.currentUrl));
     await tester.pumpAndSettle();
     expect(router.current.queryParams.rawMap, {'redirectTo': '/first-page?redirectTo=/random-page'});
   });
@@ -45,11 +47,11 @@ void main() {
   // should keep the '=' and '&' encoded, so the value reads back whole.
   testWidgets('currentUrl keeps "=" and "&" in a query param encoded', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.replace(_RedirectingRoute('FirstRoute', redirectTo: '?=:http://&'));
+    unawaited(router.replace(_RedirectingRoute('FirstRoute', redirectTo: '?=:http://&')));
     await tester.pumpAndSettle();
     expect(router.currentUrl, '/first-page?redirectTo=?%3D:http://%26');
 
-    router.navigatePath(router.currentUrl);
+    unawaited(router.navigatePath(router.currentUrl));
     await tester.pumpAndSettle();
     expect(router.current.queryParams.rawMap, {'redirectTo': '?=:http://&'});
   });
@@ -57,7 +59,7 @@ void main() {
   // currentUrl still reads as text: letters outside ASCII and spaces show as they are.
   testWidgets('currentUrl shows letters outside ASCII and spaces decoded', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.replace(_RedirectingRoute('FirstRoute', redirectTo: 'café au lait'));
+    unawaited(router.replace(_RedirectingRoute('FirstRoute', redirectTo: 'café au lait')));
     await tester.pumpAndSettle();
     expect(router.currentUrl, '/first-page?redirectTo=café+au+lait');
   });

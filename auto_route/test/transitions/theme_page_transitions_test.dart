@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as flutter;
@@ -44,7 +46,7 @@ void main() {
         await tester.pumpAndSettle();
         builder.calls = 0;
 
-        router.push(const _DetailsRoute());
+        unawaited(router.push(const _DetailsRoute()));
         await tester.pumpAndSettle();
 
         expect(find.text('Details'), findsOneWidget);
@@ -83,7 +85,7 @@ void main() {
         await tester.pumpAndSettle();
         builder.calls = 0;
 
-        router.push(const _DetailsRoute());
+        unawaited(router.push(const _DetailsRoute()));
         // the page is added a frame or two after the push
         for (var i = 0; i < 3 && find.text('Details').evaluate().isEmpty; i++) {
           await tester.pump();
@@ -136,7 +138,7 @@ void main() {
     builder.calls = 0;
     flutterBuilder.calls = 0;
 
-    router.push(const _DetailsRoute());
+    unawaited(router.push(const _DetailsRoute()));
     await tester.pumpAndSettle();
 
     expect(find.text('Details'), findsOneWidget);
@@ -183,7 +185,7 @@ void main() {
     await tester.pumpAndSettle();
     builder.calls = 0;
 
-    router.pushWidget(const flutter.Scaffold(body: Text('Pushed widget')));
+    unawaited(router.pushWidget(const flutter.Scaffold(body: Text('Pushed widget'))));
     await tester.pumpAndSettle();
 
     expect(find.text('Pushed widget'), findsOneWidget);

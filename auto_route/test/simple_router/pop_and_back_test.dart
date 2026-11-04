@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -26,14 +28,14 @@ void main() {
     expect(router.navigationHistory.length, 1);
     expect(router.urlState.url, '/');
 
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
     expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name]);
     expect(router.navigationHistory.length, 2);
     expect(router.urlState.url, '/second-route');
 
-    router.navigate(const ThirdRoute());
+    unawaited(router.navigate(const ThirdRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
     expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name, ThirdRoute.name]);
@@ -61,7 +63,7 @@ void main() {
   // has no history entry yet; it must take the popped page's entry, not follow it.
   testWidgets('Popping a page pushed with pushAll then going back should not return to it', (tester) async {
     await pumpRouterApp(tester, router);
-    router.pushAll([const SecondRoute(), const ThirdRoute()]);
+    unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
     expect(router.navigationHistory.length, 2);

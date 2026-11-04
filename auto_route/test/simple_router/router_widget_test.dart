@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -18,7 +20,7 @@ void main() {
 
   testWidgets('Pushing ${SecondRoute.name} should show [SecondPage]', (tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
     expect(find.text(SecondRoute.name), findsOneWidget);
     expect(router.urlState.url, '/second-route');
@@ -26,7 +28,7 @@ void main() {
 
   testWidgets('Navigating to ${SecondRoute.name} should show [SecondPage]', (tester) async {
     await pumpRouterApp(tester, router);
-    router.navigate(const SecondRoute());
+    unawaited(router.navigate(const SecondRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
     expect(router.urlState.url, '/second-route');
@@ -34,9 +36,9 @@ void main() {
 
   testWidgets('Pushing ${SecondRoute.name} then popping should show [FirstPage]', (tester) async {
     await pumpRouterApp(tester, router);
-    router.push(const SecondRoute());
+    unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
-    router.maybePop();
+    unawaited(router.maybePop());
     await tester.pumpAndSettle();
     expectCurrentPage(router, FirstRoute.name);
     expect(router.urlState.url, '/');
@@ -44,7 +46,7 @@ void main() {
 
   testWidgets('Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show [ThirdPage]', (tester) async {
     await pumpRouterApp(tester, router);
-    router.pushAll([const SecondRoute(), const ThirdRoute()]);
+    unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
     expect(router.urlState.url, '/third-route');
@@ -53,9 +55,9 @@ void main() {
   testWidgets('Removing multiple routes should complete each push future', (tester) async {
     await pumpRouterApp(tester, router);
     final results = <String, String?>{};
-    router.push<String>(const SecondRoute()).then((result) => results[SecondRoute.name] = result);
+    unawaited(router.push<String>(const SecondRoute()).then((result) => results[SecondRoute.name] = result));
     await tester.pumpAndSettle();
-    router.push<String>(const ThirdRoute()).then((result) => results[ThirdRoute.name] = result);
+    unawaited(router.push<String>(const ThirdRoute()).then((result) => results[ThirdRoute.name] = result));
     await tester.pumpAndSettle();
 
     router.removeWhere((route) => route.name != FirstRoute.name);
@@ -68,9 +70,9 @@ void main() {
   testWidgets('Clearing the stack should complete each push future', (tester) async {
     await pumpRouterApp(tester, router);
     final results = <String, String?>{};
-    router.push<String>(const SecondRoute()).then((result) => results[SecondRoute.name] = result);
+    unawaited(router.push<String>(const SecondRoute()).then((result) => results[SecondRoute.name] = result));
     await tester.pumpAndSettle();
-    router.push<String>(const ThirdRoute()).then((result) => results[ThirdRoute.name] = result);
+    unawaited(router.push<String>(const ThirdRoute()).then((result) => results[ThirdRoute.name] = result));
     await tester.pumpAndSettle();
 
     router.removeWhere((route) => true);
@@ -83,9 +85,9 @@ void main() {
   testWidgets('Removing a non-top route should complete only its push future', (tester) async {
     await pumpRouterApp(tester, router);
     final results = <String, String?>{};
-    router.push<String>(const SecondRoute()).then((result) => results[SecondRoute.name] = result);
+    unawaited(router.push<String>(const SecondRoute()).then((result) => results[SecondRoute.name] = result));
     await tester.pumpAndSettle();
-    router.push<String>(const ThirdRoute()).then((result) => results[ThirdRoute.name] = result);
+    unawaited(router.push<String>(const ThirdRoute()).then((result) => results[ThirdRoute.name] = result));
     await tester.pumpAndSettle();
 
     router.removeRoute(router.stackData.firstWhere((route) => route.name == SecondRoute.name));
@@ -118,10 +120,10 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, guardedRouter);
-    guardedRouter.push(const FourthRoute());
+    unawaited(guardedRouter.push(const FourthRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(guardedRouter, SecondRoute.name);
-    guardedRouter.push(const ThirdRoute());
+    unawaited(guardedRouter.push(const ThirdRoute()));
     await tester.pumpAndSettle();
 
     guardedRouter.removeWhere((route) => route.name == SecondRoute.name || route.name == ThirdRoute.name);
@@ -141,10 +143,10 @@ void main() {
   ) async {
     await pumpRouterApp(tester, router);
     var completed = false;
-    router.push<String>(const SecondRoute()).then((_) => completed = true);
+    unawaited(router.push<String>(const SecondRoute()).then((_) => completed = true));
     await tester.pumpAndSettle();
 
-    router.replace(const ThirdRoute());
+    unawaited(router.replace(const ThirdRoute()));
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
 
@@ -163,10 +165,12 @@ void main() {
     await pumpRouterApp(tester, router);
     var completed = false;
     Object? result;
-    router.navigate(const SecondRoute()).then((value) {
-      completed = true;
-      result = value;
-    });
+    unawaited(
+      router.navigate(const SecondRoute()).then((value) {
+        completed = true;
+        result = value;
+      }),
+    );
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
     expect(completed, isFalse, reason: 'navigate() completed before the page was popped');
