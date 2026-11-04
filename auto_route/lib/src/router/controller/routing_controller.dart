@@ -1675,14 +1675,16 @@ abstract class StackRouter extends RoutingController {
     // ignore: avoid-unnecessary-nullable-parameters
     ValueChanged<RouteMatch<dynamic>>? onLastRouteAdded,
   }) async {
-    final anchor = matches.first;
+    final kept = isReevaluating ? 0 : _keepPagesUnderTarget(matches);
+    final toPush = kept == 0 ? matches : matches.sublist(kept);
+    final anchor = toPush.first;
     final anchorPage = _pages.lastWhereOrNull((p) => p.routeKey == anchor.key);
     if (anchorPage != null) {
       for (final candidate in List<AutoRoutePage<dynamic>>.unmodifiable(_pages).reversed) {
         _pages.removeLast();
         if (candidate.routeKey == anchorPage.routeKey) {
           // use the existing match id to avoid breaking child controllers
-          matches[0] = matches[0].withId(anchorPage.routeData.matchId);
+          toPush[0] = toPush[0].withId(anchorPage.routeData.matchId);
           for (final ctr in _childControllers) {
             if (ctr.matchId == candidate.routeData.matchId) {
               ctr._markedForDataUpdate = true;
@@ -1693,13 +1695,36 @@ abstract class StackRouter extends RoutingController {
       }
     }
     return _pushAllGuarded(
-      matches,
+      toPush,
       onFailure: onFailure,
       updateAncestorsPathData: false,
       isReevaluating: isReevaluating,
       pushed: pushed,
       onLastRouteAdded: onLastRouteAdded,
     );
+  }
+
+  // Keeps the pages that [matches], save the last, would build again as they
+  // are, from the page the first one matches up, and returns how many: their
+  // widgets are not created and built again, as with go_router
+  // (flutter/flutter#147639). A page holding a nested router is built again,
+  // which updates its router. The pages above the kept ones are removed,
+  // except one the next match opens again, which is left for the caller.
+  int _keepPagesUnderTarget(List<RouteMatch<dynamic>> matches) {
+    final start = _pages.lastIndexWhere((p) => p.routeKey == matches.first.key);
+    if (start == -1) return 0;
+    var kept = 0;
+    while (kept < matches.length - 1 && start + kept < _pages.length) {
+      final data = _pages[start + kept].routeData;
+      if (data._match != matches[kept] || _innerControllerOfMatch(data.matchId) != null) break;
+      kept++;
+    }
+    if (kept == 0) return 0;
+    final next = start + kept;
+    if (next < _pages.length && _pages[next].routeKey != matches[kept].key) {
+      _pages.removeRange(next, _pages.length);
+    }
+    return kept;
   }
 
   @optionalTypeArgs

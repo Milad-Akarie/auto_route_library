@@ -65,6 +65,7 @@ import 'override_args_on_reevaluate_test.dart' as override_args_on_reevaluate;
 import 'override_children_on_reevaluate_test.dart' as override_children_on_reevaluate;
 import 'page_view_swipe_back_test.dart' as page_view_swipe_back;
 import 'pageless_push_rebuild_test.dart' as pageless_push_rebuild;
+import 'parent_pages_build_test.dart' as parent_pages_build;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_and_push_all_test.dart' as pop_and_push_all;
 import 'pop_and_push_from_animating_modal_test.dart' as pop_and_push_from_animating_modal;
@@ -215,6 +216,7 @@ void main() {
   group('override children on reevaluate', override_children_on_reevaluate.main);
   group('page view swipe back', page_view_swipe_back.main);
   group('pageless push rebuild', pageless_push_rebuild.main);
+  group('parent pages build', parent_pages_build.main);
   group('pop and back', pop_and_back.main);
   group('pop and push all', pop_and_push_all.main);
   group('pop and push from animating modal', pop_and_push_from_animating_modal.main);
