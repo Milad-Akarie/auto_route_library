@@ -89,10 +89,13 @@ class AutoRoutePage<T> extends Page<T> {
   PopInvokedWithResultCallback<T> get onPopInvoked {
     return (didPop, result) {
       if (didPop) {
+        final router = routeData.router;
+        // As Route.didComplete does, a pop without a result, such as the
+        // back gesture, completes with the route's currentResult.
+        final shownRoute = router is StackRouter ? router.pagelessRoutesObserver.routeOf(this) : null;
         routeData
           ..onPoppedByNavigator()
-          ..onPopInvoked(result);
-        final router = routeData.router;
+          ..onPopInvoked(result ?? shownRoute?.currentResult as T?);
         // a workaround to fix pop flicker issue
         // TODO(maintainer): remove this workaround after the Flutter issue is fixed.
         // https://github.com/flutter/flutter/issues/178570
