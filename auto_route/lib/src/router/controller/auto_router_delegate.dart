@@ -116,7 +116,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   UrlState get urlState => controller.navigationHistory.urlState;
 
   /// The current [urlState]; off the web it also holds the pages of every
-  /// router, which the [Router] saves for state restoration.
+  /// router, and the route the platform started the app at, which the
+  /// [Router] saves for state restoration.
   ///
   /// Null until the first navigation has put a page in the root router: the
   /// [Router] reports nothing for null, while the empty [urlState] would
@@ -127,8 +128,16 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     // as in pushAndPopUntil, and the url must still be reported.
     _hadPage = _hadPage || controller.hasEntries;
     if (!_hadPage) return null;
-    return kIsWeb ? urlState : urlState.copyWith(savedRoutes: controller._savedRoutes());
+    if (kIsWeb) return urlState;
+    return urlState.copyWith(savedRoutes: {_routesKey: controller._savedRoutes(), _launchLinkKey: _launchLink});
   }
+
+  // The keys of what currentConfiguration saves for state restoration.
+  static const _routesKey = 'routes';
+  static const _launchLinkKey = 'launchLink';
+
+  // The route the platform started this process at: a link, or '/'.
+  static String get _launchLink => WidgetsBinding.instance.platformDispatcher.defaultRouteName;
 
   var _hadPage = false;
 
@@ -175,9 +184,19 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   ///
   /// A page that can't be built without the args it was opened with is left
   /// out, since args aren't saved.
+  ///
+  /// A link the platform started the restored app with then opens over the
+  /// restored pages, as it does in the running app. A link that also started
+  /// the app that was saved is not opened again: Android restarts an app from
+  /// its recent apps with the link that first opened it.
   @override
   Future<void> setRestoredRoutePath(UrlState configuration) {
-    final routes = _restoredRoutes(configuration.savedRoutes);
+    final saved = configuration.savedRoutes;
+    if (_launchLink != Navigator.defaultRouteName && (saved is! Map || saved[_launchLinkKey] != _launchLink)) {
+      _openLaunchLinkAfterRestore();
+    }
+    // Saved before the launch link was, the routes alone.
+    final routes = _restoredRoutes(saved is Map ? saved[_routesKey] : saved);
     final matches = routes == null || routes.isEmpty || controller.hasEntries
         ? null
         : controller._matchAllOrReportFailure(routes, (_) {});
@@ -186,6 +205,20 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return setNewRoutePath(configuration);
     }
     return controller.navigateAll(buildable);
+  }
+
+  // Hands the launch link to the Router's route information provider once the
+  // restored pages are built, the way the platform hands a link to the
+  // running app, so the parser and deepLinkBuilder see it too.
+  void _openLaunchLinkAfterRestore() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = controller.navigatorKey.currentContext;
+      // Typed as Object so the check below makes it an observer.
+      final Object? provider = context == null ? null : Router.maybeOf(context)?.routeInformationProvider;
+      if (provider is WidgetsBindingObserver) {
+        unawaited(provider.didPushRouteInformation(RouteInformation(uri: Uri.parse(_launchLink))));
+      }
+    }, debugLabel: 'AutoRouterDelegate.openLaunchLinkAfterRestore');
   }
 
   // Names the link no route matched, which on a phone can come from another

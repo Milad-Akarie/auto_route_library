@@ -57,7 +57,9 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
   }
 
-  Object? savedRoutes() => router.delegate().currentConfiguration!.savedRoutes;
+  // The saved pages, which the configuration keeps next to the launch link.
+  List<Object?> savedRoutes() =>
+      (router.delegate().currentConfiguration!.savedRoutes! as Map)['routes'] as List<Object?>;
 
   // Groundwork for restoring every page of the app, for
   // https://github.com/Milad-Akarie/auto_route_library/issues/2040 and

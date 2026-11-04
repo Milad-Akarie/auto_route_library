@@ -112,6 +112,7 @@ import 'restore_args_test.dart' as restore_args;
 import 'restore_history_test.dart' as restore_history;
 import 'restore_stack_test.dart' as restore_stack;
 import 'restore_tabs_test.dart' as restore_tabs;
+import 'restore_with_link_test.dart' as restore_with_link;
 import 'root_bottom_sheet_aware_test.dart' as root_bottom_sheet_aware;
 import 'root_router_dispose_test.dart' as root_router_dispose;
 import 'route_aware_mixin_test.dart' as route_aware_mixin;
@@ -266,6 +267,7 @@ void main() {
   group('restore history', restore_history.main);
   group('restore stack', restore_stack.main);
   group('restore tabs', restore_tabs.main);
+  group('restore with link', restore_with_link.main);
   group('root bottom sheet aware', root_bottom_sheet_aware.main);
   group('root router dispose', root_router_dispose.main);
   group('route aware mixin', route_aware_mixin.main);
