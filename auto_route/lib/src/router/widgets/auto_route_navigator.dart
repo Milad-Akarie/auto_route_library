@@ -54,7 +54,7 @@ class AutoRouteNavigator extends StatefulWidget {
   final TraversalEdgeBehavior? routeTraversalEdgeBehavior;
 
   @override
-  AutoRouteNavigatorState createState() => AutoRouteNavigatorState();
+  AutoRouteNavigatorState createState() => .new();
 }
 
 /// State of [AutoRouteNavigator]

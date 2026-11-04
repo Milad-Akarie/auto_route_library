@@ -226,7 +226,7 @@ class AutoTabViewState extends State<AutoTabView> {
   }
 
   Future<void> _warpToAdjacentTab(Duration duration) async {
-    if (duration == Duration.zero) {
+    if (duration == .zero) {
       _jumpToPage(_currentIndex!);
     } else {
       await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
@@ -257,7 +257,7 @@ class AutoTabViewState extends State<AutoTabView> {
     _jumpToPage(initialPage);
 
     // Jump or animate to the destination page.
-    if (duration == Duration.zero) {
+    if (duration == .zero) {
       _jumpToPage(_currentIndex!);
     } else {
       await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);

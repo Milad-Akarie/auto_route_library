@@ -68,7 +68,7 @@ void main() {
     expect(completed, 2);
     expect(resultOfD, 'done');
     expectCurrentPage(router, 'Home');
-  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
+  }, variant: TargetPlatformVariant.only(.iOS));
 
   // Steps: open Home, B and C, then call pushAndPopUntil(D) keeping Home.
   // Observers hear the removals, as with Navigator.pushAndRemoveUntil.
@@ -122,7 +122,7 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => PageInfo(
+PageInfo _page(String name) => .new(
   name,
   builder: (_) => Scaffold(appBar: AppBar(), body: Text(name)),
 );

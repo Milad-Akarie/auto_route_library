@@ -35,7 +35,7 @@ abstract class RootStackRouter extends StackRouter {
     bool Function(String? location)? neglectWhen,
     bool rebuildStackOnDeepLink = false,
     Listenable? reevaluateListenable,
-    Clip clipBehavior = Clip.hardEdge,
+    Clip clipBehavior = .hardEdge,
   }) {
     return RouterConfig(
       routeInformationParser: defaultRouteParser(
@@ -57,7 +57,7 @@ abstract class RootStackRouter extends StackRouter {
   }
 
   @override
-  RouteData get routeData => RouteData(
+  RouteData get routeData => .new(
     router: this,
     type: const RouteType.material(),
     stackKey: _stackKey,
@@ -77,7 +77,7 @@ abstract class RootStackRouter extends StackRouter {
   List<AutoRouteGuard> get guards => const [];
 
   /// The default animation
-  RouteType get defaultRouteType => const RouteType.material();
+  RouteType get defaultRouteType => const .material();
 
   // ignore: prefer_final_fields
   bool _managedByWidget = false;
@@ -110,7 +110,7 @@ abstract class RootStackRouter extends StackRouter {
     DeepLinkBuilder? deepLinkBuilder,
     bool rebuildStackOnDeepLink = false,
     Listenable? reevaluateListenable,
-    Clip clipBehavior = Clip.hardEdge,
+    Clip clipBehavior = .hardEdge,
   }) {
     return _lazyRootDelegate ??= AutoRouterDelegate(
       this,
@@ -128,7 +128,7 @@ abstract class RootStackRouter extends StackRouter {
   DefaultRouteParser defaultRouteParser({
     bool includePrefixMatches = !kIsWeb,
     DeepLinkTransformer? deepLinkTransformer,
-  }) => DefaultRouteParser(
+  }) => .new(
     matcher,
     includePrefixMatches: includePrefixMatches,
     deepLinkTransformer: deepLinkTransformer ?? (uri) async => uri,

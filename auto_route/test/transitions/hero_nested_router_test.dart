@@ -163,14 +163,14 @@ class _FromRoute extends PageRouteInfo<void> {
   const _FromRoute() : super(name);
 
   static const String name = 'FromRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _heroPage('from', Alignment.bottomLeft));
+  static PageInfo page = PageInfo(name, builder: (_) => _heroPage('from', .bottomLeft));
 }
 
 class _ToRoute extends PageRouteInfo<void> {
   const _ToRoute() : super(name);
 
   static const String name = 'ToRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _heroPage('to', Alignment.topRight));
+  static PageInfo page = PageInfo(name, builder: (_) => _heroPage('to', .topRight));
 }
 
 class _ShellRoute extends PageRouteInfo<void> {

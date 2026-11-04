@@ -16,7 +16,7 @@ import '../router_test_utils.dart';
 // navigate() to the open dashboard had the same cause: its nested router went
 // to the children passed to navigate(), not to the guard's.
 void main() {
-  AutoRouteGuard resetToHome() => AutoRouteGuard.simple((resolver, _) {
+  AutoRouteGuard resetToHome() => .simple((resolver, _) {
     if (resolver.isReevaluating) {
       resolver.overrideNext(children: [const _HomeRoute()]);
     } else {

@@ -59,7 +59,7 @@ void main() {
         guards: [
           AutoRouteGuard.simple((resolver, _) async {
             if (loopedTooLong()) return;
-            if (isAsync) await Future<void>.delayed(Duration.zero);
+            if (isAsync) await Future<void>.delayed(.zero);
             resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
           }),
         ],

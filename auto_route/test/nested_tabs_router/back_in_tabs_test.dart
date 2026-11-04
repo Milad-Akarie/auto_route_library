@@ -145,7 +145,7 @@ final _homePage = PageInfo(
   builder: (_) => const AutoTabsRouter(routes: [_Route('BooksTab'), _Route('ProfileTab')]),
 );
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);

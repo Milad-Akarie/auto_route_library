@@ -8,7 +8,7 @@ class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
   final Function(UserData data)? onResult;
 
   @override
-  UserDataCollectorPageState createState() => UserDataCollectorPageState();
+  UserDataCollectorPageState createState() => .new();
 
   @override
   Widget wrappedRoute(BuildContext context) {

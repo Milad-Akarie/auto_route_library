@@ -12,7 +12,7 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       NamedRouteDef(
         name: 'RouteA',

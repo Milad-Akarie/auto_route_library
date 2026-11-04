@@ -11,7 +11,7 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(
         initial: true,
@@ -69,7 +69,7 @@ void main() {
   }
 }
 
-PageInfo _page(String name) => PageInfo(
+PageInfo _page(String name) => .new(
   name,
   builder: (_) => Scaffold(
     appBar: AppBar(leading: const AutoLeadingButton()),

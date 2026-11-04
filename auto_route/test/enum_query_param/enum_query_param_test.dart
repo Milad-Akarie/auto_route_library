@@ -30,7 +30,7 @@ void main() {
   testWidgets('Pushing the route writes the enum by its name in the url', (tester) async {
     final router = CartRouter();
     await pumpRouterApp(tester, router);
-    router.push(MfUserCartRoute(userCartType: MfUserCartTypes.mf));
+    router.push(MfUserCartRoute(userCartType: .mf));
     await tester.pumpAndSettle();
     expect(find.text('Cart mf'), findsOneWidget);
     expect(router.urlState.url, '/cart?type=mf');

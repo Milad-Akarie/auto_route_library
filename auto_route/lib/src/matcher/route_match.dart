@@ -273,7 +273,7 @@ class RouteMatch<T> {
 
   /// Returns a new instance of [PageRouteInfo] from
   /// the current [RouteMatch] instance
-  PageRouteInfo toPageRouteInfo() => PageRouteInfo.fromMatch(this);
+  PageRouteInfo toPageRouteInfo() => .fromMatch(this);
 }
 
 /// When a route is re-evaluated this class is used

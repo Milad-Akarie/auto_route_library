@@ -154,7 +154,7 @@ class Tab2Nested2Route extends PageRouteInfo<void> {
 
 /// First to fourth pages at the root, as in auto_route/test/simple_router/router.dart.
 /// FourthRoute's guard always rejects.
-RootStackRouter buildSimpleRouter() => RootStackRouter.build(
+RootStackRouter buildSimpleRouter() => .build(
   routes: [
     AutoRoute(page: FirstRoute.page, path: '/'),
     AutoRoute(page: SecondRoute.page),

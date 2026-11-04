@@ -20,7 +20,7 @@ void main() {
     builder: (data) => Scaffold(body: Center(child: Text('Flag ${data.queryParams.optBool('f')}'))),
   );
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(path: '/', page: namedPage('HomeRoute'), initial: true),
       AutoRoute(path: '/flag', page: flagPage),

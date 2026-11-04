@@ -21,11 +21,11 @@ class _Route extends PageRouteInfo<void> {
   const _Route(super.name);
 }
 
-PageInfo _tabPage(String name) => PageInfo(name, builder: (_) => Center(child: Text(name)));
+PageInfo _tabPage(String name) => .new(name, builder: (_) => Center(child: Text(name)));
 
 const _tabs = [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')];
 
-RootStackRouter _router(Widget Function() tabsRouter) => RootStackRouter.build(
+RootStackRouter _router(Widget Function() tabsRouter) => .build(
   routes: [
     AutoRoute(
       path: '/',

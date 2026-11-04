@@ -52,4 +52,4 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Text(name));
+PageInfo _page(String name) => .new(name, builder: (_) => Text(name));

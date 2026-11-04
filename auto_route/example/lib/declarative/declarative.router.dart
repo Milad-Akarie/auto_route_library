@@ -107,11 +107,11 @@ class _NameInputScreenState extends State<NameInputScreen> {
       color: Colors.white,
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const .all(16.0),
           child: Column(
             children: [
               const Text('Enter your name'),
-              TextField(controller: _controller, textAlign: TextAlign.center),
+              TextField(controller: _controller, textAlign: .center),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -152,11 +152,11 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
       color: Colors.white,
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const .all(16.0),
           child: Column(
             children: [
               const Text('Enter your age'),
-              TextField(controller: _controller, textAlign: TextAlign.center),
+              TextField(controller: _controller, textAlign: .center),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
@@ -184,7 +184,7 @@ class ResultScreen extends StatelessWidget {
       color: Colors.white,
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const .all(16.0),
           child: Column(
             children: [
               Text('Name: ${profile.name}'),

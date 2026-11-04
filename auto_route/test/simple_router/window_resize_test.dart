@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-PageInfo _sizePage(String name) => PageInfo(
+PageInfo _sizePage(String name) => .new(
   name,
   builder: (_) => Builder(builder: (context) => Text('$name ${MediaQuery.sizeOf(context).width.round()}')),
 );

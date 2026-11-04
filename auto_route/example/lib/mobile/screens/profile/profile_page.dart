@@ -9,7 +9,7 @@ class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  ProfilePageState createState() => ProfilePageState();
+  ProfilePageState createState() => .new();
 }
 
 class ProfilePageState extends State<ProfilePage> {
@@ -21,7 +21,7 @@ class ProfilePageState extends State<ProfilePage> {
       body: Center(
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: .center,
             children: [
               Text(
                 'Profile page',
@@ -84,7 +84,7 @@ class ProfilePageState extends State<ProfilePage> {
                 )
               else
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: .center,
                   children: [
                     const Text('Your Data is complete'),
                     const SizedBox(height: 24),

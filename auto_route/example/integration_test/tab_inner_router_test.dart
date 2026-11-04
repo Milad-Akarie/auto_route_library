@@ -61,7 +61,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-_TabsKind _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = .indexedStack;
 
 final _extraNotifier = ValueNotifier<bool>(false);
 
@@ -76,10 +76,10 @@ class _HostRoute extends PageRouteInfo<void> {
       builder: (context, extra, _) {
         final routes = [const _NestedHostRoute(), if (extra) const _ExtraRoute(), const _SecondRoute()];
         return switch (_tabsKind) {
-          _TabsKind.indexedStack => AutoTabsRouter(routes: routes),
-          _TabsKind.pageView => AutoTabsRouter.pageView(routes: routes),
-          _TabsKind.tabBar => AutoTabsRouter.tabBar(routes: routes),
-          _TabsKind.builder => AutoTabsRouter.builder(
+          .indexedStack => AutoTabsRouter(routes: routes),
+          .pageView => AutoTabsRouter.pageView(routes: routes),
+          .tabBar => AutoTabsRouter.tabBar(routes: routes),
+          .builder => AutoTabsRouter.builder(
             routes: routes,
             builder: (context, children, tabsRouter) => IndexedStack(
               index: tabsRouter.activeIndex,

@@ -150,7 +150,7 @@ final _draftPage = PageInfo(
   builder: (data) => Scaffold(body: Text('Showing draft ${data.params.getString('id')}')),
 );
 final _homePage = PageInfo('HomeRoute', builder: (_) => const _HomePage());
-PageInfo _tabPage(String name) => PageInfo('${name}Route', builder: (_) => Text('$name tab'));
+PageInfo _tabPage(String name) => .new('${name}Route', builder: (_) => Text('$name tab'));
 
 class _MailPage extends StatelessWidget {
   const _MailPage();

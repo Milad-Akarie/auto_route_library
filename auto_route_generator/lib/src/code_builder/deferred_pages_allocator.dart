@@ -40,15 +40,13 @@ class DeferredPagesAllocator implements Allocator {
 
 extension _RouteConfigList on List<RouteConfig> {
   bool isDeferred(String importPath, bool defaultDeferredLoading) {
-    return mapRouteToDeferredType(importPath, defaultDeferredLoading) == _DeferredStatus.deferred;
+    return mapRouteToDeferredType(importPath, defaultDeferredLoading) == .deferred;
   }
 
   _DeferredStatus mapRouteToDeferredType(String importPath, bool defaultDeferredLoading) {
     for (final routeConfig in this) {
       if (routeConfig.pageType?.import == importPath) {
-        return (routeConfig.deferredLoading ?? defaultDeferredLoading)
-            ? _DeferredStatus.deferred
-            : _DeferredStatus.none;
+        return (routeConfig.deferredLoading ?? defaultDeferredLoading) ? .deferred : .none;
       }
       //todo handle this
       // if (routeConfig.childRouterConfig == null) {
@@ -65,7 +63,7 @@ extension _RouteConfigList on List<RouteConfig> {
       //   }
       // }
     }
-    return _DeferredStatus.notFound;
+    return .notFound;
   }
 }
 

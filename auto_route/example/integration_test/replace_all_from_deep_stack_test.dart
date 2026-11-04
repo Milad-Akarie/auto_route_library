@@ -43,7 +43,7 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => PageInfo(
+PageInfo _page(String name) => .new(
   name,
   builder: (_) => Scaffold(appBar: AppBar(), body: Text(name)),
 );

@@ -45,7 +45,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-_TabsKind _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = .indexedStack;
 
 // The context of the AutoTabsRouter's builder, kept for the tab pages.
 BuildContext? _keptContext;
@@ -59,28 +59,28 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     builder: (_) {
       const routes = [_FirstTabRoute(), _SecondTabRoute()];
       return switch (_tabsKind) {
-        _TabsKind.indexedStack => AutoTabsRouter(
+        .indexedStack => AutoTabsRouter(
           routes: routes,
           builder: (context, child) {
             _keptContext = context;
             return child;
           },
         ),
-        _TabsKind.pageView => AutoTabsRouter.pageView(
+        .pageView => AutoTabsRouter.pageView(
           routes: routes,
           builder: (context, child, _) {
             _keptContext = context;
             return child;
           },
         ),
-        _TabsKind.tabBar => AutoTabsRouter.tabBar(
+        .tabBar => AutoTabsRouter.tabBar(
           routes: routes,
           builder: (context, child, _) {
             _keptContext = context;
             return child;
           },
         ),
-        _TabsKind.builder => AutoTabsRouter.builder(
+        .builder => AutoTabsRouter.builder(
           routes: routes,
           builder: (context, children, tabsRouter) {
             _keptContext = context;

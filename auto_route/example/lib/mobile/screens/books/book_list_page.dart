@@ -20,7 +20,7 @@ class _BookListScreenState extends State<BookListScreen> {
         children: [
           for (final book in [...?booksDb?.books])
             Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              margin: const .symmetric(horizontal: 16, vertical: 8),
               child: ListTile(
                 title: Text(book.name),
                 subtitle: Text(book.genre),

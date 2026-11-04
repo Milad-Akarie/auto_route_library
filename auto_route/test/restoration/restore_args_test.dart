@@ -8,7 +8,7 @@ import 'restoration_test_utils.dart';
 void main() {
   // Flutter's state restoration doesn't run on the web, so the routers save
   // their pages only off the web.
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(path: '/', page: page('HomeRoute'), initial: true),
       AutoRoute(path: '/manufacturers', page: _ManufacturersByLetterRoute.page),

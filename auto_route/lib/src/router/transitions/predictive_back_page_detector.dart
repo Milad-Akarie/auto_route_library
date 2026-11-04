@@ -48,7 +48,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
   }
 
   _PredictiveBackPhase get phase => _phase;
-  _PredictiveBackPhase _phase = _PredictiveBackPhase.idle;
+  _PredictiveBackPhase _phase = .idle;
   set phase(_PredictiveBackPhase phase) {
     if (_phase != phase && mounted) {
       setState(() => _phase = phase);
@@ -77,7 +77,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 
   @override
   bool handleStartBackGesture(PredictiveBackEvent backEvent) {
-    phase = _PredictiveBackPhase.start;
+    phase = .start;
     final gestureInProgress = !backEvent.isButtonEvent && _isEnabled;
     if (!gestureInProgress) {
       return false;
@@ -90,7 +90,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 
   @override
   void handleUpdateBackGestureProgress(PredictiveBackEvent backEvent) {
-    phase = _PredictiveBackPhase.update;
+    phase = .update;
 
     widget.route.handleUpdateBackGestureProgress(progress: 1 - backEvent.progress);
     currentBackEvent = backEvent;
@@ -98,7 +98,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 
   @override
   void handleCancelBackGesture() {
-    phase = _PredictiveBackPhase.cancel;
+    phase = .cancel;
 
     widget.route.handleCancelBackGesture();
     startBackEvent = currentBackEvent = null;
@@ -106,7 +106,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 
   @override
   void handleCommitBackGesture() {
-    phase = _PredictiveBackPhase.commit;
+    phase = .commit;
     widget.route.handleCommitBackGesture();
     startBackEvent = currentBackEvent = null;
   }
@@ -225,7 +225,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
 
   late Animation<Offset> _positionAnimation;
 
-  Offset _lastDrag = Offset.zero;
+  Offset _lastDrag = .zero;
 
   // This isn't done as an animation because it's based on the vertical drag
   // amount, not the progression of the back gesture like widget.animation is.
@@ -245,35 +245,29 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
 
   void _updateAnimations(Size screenSize) {
     _animation.parent = switch (widget.phase) {
-      _PredictiveBackPhase.commit => _curvedAnimationReversed,
+      .commit => _curvedAnimationReversed,
       _ => widget.animation,
     };
 
     _bounceAnimation.parent = switch (widget.phase) {
-      _PredictiveBackPhase.commit => Tween<double>(
-        begin: 0.0,
-        end: _lastBounceAnimationValue,
-      ).animate(_curvedAnimation!),
+      .commit => Tween<double>(begin: 0.0, end: _lastBounceAnimationValue).animate(_curvedAnimation!),
       _ => ReverseAnimation(widget.animation),
     };
 
     _commitAnimation.parent = switch (widget.phase) {
-      _PredictiveBackPhase.commit => _animation,
+      .commit => _animation,
       _ => kAlwaysDismissedAnimation,
     };
 
     final xShift = (screenSize.width / _kDivisionFactor) - _kMargin;
     _positionAnimation = _animation.drive(switch (widget.phase) {
-      _PredictiveBackPhase.commit => Tween<Offset>(
-        begin: _lastDrag,
-        end: Offset(screenSize.height * _kYPositionFactor, 0.0),
-      ),
+      .commit => Tween<Offset>(begin: _lastDrag, end: Offset(screenSize.height * _kYPositionFactor, 0.0)),
       _ => Tween<Offset>(
         // The y position before commit is given by the vertical drag, not by an
         // animation.
         begin: switch (widget.currentBackEvent?.swipeEdge) {
-          SwipeEdge.left => Offset(xShift, _getYShiftPosition(screenSize.height)),
-          SwipeEdge.right => Offset(-xShift, _getYShiftPosition(screenSize.height)),
+          .left => Offset(xShift, _getYShiftPosition(screenSize.height)),
+          .right => Offset(-xShift, _getYShiftPosition(screenSize.height)),
           null => Offset(xShift, _getYShiftPosition(screenSize.height)),
         },
         end: Offset.zero,
@@ -304,7 +298,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
     if (widget.animation != oldWidget.animation) {
       _updateCurvedAnimations();
     }
-    if (widget.phase != oldWidget.phase && widget.phase == _PredictiveBackPhase.commit) {
+    if (widget.phase != oldWidget.phase && widget.phase == .commit) {
       _updateAnimations(MediaQuery.sizeOf(context));
     }
   }
@@ -333,15 +327,12 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
           scale: _scaleTween.evaluate(_bounceAnimation),
           child: Transform.translate(
             offset: switch (widget.phase) {
-              _PredictiveBackPhase.commit => _positionAnimation.value,
+              .commit => _positionAnimation.value,
               _ => _lastDrag = Offset(_positionAnimation.value.dx, _getYShiftPosition(MediaQuery.heightOf(context))),
             },
             child: Opacity(
               opacity: _opacityTween.evaluate(_commitAnimation),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(_borderRadiusTween.evaluate(_bounceAnimation)),
-                child: child,
-              ),
+              child: ClipRRect(borderRadius: .circular(_borderRadiusTween.evaluate(_bounceAnimation)), child: child),
             ),
           ),
         );
@@ -490,7 +481,7 @@ class _PredictiveBackFullscreenPageTransitionState extends State<_PredictiveBack
           // gesture.
           child: AnimatedOpacity(
             opacity: switch (widget.phase) {
-              _PredictiveBackPhase.commit => 0.0,
+              .commit => 0.0,
               _ => widget.animation.value < _kCommitAt ? 0.0 : 1.0,
             },
             duration: _kCommitDuration,
@@ -510,7 +501,7 @@ class _PredictiveBackFullscreenPageTransitionState extends State<_PredictiveBack
         animation: widget.animation,
         builder: _primaryAnimatedBuilder,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(_PredictiveBackSharedElementPageTransitionState._kDeviceBorderRadius),
+          borderRadius: .circular(_PredictiveBackSharedElementPageTransitionState._kDeviceBorderRadius),
           child: widget.child,
         ),
       ),

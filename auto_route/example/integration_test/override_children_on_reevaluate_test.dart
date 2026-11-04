@@ -19,7 +19,7 @@ void main() {
     AutoRoute(page: _ProfileRoute.page, path: 'profile'),
   ];
 
-  AutoRouteGuard resetToHome() => AutoRouteGuard.simple((resolver, _) {
+  AutoRouteGuard resetToHome() => .simple((resolver, _) {
     if (resolver.isReevaluating) {
       resolver.overrideNext(children: [const _HomeRoute()]);
     } else {

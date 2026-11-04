@@ -1,10 +1,10 @@
 import 'package:meta/meta.dart' show optionalTypeArgs;
-import 'package:meta/meta_meta.dart' show Target, TargetKind;
+import 'package:meta/meta_meta.dart' show Target;
 
 /// Classes annotated with AutoRouteConfig will generate
 /// an abstract class that extends [RootStackRouter] that
 /// can be extended by the annotated class to be used as the RootRouter of the App
-@Target({TargetKind.classType})
+@Target({.classType})
 class AutoRouterConfig {
   /// default constructor
   const AutoRouterConfig({
@@ -49,7 +49,7 @@ class AutoRouterConfig {
 ///
 /// defaults to dynamic
 @optionalTypeArgs
-@Target({TargetKind.classType})
+@Target({.classType})
 class RoutePage {
   /// default constructor
   const RoutePage({this.name, this.deferredLoading});
@@ -70,7 +70,7 @@ const routePage = RoutePage();
 
 /// this annotation is used to make parameters that's supposed
 /// to take their values from the dynamic segments of a path
-@Target({TargetKind.parameter})
+@Target({.parameter})
 class PathParam {
   /// default constructor
   const PathParam([this.name]) : _inherited = false;
@@ -100,7 +100,7 @@ const inheritPathParam = PathParam.inherit();
 /// to take their values from query params of the url
 ///
 /// e.g /path?foo=bar
-@Target({TargetKind.parameter})
+@Target({.parameter})
 class QueryParam {
   /// default constructor
   const QueryParam([this.name]);
@@ -119,7 +119,7 @@ const queryParam = QueryParam();
 /// e.g /path#foo
 ///
 /// so it can take its value from the url fragment automatically
-@Target({TargetKind.parameter})
+@Target({.parameter})
 class UrlFragment {
   const UrlFragment._();
 }

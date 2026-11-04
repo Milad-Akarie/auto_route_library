@@ -40,13 +40,13 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
 /// each test, and while it's unknown Flutter stops telling Android whether
 /// it handles back.
 Future<void> pumpRestorableApp(WidgetTester tester, RootStackRouter Function() buildRouter) async {
-  tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+  tester.binding.handleAppLifecycleStateChanged(.resumed);
   await tester.pumpWidget(RestorableRouterApp(buildRouter));
   await tester.pumpAndSettle();
 }
 
 /// A page showing its route's name.
-PageInfo namedPage(String name) => PageInfo(
+PageInfo namedPage(String name) => .new(
   name,
   builder: (_) => Scaffold(body: Center(child: Text(name))),
 );

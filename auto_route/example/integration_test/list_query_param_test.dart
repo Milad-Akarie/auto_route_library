@@ -48,7 +48,7 @@ void main() {
           ids: const [4, 5],
           prices: const [1.5],
           flags: const [true],
-          sorts: const [Sort.desc],
+          sorts: const [.desc],
           picked: const [9],
         ),
       ),

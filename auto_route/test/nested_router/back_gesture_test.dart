@@ -32,7 +32,7 @@ Future<void> pumpIosApp(WidgetTester tester, RootStackRouter router) {
   return tester
       .pumpWidget(
         MaterialApp.router(
-          theme: ThemeData(platform: TargetPlatform.iOS),
+          theme: ThemeData(platform: .iOS),
           routeInformationParser: router.defaultRouteParser(),
           routerDelegate: router.delegate(),
         ),

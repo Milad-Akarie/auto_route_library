@@ -93,7 +93,7 @@ Future<void> expectAppWroteDeepLinkEntry(int index) async {
 // while it's unknown Flutter stops telling Android whether it handles back
 // (see systemBack). A running app is in the foreground.
 void _bringAppToForeground(WidgetTester tester) {
-  tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+  tester.binding.handleAppLifecycleStateChanged(.resumed);
 }
 
 void expectCurrentPage(StackRouter router, String name) {
@@ -117,7 +117,7 @@ void expectTopPage(StackRouter router, String name) {
 /// [pumpRouterConfigApp]. Other platforms have no back key,
 /// so this sends the 'popRoute' message the engine sends for one.
 Future<void> systemBack(WidgetTester tester) async {
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+  if (!kIsWeb && defaultTargetPlatform == .android) {
     try {
       await const MethodChannel('auto_route_example/system_back').invokeMethod<void>('pressBack');
     } on PlatformException catch (error) {
@@ -140,7 +140,7 @@ Future<void> systemBack(WidgetTester tester) async {
 /// the app with [pumpRouterApp] or [pumpRouterConfigApp] first, as for
 /// [systemBack].
 Future<bool?> androidSendsBackToFlutter() async {
-  if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return null;
+  if (kIsWeb || defaultTargetPlatform != .android) return null;
   // Flutter tells Android through a separate platform message; give it time to arrive.
   await Future<void>.delayed(const Duration(milliseconds: 300));
   return const MethodChannel('auto_route_example/system_back').invokeMethod<bool>('sendsBackToFlutter');

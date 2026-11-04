@@ -5,10 +5,10 @@ import 'package:material_ui/material_ui.dart';
 // The ways a user goes back, for tests that check a PopScope against each.
 
 /// An Android theme, for the predictive back gesture.
-final ThemeData androidTheme = ThemeData(platform: TargetPlatform.android);
+final ThemeData androidTheme = ThemeData(platform: .android);
 
 /// An iOS theme, whose page transitions take the edge swipe.
-final ThemeData iosTheme = ThemeData(platform: TargetPlatform.iOS);
+final ThemeData iosTheme = ThemeData(platform: .iOS);
 
 /// Presses the Android back key, or makes a back gesture without a
 /// predictive animation, then waits for the pop to finish.
@@ -69,7 +69,7 @@ class FrameworkHandlesBackRecorder {
   /// Starts recording; call it before pumping the app.
   void listen(WidgetTester tester) {
     // Flutter sends the value only while the app is in the foreground.
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    tester.binding.handleAppLifecycleStateChanged(.resumed);
     final messenger = tester.binding.defaultBinaryMessenger;
     messenger.setMockMethodCallHandler(SystemChannels.platform, (call) async {
       if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {

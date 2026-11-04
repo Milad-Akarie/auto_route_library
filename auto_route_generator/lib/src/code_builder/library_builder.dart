@@ -21,7 +21,7 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 
 /// Builds a list type reference of type [reference]
-TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference(
+TypeReference listRefer(Reference reference, {bool nullable = false}) => .new(
   (b) => b
     ..symbol = 'List'
     ..isNullable = nullable
@@ -64,7 +64,7 @@ String generateLibrary(
   }
 
   final emitter = DartEmitter(
-    allocator: router.usesPartBuilder ? Allocator.none : DeferredPagesAllocator(routes, router.deferredLoading),
+    allocator: router.usesPartBuilder ? .none : DeferredPagesAllocator(routes, router.deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );

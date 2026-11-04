@@ -51,13 +51,13 @@ void main() {
   }
 
   testWidgets('Changing the theme keeps the page that is open on top of the tabs', (tester) async {
-    await tester.pumpWidget(app(ThemeMode.light));
+    await tester.pumpWidget(app(.light));
     await tester.pumpAndSettle();
     router.pushPath('/f');
     await tester.pumpAndSettle();
     expect(find.text('F'), findsOneWidget);
 
-    await tester.pumpWidget(app(ThemeMode.dark));
+    await tester.pumpWidget(app(.dark));
     await tester.pumpAndSettle();
 
     expect(router.topRoute.name, 'F');
@@ -66,14 +66,14 @@ void main() {
   });
 
   testWidgets('Changing the theme keeps the tab that is open', (tester) async {
-    await tester.pumpWidget(app(ThemeMode.light));
+    await tester.pumpWidget(app(.light));
     await tester.pumpAndSettle();
     expect(router.topRoute.name, 'A');
     router.navigatePath('/dashboardView/empty/b');
     await tester.pumpAndSettle();
     expect(router.topRoute.name, 'B');
 
-    await tester.pumpWidget(app(ThemeMode.dark));
+    await tester.pumpWidget(app(.dark));
     await tester.pumpAndSettle();
 
     expect(router.topRoute.name, 'B');
@@ -87,7 +87,7 @@ final _dashboardPage = PageInfo(
       const Scaffold(body: AutoTabsRouter(routes: [PageRouteInfo('A'), PageRouteInfo('B'), PageRouteInfo('C')])),
 );
 
-PageInfo _page(String name) => PageInfo(
+PageInfo _page(String name) => .new(
   name,
   builder: (_) => Scaffold(body: Center(child: Text(name))),
 );

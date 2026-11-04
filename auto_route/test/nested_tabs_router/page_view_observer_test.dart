@@ -21,7 +21,7 @@ class _Route extends PageRouteInfo<void> {
   const _Route(super.name);
 }
 
-PageInfo _tabPage(String name) => PageInfo(name, builder: (_) => Center(child: Text(name)));
+PageInfo _tabPage(String name) => .new(name, builder: (_) => Center(child: Text(name)));
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/2044

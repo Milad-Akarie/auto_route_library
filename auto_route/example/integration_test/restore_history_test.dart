@@ -24,7 +24,7 @@ void main() {
 
   // The paths the generator gives these routes don't nest, so the restored
   // url alone can't bring the pages before ProductDetails back.
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(page: namedPage('HomeRoute'), restorationId: (match) => match.name, initial: true),
       AutoRoute(page: namedPage('ProductsRoute'), restorationId: (match) => match.name),

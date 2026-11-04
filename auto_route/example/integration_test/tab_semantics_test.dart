@@ -79,7 +79,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar }
 
-_TabsKind _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = .indexedStack;
 
 class _TabsHostRoute extends PageRouteInfo<void> {
   const _TabsHostRoute() : super(name);
@@ -90,9 +90,9 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     builder: (_) {
       const routes = [_FirstTabRoute(), _SecondTabRoute(), _ThirdTabRoute()];
       return switch (_tabsKind) {
-        _TabsKind.indexedStack => const AutoTabsRouter(routes: routes),
-        _TabsKind.pageView => const AutoTabsRouter.pageView(routes: routes),
-        _TabsKind.tabBar => const AutoTabsRouter.tabBar(routes: routes),
+        .indexedStack => const AutoTabsRouter(routes: routes),
+        .pageView => const AutoTabsRouter.pageView(routes: routes),
+        .tabBar => const AutoTabsRouter.tabBar(routes: routes),
       };
     },
   );

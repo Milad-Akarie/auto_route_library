@@ -20,7 +20,7 @@ void main() {
 
   setUp(() => isAllowed = false);
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       NamedRouteDef(name: 'InitialRoute', path: '/', builder: (_, _) => page('InitialRoute')),
       NamedRouteDef(name: 'FooRoute', path: '/foo', builder: (_, _) => page('FooRoute')),

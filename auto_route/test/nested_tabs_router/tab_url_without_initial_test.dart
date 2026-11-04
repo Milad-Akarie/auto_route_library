@@ -11,7 +11,7 @@ class _Route extends PageRouteInfo<void> {
 
 // A tabs host whose tabs have no '' path and none is initial: its url, '/tabs',
 // names no tab.
-RootStackRouter _router() => RootStackRouter.build(
+RootStackRouter _router() => .build(
   routes: [
     AutoRoute(
       page: PageInfo('HomeRoute', builder: (_) => const Text('Home')),

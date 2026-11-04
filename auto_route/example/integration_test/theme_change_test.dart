@@ -43,13 +43,13 @@ void main() {
       darkTheme: ThemeData.dark(),
       routerConfig: config,
     );
-    await tester.pumpWidget(app(ThemeMode.light));
+    await tester.pumpWidget(app(.light));
     await tester.pumpAndSettle();
     unawaited(router.pushPath('/f'));
     await tester.pumpAndSettle();
     expect(find.text('F'), findsOneWidget);
 
-    await tester.pumpWidget(app(ThemeMode.dark));
+    await tester.pumpWidget(app(.dark));
     await tester.pumpAndSettle();
 
     expect(router.topRoute.name, 'F');
@@ -62,7 +62,7 @@ final _dashboardPage = PageInfo(
   builder: (_) => const Scaffold(body: AutoTabsRouter(routes: [PageRouteInfo('A'), PageRouteInfo('B')])),
 );
 
-PageInfo _page(String name) => PageInfo(
+PageInfo _page(String name) => .new(
   name,
   builder: (_) => Scaffold(body: Center(child: Text(name))),
 );

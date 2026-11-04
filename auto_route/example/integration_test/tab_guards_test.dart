@@ -24,7 +24,7 @@ void main() {
   setUp(() => _signedIn = false);
 
   testWidgets('tapping a tab whose guard rejects keeps the current tab', (tester) async {
-    final router = _buildRouter(_Tabs.indexedStack, _rejectingGuard);
+    final router = _buildRouter(.indexedStack, _rejectingGuard);
     await pumpRouterApp(tester, router);
 
     await tester.tap(find.byIcon(Icons.person));
@@ -35,7 +35,7 @@ void main() {
   });
 
   testWidgets('a guard that redirects to a login page shows the tab after the login', (tester) async {
-    final router = _buildRouter(_Tabs.indexedStack, _loginGuard);
+    final router = _buildRouter(.indexedStack, _loginGuard);
     await pumpRouterApp(tester, router);
 
     await tester.tap(find.byIcon(Icons.person));
@@ -52,7 +52,7 @@ void main() {
   });
 
   testWidgets('opening the url of a tab whose guard rejects shows the first tab', (tester) async {
-    final router = _buildRouter(_Tabs.indexedStack, _rejectingGuard);
+    final router = _buildRouter(.indexedStack, _rejectingGuard);
     await pumpRouterApp(tester, router, initialLink: '/profile');
 
     _expectTab(router, 'FeedRoute');
@@ -60,7 +60,7 @@ void main() {
   });
 
   testWidgets('typing the url of a tab whose guard rejects keeps the current tab', (tester) async {
-    final router = _buildRouter(_Tabs.indexedStack, _rejectingGuard);
+    final router = _buildRouter(.indexedStack, _rejectingGuard);
     await pumpRouterAppWithConfig(tester, router);
 
     typeBrowserUrl('/profile');
@@ -124,9 +124,9 @@ RootStackRouter _buildRouter(_Tabs kind, AutoRouteGuard guard) {
   Widget scaffold(BuildContext context, Widget child) =>
       Scaffold(body: child, bottomNavigationBar: bottomBar(AutoTabsRouter.of(context)));
   final host = switch (kind) {
-    _Tabs.indexedStack => AutoTabsRouter(routes: routes, builder: scaffold),
-    _Tabs.pageView => AutoTabsRouter.pageView(routes: routes, builder: (context, child, _) => scaffold(context, child)),
-    _Tabs.tabBar => AutoTabsRouter.tabBar(routes: routes, builder: (context, child, _) => scaffold(context, child)),
+    .indexedStack => AutoTabsRouter(routes: routes, builder: scaffold),
+    .pageView => AutoTabsRouter.pageView(routes: routes, builder: (context, child, _) => scaffold(context, child)),
+    .tabBar => AutoTabsRouter.tabBar(routes: routes, builder: (context, child, _) => scaffold(context, child)),
   };
   Widget page(String name) => Center(child: Text(name));
   return RootStackRouter.build(

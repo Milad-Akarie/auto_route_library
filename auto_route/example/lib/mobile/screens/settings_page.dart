@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
           children: [
             Text(widget.tab),
             Text(widget.query),

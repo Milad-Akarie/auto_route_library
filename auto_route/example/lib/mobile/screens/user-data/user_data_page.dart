@@ -12,10 +12,10 @@ class UserDataPage extends StatelessWidget {
     final userData = context.watch<SettingsState>().userData;
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const .symmetric(horizontal: 32),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: .center,
+          crossAxisAlignment: .stretch,
           children: [
             const Text('Success'),
             const SizedBox(height: 24),

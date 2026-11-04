@@ -51,7 +51,7 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => PageInfo(
+PageInfo _page(String name) => .new(
   name,
   builder: (_) => Scaffold(body: Center(child: Text(name))),
 );

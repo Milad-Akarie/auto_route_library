@@ -37,7 +37,7 @@ void main() {
             type: RouteType.custom(opaque: false, barrierDismissible: true),
             guards: [
               AutoRouteGuard.simple((resolver, _) async {
-                if (guardDelay > Duration.zero) await Future<void>.delayed(guardDelay);
+                if (guardDelay > .zero) await Future<void>.delayed(guardDelay);
                 resolver.next();
               }),
             ],

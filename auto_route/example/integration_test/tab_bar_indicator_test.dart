@@ -113,7 +113,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   );
 }
 
-PageInfo _listPage(String name) => PageInfo(
+PageInfo _listPage(String name) => .new(
   name,
   builder: (_) => ListView.builder(
     itemCount: 30,

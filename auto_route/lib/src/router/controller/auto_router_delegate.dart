@@ -97,10 +97,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// Forces a url update
   static void reportUrlChanged(BuildContext context, String url) {
-    Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
-      RouteInformation(uri: Uri.parse(url)),
-      type: RouteInformationReportingType.navigate,
-    );
+    Router.of(context).routeInformationProvider
+        ?.routerReportsNewRouteInformation(RouteInformation(uri: Uri.parse(url)), type: .navigate);
   }
 
   @override
@@ -256,8 +254,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     if (route == null) return false;
     // WillPopScope answers only through the deprecated willPop.
     // ignore: deprecated_member_use
-    if (await route.willPop() == RoutePopDisposition.doNotPop) return true;
-    if (route.popDisposition == RoutePopDisposition.doNotPop) {
+    if (await route.willPop() == .doNotPop) return true;
+    if (route.popDisposition == .doNotPop) {
       route.onPopInvokedWithResult(false, null);
       return true;
     }
@@ -321,10 +319,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     final router = context == null ? null : Router.maybeOf(context);
     final routeInformation = router?.routeInformationParser?.restoreRouteInformation(currentConfiguration);
     if (routeInformation == null) return;
-    router!.routeInformationProvider?.routerReportsNewRouteInformation(
-      routeInformation,
-      type: RouteInformationReportingType.neglect,
-    );
+    router!.routeInformationProvider?.routerReportsNewRouteInformation(routeInformation, type: .neglect);
   }
 }
 
@@ -353,7 +348,7 @@ class _AutoRootRouter extends StatefulWidget {
   final TraversalEdgeBehavior? routeTraversalEdgeBehavior;
 
   @override
-  _AutoRootRouterState createState() => _AutoRootRouterState();
+  _AutoRootRouterState createState() => .new();
 }
 
 class _AutoRootRouterState extends State<_AutoRootRouter> {
@@ -434,7 +429,7 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
       topRoute = route;
       return true;
     });
-    return topRoute?.popDisposition == RoutePopDisposition.doNotPop;
+    return topRoute?.popDisposition == .doNotPop;
   }
 
   @override

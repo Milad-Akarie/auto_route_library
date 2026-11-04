@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/transitions/flutter_material_theme.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart' show PredictiveBackEvent, SwipeEdge;
+import 'package:flutter/services.dart' show PredictiveBackEvent;
 import 'package:material_ui/material_ui.dart';
 
 part 'transitions/predictive_back_page_detector.dart';
@@ -309,7 +309,7 @@ class _NoAnimationPageRouteBuilder<T> extends _PageRoute<T> with _NoAnimationPag
   Widget buildContent(BuildContext context) => _page.buildPage(context);
 
   @override
-  Duration get transitionDuration => Duration.zero;
+  Duration get transitionDuration => .zero;
 }
 
 mixin _NoAnimationPageRouteTransitionMixin<T> on _PageRoute<T> {
@@ -343,10 +343,10 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
   Widget buildContent(BuildContext context);
 
   @override
-  Duration get transitionDuration => routeType.duration ?? const Duration(milliseconds: 300);
+  Duration get transitionDuration => routeType.duration ?? const .new(milliseconds: 300);
 
   @override
-  Duration get reverseTransitionDuration => routeType.reverseDuration ?? const Duration(milliseconds: 300);
+  Duration get reverseTransitionDuration => routeType.reverseDuration ?? const .new(milliseconds: 300);
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
@@ -395,7 +395,7 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
     Widget child,
   ) {
     final platform = flutterMaterialThemeOf(context)?.platform ?? Theme.of(context).platform;
-    if (!enablePredictiveBackGesture || platform != TargetPlatform.android) {
+    if (!enablePredictiveBackGesture || platform != .android) {
       return super.buildTransitions(context, animation, secondaryAnimation, child);
     }
 

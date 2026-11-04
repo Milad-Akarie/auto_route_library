@@ -114,7 +114,7 @@ class TypeResolver {
             for (final p in type.formalParameters.where((p) => p.isRequiredNamed)) p.name!: _resolveNestedType(p.type),
           },
         ),
-        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        isNullable: type.nullabilitySuffix == .question,
         nameInRecord: nameInRecord,
       );
     } else if (type is FunctionType) {
@@ -122,7 +122,7 @@ class TypeResolver {
       return ResolvedType(
         name: alias.element.displayName,
         import: resolveImport(alias.element),
-        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        isNullable: type.nullabilitySuffix == .question,
         typeArguments: alias.typeArguments.map(resolveType).toList(),
         nameInRecord: nameInRecord,
       );
@@ -130,7 +130,7 @@ class TypeResolver {
       return ResolvedType.record(
         name: type.nameWithoutSuffix,
         import: resolveImport(type.element),
-        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        isNullable: type.nullabilitySuffix == .question,
         typeArguments: _resolveTypeArguments(type),
         nameInRecord: nameInRecord,
       );
@@ -140,7 +140,7 @@ class TypeResolver {
     return ResolvedType(
       name: type.element?.displayName ?? 'void',
       import: resolveImport(type.element),
-      isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+      isNullable: type.nullabilitySuffix == .question,
       typeArguments: _resolveTypeArguments(type),
       nameInRecord: nameInRecord,
       isEnum: type.element is EnumElement,
@@ -165,14 +165,14 @@ class TypeResolver {
       return ResolvedType.record(
         name: effectiveElement?.displayName ?? 'void',
         import: import,
-        isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+        isNullable: type.nullabilitySuffix == .question,
         typeArguments: typeArgs,
       );
     }
 
     return ResolvedType(
       name: effectiveElement?.displayName ?? type.nameWithoutSuffix,
-      isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
+      isNullable: type.nullabilitySuffix == .question,
       import: import,
       typeArguments: typeArgs,
       isEnum: effectiveElement is EnumElement,

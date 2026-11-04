@@ -15,7 +15,7 @@ void main() {
 
   Widget page(String name) => Scaffold(body: SafeArea(child: Text(name)));
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
       NamedRouteDef(name: 'DetailsRoute', path: '/details', builder: (_, _) => page('DetailsRoute')),

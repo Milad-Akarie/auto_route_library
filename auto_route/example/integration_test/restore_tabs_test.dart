@@ -19,7 +19,7 @@ void main() {
   // Flutter's state restoration doesn't run on the web, so the routers save
   // their pages only off the web.
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(path: '/', page: namedPage('SignUpRoute'), initial: true),
       AutoRoute(
@@ -113,7 +113,7 @@ final _bottomNavigationPage = PageInfo(
       return Scaffold(
         body: child,
         bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
+          type: .fixed,
           currentIndex: tabsRouter.activeIndex,
           onTap: tabsRouter.setActiveIndex,
           items: const [

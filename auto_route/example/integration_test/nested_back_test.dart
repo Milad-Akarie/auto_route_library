@@ -43,7 +43,7 @@ void main() {
     );
   });
 
-  final iosTheme = ThemeData(platform: TargetPlatform.iOS);
+  final iosTheme = ThemeData(platform: .iOS);
 
   // Steps: push SecondHostRoute (its nested router shows SecondNested1Route),
   // push SecondNested3Route into that nested router, then go back.

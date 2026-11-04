@@ -64,7 +64,7 @@ void main() {
 final _dashboardPage = PageInfo('Dashboard', builder: (_) => const Scaffold(body: AutoRouter()));
 
 // A page without a background, like the ones in the report.
-PageInfo _page(String name) => PageInfo(
+PageInfo _page(String name) => .new(
   name,
   builder: (_) => Align(alignment: Alignment.topLeft, child: Text(name)),
 );

@@ -10,7 +10,7 @@ class TestPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: .min,
         children: [Text(context.routeData.name), Text(context.routeData.match), Text(context.router.urlState.url)],
       ),
     );

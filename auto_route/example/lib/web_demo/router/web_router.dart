@@ -83,14 +83,14 @@ class _MainWebPageState extends State<MainWebPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
           children: [
             const Text(
               'HomePage',
               style: TextStyle(fontSize: 30),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed:
                     widget.navigate ??
@@ -107,7 +107,7 @@ class _MainWebPageState extends State<MainWebPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
                   App.of(context).authService.isAuthenticated = false;
@@ -176,7 +176,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
     return Scaffold(
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
           children: [
             Text(
               'User Profile : ${widget.userId}  likes: ${widget.likes}}',
@@ -198,7 +198,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ),
             const SizedBox(height: 8),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -209,7 +209,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
                   App.of(context).authService.isAuthenticated = false;
@@ -230,7 +230,7 @@ class UserPostsPage extends StatefulWidget {
   final int id;
 
   @override
-  UserPostsPageState createState() => UserPostsPageState();
+  UserPostsPageState createState() => .new();
 }
 
 class UserPostsPageState extends State<UserPostsPage> {
@@ -256,7 +256,7 @@ class UserPostsPageState extends State<UserPostsPage> {
               child: const Text('Show Dialog'),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed: () {
                   App.of(context).authService.isAuthenticated = false;
@@ -287,7 +287,7 @@ class UserPage extends StatefulWidget {
   final String? fragment;
 
   @override
-  UserPageState createState() => UserPageState();
+  UserPageState createState() => .new();
 }
 
 class UserPageState extends State<UserPage> {

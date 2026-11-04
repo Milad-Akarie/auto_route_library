@@ -41,7 +41,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
         ..fields.addAll([
           Field(
             (b) => b
-              ..modifier = FieldModifier.constant
+              ..modifier = .constant
               ..name = 'name'
               ..static = true
               ..type = stringRefer
@@ -114,7 +114,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
             ...nonInheritedParameters.map(
               (param) => Field(
                 (b) => b
-                  ..modifier = FieldModifier.final$
+                  ..modifier = .final$
                   ..name = param.name
                   ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer,
               ),
@@ -195,7 +195,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               Method(
                 (b) => b
                   ..name = 'hashCode'
-                  ..type = MethodType.getter
+                  ..type = .getter
                   ..annotations.add(refer('override'))
                   ..returns = refer('int')
                   ..lambda = true

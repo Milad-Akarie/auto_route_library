@@ -54,4 +54,4 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));

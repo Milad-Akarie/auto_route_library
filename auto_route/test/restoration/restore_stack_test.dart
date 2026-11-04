@@ -8,7 +8,7 @@ import 'restoration_test_utils.dart';
 void main() {
   // Flutter's state restoration doesn't run on the web, so the routers save
   // their pages only off the web.
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(page: page('SignUpRoute'), initial: true),
       AutoRoute(page: page('ExternalRoute')),
@@ -123,7 +123,7 @@ void main() {
   // paths the generator gives them, which don't nest, so the restored url
   // alone can't bring the pages before it back.
   testWidgets('back after restoration returns through the pages before it', (tester) async {
-    RootStackRouter buildShopRouter() => RootStackRouter.build(
+    RootStackRouter buildShopRouter() => .build(
       routes: [
         AutoRoute(page: page('HomeRoute'), restorationId: (match) => match.name, initial: true),
         AutoRoute(page: page('ProductsRoute'), restorationId: (match) => match.name),

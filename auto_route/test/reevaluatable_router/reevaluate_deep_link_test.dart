@@ -10,7 +10,7 @@ import 'package:material_ui/material_ui.dart';
 // must open that url, also when the listenable fires and the route is guarded.
 // The browser's own address bar is covered by test/web/typed_url_reevaluate_web_test.dart.
 void main() {
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       NamedRouteDef(
         name: 'HomeRoute',

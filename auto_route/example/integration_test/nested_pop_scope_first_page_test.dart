@@ -87,7 +87,7 @@ void main() {
       }
 
       testWidgets('the iOS back swipe keeps the host when its page has a PopScope', (tester) async {
-        await openHost(tester, theme: ThemeData(platform: TargetPlatform.iOS));
+        await openHost(tester, theme: ThemeData(platform: .iOS));
 
         await swipeBack(tester);
 

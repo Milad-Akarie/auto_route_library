@@ -54,7 +54,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-_TabsKind _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = .indexedStack;
 
 final _secondRemovedNotifier = ValueNotifier<bool>(false);
 
@@ -69,10 +69,10 @@ class _TabsHostRoute extends PageRouteInfo<void> {
       builder: (context, secondRemoved, _) {
         final routes = [const _FirstTabRoute(), if (!secondRemoved) const _SecondTabRoute()];
         return switch (_tabsKind) {
-          _TabsKind.indexedStack => AutoTabsRouter(routes: routes),
-          _TabsKind.pageView => AutoTabsRouter.pageView(routes: routes),
-          _TabsKind.tabBar => AutoTabsRouter.tabBar(routes: routes),
-          _TabsKind.builder => AutoTabsRouter.builder(
+          .indexedStack => AutoTabsRouter(routes: routes),
+          .pageView => AutoTabsRouter.pageView(routes: routes),
+          .tabBar => AutoTabsRouter.tabBar(routes: routes),
+          .builder => AutoTabsRouter.builder(
             routes: routes,
             builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
           ),

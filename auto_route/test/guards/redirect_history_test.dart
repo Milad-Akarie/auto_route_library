@@ -17,7 +17,7 @@ import '../router_test_utils.dart';
 // reopened it with the resolver.next of the first navigation, already called.
 // A resolved redirect must leave no history entry: back() lands on RouteA.
 void main() {
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       NamedRouteDef(
         name: 'RouteA',

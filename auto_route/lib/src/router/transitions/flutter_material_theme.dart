@@ -35,10 +35,7 @@ flutter.ThemeData? flutterMaterialThemeOf(BuildContext context) {
 flutter.PageTransitionsBuilder flutterPageTransitionsBuilderOf(flutter.ThemeData theme) {
   return theme.pageTransitionsTheme.builders[theme.platform] ??
       switch (theme.platform) {
-        TargetPlatform.iOS || TargetPlatform.macOS => const flutter.CupertinoPageTransitionsBuilder(),
-        TargetPlatform.android ||
-        TargetPlatform.fuchsia ||
-        TargetPlatform.windows ||
-        TargetPlatform.linux => const flutter.ZoomPageTransitionsBuilder(),
+        .iOS || .macOS => const flutter.CupertinoPageTransitionsBuilder(),
+        .android || .fuchsia || .windows || .linux => const flutter.ZoomPageTransitionsBuilder(),
       };
 }

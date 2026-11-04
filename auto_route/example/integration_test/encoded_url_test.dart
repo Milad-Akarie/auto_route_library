@@ -15,7 +15,7 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(page: FirstRoute.page, path: '/'),
       AutoRoute(page: _SecondsRoute.page, path: '/seconds/:id'),

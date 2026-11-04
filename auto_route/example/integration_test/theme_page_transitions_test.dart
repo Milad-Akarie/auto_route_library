@@ -55,7 +55,7 @@ void main() {
         AutoRoute(page: _DetailsRoute.page, path: '/details'),
       ],
     );
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    tester.binding.handleAppLifecycleStateChanged(.resumed);
     await tester.pumpWidget(
       flutter.MaterialApp.router(
         theme: flutter.ThemeData(
@@ -113,7 +113,7 @@ class _FlutterRecordingTransitionsBuilder extends flutter.PageTransitionsBuilder
   int calls = 0;
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 200);
+  Duration get transitionDuration => const .new(milliseconds: 200);
 
   @override
   Widget buildTransitions<T>(

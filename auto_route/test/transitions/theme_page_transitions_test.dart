@@ -227,7 +227,7 @@ class _FlutterRecordingTransitionsBuilder extends flutter.PageTransitionsBuilder
   int calls = 0;
 
   @override
-  Duration get transitionDuration => const Duration(milliseconds: 200);
+  Duration get transitionDuration => const .new(milliseconds: 200);
 
   @override
   Widget buildTransitions<T>(

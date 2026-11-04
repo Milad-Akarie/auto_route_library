@@ -13,7 +13,7 @@ void main() {
 
   setUp(rewindBrowserHistory);
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(page: FirstRoute.page, path: '/'),
       AutoRoute(page: SecondRoute.page, path: '/second'),

@@ -37,9 +37,9 @@ class _Route extends PageRouteInfo<void> {
   const _Route(super.name, {List<PageRouteInfo>? children}) : super(initialChildren: children);
 }
 
-PageInfo _awarePage(String name) => PageInfo(name, builder: (_) => const _AwarePage());
+PageInfo _awarePage(String name) => .new(name, builder: (_) => const _AwarePage());
 
-PageInfo _stackHost(String name) => PageInfo(name, builder: (_) => const AutoRouter());
+PageInfo _stackHost(String name) => .new(name, builder: (_) => const AutoRouter());
 
 /// Shows [routes] with a fresh [AutoRouteObserver] for each router, as the
 /// README asks, then clears the calls the first pages got.

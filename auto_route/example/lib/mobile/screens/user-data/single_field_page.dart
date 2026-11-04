@@ -12,7 +12,7 @@ class SingleFieldPage extends StatefulWidget {
   final void Function(String)? onNext;
 
   @override
-  SingleFieldPageState createState() => SingleFieldPageState();
+  SingleFieldPageState createState() => .new();
 }
 
 class SingleFieldPageState extends State<SingleFieldPage> {
@@ -34,7 +34,7 @@ class SingleFieldPageState extends State<SingleFieldPage> {
             const SizedBox(height: 100),
             Text(widget.message),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+              padding: const .symmetric(horizontal: 32, vertical: 24),
               child: TextField(
                 decoration: const InputDecoration(border: OutlineInputBorder()),
                 onChanged: (t) {

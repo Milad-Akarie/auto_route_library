@@ -11,7 +11,7 @@ class BookDetailsPage extends StatefulWidget {
   final int id;
 
   @override
-  BookDetailsPageState createState() => BookDetailsPageState();
+  BookDetailsPageState createState() => .new();
 }
 
 class BookDetailsPageState extends State<BookDetailsPage> {
@@ -25,17 +25,17 @@ class BookDetailsPageState extends State<BookDetailsPage> {
         ? const Text('Book null')
         : Scaffold(
             body: SizedBox(
-              width: double.infinity,
+              width: .infinity,
               child: Hero(
                 tag: 'Hero${book.id}',
                 child: Card(
-                  margin: const EdgeInsets.all(48),
+                  margin: const .all(48),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: .center,
                     children: [
                       Text('Book Details/${book.id}'),
                       Padding(
-                        padding: const EdgeInsets.only(top: 24),
+                        padding: const .only(top: 24),
                         child: Text(
                           'Reads  $counter',
                           style: const TextStyle(fontSize: 20),

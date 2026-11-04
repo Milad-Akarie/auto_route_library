@@ -63,7 +63,7 @@ class AutoRouter extends StatefulWidget {
     GlobalKey<NavigatorState>? navigatorKey,
     OnNestedNavigateCallBack? onNavigate,
     WidgetBuilder? placeholder,
-    Clip clipBehavior = Clip.hardEdge,
+    Clip clipBehavior = .hardEdge,
     TraversalEdgeBehavior? traversalEdgeBehavior,
   }) => _DeclarativeAutoRouter(
     onPopRoute: onPopRoute,
@@ -234,7 +234,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final TraversalEdgeBehavior? traversalEdgeBehavior;
 
   @override
-  _DeclarativeAutoRouterState createState() => _DeclarativeAutoRouterState();
+  _DeclarativeAutoRouterState createState() => .new();
 }
 
 class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {

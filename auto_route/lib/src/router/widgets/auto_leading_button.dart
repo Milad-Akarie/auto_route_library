@@ -152,11 +152,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
       final topPage = scope.controller.topPage;
       final useCloseButton = topPage?.fullscreenDialog ?? false;
       if (widget.builder != null) {
-        return widget.builder!(
-          context,
-          useCloseButton ? LeadingType.close : LeadingType.back,
-          scope.controller.maybePopTop,
-        );
+        return widget.builder!(context, useCloseButton ? .close : .back, scope.controller.maybePopTop);
       }
       leading = useCloseButton
           ? CloseButton(
@@ -173,7 +169,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
     final scaffold = Scaffold.maybeOf(context);
     if (scaffold?.hasDrawer == true) {
       if (widget.builder != null) {
-        return widget.builder!(context, LeadingType.drawer, _handleDrawerButton);
+        return widget.builder!(context, .drawer, _handleDrawerButton);
       }
       leading = IconButton(
         key: const ValueKey(LeadingType.drawer),
@@ -185,7 +181,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
     }
 
     if (widget.builder != null) {
-      return widget.builder!(context, LeadingType.noLeading, null);
+      return widget.builder!(context, .noLeading, null);
     }
     if (widget._nullableBuilder != null) {
       return widget._nullableBuilder!(context, leading);

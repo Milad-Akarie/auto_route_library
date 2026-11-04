@@ -124,5 +124,5 @@ class _BookRoute extends PageRouteInfo<void> {
 }
 
 class _BookTabRoute {
-  static PageInfo pageFor(String name) => PageInfo(name, builder: (_) => Text(name));
+  static PageInfo pageFor(String name) => .new(name, builder: (_) => Text(name));
 }

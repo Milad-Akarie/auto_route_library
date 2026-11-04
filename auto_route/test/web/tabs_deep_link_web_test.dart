@@ -65,9 +65,9 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Text(name));
+PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 
-PageInfo _shellPage(String name) => PageInfo(name, builder: (_) => const AutoRouter());
+PageInfo _shellPage(String name) => .new(name, builder: (_) => const AutoRouter());
 
 final _tabsPage = PageInfo(
   'AuthenticatedAppRoute',

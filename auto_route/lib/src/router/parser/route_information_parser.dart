@@ -348,7 +348,7 @@ class UrlState {
   /// With the flattened version of [segments]
   /// e.g if segments = [Match1[Match2[Match3]]]
   /// the result is [Match1,Match2,Match3]
-  UrlState get flatten => UrlState.fromSegments(segments.last.flattened, state: pathState);
+  UrlState get flatten => .fromSegments(segments.last.flattened, state: pathState);
 
   @override
   String toString() {

@@ -38,7 +38,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   @override
   void routerReportsNewRouteInformation(
     RouteInformation routeInformation, {
-    RouteInformationReportingType type = RouteInformationReportingType.none,
+    RouteInformationReportingType type = .none,
   }) {
     if (neglectIf != null && neglectIf!(routeInformation.uri.toString())) {
       return;
@@ -56,8 +56,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
     // The routes saved for state restoration stay with the Router.
     final state = UrlState.platformState(routeInformation.state);
     var replace =
-        type == RouteInformationReportingType.neglect ||
-        (type == RouteInformationReportingType.none &&
+        type == .neglect ||
+        (type == .none &&
             _valueInEngine.uri == appRouteInformation.uri &&
             UrlState.platformState(_valueInEngine.state) == state);
 

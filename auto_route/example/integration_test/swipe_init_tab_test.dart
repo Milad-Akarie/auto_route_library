@@ -13,7 +13,7 @@ void main() {
 
   const tabs = [NamedRoute('Tab1Route'), NamedRoute('Tab2Route'), NamedRoute('Tab3Route')];
 
-  RootStackRouter buildRouter(Widget Function() tabsRouter) => RootStackRouter.build(
+  RootStackRouter buildRouter(Widget Function() tabsRouter) => .build(
     routes: [
       AutoRoute(
         path: '/',

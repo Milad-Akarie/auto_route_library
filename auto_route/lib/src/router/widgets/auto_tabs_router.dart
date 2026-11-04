@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
 import 'package:collection/collection.dart';
@@ -251,7 +249,7 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
   }
 
   @override
-  _AutoTabsRouterIndexedStackState createState() => _AutoTabsRouterIndexedStackState();
+  _AutoTabsRouterIndexedStackState createState() => .new();
 }
 
 class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRouterIndexedStack>
@@ -392,7 +390,7 @@ class _IndexedStackBuilder extends StatefulWidget {
   final Animation<double> animation;
 
   @override
-  _IndexedStackBuilderState createState() => _IndexedStackBuilderState();
+  _IndexedStackBuilderState createState() => .new();
 }
 
 class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteAwareTabsMixin<_IndexedStackBuilder> {
@@ -461,7 +459,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
       container: true,
       child: IndexedStack(
         index: widget.activeIndex,
-        sizing: StackFit.expand,
+        sizing: .expand,
         children: List.generate(widget.stack.length, (index) {
           if (!widget.stack[index].maintainState && index != widget.activeIndex) {
             _initializedPagesTracker[index] = false;
@@ -508,7 +506,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
   final DragStartBehavior dragStartBehavior;
 
   @override
-  _AutoTabsRouterPageViewState createState() => _AutoTabsRouterPageViewState();
+  _AutoTabsRouterPageViewState createState() => .new();
 }
 
 class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPageView>
@@ -618,7 +616,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     super.navigatorObservers,
     this.physics,
     this.dragStartBehavior = DragStartBehavior.start,
-  }) : duration = duration ?? (animatePageTransition ? null : Duration.zero),
+  }) : duration = duration ?? (animatePageTransition ? null : .zero),
        super._();
   final AutoTabsTabBarBuilder? builder;
   final bool animatePageTransition;
@@ -629,7 +627,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   final Axis scrollDirection;
 
   @override
-  _AutoTabsRouterTabBarState createState() => _AutoTabsRouterTabBarState();
+  _AutoTabsRouterTabBarState createState() => .new();
 }
 
 class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabBar>
@@ -767,7 +765,7 @@ class _AutoTabsRouterBuilder extends AutoTabsRouter {
   final OnNavigationChanged? onRouterReady;
 
   @override
-  _AutoTabsRouterBuilderState createState() => _AutoTabsRouterBuilderState();
+  _AutoTabsRouterBuilderState createState() => .new();
 }
 
 class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBuilder>
@@ -903,10 +901,7 @@ class KeepAliveTabState extends State<KeepAliveTab> with AutomaticKeepAliveClien
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Semantics(
-      role: SemanticsRole.tabPanel,
-      child: _load ? widget.page.buildPage(context) : const SizedBox.shrink(),
-    );
+    return Semantics(role: .tabPanel, child: _load ? widget.page.buildPage(context) : const SizedBox.shrink());
   }
 
   @override

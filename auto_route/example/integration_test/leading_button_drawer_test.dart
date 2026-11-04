@@ -40,7 +40,7 @@ void main() {
       ],
     );
 
-    Future<void> pumpApp({Key? key, Brightness brightness = Brightness.light, Locale? locale}) async {
+    Future<void> pumpApp({Key? key, Brightness brightness = .light, Locale? locale}) async {
       await tester.pumpWidget(
         MaterialApp.router(
           key: key,
@@ -60,18 +60,18 @@ void main() {
 
     await pumpApp();
     expectDrawerIcon();
-    await pumpApp(brightness: Brightness.dark);
+    await pumpApp(brightness: .dark);
     expectDrawerIcon();
-    await pumpApp(brightness: Brightness.dark, locale: const Locale('fr'));
+    await pumpApp(brightness: .dark, locale: const Locale('fr'));
     expectDrawerIcon();
     await pumpApp(key: const ValueKey('fr'), locale: const Locale('fr'));
     expectDrawerIcon();
   });
 }
 
-PageInfo _emptyRouter(String name) => PageInfo(name, builder: (_) => const AutoRouter());
+PageInfo _emptyRouter(String name) => .new(name, builder: (_) => const AutoRouter());
 
-PageInfo _text(String name) => PageInfo(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _text(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 final _feedListing = PageInfo(
   'FeedListingRoute',

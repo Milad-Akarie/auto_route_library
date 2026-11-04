@@ -108,10 +108,10 @@ class PageRouteInfo<T extends Object?> {
   bool get fromRedirect => redirectedFrom != null;
 
   /// Builds and returns a new instance of Parameters with [rawPathParams]
-  Parameters get pathParams => Parameters(rawPathParams);
+  Parameters get pathParams => .new(rawPathParams);
 
   /// Builds and returns a new instance of Parameters with [rawQueryParams]
-  Parameters get queryParams => Parameters(rawQueryParams);
+  Parameters get queryParams => .new(rawQueryParams);
 
   /// Expends the path by populating it's dynamic-segments with
   /// their corresponding values from [params]

@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 void main() {
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(
         page: _TabsHostRoute.page,

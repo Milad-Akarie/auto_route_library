@@ -65,7 +65,7 @@ void main() {
   });
 }
 
-CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => CustomRoute(
+CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => .new(
   page: page,
   path: path,
   initial: initial,
@@ -73,7 +73,7 @@ CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => CustomR
   duration: const Duration(milliseconds: 200),
 );
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);

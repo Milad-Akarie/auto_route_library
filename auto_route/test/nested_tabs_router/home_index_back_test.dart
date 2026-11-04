@@ -78,7 +78,7 @@ final _tabsPage = PageInfo(
   builder: (_) => AutoTabsScaffold(homeIndex: _homeIndex, routes: [for (final name in _tabNames) _Route(name)]),
 );
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Text(name));
+PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);

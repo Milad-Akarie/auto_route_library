@@ -9,7 +9,7 @@ class App extends StatefulWidget {
   const App({super.key});
 
   @override
-  AppState createState() => AppState();
+  AppState createState() => .new();
 
   static AppState of(BuildContext context) {
     return context.findAncestorStateOfType<AppState>()!;

@@ -27,7 +27,6 @@ import 'package:material_ui/material_ui.dart'
         SliverFillViewport,
         State,
         StatefulWidget,
-        TextDirection,
         Viewport,
         Widget,
         debugCheckHasDirectionality;
@@ -244,13 +243,13 @@ class _EagerPageViewState extends State<EagerPageView> {
 
   AxisDirection _getDirection(BuildContext context) {
     switch (widget.scrollDirection) {
-      case Axis.horizontal:
+      case .horizontal:
         assert(debugCheckHasDirectionality(context));
         final textDirection = Directionality.of(context);
         final axisDirection = textDirectionToAxisDirection(textDirection);
         return widget.reverse ? flipAxisDirection(axisDirection) : axisDirection;
-      case Axis.vertical:
-        return widget.reverse ? AxisDirection.up : AxisDirection.down;
+      case .vertical:
+        return widget.reverse ? .up : .down;
     }
   }
 

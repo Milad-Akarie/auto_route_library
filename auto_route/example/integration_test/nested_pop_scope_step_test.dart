@@ -91,7 +91,7 @@ void main() {
   // The swipe doesn't start while a PopScope blocks the page, as in a flat
   // route. Run with the iOS page transitions on every platform.
   testWidgets('the iOS back swipe on a step with a PopScope stays on the step', (tester) async {
-    await openIdNumberForm(tester, theme: ThemeData(platform: TargetPlatform.iOS));
+    await openIdNumberForm(tester, theme: ThemeData(platform: .iOS));
 
     await swipeBack(tester);
     expectOnIdStep(showingForm: true);

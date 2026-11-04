@@ -110,7 +110,7 @@ bool get appWroteBrowserEntry {
 Future<void> pumpAsRunApp(WidgetTester tester, Widget app) async {
   tester.binding.attachRootWidget(tester.binding.wrapWithDefaultView(app));
   tester.binding.buildOwner!.buildScope(tester.binding.rootElement!);
-  await Future<void>.delayed(Duration.zero);
+  await Future<void>.delayed(.zero);
   await settleBrowser(tester);
 }
 

@@ -54,7 +54,7 @@ mixin CupertinoRouteTransitionOverrideMixin<T> on PageRoute<T> {
   @override
   RoutePopDisposition get popDisposition {
     if (willHandlePopInternally) {
-      return RoutePopDisposition.pop;
+      return .pop;
     }
     return super.popDisposition;
   }
@@ -276,9 +276,9 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
 
   double _convertToLogical(double value) {
     switch (Directionality.of(context)) {
-      case TextDirection.rtl:
+      case .rtl:
         return -value;
-      case TextDirection.ltr:
+      case .ltr:
         return value;
     }
   }
@@ -288,12 +288,12 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
     assert(debugCheckHasDirectionality(context));
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
-    var dragAreaWidth = Directionality.of(context) == TextDirection.ltr
+    var dragAreaWidth = Directionality.of(context) == .ltr
         ? MediaQuery.of(context).padding.left
         : MediaQuery.of(context).padding.right;
     dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
     return Stack(
-      fit: StackFit.passthrough,
+      fit: .passthrough,
       children: <Widget>[
         widget.child,
         PositionedDirectional(
@@ -301,7 +301,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
           width: dragAreaWidth,
           top: 0.0,
           bottom: 0.0,
-          child: Listener(onPointerDown: _handlePointerDown, behavior: HitTestBehavior.translucent),
+          child: Listener(onPointerDown: _handlePointerDown, behavior: .translucent),
         ),
       ],
     );
@@ -413,7 +413,7 @@ class _CupertinoBackGestureController<T> {
 class _CupertinoEdgeShadowDecoration extends Decoration {
   const _CupertinoEdgeShadowDecoration._([this._colors]);
 
-  static DecorationTween tween(bool withShadow) => DecorationTween(
+  static DecorationTween tween(bool withShadow) => .new(
     begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
     end: _CupertinoEdgeShadowDecoration._(
       // Eyeballed gradient used to mimic a drop shadow on the start side only.
@@ -560,10 +560,10 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
     final double start;
     final double shadowDirection; // -1 for ltr, 1 for rtl.
     switch (textDirection!) {
-      case TextDirection.rtl:
+      case .rtl:
         start = offset.dx + configuration.size!.width;
         shadowDirection = 1;
-      case TextDirection.ltr:
+      case .ltr:
         start = offset.dx;
         shadowDirection = -1;
     }

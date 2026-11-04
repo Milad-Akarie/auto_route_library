@@ -182,7 +182,7 @@ void main() {
         ),
         AutoRoute(page: ThirdRoute.page),
       ],
-      defaultRouteType: RouteType.custom(reverseDuration: Duration.zero, duration: Duration.zero),
+      defaultRouteType: RouteType.custom(reverseDuration: .zero, duration: .zero),
     );
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
     expectTopPage(router, FirstRoute.name);

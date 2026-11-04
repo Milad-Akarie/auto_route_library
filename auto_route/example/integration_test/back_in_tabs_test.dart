@@ -99,7 +99,7 @@ void main() {
   });
 
   testWidgets('the iOS back swipe pops only the page of the tab on screen', (tester) async {
-    final tabs = await pumpApp(tester, theme: ThemeData(platform: TargetPlatform.iOS));
+    final tabs = await pumpApp(tester, theme: ThemeData(platform: .iOS));
     await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
     await showTab(tester, tabs, 1);
     await pushInTab(tester, tabs, 1, 'MyBooksRoute');
@@ -127,7 +127,7 @@ final _homePage = PageInfo(
   builder: (_) => const AutoTabsRouter(routes: [_Route('BooksTab'), _Route('ProfileTab')]),
 );
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(body: Text(name)));
+PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const _Route(super.name);

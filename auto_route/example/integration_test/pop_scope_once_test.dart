@@ -66,7 +66,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  final iosTheme = ThemeData(platform: TargetPlatform.iOS);
+  final iosTheme = ThemeData(platform: .iOS);
   final backs = <String, (Future<void> Function(WidgetTester), ThemeData?)>{
     'Navigator.maybePop': (tapMaybePop, null),
     'system back': (systemBack, null),

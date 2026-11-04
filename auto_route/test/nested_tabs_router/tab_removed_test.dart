@@ -60,7 +60,7 @@ void _runRemovedTabTests(_TabsKind kind) {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-_TabsKind _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = .indexedStack;
 
 final _routesNotifier = ValueNotifier<List<PageRouteInfo>>(const []);
 
@@ -73,10 +73,10 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     builder: (_) => ValueListenableBuilder<List<PageRouteInfo>>(
       valueListenable: _routesNotifier,
       builder: (context, routes, _) => switch (_tabsKind) {
-        _TabsKind.indexedStack => AutoTabsRouter(routes: routes),
-        _TabsKind.pageView => AutoTabsRouter.pageView(routes: routes),
-        _TabsKind.tabBar => AutoTabsRouter.tabBar(routes: routes),
-        _TabsKind.builder => AutoTabsRouter.builder(
+        .indexedStack => AutoTabsRouter(routes: routes),
+        .pageView => AutoTabsRouter.pageView(routes: routes),
+        .tabBar => AutoTabsRouter.tabBar(routes: routes),
+        .builder => AutoTabsRouter.builder(
           routes: routes,
           builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
         ),
@@ -123,7 +123,7 @@ class _CounterPageState extends State<_CounterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Text('${widget.label} taps: $_taps'),
           TextButton(onPressed: () => setState(() => _taps++), child: Text('${widget.label}: add one')),

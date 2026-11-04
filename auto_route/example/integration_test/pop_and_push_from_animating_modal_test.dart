@@ -76,11 +76,11 @@ class _Modal1Route extends PageRouteInfo<void> {
     name,
     builder: (_) => Builder(
       builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: .min,
         children: [
           const SizedBox(height: 64),
           SizedBox(
-            width: double.infinity,
+            width: .infinity,
             child: FilledButton(
               onPressed: () => context.router.popAndPush(const _First1Route()),
               child: const Text('Test'),

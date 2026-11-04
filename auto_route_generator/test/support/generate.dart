@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:analyzer/dart/analysis/results.dart';
-import 'package:analyzer/diagnostic/diagnostic.dart';
 import 'package:auto_route_generator/builder.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
@@ -132,7 +131,7 @@ class _CompileCheckBuilder implements Builder {
       for (final fragment in library.fragments) {
         final result = await library.session.getErrors(fragment.source.fullName);
         if (result is ErrorsResult) {
-          for (final e in result.diagnostics.where((e) => e.severity == Severity.error)) {
+          for (final e in result.diagnostics.where((e) => e.severity == .error)) {
             errors.add('${fragment.source.uri.pathSegments.last}: ${e.message}');
           }
         }

@@ -226,7 +226,7 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   /// Returns an unmodifiable lis of current pages stack data
-  List<RouteData> get stackData => List.unmodifiable(_pages.map((e) => e.routeData));
+  List<RouteData> get stackData => .unmodifiable(_pages.map((e) => e.routeData));
 
   /// See [NavigationHistory.isRouteActive]
   bool isRouteActive(String routeName) {
@@ -864,13 +864,13 @@ class TabsRouter extends RoutingController {
     bool update = false,
     OnNavigationFailure? onFailure,
   }) {
-    if (_disposed || change != _tabChanges) return _TabChange.replaced;
+    if (_disposed || change != _tabChanges) return .replaced;
     _pendingTab = null;
     _pendingChange = null;
     if (!result.continueNavigation) {
       // A view that moved to the tab goes back to the active one.
       if (notify) notifyListeners();
-      return _TabChange.rejected;
+      return .rejected;
     }
     // A guard may have overridden the route, e.g. its args.
     final updated = update || !identical(result.route, match) ? _updateTabPage(index, result.route) : null;
@@ -878,7 +878,7 @@ class TabsRouter extends RoutingController {
     _previousIndex = _activeIndex;
     _activeIndex = index;
     if (notify) {
-      if (didPreload && SchedulerBinding.instance.schedulerPhase != SchedulerPhase.idle) {
+      if (didPreload && SchedulerBinding.instance.schedulerPhase != .idle) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
           notifyAll();
         });
@@ -887,7 +887,7 @@ class TabsRouter extends RoutingController {
       }
     }
     if (updated != null) _navigateInsideTab(updated, onFailure: onFailure);
-    return _TabChange.done;
+    return .done;
   }
 
   // Asks the guards of the tab [route] opens whether it may show, the way a
@@ -939,7 +939,7 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  List<AutoRoutePage> get stack => List.unmodifiable(_pages);
+  List<AutoRoutePage> get stack => .unmodifiable(_pages);
 
   AutoRoutePage? get _activePage {
     return _pages.isEmpty ? null : _pages[_activeIndex];
@@ -961,7 +961,7 @@ class TabsRouter extends RoutingController {
       // When the guards of the home tab keep it out, back goes on as it
       // would from the home tab.
       Future<bool> popOrParent(_TabChange change) =>
-          change == _TabChange.rejected ? _maybePopParent<T>(result) : SynchronousFuture<bool>(true);
+          change == .rejected ? _maybePopParent<T>(result) : SynchronousFuture<bool>(true);
       final change = _changeTab(homeIndex);
       return change is _TabChange ? popOrParent(change) : change.then(popOrParent);
     }
@@ -983,7 +983,7 @@ class TabsRouter extends RoutingController {
       // When the guards of the home tab keep it out, back goes on as it
       // would from the home tab.
       void popParent(_TabChange change) {
-        if (change == _TabChange.rejected) _parent?.pop(result);
+        if (change == .rejected) _parent?.pop(result);
       }
 
       final change = _changeTab(homeIndex);
@@ -1606,7 +1606,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  List<AutoRoutePage> get stack => List.unmodifiable(_pages);
+  List<AutoRoutePage> get stack => .unmodifiable(_pages);
 
   /// Adds the corresponding page to given [route] to the [_pages] stack
   ///
@@ -2478,7 +2478,7 @@ class ActiveGuardObserver extends ValueNotifier<List<GuardEntry>> {
   bool get guardInProgress => value.isNotEmpty;
 
   /// returns a list of active guards
-  List<AutoRouteGuard> get activeGuards => List.unmodifiable(value.map((e) => e.guard));
+  List<AutoRouteGuard> get activeGuards => .unmodifiable(value.map((e) => e.guard));
 }
 
 /// A class that holds a guard and it's corresponding resolver

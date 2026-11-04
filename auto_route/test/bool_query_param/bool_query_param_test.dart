@@ -16,7 +16,7 @@ import '../router_test_utils.dart';
 void main() {
   final flagPage = PageInfo('FlagRoute', builder: (data) => Text('Flag ${data.queryParams.optBool('f')}'));
 
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(path: '/', page: page('HomeRoute'), initial: true),
       AutoRoute(path: '/flag', page: flagPage),

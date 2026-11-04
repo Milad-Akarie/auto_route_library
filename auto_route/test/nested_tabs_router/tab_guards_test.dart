@@ -162,7 +162,7 @@ void main() {
         expect(router.urlState.url, '/c');
       });
 
-      if (kind != _Tabs.indexedStack) {
+      if (kind != .indexedStack) {
         testWidgets('swiping to a tab whose guard rejects returns to the current tab', (tester) async {
           final router = _buildRouter(kind);
           await pumpRouterApp(tester, router);
@@ -226,9 +226,9 @@ final _loginGuard = AutoRouteGuard.simple((resolver, _) {
 RootStackRouter _buildRouter(_Tabs kind, {AutoRouteGuard? guard, int guardedTab = 1, int homeIndex = -1}) {
   final routes = [for (final name in _tabNames) NamedRoute(name)];
   final host = switch (kind) {
-    _Tabs.indexedStack => AutoTabsRouter(routes: routes, homeIndex: homeIndex),
-    _Tabs.pageView => AutoTabsRouter.pageView(routes: routes, homeIndex: homeIndex),
-    _Tabs.tabBar => AutoTabsRouter.tabBar(routes: routes, homeIndex: homeIndex),
+    .indexedStack => AutoTabsRouter(routes: routes, homeIndex: homeIndex),
+    .pageView => AutoTabsRouter.pageView(routes: routes, homeIndex: homeIndex),
+    .tabBar => AutoTabsRouter.tabBar(routes: routes, homeIndex: homeIndex),
   };
   return RootStackRouter.build(
     routes: [

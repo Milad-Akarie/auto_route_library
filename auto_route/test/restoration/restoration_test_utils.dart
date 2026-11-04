@@ -26,4 +26,4 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
   }
 }
 
-PageInfo page(String name) => PageInfo(name, builder: (_) => Text(name));
+PageInfo page(String name) => .new(name, builder: (_) => Text(name));

@@ -20,7 +20,7 @@ class Parameters {
 
   /// merges the value of two instances of [Parameters] classes
   /// and returns a new instance containing the merged values.
-  Parameters operator +(Parameters other) => Parameters({..._params, ...other._params});
+  Parameters operator +(Parameters other) => .new({..._params, ...other._params});
 
   @override
   bool operator ==(Object other) =>
