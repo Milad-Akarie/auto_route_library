@@ -34,10 +34,10 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   @override
   Future<RouterConfig?> loadFromCache(BuildStep buildStep, int stepHash) async {
     final cachedRouterFile = _buildRouterFile(buildStep, toCache: true);
-    if (await cachedRouterFile.exists()) {
-      final json = jsonDecode(await cachedRouterFile.readAsString());
+    if (cachedRouterFile.existsSync()) {
+      final json = jsonDecode(await cachedRouterFile.readAsString()) as Map<String, dynamic>;
       if (json['cacheHash'] == stepHash) {
-        return RouterConfig.fromJson(json as Map<String, dynamic>);
+        return RouterConfig.fromJson(json);
       }
     }
     return null;
@@ -87,7 +87,12 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
         }
         routesCacheFile.writeAsStringSync(jsonEncode(generatedResults));
       }
+      // A cache that can't be written only costs the next build its speed, so
+      // any failure is reported and the build goes on.
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
+      // build_runner shows a builder's print as its output.
+      // ignore: avoid_print
       print('Could not write config routerCache');
     }
 

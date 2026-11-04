@@ -122,7 +122,7 @@ class ResolvedType {
           ..isNullable = isNullable
           ..positionalFieldTypes.addAll(typeArguments.where((e) => !e.isNamedRecordField).map((e) => e.refer))
           ..namedFieldTypes.addAll({
-            for (final entry in [...typeArguments.where((e) => e.isNamedRecordField)]) entry.nameInRecord!: entry.refer,
+            for (final entry in typeArguments.where((e) => e.isNamedRecordField)) entry.nameInRecord!: entry.refer,
           }),
       );
     }
@@ -154,9 +154,9 @@ class ResolvedType {
       'name': name,
       'isNullable': isNullable,
       'isRecordType': _isRecordType,
-      if (nameInRecord != null) 'nameInRecord': nameInRecord,
+      'nameInRecord': ?nameInRecord,
       if (typeArguments.isNotEmpty) 'typeArguments': typeArguments.map((e) => e.toJson()).toList(),
-      if (functionParts != null) 'functionParts': functionParts!.toJson(),
+      'functionParts': ?functionParts?.toJson(),
       if (isEnum) 'isEnum': true,
     };
   }

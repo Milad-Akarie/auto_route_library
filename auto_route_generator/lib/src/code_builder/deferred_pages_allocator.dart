@@ -47,7 +47,7 @@ extension _RouteConfigList on List<RouteConfig> {
       if (routeConfig.pageType?.import == importPath) {
         return (routeConfig.deferredLoading ?? defaultDeferredLoading) ? .deferred : .none;
       }
-      //todo handle this
+      // TODO(maintainer): handle this.
       // if (routeConfig.childRouterConfig == null) {
       // } else {
       //   final deferredStatus = routeConfig.childRouterConfig!.routes

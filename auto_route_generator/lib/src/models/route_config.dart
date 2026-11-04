@@ -114,16 +114,11 @@ class RouteConfig {
   /// Clones the route config with the given parameters
   RouteConfig copyWith({
     String? name,
-    String? pathName,
     List<PathParamConfig>? pathParams,
-    bool? initial,
-    bool? fullMatch,
     ResolvedType? pageType,
     String? className,
     List<ParamConfig>? parameters,
-    String? redirectTo,
     bool? hasWrappedRoute,
-    String? replacementInRouteName,
     bool? hasConstConstructor,
     bool? deferredLoading,
   }) {

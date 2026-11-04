@@ -10,7 +10,7 @@ import 'package:code_builder/code_builder.dart';
 const _collectionsImport = 'package:collection/collection.dart';
 
 /// Builds a generic type reference with the given [symbol] and [args]
-TypeReference _genericRef(String symbol, List<ResolvedType> args, [String? url]) {
+TypeReference _genericRef(String symbol, List<ResolvedType> args, String url) {
   return TypeReference((b) {
     b
       ..symbol = symbol

@@ -53,6 +53,8 @@ class RouteConfigResolver {
         (p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
       );
       if (unParsableRequiredArgs.isNotEmpty) {
+        // build_runner shows a builder's print as its output.
+        // ignore: avoid_print
         print(
           '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
           'that can not be parsed from path,\n@PathParam() and @QueryParam() annotations will be ignored.\n',

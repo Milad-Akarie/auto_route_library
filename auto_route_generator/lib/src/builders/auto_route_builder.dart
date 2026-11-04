@@ -41,7 +41,7 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   @override
   Future<RoutesList?> loadFromCache(BuildStep buildStep, int stepHash) async {
     var cachedRes = <String, RoutesList>{};
-    if (await routesCacheFile.exists()) {
+    if (routesCacheFile.existsSync()) {
       cachedRes = await buildStep.fetchResource(_cacheResource);
     }
     if (cachedRes.containsKey(buildStep.inputId.path)) {

@@ -47,8 +47,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   bool get cacheEnabled;
 
   String _defaultFormatOutput(LibraryLanguageVersion libVersion, String code) {
-    code = '$dartFormatWidth\n$code';
-    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format(code);
+    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format('$dartFormatWidth\n$code');
   }
 
   /// Custom ignore for file rules passed from the options
@@ -101,6 +100,9 @@ abstract class CacheAwareBuilder<T> extends Builder {
   String validateAndFormatDartCode(BuildStep buildStep, LibraryLanguageVersion libVersion, String generated) {
     try {
       return _defaultFormatOutput(libVersion, generated);
+      // Any formatter failure is logged with the unformatted output, so the
+      // generator's bug can be found.
+      // ignore: avoid_catches_without_on_clauses
     } catch (e, stack) {
       log.severe(
         '''
