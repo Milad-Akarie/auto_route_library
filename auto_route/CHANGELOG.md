@@ -1,4 +1,5 @@
 ## Unreleased
+- **FIX**: a page view tabs router with a zero duration switches tabs without animating (#1150).
 - `NavigationHistory`, the type of `router.navigationHistory`, is exported from `package:auto_route/auto_route.dart`,
   so an app can name it in a variable, a parameter or a test.
 - **DEPRECATION**: passing a bool to `NavigationResolver.next` is deprecated; call `next()` to

@@ -178,6 +178,9 @@ class AutoPageViewState extends State<AutoPageView> {
     _warpUnderwayCount -= 1;
   }
 
+  // A zero duration jumps: animateToPage asserts a duration above zero.
+  bool get _animates => widget.animatePageTransition && widget.duration > .zero;
+
   Future<void> _animateToPage(int page) async {
     _warpUnderwayCount += 1;
     await _controller.animateToPage(page, duration: widget.duration, curve: Curves.ease);
@@ -185,7 +188,7 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   Future<void> _warpToAdjacentTab() async {
-    if (widget.animatePageTransition) {
+    if (_animates) {
       await _animateToPage(_router.activeIndex);
     } else {
       _jumpToPage(_router.activeIndex);
@@ -206,7 +209,7 @@ class AutoPageViewState extends State<AutoPageView> {
     });
     _jumpToPage(initialPage);
 
-    if (widget.animatePageTransition) {
+    if (_animates) {
       await _animateToPage(_router.activeIndex);
     } else {
       _jumpToPage(_router.activeIndex);

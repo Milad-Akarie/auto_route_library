@@ -75,6 +75,7 @@ import 'overlapping_reevaluation_test.dart' as overlapping_reevaluation;
 import 'override_args_on_reevaluate_test.dart' as override_args_on_reevaluate;
 import 'override_children_on_reevaluate_test.dart' as override_children_on_reevaluate;
 import 'page_view_swipe_back_test.dart' as page_view_swipe_back;
+import 'page_view_zero_duration_test.dart' as page_view_zero_duration;
 import 'pageless_push_rebuild_test.dart' as pageless_push_rebuild;
 import 'parent_pages_build_test.dart' as parent_pages_build;
 import 'pop_and_back_test.dart' as pop_and_back;
@@ -253,6 +254,7 @@ void main() {
   group('override args on reevaluate', override_args_on_reevaluate.main);
   group('override children on reevaluate', override_children_on_reevaluate.main);
   group('page view swipe back', page_view_swipe_back.main);
+  group('page view zero duration', page_view_zero_duration.main);
   group('pageless push rebuild', pageless_push_rebuild.main);
   group('parent pages build', parent_pages_build.main);
   group('pop and back', pop_and_back.main);
