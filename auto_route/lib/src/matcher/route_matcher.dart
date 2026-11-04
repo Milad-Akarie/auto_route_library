@@ -31,6 +31,7 @@ class RouteMatcher {
     bool includePrefixMatches = false,
     bool root = false,
     String? redirectedFrom,
+    List<String> redirectChain = const [],
   }) {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch<dynamic>>[];
@@ -43,7 +44,16 @@ class RouteMatcher {
         // handle redirects
         if (config is RedirectRoute) {
           final redirectToUri = Uri.parse(PageRouteInfo.expandPath(config.redirectTo, match.params.rawMap));
+          final redirectFrom = PageRouteInfo.expandPath(config.path, match.params.rawMap);
+          if (redirectChain.contains(redirectFrom)) {
+            throw FlutterError(
+              'Redirect loop detected: ${[...redirectChain, redirectFrom].join(' -> ')}\n'
+              'The RedirectRoutes above send the url back to one that was already redirected. '
+              'Change the redirectTo of one of them so the chain ends at a page.',
+            );
+          }
           return _handleRedirect(
+            redirectChain: [...redirectChain, redirectFrom],
             routesCollection: collection,
             includePrefixMatches: includePrefixMatches,
             redirectTo: redirectToUri.replace(
@@ -96,8 +106,10 @@ class RouteMatcher {
     required bool includePrefixMatches,
     required Uri redirectTo,
     required String redirectedFrom,
+    required List<String> redirectChain,
   }) {
     return _match(
+      redirectChain: redirectChain,
       redirectTo,
       routesCollection,
       includePrefixMatches: includePrefixMatches,
