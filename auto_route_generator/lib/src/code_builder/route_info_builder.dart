@@ -9,6 +9,19 @@ import 'package:code_builder/code_builder.dart';
 
 const _collectionsImport = 'package:collection/collection.dart';
 
+/// A string literal of [value] as it is: unlike [literalString], a `$` in
+/// it, as in a name such as `venue$id`, is escaped instead of read as an
+/// interpolation.
+Expression _plainString(String value) => literalString(_escapeDollar(value));
+
+/// The interpolation of the variable [name] in a string literal, braced
+/// when [name] holds a `$`, which would otherwise start an interpolation of
+/// its own.
+String _interpolation(String name) => name.contains(r'$') ? '\${$name}' : '\$$name';
+
+/// [value] with each `$` escaped, to stand for itself in a string literal.
+String _escapeDollar(String value) => value.replaceAll(r'$', r'\$');
+
 /// Builds a generic type reference with the given [symbol] and [args]
 TypeReference _genericRef(String symbol, List<ResolvedType> args, String url) {
   return TypeReference((b) {
@@ -45,7 +58,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..name = 'name'
               ..static = true
               ..type = stringRefer
-              ..assignment = literalString(r.getName(router.replaceInRouteName)).code,
+              ..assignment = _plainString(r.getName(router.replaceInRouteName)).code,
           ),
           Field(
             (b) => b
@@ -85,7 +98,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                             Map.fromEntries(
                               nonInheritedParameters
                                   .where((p) => p.isPathParam)
-                                  .map((p) => MapEntry(p.paramName, refer(p.name))),
+                                  .map((p) => MapEntry(_plainString(p.paramName), refer(p.name))),
                             ),
                           ),
                         if (parameters.any((p) => p.isQueryParam))
@@ -93,7 +106,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                             Map.fromEntries(
                               parameters
                                   .where((p) => p.isQueryParam)
-                                  .map((p) => MapEntry(p.paramName, _getUrlPartValue(p))),
+                                  .map((p) => MapEntry(_plainString(p.paramName), _getUrlPartValue(p))),
                             ),
                           ),
                         if (fragmentParam != null) 'fragment': refer(fragmentParam.name),
@@ -135,7 +148,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                 ..annotations.add(refer('override'))
                 ..returns = stringRefer
                 ..body = literalString(
-                  '${r.getName(router.replaceInRouteName)}Args{${nonInheritedParameters.map((p) => '${p.name}: \$${p.name}').join(', ')}}',
+                  '${_escapeDollar(r.getName(router.replaceInRouteName))}Args{${nonInheritedParameters.map((p) => '${_escapeDollar(p.name)}: ${_interpolation(p.name)}').join(', ')}}',
                 ).returned.statement,
             ),
             if (router.argsEquality)
@@ -371,7 +384,7 @@ Expression _getPageInstance(RouteConfig r) {
 Expression _getUrlPartAssignment(ParamConfig p) {
   if (p.isPathParam) {
     return refer('pathParams').property(p.getterMethodName).call([
-      literalString(p.paramName),
+      _plainString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import),
     ]);
   } else if (p.isQueryParam && p.type.isEnum) {
@@ -380,7 +393,7 @@ Expression _getUrlPartAssignment(ParamConfig p) {
         .property('values')
         .property('asNameMap')
         .call([])
-        .index(refer('queryParams').property('optString').call([literalString(p.paramName)]));
+        .index(refer('queryParams').property('optString').call([_plainString(p.paramName)]));
     if (p.defaultValueCode == null) return value;
     return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
   } else if (p.isQueryParam && p.listItemType != null) {
@@ -391,7 +404,7 @@ Expression _getUrlPartAssignment(ParamConfig p) {
     final itemType = refer(item.name, item.import);
     final value = refer('queryParams')
         .property('optList')
-        .call([literalString(p.paramName)])
+        .call([_plainString(p.paramName)])
         .nullSafeProperty('map')
         .call([_listItemParser(item, itemType)])
         .property('whereType')
@@ -402,7 +415,7 @@ Expression _getUrlPartAssignment(ParamConfig p) {
     return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
   } else if (p.isQueryParam) {
     return refer('queryParams').property(p.getterMethodName).call([
-      literalString(p.paramName),
+      _plainString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import),
     ]);
   }

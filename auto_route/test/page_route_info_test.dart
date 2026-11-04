@@ -59,4 +59,11 @@ void main() {
       ],
     );
   });
+
+  // #1163: a path parameter named with a `$`, such as `user$id`, stayed in
+  // the url as written, '/users/:user$id': its name went into a pattern
+  // unescaped, where `$` means the end of the text.
+  test(r'expandPath fills in a path parameter named with a $ (#1163)', () {
+    expect(PageRouteInfo.expandPath(r'/users/:user$id', {r'user$id': '8'}), '/users/8');
+  });
 }

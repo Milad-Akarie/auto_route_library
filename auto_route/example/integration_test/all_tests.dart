@@ -27,6 +27,7 @@ import 'deferred_and_eager_page_test.dart' as deferred_and_eager_page;
 import 'deferred_page_popped_test.dart' as deferred_page_popped;
 import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
 import 'disposed_nested_router_test.dart' as disposed_nested_router;
+import 'dollar_names_test.dart' as dollar_names;
 import 'empty_nested_router_test.dart' as empty_nested_router;
 import 'encoded_deep_link_test.dart' as encoded_deep_link;
 import 'encoded_path_params_test.dart' as encoded_path_params;
@@ -187,6 +188,7 @@ void main() {
   group('deferred page popped', deferred_page_popped.main);
   group('dialog then page pop', dialog_then_page_pop.main);
   group('disposed nested router', disposed_nested_router.main);
+  group('dollar names', dollar_names.main);
   group('empty nested router', empty_nested_router.main);
   group('encoded deep link', encoded_deep_link.main);
   group('encoded path params', encoded_path_params.main);

@@ -59,4 +59,43 @@ void main() {
       expect(result.errors.join(), contains("'Ro ute'"));
     });
   });
+
+  // #1163: a page parameter named with a `$`, such as `venue$id`, gave a
+  // router that didn't compile: the args' toString wrote
+  // 'venue$id: $venue$id', which Dart reads as interpolations of `id` and
+  // `venue`. A path or query parameter, or a page class, named with a `$`
+  // broke the same way in the url keys and the route name.
+  test(r'names with a $ compile and stand for themselves (#1163)', () async {
+    final result = await generateRouter({
+      'lib/venue_page.dart': r'''
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
+
+@RoutePage()
+class Venue$Page extends StatelessWidget {
+  const Venue$Page({
+    super.key,
+    this.venue$id,
+    @PathParam() required this.user$id,
+    @QueryParam() this.tab$name,
+  });
+
+  final String? venue$id;
+  final String user$id;
+  final String? tab$name;
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+''',
+    });
+    expect(result.errors, isEmpty);
+    expect(result.compileErrors, isEmpty);
+    expect(result.source, contains(r"static const String name = 'Venue\$Route';"));
+    expect(result.source, contains(r"'Venue\$RouteArgs{key: $key, venue\$id: ${venue$id}, user\$id: ${user$id}"));
+    expect(result.source, contains(r"rawPathParams: {'user\$id': user$id}"));
+    expect(result.source, contains(r"rawQueryParams: {'tab\$name': tab$name}"));
+    expect(result.source, contains(r"pathParams.getString('user\$id')"));
+    expect(result.source, contains(r"queryParams.optString('tab\$name')"));
+  });
 }
