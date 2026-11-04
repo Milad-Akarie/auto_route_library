@@ -66,4 +66,20 @@ void main() {
     expect(find.text('ids [4, 5] prices [1.5] flags [true] sorts [desc] picked [9]'), findsOneWidget);
     expect(router.urlState.url, '/items?ids=4&ids=5&prices=1.5&flags=true&sorts=desc&picked=9');
   });
+
+  // flutter/flutter#127373: a route whose list query params are all empty,
+  // as a default of `const []` often makes them, ended its url with a stray
+  // '?': the empty list was kept as a query param with nothing to write.
+  // Steps: push ItemsRoute with ids and picked both empty.
+  // Should: the url is '/items', and a link to it opens the same page.
+  testWidgets('a list query param that is empty leaves no ? in the url (flutter/flutter#127373)', (tester) async {
+    final router = ListRouter();
+    await pumpRouterApp(tester, router);
+    unawaited(router.push(ItemsRoute(ids: const [], picked: const [])));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('ids [] prices null flags null sorts null picked []'), findsOneWidget);
+    expect(router.urlState.url, '/items');
+    expect(router.urlState.uri.hasQuery, isFalse);
+  });
 }

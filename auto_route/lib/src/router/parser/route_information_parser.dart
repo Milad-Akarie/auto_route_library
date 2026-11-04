@@ -404,7 +404,8 @@ class UrlState {
       final queries = lastSegment.queryParams.rawMap;
       for (final key in queries.keys) {
         final value = normalizeQueryParamValue(queries[key]);
-        if (value != null) {
+        // An empty list has no item to write, and kept it would leave a '?'.
+        if (value != null && !(value is List && value.isEmpty)) {
           queryParams[key] = value;
         }
       }
