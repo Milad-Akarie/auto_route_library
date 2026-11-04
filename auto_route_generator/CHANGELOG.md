@@ -9,6 +9,21 @@
 - **BREAKING CHANGE**: a `List` query param of a type other than `String`, `int`, `double`, `num`,
   `bool` or an enum, and a `List` path param of anything but `String`, fail the build with a
   message naming the param, instead of producing code that does not compile.
+- **BREAKING CHANGE**: a query param of a type the url can't give (such as `DateTime`) fails the
+  build with a message naming it, as a path param already did, instead of compiling and throwing a
+  `TypeError` when a link opens the page. A page whose required args keep it from opening by a link
+  is not checked, flutter/flutter#108437
+- **BREAKING CHANGE**: a page argument whose type the build can't resolve, such as a class another
+  builder hasn't written yet or one without its import, fails the build with a message naming the
+  argument and its page, instead of a router that doesn't compile ("Undefined class
+  'InvalidType'"). Run the other builder first, fixes #1507
+- **BREAKING CHANGE**: a page class with type parameters fails the build with a message naming it
+  and the way around it (a page class without type parameters that builds the generic widget),
+  instead of "Could not format because the source could not be parsed", fixes #332
+- **BREAKING CHANGE**: a `replaceInRouteName` without exactly one comma, with an empty pattern, or
+  with a replacement a Dart name can't hold fails the build naming the router and the value;
+  before, it was skipped and every route kept its `Route` suffix. A space after the comma
+  (`'Page, Route'`) is trimmed instead of breaking the build, fixes #994
 - **FIX**: a `List<int>`, `List<double>`, `List<num>`, `List<bool>` or enum list query param
   compiles; an item that doesn't convert is left out, fixes #2061
 - **FIX**: `build_extensions` can move the generated router, for example
@@ -19,6 +34,15 @@
 - **FIX**: a route argument whose record holds another record builds, fixes #1801
 - **FIX**: a default value named after `const` (`this.title = constTitle`) is no longer written
   as `const`.
+- **FIX**: a `Set` or `Iterable` query param opens from a link; its items convert as a `List`'s
+  do, flutter/flutter#108437
+- **FIX**: a list or set default naming an enum from another file (`const [Sort.asc]`) gets its
+  import, flutter/flutter#122181
+- **FIX**: page classes and page params named with a '$' (`venue$id`) compile, fixes #1163
+- **FIX**: a deferred page and a page that isn't deferred in one file compile together; every page
+  of a file loads the way the file does.
+- **FIX**: a router outside `lib/`, such as one in `integration_test/`, imports its pages by
+  relative path, so a Flutter build accepts it.
 ## 10.6.0
 - **CHORE**: update analyzer constraints to support versions >=10.0.0 <14.0.0
 - **CHORE**: update lean_builder dependency to ^1.2.0

@@ -73,6 +73,25 @@
   rejected route rejects the whole batch, in nested routers too, fixes #2299
 - **BEHAVIOR CHANGE**: a page whose required args weren't saved is left out of a restored stack
   instead of failing, fixes #2098
+- **BEHAVIOR CHANGE**: `AutoRouteObserver` tells the popped page `didPop` before it tells the page
+  under it `didPopNext`, on a pop and on a remove that uncovers a page; before, the page under
+  heard first. A push already ran in this order, flutter/flutter#26902
+- **BEHAVIOR CHANGE**: `navigate()` from a tab to a route that is a child of the tabs host's route
+  but not one of its `AutoTabsRouter`'s routes now calls `onFailure` with a
+  `RouteNotFoundFailure`, or throws; before, it did nothing, fixes #1371
+- **BEHAVIOR CHANGE**: `popUntil` and `popUntilRoot` remove the pages between the top page and the
+  one the predicate meets, then pop the top page with its animation, so the pages in between no
+  longer show. Navigator observers hear `didRemove` for those pages, not `didPop`; their push
+  futures complete with null as before, flutter/flutter#59990
+- **BEHAVIOR CHANGE**: two `RedirectRoute`s that point at each other report a `FlutterError`
+  naming the loop instead of overflowing the stack, flutter/flutter#104441
+- **BEHAVIOR CHANGE**: a global guard's `redirect()` or `redirectPath()` that redirects again to
+  where it came from, and two guards whose `redirectUntil()` send the user to each other's route,
+  now report a `FlutterError` naming the loop and reject the route, instead of overflowing the
+  stack or opening pages without end, flutter/flutter#118061
+- **BEHAVIOR CHANGE**: `replace()` with a route of the same name and no children opens the route's
+  initial child, as `navigate()` with the same route does; before, the nested router kept the child
+  it showed. A route with no initial child still keeps it.
 - **FEAT**: routers save their pages for state restoration (off the web): every page's name, path,
   query params and fragment, and each nested router's pages. Route args are your own objects and
   are not saved, so a page that needs required args is left out when restored.
@@ -155,6 +174,51 @@
   `TagsRoute(tags: {'a'}) == TagsRoute(tags: {'a'})`.
 - **FIX**: a path param whose name starts another param's name expands whole: with params `id`
   and `idx`, `/a/:idx` no longer becomes `/a/1x`, also through a `RedirectRoute`.
+- **FIX**: `pop()` right after `push()` closes the pushed page instead of the page under it; on
+  the first page it no longer leaves only the pushed one, flutter/flutter#145573. System back,
+  `pop` or `maybePop` in the same frame as `replaceAll([Home])` keeps the new page instead of
+  leaving none.
+- **FIX**: `navigate`, `navigatePath` and `replaceAll` close the routes pushed with
+  `Navigator.push` over the page they land on, flutter/flutter#171962
+- **FIX**: a pushed page's future completes with its route's `currentResult` when the back gesture
+  or system back closes it, as `Navigator.push` does, instead of null, flutter/flutter#171130
+- **FIX**: two buttons pressed at once open only the first page, and a finger lifted from a
+  button after another page opened over it opens nothing, flutter/flutter#160504
+- **FIX**: opening a deeper page by its path (`/a`, then `/a/b`) no longer builds the pages under
+  it again, flutter/flutter#147639
+- **FIX**: routes added to the router before a hot reload open by path, push or link, also as
+  children of a nested router on screen, flutter/flutter#105553
+- **FIX**: on web, the browser's back button walks back through one route pushed several times
+  with different params, flutter/flutter#186052
+- **FIX**: on web, the browser's back button leaves the login page a guard redirected to after a
+  logout, instead of showing it again on every press, flutter/flutter#135359
+- **FIX**: on web, an app the user comes back to with the browser's back button, or reloads, reads
+  the state it saved with `pushPathState`, instead of null, flutter/flutter#108697
+- **FIX**: with state restoration, a link that starts an app the platform ended in the background
+  opens its page instead of being ignored, flutter/flutter#161858
+- **FIX**: a page built under a deep link (Home under `/b`) hears `didPushNext` when it subscribes
+  to `AutoRouteObserver`, flutter/flutter#70272
+- **FIX**: a widget with `AutoRouteAwareStateMixin` shown in a dialog no longer throws,
+  flutter/flutter#62023
+- **FIX**: widgets laid out before a nested router stay in the semantics tree, so screen readers
+  read them, flutter/flutter#150978
+- **FIX**: the predictive back gesture belongs to the page on screen when a nested router sits
+  under a root page, flutter/flutter#152323
+- **FIX**: a page closed in the same frame as its dialog animates out with it instead of
+  vanishing at once, flutter/flutter#111137
+- **FIX**: an empty list query param leaves no '?' at the end of the url (`/items`, not `/items?`),
+  flutter/flutter#127373
+- **FIX**: a path param named with a '$' (`:user$id`) is filled into the url, fixes #1163
+- **FIX**: `replace()` and `pushAndPopUntil()` with a route of the same name and new nested
+  children show only those children; before, both kept the nested pages they showed, fixes #1363
+- **FIX**: `popUntilRouteWithName` and `popUntilRouteWithPath` with a page that isn't in the stack
+  stop at the first page instead of leaving a blank screen, fixes #1502
+- **FIX**: `pushPath` of an unknown relative path in a nested router calls `onFailure`, or throws,
+  instead of pushing the router's first page again, fixes #1648
+- **FIX**: a link that comes while the first page waits on its guard keeps its pages, instead of
+  the first page coming back on top once its guard resolves, fixes #1668
+- **CHORE**: `AutoRoutePage` no longer removes a popped page from its router's stack itself. It did
+  so to stop a flicker on Flutter 3.38 to 3.41 (flutter/flutter#178570), which Flutter 3.44 fixed.
 - **PERF**: a url is matched against the routes several times faster, and the matcher splits urls
   at '/' itself; a tab switch builds the readable url once instead of on every read.
 ## 11.2.0
