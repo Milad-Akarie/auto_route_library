@@ -22,6 +22,10 @@ class DisposalTracker<T extends Object> {
   /// disposed.
   int get undisposed => _live.length;
 
+  /// Whether [object] was created since the tracker started and is not
+  /// disposed.
+  bool isUndisposed(T object) => _live.contains(object);
+
   void _onEvent(ObjectEvent event) {
     final object = event.object;
     if (object is! T) return;

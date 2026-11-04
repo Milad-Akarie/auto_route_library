@@ -295,10 +295,16 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
   }
 
+  // Disposing the root router disposes this delegate, and this delegate
+  // disposes the root router; the second call returns at once.
+  bool _disposed = false;
+
   @override
   void dispose() {
+    if (_disposed) return;
+    _disposed = true;
     super.dispose();
-    removeListener(_handleRebuild);
+    controller.navigationHistory.removeListener(_handleRebuild);
     reevaluateListenable?.removeListener(controller.reevaluateGuards);
     controller.removeListener(notifyListeners);
     controller.removeListener(_reportFirstPage);

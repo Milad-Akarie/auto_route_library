@@ -148,6 +148,18 @@ abstract class RootStackRouter extends StackRouter {
   @override
   NavigationHistory get navigationHistory => _navigationHistory;
 
+  /// Disposes this router with the navigation history, the url provider and
+  /// the delegate it created, which also disposes the delegate's own
+  /// listeners. Disposing that delegate disposes this router too.
+  @override
+  void dispose() {
+    if (_disposed) return;
+    super.dispose();
+    _navigationHistory.dispose();
+    _lazyInformationProvider?.dispose();
+    _lazyRootDelegate?.dispose();
+  }
+
   @override
   late final RouteCollection routeCollection = RouteCollection.fromList(
     routes,
