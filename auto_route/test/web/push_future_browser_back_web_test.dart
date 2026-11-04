@@ -41,4 +41,27 @@ void main() {
     expect(result, isNull);
     expectCurrentPage(router, FirstRoute.name);
   });
+
+  // flutter/flutter#128122: rebuilding the stack from a browser entry broke
+  // the push futures, which then completed twice or never.
+  // Push SecondRoute and keep its future, press the browser's back button,
+  // then its forward button, which opens SecondRoute again, and pop it. The
+  // first future completes once, with null, from the back button; the pop
+  // throws nothing.
+  testWidgets('The browser back and forward buttons complete a push future once', (tester) async {
+    await pumpRouterConfigApp(tester, router.config());
+    await settleBrowser(tester);
+    var completions = 0;
+    unawaited(router.push<String>(const SecondRoute()).then((_) => completions++));
+    await settleBrowser(tester);
+
+    await pressBrowserBack(tester);
+    await pressBrowserForward(tester);
+    expectCurrentPage(router, SecondRoute.name);
+    router.pop<String>('picked');
+    await settleBrowser(tester);
+    expectCurrentPage(router, FirstRoute.name);
+    expect(completions, 1);
+    expect(tester.takeException(), isNull);
+  });
 }
