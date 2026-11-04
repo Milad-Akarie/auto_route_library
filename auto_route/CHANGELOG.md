@@ -1,4 +1,7 @@
 ## Unreleased
+- **DEPRECATION**: `RouteData.setAnimation(a)` is deprecated; write `routeData.animation = a`.
+  `RouteData.animation` can now be read too. `RouteData.args` stays `Object?`: a route's args can be
+  any class, so read them typed with `argsAs<T>()`.
 - **BREAKING CHANGE**: `NavigationResolver.redirectUntil` returns `Future<void>` instead of `void`,
   completing once the redirect route closes. Calls compile as before; a class that overrides it
   must return `Future<void>`, and a lint that asks for it is answered with `unawaited(...)`.

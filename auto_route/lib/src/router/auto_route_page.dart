@@ -449,7 +449,7 @@ abstract class _PageRoute<T> extends PageRoute<T> {
   @override
   void install() {
     super.install();
-    _page.routeData.setAnimation(animation);
+    _page.routeData.animation = animation;
   }
 
   @override

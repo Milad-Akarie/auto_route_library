@@ -155,7 +155,7 @@ class RouteData<R> {
   /// Helper to access [RouteMatch.args]
   ///
   /// this method is unsafe prefer using [argsAs]
-  // Public API: changing it is the maintainer's call.
+  // Null for a route pushed without args. The rule reads RouteMatch<dynamic>'s args as never null.
   // ignore: avoid-unnecessary-nullable-return-type
   Object? get args => _match.args;
 
@@ -248,21 +248,24 @@ class RouteData<R> {
     }
   }
 
-  Animation<dynamic>? _animation;
+  /// The animation of the [Route] that shows this page, or null before the
+  /// route is built.
+  ///
+  /// The page's route sets it when it builds; [animationCompletion] reads it.
+  Animation<dynamic>? animation;
 
-  /// The main animation that is used by the Route
-  // Public API: changing it is the maintainer's call.
+  /// Sets [animation].
+  @Deprecated('Set animation instead')
+  // The old name, kept as a method so existing calls still compile until it is removed.
   // ignore: use_setters_to_change_properties
-  void setAnimation(Animation<dynamic>? animation) {
-    _animation = animation;
-  }
+  void setAnimation(Animation<dynamic>? animation) => this.animation = animation;
 
   /// Returns the current animation completion future
   /// if the current route is animating
   ///
   /// If the current route is not animating, it returns null
   Future<void>? get animationCompletion {
-    if (_animation case final animation?) {
+    if (animation case final animation?) {
       if (animation.isAnimating) {
         // if the current route is animating, we wait for it to complete
         final completer = Completer<void>();
