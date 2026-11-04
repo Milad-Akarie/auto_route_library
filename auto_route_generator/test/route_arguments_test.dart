@@ -312,4 +312,26 @@ class Range {
       expect(result.errors.single, contains('a List path param can hold String items, not int'));
     });
   });
+
+  // flutter/flutter#157809: a url naming a value an enum does not have, as in
+  // '/mode/bogus' for `enum Mode { light, dark }`, failed the build of the
+  // page with "Bad state". An enum query param reads such a name as null
+  // (test/enum_query_param in auto_route). An enum path param can't be
+  // declared: the build stops with an error that names the param and the
+  // types a path param can have, so no url reaches the page with a bad name.
+  group('an enum path param (flutter/flutter#157809)', () {
+    test('is a build error that names the param', () async {
+      final result = await generateRouter({
+        'lib/mode_page.dart': _page(
+          'ModePage',
+          imports: 'enum Mode { light, dark }',
+          parameters: '@PathParam() required this.mode',
+          fields: '  final Mode mode;',
+        ),
+      });
+      expect(result.errors, hasLength(1));
+      expect(result.errors.single, contains('Parameter [mode] must be of a type that can be parsed from a [String]'));
+      expect(result.errors.single, contains('valid types: [String, int, double, num, bool, dynamic]'));
+    });
+  });
 }
