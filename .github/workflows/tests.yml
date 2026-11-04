@@ -129,9 +129,14 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@v7.0.1
-      # Booting takes over two minutes, so it runs in the background while
-      # Flutter is set up and the app is built.
-      - name: Start booting an iPhone simulator
+      - name: Note when the job started
+        run: echo "JOB_STARTED=$(date +%s)" >> "$GITHUB_ENV"
+      - uses: subosito/flutter-action@v2.23.0
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Boot an iPhone simulator
         run: |
           udid=$(xcrun simctl list devices available --json | python3 -c '
           import json, sys
@@ -139,25 +144,13 @@ jobs:
           iphones = [d for runtime, ds in devices.items() if ".iOS-" in runtime for d in ds if d["name"].startswith("iPhone")]
           print(iphones[-1]["udid"])
           ')
-          nohup xcrun simctl bootstatus "$udid" -b > "$RUNNER_TEMP/simulator-boot.txt" 2>&1 &
+          xcrun simctl boot "$udid"
+          xcrun simctl bootstatus "$udid"
           echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
-          echo "JOB_STARTED=$(date +%s)" >> "$GITHUB_ENV"
-      - uses: subosito/flutter-action@v2.23.0
-        with:
-          channel: stable
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          cache: true
-      # The same debug build the tests run, so their own Xcode build only catches up.
-      - name: Build the app for the simulator
-        working-directory: auto_route/example
-        run: flutter build ios --simulator --debug --target=integration_test/all_tests.dart
-      - name: Wait for the simulator to boot
-        run: |
-          xcrun simctl bootstatus "$SIMULATOR_UDID"
-          cat "$RUNNER_TEMP/simulator-boot.txt"
-          # The tests stop a minute before the job's limit, so a run that
-          # doesn't fit fails and the next step names how far it got.
-          minutes=$(( (JOB_STARTED + 14 * 60 - $(date +%s)) / 60 ))
+          # The tests stop two minutes before the job's limit, so a run that
+          # doesn't fit fails, and the next step names how far it got before
+          # the cleanup steps run out the limit.
+          minutes=$(( (JOB_STARTED + 13 * 60 - $(date +%s)) / 60 ))
           echo "TEST_MINUTES=$(( minutes > 1 ? minutes : 1 ))" >> "$GITHUB_ENV"
       - name: Integration tests on the iOS simulator
         working-directory: auto_route/example
