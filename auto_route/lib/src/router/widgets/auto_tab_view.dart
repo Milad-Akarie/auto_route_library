@@ -59,8 +59,6 @@ class AutoTabView extends StatefulWidget {
 /// State implementation of [AutoTabView]
 class AutoTabViewState extends State<AutoTabView> {
   TabController get _controller => widget.controller;
-  // A leak: never disposed. Left for the leak hunt, which proves and fixes it.
-  // ignore: dispose-fields
   late PageController _pageController;
   late List<Widget> _children;
   int? _currentIndex;
@@ -147,6 +145,7 @@ class AutoTabViewState extends State<AutoTabView> {
       _controller.animation!.removeListener(_handleTabControllerAnimationTick);
     }
     _router.removeListener(_onRouterUpdated);
+    _pageController.dispose();
     super.dispose();
   }
 
