@@ -1808,17 +1808,37 @@ abstract class StackRouter extends RoutingController {
   Future<T?> replace<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) {
     final scope = _findStackScope(route);
     final replaced = scope._pages.lastOrNull?.routeData;
+    RouteMatch<dynamic>? match;
     return scope._push<T>(
       route,
       onFailure: onFailure,
+      onMatch: (m) => match = m,
       onAccepted: () {
         // a guard may have removed it already, e.g. with redirectUntil(replace: true)
         if (replaced != null && scope._pages.any((page) => page.routeData == replaced)) {
           scope._removeRoute(replaced._match, notify: false);
         }
         markUrlStateForReplace();
+        scope._openChildrenInKeptRouter(replaced, match, onFailure: onFailure);
       },
     );
+  }
+
+  // A page replaced by one of the same route hands its Flutter route, and
+  // with it its nested router, to the new page, so the nested router would
+  // keep its pages: open the children [match] carries in it instead.
+  void _openChildrenInKeptRouter(
+    RouteData<dynamic>? replaced,
+    RouteMatch<dynamic>? match, {
+    OnNavigationFailure? onFailure,
+  }) {
+    final children = match?.children;
+    if (replaced == null || match == null || children == null || children.isEmpty) return;
+    if (replaced.key != match.key) return;
+    final kept = _innerControllerOfPage(replaced);
+    if (kept == null) return;
+    kept._markedForDataUpdate = true;
+    unawaited(kept._navigateAll(children, onFailure: onFailure));
   }
 
   Future<T?> _redirect<T extends Object?>(
