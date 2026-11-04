@@ -22,24 +22,24 @@ class ItemsRoute extends PageRouteInfo<ItemsRouteArgs> {
     List<int> picked = const [1, 2],
     List<PageRouteInfo>? children,
   }) : super(
-          ItemsRoute.name,
-          args: ItemsRouteArgs(
-            key: key,
-            ids: ids,
-            prices: prices,
-            flags: flags,
-            sorts: sorts,
-            picked: picked,
-          ),
-          rawQueryParams: {
-            'ids': ids,
-            'prices': prices,
-            'flags': flags,
-            'sorts': sorts?.map((item) => item.name).toList(),
-            'picked': picked,
-          },
-          initialChildren: children,
-        );
+         ItemsRoute.name,
+         args: ItemsRouteArgs(
+           key: key,
+           ids: ids,
+           prices: prices,
+           flags: flags,
+           sorts: sorts,
+           picked: picked,
+         ),
+         rawQueryParams: {
+           'ids': ids,
+           'prices': prices,
+           'flags': flags,
+           'sorts': sorts?.map((item) => item.name).toList(),
+           'picked': picked,
+         },
+         initialChildren: children,
+       );
 
   static const String name = 'ItemsRoute';
 
@@ -65,8 +65,8 @@ class ItemsRoute extends PageRouteInfo<ItemsRouteArgs> {
                 (text) => text.toLowerCase() == 'true'
                     ? true
                     : text.toLowerCase() == 'false'
-                        ? false
-                        : null,
+                    ? false
+                    : null,
               )
               .whereType<bool>()
               .toList(),
@@ -75,7 +75,8 @@ class ItemsRoute extends PageRouteInfo<ItemsRouteArgs> {
               ?.map((name) => Sort.values.asNameMap()[name])
               .whereType<Sort>()
               .toList(),
-          picked: queryParams
+          picked:
+              queryParams
                   .optList('picked')
                   ?.map(int.tryParse)
                   .whereType<int>()
@@ -148,7 +149,7 @@ class ItemsRouteArgs {
 /// [ListHomeView]
 class ListHomeRoute extends PageRouteInfo<void> {
   const ListHomeRoute({List<PageRouteInfo>? children})
-      : super(ListHomeRoute.name, initialChildren: children);
+    : super(ListHomeRoute.name, initialChildren: children);
 
   static const String name = 'ListHomeRoute';
 

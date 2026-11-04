@@ -14,7 +14,7 @@ part of 'cart_router.dart';
 /// [CartHomeView]
 class CartHomeRoute extends PageRouteInfo<void> {
   const CartHomeRoute({List<PageRouteInfo>? children})
-      : super(CartHomeRoute.name, initialChildren: children);
+    : super(CartHomeRoute.name, initialChildren: children);
 
   static const String name = 'CartHomeRoute';
 
@@ -34,11 +34,11 @@ class MfUserCartRoute extends PageRouteInfo<MfUserCartRouteArgs> {
     required MfUserCartTypes? userCartType,
     List<PageRouteInfo>? children,
   }) : super(
-          MfUserCartRoute.name,
-          args: MfUserCartRouteArgs(key: key, userCartType: userCartType),
-          rawQueryParams: {'type': userCartType?.name},
-          initialChildren: children,
-        );
+         MfUserCartRoute.name,
+         args: MfUserCartRouteArgs(key: key, userCartType: userCartType),
+         rawQueryParams: {'type': userCartType?.name},
+         initialChildren: children,
+       );
 
   static const String name = 'MfUserCartRoute';
 
@@ -48,8 +48,8 @@ class MfUserCartRoute extends PageRouteInfo<MfUserCartRouteArgs> {
       final queryParams = data.queryParams;
       final args = data.argsAs<MfUserCartRouteArgs>(
         orElse: () => MfUserCartRouteArgs(
-          userCartType:
-              MfUserCartTypes.values.asNameMap()[queryParams.optString('type')],
+          userCartType: MfUserCartTypes.values
+              .asNameMap()[queryParams.optString('type')],
         ),
       );
       return MfUserCartView(key: args.key, userCartType: args.userCartType);
