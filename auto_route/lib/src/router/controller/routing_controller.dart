@@ -2166,6 +2166,7 @@ abstract class StackRouter extends RoutingController {
     // A page popped since the stack was collected for reevaluation stays closed, with the pages above it.
     bool wasPopped(RouteMatch<dynamic> match) =>
         match is ReevaluatableRouteMatch && match.currentPage.routeData._isPoppedByNavigator;
+    final link = root._startingLink;
     for (var i = 0; i < routes.length; i++) {
       if (wasPopped(routes[i])) break;
       final result = await _canNavigate(
@@ -2175,6 +2176,8 @@ abstract class StackRouter extends RoutingController {
         isReevaluating: isReevaluating,
       );
       if (_disposed) break;
+      // A later link took over while a guard decided.
+      if (link != null && root._linkCount != link) break;
       final match = result.route;
       if (wasPopped(match)) break;
       if (result.continueNavigation) {

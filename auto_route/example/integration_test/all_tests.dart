@@ -46,6 +46,7 @@ import 'keep_history_test.dart' as keep_history;
 import 'late_router_deep_link_test.dart' as late_router_deep_link;
 import 'leading_button_drawer_test.dart' as leading_button_drawer;
 import 'leading_button_pop_test.dart' as leading_button_pop;
+import 'link_during_initial_guard_test.dart' as link_during_initial_guard;
 import 'list_query_param_test.dart' as list_query_param;
 import 'login_state_test.dart' as login_state;
 import 'logout_redirect_back_test.dart' as logout_redirect_back;
@@ -219,6 +220,7 @@ void main() {
   group('late router deep link', late_router_deep_link.main);
   group('leading button drawer', leading_button_drawer.main);
   group('leading button pop', leading_button_pop.main);
+  group('link during initial guard', link_during_initial_guard.main);
   group('list query param', list_query_param.main);
   group('login state', login_state.main);
   group('logout redirect back', logout_redirect_back.main);

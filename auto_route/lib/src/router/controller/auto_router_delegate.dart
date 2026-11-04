@@ -162,6 +162,10 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     if (deepLink is _IgnoredDeepLink) return SynchronousFuture(null);
 
     throwIf(!deepLink.isValid, _unresolvedMessage(deepLink));
+    return controller.root._openLink(() => _openDeepLink(deepLink));
+  }
+
+  Future<void> _openDeepLink(DeepLink deepLink) {
     if (deepLink is PlatformDeepLink) {
       _onNewUrlState(deepLink.configuration);
       return controller.navigateAll(deepLink.matches);

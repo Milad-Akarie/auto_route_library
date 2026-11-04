@@ -23,6 +23,28 @@ abstract class RootStackRouter extends StackRouter {
 
   final _rootBackButtonDispatcher = RootBackButtonDispatcher();
 
+  // Counts the links the delegate opened. A navigation a link starts keeps
+  // the count it started with, and stops at its next guard once a later link
+  // has started: a slow guard of the link the app started at must not open
+  // its page over the pages of a link that came after it.
+  int _linkCount = 0;
+
+  // The count of the link whose navigation is starting, while it starts.
+  int? _startingLink;
+
+  // Runs [open], which starts the navigation of a new link, as that link's.
+  // The navigation starts before [open] returns, up to its first guard.
+  Future<void> _openLink(Future<void> Function() open) {
+    _startingLink = ++_linkCount;
+    final Future<void> navigation;
+    try {
+      navigation = open();
+    } finally {
+      _startingLink = null;
+    }
+    return navigation;
+  }
+
   /// Returns a [RouterConfig] instead to be passed
   /// to [MaterialApp.router]
   RouterConfig<UrlState> config({
