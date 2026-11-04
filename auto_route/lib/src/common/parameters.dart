@@ -132,8 +132,14 @@ class Parameters {
 
   /// returns the value corresponding with [key] as nullable [bool]
   /// if null returns [defaultValue]
+  ///
+  /// A [bool] value is returned as it is, which is what a route pushed with
+  /// `queryParams: {'f': true}` or restored from saved state holds. Any other
+  /// value is read from its text: 'true' or 'false', in any case.
   bool? optBool(String key, [bool? defaultValue]) {
-    switch (_params[key]?.toLowerCase()) {
+    final param = _params[key];
+    if (param is bool) return param;
+    switch (param?.toString().toLowerCase()) {
       case 'true':
         return true;
       case 'false':

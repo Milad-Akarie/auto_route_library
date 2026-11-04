@@ -8,6 +8,7 @@ import 'async_simple_guard_test.dart' as async_simple_guard;
 import 'back_in_tabs_test.dart' as back_in_tabs;
 import 'back_same_url_test.dart' as back_same_url;
 import 'back_twice_test.dart' as back_twice;
+import 'bool_query_param_test.dart' as bool_query_param;
 import 'camel_case_path_test.dart' as camel_case_path;
 import 'current_hierarchy_test.dart' as current_hierarchy;
 import 'current_url_test.dart' as current_url;
@@ -133,6 +134,7 @@ void main() {
   group('back in tabs', back_in_tabs.main);
   group('back same url', back_same_url.main);
   group('back twice', back_twice.main);
+  group('bool query param', bool_query_param.main);
   group('camel case path', camel_case_path.main);
   group('current hierarchy', current_hierarchy.main);
   group('current url', current_url.main);

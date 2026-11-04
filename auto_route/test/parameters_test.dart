@@ -117,4 +117,27 @@ void main() {
     final allParams = const Parameters({'key1': 'value1'}) + const Parameters({'key2': 'value2'});
     expect(allParams.rawMap, {'key1': 'value1', 'key2': 'value2'});
   });
+
+  // https://github.com/Milad-Akarie/auto_route_library/pull/2222
+  // Steps: read a bool value, as a route pushed with queryParams {'f': true}
+  // holds it, with optBool or getBool.
+  // Should: the bool comes back, not NoSuchMethodError on toLowerCase.
+  test('Calling Parameters.optBool and getBool on a bool value should return it', () {
+    const params = Parameters({'yes': true, 'no': false});
+    expect(params.optBool('yes'), true);
+    expect(params.optBool('no', true), false);
+    expect(params.getBool('yes'), true);
+    expect(params.getBool('no'), false);
+  });
+
+  test('Calling Parameters.optBool on a string value should read true and false in any case', () {
+    const params = Parameters({'a': 'true', 'b': 'FALSE', 'c': 'maybe', 'd': 1});
+    expect(params.optBool('a'), true);
+    expect(params.optBool('b'), false);
+    expect(params.optBool('c'), null);
+    expect(params.optBool('c', true), true);
+    expect(params.optBool('d'), null);
+    expect(params.optBool('missing', false), false);
+    expect(() => params.getBool('c'), throwsFlutterError);
+  });
 }
