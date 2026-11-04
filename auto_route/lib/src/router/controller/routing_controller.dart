@@ -1338,6 +1338,11 @@ abstract class StackRouter extends RoutingController {
   // guard stops here, since the router's page left the stack meanwhile.
   bool _disposed = false;
 
+  // Pushes that no guard checks, from the call until their page is added a
+  // microtask later. A pop called meanwhile waits for them, so it pops the
+  // page the caller just pushed rather than the one below it.
+  final _landingPushes = <Future<void>>{};
+
   /// Whether a reevaluation is in progress
   bool _isReevaluating = false;
 
@@ -1528,6 +1533,10 @@ abstract class StackRouter extends RoutingController {
   @override
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) async {
+    if (_landingPushes.isNotEmpty) {
+      await Future.wait(_landingPushes);
+    }
+    if (_popUnbuiltTop(result)) return true;
     final navigator = _navigatorKey.currentState;
     if (await navigator?.maybePop<T>(result) ?? false) {
       return true;
@@ -1540,13 +1549,37 @@ abstract class StackRouter extends RoutingController {
   /// Pop current route regardless if it's the last
   /// route in stack or the result of it's PopScopes
   /// see [Navigator.pop]
+  ///
+  /// Right after [push] or [replace] of a route without guards, the pop
+  /// waits for that page to be added and pops it, before it is ever shown.
+  /// A push still waiting on a guard is not waited for: the guard may be
+  /// waiting on the very route this pop closes, such as a dialog.
   @override
   @optionalTypeArgs
   void pop<T extends Object?>([T? result]) {
+    if (_landingPushes.isNotEmpty) {
+      unawaited(Future.wait(_landingPushes).then((_) => pop<T>(result)));
+      return;
+    }
+    if (_popUnbuiltTop(result)) return;
     final navigator = _navigatorKey.currentState;
     if (navigator != null) {
       navigator.pop(result);
     }
+  }
+
+  // Removes the top page when the navigator has not built it yet, as right
+  // after a push, and completes it with [result]. Navigator.pop would pop
+  // the page below it instead.
+  bool _popUnbuiltTop(Object? result) {
+    final navigator = _navigatorKey.currentState;
+    final top = _pages.lastOrNull;
+    if (navigator == null || top == null || navigator.widget.pages.contains(top)) {
+      return false;
+    }
+    top.routeData.onPopInvoked(result);
+    _removeRoute(top.routeData._match);
+    return true;
   }
 
   /// Removes the very last entry from [_pages]
@@ -1687,7 +1720,14 @@ abstract class StackRouter extends RoutingController {
       return null;
     }
     onMatch?.call(match);
+    final landing = root.guards.isEmpty && match.guards.isEmpty ? Completer<void>() : null;
+    if (landing != null) _landingPushes.add(landing.future);
     final result = await _canNavigate(match, onFailure: onFailure);
+    if (landing != null) {
+      _landingPushes.remove(landing.future);
+      // Its listeners run in a later microtask, after this push adds its page.
+      landing.complete();
+    }
     if (_disposed) return null;
     if (result.continueNavigation) {
       onAccepted?.call();

@@ -66,6 +66,7 @@ import 'pageless_push_rebuild_test.dart' as pageless_push_rebuild;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_and_push_all_test.dart' as pop_and_push_all;
 import 'pop_and_push_from_animating_modal_test.dart' as pop_and_push_from_animating_modal;
+import 'pop_right_after_push_test.dart' as pop_right_after_push;
 import 'pop_scope_once_test.dart' as pop_scope_once;
 import 'pop_scope_test.dart' as pop_scope;
 import 'pop_while_reevaluating_test.dart' as pop_while_reevaluating;
@@ -212,6 +213,7 @@ void main() {
   group('pop and back', pop_and_back.main);
   group('pop and push all', pop_and_push_all.main);
   group('pop and push from animating modal', pop_and_push_from_animating_modal.main);
+  group('pop right after push', pop_right_after_push.main);
   group('pop scope once', pop_scope_once.main);
   group('pop scope', pop_scope.main);
   group('pop while reevaluating', pop_while_reevaluating.main);
