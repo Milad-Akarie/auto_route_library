@@ -580,6 +580,40 @@ context.navigateTo(
 
 A route is looked up from the router you call it on, up through its parents. A route that lives in a sibling router, such as another tab, isn't found from there and fails with `Failed to navigate to ...`, so give its parent as well, as above. When you call from the root router, or from a place without a context, give the whole chain, `MainRoute(children: [BooksTab(children: [...])])`.
 
+### Panes side by side
+
+A route has one nested router. Two `AutoRouter()` widgets under the same route are two views of that one router, so they show the same page and the same stack.
+
+For a master-detail layout, keep the list in the shell page as an ordinary widget, make the detail pages its children, and let one `AutoRouter` show them. On a wide screen the list sits beside the router. On a narrow one, the router alone shows the list as its first child, and a detail page opens over it:
+
+```dart
+@RoutePage()
+class ChatsShellPage extends StatefulWidget {
+  const ChatsShellPage({super.key});
+
+  @override
+  State<ChatsShellPage> createState() => _ChatsShellPageState();
+}
+
+class _ChatsShellPageState extends State<ChatsShellPage> {
+  // keeps the nested stack when the layout switches
+  final _routerKey = GlobalKey<AutoRouterState>();
+
+  @override
+  Widget build(BuildContext context) {
+    final wide = MediaQuery.sizeOf(context).width >= 800;
+    final router = AutoRouter(key: _routerKey);
+    return wide
+        ? Row(children: [const SizedBox(width: 300, child: ChatList()), Expanded(child: router)])
+        : router;
+  }
+}
+```
+
+The first child, with the path `''`, shows `ChatList` when the screen is narrow and a hint such as "Pick a chat" when it's wide. The list opens a chat with `context.router.push(ChatRoute(id: id))`. Without the `GlobalKey`, resizing the window builds a new `AutoRouter`, which starts again from the first child and loses the open chat.
+
+The address holds one location, so two routers on the same level can't both be in it. If two panes have to navigate on their own, make them two tabs of an [`AutoTabsRouter`](#tab-navigation) and arrange them in its `builder`.
+
 ## Tab Navigation
 
 If you're working with flutter mobile, you're most likely to implement tabs navigation, that's why `auto_route` makes tabs navigation as easy and straightforward as possible.
