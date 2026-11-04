@@ -36,7 +36,7 @@ class RouteMatcher {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch<dynamic>>[];
     for (final config in collection.routes) {
-      var match = matchByPath(uri, config, redirectedFrom: redirectedFrom);
+      var match = _matchByPath(uri, pathSegments, config, redirectedFrom: redirectedFrom);
       if (match != null) {
         if (!includePrefixMatches || config.path == '*') {
           matches.clear();
@@ -108,14 +108,25 @@ class RouteMatcher {
 
   List<String> _split(String path) => p.split(path);
 
+  // The segments of each route's path. A route's path never changes, and
+  // matching a url compares it with every route until one matches, so each
+  // path is split once instead of on every match.
+  static final _pathParts = Expando<List<String>>('path parts');
+
+  List<String> _partsOf(AutoRoute config) => _pathParts[config] ??= _split(config.path);
+
   /// Matches a uri against a route-config [AutoRoute]
   /// and returns a single match result
   ///
   /// returns null if not match is found
   RouteMatch<dynamic>? matchByPath(Uri uri, AutoRoute config, {String? redirectedFrom}) {
-    final parts = _split(config.path);
     // Split before decoding, so an encoded '/' stays inside its segment.
-    final segments = _split(uri.path);
+    return _matchByPath(uri, _split(uri.path), config, redirectedFrom: redirectedFrom);
+  }
+
+  // [segments] is the path of [uri], split.
+  RouteMatch<dynamic>? _matchByPath(Uri uri, List<String> segments, AutoRoute config, {String? redirectedFrom}) {
+    final parts = _partsOf(config);
 
     if (parts.length > segments.length) {
       return null;
@@ -138,7 +149,8 @@ class RouteMatcher {
 
     var extractedSegments = segments.sublist(0, parts.length);
     if (parts.isNotEmpty && parts.last == '*') {
-      extractedSegments = segments;
+      // A copy: [segments] is shared by every route this url is matched against.
+      extractedSegments = List.of(segments);
     }
 
     final stringMatch = p.joinAll(extractedSegments);
