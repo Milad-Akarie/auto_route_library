@@ -54,9 +54,16 @@ jobs:
         working-directory: auto_route_generator
         run: flutter pub get && dart analyze
       - name: Generator tests
+        id: generator-tests
         if: success() || failure()
         working-directory: auto_route_generator
-        run: dart test --reporter github
+        shell: bash
+        run: dart test --reporter github --file-reporter "json:$RUNNER_TEMP/generator-results.json" 2>&1 | tee "$RUNNER_TEMP/generator-output.txt"
+      # Only when the generator tests failed: a failure of the steps above has its own report.
+      - name: Name each failed generator test
+        if: failure() && steps.generator-tests.outcome == 'failure'
+        working-directory: auto_route_generator
+        run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/generator-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/generator-output.txt"
 
   headless-chrome:
     name: Headless tests in Chrome
