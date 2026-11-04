@@ -87,6 +87,16 @@ void main() {
     expect(params.getBool('key2'), true);
   });
 
+  // https://github.com/Milad-Akarie/auto_route_library/issues/1319
+  // queryParams: {'key': true} is a bool in the map, not text; getBool and
+  // optBool must return it instead of calling toLowerCase on it.
+  test('Calling Parameters.getBool and optBool on a bool value should return it', () {
+    const params = Parameters({'key': true, 'key2': false});
+    expect(params.getBool('key'), true);
+    expect(params.getBool('key2'), false);
+    expect(params.optBool('key'), true);
+  });
+
   test('Calling Parameters.getBool on a none-bool string-value should throw', () {
     const params = Parameters({'key': 'str'});
     expect(() => params.getBool('key'), throwsFlutterError);
