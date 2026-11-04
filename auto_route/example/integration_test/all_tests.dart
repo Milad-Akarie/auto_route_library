@@ -96,6 +96,7 @@ import 'push_and_pop_until_test.dart' as push_and_pop_until;
 import 'push_and_reevaluate_test.dart' as push_and_reevaluate;
 import 'push_futures_test.dart' as push_futures;
 import 'push_same_route_twice_test.dart' as push_same_route_twice;
+import 'push_unknown_relative_path_test.dart' as push_unknown_relative_path;
 import 'query_param_rebuild_test.dart' as query_param_rebuild;
 import 'query_params_on_pop_test.dart' as query_params_on_pop;
 import 'rapid_pops_test.dart' as rapid_pops;
@@ -267,6 +268,7 @@ void main() {
   group('push and reevaluate', push_and_reevaluate.main);
   group('push futures', push_futures.main);
   group('push same route twice', push_same_route_twice.main);
+  group('push unknown relative path', push_unknown_relative_path.main);
   group('query param rebuild', query_param_rebuild.main);
   group('query params on pop', query_params_on_pop.main);
   group('rapid pops', rapid_pops.main);

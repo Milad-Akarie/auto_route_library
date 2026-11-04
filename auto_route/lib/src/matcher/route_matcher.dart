@@ -95,7 +95,7 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty || (root && matches.last.allSegments(includeEmpty: true).length < pathSegments.length)) {
+    if (matches.isEmpty || (root && _consumedSegments(matches.last) < pathSegments.length)) {
       return null;
     }
     return matches;
@@ -115,6 +115,15 @@ class RouteMatcher {
       includePrefixMatches: includePrefixMatches,
       redirectedFrom: redirectedFrom,
     );
+  }
+
+  // How many segments of the url [match] and its children consumed. A match
+  // with no segments of its own consumed none, unless a redirect to an empty
+  // path made it: then it stands for the segment the redirect matched. So a
+  // path no route has doesn't match the '' route of a router.
+  static int _consumedSegments(RouteMatch<dynamic> match) {
+    final own = match.segments.isEmpty && match.redirectedFrom != null ? 1 : match.segments.length;
+    return own + (match.hasChildren ? _consumedSegments(match.children!.last) : 0);
   }
 
   // Splits a url's path at each '/': the root '/' first when the path has one,
