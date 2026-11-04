@@ -27,6 +27,8 @@ dev_dependencies:
     path: ../../auto_route_generator
   integration_test:
     sdk: flutter
+  flutter_driver:
+    sdk: flutter
   very_good_analysis: ^11.0.0
 
 dependency_overrides:
