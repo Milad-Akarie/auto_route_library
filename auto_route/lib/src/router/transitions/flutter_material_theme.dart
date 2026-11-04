@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart' as flutter show CupertinoPageTransitionsBuilder;
-import 'package:flutter/material.dart' as flutter
+import 'package:flutter/material.dart'
+    as flutter
     show PageTransitionsBuilder, Theme, ThemeData, ZoomPageTransitionsBuilder;
 import 'package:material_ui/material_ui.dart';
 
@@ -38,7 +39,6 @@ flutter.PageTransitionsBuilder flutterPageTransitionsBuilderOf(flutter.ThemeData
         TargetPlatform.android ||
         TargetPlatform.fuchsia ||
         TargetPlatform.windows ||
-        TargetPlatform.linux =>
-          const flutter.ZoomPageTransitionsBuilder(),
+        TargetPlatform.linux => const flutter.ZoomPageTransitionsBuilder(),
       };
 }

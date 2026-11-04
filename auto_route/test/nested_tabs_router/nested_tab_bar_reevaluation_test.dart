@@ -15,16 +15,26 @@ void main() {
   // Should: feed shows its first tab, forYou.
   testWidgets('a nested tab bar opened after a reevaluation shows its first tab', (WidgetTester tester) async {
     final reevaluateNotifier = ValueNotifier(0);
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _SplashRoute.page, path: '/', initial: true),
-      AutoRoute(page: _HomeWrapperRoute.page, path: '/home', children: [
-        AutoRoute(page: _FeedRoute.page, path: 'feed', children: [
-          AutoRoute(page: _ForYouFeedRoute.page, path: 'for-you', initial: true),
-          AutoRoute(page: _FollowingFeedRoute.page, path: 'following'),
-        ]),
-        AutoRoute(page: _MyProfileRoute.page, path: 'profile'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _SplashRoute.page, path: '/', initial: true),
+        AutoRoute(
+          page: _HomeWrapperRoute.page,
+          path: '/home',
+          children: [
+            AutoRoute(
+              page: _FeedRoute.page,
+              path: 'feed',
+              children: [
+                AutoRoute(page: _ForYouFeedRoute.page, path: 'for-you', initial: true),
+                AutoRoute(page: _FollowingFeedRoute.page, path: 'following'),
+              ],
+            ),
+            AutoRoute(page: _MyProfileRoute.page, path: 'profile'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluateNotifier);
     router.replace(const _HomeWrapperRoute(children: [_MyProfileRoute()]));
     await tester.pumpAndSettle();
@@ -68,7 +78,10 @@ class _FeedRoute extends PageRouteInfo<void> {
         appBar: AppBar(
           bottom: TabBar(
             controller: tabController,
-            tabs: const [Tab(text: 'For you'), Tab(text: 'Following')],
+            tabs: const [
+              Tab(text: 'For you'),
+              Tab(text: 'Following'),
+            ],
           ),
         ),
         body: child,

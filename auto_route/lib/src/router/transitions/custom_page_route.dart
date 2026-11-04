@@ -26,37 +26,26 @@ class AutoPageRouteBuilder<T> extends PageRoute<T> {
   String? get barrierLabel => null;
 
   @override
-  Widget buildPage(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
     return child;
   }
 
   @override
   Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     if (transitionBuilder != null) {
-      return transitionBuilder!(
-        context,
-        animation,
-        secondaryAnimation,
-        child,
-      );
+      return transitionBuilder!(context, animation, secondaryAnimation, child);
     }
     final flutterTheme = flutterMaterialThemeOf(context);
     if (flutterTheme != null) {
       return flutterTheme.pageTransitionsTheme.buildTransitions(this, context, animation, secondaryAnimation, child);
     }
     final theme = Theme.of(context);
-    return theme.pageTransitionsTheme.buildTransitions(
-      this,
-      context,
-      animation,
-      secondaryAnimation,
-      child,
-    );
+    return theme.pageTransitionsTheme.buildTransitions(this, context, animation, secondaryAnimation, child);
   }
 
   @override

@@ -22,10 +22,12 @@ const Reference stringRefer = Reference('String');
 const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 
 /// Builds a list type reference of type [reference]
-TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference((b) => b
-  ..symbol = "List"
-  ..isNullable = nullable
-  ..types.add(reference));
+TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference(
+  (b) => b
+    ..symbol = "List"
+    ..isNullable = nullable
+    ..types.add(reference),
+);
 
 /// Throws when a route in a part file gets the name of a page class.
 ///
@@ -58,7 +60,8 @@ String generateLibrary(
 }) {
   if (router.usesPartBuilder && router.deferredLoading) {
     throw ArgumentError(
-        'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!');
+      'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
+    );
   }
 
   final emitter = DartEmitter(
@@ -106,7 +109,5 @@ String generateLibrary(
       ]),
   );
 
-  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion).format(
-    library.accept(emitter).toString(),
-  );
+  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion).format(library.accept(emitter).toString());
 }

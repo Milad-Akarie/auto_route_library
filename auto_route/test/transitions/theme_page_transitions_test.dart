@@ -20,84 +20,90 @@ void main() {
     ('RouteType.material()', const RouteType.material()),
     ('RouteType.adaptive()', const RouteType.adaptive()),
   ]) {
-    testWidgets('A page of $label uses the Theme pageTransitionsTheme', (tester) async {
-      final builder = _RecordingTransitionsBuilder();
-      final router = RootStackRouter.build(
-        defaultRouteType: type,
-        routes: [
-          AutoRoute(page: _HomeRoute.page, path: '/'),
-          AutoRoute(page: _DetailsRoute.page, path: '/details'),
-        ],
-      );
-      await tester.pumpWidget(
-        MaterialApp.router(
-          theme: ThemeData(
-            pageTransitionsTheme: PageTransitionsTheme(
-              builders: {for (final platform in TargetPlatform.values) platform: builder},
+    testWidgets(
+      'A page of $label uses the Theme pageTransitionsTheme',
+      (tester) async {
+        final builder = _RecordingTransitionsBuilder();
+        final router = RootStackRouter.build(
+          defaultRouteType: type,
+          routes: [
+            AutoRoute(page: _HomeRoute.page, path: '/'),
+            AutoRoute(page: _DetailsRoute.page, path: '/details'),
+          ],
+        );
+        await tester.pumpWidget(
+          MaterialApp.router(
+            theme: ThemeData(
+              pageTransitionsTheme: PageTransitionsTheme(
+                builders: {for (final platform in TargetPlatform.values) platform: builder},
+              ),
             ),
+            routerConfig: router.config(),
           ),
-          routerConfig: router.config(),
-        ),
-      );
-      await tester.pumpAndSettle();
-      builder.calls = 0;
+        );
+        await tester.pumpAndSettle();
+        builder.calls = 0;
 
-      router.push(const _DetailsRoute());
-      await tester.pumpAndSettle();
+        router.push(const _DetailsRoute());
+        await tester.pumpAndSettle();
 
-      expect(find.text('Details'), findsOneWidget);
-      expect(builder.calls, greaterThan(0));
-    },
-        // an adaptive route has no transition on web
-        skip: kIsWeb && type is AdaptiveRouteType);
+        expect(find.text('Details'), findsOneWidget);
+        expect(builder.calls, greaterThan(0));
+      },
+      // an adaptive route has no transition on web
+      skip: kIsWeb && type is AdaptiveRouteType,
+    );
   }
 
   for (final (label, type) in [
     ('RouteType.material()', const RouteType.material()),
     ('RouteType.adaptive()', const RouteType.adaptive()),
   ]) {
-    testWidgets('A page of $label uses the pageTransitionsTheme of a MaterialApp from Flutter', (tester) async {
-      final builder = _FlutterRecordingTransitionsBuilder();
-      final router = RootStackRouter.build(
-        defaultRouteType: type,
-        routes: [
-          AutoRoute(page: _HomeRoute.flutterPage, path: '/'),
-          AutoRoute(page: _DetailsRoute.flutterPage, path: '/details'),
-        ],
-      );
-      await tester.pumpWidget(
-        flutter.MaterialApp.router(
-          theme: flutter.ThemeData(
-            pageTransitionsTheme: flutter.PageTransitionsTheme(
-              builders: {for (final platform in TargetPlatform.values) platform: builder},
+    testWidgets(
+      'A page of $label uses the pageTransitionsTheme of a MaterialApp from Flutter',
+      (tester) async {
+        final builder = _FlutterRecordingTransitionsBuilder();
+        final router = RootStackRouter.build(
+          defaultRouteType: type,
+          routes: [
+            AutoRoute(page: _HomeRoute.flutterPage, path: '/'),
+            AutoRoute(page: _DetailsRoute.flutterPage, path: '/details'),
+          ],
+        );
+        await tester.pumpWidget(
+          flutter.MaterialApp.router(
+            theme: flutter.ThemeData(
+              pageTransitionsTheme: flutter.PageTransitionsTheme(
+                builders: {for (final platform in TargetPlatform.values) platform: builder},
+              ),
             ),
+            routerConfig: router.config(),
           ),
-          routerConfig: router.config(),
-        ),
-      );
-      await tester.pumpAndSettle();
-      builder.calls = 0;
+        );
+        await tester.pumpAndSettle();
+        builder.calls = 0;
 
-      router.push(const _DetailsRoute());
-      // the page is added a frame or two after the push
-      for (var i = 0; i < 3 && find.text('Details').evaluate().isEmpty; i++) {
-        await tester.pump();
-      }
-      await tester.pump(const Duration(milliseconds: 100));
+        router.push(const _DetailsRoute());
+        // the page is added a frame or two after the push
+        for (var i = 0; i < 3 && find.text('Details').evaluate().isEmpty; i++) {
+          await tester.pump();
+        }
+        await tester.pump(const Duration(milliseconds: 100));
 
-      // the theme's builder sets the duration, 200 ms, so the page is still
-      // on its way in after 100 ms and is in by 250 ms, before the default
-      // 300 ms
-      expect(find.text('Details'), findsOneWidget);
-      expect(builder.calls, greaterThan(0));
-      final route = flutter.ModalRoute.of(tester.element(find.text('Details')))!;
-      expect(route.transitionDuration, const Duration(milliseconds: 200));
-      expect(route.animation!.isCompleted, isFalse);
-      await tester.pump(const Duration(milliseconds: 150));
-      expect(route.animation!.isCompleted, isTrue);
-    },
-        // an adaptive route has no transition on web
-        skip: kIsWeb && type is AdaptiveRouteType);
+        // the theme's builder sets the duration, 200 ms, so the page is still
+        // on its way in after 100 ms and is in by 250 ms, before the default
+        // 300 ms
+        expect(find.text('Details'), findsOneWidget);
+        expect(builder.calls, greaterThan(0));
+        final route = flutter.ModalRoute.of(tester.element(find.text('Details')))!;
+        expect(route.transitionDuration, const Duration(milliseconds: 200));
+        expect(route.animation!.isCompleted, isFalse);
+        await tester.pump(const Duration(milliseconds: 150));
+        expect(route.animation!.isCompleted, isTrue);
+      },
+      // an adaptive route has no transition on web
+      skip: kIsWeb && type is AdaptiveRouteType,
+    );
   }
 
   testWidgets('A page uses the nearer Theme when both Material libraries have one', (tester) async {
@@ -157,8 +163,9 @@ void main() {
     expect(homeRoute.receivedTransition, isNull);
   });
 
-  testWidgets('A widget pushed with pushWidget uses the pageTransitionsTheme of a MaterialApp from Flutter',
-      (tester) async {
+  testWidgets('A widget pushed with pushWidget uses the pageTransitionsTheme of a MaterialApp from Flutter', (
+    tester,
+  ) async {
     final builder = _FlutterRecordingTransitionsBuilder();
     final router = RootStackRouter.build(
       routes: [AutoRoute(page: _HomeRoute.flutterPage, path: '/')],

@@ -88,9 +88,9 @@ class AutoLeadingButton extends StatefulWidget {
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
     this.builder,
-  })  : assert(color == null || builder == null),
-        _nullableBuilder = null,
-        _showIfParentCanPop = showIfParentCanPop ?? true;
+  }) : assert(color == null || builder == null),
+       _nullableBuilder = null,
+       _showIfParentCanPop = showIfParentCanPop ?? true;
 
   /// builds a nullable leading widget based on the current router state
   ///
@@ -116,9 +116,9 @@ class AutoLeadingButton extends StatefulWidget {
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
     required NullableWidgetBuilder builder,
-  })  : _nullableBuilder = builder,
-        builder = null,
-        _showIfParentCanPop = showIfParentCanPop ?? true;
+  }) : _nullableBuilder = builder,
+       builder = null,
+       _showIfParentCanPop = showIfParentCanPop ?? true;
 
   @override
   State<AutoLeadingButton> createState() => _AutoLeadingButtonState();
@@ -173,11 +173,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
     final ScaffoldState? scaffold = Scaffold.maybeOf(context);
     if (scaffold?.hasDrawer == true) {
       if (widget.builder != null) {
-        return widget.builder!(
-          context,
-          LeadingType.drawer,
-          _handleDrawerButton,
-        );
+        return widget.builder!(context, LeadingType.drawer, _handleDrawerButton);
       }
       leading = IconButton(
         key: const ValueKey(LeadingType.drawer),
@@ -194,10 +190,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
     if (widget._nullableBuilder != null) {
       return widget._nullableBuilder!(context, leading);
     }
-    return leading ??
-        const SizedBox.shrink(
-          key: ValueKey(LeadingType.noLeading),
-        );
+    return leading ?? const SizedBox.shrink(key: ValueKey(LeadingType.noLeading));
   }
 
   void _handleDrawerButton() {

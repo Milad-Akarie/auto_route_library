@@ -4,24 +4,15 @@ import 'package:material_ui/material_ui.dart';
 
 /// Signature for a function that takes in [BuildContext] and [TabsRouter]
 /// and returns a PreferredSizeWidget usually an AppBar
-typedef AppBarBuilder = PreferredSizeWidget? Function(
-  BuildContext context,
-  TabsRouter tabsRouter,
-);
+typedef AppBarBuilder = PreferredSizeWidget? Function(BuildContext context, TabsRouter tabsRouter);
 
 /// Signature for a function that takes in [BuildContext] and [TabsRouter]
 /// and returns a BottomNavigation Widget
-typedef BottomNavigationBuilder = Widget Function(
-  BuildContext context,
-  TabsRouter tabsRouter,
-);
+typedef BottomNavigationBuilder = Widget Function(BuildContext context, TabsRouter tabsRouter);
 
 /// Signature for a function that takes in [BuildContext] and [TabsRouter]
 /// and returns a FloatingActionButton Widget or null
-typedef FloatingActionButtonBuilder = Widget? Function(
-  BuildContext context,
-  TabsRouter tabsRouter,
-);
+typedef FloatingActionButtonBuilder = Widget? Function(BuildContext context, TabsRouter tabsRouter);
 
 /// A scaffold wrapper widget that makes creating an [AutoTabsRouter]
 /// much easier and cleaner
@@ -177,11 +168,7 @@ class AutoTabsScaffold extends StatelessWidget {
       inheritNavigatorObservers: inheritNavigatorObservers,
       curve: animationCurve,
       transitionBuilder: (context, child, animation) =>
-          transitionBuilder?.call(context, child, animation) ??
-          FadeTransition(
-            opacity: animation,
-            child: child,
-          ),
+          transitionBuilder?.call(context, child, animation) ?? FadeTransition(opacity: animation, child: child),
       builder: (context, child) {
         final tabsRouter = context.tabsRouter;
         return Scaffold(
@@ -206,21 +193,13 @@ class AutoTabsScaffold extends StatelessWidget {
           bottomSheet: bottomSheet,
           persistentFooterButtons: persistentFooterButtons,
           primary: primary,
-          appBar: appBarBuilder == null
-              ? null
-              : appBarBuilder!(
-                  context,
-                  tabsRouter,
-                ),
+          appBar: appBarBuilder == null ? null : appBarBuilder!(context, tabsRouter),
           body: child,
           bottomNavigationBar: bottomNavigationBuilder == null
               ? null
               : AnimatedBuilder(
                   animation: tabsRouter,
-                  builder: (_, __) => bottomNavigationBuilder!(
-                    context,
-                    tabsRouter,
-                  ),
+                  builder: (_, __) => bottomNavigationBuilder!(context, tabsRouter),
                 ),
         );
       },

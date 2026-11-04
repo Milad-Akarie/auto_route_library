@@ -13,12 +13,7 @@ class RouteMatcher {
 
   /// Parses a [Uri] from [rawPath] then maps call to [_match]
   List<RouteMatch>? match(String rawPath, {bool includePrefixMatches = false}) {
-    return _match(
-      Uri.parse(rawPath),
-      collection,
-      includePrefixMatches: includePrefixMatches,
-      root: true,
-    );
+    return _match(Uri.parse(rawPath), collection, includePrefixMatches: includePrefixMatches, root: true);
   }
 
   /// Matches a uri against the config-entries in [collection]
@@ -28,16 +23,16 @@ class RouteMatcher {
   ///
   /// returns null if not match is found
   List<RouteMatch>? matchUri(Uri uri, {bool includePrefixMatches = false}) {
-    return _match(
-      uri,
-      collection,
-      includePrefixMatches: includePrefixMatches,
-      root: true,
-    );
+    return _match(uri, collection, includePrefixMatches: includePrefixMatches, root: true);
   }
 
-  List<RouteMatch>? _match(Uri uri, RouteCollection collection,
-      {bool includePrefixMatches = false, bool root = false, String? redirectedFrom}) {
+  List<RouteMatch>? _match(
+    Uri uri,
+    RouteCollection collection, {
+    bool includePrefixMatches = false,
+    bool root = false,
+    String? redirectedFrom,
+  }) {
     final pathSegments = _split(uri.path);
     final matches = <RouteMatch>[];
     for (var config in collection.routes) {
@@ -48,24 +43,15 @@ class RouteMatcher {
         }
         // handle redirects
         if (config is RedirectRoute) {
-          final redirectToUri = Uri.parse(PageRouteInfo.expandPath(
-            config.redirectTo,
-            match.params.rawMap,
-          ));
+          final redirectToUri = Uri.parse(PageRouteInfo.expandPath(config.redirectTo, match.params.rawMap));
           return _handleRedirect(
             routesCollection: collection,
             includePrefixMatches: includePrefixMatches,
             redirectTo: redirectToUri.replace(
-              queryParameters: {
-                ...redirectToUri.queryParametersAll,
-                ...uri.queryParametersAll,
-              },
+              queryParameters: {...redirectToUri.queryParametersAll, ...uri.queryParametersAll},
               fragment: uri.fragment,
             ),
-            redirectedFrom: PageRouteInfo.expandPath(
-              config.path,
-              match.params.rawMap,
-            ),
+            redirectedFrom: PageRouteInfo.expandPath(config.path, match.params.rawMap),
           );
         }
 
@@ -198,11 +184,7 @@ class RouteMatcher {
       } else {
         // include default matches if exist
         final defaultMatches = _match(
-          Uri(
-            path: '',
-            queryParameters: _normalizeForUri(route.rawQueryParams),
-            fragment: route.fragment,
-          ),
+          Uri(path: '', queryParameters: _normalizeForUri(route.rawQueryParams), fragment: route.fragment),
           subRoutes,
         );
         if (defaultMatches != null) {

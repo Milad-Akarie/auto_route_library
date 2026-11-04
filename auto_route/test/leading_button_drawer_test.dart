@@ -20,13 +20,22 @@ void main() {
     router = RootStackRouter.build(
       defaultRouteType: const RouteType.adaptive(),
       routes: [
-        AutoRoute(page: _emptyRouter('HomeEmptyRoute'), path: '/', children: [
-          AutoRoute(page: _emptyRouter('FeedEmptyRoute'), path: '', initial: true, children: [
-            AutoRoute(page: _feedListing, path: '', initial: true),
-            AutoRoute(page: _text('FeedDetailsRoute'), path: 'details'),
-          ]),
-          AutoRoute(page: _text('CommentsRoute'), path: 'comments', fullscreenDialog: true),
-        ]),
+        AutoRoute(
+          page: _emptyRouter('HomeEmptyRoute'),
+          path: '/',
+          children: [
+            AutoRoute(
+              page: _emptyRouter('FeedEmptyRoute'),
+              path: '',
+              initial: true,
+              children: [
+                AutoRoute(page: _feedListing, path: '', initial: true),
+                AutoRoute(page: _text('FeedDetailsRoute'), path: 'details'),
+              ],
+            ),
+            AutoRoute(page: _text('CommentsRoute'), path: 'comments', fullscreenDialog: true),
+          ],
+        ),
       ],
     );
   });
@@ -39,12 +48,14 @@ void main() {
 
   testWidgets('AutoLeadingButton should keep the drawer icon when the MaterialApp rebuilds', (tester) async {
     Future<void> pumpApp({Key? key, Brightness brightness = Brightness.light, Locale? locale}) async {
-      await tester.pumpWidget(MaterialApp.router(
-        key: key,
-        theme: ThemeData(brightness: brightness),
-        locale: locale,
-        routerConfig: router.config(),
-      ));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          key: key,
+          theme: ThemeData(brightness: brightness),
+          locale: locale,
+          routerConfig: router.config(),
+        ),
+      );
       await tester.pumpAndSettle();
     }
 

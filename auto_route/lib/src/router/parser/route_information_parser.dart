@@ -28,19 +28,11 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   final DeepLinkTransformer? deepLinkTransformer;
 
   /// Default constructor
-  DefaultRouteParser(
-    this._matcher, {
-    this.includePrefixMatches = false,
-    this.deepLinkTransformer,
-  });
+  DefaultRouteParser(this._matcher, {this.includePrefixMatches = false, this.deepLinkTransformer});
 
   @override
-  Future<UrlState> parseRouteInformation(
-    RouteInformation routeInformation,
-  ) async {
-    final resolvedUri = _normalize(
-      await deepLinkTransformer?.call((routeInformation.uri)) ?? routeInformation.uri,
-    );
+  Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
+    final resolvedUri = _normalize(await deepLinkTransformer?.call((routeInformation.uri)) ?? routeInformation.uri);
     var matches = _matcher.matchUri(resolvedUri, includePrefixMatches: includePrefixMatches);
     final state = routeInformation.state;
     final savedRoutes = state is Map ? state[UrlState._savedRoutesKey] : null;
@@ -72,10 +64,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
       replace: configuration.shouldReplace,
       state: configuration.savedRoutes == null
           ? configuration.pathState
-          : {
-              UrlState._savedRoutesKey: configuration.savedRoutes,
-              UrlState._pathStateKey: configuration.pathState,
-            },
+          : {UrlState._savedRoutesKey: configuration.savedRoutes, UrlState._pathStateKey: configuration.pathState},
     );
   }
 }
@@ -189,18 +178,17 @@ class _WebEngineUri implements Uri {
     String? query,
     Map<String, dynamic>? queryParameters,
     String? fragment,
-  }) =>
-      _uri.replace(
-        scheme: scheme,
-        userInfo: userInfo,
-        host: host,
-        port: port,
-        path: path,
-        pathSegments: pathSegments,
-        query: query,
-        queryParameters: queryParameters,
-        fragment: fragment,
-      );
+  }) => _uri.replace(
+    scheme: scheme,
+    userInfo: userInfo,
+    host: host,
+    port: port,
+    path: path,
+    pathSegments: pathSegments,
+    query: query,
+    queryParameters: queryParameters,
+    fragment: fragment,
+  );
 
   @override
   Uri removeFragment() => _uri.removeFragment();
@@ -231,18 +219,9 @@ class AutoRouteInformation extends RouteInformation {
   final Uri? appUri;
 
   /// Default constructor
-  const AutoRouteInformation({
-    required Uri super.uri,
-    super.state,
-    this.replace = true,
-  }) : appUri = null;
+  const AutoRouteInformation({required Uri super.uri, super.state, this.replace = true}) : appUri = null;
 
-  const AutoRouteInformation._({
-    required Uri super.uri,
-    required Uri this.appUri,
-    super.state,
-    this.replace = true,
-  });
+  const AutoRouteInformation._({required Uri super.uri, required Uri this.appUri, super.state, this.replace = true});
 
   @override
   bool operator ==(Object other) =>
@@ -284,13 +263,7 @@ class UrlState {
   static const _pathStateKey = 'pathState';
 
   /// Default constructor
-  const UrlState(
-    this.uri,
-    this.segments, {
-    this.shouldReplace = false,
-    this.pathState,
-    @internal this.savedRoutes,
-  });
+  const UrlState(this.uri, this.segments, {this.shouldReplace = false, this.pathState, @internal this.savedRoutes});
 
   /// Returns the part of a [RouteInformation.state] built by
   /// [DefaultRouteParser] that's meant for the platform: [state] without
@@ -357,17 +330,8 @@ class UrlState {
 
   /// Builds UrlState from list of
   /// route matches instead of uri
-  factory UrlState.fromSegments(
-    List<RouteMatch> routes, {
-    bool shouldReplace = false,
-    Object? state,
-  }) {
-    return UrlState(
-      _buildUri(routes),
-      routes,
-      shouldReplace: shouldReplace,
-      pathState: state,
-    );
+  factory UrlState.fromSegments(List<RouteMatch> routes, {bool shouldReplace = false, Object? state}) {
+    return UrlState(_buildUri(routes), routes, shouldReplace: shouldReplace, pathState: state);
   }
 
   /// Converts a list of linear route matches to
@@ -378,11 +342,7 @@ class UrlState {
     if (segments.length == 1) {
       return segments.first;
     } else {
-      return segments.first.copyWith(children: [
-        toHierarchy(
-          segments.sublist(1, segments.length),
-        ),
-      ]);
+      return segments.first.copyWith(children: [toHierarchy(segments.sublist(1, segments.length))]);
     }
   }
 
@@ -404,10 +364,7 @@ class UrlState {
   /// Witch is the last
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
 
-  RouteMatch? _findSegment(
-    List<RouteMatch> segments,
-    bool Function(RouteMatch segment) predicate,
-  ) {
+  RouteMatch? _findSegment(List<RouteMatch> segments, bool Function(RouteMatch segment) predicate) {
     for (var segment in segments) {
       if (predicate(segment)) {
         return segment;
@@ -431,11 +388,7 @@ class UrlState {
     if (routes.isEmpty) {
       return Uri(path: fullPath);
     }
-    fullPath = p.joinAll(
-      routes.where((e) => e.stringMatch.isNotEmpty).map(
-            (e) => e.stringMatch,
-          ),
-    );
+    fullPath = p.joinAll(routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch));
     final normalized = p.normalize(fullPath);
     final lastSegment = routes.last;
     Map<String, dynamic> queryParams = {};
@@ -453,11 +406,7 @@ class UrlState {
     if (lastSegment.fragment.isNotEmpty == true) {
       fragment = lastSegment.fragment;
     }
-    return Uri(
-      path: normalized,
-      queryParameters: queryParams.isNotEmpty ? queryParams : null,
-      fragment: fragment,
-    );
+    return Uri(path: normalized, queryParameters: queryParams.isNotEmpty ? queryParams : null, fragment: fragment);
   }
 
   /// Stringify query param value

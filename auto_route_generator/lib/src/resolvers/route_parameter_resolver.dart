@@ -83,11 +83,7 @@ class RouteParameterResolver {
     }
 
     if (isUrlFragment) {
-      throwIf(
-        type.name != 'String',
-        'UrlFragments must be of type String',
-        element: parameterElement,
-      );
+      throwIf(type.name != 'String', 'UrlFragments must be of type String', element: parameterElement);
       throwIf(
         !type.isNullable && !parameterElement.hasDefaultValue,
         'UrlFragments must be nullable or have default value',
@@ -116,17 +112,18 @@ class RouteParameterResolver {
   ParamConfig _resolveFunctionType(FormalParameterElement paramElement) {
     var type = paramElement.type as FunctionType;
     return FunctionParamConfig(
-        returnType: _typeResolver.resolveType(type.returnType),
-        type: _typeResolver.resolveType(type),
-        params: type.formalParameters.map(resolve).toList(),
-        name: paramElement.displayName,
-        defaultValueCode: paramElement.defaultValueCode,
-        defaultValueImport: _resolveDefaultValueImport(paramElement),
-        isRequired: paramElement.isRequiredNamed,
-        isPositional: paramElement.isPositional,
-        hasRequired: paramElement.isRequired,
-        isOptional: paramElement.isOptional,
-        isNamed: paramElement.isNamed);
+      returnType: _typeResolver.resolveType(type.returnType),
+      type: _typeResolver.resolveType(type),
+      params: type.formalParameters.map(resolve).toList(),
+      name: paramElement.displayName,
+      defaultValueCode: paramElement.defaultValueCode,
+      defaultValueImport: _resolveDefaultValueImport(paramElement),
+      isRequired: paramElement.isRequiredNamed,
+      isPositional: paramElement.isPositional,
+      hasRequired: paramElement.isRequired,
+      isOptional: paramElement.isOptional,
+      isNamed: paramElement.isNamed,
+    );
   }
 
   /// Resolves the import of the declaration a default value names: a
@@ -152,10 +149,7 @@ class RouteParameterResolver {
         isOptional = true;
         paramName = paramName.substring(0, paramName.length - 1);
       }
-      return PathParamConfig(
-        name: paramName,
-        isOptional: isOptional,
-      );
+      return PathParamConfig(name: paramName, isOptional: isOptional);
     }).toList();
   }
 }

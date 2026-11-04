@@ -3,11 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 /// Signature for custom router builder used by
 /// [CustomRouteType]
-typedef CustomRouteBuilder = Route<T> Function<T>(
-  BuildContext context,
-  Widget child,
-  AutoRoutePage<T> page,
-);
+typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget child, AutoRoutePage<T> page);
 
 /// An abstraction of route types used by
 /// [AutoRoutePage.onCreateRoute] to decide transition animations
@@ -61,10 +57,8 @@ abstract class RouteType {
 /// Generates a route that uses [MaterialRouteTransitionMixin]
 class MaterialRouteType extends RouteType with PredictiveBackGestureMixin {
   /// Default constructor
-  const MaterialRouteType({
-    this.enablePredictiveBackGesture = false,
-    this.predictiveBackPageTransitionsBuilder,
-  }) : super._(opaque: true);
+  const MaterialRouteType({this.enablePredictiveBackGesture = false, this.predictiveBackPageTransitionsBuilder})
+    : super._(opaque: true);
 
   @override
   final bool enablePredictiveBackGesture;
@@ -182,18 +176,16 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
     @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
     Duration? duration,
     Duration? reverseDuration,
-  })  : assert(
-          durationInMilliseconds == null || duration == null,
-          'Use either duration or durationInMilliseconds',
-        ),
-        assert(
-          reverseDurationInMilliseconds == null || reverseDuration == null,
-          'Use either reverseDuration or reverseDurationInMilliseconds',
-        ),
-        duration = duration ?? (durationInMilliseconds != null ? Duration(milliseconds: durationInMilliseconds) : null),
-        reverseDuration = reverseDuration ??
-            (reverseDurationInMilliseconds != null ? Duration(milliseconds: reverseDurationInMilliseconds) : null),
-        super._();
+  }) : assert(durationInMilliseconds == null || duration == null, 'Use either duration or durationInMilliseconds'),
+       assert(
+         reverseDurationInMilliseconds == null || reverseDuration == null,
+         'Use either reverseDuration or reverseDurationInMilliseconds',
+       ),
+       duration = duration ?? (durationInMilliseconds != null ? Duration(milliseconds: durationInMilliseconds) : null),
+       reverseDuration =
+           reverseDuration ??
+           (reverseDurationInMilliseconds != null ? Duration(milliseconds: reverseDurationInMilliseconds) : null),
+       super._();
 
   @override
   bool operator ==(Object other) =>

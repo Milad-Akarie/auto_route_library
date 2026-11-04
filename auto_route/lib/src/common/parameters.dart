@@ -28,9 +28,7 @@ class Parameters {
       identical(this, other) ||
       other is Parameters &&
           runtimeType == other.runtimeType &&
-          const MapEquality(
-            values: DeepCollectionEquality(),
-          ).equals(_params, other._params);
+          const MapEquality(values: DeepCollectionEquality()).equals(_params, other._params);
 
   @override
   int get hashCode => const MapEquality().hash(_params);

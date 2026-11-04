@@ -24,11 +24,15 @@ void main() {
 
   Future<TabsRouter> pumpApp(WidgetTester tester, {required int homeIndex}) async {
     _homeIndex = homeIndex;
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _tabsPage, path: '/', children: [
-        for (final name in _tabNames) AutoRoute(page: _page(name), path: name),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _tabsPage,
+          path: '/',
+          children: [for (final name in _tabNames) AutoRoute(page: _page(name), path: name)],
+        ),
+      ],
+    );
     frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
     await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
     await tester.pumpAndSettle();
@@ -71,10 +75,7 @@ var _homeIndex = 0;
 
 final _tabsPage = PageInfo(
   'HomeRoute',
-  builder: (_) => AutoTabsScaffold(
-    homeIndex: _homeIndex,
-    routes: [for (final name in _tabNames) _Route(name)],
-  ),
+  builder: (_) => AutoTabsScaffold(homeIndex: _homeIndex, routes: [for (final name in _tabNames) _Route(name)]),
 );
 
 PageInfo _page(String name) => PageInfo(name, builder: (_) => Text(name));

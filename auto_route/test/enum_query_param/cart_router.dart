@@ -9,9 +9,9 @@ enum MfUserCartTypes { rm, mf }
 class CartRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(path: '/', page: CartHomeRoute.page),
-        AutoRoute(path: '/cart', page: MfUserCartRoute.page),
-      ];
+    AutoRoute(path: '/', page: CartHomeRoute.page),
+    AutoRoute(path: '/cart', page: MfUserCartRoute.page),
+  ];
 }
 
 @RoutePage()

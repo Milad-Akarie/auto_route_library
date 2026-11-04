@@ -15,18 +15,20 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _page('MainRoute'), initial: true),
-      AutoRoute(page: _page('ShoppingCartRoute')),
-      AutoRoute(page: _page('OrderSummaryRoute')),
-      AutoRoute(page: _page('PaymentTerminationRoute')),
-      AutoRoute(page: _page('MyDeliveriesRoute')),
-      AutoRoute(page: _page('SignInRoute')),
-      AutoRoute(page: _page('VerifyRoute')),
-      AutoRoute(page: _page('CustomStackFlow')),
-      AutoRoute(page: _page('FirstRoute')),
-      AutoRoute(page: _page('SecondRoute')),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _page('MainRoute'), initial: true),
+        AutoRoute(page: _page('ShoppingCartRoute')),
+        AutoRoute(page: _page('OrderSummaryRoute')),
+        AutoRoute(page: _page('PaymentTerminationRoute')),
+        AutoRoute(page: _page('MyDeliveriesRoute')),
+        AutoRoute(page: _page('SignInRoute')),
+        AutoRoute(page: _page('VerifyRoute')),
+        AutoRoute(page: _page('CustomStackFlow')),
+        AutoRoute(page: _page('FirstRoute')),
+        AutoRoute(page: _page('SecondRoute')),
+      ],
+    );
   });
 
   List<String?> stackNames() => router.stack.map((p) => p.name).toList();
@@ -113,4 +115,7 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(appBar: AppBar(), body: Text(name)));
+PageInfo _page(String name) => PageInfo(
+  name,
+  builder: (_) => Scaffold(appBar: AppBar(), body: Text(name)),
+);

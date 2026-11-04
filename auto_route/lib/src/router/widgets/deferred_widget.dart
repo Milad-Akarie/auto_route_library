@@ -17,12 +17,7 @@ typedef DeferredWidgetBuilder = Widget Function();
 /// state as long as closure to create widget stays the same.
 class DeferredWidget extends StatefulWidget {
   /// default constructor
-  const DeferredWidget(
-    this.libraryLoader,
-    this.createWidget, {
-    super.key,
-    this.placeholder,
-  });
+  const DeferredWidget(this.libraryLoader, this.createWidget, {super.key, this.placeholder});
 
   /// Triggers the deferred library loading process
   final LibraryLoader libraryLoader;
@@ -91,16 +86,10 @@ class _DeferredWidgetState extends State<DeferredWidget> {
 /// and is currently being installed.
 class DeferredLoadingPlaceholder extends StatelessWidget {
   /// default constructor
-  const DeferredLoadingPlaceholder({
-    super.key,
-  });
+  const DeferredLoadingPlaceholder({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

@@ -22,10 +22,7 @@ abstract class AutoRouteGuard {
   }
 }
    */
-  FutureOr<void> onNavigation(
-    NavigationResolver resolver,
-    StackRouter router,
-  );
+  FutureOr<void> onNavigation(NavigationResolver resolver, StackRouter router);
 
   /// Builds a simple instance that takes in the [OnNavigation] callback
   factory AutoRouteGuard.simple(OnNavigation onNavigation, {String? debugLabel}) = AutoRouteGuardCallback;
@@ -128,18 +125,10 @@ class ResolverResult {
   final RouteMatch route;
 
   /// Default constructor
-  const ResolverResult({
-    required this.continueNavigation,
-    required this.reevaluateNext,
-    required this.route,
-  });
+  const ResolverResult({required this.continueNavigation, required this.reevaluateNext, required this.route});
 
   //// clones this instance with the provided values
-  ResolverResult copyWith({
-    bool? continueNavigation,
-    bool? reevaluateNext,
-    RouteMatch? route,
-  }) {
+  ResolverResult copyWith({bool? continueNavigation, bool? reevaluateNext, RouteMatch? route}) {
     return ResolverResult(
       continueNavigation: continueNavigation ?? this.continueNavigation,
       reevaluateNext: reevaluateNext ?? this.reevaluateNext,
@@ -211,13 +200,7 @@ class NavigationResolver {
   /// to stack on [RoutingController.reevaluateGuards]
   void resolveNext(bool continueNavigation, {bool reevaluateNext = true}) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
-    _complete(
-      ResolverResult(
-        continueNavigation: continueNavigation,
-        reevaluateNext: reevaluateNext,
-        route: route,
-      ),
-    );
+    _complete(ResolverResult(continueNavigation: continueNavigation, reevaluateNext: reevaluateNext, route: route));
   }
 
   // The result the guard resolved with, known at once, before [future]
@@ -241,20 +224,9 @@ class NavigationResolver {
     bool reevaluateNext = true,
   }) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
-    final overrides = RouteOverrides(
-      children: children,
-      args: args,
-      queryParams: queryParams,
-      fragment: fragment,
-    );
+    final overrides = RouteOverrides(children: children, args: args, queryParams: queryParams, fragment: fragment);
     final overriddenRoute = overrides.override(route, _router.matcher);
-    _complete(
-      ResolverResult(
-        continueNavigation: true,
-        reevaluateNext: reevaluateNext,
-        route: overriddenRoute,
-      ),
-    );
+    _complete(ResolverResult(continueNavigation: true, reevaluateNext: reevaluateNext, route: overriddenRoute));
   }
 
   bool _isRedirecting = false;
@@ -274,11 +246,7 @@ class NavigationResolver {
   ///      resolver.redirectUntil(LoginRoute());
   ///    }
   ///  }
-  void redirectUntil(
-    PageRouteInfo route, {
-    OnNavigationFailure? onFailure,
-    bool replace = false,
-  }) async {
+  void redirectUntil(PageRouteInfo route, {OnNavigationFailure? onFailure, bool replace = false}) async {
     if (_isRedirecting) return null;
     // This route was opened by the redirect of a guard still waiting; sending it to itself again never ends.
     final redirectedBy = _redirectingResolvers[this.route.id];
@@ -387,12 +355,7 @@ class RouteOverrides {
   final String? fragment;
 
   /// Default constructor
-  const RouteOverrides({
-    this.children,
-    this.args,
-    this.queryParams,
-    this.fragment,
-  });
+  const RouteOverrides({this.children, this.args, this.queryParams, this.fragment});
 
   /// Builds a new [PageRouteInfo] with the provided overrides
   RouteMatch override(RouteMatch route, RouteMatcher matcher) {

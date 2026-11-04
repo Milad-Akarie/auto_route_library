@@ -17,50 +17,52 @@ import '../router_test_utils.dart';
 // reopened it with the resolver.next of the first navigation, already called.
 // A resolved redirect must leave no history entry: back() lands on RouteA.
 void main() {
-  RootStackRouter buildRouter() => RootStackRouter.build(routes: [
-        NamedRouteDef(
-          name: 'RouteA',
-          initial: true,
-          guards: [
-            AutoRouteGuard.simple((resolver, _) {
-              resolver.redirectUntil(NamedRoute('RouteARedirected', args: resolver.next));
-            }),
-          ],
-          builder: (context, _) => Scaffold(
-            body: Center(
-              child: ElevatedButton(
-                onPressed: () => context.router.replace(const NamedRoute('RouteC')),
-                child: const Text('Go to Page C (replace)'),
-              ),
+  RootStackRouter buildRouter() => RootStackRouter.build(
+    routes: [
+      NamedRouteDef(
+        name: 'RouteA',
+        initial: true,
+        guards: [
+          AutoRouteGuard.simple((resolver, _) {
+            resolver.redirectUntil(NamedRoute('RouteARedirected', args: resolver.next));
+          }),
+        ],
+        builder: (context, _) => Scaffold(
+          body: Center(
+            child: ElevatedButton(
+              onPressed: () => context.router.replace(const NamedRoute('RouteC')),
+              child: const Text('Go to Page C (replace)'),
             ),
           ),
         ),
-        NamedRouteDef(
-          name: 'RouteARedirected',
-          builder: (_, data) {
-            final next = data.args as VoidCallback;
-            WidgetsBinding.instance.addPostFrameCallback((_) => next());
-            return const Scaffold(body: Center(child: Text('PageARedirected')));
-          },
-        ),
-        NamedRouteDef(
-          name: 'RouteC',
-          guards: [
-            AutoRouteGuard.simple((resolver, _) {
-              resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.nextOrBack(false)));
-            }),
-          ],
-          builder: (_, __) => const Scaffold(body: Center(child: Text('Page C'))),
-        ),
-        NamedRouteDef(
-          name: 'RouteCRedirected',
-          builder: (_, data) => Scaffold(
-            body: Center(
-              child: ElevatedButton(onPressed: data.args as VoidCallback, child: const Text('Go back')),
-            ),
+      ),
+      NamedRouteDef(
+        name: 'RouteARedirected',
+        builder: (_, data) {
+          final next = data.args as VoidCallback;
+          WidgetsBinding.instance.addPostFrameCallback((_) => next());
+          return const Scaffold(body: Center(child: Text('PageARedirected')));
+        },
+      ),
+      NamedRouteDef(
+        name: 'RouteC',
+        guards: [
+          AutoRouteGuard.simple((resolver, _) {
+            resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.nextOrBack(false)));
+          }),
+        ],
+        builder: (_, __) => const Scaffold(body: Center(child: Text('Page C'))),
+      ),
+      NamedRouteDef(
+        name: 'RouteCRedirected',
+        builder: (_, data) => Scaffold(
+          body: Center(
+            child: ElevatedButton(onPressed: data.args as VoidCallback, child: const Text('Go back')),
           ),
         ),
-      ]);
+      ),
+    ],
+  );
 
   testWidgets('A resolved redirect leaves no history entry for back() to return to (#2331)', (tester) async {
     final router = buildRouter();

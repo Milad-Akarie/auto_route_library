@@ -15,12 +15,16 @@ void main() {
   group('A Hero flies to the first page of a nested router', () {
     late RootStackRouter router;
     setUp(() {
-      router = RootStackRouter.build(routes: [
-        AutoRoute(page: _FromRoute.page, path: '/', initial: true),
-        AutoRoute(page: _ShellRoute.page, path: '/shell', children: [
-          AutoRoute(page: _ToRoute.page, path: '', initial: true),
-        ]),
-      ]);
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _FromRoute.page, path: '/', initial: true),
+          AutoRoute(
+            page: _ShellRoute.page,
+            path: '/shell',
+            children: [AutoRoute(page: _ToRoute.page, path: '', initial: true)],
+          ),
+        ],
+      );
     });
 
     testWidgets('when the nested router page is pushed without children', (tester) async {
@@ -57,14 +61,22 @@ void main() {
   // has the same Hero.
   // Should: the Hero flies to the account page like it does to a plain page.
   testWidgets('A Hero flies from a nested router page to the first page of a shell route', (tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _HeroShellRoute.page, path: '/', children: [
-        AutoRoute(page: _FromRoute.page, path: '', initial: true),
-        AutoRoute(page: _ShellRoute.page, path: 'account', children: [
-          AutoRoute(page: _ToRoute.page, path: '', initial: true),
-        ]),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _HeroShellRoute.page,
+          path: '/',
+          children: [
+            AutoRoute(page: _FromRoute.page, path: '', initial: true),
+            AutoRoute(
+              page: _ShellRoute.page,
+              path: 'account',
+              children: [AutoRoute(page: _ToRoute.page, path: '', initial: true)],
+            ),
+          ],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     expect(find.text('from'), findsOneWidget);
 
@@ -77,10 +89,12 @@ void main() {
 
   // The flight a plain page gets, so the checks above mean something.
   testWidgets('A Hero flies between two pages of the same router', (tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _FromRoute.page, path: '/', initial: true),
-      AutoRoute(page: _ToRoute.page, path: '/to'),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _FromRoute.page, path: '/', initial: true),
+        AutoRoute(page: _ToRoute.page, path: '/to'),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     router.push(const _ToRoute());
     await _pumpUntilFlight(tester);
@@ -91,17 +105,23 @@ void main() {
   // A guard needs a context, so a guarded first page is still added one frame
   // later; the page must still open.
   testWidgets('The guarded first page of a nested router still opens', (tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _FromRoute.page, path: '/', initial: true),
-      AutoRoute(page: _ShellRoute.page, path: '/shell', children: [
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _FromRoute.page, path: '/', initial: true),
         AutoRoute(
-          page: _ToRoute.page,
-          path: '',
-          initial: true,
-          guards: [AutoRouteGuard.simple((resolver, _) => resolver.next())],
+          page: _ShellRoute.page,
+          path: '/shell',
+          children: [
+            AutoRoute(
+              page: _ToRoute.page,
+              path: '',
+              initial: true,
+              guards: [AutoRouteGuard.simple((resolver, _) => resolver.next())],
+            ),
+          ],
         ),
-      ]),
-    ]);
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     router.push(const _ShellRoute());
     await tester.pumpAndSettle();
@@ -131,7 +151,10 @@ Widget _heroPage(String name, Alignment alignment) {
   return Scaffold(
     body: Align(
       alignment: alignment,
-      child: Hero(tag: 'box', child: SizedBox(width: 50, height: 50, child: Text(name))),
+      child: Hero(
+        tag: 'box',
+        child: SizedBox(width: 50, height: 50, child: Text(name)),
+      ),
     ),
   );
 }

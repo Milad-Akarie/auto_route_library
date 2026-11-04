@@ -9,10 +9,12 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _HomeRoute.page, initial: true),
-      AutoRoute(page: _FormRoute.page),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _HomeRoute.page, initial: true),
+        AutoRoute(page: _FormRoute.page),
+      ],
+    );
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2017
@@ -71,10 +73,7 @@ class _FormPage extends StatelessWidget {
           final bool? result = await showDialog(
             context: context,
             builder: (context) => Dialog(
-              child: ElevatedButton(
-                onPressed: () => context.router.maybePop(true),
-                child: const Text('Confirm'),
-              ),
+              child: ElevatedButton(onPressed: () => context.router.maybePop(true), child: const Text('Confirm')),
             ),
           );
 

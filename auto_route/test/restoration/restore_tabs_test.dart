@@ -7,20 +7,34 @@ import 'restoration_test_utils.dart';
 void main() {
   // Flutter's state restoration doesn't run on the web, so the routers save
   // their pages only off the web.
-  RootStackRouter buildRouter() => RootStackRouter.build(routes: [
-        AutoRoute(page: page('SignUpRoute'), initial: true),
-        AutoRoute(page: _bottomNavigationPage, children: [
-          AutoRoute(path: 'home', page: const EmptyShellRoute('HomeTabRoute'), initial: true, children: [
-            AutoRoute(page: page('HomeRoute'), initial: true),
-            AutoRoute(page: page('InternalRoute')),
-          ]),
-          AutoRoute(path: 'transitions', page: const EmptyShellRoute('TransitionsTabRoute'), children: [
-            AutoRoute(page: page('TransitionsRoute'), initial: true),
-            AutoRoute(page: page('TransitionDetailsRoute')),
-          ]),
+  RootStackRouter buildRouter() => RootStackRouter.build(
+    routes: [
+      AutoRoute(page: page('SignUpRoute'), initial: true),
+      AutoRoute(
+        page: _bottomNavigationPage,
+        children: [
+          AutoRoute(
+            path: 'home',
+            page: const EmptyShellRoute('HomeTabRoute'),
+            initial: true,
+            children: [
+              AutoRoute(page: page('HomeRoute'), initial: true),
+              AutoRoute(page: page('InternalRoute')),
+            ],
+          ),
+          AutoRoute(
+            path: 'transitions',
+            page: const EmptyShellRoute('TransitionsTabRoute'),
+            children: [
+              AutoRoute(page: page('TransitionsRoute'), initial: true),
+              AutoRoute(page: page('TransitionDetailsRoute')),
+            ],
+          ),
           AutoRoute(path: 'settings', page: page('SettingsRoute')),
-        ]),
-      ]);
+        ],
+      ),
+    ],
+  );
 
   TabsRouter tabsRouter() => RestorableRouterApp.router.innerRouterOf<TabsRouter>('BottomNavigationRoute')!;
 
@@ -80,18 +94,24 @@ void main() {
     expect(tabsRouter().activeIndex, 2);
     expect(find.text('SettingsRoute'), findsOneWidget);
     expect(RestorableRouterApp.router.currentHierarchy(), const [
-      HierarchySegment('BottomNavigationRoute', children: [
-        HierarchySegment('HomeTabRoute', children: [
-          HierarchySegment('HomeRoute'),
-          HierarchySegment('InternalRoute'),
-          HierarchySegment('InternalRoute'),
-        ]),
-        HierarchySegment('TransitionsTabRoute', children: [
-          HierarchySegment('TransitionsRoute'),
-          HierarchySegment('TransitionDetailsRoute'),
-        ]),
-        HierarchySegment('SettingsRoute'),
-      ]),
+      HierarchySegment(
+        'BottomNavigationRoute',
+        children: [
+          HierarchySegment(
+            'HomeTabRoute',
+            children: [
+              HierarchySegment('HomeRoute'),
+              HierarchySegment('InternalRoute'),
+              HierarchySegment('InternalRoute'),
+            ],
+          ),
+          HierarchySegment(
+            'TransitionsTabRoute',
+            children: [HierarchySegment('TransitionsRoute'), HierarchySegment('TransitionDetailsRoute')],
+          ),
+          HierarchySegment('SettingsRoute'),
+        ],
+      ),
     ]);
 
     await selectTab(tester, 1);

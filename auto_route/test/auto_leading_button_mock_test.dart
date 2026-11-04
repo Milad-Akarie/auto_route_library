@@ -57,11 +57,7 @@ class _MockStackRouter extends Fake implements StackRouter {
   final PagelessRoutesObserver pagelessRoutesObserver = PagelessRoutesObserver();
 
   @override
-  bool canPop({
-    bool ignoreChildRoutes = false,
-    bool ignoreParentRoutes = false,
-    bool ignorePagelessRoutes = false,
-  }) =>
+  bool canPop({bool ignoreChildRoutes = false, bool ignoreParentRoutes = false, bool ignorePagelessRoutes = false}) =>
       canPopValue;
 
   @override

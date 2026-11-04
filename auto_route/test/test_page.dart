@@ -11,11 +11,7 @@ class TestPage extends StatelessWidget {
     return Scaffold(
       body: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(context.routeData.name),
-          Text(context.routeData.match),
-          Text(context.router.urlState.url),
-        ],
+        children: [Text(context.routeData.name), Text(context.routeData.match), Text(context.router.urlState.url)],
       ),
     );
   }
@@ -23,11 +19,7 @@ class TestPage extends StatelessWidget {
 
 @RoutePage()
 class SecondHostPage extends StatelessWidget {
-  const SecondHostPage({
-    super.key,
-    this.useCustomLeading = false,
-    this.hasDrawer = false,
-  });
+  const SecondHostPage({super.key, this.useCustomLeading = false, this.hasDrawer = false});
 
   final bool useCustomLeading;
   final bool hasDrawer;
@@ -35,29 +27,27 @@ class SecondHostPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: useCustomLeading
-              ? AutoLeadingButton(
-                  builder: (context, leadingType, action) {
-                    if (leadingType.isBack) {
-                      return const BackButton();
-                    } else if (leadingType.isClose) {
-                      return const CloseButton();
-                    } else if (leadingType.isDrawer) {
-                      return IconButton(
-                        icon: const Icon(Icons.menu),
-                        onPressed: () {},
-                      );
-                    } else if (leadingType.isNoLeading) {
-                      return const SizedBox.shrink();
-                    }
-                    throw 'Invalid leading type';
-                  },
-                )
-              : const AutoLeadingButton(),
-        ),
-        drawer: hasDrawer ? const Drawer() : null,
-        body: const AutoRouter());
+      appBar: AppBar(
+        leading: useCustomLeading
+            ? AutoLeadingButton(
+                builder: (context, leadingType, action) {
+                  if (leadingType.isBack) {
+                    return const BackButton();
+                  } else if (leadingType.isClose) {
+                    return const CloseButton();
+                  } else if (leadingType.isDrawer) {
+                    return IconButton(icon: const Icon(Icons.menu), onPressed: () {});
+                  } else if (leadingType.isNoLeading) {
+                    return const SizedBox.shrink();
+                  }
+                  throw 'Invalid leading type';
+                },
+              )
+            : const AutoLeadingButton(),
+      ),
+      drawer: hasDrawer ? const Drawer() : null,
+      body: const AutoRouter(),
+    );
   }
 }
 
@@ -149,30 +139,18 @@ class TabsHostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final routes = useDefaultRoutes
-        ? null
-        : [
-            const Tab1Route(),
-            const Tab2Route(),
-            const Tab3Route(),
-          ];
+    final routes = useDefaultRoutes ? null : [const Tab1Route(), const Tab2Route(), const Tab3Route()];
 
     if (tabsType == 'IndexedStack') {
-      return AutoTabsRouter(
-        routes: routes,
-      );
+      return AutoTabsRouter(routes: routes);
     }
 
     if (tabsType == 'PageView') {
-      return AutoTabsRouter.pageView(
-        routes: routes,
-      );
+      return AutoTabsRouter.pageView(routes: routes);
     }
 
     if (tabsType == 'TabBar') {
-      return AutoTabsRouter.tabBar(
-        routes: routes,
-      );
+      return AutoTabsRouter.tabBar(routes: routes);
     }
 
     throw 'unsupported tabs type';
@@ -194,7 +172,7 @@ class DeclarativeRouterHostScreen extends StatelessWidget {
           routes: (_) => [
             const SecondNested1Route(),
             if (value >= 2) const SecondNested2Route(),
-            if (value == 3) const SecondNested3Route()
+            if (value == 3) const SecondNested3Route(),
           ],
         );
       },

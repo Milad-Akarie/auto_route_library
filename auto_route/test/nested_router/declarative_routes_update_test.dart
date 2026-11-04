@@ -10,11 +10,15 @@ void main() {
   // AutoRouter.declarative(routes: (_) => [HomeRoute(id: id)]).
   // Changing `id` should rebuild the home page with the new id.
   testWidgets('changing a variable of the declarative routes rebuilds the page with it', (tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _HostRoute.page, initial: true, children: [
-        AutoRoute(page: _HomeRoute.page, initial: true),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _HostRoute.page,
+          initial: true,
+          children: [AutoRoute(page: _HomeRoute.page, initial: true)],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     expect(find.text('Home 1'), findsOneWidget);
     final homeState = tester.state(find.byType(_HomePage));
@@ -48,10 +52,14 @@ class _HostPageState extends State<_HostPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      TextButton(onPressed: () => setState(() => id++), child: const Text('Next id')),
-      Expanded(child: AutoRouter.declarative(routes: (_) => [_HomeRoute(id: id)])),
-    ]);
+    return Column(
+      children: [
+        TextButton(onPressed: () => setState(() => id++), child: const Text('Next id')),
+        Expanded(
+          child: AutoRouter.declarative(routes: (_) => [_HomeRoute(id: id)]),
+        ),
+      ],
+    );
   }
 }
 

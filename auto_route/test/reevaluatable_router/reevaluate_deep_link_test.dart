@@ -10,15 +10,21 @@ import 'package:material_ui/material_ui.dart';
 // must open that url, also when the listenable fires and the route is guarded.
 // The browser's own address bar is covered by test/web/typed_url_reevaluate_web_test.dart.
 void main() {
-  RootStackRouter buildRouter() => RootStackRouter.build(routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => const Scaffold(body: Text('HomeRoute'))),
-        NamedRouteDef(
-          name: 'ProfileRoute',
-          path: '/profile',
-          guards: [AutoRouteGuard.simple((resolver, _) => resolver.next())],
-          builder: (_, __) => const Scaffold(body: Text('ProfileRoute')),
-        ),
-      ]);
+  RootStackRouter buildRouter() => RootStackRouter.build(
+    routes: [
+      NamedRouteDef(
+        name: 'HomeRoute',
+        path: '/',
+        builder: (_, __) => const Scaffold(body: Text('HomeRoute')),
+      ),
+      NamedRouteDef(
+        name: 'ProfileRoute',
+        path: '/profile',
+        guards: [AutoRouteGuard.simple((resolver, _) => resolver.next())],
+        builder: (_, __) => const Scaffold(body: Text('ProfileRoute')),
+      ),
+    ],
+  );
 
   testWidgets('The first url opens its page with reevaluateListenable set (#2173)', (tester) async {
     tester.binding.platformDispatcher.defaultRouteNameTestValue = '/profile';

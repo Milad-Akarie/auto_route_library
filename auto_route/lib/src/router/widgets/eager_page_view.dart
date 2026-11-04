@@ -39,17 +39,11 @@ import 'package:flutter/rendering.dart';
 /// - it requires a [PageController] to be passed in
 
 class _ForceImplicitScrollPhysics extends ScrollPhysics {
-  const _ForceImplicitScrollPhysics({
-    required this.allowImplicitScrolling,
-    super.parent,
-  });
+  const _ForceImplicitScrollPhysics({required this.allowImplicitScrolling, super.parent});
 
   @override
   _ForceImplicitScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return _ForceImplicitScrollPhysics(
-      allowImplicitScrolling: allowImplicitScrolling,
-      parent: buildParent(ancestor),
-    );
+    return _ForceImplicitScrollPhysics(allowImplicitScrolling: allowImplicitScrolling, parent: buildParent(ancestor));
   }
 
   @override
@@ -263,9 +257,7 @@ class _EagerPageViewState extends State<EagerPageView> {
   @override
   Widget build(BuildContext context) {
     final AxisDirection axisDirection = _getDirection(context);
-    final ScrollPhysics physics = const _ForceImplicitScrollPhysics(
-      allowImplicitScrolling: false,
-    ).applyTo(
+    final ScrollPhysics physics = const _ForceImplicitScrollPhysics(allowImplicitScrolling: false).applyTo(
       widget.pageSnapping
           ? _kPagePhysics.applyTo(widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context))
           : widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context),

@@ -34,10 +34,7 @@ void main() {
           path: '/authorized',
           transitionsBuilder: TransitionsBuilders.fadeIn,
           duration: const Duration(milliseconds: 200),
-          children: [
-            _fade(_page('HomeRoute'), 'home', initial: true),
-            _fade(_page('ActivityRoute'), 'activity'),
-          ],
+          children: [_fade(_page('HomeRoute'), 'home', initial: true), _fade(_page('ActivityRoute'), 'activity')],
         ),
       ],
     );
@@ -73,12 +70,12 @@ void main() {
 }
 
 CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => CustomRoute(
-      page: page,
-      path: path,
-      initial: initial,
-      transitionsBuilder: TransitionsBuilders.fadeIn,
-      duration: const Duration(milliseconds: 200),
-    );
+  page: page,
+  path: path,
+  initial: initial,
+  transitionsBuilder: TransitionsBuilders.fadeIn,
+  duration: const Duration(milliseconds: 200),
+);
 
 PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(body: Text(name)));
 

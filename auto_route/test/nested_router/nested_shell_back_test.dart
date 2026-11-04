@@ -9,16 +9,27 @@ void main() {
   late List<String> pushes;
   setUp(() {
     pushes = [];
-    router = RootStackRouter.build(routes: [
-      AutoRoute(initial: true, path: '/dashboard', page: const EmptyShellRoute('dashboard'), children: [
-        AutoRoute(initial: true, page: _dashboardPage),
-        AutoRoute(path: 'cashless', page: const EmptyShellRoute('cashless'), children: [
-          AutoRoute(page: _page('CashlessSchoolMainRoute')),
-          AutoRoute(page: _page('CashlessHistoryRoute')),
-          AutoRoute(initial: true, page: _page('CashlessSchoolApplyRoute')),
-        ]),
-      ]),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          initial: true,
+          path: '/dashboard',
+          page: const EmptyShellRoute('dashboard'),
+          children: [
+            AutoRoute(initial: true, page: _dashboardPage),
+            AutoRoute(
+              path: 'cashless',
+              page: const EmptyShellRoute('cashless'),
+              children: [
+                AutoRoute(page: _page('CashlessSchoolMainRoute')),
+                AutoRoute(page: _page('CashlessHistoryRoute')),
+                AutoRoute(initial: true, page: _page('CashlessSchoolApplyRoute')),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2323
@@ -32,10 +43,7 @@ void main() {
   // route. Back still returns to the dashboard.
   for (final back in ['system back', 'back button']) {
     testWidgets('$back from the first page of a nested shell returns to the dashboard', (tester) async {
-      await pumpRouterConfigApp(
-        tester,
-        router.config(navigatorObservers: () => [_PushRecorder(pushes)]),
-      );
+      await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [_PushRecorder(pushes)]));
       expect(find.text('DashboardRoute'), findsOneWidget);
 
       await tester.tap(find.text('Open cashless'));
@@ -80,9 +88,12 @@ void main() {
 }
 
 PageInfo _page(String name) => PageInfo(
-      name,
-      builder: (_) => Scaffold(appBar: AppBar(leading: const AutoLeadingButton()), body: Text(name)),
-    );
+  name,
+  builder: (_) => Scaffold(
+    appBar: AppBar(leading: const AutoLeadingButton()),
+    body: Text(name),
+  ),
+);
 
 final _dashboardPage = PageInfo('DashboardRoute', builder: (_) => const _DashboardPage());
 
@@ -91,13 +102,15 @@ class _DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      const Text('DashboardRoute'),
-      TextButton(
-        onPressed: () => context.router.push(const NamedRoute('cashless')),
-        child: const Text('Open cashless'),
-      ),
-    ]);
+    return Column(
+      children: [
+        const Text('DashboardRoute'),
+        TextButton(
+          onPressed: () => context.router.push(const NamedRoute('cashless')),
+          child: const Text('Open cashless'),
+        ),
+      ],
+    );
   }
 }
 

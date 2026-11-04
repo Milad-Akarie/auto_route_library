@@ -36,9 +36,14 @@ void main() {
   // Reported: the current page builds again as soon as the push starts.
   // Should: the page underneath isn't built again.
   testWidgets('Navigator.push of a page outside the router does not rebuild the page underneath', (tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(path: '/', page: PageInfo('HomeRoute', builder: (_) => const _HomePage())),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          page: PageInfo('HomeRoute', builder: (_) => const _HomePage()),
+        ),
+      ],
+    );
     await pumpRouterApp(tester, router);
     _HomePageState.builds = 0;
 

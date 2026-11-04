@@ -22,7 +22,7 @@ class RouteNotFoundFailure extends NavigationFailure {
   // coverage:ignore-start
   @override
   String toString() => "Failed to navigate to $path";
-// coverage:ignore-end
+  // coverage:ignore-end
 }
 
 /// A failure indicates that the one of the guards
@@ -41,5 +41,5 @@ class RejectedByGuardFailure extends NavigationFailure {
   // coverage:ignore-start
   @override
   String toString() => '${route.stringMatch} rejected by guard ${guard.runtimeType}';
-// coverage:ignore-end
+  // coverage:ignore-end
 }

@@ -71,9 +71,7 @@ class AppRouter extends RootStackRouter {
   // drops `const` from its constructor and its route takes the key.
   group('a page whose only parameter is the key (#2083)', () {
     test('gets a const route without the key when its constructor is const', () async {
-      final result = await generateRouter({
-        'lib/screen.dart': _keyOnlyScreen(isConst: true),
-      });
+      final result = await generateRouter({'lib/screen.dart': _keyOnlyScreen(isConst: true)});
       expect(result.compileErrors, isEmpty);
       final source = _flatten(result.source!);
       expect(source, contains('class InitializationInvitationMissingRoute extends PageRouteInfo<void>'));
@@ -82,9 +80,7 @@ class AppRouter extends RootStackRouter {
     });
 
     test('gets a route that takes the key when its constructor is not const', () async {
-      final result = await generateRouter({
-        'lib/screen.dart': _keyOnlyScreen(isConst: false),
-      });
+      final result = await generateRouter({'lib/screen.dart': _keyOnlyScreen(isConst: false)});
       expect(result.compileErrors, isEmpty);
       final source = _flatten(result.source!);
       expect(source, contains('InitializationInvitationMissingRoute({Key? key, List<PageRouteInfo>? children,})'));
@@ -93,7 +89,8 @@ class AppRouter extends RootStackRouter {
   });
 }
 
-String _keyOnlyScreen({required bool isConst}) => '''
+String _keyOnlyScreen({required bool isConst}) =>
+    '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 

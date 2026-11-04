@@ -37,9 +37,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
           b
             ..symbol = 'PageRouteInfo'
             ..url = autoRouteImport
-            ..types.add(
-              (nonInheritedParameters.isNotEmpty) ? argsClassRefer : refer('void'),
-            );
+            ..types.add((nonInheritedParameters.isNotEmpty) ? argsClassRefer : refer('void'));
         })
         ..fields.addAll([
           Field(
@@ -58,81 +56,77 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..assignment = pageInfoRefer.newInstance([refer('name')], {'builder': _buildMethod(r, router)}).code,
           ),
         ])
-        ..constructors.addAll(
-          [
-            Constructor(
-              (b) {
-                b
-                  ..constant = parameters.isEmpty
-                  ..optionalParameters.addAll([
-                    ...buildArgParams(nonInheritedParameters, emitter, toThis: false),
-                    Parameter((b) => b
-                      ..named = true
-                      ..name = 'children'
-                      ..type = listRefer(pageRouteType, nullable: true)),
-                  ])
-                  ..initializers.add(refer('super').call([
-                    refer(r.getName(router.replaceInRouteName)).property('name')
-                  ], {
-                    if (nonInheritedParameters.isNotEmpty)
-                      'args': argsClassRefer.call(
-                        [],
-                        Map.fromEntries(
-                          nonInheritedParameters.map(
-                            (p) => MapEntry(
-                              p.name,
-                              refer(p.getSafeName()),
+        ..constructors.addAll([
+          Constructor((b) {
+            b
+              ..constant = parameters.isEmpty
+              ..optionalParameters.addAll([
+                ...buildArgParams(nonInheritedParameters, emitter, toThis: false),
+                Parameter(
+                  (b) => b
+                    ..named = true
+                    ..name = 'children'
+                    ..type = listRefer(pageRouteType, nullable: true),
+                ),
+              ])
+              ..initializers.add(
+                refer('super')
+                    .call(
+                      [refer(r.getName(router.replaceInRouteName)).property('name')],
+                      {
+                        if (nonInheritedParameters.isNotEmpty)
+                          'args': argsClassRefer.call(
+                            [],
+                            Map.fromEntries(
+                              nonInheritedParameters.map((p) => MapEntry(p.name, refer(p.getSafeName()))),
                             ),
                           ),
-                        ),
-                      ),
-                    if (nonInheritedParameters.any((p) => p.isPathParam))
-                      'rawPathParams': literalMap(
-                        Map.fromEntries(
-                          nonInheritedParameters.where((p) => p.isPathParam).map(
-                                (p) => MapEntry(
-                                  p.paramName,
-                                  refer(p.name),
-                                ),
-                              ),
-                        ),
-                      ),
-                    if (parameters.any((p) => p.isQueryParam))
-                      'rawQueryParams': literalMap(
-                        Map.fromEntries(
-                          parameters.where((p) => p.isQueryParam).map(
-                                (p) => MapEntry(
-                                  p.paramName,
-                                  _getUrlPartValue(p),
-                                ),
-                              ),
-                        ),
-                      ),
-                    if (fragmentParam != null) 'fragment': refer(fragmentParam.name),
-                    'initialChildren': refer('children'),
-                    if (!router.argsEquality) 'argsEquality': literalBool(false),
-                  }).code);
-              },
-            ),
-          ],
-        ),
+                        if (nonInheritedParameters.any((p) => p.isPathParam))
+                          'rawPathParams': literalMap(
+                            Map.fromEntries(
+                              nonInheritedParameters
+                                  .where((p) => p.isPathParam)
+                                  .map((p) => MapEntry(p.paramName, refer(p.name))),
+                            ),
+                          ),
+                        if (parameters.any((p) => p.isQueryParam))
+                          'rawQueryParams': literalMap(
+                            Map.fromEntries(
+                              parameters
+                                  .where((p) => p.isQueryParam)
+                                  .map((p) => MapEntry(p.paramName, _getUrlPartValue(p))),
+                            ),
+                          ),
+                        if (fragmentParam != null) 'fragment': refer(fragmentParam.name),
+                        'initialChildren': refer('children'),
+                        if (!router.argsEquality) 'argsEquality': literalBool(false),
+                      },
+                    )
+                    .code,
+              );
+          }),
+        ]),
     ),
     if (nonInheritedParameters.isNotEmpty)
       Class(
         (b) => b
           ..name = argsClassRefer.symbol
           ..fields.addAll([
-            ...nonInheritedParameters.map((param) => Field((b) => b
-              ..modifier = FieldModifier.final$
-              ..name = param.name
-              ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer)),
+            ...nonInheritedParameters.map(
+              (param) => Field(
+                (b) => b
+                  ..modifier = FieldModifier.final$
+                  ..name = param.name
+                  ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer,
+              ),
+            ),
           ])
           ..constructors.add(
-            Constructor((b) => b
-              ..constant = true
-              ..optionalParameters.addAll(
-                buildArgParams(nonInheritedParameters, emitter, useSafeName: false),
-              )),
+            Constructor(
+              (b) => b
+                ..constant = true
+                ..optionalParameters.addAll(buildArgParams(nonInheritedParameters, emitter, useSafeName: false)),
+            ),
           )
           ..methods.addAll([
             Method(
@@ -153,9 +147,11 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                   ..annotations.add(refer('override'))
                   ..returns = refer('bool')
                   ..requiredParameters.add(
-                    Parameter((b) => b
-                      ..name = 'other'
-                      ..type = refer('Object')),
+                    Parameter(
+                      (b) => b
+                        ..name = 'other'
+                        ..type = refer('Object'),
+                    ),
                   )
                   ..body = Block(
                     (b) => b
@@ -169,37 +165,25 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                               _genericRef('ListEquality', p.type.typeArguments, _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
-                                  .call([
-                                    refer(p.name),
-                                    refer('other').property(p.name),
-                                  ])
+                                  .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isSet)
                               _genericRef('SetEquality', p.type.typeArguments, _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
-                                  .call([
-                                    refer(p.name),
-                                    refer('other').property(p.name),
-                                  ])
+                                  .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isMap)
                               _genericRef('MapEquality', p.type.typeArguments, _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
-                                  .call([
-                                    refer(p.name),
-                                    refer('other').property(p.name),
-                                  ])
+                                  .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else if (p.type.isIterable)
                               _genericRef('IterableEquality', p.type.typeArguments, _collectionsImport)
                                   .constInstance([])
                                   .property('equals')
-                                  .call([
-                                    refer(p.name),
-                                    refer('other').property(p.name),
-                                  ])
+                                  .call([refer(p.name), refer('other').property(p.name)])
                                   .code
                             else
                               Code('${p.name} == other.${p.name}'),
@@ -217,41 +201,41 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                   ..returns = refer('int')
                   ..lambda = true
                   ..body = Block(
-                    (b) => b.statements.addAll([
-                      for (final p in equatableParams)
-                        if (p.type.isList)
-                          _genericRef('ListEquality', p.type.typeArguments, _collectionsImport)
-                              .constInstance([])
-                              .property('hash')
-                              .call([refer(p.name)])
-                              .code
-                        else if (p.type.isSet)
-                          _genericRef('SetEquality', p.type.typeArguments, _collectionsImport)
-                              .constInstance([])
-                              .property('hash')
-                              .call([refer(p.name)])
-                              .code
-                        else if (p.type.isMap)
-                          _genericRef('MapEquality', p.type.typeArguments, _collectionsImport)
-                              .constInstance([])
-                              .property('hash')
-                              .call([refer(p.name)])
-                              .code
-                        else if (p.type.isIterable)
-                          _genericRef('IterableEquality', p.type.typeArguments, _collectionsImport)
-                              .constInstance([])
-                              .property('hash')
-                              .call([refer(p.name)])
-                              .code
-                        else
-                          Code('${p.name}.hashCode')
-                    ].insertBetween(
-                      Code(' ^ '),
-                    )),
+                    (b) => b.statements.addAll(
+                      [
+                        for (final p in equatableParams)
+                          if (p.type.isList)
+                            _genericRef(
+                              'ListEquality',
+                              p.type.typeArguments,
+                              _collectionsImport,
+                            ).constInstance([]).property('hash').call([refer(p.name)]).code
+                          else if (p.type.isSet)
+                            _genericRef(
+                              'SetEquality',
+                              p.type.typeArguments,
+                              _collectionsImport,
+                            ).constInstance([]).property('hash').call([refer(p.name)]).code
+                          else if (p.type.isMap)
+                            _genericRef(
+                              'MapEquality',
+                              p.type.typeArguments,
+                              _collectionsImport,
+                            ).constInstance([]).property('hash').call([refer(p.name)]).code
+                          else if (p.type.isIterable)
+                            _genericRef(
+                              'IterableEquality',
+                              p.type.typeArguments,
+                              _collectionsImport,
+                            ).constInstance([]).property('hash').call([refer(p.name)]).code
+                          else
+                            Code('${p.name}.hashCode'),
+                      ].insertBetween(Code(' ^ ')),
+                    ),
                   ),
-              )
+              ),
           ]),
-      )
+      ),
   ];
 }
 
@@ -260,37 +244,40 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
 final _constKeyword = RegExp(r'^const\b');
 
 /// Builds a list of [Parameter]s from the given [parameters]
-Iterable<Parameter> buildArgParams(List<ParamConfig> parameters, DartEmitter emitter,
-    {bool toThis = true, bool useSafeName = true}) {
+Iterable<Parameter> buildArgParams(
+  List<ParamConfig> parameters,
+  DartEmitter emitter, {
+  bool toThis = true,
+  bool useSafeName = true,
+}) {
   return parameters.map(
-    (p) => Parameter(
-      (b) {
-        Code? defaultCode;
-        if (p.defaultValueCode != null) {
-          if (_constKeyword.hasMatch(p.defaultValueCode!)) {
-            if (p.defaultValueCode!.contains('[]')) {
-              defaultCode = Code('const []');
-            } else if (p.defaultValueCode!.contains('{}')) {
-              defaultCode = Code('const {}');
-            } else {
-              defaultCode = Code(
-                  'const ${refer(p.defaultValueCode!.replaceFirst(_constKeyword, ''), p.defaultValueImport ?? p.type.import).accept(emitter).toString()}');
-            }
+    (p) => Parameter((b) {
+      Code? defaultCode;
+      if (p.defaultValueCode != null) {
+        if (_constKeyword.hasMatch(p.defaultValueCode!)) {
+          if (p.defaultValueCode!.contains('[]')) {
+            defaultCode = Code('const []');
+          } else if (p.defaultValueCode!.contains('{}')) {
+            defaultCode = Code('const {}');
           } else {
-            defaultCode = refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import).code;
+            defaultCode = Code(
+              'const ${refer(p.defaultValueCode!.replaceFirst(_constKeyword, ''), p.defaultValueImport ?? p.type.import).accept(emitter).toString()}',
+            );
           }
+        } else {
+          defaultCode = refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import).code;
         }
-        b
-          ..name = useSafeName ? p.getSafeName() : p.name
-          ..named = true
-          ..toThis = toThis
-          ..required = p.isRequired || p.isPositional
-          ..defaultTo = defaultCode;
-        if (!toThis) {
-          b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
-        }
-      },
-    ),
+      }
+      b
+        ..name = useSafeName ? p.getSafeName() : p.name
+        ..named = true
+        ..toThis = toThis
+        ..required = p.isRequired || p.isPositional
+        ..defaultTo = defaultCode;
+      if (!toThis) {
+        b.type = p is FunctionParamConfig ? p.funRefer : p.type.refer;
+      }
+    }),
   );
 }
 
@@ -299,10 +286,7 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
   var constructedPage = useConsConstructor ? r.pageType!.refer.constInstance([]) : _getPageInstance(r);
 
   if (r.hasWrappedRoute == true) {
-    constructedPage = refer('WrappedRoute', autoRouteImport).newInstance(
-      [],
-      {'child': constructedPage},
-    );
+    constructedPage = refer('WrappedRoute', autoRouteImport).newInstance([], {'child': constructedPage});
   }
 
   if ((r.deferredLoading ?? router.deferredLoading) && r.pageType != null) {
@@ -313,57 +297,62 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
   final nonInheritedParameters = r.parameters.where((p) => !p.isInheritedPathParam);
   return Method(
     (b) => b
-      ..requiredParameters.add(
-        Parameter((b) => b.name = 'data'),
-      )
-      ..body = Block((b) => b.statements.addAll([
-            if ((!r.hasUnparsableRequiredArgs) && r.parameters.any((p) => p.isPathParam) ||
-                inheritedParameters.isNotEmpty)
-              declareFinal('pathParams').assign(refer('data').property('inheritedPathParams')).statement,
-            if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
-              declareFinal('queryParams').assign(refer('data').property('queryParams')).statement,
-            if (nonInheritedParameters.isNotEmpty)
-              declareFinal('args')
-                  .assign(
-                    refer('data').property('argsAs').call([], {
-                      if (!r.hasUnparsableRequiredArgs)
-                        'orElse': Method(
-                          (b) => b
-                            ..lambda = true
-                            ..body = r.pathQueryParams.isEmpty
-                                ? refer('${r.getName(router.replaceInRouteName)}Args').constInstance([]).code
-                                : refer('${r.getName(router.replaceInRouteName)}Args').newInstance(
-                                    [],
-                                    Map.fromEntries(
-                                      nonInheritedParameters
-                                          .where((p) => (p.isPathParam || p.isQueryParam || p.isUrlFragment))
-                                          .map(
-                                            (p) => MapEntry(
-                                              p.name,
-                                              _getUrlPartAssignment(p),
+      ..requiredParameters.add(Parameter((b) => b.name = 'data'))
+      ..body = Block(
+        (b) => b.statements.addAll([
+          if ((!r.hasUnparsableRequiredArgs) && r.parameters.any((p) => p.isPathParam) ||
+              inheritedParameters.isNotEmpty)
+            declareFinal('pathParams').assign(refer('data').property('inheritedPathParams')).statement,
+          if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
+            declareFinal('queryParams').assign(refer('data').property('queryParams')).statement,
+          if (nonInheritedParameters.isNotEmpty)
+            declareFinal('args')
+                .assign(
+                  refer('data')
+                      .property('argsAs')
+                      .call(
+                        [],
+                        {
+                          if (!r.hasUnparsableRequiredArgs)
+                            'orElse': Method(
+                              (b) => b
+                                ..lambda = true
+                                ..body = r.pathQueryParams.isEmpty
+                                    ? refer('${r.getName(router.replaceInRouteName)}Args').constInstance([]).code
+                                    : refer('${r.getName(router.replaceInRouteName)}Args')
+                                          .newInstance(
+                                            [],
+                                            Map.fromEntries(
+                                              nonInheritedParameters
+                                                  .where((p) => (p.isPathParam || p.isQueryParam || p.isUrlFragment))
+                                                  .map((p) => MapEntry(p.name, _getUrlPartAssignment(p))),
                                             ),
-                                          ),
-                                    ),
-                                  ).code,
-                        ).closure
-                    }, [
-                      refer('${r.getName(router.replaceInRouteName)}Args'),
-                    ]),
-                  )
-                  .statement,
-            constructedPage.returned.statement
-          ])),
+                                          )
+                                          .code,
+                            ).closure,
+                        },
+                        [refer('${r.getName(router.replaceInRouteName)}Args')],
+                      ),
+                )
+                .statement,
+          constructedPage.returned.statement,
+        ]),
+      ),
   ).closure;
 }
 
 Expression _getDeferredBuilder(RouteConfig r, Expression page) {
-  return TypeReference((b) => b
-    ..symbol = 'DeferredWidget'
-    ..url = autoRouteImport).newInstance([
-    TypeReference((b) => b
-      ..symbol = 'loadLibrary'
-      ..url = r.pageType!.refer.url),
-    Method((b) => b..body = page.code).closure
+  return TypeReference(
+    (b) => b
+      ..symbol = 'DeferredWidget'
+      ..url = autoRouteImport,
+  ).newInstance([
+    TypeReference(
+      (b) => b
+        ..symbol = 'loadLibrary'
+        ..url = r.pageType!.refer.url,
+    ),
+    Method((b) => b..body = page.code).closure,
   ]);
 }
 
@@ -372,12 +361,11 @@ Expression _getPageInstance(RouteConfig r) {
     r.positionalParams.map((p) {
       return refer('args').property(p.name);
     }),
-    Map.fromEntries(r.namedParams.map(
-      (p) => MapEntry(
-        p.name,
-        p.isInheritedPathParam ? _getUrlPartAssignment(p) : refer('args').property(p.name),
+    Map.fromEntries(
+      r.namedParams.map(
+        (p) => MapEntry(p.name, p.isInheritedPathParam ? _getUrlPartAssignment(p) : refer('args').property(p.name)),
       ),
-    )),
+    ),
   );
 }
 
@@ -392,7 +380,8 @@ Expression _getUrlPartAssignment(ParamConfig p) {
     final value = refer(p.type.name, p.type.import)
         .property('values')
         .property('asNameMap')
-        .call([]).index(refer('queryParams').property('optString').call([literalString(p.paramName)]));
+        .call([])
+        .index(refer('queryParams').property('optString').call([literalString(p.paramName)]));
     if (p.defaultValueCode == null) return value;
     return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
   } else if (p.isQueryParam && p.listItemType != null) {
@@ -425,15 +414,17 @@ Expression _getUrlPartAssignment(ParamConfig p) {
 /// The function that converts the text of one list item to [item].
 Expression _listItemParser(ResolvedType item, Expression itemType) {
   if (item.isEnum) {
-    return Method((b) => b
-      ..requiredParameters.add(Parameter((b) => b..name = 'name'))
-      ..lambda = true
-      ..body = itemType.property('values').property('asNameMap').call([]).index(refer('name')).code).closure;
+    return Method(
+      (b) => b
+        ..requiredParameters.add(Parameter((b) => b..name = 'name'))
+        ..lambda = true
+        ..body = itemType.property('values').property('asNameMap').call([]).index(refer('name')).code,
+    ).closure;
   }
   return switch (item.name) {
-    'bool' => CodeExpression(Code(
-        "(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null",
-      )),
+    'bool' => CodeExpression(
+      Code("(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null"),
+    ),
     _ => itemType.property('tryParse'),
   };
 }
@@ -444,11 +435,12 @@ Expression _getUrlPartValue(ParamConfig p) {
   final value = refer(p.name);
   if (p.listItemType?.isEnum == true) {
     final item = p.listItemType!;
-    final name = Method((b) => b
-          ..requiredParameters.add(Parameter((b) => b..name = 'item'))
-          ..lambda = true
-          ..body = (item.isNullable ? refer('item').nullSafeProperty('name') : refer('item').property('name')).code)
-        .closure;
+    final name = Method(
+      (b) => b
+        ..requiredParameters.add(Parameter((b) => b..name = 'item'))
+        ..lambda = true
+        ..body = (item.isNullable ? refer('item').nullSafeProperty('name') : refer('item').property('name')).code,
+    ).closure;
     return (p.type.isNullable ? value.nullSafeProperty('map') : value.property('map'))
         .call([name])
         .property('toList')

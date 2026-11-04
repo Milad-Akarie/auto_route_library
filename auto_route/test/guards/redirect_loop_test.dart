@@ -23,7 +23,11 @@ void main() {
   final routes = [
     NamedRouteDef(name: 'HomeRoute', path: '/', meta: const {'skipAuth': false}, builder: (_, __) => page('HomeRoute')),
     NamedRouteDef(
-        name: 'LoginRoute', path: '/login', meta: const {'skipAuth': true}, builder: (_, __) => page('LoginRoute')),
+      name: 'LoginRoute',
+      path: '/login',
+      meta: const {'skipAuth': true},
+      builder: (_, __) => page('LoginRoute'),
+    ),
   ];
 
   // Stands in for the guard's own logic; past a few calls it stops answering, so
@@ -47,15 +51,19 @@ void main() {
   // to, so each redirect opened another redirect without end.
   // The loop must stop with an error that says what happened and how to fix it.
   for (final isAsync in [false, true]) {
-    testWidgets('A global guard redirecting to a route it guards reports the loop, async: $isAsync (#2213)',
-        (tester) async {
-      final router = _AppRouter(routes: routes, guards: [
-        AutoRouteGuard.simple((resolver, _) async {
-          if (loopedTooLong()) return;
-          if (isAsync) await Future<void>.delayed(Duration.zero);
-          resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
-        }),
-      ]);
+    testWidgets('A global guard redirecting to a route it guards reports the loop, async: $isAsync (#2213)', (
+      tester,
+    ) async {
+      final router = _AppRouter(
+        routes: routes,
+        guards: [
+          AutoRouteGuard.simple((resolver, _) async {
+            if (loopedTooLong()) return;
+            if (isAsync) await Future<void>.delayed(Duration.zero);
+            resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
+          }),
+        ],
+      );
 
       final error = await pumpAndTakeError(tester, router);
 
@@ -67,16 +75,19 @@ void main() {
 
   // The README's way: a global guard lets the route it redirects to through.
   testWidgets('A global guard that lets its redirect route through shows that route (#2213)', (tester) async {
-    final router = _AppRouter(routes: routes, guards: [
-      AutoRouteGuard.simple((resolver, _) {
-        if (loopedTooLong()) return;
-        if (resolver.routeName == 'LoginRoute') {
-          resolver.next();
-        } else {
-          resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
-        }
-      }),
-    ]);
+    final router = _AppRouter(
+      routes: routes,
+      guards: [
+        AutoRouteGuard.simple((resolver, _) {
+          if (loopedTooLong()) return;
+          if (resolver.routeName == 'LoginRoute') {
+            resolver.next();
+          } else {
+            resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
+          }
+        }),
+      ],
+    );
 
     final error = await pumpAndTakeError(tester, router);
 
@@ -90,19 +101,23 @@ void main() {
   // resolver.route.meta, the route being opened. So it redirected SignInRoute to
   // itself, which ended in a stack overflow through the old
   // NavigationResolver.redirect(). With redirectUntil() it ends in the same error.
-  testWidgets('A global guard reading router.current instead of resolver.route reports the loop (#1818)',
-      (tester) async {
-    final router = _AppRouter(routes: routes, guards: [
-      AutoRouteGuard.simple((resolver, router) {
-        if (loopedTooLong()) return;
-        final skipAuth = router.current.meta['skipAuth'] as bool?;
-        if (skipAuth == true) {
-          resolver.next();
-        } else {
-          resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
-        }
-      }),
-    ]);
+  testWidgets('A global guard reading router.current instead of resolver.route reports the loop (#1818)', (
+    tester,
+  ) async {
+    final router = _AppRouter(
+      routes: routes,
+      guards: [
+        AutoRouteGuard.simple((resolver, router) {
+          if (loopedTooLong()) return;
+          final skipAuth = router.current.meta['skipAuth'] as bool?;
+          if (skipAuth == true) {
+            resolver.next();
+          } else {
+            resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
+          }
+        }),
+      ],
+    );
 
     final error = await pumpAndTakeError(tester, router);
 

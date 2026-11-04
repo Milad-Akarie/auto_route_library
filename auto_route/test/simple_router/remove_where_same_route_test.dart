@@ -7,11 +7,13 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _HomeRoute.page, initial: true),
-      AutoRoute(page: _FormRoute.page),
-      AutoRoute(page: _InfoRoute.page),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _HomeRoute.page, initial: true),
+        AutoRoute(page: _FormRoute.page),
+        AutoRoute(page: _InfoRoute.page),
+      ],
+    );
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1943
@@ -81,7 +83,11 @@ class _InfoRouteArgs {
 }
 
 class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
-  _InfoRoute({Key? key, required String title}) : super(name, args: _InfoRouteArgs(key: key, title: title));
+  _InfoRoute({Key? key, required String title})
+    : super(
+        name,
+        args: _InfoRouteArgs(key: key, title: title),
+      );
 
   static const String name = 'InfoRoute';
   static PageInfo page = PageInfo(

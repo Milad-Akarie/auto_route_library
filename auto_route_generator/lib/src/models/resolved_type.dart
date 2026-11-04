@@ -45,8 +45,8 @@ class ResolvedType {
     this.isNullable = false,
     this.nameInRecord,
     this.isEnum = false,
-  })  : _isRecordType = false,
-        functionParts = null;
+  }) : _isRecordType = false,
+       functionParts = null;
 
   /// Constructor for a record types
   ResolvedType.record({
@@ -55,22 +55,19 @@ class ResolvedType {
     this.typeArguments = const [],
     this.isNullable = false,
     this.nameInRecord,
-  })  : _isRecordType = true,
-        functionParts = null,
-        isEnum = false;
+  }) : _isRecordType = true,
+       functionParts = null,
+       isEnum = false;
 
   /// Constructor for a function type, such as `void Function(String url)`,
   /// when it is a type argument or a record field
-  ResolvedType.function({
-    required FunctionTypeParts parts,
-    this.isNullable = false,
-    this.nameInRecord,
-  })  : name = 'Function',
-        import = null,
-        typeArguments = const [],
-        _isRecordType = false,
-        functionParts = parts,
-        isEnum = false;
+  ResolvedType.function({required FunctionTypeParts parts, this.isNullable = false, this.nameInRecord})
+    : name = 'Function',
+      import = null,
+      typeArguments = const [],
+      _isRecordType = false,
+      functionParts = parts,
+      isEnum = false;
 
   /// the unique identity of the type
   String get identity => "$import#$name";
@@ -101,19 +98,19 @@ class ResolvedType {
         (b) => b
           ..url = import
           ..isNullable = isNullable
-          ..positionalFieldTypes.addAll(
-            typeArguments.where((e) => !e.isNamedRecordField).map((e) => e.refer),
-          )
+          ..positionalFieldTypes.addAll(typeArguments.where((e) => !e.isNamedRecordField).map((e) => e.refer))
           ..namedFieldTypes.addAll({
-            for (final entry in [...typeArguments.where((e) => e.isNamedRecordField)]) entry.nameInRecord!: entry.refer
+            for (final entry in [...typeArguments.where((e) => e.isNamedRecordField)]) entry.nameInRecord!: entry.refer,
           }),
       );
     }
-    return TypeReference((b) => b
-      ..symbol = name
-      ..url = import
-      ..isNullable = isNullable
-      ..types.addAll(typeArguments.map((e) => e.refer)));
+    return TypeReference(
+      (b) => b
+        ..symbol = name
+        ..url = import
+        ..isNullable = isNullable
+        ..types.addAll(typeArguments.map((e) => e.refer)),
+    );
   }
 
   @override
@@ -214,12 +211,10 @@ class FunctionTypeParts {
 
   /// deserializes the parts from json
   factory FunctionTypeParts.fromJson(Map<String, dynamic> map) {
-    List<ResolvedType> list(String key) => [
-          for (final e in map[key] as List<dynamic>) ResolvedType.fromJson(e),
-        ];
+    List<ResolvedType> list(String key) => [for (final e in map[key] as List<dynamic>) ResolvedType.fromJson(e)];
     Map<String, ResolvedType> named(String key) => {
-          for (final e in (map[key] as Map<String, dynamic>).entries) e.key: ResolvedType.fromJson(e.value),
-        };
+      for (final e in (map[key] as Map<String, dynamic>).entries) e.key: ResolvedType.fromJson(e.value),
+    };
     return FunctionTypeParts(
       returnType: ResolvedType.fromJson(map['returnType']),
       requiredParameters: list('requiredParameters'),

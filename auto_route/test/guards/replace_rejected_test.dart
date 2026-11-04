@@ -19,31 +19,33 @@ void main() {
 
   setUp(() {
     isAllowed = false;
-    router = RootStackRouter.build(routes: [
-      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => page('HomeRoute')),
-      NamedRouteDef(name: 'DetailsRoute', path: '/details', builder: (_, __) => page('DetailsRoute')),
-      NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, __) => page('LoginRoute')),
-      NamedRouteDef(
-        name: 'ProtectedRoute',
-        path: '/protected',
-        guards: [
-          AutoRouteGuard.simple((resolver, _) {
-            if (isAllowed) {
-              resolver.next();
-            } else {
-              resolver.redirectUntil(const NamedRoute('LoginRoute'));
-            }
-          }),
-        ],
-        builder: (_, __) => page('ProtectedRoute'),
-      ),
-      NamedRouteDef(
-        name: 'ForbiddenRoute',
-        path: '/forbidden',
-        guards: [AutoRouteGuard.simple((resolver, _) => resolver.next(false))],
-        builder: (_, __) => page('ForbiddenRoute'),
-      ),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => page('HomeRoute')),
+        NamedRouteDef(name: 'DetailsRoute', path: '/details', builder: (_, __) => page('DetailsRoute')),
+        NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, __) => page('LoginRoute')),
+        NamedRouteDef(
+          name: 'ProtectedRoute',
+          path: '/protected',
+          guards: [
+            AutoRouteGuard.simple((resolver, _) {
+              if (isAllowed) {
+                resolver.next();
+              } else {
+                resolver.redirectUntil(const NamedRoute('LoginRoute'));
+              }
+            }),
+          ],
+          builder: (_, __) => page('ProtectedRoute'),
+        ),
+        NamedRouteDef(
+          name: 'ForbiddenRoute',
+          path: '/forbidden',
+          guards: [AutoRouteGuard.simple((resolver, _) => resolver.next(false))],
+          builder: (_, __) => page('ForbiddenRoute'),
+        ),
+      ],
+    );
   });
 
   List<String> stackNames() => router.stack.map((page) => page.routeData.name).toList();
@@ -60,8 +62,9 @@ void main() {
     expectTopPage(router, 'DetailsRoute');
   });
 
-  testWidgets('A replace redirected by its guard keeps the page under the redirect until the guard resolves (#2046)',
-      (tester) async {
+  testWidgets('A replace redirected by its guard keeps the page under the redirect until the guard resolves (#2046)', (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     router.push(const NamedRoute('DetailsRoute'));
     await tester.pumpAndSettle();

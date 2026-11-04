@@ -14,17 +14,27 @@ void main() {
   // Happens: the url stays /dashboard/tests/test2 while the first tab shows.
   // Should: the url is /dashboard/tests/test1.
   testWidgets('the url follows the active tab when two tabs share a parent route', (WidgetTester tester) async {
-    final router = RootStackRouter.build(routes: [
-      RedirectRoute(path: '/', redirectTo: '/dashboard'),
-      AutoRoute(page: _DashboardRoute.page, path: '/dashboard', children: [
-        RedirectRoute(path: '', redirectTo: 'test3'),
-        AutoRoute(page: _TestsRoute.page, path: 'tests', children: [
-          AutoRoute(page: _Test1Route.page, path: 'test1'),
-          AutoRoute(page: _Test2Route.page, path: 'test2'),
-        ]),
-        AutoRoute(page: _Test3Route.page, path: 'test3'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        RedirectRoute(path: '/', redirectTo: '/dashboard'),
+        AutoRoute(
+          page: _DashboardRoute.page,
+          path: '/dashboard',
+          children: [
+            RedirectRoute(path: '', redirectTo: 'test3'),
+            AutoRoute(
+              page: _TestsRoute.page,
+              path: 'tests',
+              children: [
+                AutoRoute(page: _Test1Route.page, path: 'test1'),
+                AutoRoute(page: _Test2Route.page, path: 'test2'),
+              ],
+            ),
+            AutoRoute(page: _Test3Route.page, path: 'test3'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     expect(router.urlState.url, '/dashboard/test3');
     final tabsRouter = router.innerRouterOf<TabsRouter>(_DashboardRoute.name)!;

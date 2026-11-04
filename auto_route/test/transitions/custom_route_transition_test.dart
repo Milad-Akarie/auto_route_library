@@ -34,15 +34,20 @@ void main() {
       ),
       routes: [
         AutoRoute(page: _PageRoute.homePage, path: '/'),
-        AutoRoute(page: _ShellRoute.page, path: '/devices', usesPathAsKey: true, children: [
-          AutoRoute(page: _PageRoute.addPage, path: 'add'),
-          CustomRoute(
-            page: _PageRoute.controllerPage,
-            path: ':id/controller',
-            transitionsBuilder: recording('slideTop'),
-            usesPathAsKey: true,
-          ),
-        ]),
+        AutoRoute(
+          page: _ShellRoute.page,
+          path: '/devices',
+          usesPathAsKey: true,
+          children: [
+            AutoRoute(page: _PageRoute.addPage, path: 'add'),
+            CustomRoute(
+              page: _PageRoute.controllerPage,
+              path: ':id/controller',
+              transitionsBuilder: recording('slideTop'),
+              usesPathAsKey: true,
+            ),
+          ],
+        ),
       ],
     );
   });
@@ -85,6 +90,8 @@ class _ShellRoute extends PageRouteInfo<void> {
 class _PageRoute {
   static PageInfo homePage = PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('Home')));
   static PageInfo addPage = PageInfo('AddRoute', builder: (_) => const Scaffold(body: Text('Add')));
-  static PageInfo controllerPage =
-      PageInfo('ControllerRoute', builder: (_) => const Scaffold(body: Text('Controller')));
+  static PageInfo controllerPage = PageInfo(
+    'ControllerRoute',
+    builder: (_) => const Scaffold(body: Text('Controller')),
+  );
 }

@@ -13,10 +13,7 @@ String toKebabCase(String s) {
 
 /// A helper assertion method that throws
 /// the giving [message] if [condition] is true
-void throwIf(
-  bool condition,
-  String message,
-) {
+void throwIf(bool condition, String message) {
   if (condition) {
     throw FlutterError(message);
   }

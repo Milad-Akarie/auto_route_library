@@ -18,15 +18,11 @@ void main() {
   // default) even when the builder does not animate anything, so a page
   // without a background shows what is below it. A background, or
   // `duration: Duration.zero` on the CustomRoute, ends it.
-  for (final (duration, overlaps) in [
-    (null, true),
-    (Duration.zero, false),
-  ]) {
-    testWidgets(
-      'Navigating between noTransition pages with ${duration == null ? 'the default' : 'a zero'} duration '
-      '${overlaps ? 'keeps' : 'does not keep'} the old page on screen',
-      (tester) async {
-        final router = RootStackRouter.build(routes: [
+  for (final (duration, overlaps) in [(null, true), (Duration.zero, false)]) {
+    testWidgets('Navigating between noTransition pages with ${duration == null ? 'the default' : 'a zero'} duration '
+        '${overlaps ? 'keeps' : 'does not keep'} the old page on screen', (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
           CustomRoute(
             page: _dashboardPage,
             path: '/dashboard',
@@ -47,25 +43,28 @@ void main() {
               ),
             ],
           ),
-        ]);
-        await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.path('/dashboard/home')));
-        expect(find.text('Home'), findsOneWidget);
+        ],
+      );
+      await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.path('/dashboard/home')));
+      expect(find.text('Home'), findsOneWidget);
 
-        router.navigatePath('/dashboard/brands');
-        await tester.pump();
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 100));
+      router.navigatePath('/dashboard/brands');
+      await tester.pump();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
 
-        expect(find.text('Brands'), findsOneWidget);
-        expect(find.text('Home'), overlaps ? findsOneWidget : findsNothing);
-        await tester.pumpAndSettle();
-        expect(find.text('Home'), findsNothing);
-      },
-    );
+      expect(find.text('Brands'), findsOneWidget);
+      expect(find.text('Home'), overlaps ? findsOneWidget : findsNothing);
+      await tester.pumpAndSettle();
+      expect(find.text('Home'), findsNothing);
+    });
   }
 }
 
 final _dashboardPage = PageInfo('Dashboard', builder: (_) => const Scaffold(body: AutoRouter()));
 
 // A page without a background, like the ones in the report.
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Align(alignment: Alignment.topLeft, child: Text(name)));
+PageInfo _page(String name) => PageInfo(
+  name,
+  builder: (_) => Align(alignment: Alignment.topLeft, child: Text(name)),
+);

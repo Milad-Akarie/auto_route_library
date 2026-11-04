@@ -74,7 +74,7 @@ class _HomeRoute extends PageRouteInfo<void> {
 
 class _BusinessRoute extends PageRouteInfo<void> {
   _BusinessRoute({required String businessCustomId, List<PageRouteInfo>? children})
-      : super(pageName, rawPathParams: {'businessCustomId': businessCustomId}, initialChildren: children);
+    : super(pageName, rawPathParams: {'businessCustomId': businessCustomId}, initialChildren: children);
 
   static const String pageName = 'BusinessRoute';
   static PageInfo page = PageInfo(
@@ -109,7 +109,7 @@ class _BookShellRoute extends PageRouteInfo<void> {
 class _BookRoute extends PageRouteInfo<void> {
   // As generated for @PathParam('id') and @queryParam someQueryParam.
   _BookRoute({required int id, int? someQueryParam})
-      : super(pageName, rawPathParams: {'id': id}, rawQueryParams: {'someQueryParam': someQueryParam});
+    : super(pageName, rawPathParams: {'id': id}, rawQueryParams: {'someQueryParam': someQueryParam});
 
   static const String pageName = 'BookRoute';
   static PageInfo page = PageInfo(

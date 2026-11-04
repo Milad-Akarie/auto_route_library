@@ -13,10 +13,7 @@ class _DetailArgs {
   final int counter;
 }
 
-PageInfo _detailPage = PageInfo(
-  'DetailRoute',
-  builder: (data) => Text('Detail ${data.argsAs<_DetailArgs>().counter}'),
-);
+PageInfo _detailPage = PageInfo('DetailRoute', builder: (data) => Text('Detail ${data.argsAs<_DetailArgs>().counter}'));
 
 /// Allocates garbage until the VM has run two full collections.
 ///
@@ -41,10 +38,15 @@ void main() {
   testWidgets(
     'The args of a popped page are garbage collected',
     (tester) async {
-      final router = RootStackRouter.build(routes: [
-        AutoRoute(path: '/', page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute'))),
-        AutoRoute(path: '/detail', page: _detailPage),
-      ]);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
+          ),
+          AutoRoute(path: '/detail', page: _detailPage),
+        ],
+      );
       await pumpRouterApp(tester, router);
       late final WeakReference<_DetailArgs> args;
       // In a closure, so no local variable of this test holds the args.

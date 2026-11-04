@@ -13,11 +13,16 @@ void main() {
   // Reported: the url changes but the page keeps showing the old query.
   // Should: the page shows each new query.
   testWidgets('navigating to a tab path with a new query shows the new query', (WidgetTester tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _DashboardRoute.page, path: '/dashboard', initial: true, children: [
-        AutoRoute(page: _SettingsTab.page, path: 'settings'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _DashboardRoute.page,
+          path: '/dashboard',
+          initial: true,
+          children: [AutoRoute(page: _SettingsTab.page, path: 'settings')],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     expect(find.text('query: none'), findsOneWidget);
 
@@ -64,7 +69,11 @@ class _SettingsTabArgs {
 // What the generator makes for a page with `@queryParam String query = 'none'`.
 class _SettingsTab extends PageRouteInfo<_SettingsTabArgs> {
   _SettingsTab({String query = 'none'})
-      : super(name, args: _SettingsTabArgs(query: query), rawQueryParams: {'query': query});
+    : super(
+        name,
+        args: _SettingsTabArgs(query: query),
+        rawQueryParams: {'query': query},
+      );
 
   static const String name = '_SettingsTab';
   static PageInfo page = PageInfo(

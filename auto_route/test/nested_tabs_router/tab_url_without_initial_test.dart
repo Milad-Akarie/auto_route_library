@@ -11,26 +11,39 @@ class _Route extends PageRouteInfo<void> {
 
 // A tabs host whose tabs have no '' path and none is initial: its url, '/tabs',
 // names no tab.
-RootStackRouter _router() => RootStackRouter.build(routes: [
-      AutoRoute(page: PageInfo('HomeRoute', builder: (_) => const Text('Home')), path: '/'),
-      AutoRoute(
-        page: PageInfo(
-          'TabsRoute',
-          builder: (_) => AutoTabsRouter(
-            routes: const [_Route('Tab1Route'), _Route('Tab2Route')],
-            builder: (context, child) => Column(children: [
+RootStackRouter _router() => RootStackRouter.build(
+  routes: [
+    AutoRoute(
+      page: PageInfo('HomeRoute', builder: (_) => const Text('Home')),
+      path: '/',
+    ),
+    AutoRoute(
+      page: PageInfo(
+        'TabsRoute',
+        builder: (_) => AutoTabsRouter(
+          routes: const [_Route('Tab1Route'), _Route('Tab2Route')],
+          builder: (context, child) => Column(
+            children: [
               TextButton(onPressed: () => context.tabsRouter.setActiveIndex(1), child: const Text('Show tab 2')),
               Expanded(child: child),
-            ]),
+            ],
           ),
         ),
-        path: '/tabs',
-        children: [
-          AutoRoute(page: PageInfo('Tab1Route', builder: (_) => const Text('Tab 1')), path: 'tab-1'),
-          AutoRoute(page: PageInfo('Tab2Route', builder: (_) => const Text('Tab 2')), path: 'tab-2'),
-        ],
       ),
-    ]);
+      path: '/tabs',
+      children: [
+        AutoRoute(
+          page: PageInfo('Tab1Route', builder: (_) => const Text('Tab 1')),
+          path: 'tab-1',
+        ),
+        AutoRoute(
+          page: PageInfo('Tab2Route', builder: (_) => const Text('Tab 2')),
+          path: 'tab-2',
+        ),
+      ],
+    ),
+  ],
+);
 
 void main() {
   // Found while settling the web issues; no upstream report.
@@ -41,8 +54,7 @@ void main() {
   // to that entry named no tab and the second tab stayed on screen.
   // Should: the url names the first tab, '/tabs/tab-1', and going back shows it.
   for (final includePrefixMatches in [false, true]) {
-    testWidgets(
-        'A tabs host opened without a tab in its url reports its first tab, '
+    testWidgets('A tabs host opened without a tab in its url reports its first tab, '
         'includePrefixMatches: $includePrefixMatches', (tester) async {
       final router = _router();
       await pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));

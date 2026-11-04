@@ -14,13 +14,20 @@ void main() {
   // Should: the TabController's animation, which places the indicator, moves
   // one way only, frame after frame, and ends on the tapped tab.
   testWidgets('the tab indicator moves one way to the tapped tab in a NestedScrollView', (WidgetTester tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _HomeRoute.page, path: '/', initial: true, children: [
-        AutoRoute(page: _AllNotesTabRoute.page, path: 'all'),
-        AutoRoute(page: _PinnedTabRoute.page, path: 'pinned'),
-        AutoRoute(page: _FoldersTabRoute.page, path: 'folders'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _HomeRoute.page,
+          path: '/',
+          initial: true,
+          children: [
+            AutoRoute(page: _AllNotesTabRoute.page, path: 'all'),
+            AutoRoute(page: _PinnedTabRoute.page, path: 'pinned'),
+            AutoRoute(page: _FoldersTabRoute.page, path: 'folders'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     final tabController = tester.widget<TabBar>(find.byType(TabBar)).controller!;
 
@@ -104,12 +111,9 @@ class _HomeRoute extends PageRouteInfo<void> {
 }
 
 PageInfo _listPage(String name) => PageInfo(
-      name,
-      builder: (_) => ListView.builder(
-        itemCount: 30,
-        itemBuilder: (_, index) => ListTile(title: Text('$name $index')),
-      ),
-    );
+  name,
+  builder: (_) => ListView.builder(itemCount: 30, itemBuilder: (_, index) => ListTile(title: Text('$name $index'))),
+);
 
 class _AllNotesTabRoute extends PageRouteInfo<void> {
   const _AllNotesTabRoute() : super(name);

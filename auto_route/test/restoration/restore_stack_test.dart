@@ -8,15 +8,20 @@ import 'restoration_test_utils.dart';
 void main() {
   // Flutter's state restoration doesn't run on the web, so the routers save
   // their pages only off the web.
-  RootStackRouter buildRouter() => RootStackRouter.build(routes: [
-        AutoRoute(page: page('SignUpRoute'), initial: true),
-        AutoRoute(page: page('ExternalRoute')),
-        AutoRoute(page: page('SettingsRoute')),
-        AutoRoute(page: const EmptyShellRoute('ShelfRoute'), children: [
+  RootStackRouter buildRouter() => RootStackRouter.build(
+    routes: [
+      AutoRoute(page: page('SignUpRoute'), initial: true),
+      AutoRoute(page: page('ExternalRoute')),
+      AutoRoute(page: page('SettingsRoute')),
+      AutoRoute(
+        page: const EmptyShellRoute('ShelfRoute'),
+        children: [
           AutoRoute(page: page('ShelfListRoute'), initial: true),
           AutoRoute(path: 'item/:id', page: itemPage),
-        ]),
-      ]);
+        ],
+      ),
+    ],
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2040
   // From the initial sign-up page, replace(ExternalRoute()), then push
@@ -98,11 +103,10 @@ void main() {
     expect(router.currentHierarchy(ignoreParams: true), const [
       HierarchySegment('SignUpRoute'),
       HierarchySegment('SettingsRoute'),
-      HierarchySegment('ShelfRoute', children: [
-        HierarchySegment('ShelfListRoute'),
-        HierarchySegment('ItemRoute'),
-        HierarchySegment('ItemRoute'),
-      ]),
+      HierarchySegment(
+        'ShelfRoute',
+        children: [HierarchySegment('ShelfListRoute'), HierarchySegment('ItemRoute'), HierarchySegment('ItemRoute')],
+      ),
     ]);
 
     for (final expected in ['Item 7', 'ShelfListRoute', 'SettingsRoute', 'SignUpRoute']) {
@@ -119,11 +123,13 @@ void main() {
   // paths the generator gives them, which don't nest, so the restored url
   // alone can't bring the pages before it back.
   testWidgets('back after restoration returns through the pages before it', (tester) async {
-    RootStackRouter buildShopRouter() => RootStackRouter.build(routes: [
-          AutoRoute(page: page('HomeRoute'), restorationId: (match) => match.name, initial: true),
-          AutoRoute(page: page('ProductsRoute'), restorationId: (match) => match.name),
-          AutoRoute(page: page('ProductDetailsRoute'), restorationId: (match) => match.name),
-        ]);
+    RootStackRouter buildShopRouter() => RootStackRouter.build(
+      routes: [
+        AutoRoute(page: page('HomeRoute'), restorationId: (match) => match.name, initial: true),
+        AutoRoute(page: page('ProductsRoute'), restorationId: (match) => match.name),
+        AutoRoute(page: page('ProductDetailsRoute'), restorationId: (match) => match.name),
+      ],
+    );
     await tester.pumpWidget(RestorableRouterApp(buildShopRouter));
     await tester.pumpAndSettle();
     RestorableRouterApp.router.push(const NamedRoute('ProductsRoute'));

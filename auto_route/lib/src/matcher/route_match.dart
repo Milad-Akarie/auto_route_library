@@ -122,9 +122,9 @@ class RouteMatch<T> {
     this.fragment = '',
     this.redirectedFrom,
     this.autoFilled = false,
-  })  : _config = config,
-        _evaluatedGuards = const [],
-        id = UniqueKey();
+  }) : _config = config,
+       _evaluatedGuards = const [],
+       id = UniqueKey();
 
   const RouteMatch._internal({
     required AutoRoute config,
@@ -140,8 +140,8 @@ class RouteMatch<T> {
     this.autoFilled = false,
     required this.id,
     List<AutoRouteGuard> evaluatedGuards = const [],
-  })  : _config = config,
-        _evaluatedGuards = evaluatedGuards;
+  }) : _config = config,
+       _evaluatedGuards = evaluatedGuards;
 
   /// Whether this match has nested child-matches
   bool get hasChildren => children?.isNotEmpty == true;
@@ -157,10 +157,10 @@ class RouteMatch<T> {
   /// if [includeEmpty] is true empty segments will be included
   /// in the list
   List<String> allSegments({bool includeEmpty = false}) => [
-        if (segments.isEmpty && includeEmpty) '',
-        ...segments,
-        if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty)
-      ];
+    if (segments.isEmpty && includeEmpty) '',
+    ...segments,
+    if (hasChildren) ...children!.last.allSegments(includeEmpty: includeEmpty),
+  ];
 
   /// Joins all segments to a valid path
   String get fullPath => p.joinAll(allSegments());
@@ -291,24 +291,22 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   final RouteMatch originalMatch;
 
   /// Creates a new instance of [ReevaluatableRouteMatch]
-  ReevaluatableRouteMatch({
-    required this.currentPage,
-    required this.originalMatch,
-  }) : super._internal(
-          config: originalMatch._config,
-          stringMatch: originalMatch.stringMatch,
-          segments: originalMatch.segments,
-          key: originalMatch.key,
-          params: originalMatch.params,
-          queryParams: originalMatch.queryParams,
-          fragment: originalMatch.fragment,
-          redirectedFrom: originalMatch.redirectedFrom,
-          autoFilled: originalMatch.autoFilled,
-          id: originalMatch.id,
-          children: originalMatch.children,
-          evaluatedGuards: originalMatch.evaluatedGuards,
-          args: originalMatch.args,
-        );
+  ReevaluatableRouteMatch({required this.currentPage, required this.originalMatch})
+    : super._internal(
+        config: originalMatch._config,
+        stringMatch: originalMatch.stringMatch,
+        segments: originalMatch.segments,
+        key: originalMatch.key,
+        params: originalMatch.params,
+        queryParams: originalMatch.queryParams,
+        fragment: originalMatch.fragment,
+        redirectedFrom: originalMatch.redirectedFrom,
+        autoFilled: originalMatch.autoFilled,
+        id: originalMatch.id,
+        children: originalMatch.children,
+        evaluatedGuards: originalMatch.evaluatedGuards,
+        args: originalMatch.args,
+      );
 
   @override
   ReevaluatableRouteMatch<T, R> copyWith({
@@ -368,12 +366,7 @@ class HierarchySegment {
   final Parameters? pathParams, queryParams;
 
   /// Default constructor
-  const HierarchySegment(
-    this.name, {
-    this.pathParams,
-    this.queryParams,
-    this.children = const [],
-  });
+  const HierarchySegment(this.name, {this.pathParams, this.queryParams, this.children = const []});
 
   /// Returns a pretty json output of this hierarchy
   Map<String, dynamic> toJson() {
@@ -413,13 +406,15 @@ extension PrettyHierarchySegmentX on List<HierarchySegment> {
     const encoder = JsonEncoder.withIndent('  ');
 
     Map toMap(List<HierarchySegment> segments) {
-      return Map.fromEntries(segments.map(
-        (e) => MapEntry(e.name, {
-          if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
-          if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
-          if (e.children.isNotEmpty) 'children': toMap(e.children),
-        }),
-      ));
+      return Map.fromEntries(
+        segments.map(
+          (e) => MapEntry(e.name, {
+            if (e.pathParams?.isNotEmpty == true) 'pathParams': e.pathParams!.rawMap,
+            if (e.queryParams?.isNotEmpty == true) 'queryParams': e.queryParams!.rawMap,
+            if (e.children.isNotEmpty) 'children': toMap(e.children),
+          }),
+        ),
+      );
     }
 
     return encoder.convert(toMap(this));

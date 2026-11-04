@@ -7,8 +7,10 @@
 
 import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
 import 'package:flutter/foundation.dart';
+
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
@@ -33,22 +35,13 @@ const Color kCupertinoModalBarrierColor = CupertinoDynamicColor.withBrightness(
 );
 
 // Offset from offscreen to the right to fully on screen.
-final Animatable<Offset> _kRightMiddleTween = Tween<Offset>(
-  begin: const Offset(1.0, 0.0),
-  end: Offset.zero,
-);
+final Animatable<Offset> _kRightMiddleTween = Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero);
 
 // Offset from fully on screen to 1/3 offscreen to the left.
-final Animatable<Offset> _kMiddleLeftTween = Tween<Offset>(
-  begin: Offset.zero,
-  end: const Offset(-1.0 / 3.0, 0.0),
-);
+final Animatable<Offset> _kMiddleLeftTween = Tween<Offset>(begin: Offset.zero, end: const Offset(-1.0 / 3.0, 0.0));
 
 // Offset from offscreen below to fully on screen.
-final Animatable<Offset> _kBottomUpTween = Tween<Offset>(
-  begin: const Offset(0.0, 1.0),
-  end: Offset.zero,
-);
+final Animatable<Offset> _kBottomUpTween = Tween<Offset>(begin: const Offset(0.0, 1.0), end: Offset.zero);
 
 /// A mixin that implements methods and/or parameters of a [PageRoute].
 ///
@@ -87,35 +80,35 @@ class CupertinoPageTransition extends StatelessWidget {
     required Animation<double> secondaryRouteAnimation,
     required this.child,
     required bool linearTransition,
-  })  : _primaryPositionAnimation = (linearTransition
-                ? primaryRouteAnimation
-                : CurvedAnimation(
-                    // The curves below have been rigorously derived from plots of native
-                    // iOS animation frames. Specifically, a video was taken of a page
-                    // transition animation and the distance in each frame that the page
-                    // moved was measured. A best fit bezier curve was the fitted to the
-                    // point set, which is linearToEaseIn. Conversely, easeInToLinear is the
-                    // reflection over the origin of linearToEaseIn.
-                    parent: primaryRouteAnimation,
-                    curve: Curves.linearToEaseOut,
-                    reverseCurve: Curves.easeInToLinear,
-                  ))
-            .drive(_kRightMiddleTween),
-        _secondaryPositionAnimation = (linearTransition
-                ? secondaryRouteAnimation
-                : CurvedAnimation(
-                    parent: secondaryRouteAnimation,
-                    curve: Curves.linearToEaseOut,
-                    reverseCurve: Curves.easeInToLinear,
-                  ))
-            .drive(_kMiddleLeftTween),
-        _primaryShadowAnimation = (linearTransition
-                ? primaryRouteAnimation
-                : CurvedAnimation(
-                    parent: primaryRouteAnimation,
-                    curve: Curves.linearToEaseOut,
-                  ))
-            .drive(_CupertinoEdgeShadowDecoration.tween(linearTransition));
+  }) : _primaryPositionAnimation =
+           (linearTransition
+                   ? primaryRouteAnimation
+                   : CurvedAnimation(
+                       // The curves below have been rigorously derived from plots of native
+                       // iOS animation frames. Specifically, a video was taken of a page
+                       // transition animation and the distance in each frame that the page
+                       // moved was measured. A best fit bezier curve was the fitted to the
+                       // point set, which is linearToEaseIn. Conversely, easeInToLinear is the
+                       // reflection over the origin of linearToEaseIn.
+                       parent: primaryRouteAnimation,
+                       curve: Curves.linearToEaseOut,
+                       reverseCurve: Curves.easeInToLinear,
+                     ))
+               .drive(_kRightMiddleTween),
+       _secondaryPositionAnimation =
+           (linearTransition
+                   ? secondaryRouteAnimation
+                   : CurvedAnimation(
+                       parent: secondaryRouteAnimation,
+                       curve: Curves.linearToEaseOut,
+                       reverseCurve: Curves.easeInToLinear,
+                     ))
+               .drive(_kMiddleLeftTween),
+       _primaryShadowAnimation =
+           (linearTransition
+                   ? primaryRouteAnimation
+                   : CurvedAnimation(parent: primaryRouteAnimation, curve: Curves.linearToEaseOut))
+               .drive(_CupertinoEdgeShadowDecoration.tween(linearTransition));
 
   // When this page is coming in to cover another page.
   final Animation<Offset> _primaryPositionAnimation;
@@ -138,10 +131,7 @@ class CupertinoPageTransition extends StatelessWidget {
       child: SlideTransition(
         position: _primaryPositionAnimation,
         textDirection: textDirection,
-        child: DecoratedBoxTransition(
-          decoration: _primaryShadowAnimation,
-          child: child,
-        ),
+        child: DecoratedBoxTransition(decoration: _primaryShadowAnimation, child: child),
       ),
     );
   }
@@ -166,21 +156,22 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
     required Animation<double> secondaryRouteAnimation,
     required this.child,
     required bool linearTransition,
-  })  : _positionAnimation = CurvedAnimation(
-          parent: primaryRouteAnimation,
-          curve: Curves.linearToEaseOut,
-          // The curve must be flipped so that the reverse animation doesn't play
-          // an ease-in curve, which iOS does not use.
-          reverseCurve: Curves.linearToEaseOut.flipped,
-        ).drive(_kBottomUpTween),
-        _secondaryPositionAnimation = (linearTransition
-                ? secondaryRouteAnimation
-                : CurvedAnimation(
-                    parent: secondaryRouteAnimation,
-                    curve: Curves.linearToEaseOut,
-                    reverseCurve: Curves.easeInToLinear,
-                  ))
-            .drive(_kMiddleLeftTween);
+  }) : _positionAnimation = CurvedAnimation(
+         parent: primaryRouteAnimation,
+         curve: Curves.linearToEaseOut,
+         // The curve must be flipped so that the reverse animation doesn't play
+         // an ease-in curve, which iOS does not use.
+         reverseCurve: Curves.linearToEaseOut.flipped,
+       ).drive(_kBottomUpTween),
+       _secondaryPositionAnimation =
+           (linearTransition
+                   ? secondaryRouteAnimation
+                   : CurvedAnimation(
+                       parent: secondaryRouteAnimation,
+                       curve: Curves.linearToEaseOut,
+                       reverseCurve: Curves.easeInToLinear,
+                     ))
+               .drive(_kMiddleLeftTween);
 
   final Animation<Offset> _positionAnimation;
 
@@ -198,10 +189,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
       position: _secondaryPositionAnimation,
       textDirection: textDirection,
       transformHitTests: false,
-      child: SlideTransition(
-        position: _positionAnimation,
-        child: child,
-      ),
+      child: SlideTransition(position: _positionAnimation, child: child),
     );
   }
 }
@@ -314,10 +302,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
           width: dragAreaWidth,
           top: 0.0,
           bottom: 0.0,
-          child: Listener(
-            onPointerDown: _handlePointerDown,
-            behavior: HitTestBehavior.translucent,
-          ),
+          child: Listener(onPointerDown: _handlePointerDown, behavior: HitTestBehavior.translucent),
         ),
       ],
     );
@@ -340,10 +325,7 @@ class _CupertinoBackGestureController<T> {
   /// Creates a controller for an iOS-style back gesture.
   ///
   /// The [navigator] and [controller] arguments must not be null.
-  _CupertinoBackGestureController({
-    required this.navigator,
-    required this.controller,
-  }) {
+  _CupertinoBackGestureController({required this.navigator, required this.controller}) {
     navigator.didStartUserGesture();
   }
 
@@ -385,8 +367,11 @@ class _CupertinoBackGestureController<T> {
         lerpDouble(_kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)!.floor(),
         _kMaxPageBackAnimationTime,
       );
-      controller.animateTo(1.0,
-          duration: Duration(milliseconds: droppedPageForwardAnimationTime), curve: animationCurve);
+      controller.animateTo(
+        1.0,
+        duration: Duration(milliseconds: droppedPageForwardAnimationTime),
+        curve: animationCurve,
+      );
     } else {
       // This route is destined to pop at this point. Reuse navigator's pop.
       navigator.pop();
@@ -394,10 +379,16 @@ class _CupertinoBackGestureController<T> {
       // The popping may have finished inline if already at the target destination.
       if (controller.isAnimating) {
         // Otherwise, use a custom popping animation duration and curve.
-        final int droppedPageBackAnimationTime =
-            lerpDouble(0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)!.floor();
-        controller.animateBack(0.0,
-            duration: Duration(milliseconds: droppedPageBackAnimationTime), curve: animationCurve);
+        final int droppedPageBackAnimationTime = lerpDouble(
+          0,
+          _kMaxDroppedSwipePageForwardAnimationTime,
+          controller.value,
+        )!.floor();
+        controller.animateBack(
+          0.0,
+          duration: Duration(milliseconds: droppedPageBackAnimationTime),
+          curve: animationCurve,
+        );
       }
     }
 
@@ -424,19 +415,12 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
   const _CupertinoEdgeShadowDecoration._([this._colors]);
 
   static DecorationTween tween(bool withShadow) => DecorationTween(
-        begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
-        end: _CupertinoEdgeShadowDecoration._(
-          // Eyeballed gradient used to mimic a drop shadow on the start side only.
-          withShadow
-              ? const <Color>[
-                  Color(0x38000000),
-                  Color(0x12000000),
-                  Color(0x04000000),
-                  Color(0x00000000),
-                ]
-              : const [],
-        ),
-      );
+    begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
+    end: _CupertinoEdgeShadowDecoration._(
+      // Eyeballed gradient used to mimic a drop shadow on the start side only.
+      withShadow ? const <Color>[Color(0x38000000), Color(0x12000000), Color(0x04000000), Color(0x00000000)] : const [],
+    ),
+  );
 
   // Colors used to paint a gradient at the start edge of the box it is
   // decorating.
@@ -484,17 +468,16 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
       return aColors == null
           ? a
           : _CupertinoEdgeShadowDecoration._(
-              aColors.map<Color>((Color color) => Color.lerp(null, color, 1.0 - t)!).toList());
+              aColors.map<Color>((Color color) => Color.lerp(null, color, 1.0 - t)!).toList(),
+            );
     }
     assert(bColors != null || aColors != null);
     // If it ever becomes necessary, we could allow decorations with different
     // length' here, similarly to how it is handled in [LinearGradient.lerp].
     assert(bColors == null || aColors == null || aColors.length == bColors.length);
-    return _CupertinoEdgeShadowDecoration._(
-      <Color>[
-        for (int i = 0; i < bColors!.length; i += 1) Color.lerp(a._colors?[i], bColors[i], t)!,
-      ],
-    );
+    return _CupertinoEdgeShadowDecoration._(<Color>[
+      for (int i = 0; i < bColors!.length; i += 1) Color.lerp(a._colors?[i], bColors[i], t)!,
+    ]);
   }
 
   @override
@@ -536,10 +519,7 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
 
 /// A [BoxPainter] used to draw the page transition shadow using gradients.
 class _CupertinoEdgeShadowPainter extends BoxPainter {
-  _CupertinoEdgeShadowPainter(
-    this._decoration,
-    VoidCallback? onChange,
-  ) : super(onChange);
+  _CupertinoEdgeShadowPainter(this._decoration, VoidCallback? onChange) : super(onChange);
 
   final _CupertinoEdgeShadowDecoration _decoration;
 

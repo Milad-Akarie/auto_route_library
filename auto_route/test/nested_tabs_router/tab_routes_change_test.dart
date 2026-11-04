@@ -18,14 +18,21 @@ void _runRoutesChangeTests(_TabsKind kind) {
     _CountedPageState.disposeCounts.clear();
     addTearDown(() => _signedInNotifier.value = false);
     _tabsKind = kind;
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _TabsHostRoute.page, path: '/', initial: true, children: [
-        AutoRoute(page: _FirstTabRoute.page, path: 'first', initial: true),
-        AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-        AutoRoute(page: _SignInTabRoute.page, path: 'sign-in'),
-        AutoRoute(page: _AccountTabRoute.page, path: 'account'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _TabsHostRoute.page,
+          path: '/',
+          initial: true,
+          children: [
+            AutoRoute(page: _FirstTabRoute.page, path: 'first', initial: true),
+            AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+            AutoRoute(page: _SignInTabRoute.page, path: 'sign-in'),
+            AutoRoute(page: _AccountTabRoute.page, path: 'account'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     expect(find.text(_FirstTabRoute.name), findsOneWidget);
   }
@@ -39,24 +46,23 @@ void _runRoutesChangeTests(_TabsKind kind) {
   // changes.
   // Happens: the first and second tab pages are disposed and built again.
   // Should: the first tab page keeps its state; only the third tab changes.
-  testWidgets(
-    '${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of the active tab',
-    (WidgetTester tester) async {
-      await pumpTabs(tester);
-      expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1);
+  testWidgets('${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of the active tab', (
+    WidgetTester tester,
+  ) async {
+    await pumpTabs(tester);
+    expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1);
 
-      _signedInNotifier.value = true;
-      await tester.pumpAndSettle();
-      expect(find.text(_FirstTabRoute.name), findsOneWidget);
-      expect(_CountedPageState.disposeCounts[_FirstTabRoute.name], isNull);
-      expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1);
+    _signedInNotifier.value = true;
+    await tester.pumpAndSettle();
+    expect(find.text(_FirstTabRoute.name), findsOneWidget);
+    expect(_CountedPageState.disposeCounts[_FirstTabRoute.name], isNull);
+    expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1);
 
-      // The swapped tab shows its new route.
-      tabsRouterOf(tester).setActiveIndex(2);
-      await tester.pumpAndSettle();
-      expect(find.text(_AccountTabRoute.name), findsOneWidget);
-    },
-  );
+    // The swapped tab shows its new route.
+    tabsRouterOf(tester).setActiveIndex(2);
+    await tester.pumpAndSettle();
+    expect(find.text(_AccountTabRoute.name), findsOneWidget);
+  });
 
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/2314
   // for a tab that is loaded but not active.
@@ -64,26 +70,25 @@ void _runRoutesChangeTests(_TabsKind kind) {
   // one, then flip signedIn.
   // Happens: the second tab page is disposed and built again.
   // Should: the second tab page keeps its state.
-  testWidgets(
-    '${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of a loaded inactive tab',
-    (WidgetTester tester) async {
-      await pumpTabs(tester);
-      tabsRouterOf(tester).setActiveIndex(1);
-      await tester.pumpAndSettle();
-      expect(find.text(_SecondTabRoute.name), findsOneWidget);
-      tabsRouterOf(tester).setActiveIndex(0);
-      await tester.pumpAndSettle();
-      expect(_CountedPageState.initCounts[_SecondTabRoute.name], 1);
+  testWidgets('${kind.name}: swapping one route in AutoTabsRouter.routes keeps the state of a loaded inactive tab', (
+    WidgetTester tester,
+  ) async {
+    await pumpTabs(tester);
+    tabsRouterOf(tester).setActiveIndex(1);
+    await tester.pumpAndSettle();
+    expect(find.text(_SecondTabRoute.name), findsOneWidget);
+    tabsRouterOf(tester).setActiveIndex(0);
+    await tester.pumpAndSettle();
+    expect(_CountedPageState.initCounts[_SecondTabRoute.name], 1);
 
-      _signedInNotifier.value = true;
-      await tester.pumpAndSettle();
-      expect(_CountedPageState.disposeCounts[_SecondTabRoute.name], isNull);
-      tabsRouterOf(tester).setActiveIndex(1);
-      await tester.pumpAndSettle();
-      expect(find.text(_SecondTabRoute.name), findsOneWidget);
-      expect(_CountedPageState.initCounts[_SecondTabRoute.name], 1);
-    },
-  );
+    _signedInNotifier.value = true;
+    await tester.pumpAndSettle();
+    expect(_CountedPageState.disposeCounts[_SecondTabRoute.name], isNull);
+    tabsRouterOf(tester).setActiveIndex(1);
+    await tester.pumpAndSettle();
+    expect(find.text(_SecondTabRoute.name), findsOneWidget);
+    expect(_CountedPageState.initCounts[_SecondTabRoute.name], 1);
+  });
 }
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
@@ -111,12 +116,9 @@ class _TabsHostRoute extends PageRouteInfo<void> {
           _TabsKind.pageView => AutoTabsRouter.pageView(routes: routes),
           _TabsKind.tabBar => AutoTabsRouter.tabBar(routes: routes),
           _TabsKind.builder => AutoTabsRouter.builder(
-              routes: routes,
-              builder: (context, children, tabsRouter) => IndexedStack(
-                index: tabsRouter.activeIndex,
-                children: children,
-              ),
-            ),
+            routes: routes,
+            builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+          ),
         };
       },
     ),

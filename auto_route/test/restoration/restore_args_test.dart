@@ -8,11 +8,13 @@ import 'restoration_test_utils.dart';
 void main() {
   // Flutter's state restoration doesn't run on the web, so the routers save
   // their pages only off the web.
-  RootStackRouter buildRouter() => RootStackRouter.build(routes: [
-        AutoRoute(path: '/', page: page('HomeRoute'), initial: true),
-        AutoRoute(path: '/manufacturers', page: _ManufacturersByLetterRoute.page),
-        AutoRoute(path: '/book/:id', page: _BookRoute.page),
-      ]);
+  RootStackRouter buildRouter() => RootStackRouter.build(
+    routes: [
+      AutoRoute(path: '/', page: page('HomeRoute'), initial: true),
+      AutoRoute(path: '/manufacturers', page: _ManufacturersByLetterRoute.page),
+      AutoRoute(path: '/book/:id', page: _BookRoute.page),
+    ],
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2098
   // Push a page whose route has a required argument that isn't a path or
@@ -65,7 +67,7 @@ class _ManufacturersByLetterRouteArgs {
 
 class _ManufacturersByLetterRoute extends PageRouteInfo<_ManufacturersByLetterRouteArgs> {
   _ManufacturersByLetterRoute({required _Letter letter})
-      : super(name, args: _ManufacturersByLetterRouteArgs(letter: letter));
+    : super(name, args: _ManufacturersByLetterRouteArgs(letter: letter));
 
   static const name = 'ManufacturersByLetterRoute';
 
@@ -86,7 +88,12 @@ class _BookRouteArgs {
 }
 
 class _BookRoute extends PageRouteInfo<_BookRouteArgs> {
-  _BookRoute({required int id}) : super(name, args: _BookRouteArgs(id: id), rawPathParams: {'id': id});
+  _BookRoute({required int id})
+    : super(
+        name,
+        args: _BookRouteArgs(id: id),
+        rawPathParams: {'id': id},
+      );
 
   static const name = 'BookRoute';
 

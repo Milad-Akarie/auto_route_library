@@ -20,39 +20,37 @@ void main() {
   // Steps, as in the reporter's app on a Mac: open the app on '/second', as a
   // reload does, then swipe back from the left edge.
   // Should: Page1 shows, with no error.
-  testWidgets(
-    'With includePrefixMatches on web, swiping back after a reload animates a Hero without an error',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(page: _page1, path: '/'),
-          AutoRoute(page: _page2, path: '/second'),
-        ],
-      );
-      router.routeInfoProvider(initialRouteInformation: RouteInformation(uri: Uri.parse('/second')));
-      await pumpRouterConfigApp(tester, router.config(includePrefixMatches: true));
-      await settleBrowser(tester);
-      expect(router.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
-      expect(find.text('Page 2'), findsOneWidget);
+  testWidgets('With includePrefixMatches on web, swiping back after a reload animates a Hero without an error', (
+    tester,
+  ) async {
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _page1, path: '/'),
+        AutoRoute(page: _page2, path: '/second'),
+      ],
+    );
+    router.routeInfoProvider(initialRouteInformation: RouteInformation(uri: Uri.parse('/second')));
+    await pumpRouterConfigApp(tester, router.config(includePrefixMatches: true));
+    await settleBrowser(tester);
+    expect(router.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
+    expect(find.text('Page 2'), findsOneWidget);
 
-      await tester.dragFrom(const Offset(2, 300), const Offset(500, 0));
-      await settleBrowser(tester);
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((p) => p.name), ['Page1Route']);
-      expect(find.text('Page 1'), findsOneWidget);
-    },
-    variant: TargetPlatformVariant.only(TargetPlatform.macOS),
-  );
+    await tester.dragFrom(const Offset(2, 300), const Offset(500, 0));
+    await settleBrowser(tester);
+    expect(tester.takeException(), isNull);
+    expect(router.stack.map((p) => p.name), ['Page1Route']);
+    expect(find.text('Page 1'), findsOneWidget);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.macOS));
 }
 
 final _page1 = _heroPage('Page1Route', 'Page 1');
 final _page2 = _heroPage('Page2Route', 'Page 2');
 
 PageInfo _heroPage(String name, String label) => PageInfo(
-      name,
-      builder: (_) => Scaffold(
-        body: Center(
-          child: Hero(tag: #tag, transitionOnUserGestures: true, child: Text(label)),
-        ),
-      ),
-    );
+  name,
+  builder: (_) => Scaffold(
+    body: Center(
+      child: Hero(tag: #tag, transitionOnUserGestures: true, child: Text(label)),
+    ),
+  ),
+);

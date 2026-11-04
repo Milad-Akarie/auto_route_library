@@ -18,23 +18,25 @@ void main() {
 
   testWidgets('a guard re-check overriding the args of a page shows them', (tester) async {
     final auth = ValueNotifier(0);
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _HomeRoute.page, path: '/'),
-      AutoRoute(
-        page: _ProfileRoute.page,
-        path: '/profile',
-        guards: [
-          AutoRouteGuard.simple((resolver, _) {
-            if (resolver.isReevaluating) {
-              resolver.overrideNext(args: const _ProfileArgs(userId: 'guest'));
-            } else {
-              resolver.next();
-            }
-          }),
-        ],
-      ),
-      AutoRoute(page: _SettingsRoute.page, path: '/settings'),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _HomeRoute.page, path: '/'),
+        AutoRoute(
+          page: _ProfileRoute.page,
+          path: '/profile',
+          guards: [
+            AutoRouteGuard.simple((resolver, _) {
+              if (resolver.isReevaluating) {
+                resolver.overrideNext(args: const _ProfileArgs(userId: 'guest'));
+              } else {
+                resolver.next();
+              }
+            }),
+          ],
+        ),
+        AutoRoute(page: _SettingsRoute.page, path: '/settings'),
+      ],
+    );
     await pumpRouterApp(tester, router, reevaluationNotifier: auth);
     router.push(_ProfileRoute(userId: 'u-1'));
     await tester.pumpAndSettle();
@@ -72,10 +74,7 @@ class _ProfileRoute extends PageRouteInfo<_ProfileArgs> {
   _ProfileRoute({required String userId}) : super(name, args: _ProfileArgs(userId: userId));
 
   static const String name = '_ProfileRoute';
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) => _ProfileView(userId: data.argsAs<_ProfileArgs>().userId),
-  );
+  static PageInfo page = PageInfo(name, builder: (data) => _ProfileView(userId: data.argsAs<_ProfileArgs>().userId));
 }
 
 var _profileStates = 0;

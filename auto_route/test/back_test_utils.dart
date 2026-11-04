@@ -36,10 +36,10 @@ Future<void> predictiveBack(WidgetTester tester) async {
   }
 
   Map<String, Object?> event(double x, double progress) => {
-        'touchOffset': [x, 300.0],
-        'progress': progress,
-        'swipeEdge': 0,
-      };
+    'touchOffset': [x, 300.0],
+    'progress': progress,
+    'swipeEdge': 0,
+  };
 
   await send('startBackGesture', event(5, 0));
   await tester.pump();

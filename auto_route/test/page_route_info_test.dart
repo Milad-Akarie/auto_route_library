@@ -9,9 +9,7 @@ void main() {
             rawPathParams: {'foo': 'baz'},
             rawQueryParams: {'foo': 'bar'},
             args: 'Args',
-            initialChildren: [
-              PageRouteInfo('sub'),
-            ],
+            initialChildren: [PageRouteInfo('sub')],
           ) ==
           const PageRouteInfo(
             'Name',
@@ -43,36 +41,22 @@ void main() {
 
   test("Calling PageRouteInfo.flattened should return list of flattened children", () {
     expect(
-        const PageRouteInfo(
+      const PageRouteInfo(
+        'Name',
+        initialChildren: [
+          PageRouteInfo('Sub1', initialChildren: [PageRouteInfo('Sub2')]),
+        ],
+      ).flattened,
+      const [
+        PageRouteInfo(
           'Name',
           initialChildren: [
-            PageRouteInfo(
-              'Sub1',
-              initialChildren: [
-                PageRouteInfo('Sub2'),
-              ],
-            ),
+            PageRouteInfo('Sub1', initialChildren: [PageRouteInfo('Sub2')]),
           ],
-        ).flattened,
-        const [
-          PageRouteInfo(
-            'Name',
-            initialChildren: [
-              PageRouteInfo(
-                'Sub1',
-                initialChildren: [
-                  PageRouteInfo('Sub2'),
-                ],
-              ),
-            ],
-          ),
-          PageRouteInfo(
-            'Sub1',
-            initialChildren: [
-              PageRouteInfo('Sub2'),
-            ],
-          ),
-          PageRouteInfo('Sub2'),
-        ]);
+        ),
+        PageRouteInfo('Sub1', initialChildren: [PageRouteInfo('Sub2')]),
+        PageRouteInfo('Sub2'),
+      ],
+    );
   });
 }

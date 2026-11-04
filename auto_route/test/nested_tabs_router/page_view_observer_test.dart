@@ -31,20 +31,22 @@ void main() {
   // didChangeTabRoute, so a bottom navigation bar built from it kept the old tab.
   // Should: each swipe fires didChangeTabRoute with the tab it left.
   testWidgets('Swiping AutoTabsRouter.pageView back to a lower tab fires didChangeTabRoute', (tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(
-        path: '/',
-        page: PageInfo(
-          'TabsRoute',
-          builder: (_) => AutoTabsRouter.pageView(routes: const [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')]),
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          page: PageInfo(
+            'TabsRoute',
+            builder: (_) => AutoTabsRouter.pageView(routes: const [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')]),
+          ),
+          children: [
+            AutoRoute(path: 'tab1', page: _tabPage('Tab1')),
+            AutoRoute(path: 'tab2', page: _tabPage('Tab2')),
+            AutoRoute(path: 'tab3', page: _tabPage('Tab3')),
+          ],
         ),
-        children: [
-          AutoRoute(path: 'tab1', page: _tabPage('Tab1')),
-          AutoRoute(path: 'tab2', page: _tabPage('Tab2')),
-          AutoRoute(path: 'tab3', page: _tabPage('Tab3')),
-        ],
-      ),
-    ]);
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [_TabsObserver()]));
     final tabsRouter = router.innerRouterOf<TabsRouter>('TabsRoute')!;
     _tabEvents.clear();

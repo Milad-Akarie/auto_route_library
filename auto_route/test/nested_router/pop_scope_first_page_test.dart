@@ -31,12 +31,16 @@ void main() {
       setUp(() {
         _popAttempts = 0;
         _nestedRouter = nestedRouter;
-        router = RootStackRouter.build(routes: [
-          AutoRoute(page: FirstRoute.page, path: '/'),
-          AutoRoute(page: _HostRoute.page, path: '/host', children: [
-            AutoRoute(page: _GuardedRoute.page, path: ''),
-          ]),
-        ]);
+        router = RootStackRouter.build(
+          routes: [
+            AutoRoute(page: FirstRoute.page, path: '/'),
+            AutoRoute(
+              page: _HostRoute.page,
+              path: '/host',
+              children: [AutoRoute(page: _GuardedRoute.page, path: '')],
+            ),
+          ],
+        );
       });
 
       Future<void> openHost(WidgetTester tester, {ThemeData? theme}) async {
@@ -86,13 +90,18 @@ void main() {
         'system back': systemBack,
         'the predictive back gesture': predictiveBack,
       }.entries) {
-        testWidgets('Flutter should tell Android it handles back after $name on a first page with a PopScope',
-            (tester) async {
-          router = RootStackRouter.build(routes: [
-            AutoRoute(page: _HostRoute.page, path: '/', children: [
-              AutoRoute(page: _GuardedRoute.page, path: ''),
-            ]),
-          ]);
+        testWidgets('Flutter should tell Android it handles back after $name on a first page with a PopScope', (
+          tester,
+        ) async {
+          router = RootStackRouter.build(
+            routes: [
+              AutoRoute(
+                page: _HostRoute.page,
+                path: '/',
+                children: [AutoRoute(page: _GuardedRoute.page, path: '')],
+              ),
+            ],
+          );
           final frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
           await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
           await tester.pumpAndSettle();

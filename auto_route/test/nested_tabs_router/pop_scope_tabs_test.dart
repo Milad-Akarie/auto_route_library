@@ -33,10 +33,14 @@ void main() {
     'on a page pushed into a stack inside a tab': (
       [
         AutoRoute(page: _tab('TabA'), path: 'a'),
-        AutoRoute(page: _stackTab, path: 'b', children: [
-          AutoRoute(page: _tab('StackPage1'), path: ''),
-          AutoRoute(page: _guarded('StackPage2'), path: 'two'),
-        ]),
+        AutoRoute(
+          page: _stackTab,
+          path: 'b',
+          children: [
+            AutoRoute(page: _tab('StackPage1'), path: ''),
+            AutoRoute(page: _guarded('StackPage2'), path: 'two'),
+          ],
+        ),
       ],
       scopeAroundTabs: false,
       pushInTab: true,
@@ -49,9 +53,9 @@ void main() {
       testWidgets('$name twice with a PopScope $where should keep the app open and the page', (tester) async {
         _popAttempts = 0;
         _scopeAroundTabs = scopeAroundTabs;
-        final router = RootStackRouter.build(routes: [
-          AutoRoute(page: _tabsScreen, path: '/', children: tabs),
-        ]);
+        final router = RootStackRouter.build(
+          routes: [AutoRoute(page: _tabsScreen, path: '/', children: tabs)],
+        );
         final frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
         await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
         await tester.pumpAndSettle();
@@ -82,17 +86,20 @@ var _popAttempts = 0;
 var _scopeAroundTabs = false;
 
 Widget _popScope(Widget child) => PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _popAttempts++;
-      },
-      child: child,
-    );
+  canPop: false,
+  onPopInvokedWithResult: (didPop, _) {
+    if (!didPop) _popAttempts++;
+  },
+  child: child,
+);
 
-final _tabsScreen = PageInfo('TabsScreenRoute', builder: (_) {
-  const tabs = AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')]);
-  return _scopeAroundTabs ? _popScope(tabs) : tabs;
-});
+final _tabsScreen = PageInfo(
+  'TabsScreenRoute',
+  builder: (_) {
+    const tabs = AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')]);
+    return _scopeAroundTabs ? _popScope(tabs) : tabs;
+  },
+);
 
 final _stackTab = PageInfo('TabB', builder: (_) => const AutoRouter());
 

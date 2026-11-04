@@ -4,7 +4,8 @@ import 'support/generate.dart';
 
 /// A page library named [name] whose constructor takes [parameters], each
 /// also declared as a field in [fields].
-String _page(String name, {String imports = '', required String parameters, required String fields}) => '''
+String _page(String name, {String imports = '', required String parameters, required String fields}) =>
+    '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 $imports
@@ -265,12 +266,16 @@ class Range {
           .replaceAll(RegExp(r',(?=[)}\]])'), '');
       expect(source, contains("ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()"));
       expect(
-          source, contains("prices:queryParams.optList('prices')?.map(double.tryParse).whereType<double>().toList()"));
+        source,
+        contains("prices:queryParams.optList('prices')?.map(double.tryParse).whereType<double>().toList()"),
+      );
       expect(source, contains("sizes:queryParams.optList('sizes')?.map(num.tryParse).whereType<num>().toList()"));
       expect(source, contains("flags:queryParams.optList('flags')?.map((text)=>text.toLowerCase()=='true'"));
       expect(source, contains("tags:queryParams.optList('tags')"));
-      expect(source,
-          contains("picked:queryParams.optList('picked')?.map(int.tryParse).whereType<int>().toList()??const[1,2]"));
+      expect(
+        source,
+        contains("picked:queryParams.optList('picked')?.map(int.tryParse).whereType<int>().toList()??const[1,2]"),
+      );
       expect(
         source,
         contains(

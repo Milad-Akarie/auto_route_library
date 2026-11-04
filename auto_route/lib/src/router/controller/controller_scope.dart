@@ -48,9 +48,11 @@ class RouterScope extends InheritedWidget {
     }
     assert(() {
       if (scope == null) {
-        throw FlutterError('RouterScope operation requested with a context that does not include a RouterScope.\n'
-            'The context used to retrieve the Router must be that of a widget that '
-            'is a descendant of a RouterScope widget.');
+        throw FlutterError(
+          'RouterScope operation requested with a context that does not include a RouterScope.\n'
+          'The context used to retrieve the Router must be that of a widget that '
+          'is a descendant of a RouterScope widget.',
+        );
       }
       return true;
     }());
@@ -79,7 +81,8 @@ class RouterScope extends InheritedWidget {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<RoutingController>('controller', controller));
     properties.add(
-        DiagnosticsProperty<NavigatorObserversBuilder>('inheritableObserversBuilder', inheritableObserversBuilder));
+      DiagnosticsProperty<NavigatorObserversBuilder>('inheritableObserversBuilder', inheritableObserversBuilder),
+    );
     properties.add(DiagnosticsProperty<int>('stateHash', stateHash));
   }
 }
@@ -97,12 +100,7 @@ class StackRouterScope extends InheritedWidget {
   final int stateHash;
 
   /// Default constructor
-  const StackRouterScope({
-    super.key,
-    required super.child,
-    required this.controller,
-    required this.stateHash,
-  });
+  const StackRouterScope({super.key, required super.child, required this.controller, required this.stateHash});
 
   /// Looks up and returns the scoped [controller]
   ///
@@ -143,12 +141,7 @@ class TabsRouterScope extends InheritedWidget {
   final int stateHash;
 
   /// Default constructor
-  const TabsRouterScope({
-    super.key,
-    required super.child,
-    required this.stateHash,
-    required this.controller,
-  });
+  const TabsRouterScope({super.key, required super.child, required this.stateHash, required this.controller});
 
   /// Looks up and returns the scoped [controller]
   ///

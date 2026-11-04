@@ -15,7 +15,7 @@ import 'package:flutter/widgets.dart';
 /// [Navigator.reportsRouteUpdateToEngine].
 class AutoRouteInformationProvider extends RouteInformationProvider with WidgetsBindingObserver, ChangeNotifier {
   AutoRouteInformationProvider._({required RouteInformation initialRouteInformation, this.neglectIf})
-      : _value = initialRouteInformation;
+    : _value = initialRouteInformation;
 
   /// if true is return the route will be
   /// reported to engine
@@ -25,22 +25,22 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   ///
   /// Use the [initialRouteInformation] to set the default route information for this
   /// provider.
-  factory AutoRouteInformationProvider(
-      {RouteInformation? initialRouteInformation, bool Function(String? location)? neglectWhen}) {
-    final initialRouteInfo = initialRouteInformation ??
-        RouteInformation(
-          uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
-        );
+  factory AutoRouteInformationProvider({
+    RouteInformation? initialRouteInformation,
+    bool Function(String? location)? neglectWhen,
+  }) {
+    final initialRouteInfo =
+        initialRouteInformation ??
+        RouteInformation(uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName));
 
-    return AutoRouteInformationProvider._(
-      initialRouteInformation: initialRouteInfo,
-      neglectIf: neglectWhen,
-    );
+    return AutoRouteInformationProvider._(initialRouteInformation: initialRouteInfo, neglectIf: neglectWhen);
   }
 
   @override
-  void routerReportsNewRouteInformation(RouteInformation routeInformation,
-      {RouteInformationReportingType type = RouteInformationReportingType.none}) {
+  void routerReportsNewRouteInformation(
+    RouteInformation routeInformation, {
+    RouteInformationReportingType type = RouteInformationReportingType.none,
+  }) {
     if (neglectIf != null && neglectIf!(routeInformation.uri.toString())) {
       return;
     }
@@ -56,7 +56,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
 
     // The routes saved for state restoration stay with the Router.
     final state = UrlState.platformState(routeInformation.state);
-    var replace = type == RouteInformationReportingType.neglect ||
+    var replace =
+        type == RouteInformationReportingType.neglect ||
         (type == RouteInformationReportingType.none &&
             _valueInEngine.uri == appRouteInformation.uri &&
             UrlState.platformState(_valueInEngine.state) == state);
@@ -65,11 +66,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
       replace = routeInformation.replace;
     }
     SystemNavigator.selectMultiEntryHistory();
-    SystemNavigator.routeInformationUpdated(
-      uri: reportedUri,
-      state: state,
-      replace: replace,
-    );
+    SystemNavigator.routeInformationUpdated(uri: reportedUri, state: state, replace: replace);
     _value = appRouteInformation;
     _valueInEngine = appRouteInformation;
   }
@@ -78,8 +75,9 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   RouteInformation get value => _value;
   RouteInformation _value;
 
-  RouteInformation _valueInEngine =
-      RouteInformation(uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName));
+  RouteInformation _valueInEngine = RouteInformation(
+    uri: Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName),
+  );
 
   void _platformReportsNewRouteInformation(RouteInformation routeInformation) {
     if (_value == routeInformation) return;

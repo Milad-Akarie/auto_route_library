@@ -10,11 +10,7 @@ class RouteDataScope extends InheritedWidget {
   final RouteData routeData;
 
   /// Default reconstruct
-  const RouteDataScope({
-    super.key,
-    required this.routeData,
-    required super.child,
-  });
+  const RouteDataScope({super.key, required this.routeData, required super.child});
 
   /// Looks up and returns the scoped [routeData]
   ///
@@ -23,9 +19,11 @@ class RouteDataScope extends InheritedWidget {
     var scope = context.findAncestorWidgetOfExactType<RouteDataScope>();
     assert(() {
       if (scope == null) {
-        throw FlutterError('RouteData operation requested with a context that does not include an RouteData.\n'
-            'The context used to retrieve the RouteData must be that of a widget that '
-            'is a descendant of a AutoRoutePage.');
+        throw FlutterError(
+          'RouteData operation requested with a context that does not include an RouteData.\n'
+          'The context used to retrieve the RouteData must be that of a widget that '
+          'is a descendant of a AutoRoutePage.',
+        );
       }
       return true;
     }());

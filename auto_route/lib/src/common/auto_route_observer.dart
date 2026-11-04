@@ -128,10 +128,7 @@ class AutoRouteObserver extends AutoRouterObserver {
       if (router is TabsRouter) {
         final previousIndex = router.previousIndex;
         if (previousIndex != null && previousIndex >= 0 && previousIndex < router.stackData.length) {
-          final previousRoute = TabPageRoute(
-            routeInfo: router.stackData[previousIndex].route,
-            index: previousIndex,
-          );
+          final previousRoute = TabPageRoute(routeInfo: router.stackData[previousIndex].route, index: previousIndex);
           routeAware.didInitTabRoute(previousRoute);
         } else {
           routeAware.didInitTabRoute(null);
@@ -276,10 +273,7 @@ class TabPageRoute {
   final int index;
 
   /// default constructor
-  const TabPageRoute({
-    required this.routeInfo,
-    required this.index,
-  });
+  const TabPageRoute({required this.routeInfo, required this.index});
 
   /// helper getter to access [RouteMatch.name]
   String get name => routeInfo.name;

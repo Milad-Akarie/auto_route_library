@@ -29,12 +29,7 @@ extension on RoutingController {
     }
     // A route pushed on top shares its query params and fragment with the
     // pages under it, which keep the ones they were opened with apart.
-    return _savedMatch(
-      data.route,
-      queryParams: data._ownQueryParams,
-      fragment: data._ownFragment,
-      children: children,
-    );
+    return _savedMatch(data.route, queryParams: data._ownQueryParams, fragment: data._ownFragment, children: children);
   }
 }
 
@@ -58,10 +53,10 @@ Map<String, Object?> _savedMatch(
 
 Map<String, Object?> _plainValues(Map<String, dynamic> values) {
   Object? plain(Object? value) => switch (value) {
-        null || String() || num() || bool() => value,
-        Iterable() => [for (final item in value) plain(item)],
-        _ => value.toString(),
-      };
+    null || String() || num() || bool() => value,
+    Iterable() => [for (final item in value) plain(item)],
+    _ => value.toString(),
+  };
   return {for (final entry in values.entries) entry.key: plain(entry.value)};
 }
 
@@ -84,13 +79,15 @@ List<PageRouteInfo>? _restoredRoutes(Object? saved) {
     }
     final restoredChildren = children == null ? null : _restoredRoutes(children);
     if (children != null && restoredChildren == null) return null;
-    routes.add(PageRouteInfo(
-      name,
-      rawPathParams: path == null ? const {} : Map<String, dynamic>.from(path as Map),
-      rawQueryParams: query == null ? const {} : Map<String, dynamic>.from(query as Map),
-      fragment: fragment as String?,
-      initialChildren: restoredChildren,
-    ));
+    routes.add(
+      PageRouteInfo(
+        name,
+        rawPathParams: path == null ? const {} : Map<String, dynamic>.from(path as Map),
+        rawQueryParams: query == null ? const {} : Map<String, dynamic>.from(query as Map),
+        fragment: fragment as String?,
+        initialChildren: restoredChildren,
+      ),
+    );
   }
   return routes;
 }

@@ -18,28 +18,22 @@ const _typeChecker = TypeChecker.typeNamed(RoutePage, inPackage: 'auto_route');
 /// Default location of the routes cache file
 final routesCacheFile = File('.dart_tool/build/cache/auto_routes_cache.json');
 
-final _cacheResource = Resource<Map<String, RoutesList>>(
-  () async {
-    final cachedRes = <String, RoutesList>{};
-    final jsonRes = jsonDecode(await routesCacheFile.readAsString());
-    for (final json in jsonRes as List<dynamic>) {
-      final generated = RoutesList.fromJson(json);
-      cachedRes[generated.inputPath] = generated;
-    }
+final _cacheResource = Resource<Map<String, RoutesList>>(() async {
+  final cachedRes = <String, RoutesList>{};
+  final jsonRes = jsonDecode(await routesCacheFile.readAsString());
+  for (final json in jsonRes as List<dynamic>) {
+    final generated = RoutesList.fromJson(json);
+    cachedRes[generated.inputPath] = generated;
+  }
 
-    return cachedRes;
-  },
-);
+  return cachedRes;
+});
 
 /// A [Builder] which generates json route files for annotated pages
 class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   /// Default constructor
   AutoRouteBuilder({super.options})
-      : super(
-          generatedExtension: '.route.json',
-          allowSyntaxErrors: true,
-          annotationName: 'RoutePage',
-        );
+    : super(generatedExtension: '.route.json', allowSyntaxErrors: true, annotationName: 'RoutePage');
 
   @override
   bool get cacheEnabled => options?.config['enable_cached_builds'] == true;
@@ -86,18 +80,9 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
     final routeResolver = RouteConfigResolver(TypeResolver(await buildStep.resolver.libraries.toList()));
     final routes = <RouteConfig>[];
     for (var annotatedElement in library.annotatedWith(_typeChecker)) {
-      final route = routeResolver.resolve(
-        annotatedElement.element,
-        annotatedElement.annotation,
-      );
+      final route = routeResolver.resolve(annotatedElement.element, annotatedElement.annotation);
       routes.add(route);
     }
-    return routes.isEmpty
-        ? null
-        : RoutesList(
-            routes: routes,
-            inputPath: buildStep.inputId.path,
-            inputHash: stepHash,
-          );
+    return routes.isEmpty ? null : RoutesList(routes: routes, inputPath: buildStep.inputId.path, inputHash: stepHash);
   }
 }

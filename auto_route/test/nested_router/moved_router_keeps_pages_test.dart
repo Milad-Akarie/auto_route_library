@@ -23,22 +23,29 @@ void main() {
     late int guardChecks;
     setUp(() {
       guardChecks = 0;
-      router = RootStackRouter.build(routes: [
-        AutoRoute(initial: true, path: '/mail', page: _mailPage, children: [
-          AutoRoute(initial: true, path: '', page: _inboxPage),
-          AutoRoute(path: ':id', page: _messagePage),
+      router = RootStackRouter.build(
+        routes: [
           AutoRoute(
-            path: 'drafts/:id',
-            page: _draftPage,
-            guards: [
-              AutoRouteGuard.simple((resolver, _) {
-                guardChecks++;
-                resolver.next();
-              }),
+            initial: true,
+            path: '/mail',
+            page: _mailPage,
+            children: [
+              AutoRoute(initial: true, path: '', page: _inboxPage),
+              AutoRoute(path: ':id', page: _messagePage),
+              AutoRoute(
+                path: 'drafts/:id',
+                page: _draftPage,
+                guards: [
+                  AutoRouteGuard.simple((resolver, _) {
+                    guardChecks++;
+                    resolver.next();
+                  }),
+                ],
+              ),
             ],
           ),
-        ]),
-      ]);
+        ],
+      );
     });
 
     // Steps: on a wide window, open message 2 beside the list; make the
@@ -96,12 +103,19 @@ void main() {
   // This already worked; it guards the tabs router against the change above.
   group('a nested tabs router moved in the tree', () {
     setUp(() {
-      router = RootStackRouter.build(routes: [
-        AutoRoute(initial: true, path: '/home', page: _homePage, children: [
-          AutoRoute(initial: true, path: 'feed', page: _tabPage('Feed')),
-          AutoRoute(path: 'profile', page: _tabPage('Profile')),
-        ]),
-      ]);
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            initial: true,
+            path: '/home',
+            page: _homePage,
+            children: [
+              AutoRoute(initial: true, path: 'feed', page: _tabPage('Feed')),
+              AutoRoute(path: 'profile', page: _tabPage('Profile')),
+            ],
+          ),
+        ],
+      );
     });
 
     // Steps: on a wide window, open the profile tab; make the window narrow.
@@ -144,10 +158,12 @@ class _MailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!_isWide(context)) return const AutoRouter();
-    return const Row(children: [
-      SizedBox(width: 200, child: _MessageList()),
-      Expanded(child: AutoRouter()),
-    ]);
+    return const Row(
+      children: [
+        SizedBox(width: 200, child: _MessageList()),
+        Expanded(child: AutoRouter()),
+      ],
+    );
   }
 }
 
@@ -165,13 +181,12 @@ class _MessageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      for (final id in ['1', '2'])
-        TextButton(
-          onPressed: () => context.router.navigatePath('/mail/$id'),
-          child: Text('Message $id'),
-        ),
-    ]);
+    return Column(
+      children: [
+        for (final id in ['1', '2'])
+          TextButton(onPressed: () => context.router.navigatePath('/mail/$id'), child: Text('Message $id')),
+      ],
+    );
   }
 }
 
@@ -181,15 +196,21 @@ class _HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = AutoTabsRouter(
-      builder: (context, child) => Column(children: [
-        TextButton(
-          onPressed: () => context.tabsRouter.setActiveIndex(1),
-          child: const Text('Open profile'),
-        ),
-        Expanded(child: child),
-      ]),
+      builder: (context, child) => Column(
+        children: [
+          TextButton(onPressed: () => context.tabsRouter.setActiveIndex(1), child: const Text('Open profile')),
+          Expanded(child: child),
+        ],
+      ),
     );
     if (!_isWide(context)) return Scaffold(body: tabs);
-    return Scaffold(body: Row(children: [const SizedBox(width: 200), Expanded(child: tabs)]));
+    return Scaffold(
+      body: Row(
+        children: [
+          const SizedBox(width: 200),
+          Expanded(child: tabs),
+        ],
+      ),
+    );
   }
 }

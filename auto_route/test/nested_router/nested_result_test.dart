@@ -7,17 +7,17 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(path: '/other', page: _OtherRoute.page),
-      AutoRoute(
-        path: '/home',
-        page: _HomeRoute.page,
-        initial: true,
-        children: [
-          AutoRoute(path: 'content/:index', page: _ContentRoute.page),
-        ],
-      ),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(path: '/other', page: _OtherRoute.page),
+        AutoRoute(
+          path: '/home',
+          page: _HomeRoute.page,
+          initial: true,
+          children: [AutoRoute(path: 'content/:index', page: _ContentRoute.page)],
+        ),
+      ],
+    );
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1732
@@ -121,7 +121,14 @@ class _HomeRoute extends PageRouteInfo<void> {
   static const String name = 'HomeRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (_) => const Scaffold(body: Column(children: [Text('Home'), Expanded(child: AutoRouter())])),
+    builder: (_) => const Scaffold(
+      body: Column(
+        children: [
+          Text('Home'),
+          Expanded(child: AutoRouter()),
+        ],
+      ),
+    ),
   );
 }
 
@@ -134,10 +141,7 @@ class _ContentRoute extends PageRouteInfo<void> {
     builder: (data) => Builder(
       builder: (context) => Scaffold(
         appBar: AppBar(
-          leading: GestureDetector(
-            child: const Icon(Icons.arrow_back),
-            onTap: () => context.router.pop<bool>(true),
-          ),
+          leading: GestureDetector(child: const Icon(Icons.arrow_back), onTap: () => context.router.pop<bool>(true)),
         ),
         body: Text('Content ${data.inheritedPathParams.getString('index')}'),
       ),

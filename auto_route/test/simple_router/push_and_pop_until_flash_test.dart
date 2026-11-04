@@ -16,12 +16,14 @@ void main() {
 
   setUp(() {
     observed = [];
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _page('Home'), initial: true),
-      AutoRoute(page: _page('B')),
-      AutoRoute(page: _page('C')),
-      AutoRoute(page: _page('D')),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _page('Home'), initial: true),
+        AutoRoute(page: _page('B')),
+        AutoRoute(page: _page('C')),
+        AutoRoute(page: _page('D')),
+      ],
+    );
   });
 
   Future<void> openHomeBC(WidgetTester tester, List<Future<Object?>> pushed) async {
@@ -120,7 +122,10 @@ void main() {
   });
 }
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(appBar: AppBar(), body: Text(name)));
+PageInfo _page(String name) => PageInfo(
+  name,
+  builder: (_) => Scaffold(appBar: AppBar(), body: Text(name)),
+);
 
 class _NamesObserver extends NavigatorObserver {
   _NamesObserver(this.events);

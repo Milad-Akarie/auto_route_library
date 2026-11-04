@@ -161,11 +161,7 @@ class PageRouteInfo<T extends Object?> {
       redirectedFrom: match.redirectedFrom,
       stringMatch: match.stringMatch,
       args: match.args,
-      initialChildren: match.children
-          ?.map(
-            (m) => PageRouteInfo.fromMatch(m),
-          )
-          .toList(),
+      initialChildren: match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList(),
     );
   }
 
@@ -186,12 +182,14 @@ class PageRouteInfo<T extends Object?> {
   }
 
   /// Creates a new instance of a named route
-  const factory PageRouteInfo.named(String name,
-      {List<PageRouteInfo>? children,
-      T? args,
-      Map<String, dynamic> params,
-      Map<String, dynamic> queryParams,
-      String? fragment}) = NamedRoute<T>;
+  const factory PageRouteInfo.named(
+    String name, {
+    List<PageRouteInfo>? children,
+    T? args,
+    Map<String, dynamic> params,
+    Map<String, dynamic> queryParams,
+    String? fragment,
+  }) = NamedRoute<T>;
 
   @override
   bool operator ==(Object other) =>
@@ -241,9 +239,5 @@ class NamedRoute<A extends Object?> extends PageRouteInfo<A> {
     Map<String, dynamic> params = const {},
     Map<String, dynamic> queryParams = const {},
     super.fragment,
-  }) : super(
-          initialChildren: children,
-          rawPathParams: params,
-          rawQueryParams: queryParams,
-        );
+  }) : super(initialChildren: children, rawPathParams: params, rawQueryParams: queryParams);
 }

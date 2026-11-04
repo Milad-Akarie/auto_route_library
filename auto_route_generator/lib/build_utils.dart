@@ -11,10 +11,7 @@ void throwIf(bool condition, String message, {Element? element}) {
 
 /// Helper to through flutter errors
 void throwError(String message, {Element? element}) {
-  throw InvalidGenerationSourceError(
-    message,
-    element: element,
-  );
+  throw InvalidGenerationSourceError(message, element: element);
 }
 
 /// Extension helpers for [DartType]

@@ -7,14 +7,19 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _SplashRoute.page, initial: true),
-      AutoRoute(page: _AppRouterRoute.page, children: [
-        AutoRoute(page: _HomeRoute.page, initial: true),
-        AutoRoute(page: _OtherRoute.page),
-        AutoRoute(page: _TestRoute.page),
-      ]),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _SplashRoute.page, initial: true),
+        AutoRoute(
+          page: _AppRouterRoute.page,
+          children: [
+            AutoRoute(page: _HomeRoute.page, initial: true),
+            AutoRoute(page: _OtherRoute.page),
+            AutoRoute(page: _TestRoute.page),
+          ],
+        ),
+      ],
+    );
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1948

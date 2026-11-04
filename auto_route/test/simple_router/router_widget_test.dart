@@ -42,13 +42,11 @@ void main() {
     expect(router.urlState.url, '/');
   });
 
-  testWidgets('Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show [ThirdPage]',
-      (WidgetTester tester) async {
+  testWidgets('Pushing ${SecondRoute.name} and ${ThirdRoute.name} should show [ThirdPage]', (
+    WidgetTester tester,
+  ) async {
     await pumpRouterApp(tester, router);
-    router.pushAll([
-      const SecondRoute(),
-      const ThirdRoute(),
-    ]);
+    router.pushAll([const SecondRoute(), const ThirdRoute()]);
     await tester.pumpAndSettle();
     expectCurrentPage(router, ThirdRoute.name);
     expect(router.urlState.url, '/third-route');
@@ -106,19 +104,21 @@ void main() {
 
   testWidgets('Removing a login flow should resume a guard awaiting its push future', (tester) async {
     var guardResumed = false;
-    final guardedRouter = RootStackRouter.build(routes: [
-      AutoRoute(page: FirstRoute.page, initial: true),
-      AutoRoute(page: SecondRoute.page),
-      AutoRoute(page: ThirdRoute.page),
-      AutoRoute.guarded(
-        page: FourthRoute.page,
-        onNavigation: (resolver, router) async {
-          await router.push(const SecondRoute());
-          guardResumed = true;
-          resolver.next();
-        },
-      ),
-    ]);
+    final guardedRouter = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: FirstRoute.page, initial: true),
+        AutoRoute(page: SecondRoute.page),
+        AutoRoute(page: ThirdRoute.page),
+        AutoRoute.guarded(
+          page: FourthRoute.page,
+          onNavigation: (resolver, router) async {
+            await router.push(const SecondRoute());
+            guardResumed = true;
+            resolver.next();
+          },
+        ),
+      ],
+    );
     await pumpRouterApp(tester, guardedRouter);
     guardedRouter.push(const FourthRoute());
     await tester.pumpAndSettle();
@@ -138,8 +138,9 @@ void main() {
   // page C; page C is popped, which returns to page A.
   // Happens: the future returned by A's push() never completes.
   // Should happen: it completes when C is popped, as it did in 10.0.1.
-  testWidgets('Popping a route that replaced the pushed route should complete the original push future',
-      (tester) async {
+  testWidgets('Popping a route that replaced the pushed route should complete the original push future', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     var completed = false;
     router.push<String>(const SecondRoute()).then((_) => completed = true);
@@ -160,28 +161,21 @@ void main() {
   // Steps: await router.navigate(SecondRoute()), then pop SecondPage with a result.
   // Happens: the navigate() future completes right away with null, before the page is popped.
   // Should: it completes only when the page is popped, with the popped result, as push() does.
-  testWidgets(
-    'navigate() should complete with the result the opened page is popped with',
-    (WidgetTester tester) async {
-      await pumpRouterApp(tester, router);
-      var completed = false;
-      Object? result;
-      router.navigate(const SecondRoute()).then((value) {
-        completed = true;
-        result = value;
-      });
-      await tester.pumpAndSettle();
-      expectCurrentPage(router, SecondRoute.name);
-      expect(
-        completed,
-        isFalse,
-        reason: 'navigate() completed before the page was popped',
-      );
+  testWidgets('navigate() should complete with the result the opened page is popped with', (WidgetTester tester) async {
+    await pumpRouterApp(tester, router);
+    var completed = false;
+    Object? result;
+    router.navigate(const SecondRoute()).then((value) {
+      completed = true;
+      result = value;
+    });
+    await tester.pumpAndSettle();
+    expectCurrentPage(router, SecondRoute.name);
+    expect(completed, isFalse, reason: 'navigate() completed before the page was popped');
 
-      router.pop('done');
-      await tester.pumpAndSettle();
-      expect(completed, isTrue);
-      expect(result, 'done');
-    },
-  );
+    router.pop('done');
+    await tester.pumpAndSettle();
+    expect(completed, isTrue);
+    expect(result, 'done');
+  });
 }

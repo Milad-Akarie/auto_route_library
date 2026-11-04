@@ -72,9 +72,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// Forces a url update
   static void reportUrlChanged(BuildContext context, String url) {
     Router.of(context).routeInformationProvider?.routerReportsNewRouteInformation(
-          RouteInformation(uri: Uri.parse(url)),
-          type: RouteInformationReportingType.navigate,
-        );
+      RouteInformation(uri: Uri.parse(url)),
+      type: RouteInformationReportingType.navigate,
+    );
   }
 
   @override
@@ -161,15 +161,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return controller.navigateAll(deepLink.matches);
     } else if (deepLink is _PathDeepLink) {
       if (deepLink.navigate) {
-        return controller.navigatePath(
-          deepLink.path,
-          includePrefixMatches: deepLink.includePrefixMatches,
-        );
+        return controller.navigatePath(deepLink.path, includePrefixMatches: deepLink.includePrefixMatches);
       } else {
-        return controller.pushPath(
-          deepLink.path,
-          includePrefixMatches: deepLink.includePrefixMatches,
-        );
+        return controller.pushPath(deepLink.path, includePrefixMatches: deepLink.includePrefixMatches);
       }
     } else if (deepLink is _RoutesDeepLink) {
       if (deepLink.navigate) {
@@ -282,14 +276,14 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   Widget build(BuildContext context) => _AutoRootRouter(
-        router: controller,
-        navigatorObservers: _navigatorObservers,
-        navigatorObserversBuilder: navigatorObservers,
-        navRestorationScopeId: navRestorationScopeId,
-        placeholder: placeholder,
-        clipBehavior: clipBehavior,
-        routeTraversalEdgeBehavior: routeTraversalEdgeBehavior,
-      );
+    router: controller,
+    navigatorObservers: _navigatorObservers,
+    navigatorObserversBuilder: navigatorObservers,
+    navRestorationScopeId: navRestorationScopeId,
+    placeholder: placeholder,
+    clipBehavior: clipBehavior,
+    routeTraversalEdgeBehavior: routeTraversalEdgeBehavior,
+  );
 
   void _handleRebuild() {
     final context = controller.navigatorKey.currentContext;
@@ -513,9 +507,7 @@ abstract class DeepLink {
       if (!uri.path.startsWith(prefix)) {
         return SynchronousFuture(uri); // No change if prefix not found
       }
-      return SynchronousFuture(
-        Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri,
-      );
+      return SynchronousFuture(Uri.tryParse(uri.toString().replaceFirst(prefix, '')) ?? uri);
     };
   }
 }
@@ -527,11 +519,7 @@ class _PathDeepLink extends DeepLink {
   /// if false the path will be pushed instead of navigated
   final bool navigate;
 
-  const _PathDeepLink(
-    this.path, {
-    this.includePrefixMatches = true,
-    this.navigate = true,
-  }) : super._();
+  const _PathDeepLink(this.path, {this.includePrefixMatches = true, this.navigate = true}) : super._();
 
   @override
   bool get isValid => path.isNotEmpty;
@@ -543,10 +531,7 @@ class _RoutesDeepLink extends DeepLink {
   /// if false the routes will be pushed instead of navigated
   final bool navigate;
 
-  const _RoutesDeepLink(
-    this.routes, {
-    this.navigate = true,
-  }) : super._();
+  const _RoutesDeepLink(this.routes, {this.navigate = true}) : super._();
 
   @override
   bool get isValid => routes.isNotEmpty;

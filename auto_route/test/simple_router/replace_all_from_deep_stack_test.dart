@@ -7,12 +7,14 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _page('MenuRoute'), initial: true),
-      AutoRoute(page: _page('RecordRoute')),
-      AutoRoute(page: _page('FormRoute')),
-      AutoRoute(page: _page('LoginRoute')),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _page('MenuRoute'), initial: true),
+        AutoRoute(page: _page('RecordRoute')),
+        AutoRoute(page: _page('FormRoute')),
+        AutoRoute(page: _page('LoginRoute')),
+      ],
+    );
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2008
@@ -42,4 +44,7 @@ void main() {
   }
 }
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(appBar: AppBar(), body: Text(name)));
+PageInfo _page(String name) => PageInfo(
+  name,
+  builder: (_) => Scaffold(appBar: AppBar(), body: Text(name)),
+);

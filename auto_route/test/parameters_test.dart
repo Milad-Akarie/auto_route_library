@@ -92,12 +92,14 @@ void main() {
     expect(() => params.getBool('key'), throwsFlutterError);
   });
 
-  test('Calling Parameters.optBool on a true-string value should return a <bool> and null on a none existing value',
-      () {
-    const params = Parameters({'key': 'true'});
-    expect(params.optBool('key'), isA<bool>());
-    expect(params.optBool('key2'), null);
-  });
+  test(
+    'Calling Parameters.optBool on a true-string value should return a <bool> and null on a none existing value',
+    () {
+      const params = Parameters({'key': 'true'});
+      expect(params.optBool('key'), isA<bool>());
+      expect(params.optBool('key2'), null);
+    },
+  );
 
   test('Calling Parameters.getBool on "false" or "False" string value should return false', () {
     const params = Parameters({'key': 'false', 'key2': 'False'});
@@ -107,7 +109,7 @@ void main() {
 
   test('Calling Parameters.getList on a list value should return a <List>', () {
     const params = Parameters({
-      'key': ['1', '2']
+      'key': ['1', '2'],
     });
     expect(params.getList('key'), isA<List>());
     expect(params.optList('key2'), null);

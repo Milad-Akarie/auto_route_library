@@ -17,24 +17,27 @@ void main() {
   // before the pop and pushed the dialog back once its guard called next().
   // A page popped while guards are reevaluated must stay closed.
   for (final guardDelay in [Duration.zero, const Duration(milliseconds: 50)]) {
-    testWidgets('A dialog popped right after a reevaluation starts stays closed, guard delay $guardDelay (#1643)',
-        (tester) async {
+    testWidgets('A dialog popped right after a reevaluation starts stays closed, guard delay $guardDelay (#1643)', (
+      tester,
+    ) async {
       final user = ValueNotifier(0);
-      final router = RootStackRouter.build(routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => _page('HomeRoute')),
-        NamedRouteDef(
-          name: 'DialogRoute',
-          path: '/dialog',
-          type: RouteType.custom(opaque: false, barrierDismissible: true),
-          guards: [
-            AutoRouteGuard.simple((resolver, _) async {
-              if (guardDelay > Duration.zero) await Future<void>.delayed(guardDelay);
-              resolver.next();
-            }),
-          ],
-          builder: (_, __) => _page('DialogRoute'),
-        ),
-      ]);
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => _page('HomeRoute')),
+          NamedRouteDef(
+            name: 'DialogRoute',
+            path: '/dialog',
+            type: RouteType.custom(opaque: false, barrierDismissible: true),
+            guards: [
+              AutoRouteGuard.simple((resolver, _) async {
+                if (guardDelay > Duration.zero) await Future<void>.delayed(guardDelay);
+                resolver.next();
+              }),
+            ],
+            builder: (_, __) => _page('DialogRoute'),
+          ),
+        ],
+      );
       await pumpRouterApp(tester, router, reevaluationNotifier: user);
       router.push(const NamedRoute('DialogRoute'));
       await tester.pumpAndSettle();
@@ -58,22 +61,24 @@ void main() {
   testWidgets('A dialog popped while its guard is reevaluated stays closed (#1643)', (tester) async {
     final user = ValueNotifier(0);
     var guardRuns = 0;
-    final router = RootStackRouter.build(routes: [
-      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => _page('HomeRoute')),
-      NamedRouteDef(
-        name: 'DialogRoute',
-        path: '/dialog',
-        type: RouteType.custom(opaque: false, barrierDismissible: true),
-        guards: [
-          AutoRouteGuard.simple((resolver, _) async {
-            // The first run opens the dialog; the reevaluation's run waits.
-            if (guardRuns++ > 0) await Future<void>.delayed(const Duration(milliseconds: 50));
-            resolver.next();
-          }),
-        ],
-        builder: (_, __) => _page('DialogRoute'),
-      ),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => _page('HomeRoute')),
+        NamedRouteDef(
+          name: 'DialogRoute',
+          path: '/dialog',
+          type: RouteType.custom(opaque: false, barrierDismissible: true),
+          guards: [
+            AutoRouteGuard.simple((resolver, _) async {
+              // The first run opens the dialog; the reevaluation's run waits.
+              if (guardRuns++ > 0) await Future<void>.delayed(const Duration(milliseconds: 50));
+              resolver.next();
+            }),
+          ],
+          builder: (_, __) => _page('DialogRoute'),
+        ),
+      ],
+    );
     await pumpRouterApp(tester, router, reevaluationNotifier: user);
     router.push(const NamedRoute('DialogRoute'));
     await tester.pumpAndSettle();
@@ -102,27 +107,29 @@ void main() {
     final settings = StreamController<bool>.broadcast();
     addTearDown(settings.close);
     late final RootStackRouter router;
-    router = RootStackRouter.build(routes: [
-      NamedRouteDef(
-        name: 'HomeRoute',
-        path: '/',
-        guards: [
-          AutoRouteGuard.simple((resolver, router) {
-            resolver.next();
-            if (isAppGuarded && !router.isRouteActive('AppGuardRoute')) {
-              router.push(const NamedRoute('AppGuardRoute'));
-            }
-          }),
-        ],
-        builder: (_, __) => _page('HomeRoute'),
-      ),
-      NamedRouteDef(
-        name: 'AppGuardRoute',
-        path: '/locked',
-        type: RouteType.custom(opaque: false),
-        builder: (_, __) => _page('AppGuardRoute'),
-      ),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        NamedRouteDef(
+          name: 'HomeRoute',
+          path: '/',
+          guards: [
+            AutoRouteGuard.simple((resolver, router) {
+              resolver.next();
+              if (isAppGuarded && !router.isRouteActive('AppGuardRoute')) {
+                router.push(const NamedRoute('AppGuardRoute'));
+              }
+            }),
+          ],
+          builder: (_, __) => _page('HomeRoute'),
+        ),
+        NamedRouteDef(
+          name: 'AppGuardRoute',
+          path: '/locked',
+          type: RouteType.custom(opaque: false),
+          builder: (_, __) => _page('AppGuardRoute'),
+        ),
+      ],
+    );
     await pumpRouterApp(tester, router, reevaluationNotifier: ReevaluateListenable.stream(settings.stream));
     isAppGuarded = true;
     settings.add(true);

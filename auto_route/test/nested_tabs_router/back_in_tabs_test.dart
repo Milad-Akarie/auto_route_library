@@ -22,18 +22,32 @@ import '../back_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _homePage, path: '/', children: [
-        AutoRoute(page: const EmptyShellRoute('BooksTab'), path: 'books', children: [
-          AutoRoute(page: _page('BookListRoute'), path: ''),
-          AutoRoute(page: _page('BookDetailsRoute'), path: ':id'),
-        ]),
-        AutoRoute(page: const EmptyShellRoute('ProfileTab'), path: 'profile', children: [
-          AutoRoute(page: _page('ProfileRoute'), path: ''),
-          AutoRoute(page: _page('MyBooksRoute'), path: 'my-books'),
-        ]),
-      ]),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _homePage,
+          path: '/',
+          children: [
+            AutoRoute(
+              page: const EmptyShellRoute('BooksTab'),
+              path: 'books',
+              children: [
+                AutoRoute(page: _page('BookListRoute'), path: ''),
+                AutoRoute(page: _page('BookDetailsRoute'), path: ':id'),
+              ],
+            ),
+            AutoRoute(
+              page: const EmptyShellRoute('ProfileTab'),
+              path: 'profile',
+              children: [
+                AutoRoute(page: _page('ProfileRoute'), path: ''),
+                AutoRoute(page: _page('MyBooksRoute'), path: 'my-books'),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
   });
 
   late FrameworkHandlesBackRecorder frameworkHandlesBack;
@@ -56,8 +70,8 @@ void main() {
   }
 
   List<String?> stackOf(TabsRouter tabs, int index) => [
-        for (final page in tabs.stackRouterOfIndex(index)!.stack) page.name,
-      ];
+    for (final page in tabs.stackRouterOfIndex(index)!.stack) page.name,
+  ];
 
   // Android only: on web Flutter never tells the platform whether it handles back.
   for (final MapEntry(key: name, value: back) in {

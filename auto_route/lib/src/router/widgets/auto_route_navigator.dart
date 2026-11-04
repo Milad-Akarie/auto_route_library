@@ -174,10 +174,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
               }
             },
           )
-        : widget.placeholder?.call(context) ??
-            Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
-            );
+        : widget.placeholder?.call(context) ?? Container(color: Theme.of(context).scaffoldBackgroundColor);
   }
 
   @override

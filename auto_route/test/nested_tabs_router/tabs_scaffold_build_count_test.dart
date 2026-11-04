@@ -12,12 +12,19 @@ void main() {
   // Should: it runs once to open the page, and once per tab change.
   testWidgets('AutoTabsScaffold builds its bottom navigation once when it opens', (WidgetTester tester) async {
     _bottomNavigationBuilds = 0;
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _NavigationRoute.page, path: '/', initial: true, children: [
-        AutoRoute(page: _UsersRoute.page, path: 'users'),
-        AutoRoute(page: _PostsRoute.page, path: 'posts'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _NavigationRoute.page,
+          path: '/',
+          initial: true,
+          children: [
+            AutoRoute(page: _UsersRoute.page, path: 'users'),
+            AutoRoute(page: _PostsRoute.page, path: 'posts'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     expect(find.text(_UsersRoute.name), findsOneWidget);
     expect(_bottomNavigationBuilds, 1);

@@ -50,5 +50,9 @@ void main() {
   }
 }
 
-PageInfo _page(String name) =>
-    PageInfo(name, builder: (_) => Scaffold(body: Align(alignment: Alignment.topLeft, child: Text(name))));
+PageInfo _page(String name) => PageInfo(
+  name,
+  builder: (_) => Scaffold(
+    body: Align(alignment: Alignment.topLeft, child: Text(name)),
+  ),
+);

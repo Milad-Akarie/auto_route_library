@@ -7,7 +7,9 @@ import 'main_router.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [AutoRoute(page: FirstRoute.page, path: '/', initial: true)]);
+    router = RootStackRouter.build(
+      routes: [AutoRoute(page: FirstRoute.page, path: '/', initial: true)],
+    );
   });
 
   Future<UrlState> parse(String link) {
@@ -15,12 +17,12 @@ void main() {
   }
 
   Matcher unresolvedError(String link) => throwsA(
-        isA<FlutterError>().having(
-          (e) => e.message,
-          'message',
-          allOf(startsWith('Can not resolve initial route'), contains('"$link"'), contains("RedirectRoute(path: '*'")),
-        ),
-      );
+    isA<FlutterError>().having(
+      (e) => e.message,
+      'message',
+      allOf(startsWith('Can not resolve initial route'), contains('"$link"'), contains("RedirectRoute(path: '*'")),
+    ),
+  );
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2119
   // Open the app with a link no route matches, as another app can send on

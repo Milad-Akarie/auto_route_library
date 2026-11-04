@@ -65,19 +65,18 @@ class AutoRouter extends StatefulWidget {
     WidgetBuilder? placeholder,
     Clip clipBehavior = Clip.hardEdge,
     TraversalEdgeBehavior? traversalEdgeBehavior,
-  }) =>
-      _DeclarativeAutoRouter(
-        onPopRoute: onPopRoute,
-        navigatorKey: navigatorKey,
-        navRestorationScopeId: navRestorationScopeId,
-        navigatorObservers: navigatorObservers,
-        inheritNavigatorObservers: inheritNavigatorObservers,
-        onNavigate: onNavigate,
-        placeholder: placeholder,
-        routes: routes,
-        clipBehavior: clipBehavior,
-        traversalEdgeBehavior: traversalEdgeBehavior,
-      );
+  }) => _DeclarativeAutoRouter(
+    onPopRoute: onPopRoute,
+    navigatorKey: navigatorKey,
+    navRestorationScopeId: navRestorationScopeId,
+    navigatorObservers: navigatorObservers,
+    inheritNavigatorObservers: inheritNavigatorObservers,
+    onNavigate: onNavigate,
+    placeholder: placeholder,
+    routes: routes,
+    clipBehavior: clipBehavior,
+    traversalEdgeBehavior: traversalEdgeBehavior,
+  );
 
   @override
   State<AutoRouter> createState() => AutoRouterState();
@@ -92,9 +91,11 @@ class AutoRouter extends StatefulWidget {
     var scope = StackRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
-        throw FlutterError('AutoRouter operation requested with a context that does not include an AutoRouter.\n'
-            'The context used to retrieve the Router must be that of a widget that '
-            'is a descendant of an AutoRouter widget.');
+        throw FlutterError(
+          'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+          'The context used to retrieve the Router must be that of a widget that '
+          'is a descendant of an AutoRouter widget.',
+        );
       }
       return true;
     }());
@@ -139,9 +140,7 @@ class AutoRouterState extends State<AutoRouter> {
         matchId: parentRouteData.matchId,
         routeData: parentRouteData,
         navigatorKey: widget.navigatorKey,
-        routeCollection: _parentController.routeCollection.subCollectionOf(
-          parentRouteData.name,
-        ),
+        routeCollection: _parentController.routeCollection.subCollectionOf(parentRouteData.name),
       );
       _parentController.attachChildController(_controller!);
       _controller!.addListener(_rebuildListener);
@@ -187,11 +186,7 @@ class AutoRouterState extends State<AutoRouter> {
       child: StackRouterScope(
         controller: _controller!,
         stateHash: stateHash,
-        child: widget.builder == null
-            ? navigator
-            : Builder(
-                builder: (ctx) => widget.builder!(ctx, navigator),
-              ),
+        child: widget.builder == null ? navigator : Builder(builder: (ctx) => widget.builder!(ctx, navigator)),
       ),
     );
   }
@@ -276,9 +271,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
         managedByWidget: true,
         onNavigate: widget.onNavigate,
         navigatorKey: widget.navigatorKey,
-        routeCollection: _parentController.routeCollection.subCollectionOf(
-          parentData.name,
-        ),
+        routeCollection: _parentController.routeCollection.subCollectionOf(parentData.name),
       );
       _parentController.attachChildController(_controller!);
     }

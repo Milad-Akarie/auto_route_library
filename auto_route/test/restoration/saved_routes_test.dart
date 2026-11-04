@@ -12,21 +12,35 @@ void main() {
   late RootStackRouter router;
   late List<Object?> platformStates;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(path: '/', page: _page('HomeRoute'), initial: true),
-      AutoRoute(path: '/books/:id', page: _page('BookRoute')),
-      AutoRoute(path: '/shelf', page: const EmptyShellRoute('ShelfRoute'), children: [
-        AutoRoute(path: '', page: _page('ShelfListRoute')),
-        AutoRoute(path: 'item', page: _page('ShelfItemRoute')),
-      ]),
-      AutoRoute(path: '/tabs', page: _tabsPage, children: [
-        AutoRoute(path: 'feed', page: const EmptyShellRoute('FeedTabRoute'), children: [
-          AutoRoute(path: '', page: _page('FeedRoute')),
-          AutoRoute(path: 'post', page: _page('PostRoute')),
-        ]),
-        AutoRoute(path: 'settings', page: _page('SettingsTabRoute')),
-      ]),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(path: '/', page: _page('HomeRoute'), initial: true),
+        AutoRoute(path: '/books/:id', page: _page('BookRoute')),
+        AutoRoute(
+          path: '/shelf',
+          page: const EmptyShellRoute('ShelfRoute'),
+          children: [
+            AutoRoute(path: '', page: _page('ShelfListRoute')),
+            AutoRoute(path: 'item', page: _page('ShelfItemRoute')),
+          ],
+        ),
+        AutoRoute(
+          path: '/tabs',
+          page: _tabsPage,
+          children: [
+            AutoRoute(
+              path: 'feed',
+              page: const EmptyShellRoute('FeedTabRoute'),
+              children: [
+                AutoRoute(path: '', page: _page('FeedRoute')),
+                AutoRoute(path: 'post', page: _page('PostRoute')),
+              ],
+            ),
+            AutoRoute(path: 'settings', page: _page('SettingsTabRoute')),
+          ],
+        ),
+      ],
+    );
   });
 
   Future<void> pumpApp(WidgetTester tester) async {

@@ -58,9 +58,11 @@ void main() {
   // Should: B hears both, since it is the page covered and shown again.
   testWidgets('A page in a nested router hears a root route cover and uncover its host', (tester) async {
     final router = await _pumpApp(tester, [
-      AutoRoute(path: '/', page: _stackHost('A'), children: [
-        AutoRoute(path: '', page: _awarePage('B')),
-      ]),
+      AutoRoute(
+        path: '/',
+        page: _stackHost('A'),
+        children: [AutoRoute(path: '', page: _awarePage('B'))],
+      ),
       AutoRoute(path: '/c', page: _awarePage('C')),
     ]);
 
@@ -78,10 +80,14 @@ void main() {
   // shows inside the host, so only that one hears its host covered.
   testWidgets('A page covered inside its nested router is not told again when the host is covered', (tester) async {
     final router = await _pumpApp(tester, [
-      AutoRoute(path: '/', page: _stackHost('A'), children: [
-        AutoRoute(path: '', page: _awarePage('B1')),
-        AutoRoute(path: 'b2', page: _awarePage('B2')),
-      ]),
+      AutoRoute(
+        path: '/',
+        page: _stackHost('A'),
+        children: [
+          AutoRoute(path: '', page: _awarePage('B1')),
+          AutoRoute(path: 'b2', page: _awarePage('B2')),
+        ],
+      ),
       AutoRoute(path: '/c', page: _awarePage('C')),
     ]);
     router.innerRouterOf<StackRouter>('A')!.push(const _Route('B2'));
@@ -112,23 +118,24 @@ void main() {
     final router = await _pumpApp(tester, [
       AutoRoute(
         path: '/',
-        page: PageInfo('AppRoute',
-            builder: (_) => const AutoTabsRouter(routes: [_Route('Dashboard'), _Route('Settings')])),
+        page: PageInfo(
+          'AppRoute',
+          builder: (_) => const AutoTabsRouter(routes: [_Route('Dashboard'), _Route('Settings')]),
+        ),
         children: [
           AutoRoute(path: 'dashboard', page: _awarePage('Dashboard')),
-          AutoRoute(path: 'settings', page: _stackHost('Settings'), children: [
-            AutoRoute(path: '', page: _awarePage('Something')),
-          ]),
+          AutoRoute(
+            path: 'settings',
+            page: _stackHost('Settings'),
+            children: [AutoRoute(path: '', page: _awarePage('Something'))],
+          ),
         ],
       ),
       CustomRoute(
         path: '/bottom-sheet',
         page: PageInfo('BottomSheetRoute', builder: (_) => const Text('sheet')),
-        customRouteBuilder: <T>(context, child, page) => ModalBottomSheetRoute<T>(
-          settings: page,
-          isScrollControlled: true,
-          builder: (_) => child,
-        ),
+        customRouteBuilder: <T>(context, child, page) =>
+            ModalBottomSheetRoute<T>(settings: page, isScrollControlled: true, builder: (_) => child),
       ),
     ]);
     router.innerRouterOf<TabsRouter>('AppRoute')!.setActiveIndex(1);
@@ -158,9 +165,11 @@ void main() {
   testWidgets('A page in a nested router hears didPop when its host route is popped', (tester) async {
     final router = await _pumpApp(tester, [
       AutoRoute(path: '/', page: _awarePage('Home')),
-      AutoRoute(path: '/a', page: _stackHost('A'), children: [
-        AutoRoute(path: '', page: _awarePage('B')),
-      ]),
+      AutoRoute(
+        path: '/a',
+        page: _stackHost('A'),
+        children: [AutoRoute(path: '', page: _awarePage('B'))],
+      ),
     ]);
     router.push(const _Route('A'));
     await tester.pumpAndSettle();

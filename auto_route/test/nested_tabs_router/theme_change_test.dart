@@ -16,17 +16,28 @@ void main() {
   late RootStackRouter router;
   late RouterConfig<UrlState> config;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _dashboardPage, path: '/dashboardView', initial: true, children: [
-        AutoRoute(page: PageInfo.emptyShell('EmptyRouter'), path: 'empty', children: [
-          AutoRoute(page: _page('A'), path: 'a'),
-          AutoRoute(page: _page('B'), path: 'b'),
-          AutoRoute(page: _page('C'), path: 'c'),
-        ]),
-      ]),
-      AutoRoute(page: _page('F'), path: '/f'),
-      AutoRoute(page: _page('G'), path: '/g'),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _dashboardPage,
+          path: '/dashboardView',
+          initial: true,
+          children: [
+            AutoRoute(
+              page: PageInfo.emptyShell('EmptyRouter'),
+              path: 'empty',
+              children: [
+                AutoRoute(page: _page('A'), path: 'a'),
+                AutoRoute(page: _page('B'), path: 'b'),
+                AutoRoute(page: _page('C'), path: 'c'),
+              ],
+            ),
+          ],
+        ),
+        AutoRoute(page: _page('F'), path: '/f'),
+        AutoRoute(page: _page('G'), path: '/g'),
+      ],
+    );
     config = router.config();
   });
 
@@ -72,9 +83,11 @@ void main() {
 
 final _dashboardPage = PageInfo(
   'Dashboard',
-  builder: (_) => const Scaffold(
-    body: AutoTabsRouter(routes: [PageRouteInfo('A'), PageRouteInfo('B'), PageRouteInfo('C')]),
-  ),
+  builder: (_) =>
+      const Scaffold(body: AutoTabsRouter(routes: [PageRouteInfo('A'), PageRouteInfo('B'), PageRouteInfo('C')])),
 );
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Scaffold(body: Center(child: Text(name))));
+PageInfo _page(String name) => PageInfo(
+  name,
+  builder: (_) => Scaffold(body: Center(child: Text(name))),
+);

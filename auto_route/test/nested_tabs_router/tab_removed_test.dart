@@ -16,17 +16,25 @@ void _runRemovedTabTests(_TabsKind kind) {
   // Open the second page, then the third, then rebuild with [first, third].
   // Happens: the removed second page shows.
   // Should: the third page shows and keeps its state.
-  testWidgets('${kind.name}: removing the page before the active page keeps the active page shown',
-      (WidgetTester tester) async {
+  testWidgets('${kind.name}: removing the page before the active page keeps the active page shown', (
+    WidgetTester tester,
+  ) async {
     _tabsKind = kind;
     _routesNotifier.value = const [_FirstTabRoute(), _SecondTabRoute(), _ThirdTabRoute()];
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _TabsHostRoute.page, path: '/', initial: true, children: [
-        AutoRoute(page: _FirstTabRoute.page, path: 'first'),
-        AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-        AutoRoute(page: _ThirdTabRoute.page, path: 'third'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _TabsHostRoute.page,
+          path: '/',
+          initial: true,
+          children: [
+            AutoRoute(page: _FirstTabRoute.page, path: 'first'),
+            AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+            AutoRoute(page: _ThirdTabRoute.page, path: 'third'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     final tabsRouter = router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!;
     tabsRouter.setActiveIndex(1);
@@ -71,12 +79,9 @@ class _TabsHostRoute extends PageRouteInfo<void> {
         _TabsKind.pageView => AutoTabsRouter.pageView(routes: routes),
         _TabsKind.tabBar => AutoTabsRouter.tabBar(routes: routes),
         _TabsKind.builder => AutoTabsRouter.builder(
-            routes: routes,
-            builder: (context, children, tabsRouter) => IndexedStack(
-              index: tabsRouter.activeIndex,
-              children: children,
-            ),
-          ),
+          routes: routes,
+          builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+        ),
       },
     ),
   );

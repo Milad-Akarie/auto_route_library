@@ -11,7 +11,7 @@ This repository is its own product: a maintained fork of the auto_route package.
 6. No pull requests and no new issues upstream. `Co-authored-by` trailers for code taken from others stay.
 7. Before changing code for an issue, reproduce exactly the bug that was reported: the reporter's setup, platform, steps and, when they matter, versions. Read every comment on the issue, including the comments it links to. If the reproduction or the comments show it is intended behavior, a misuse or already answered, change no code. Commit a test that documents the behavior, or none, and say why in the report. This keeps us from fixing something that should not be fixed.
 
-Also: never push (the maintainer merges into `dev` and pushes), format only the lines you add, American English, made-up names in code and fixtures.
+Also: never push (the maintainer merges into `dev` and pushes), run `dart format` on every file you change, American English, made-up names in code and fixtures.
 
 ## Branches
 - `dev` is where work happens. Branch every piece of work from `dev`; finished work lands on `dev`.
@@ -89,5 +89,3 @@ If a test fails on one platform because of a real bug, skip it on that platform 
   ```bash
   git checkout -- auto_route/example/ios/Flutter/ephemeral/flutter_native_integration.env auto_route/example/macos/Flutter/ephemeral
   ```
-
-- The existing test files aren't formatter-clean. Format only the files you add: `dart format <file>`.

@@ -17,21 +17,27 @@ void main() {
     addTearDown(tester.binding.platformDispatcher.clearDefaultRouteNameTestValue);
     var guardCalls = 0;
     final auth = ValueNotifier(0);
-    final router = RootStackRouter.build(routes: [
-      NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => const Scaffold(body: Text('HomeRoute'))),
-      NamedRouteDef(
-        name: 'ProfileRoute',
-        path: '/profile',
-        guards: [
-          AutoRouteGuard.simple((resolver, _) async {
-            guardCalls++;
-            await Future<void>.delayed(const Duration(milliseconds: 100));
-            resolver.next();
-          }),
-        ],
-        builder: (_, __) => const Scaffold(body: Text('ProfileRoute')),
-      ),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        NamedRouteDef(
+          name: 'HomeRoute',
+          path: '/',
+          builder: (_, __) => const Scaffold(body: Text('HomeRoute')),
+        ),
+        NamedRouteDef(
+          name: 'ProfileRoute',
+          path: '/profile',
+          guards: [
+            AutoRouteGuard.simple((resolver, _) async {
+              guardCalls++;
+              await Future<void>.delayed(const Duration(milliseconds: 100));
+              resolver.next();
+            }),
+          ],
+          builder: (_, __) => const Scaffold(body: Text('ProfileRoute')),
+        ),
+      ],
+    );
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: auth)));
     auth.value++;

@@ -43,32 +43,43 @@ void main() {
   // widget again, which is how Flutter's hot reload works.
   testWidgets('A query param page in nested tabs keeps its state when a parent rebuilds', (tester) async {
     _ParamPageState.created = 0;
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(path: '/', initial: true, page: PageInfo('MainRoute', builder: (_) => const AutoRouter()), children: [
+    final router = RootStackRouter.build(
+      routes: [
         AutoRoute(
-          path: 'nested1',
-          page: PageInfo(
-            'NestedRoutingRoute',
-            builder: (_) => AutoTabsRouter.tabBar(routes: const [NamedRoute('PageThatRequiresQueryParamRoute')]),
-          ),
+          path: '/',
+          initial: true,
+          page: PageInfo('MainRoute', builder: (_) => const AutoRouter()),
           children: [
             AutoRoute(
-              path: 'nested2',
-              initial: true,
+              path: 'nested1',
               page: PageInfo(
-                'PageThatRequiresQueryParamRoute',
-                builder: (data) => _ParamPage(param: data.queryParams.getBool('param', false)),
+                'NestedRoutingRoute',
+                builder: (_) => AutoTabsRouter.tabBar(routes: const [NamedRoute('PageThatRequiresQueryParamRoute')]),
               ),
+              children: [
+                AutoRoute(
+                  path: 'nested2',
+                  initial: true,
+                  page: PageInfo(
+                    'PageThatRequiresQueryParamRoute',
+                    builder: (data) => _ParamPage(param: data.queryParams.getBool('param', false)),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-      ]),
-    ]);
+      ],
+    );
     late StateSetter setParentState;
-    await tester.pumpWidget(StatefulBuilder(builder: (context, setState) {
-      setParentState = setState;
-      return MaterialApp.router(routerConfig: router.config());
-    }));
+    await tester.pumpWidget(
+      StatefulBuilder(
+        builder: (context, setState) {
+          setParentState = setState;
+          return MaterialApp.router(routerConfig: router.config());
+        },
+      ),
+    );
     await tester.pumpAndSettle();
     router.navigatePath('/nested1/nested2?param=true');
     await tester.pumpAndSettle();

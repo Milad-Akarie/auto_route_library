@@ -42,16 +42,14 @@ class AutoRoutePage<T> extends Page<T> {
   Widget get child => _child;
 
   /// Default constructor
-  AutoRoutePage({
-    required this.routeData,
-    required Widget child,
-  })  : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
-        super(
-          restorationId: routeData.restorationId,
-          name: routeData.name,
-          arguments: routeData.route.args,
-          key: routeData.matchId,
-        );
+  AutoRoutePage({required this.routeData, required Widget child})
+    : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
+      super(
+        restorationId: routeData.restorationId,
+        name: routeData.name,
+        arguments: routeData.route.args,
+        key: routeData.matchId,
+      );
 
   /// Records that the [Navigator] has shown this page, so it now holds a
   /// route of its own.
@@ -77,7 +75,8 @@ class AutoRoutePage<T> extends Page<T> {
   /// removed page's route and leave its own to be popped.
   @override
   bool canUpdate(Page<dynamic> other) {
-    final canUpdate = other.runtimeType == runtimeType &&
+    final canUpdate =
+        other.runtimeType == runtimeType &&
         (other as AutoRoutePage).routeKey == routeKey &&
         routeData.stackKey == other.routeData.stackKey &&
         (_shownPages[this] != true || other.key == key);
@@ -105,10 +104,7 @@ class AutoRoutePage<T> extends Page<T> {
   /// Builds a the widget that's scoped
   /// with [routeData]
   Widget buildPage(BuildContext context) {
-    return RouteDataScope(
-      routeData: routeData,
-      child: _child,
-    );
+    return RouteDataScope(routeData: routeData, child: _child);
   }
 
   /// Creates a PageRoute variant based on
@@ -267,7 +263,11 @@ mixin _FlutterMaterialThemeTransitionMixin<T> on MaterialRouteTransitionMixin<T>
 
   @override
   Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     final theme = flutterMaterialThemeOf(context);
     if (theme == null) return super.buildTransitions(context, animation, secondaryAnimation, child);
     return theme.pageTransitionsTheme.buildTransitions<T>(this, context, animation, secondaryAnimation, child);
@@ -329,16 +329,8 @@ mixin _NoAnimationPageRouteTransitionMixin<T> on _PageRoute<T> {
   bool get opaque => _page.opaque;
 
   @override
-  Widget buildPage(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
-    return Semantics(
-      scopesRoute: true,
-      explicitChildNodes: true,
-      child: buildContent(context),
-    );
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    return Semantics(scopesRoute: true, explicitChildNodes: true, child: buildContent(context));
   }
 }
 
@@ -357,26 +349,26 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
   Duration get reverseTransitionDuration => routeType.reverseDuration ?? const Duration(milliseconds: 300);
 
   @override
-  Widget buildPage(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
-    return Semantics(
-      scopesRoute: true,
-      explicitChildNodes: true,
-      child: buildContent(context),
-    );
+  Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+    return Semantics(scopesRoute: true, explicitChildNodes: true, child: buildContent(context));
   }
 
   Widget _defaultTransitionsBuilder(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return child;
   }
 
   @override
   Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     final transitionsBuilder = routeType.transitionsBuilder ?? _defaultTransitionsBuilder;
     return transitionsBuilder(context, animation, secondaryAnimation, child);
   }
@@ -397,7 +389,11 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
   late final _predictiveBackPageTransitionsBuilder = const PredictiveBackPageTransitionsBuilder();
   @override
   Widget buildTransitions(
-      BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     final platform = flutterMaterialThemeOf(context)?.platform ?? Theme.of(context).platform;
     if (!enablePredictiveBackGesture || platform != TargetPlatform.android) {
       return super.buildTransitions(context, animation, secondaryAnimation, child);
@@ -414,26 +410,25 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
     }
     return _PredictiveBackGestureDetector(
       route: this,
-      builder: (
-        BuildContext context,
-        _PredictiveBackPhase phase,
-        PredictiveBackEvent? startBackEvent,
-        PredictiveBackEvent? currentBackEvent,
-      ) {
-        if (popGestureInProgress) {
-          return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
-        } else {
-          return super.buildTransitions(context, animation, secondaryAnimation, child);
-        }
-      },
+      builder:
+          (
+            BuildContext context,
+            _PredictiveBackPhase phase,
+            PredictiveBackEvent? startBackEvent,
+            PredictiveBackEvent? currentBackEvent,
+          ) {
+            if (popGestureInProgress) {
+              return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
+            } else {
+              return super.buildTransitions(context, animation, secondaryAnimation, child);
+            }
+          },
     );
   }
 }
 
 abstract class _PageRoute<T> extends PageRoute<T> {
-  _PageRoute({
-    required AutoRoutePage page,
-  }) : super(settings: page);
+  _PageRoute({required AutoRoutePage page}) : super(settings: page);
 
   AutoRoutePage get _page => settings as AutoRoutePage;
 
@@ -448,11 +443,7 @@ abstract class _PageRoute<T> extends PageRoute<T> {
       // detector still listens; the gesture belongs to the tab on screen.
       if (!router.isInActiveTabs) return false;
       final topMostRouter = router.topMostRouter();
-      return (router.isTopMost ||
-          !topMostRouter.canPop(
-            ignoreParentRoutes: true,
-            ignorePagelessRoutes: true,
-          ));
+      return (router.isTopMost || !topMostRouter.canPop(ignoreParentRoutes: true, ignorePagelessRoutes: true));
     }
     return false;
   }

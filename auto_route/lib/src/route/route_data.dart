@@ -42,12 +42,12 @@ class RouteData<R> {
     required this.stackKey,
     required List<RouteMatch> pendingChildren,
     required this.type,
-  })  : _match = route,
-        _ownQueryParams = route.queryParams,
-        _ownFragment = route.fragment,
-        _popCompleter = popCompleter,
-        _parent = parent,
-        _pendingChildren = List<RouteMatch>.from(pendingChildren);
+  }) : _match = route,
+       _ownQueryParams = route.queryParams,
+       _ownFragment = route.fragment,
+       _popCompleter = popCompleter,
+       _parent = parent,
+       _pendingChildren = List<RouteMatch>.from(pendingChildren);
 
   /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
   /// where it can be used by [CupertinoNavigationBar]
@@ -112,7 +112,8 @@ class RouteData<R> {
         if (_match.autoFilled) {
           messages.add('${_match.name} is an auto created ancestor of target route ${_match.flattened.last.name}');
           messages.add(
-              'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first');
+            'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first',
+          );
           messages.add('try navigating to ${_match.flattened.map((e) => e.name).join(' -> ')}');
         }
         throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
@@ -173,16 +174,11 @@ class RouteData<R> {
   /// The track to the very first ancestor match
   ///
   /// This can be used to render visual breadcrumbs in UI
-  List<RouteMatch> get breadcrumbs => List.unmodifiable([
-        if (_parent != null) ..._parent!.breadcrumbs,
-        _match,
-      ]);
+  List<RouteMatch> get breadcrumbs => List.unmodifiable([if (_parent != null) ..._parent!.breadcrumbs, _match]);
 
   /// Collects all path params form all previous ancestors
   Parameters get inheritedPathParams {
-    final params = breadcrumbs.map((e) => e.params).reduce(
-          (value, element) => value + element,
-        );
+    final params = breadcrumbs.map((e) => e.params).reduce((value, element) => value + element);
     return params;
   }
 

@@ -17,18 +17,23 @@ void main() {
   // Happens: the url changes to page=2, but the page still shows page 1.
   // Should: the page shows page 2, as it does without customRouteBuilder.
   testWidgets('A customRouteBuilder page shows the new query params after replace()', (tester) async {
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(path: '/', page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute'))),
-      CustomRoute(
-        path: '/products',
-        page: _productsPage,
-        customRouteBuilder: <T>(context, child, page) => PageRouteBuilder<T>(
-          settings: page,
-          pageBuilder: (_, __, ___) => SelectionArea(child: child),
-          transitionsBuilder: TransitionsBuilders.fadeIn,
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
         ),
-      ),
-    ]);
+        CustomRoute(
+          path: '/products',
+          page: _productsPage,
+          customRouteBuilder: <T>(context, child, page) => PageRouteBuilder<T>(
+            settings: page,
+            pageBuilder: (_, __, ___) => SelectionArea(child: child),
+            transitionsBuilder: TransitionsBuilders.fadeIn,
+          ),
+        ),
+      ],
+    );
     await pumpRouterApp(tester, router);
     router.push(const NamedRoute('ProductsRoute', queryParams: {'page': '1'}));
     await tester.pumpAndSettle();

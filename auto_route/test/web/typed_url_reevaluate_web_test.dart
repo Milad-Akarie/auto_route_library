@@ -19,18 +19,25 @@ void main() {
   // app followed the url. The app follows the typed url either way, also when
   // the listenable fires afterwards and when the route is guarded.
   for (final withListenable in [false, true]) {
-    testWidgets('A url typed in the address bar opens its page, reevaluateListenable: $withListenable (#2173)',
-        (tester) async {
+    testWidgets('A url typed in the address bar opens its page, reevaluateListenable: $withListenable (#2173)', (
+      tester,
+    ) async {
       final auth = ValueNotifier(0);
-      final router = RootStackRouter.build(routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => const Scaffold(body: Text('HomeRoute'))),
-        NamedRouteDef(
-          name: 'ProfileRoute',
-          path: '/profile',
-          guards: [AutoRouteGuard.simple((resolver, _) => resolver.next())],
-          builder: (_, __) => const Scaffold(body: Text('ProfileRoute')),
-        ),
-      ]);
+      final router = RootStackRouter.build(
+        routes: [
+          NamedRouteDef(
+            name: 'HomeRoute',
+            path: '/',
+            builder: (_, __) => const Scaffold(body: Text('HomeRoute')),
+          ),
+          NamedRouteDef(
+            name: 'ProfileRoute',
+            path: '/profile',
+            guards: [AutoRouteGuard.simple((resolver, _) => resolver.next())],
+            builder: (_, __) => const Scaffold(body: Text('ProfileRoute')),
+          ),
+        ],
+      );
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router.config(

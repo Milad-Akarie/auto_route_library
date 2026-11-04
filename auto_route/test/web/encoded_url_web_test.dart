@@ -38,8 +38,8 @@ void main() {
 
     // A refresh opens the app at the url in the address bar.
     final refreshed = await router.defaultRouteParser().parseRouteInformation(
-          RouteInformation(uri: Uri.parse(browserPath)),
-        );
+      RouteInformation(uri: Uri.parse(browserPath)),
+    );
     expect(refreshed.topMatch?.params.rawMap, {'id': '123#456#789'});
     expect(refreshed.topMatch?.queryParams.rawMap, {'query': '123#456#789'});
   });
@@ -47,8 +47,9 @@ void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1812
   // The same with the app built from routerDelegate and routeInformationParser,
   // which leaves reporting urls to Flutter's own route information provider.
-  testWidgets('On web, a "#" in a path param survives a refresh with Flutter\'s route information provider',
-      (tester) async {
+  testWidgets('On web, a "#" in a path param survives a refresh with Flutter\'s route information provider', (
+    tester,
+  ) async {
     await pumpRouterApp(tester, router);
     await settleBrowser(tester);
     router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789'));
@@ -80,37 +81,38 @@ void main() {
   // link whose path param holds an encoded '#'. The browser should keep one
   // history entry for it, as for a link without one; with a second entry, the
   // first back would show the same page again.
-  testWidgets('On web, a deep link to an encoded url adds no history entry with Flutter\'s route information provider',
-      (tester) async {
-    for (final (link, id) in [('/seconds/12', '12'), ('/seconds/1%232', '1#2')]) {
-      await rewindBrowserHistory();
-      openBrowserAt(tester, link);
-      final linkedRouter = RootStackRouter.build(routes: router.routes);
-      await pumpAsRunApp(
-        tester,
-        MaterialApp.router(
-          routeInformationParser: linkedRouter.defaultRouteParser(),
-          routerDelegate: linkedRouter.delegate(),
-        ),
-      );
-      expect(find.text('id $id, query null'), findsOneWidget);
-      expect(browserPath, link);
-      expect(browserSerialCount, 0, reason: link);
-      expect(appWroteBrowserEntry, isTrue);
-      await tester.pumpWidget(const SizedBox());
-    }
-  });
+  testWidgets(
+    'On web, a deep link to an encoded url adds no history entry with Flutter\'s route information provider',
+    (tester) async {
+      for (final (link, id) in [('/seconds/12', '12'), ('/seconds/1%232', '1#2')]) {
+        await rewindBrowserHistory();
+        openBrowserAt(tester, link);
+        final linkedRouter = RootStackRouter.build(routes: router.routes);
+        await pumpAsRunApp(
+          tester,
+          MaterialApp.router(
+            routeInformationParser: linkedRouter.defaultRouteParser(),
+            routerDelegate: linkedRouter.delegate(),
+          ),
+        );
+        expect(find.text('id $id, query null'), findsOneWidget);
+        expect(browserPath, link);
+        expect(browserSerialCount, 0, reason: link);
+        expect(appWroteBrowserEntry, isTrue);
+        await tester.pumpWidget(const SizedBox());
+      }
+    },
+  );
 }
 
 class _SecondsRoute extends PageRouteInfo<void> {
   _SecondsRoute({required String id, String? query})
-      : super(name, rawPathParams: {'id': id}, rawQueryParams: {'query': query});
+    : super(name, rawPathParams: {'id': id}, rawQueryParams: {'query': query});
 
   static const String name = 'SecondsRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (data) => Text(
-      'id ${data.inheritedPathParams.getString('id')}, query ${data.queryParams.optString('query')}',
-    ),
+    builder: (data) =>
+        Text('id ${data.inheritedPathParams.getString('id')}, query ${data.queryParams.optString('query')}'),
   );
 }

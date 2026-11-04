@@ -25,14 +25,20 @@ void main() {
   setUp(() {
     _heard.clear();
     _canPop = true;
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: FirstRoute.page, path: '/'),
-      AutoRoute(page: _CountedRoute.page, path: '/counted'),
-      AutoRoute(page: _HostRoute.page, path: '/host', children: [
-        AutoRoute(page: SecondNested1Route.page, path: ''),
-        AutoRoute(page: _CountedRoute.page, path: 'counted'),
-      ]),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: FirstRoute.page, path: '/'),
+        AutoRoute(page: _CountedRoute.page, path: '/counted'),
+        AutoRoute(
+          page: _HostRoute.page,
+          path: '/host',
+          children: [
+            AutoRoute(page: SecondNested1Route.page, path: ''),
+            AutoRoute(page: _CountedRoute.page, path: 'counted'),
+          ],
+        ),
+      ],
+    );
   });
 
   Future<void> openCountedPage(WidgetTester tester, {required bool nested, ThemeData? theme}) async {
@@ -71,10 +77,12 @@ void main() {
   // The reporter's own reproduction: routes with no paths, the home page
   // initial, and a 'Next page' button that pushes the second page.
   testWidgets("the report's 'Go back' button should call onPopInvokedWithResult once", (tester) async {
-    final reportRouter = RootStackRouter.build(routes: [
-      AutoRoute(page: _ReportHomeRoute.page, initial: true),
-      AutoRoute(page: _CountedRoute.page),
-    ]);
+    final reportRouter = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _ReportHomeRoute.page, initial: true),
+        AutoRoute(page: _CountedRoute.page),
+      ],
+    );
     await tester.pumpWidget(MaterialApp.router(routerConfig: reportRouter.config()));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next page'));
@@ -132,10 +140,7 @@ class _ReportHomeRoute extends PageRouteInfo<void> {
         builder: (context) => Column(
           children: [
             const Text('Page One'),
-            TextButton(
-              onPressed: () => context.router.push(const _CountedRoute()),
-              child: const Text('Next page'),
-            ),
+            TextButton(onPressed: () => context.router.push(const _CountedRoute()), child: const Text('Next page')),
           ],
         ),
       ),
@@ -165,10 +170,7 @@ class _CountedRoute extends PageRouteInfo<void> {
           builder: (context) => Column(
             children: [
               const Text(name),
-              TextButton(
-                onPressed: () => Navigator.maybePop(context),
-                child: const Text(_maybePopLabel),
-              ),
+              TextButton(onPressed: () => Navigator.maybePop(context), child: const Text(_maybePopLabel)),
             ],
           ),
         ),

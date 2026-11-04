@@ -9,11 +9,13 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: FirstRoute.page, path: '/'),
-      AutoRoute(page: _BookRoute.page, path: '/book'),
-      AutoRoute(page: SecondRoute.page, path: '/second'),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: FirstRoute.page, path: '/'),
+        AutoRoute(page: _BookRoute.page, path: '/book'),
+        AutoRoute(page: SecondRoute.page, path: '/second'),
+      ],
+    );
   });
 
   // Found while guarding https://github.com/Milad-Akarie/auto_route_library/issues/1864

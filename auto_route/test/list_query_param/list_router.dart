@@ -10,9 +10,9 @@ enum Sort { asc, desc }
 class ListRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(path: '/', page: ListHomeRoute.page),
-        AutoRoute(path: '/items', page: ItemsRoute.page),
-      ];
+    AutoRoute(path: '/', page: ListHomeRoute.page),
+    AutoRoute(path: '/items', page: ItemsRoute.page),
+  ];
 }
 
 @RoutePage()
@@ -43,8 +43,6 @@ class ItemsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: Text(
-          'ids $ids prices $prices flags $flags sorts ${sorts?.map((s) => s.name).toList()} picked $picked',
-        ),
-      );
+    body: Text('ids $ids prices $prices flags $flags sorts ${sorts?.map((s) => s.name).toList()} picked $picked'),
+  );
 }

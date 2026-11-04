@@ -230,30 +230,33 @@ RootStackRouter _buildRouter(_Tabs kind, {AutoRouteGuard? guard, int guardedTab 
     _Tabs.pageView => AutoTabsRouter.pageView(routes: routes, homeIndex: homeIndex),
     _Tabs.tabBar => AutoTabsRouter.tabBar(routes: routes, homeIndex: homeIndex),
   };
-  return RootStackRouter.build(routes: [
-    AutoRoute(page: PageInfo('HomeRoute', builder: (_) => Scaffold(body: host)), path: '/', children: [
-      for (final (index, name) in _tabNames.indexed)
-        AutoRoute(
-          page: PageInfo(name, builder: (_) => Center(child: Text(name))),
-          path: name.substring(3).toLowerCase(),
-          guards: [if (index == guardedTab) guard ?? _guard],
-        ),
-    ]),
-    AutoRoute(
-      page: PageInfo(
-        'LoginRoute',
-        builder: (data) => Scaffold(
-          body: Center(
-            child: TextButton(
-              onPressed: () => data.router.root.reevaluateGuards(),
-              child: const Text('LoginRoute'),
+  return RootStackRouter.build(
+    routes: [
+      AutoRoute(
+        page: PageInfo('HomeRoute', builder: (_) => Scaffold(body: host)),
+        path: '/',
+        children: [
+          for (final (index, name) in _tabNames.indexed)
+            AutoRoute(
+              page: PageInfo(name, builder: (_) => Center(child: Text(name))),
+              path: name.substring(3).toLowerCase(),
+              guards: [if (index == guardedTab) guard ?? _guard],
+            ),
+        ],
+      ),
+      AutoRoute(
+        page: PageInfo(
+          'LoginRoute',
+          builder: (data) => Scaffold(
+            body: Center(
+              child: TextButton(onPressed: () => data.router.root.reevaluateGuards(), child: const Text('LoginRoute')),
             ),
           ),
         ),
+        path: '/login',
       ),
-      path: '/login',
-    ),
-  ]);
+    ],
+  );
 }
 
 TabsRouter _tabsOf(RootStackRouter router) => router.innerRouterOf<TabsRouter>('HomeRoute')!;

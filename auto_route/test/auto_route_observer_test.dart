@@ -13,58 +13,46 @@ void main() {
     router = ObserverRouter();
   });
 
-  Future<void> pumpRouter(WidgetTester tester) => pumpRouterApp(
-        tester,
-        router,
-        observers: () => [observer],
-      );
+  Future<void> pumpRouter(WidgetTester tester) => pumpRouterApp(tester, router, observers: () => [observer]);
 
-  testWidgets(
-    'AutoRouteObserver should notify subscribers of push and pop events',
-    (WidgetTester tester) async {
-      await pumpRouter(tester);
-      final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
+  testWidgets('AutoRouteObserver should notify subscribers of push and pop events', (WidgetTester tester) async {
+    await pumpRouter(tester);
+    final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
 
-      router.push(const SecondRoute());
-      await tester.pumpAndSettle();
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
 
-      expect(state.didPushNextCalled, isTrue);
-      expect(state.didPopNextCalled, isFalse);
+    expect(state.didPushNextCalled, isTrue);
+    expect(state.didPopNextCalled, isFalse);
 
-      router.pop();
-      await tester.pumpAndSettle();
+    router.pop();
+    await tester.pumpAndSettle();
 
-      expect(state.didPopNextCalled, isTrue);
-    },
-  );
+    expect(state.didPopNextCalled, isTrue);
+  });
 
-  testWidgets(
-    'AutoRouteObserver should notify subscribers of tab events',
-    (WidgetTester tester) async {
-      await pumpRouter(tester);
-      router.push(const TabsRoute());
-      await tester.pumpAndSettle();
+  testWidgets('AutoRouteObserver should notify subscribers of tab events', (WidgetTester tester) async {
+    await pumpRouter(tester);
+    router.push(const TabsRoute());
+    await tester.pumpAndSettle();
 
-      final activeTabState = tester.state<AutoRouteAwareTestPageState>(
-        find.byKey(const ValueKey('tab1')),
-      );
+    final activeTabState = tester.state<AutoRouteAwareTestPageState>(find.byKey(const ValueKey('tab1')));
 
-      expect(activeTabState.didInitTabRouteCalled, isTrue);
+    expect(activeTabState.didInitTabRouteCalled, isTrue);
 
-      final tabsRouter = router.innerRouterOf<TabsRouter>(TabsRoute.name);
-      expect(tabsRouter, isNotNull);
+    final tabsRouter = router.innerRouterOf<TabsRouter>(TabsRoute.name);
+    expect(tabsRouter, isNotNull);
 
-      // Switch to Tab 2
-      tabsRouter?.setActiveIndex(1);
-      await tester.pumpAndSettle();
+    // Switch to Tab 2
+    tabsRouter?.setActiveIndex(1);
+    await tester.pumpAndSettle();
 
-      // Switch back to Tab 1 to trigger didChangeTabRoute for Tab 1
-      tabsRouter?.setActiveIndex(0);
-      await tester.pumpAndSettle();
+    // Switch back to Tab 1 to trigger didChangeTabRoute for Tab 1
+    tabsRouter?.setActiveIndex(0);
+    await tester.pumpAndSettle();
 
-      expect(activeTabState.didChangeTabRouteCalled, isTrue);
-    },
-  );
+    expect(activeTabState.didChangeTabRouteCalled, isTrue);
+  });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2315
   // Steps: no tabs or nested routers. The app hands the observer through
@@ -74,22 +62,21 @@ void main() {
   // Should: both fire. They do when the observer is an AutoRouteObserver; the
   // mixin finds no other kind of observer, so a plain NavigatorObserver or
   // AutoRouterObserver tells it nothing.
-  testWidgets(
-    'AutoRouteAwareStateMixin hears push and pop with the observer given to config()',
-    (WidgetTester tester) async {
-      await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [AutoRouteObserver()]));
-      final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
-      expect(state.didPushCalled, isTrue);
+  testWidgets('AutoRouteAwareStateMixin hears push and pop with the observer given to config()', (
+    WidgetTester tester,
+  ) async {
+    await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [AutoRouteObserver()]));
+    final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
+    expect(state.didPushCalled, isTrue);
 
-      router.push(const SecondRoute());
-      await tester.pumpAndSettle();
-      expect(state.didPushNextCalled, isTrue);
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
+    expect(state.didPushNextCalled, isTrue);
 
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(state.didPopNextCalled, isTrue);
-    },
-  );
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(state.didPopNextCalled, isTrue);
+  });
 
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/1774
   // Steps: FirstRoute has AutoRouteAwareStateMixin. Push ConfirmRoute, open a
@@ -98,52 +85,45 @@ void main() {
   // Happens: ConfirmRoute is removed and FirstRoute shows, but FirstRoute's
   // didPopNext doesn't fire; the observer gets didRemove, not didPop.
   // Should: FirstRoute gets didPopNext, as when going back without the dialog.
-  testWidgets(
-    'navigateTo() back to a page right after closing a dialog tells that page didPopNext',
-    (WidgetTester tester) async {
-      await pumpRouter(tester);
-      final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
-      router.push(const ConfirmRoute());
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Open dialog'));
-      await tester.pumpAndSettle();
-      expect(state.didPopNextCalled, isFalse);
+  testWidgets('navigateTo() back to a page right after closing a dialog tells that page didPopNext', (
+    WidgetTester tester,
+  ) async {
+    await pumpRouter(tester);
+    final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
+    router.push(const ConfirmRoute());
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Open dialog'));
+    await tester.pumpAndSettle();
+    expect(state.didPopNextCalled, isFalse);
 
-      await tester.tap(find.text('Close and go back'));
-      await tester.pumpAndSettle();
-      expect(router.stack.map((page) => page.name), [FirstRoute.name]);
-      expect(state.didPopNextCalled, isTrue);
-    },
-  );
+    await tester.tap(find.text('Close and go back'));
+    await tester.pumpAndSettle();
+    expect(router.stack.map((page) => page.name), [FirstRoute.name]);
+    expect(state.didPopNextCalled, isTrue);
+  });
 
   // Same as above, but replace() removes the page over FirstRoute and pushes
   // another one in its place: FirstRoute stays covered and hears nothing.
-  testWidgets(
-    'replacing the page over a page does not tell that page didPopNext',
-    (WidgetTester tester) async {
-      await pumpRouter(tester);
-      final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
-      router.push(const SecondRoute());
-      await tester.pumpAndSettle();
-      router.replace(const ConfirmRoute());
-      await tester.pumpAndSettle();
-      expect(router.stack.map((page) => page.name), [FirstRoute.name, ConfirmRoute.name]);
-      expect(state.didPopNextCalled, isFalse);
-    },
-  );
+  testWidgets('replacing the page over a page does not tell that page didPopNext', (WidgetTester tester) async {
+    await pumpRouter(tester);
+    final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
+    router.push(const SecondRoute());
+    await tester.pumpAndSettle();
+    router.replace(const ConfirmRoute());
+    await tester.pumpAndSettle();
+    expect(router.stack.map((page) => page.name), [FirstRoute.name, ConfirmRoute.name]);
+    expect(state.didPopNextCalled, isFalse);
+  });
 
-  testWidgets(
-    'AutoRouteObserver should unsubscribe when widget is disposed',
-    (WidgetTester tester) async {
-      await pumpRouter(tester);
-      expect(find.byType(AutoRouteAwareTestPage), findsOneWidget);
+  testWidgets('AutoRouteObserver should unsubscribe when widget is disposed', (WidgetTester tester) async {
+    await pumpRouter(tester);
+    expect(find.byType(AutoRouteAwareTestPage), findsOneWidget);
 
-      router.replace(const SecondRoute());
-      await tester.pumpAndSettle();
+    router.replace(const SecondRoute());
+    await tester.pumpAndSettle();
 
-      expect(find.byType(AutoRouteAwareTestPage), findsNothing);
-    },
-  );
+    expect(find.byType(AutoRouteAwareTestPage), findsNothing);
+  });
 }
 
 class AutoRouteAwareTestPage extends StatefulWidget {
@@ -163,9 +143,7 @@ class AutoRouteAwareTestPageState extends State<AutoRouteAwareTestPage> with Aut
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(),
-    );
+    return Scaffold(body: Container());
   }
 
   @override
@@ -204,37 +182,31 @@ class AutoRouteAwareTestPageState extends State<AutoRouteAwareTestPage> with Aut
 class ObserverRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(page: FirstRoute.page, initial: true),
-        AutoRoute(page: SecondRoute.page),
-        AutoRoute(page: ConfirmRoute.page),
-        AutoRoute(
-          page: TabsRoute.page,
-          children: [
-            AutoRoute(page: Tab1Route.page),
-            AutoRoute(page: Tab2Route.page),
-          ],
-        ),
-      ];
+    AutoRoute(page: FirstRoute.page, initial: true),
+    AutoRoute(page: SecondRoute.page),
+    AutoRoute(page: ConfirmRoute.page),
+    AutoRoute(
+      page: TabsRoute.page,
+      children: [
+        AutoRoute(page: Tab1Route.page),
+        AutoRoute(page: Tab2Route.page),
+      ],
+    ),
+  ];
 }
 
 class FirstRoute extends PageRouteInfo<void> {
   const FirstRoute({List<PageRouteInfo>? children}) : super(FirstRoute.name, initialChildren: children);
 
   static const String name = 'FirstRoute';
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) => const AutoRouteAwareTestPage(key: ValueKey('first')),
-  );
+  static PageInfo page = PageInfo(name, builder: (data) => const AutoRouteAwareTestPage(key: ValueKey('first')));
 }
 
 class SecondRoute extends PageRouteInfo<void> {
   const SecondRoute({List<PageRouteInfo>? children}) : super(SecondRoute.name, initialChildren: children);
 
   static const String name = 'SecondRoute';
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) => const Scaffold(body: Text('Second Page')),
-  );
+  static PageInfo page = PageInfo(name, builder: (data) => const Scaffold(body: Text('Second Page')));
 }
 
 class ConfirmRoute extends PageRouteInfo<void> {
@@ -271,33 +243,19 @@ class TabsRoute extends PageRouteInfo<void> {
   const TabsRoute({List<PageRouteInfo>? children}) : super(TabsRoute.name, initialChildren: children);
 
   static const String name = 'TabsRoute';
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) => AutoTabsRouter(
-      routes: const [
-        Tab1Route(),
-        Tab2Route(),
-      ],
-    ),
-  );
+  static PageInfo page = PageInfo(name, builder: (data) => AutoTabsRouter(routes: const [Tab1Route(), Tab2Route()]));
 }
 
 class Tab1Route extends PageRouteInfo<void> {
   const Tab1Route({List<PageRouteInfo>? children}) : super(Tab1Route.name, initialChildren: children);
 
   static const String name = 'Tab1Route';
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) => const AutoRouteAwareTestPage(key: ValueKey('tab1')),
-  );
+  static PageInfo page = PageInfo(name, builder: (data) => const AutoRouteAwareTestPage(key: ValueKey('tab1')));
 }
 
 class Tab2Route extends PageRouteInfo<void> {
   const Tab2Route({List<PageRouteInfo>? children}) : super(Tab2Route.name, initialChildren: children);
 
   static const String name = 'Tab2Route';
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) => const Scaffold(body: Text('Tab 2')),
-  );
+  static PageInfo page = PageInfo(name, builder: (data) => const Scaffold(body: Text('Tab 2')));
 }

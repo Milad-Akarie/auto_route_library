@@ -47,12 +47,14 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   @override
   int calculateUpdatableHash(CompilationUnit unit) {
     var calculatedHash = 0;
-    for (final clazz in unit.declarations
-        .whereType<ClassDeclaration>()
-        .where((e) => e.metadata.any((e) => e.name.name == annotationName))) {
+    for (final clazz in unit.declarations.whereType<ClassDeclaration>().where(
+      (e) => e.metadata.any((e) => e.name.name == annotationName),
+    )) {
       final routerAnnotation = clazz.metadata.firstWhere((e) => e.name.name == annotationName);
-      final partDirectives =
-          unit.directives.whereType<PartDirective>().fold<int>(0, (acc, a) => acc ^ a.toSource().hashCode);
+      final partDirectives = unit.directives.whereType<PartDirective>().fold<int>(
+        0,
+        (acc, a) => acc ^ a.toSource().hashCode,
+      );
       calculatedHash =
           calculatedHash ^ clazz.namePart.toString().hashCode ^ routerAnnotation.toSource().hashCode ^ partDirectives;
     }
@@ -61,9 +63,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
 
   bool _hasPartDirective(ClassElement clazz, AssetId output) {
     final uriIncludes = clazz.library.firstFragment.partIncludes.map((e) => e.uri);
-    return uriIncludes.whereType<DirectiveUriWithSource>().any(
-          (e) => e.source.fullName.endsWith(output.path),
-        );
+    return uriIncludes.whereType<DirectiveUriWithSource>().any((e) => e.source.fullName.endsWith(output.path));
   }
 
   @override
@@ -86,20 +86,13 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
         if (!routesCacheFile.existsSync()) {
           routesCacheFile.createSync(recursive: true);
         }
-        routesCacheFile.writeAsStringSync(
-          jsonEncode(generatedResults),
-        );
+        routesCacheFile.writeAsStringSync(jsonEncode(generatedResults));
       }
     } catch (e) {
       print('Could not write config routerCache');
     }
 
-    return '$_header\n${generateLibrary(
-      item,
-      routes: routes..sort((a, b) => a.className.compareTo(b.className)),
-      ignoreForFile: ignoreForFile,
-      outputPath: buildStep.allowedOutputs.first.path,
-    )}';
+    return '$_header\n${generateLibrary(item, routes: routes..sort((a, b) => a.className.compareTo(b.className)), ignoreForFile: ignoreForFile, outputPath: buildStep.allowedOutputs.first.path)}';
   }
 
   @override
@@ -109,11 +102,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     final element = annotatedElements.first.element;
     final annotation = annotatedElements.first.annotation;
 
-    throwIf(
-      element is! ClassElement,
-      '${element.displayName} is not a class element',
-      element: element,
-    );
+    throwIf(element is! ClassElement, '${element.displayName} is not a class element', element: element);
     final clazz = element as ClassElement;
 
     final usesPartBuilder = _hasPartDirective(clazz, buildStep.allowedOutputs.first);
@@ -134,9 +123,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     if (!routerFile.existsSync()) {
       routerFile.createSync(recursive: true);
     }
-    routerFile.writeAsStringSync(
-      jsonEncode(router.toJson()),
-    );
+    routerFile.writeAsStringSync(jsonEncode(router.toJson()));
   }
 
   File _buildRouterFile(BuildStep buildStep, {bool toCache = false}) {
@@ -144,7 +131,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
       '.dart_tool/build',
       toCache ? 'cache' : 'generated',
       buildStep.inputId.package,
-      buildStep.inputId.changeExtension('.router_config.json').path
+      buildStep.inputId.changeExtension('.router_config.json').path,
     ].join('/');
     return File(path);
   }

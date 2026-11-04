@@ -28,13 +28,19 @@ void main() {
   late RootStackRouter router;
   setUp(() {
     _popAttempts = 0;
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: FirstRoute.page, path: '/'),
-      AutoRoute(page: _OnboardingRoute.page, path: '/onboarding', children: [
-        AutoRoute(page: _WelcomeStepRoute.page, path: ''),
-        AutoRoute(page: _IdStepRoute.page, path: 'id'),
-      ]),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: FirstRoute.page, path: '/'),
+        AutoRoute(
+          page: _OnboardingRoute.page,
+          path: '/onboarding',
+          children: [
+            AutoRoute(page: _WelcomeStepRoute.page, path: ''),
+            AutoRoute(page: _IdStepRoute.page, path: 'id'),
+          ],
+        ),
+      ],
+    );
   });
 
   Future<void> openIdNumberForm(WidgetTester tester, {ThemeData? theme}) async {
@@ -141,10 +147,7 @@ class _IdStepState extends State<_IdStep> {
   @override
   Widget build(BuildContext context) {
     if (!_showingForm) {
-      return TextButton(
-        onPressed: () => setState(() => _showingForm = true),
-        child: const Text(_chooseType),
-      );
+      return TextButton(onPressed: () => setState(() => _showingForm = true), child: const Text(_chooseType));
     }
     return PopScope(
       canPop: false,
@@ -156,10 +159,7 @@ class _IdStepState extends State<_IdStep> {
       child: Column(
         children: [
           const Text(_numberForm),
-          TextButton(
-            onPressed: () => setState(() => _showingForm = false),
-            child: const Text(_backToChoice),
-          ),
+          TextButton(onPressed: () => setState(() => _showingForm = false), child: const Text(_backToChoice)),
         ],
       ),
     );

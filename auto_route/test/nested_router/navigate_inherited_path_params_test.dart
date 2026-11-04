@@ -7,17 +7,31 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _DashboardRoute.page, path: '/dashboard', initial: true, children: [
-        AutoRoute(page: _VendorsRoute.page, path: 'vendors', initial: true, children: [
-          AutoRoute(page: _VendorListRoute.page, path: ''),
-          AutoRoute(page: _EditVendorRoute.page, path: ':vendor-id', children: [
-            AutoRoute(page: _VendorBranchesRoute.page, path: 'branches'),
-          ]),
-        ]),
-      ]),
-      AutoRoute(page: _SettingsRoute.page, path: '/settings'),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _DashboardRoute.page,
+          path: '/dashboard',
+          initial: true,
+          children: [
+            AutoRoute(
+              page: _VendorsRoute.page,
+              path: 'vendors',
+              initial: true,
+              children: [
+                AutoRoute(page: _VendorListRoute.page, path: ''),
+                AutoRoute(
+                  page: _EditVendorRoute.page,
+                  path: ':vendor-id',
+                  children: [AutoRoute(page: _VendorBranchesRoute.page, path: 'branches')],
+                ),
+              ],
+            ),
+          ],
+        ),
+        AutoRoute(page: _SettingsRoute.page, path: '/settings'),
+      ],
+    );
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/1816
@@ -27,9 +41,13 @@ void main() {
   // 'vendor-id', not fail to parse it from null at '/dashboard/vendors/:vendor-id/branches'.
   testWidgets('navigate() from outside the nested router keeps the inherited path params', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(_DashboardRoute(children: [
-      _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
-    ]));
+    router.navigate(
+      _DashboardRoute(
+        children: [
+          _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
+        ],
+      ),
+    );
     await tester.pumpAndSettle();
     expect(router.urlState.url, '/dashboard/vendors/v-42');
     router.push(const _SettingsRoute());
@@ -49,9 +67,13 @@ void main() {
   // under vendor 'v-42'.
   testWidgets('navigate() before the parent is built keeps the inherited path params', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
-    router.navigate(_DashboardRoute(children: [
-      _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
-    ]));
+    router.navigate(
+      _DashboardRoute(
+        children: [
+          _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
+        ],
+      ),
+    );
     // Let the router add the vendor page, which it does after checking guards.
     for (var i = 0; i < 5; i++) {
       await Future.microtask(() {});
@@ -88,7 +110,7 @@ class _VendorListRoute extends PageRouteInfo<void> {
 
 class _EditVendorRoute extends PageRouteInfo<void> {
   _EditVendorRoute({required String vendorId, List<PageRouteInfo>? children})
-      : super(name, rawPathParams: {'vendor-id': vendorId}, initialChildren: children);
+    : super(name, rawPathParams: {'vendor-id': vendorId}, initialChildren: children);
 
   static const String name = 'EditVendorRoute';
   static PageInfo page = PageInfo(
@@ -96,7 +118,12 @@ class _EditVendorRoute extends PageRouteInfo<void> {
     builder: (data) {
       // As generated for a constructor parameter marked @PathParam('vendor-id').
       final vendorId = data.inheritedPathParams.getString('vendor-id');
-      return Column(children: [Text('Vendor $vendorId'), const Expanded(child: AutoRouter())]);
+      return Column(
+        children: [
+          Text('Vendor $vendorId'),
+          const Expanded(child: AutoRouter()),
+        ],
+      );
     },
   );
 }

@@ -11,19 +11,21 @@ void main() {
 }
 
 void _runIndexTests(_TabsKind kind) {
-  Future<RootStackRouter> pumpTabs(
-    WidgetTester tester,
-    List<PageRouteInfo> routes, {
-    String initialLink = '/',
-  }) async {
+  Future<RootStackRouter> pumpTabs(WidgetTester tester, List<PageRouteInfo> routes, {String initialLink = '/'}) async {
     _tabsKind = kind;
     _routesNotifier.value = routes;
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _TabsHostRoute.page, path: '/', children: [
-        AutoRoute(page: _FirstTabRoute.page, path: 'first', initial: true),
-        AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _TabsHostRoute.page,
+          path: '/',
+          children: [
+            AutoRoute(page: _FirstTabRoute.page, path: 'first', initial: true),
+            AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+          ],
+        ),
+      ],
+    );
     // An AutoRouterObserver hears about tab changes; it reads the tab routes by index.
     await pumpRouterApp(tester, router, initialLink: initialLink, observers: () => [AutoRouterObserver()]);
     return router;
@@ -90,12 +92,9 @@ class _TabsHostRoute extends PageRouteInfo<void> {
         _TabsKind.pageView => AutoTabsRouter.pageView(routes: routes),
         _TabsKind.tabBar => AutoTabsRouter.tabBar(routes: routes),
         _TabsKind.builder => AutoTabsRouter.builder(
-            routes: routes,
-            builder: (context, children, tabsRouter) => IndexedStack(
-              index: tabsRouter.activeIndex,
-              children: children,
-            ),
-          ),
+          routes: routes,
+          builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+        ),
       },
     ),
   );

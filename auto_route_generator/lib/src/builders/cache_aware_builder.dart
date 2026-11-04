@@ -46,17 +46,10 @@ abstract class CacheAwareBuilder<T> extends Builder {
     required this.annotationName,
     this.options,
   }) : buildExtensions = validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
-          '.dart': [
-            generatedExtension,
-            ...additionalOutputExtensions,
-          ]
-        }) {
+         '.dart': [generatedExtension, ...additionalOutputExtensions],
+       }) {
     if (generatedExtension.isEmpty || !generatedExtension.startsWith('.')) {
-      throw ArgumentError.value(
-        generatedExtension,
-        'generatedExtension',
-        'Extension must be in the format of .*',
-      );
+      throw ArgumentError.value(generatedExtension, 'generatedExtension', 'Extension must be in the format of .*');
     }
 
     if (options != null && additionalOutputExtensions.isNotEmpty) {
@@ -71,10 +64,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<void> build(BuildStep buildStep) async {
     final resolver = buildStep.resolver;
     if (!await resolver.isLibrary(buildStep.inputId)) return;
-    var unit = await resolver.compilationUnitFor(
-      buildStep.inputId,
-      allowSyntaxErrors: allowSyntaxErrors,
-    );
+    var unit = await resolver.compilationUnitFor(buildStep.inputId, allowSyntaxErrors: allowSyntaxErrors);
     if (!(await hasAnyTopLevelAnnotations(buildStep.inputId, buildStep, unit))) {
       return;
     }
@@ -89,10 +79,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
       }
     }
 
-    final lib = await resolver.libraryFor(
-      buildStep.inputId,
-      allowSyntaxErrors: allowSyntaxErrors,
-    );
+    final lib = await resolver.libraryFor(buildStep.inputId, allowSyntaxErrors: allowSyntaxErrors);
     var generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return;
     return _writeContent(buildStep, lib.languageVersion, generated);
@@ -152,9 +139,7 @@ source formatter.''',
         return true;
       }
       if (directive is PartDirective) {
-        partIds.add(
-          AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input),
-        );
+        partIds.add(AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input));
       }
     }
     for (var declaration in parsed.declarations) {
@@ -186,9 +171,7 @@ Map<String, List<String>> validatedBuildExtensionsFrom(
   if (extensionsOption == null) return defaultExtensions;
 
   if (extensionsOption is! Map) {
-    throw ArgumentError(
-      'Configured build_extensions should be a map from inputs to outputs.',
-    );
+    throw ArgumentError('Configured build_extensions should be a map from inputs to outputs.');
   }
 
   final defaultOutput = defaultExtensions.values.first.first;
@@ -197,17 +180,13 @@ Map<String, List<String>> validatedBuildExtensionsFrom(
   for (final entry in extensionsOption.entries) {
     final input = entry.key;
     if (input is! String || !input.endsWith('.dart')) {
-      throw ArgumentError(
-        'Invalid key in build_extensions option: `$input` should be a string ending with `.dart`',
-      );
+      throw ArgumentError('Invalid key in build_extensions option: `$input` should be a string ending with `.dart`');
     }
     // One output, given as a string or as a list of one string.
     final value = entry.value;
     final output = value is List && value.length == 1 ? value.single : value;
     if (output is! String || !output.endsWith(outputSuffix)) {
-      throw ArgumentError(
-        'Invalid output extension `$value`. It should be a string ending with `$outputSuffix`',
-      );
+      throw ArgumentError('Invalid output extension `$value`. It should be a string ending with `$outputSuffix`');
     }
     result[input] = [output];
   }

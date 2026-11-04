@@ -116,8 +116,8 @@ class _CompileCheckBuilder implements Builder {
 
   @override
   Map<String, List<String>> get buildExtensions => const {
-        '.dart': [_compileErrorsExtension],
-      };
+    '.dart': [_compileErrorsExtension],
+  };
 
   @override
   Future<void> build(BuildStep buildStep) async {

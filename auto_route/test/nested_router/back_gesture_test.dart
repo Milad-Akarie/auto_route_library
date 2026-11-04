@@ -9,14 +9,22 @@ class BackGestureRouter extends MainRouter {
   @override
   final List<AutoRoute> routes = [
     AutoRoute(path: '/', page: FirstRoute.page),
-    AutoRoute(path: '/second', page: SecondHostRoute.page, children: [
-      AutoRoute(path: '', page: SecondNested1Route.page),
-      AutoRoute(path: 'nested3', page: SecondNested3Route.page),
-      AutoRoute(path: 'deep', page: Tab2Route.page, children: [
-        AutoRoute(path: '', page: Tab2Nested1Route.page),
-        AutoRoute(path: 'nested2', page: Tab2Nested2Route.page),
-      ]),
-    ]),
+    AutoRoute(
+      path: '/second',
+      page: SecondHostRoute.page,
+      children: [
+        AutoRoute(path: '', page: SecondNested1Route.page),
+        AutoRoute(path: 'nested3', page: SecondNested3Route.page),
+        AutoRoute(
+          path: 'deep',
+          page: Tab2Route.page,
+          children: [
+            AutoRoute(path: '', page: Tab2Nested1Route.page),
+            AutoRoute(path: 'nested2', page: Tab2Nested2Route.page),
+          ],
+        ),
+      ],
+    ),
   ];
 }
 

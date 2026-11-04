@@ -21,23 +21,25 @@ void main() {
   late RootStackRouter router;
   setUp(() {
     authRepo = _AuthRepo();
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _LoginRoute.page(authRepo)),
-      AutoRoute(
-        page: _HomeRoute.page(authRepo),
-        initial: true,
-        guards: [
-          AutoRouteGuard.simple((resolver, router) {
-            if (authRepo.isLoggedIn) {
-              resolver.next(true);
-              return;
-            }
-            resolver.next(false);
-            router.replaceAll([const _LoginRoute()]);
-          }),
-        ],
-      ),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _LoginRoute.page(authRepo)),
+        AutoRoute(
+          page: _HomeRoute.page(authRepo),
+          initial: true,
+          guards: [
+            AutoRouteGuard.simple((resolver, router) {
+              if (authRepo.isLoggedIn) {
+                resolver.next(true);
+                return;
+              }
+              resolver.next(false);
+              router.replaceAll([const _LoginRoute()]);
+            }),
+          ],
+        ),
+      ],
+    );
   });
 
   Future<void> pumpApp(WidgetTester tester) async {
@@ -83,19 +85,19 @@ class _LoginRoute extends PageRouteInfo<void> {
 
   static const String name = 'LoginRoute';
   static PageInfo page(_AuthRepo authRepo) => PageInfo(
-        name,
-        builder: (_) => Builder(
-          builder: (context) => Scaffold(
-            body: FilledButton(
-              onPressed: () {
-                authRepo.login();
-                context.router.replaceAll([const _HomeRoute()]);
-              },
-              child: const Text('Log In'),
-            ),
-          ),
+    name,
+    builder: (_) => Builder(
+      builder: (context) => Scaffold(
+        body: FilledButton(
+          onPressed: () {
+            authRepo.login();
+            context.router.replaceAll([const _HomeRoute()]);
+          },
+          child: const Text('Log In'),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
@@ -103,14 +105,14 @@ class _HomeRoute extends PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
   static PageInfo page(_AuthRepo authRepo) => PageInfo(
-        name,
-        builder: (_) => Scaffold(
-          body: Column(
-            children: [
-              const Text('Home Screen'),
-              FilledButton(onPressed: authRepo.logOut, child: const Text('Log Out')),
-            ],
-          ),
-        ),
-      );
+    name,
+    builder: (_) => Scaffold(
+      body: Column(
+        children: [
+          const Text('Home Screen'),
+          FilledButton(onPressed: authRepo.logOut, child: const Text('Log Out')),
+        ],
+      ),
+    ),
+  );
 }

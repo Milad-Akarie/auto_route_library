@@ -93,10 +93,7 @@ class AutoRoute {
 
   /// Builds a [AutoRoutePage] from [RouteData]
   AutoRoutePage<T> buildPage<T>(RouteData data) {
-    return AutoRoutePage<T>(
-      child: builder(data),
-      routeData: data,
-    );
+    return AutoRoutePage<T>(child: builder(data), routeData: data);
   }
 
   AutoRoute._({
@@ -115,8 +112,8 @@ class AutoRoute {
     this.allowSnapshotting = true,
     this.initial = false,
     this.children,
-  })  : _path = path,
-        _pageBuilder = page.builder;
+  }) : _path = path,
+       _pageBuilder = page.builder;
 
   AutoRoute._change({
     required this.page,
@@ -134,8 +131,8 @@ class AutoRoute {
     required this.children,
     required this.initial,
     required this.allowSnapshotting,
-  })  : _path = path,
-        _pageBuilder = page.builder;
+  }) : _path = path,
+       _pageBuilder = page.builder;
 
   /// Builds a default AutoRoute instance with any [type]
   factory AutoRoute({
@@ -229,24 +226,23 @@ class AutoRoute {
     bool keepHistory = true,
     bool initial = false,
     bool allowSnapshotting = true,
-  }) =>
-      NamedRouteDef(
-        name: name,
-        builder: builder,
-        path: path,
-        usesPathAsKey: usesPathAsKey,
-        fullMatch: fullMatch,
-        type: type,
-        meta: meta,
-        maintainState: maintainState,
-        fullscreenDialog: fullscreenDialog,
-        children: children,
-        title: title,
-        restorationId: restorationId,
-        keepHistory: keepHistory,
-        initial: initial,
-        allowSnapshotting: allowSnapshotting,
-      );
+  }) => NamedRouteDef(
+    name: name,
+    builder: builder,
+    path: path,
+    usesPathAsKey: usesPathAsKey,
+    fullMatch: fullMatch,
+    type: type,
+    meta: meta,
+    maintainState: maintainState,
+    fullscreenDialog: fullscreenDialog,
+    children: children,
+    title: title,
+    restorationId: restorationId,
+    keepHistory: keepHistory,
+    initial: initial,
+    allowSnapshotting: allowSnapshotting,
+  );
 
   /// The path defined by user or automatically-added
   /// By [RouteCollection.fromList]
@@ -318,14 +314,8 @@ class RedirectRoute extends AutoRoute {
   final String redirectTo;
 
   /// Default constructor
-  RedirectRoute({
-    required String path,
-    required this.redirectTo,
-  }) : super._(
-          path: path,
-          page: PageInfo.redirect,
-          fullMatch: true,
-        );
+  RedirectRoute({required String path, required this.redirectTo})
+    : super._(path: path, page: PageInfo.redirect, fullMatch: true);
 
   @override
   String get name => "${page.name}-$path-$redirectTo";
@@ -353,11 +343,11 @@ class MaterialRoute extends AutoRoute {
     bool enablePredictiveBackGesture = false,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) : super._(
-          type: RouteType.material(
-            enablePredictiveBackGesture: enablePredictiveBackGesture,
-            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
-          ),
-        );
+         type: RouteType.material(
+           enablePredictiveBackGesture: enablePredictiveBackGesture,
+           predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+         ),
+       );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.cupertino] type
@@ -405,12 +395,12 @@ class AdaptiveRoute<R> extends AutoRoute {
     bool enablePredictiveBackGesture = false,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) : super._(
-          type: RouteType.adaptive(
-            opaque: opaque,
-            enablePredictiveBackGesture: enablePredictiveBackGesture,
-            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
-          ),
-        );
+         type: RouteType.adaptive(
+           opaque: opaque,
+           enablePredictiveBackGesture: enablePredictiveBackGesture,
+           predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+         ),
+       );
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
@@ -444,29 +434,31 @@ class CustomRoute<R> extends AutoRoute {
     Color? barrierColor,
     bool enablePredictiveBackGesture = false,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
-  })  : assert(durationInMilliseconds == null || duration == null, 'Use duration instead of durationInMilliseconds'),
-        assert(reverseDurationInMilliseconds == null || reverseDuration == null,
-            'Use reverseDuration instead of reverseDurationInMilliseconds'),
-        super._(
-          type: RouteType.custom(
-            transitionsBuilder: transitionsBuilder,
-            customRouteBuilder: customRouteBuilder,
-            duration: duration,
-            reverseDuration: reverseDuration,
-            // todo: remove deprecated members
-            // ignore: deprecated_member_use_from_same_package
-            durationInMilliseconds: durationInMilliseconds,
-            // todo: remove deprecated members
-            // ignore: deprecated_member_use_from_same_package
-            reverseDurationInMilliseconds: reverseDurationInMilliseconds,
-            opaque: opaque,
-            barrierDismissible: barrierDismissible,
-            barrierLabel: barrierLabel,
-            barrierColor: barrierColor,
-            enablePredictiveBackGesture: enablePredictiveBackGesture,
-            predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
-          ),
-        );
+  }) : assert(durationInMilliseconds == null || duration == null, 'Use duration instead of durationInMilliseconds'),
+       assert(
+         reverseDurationInMilliseconds == null || reverseDuration == null,
+         'Use reverseDuration instead of reverseDurationInMilliseconds',
+       ),
+       super._(
+         type: RouteType.custom(
+           transitionsBuilder: transitionsBuilder,
+           customRouteBuilder: customRouteBuilder,
+           duration: duration,
+           reverseDuration: reverseDuration,
+           // todo: remove deprecated members
+           // ignore: deprecated_member_use_from_same_package
+           durationInMilliseconds: durationInMilliseconds,
+           // todo: remove deprecated members
+           // ignore: deprecated_member_use_from_same_package
+           reverseDurationInMilliseconds: reverseDurationInMilliseconds,
+           opaque: opaque,
+           barrierDismissible: barrierDismissible,
+           barrierLabel: barrierLabel,
+           barrierColor: barrierColor,
+           enablePredictiveBackGesture: enablePredictiveBackGesture,
+           predictiveBackPageTransitionsBuilder: predictiveBackPageTransitionsBuilder,
+         ),
+       );
 }
 
 /// Builds an [AutoRoute] instance with a direct page builder
@@ -513,9 +505,9 @@ class NamedRouteDef extends AutoRoute {
     super.type,
     required WidgetBuilderWithData builder,
   }) : super._(
-          guards: [AutoRouteGuard.simple(onNavigation)],
-          page: PageInfo.builder(name, builder: builder),
-        );
+         guards: [AutoRouteGuard.simple(onNavigation)],
+         page: PageInfo.builder(name, builder: builder),
+       );
 
   /// Creates a guarded route
   NamedRouteDef.shell({
@@ -541,14 +533,8 @@ class NamedRouteDef extends AutoRoute {
 @visibleForTesting
 class TestRoute extends AutoRoute {
   /// Default constructor
-  TestRoute(
-    String name, {
-    super.path,
-    super.children,
-    super.fullMatch,
-    super.restorationId,
-    super.initial,
-  }) : super._(page: PageInfo(name, builder: (_) => const SizedBox()));
+  TestRoute(String name, {super.path, super.children, super.fullMatch, super.restorationId, super.initial})
+    : super._(page: PageInfo(name, builder: (_) => const SizedBox()));
 }
 
 /// Builds a simplified [AutoRoute] instance for internal usage
@@ -556,12 +542,8 @@ class TestRoute extends AutoRoute {
 @internal
 class DummyRootRoute extends AutoRoute {
   /// Default constructor
-  DummyRootRoute({
-    required String path,
-    super.children,
-    super.fullMatch,
-    super.restorationId,
-  }) : super._(page: PageInfo.root, path: path);
+  DummyRootRoute({required String path, super.children, super.fullMatch, super.restorationId})
+    : super._(page: PageInfo.root, path: path);
 }
 
 /// Signature for a function that generates a path for a route name
@@ -590,11 +572,16 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(List<AutoRoute> routes,
-      {bool root = false, OnGeneratePath onGeneratePath = defaultPathGenerator}) {
+  factory RouteCollection.fromList(
+    List<AutoRoute> routes, {
+    bool root = false,
+    OnGeneratePath onGeneratePath = defaultPathGenerator,
+  }) {
     final routesMarkedInitial = routes.where((e) => e.initial);
-    throwIf(routesMarkedInitial.length > 1,
-        'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}');
+    throwIf(
+      routesMarkedInitial.length > 1,
+      'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}',
+    );
 
     final targetInitialPath = root ? '/' : '';
     var routesMap = <String, AutoRoute>{};
@@ -602,18 +589,12 @@ class RouteCollection {
     var hasValidInitialPath = false;
     for (var r in routes) {
       if (r.hasSubTree) {
-        subCollections[r.name] = RouteCollection.fromList(
-          r.children!,
-          onGeneratePath: onGeneratePath,
-        );
+        subCollections[r.name] = RouteCollection.fromList(r.children!, onGeneratePath: onGeneratePath);
       }
 
       var routeToUse = r;
       if (r._path != null) {
-        throwIf(
-          !root && r.path.startsWith('/'),
-          'Sub-paths can not start with a "/": ${r.path}',
-        );
+        throwIf(!root && r.path.startsWith('/'), 'Sub-paths can not start with a "/": ${r.path}');
         throwIf(
           root && !r.path.startsWith(RegExp('[/]|[*]')),
           'Root-paths must start with a "/" or be a wild-card:  ${r.path}',
@@ -625,8 +606,10 @@ class RouteCollection {
           generatedPath = root ? '/' : '';
         } else {
           final path = onGeneratePath(r);
-          assert(!path.startsWith('/'),
-              '"/" is added automatically based on route level, generated path should not have a leading "/"');
+          assert(
+            !path.startsWith('/'),
+            '"/" is added automatically based on route level, generated path should not have a leading "/"',
+          );
           generatedPath = root ? '/$path' : path;
         }
         routeToUse = r.changePath(generatedPath);
@@ -638,14 +621,8 @@ class RouteCollection {
       routesMap[r.name] = routeToUse;
     }
     if (!hasValidInitialPath && routesMarkedInitial.isNotEmpty) {
-      final redirectRoute = RedirectRoute(
-        path: targetInitialPath,
-        redirectTo: routesMarkedInitial.first.path,
-      );
-      routesMap = {
-        redirectRoute.name: redirectRoute,
-        ...routesMap,
-      };
+      final redirectRoute = RedirectRoute(path: targetInitialPath, redirectTo: routesMarkedInitial.first.path);
+      routesMap = {redirectRoute.name: redirectRoute, ...routesMap};
     }
     return RouteCollection(routesMap, subCollections);
   }

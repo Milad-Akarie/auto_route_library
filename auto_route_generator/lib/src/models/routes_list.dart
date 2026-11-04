@@ -12,19 +12,11 @@ class RoutesList {
   final int? inputHash;
 
   /// Default constructor
-  const RoutesList({
-    required this.routes,
-    required this.inputPath,
-    required this.inputHash,
-  });
+  const RoutesList({required this.routes, required this.inputPath, required this.inputHash});
 
   /// Serializes this instance to a JSON object.
   Map<String, dynamic> toJson() {
-    return {
-      'routes': List.unmodifiable(routes.map((e) => e.toJson())),
-      'inputPath': inputPath,
-      'inputHash': inputHash,
-    };
+    return {'routes': List.unmodifiable(routes.map((e) => e.toJson())), 'inputPath': inputPath, 'inputHash': inputHash};
   }
 
   /// Deserializes this instance from a JSON object.

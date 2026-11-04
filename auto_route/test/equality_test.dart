@@ -27,7 +27,7 @@ void main() {
           fragment: 'fragment',
           redirectedFrom: 'redirectedFrom',
           autoFilled: false,
-        )
+        ),
       ],
     );
     expect(match, equals(match));
@@ -41,12 +41,7 @@ void main() {
       rawPathParams: {"id": 1},
       rawQueryParams: {"foo": "bar"},
       initialChildren: [
-        PageRouteInfo(
-          'Test',
-          args: "Args",
-          rawPathParams: {"id": 1},
-          rawQueryParams: {"foo": "bar"},
-        )
+        PageRouteInfo('Test', args: "Args", rawPathParams: {"id": 1}, rawQueryParams: {"foo": "bar"}),
       ],
       fragment: 'fragment',
     );

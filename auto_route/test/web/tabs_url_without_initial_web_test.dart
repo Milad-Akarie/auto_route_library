@@ -18,10 +18,14 @@ void main() {
       routes: [
         AutoRoute(page: _HomeRoute.page, path: '/'),
         // No tab has a '' path or is initial, so '/tabs' names no tab.
-        AutoRoute(page: _TabsRoute.page, path: '/tabs', children: [
-          AutoRoute(page: _Tab1Route.page, path: 'tab-1'),
-          AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
-        ]),
+        AutoRoute(
+          page: _TabsRoute.page,
+          path: '/tabs',
+          children: [
+            AutoRoute(page: _Tab1Route.page, path: 'tab-1'),
+            AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
+          ],
+        ),
       ],
     );
     await rewindBrowserHistory();
@@ -36,8 +40,7 @@ void main() {
   // Should: the entry holds '/tabs/tab-1', and each button shows the tab its
   // url names.
   for (final includePrefixMatches in [false, true]) {
-    testWidgets(
-        'On web, the browser back button returns to the first tab of a host opened without a tab in its url, '
+    testWidgets('On web, the browser back button returns to the first tab of a host opened without a tab in its url, '
         'includePrefixMatches: $includePrefixMatches', (tester) async {
       await pumpRouterConfigApp(tester, router.config(includePrefixMatches: includePrefixMatches));
       await settleBrowser(tester);

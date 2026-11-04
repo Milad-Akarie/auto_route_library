@@ -25,17 +25,19 @@ PageInfo _tabPage(String name) => PageInfo(name, builder: (_) => Center(child: T
 
 const _tabs = [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')];
 
-RootStackRouter _router(Widget Function() tabsRouter) => RootStackRouter.build(routes: [
-      AutoRoute(
-        path: '/',
-        page: PageInfo('TabsRoute', builder: (_) => tabsRouter()),
-        children: [
-          AutoRoute(path: 'tab1', page: _tabPage('Tab1')),
-          AutoRoute(path: 'tab2', page: _tabPage('Tab2')),
-          AutoRoute(path: 'tab3', page: _tabPage('Tab3')),
-        ],
-      ),
-    ]);
+RootStackRouter _router(Widget Function() tabsRouter) => RootStackRouter.build(
+  routes: [
+    AutoRoute(
+      path: '/',
+      page: PageInfo('TabsRoute', builder: (_) => tabsRouter()),
+      children: [
+        AutoRoute(path: 'tab1', page: _tabPage('Tab1')),
+        AutoRoute(path: 'tab2', page: _tabPage('Tab2')),
+        AutoRoute(path: 'tab3', page: _tabPage('Tab3')),
+      ],
+    ),
+  ],
+);
 
 Future<void> _expectSwipesInitNewTabs(WidgetTester tester, RootStackRouter router) async {
   await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [_TabsObserver()]));
@@ -80,10 +82,7 @@ void main() {
   testWidgets('Swiping AutoTabsRouter.tabBar to a tab never opened fires didInitTabRoute', (tester) async {
     await _expectSwipesInitNewTabs(
       tester,
-      _router(() => AutoTabsRouter.tabBar(
-            routes: _tabs,
-            builder: (context, child, controller) => child,
-          )),
+      _router(() => AutoTabsRouter.tabBar(routes: _tabs, builder: (context, child, controller) => child)),
     );
   });
 }

@@ -23,12 +23,7 @@ class PageInfo {
 
   /// Builds a new instance of [PageInfo] with the given parameters
   factory PageInfo.builder(String name, {required WidgetBuilderWithData builder}) {
-    return PageInfo(
-      name,
-      builder: (data) => Builder(
-        builder: (context) => builder(context, data),
-      ),
-    );
+    return PageInfo(name, builder: (data) => Builder(builder: (context) => builder(context, data)));
   }
 
   @override
@@ -46,24 +41,15 @@ class PageInfo {
   static const root = _NoBuilderPageInfo('#Root');
 
   /// Creates a new instance of [PageInfo] with the given parameters
-  PageInfo copyWith({
-    String? name,
-    AutoRoutePageBuilder? builder,
-  }) {
-    return PageInfo(
-      name ?? this.name,
-      builder: builder ?? this.builder,
-    );
+  PageInfo copyWith({String? name, AutoRoutePageBuilder? builder}) {
+    return PageInfo(name ?? this.name, builder: builder ?? this.builder);
   }
 }
 
 /// Dummy [PageInfo] used to represent a redirect route
 class _NoBuilderPageInfo extends PageInfo {
   /// Default constructor
-  const _NoBuilderPageInfo(super.name)
-      : super(
-          builder: _noBuilder,
-        );
+  const _NoBuilderPageInfo(super.name) : super(builder: _noBuilder);
 
   static Widget _noBuilder(RouteData _) {
     throw FlutterError('PageInfo does not have a builder');

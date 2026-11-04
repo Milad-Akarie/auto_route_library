@@ -65,8 +65,9 @@ void main() {
   // Popping the second Book in the app returns the browser to the first Book's
   // entry, so the browser's back button then goes to Home, not to the first
   // Book again.
-  testWidgets('Popping a page with the same url as the one under it steps the browser back to its entry',
-      (tester) async {
+  testWidgets('Popping a page with the same url as the one under it steps the browser back to its entry', (
+    tester,
+  ) async {
     await pushTwoBooks(tester);
 
     router.maybePop();

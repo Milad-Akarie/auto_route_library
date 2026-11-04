@@ -15,20 +15,33 @@ void main() {
     // Reported: innerRouterOf returns null after the routes change, with the
     // page-view kind only.
     // Should: it returns the nested router, which pops to its first page.
-    testWidgets('${kind.name}: innerRouterOf finds the tab\'s nested router after the routes change',
-        (WidgetTester tester) async {
+    testWidgets('${kind.name}: innerRouterOf finds the tab\'s nested router after the routes change', (
+      WidgetTester tester,
+    ) async {
       addTearDown(() => _extraNotifier.value = false);
       _tabsKind = kind;
-      final router = RootStackRouter.build(routes: [
-        AutoRoute(page: _HostRoute.page, path: '/', initial: true, children: [
-          AutoRoute(page: _NestedHostRoute.page, path: 'nested', initial: true, children: [
-            AutoRoute(page: _NestedFirstRoute.page, path: '', initial: true),
-            AutoRoute(page: _NestedSecondRoute.page, path: 'second'),
-          ]),
-          AutoRoute(page: _ExtraRoute.page, path: 'extra'),
-          AutoRoute(page: _SecondRoute.page, path: 'second'),
-        ]),
-      ]);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _HostRoute.page,
+            path: '/',
+            initial: true,
+            children: [
+              AutoRoute(
+                page: _NestedHostRoute.page,
+                path: 'nested',
+                initial: true,
+                children: [
+                  AutoRoute(page: _NestedFirstRoute.page, path: '', initial: true),
+                  AutoRoute(page: _NestedSecondRoute.page, path: 'second'),
+                ],
+              ),
+              AutoRoute(page: _ExtraRoute.page, path: 'extra'),
+              AutoRoute(page: _SecondRoute.page, path: 'second'),
+            ],
+          ),
+        ],
+      );
       await pumpRouterConfigApp(tester, router.config());
       final tabsRouter = router.innerRouterOf<TabsRouter>(_HostRoute.name)!;
       tabsRouter.innerRouterOf<StackRouter>(_NestedHostRoute.name)!.push(const _NestedSecondRoute());
@@ -69,12 +82,9 @@ class _HostRoute extends PageRouteInfo<void> {
           _TabsKind.pageView => AutoTabsRouter.pageView(routes: routes),
           _TabsKind.tabBar => AutoTabsRouter.tabBar(routes: routes),
           _TabsKind.builder => AutoTabsRouter.builder(
-              routes: routes,
-              builder: (context, children, tabsRouter) => IndexedStack(
-                index: tabsRouter.activeIndex,
-                children: children,
-              ),
-            ),
+            routes: routes,
+            builder: (context, children, tabsRouter) => IndexedStack(index: tabsRouter.activeIndex, children: children),
+          ),
         };
       },
     ),

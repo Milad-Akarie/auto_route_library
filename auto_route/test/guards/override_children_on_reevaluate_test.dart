@@ -17,23 +17,28 @@ import '../router_test_utils.dart';
 // to the children passed to navigate(), not to the guard's.
 void main() {
   AutoRouteGuard resetToHome() => AutoRouteGuard.simple((resolver, _) {
-        if (resolver.isReevaluating) {
-          resolver.overrideNext(children: [const _HomeRoute()]);
-        } else {
-          resolver.next();
-        }
-      });
+    if (resolver.isReevaluating) {
+      resolver.overrideNext(children: [const _HomeRoute()]);
+    } else {
+      resolver.next();
+    }
+  });
 
   testWidgets('a guard re-check overriding the children of a nested router opens them', (tester) async {
     final auth = ValueNotifier(0);
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _DashboardRoute.page, path: '/', guards: [
-        resetToHome()
-      ], children: [
-        AutoRoute(page: _HomeRoute.page, path: '', initial: true),
-        AutoRoute(page: _ProfileRoute.page, path: 'profile'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _DashboardRoute.page,
+          path: '/',
+          guards: [resetToHome()],
+          children: [
+            AutoRoute(page: _HomeRoute.page, path: '', initial: true),
+            AutoRoute(page: _ProfileRoute.page, path: 'profile'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterApp(tester, router, initialLink: '/profile', reevaluationNotifier: auth);
     expect(find.text(_ProfileRoute.name), findsOneWidget);
 
@@ -47,14 +52,19 @@ void main() {
 
   testWidgets('a guard re-check overriding the children of a tabs router opens that tab', (tester) async {
     final auth = ValueNotifier(0);
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(page: _DashboardTabsRoute.page, path: '/', guards: [
-        resetToHome()
-      ], children: [
-        AutoRoute(page: _HomeRoute.page, path: '', initial: true),
-        AutoRoute(page: _ProfileRoute.page, path: 'profile'),
-      ]),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _DashboardTabsRoute.page,
+          path: '/',
+          guards: [resetToHome()],
+          children: [
+            AutoRoute(page: _HomeRoute.page, path: '', initial: true),
+            AutoRoute(page: _ProfileRoute.page, path: 'profile'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterApp(tester, router, initialLink: '/profile', reevaluationNotifier: auth);
     expect(router.topRoute.name, _ProfileRoute.name);
 
@@ -69,25 +79,27 @@ void main() {
 
   testWidgets('navigate() to an open page whose guard overrides its children opens them', (tester) async {
     var reset = false;
-    final router = RootStackRouter.build(routes: [
-      AutoRoute(
-        page: _DashboardRoute.page,
-        path: '/',
-        guards: [
-          AutoRouteGuard.simple((resolver, _) {
-            if (reset) {
-              resolver.overrideNext(children: [const _HomeRoute()]);
-            } else {
-              resolver.next();
-            }
-          }),
-        ],
-        children: [
-          AutoRoute(page: _HomeRoute.page, path: '', initial: true),
-          AutoRoute(page: _ProfileRoute.page, path: 'profile'),
-        ],
-      ),
-    ]);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _DashboardRoute.page,
+          path: '/',
+          guards: [
+            AutoRouteGuard.simple((resolver, _) {
+              if (reset) {
+                resolver.overrideNext(children: [const _HomeRoute()]);
+              } else {
+                resolver.next();
+              }
+            }),
+          ],
+          children: [
+            AutoRoute(page: _HomeRoute.page, path: '', initial: true),
+            AutoRoute(page: _ProfileRoute.page, path: 'profile'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterApp(tester, router);
     expect(router.topRoute.name, _HomeRoute.name);
 
@@ -112,10 +124,7 @@ class _DashboardTabsRoute extends PageRouteInfo<void> {
   const _DashboardTabsRoute() : super(name);
 
   static const String name = '_DashboardTabsRoute';
-  static PageInfo page = PageInfo(
-    name,
-    builder: (_) => const AutoTabsRouter(routes: [_HomeRoute(), _ProfileRoute()]),
-  );
+  static PageInfo page = PageInfo(name, builder: (_) => const AutoTabsRouter(routes: [_HomeRoute(), _ProfileRoute()]));
 }
 
 class _HomeRoute extends PageRouteInfo<void> {

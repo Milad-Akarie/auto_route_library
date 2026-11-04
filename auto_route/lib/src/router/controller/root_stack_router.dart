@@ -33,9 +33,7 @@ abstract class RootStackRouter extends StackRouter {
         includePrefixMatches: includePrefixMatches,
         deepLinkTransformer: deepLinkTransformer,
       ),
-      routeInformationProvider: routeInfoProvider(
-        neglectWhen: neglectWhen,
-      ),
+      routeInformationProvider: routeInfoProvider(neglectWhen: neglectWhen),
       backButtonDispatcher: _rootBackButtonDispatcher,
       routerDelegate: delegate(
         reevaluateListenable: reevaluateListenable,
@@ -51,17 +49,17 @@ abstract class RootStackRouter extends StackRouter {
 
   @override
   RouteData get routeData => RouteData(
-        router: this,
-        type: const RouteType.material(),
-        stackKey: _stackKey,
-        route: RouteMatch(
-          config: DummyRootRoute(path: ''),
-          segments: const [''],
-          stringMatch: '',
-          key: const ValueKey('Root'),
-        ),
-        pendingChildren: const [],
-      );
+    router: this,
+    type: const RouteType.material(),
+    stackKey: _stackKey,
+    route: RouteMatch(
+      config: DummyRootRoute(path: ''),
+      segments: const [''],
+      stringMatch: '',
+      key: const ValueKey('Root'),
+    ),
+    pendingChildren: const [],
+  );
 
   /// The list of route entries to match against
   List<AutoRoute> get routes;
@@ -121,12 +119,11 @@ abstract class RootStackRouter extends StackRouter {
   DefaultRouteParser defaultRouteParser({
     bool includePrefixMatches = !kIsWeb,
     DeepLinkTransformer? deepLinkTransformer,
-  }) =>
-      DefaultRouteParser(
-        matcher,
-        includePrefixMatches: includePrefixMatches,
-        deepLinkTransformer: deepLinkTransformer ?? (uri) async => uri,
-      );
+  }) => DefaultRouteParser(
+    matcher,
+    includePrefixMatches: includePrefixMatches,
+    deepLinkTransformer: deepLinkTransformer ?? (uri) async => uri,
+  );
 
   @override
   void updateRouteData(RouteData data) {
@@ -140,8 +137,11 @@ abstract class RootStackRouter extends StackRouter {
   NavigationHistory get navigationHistory => _navigationHistory;
 
   @override
-  late final RouteCollection routeCollection =
-      RouteCollection.fromList(routes, root: true, onGeneratePath: onGeneratePath);
+  late final RouteCollection routeCollection = RouteCollection.fromList(
+    routes,
+    root: true,
+    onGeneratePath: onGeneratePath,
+  );
 
   /// Generates a path for a route with the provided [name]
   ///

@@ -12,18 +12,12 @@ extension AutoRouterX on BuildContext {
 
   /// see [StackRouter.push]
   @optionalTypeArgs
-  Future<T?> pushRoute<T extends Object?>(
-    PageRouteInfo route, {
-    OnNavigationFailure? onFailure,
-  }) =>
+  Future<T?> pushRoute<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
       router.push<T>(route, onFailure: onFailure);
 
   /// see [StackRouter.replace]
   @optionalTypeArgs
-  Future<T?> replaceRoute<T extends Object?>(
-    PageRouteInfo route, {
-    OnNavigationFailure? onFailure,
-  }) =>
+  Future<T?> replaceRoute<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
       router.replace<T>(route, onFailure: onFailure);
 
   /// see [StackRouter.maybePop]
@@ -36,21 +30,15 @@ extension AutoRouterX on BuildContext {
 
   /// see [RoutingController.navigate]
   Future<T?> navigateTo<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
-      RouterScope.of(this).controller.navigate(
-            route,
-            onFailure: onFailure,
-          );
+      RouterScope.of(this).controller.navigate(route, onFailure: onFailure);
 
   /// see [RoutingController.back]
   void back() => RouterScope.of(this).controller.back();
 
   /// see [RoutingController.navigatePath]
   Future<void> navigateToPath(String path, {bool includePrefixMatches = false, OnNavigationFailure? onFailure}) =>
-      RouterScope.of(this).controller.navigatePath(
-            path,
-            includePrefixMatches: includePrefixMatches,
-            onFailure: onFailure,
-          );
+      RouterScope.of(this).controller
+          .navigatePath(path, includePrefixMatches: includePrefixMatches, onFailure: onFailure);
 
   /// Helper to read the scoped [TabsRouter]
   TabsRouter get tabsRouter => AutoTabsRouter.of(this);

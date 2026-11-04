@@ -17,10 +17,14 @@ void main() {
     router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _HomeRoute.page, path: '/'),
-        AutoRoute(page: _TabsRoute.page, path: '/tabs', children: [
-          AutoRoute(page: _Tab1Route.page, path: 'tab-1', initial: true),
-          AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
-        ]),
+        AutoRoute(
+          page: _TabsRoute.page,
+          path: '/tabs',
+          children: [
+            AutoRoute(page: _Tab1Route.page, path: 'tab-1', initial: true),
+            AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
+          ],
+        ),
       ],
     );
     await rewindBrowserHistory();

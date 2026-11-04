@@ -16,11 +16,7 @@ void main() {
     final pageNotifier = ValueNotifier(1);
     await pumpRouterConfigApp(
       tester,
-      router.config(
-        deepLinkBuilder: (_) => DeepLink.single(
-          DeclarativeRouterHostRoute(pageNotifier: pageNotifier),
-        ),
-      ),
+      router.config(deepLinkBuilder: (_) => DeepLink.single(DeclarativeRouterHostRoute(pageNotifier: pageNotifier))),
     );
 
     final declarativeRouter = router.topMostRouter();

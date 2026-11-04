@@ -28,8 +28,9 @@ void main() {
   // On 10.0.0, as on 10.0.1, the last login opened ProfileRoute, not the paywall: the
   // guard of the profile, whose redirect the back button had closed, was
   // still waiting and resumed. On dev it opens the paywall.
-  testWidgets('Logging in after leaving an earlier redirect opens the route that redirected last (#2178)',
-      (tester) async {
+  testWidgets('Logging in after leaving an earlier redirect opens the route that redirected last (#2178)', (
+    tester,
+  ) async {
     final n = GuardChangeNotifier();
     final login = AutoRouteGuard.simple((resolver, router) {
       if (n.connected) {
@@ -40,52 +41,56 @@ void main() {
     });
     final anonymous = AutoRouteGuard.simple((resolver, router) => resolver.nextOrBack(!n.connected));
     final noPro = AutoRouteGuard.simple((resolver, router) => resolver.nextOrBack(!n.hasProSubscription));
-    final router = RootStackRouter.build(routes: [
-      NamedRouteDef(
-        name: 'HomeRoute',
-        path: '/',
-        builder: (context, _) => Scaffold(
-          appBar: AppBar(title: const Text('Home Page')),
-          body: Column(children: [
-            ElevatedButton(
-              onPressed: () => context.router.push(const NamedRoute('SubscriptionPaywallRoute')),
-              child: const Text('Click to open Subscription Paywall Page'),
+    final router = RootStackRouter.build(
+      routes: [
+        NamedRouteDef(
+          name: 'HomeRoute',
+          path: '/',
+          builder: (context, _) => Scaffold(
+            appBar: AppBar(title: const Text('Home Page')),
+            body: Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () => context.router.push(const NamedRoute('SubscriptionPaywallRoute')),
+                  child: const Text('Click to open Subscription Paywall Page'),
+                ),
+                ElevatedButton(
+                  onPressed: () => context.router.push(const NamedRoute('ProfileRoute')),
+                  child: const Text('Click to open Profile Page'),
+                ),
+              ],
             ),
-            ElevatedButton(
-              onPressed: () => context.router.push(const NamedRoute('ProfileRoute')),
-              child: const Text('Click to open Profile Page'),
-            ),
-          ]),
+          ),
         ),
-      ),
-      NamedRouteDef(
-        name: 'ProfileRoute',
-        path: '/profile',
-        guards: [login],
-        builder: (_, __) => Scaffold(
-          appBar: AppBar(title: const Text('Profile Page')),
-          body: ElevatedButton(onPressed: n.disconnect, child: const Text('Click to logout')),
+        NamedRouteDef(
+          name: 'ProfileRoute',
+          path: '/profile',
+          guards: [login],
+          builder: (_, __) => Scaffold(
+            appBar: AppBar(title: const Text('Profile Page')),
+            body: ElevatedButton(onPressed: n.disconnect, child: const Text('Click to logout')),
+          ),
         ),
-      ),
-      NamedRouteDef(
-        name: 'SignInRoute',
-        path: '/signin',
-        guards: [anonymous],
-        builder: (_, __) => Scaffold(
-          appBar: AppBar(title: const Text('SignIn Page')),
-          body: ElevatedButton(onPressed: n.connect, child: const Text('Click to login')),
+        NamedRouteDef(
+          name: 'SignInRoute',
+          path: '/signin',
+          guards: [anonymous],
+          builder: (_, __) => Scaffold(
+            appBar: AppBar(title: const Text('SignIn Page')),
+            body: ElevatedButton(onPressed: n.connect, child: const Text('Click to login')),
+          ),
         ),
-      ),
-      NamedRouteDef(
-        name: 'SubscriptionPaywallRoute',
-        path: '/paywall',
-        guards: [noPro, login],
-        builder: (_, __) => Scaffold(
-          appBar: AppBar(title: const Text('Subscription Paywall Page')),
-          body: const Text('paywall body'),
+        NamedRouteDef(
+          name: 'SubscriptionPaywallRoute',
+          path: '/paywall',
+          guards: [noPro, login],
+          builder: (_, __) => Scaffold(
+            appBar: AppBar(title: const Text('Subscription Paywall Page')),
+            body: const Text('paywall body'),
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
     await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: n)));
     await tester.pumpAndSettle();
     Future<void> tap(String t) async {

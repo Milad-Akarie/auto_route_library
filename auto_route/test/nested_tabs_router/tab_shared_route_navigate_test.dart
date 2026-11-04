@@ -10,26 +10,36 @@ void main() {
   late TabsRouter tabsRouter;
 
   Future<void> pumpDashboard(WidgetTester tester) async {
-    router = RootStackRouter.build(routes: [
-      RedirectRoute(path: '/', redirectTo: '/dashboard'),
-      AutoRoute(page: _DashboardRoute.page, path: '/dashboard', children: [
-        RedirectRoute(path: '', redirectTo: 'test3'),
-        AutoRoute(page: _TestsRoute.page, path: 'tests', children: [
-          AutoRoute(page: _Test1Route.page, path: 'test1'),
-          AutoRoute(page: _Test2Route.page, path: 'test2'),
-        ]),
-        AutoRoute(page: _Test3Route.page, path: 'test3'),
-      ]),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        RedirectRoute(path: '/', redirectTo: '/dashboard'),
+        AutoRoute(
+          page: _DashboardRoute.page,
+          path: '/dashboard',
+          children: [
+            RedirectRoute(path: '', redirectTo: 'test3'),
+            AutoRoute(
+              page: _TestsRoute.page,
+              path: 'tests',
+              children: [
+                AutoRoute(page: _Test1Route.page, path: 'test1'),
+                AutoRoute(page: _Test2Route.page, path: 'test2'),
+              ],
+            ),
+            AutoRoute(page: _Test3Route.page, path: 'test3'),
+          ],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, router.config());
     tabsRouter = router.innerRouterOf<TabsRouter>(_DashboardRoute.name)!;
   }
 
   // The pages of each tab's nested router; '-' for a tab without one.
   List<String> tabStacks() => [
-        for (var i = 0; i < tabsRouter.pageCount; i++)
-          tabsRouter.stackRouterOfIndex(i)?.stack.map((p) => p.name).join(', ') ?? '-',
-      ];
+    for (var i = 0; i < tabsRouter.pageCount; i++)
+      tabsRouter.stackRouterOfIndex(i)?.stack.map((p) => p.name).join(', ') ?? '-',
+  ];
 
   // Found while settling https://github.com/Milad-Akarie/auto_route_library/issues/1874;
   // no upstream report of its own.

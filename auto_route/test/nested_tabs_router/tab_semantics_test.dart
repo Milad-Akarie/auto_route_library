@@ -23,13 +23,20 @@ void main() {
       tester.view.devicePixelRatio = 2.625;
       addTearDown(tester.view.reset);
       _tabsKind = kind;
-      final router = RootStackRouter.build(routes: [
-        AutoRoute(page: _TabsHostRoute.page, path: '/', initial: true, children: [
-          AutoRoute(page: _FirstTabRoute.page, path: 'first'),
-          AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-          AutoRoute(page: _ThirdTabRoute.page, path: 'third'),
-        ]),
-      ]);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _TabsHostRoute.page,
+            path: '/',
+            initial: true,
+            children: [
+              AutoRoute(page: _FirstTabRoute.page, path: 'first'),
+              AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+              AutoRoute(page: _ThirdTabRoute.page, path: 'third'),
+            ],
+          ),
+        ],
+      );
       await pumpRouterConfigApp(tester, router.config());
       final tabsRouter = router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!;
 
@@ -95,14 +102,14 @@ class _TabsHostRoute extends PageRouteInfo<void> {
 }
 
 Widget _tabPage(String label) => Scaffold(
-      appBar: AppBar(title: Text('$label title')),
-      body: Column(
-        children: [
-          Text('$label text'),
-          ElevatedButton(onPressed: () {}, child: Text('$label button')),
-        ],
-      ),
-    );
+  appBar: AppBar(title: Text('$label title')),
+  body: Column(
+    children: [
+      Text('$label text'),
+      ElevatedButton(onPressed: () {}, child: Text('$label button')),
+    ],
+  ),
+);
 
 class _FirstTabRoute extends PageRouteInfo<void> {
   const _FirstTabRoute() : super(name);

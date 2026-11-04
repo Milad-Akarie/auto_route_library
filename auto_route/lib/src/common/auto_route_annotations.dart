@@ -62,10 +62,7 @@ class RoutePage {
   final bool? deferredLoading;
 
   /// default constructor
-  const RoutePage({
-    this.name,
-    this.deferredLoading,
-  });
+  const RoutePage({this.name, this.deferredLoading});
 }
 
 /// default routePage

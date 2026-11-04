@@ -17,11 +17,7 @@ class RouteConfigResolver {
   /// Resolves a [ClassElement] into a consumable [RouteConfig]
   RouteConfig resolve(Element element, ConstantReader routePage) {
     var isDeferred = routePage.peek('deferredLoading')?.boolValue;
-    throwIf(
-      element is! ClassElement,
-      '${element.displayName} is not a class element',
-      element: element,
-    );
+    throwIf(element is! ClassElement, '${element.displayName} is not a class element', element: element);
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
@@ -31,10 +27,7 @@ class RouteConfigResolver {
 
     var name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
-    throwIf(
-      constructor == null,
-      'Route pages must have an unnamed constructor',
-    );
+    throwIf(constructor == null, 'Route pages must have an unnamed constructor');
     var hasConstConstructor = false;
     var params = constructor!.formalParameters;
     var parameters = <ParamConfig>[];
@@ -58,12 +51,14 @@ class RouteConfigResolver {
     var pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs =
-          parameters.where((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+      var unParsableRequiredArgs = parameters.where(
+        (p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
+      );
       if (unParsableRequiredArgs.isNotEmpty) {
         print(
-            '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
-            'that can not be parsed from path,\n@PathParam() and @QueryParam() annotations will be ignored.\n');
+          '\nWARNING => Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
+          'that can not be parsed from path,\n@PathParam() and @QueryParam() annotations will be ignored.\n',
+        );
       }
     }
 

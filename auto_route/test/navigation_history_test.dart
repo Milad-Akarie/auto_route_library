@@ -10,8 +10,9 @@ import 'simple_router/router.dart';
 // web the history is the browser's own; test/web tests it against the real
 // browser history, which this file's default headless setup doesn't connect.
 const Object _webSupportsIt = kIsWeb ? 'checks that this throws, which it does only off the web' : false;
-const Object _webCountsBrowserEntries =
-    kIsWeb ? "checks the native history's entry count; on web length counts the browser's entries" : false;
+const Object _webCountsBrowserEntries = kIsWeb
+    ? "checks the native history's entry count; on web length counts the browser's entries"
+    : false;
 const Object _webBackMovesBrowser = kIsWeb
     ? "checks the native history's own back step; on web back() moves the browser, which reports it later"
     : false;
@@ -214,24 +215,15 @@ void main() {
     });
 
     test('Forward navigation should throw error on native platforms', () {
-      expect(
-        () => history.forward(),
-        throwsA(isA<FlutterError>()),
-      );
+      expect(() => history.forward(), throwsA(isA<FlutterError>()));
     }, skip: _webSupportsIt);
 
     test('pathState getter should throw error on native platforms', () {
-      expect(
-        () => history.pathState,
-        throwsA(isA<FlutterError>()),
-      );
+      expect(() => history.pathState, throwsA(isA<FlutterError>()));
     }, skip: _webSupportsIt);
 
     test('pushPathState should throw error on native platforms', () {
-      expect(
-        () => history.pushPathState(null),
-        throwsA(isA<FlutterError>()),
-      );
+      expect(() => history.pushPathState(null), throwsA(isA<FlutterError>()));
     }, skip: _webSupportsIt);
 
     test('Should mark and unmark URL state for replace', () async {

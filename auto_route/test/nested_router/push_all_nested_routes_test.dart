@@ -7,16 +7,24 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(page: _BootRoute.page, initial: true),
-      AutoRoute(page: _DashboardRoute.page, children: [
-        AutoRoute(page: _MetricsRoute.page, initial: true),
-        AutoRoute(page: const EmptyShellRoute(_usersShell), children: [
-          AutoRoute(page: _UsersRoute.page, initial: true),
-          AutoRoute(page: _UserRoute.page),
-        ]),
-      ]),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _BootRoute.page, initial: true),
+        AutoRoute(
+          page: _DashboardRoute.page,
+          children: [
+            AutoRoute(page: _MetricsRoute.page, initial: true),
+            AutoRoute(
+              page: const EmptyShellRoute(_usersShell),
+              children: [
+                AutoRoute(page: _UsersRoute.page, initial: true),
+                AutoRoute(page: _UserRoute.page),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
   });
 
   Future<StackRouter> openDashboard(WidgetTester tester) async {
@@ -80,14 +88,23 @@ void main() {
   // routes are [UsersRoute(), UserRoute()] shows two tabs, each in its own
   // copy of the shell.
   testWidgets('a tabs router keeps two tabs of one nested router as two tabs', (tester) async {
-    final tabsApp = RootStackRouter.build(routes: [
-      AutoRoute(page: _TabsRoute.page, initial: true, children: [
-        AutoRoute(page: const EmptyShellRoute(_usersShell), children: [
-          AutoRoute(page: _UsersRoute.page, initial: true),
-          AutoRoute(page: _UserRoute.page),
-        ]),
-      ]),
-    ]);
+    final tabsApp = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _TabsRoute.page,
+          initial: true,
+          children: [
+            AutoRoute(
+              page: const EmptyShellRoute(_usersShell),
+              children: [
+                AutoRoute(page: _UsersRoute.page, initial: true),
+                AutoRoute(page: _UserRoute.page),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
     await pumpRouterConfigApp(tester, tabsApp.config());
     final tabs = tabsApp.innerRouterOf<TabsRouter>(_TabsRoute.name)!;
     expect(tabs.stack.map((p) => p.name), [_usersShell, _usersShell]);
@@ -136,12 +153,18 @@ class _UsersRoute extends PageRouteInfo<void> {
   const _UsersRoute() : super(name);
 
   static const String name = 'UsersRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => Scaffold(appBar: AppBar(), body: const Text(name)));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => Scaffold(appBar: AppBar(), body: const Text(name)),
+  );
 }
 
 class _UserRoute extends PageRouteInfo<int> {
   const _UserRoute({required int userId}) : super(name, args: userId);
 
   static const String name = 'UserRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => Scaffold(appBar: AppBar(), body: const Text(name)));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => Scaffold(appBar: AppBar(), body: const Text(name)),
+  );
 }

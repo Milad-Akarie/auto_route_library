@@ -23,10 +23,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// url that follows, such as the guarded page that takes the place of a
   /// [NavigationResolver.redirectUntil] page.
   void rebuildUrl() {
-    final newState = UrlState.fromSegments(
-      router.currentSegments,
-      shouldReplace: _isUrlStateMarkedForReplace,
-    );
+    final newState = UrlState.fromSegments(router.currentSegments, shouldReplace: _isUrlStateMarkedForReplace);
     if (newState.hasSegments) {
       _unMarkUrlStateForReplace();
     }
@@ -151,9 +148,7 @@ abstract class NavigationHistory with ChangeNotifier {
 
   /// Whether this route is in the visible urlState-segments
   bool isRouteActive(String routeName) {
-    return urlState.segments.any(
-      (r) => r.name == routeName,
-    );
+    return urlState.segments.any((r) => r.name == routeName);
   }
 
   /// Whether this route-data is in the visible urlState-segments
@@ -161,9 +156,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// Compares the page too, since the same route can be pushed twice with
   /// equal arguments.
   bool isRouteDataActive(RouteData data) {
-    return urlState.segments.any(
-      (route) => route == data.route && route.id == data.route.id,
-    );
+    return urlState.segments.any((route) => route == data.route && route.id == data.route.id);
   }
 
   /// Whether this path-pattern is in the visible urlState-segments

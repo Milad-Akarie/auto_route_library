@@ -7,13 +7,20 @@ import '../router_test_utils.dart';
 void main() {
   late RootStackRouter router;
   setUp(() {
-    router = RootStackRouter.build(routes: [
-      AutoRoute(path: '/', page: const EmptyShellRoute('ShellRoute'), initial: true, children: [
-        AutoRoute(path: '', page: _page('FeedRoute')),
-        AutoRoute(path: 'wallet', page: _page('WalletRoute'), guards: [_SlowGuard()]),
-      ]),
-      AutoRoute(path: '/sign-in', page: _page('SignInRoute')),
-    ]);
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          page: const EmptyShellRoute('ShellRoute'),
+          initial: true,
+          children: [
+            AutoRoute(path: '', page: _page('FeedRoute')),
+            AutoRoute(path: 'wallet', page: _page('WalletRoute'), guards: [_SlowGuard()]),
+          ],
+        ),
+        AutoRoute(path: '/sign-in', page: _page('SignInRoute')),
+      ],
+    );
   });
 
   // Pumps in short steps, so the shell's page leaves the tree, which disposes

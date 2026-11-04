@@ -187,12 +187,7 @@ class FunctionParamConfig extends ParamConfig {
     required super.isRequired,
     super.defaultValueCode,
     super.defaultValueImport,
-  }) : super(
-          isPathParam: false,
-          isQueryParam: false,
-          isInheritedPathParam: false,
-          isUrlFragment: false,
-        );
+  }) : super(isPathParam: false, isQueryParam: false, isInheritedPathParam: false, isUrlFragment: false);
 
   @override
   Map<String, dynamic> toJson() {
@@ -254,22 +249,14 @@ class FunctionParamConfig extends ParamConfig {
 
   /// Returns A function reference of the function type
   cb.FunctionType get funRefer => cb.FunctionType(
-        (b) => b
-          ..returnType = returnType.refer
-          ..requiredParameters.addAll(requiredParams.map((e) => e.type.refer))
-          ..optionalParameters.addAll(optionalParams.map((e) => e.type.refer))
-          ..isNullable = type.isNullable
-          ..namedParameters.addAll(
-            {}..addEntries(namedOptionalParams.map(
-                (e) => MapEntry(e.name, e.type.refer),
-              )),
-          )
-          ..namedRequiredParameters.addAll(
-            {}..addEntries(namedRequiredParams.map(
-                (e) => MapEntry(e.name, e.type.refer),
-              )),
-          ),
-      );
+    (b) => b
+      ..returnType = returnType.refer
+      ..requiredParameters.addAll(requiredParams.map((e) => e.type.refer))
+      ..optionalParameters.addAll(optionalParams.map((e) => e.type.refer))
+      ..isNullable = type.isNullable
+      ..namedParameters.addAll({}..addEntries(namedOptionalParams.map((e) => MapEntry(e.name, e.type.refer))))
+      ..namedRequiredParameters.addAll({}..addEntries(namedRequiredParams.map((e) => MapEntry(e.name, e.type.refer)))),
+  );
 }
 
 /// Holds information about a path parameter
@@ -285,17 +272,11 @@ class PathParamConfig {
 
   /// Serializes the path parameter to a json map
   Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'isOptional': isOptional,
-    };
+    return {'name': name, 'isOptional': isOptional};
   }
 
   /// Deserializes the path parameter from a json map
   factory PathParamConfig.fromJson(Map<String, dynamic> map) {
-    return PathParamConfig(
-      name: map['name'] as String,
-      isOptional: map['isOptional'] as bool,
-    );
+    return PathParamConfig(name: map['name'] as String, isOptional: map['isOptional'] as bool);
   }
 }

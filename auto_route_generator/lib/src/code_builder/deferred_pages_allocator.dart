@@ -30,15 +30,13 @@ class DeferredPagesAllocator implements Allocator {
   int _nextKey() => _keys++;
 
   @override
-  Iterable<Directive> get imports => _imports.keys.map(
-        (importPath) {
-          if (routes.isDeferred(importPath, defaultDeferredLoading)) {
-            return Directive.importDeferredAs(importPath, '_i${_imports[importPath]}');
-          } else {
-            return Directive.import(importPath, as: '_i${_imports[importPath]}');
-          }
-        },
-      );
+  Iterable<Directive> get imports => _imports.keys.map((importPath) {
+    if (routes.isDeferred(importPath, defaultDeferredLoading)) {
+      return Directive.importDeferredAs(importPath, '_i${_imports[importPath]}');
+    } else {
+      return Directive.import(importPath, as: '_i${_imports[importPath]}');
+    }
+  });
 }
 
 extension _RouteConfigList on List<RouteConfig> {

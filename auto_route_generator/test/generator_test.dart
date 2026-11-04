@@ -51,7 +51,8 @@ class HomePage extends StatelessWidget {
   // route is declared in the library that imports the page, so it shadowed
   // the page and the build left a router that does not compile.
   group('a page the default replacement does not rename (#1870)', () {
-    String router({required bool part}) => '''
+    String router({required bool part}) =>
+        '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
@@ -96,7 +97,8 @@ class AppRouter extends RootStackRouter {
   });
 }
 
-String _page(String name) => '''
+String _page(String name) =>
+    '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 

@@ -14,53 +14,37 @@ import '../router_test_utils.dart';
 // page builder reads data.queryParams.optBool('f').
 // Should: the page shows the flag, without NoSuchMethodError on toLowerCase.
 void main() {
-  final flagPage = PageInfo(
-    'FlagRoute',
-    builder: (data) => Text('Flag ${data.queryParams.optBool('f')}'),
-  );
+  final flagPage = PageInfo('FlagRoute', builder: (data) => Text('Flag ${data.queryParams.optBool('f')}'));
 
   RootStackRouter buildRouter() => RootStackRouter.build(
-        routes: [
-          AutoRoute(path: '/', page: page('HomeRoute'), initial: true),
-          AutoRoute(path: '/flag', page: flagPage),
-        ],
-      );
+    routes: [
+      AutoRoute(path: '/', page: page('HomeRoute'), initial: true),
+      AutoRoute(path: '/flag', page: flagPage),
+    ],
+  );
 
-  testWidgets('a page pushed with a bool query param reads it with optBool', (
-    tester,
-  ) async {
+  testWidgets('a page pushed with a bool query param reads it with optBool', (tester) async {
     final router = buildRouter();
     await pumpRouterApp(tester, router);
-    unawaited(
-      router.push(const NamedRoute('FlagRoute', queryParams: {'f': true})),
-    );
+    unawaited(router.push(const NamedRoute('FlagRoute', queryParams: {'f': true})));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Flag true'), findsOneWidget);
   });
 
-  testWidgets(
-    'a page opened from a deep link reads the text value with optBool',
-    (tester) async {
-      final router = buildRouter();
-      await pumpRouterApp(tester, router, initialLink: '/flag?f=false');
-      expect(tester.takeException(), isNull);
-      expect(find.text('Flag false'), findsOneWidget);
-    },
-  );
+  testWidgets('a page opened from a deep link reads the text value with optBool', (tester) async {
+    final router = buildRouter();
+    await pumpRouterApp(tester, router, initialLink: '/flag?f=false');
+    expect(tester.takeException(), isNull);
+    expect(find.text('Flag false'), findsOneWidget);
+  });
 
   // The saved state keeps the bool as a bool, so the restored page reads it
   // through the same optBool.
-  testWidgets('a restored page reads its saved bool query param', (
-    tester,
-  ) async {
+  testWidgets('a restored page reads its saved bool query param', (tester) async {
     await tester.pumpWidget(RestorableRouterApp(buildRouter));
     await tester.pumpAndSettle();
-    unawaited(
-      RestorableRouterApp.router.push(
-        const NamedRoute('FlagRoute', queryParams: {'f': true}),
-      ),
-    );
+    unawaited(RestorableRouterApp.router.push(const NamedRoute('FlagRoute', queryParams: {'f': true})));
     await tester.pumpAndSettle();
     expect(find.text('Flag true'), findsOneWidget);
 

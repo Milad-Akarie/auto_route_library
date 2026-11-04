@@ -18,9 +18,7 @@ void main() {
               page: _ListDetailRoute.page,
               initial: true,
               path: ':id',
-              children: [
-                AutoRoute(page: _CreateListItemsRoute.page, path: ':familyId'),
-              ],
+              children: [AutoRoute(page: _CreateListItemsRoute.page, path: ':familyId')],
             ),
           ],
         ),
@@ -85,7 +83,7 @@ class _ListDetailRouter extends PageRouteInfo<void> {
 
 class _ListDetailRoute extends PageRouteInfo<void> {
   _ListDetailRoute({required String id, List<PageRouteInfo>? children})
-      : super(pageName, rawPathParams: {'id': id}, initialChildren: children);
+    : super(pageName, rawPathParams: {'id': id}, initialChildren: children);
 
   static const String pageName = 'ListDetailRoute';
   static PageInfo page = PageInfo(
