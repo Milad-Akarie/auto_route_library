@@ -69,6 +69,23 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   void initState() {
     super.initState();
     _listenToAncestorTabs();
+    _topPageKey = widget.router.stack.lastOrNull?.key;
+    widget.router.addListener(_handleStackChanged);
+  }
+
+  // The fingers down on this navigator's pages, by pointer id.
+  final _activePointers = <int>{};
+  LocalKey? _topPageKey;
+
+  // Navigator.push and pop cancel the fingers that are down, so a second
+  // finger can't tap something on the page left behind. A Navigator given
+  // pages doesn't, so it is done here when the top page changes: of two
+  // buttons pressed at once, only the first opens its page.
+  void _handleStackChanged() {
+    final topPageKey = widget.router.stack.lastOrNull?.key;
+    if (topPageKey == _topPageKey) return;
+    _topPageKey = topPageKey;
+    _activePointers.toList().forEach(WidgetsBinding.instance.cancelPointer);
   }
 
   // A tab switch above this navigator decides whether it takes back.
@@ -93,6 +110,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   void dispose() {
+    widget.router.removeListener(_handleStackChanged);
     for (final tabs in _ancestorTabs) {
       tabs.removeListener(_handleAncestorTabsChanged);
     }
@@ -123,6 +141,9 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   void didUpdateWidget(covariant AutoRouteNavigator oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.router != oldWidget.router) {
+      oldWidget.router.removeListener(_handleStackChanged);
+      widget.router.addListener(_handleStackChanged);
+      _topPageKey = widget.router.stack.lastOrNull?.key;
       _listenToAncestorTabs();
       _inActiveTabs = widget.router.isInActiveTabs;
     }
@@ -133,9 +154,14 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   Widget build(BuildContext context) {
-    // A widget class would add an element and move the state below it.
-    // ignore: avoid-returning-widgets
-    final navigator = _buildNavigator(context);
+    final navigator = Listener(
+      onPointerDown: (event) => _activePointers.add(event.pointer),
+      onPointerUp: (event) => _activePointers.remove(event.pointer),
+      onPointerCancel: (event) => _activePointers.remove(event.pointer),
+      // A widget class would add an element and move the state below it.
+      // ignore: avoid-returning-widgets
+      child: _buildNavigator(context),
+    );
     if (widget.router.isRoot) return navigator;
     // A nested navigator sits on a page of its parent's navigator. While it
     // can take back itself, NavigatorPopHandler turns off that page's back
