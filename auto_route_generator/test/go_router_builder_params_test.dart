@@ -1,0 +1,73 @@
+import 'package:test/test.dart';
+
+import 'support/generate.dart';
+
+/// A page library named [name] whose constructor takes [parameters], each
+/// also declared as a field in [fields]. [constructor] is `const` or empty.
+String _page(
+  String name, {
+  String imports = '',
+  required String parameters,
+  required String fields,
+  String constructor = 'const',
+}) =>
+    '''
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
+$imports
+
+@RoutePage()
+class $name extends StatelessWidget {
+  $constructor $name({super.key, $parameters});
+
+$fields
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+''';
+
+/// The generated source without import prefixes, white space and trailing
+/// commas, so a test can look for a line of code.
+String _flat(GeneratedRouter result) => result.source!
+    .replaceAll(RegExp(r'_i\d+\.'), '')
+    .replaceAll(RegExp(r'\s+'), '')
+    .replaceAll(RegExp(r',(?=[)}\]])'), '');
+
+void main() {
+  // flutter/flutter#105876: go_router_builder wrote an enum param through a
+  // map of every field of the enum, so an enhanced enum failed to compile
+  // ("Member not found: 'themeColor'"). auto_route reads and writes an enum
+  // query param by its name only; the fields don't matter.
+  group('an enhanced enum query parameter (flutter/flutter#105876)', () {
+    test('is read and written by its name', () async {
+      final result = await generateRouter({
+        'lib/fruit.dart': '''
+import 'dart:ui';
+
+enum Fruit {
+  apple(themeColor: Color(0xFFFF0000)),
+  banana(themeColor: Color(0xFFFFFF00));
+
+  const Fruit({required this.themeColor});
+
+  final Color themeColor;
+}
+''',
+        'lib/fruit_page.dart': _page(
+          'FruitPage',
+          imports: "import 'fruit.dart';",
+          parameters: '@QueryParam() this.fruit, @QueryParam() this.other = Fruit.banana',
+          fields: '''
+  final Fruit? fruit;
+  final Fruit other;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      final source = _flat(result);
+      expect(source, contains("rawQueryParams:{'fruit':fruit?.name,'other':other.name}"));
+      expect(source, contains("fruit:Fruit.values.asNameMap()[queryParams.optString('fruit')]"));
+    });
+  });
+}
