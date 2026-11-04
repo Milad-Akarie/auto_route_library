@@ -1,4 +1,6 @@
 ## Unreleased
+- **CHORE**: require Dart 3.13, the version Flutter 3.47 ships. The package already required
+  Flutter 3.47, so no app that could use it before is left out.
 - **BEHAVIOR CHANGE**: `pushAndPopUntil` now removes the routes below the new page instead of
   popping them, like `Navigator.pushAndRemoveUntil`, so they no longer flash while the new page
   slides in. Navigator observers get `didRemove` for those routes, not `didPop`; the PopScope of

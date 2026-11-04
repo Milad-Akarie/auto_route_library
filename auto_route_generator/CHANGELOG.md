@@ -1,3 +1,5 @@
+## Unreleased
+- **CHORE**: require Dart 3.13, the version Flutter 3.47 ships.
 ## 10.6.0
 - **CHORE**: update analyzer constraints to support versions >=10.0.0 <14.0.0
 - **CHORE**: update lean_builder dependency to ^1.2.0
