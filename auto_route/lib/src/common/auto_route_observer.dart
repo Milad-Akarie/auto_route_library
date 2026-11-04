@@ -121,7 +121,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   /// while [route] shows inside its host route, when the host route is covered,
   /// uncovered or popped in an ancestor navigator that has an [AutoRouteObserver].
   void subscribe(AutoRouteAware routeAware, RouteData route) {
-    final Set<AutoRouteAware> subscribers = _listeners.putIfAbsent(route.key, () => <AutoRouteAware>{});
+    final subscribers = _listeners.putIfAbsent(route.key, () => <AutoRouteAware>{});
     if (subscribers.add(routeAware)) {
       _subscribeToAncestors(routeAware, route);
       final router = route.router;
@@ -146,7 +146,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   void unsubscribe(AutoRouteAware routeAware) {
     for (final route in _listeners.keys) {
-      final Set<AutoRouteAware>? subscribers = _listeners[route];
+      final subscribers = _listeners[route];
       subscribers?.remove(routeAware);
     }
     for (final observer in _ancestorObservers.remove(routeAware) ?? const <AutoRouteObserver>{}) {
@@ -192,9 +192,9 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
-    final List<AutoRouteAware>? subscribers = _listeners[route.routeInfo.key]?.toList();
+    final subscribers = _listeners[route.routeInfo.key]?.toList();
     if (subscribers != null) {
-      for (final AutoRouteAware routeAware in subscribers) {
+      for (final routeAware in subscribers) {
         routeAware.didInitTabRoute(previousRoute);
       }
     }
@@ -202,9 +202,9 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   @override
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
-    final List<AutoRouteAware>? subscribers = _listeners[route.routeInfo.key]?.toList();
+    final subscribers = _listeners[route.routeInfo.key]?.toList();
     if (subscribers != null) {
-      for (final AutoRouteAware routeAware in subscribers) {
+      for (final routeAware in subscribers) {
         routeAware.didChangeTabRoute(previousRoute);
       }
     }
@@ -226,20 +226,20 @@ class AutoRouteObserver extends AutoRouterObserver {
   void _notifyPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
-      final List<AutoRouteAware>? previousSubscribers = _listeners[previousKey]?.toList();
+      final previousSubscribers = _listeners[previousKey]?.toList();
 
       if (previousSubscribers != null) {
-        for (final AutoRouteAware routeAware in previousSubscribers) {
+        for (final routeAware in previousSubscribers) {
           routeAware.didPopNext();
         }
       }
       _notifyNested(previousKey, (routeAware) => routeAware.didPopNext());
       final key = (route.settings as AutoRoutePage).routeKey;
 
-      final List<AutoRouteAware>? subscribers = _listeners[key]?.toList();
+      final subscribers = _listeners[key]?.toList();
 
       if (subscribers != null) {
-        for (final AutoRouteAware routeAware in subscribers) {
+        for (final routeAware in subscribers) {
           routeAware.didPop();
         }
       }
@@ -251,10 +251,10 @@ class AutoRouteObserver extends AutoRouterObserver {
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
-      final Set<AutoRouteAware>? previousSubscribers = _listeners[previousKey];
+      final previousSubscribers = _listeners[previousKey];
 
       if (previousSubscribers != null) {
-        for (final AutoRouteAware routeAware in previousSubscribers) {
+        for (final routeAware in previousSubscribers) {
           routeAware.didPushNext();
         }
       }

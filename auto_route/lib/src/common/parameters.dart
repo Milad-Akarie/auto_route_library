@@ -51,7 +51,7 @@ class Parameters {
   /// returns the value corresponding with [key] as [String]
   /// if null returns [defaultValue]
   String getString(String key, [String? defaultValue]) {
-    var val = _params[key] ?? defaultValue;
+    final val = _params[key] ?? defaultValue;
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [String] $key value from ${_params[key]}');
     }
@@ -61,7 +61,7 @@ class Parameters {
   /// returns the value corresponding with [key] as nullable [Int]
   /// if null returns [defaultValue]
   int? optInt(String key, [int? defaultValue]) {
-    var param = _params[key];
+    final param = _params[key];
     if (param == null) {
       return defaultValue;
     } else if (param is int) {
@@ -74,7 +74,7 @@ class Parameters {
   /// returns the value corresponding with [key] as [Int]
   /// if null returns [defaultValue]
   int getInt(String key, [int? defaultValue]) {
-    var val = optInt(key, defaultValue);
+    final val = optInt(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [int] $key value from ${_params[key]}');
     }
@@ -84,7 +84,7 @@ class Parameters {
   /// returns the value corresponding with [key] as nullable [double]
   /// if null returns [defaultValue]
   double? optDouble(String key, [double? defaultValue]) {
-    var param = _params[key];
+    final param = _params[key];
     if (param == null) {
       return defaultValue;
     } else if (param is double) {
@@ -97,7 +97,7 @@ class Parameters {
   /// returns the value corresponding with [key] as [double]
   /// if null returns [defaultValue]
   double getDouble(String key, [double? defaultValue]) {
-    var val = optDouble(key, defaultValue);
+    final val = optDouble(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [double] $key value from ${_params[key]}');
     }
@@ -107,7 +107,7 @@ class Parameters {
   /// returns the value corresponding with [key] as  nullable [num]
   /// if null returns [defaultValue]
   num? optNum(String key, [num? defaultValue]) {
-    var param = _params[key];
+    final param = _params[key];
     if (param == null) {
       return defaultValue;
     } else if (param is num) {
@@ -120,7 +120,7 @@ class Parameters {
   /// returns the value corresponding with [key] as  [num]
   /// if null returns [defaultValue]
   num getNum(String key, [num? defaultValue]) {
-    var val = optNum(key, defaultValue);
+    final val = optNum(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [num] $key value from ${_params[key]}');
     }
@@ -149,7 +149,7 @@ class Parameters {
   /// returns the value corresponding with [key] as [bool]
   /// if null returns [defaultValue]
   bool getBool(String key, [bool? defaultValue]) {
-    var val = optBool(key, defaultValue);
+    final val = optBool(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [bool] $key value from ${_params[key]}');
     }
@@ -158,7 +158,7 @@ class Parameters {
 
   /// returns the value corresponding with [key] as nullable [List<String>]
   List<String> getList(String key, [List<String>? defaultValue]) {
-    var val = _params[key] ?? defaultValue;
+    final val = _params[key] ?? defaultValue;
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [List<String>] $key value from ${_params[key]}');
     }
@@ -172,7 +172,7 @@ class Parameters {
   /// returns the value corresponding with [key] as nullable [List<String>]
   /// if null returns [defaultValue]
   List<String>? optList(String key, [List<String>? defaultValue]) {
-    var val = _params[key];
+    final val = _params[key];
     if (val == null) {
       return defaultValue;
     }

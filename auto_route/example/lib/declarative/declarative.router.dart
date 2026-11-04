@@ -96,7 +96,7 @@ class _NameInputScreenState extends State<NameInputScreen> {
   final _controller = TextEditingController();
 
   @override
-  dispose() {
+  void dispose() {
     _controller.dispose();
     super.dispose();
   }
@@ -141,7 +141,7 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
   final _controller = TextEditingController();
 
   @override
-  dispose() {
+  void dispose() {
     _controller.dispose();
     super.dispose();
   }

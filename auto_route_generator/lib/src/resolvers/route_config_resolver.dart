@@ -14,21 +14,21 @@ class RouteConfigResolver {
 
   /// Resolves a [ClassElement] into a consumable [RouteConfig]
   RouteConfig resolve(Element element, ConstantReader routePage) {
-    var isDeferred = routePage.peek('deferredLoading')?.boolValue;
+    final isDeferred = routePage.peek('deferredLoading')?.boolValue;
     throwIf(element is! ClassElement, '${element.displayName} is not a class element', element: element);
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
     final hasWrappedRoute = classElement.allSupertypes.any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
-    var pageType = _typeResolver.resolveType(page);
-    var className = page.nameWithoutSuffix;
+    final pageType = _typeResolver.resolveType(page);
+    final className = page.nameWithoutSuffix;
 
-    var name = routePage.peek('name')?.stringValue;
+    final name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
     throwIf(constructor == null, 'Route pages must have an unnamed constructor');
     var hasConstConstructor = false;
-    var params = constructor!.formalParameters;
-    var parameters = <ParamConfig>[];
+    final params = constructor!.formalParameters;
+    final parameters = <ParamConfig>[];
     if (params.isNotEmpty) {
       if (constructor.isConst && params.length == 1 && params.first.type.nameWithoutSuffix == 'Key') {
         hasConstConstructor = true;
@@ -46,10 +46,10 @@ class RouteConfigResolver {
       element: element,
     );
 
-    var pathParameters = parameters.where((element) => element.isPathParam);
+    final pathParameters = parameters.where((element) => element.isPathParam);
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
-      var unParsableRequiredArgs = parameters.where(
+      final unParsableRequiredArgs = parameters.where(
         (p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
       );
       if (unParsableRequiredArgs.isNotEmpty) {
@@ -61,7 +61,7 @@ class RouteConfigResolver {
     }
 
     if (pathParameters.isNotEmpty) {
-      for (var pParam in pathParameters) {
+      for (final pParam in pathParameters) {
         throwIf(
           !validPathParamTypes.contains(pParam.type.name),
           "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",

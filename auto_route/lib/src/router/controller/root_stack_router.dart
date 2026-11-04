@@ -3,7 +3,7 @@ part of 'routing_controller.dart';
 /// Signature for a function uses [pagesMap] to build an [AutoRoutePage]
 typedef PageBuilder = AutoRoutePage Function(RouteData data);
 
-const _kRootKey = ValueKey('%__Root__%');
+const ValueKey<String> _kRootKey = ValueKey('%__Root__%');
 
 /// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {

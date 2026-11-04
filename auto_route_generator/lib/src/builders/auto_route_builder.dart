@@ -40,7 +40,7 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
 
   @override
   Future<RoutesList?> loadFromCache(BuildStep buildStep, int stepHash) async {
-    Map<String, RoutesList> cachedRes = {};
+    var cachedRes = <String, RoutesList>{};
     if (await routesCacheFile.exists()) {
       cachedRes = await buildStep.fetchResource(_cacheResource);
     }
@@ -79,7 +79,7 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   Future<RoutesList?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash) async {
     final routeResolver = RouteConfigResolver(TypeResolver(await buildStep.resolver.libraries.toList()));
     final routes = <RouteConfig>[];
-    for (var annotatedElement in library.annotatedWith(_typeChecker)) {
+    for (final annotatedElement in library.annotatedWith(_typeChecker)) {
       final route = routeResolver.resolve(annotatedElement.element, annotatedElement.annotation);
       routes.add(route);
     }

@@ -45,7 +45,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-var _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = _TabsKind.indexedStack;
 
 // The context of the AutoTabsRouter's builder, kept for the tab pages.
 BuildContext? _keptContext;

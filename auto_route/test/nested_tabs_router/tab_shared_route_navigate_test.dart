@@ -52,7 +52,7 @@ void main() {
   // /dashboard/tests/test1: the tab was looked up by route name, which found
   // the first tests tab, and its nested router too, which found the second.
   // Should: the second tab opens, on Test2Route, and the first is left as it was.
-  testWidgets('navigate() to the second of two tabs sharing a route opens that tab', (WidgetTester tester) async {
+  testWidgets('navigate() to the second of two tabs sharing a route opens that tab', (tester) async {
     await pumpDashboard(tester);
     for (final index in [0, 1, 2]) {
       tabsRouter.setActiveIndex(index);

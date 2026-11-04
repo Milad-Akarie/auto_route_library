@@ -31,7 +31,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
     final resolvedUri = _normalize(await deepLinkTransformer?.call((routeInformation.uri)) ?? routeInformation.uri);
-    var matches = _matcher.matchUri(resolvedUri, includePrefixMatches: includePrefixMatches);
+    final matches = _matcher.matchUri(resolvedUri, includePrefixMatches: includePrefixMatches);
     final state = routeInformation.state;
     final savedRoutes = state is Map ? state[UrlState._savedRoutesKey] : null;
     return SynchronousFuture<UrlState>(
@@ -45,7 +45,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   }
 
   Uri _normalize(Uri uri) {
-    var path = uri.path.isEmpty ? '/' : uri.path;
+    final path = uri.path.isEmpty ? '/' : uri.path;
     return Uri(
       path: p.normalize(path),
       queryParameters: uri.queryParameters.isEmpty ? null : uri.queryParametersAll,
@@ -363,11 +363,11 @@ class UrlState {
   RouteMatch? get topMatch => hasSegments ? segments.last : null;
 
   RouteMatch? _findSegment(List<RouteMatch> segments, bool Function(RouteMatch segment) predicate) {
-    for (var segment in segments) {
+    for (final segment in segments) {
       if (predicate(segment)) {
         return segment;
       } else if (segment.hasChildren) {
-        var subSegment = _findSegment(segment.children!, predicate);
+        final subSegment = _findSegment(segment.children!, predicate);
         if (subSegment != null) {
           return subSegment;
         }
@@ -389,11 +389,11 @@ class UrlState {
     fullPath = p.joinAll(routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch));
     final normalized = p.normalize(fullPath);
     final lastSegment = routes.last;
-    Map<String, dynamic> queryParams = {};
+    final queryParams = <String, dynamic>{};
     if (lastSegment.queryParams.isNotEmpty) {
-      var queries = lastSegment.queryParams.rawMap;
-      for (var key in queries.keys) {
-        var value = normalizeQueryParamValue(queries[key]);
+      final queries = lastSegment.queryParams.rawMap;
+      for (final key in queries.keys) {
+        final value = normalizeQueryParamValue(queries[key]);
         if (value != null) {
           queryParams[key] = value;
         }

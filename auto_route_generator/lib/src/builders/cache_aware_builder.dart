@@ -64,7 +64,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<void> build(BuildStep buildStep) async {
     final resolver = buildStep.resolver;
     if (!await resolver.isLibrary(buildStep.inputId)) return;
-    var unit = await resolver.compilationUnitFor(buildStep.inputId, allowSyntaxErrors: allowSyntaxErrors);
+    final unit = await resolver.compilationUnitFor(buildStep.inputId, allowSyntaxErrors: allowSyntaxErrors);
     if (!(await hasAnyTopLevelAnnotations(buildStep.inputId, buildStep, unit))) {
       return;
     }
@@ -80,7 +80,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
     }
 
     final lib = await resolver.libraryFor(buildStep.inputId, allowSyntaxErrors: allowSyntaxErrors);
-    var generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
+    final generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return;
     return _writeContent(buildStep, lib.languageVersion, generated);
   }
@@ -134,7 +134,7 @@ source formatter.''',
     if (!await buildStep.canRead(input)) return false;
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];
-    for (var directive in parsed.directives) {
+    for (final directive in parsed.directives) {
       if (directive.metadata.any((e) => e.name.name == annotationName)) {
         return true;
       }
@@ -142,12 +142,12 @@ source formatter.''',
         partIds.add(AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input));
       }
     }
-    for (var declaration in parsed.declarations) {
+    for (final declaration in parsed.declarations) {
       if (declaration.metadata.any((e) => e.name.name == annotationName)) {
         return true;
       }
     }
-    for (var partId in partIds) {
+    for (final partId in partIds) {
       if (await hasAnyTopLevelAnnotations(partId, buildStep)) {
         return true;
       }

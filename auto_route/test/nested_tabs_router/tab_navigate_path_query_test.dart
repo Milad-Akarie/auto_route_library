@@ -12,7 +12,7 @@ void main() {
   // context.navigateToPath(...), then navigate(buildPageRoute(...)).
   // Reported: the url changes but the page keeps showing the old query.
   // Should: the page shows each new query.
-  testWidgets('navigating to a tab path with a new query shows the new query', (WidgetTester tester) async {
+  testWidgets('navigating to a tab path with a new query shows the new query', (tester) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(

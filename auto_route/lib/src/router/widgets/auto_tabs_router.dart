@@ -132,7 +132,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   ///
   /// throws an error if it does not find it
   static TabsRouter of(BuildContext context, {bool watch = false}) {
-    var scope = TabsRouterScope.of(context, watch: watch);
+    final scope = TabsRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
         throw FlutterError(
@@ -164,11 +164,11 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
     final parentScope = RouterScope.of(context, watch: true);
     if (_controller == null) {
       _inheritableObserversBuilder = () {
-        var observers = widget.navigatorObservers();
+        final observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
           return observers;
         }
-        var inheritedObservers = parentScope.inheritableObserversBuilder();
+        final inheritedObservers = parentScope.inheritableObserversBuilder();
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
@@ -334,7 +334,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
             lazyLoad: widget.lazyLoad,
             animation: _animation,
             navigatorObservers: _navigatorObservers,
-            itemBuilder: (BuildContext context, int index) {
+            itemBuilder: (context, index) {
               return KeepAliveTab(key: _tabKeyOf(stack[index]), page: stack[index]);
             },
             stack: stack,

@@ -26,7 +26,7 @@ class TypeResolver {
     }
 
     final fallBackImports = <String>{};
-    for (var lib in libs) {
+    for (final lib in libs) {
       if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames2.values.contains(element)) {
         final uri = lib.uri;
         if (_unPreferredImports.contains(uri.toString())) {
@@ -60,7 +60,7 @@ class TypeResolver {
   }
 
   String _relative(Uri fileUri, Uri to) {
-    var libName = to.pathSegments.first;
+    final libName = to.pathSegments.first;
     if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.first == libName) ||
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
@@ -87,7 +87,7 @@ class TypeResolver {
         types.add(_resolveNestedType(recordField.type, nameInRecord: recordField.name));
       }
     } else if (typeToCheck is ParameterizedType) {
-      for (DartType type in typeToCheck.typeArguments) {
+      for (final type in typeToCheck.typeArguments) {
         types.add(_resolveNestedType(type));
       }
     }

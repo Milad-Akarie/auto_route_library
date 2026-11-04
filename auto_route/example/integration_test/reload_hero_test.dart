@@ -43,8 +43,8 @@ void main() {
   });
 }
 
-final _page1 = _heroPage('Page1Route', 'Page 1');
-final _page2 = _heroPage('Page2Route', 'Page 2');
+final PageInfo _page1 = _heroPage('Page1Route', 'Page 1');
+final PageInfo _page2 = _heroPage('Page2Route', 'Page 2');
 
 PageInfo _heroPage(String name, String label) => PageInfo(
   name,

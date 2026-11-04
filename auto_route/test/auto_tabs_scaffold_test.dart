@@ -12,17 +12,17 @@ void main() {
     router = TabsScaffoldRouter();
   });
 
-  testWidgets('AutoTabsScaffold should show first tab by default', (WidgetTester tester) async {
+  testWidgets('AutoTabsScaffold should show first tab by default', (tester) async {
     await pumpRouterApp(tester, router);
     expect(find.text(FirstRoute.name), findsOneWidget);
   });
 
-  testWidgets('AutoTabsScaffold should render bottom navigation', (WidgetTester tester) async {
+  testWidgets('AutoTabsScaffold should render bottom navigation', (tester) async {
     await pumpRouterApp(tester, router);
     expect(find.byType(BottomNavigationBar), findsOneWidget);
   });
 
-  testWidgets('AutoTabsScaffold should switch tabs via bottom navigation', (WidgetTester tester) async {
+  testWidgets('AutoTabsScaffold should switch tabs via bottom navigation', (tester) async {
     await pumpRouterApp(tester, router);
     expect(find.text(FirstRoute.name), findsOneWidget);
     // can I get a screenshot here
@@ -32,18 +32,18 @@ void main() {
     expectTopPage(router, SecondRoute.name);
   });
 
-  testWidgets('AutoTabsScaffold should render app bar', (WidgetTester tester) async {
+  testWidgets('AutoTabsScaffold should render app bar', (tester) async {
     await pumpRouterApp(tester, router);
     expect(find.byType(AppBar), findsOneWidget);
     expect(find.text('My App Bar'), findsOneWidget);
   });
 
-  testWidgets('AutoTabsScaffold should render bottom navigation', (WidgetTester tester) async {
+  testWidgets('AutoTabsScaffold should render bottom navigation', (tester) async {
     await pumpRouterApp(tester, router);
     expect(find.byType(BottomNavigationBar), findsOneWidget);
   });
 
-  testWidgets('AutoTabsScaffold should use default routes if no children are provided', (WidgetTester tester) async {
+  testWidgets('AutoTabsScaffold should use default routes if no children are provided', (tester) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -67,7 +67,7 @@ void main() {
   // should throw if building default routes when one has required arguments
   testWidgets(
     'AutoTabsScaffold should throw (FlutterError) if building default routes when one has required arguments',
-    (WidgetTester tester) async {
+    (tester) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(

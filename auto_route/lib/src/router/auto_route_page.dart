@@ -410,19 +410,13 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
     }
     return _PredictiveBackGestureDetector(
       route: this,
-      builder:
-          (
-            BuildContext context,
-            _PredictiveBackPhase phase,
-            PredictiveBackEvent? startBackEvent,
-            PredictiveBackEvent? currentBackEvent,
-          ) {
-            if (popGestureInProgress) {
-              return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
-            } else {
-              return super.buildTransitions(context, animation, secondaryAnimation, child);
-            }
-          },
+      builder: (context, phase, startBackEvent, currentBackEvent) {
+        if (popGestureInProgress) {
+          return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
+        } else {
+          return super.buildTransitions(context, animation, secondaryAnimation, child);
+        }
+      },
     );
   }
 }

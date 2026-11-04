@@ -26,7 +26,7 @@ void main() {
   // built again from scratch.
   // Happens: the first tab shows again while the url stays '/second'.
   // Should: the second tab stays active.
-  testWidgets('Rebuilding the layout above AutoTabsRouter.tabBar keeps the active tab', (WidgetTester tester) async {
+  testWidgets('Rebuilding the layout above AutoTabsRouter.tabBar keeps the active tab', (tester) async {
     addTearDown(() => _layoutNotifier.value = false);
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());

@@ -15,7 +15,7 @@ void main() {
 
   Future<void> pumpRouter(WidgetTester tester) => pumpRouterApp(tester, router, observers: () => [observer]);
 
-  testWidgets('AutoRouteObserver should notify subscribers of push and pop events', (WidgetTester tester) async {
+  testWidgets('AutoRouteObserver should notify subscribers of push and pop events', (tester) async {
     await pumpRouter(tester);
     final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
 
@@ -31,7 +31,7 @@ void main() {
     expect(state.didPopNextCalled, isTrue);
   });
 
-  testWidgets('AutoRouteObserver should notify subscribers of tab events', (WidgetTester tester) async {
+  testWidgets('AutoRouteObserver should notify subscribers of tab events', (tester) async {
     await pumpRouter(tester);
     router.push(const TabsRoute());
     await tester.pumpAndSettle();
@@ -62,9 +62,7 @@ void main() {
   // Should: both fire. They do when the observer is an AutoRouteObserver; the
   // mixin finds no other kind of observer, so a plain NavigatorObserver or
   // AutoRouterObserver tells it nothing.
-  testWidgets('AutoRouteAwareStateMixin hears push and pop with the observer given to config()', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('AutoRouteAwareStateMixin hears push and pop with the observer given to config()', (tester) async {
     await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [AutoRouteObserver()]));
     final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
     expect(state.didPushCalled, isTrue);
@@ -85,9 +83,7 @@ void main() {
   // Happens: ConfirmRoute is removed and FirstRoute shows, but FirstRoute's
   // didPopNext doesn't fire; the observer gets didRemove, not didPop.
   // Should: FirstRoute gets didPopNext, as when going back without the dialog.
-  testWidgets('navigateTo() back to a page right after closing a dialog tells that page didPopNext', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('navigateTo() back to a page right after closing a dialog tells that page didPopNext', (tester) async {
     await pumpRouter(tester);
     final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
     router.push(const ConfirmRoute());
@@ -104,7 +100,7 @@ void main() {
 
   // Same as above, but replace() removes the page over FirstRoute and pushes
   // another one in its place: FirstRoute stays covered and hears nothing.
-  testWidgets('replacing the page over a page does not tell that page didPopNext', (WidgetTester tester) async {
+  testWidgets('replacing the page over a page does not tell that page didPopNext', (tester) async {
     await pumpRouter(tester);
     final state = tester.state<AutoRouteAwareTestPageState>(find.byType(AutoRouteAwareTestPage));
     router.push(const SecondRoute());
@@ -115,7 +111,7 @@ void main() {
     expect(state.didPopNextCalled, isFalse);
   });
 
-  testWidgets('AutoRouteObserver should unsubscribe when widget is disposed', (WidgetTester tester) async {
+  testWidgets('AutoRouteObserver should unsubscribe when widget is disposed', (tester) async {
     await pumpRouter(tester);
     expect(find.byType(AutoRouteAwareTestPage), findsOneWidget);
 

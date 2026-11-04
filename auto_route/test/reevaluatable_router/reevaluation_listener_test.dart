@@ -37,12 +37,12 @@ void main() {
     )..ignorePopCompleters = true;
   });
 
-  testWidgets('Initial route should be ${FirstRoute.name}', (WidgetTester tester) async {
+  testWidgets('Initial route should be ${FirstRoute.name}', (tester) async {
     await pumpRouterApp(tester, router);
     expect(find.text(FirstRoute.name), findsOneWidget);
   });
 
-  testWidgets('Reevaluation should call the guard', (WidgetTester tester) async {
+  testWidgets('Reevaluation should call the guard', (tester) async {
     await pumpRouterApp(tester, router);
     router.navigate(const SecondRoute());
     await tester.pumpAndSettle();
@@ -52,7 +52,7 @@ void main() {
     verify(mockListener(captureAny, router)).called(1);
   });
 
-  testWidgets('Reevaluation should call the guard', (WidgetTester tester) async {
+  testWidgets('Reevaluation should call the guard', (tester) async {
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
     router.navigate(const SecondRoute());
     await tester.pumpAndSettle();
@@ -62,7 +62,7 @@ void main() {
     verify(mockListener(captureAny, router)).called(1);
   });
 
-  testWidgets('Reevaluation with true should navigate to the third route', (WidgetTester tester) async {
+  testWidgets('Reevaluation with true should navigate to the third route', (tester) async {
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
     router.push(const ThirdRoute());
     await tester.pumpAndSettle();
@@ -78,7 +78,7 @@ void main() {
     expectTopPage(router, ThirdRoute.name);
   });
 
-  testWidgets('Reevaluation should call the guard and navigate to protected page', (WidgetTester tester) async {
+  testWidgets('Reevaluation should call the guard and navigate to protected page', (tester) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -104,7 +104,7 @@ void main() {
     verifyNever(mockListener(captureAny, router));
   });
 
-  testWidgets('Reevaluation with false should remove the route', (WidgetTester tester) async {
+  testWidgets('Reevaluation with false should remove the route', (tester) async {
     reevaluationNotifier.value = true;
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
     await router.push(const ThirdRoute());
@@ -115,9 +115,7 @@ void main() {
     expect(router.current.name, FirstRoute.name);
   });
 
-  testWidgets('Reevaluation should call the guard and navigate to protected page [with TabRouter]', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Reevaluation should call the guard and navigate to protected page [with TabRouter]', (tester) async {
     const tab2Router = EmptyShellRoute('Tab2Router');
     final router = RootStackRouter.build(
       routes: [
@@ -167,7 +165,7 @@ void main() {
   });
 
   // testing resolver.redirectUntil
-  testWidgets('Reevaluation with redirectUntil should navigate accordingly', (WidgetTester tester) async {
+  testWidgets('Reevaluation with redirectUntil should navigate accordingly', (tester) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: FirstRoute.page, initial: true),
@@ -207,7 +205,7 @@ void main() {
   // an unmodifiable list", because the reevaluation gave the unopened tab a
   // const list of pending children that TabsRouter.setupRoutes later clears.
   // Should happen: the tab opens and shows its first nested page.
-  testWidgets('Opening a nested tabs page after reevaluation should not crash', (WidgetTester tester) async {
+  testWidgets('Opening a nested tabs page after reevaluation should not crash', (tester) async {
     const innerTabsName = 'InnerTabsRoute';
     final router = RootStackRouter.build(
       routes: [
@@ -250,9 +248,7 @@ void main() {
   // stack is only [SecondRoute] and the counter is lost.
   // Should happen: the stack is [FirstRoute, SecondRoute], then [FirstRoute]
   // with the counter still at 1.
-  testWidgets('Reevaluation with redirectUntil should keep the state of the reevaluated page', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Reevaluation with redirectUntil should keep the state of the reevaluated page', (tester) async {
     final isLoggedIn = ValueNotifier(true);
     final router = RootStackRouter.build(
       routes: [
@@ -289,9 +285,7 @@ void main() {
   // [FirstRoute, ThirdRoute].
   // Should happen: the stack is [FirstRoute, SecondRoute, ThirdRoute], and
   // popping ThirdRoute without passing the guard also removes SecondRoute.
-  testWidgets('Reevaluation with redirectUntil should remove the reevaluated page when rejected', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Reevaluation with redirectUntil should remove the reevaluated page when rejected', (tester) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: FirstRoute.page, initial: true),
@@ -326,7 +320,7 @@ void main() {
   // throw "Bad state: Future already completed".
   // Should happen: each reevaluation waits its turn, the guard runs once per
   // reevaluation, and the page shows once the guard passes.
-  testWidgets('Overlapping reevaluations wait for a running guard without crashing', (WidgetTester tester) async {
+  testWidgets('Overlapping reevaluations wait for a running guard without crashing', (tester) async {
     var calls = 0;
     final router = RootStackRouter.build(
       routes: [
@@ -368,9 +362,7 @@ void main() {
   // then tap Log in.
   // Happens (reported on 11.1.0): HomeRoute comes back with its counter at 0.
   // Should happen: HomeRoute comes back with its counter still at 3.
-  testWidgets('Logging out and back in should keep the state of the guarded home page (#2338)', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Logging out and back in should keep the state of the guarded home page (#2338)', (tester) async {
     final authStore = _AuthStore();
     final authGuard = AutoRouteGuard.simple((resolver, router) {
       final isHome = resolver.route.name == _HomePage.routeName;
@@ -413,9 +405,7 @@ void main() {
   // fires reevaluateListenable in the same callback.
   // Happens (reported): the push is skipped or never becomes visible.
   // Should happen: SecondRoute is pushed and shown.
-  testWidgets('Push followed by reevaluation in the same callback should still push (#2327)', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Push followed by reevaluation in the same callback should still push (#2327)', (tester) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(

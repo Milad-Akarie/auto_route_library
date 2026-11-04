@@ -13,7 +13,7 @@ void main() {
   // then the first again.
   // Happens: the url stays /dashboard/tests/test2 while the first tab shows.
   // Should: the url is /dashboard/tests/test1.
-  testWidgets('the url follows the active tab when two tabs share a parent route', (WidgetTester tester) async {
+  testWidgets('the url follows the active tab when two tabs share a parent route', (tester) async {
     final router = RootStackRouter.build(
       routes: [
         RedirectRoute(path: '/', redirectTo: '/dashboard'),

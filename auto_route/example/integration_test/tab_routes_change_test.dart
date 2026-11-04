@@ -68,7 +68,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-var _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = _TabsKind.indexedStack;
 
 final _signedInNotifier = ValueNotifier<bool>(false);
 

@@ -121,8 +121,8 @@ class PageRouteInfo<T extends Object?> {
     if (mapNullOrEmpty(params)) {
       return template;
     }
-    var paramsRegex = RegExp(":(${params.keys.join('|')})");
-    var path = template.replaceAllMapped(paramsRegex, (match) {
+    final paramsRegex = RegExp(":(${params.keys.join('|')})");
+    final path = template.replaceAllMapped(paramsRegex, (match) {
       final value = params[match.group(1)]?.toString();
       // Encoded as a path segment, so a '/', '?' or '#' in the value stays part of it.
       // The leading empty segment keeps a ':' in the value from being escaped as a scheme.

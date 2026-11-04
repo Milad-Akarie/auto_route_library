@@ -15,7 +15,7 @@ void main() {
     // on 10.1.2.
     // Should: the open tab's title, text and button are in the semantics tree
     // and not hidden; the other tabs' are hidden or left out.
-    testWidgets('${kind.name}: a tab opened again is in the semantics tree', (WidgetTester tester) async {
+    testWidgets('${kind.name}: a tab opened again is in the semantics tree', (tester) async {
       final semantics = tester.ensureSemantics();
       // A phone's screen: the pages laid out beside the open one only reached
       // the semantics tree, not hidden, on a narrow screen.
@@ -82,7 +82,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar }
 
-var _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = _TabsKind.indexedStack;
 
 class _TabsHostRoute extends PageRouteInfo<void> {
   const _TabsHostRoute() : super(name);

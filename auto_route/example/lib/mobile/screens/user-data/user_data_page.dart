@@ -10,7 +10,7 @@ class UserDataPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var userData = context.watch<SettingsState>().userData;
+    final userData = context.watch<SettingsState>().userData;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),

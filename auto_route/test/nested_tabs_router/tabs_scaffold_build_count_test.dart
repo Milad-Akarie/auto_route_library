@@ -10,7 +10,7 @@ void main() {
   // bottomNavigationBuilder while the app opens, then on a tab change.
   // Reported: the builder runs twice when there is more than one route.
   // Should: it runs once to open the page, and once per tab change.
-  testWidgets('AutoTabsScaffold builds its bottom navigation once when it opens', (WidgetTester tester) async {
+  testWidgets('AutoTabsScaffold builds its bottom navigation once when it opens', (tester) async {
     _bottomNavigationBuilds = 0;
     final router = RootStackRouter.build(
       routes: [

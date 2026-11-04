@@ -44,7 +44,7 @@ extension _RouteConfigList on List<RouteConfig> {
   }
 
   _DeferredStatus mapRouteToDeferredType(String importPath, bool defaultDeferredLoading) {
-    for (RouteConfig routeConfig in this) {
+    for (final routeConfig in this) {
       if (routeConfig.pageType?.import == importPath) {
         return (routeConfig.deferredLoading ?? defaultDeferredLoading)
             ? _DeferredStatus.deferred

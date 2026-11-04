@@ -12,7 +12,7 @@ void main() {
     // Reported: nothing happens, on 10.1.2 and not on 9.2.2.
     // Should: the first tab shows.
     testWidgets('${kind.name}: setActiveIndex through the builder context kept by a tab page opens the tab', (
-      WidgetTester tester,
+      tester,
     ) async {
       _tabsKind = kind;
       final router = RootStackRouter.build(
@@ -43,7 +43,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-var _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = _TabsKind.indexedStack;
 
 // The context of the AutoTabsRouter's builder, kept for the tab pages.
 BuildContext? _keptContext;

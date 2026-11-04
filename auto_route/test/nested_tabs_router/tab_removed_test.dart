@@ -16,9 +16,7 @@ void _runRemovedTabTests(_TabsKind kind) {
   // Open the second page, then the third, then rebuild with [first, third].
   // Happens: the removed second page shows.
   // Should: the third page shows and keeps its state.
-  testWidgets('${kind.name}: removing the page before the active page keeps the active page shown', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('${kind.name}: removing the page before the active page keeps the active page shown', (tester) async {
     _tabsKind = kind;
     _routesNotifier.value = const [_FirstTabRoute(), _SecondTabRoute(), _ThirdTabRoute()];
     final router = RootStackRouter.build(
@@ -62,7 +60,7 @@ void _runRemovedTabTests(_TabsKind kind) {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-var _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = _TabsKind.indexedStack;
 
 final _routesNotifier = ValueNotifier<List<PageRouteInfo>>(const []);
 

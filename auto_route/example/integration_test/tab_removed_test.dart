@@ -66,7 +66,7 @@ void _expectOnScreen(WidgetTester tester, Finder finder) {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-var _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = _TabsKind.indexedStack;
 
 final _secondRemovedNotifier = ValueNotifier<bool>(false);
 

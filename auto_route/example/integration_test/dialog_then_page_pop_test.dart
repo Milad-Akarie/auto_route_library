@@ -72,7 +72,7 @@ class _FormPage extends StatelessWidget {
         child: ElevatedButton(
           child: const Text('Close form'),
           onPressed: () async {
-            final bool? result = await showDialog(
+            final result = await showDialog(
               context: context,
               builder: (context) => Dialog(
                 child: ElevatedButton(

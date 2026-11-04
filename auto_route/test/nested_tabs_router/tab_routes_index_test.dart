@@ -37,7 +37,7 @@ void _runIndexTests(_TabsKind kind) {
   // Happens: RangeError in _didChangeTabRoute, which reads the old active
   // index 1 in the new one-tab routes.
   // Should: the first tab shows.
-  testWidgets('${kind.name}: removing the active last tab shows the first tab', (WidgetTester tester) async {
+  testWidgets('${kind.name}: removing the active last tab shows the first tab', (tester) async {
     final router = await pumpTabs(tester, const [_FirstTabRoute(), _SecondTabRoute()]);
     router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.setActiveIndex(1);
     await tester.pumpAndSettle();
@@ -51,7 +51,7 @@ void _runIndexTests(_TabsKind kind) {
 
   // Same as above, but the app opens on the second tab, so the first tab
   // has never been shown when it becomes the active tab.
-  testWidgets('${kind.name}: removing the active tab shows a tab never opened before', (WidgetTester tester) async {
+  testWidgets('${kind.name}: removing the active tab shows a tab never opened before', (tester) async {
     await pumpTabs(tester, const [_FirstTabRoute(), _SecondTabRoute()], initialLink: '/second');
     expect(find.text(_SecondTabRoute.name), findsOneWidget);
 
@@ -62,7 +62,7 @@ void _runIndexTests(_TabsKind kind) {
 
   // The same RangeError when the routes grow: with [first] active, a rebuild
   // with [second, first] moves the active tab to index 1, past the old routes.
-  testWidgets('${kind.name}: adding a tab before the active tab keeps it shown', (WidgetTester tester) async {
+  testWidgets('${kind.name}: adding a tab before the active tab keeps it shown', (tester) async {
     final router = await pumpTabs(tester, const [_FirstTabRoute()]);
     expect(find.text(_FirstTabRoute.name), findsOneWidget);
 
@@ -75,7 +75,7 @@ void _runIndexTests(_TabsKind kind) {
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
 
-var _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = _TabsKind.indexedStack;
 
 final _routesNotifier = ValueNotifier<List<PageRouteInfo>>(const []);
 

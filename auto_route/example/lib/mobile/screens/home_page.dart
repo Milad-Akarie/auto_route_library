@@ -51,7 +51,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool _showSettingsTap = true;
 
   @override
-  Widget build(context) {
+  Widget build(BuildContext context) {
     // builder will rebuild everytime this router's stack
     // updates
     // we need it to indicate which NavigationRailDestination is active

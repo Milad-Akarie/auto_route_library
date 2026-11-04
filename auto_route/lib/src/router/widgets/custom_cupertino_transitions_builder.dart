@@ -122,7 +122,7 @@ class CupertinoPageTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    final TextDirection textDirection = Directionality.of(context);
+    final textDirection = Directionality.of(context);
     return SlideTransition(
       position: _secondaryPositionAnimation,
       textDirection: textDirection,
@@ -183,7 +183,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    final TextDirection textDirection = Directionality.of(context);
+    final textDirection = Directionality.of(context);
     return SlideTransition(
       position: _secondaryPositionAnimation,
       textDirection: textDirection,
@@ -288,7 +288,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
     assert(debugCheckHasDirectionality(context));
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
-    double dragAreaWidth = Directionality.of(context) == TextDirection.ltr
+    var dragAreaWidth = Directionality.of(context) == TextDirection.ltr
         ? MediaQuery.of(context).padding.left
         : MediaQuery.of(context).padding.right;
     dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
@@ -378,7 +378,7 @@ class _CupertinoBackGestureController<T> {
       // The popping may have finished inline if already at the target destination.
       if (controller.isAnimating) {
         // Otherwise, use a custom popping animation duration and curve.
-        final int droppedPageBackAnimationTime = lerpDouble(
+        final droppedPageBackAnimationTime = lerpDouble(
           0,
           _kMaxDroppedSwipePageForwardAnimationTime,
           controller.value,
@@ -396,7 +396,7 @@ class _CupertinoBackGestureController<T> {
       // curve of the page transition mid-flight since CupertinoPageTransition
       // depends on userGestureInProgress.
       late AnimationStatusListener animationStatusCallback;
-      animationStatusCallback = (AnimationStatus status) {
+      animationStatusCallback = (status) {
         navigator.didStopUserGesture();
         controller.removeStatusListener(animationStatusCallback);
       };
@@ -461,14 +461,12 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
     if (a == null) {
       return bColors == null
           ? b
-          : _CupertinoEdgeShadowDecoration._(bColors.map<Color>((Color color) => Color.lerp(null, color, t)!).toList());
+          : _CupertinoEdgeShadowDecoration._(bColors.map<Color>((color) => Color.lerp(null, color, t)!).toList());
     }
     if (b == null) {
       return aColors == null
           ? a
-          : _CupertinoEdgeShadowDecoration._(
-              aColors.map<Color>((Color color) => Color.lerp(null, color, 1.0 - t)!).toList(),
-            );
+          : _CupertinoEdgeShadowDecoration._(aColors.map<Color>((color) => Color.lerp(null, color, 1.0 - t)!).toList());
     }
     assert(bColors != null || aColors != null);
     // If it ever becomes necessary, we could allow decorations with different
@@ -524,7 +522,7 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
 
   @override
   void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
-    final List<Color>? colors = _decoration._colors;
+    final colors = _decoration._colors;
     if (colors == null || colors.isEmpty) {
       return;
     }
@@ -553,11 +551,11 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
     // the two colors that define the interval of the band.
 
     // Shadow spans 5% of the page.
-    final double shadowWidth = 0.05 * configuration.size!.width;
-    final double shadowHeight = configuration.size!.height;
-    final double bandWidth = shadowWidth / (colors.length - 1);
+    final shadowWidth = 0.05 * configuration.size!.width;
+    final shadowHeight = configuration.size!.height;
+    final bandWidth = shadowWidth / (colors.length - 1);
 
-    final TextDirection? textDirection = configuration.textDirection;
+    final textDirection = configuration.textDirection;
     assert(textDirection != null);
     final double start;
     final double shadowDirection; // -1 for ltr, 1 for rtl.
@@ -572,14 +570,14 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
         break;
     }
 
-    int bandColorIndex = 0;
-    for (int dx = 0; dx < shadowWidth; dx += 1) {
+    var bandColorIndex = 0;
+    for (var dx = 0; dx < shadowWidth; dx += 1) {
       if (dx ~/ bandWidth != bandColorIndex) {
         bandColorIndex += 1;
       }
-      final Paint paint = Paint()
+      final paint = Paint()
         ..color = Color.lerp(colors[bandColorIndex], colors[bandColorIndex + 1], (dx % bandWidth) / bandWidth)!;
-      final double x = start + shadowDirection * dx;
+      final x = start + shadowDirection * dx;
       canvas.drawRect(Rect.fromLTWH(x - 1.0, offset.dy, 1.0, shadowHeight), paint);
     }
   }

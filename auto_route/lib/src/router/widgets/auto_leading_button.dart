@@ -150,7 +150,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
       ignorePagelessRoutes: widget.ignorePagelessRoutes,
     )) {
       final topPage = scope.controller.topPage;
-      final bool useCloseButton = topPage?.fullscreenDialog ?? false;
+      final useCloseButton = topPage?.fullscreenDialog ?? false;
       if (widget.builder != null) {
         return widget.builder!(
           context,
@@ -170,7 +170,7 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
               onPressed: scope.controller.maybePopTop,
             );
     }
-    final ScaffoldState? scaffold = Scaffold.maybeOf(context);
+    final scaffold = Scaffold.maybeOf(context);
     if (scaffold?.hasDrawer == true) {
       if (widget.builder != null) {
         return widget.builder!(context, LeadingType.drawer, _handleDrawerButton);

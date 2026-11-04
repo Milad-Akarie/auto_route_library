@@ -15,7 +15,7 @@ class BookListScreen extends StatefulWidget {
 class _BookListScreenState extends State<BookListScreen> {
   @override
   Widget build(BuildContext context) {
-    var booksDb = BooksDBProvider.of(context);
+    final booksDb = BooksDBProvider.of(context);
     return Scaffold(
       body: ListView(
         children: [

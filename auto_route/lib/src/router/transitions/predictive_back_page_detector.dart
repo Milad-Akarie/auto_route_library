@@ -78,7 +78,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
   @override
   bool handleStartBackGesture(PredictiveBackEvent backEvent) {
     phase = _PredictiveBackPhase.start;
-    final bool gestureInProgress = !backEvent.isButtonEvent && _isEnabled;
+    final gestureInProgress = !backEvent.isButtonEvent && _isEnabled;
     if (!gestureInProgress) {
       return false;
     }
@@ -127,7 +127,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 
   @override
   Widget build(BuildContext context) {
-    final _PredictiveBackPhase effectivePhase = widget.route.popGestureInProgress ? phase : _PredictiveBackPhase.idle;
+    final effectivePhase = widget.route.popGestureInProgress ? phase : _PredictiveBackPhase.idle;
     return widget.builder(context, effectivePhase, startBackEvent, currentBackEvent);
   }
 }
@@ -230,13 +230,13 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
   // This isn't done as an animation because it's based on the vertical drag
   // amount, not the progression of the back gesture like widget.animation is.
   double _getYShiftPosition(double screenHeight) {
-    final double startTouchY = widget.startBackEvent?.touchOffset?.dy ?? 0;
-    final double currentTouchY = widget.currentBackEvent?.touchOffset?.dy ?? 0;
+    final startTouchY = widget.startBackEvent?.touchOffset?.dy ?? 0;
+    final currentTouchY = widget.currentBackEvent?.touchOffset?.dy ?? 0;
 
-    final double yShiftMax = (screenHeight / _kDivisionFactor) - _kMargin;
+    final yShiftMax = (screenHeight / _kDivisionFactor) - _kMargin;
 
-    final double rawYShift = currentTouchY - startTouchY;
-    final double easedYShift =
+    final rawYShift = currentTouchY - startTouchY;
+    final easedYShift =
         // This curve was eyeballed on a Pixel 9 running Android 16.
         Curves.easeOut.transform(clampDouble(rawYShift.abs() / screenHeight, 0.0, 1.0)) * rawYShift.sign * yShiftMax;
 
@@ -262,7 +262,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
       _ => kAlwaysDismissedAnimation,
     };
 
-    final double xShift = (screenSize.width / _kDivisionFactor) - _kMargin;
+    final xShift = (screenSize.width / _kDivisionFactor) - _kMargin;
     _positionAnimation = _animation.drive(switch (widget.phase) {
       _PredictiveBackPhase.commit => Tween<Offset>(
         begin: _lastDrag,
@@ -327,7 +327,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: widget.animation,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         _lastBounceAnimationValue = _bounceAnimation.value;
         return Transform.scale(
           scale: _scaleTween.evaluate(_bounceAnimation),
@@ -440,8 +440,8 @@ class _PredictiveBackFullscreenPageTransitionState extends State<_PredictiveBack
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final double screenWidth = MediaQuery.widthOf(context);
-    final double xShift = (screenWidth / _kScreenWidthDivisionFactor) - _kXShiftAdjustment;
+    final screenWidth = MediaQuery.widthOf(context);
+    final xShift = (screenWidth / _kScreenWidthDivisionFactor) - _kXShiftAdjustment;
     _primaryPositionTween = TweenSequence<Offset>(<TweenSequenceItem<Offset>>[
       TweenSequenceItem<Offset>(
         tween: Tween<Offset>(begin: Offset.zero, end: Offset.zero),
@@ -458,7 +458,7 @@ class _PredictiveBackFullscreenPageTransitionState extends State<_PredictiveBack
   }
 
   Widget _secondaryAnimatedBuilder(BuildContext context, Widget? child) {
-    final bool isCurrent = widget.getIsCurrent();
+    final isCurrent = widget.getIsCurrent();
 
     return Transform.translate(
       offset: isCurrent

@@ -13,7 +13,7 @@ void main() {
   // Reported: the tab indicator shakes while it moves.
   // Should: the TabController's animation, which places the indicator, moves
   // one way only, frame after frame, and ends on the tapped tab.
-  testWidgets('the tab indicator moves one way to the tapped tab in a NestedScrollView', (WidgetTester tester) async {
+  testWidgets('the tab indicator moves one way to the tapped tab in a NestedScrollView', (tester) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(

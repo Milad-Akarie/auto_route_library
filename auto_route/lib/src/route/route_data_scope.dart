@@ -15,7 +15,7 @@ class RouteDataScope extends InheritedWidget {
   ///
   /// throws an error if it does not find it
   static RouteDataScope of(BuildContext context) {
-    var scope = context.findAncestorWidgetOfExactType<RouteDataScope>();
+    final scope = context.findAncestorWidgetOfExactType<RouteDataScope>();
     assert(() {
       if (scope == null) {
         throw FlutterError(

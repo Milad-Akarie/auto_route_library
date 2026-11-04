@@ -64,7 +64,7 @@ void main() {
     );
 
     test('Calling [routes] should return a list of all route configs', () {
-      var expectedRoutes = [routeA, routeB, routeC];
+      final expectedRoutes = [routeA, routeB, routeC];
       expect(collection.routes, expectedRoutes);
     });
 
@@ -103,7 +103,7 @@ void main() {
     });
 
     test('Extracting sub collection of a branch route should return sub collection', () {
-      var expectedCollection = RouteCollection.fromList([subRouteC1], root: false);
+      final expectedCollection = RouteCollection.fromList([subRouteC1], root: false);
       expect(collection.subCollectionOf('C'), expectedCollection);
     });
 

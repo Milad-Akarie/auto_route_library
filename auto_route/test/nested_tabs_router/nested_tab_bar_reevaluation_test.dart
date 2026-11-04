@@ -13,7 +13,7 @@ void main() {
   // Reported: "Unsupported operation: Cannot clear an unmodifiable list" from
   // TabsRouter.setupRoutes, building feed's AutoTabsRouter.tabBar.
   // Should: feed shows its first tab, forYou.
-  testWidgets('a nested tab bar opened after a reevaluation shows its first tab', (WidgetTester tester) async {
+  testWidgets('a nested tab bar opened after a reevaluation shows its first tab', (tester) async {
     final reevaluateNotifier = ValueNotifier(0);
     final router = RootStackRouter.build(
       routes: [

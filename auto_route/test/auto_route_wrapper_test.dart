@@ -13,7 +13,7 @@ void main() {
 
   Future<void> pumpRouter(WidgetTester tester) => pumpRouterApp(tester, router);
 
-  testWidgets('WrappedRoute should wrap the child widget', (WidgetTester tester) async {
+  testWidgets('WrappedRoute should wrap the child widget', (tester) async {
     await pumpRouter(tester);
     expect(find.byType(WrapperPage), findsOneWidget);
     expect(find.text('Wrapped'), findsOneWidget);
@@ -44,9 +44,7 @@ void main() {
   // Should: BRoute is pushed in the nested router; the provided state stays.
   // Pushing the absolute path '/parent/b' from the root instead pushes a
   // second ParentRoute with its own wrapper, as the issue's comments explain.
-  testWidgets('Pushing a sibling route from a child widget keeps the wrapper of the host route', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Pushing a sibling route from a child widget keeps the wrapper of the host route', (tester) async {
     _ProvidedState.created = 0;
     final router = RootStackRouter.build(
       routes: [

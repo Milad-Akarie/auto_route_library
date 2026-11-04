@@ -75,7 +75,7 @@ void main() {
       return nested;
     }
 
-    testWidgets('system back should pop only the sub-route, then the host route', (WidgetTester tester) async {
+    testWidgets('system back should pop only the sub-route, then the host route', (tester) async {
       await pumpRouterApp(tester, router);
       final nested = await pushSubRoute(tester);
 
@@ -91,7 +91,7 @@ void main() {
       expectTopPage(router, FirstRoute.name);
     });
 
-    testWidgets('iOS back swipe should pop only the sub-route, then the host route', (WidgetTester tester) async {
+    testWidgets('iOS back swipe should pop only the sub-route, then the host route', (tester) async {
       await pumpIosApp(tester, router);
       final nested = await pushSubRoute(tester);
 
@@ -132,14 +132,14 @@ void main() {
       expectTopPage(router, FirstRoute.name);
     }
 
-    testWidgets('system back should pop one route at a time', (WidgetTester tester) async {
+    testWidgets('system back should pop one route at a time', (tester) async {
       await pumpRouterApp(tester, router);
       await pushDeepRoutes(tester);
 
       await expectBackSteps(tester, systemBack);
     });
 
-    testWidgets('iOS back swipe should pop one route at a time', (WidgetTester tester) async {
+    testWidgets('iOS back swipe should pop one route at a time', (tester) async {
       await pumpIosApp(tester, router);
       await pushDeepRoutes(tester);
 

@@ -41,7 +41,7 @@ class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
   final PageRouteInfo? Function(NavigationResolver resolver) redirect;
 
   @override
-  void onNavigation(NavigationResolver resolver, router) {
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
       router.push(redirectTo);
@@ -55,7 +55,7 @@ class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
   final String? Function(NavigationResolver resolver) redirect;
 
   @override
-  void onNavigation(NavigationResolver resolver, router) {
+  void onNavigation(NavigationResolver resolver, StackRouter router) {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
       router.pushPath(redirectTo);

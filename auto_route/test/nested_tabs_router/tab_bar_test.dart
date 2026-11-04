@@ -19,7 +19,7 @@ void main() {
     router.config(deepLinkBuilder: (_) => DeepLink.single(TabsHostRoute(tabsType: 'TabBar'))),
   );
 
-  testWidgets('Scrolling through pages in AutoTabView should sync with active route', (WidgetTester tester) async {
+  testWidgets('Scrolling through pages in AutoTabView should sync with active route', (tester) async {
     tester.view.physicalSize = const Size(500, 1500);
     await pumpRouter(tester);
     final pageViewFinder = find.byType(AutoTabView);

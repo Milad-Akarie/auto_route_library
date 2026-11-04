@@ -14,7 +14,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   @override
   final StackRouter router;
 
-  final _history = window.history;
+  final History _history = window.history;
 
   // The url state of each browser entry, by the engine's serial count. The
   // browser exposes only its current entry, so each entry is recorded when the

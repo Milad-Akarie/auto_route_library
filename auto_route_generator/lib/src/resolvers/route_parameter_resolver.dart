@@ -27,8 +27,8 @@ class RouteParameterResolver {
     if (paramName.startsWith('_')) {
       paramName = paramName.replaceFirst("_", '');
     }
-    var pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
-    var queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
+    final pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
+    final queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
 
     var nameOrAlias = paramName;
     var isInheritedPathParam = false;
@@ -36,7 +36,7 @@ class RouteParameterResolver {
 
     // A value parsed from the url is parsed by the type a typedef stands for.
     final isParsedFromUrl = pathParamAnnotation != null || queryParamAnnotation != null || isUrlFragment;
-    var type = _typeResolver.resolveType(paramType, skipAlias: isParsedFromUrl);
+    final type = _typeResolver.resolveType(paramType, skipAlias: isParsedFromUrl);
 
     if (pathParamAnnotation != null) {
       isInheritedPathParam = pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
@@ -107,7 +107,7 @@ class RouteParameterResolver {
   }
 
   ParamConfig _resolveFunctionType(FormalParameterElement paramElement) {
-    var type = paramElement.type as FunctionType;
+    final type = paramElement.type as FunctionType;
     return FunctionParamConfig(
       returnType: _typeResolver.resolveType(type.returnType),
       type: _typeResolver.resolveType(type),

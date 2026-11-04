@@ -12,7 +12,7 @@ void main() {
     router = NestedRouter();
   });
 
-  testWidgets('Simple Declarative routing test', (WidgetTester tester) async {
+  testWidgets('Simple Declarative routing test', (tester) async {
     final pageNotifier = ValueNotifier(1);
     await pumpRouterConfigApp(
       tester,

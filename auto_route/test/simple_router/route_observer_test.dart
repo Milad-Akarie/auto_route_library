@@ -16,7 +16,7 @@ void main() {
     router = SimpleRouter();
   });
 
-  testWidgets('Simple observer test', (WidgetTester tester) async {
+  testWidgets('Simple observer test', (tester) async {
     final mockObserver = MockAutoRouterObserver();
     await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [mockObserver]));
     expect(verify(mockObserver.didPush(captureAny, any)).captured.single.settings.name, FirstRoute.name);

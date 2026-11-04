@@ -50,7 +50,7 @@ void main() {
   });
 }
 
-final _reevaluateNotifier = ValueNotifier(0);
+final ValueNotifier<int> _reevaluateNotifier = ValueNotifier(0);
 
 class _SplashRoute extends PageRouteInfo<void> {
   const _SplashRoute() : super(name);

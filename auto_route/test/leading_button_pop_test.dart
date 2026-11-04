@@ -51,9 +51,7 @@ void main() {
 
   // Steps: push the user page, then tap its leading button.
   // Should: the home page shows again.
-  testWidgets('AutoLeadingButton on a page holding a nested router goes back to the previous page', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('AutoLeadingButton on a page holding a nested router goes back to the previous page', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     router.push(const _UserRoute());
     await tester.pumpAndSettle();
@@ -69,9 +67,7 @@ void main() {
   // leading button on the verify page, then on the user page.
   // Happens: the first tap shows the user page; the second does nothing.
   // Should: the first tap shows the user page, the second the home page.
-  testWidgets('AutoLeadingButton goes back to the previous page after a guard redirect was popped', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('AutoLeadingButton goes back to the previous page after a guard redirect was popped', (tester) async {
     await pumpRouterConfigApp(tester, router.config());
     router.push(const _UserRoute());
     await tester.pumpAndSettle();

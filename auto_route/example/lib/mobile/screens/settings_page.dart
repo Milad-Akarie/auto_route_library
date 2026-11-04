@@ -20,7 +20,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMixin<SettingsPage> {
-  var queryUpdateCont = 0;
+  int queryUpdateCont = 0;
 
   @override
   Widget build(BuildContext context) {

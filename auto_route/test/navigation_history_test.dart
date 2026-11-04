@@ -102,7 +102,7 @@ void main() {
 
     test('Should limit history to 20 entries', () async {
       // Push 25 routes
-      for (int i = 0; i < 25; i++) {
+      for (var i = 0; i < 25; i++) {
         // Alternate between routes to avoid duplicate prevention
         if (i % 3 == 0) {
           await router.push(const FirstRoute());
@@ -118,7 +118,7 @@ void main() {
     });
 
     test('Should notify listeners on URL state change', () async {
-      bool notified = false;
+      var notified = false;
       history.addListener(() {
         notified = true;
       });
@@ -276,8 +276,8 @@ void main() {
     }, skip: _webBackMovesBrowser);
 
     test('Multiple listeners should all be notified', () async {
-      int listener1Count = 0;
-      int listener2Count = 0;
+      var listener1Count = 0;
+      var listener2Count = 0;
 
       history.addListener(() => listener1Count++);
       history.addListener(() => listener2Count++);
@@ -290,7 +290,7 @@ void main() {
     });
 
     test('Should remove listener correctly', () async {
-      int callCount = 0;
+      var callCount = 0;
       void listener() => callCount++;
 
       history.addListener(listener);

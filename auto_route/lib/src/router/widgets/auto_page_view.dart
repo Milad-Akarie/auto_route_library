@@ -163,7 +163,7 @@ class AutoPageViewState extends State<AutoPageView> {
 
   void _disposeInactiveChildren() {
     final stack = _router.stack;
-    for (int i = 0; i < stack.length; i++) {
+    for (var i = 0; i < stack.length; i++) {
       if (i != _router.activeIndex) {
         _tabKeys[stack[i].routeData.matchId]?.currentState?.unloadIfRequired();
       }
@@ -194,11 +194,11 @@ class AutoPageViewState extends State<AutoPageView> {
 
   Future<void> _warpToNonAdjacentTab(int previousIndex) async {
     assert((_router.activeIndex - previousIndex).abs() > 1);
-    final int initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
+    final initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
 
     setState(() {
       _children = List<Widget>.of(_children, growable: false);
-      final Widget temp = _children[initialPage];
+      final temp = _children[initialPage];
       _children[initialPage] = _children[previousIndex];
       _children[previousIndex] = temp;
     });
@@ -217,9 +217,9 @@ class AutoPageViewState extends State<AutoPageView> {
     _disposeInactiveChildren();
     // From the page on screen: it's the tab before the active one, or the
     // tab a swipe reached when its guards kept it out.
-    final int previousIndex = _controller.page!.round();
+    final previousIndex = _controller.page!.round();
 
-    final bool adjacentDestination = (_router.activeIndex - previousIndex).abs() == 1;
+    final adjacentDestination = (_router.activeIndex - previousIndex).abs() == 1;
     if (adjacentDestination) {
       await _warpToAdjacentTab();
     } else {

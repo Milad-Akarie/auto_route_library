@@ -88,7 +88,7 @@ class AutoRouter extends StatefulWidget {
   ///
   /// throws an error if it does not find it
   static StackRouter of(BuildContext context, {bool watch = false}) {
-    var scope = StackRouterScope.of(context, watch: watch);
+    final scope = StackRouterScope.of(context, watch: watch);
     assert(() {
       if (scope == null) {
         throw FlutterError(
@@ -125,11 +125,11 @@ class AutoRouterState extends State<AutoRouter> {
       final parentRouteData = RouteData.of(context);
       final parentScope = RouterScope.of(context, watch: true);
       _inheritableObserversBuilder = () {
-        var observers = widget.navigatorObservers();
+        final observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
           return observers;
         }
-        var inheritedObservers = parentScope.inheritableObserversBuilder();
+        final inheritedObservers = parentScope.inheritableObserversBuilder();
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
@@ -203,7 +203,7 @@ class AutoRouterState extends State<AutoRouter> {
   }
 
   @override
-  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<StackRouter>('controller', controller));
   }
@@ -254,11 +254,11 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
       _heroController = HeroController();
       final parentScope = RouterScope.of(context);
       _inheritableObserversBuilder = () {
-        var observers = widget.navigatorObservers();
+        final observers = widget.navigatorObservers();
         if (!widget.inheritNavigatorObservers) {
           return observers;
         }
-        var inheritedObservers = parentScope.inheritableObserversBuilder();
+        final inheritedObservers = parentScope.inheritableObserversBuilder();
         return inheritedObservers + observers;
       };
       _navigatorObservers = _inheritableObserversBuilder();
@@ -315,7 +315,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   }
 
   @override
-  debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<StackRouter>('controller', controller));
   }

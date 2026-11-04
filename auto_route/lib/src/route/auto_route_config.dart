@@ -584,7 +584,7 @@ class RouteCollection {
     var routesMap = <String, AutoRoute>{};
     final subCollections = <String, RouteCollection>{};
     var hasValidInitialPath = false;
-    for (var r in routes) {
+    for (final r in routes) {
       if (r.hasSubTree) {
         subCollections[r.name] = RouteCollection.fromList(r.children!, onGeneratePath: onGeneratePath);
       }
@@ -667,7 +667,7 @@ class RouteCollection {
     }
 
     if (node.hasSubTree) {
-      for (AutoRoute child in node.children!) {
+      for (final child in node.children!) {
         if (_findPath(child, routeName, track)) {
           track.insert(0, node);
           return true;

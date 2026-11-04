@@ -20,7 +20,7 @@ extension IterableExtenstion<E> on Iterable<E> {
   /// Returns the first element that satisfies the given predicate [test]
   /// or `null` if no element satisfies the predicate.
   E? firstWhereOrNull(bool Function(E element) test) {
-    for (var e in this) {
+    for (final e in this) {
       if (test(e)) {
         return e;
       }
@@ -42,7 +42,7 @@ extension IterableExtenstion<E> on Iterable<E> {
   /// Returns a distinct list of elements by the given [distinctBy] function
   Iterable<E> distinctBy<T>(T Function(E e) distinctBy) {
     final uniqueItems = <T, E>{};
-    for (var e in this) {
+    for (final e in this) {
       uniqueItems[distinctBy(e)] = e;
     }
     return uniqueItems.values;

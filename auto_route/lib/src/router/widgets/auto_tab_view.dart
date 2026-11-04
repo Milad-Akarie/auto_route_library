@@ -181,7 +181,7 @@ class AutoTabViewState extends State<AutoTabView> {
 
   void _disposeInactiveChildren() {
     final stack = _router.stack;
-    for (int i = 0; i < stack.length; i++) {
+    for (var i = 0; i < stack.length; i++) {
       if (i != _router.activeIndex) {
         _tabKeys[stack[i].routeData.matchId]?.currentState?.unloadIfRequired();
       }
@@ -203,7 +203,7 @@ class AutoTabViewState extends State<AutoTabView> {
       return;
     }
     _disposeInactiveChildren();
-    final bool adjacentDestination = (_currentIndex! - _controller.previousIndex).abs() == 1;
+    final adjacentDestination = (_currentIndex! - _controller.previousIndex).abs() == 1;
     if (adjacentDestination) {
       await _warpToAdjacentTab(_controller.animationDuration);
     } else {
@@ -240,19 +240,19 @@ class AutoTabViewState extends State<AutoTabView> {
   }
 
   Future<void> _warpToNonAdjacentTab(Duration duration) async {
-    final int previousIndex = _controller.previousIndex;
+    final previousIndex = _controller.previousIndex;
     assert((_currentIndex! - previousIndex).abs() > 1);
 
     // initialPage defines which page is shown when starting the animation.
     // This page is adjacent to the destination page.
-    final int initialPage = _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
+    final initialPage = _currentIndex! > previousIndex ? _currentIndex! - 1 : _currentIndex! + 1;
 
     setState(() {
       // Needed for `RenderSliverMultiBoxAdaptor.move` and kept alive children.
       // For motivation, see https://github.com/flutter/flutter/pull/29188 and
       // https://github.com/flutter/flutter/issues/27010#issuecomment-486475152.
       _children = List<Widget>.of(_children, growable: false);
-      final Widget temp = _children[initialPage];
+      final temp = _children[initialPage];
       _children[initialPage] = _children[previousIndex];
       _children[previousIndex] = temp;
     });

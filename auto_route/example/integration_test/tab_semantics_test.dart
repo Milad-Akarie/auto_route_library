@@ -79,7 +79,7 @@ void main() {
 
 enum _TabsKind { indexedStack, pageView, tabBar }
 
-var _tabsKind = _TabsKind.indexedStack;
+_TabsKind _tabsKind = _TabsKind.indexedStack;
 
 class _TabsHostRoute extends PageRouteInfo<void> {
   const _TabsHostRoute() : super(name);

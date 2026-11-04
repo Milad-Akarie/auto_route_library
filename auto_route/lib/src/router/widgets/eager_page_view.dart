@@ -246,8 +246,8 @@ class _EagerPageViewState extends State<EagerPageView> {
     switch (widget.scrollDirection) {
       case Axis.horizontal:
         assert(debugCheckHasDirectionality(context));
-        final TextDirection textDirection = Directionality.of(context);
-        final AxisDirection axisDirection = textDirectionToAxisDirection(textDirection);
+        final textDirection = Directionality.of(context);
+        final axisDirection = textDirectionToAxisDirection(textDirection);
         return widget.reverse ? flipAxisDirection(axisDirection) : axisDirection;
       case Axis.vertical:
         return widget.reverse ? AxisDirection.up : AxisDirection.down;
@@ -256,7 +256,7 @@ class _EagerPageViewState extends State<EagerPageView> {
 
   @override
   Widget build(BuildContext context) {
-    final AxisDirection axisDirection = _getDirection(context);
+    final axisDirection = _getDirection(context);
     final ScrollPhysics physics = const _ForceImplicitScrollPhysics(allowImplicitScrolling: false).applyTo(
       widget.pageSnapping
           ? _kPagePhysics.applyTo(widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context))
@@ -264,10 +264,10 @@ class _EagerPageViewState extends State<EagerPageView> {
     );
 
     return NotificationListener<ScrollNotification>(
-      onNotification: (ScrollNotification notification) {
+      onNotification: (notification) {
         if (notification.depth == 0 && widget.onPageChanged != null && notification is ScrollUpdateNotification) {
-          final PageMetrics metrics = notification.metrics as PageMetrics;
-          final int currentPage = metrics.page!.round();
+          final metrics = notification.metrics as PageMetrics;
+          final currentPage = metrics.page!.round();
           if (currentPage != _lastReportedPage) {
             _lastReportedPage = currentPage;
             widget.onPageChanged!(currentPage);
@@ -282,7 +282,7 @@ class _EagerPageViewState extends State<EagerPageView> {
         physics: physics,
         restorationId: widget.restorationId,
         scrollBehavior: widget.scrollBehavior ?? ScrollConfiguration.of(context).copyWith(scrollbars: false),
-        viewportBuilder: (BuildContext context, ViewportOffset position) {
+        viewportBuilder: (context, position) {
           return Viewport(
             scrollCacheExtent: ScrollCacheExtent.viewport(widget.cacheExtent.toDouble()),
             axisDirection: axisDirection,
