@@ -735,6 +735,30 @@ AutoTabsRouter.tabBar(
 );
 ```
 
+### A page that's reachable from several tabs
+
+Where you declare a page decides where it opens.
+
+- Declared as a child of a tab, it opens inside that tab's stack, so the tab bar stays visible.
+- Declared at the root, next to the tab bar's route, it opens above the whole screen and hides the tab bar.
+
+The same page can be declared under every tab that needs it, with the same route, and `push` opens it in the tab you're in:
+
+```dart
+AutoRoute(page: HomeTab.page, children: [
+  AutoRoute(page: HomeRoute.page, initial: true),
+  AutoRoute(page: BookDetailsRoute.page), // opens inside this tab
+]),
+AutoRoute(page: BooksTab.page, children: [
+  AutoRoute(page: BooksRoute.page, initial: true),
+  AutoRoute(page: BookDetailsRoute.page), // and inside this one
+]),
+```
+
+```dart
+context.router.push(const BookDetailsRoute());
+```
+
 ## Finding The Right Router
 
 Every nested `AutoRouter` has its own routing controller to manage the stack inside of it and the easiest way to obtain a scoped controller is by using the `BuildContext`.
