@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../main_router.dart';
 import '../router_test_utils.dart';

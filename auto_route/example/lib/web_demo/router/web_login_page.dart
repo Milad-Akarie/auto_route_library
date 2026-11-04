@@ -5,9 +5,8 @@ import 'package:material_ui/material_ui.dart';
 //ignore_for_file: public_member_api_docs
 @RoutePage()
 class WebLoginPage extends StatelessWidget {
-  final ValueChanged<bool>? onResult;
-
   const WebLoginPage({super.key, this.onResult});
+  final ValueChanged<bool>? onResult;
 
   @override
   Widget build(BuildContext context) {

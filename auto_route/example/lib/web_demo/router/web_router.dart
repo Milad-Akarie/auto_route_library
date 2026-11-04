@@ -7,9 +7,8 @@ import 'package:material_ui/material_ui.dart';
 //ignore_for_file: public_member_api_docs
 @AutoRouterConfig(generateForDir: ['lib/web_demo'])
 class WebAppRouter extends RootStackRouter {
-  AuthService authService;
-
   WebAppRouter(this.authService);
+  AuthService authService;
 
   @override
   List<AutoRoute> get routes => [
@@ -65,13 +64,12 @@ class WebAppRouter extends RootStackRouter {
 
 @RoutePage()
 class MainWebPage extends StatefulWidget {
-  final VoidCallback? navigate, showUserPosts;
-
   const MainWebPage({
     super.key,
     this.navigate,
     this.showUserPosts,
   });
+  final VoidCallback? navigate, showUserPosts;
 
   @override
   State<MainWebPage> createState() => _MainWebPageState();
@@ -157,16 +155,15 @@ class QueryPage extends StatelessWidget {
 
 @RoutePage()
 class UserProfilePage extends StatefulWidget {
-  final VoidCallback? navigate;
-  final int likes;
-  final int userId;
-
   const UserProfilePage({
     super.key,
     this.navigate,
     @PathParam('userID') this.userId = -1,
     @queryParam this.likes = 0,
   });
+  final VoidCallback? navigate;
+  final int likes;
+  final int userId;
 
   @override
   State<UserProfilePage> createState() => _UserProfilePageState();
@@ -230,9 +227,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 
 @RoutePage()
 class UserPostsPage extends StatefulWidget {
-  final int id;
-
   const UserPostsPage({super.key, @PathParam.inherit('userID') required this.id});
+  final int id;
 
   @override
   UserPostsPageState createState() => UserPostsPageState();
@@ -282,16 +278,15 @@ class UserPostsPageState extends State<UserPostsPage> {
 
 @RoutePage()
 class UserPage extends StatefulWidget {
-  final int id;
-  final List<String>? query;
-  final String? fragment;
-
   const UserPage({
     super.key,
     @PathParam('userID') this.id = -1,
     @QueryParam() this.query,
     @urlFragment this.fragment,
   });
+  final int id;
+  final List<String>? query;
+  final String? fragment;
 
   @override
   UserPageState createState() => UserPageState();
@@ -336,9 +331,8 @@ class NotFoundScreen extends StatelessWidget {
 
 @RoutePage()
 class UserAllPostsPage extends StatelessWidget {
-  final VoidCallback? navigate;
-
   const UserAllPostsPage({super.key, this.navigate});
+  final VoidCallback? navigate;
 
   @override
   Widget build(BuildContext context) {

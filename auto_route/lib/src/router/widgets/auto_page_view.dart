@@ -1,9 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/router/widgets/eager_page_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
-
-import 'eager_page_view.dart';
 
 /// Most of the code here is taking from flutter's [TabView]
 class AutoPageView extends StatefulWidget {

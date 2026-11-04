@@ -12,6 +12,15 @@ abstract class RootStackRouter extends StackRouter {
     _navigationHistory = NavigationHistory.create(this);
   }
 
+  /// Builds a new instance of [RootStackRouter]
+  /// with the provided parameters
+  factory RootStackRouter.build({
+    required List<AutoRoute> routes,
+    List<AutoRouteGuard> guards,
+    GlobalKey<NavigatorState>? navigatorKey,
+    RouteType defaultRouteType,
+  }) = _RootStackRouterImpl;
+
   final _rootBackButtonDispatcher = RootBackButtonDispatcher();
 
   /// Returns a [RouterConfig] instead to be passed
@@ -155,18 +164,16 @@ abstract class RootStackRouter extends StackRouter {
   String onGeneratePath(AutoRoute route) {
     return RouteCollection.defaultPathGenerator(route);
   }
-
-  /// Builds a new instance of [RootStackRouter]
-  /// with the provided parameters
-  factory RootStackRouter.build({
-    required List<AutoRoute> routes,
-    List<AutoRouteGuard> guards,
-    GlobalKey<NavigatorState>? navigatorKey,
-    RouteType defaultRouteType,
-  }) = _RootStackRouterImpl;
 }
 
 class _RootStackRouterImpl extends RootStackRouter {
+  _RootStackRouterImpl({
+    required this.routes,
+    this.guards = const [],
+    super.navigatorKey,
+    this.defaultRouteType = const RouteType.material(),
+    OnGeneratePath? onGeneratePath,
+  }) : _onGeneratePath = onGeneratePath ?? RouteCollection.defaultPathGenerator;
   @override
   final List<AutoRoute> routes;
 
@@ -177,14 +184,6 @@ class _RootStackRouterImpl extends RootStackRouter {
   final RouteType defaultRouteType;
 
   final OnGeneratePath _onGeneratePath;
-
-  _RootStackRouterImpl({
-    required this.routes,
-    this.guards = const [],
-    super.navigatorKey,
-    this.defaultRouteType = const RouteType.material(),
-    OnGeneratePath? onGeneratePath,
-  }) : _onGeneratePath = onGeneratePath ?? RouteCollection.defaultPathGenerator;
 
   @override
   String onGeneratePath(AutoRoute route) {

@@ -7,14 +7,13 @@ import 'package:provider/provider.dart';
 
 @RoutePage(name: 'SettingsTab')
 class SettingsPage extends StatefulWidget {
-  final String tab;
-  final String query;
-
   const SettingsPage({
     super.key,
     @pathParam this.tab = 'none',
     @queryParam this.query = 'none',
   });
+  final String tab;
+  final String query;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();

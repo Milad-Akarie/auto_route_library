@@ -1,12 +1,11 @@
 import 'package:auto_route/src/matcher/route_match.dart';
+import 'package:auto_route/src/router/controller/navigation_history/navigation_history.dart'
+    if (dart.library.io) 'native_navigation_history.dart'
+    if (dart.library.js_interop) 'web_navigation_history.dart';
 import 'package:auto_route/src/router/controller/routing_controller.dart';
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
-
-import 'navigation_history.dart'
-    if (dart.library.io) 'native_navigation_history.dart'
-    if (dart.library.js_interop) 'web_navigation_history.dart';
 
 /// An abstraction on a navigation history tracker
 /// that utilises browser history on web and mimics it on native

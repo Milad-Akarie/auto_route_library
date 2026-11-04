@@ -14,13 +14,6 @@ import 'package:flutter/widgets.dart';
 /// overrides the initialization behavior of
 /// [Navigator.reportsRouteUpdateToEngine].
 class AutoRouteInformationProvider extends RouteInformationProvider with WidgetsBindingObserver, ChangeNotifier {
-  AutoRouteInformationProvider._({required RouteInformation initialRouteInformation, this.neglectIf})
-    : _value = initialRouteInformation;
-
-  /// if true is return the route will be
-  /// reported to engine
-  bool Function(String? location)? neglectIf;
-
   /// Create a platform route information provider.
   ///
   /// Use the [initialRouteInformation] to set the default route information for this
@@ -35,6 +28,12 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
 
     return AutoRouteInformationProvider._(initialRouteInformation: initialRouteInfo, neglectIf: neglectWhen);
   }
+  AutoRouteInformationProvider._({required RouteInformation initialRouteInformation, this.neglectIf})
+    : _value = initialRouteInformation;
+
+  /// if true is return the route will be
+  /// reported to engine
+  bool Function(String? location)? neglectIf;
 
   @override
   void routerReportsNewRouteInformation(

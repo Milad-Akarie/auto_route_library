@@ -1,16 +1,15 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
-
-import '../../auto_route.dart';
 
 /// Injects the given [routeData] to context
 /// so it can be looked up by any child widget
 class RouteDataScope extends InheritedWidget {
-  /// The route data to be scoped
-  final RouteData routeData;
-
   /// Default reconstruct
   const RouteDataScope({super.key, required this.routeData, required super.child});
+
+  /// The route data to be scoped
+  final RouteData routeData;
 
   /// Looks up and returns the scoped [routeData]
   ///

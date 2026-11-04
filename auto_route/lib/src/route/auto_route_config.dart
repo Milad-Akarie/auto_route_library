@@ -22,78 +22,41 @@ typedef RestorationIdBuilder = String Function(RouteMatch match);
 /// to create [RouteMatch]'s from paths and [PageRouteInfo]'s
 @immutable
 class AutoRoute {
-  /// The name of page this route should map to
-  final PageInfo page;
-  final String? _path;
-
-  /// Weather to match this route's path as fullMatch
-  final bool fullMatch;
-
-  /// The list of [AutoRoute] children of this route
-  final List<AutoRoute>? children;
-
-  /// The list of [AutoRouteGuard]'s the matched route
-  /// will go through before being presented
-  final List<AutoRouteGuard> guards;
-
-  /// If set to true the [AutoRoutePage] will use the matched-path
-  /// as it's key otherwise [name] will be used
-  final bool usesPathAsKey;
-
-  /// a Map of dynamic data that can be accessed by
-  /// [RouteData.meta] when the route is created
-  final Map<String, dynamic> meta;
-
-  /// Indicates what kind of [PageRoute] this route will use
-  /// e.g [MaterialRouteType] will create [_PageBasedMaterialPageRoute]
-  final RouteType? type;
-
-  /// Whether to treat the target route as a fullscreenDialog.
-  /// Passed To [PageRoute.fullscreenDialog]
-  final bool fullscreenDialog;
-
-  /// Whether the target route should maintain it's state.
-  /// Passed To [PageRoute.maintainState]
-  final bool maintainState;
-
-  /// Whether the target route should allow snapshotting.
-  /// Passed To [PageRoute.allowSnapshotting]
-  final bool allowSnapshotting;
-
-  /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
-  /// where it can be used by [CupertinoNavigationBar]
-  ///
-  /// it can also be used manually by calling [RouteData.title] inside widgets
-  final TitleBuilder? title;
-
-  /// Builds a String value that that's passed to
-  /// [AutoRoutePage.restorationId]
-  final RestorationIdBuilder? restorationId;
-
-  /// Whether the target route should be kept in stack
-  /// after another route is pushed above it
-  final bool keepHistory;
-
-  /// Marks route as initial destination of a router
-  ///
-  /// initial will auto-generate initial paths
-  /// for routes with defined-paths
-  ///
-  /// if used with a non-initial defined path it auto-generates
-  /// a RedirectRoute() to that path
-  final bool initial;
-
-  /// Helper getter to get the name of the page
-  String get name => page.name;
-
-  final AutoRoutePageBuilder _pageBuilder;
-
-  /// Returns the Widget builder function of the page
-  AutoRoutePageBuilder get builder => _pageBuilder;
-
-  /// Builds a [AutoRoutePage] from [RouteData]
-  AutoRoutePage<T> buildPage<T>(RouteData data) {
-    return AutoRoutePage<T>(child: builder(data), routeData: data);
+  /// Builds a default AutoRoute instance with any [type]
+  factory AutoRoute({
+    required PageInfo page,
+    String? path,
+    bool usesPathAsKey = false,
+    List<AutoRouteGuard> guards = const [],
+    bool fullMatch = false,
+    RouteType? type,
+    Map<String, dynamic> meta = const {},
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+    List<AutoRoute>? children,
+    TitleBuilder? title,
+    RestorationIdBuilder? restorationId,
+    bool keepHistory = true,
+    bool initial = false,
+    bool allowSnapshotting = true,
+  }) {
+    return AutoRoute._(
+      page: page,
+      path: path,
+      fullMatch: fullMatch,
+      maintainState: maintainState,
+      fullscreenDialog: fullscreenDialog,
+      meta: meta,
+      type: type,
+      usesPathAsKey: usesPathAsKey,
+      guards: guards,
+      restorationId: restorationId,
+      children: children,
+      title: title,
+      keepHistory: keepHistory,
+      initial: initial,
+      allowSnapshotting: allowSnapshotting,
+    );
   }
 
   AutoRoute._({
@@ -133,43 +96,6 @@ class AutoRoute {
     required this.allowSnapshotting,
   }) : _path = path,
        _pageBuilder = page.builder;
-
-  /// Builds a default AutoRoute instance with any [type]
-  factory AutoRoute({
-    required PageInfo page,
-    String? path,
-    bool usesPathAsKey = false,
-    List<AutoRouteGuard> guards = const [],
-    bool fullMatch = false,
-    RouteType? type,
-    Map<String, dynamic> meta = const {},
-    bool maintainState = true,
-    bool fullscreenDialog = false,
-    List<AutoRoute>? children,
-    TitleBuilder? title,
-    RestorationIdBuilder? restorationId,
-    bool keepHistory = true,
-    bool initial = false,
-    bool allowSnapshotting = true,
-  }) {
-    return AutoRoute._(
-      page: page,
-      path: path,
-      fullMatch: fullMatch,
-      maintainState: maintainState,
-      fullscreenDialog: fullscreenDialog,
-      meta: meta,
-      type: type,
-      usesPathAsKey: usesPathAsKey,
-      guards: guards,
-      restorationId: restorationId,
-      children: children,
-      title: title,
-      keepHistory: keepHistory,
-      initial: initial,
-      allowSnapshotting: allowSnapshotting,
-    );
-  }
 
   /// Creates an AutoRoute with a single [AutoRouteGuard]
   /// callback
@@ -244,6 +170,80 @@ class AutoRoute {
     allowSnapshotting: allowSnapshotting,
   );
 
+  /// The name of page this route should map to
+  final PageInfo page;
+  final String? _path;
+
+  /// Weather to match this route's path as fullMatch
+  final bool fullMatch;
+
+  /// The list of [AutoRoute] children of this route
+  final List<AutoRoute>? children;
+
+  /// The list of [AutoRouteGuard]'s the matched route
+  /// will go through before being presented
+  final List<AutoRouteGuard> guards;
+
+  /// If set to true the [AutoRoutePage] will use the matched-path
+  /// as it's key otherwise [name] will be used
+  final bool usesPathAsKey;
+
+  /// a Map of dynamic data that can be accessed by
+  /// [RouteData.meta] when the route is created
+  final Map<String, dynamic> meta;
+
+  /// Indicates what kind of [PageRoute] this route will use
+  /// e.g [MaterialRouteType] will create [_PageBasedMaterialPageRoute]
+  final RouteType? type;
+
+  /// Whether to treat the target route as a fullscreenDialog.
+  /// Passed To [PageRoute.fullscreenDialog]
+  final bool fullscreenDialog;
+
+  /// Whether the target route should maintain it's state.
+  /// Passed To [PageRoute.maintainState]
+  final bool maintainState;
+
+  /// Whether the target route should allow snapshotting.
+  /// Passed To [PageRoute.allowSnapshotting]
+  final bool allowSnapshotting;
+
+  /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
+  /// where it can be used by [CupertinoNavigationBar]
+  ///
+  /// it can also be used manually by calling [RouteData.title] inside widgets
+  final TitleBuilder? title;
+
+  /// Builds a String value that that's passed to
+  /// [AutoRoutePage.restorationId]
+  final RestorationIdBuilder? restorationId;
+
+  /// Whether the target route should be kept in stack
+  /// after another route is pushed above it
+  final bool keepHistory;
+
+  /// Marks route as initial destination of a router
+  ///
+  /// initial will auto-generate initial paths
+  /// for routes with defined-paths
+  ///
+  /// if used with a non-initial defined path it auto-generates
+  /// a RedirectRoute() to that path
+  final bool initial;
+
+  /// Helper getter to get the name of the page
+  String get name => page.name;
+
+  final AutoRoutePageBuilder _pageBuilder;
+
+  /// Returns the Widget builder function of the page
+  AutoRoutePageBuilder get builder => _pageBuilder;
+
+  /// Builds a [AutoRoutePage] from [RouteData]
+  AutoRoutePage<T> buildPage<T>(RouteData data) {
+    return AutoRoutePage<T>(child: builder(data), routeData: data);
+  }
+
   /// The path defined by user or automatically-added
   /// By [RouteCollection.fromList]
   String get path => _path ?? '';
@@ -309,13 +309,13 @@ class AutoRoute {
 /// Map to an existing route-entry that maps to a page
 @immutable
 class RedirectRoute extends AutoRoute {
-  /// The target path which this route should
-  /// redirect to
-  final String redirectTo;
-
   /// Default constructor
   RedirectRoute({required String path, required this.redirectTo})
     : super._(path: path, page: PageInfo.redirect, fullMatch: true);
+
+  /// The target path which this route should
+  /// redirect to
+  final String redirectTo;
 
   @override
   String get name => "${page.name}-$path-$redirectTo";
@@ -559,9 +559,6 @@ typedef OnGeneratePath = String Function(AutoRoute route);
 ///
 /// Mainly used by [RouteMatcher]
 class RouteCollection {
-  final Map<String, AutoRoute> _routesMap;
-  final Map<String, RouteCollection> _subCollections;
-
   /// Default constructor
   RouteCollection(this._routesMap, [this._subCollections = const {}]) : assert(_routesMap.isNotEmpty);
 
@@ -626,6 +623,8 @@ class RouteCollection {
     }
     return RouteCollection(routesMap, subCollections);
   }
+  final Map<String, AutoRoute> _routesMap;
+  final Map<String, RouteCollection> _subCollections;
 
   /// Returns the values of [_routesMap] as iterable
   Iterable<AutoRoute> get routes => _routesMap.values;

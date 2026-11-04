@@ -1,16 +1,15 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:example/mobile/router/auth_guard.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
-import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
 // ignore_for_file: constant_identifier_names
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
 class AppRouter extends RootStackRouter {
-  final AuthService authService;
-
   AppRouter(this.authService);
+  final AuthService authService;
 
   @override
   late final List<AutoRoute> routes = [
@@ -60,10 +59,9 @@ const BooksTab = EmptyShellRoute('BooksTab');
 const ProfileTab = EmptyShellRoute('ProfileTab');
 
 abstract class RouteDef {
+  RouteDef(this.name, {this.path});
   final String name;
   final String? path;
-
-  RouteDef(this.name, {this.path});
 
   Widget build(BuildContext context, RouteData data);
 

@@ -37,6 +37,9 @@ Future<TestReaderWriter> _loadPackages() async {
 
 /// What one run of both builders produced.
 class GeneratedRouter {
+  /// Creates the result of one run.
+  GeneratedRouter(this.source, this.errors, this.compileErrors);
+
   /// The generated `.gr.dart` source, or `null` when the build wrote none.
   final String? source;
 
@@ -46,9 +49,6 @@ class GeneratedRouter {
   /// The analyzer errors in the router library and its generated part, so a
   /// test can check that the generated code compiles.
   final List<String> compileErrors;
-
-  /// Creates the result of one run.
-  GeneratedRouter(this.source, this.errors, this.compileErrors);
 
   @override
   String toString() => 'build errors: $errors\ncompile errors: $compileErrors\n$source';
@@ -109,10 +109,9 @@ const _compileErrorsExtension = '.compile_errors.txt';
 /// the output too when it is a library of its own, and writes the analyzer
 /// errors in them, one per line.
 class _CompileCheckBuilder implements Builder {
+  _CompileCheckBuilder(this.routerPath, this.outputPath);
   final String routerPath;
   final String outputPath;
-
-  _CompileCheckBuilder(this.routerPath, this.outputPath);
 
   @override
   Map<String, List<String>> get buildExtensions => const {

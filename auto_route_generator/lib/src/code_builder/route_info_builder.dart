@@ -1,12 +1,11 @@
 import 'dart:core';
 
+import 'package:auto_route_generator/src/code_builder/library_builder.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
+import 'package:auto_route_generator/src/models/route_config.dart';
+import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:code_builder/code_builder.dart';
-
-import '../models/route_config.dart';
-import '../models/route_parameter_config.dart';
-import '../models/router_config.dart';
-import 'library_builder.dart';
 
 const _collectionsImport = 'package:collection/collection.dart';
 

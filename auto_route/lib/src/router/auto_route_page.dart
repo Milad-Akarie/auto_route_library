@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/transitions/flutter_material_theme.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart' show PredictiveBackEvent, SwipeEdge;
+import 'package:material_ui/material_ui.dart';
 
 part 'transitions/predictive_back_page_detector.dart';
 
@@ -13,6 +13,16 @@ final _shownPages = Expando<bool>();
 /// Creates a RoutePage based on [routeData.type],
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
+  /// Default constructor
+  AutoRoutePage({required this.routeData, required Widget child})
+    : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
+      super(
+        restorationId: routeData.restorationId,
+        name: routeData.name,
+        arguments: routeData.route.args,
+        key: routeData.matchId,
+      );
+
   /// The Route Data that's used to build the page
   final RouteData routeData;
   final Widget _child;
@@ -40,16 +50,6 @@ class AutoRoutePage<T> extends Page<T> {
 
   /// The widget passed to the route
   Widget get child => _child;
-
-  /// Default constructor
-  AutoRoutePage({required this.routeData, required Widget child})
-    : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
-      super(
-        restorationId: routeData.restorationId,
-        name: routeData.name,
-        arguments: routeData.route.args,
-        key: routeData.matchId,
-      );
 
   /// Records that the [Navigator] has shown this page, so it now holds a
   /// route of its own.

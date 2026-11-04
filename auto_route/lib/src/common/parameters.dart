@@ -4,10 +4,9 @@ import 'package:collection/collection.dart';
 /// This class helps read typed data from
 /// raw maps, it's used for both path-parameters and query-parameters
 class Parameters {
-  final Map<String, dynamic> _params;
-
   /// default construct
   const Parameters(Map<String, dynamic>? params) : _params = params ?? const {};
+  final Map<String, dynamic> _params;
 
   /// returns the raw map passed to the constructor
   Map<String, dynamic> get rawMap => _params;

@@ -57,29 +57,6 @@ typedef NullableWidgetBuilder = Widget Function(BuildContext context, Widget? le
 /// it will pop sub-page2 then page2
 ///
 class AutoLeadingButton extends StatefulWidget {
-  /// The color of [BackButton] and [CloseButton]
-  final Color? color;
-
-  /// Whether to pop current stack and not care about
-  /// child routes
-  final bool showIfChildCanPop;
-
-  /// Whether to ignore pageless routes when
-  /// calculating top-most route
-  ///
-  /// What is a (PagelessRoute)?
-  /// [Route] that does not correspond to a [Page] object is called a pageless
-  /// route and is tied to the [Route] that _does_ correspond to a [Page] object
-  /// that is below it in the history.
-  final bool ignorePagelessRoutes;
-  final bool _showIfParentCanPop;
-
-  /// Clients can use this builder to customize
-  /// the looks and feels of their leading buttons
-  final AutoLeadingButtonBuilder? builder;
-
-  final NullableWidgetBuilder? _nullableBuilder;
-
   /// Default constructor
   const AutoLeadingButton({
     super.key,
@@ -119,6 +96,29 @@ class AutoLeadingButton extends StatefulWidget {
   }) : _nullableBuilder = builder,
        builder = null,
        _showIfParentCanPop = showIfParentCanPop ?? true;
+
+  /// The color of [BackButton] and [CloseButton]
+  final Color? color;
+
+  /// Whether to pop current stack and not care about
+  /// child routes
+  final bool showIfChildCanPop;
+
+  /// Whether to ignore pageless routes when
+  /// calculating top-most route
+  ///
+  /// What is a (PagelessRoute)?
+  /// [Route] that does not correspond to a [Page] object is called a pageless
+  /// route and is tied to the [Route] that _does_ correspond to a [Page] object
+  /// that is below it in the history.
+  final bool ignorePagelessRoutes;
+  final bool _showIfParentCanPop;
+
+  /// Clients can use this builder to customize
+  /// the looks and feels of their leading buttons
+  final AutoLeadingButtonBuilder? builder;
+
+  final NullableWidgetBuilder? _nullableBuilder;
 
   @override
   State<AutoLeadingButton> createState() => _AutoLeadingButtonState();

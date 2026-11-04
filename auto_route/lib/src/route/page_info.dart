@@ -5,25 +5,25 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 ///
 /// Might hold more info in the future
 class PageInfo {
-  /// The name of the generated [RoutePage]
-  final String name;
-
-  /// The builder function of the generated [RoutePage]
-  final AutoRoutePageBuilder builder;
-
   /// Default constructor
   const PageInfo(this.name, {required this.builder});
 
   /// Builds an empty shell [PageInfo] with a const builder
   const PageInfo.emptyShell(this.name) : builder = _emptyShellBuilder;
 
-  static Widget _emptyShellBuilder(RouteData _) {
-    return const AutoRouter();
-  }
-
   /// Builds a new instance of [PageInfo] with the given parameters
   factory PageInfo.builder(String name, {required WidgetBuilderWithData builder}) {
     return PageInfo(name, builder: (data) => Builder(builder: (context) => builder(context, data)));
+  }
+
+  /// The name of the generated [RoutePage]
+  final String name;
+
+  /// The builder function of the generated [RoutePage]
+  final AutoRoutePageBuilder builder;
+
+  static Widget _emptyShellBuilder(RouteData _) {
+    return const AutoRouter();
   }
 
   @override

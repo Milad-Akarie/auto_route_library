@@ -11,6 +11,32 @@ typedef DeepLinkTransformer = Future<Uri> Function(Uri uri);
 
 /// An auto_route implementation for [RouterDelegate]
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
+  /// Default constructor
+  AutoRouterDelegate(
+    this.controller, {
+    this.placeholder,
+    this.navRestorationScopeId,
+    this.navigatorObservers = defaultNavigatorObserversBuilder,
+    this.deepLinkBuilder,
+    this.rebuildStackOnDeepLink = false,
+    this.reevaluateListenable,
+    this.clipBehavior = Clip.hardEdge,
+    this.routeTraversalEdgeBehavior,
+  }) {
+    _navigatorObservers = navigatorObservers();
+    controller.navigationHistory.addListener(_handleRebuild);
+    reevaluateListenable?.addListener(controller.reevaluateGuards);
+    if (!kIsWeb) {
+      // Pages can change without the url changing; the Router saves them
+      // through currentConfiguration.
+      controller.addListener(notifyListeners);
+    } else {
+      // A deep link's url is set before its page is in, while
+      // currentConfiguration is still null; the Router hears of it here.
+      controller.addListener(_reportFirstPage);
+    }
+  }
+
   /// An object that provides pages stack to [Navigator.pages]
   /// and wraps a navigator key to handle stack navigation actions
   final StackRouter controller;
@@ -81,32 +107,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   Future<bool> popRoute() async => controller.maybePopTop();
 
   late List<NavigatorObserver> _navigatorObservers;
-
-  /// Default constructor
-  AutoRouterDelegate(
-    this.controller, {
-    this.placeholder,
-    this.navRestorationScopeId,
-    this.navigatorObservers = defaultNavigatorObserversBuilder,
-    this.deepLinkBuilder,
-    this.rebuildStackOnDeepLink = false,
-    this.reevaluateListenable,
-    this.clipBehavior = Clip.hardEdge,
-    this.routeTraversalEdgeBehavior,
-  }) {
-    _navigatorObservers = navigatorObservers();
-    controller.navigationHistory.addListener(_handleRebuild);
-    reevaluateListenable?.addListener(controller.reevaluateGuards);
-    if (!kIsWeb) {
-      // Pages can change without the url changing; the Router saves them
-      // through currentConfiguration.
-      controller.addListener(notifyListeners);
-    } else {
-      // A deep link's url is set before its page is in, while
-      // currentConfiguration is still null; the Router hears of it here.
-      controller.addListener(_reportFirstPage);
-    }
-  }
 
   void _reportFirstPage() {
     if (!controller.hasEntries) return;
@@ -473,13 +473,6 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
 
 /// Holds deep-link information
 abstract class DeepLink {
-  const DeepLink._();
-
-  /// Whether this link is navigable
-  ///
-  /// e.g PathDeepLink.path.isNotEmpty;
-  bool get isValid;
-
   /// Builds a deep-link from a list of [PageRouteInf]s
   const factory DeepLink(List<PageRouteInfo> routes, {bool navigate}) = _RoutesDeepLink;
 
@@ -490,6 +483,12 @@ abstract class DeepLink {
 
   /// Builds a deep-link form string path
   const factory DeepLink.path(String path, {bool includePrefixMatches, bool navigate}) = _PathDeepLink;
+  const DeepLink._();
+
+  /// Whether this link is navigable
+  ///
+  /// e.g PathDeepLink.path.isNotEmpty;
+  bool get isValid;
 
   /// Builds a deep link with initial path
   static const DeepLink defaultPath = DeepLink.path(Navigator.defaultRouteName);
@@ -513,25 +512,23 @@ abstract class DeepLink {
 }
 
 class _PathDeepLink extends DeepLink {
+  const _PathDeepLink(this.path, {this.includePrefixMatches = true, this.navigate = true}) : super._();
   final String path;
   final bool includePrefixMatches;
 
   /// if false the path will be pushed instead of navigated
   final bool navigate;
 
-  const _PathDeepLink(this.path, {this.includePrefixMatches = true, this.navigate = true}) : super._();
-
   @override
   bool get isValid => path.isNotEmpty;
 }
 
 class _RoutesDeepLink extends DeepLink {
+  const _RoutesDeepLink(this.routes, {this.navigate = true}) : super._();
   final List<PageRouteInfo> routes;
 
   /// if false the routes will be pushed instead of navigated
   final bool navigate;
-
-  const _RoutesDeepLink(this.routes, {this.navigate = true}) : super._();
 
   @override
   bool get isValid => routes.isNotEmpty;
@@ -547,6 +544,8 @@ class _IgnoredDeepLink extends DeepLink {
 /// Holds information of the deep-link
 /// coming from the platform window
 class PlatformDeepLink extends DeepLink {
+  const PlatformDeepLink._(this.configuration, this.initial) : super._();
+
   /// The initial url state parsed from initial raw path
   final UrlState configuration;
 
@@ -561,8 +560,6 @@ class PlatformDeepLink extends DeepLink {
 
   /// The pre-matched routes from the row path
   List<RouteMatch> get matches => configuration.segments;
-
-  const PlatformDeepLink._(this.configuration, this.initial) : super._();
 
   @override
   bool get isValid => configuration.hasSegments;

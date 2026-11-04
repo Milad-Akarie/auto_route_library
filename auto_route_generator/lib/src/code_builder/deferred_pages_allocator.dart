@@ -3,6 +3,8 @@ import 'package:code_builder/code_builder.dart';
 
 /// Allocates symbols for deferred pages
 class DeferredPagesAllocator implements Allocator {
+  /// Default constructor
+  DeferredPagesAllocator(this.routes, this.defaultDeferredLoading);
   static const _doNotPrefix = ['dart:core'];
 
   final _imports = <String, int>{};
@@ -13,9 +15,6 @@ class DeferredPagesAllocator implements Allocator {
 
   /// The default deferred loading value
   final bool defaultDeferredLoading;
-
-  /// Default constructor
-  DeferredPagesAllocator(this.routes, this.defaultDeferredLoading);
 
   @override
   String allocate(Reference reference) {

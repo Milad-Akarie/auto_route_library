@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart' show RouteMatch, StackRouter, UrlState;
+import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-
-import 'navigation_history_base.dart';
 
 /// An implementation of [NavigationHistory]
 /// That's used for native platforms
@@ -142,13 +141,12 @@ class NavigationHistoryImpl extends NavigationHistory {
 }
 
 class _HistoryEntry {
+  const _HistoryEntry(this.route, this.url, this.pageId);
   final RouteMatch route;
   final String url;
 
   // The id of the page on top, which tells apart two pages with the same url.
   final LocalKey pageId;
-
-  const _HistoryEntry(this.route, this.url, this.pageId);
 
   @override
   bool operator ==(Object other) =>

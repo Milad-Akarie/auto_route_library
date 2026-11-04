@@ -8,6 +8,21 @@ part of '../router/controller/routing_controller.dart';
 ///
 /// It also tracks ancestors by taking in a parent-route
 class RouteData<R> {
+  /// Default constructor
+  RouteData({
+    required RouteMatch route,
+    required this.router,
+    Completer<R?>? popCompleter,
+    RouteData? parent,
+    required this.stackKey,
+    required List<RouteMatch> pendingChildren,
+    required this.type,
+  }) : _match = route,
+       _ownQueryParams = route.queryParams,
+       _ownFragment = route.fragment,
+       _popCompleter = popCompleter,
+       _parent = parent,
+       _pendingChildren = List<RouteMatch>.from(pendingChildren);
   RouteMatch _match;
   RouteData? _parent;
   final Completer<R?>? _popCompleter;
@@ -32,22 +47,6 @@ class RouteData<R> {
   ///
   /// Used inside of [AutoRoutePage.canUpdate]
   final Key stackKey;
-
-  /// Default constructor
-  RouteData({
-    required RouteMatch route,
-    required this.router,
-    Completer<R?>? popCompleter,
-    RouteData? parent,
-    required this.stackKey,
-    required List<RouteMatch> pendingChildren,
-    required this.type,
-  }) : _match = route,
-       _ownQueryParams = route.queryParams,
-       _ownFragment = route.fragment,
-       _popCompleter = popCompleter,
-       _parent = parent,
-       _pendingChildren = List<RouteMatch>.from(pendingChildren);
 
   /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
   /// where it can be used by [CupertinoNavigationBar]

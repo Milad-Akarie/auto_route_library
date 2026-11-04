@@ -9,22 +9,17 @@ import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:flutter/scheduler.dart';
+import 'package:material_ui/material_ui.dart';
 // keep meta import, some users complain it's causing issues with
 // older flutter versions
 // ignore: unnecessary_import
 import 'package:meta/meta.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter/scheduler.dart';
 
 part '../../route/route_data.dart';
-
 part 'auto_route_guard.dart';
-
 part 'auto_router_delegate.dart';
-
 part 'root_stack_router.dart';
-
 part 'routes_restoration.dart';
 
 // ignore_for_file: deprecated_member_use_from_same_package
@@ -750,6 +745,18 @@ abstract class RoutingController with ChangeNotifier {
 ///
 /// aka Tab-Routing
 class TabsRouter extends RoutingController {
+  /// Default constructor
+  TabsRouter({
+    required this.routeCollection,
+    required this.key,
+    required RouteData routeData,
+    this.homeIndex = -1,
+    required this.preload,
+    required this.matchId,
+    RoutingController? parent,
+  }) : matcher = RouteMatcher(routeCollection),
+       _parent = parent,
+       _routeData = routeData;
   @override
   final RoutingController? _parent;
   @override
@@ -770,19 +777,6 @@ class TabsRouter extends RoutingController {
   /// set activeIndex to homeIndex
   /// else pop parent
   final int homeIndex;
-
-  /// Default constructor
-  TabsRouter({
-    required this.routeCollection,
-    required this.key,
-    required RouteData routeData,
-    this.homeIndex = -1,
-    required this.preload,
-    required this.matchId,
-    RoutingController? parent,
-  }) : matcher = RouteMatcher(routeCollection),
-       _parent = parent,
-       _routeData = routeData;
 
   /// Called to preload a page before other navigation events occur
   /// if it returns true, the page has been preloaded, otherwise we assume it's already loaded
@@ -1306,17 +1300,6 @@ class TabsRouter extends RoutingController {
 
 /// An implementation of a [RoutingController] that handles stack navigation
 abstract class StackRouter extends RoutingController {
-  @override
-  final RoutingController? _parent;
-  @override
-  final Key key;
-
-  @override
-  final Key matchId;
-
-  final GlobalKey<NavigatorState> _navigatorKey;
-  final OnNestedNavigateCallBack? _onNavigateCallback;
-
   /// Default constructor
   StackRouter({
     required this.key,
@@ -1327,6 +1310,16 @@ abstract class StackRouter extends RoutingController {
   }) : _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
        _onNavigateCallback = onNavigate,
        _parent = parent;
+  @override
+  final RoutingController? _parent;
+  @override
+  final Key key;
+
+  @override
+  final Key matchId;
+
+  final GlobalKey<NavigatorState> _navigatorKey;
+  final OnNestedNavigateCallBack? _onNavigateCallback;
 
   /// The pending routes handler for this controller
   @internal
@@ -2337,16 +2330,6 @@ abstract class StackRouter extends RoutingController {
 /// An Implementation of StackRouter used by nested
 /// [AutoRouter] widgets
 class NestedStackRouter extends StackRouter {
-  @override
-  final RouteMatcher matcher;
-  @override
-  final RouteCollection routeCollection;
-
-  @override
-  final bool managedByWidget;
-
-  RouteData _routeData;
-
   /// Default constructor
   NestedStackRouter({
     required this.routeCollection,
@@ -2371,6 +2354,15 @@ class NestedStackRouter extends StackRouter {
       routeData.pendingChildren.addAll(outgoing._openMatches());
     }
   }
+  @override
+  final RouteMatcher matcher;
+  @override
+  final RouteCollection routeCollection;
+
+  @override
+  final bool managedByWidget;
+
+  RouteData _routeData;
 
   @override
   RouteData get routeData => _routeData;
@@ -2443,10 +2435,9 @@ class NestedStackRouter extends StackRouter {
 enum _TabChange { done, rejected, replaced }
 
 class _RouterScopeResult<T extends RoutingController> {
+  const _RouterScopeResult(this.router, this.matches);
   final T router;
   final List<RouteMatch> matches;
-
-  const _RouterScopeResult(this.router, this.matches);
 }
 
 /// Holds a one-time read initial routes value
@@ -2499,13 +2490,13 @@ class ActiveGuardObserver extends ValueNotifier<List<GuardEntry>> {
 
 /// A class that holds a guard and it's corresponding resolver
 class GuardEntry {
+  /// Default constructor
+  const GuardEntry(this.guard, this._resolver);
+
   /// The auto route guard
   final AutoRouteGuard guard;
 
   final NavigationResolver _resolver;
-
-  /// Default constructor
-  const GuardEntry(this.guard, this._resolver);
 }
 
 // Stands in for the route of a page the navigator has not built yet, so a

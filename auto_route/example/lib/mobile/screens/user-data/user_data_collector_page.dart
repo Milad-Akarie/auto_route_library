@@ -5,9 +5,8 @@ import 'package:provider/provider.dart';
 
 //ignore_for_file: public_member_api_docs
 class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
-  final Function(UserData data)? onResult;
-
   const UserDataCollectorPage({super.key, this.onResult});
+  final Function(UserData data)? onResult;
 
   @override
   UserDataCollectorPageState createState() => UserDataCollectorPageState();

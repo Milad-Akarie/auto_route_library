@@ -13,13 +13,12 @@ class SettingsState extends ChangeNotifier {
 }
 
 class UserData {
-  final String? name;
-  final String? favoriteBook;
-
   const UserData({
     this.name,
     this.favoriteBook,
   });
+  final String? name;
+  final String? favoriteBook;
 
   @override
   String toString() {

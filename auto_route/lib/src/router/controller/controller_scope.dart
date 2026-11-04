@@ -6,6 +6,16 @@ import 'package:flutter/widgets.dart';
 /// so it can be looked up by any child widget
 @protected
 class RouterScope extends InheritedWidget {
+  /// Default constructor
+  const RouterScope({
+    super.key,
+    required super.child,
+    required this.controller,
+    this.navigatorObservers = const [],
+    required this.inheritableObserversBuilder,
+    required this.stateHash,
+  });
+
   /// The controller to inject
   final RoutingController controller;
 
@@ -22,16 +32,6 @@ class RouterScope extends InheritedWidget {
   /// The list of inherited observer from all
   /// ancestors [RouterScope]s
   final List<NavigatorObserver> navigatorObservers;
-
-  /// Default constructor
-  const RouterScope({
-    super.key,
-    required super.child,
-    required this.controller,
-    this.navigatorObservers = const [],
-    required this.inheritableObserversBuilder,
-    required this.stateHash,
-  });
 
   /// Looks up and returns the scoped [controller]
   ///
@@ -90,6 +90,9 @@ class RouterScope extends InheritedWidget {
 /// Injects the given [StackRouter] to context
 /// so it can be looked up by any child widget
 class StackRouterScope extends InheritedWidget {
+  /// Default constructor
+  const StackRouterScope({super.key, required super.child, required this.controller, required this.stateHash});
+
   /// The controller to inject
   final StackRouter controller;
 
@@ -98,9 +101,6 @@ class StackRouterScope extends InheritedWidget {
   ///
   /// it's used to track the changes of [controller] state
   final int stateHash;
-
-  /// Default constructor
-  const StackRouterScope({super.key, required super.child, required this.controller, required this.stateHash});
 
   /// Looks up and returns the scoped [controller]
   ///
@@ -131,6 +131,9 @@ class StackRouterScope extends InheritedWidget {
 /// Injects the given [TabsRouter] to context
 /// so it can be looked up by any child widget
 class TabsRouterScope extends InheritedWidget {
+  /// Default constructor
+  const TabsRouterScope({super.key, required super.child, required this.stateHash, required this.controller});
+
   /// The controller to inject
   final TabsRouter controller;
 
@@ -139,9 +142,6 @@ class TabsRouterScope extends InheritedWidget {
   ///
   /// it's used to track the changes of [controller] state
   final int stateHash;
-
-  /// Default constructor
-  const TabsRouterScope({super.key, required super.child, required this.stateHash, required this.controller});
 
   /// Looks up and returns the scoped [controller]
   ///

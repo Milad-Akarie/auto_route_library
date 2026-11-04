@@ -266,14 +266,14 @@ class AutoRouteObserver extends AutoRouterObserver {
 /// Holds information of Tab-init and Tab-changed events
 /// used in [AutoRouteAware] and [AutoRouterObserver]
 class TabPageRoute {
+  /// default constructor
+  const TabPageRoute({required this.routeInfo, required this.index});
+
   /// match information of the target tab
   final RouteMatch routeInfo;
 
   /// index of the target tab
   final int index;
-
-  /// default constructor
-  const TabPageRoute({required this.routeInfo, required this.index});
 
   /// helper getter to access [RouteMatch.name]
   String get name => routeInfo.name;

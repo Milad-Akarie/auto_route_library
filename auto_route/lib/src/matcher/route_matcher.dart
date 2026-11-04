@@ -5,11 +5,11 @@ import 'package:path/path.dart' as p;
 /// Matches paths and [PageRouteInfo]s with
 /// the given [collection]
 class RouteMatcher {
-  /// The list of route-entries to match against
-  final RouteCollection collection;
-
   /// Default constructor
   const RouteMatcher(this.collection);
+
+  /// The list of route-entries to match against
+  final RouteCollection collection;
 
   /// Parses a [Uri] from [rawPath] then maps call to [_match]
   List<RouteMatch>? match(String rawPath, {bool includePrefixMatches = false}) {

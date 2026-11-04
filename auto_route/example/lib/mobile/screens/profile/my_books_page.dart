@@ -5,9 +5,8 @@ import 'package:material_ui/material_ui.dart';
 //ignore_for_file: public_member_api_docs
 @RoutePage()
 class MyBooksPage extends StatelessWidget {
-  final String? filter;
-
   const MyBooksPage({super.key, @queryParam this.filter = 'none2'});
+  final String? filter;
 
   @override
   Widget build(BuildContext context) {

@@ -1,15 +1,16 @@
 import 'dart:convert';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show RouteInformation, RouteInformationParser;
 import 'package:path/path.dart' as p;
 
-import '../../matcher/route_matcher.dart';
-
 /// AutoRoute extension of [RouteInformationParser]
 class DefaultRouteParser extends RouteInformationParser<UrlState> {
+  /// Default constructor
+  DefaultRouteParser(this._matcher, {this.includePrefixMatches = false, this.deepLinkTransformer});
   final RouteMatcher _matcher;
 
   /// If set to true all paths that's
@@ -26,9 +27,6 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
   /// It's recommended to return [SynchronousFuture] of the transformed [Uri]
   /// if you're doing any async operation in the transformer
   final DeepLinkTransformer? deepLinkTransformer;
-
-  /// Default constructor
-  DefaultRouteParser(this._matcher, {this.includePrefixMatches = false, this.deepLinkTransformer});
 
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
@@ -207,6 +205,11 @@ class _WebEngineUri implements Uri {
 /// an extra property [replace] which forces the current
 /// route to be replaced
 class AutoRouteInformation extends RouteInformation {
+  /// Default constructor
+  const AutoRouteInformation({required Uri super.uri, super.state, this.replace = true}) : appUri = null;
+
+  const AutoRouteInformation._({required Uri super.uri, required Uri this.appUri, super.state, this.replace = true});
+
   /// forces the current location to be replaced with this location
   final bool replace;
 
@@ -217,11 +220,6 @@ class AutoRouteInformation extends RouteInformation {
   /// platform reports use this one.
   @internal
   final Uri? appUri;
-
-  /// Default constructor
-  const AutoRouteInformation({required Uri super.uri, super.state, this.replace = true}) : appUri = null;
-
-  const AutoRouteInformation._({required Uri super.uri, required Uri this.appUri, super.state, this.replace = true});
 
   @override
   bool operator ==(Object other) =>
@@ -236,6 +234,15 @@ class AutoRouteInformation extends RouteInformation {
 /// it's used by [Router] as configuration state
 @immutable
 class UrlState {
+  /// Default constructor
+  const UrlState(this.uri, this.segments, {this.shouldReplace = false, this.pathState, @internal this.savedRoutes});
+
+  /// Builds UrlState from list of
+  /// route matches instead of uri
+  factory UrlState.fromSegments(List<RouteMatch> routes, {bool shouldReplace = false, Object? state}) {
+    return UrlState(_buildUri(routes), routes, shouldReplace: shouldReplace, pathState: state);
+  }
+
   /// Represents current router uri
   final Uri uri;
 
@@ -261,9 +268,6 @@ class UrlState {
 
   static const _savedRoutesKey = 'autoRouteSavedRoutes';
   static const _pathStateKey = 'pathState';
-
-  /// Default constructor
-  const UrlState(this.uri, this.segments, {this.shouldReplace = false, this.pathState, @internal this.savedRoutes});
 
   /// Returns the part of a [RouteInformation.state] built by
   /// [DefaultRouteParser] that's meant for the platform: [state] without
@@ -327,12 +331,6 @@ class UrlState {
 
   /// Returns the path of [uri]
   String get path => uri.path;
-
-  /// Builds UrlState from list of
-  /// route matches instead of uri
-  factory UrlState.fromSegments(List<RouteMatch> routes, {bool shouldReplace = false, Object? state}) {
-    return UrlState(_buildUri(routes), routes, shouldReplace: shouldReplace, pathState: state);
-  }
 
   /// Converts a list of linear route matches to
   /// to a hierarchy of routes

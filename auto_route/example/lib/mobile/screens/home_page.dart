@@ -15,15 +15,14 @@ class HomePage extends StatefulWidget {
 }
 
 class RouteDestination {
-  final PageRouteInfo route;
-  final IconData icon;
-  final String label;
-
   const RouteDestination({
     required this.route,
     required this.icon,
     required this.label,
   });
+  final PageRouteInfo route;
+  final IconData icon;
+  final String label;
 }
 
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {

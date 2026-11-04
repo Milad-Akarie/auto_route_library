@@ -13,11 +13,11 @@ abstract class NavigationFailure {
 /// A failure indicates that the request route or path
 /// has not been found by the [RouteMatcher]
 class RouteNotFoundFailure extends NavigationFailure {
-  /// the path or name of the target route
-  final String path;
-
   /// default constructor
   const RouteNotFoundFailure(this.path);
+
+  /// the path or name of the target route
+  final String path;
 
   // coverage:ignore-start
   @override
@@ -29,14 +29,14 @@ class RouteNotFoundFailure extends NavigationFailure {
 /// has aborted the navigation on this route
 /// by calling [NavigationResolver.next] with false value
 class RejectedByGuardFailure extends NavigationFailure {
+  /// default constructor
+  const RejectedByGuardFailure(this.route, this.guard);
+
   /// The rejected route
   final RouteMatch route;
 
   /// The guard that did the rejection
   final AutoRouteGuard guard;
-
-  /// default constructor
-  const RejectedByGuardFailure(this.route, this.guard);
 
   // coverage:ignore-start
   @override

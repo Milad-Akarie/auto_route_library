@@ -6,9 +6,8 @@ import 'package:provider/provider.dart';
 //ignore_for_file: public_member_api_docs
 @RoutePage()
 class LoginPage extends StatelessWidget {
-  final bool showBackButton;
-
   const LoginPage({super.key, this.showBackButton = true});
+  final bool showBackButton;
 
   @override
   Widget build(BuildContext context) {

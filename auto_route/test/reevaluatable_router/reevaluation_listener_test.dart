@@ -475,9 +475,8 @@ class _AuthStore extends ChangeNotifier {
 }
 
 class _HomePage extends StatefulWidget {
-  static const routeName = 'HomeRoute';
-
   const _HomePage(this.authStore);
+  static const routeName = 'HomeRoute';
 
   final _AuthStore authStore;
 
@@ -501,9 +500,8 @@ class _HomePageState extends State<_HomePage> {
 }
 
 class _LoginPage extends StatelessWidget {
-  static const routeName = 'LoginRoute';
-
   const _LoginPage(this.authStore);
+  static const routeName = 'LoginRoute';
 
   final _AuthStore authStore;
 

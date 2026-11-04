@@ -1,10 +1,50 @@
-import '../../utils.dart';
-import 'resolved_type.dart';
-import 'route_parameter_config.dart';
+import 'package:auto_route_generator/src/models/resolved_type.dart';
+import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/utils.dart';
 
 /// holds the extracted route configs
 /// to be used in [RouterClassGenerator]
 class RouteConfig {
+  /// Default constructor
+  RouteConfig({
+    this.name,
+    this.pathParams = const [],
+    this.pageType,
+    required this.className,
+    this.parameters = const [],
+    this.hasWrappedRoute,
+    this.hasConstConstructor = false,
+    this.deferredLoading,
+  });
+
+  /// Deserializes the route config from json
+  factory RouteConfig.fromJson(Map<String, dynamic> map) {
+    final pathParams = <PathParamConfig>[];
+    if (map['pathParams'] != null) {
+      for (final arg in map['pathParams']) {
+        pathParams.add(PathParamConfig.fromJson(arg));
+      }
+    }
+
+    final parameters = <ParamConfig>[];
+    if (map['parameters'] != null) {
+      for (final arg in map['parameters']) {
+        parameters.add(ParamConfig.fromJson(arg));
+      }
+    }
+
+    return RouteConfig(
+      name: map['name'] as String?,
+      pathParams: pathParams,
+      pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType']),
+      className: map['className'] as String,
+      parameters: parameters,
+      hasWrappedRoute: map['hasWrappedRoute'] as bool?,
+      hasConstConstructor: map['hasConstConstructor'] as bool,
+      deferredLoading: map['deferredLoading'] as bool?,
+    );
+  }
+
   /// the route name
   final String? name;
 
@@ -28,18 +68,6 @@ class RouteConfig {
 
   /// whether the route is deferred
   final bool? deferredLoading;
-
-  /// Default constructor
-  RouteConfig({
-    this.name,
-    this.pathParams = const [],
-    this.pageType,
-    required this.className,
-    this.parameters = const [],
-    this.hasWrappedRoute,
-    this.hasConstConstructor = false,
-    this.deferredLoading,
-  });
 
   /// The class name for ArgumentsHolder
   String get argumentsHolderClassName {
@@ -123,33 +151,5 @@ class RouteConfig {
       'hasConstConstructor': hasConstConstructor,
       'deferredLoading': deferredLoading,
     };
-  }
-
-  /// Deserializes the route config from json
-  factory RouteConfig.fromJson(Map<String, dynamic> map) {
-    final pathParams = <PathParamConfig>[];
-    if (map['pathParams'] != null) {
-      for (final arg in map['pathParams']) {
-        pathParams.add(PathParamConfig.fromJson(arg));
-      }
-    }
-
-    final parameters = <ParamConfig>[];
-    if (map['parameters'] != null) {
-      for (final arg in map['parameters']) {
-        parameters.add(ParamConfig.fromJson(arg));
-      }
-    }
-
-    return RouteConfig(
-      name: map['name'] as String?,
-      pathParams: pathParams,
-      pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType']),
-      className: map['className'] as String,
-      parameters: parameters,
-      hasWrappedRoute: map['hasWrappedRoute'] as bool?,
-      hasConstConstructor: map['hasConstConstructor'] as bool,
-      deferredLoading: map['deferredLoading'] as bool?,
-    );
   }
 }

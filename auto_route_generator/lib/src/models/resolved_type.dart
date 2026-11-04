@@ -1,30 +1,19 @@
-import 'package:code_builder/code_builder.dart' show FunctionType, TypeReference, RecordType, Reference;
+import 'package:code_builder/code_builder.dart' show FunctionType, RecordType, Reference, TypeReference;
 
 /// A class that represents a resolved type.
 ///
 /// holds the type name, import, type arguments and nullability
 class ResolvedType {
-  /// the import path of the type
-  String? import;
-
-  /// the type name
-  String name;
-
-  /// whether the type is nullable
-  bool isNullable;
-
-  /// the type arguments
-  List<ResolvedType> typeArguments;
-  final bool _isRecordType;
-
-  /// the name of the field in the record
-  final String? nameInRecord;
-
-  /// the parts of a function type, `null` for any other type
-  final FunctionTypeParts? functionParts;
-
-  /// whether the type is an enum
-  final bool isEnum;
+  /// Default constructor
+  ResolvedType({
+    required this.name,
+    this.import,
+    this.typeArguments = const [],
+    this.isNullable = false,
+    this.nameInRecord,
+    this.isEnum = false,
+  }) : _isRecordType = false,
+       functionParts = null;
 
   ResolvedType._({
     required this.name,
@@ -36,17 +25,6 @@ class ResolvedType {
     this.functionParts,
     this.isEnum = false,
   }) : _isRecordType = isRecordType;
-
-  /// Default constructor
-  ResolvedType({
-    required this.name,
-    this.import,
-    this.typeArguments = const [],
-    this.isNullable = false,
-    this.nameInRecord,
-    this.isEnum = false,
-  }) : _isRecordType = false,
-       functionParts = null;
 
   /// Constructor for a record types
   ResolvedType.record({
@@ -68,6 +46,48 @@ class ResolvedType {
       _isRecordType = false,
       functionParts = parts,
       isEnum = false;
+
+  /// deserializes the type from json
+  factory ResolvedType.fromJson(Map<String, dynamic> map) {
+    final typedArgs = <ResolvedType>[];
+    if (map['typeArguments'] != null) {
+      for (final arg in map['typeArguments']) {
+        typedArgs.add(ResolvedType.fromJson(arg));
+      }
+    }
+    return ResolvedType._(
+      import: map['import'] as String?,
+      name: map['name'] as String,
+      isNullable: map['isNullable'] as bool,
+      isRecordType: map['isRecordType'] as bool,
+      nameInRecord: map['nameInRecord'] as String?,
+      typeArguments: typedArgs,
+      functionParts: map['functionParts'] == null ? null : FunctionTypeParts.fromJson(map['functionParts']),
+      isEnum: map['isEnum'] == true,
+    );
+  }
+
+  /// the import path of the type
+  String? import;
+
+  /// the type name
+  String name;
+
+  /// whether the type is nullable
+  bool isNullable;
+
+  /// the type arguments
+  List<ResolvedType> typeArguments;
+  final bool _isRecordType;
+
+  /// the name of the field in the record
+  final String? nameInRecord;
+
+  /// the parts of a function type, `null` for any other type
+  final FunctionTypeParts? functionParts;
+
+  /// whether the type is an enum
+  final bool isEnum;
 
   /// the unique identity of the type
   String get identity => "$import#$name";
@@ -139,26 +159,6 @@ class ResolvedType {
     };
   }
 
-  /// deserializes the type from json
-  factory ResolvedType.fromJson(Map<String, dynamic> map) {
-    final typedArgs = <ResolvedType>[];
-    if (map['typeArguments'] != null) {
-      for (final arg in map['typeArguments']) {
-        typedArgs.add(ResolvedType.fromJson(arg));
-      }
-    }
-    return ResolvedType._(
-      import: map['import'] as String?,
-      name: map['name'] as String,
-      isNullable: map['isNullable'] as bool,
-      isRecordType: map['isRecordType'] as bool,
-      nameInRecord: map['nameInRecord'] as String?,
-      typeArguments: typedArgs,
-      functionParts: map['functionParts'] == null ? null : FunctionTypeParts.fromJson(map['functionParts']),
-      isEnum: map['isEnum'] == true,
-    );
-  }
-
   /// whether the type is a list
   bool get isList => name == 'List';
 
@@ -174,6 +174,30 @@ class ResolvedType {
 
 /// The return type and parameter types of a function type.
 class FunctionTypeParts {
+  /// Default constructor
+  const FunctionTypeParts({
+    required this.returnType,
+    this.requiredParameters = const [],
+    this.optionalParameters = const [],
+    this.namedParameters = const {},
+    this.namedRequiredParameters = const {},
+  });
+
+  /// deserializes the parts from json
+  factory FunctionTypeParts.fromJson(Map<String, dynamic> map) {
+    List<ResolvedType> list(String key) => [for (final e in map[key] as List<dynamic>) ResolvedType.fromJson(e)];
+    Map<String, ResolvedType> named(String key) => {
+      for (final e in (map[key] as Map<String, dynamic>).entries) e.key: ResolvedType.fromJson(e.value),
+    };
+    return FunctionTypeParts(
+      returnType: ResolvedType.fromJson(map['returnType']),
+      requiredParameters: list('requiredParameters'),
+      optionalParameters: list('optionalParameters'),
+      namedParameters: named('namedParameters'),
+      namedRequiredParameters: named('namedRequiredParameters'),
+    );
+  }
+
   /// the return type
   final ResolvedType returnType;
 
@@ -189,15 +213,6 @@ class FunctionTypeParts {
   /// the types of the required named parameters, by name
   final Map<String, ResolvedType> namedRequiredParameters;
 
-  /// Default constructor
-  const FunctionTypeParts({
-    required this.returnType,
-    this.requiredParameters = const [],
-    this.optionalParameters = const [],
-    this.namedParameters = const {},
-    this.namedRequiredParameters = const {},
-  });
-
   /// serializes the parts to json
   Map<String, dynamic> toJson() {
     return {
@@ -207,20 +222,5 @@ class FunctionTypeParts {
       'namedParameters': namedParameters.map((k, v) => MapEntry(k, v.toJson())),
       'namedRequiredParameters': namedRequiredParameters.map((k, v) => MapEntry(k, v.toJson())),
     };
-  }
-
-  /// deserializes the parts from json
-  factory FunctionTypeParts.fromJson(Map<String, dynamic> map) {
-    List<ResolvedType> list(String key) => [for (final e in map[key] as List<dynamic>) ResolvedType.fromJson(e)];
-    Map<String, ResolvedType> named(String key) => {
-      for (final e in (map[key] as Map<String, dynamic>).entries) e.key: ResolvedType.fromJson(e.value),
-    };
-    return FunctionTypeParts(
-      returnType: ResolvedType.fromJson(map['returnType']),
-      requiredParameters: list('requiredParameters'),
-      optionalParameters: list('optionalParameters'),
-      namedParameters: named('namedParameters'),
-      namedRequiredParameters: named('namedRequiredParameters'),
-    );
   }
 }

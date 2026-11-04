@@ -8,19 +8,6 @@ typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget c
 /// An abstraction of route types used by
 /// [AutoRoutePage.onCreateRoute] to decide transition animations
 abstract class RouteType {
-  const RouteType._({this.opaque = true});
-
-  /// Whether the target [Route] should be opaque
-  /// see [ModalRoute.opaque]
-  final bool opaque;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) || other is RouteType && runtimeType == other.runtimeType && opaque == other.opaque;
-
-  @override
-  int get hashCode => opaque.hashCode;
-
   /// Builds a [MaterialRouteType] route type
   const factory RouteType.material({
     bool enablePredictiveBackGesture,
@@ -52,6 +39,18 @@ abstract class RouteType {
     bool enablePredictiveBackGesture,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) = CustomRouteType;
+  const RouteType._({this.opaque = true});
+
+  /// Whether the target [Route] should be opaque
+  /// see [ModalRoute.opaque]
+  final bool opaque;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is RouteType && runtimeType == other.runtimeType && opaque == other.opaque;
+
+  @override
+  int get hashCode => opaque.hashCode;
 }
 
 /// Generates a route that uses [MaterialRouteTransitionMixin]
@@ -95,6 +94,31 @@ class AdaptiveRouteType extends RouteType with PredictiveBackGestureMixin {
 
 /// Generates a route with user-defined transitions
 class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
+  /// Default constructor
+  CustomRouteType({
+    this.customRouteBuilder,
+    this.barrierLabel,
+    this.barrierColor,
+    this.transitionsBuilder,
+    super.opaque,
+    this.barrierDismissible = false,
+    this.enablePredictiveBackGesture = false,
+    this.predictiveBackPageTransitionsBuilder,
+    @Deprecated('Use duration instead') int? durationInMilliseconds,
+    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
+    Duration? duration,
+    Duration? reverseDuration,
+  }) : assert(durationInMilliseconds == null || duration == null, 'Use either duration or durationInMilliseconds'),
+       assert(
+         reverseDurationInMilliseconds == null || reverseDuration == null,
+         'Use either reverseDuration or reverseDurationInMilliseconds',
+       ),
+       duration = duration ?? (durationInMilliseconds != null ? Duration(milliseconds: durationInMilliseconds) : null),
+       reverseDuration =
+           reverseDuration ??
+           (reverseDurationInMilliseconds != null ? Duration(milliseconds: reverseDurationInMilliseconds) : null),
+       super._();
+
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
@@ -161,31 +185,6 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
 
   @override
   final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
-
-  /// Default constructor
-  CustomRouteType({
-    this.customRouteBuilder,
-    this.barrierLabel,
-    this.barrierColor,
-    this.transitionsBuilder,
-    super.opaque,
-    this.barrierDismissible = false,
-    this.enablePredictiveBackGesture = false,
-    this.predictiveBackPageTransitionsBuilder,
-    @Deprecated('Use duration instead') int? durationInMilliseconds,
-    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
-    Duration? duration,
-    Duration? reverseDuration,
-  }) : assert(durationInMilliseconds == null || duration == null, 'Use either duration or durationInMilliseconds'),
-       assert(
-         reverseDurationInMilliseconds == null || reverseDuration == null,
-         'Use either reverseDuration or reverseDurationInMilliseconds',
-       ),
-       duration = duration ?? (durationInMilliseconds != null ? Duration(milliseconds: durationInMilliseconds) : null),
-       reverseDuration =
-           reverseDuration ??
-           (reverseDurationInMilliseconds != null ? Duration(milliseconds: reverseDurationInMilliseconds) : null),
-       super._();
 
   @override
   bool operator ==(Object other) =>

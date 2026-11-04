@@ -17,6 +17,43 @@ typedef FloatingActionButtonBuilder = Widget? Function(BuildContext context, Tab
 /// A scaffold wrapper widget that makes creating an [AutoTabsRouter]
 /// much easier and cleaner
 class AutoTabsScaffold extends StatelessWidget {
+  /// Default constructor;
+  const AutoTabsScaffold({
+    super.key,
+    this.routes,
+    this.lazyLoad = true,
+    this.homeIndex = -1,
+    this.animationDuration = const Duration(milliseconds: 300),
+    this.animationCurve = Curves.ease,
+    this.transitionBuilder,
+    this.bottomNavigationBuilder,
+    this.inheritNavigatorObservers = true,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.floatingActionButton,
+    this.floatingActionButtonBuilder,
+    this.floatingActionButtonLocation,
+    this.floatingActionButtonAnimator,
+    this.persistentFooterButtons,
+    this.drawer,
+    this.onDrawerChanged,
+    this.endDrawer,
+    this.onEndDrawerChanged,
+    this.drawerScrimColor,
+    this.backgroundColor,
+    this.bottomSheet,
+    this.resizeToAvoidBottomInset,
+    this.primary = true,
+    this.drawerDragStartBehavior = DragStartBehavior.start,
+    this.drawerEdgeDragWidth,
+    this.drawerEnableOpenDragGesture = true,
+    this.endDrawerEnableOpenDragGesture = true,
+    this.restorationId,
+    this.extendBody = false,
+    this.extendBodyBehindAppBar = false,
+    this.appBarBuilder,
+    this.scaffoldKey,
+  });
+
   /// Builds the transition between tabs
   /// defaults to [FadeTransition]
   final AnimatedIndexedStackTransitionBuilder? transitionBuilder;
@@ -119,43 +156,6 @@ class AutoTabsScaffold extends StatelessWidget {
   /// set activeIndex to homeIndex
   /// else pop parent
   final int homeIndex;
-
-  /// Default constructor;
-  const AutoTabsScaffold({
-    super.key,
-    this.routes,
-    this.lazyLoad = true,
-    this.homeIndex = -1,
-    this.animationDuration = const Duration(milliseconds: 300),
-    this.animationCurve = Curves.ease,
-    this.transitionBuilder,
-    this.bottomNavigationBuilder,
-    this.inheritNavigatorObservers = true,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-    this.floatingActionButton,
-    this.floatingActionButtonBuilder,
-    this.floatingActionButtonLocation,
-    this.floatingActionButtonAnimator,
-    this.persistentFooterButtons,
-    this.drawer,
-    this.onDrawerChanged,
-    this.endDrawer,
-    this.onEndDrawerChanged,
-    this.drawerScrimColor,
-    this.backgroundColor,
-    this.bottomSheet,
-    this.resizeToAvoidBottomInset,
-    this.primary = true,
-    this.drawerDragStartBehavior = DragStartBehavior.start,
-    this.drawerEdgeDragWidth,
-    this.drawerEnableOpenDragGesture = true,
-    this.endDrawerEnableOpenDragGesture = true,
-    this.restorationId,
-    this.extendBody = false,
-    this.extendBodyBehindAppBar = false,
-    this.appBarBuilder,
-    this.scaffoldKey,
-  });
 
   @override
   Widget build(BuildContext context) {

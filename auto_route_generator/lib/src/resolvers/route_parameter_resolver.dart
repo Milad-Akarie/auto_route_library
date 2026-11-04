@@ -2,12 +2,10 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
-
+import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:source_gen/source_gen.dart';
-
-import '../../build_utils.dart';
 
 final _pathParamChecker = TypeChecker.typeNamed(PathParam, inPackage: 'auto_route');
 final _queryParamChecker = TypeChecker.typeNamed(QueryParam, inPackage: 'auto_route');
@@ -15,10 +13,9 @@ final _urlFragmentChecker = TypeChecker.typeNamed(UrlFragment, inPackage: 'auto_
 
 /// Resolves route parameters
 class RouteParameterResolver {
-  final TypeResolver _typeResolver;
-
   /// Default constructor
   RouteParameterResolver(this._typeResolver);
+  final TypeResolver _typeResolver;
 
   /// Resolves a ParameterElement into a consumable [ParamConfig]
   ParamConfig resolve(FormalParameterElement parameterElement) {

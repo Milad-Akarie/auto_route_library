@@ -1,12 +1,24 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../auto_route.dart';
-
 /// An AutoRoute Wrapper for [Navigator]
 /// it handles empty stacks and declarative routes
 class AutoRouteNavigator extends StatefulWidget {
+  /// Default constructor
+  const AutoRouteNavigator({
+    required this.router,
+    required this.navigatorObservers,
+    this.navRestorationScopeId,
+    this.didPop,
+    this.declarativeRoutesBuilder,
+    this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
+    this.routeTraversalEdgeBehavior,
+    super.key,
+  });
+
   /// The router that handles the pages stack
   /// passed to [Navigator.pages]
   final StackRouter router;
@@ -40,19 +52,6 @@ class AutoRouteNavigator extends StatefulWidget {
 
   /// The traversal edge behavior of the navigator
   final TraversalEdgeBehavior? routeTraversalEdgeBehavior;
-
-  /// Default constructor
-  const AutoRouteNavigator({
-    required this.router,
-    required this.navigatorObservers,
-    this.navRestorationScopeId,
-    this.didPop,
-    this.declarativeRoutesBuilder,
-    this.placeholder,
-    this.clipBehavior = Clip.hardEdge,
-    this.routeTraversalEdgeBehavior,
-    super.key,
-  });
 
   @override
   AutoRouteNavigatorState createState() => AutoRouteNavigatorState();

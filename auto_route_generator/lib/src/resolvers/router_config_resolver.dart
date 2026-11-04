@@ -1,8 +1,7 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
-
-import '../models/router_config.dart';
 
 /// Extracts and holds router configs
 class RouterConfigResolver {

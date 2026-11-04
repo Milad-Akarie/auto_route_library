@@ -2,15 +2,14 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
 
 class Book {
-  final int id;
-  final String name;
-  final String genre;
-
   const Book({
     required this.id,
     required this.name,
     required this.genre,
   });
+  final int id;
+  final String name;
+  final String genre;
 }
 
 class BooksDB {
@@ -33,9 +32,8 @@ class BooksDB {
 }
 
 class BooksDBProvider extends InheritedWidget {
-  final booksDb = BooksDB();
-
   BooksDBProvider({super.key, required super.child});
+  final booksDb = BooksDB();
 
   @override
   bool updateShouldNotify(_) {
@@ -80,23 +78,21 @@ class UsersDB {
 }
 
 class User {
-  final int id;
-  final String name;
-  final String email;
-  final List<Book> books;
-
   User({
     required this.id,
     required this.name,
     required this.email,
     required this.books,
   });
+  final int id;
+  final String name;
+  final String email;
+  final List<Book> books;
 }
 
 class UsersDBProvider extends InheritedWidget {
-  final usersDB = UsersDB();
-
   UsersDBProvider({super.key, required super.child});
+  final usersDB = UsersDB();
 
   @override
   bool updateShouldNotify(_) {

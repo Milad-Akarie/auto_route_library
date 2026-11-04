@@ -128,14 +128,13 @@ class Tab3Nested2Page extends TestPage {
 
 @RoutePage()
 class TabsHostPage extends StatelessWidget {
-  final String tabsType;
-  final bool useDefaultRoutes;
-
   const TabsHostPage({
     super.key,
     @queryParam this.tabsType = 'IndexedStack',
     @queryParam this.useDefaultRoutes = false,
   });
+  final String tabsType;
+  final bool useDefaultRoutes;
 
   @override
   Widget build(BuildContext context) {

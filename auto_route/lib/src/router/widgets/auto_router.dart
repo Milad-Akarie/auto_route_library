@@ -4,6 +4,19 @@ import 'package:material_ui/material_ui.dart';
 
 /// A Wrapper for [Navigator] that handles stack-routing
 class AutoRouter extends StatefulWidget {
+  /// Default constructor
+  const AutoRouter({
+    super.key,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    this.builder,
+    this.navRestorationScopeId,
+    this.navigatorKey,
+    this.inheritNavigatorObservers = true,
+    this.placeholder,
+    this.clipBehavior = Clip.hardEdge,
+    this.traversalEdgeBehavior,
+  });
+
   /// A builder function that returns a list of observes
   ///
   /// Why isn't this a list of navigatorObservers?
@@ -37,19 +50,6 @@ class AutoRouter extends StatefulWidget {
 
   /// The traversal edge behavior of the navigator
   final TraversalEdgeBehavior? traversalEdgeBehavior;
-
-  /// Default constructor
-  const AutoRouter({
-    super.key,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-    this.builder,
-    this.navRestorationScopeId,
-    this.navigatorKey,
-    this.inheritNavigatorObservers = true,
-    this.placeholder,
-    this.clipBehavior = Clip.hardEdge,
-    this.traversalEdgeBehavior,
-  });
 
   /// Builds a [_DeclarativeAutoRouter] which uses
   /// a declarative list of routes to update navigator stack
@@ -210,16 +210,6 @@ class AutoRouterState extends State<AutoRouter> {
 }
 
 class _DeclarativeAutoRouter extends StatefulWidget {
-  final RoutesBuilder routes;
-  final RoutePopCallBack? onPopRoute;
-  final NavigatorObserversBuilder navigatorObservers;
-  final String? navRestorationScopeId;
-  final bool inheritNavigatorObservers;
-  final GlobalKey<NavigatorState>? navigatorKey;
-  final OnNestedNavigateCallBack? onNavigate;
-  final WidgetBuilder? placeholder;
-  final Clip clipBehavior;
-  final TraversalEdgeBehavior? traversalEdgeBehavior;
   const _DeclarativeAutoRouter({
     required this.routes,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
@@ -232,6 +222,16 @@ class _DeclarativeAutoRouter extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.traversalEdgeBehavior,
   });
+  final RoutesBuilder routes;
+  final RoutePopCallBack? onPopRoute;
+  final NavigatorObserversBuilder navigatorObservers;
+  final String? navRestorationScopeId;
+  final bool inheritNavigatorObservers;
+  final GlobalKey<NavigatorState>? navigatorKey;
+  final OnNestedNavigateCallBack? onNavigate;
+  final WidgetBuilder? placeholder;
+  final Clip clipBehavior;
+  final TraversalEdgeBehavior? traversalEdgeBehavior;
 
   @override
   _DeclarativeAutoRouterState createState() => _DeclarativeAutoRouterState();

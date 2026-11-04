@@ -6,6 +6,14 @@ import 'package:meta/meta_meta.dart' show Target, TargetKind;
 /// can be extended by the annotated class to be used as the RootRouter of the App
 @Target({TargetKind.classType})
 class AutoRouterConfig {
+  /// default constructor
+  const AutoRouterConfig({
+    this.replaceInRouteName = 'Page|Screen,Route',
+    this.deferredLoading = false,
+    this.generateForDir = const ['lib'],
+    this.argsEquality = true,
+  });
+
   /// Auto generated route names can be a bit long with
   /// the [Route] suffix
   /// e.g ProductDetailsPage would be ProductDetailsPageRoute
@@ -34,14 +42,6 @@ class AutoRouterConfig {
   ///
   /// defaults to true
   final bool argsEquality;
-
-  /// default constructor
-  const AutoRouterConfig({
-    this.replaceInRouteName = 'Page|Screen,Route',
-    this.deferredLoading = false,
-    this.generateForDir = const ['lib'],
-    this.argsEquality = true,
-  });
 }
 
 /// This annotation is used to mark flutter widgets as routable pages
@@ -51,6 +51,9 @@ class AutoRouterConfig {
 @optionalTypeArgs
 @Target({TargetKind.classType})
 class RoutePage {
+  /// default constructor
+  const RoutePage({this.name, this.deferredLoading});
+
   /// The name of the generated route
   /// if not provided, a name will be generated from class name
   /// and maybe altered by [replaceInRouteName]
@@ -60,9 +63,6 @@ class RoutePage {
   /// more info https://dart.dev/guides/language/language-tour#deferred-loading
   /// defaults to false
   final bool? deferredLoading;
-
-  /// default constructor
-  const RoutePage({this.name, this.deferredLoading});
 }
 
 /// default routePage
@@ -72,6 +72,13 @@ const routePage = RoutePage();
 /// to take their values from the dynamic segments of a path
 @Target({TargetKind.parameter})
 class PathParam {
+  /// default constructor
+  const PathParam([this.name]) : _inherited = false;
+
+  /// Use this constructor to inherit a dynamic-segment
+  /// from a parent path
+  const PathParam.inherit([this.name]) : _inherited = true;
+
   /// name of the dynamic segment declared in path
   /// e.g /path/:id -> name = id
   ///
@@ -81,13 +88,6 @@ class PathParam {
 
   // ignore: unused_field
   final bool _inherited;
-
-  /// default constructor
-  const PathParam([this.name]) : _inherited = false;
-
-  /// Use this constructor to inherit a dynamic-segment
-  /// from a parent path
-  const PathParam.inherit([this.name]) : _inherited = true;
 }
 
 /// default PathParam()
@@ -102,14 +102,14 @@ const inheritPathParam = PathParam.inherit();
 /// e.g /path?foo=bar
 @Target({TargetKind.parameter})
 class QueryParam {
+  /// default constructor
+  const QueryParam([this.name]);
+
   /// name of the query param from url
   ///
   /// if not provided the name of the parameter will be used
   /// (@QueryParam() String foo); -> name = foo
   final String? name;
-
-  /// default constructor
-  const QueryParam([this.name]);
 }
 
 /// default QueryParam()

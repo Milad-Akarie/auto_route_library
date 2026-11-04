@@ -1,18 +1,16 @@
 import 'package:analyzer/dart/element/element.dart';
+import 'package:auto_route_generator/build_utils.dart';
+import 'package:auto_route_generator/src/models/route_config.dart';
+import 'package:auto_route_generator/src/models/route_parameter_config.dart';
+import 'package:auto_route_generator/src/resolvers/route_parameter_resolver.dart';
+import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:source_gen/source_gen.dart';
-
-import '../../build_utils.dart';
-import '../models/route_config.dart';
-import '../models/route_parameter_config.dart';
-import '../resolvers/route_parameter_resolver.dart';
-import '../resolvers/type_resolver.dart';
 
 /// extracts route configs from class fields and their meta data
 class RouteConfigResolver {
-  final TypeResolver _typeResolver;
-
   /// Default constructor
   RouteConfigResolver(this._typeResolver);
+  final TypeResolver _typeResolver;
 
   /// Resolves a [ClassElement] into a consumable [RouteConfig]
   RouteConfig resolve(Element element, ConstantReader routePage) {

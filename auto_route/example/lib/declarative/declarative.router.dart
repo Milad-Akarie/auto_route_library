@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:example/declarative/declarative.router.gr.dart';
 import 'package:material_ui/material_ui.dart';
-
-import 'declarative.router.gr.dart';
 
 void main() {
   runApp(DeclarativeNavigationExampleApp());
@@ -24,9 +23,8 @@ class DecRouter extends RootStackRouter {
 }
 
 class DeclarativeNavigationExampleApp extends StatelessWidget {
-  final _router = DecRouter();
-
   DeclarativeNavigationExampleApp({super.key});
+  final _router = DecRouter();
 
   @override
   Widget build(BuildContext context) {
@@ -87,9 +85,8 @@ class _MainScreenState extends State<MainScreen> {
 
 @RoutePage()
 class NameInputScreen extends StatefulWidget {
-  final ValueChanged<String> onNameSubmitted;
-
   const NameInputScreen({super.key, required this.onNameSubmitted});
+  final ValueChanged<String> onNameSubmitted;
 
   @override
   State<NameInputScreen> createState() => _NameInputScreenState();
@@ -133,9 +130,8 @@ class _NameInputScreenState extends State<NameInputScreen> {
 // age submit page
 @RoutePage()
 class AgeInputScreen extends StatefulWidget {
-  final ValueChanged<int> onAgeSubmitted;
-
   const AgeInputScreen({super.key, required this.onAgeSubmitted});
+  final ValueChanged<int> onAgeSubmitted;
 
   @override
   State<AgeInputScreen> createState() => _AgeInputScreenState();
@@ -178,10 +174,9 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
 
 @RoutePage()
 class ResultScreen extends StatelessWidget {
+  const ResultScreen({super.key, required this.profile, required this.onReset});
   final Profile profile;
   final VoidCallback onReset;
-
-  const ResultScreen({super.key, required this.profile, required this.onReset});
 
   @override
   Widget build(BuildContext context) {

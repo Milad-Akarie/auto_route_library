@@ -1,8 +1,7 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/widgets.dart';
-
-import '../../auto_route.dart';
-import '../utils.dart';
 
 /// Holds information of a named destination
 ///
@@ -21,6 +20,42 @@ import '../utils.dart';
 @optionalTypeArgs
 @immutable
 class PageRouteInfo<T extends Object?> {
+  /// Default constructor
+  const PageRouteInfo(
+    this._name, {
+    this.initialChildren,
+    this.args,
+    this.rawPathParams = const {},
+    this.rawQueryParams = const {},
+    String? fragment,
+    this.stringMatch,
+    this.redirectedFrom,
+    this.argsEquality = true,
+  }) : fragment = fragment ?? '';
+
+  /// Creates a new instance form [RouteMatch]
+  factory PageRouteInfo.fromMatch(RouteMatch match) {
+    return PageRouteInfo(
+      match.name,
+      rawPathParams: match.params.rawMap,
+      rawQueryParams: match.queryParams.rawMap,
+      fragment: match.fragment,
+      redirectedFrom: match.redirectedFrom,
+      stringMatch: match.stringMatch,
+      args: match.args,
+      initialChildren: match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList(),
+    );
+  }
+
+  /// Creates a new instance of a named route
+  const factory PageRouteInfo.named(
+    String name, {
+    List<PageRouteInfo>? children,
+    T? args,
+    Map<String, dynamic> params,
+    Map<String, dynamic> queryParams,
+    String? fragment,
+  }) = NamedRoute<T>;
   final String _name;
 
   /// The  typed arguments of the route
@@ -54,19 +89,6 @@ class PageRouteInfo<T extends Object?> {
 
   /// The string match from the [RouteMatch]
   final String? stringMatch;
-
-  /// Default constructor
-  const PageRouteInfo(
-    this._name, {
-    this.initialChildren,
-    this.args,
-    this.rawPathParams = const {},
-    this.rawQueryParams = const {},
-    String? fragment,
-    this.stringMatch,
-    this.redirectedFrom,
-    this.argsEquality = true,
-  }) : fragment = fragment ?? '';
 
   /// Whether the equality check should include [args]
   ///
@@ -151,20 +173,6 @@ class PageRouteInfo<T extends Object?> {
     return 'Route{name: $_name,  params: $rawPathParams}, children: ${initialChildren?.map((e) => e.routeName)}';
   }
 
-  /// Creates a new instance form [RouteMatch]
-  factory PageRouteInfo.fromMatch(RouteMatch match) {
-    return PageRouteInfo(
-      match.name,
-      rawPathParams: match.params.rawMap,
-      rawQueryParams: match.queryParams.rawMap,
-      fragment: match.fragment,
-      redirectedFrom: match.redirectedFrom,
-      stringMatch: match.stringMatch,
-      args: match.args,
-      initialChildren: match.children?.map((m) => PageRouteInfo.fromMatch(m)).toList(),
-    );
-  }
-
   /// Calls [StackRouter.push] with this route on the nearest router
   Future<E?> push<E>(BuildContext context) {
     return context.router.push<E>(this);
@@ -180,16 +188,6 @@ class PageRouteInfo<T extends Object?> {
   RouteMatch? match(BuildContext context) {
     return context.router.match(this);
   }
-
-  /// Creates a new instance of a named route
-  const factory PageRouteInfo.named(
-    String name, {
-    List<PageRouteInfo>? children,
-    T? args,
-    Map<String, dynamic> params,
-    Map<String, dynamic> queryParams,
-    String? fragment,
-  }) = NamedRoute<T>;
 
   @override
   bool operator ==(Object other) =>

@@ -9,14 +9,14 @@ const _unPreferredImports = {'dart:ui'};
 
 /// A Helper class that resolves types
 class TypeResolver {
+  /// Default constructor
+  TypeResolver(this.libs, [this.targetFile]);
+
   /// The list of resolved libraries in [BuildStep]
   final List<LibraryElement> libs;
 
   /// The target file to resolve relative paths to
   final Uri? targetFile;
-
-  /// Default constructor
-  TypeResolver(this.libs, [this.targetFile]);
 
   /// Resolved the import path of the given [element]
   String? resolveImport(Element? element) {

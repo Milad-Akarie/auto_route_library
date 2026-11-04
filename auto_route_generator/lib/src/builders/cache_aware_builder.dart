@@ -12,6 +12,28 @@ const dartFormatWidth = '// dart format width=80';
 
 /// A [Builder] which skips resolving cached files
 abstract class CacheAwareBuilder<T> extends Builder {
+  /// Default constructor
+  CacheAwareBuilder({
+    this.generatedExtension = '.g.dart',
+    List<String> additionalOutputExtensions = const [],
+    this.allowSyntaxErrors = false,
+    required this.annotationName,
+    this.options,
+  }) : buildExtensions = validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
+         '.dart': [generatedExtension, ...additionalOutputExtensions],
+       }) {
+    if (generatedExtension.isEmpty || !generatedExtension.startsWith('.')) {
+      throw ArgumentError.value(generatedExtension, 'generatedExtension', 'Extension must be in the format of .*');
+    }
+
+    if (options != null && additionalOutputExtensions.isNotEmpty) {
+      throw ArgumentError(
+        'Either `options` or `additionalOutputExtensions` parameter '
+        'can be given. Not both.',
+      );
+    }
+  }
+
   /// The [buildExtensions] configuration for `.dart`
   final String generatedExtension;
 
@@ -37,28 +59,6 @@ abstract class CacheAwareBuilder<T> extends Builder {
 
   /// The [BuilderOptions] for this builder
   final BuilderOptions? options;
-
-  /// Default constructor
-  CacheAwareBuilder({
-    this.generatedExtension = '.g.dart',
-    List<String> additionalOutputExtensions = const [],
-    this.allowSyntaxErrors = false,
-    required this.annotationName,
-    this.options,
-  }) : buildExtensions = validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
-         '.dart': [generatedExtension, ...additionalOutputExtensions],
-       }) {
-    if (generatedExtension.isEmpty || !generatedExtension.startsWith('.')) {
-      throw ArgumentError.value(generatedExtension, 'generatedExtension', 'Extension must be in the format of .*');
-    }
-
-    if (options != null && additionalOutputExtensions.isNotEmpty) {
-      throw ArgumentError(
-        'Either `options` or `additionalOutputExtensions` parameter '
-        'can be given. Not both.',
-      );
-    }
-  }
 
   @override
   Future<void> build(BuildStep buildStep) async {

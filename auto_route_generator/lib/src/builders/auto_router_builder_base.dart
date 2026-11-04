@@ -11,11 +11,10 @@ import 'package:auto_route_generator/src/code_builder/library_builder.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/router_config.dart';
 import 'package:auto_route_generator/src/models/routes_list.dart';
+import 'package:auto_route_generator/src/resolvers/router_config_resolver.dart';
 import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:source_gen/source_gen.dart';
-
-import '../resolvers/router_config_resolver.dart';
 
 const _typeChecker = TypeChecker.typeNamed(AutoRouterConfig, inPackage: 'auto_route');
 

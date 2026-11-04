@@ -1,15 +1,48 @@
 import 'dart:convert';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:path/path.dart' as p;
-
-import '../../auto_route.dart';
 
 /// This is the result returned by [RouteMatcher]
 /// when a match is found
 @immutable
 class RouteMatch<T> {
+  /// Default constructor
+  RouteMatch({
+    required AutoRoute config,
+    required this.segments,
+    required this.stringMatch,
+    required this.key,
+    this.children,
+    this.args,
+    this.params = const Parameters({}),
+    this.queryParams = const Parameters({}),
+    this.fragment = '',
+    this.redirectedFrom,
+    this.autoFilled = false,
+  }) : _config = config,
+       _evaluatedGuards = const [],
+       id = UniqueKey();
+
+  const RouteMatch._internal({
+    required AutoRoute config,
+    required this.segments,
+    required this.stringMatch,
+    required this.key,
+    this.children,
+    this.args,
+    this.params = const Parameters({}),
+    this.queryParams = const Parameters({}),
+    this.fragment = '',
+    this.redirectedFrom,
+    this.autoFilled = false,
+    required this.id,
+    List<AutoRouteGuard> evaluatedGuards = const [],
+  }) : _config = config,
+       _evaluatedGuards = evaluatedGuards;
+
   /// The extracted path params either from rawPath or
   /// [PageRouteInfo] implementation
   final Parameters params;
@@ -108,40 +141,6 @@ class RouteMatch<T> {
   ///
   /// it is used to prevent re-evaluating guards
   List<AutoRouteGuard> get evaluatedGuards => _evaluatedGuards;
-
-  /// Default constructor
-  RouteMatch({
-    required AutoRoute config,
-    required this.segments,
-    required this.stringMatch,
-    required this.key,
-    this.children,
-    this.args,
-    this.params = const Parameters({}),
-    this.queryParams = const Parameters({}),
-    this.fragment = '',
-    this.redirectedFrom,
-    this.autoFilled = false,
-  }) : _config = config,
-       _evaluatedGuards = const [],
-       id = UniqueKey();
-
-  const RouteMatch._internal({
-    required AutoRoute config,
-    required this.segments,
-    required this.stringMatch,
-    required this.key,
-    this.children,
-    this.args,
-    this.params = const Parameters({}),
-    this.queryParams = const Parameters({}),
-    this.fragment = '',
-    this.redirectedFrom,
-    this.autoFilled = false,
-    required this.id,
-    List<AutoRouteGuard> evaluatedGuards = const [],
-  }) : _config = config,
-       _evaluatedGuards = evaluatedGuards;
 
   /// Whether this match has nested child-matches
   bool get hasChildren => children?.isNotEmpty == true;
@@ -284,12 +283,6 @@ class RouteMatch<T> {
 /// to create a new one
 @immutable
 class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
-  /// The current page instance
-  final AutoRoutePage<R> currentPage;
-
-  /// The original match that was used to create this instance
-  final RouteMatch originalMatch;
-
   /// Creates a new instance of [ReevaluatableRouteMatch]
   ReevaluatableRouteMatch({required this.currentPage, required this.originalMatch})
     : super._internal(
@@ -307,6 +300,12 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
         evaluatedGuards: originalMatch.evaluatedGuards,
         args: originalMatch.args,
       );
+
+  /// The current page instance
+  final AutoRoutePage<R> currentPage;
+
+  /// The original match that was used to create this instance
+  final RouteMatch originalMatch;
 
   @override
   ReevaluatableRouteMatch<T, R> copyWith({
@@ -356,6 +355,9 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
 ///      ]
 ///  );
 class HierarchySegment {
+  /// Default constructor
+  const HierarchySegment(this.name, {this.pathParams, this.queryParams, this.children = const []});
+
   /// The name of the route
   final String name;
 
@@ -364,9 +366,6 @@ class HierarchySegment {
 
   /// The path parameters of the route
   final Parameters? pathParams, queryParams;
-
-  /// Default constructor
-  const HierarchySegment(this.name, {this.pathParams, this.queryParams, this.children = const []});
 
   /// Returns a pretty json output of this hierarchy
   Map<String, dynamic> toJson() {

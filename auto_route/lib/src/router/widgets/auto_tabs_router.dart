@@ -1,12 +1,11 @@
 import 'dart:ui';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/auto_tab_view.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
-
-import '../../../auto_route.dart';
 
 /// Signature for a wrapper builder used by [_AutoTabsRouterIndexedStack]
 typedef AnimatedIndexedStackBuilder = Widget Function(BuildContext context, Widget child);
@@ -32,37 +31,6 @@ typedef OnNavigationChanged = Function(TabsRouter tabsRouter);
 
 /// An implementation of a router widget that handles parallel routeing
 abstract class AutoTabsRouter extends StatefulWidget {
-  /// The list of pages this router will handle
-  final List<PageRouteInfo>? routes;
-
-  /// A builder function that returns a list of observes
-  ///
-  /// Why isn't this a list of navigatorObservers?
-  /// The reason for that is a [NavigatorObserver] instance can only
-  /// be used by a single [Navigator], so unless you're using a one
-  /// single router or you don't want your nested routers to inherit
-  /// observers make sure navigatorObservers builder always returns
-  /// fresh observer instances.
-  final NavigatorObserversBuilder navigatorObservers;
-
-  /// Whether this router should inherit it's ancestor's observers
-  final bool inheritNavigatorObservers;
-
-  /// The index to pop from
-  ///
-  /// if activeIndex != homeIndex
-  /// set activeIndex to homeIndex
-  /// else pop parent
-  final int homeIndex;
-
-  const AutoTabsRouter._({
-    super.key,
-    required this.routes,
-    this.homeIndex = -1,
-    this.inheritNavigatorObservers = true,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-  });
-
   /// Builds an [AutoTabsRouter] to uses
   /// a [IndexedStack] to render pages
   const factory AutoTabsRouter({
@@ -77,6 +45,14 @@ abstract class AutoTabsRouter extends StatefulWidget {
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterIndexedStack;
+
+  const AutoTabsRouter._({
+    super.key,
+    required this.routes,
+    this.homeIndex = -1,
+    this.inheritNavigatorObservers = true,
+    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+  });
 
   /// Builds an [AutoTabsRouter] to uses
   /// a [PageView] to render pages
@@ -125,6 +101,29 @@ abstract class AutoTabsRouter extends StatefulWidget {
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterBuilder;
+
+  /// The list of pages this router will handle
+  final List<PageRouteInfo>? routes;
+
+  /// A builder function that returns a list of observes
+  ///
+  /// Why isn't this a list of navigatorObservers?
+  /// The reason for that is a [NavigatorObserver] instance can only
+  /// be used by a single [Navigator], so unless you're using a one
+  /// single router or you don't want your nested routers to inherit
+  /// observers make sure navigatorObservers builder always returns
+  /// fresh observer instances.
+  final NavigatorObserversBuilder navigatorObservers;
+
+  /// Whether this router should inherit it's ancestor's observers
+  final bool inheritNavigatorObservers;
+
+  /// The index to pop from
+  ///
+  /// if activeIndex != homeIndex
+  /// set activeIndex to homeIndex
+  /// else pop parent
+  final int homeIndex;
 
   /// Looks up and returns the scoped [controller]
   ///
@@ -229,16 +228,6 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
 
 // -----------------------------------------------------------
 class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
-  final AnimatedIndexedStackBuilder? builder;
-  final AnimatedIndexedStackTransitionBuilder transitionBuilder;
-  final Duration duration;
-  final Curve curve;
-  final bool lazyLoad;
-
-  static Widget _defaultTransitionBuilder(BuildContext _, Widget child, Animation<double> animation) {
-    return FadeTransition(opacity: animation, child: child);
-  }
-
   const _AutoTabsRouterIndexedStack({
     super.key,
     super.routes,
@@ -251,6 +240,15 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
     super.inheritNavigatorObservers,
     super.navigatorObservers,
   }) : super._();
+  final AnimatedIndexedStackBuilder? builder;
+  final AnimatedIndexedStackTransitionBuilder transitionBuilder;
+  final Duration duration;
+  final Curve curve;
+  final bool lazyLoad;
+
+  static Widget _defaultTransitionBuilder(BuildContext _, Widget child, Animation<double> animation) {
+    return FadeTransition(opacity: animation, child: child);
+  }
 
   @override
   _AutoTabsRouterIndexedStackState createState() => _AutoTabsRouterIndexedStackState();
@@ -486,14 +484,6 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
 }
 
 class _AutoTabsRouterPageView extends AutoTabsRouter {
-  final AutoTabsPageViewBuilder? _pageViewModeBuilder;
-  final bool animatePageTransition;
-  final Duration duration;
-  final Curve curve;
-  final Axis scrollDirection;
-  final ScrollPhysics? physics;
-  final DragStartBehavior dragStartBehavior;
-
   const _AutoTabsRouterPageView({
     super.key,
     super.routes,
@@ -509,6 +499,13 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
     super.navigatorObservers,
   }) : _pageViewModeBuilder = builder,
        super._();
+  final AutoTabsPageViewBuilder? _pageViewModeBuilder;
+  final bool animatePageTransition;
+  final Duration duration;
+  final Curve curve;
+  final Axis scrollDirection;
+  final ScrollPhysics? physics;
+  final DragStartBehavior dragStartBehavior;
 
   @override
   _AutoTabsRouterPageViewState createState() => _AutoTabsRouterPageViewState();
@@ -608,14 +605,6 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
 }
 
 class _AutoTabsRouterTabBar extends AutoTabsRouter {
-  final AutoTabsTabBarBuilder? builder;
-  final bool animatePageTransition;
-  final Duration? duration;
-  final Curve curve;
-  final ScrollPhysics? physics;
-  final DragStartBehavior dragStartBehavior;
-  final Axis scrollDirection;
-
   const _AutoTabsRouterTabBar({
     super.key,
     super.routes,
@@ -631,6 +620,13 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     this.dragStartBehavior = DragStartBehavior.start,
   }) : duration = duration ?? (animatePageTransition ? null : Duration.zero),
        super._();
+  final AutoTabsTabBarBuilder? builder;
+  final bool animatePageTransition;
+  final Duration? duration;
+  final Curve curve;
+  final ScrollPhysics? physics;
+  final DragStartBehavior dragStartBehavior;
+  final Axis scrollDirection;
 
   @override
   _AutoTabsRouterTabBarState createState() => _AutoTabsRouterTabBarState();
@@ -756,10 +752,6 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
 }
 
 class _AutoTabsRouterBuilder extends AutoTabsRouter {
-  final AutoTabsBuilder builder;
-  final OnNavigationChanged? onNavigate;
-  final OnNavigationChanged? onRouterReady;
-
   const _AutoTabsRouterBuilder({
     super.key,
     super.routes,
@@ -770,6 +762,9 @@ class _AutoTabsRouterBuilder extends AutoTabsRouter {
     super.inheritNavigatorObservers,
     super.navigatorObservers,
   }) : super._();
+  final AutoTabsBuilder builder;
+  final OnNavigationChanged? onNavigate;
+  final OnNavigationChanged? onRouterReady;
 
   @override
   _AutoTabsRouterBuilderState createState() => _AutoTabsRouterBuilderState();

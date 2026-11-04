@@ -5,12 +5,11 @@ import 'package:material_ui/material_ui.dart';
 //ignore_for_file: public_member_api_docs
 @RoutePage(name: 'BookDetailsRoute')
 class BookDetailsPage extends StatefulWidget {
-  final int id;
-
   const BookDetailsPage({
     super.key,
     @pathParam this.id = -1,
   });
+  final int id;
 
   @override
   BookDetailsPageState createState() => BookDetailsPageState();

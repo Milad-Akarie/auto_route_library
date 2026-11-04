@@ -5,15 +5,14 @@
 // The adjustments made to this code is to disable unwanted shadow
 // of routes when used as nested routes, e.g inside of a TabsRouter
 
-import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
-import 'package:flutter/foundation.dart';
-
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
 
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoDynamicColor, CupertinoRouteTransitionMixin;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
+import 'package:material_ui/material_ui.dart';
 
 const double _kBackGestureWidth = 20.0;
 const double _kMinFlingVelocity = 1.0; // Screen widths per second.

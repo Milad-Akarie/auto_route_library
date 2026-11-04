@@ -10,6 +10,17 @@ abstract class AutoRouteGuard {
   /// Default constructor
   const AutoRouteGuard();
 
+  /// Builds a simple instance that takes in the [OnNavigation] callback
+  factory AutoRouteGuard.simple(OnNavigation onNavigation, {String? debugLabel}) = AutoRouteGuardCallback;
+
+  /// Builds a simple instance that returns either a redirect-to route or null for no redirect
+  factory AutoRouteGuard.redirect(PageRouteInfo? Function(NavigationResolver resolver) redirect) =
+      _AutoRouteGuardRedirectCallback;
+
+  /// Builds a simple instance that returns either a redirect-to path or null for no redirect
+  factory AutoRouteGuard.redirectPath(String? Function(NavigationResolver resolver) redirect) =
+      _AutoRouteGuardRedirectPathCallback;
+
   /// clients will call [resolver.next(true --> default)] to continue
   /// navigation or [resolver.next(false)] to abort navigation
   /// example
@@ -23,23 +34,11 @@ abstract class AutoRouteGuard {
 }
    */
   FutureOr<void> onNavigation(NavigationResolver resolver, StackRouter router);
-
-  /// Builds a simple instance that takes in the [OnNavigation] callback
-  factory AutoRouteGuard.simple(OnNavigation onNavigation, {String? debugLabel}) = AutoRouteGuardCallback;
-
-  /// Builds a simple instance that returns either a redirect-to route or null for no redirect
-  factory AutoRouteGuard.redirect(PageRouteInfo? Function(NavigationResolver resolver) redirect) =
-      _AutoRouteGuardRedirectCallback;
-
-  /// Builds a simple instance that returns either a redirect-to path or null for no redirect
-  factory AutoRouteGuard.redirectPath(String? Function(NavigationResolver resolver) redirect) =
-      _AutoRouteGuardRedirectPathCallback;
 }
 
 class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
-  final PageRouteInfo? Function(NavigationResolver resolver) redirect;
-
   const _AutoRouteGuardRedirectCallback(this.redirect);
+  final PageRouteInfo? Function(NavigationResolver resolver) redirect;
 
   @override
   void onNavigation(NavigationResolver resolver, router) {
@@ -52,9 +51,8 @@ class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
 }
 
 class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
-  final String? Function(NavigationResolver resolver) redirect;
-
   const _AutoRouteGuardRedirectPathCallback(this.redirect);
+  final String? Function(NavigationResolver resolver) redirect;
 
   @override
   void onNavigation(NavigationResolver resolver, router) {
@@ -78,11 +76,10 @@ abstract class ReevaluateListenable extends ChangeNotifier {
 }
 
 class _StreamReevaluateListenable extends ReevaluateListenable {
-  late final StreamSubscription _streamSub;
-
   _StreamReevaluateListenable(Stream stream) {
     _streamSub = stream.listen((_) => notifyListeners());
   }
+  late final StreamSubscription _streamSub;
 
   @override
   void dispose() {
@@ -96,14 +93,14 @@ class _StreamReevaluateListenable extends ReevaluateListenable {
 ///
 /// use if there's no need to implement your own
 class AutoRouteGuardCallback extends AutoRouteGuard {
+  /// Default constructor
+  const AutoRouteGuardCallback(this.onNavigate, {this.debugLabel});
+
   /// The callback called by [AutoRouteGuard.onNavigation]
   final OnNavigation onNavigate;
 
   /// An optional debug name for easier identification
   final String? debugLabel;
-
-  /// Default constructor
-  const AutoRouteGuardCallback(this.onNavigate, {this.debugLabel});
 
   // Returns the callback's future, so a guard re-check can wait for an async callback.
   @override
@@ -115,6 +112,9 @@ class AutoRouteGuardCallback extends AutoRouteGuard {
 
 /// Holds [NavigationResolver.resolveNext] values
 class ResolverResult {
+  /// Default constructor
+  const ResolverResult({required this.continueNavigation, required this.reevaluateNext, required this.route});
+
   /// Whether to resume the navigation event or abort it
   final bool continueNavigation;
 
@@ -123,9 +123,6 @@ class ResolverResult {
 
   /// Holds the route to be used in the navigation event
   final RouteMatch route;
-
-  /// Default constructor
-  const ResolverResult({required this.continueNavigation, required this.reevaluateNext, required this.route});
 
   //// clones this instance with the provided values
   ResolverResult copyWith({bool? continueNavigation, bool? reevaluateNext, RouteMatch? route}) {
@@ -144,6 +141,14 @@ final _redirectingResolvers = Expando<NavigationResolver>('redirectingResolvers'
 /// which can be either continued or aborted
 /// used in [AutoRouteGuard.onNavigation]
 class NavigationResolver {
+  /// default constructor
+  NavigationResolver(
+    this._router,
+    this._completer,
+    this.route, {
+    this.pendingRoutes = const [],
+    bool isReevaluating = false,
+  }) : _isReevaluating = isReevaluating;
   final StackRouter _router;
   final Completer<ResolverResult> _completer;
 
@@ -179,15 +184,6 @@ class NavigationResolver {
     assert(context != null, 'Router is not mounted');
     return context!;
   }
-
-  /// default constructor
-  NavigationResolver(
-    this._router,
-    this._completer,
-    this.route, {
-    this.pendingRoutes = const [],
-    bool isReevaluating = false,
-  }) : _isReevaluating = isReevaluating;
 
   /// Completes [_completer] with either true to continue navigation
   /// or false to abort navigation
@@ -340,6 +336,9 @@ class NavigationResolver {
 
 /// Holds overridable route values
 class RouteOverrides {
+  /// Default constructor
+  const RouteOverrides({this.children, this.args, this.queryParams, this.fragment});
+
   /// The override value of [PageRouteInfo.children]
   final List<PageRouteInfo>? children;
 
@@ -353,9 +352,6 @@ class RouteOverrides {
 
   /// The override value of [PageRouteInfo.fragment]
   final String? fragment;
-
-  /// Default constructor
-  const RouteOverrides({this.children, this.args, this.queryParams, this.fragment});
 
   /// Builds a new [PageRouteInfo] with the provided overrides
   RouteMatch override(RouteMatch route, RouteMatcher matcher) {

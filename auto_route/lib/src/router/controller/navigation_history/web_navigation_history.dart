@@ -2,9 +2,8 @@ import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:auto_route/auto_route.dart';
+import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
 import 'package:web/web.dart';
-
-import 'navigation_history_base.dart';
 
 /// An implementation of [NavigationHistory]
 /// That's used for web

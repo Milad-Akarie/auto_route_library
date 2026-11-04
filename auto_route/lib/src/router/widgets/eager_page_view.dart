@@ -3,34 +3,34 @@
 // found in the LICENSE file.
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;
+import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart'
     show
-        StatefulWidget,
         Axis,
+        AxisDirection,
         BuildContext,
         Clip,
+        Directionality,
+        NotificationListener,
         PageController,
-        ScrollPhysics,
+        PageMetrics,
+        PageScrollPhysics,
         ScrollBehavior,
         ScrollConfiguration,
         ScrollNotification,
+        ScrollPhysics,
         ScrollUpdateNotification,
+        Scrollable,
+        Scrollbar,
         SliverChildDelegate,
+        SliverChildListDelegate,
         SliverFillViewport,
+        State,
+        StatefulWidget,
         TextDirection,
         Viewport,
         Widget,
-        AxisDirection,
-        Directionality,
-        PageMetrics,
-        Scrollable,
-        Scrollbar,
-        PageScrollPhysics,
-        NotificationListener,
-        State,
-        debugCheckHasDirectionality,
-        SliverChildListDelegate;
-import 'package:flutter/rendering.dart';
+        debugCheckHasDirectionality;
 
 /// This is a copy of the [PageView] widget from Flutter, with the following
 /// changes:
