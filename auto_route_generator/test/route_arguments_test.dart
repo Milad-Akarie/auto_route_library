@@ -374,4 +374,26 @@ class Range {
       expect(result.source, contains('User user'));
     });
   });
+
+  // #1507: a page argument typed by a class from a file another builder
+  // generates, such as graphql_codegen's `Query$Artist`, gave a router that
+  // didn't compile, "Undefined class 'InvalidType'", when that file wasn't
+  // written yet as auto_route's builder ran. The build now fails naming the
+  // argument and how to order the builders.
+  group('an argument whose type is not resolved (#1507)', () {
+    for (final (label, type) in [('itself', r'Query$Artist?'), ('inside a type argument', r'List<Query$Artist>?')]) {
+      test('fails the build naming the argument when the type is $label', () async {
+        final result = await generateRouter({
+          'lib/artist_page.dart': _page(
+            'ArtistPage',
+            imports: "import 'artist.graphql.dart';",
+            parameters: 'this.artist',
+            fields: '  final $type artist;',
+          ),
+        });
+        expect(result.errors.join(), contains('The type of artist in ArtistPage could not be resolved'));
+        expect(result.errors.join(), contains('runs_before'));
+      });
+    }
+  });
 }

@@ -20,6 +20,14 @@ class RouteParameterResolver {
   /// Resolves a ParameterElement into a consumable [ParamConfig]
   ParamConfig resolve(FormalParameterElement parameterElement) {
     final paramType = parameterElement.type;
+    throwIf(
+      _holdsInvalidType(paramType),
+      'The type of ${parameterElement.displayName} in ${parameterElement.enclosingElement?.enclosingElement?.displayName} '
+      'could not be resolved. '
+      'If it is declared in a file another builder generates, make that builder run before auto_route_generator, '
+      'with runs_before in its build.yaml or global_options in yours.',
+      element: parameterElement,
+    );
     if (paramType is FunctionType && paramType.alias == null) {
       return _resolveFunctionType(parameterElement);
     }
@@ -105,6 +113,19 @@ class RouteParameterResolver {
       defaultValueImport: _resolveDefaultValueImport(parameterElement),
     );
   }
+
+  /// Whether [type] or a type inside it is one the analyzer could not
+  /// resolve, such as a class from a generated file that isn't written yet.
+  /// Written out, such a type is the undefined name `InvalidType`.
+  static bool _holdsInvalidType(DartType type) => switch (type) {
+    InvalidType() => true,
+    InterfaceType(:final typeArguments) => typeArguments.any(_holdsInvalidType),
+    FunctionType(:final returnType, :final formalParameters) =>
+      _holdsInvalidType(returnType) || formalParameters.any((p) => _holdsInvalidType(p.type)),
+    RecordType(:final positionalFields, :final namedFields) =>
+      positionalFields.any((f) => _holdsInvalidType(f.type)) || namedFields.any((f) => _holdsInvalidType(f.type)),
+    _ => false,
+  };
 
   ParamConfig _resolveFunctionType(FormalParameterElement paramElement) {
     final type = paramElement.type as FunctionType;
