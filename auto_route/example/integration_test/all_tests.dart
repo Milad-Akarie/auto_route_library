@@ -124,6 +124,7 @@ import 'restore_with_link_test.dart' as restore_with_link;
 import 'root_bottom_sheet_aware_test.dart' as root_bottom_sheet_aware;
 import 'root_router_dispose_test.dart' as root_router_dispose;
 import 'route_aware_deep_link_test.dart' as route_aware_deep_link;
+import 'route_aware_in_dialog_test.dart' as route_aware_in_dialog;
 import 'route_aware_mixin_test.dart' as route_aware_mixin;
 import 'route_aware_pop_order_test.dart' as route_aware_pop_order;
 import 'set_query_param_test.dart' as set_query_param;
@@ -290,6 +291,7 @@ void main() {
   group('root bottom sheet aware', root_bottom_sheet_aware.main);
   group('root router dispose', root_router_dispose.main);
   group('route aware deep link', route_aware_deep_link.main);
+  group('route aware in dialog', route_aware_in_dialog.main);
   group('route aware mixin', route_aware_mixin.main);
   group('route aware pop order', route_aware_pop_order.main);
   group('set query param', set_query_param.main);

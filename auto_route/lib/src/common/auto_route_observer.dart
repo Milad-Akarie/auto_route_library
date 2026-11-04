@@ -68,11 +68,14 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T> implements 
     // RouterScope exposes the list of provided observers
     // including inherited observers
     _observer = RouterScope.of(context).firstObserverOfType<AutoRouteObserver>();
+    // A widget shown outside a page, as in a dialog, has no route data to
+    // subscribe to, so it hears nothing rather than throwing.
+    final routeData = context.findAncestorWidgetOfExactType<RouteDataScope>()?.routeData;
 
-    if (_observer != null) {
+    if (routeData != null) {
       // we subscribe to the observer by passing our
       // AutoRouteAware state and the scoped routeData
-      _observer!.subscribe(this, context.routeData);
+      _observer?.subscribe(this, routeData);
     }
   }
 
