@@ -4,7 +4,7 @@ import 'package:code_builder/code_builder.dart';
 /// Allocates symbols for deferred pages
 class DeferredPagesAllocator implements Allocator {
   /// Default constructor
-  DeferredPagesAllocator(this.routes, this.defaultDeferredLoading);
+  DeferredPagesAllocator(this.routes, {required this.defaultDeferredLoading});
   static const _doNotPrefix = ['dart:core'];
 
   final _imports = <String, int>{};
@@ -30,7 +30,7 @@ class DeferredPagesAllocator implements Allocator {
 
   @override
   Iterable<Directive> get imports => _imports.keys.map((importPath) {
-    if (routes.isDeferred(importPath, defaultDeferredLoading)) {
+    if (routes.isDeferred(importPath, defaultDeferredLoading: defaultDeferredLoading)) {
       return Directive.importDeferredAs(importPath, '_i${_imports[importPath]}');
     }
     return Directive.import(importPath, as: '_i${_imports[importPath]}');
@@ -38,11 +38,11 @@ class DeferredPagesAllocator implements Allocator {
 }
 
 extension _RouteConfigList on List<RouteConfig> {
-  bool isDeferred(String importPath, bool defaultDeferredLoading) {
-    return mapRouteToDeferredType(importPath, defaultDeferredLoading) == .deferred;
+  bool isDeferred(String importPath, {required bool defaultDeferredLoading}) {
+    return mapRouteToDeferredType(importPath, defaultDeferredLoading: defaultDeferredLoading) == .deferred;
   }
 
-  _DeferredStatus mapRouteToDeferredType(String importPath, bool defaultDeferredLoading) {
+  _DeferredStatus mapRouteToDeferredType(String importPath, {required bool defaultDeferredLoading}) {
     for (final routeConfig in this) {
       if (routeConfig.pageType?.import == importPath) {
         return (routeConfig.deferredLoading ?? defaultDeferredLoading) ? .deferred : .none;
@@ -51,7 +51,7 @@ extension _RouteConfigList on List<RouteConfig> {
       // if (routeConfig.childRouterConfig == null) {
       // } else {
       //   final deferredStatus = routeConfig.childRouterConfig!.routes
-      //       .mapRouteToDeferredType(importPath, defaultDeferredLoading);
+      //       .mapRouteToDeferredType(importPath, defaultDeferredLoading: defaultDeferredLoading);
       //   if (deferredStatus == _DeferredStatus.Deferred) {
       //     return _DeferredStatus.Deferred;
       //   }

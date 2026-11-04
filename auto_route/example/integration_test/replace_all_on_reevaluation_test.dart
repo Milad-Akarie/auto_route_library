@@ -30,7 +30,7 @@ void main() {
                 resolver.next();
                 return;
               }
-              resolver.next(false);
+              resolver.reject();
               unawaited(router.replaceAll([const _LoginRoute()]));
             }),
           ],

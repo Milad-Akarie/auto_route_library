@@ -8,7 +8,7 @@ import '../router_test_utils.dart';
 
 // https://github.com/Milad-Akarie/auto_route_library/issues/2299
 // Start on InitialRoute, push FooRoute, then replaceAll([ProtectedRoute()]),
-// whose guard calls resolver.next(false). In the reporter's words: "the stack
+// whose guard calls resolver.reject(). In the reporter's words: "the stack
 // is [] instead of [RouteA, RouteB], but RouteB is still shown", and the next
 // push opened as the only page. It happened in nested routers too.
 // A guard rejecting a route of the batch rejects the whole batch, as the
@@ -18,7 +18,8 @@ void main() {
 
   Widget page(String name) => Scaffold(body: Center(child: Text(name)));
 
-  AutoRouteGuard protectedGuard() => AutoRouteGuardCallback((resolver, _) => resolver.next(isAllowed));
+  AutoRouteGuard protectedGuard() =>
+      AutoRouteGuardCallback((resolver, _) => isAllowed ? resolver.next() : resolver.reject());
 
   setUp(() => isAllowed = false);
 

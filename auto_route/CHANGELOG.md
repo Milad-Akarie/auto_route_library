@@ -1,4 +1,11 @@
 ## Unreleased
+- **DEPRECATION**: passing a bool to `NavigationResolver.next` is deprecated; call `next()` to
+  continue and the new `reject()` to stop, so `resolver.next(false)` becomes `resolver.reject()`.
+- **DEPRECATION**: passing a bool to `NavigationResolver.nextOrBack` is deprecated;
+  `nextOrBack(false)` becomes `reject(goBack: true)`.
+- **DEPRECATION**: `NavigationResolver.resolveNext` is deprecated. `resolveNext(true, reevaluateNext: false)`
+  becomes `overrideNext(reevaluateNext: false)`, and `resolveNext(false, reevaluateNext: false)`
+  becomes `reject(reevaluateNext: false)`.
 - **BREAKING CHANGE** (behavior): the futures of `pushAll` and `popAndPushAll` complete once every
   guard has decided, instead of at once, as `replaceAll`'s already did. Code after `await router.pushAll(...)` now sees
   the new stack, or the old one when a guard rejected it; don't await it inside a guard of the same

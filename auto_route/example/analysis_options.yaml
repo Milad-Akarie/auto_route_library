@@ -35,10 +35,6 @@ linter:
     # stays off until it stops flagging them.
     unnecessary_type_name_in_constructor: false
     public_member_api_docs: false
-    # Off: the package's hits are public API apps call every day
-    # (`resolver.next(false)`, `getBool(key, true)`), and the few internal
-    # helpers are kept in the same style.
-    avoid_positional_boolean_parameters: false
     # Off: its hits are steps run one after another, such as
     # `router.popUntilRoot(); router.popUntilRoot();` in a test, which read as
     # steps and not as one cascade.

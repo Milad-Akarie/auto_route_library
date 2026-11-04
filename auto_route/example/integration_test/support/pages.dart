@@ -161,7 +161,7 @@ RootStackRouter buildSimpleRouter() => .build(
     AutoRoute(page: ThirdRoute.page),
     AutoRoute(
       page: FourthRoute.page,
-      guards: [AutoRouteGuard.simple((resolver, _) => resolver.next(false))],
+      guards: [AutoRouteGuard.simple((resolver, _) => resolver.reject())],
     ),
   ],
 );

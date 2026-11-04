@@ -12,7 +12,7 @@ import '../router_test_utils.dart';
 // redirectUntil(RouteARedirected(next: resolver.next)), and that page calls
 // next() after its first frame. RouteA's button replaces it with RouteC, whose
 // guard calls redirectUntil(RouteCRedirected), and that page's 'Go back' button
-// calls resolver.nextOrBack(false).
+// calls resolver.nextOrBack(false), written reject(goBack: true) here.
 // Tapping 'Go back' failed the assertion '!isResolved': when the redirect page
 // was removed, the url of the empty stack used up the replace mark meant for
 // RouteA, so RouteARedirected stayed in the history behind RouteA. back() then
@@ -50,7 +50,9 @@ void main() {
         name: 'RouteC',
         guards: [
           AutoRouteGuard.simple((resolver, _) {
-            unawaited(resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.nextOrBack(false))));
+            unawaited(
+              resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.reject(goBack: true))),
+            );
           }),
         ],
         builder: (_, _) => const Scaffold(body: Center(child: Text('Page C'))),

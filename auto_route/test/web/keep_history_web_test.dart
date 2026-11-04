@@ -37,7 +37,7 @@ void _tests(bool withConfig) {
   // SecondRoute should take FirstRoute's browser entry, so the browser's back
   // button can't return to FirstRoute.
   testWidgets('Pushing from a page without history on web replaces its browser entry', (tester) async {
-    await pumpApp(tester, router, withConfig);
+    await pumpApp(tester, router, withConfig: withConfig);
     await settleBrowser(tester);
     final start = browserSerialCount;
 
@@ -61,7 +61,7 @@ void _tests(bool withConfig) {
   // with SecondRoute, as a splash screen does.
   // SecondRoute should take FirstRoute's browser entry.
   testWidgets('replaceAll from a page without history on web replaces its browser entry', (tester) async {
-    await pumpApp(tester, router, withConfig);
+    await pumpApp(tester, router, withConfig: withConfig);
     await settleBrowser(tester);
     final start = browserSerialCount;
 
@@ -73,7 +73,7 @@ void _tests(bool withConfig) {
   });
 }
 
-Future<void> pumpApp(WidgetTester tester, RootStackRouter router, bool withConfig) {
+Future<void> pumpApp(WidgetTester tester, RootStackRouter router, {required bool withConfig}) {
   if (withConfig) return pumpRouterConfigApp(tester, router.config());
   return pumpRouterApp(tester, router);
 }

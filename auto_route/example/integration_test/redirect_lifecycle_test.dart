@@ -41,8 +41,12 @@ void main() {
         unawaited(resolver.redirectUntil(const NamedRoute('SignInRoute')));
       }
     });
-    final anonymous = AutoRouteGuard.simple((resolver, router) => resolver.nextOrBack(!n.connected));
-    final noPro = AutoRouteGuard.simple((resolver, router) => resolver.nextOrBack(!n.hasProSubscription));
+    final anonymous = AutoRouteGuard.simple(
+      (resolver, router) => n.connected ? resolver.reject(goBack: true) : resolver.next(),
+    );
+    final noPro = AutoRouteGuard.simple(
+      (resolver, router) => n.hasProSubscription ? resolver.reject(goBack: true) : resolver.next(),
+    );
     final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(

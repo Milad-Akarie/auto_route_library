@@ -101,7 +101,7 @@ enum _Tabs { indexedStack, pageView, tabBar }
 
 var _signedIn = false;
 
-final _rejectingGuard = AutoRouteGuard.simple((resolver, _) => resolver.next(_signedIn));
+final _rejectingGuard = AutoRouteGuard.simple((resolver, _) => _signedIn ? resolver.next() : resolver.reject());
 
 final _loginGuard = AutoRouteGuard.simple((resolver, _) {
   if (_signedIn) {

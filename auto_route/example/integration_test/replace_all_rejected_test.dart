@@ -33,7 +33,7 @@ void main() {
         path: '/protected',
         guards: [
           AutoRouteGuard.simple(
-            (resolver, _) => resolver.redirectUntil(NamedRoute('LoginRoute', args: () => resolver.next(false))),
+            (resolver, _) => resolver.redirectUntil(NamedRoute('LoginRoute', args: () => resolver.reject())),
           ),
         ],
         builder: (_, _) => page('ProtectedRoute'),
@@ -41,14 +41,14 @@ void main() {
       NamedRouteDef(
         name: 'ForbiddenRoute',
         path: '/forbidden',
-        guards: [AutoRouteGuardCallback((resolver, _) => resolver.next(false))],
+        guards: [AutoRouteGuardCallback((resolver, _) => resolver.reject())],
         builder: (_, _) => page('ForbiddenRoute'),
       ),
     ],
   );
 
   // Steps, the reporter's: push FooRoute, then replaceAll([ForbiddenRoute()]),
-  // whose guard calls resolver.next(false).
+  // whose guard calls resolver.reject().
   // Should: the stack is still [InitialRoute, FooRoute], on screen and in the url.
   testWidgets('A replaceAll rejected by a guard keeps the stack (#2299)', (tester) async {
     final router = buildRouter();
@@ -65,7 +65,7 @@ void main() {
   });
 
   // Steps: push FooRoute, replaceAll([ProtectedRoute()]), whose guard
-  // redirects to LoginRoute, then tap 'Cancel login', which calls next(false).
+  // redirects to LoginRoute, then tap 'Cancel login', which calls reject().
   // Should: the stack is [InitialRoute, FooRoute] again.
   testWidgets('Canceling the redirect of a replaceAll restores the stack (#2299)', (tester) async {
     final router = buildRouter();

@@ -30,7 +30,11 @@ void main() {
         path: '/checkout',
         guards: [
           AutoRouteGuardCallback((resolver, _) async {
-            resolver.next(await decision.future);
+            if (await decision.future) {
+              resolver.next();
+            } else {
+              resolver.reject();
+            }
           }),
         ],
         builder: (_, _) => page('CheckoutRoute'),

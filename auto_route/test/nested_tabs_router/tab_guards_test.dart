@@ -208,9 +208,17 @@ Completer<bool>? _decision;
 final _guard = AutoRouteGuard.simple((resolver, _) async {
   _guardCalls++;
   if (_decision case final decision?) {
-    resolver.next(await decision.future);
+    if (await decision.future) {
+      resolver.next();
+    } else {
+      resolver.reject();
+    }
   } else {
-    resolver.next(_allow);
+    if (_allow) {
+      resolver.next();
+    } else {
+      resolver.reject();
+    }
   }
 });
 

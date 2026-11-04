@@ -43,7 +43,7 @@ void main() {
         NamedRouteDef(
           name: 'ForbiddenRoute',
           path: '/forbidden',
-          guards: [AutoRouteGuard.simple((resolver, _) => resolver.next(false))],
+          guards: [AutoRouteGuard.simple((resolver, _) => resolver.reject())],
           builder: (_, _) => page('ForbiddenRoute'),
         ),
       ],

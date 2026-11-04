@@ -64,7 +64,9 @@ String generateLibrary(
   }
 
   final emitter = DartEmitter(
-    allocator: router.usesPartBuilder ? .none : DeferredPagesAllocator(routes, router.deferredLoading),
+    allocator: router.usesPartBuilder
+        ? .none
+        : DeferredPagesAllocator(routes, defaultDeferredLoading: router.deferredLoading),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );

@@ -112,7 +112,7 @@ class CupertinoPageTransition extends StatelessWidget {
            (linearTransition
                    ? primaryRouteAnimation
                    : CurvedAnimation(parent: primaryRouteAnimation, curve: Curves.linearToEaseOut))
-               .drive(_CupertinoEdgeShadowDecoration.tween(linearTransition));
+               .drive(_CupertinoEdgeShadowDecoration.tween(withShadow: linearTransition));
 
   // When this page is coming in to cover another page.
   final Animation<Offset> _primaryPositionAnimation;
@@ -418,7 +418,7 @@ class _CupertinoBackGestureController<T> {
 class _CupertinoEdgeShadowDecoration extends Decoration {
   const _CupertinoEdgeShadowDecoration._([this._colors]);
 
-  static DecorationTween tween(bool withShadow) => .new(
+  static DecorationTween tween({required bool withShadow}) => .new(
     begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
     end: _CupertinoEdgeShadowDecoration._(
       // Eyeballed gradient used to mimic a drop shadow on the start side only.

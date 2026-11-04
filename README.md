@@ -1256,11 +1256,11 @@ class AuthGuard extends AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    // the navigation is paused until resolver.next() is called with either
-    // true to resume/continue navigation or false to abort navigation
+    // the navigation is paused until resolver.next() is called to
+    // resume/continue navigation or resolver.reject() to abort it
     if(authenticated) {
       // if user is authenticated we continue
-      resolver.next(true);
+      resolver.next();
     } else {
         // we redirect the user to our login page
         // tip: use resolver.redirectUntil to have the redirected route
@@ -1269,7 +1269,7 @@ class AuthGuard extends AutoRouteGuard {
           LoginRoute(onResult: (success) {
             // if success == true the navigation will be resumed
             // else it will be aborted
-            resolver.next(success);
+            success ? resolver.next() : resolver.reject();
           },
         );
       );
@@ -1326,7 +1326,9 @@ class AppRouter extends RootStackRouter{
 
           // tip: use resolver.redirectUntil to have the redirected route
           // automatically removed from the stack when the resolver is completed
-          resolver.redirectUntil(LoginRoute(onResult: (didLogin) => resolver.next(didLogin)));
+          resolver.redirectUntil(
+            LoginRoute(onResult: (didLogin) => didLogin ? resolver.next() : resolver.reject()),
+          );
         }
       },
     ),
@@ -1357,7 +1359,7 @@ AutoRouteGuard.simple((resolver, router) {
   if (isAuthenticated || resolver.routeName == LoginRoute.name) {
     resolver.next();
   } else {
-    resolver.next(false);
+    resolver.reject();
     router.replaceAll([const LoginRoute()]);
   }
 })
@@ -1403,7 +1405,7 @@ Now, every time `AuthProvider` notifies listeners, the stack will be re-evaluate
 
 In the above example, we assigned our `AuthProvider` to `reevaluateListenable` directly, that's because `reevaluateListenable` takes a `Listenable` and AuthProvider extends `ChangeNotifier` which is a `Listenable`, if your auth provider is a stream you can use `reevaluateListenable: ReevaluateListenable.stream(YOUR-STREAM)`
 
-**Note**: When the Stack is re-evaluated, the whole existing hierarchy will be re-pushed, so if you want to stop re-evaluating routes at some point, use `resolver.resolveNext(<options>)` which is like `resolver.next()` but with more options.
+**Note**: When the Stack is re-evaluated, the whole existing hierarchy will be re-pushed, so if you want to stop re-evaluating routes at some point, pass `reevaluateNext: false`: `resolver.overrideNext(reevaluateNext: false)` continues without re-pushing the routes after the current one, and `resolver.reject(reevaluateNext: false)` stops.
 
 ```dart
 @override
@@ -1417,7 +1419,11 @@ void onNavigation(NavigationResolver resolver, StackRouter router) async {
         /// be called again and if the condition is satisfied the resolver will be completed
         onResult: (didLogin) {
           /// stop re-pushing any pending routes after current
-          resolver.resolveNext(didLogin, reevaluateNext: false);
+          if (didLogin) {
+            resolver.overrideNext(reevaluateNext: false);
+          } else {
+            resolver.reject(reevaluateNext: false);
+          }
         },
       ),
     );

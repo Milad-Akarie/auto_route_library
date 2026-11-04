@@ -27,7 +27,7 @@ class RouteNotFoundFailure extends NavigationFailure {
 
 /// A failure indicates that the one of the guards
 /// has aborted the navigation on this route
-/// by calling [NavigationResolver.next] with false value
+/// by calling [NavigationResolver.reject]
 class RejectedByGuardFailure extends NavigationFailure {
   /// default constructor
   const RejectedByGuardFailure(this.route, this.guard);

@@ -13,6 +13,8 @@ String toKebabCase(String s) {
 
 /// A helper assertion method that throws
 /// the giving [message] if [condition] is true
+// A condition first and its message after, read like assert(condition, message).
+// ignore: avoid_positional_boolean_parameters
 void throwIf(bool condition, String message) {
   if (condition) {
     throw FlutterError(message);

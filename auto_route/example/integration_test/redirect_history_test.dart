@@ -45,7 +45,9 @@ void main() {
         name: 'RouteC',
         guards: [
           AutoRouteGuard.simple((resolver, _) {
-            unawaited(resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.nextOrBack(false))));
+            unawaited(
+              resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.reject(goBack: true))),
+            );
           }),
         ],
         builder: (_, _) => const Scaffold(body: Center(child: Text('Page C'))),
@@ -64,7 +66,7 @@ void main() {
   // Steps, the reporter's: the app opens on RouteA, whose guard redirects to
   // RouteARedirected until that page calls next(); tap 'Go to Page C (replace)',
   // whose guard redirects to RouteCRedirected; tap 'Go back', which calls
-  // nextOrBack(false); then call back() once more.
+  // nextOrBack(false), written reject(goBack: true) here; then call back() once more.
   // Should: the app is back on RouteA, and back() has nothing to return to
   // instead of reopening RouteARedirected with a resolver already used.
   testWidgets(

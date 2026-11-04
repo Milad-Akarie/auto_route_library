@@ -20,15 +20,18 @@ abstract class AutoRouteGuard {
   factory AutoRouteGuard.redirectPath(String? Function(NavigationResolver resolver) redirect) =
       _AutoRouteGuardRedirectPathCallback;
 
-  /// clients will call [resolver.next(true --> default)] to continue
-  /// navigation or [resolver.next(false)] to abort navigation
+  /// clients will call [NavigationResolver.next] to continue
+  /// navigation or [NavigationResolver.reject] to abort navigation
   /// example
   /*
   class AuthGuard extends AutoRouteGuard {
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-     /// resolver.next(true) == we're good, continue navigation
-     resolver.next(isAuthenticated)
+     if (isAuthenticated) {
+       resolver.next();
+     } else {
+       resolver.reject();
+     }
   }
 }
    */
@@ -45,7 +48,11 @@ class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
     if (redirectTo != null) {
       unawaited(router.push(redirectTo));
     }
-    resolver.next(redirectTo == null);
+    if (redirectTo == null) {
+      resolver.next();
+    } else {
+      resolver.reject();
+    }
   }
 }
 
@@ -59,7 +66,11 @@ class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
     if (redirectTo != null) {
       unawaited(router.pushPath(redirectTo));
     }
-    resolver.next(redirectTo == null);
+    if (redirectTo == null) {
+      resolver.next();
+    } else {
+      resolver.reject();
+    }
   }
 }
 
@@ -109,7 +120,8 @@ class AutoRouteGuardCallback extends AutoRouteGuard {
   String toString() => 'AutoRouteGuardCallback(${debugLabel ?? hashCode})';
 }
 
-/// Holds [NavigationResolver.resolveNext] values
+/// Holds how a guard resolved: [NavigationResolver.next], [NavigationResolver.reject] or
+/// [NavigationResolver.overrideNext]
 class ResolverResult {
   /// Default constructor
   const ResolverResult({required this.continueNavigation, required this.reevaluateNext, required this.route});
@@ -184,16 +196,45 @@ class NavigationResolver {
     return context!;
   }
 
-  /// Completes [_completer] with either true to continue navigation
-  /// or false to abort navigation
-  void next([bool continueNavigation = true]) => resolveNext(continueNavigation);
+  /// Lets the navigation continue to [route].
+  ///
+  /// Call this, [reject] or [overrideNext] once per navigation. Passing false
+  /// is the deprecated way to reject it.
+  void next([
+    // The old way to reject, kept so existing guards compile until it is removed.
+    // ignore: avoid_positional_boolean_parameters
+    @Deprecated('Call next() to continue or reject() to stop') bool continueNavigation = true,
+  ]) => _resolve(continueNavigation: continueNavigation, reevaluateNext: true);
+
+  /// Stops the navigation: [route] is not opened.
+  ///
+  /// With [goBack], the router also goes back, which reverts the url when the
+  /// navigation came from it, such as a link opened in the browser.
+  ///
+  /// With [reevaluateNext] false, the routes pending after [route] are not
+  /// pushed again when `RoutingController.reevaluateGuards` runs this guard.
+  void reject({bool goBack = false, bool reevaluateNext = true}) {
+    _resolve(continueNavigation: false, reevaluateNext: reevaluateNext);
+    if (goBack) {
+      _router.back();
+    }
+  }
 
   /// Completes [_completer] with either true to continue navigation
   /// or false to abort navigation
   ///
   /// if [reevaluateNext] is set to true pending routes will also be re-pushed
   /// to stack on `RoutingController.reevaluateGuards`
-  void resolveNext(bool continueNavigation, {bool reevaluateNext = true}) {
+  @Deprecated(
+    'Call next() or reject(reevaluateNext: false), or overrideNext(reevaluateNext: false) to continue without '
+    'pushing the pending routes again',
+  )
+  // The deprecated signature, kept so existing guards compile until it is removed.
+  // ignore: avoid_positional_boolean_parameters
+  void resolveNext(bool continueNavigation, {bool reevaluateNext = true}) =>
+      _resolve(continueNavigation: continueNavigation, reevaluateNext: reevaluateNext);
+
+  void _resolve({required bool continueNavigation, required bool reevaluateNext}) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
     _complete(ResolverResult(continueNavigation: continueNavigation, reevaluateNext: reevaluateNext, route: route));
   }
@@ -228,7 +269,7 @@ class NavigationResolver {
 
   /// Temporary redirect to another route until the [_completer] is resolved
   ///
-  /// Calling resolver.next() or resolver.resolveNext()
+  /// Calling resolver.next() or resolver.reject()
   /// will remove the redirected route and mark it for replace
   /// in browser history
   ///
@@ -266,7 +307,7 @@ class NavigationResolver {
           library: 'auto_route',
         ),
       );
-      next(false);
+      reject();
       return;
     }
     _isRedirecting = true;
@@ -293,16 +334,25 @@ class NavigationResolver {
       },
     );
     if (!_completer.isCompleted) {
-      next(false);
+      reject();
     }
   }
 
   /// Helpful for when you want to revert to the previous
   /// url back can not navigate
-  void nextOrBack([bool continueNavigation = true]) {
-    next(continueNavigation);
-    if (!continueNavigation) {
-      _router.back();
+  ///
+  /// Without an argument it is the same as [next]; `reject(goBack: true)`
+  /// replaces the deprecated `nextOrBack(false)`.
+  void nextOrBack([
+    // The old way to reject, kept so existing guards compile until it is removed.
+    // ignore: avoid_positional_boolean_parameters
+    @Deprecated('Call nextOrBack() to continue or reject(goBack: true) to stop and go back')
+    bool continueNavigation = true,
+  ]) {
+    if (continueNavigation) {
+      next();
+    } else {
+      reject(goBack: true);
     }
   }
 
@@ -310,7 +360,7 @@ class NavigationResolver {
   /// see [Completer.isCompleted]
   bool get isResolved => _completer.isCompleted;
 
-  /// The future that will be completed by [resolveNext]
+  /// The future that will be completed by [next], [reject] or [overrideNext]
   Future<ResolverResult> get future => _completer.future;
 
   Completer<void>? _waitingCompleter;
