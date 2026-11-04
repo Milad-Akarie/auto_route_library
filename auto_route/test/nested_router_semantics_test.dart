@@ -52,4 +52,43 @@ void main() {
     }
     semantics.dispose();
   });
+
+  // https://github.com/flutter/flutter/issues/78692: in MaterialApp.router,
+  // two labeled Semantics in a Stack merged into one node when the delegate
+  // built them without a Navigator around them.
+  // Steps: a page of a Stack holding Semantics(label: 'c1') and
+  // Semantics(label: 'c2'), shown through auto_route's delegate.
+  // Should: c1 and c2 stay separate nodes. auto_route's pages give their
+  // content a node of its own (scopesRoute, explicitChildNodes).
+  testWidgets('Labeled widgets on a page stay separate semantics nodes', (tester) async {
+    final semantics = tester.ensureSemantics();
+    const box = SizedBox.square(dimension: 100, child: ColoredBox(color: Colors.blue));
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          page: PageInfo(
+            'HomeRoute',
+            builder: (_) => Stack(
+              children: [
+                Positioned(
+                  right: 0,
+                  child: Semantics(label: 'c1', child: box),
+                ),
+                Positioned(
+                  right: 100,
+                  child: Semantics(label: 'c2', child: box),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+    await pumpRouterApp(tester, router);
+
+    expect(find.bySemanticsLabel('c1'), findsOneWidget);
+    expect(find.bySemanticsLabel('c2'), findsOneWidget);
+    semantics.dispose();
+  });
 }
