@@ -1,8 +1,9 @@
 # Proves every fix in this fork on each platform, on every push and pull
-# request: the headless tests on the Dart VM and in Chrome, the code
-# generator's tests, then the example app's integration tests
-# (auto_route/example/integration_test) on an Android emulator, an iOS
-# simulator, web through `flutter drive`, and macOS desktop.
+# request: that the committed routers regenerate unchanged, the headless
+# tests on the Dart VM and in Chrome, the code generator's tests, then the
+# example app's integration tests (auto_route/example/integration_test) on an
+# Android emulator, an iOS simulator, web through `flutter drive`, and macOS
+# desktop.
 # Every job stops after 15 minutes, so Android and iOS each run the suite
 # in two halves, one job each. The macOS jobs run on arm64 runners; Intel
 # macOS isn't supported.
@@ -40,6 +41,9 @@ jobs:
       - name: Analyze the example app and its integration tests
         working-directory: auto_route/example
         run: flutter analyze
+      - name: Committed routers regenerate unchanged
+        if: success() || failure()
+        run: .github/scripts/check_generated_routers.sh
       - name: Headless tests on the VM
         working-directory: auto_route
         # bash adds pipefail, so the step fails with the tests despite tee.

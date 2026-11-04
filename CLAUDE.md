@@ -60,7 +60,7 @@ Also: never push (the maintainer merges into `dev` and pushes), run `dart format
    pkill -f "chromedriver --port=4444"
    ```
 
-4. The local runs in step 3 must pass before merge. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, the headless tests on the VM and in Chrome, the generator's tests, and the integration tests on Android, iOS, web and macOS. A CI failure on `dev` or `master` is fixed as its own issue.
+4. The local runs in step 3 must pass before merge. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, a check that every committed router regenerates unchanged from `auto_route/`, `auto_route/example/` and the root, the headless tests on the VM and in Chrome, the generator's tests, and the integration tests on Android, iOS, web and macOS. A CI failure on `dev` or `master` is fixed as its own issue.
 
 If a test fails on one platform because of a real bug, skip it on that platform only, with a comment naming the issue and the platform, and give that bug its own chat (rule 4).
 
