@@ -60,7 +60,12 @@ class _DeferredWidgetState extends State<DeferredWidget> {
       // ignore: avoid-unnecessary-setstate
       _onLibraryLoaded();
     } else {
-      unawaited(DeferredWidget._preload(widget.libraryLoader).then((dynamic _) => _onLibraryLoaded()));
+      unawaited(
+        DeferredWidget._preload(widget.libraryLoader).then((dynamic _) {
+          // The page can leave the tree before its library loads.
+          if (mounted) _onLibraryLoaded();
+        }),
+      );
     }
   }
 
