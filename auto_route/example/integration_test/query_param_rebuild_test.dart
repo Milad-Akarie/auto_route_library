@@ -46,7 +46,7 @@ void main() {
         ),
       ],
     );
-    final config = router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link);
+    final config = router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link);
     late StateSetter setParentState;
     await tester.pumpWidget(
       StatefulBuilder(

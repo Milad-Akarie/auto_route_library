@@ -27,7 +27,7 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
       restorationScopeId: 'app',
       // The app opens at '/': on web the browser's url would otherwise carry
       // over from the previous test.
-      routerConfig: router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link),
+      routerConfig: router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link),
     );
   }
 }

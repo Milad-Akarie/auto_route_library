@@ -63,7 +63,7 @@ void main() {
             builders: {for (final platform in TargetPlatform.values) platform: builder},
           ),
         ),
-        routerConfig: router.config(deepLinkBuilder: (_) => const DeepLink.path('/')),
+        routerConfig: router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
       ),
     );
     await tester.pumpAndSettle();

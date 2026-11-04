@@ -43,7 +43,7 @@ void main() {
       tester,
       router.config(
         includePrefixMatches: true,
-        deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link,
+        deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
       ),
     );
     unawaited(router.navigate(const Tab2Route()));
