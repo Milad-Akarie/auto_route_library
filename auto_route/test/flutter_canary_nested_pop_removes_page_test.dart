@@ -3,9 +3,8 @@ import 'package:material_ui/material_ui.dart';
 
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/178570,
 // behind https://github.com/Milad-Akarie/auto_route_library/issues/2289 and
-// https://github.com/Milad-Akarie/auto_route_library/issues/2290 and the
-// pop flicker workaround in AutoRoutePage.onPopInvoked
-// (lib/src/router/auto_route_page.dart).
+// https://github.com/Milad-Akarie/auto_route_library/issues/2290, and the
+// reason auto_route needs no pop flicker workaround.
 // Setup, as in the Flutter report, without auto_route: a Navigator built
 // from a pages list that its parent keeps, removing a page in
 // onDidRemovePage.
@@ -14,11 +13,14 @@ import 'package:material_ui/material_ui.dart';
 // On Flutter 3.38 to 3.41, Navigator called onDidRemovePage only when the
 // popped route was disposed, after its animation. A parent rebuild in
 // between handed the Navigator the popped page again, and it was pushed
-// back: the flicker. auto_route works around it by removing the page from
-// its stack as soon as the pop is invoked. Flutter fixed it in 3.44.0
-// (flutter/flutter#182315): onDidRemovePage now runs during the pop itself.
-// This test pins that fix. If it fails after a Flutter upgrade, the bug is
-// back: keep the workaround in AutoRoutePage.onPopInvoked, or restore it.
+// back: the flicker. auto_route worked around it by removing the page from
+// its stack as soon as the pop was invoked, in AutoRoutePage.onPopInvoked
+// (lib/src/router/auto_route_page.dart). Flutter fixed it in 3.44.0
+// (flutter/flutter#182315): onDidRemovePage now runs during the pop itself,
+// so the workaround is gone and AutoRouteNavigator's onDidRemovePage removes
+// the page. This test pins that fix. If it fails after a Flutter upgrade, the
+// bug is back: restore the workaround, calling `router.onPopPage(this)` from
+// onPopInvoked when the router is a StackRouter.
 void main() {
   testWidgets('popping a page calls onDidRemovePage before the pop animation ends, so a parent '
       'rebuild does not push the page again', (tester) async {
