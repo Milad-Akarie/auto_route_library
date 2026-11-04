@@ -1630,11 +1630,18 @@ class BooksListPage extends State<BookListPage> with AutoRouteAwareStateMixin<Bo
 
 ## Customizations
 
-##### MaterialAutoRouter | CupertinoAutoRouter | AdaptiveAutoRouter
+##### AutoRouterConfig
 
-| Property                    | Default value         | Definition                                                                        |
-| --------------------------- | --------------------- | --------------------------------------------------------------------------------- |
-| replaceInRouteName [String] | Page&#124Screen,Route | Used to replace conventional words in generated route name (pattern, replacement) |
+| Property                    | Default value          | Definition                                                                                                                |
+| --------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| replaceInRouteName [String] | Page&#124;Screen,Route | Used to replace conventional words in generated route name (pattern, replacement), ignored if a route name is provided |
+
+```dart
+@AutoRouterConfig(replaceInRouteName: 'Page|Screen,Route')
+class AppRouter extends RootStackRouter {
+  ...
+}
+```
 
 ## Custom Route Transitions
 
