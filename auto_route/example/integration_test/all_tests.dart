@@ -32,6 +32,7 @@ import 'keep_history_test.dart' as keep_history;
 import 'late_router_deep_link_test.dart' as late_router_deep_link;
 import 'leading_button_drawer_test.dart' as leading_button_drawer;
 import 'leading_button_pop_test.dart' as leading_button_pop;
+import 'list_query_param_test.dart' as list_query_param;
 import 'login_state_test.dart' as login_state;
 import 'moved_router_keeps_pages_test.dart' as moved_router_keeps_pages;
 import 'navigate_absolute_path_test.dart' as navigate_absolute_path;
@@ -158,6 +159,7 @@ void main() {
   group('late router deep link', late_router_deep_link.main);
   group('leading button drawer', leading_button_drawer.main);
   group('leading button pop', leading_button_pop.main);
+  group('list query param', list_query_param.main);
   group('login state', login_state.main);
   group('moved router keeps pages', moved_router_keeps_pages.main);
   group('navigate absolute path', navigate_absolute_path.main);

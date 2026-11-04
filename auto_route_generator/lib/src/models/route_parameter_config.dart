@@ -86,6 +86,14 @@ class ParamConfig {
     }
   }
 
+  /// The type of the items when this is a `List` of a type the url gives as
+  /// text and the generated code converts, such as `int`, otherwise `null`.
+  ResolvedType? get listItemType {
+    if (type.name != 'List' || type.typeArguments.length != 1) return null;
+    final item = type.typeArguments.single;
+    return item.isEnum || const {'int', 'double', 'num', 'bool'}.contains(item.name) ? item : null;
+  }
+
   /// Return the getter function name
   /// based on the type of the parameter
   String get getterMethodName {

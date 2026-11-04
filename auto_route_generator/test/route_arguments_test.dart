@@ -223,4 +223,88 @@ class Range {
       expect(result.source, matches(RegExp(r'this\.range = const _i\d+\.Range\(1\)')));
     });
   });
+
+  // #2061: a query parameter of type List<int> was read with
+  // `queryParams.optList('ids')`, which returns List<String>?, so the
+  // generated router didn't compile: "The argument type 'List<String>?'
+  // can't be assigned to the parameter type 'List<int>?'". The build gave no
+  // error. Lists of int, double, num, bool and an enum are read and written
+  // as items of the right type; enums by name.
+  group('a list query parameter (#2061)', () {
+    test('of int, double, num, bool or an enum compiles', () async {
+      final result = await generateRouter({
+        'lib/types.dart': 'enum Sort { asc, desc }',
+        'lib/list_page.dart': _page(
+          'ListPage',
+          imports: "import 'types.dart';",
+          parameters: '''
+@QueryParam() this.ids,
+    @QueryParam() this.prices,
+    @QueryParam() this.sizes,
+    @QueryParam() this.flags,
+    @QueryParam() this.sorts,
+    @QueryParam() this.tags,
+    @QueryParam() this.picked = const [1, 2],
+    @QueryParam() this.orders = const []''',
+          fields: '''
+  final List<int>? ids;
+  final List<double>? prices;
+  final List<num>? sizes;
+  final List<bool>? flags;
+  final List<Sort>? sorts;
+  final List<String>? tags;
+  final List<int> picked;
+  final List<Sort> orders;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      final source = result.source!
+          .replaceAll(RegExp(r'_i\d+\.'), '')
+          .replaceAll(RegExp(r'\s+'), '')
+          .replaceAll(RegExp(r',(?=[)}\]])'), '');
+      expect(source, contains("ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()"));
+      expect(
+          source, contains("prices:queryParams.optList('prices')?.map(double.tryParse).whereType<double>().toList()"));
+      expect(source, contains("sizes:queryParams.optList('sizes')?.map(num.tryParse).whereType<num>().toList()"));
+      expect(source, contains("flags:queryParams.optList('flags')?.map((text)=>text.toLowerCase()=='true'"));
+      expect(source, contains("tags:queryParams.optList('tags')"));
+      expect(source,
+          contains("picked:queryParams.optList('picked')?.map(int.tryParse).whereType<int>().toList()??const[1,2]"));
+      expect(
+        source,
+        contains(
+          "sorts:queryParams.optList('sorts')?.map((name)=>Sort.values.asNameMap()[name]).whereType<Sort>().toList()",
+        ),
+      );
+      expect(source, contains("'sorts':sorts?.map((item)=>item.name).toList()"));
+      expect(source, contains("'orders':orders.map((item)=>item.name).toList()"));
+    });
+
+    test('of another type is a build error', () async {
+      final result = await generateRouter({
+        'lib/list_page.dart': _page(
+          'ListPage',
+          imports: "import 'dart:ui';",
+          parameters: '@QueryParam() this.colors',
+          fields: '  final List<Color>? colors;',
+        ),
+      });
+      expect(result.errors, hasLength(1));
+      expect(result.errors.single, contains('a List query param can hold String, int, double, num, bool or enum'));
+      expect(result.errors.single, contains('not Color'));
+    });
+
+    test('of ints as a path param is a build error', () async {
+      final result = await generateRouter({
+        'lib/list_page.dart': _page(
+          'ListPage',
+          parameters: '@PathParam() required this.ids',
+          fields: '  final List<int> ids;',
+        ),
+      });
+      expect(result.errors, hasLength(1));
+      expect(result.errors.single, contains('a List path param can hold String items, not int'));
+    });
+  });
 }

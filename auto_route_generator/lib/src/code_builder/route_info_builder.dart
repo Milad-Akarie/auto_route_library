@@ -395,6 +395,23 @@ Expression _getUrlPartAssignment(ParamConfig p) {
         .call([]).index(refer('queryParams').property('optString').call([literalString(p.paramName)]));
     if (p.defaultValueCode == null) return value;
     return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
+  } else if (p.isQueryParam && p.listItemType != null) {
+    // `optList` reads the items as text, so each is converted to its type:
+    // a number or bool by parsing it, an enum by its name, as the single enum
+    // above. An item that doesn't convert is left out.
+    final item = p.listItemType!;
+    final itemType = refer(item.name, item.import);
+    final value = refer('queryParams')
+        .property('optList')
+        .call([literalString(p.paramName)])
+        .nullSafeProperty('map')
+        .call([_listItemParser(item, itemType)])
+        .property('whereType')
+        .call([], {}, [itemType])
+        .property('toList')
+        .call([]);
+    if (p.defaultValueCode == null) return value;
+    return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
   } else if (p.isQueryParam) {
     return refer('queryParams').property(p.getterMethodName).call([
       literalString(p.paramName),
@@ -405,10 +422,38 @@ Expression _getUrlPartAssignment(ParamConfig p) {
   }
 }
 
+/// The function that converts the text of one list item to [item].
+Expression _listItemParser(ResolvedType item, Expression itemType) {
+  if (item.isEnum) {
+    return Method((b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'name'))
+      ..lambda = true
+      ..body = itemType.property('values').property('asNameMap').call([]).index(refer('name')).code).closure;
+  }
+  return switch (item.name) {
+    'bool' => CodeExpression(Code(
+        "(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null",
+      )),
+    _ => itemType.property('tryParse'),
+  };
+}
+
 /// The value a url parameter puts in the url: an enum by its name, any other
 /// value as it is.
 Expression _getUrlPartValue(ParamConfig p) {
   final value = refer(p.name);
+  if (p.listItemType?.isEnum == true) {
+    final item = p.listItemType!;
+    final name = Method((b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'item'))
+          ..lambda = true
+          ..body = (item.isNullable ? refer('item').nullSafeProperty('name') : refer('item').property('name')).code)
+        .closure;
+    return (p.type.isNullable ? value.nullSafeProperty('map') : value.property('map'))
+        .call([name])
+        .property('toList')
+        .call([]);
+  }
   if (!p.type.isEnum) return value;
   return p.type.isNullable ? value.nullSafeProperty('name') : value.property('name');
 }

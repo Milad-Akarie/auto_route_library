@@ -66,6 +66,22 @@ class RouteParameterResolver {
       element: parameterElement,
     );
 
+    final isUrlParam = pathParamAnnotation != null || queryParamAnnotation != null;
+    if (isUrlParam && type.name == 'List' && type.typeArguments.length == 1) {
+      final item = type.typeArguments.single;
+      final isText = const {'String', 'Object', 'dynamic'}.contains(item.name);
+      // Only a query param converts its items.
+      final isConverted =
+          queryParamAnnotation != null && (const {'int', 'double', 'num', 'bool'}.contains(item.name) || item.isEnum);
+      final kind = queryParamAnnotation != null ? 'query' : 'path';
+      throwIf(
+        !isText && !isConverted,
+        '${parameterElement.displayName}: a List $kind param can hold '
+        '${queryParamAnnotation != null ? 'String, int, double, num, bool or enum' : 'String'} items, not ${item.name}',
+        element: parameterElement,
+      );
+    }
+
     if (isUrlFragment) {
       throwIf(
         type.name != 'String',

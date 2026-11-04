@@ -143,6 +143,7 @@ class TypeResolver {
       isNullable: type.nullabilitySuffix == NullabilitySuffix.question,
       typeArguments: _resolveTypeArguments(type),
       nameInRecord: nameInRecord,
+      isEnum: type.element is EnumElement,
     );
   }
 
