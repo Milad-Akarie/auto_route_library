@@ -817,7 +817,8 @@ class TabsRouter extends RoutingController {
   /// and the change always notifies once it happens.
   void setActiveIndex(int index, {bool notify = true}) {
     assert(index >= 0 && index < _pages.length);
-    _changeTab(index, notify: notify);
+    // A change waits on the tab's guards when it has any; nothing here waits for it.
+    if (_changeTab(index, notify: notify) case final Future<void> change) unawaited(change);
   }
 
   // The latest change of the active tab, and the tab of one whose guards are
@@ -1214,7 +1215,7 @@ class TabsRouter extends RoutingController {
     final mayUpdateController = _innerControllerOfMatch(route.id);
     if (mayUpdateController != null) {
       final newRoutes = route.children ?? const [];
-      mayUpdateController._navigateAll(newRoutes, onFailure: onFailure, isReevaluating: isReevaluating);
+      unawaited(mayUpdateController._navigateAll(newRoutes, onFailure: onFailure, isReevaluating: isReevaluating));
     }
   }
 
@@ -1935,7 +1936,7 @@ abstract class StackRouter extends RoutingController {
   Future<void> _pushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure, bool notify = true}) async {
     final matches = _matchAllOrReportFailure(routes, onFailure);
     if (matches != null) {
-      _pushAllGuarded(matches, onFailure: onFailure, notify: notify);
+      unawaited(_pushAllGuarded(matches, onFailure: onFailure, notify: notify));
     }
     return SynchronousFuture(null);
   }
@@ -1972,7 +1973,7 @@ abstract class StackRouter extends RoutingController {
           if (match is ReevaluatableRouteMatch) {
             _addReevaluatedPage(match, notify: false);
           } else {
-            _addNewPage<T>(match, notify: false);
+            unawaited(_addNewPage<T>(match, notify: false));
           }
         } else {
           _updateSharedPathData(
@@ -2389,7 +2390,7 @@ class NestedStackRouter extends StackRouter {
       return false;
     }
     for (final route in initialRoutes) {
-      _addNewPage(route, notify: false);
+      unawaited(_addNewPage(route, notify: false));
     }
     _updateSharedPathData(
       queryParams: initialRoutes.last.queryParams.rawMap,
@@ -2410,13 +2411,13 @@ class NestedStackRouter extends StackRouter {
       if (managedByWidget) {
         pendingRoutesHandler._setPendingRoutes(initialRoutes.map((e) => e.toPageRouteInfo()).toList());
       } else {
-        _pushAllGuarded(initialRoutes, returnLastRouteCompleter: false);
+        unawaited(_pushAllGuarded(initialRoutes, returnLastRouteCompleter: false));
       }
       _routeData.pendingChildren.clear();
     } else {
       final possibleInitialRoutes = matcher.match('');
       if (possibleInitialRoutes != null) {
-        _pushAllGuarded(possibleInitialRoutes, returnLastRouteCompleter: false);
+        unawaited(_pushAllGuarded(possibleInitialRoutes, returnLastRouteCompleter: false));
       }
     }
   }

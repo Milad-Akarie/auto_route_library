@@ -192,7 +192,7 @@ class AutoTabViewState extends State<AutoTabView> {
     } // This widget is driving the controller's animation.
     if (_controller.index != _currentIndex) {
       _currentIndex = _controller.index;
-      _warpToCurrentIndex();
+      unawaited(_warpToCurrentIndex());
     }
   }
 
@@ -301,7 +301,9 @@ class AutoTabViewState extends State<AutoTabView> {
           _controller.offset = 0;
           scheduleMicrotask(() {
             if (mounted) {
-              _animateToPage(_router.activeIndex, duration: _controller.animationDuration, curve: Curves.ease);
+              unawaited(
+                _animateToPage(_router.activeIndex, duration: _controller.animationDuration, curve: Curves.ease),
+              );
             }
           });
           _scrollUnderwayCount -= 1;

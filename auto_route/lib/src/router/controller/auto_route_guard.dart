@@ -43,7 +43,7 @@ class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
-      router.push(redirectTo);
+      unawaited(router.push(redirectTo));
     }
     resolver.next(redirectTo == null);
   }
@@ -57,7 +57,7 @@ class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
-      router.pushPath(redirectTo);
+      unawaited(router.pushPath(redirectTo));
     }
     resolver.next(redirectTo == null);
   }
@@ -82,7 +82,7 @@ class _StreamReevaluateListenable extends ReevaluateListenable {
 
   @override
   void dispose() {
-    _streamSub.cancel();
+    unawaited(_streamSub.cancel());
     super.dispose();
   }
 }

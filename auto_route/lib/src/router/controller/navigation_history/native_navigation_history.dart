@@ -115,9 +115,11 @@ class NavigationHistoryImpl extends NavigationHistory {
       final backCount = ++_backCount;
       _backTargetUrl = last.url;
       removePagesAbove(last.pageId);
-      router.navigateAll([last.route]).whenComplete(() {
-        if (backCount == _backCount) _stopNavigatingBack();
-      });
+      unawaited(
+        router.navigateAll([last.route]).whenComplete(() {
+          if (backCount == _backCount) _stopNavigatingBack();
+        }),
+      );
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/router/widgets/eager_page_view.dart';
 import 'package:flutter/foundation.dart';
@@ -100,7 +102,7 @@ class AutoPageViewState extends State<AutoPageView> {
     }
     _disposeInactiveChildren();
     if (_router.activeIndex != _controller.page!.round()) {
-      _warpToCurrentIndex();
+      unawaited(_warpToCurrentIndex());
     }
   }
 

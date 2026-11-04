@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/src/router/parser/route_information_parser.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -64,8 +66,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
     if (!replace && routeInformation is AutoRouteInformation) {
       replace = routeInformation.replace;
     }
-    SystemNavigator.selectMultiEntryHistory();
-    SystemNavigator.routeInformationUpdated(uri: reportedUri, state: state, replace: replace);
+    unawaited(SystemNavigator.selectMultiEntryHistory());
+    unawaited(SystemNavigator.routeInformationUpdated(uri: reportedUri, state: state, replace: replace));
     _value = appRouteInformation;
     _valueInEngine = appRouteInformation;
   }
