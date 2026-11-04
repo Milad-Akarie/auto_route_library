@@ -89,6 +89,35 @@ void main() {
     expect(find.text('to'), findsOneWidget);
   });
 
+  // https://github.com/flutter/flutter/issues/192043
+  // go_router 18.0.0: Heroes stopped flying between two pages that both live
+  // in a ShellRoute, though they flew in 17.5.0. Here the shell is a page with
+  // its own HeroControllerScope and a nested router, holding both pages.
+  // Steps: push the second page inside the shell.
+  // Should: the Hero flies, as it does between two pages of the root router.
+  testWidgets('A Hero flies between two pages of a shell route (flutter/flutter#192043)', (tester) async {
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          page: _HeroShellRoute.page,
+          path: '/',
+          children: [
+            AutoRoute(page: _FromRoute.page, path: '', initial: true),
+            AutoRoute(page: _ToRoute.page, path: 'to'),
+          ],
+        ),
+      ],
+    );
+    await pumpRouterConfigApp(tester, router.config());
+    expect(find.text('from'), findsOneWidget);
+
+    unawaited(router.innerRouterOf<StackRouter>(_HeroShellRoute.name)!.push(const _ToRoute()));
+    await _pumpUntilFlight(tester);
+    _expectHeroInFlight(tester);
+    await tester.pumpAndSettle();
+    expect(find.text('to'), findsOneWidget);
+  });
+
   // The flight a plain page gets, so the checks above mean something.
   testWidgets('A Hero flies between two pages of the same router', (tester) async {
     final router = RootStackRouter.build(
