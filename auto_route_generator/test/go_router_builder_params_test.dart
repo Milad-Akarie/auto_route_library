@@ -70,4 +70,28 @@ enum Fruit {
       expect(source, contains("fruit:Fruit.values.asNameMap()[queryParams.optString('fruit')]"));
     });
   });
+
+  // flutter/flutter#114406: go_router_builder passed a nullable value to a
+  // parameter with a default. auto_route hands the default to the getter, so
+  // a missing value gives the default.
+  group('a query parameter with a default value (flutter/flutter#114406)', () {
+    test('reads the default when the url has no value', () async {
+      final result = await generateRouter({
+        'lib/home_page.dart': _page(
+          'HomePage',
+          parameters: '@QueryParam() this.first, @QueryParam() this.second = "default", @QueryParam() this.count = 3',
+          fields: '''
+  final String? first;
+  final String second;
+  final int count;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      final source = _flat(result);
+      expect(source, contains("first:queryParams.optString('first')"));
+      expect(source, contains('second:queryParams.getString(\'second\',"default")'));
+      expect(source, contains("count:queryParams.getInt('count',3)"));
+    });
+  });
 }
