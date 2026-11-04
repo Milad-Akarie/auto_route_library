@@ -11,8 +11,6 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   LeakTesting.settings = LeakTesting.settings.withIgnored(
     notDisposed: {
       // Leaks in auto_route, each removed by the commit that fixes it.
-      // A StackRouter never disposes its ActiveGuardObserver.
-      'ActiveGuardObserver': null,
       // Disposing a RootStackRouter leaves its delegate, url provider and
       // navigation history undisposed.
       'AutoRouterDelegate': null,
@@ -20,7 +18,7 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
       'NavigationHistoryImpl': null,
 
       // Objects the tests create and never dispose: the root routers, with
-      // the observer each one creates, and the notifiers that drive guard
+      // the observers each one creates, and the notifiers that drive guard
       // reevaluation.
       '_RootStackRouterImpl': null,
       'BackGestureRouter': null,
@@ -34,6 +32,7 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
       'WrapperRouter': null,
       '_AppRouter': null,
       '_PopScopeHostRouter': null,
+      'ActiveGuardObserver': null,
       'PagelessRoutesObserver': null,
       'GuardChangeNotifier': null,
       'ValueNotifier<int>': null,

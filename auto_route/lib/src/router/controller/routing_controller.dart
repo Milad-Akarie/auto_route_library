@@ -1331,6 +1331,7 @@ abstract class StackRouter extends RoutingController {
     _disposed = true;
     super.dispose();
     pagelessRoutesObserver.dispose();
+    activeGuardObserver.dispose();
   }
 
   // Whether [dispose] was called; a navigation that resumes after awaiting a
@@ -1407,8 +1408,6 @@ abstract class StackRouter extends RoutingController {
   final pagelessRoutesObserver = PagelessRoutesObserver();
 
   /// The active guards observer of this controller
-  // Never disposed with the router. Left for the leak hunt to prove or clear.
-  // ignore: dispose-class-fields
   final activeGuardObserver = ActiveGuardObserver();
 
   /// Navigator key passed to [Navigator.key]
@@ -2471,14 +2470,25 @@ class ActiveGuardObserver extends ValueNotifier<List<GuardEntry>> {
   /// Default controller
   ActiveGuardObserver() : super([]);
 
+  // A guard can finish after its router, and this observer, are disposed.
+  bool _disposed = false;
+
   /// Adds `guard` to the list of active guards
   void _add(GuardEntry entry) {
+    if (_disposed) return;
     value = [...value, entry];
   }
 
   /// Removes `guard` from the list of active guards
   void _remove(GuardEntry entry) {
+    if (_disposed) return;
     value = [...value..remove(entry)];
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 
   /// Whether there's a guard  pending completion
