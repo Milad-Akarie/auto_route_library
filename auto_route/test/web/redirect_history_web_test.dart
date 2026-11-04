@@ -59,4 +59,128 @@ void main() {
     expect(browserPath, '/');
     expect(router.stack.map((e) => e.routeData.name), ['HomeRoute']);
   });
+
+  // flutter/flutter#135359: after a guard's redirect to the login page, the
+  // browser's back button did nothing: each press came back to the login page.
+  // Logged in, push Screen3, whose guard redirects to SignInRoute when logged
+  // out, with reevaluateListenable set to the login state. Log out: the guard
+  // redirects to SignInRoute. Press the browser's back button: HomeRoute shows,
+  // and each later press steps back through the history, never staying on the
+  // entry it was on.
+  testWidgets('The browser back button after a logout redirect steps back', (tester) async {
+    final loggedIn = ValueNotifier(true);
+    addTearDown(loggedIn.dispose);
+    final router = RootStackRouter.build(
+      routes: [
+        NamedRouteDef(
+          name: 'HomeRoute',
+          path: '/',
+          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+        ),
+        NamedRouteDef(
+          name: 'Screen3Route',
+          path: '/screen3',
+          guards: [
+            AutoRouteGuard.simple((resolver, _) {
+              if (loggedIn.value) {
+                resolver.next();
+              } else {
+                unawaited(resolver.redirectUntil(const NamedRoute('SignInRoute')));
+              }
+            }),
+          ],
+          builder: (_, _) => const Scaffold(body: Text('Screen3Route')),
+        ),
+        NamedRouteDef(
+          name: 'SignInRoute',
+          path: '/signin',
+          builder: (_, _) => const Scaffold(body: Text('SignInRoute')),
+        ),
+      ],
+    );
+    await pumpRouterConfigApp(tester, router.config(reevaluateListenable: loggedIn));
+    await settleBrowser(tester);
+    final start = browserSerialCount;
+    unawaited(router.push(const NamedRoute('Screen3Route')));
+    await settleBrowser(tester);
+    expect(browserPath, '/screen3');
+
+    loggedIn.value = false;
+    await settleBrowser(tester);
+    expect(router.topRoute.name, 'SignInRoute');
+    expect(browserSerialCount, start + 2);
+
+    // The first press closes the sign-in page and with it Screen3, which the
+    // logged-out user can't see, as the app's own back button does.
+    await pressBrowserBack(tester);
+    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute']);
+    expect(browserPath, '/');
+    expect(browserSerialCount, start + 1);
+
+    for (var i = 0; i < 3 && browserSerialCount > start; i++) {
+      final before = browserSerialCount;
+      await pressBrowserBack(tester);
+      expect(browserSerialCount, lessThan(before));
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  // The same with the sign-in page closed by the app's own back button, then
+  // the browser's back button pressed.
+  testWidgets('The browser back button after closing a logout redirect in the app steps back', (tester) async {
+    final loggedIn = ValueNotifier(true);
+    addTearDown(loggedIn.dispose);
+    final router = RootStackRouter.build(
+      routes: [
+        NamedRouteDef(
+          name: 'HomeRoute',
+          path: '/',
+          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
+        ),
+        NamedRouteDef(
+          name: 'Screen3Route',
+          path: '/screen3',
+          guards: [
+            AutoRouteGuard.simple((resolver, _) {
+              if (loggedIn.value) {
+                resolver.next();
+              } else {
+                unawaited(resolver.redirectUntil(const NamedRoute('SignInRoute')));
+              }
+            }),
+          ],
+          builder: (_, _) => const Scaffold(body: Text('Screen3Route')),
+        ),
+        NamedRouteDef(
+          name: 'SignInRoute',
+          path: '/signin',
+          builder: (_, _) => const Scaffold(body: Text('SignInRoute')),
+        ),
+      ],
+    );
+    await pumpRouterConfigApp(tester, router.config(reevaluateListenable: loggedIn));
+    await settleBrowser(tester);
+    final start = browserSerialCount;
+    unawaited(router.push(const NamedRoute('Screen3Route')));
+    await settleBrowser(tester);
+    expect(browserPath, '/screen3');
+
+    loggedIn.value = false;
+    await settleBrowser(tester);
+    expect(router.topRoute.name, 'SignInRoute');
+    expect(browserSerialCount, start + 2);
+
+    await router.maybePop();
+    await settleBrowser(tester);
+    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute']);
+    expect(browserPath, '/');
+    expect(browserSerialCount, start + 1);
+
+    for (var i = 0; i < 3 && browserSerialCount > start; i++) {
+      final before = browserSerialCount;
+      await pressBrowserBack(tester);
+      expect(browserSerialCount, lessThan(before));
+    }
+    expect(tester.takeException(), isNull);
+  });
 }

@@ -2096,8 +2096,10 @@ abstract class StackRouter extends RoutingController {
           break;
         }
       } else {
-        if (match is ReevaluatableRouteMatch) {
-          _pages.remove(match.currentPage);
+        // A page its guard now closes leaves its history entry to the page
+        // below, as a pop does; a new entry would lead back to the guard.
+        if (match is ReevaluatableRouteMatch && _pages.remove(match.currentPage)) {
+          markUrlStateForReplace();
         }
         break;
       }

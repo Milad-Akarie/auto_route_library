@@ -219,6 +219,10 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       unawaited(stack._pushAllGuarded([page]));
     } else if (configuration.hasSegments) {
       final entryRoutes = controller.navigationHistory.routesOfBrowserEntry(configuration);
+      if (entryRoutes != null && entryRoutes.isEmpty) {
+        notifyListeners();
+        return SynchronousFuture(null);
+      }
       final platLink = PlatformDeepLink._(
         entryRoutes == null ? configuration : configuration.copyWith(segments: entryRoutes),
         false,

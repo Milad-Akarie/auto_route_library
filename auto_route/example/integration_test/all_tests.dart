@@ -43,6 +43,7 @@ import 'leading_button_drawer_test.dart' as leading_button_drawer;
 import 'leading_button_pop_test.dart' as leading_button_pop;
 import 'list_query_param_test.dart' as list_query_param;
 import 'login_state_test.dart' as login_state;
+import 'logout_redirect_back_test.dart' as logout_redirect_back;
 import 'moved_router_keeps_pages_test.dart' as moved_router_keeps_pages;
 import 'navigate_absolute_path_test.dart' as navigate_absolute_path;
 import 'navigate_after_dialog_test.dart' as navigate_after_dialog;
@@ -196,6 +197,7 @@ void main() {
   group('leading button pop', leading_button_pop.main);
   group('list query param', list_query_param.main);
   group('login state', login_state.main);
+  group('logout redirect back', logout_redirect_back.main);
   group('moved router keeps pages', moved_router_keeps_pages.main);
   group('navigate absolute path', navigate_absolute_path.main);
   group('navigate after dialog', navigate_after_dialog.main);

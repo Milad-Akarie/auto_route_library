@@ -123,7 +123,10 @@ class NavigationHistoryImpl extends NavigationHistory {
     // The entry's page may still be under the current one with the same route
     // name, as when the same route was pushed twice, with the same params or
     // others; navigating to it alone would update the current page in place.
-    if (pageId != null) removePagesAbove(pageId);
+    if (pageId != null) {
+      removePagesAbove(pageId);
+      if (router.topMatch.id == pageId) return const [];
+    }
     return [UrlState.toHierarchy(entry.segments)];
   }
 

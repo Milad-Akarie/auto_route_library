@@ -74,7 +74,9 @@ abstract class NavigationHistory with ChangeNotifier {
   /// Returns a single route holding its children, as [UrlState.toHierarchy]
   /// builds it, or null when the current entry wasn't written by this history
   /// or now holds a different url, such as one typed into the address bar.
-  /// Always null on native platforms.
+  /// Returns an empty list when the entry's page is still open and is now
+  /// the top page: there is nothing to navigate to, and navigating to it
+  /// again would run its guards again. Always null on native platforms.
   @internal
   List<RouteMatch<dynamic>>? routesOfBrowserEntry(UrlState configuration) => null;
 
