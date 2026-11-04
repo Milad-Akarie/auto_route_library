@@ -140,10 +140,22 @@ class PageRouteInfo<T extends Object?> {
 
   /// Returns a new instance with the provided
   /// overrides
+  ///
+  /// Every field not overridden is kept, [fragment], [stringMatch],
+  /// [redirectedFrom] and [argsEquality] included. [path] and [match] are
+  /// ignored: a [PageRouteInfo] holds neither, and they stay only so existing
+  /// calls keep compiling.
+  // The parameter names are public API (`children` for `initialChildren`,
+  // `params` for `rawPathParams`); renaming them is the maintainer's call.
+  // ignore: avoid-incomplete-copy-with
   PageRouteInfo copyWith({
     String? name,
+    // Kept so existing calls keep compiling.
+    // ignore: avoid-unused-parameters
     String? path,
     T? args,
+    // Kept so existing calls keep compiling.
+    // ignore: avoid-unused-parameters
     RouteMatch<dynamic>? match,
     Map<String, dynamic>? params,
     Map<String, dynamic>? queryParams,
@@ -165,6 +177,10 @@ class PageRouteInfo<T extends Object?> {
       rawPathParams: params ?? rawPathParams,
       rawQueryParams: queryParams ?? rawQueryParams,
       initialChildren: children ?? initialChildren,
+      fragment: fragment ?? this.fragment,
+      stringMatch: stringMatch,
+      redirectedFrom: redirectedFrom,
+      argsEquality: argsEquality,
     );
   }
 

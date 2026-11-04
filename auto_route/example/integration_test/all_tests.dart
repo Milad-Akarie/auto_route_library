@@ -47,6 +47,7 @@ import 'nested_pop_scope_first_page_test.dart' as nested_pop_scope_first_page;
 import 'nested_pop_scope_step_test.dart' as nested_pop_scope_step;
 import 'nested_result_test.dart' as nested_result;
 import 'nested_route_aware_test.dart' as nested_route_aware;
+import 'nested_route_fragment_test.dart' as nested_route_fragment;
 import 'nested_shell_back_test.dart' as nested_shell_back;
 import 'nested_tab_bar_reevaluation_test.dart' as nested_tab_bar_reevaluation;
 import 'non_ascii_url_test.dart' as non_ascii_url;
@@ -176,6 +177,7 @@ void main() {
   group('nested pop scope step', nested_pop_scope_step.main);
   group('nested result', nested_result.main);
   group('nested route aware', nested_route_aware.main);
+  group('nested route fragment', nested_route_fragment.main);
   group('nested shell back', nested_shell_back.main);
   group('nested tab bar reevaluation', nested_tab_bar_reevaluation.main);
   group('non-ASCII url', non_ascii_url.main);
