@@ -1092,6 +1092,11 @@ Now, receiving this deep-link `/products/123` will add all above routes to the s
   included as prefix matches.
 - In the above example, if `/products/:id` comes before `/products`, `/products` will not be
   included.
+- The pages under the top one are built too, once each, while hidden. Flutter builds a covered
+  page whose route keeps its state (`maintainState`, true by default), so back shows it ready.
+  If a page is costly to build, such as one that loads data, give its route
+  `AutoRoute(maintainState: false)`: it then builds only when back shows it, but it also loses
+  its state, and builds anew, whenever another page has covered it.
 
 ## Declarative Navigation
 
