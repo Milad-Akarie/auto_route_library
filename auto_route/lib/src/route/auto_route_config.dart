@@ -426,7 +426,7 @@ class CustomRoute extends AutoRoute {
     Duration? duration,
     Duration? reverseDuration,
     bool opaque = true,
-    bool barrierDismissible = true,
+    bool barrierDismissible = false,
     String? barrierLabel,
     super.restorationId,
     Color? barrierColor,

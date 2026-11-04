@@ -39,6 +39,9 @@
 - **BEHAVIOR CHANGE**: urls split only at '/' on every platform, so on Windows a backslash in a
   route path no longer separates segments, and `RouteData.match` joins segments with '/', not '\'.
 - **FIX**: on web, a url whose first segment ends in ':' (like `/c:/files`) keeps its leading '/'.
+- **FIX**: a `CustomRoute` or `RouteType.custom` with `barrierDismissible: true` pops on a tap on its
+  barrier; the flag had no effect. `CustomRoute`'s `barrierDismissible` now defaults to false, as
+  `RouteType.custom` and `PageRouteBuilder` do, so a route that doesn't set it behaves as before.
 - **BREAKING CHANGE**: `auto_route` requires Flutter 3.47 (its pubspec now says so; it imported
   `material_ui` and `cupertino_ui`, which already needed it, and on older Flutter pub's error named
   those packages instead of this one). Upgrade Flutter, or stay on the release you use.

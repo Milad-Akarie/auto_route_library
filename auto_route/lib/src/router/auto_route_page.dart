@@ -298,6 +298,9 @@ class _CustomPageBasedPageRouteBuilder<T> extends _PageRoute<T>
   final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
 
   @override
+  bool get barrierDismissible => routeType.barrierDismissible;
+
+  @override
   Color? get barrierColor => routeType.barrierColor;
 
   @override

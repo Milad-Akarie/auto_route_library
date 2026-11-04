@@ -14,6 +14,7 @@ import 'bool_query_param_test.dart' as bool_query_param;
 import 'camel_case_path_test.dart' as camel_case_path;
 import 'current_hierarchy_test.dart' as current_hierarchy;
 import 'current_url_test.dart' as current_url;
+import 'custom_route_barrier_dismissible_test.dart' as custom_route_barrier_dismissible;
 import 'custom_route_current_result_test.dart' as custom_route_current_result;
 import 'custom_route_query_params_test.dart' as custom_route_query_params;
 import 'custom_route_transition_test.dart' as custom_route_transition;
@@ -170,6 +171,7 @@ void main() {
   group('camel case path', camel_case_path.main);
   group('current hierarchy', current_hierarchy.main);
   group('current url', current_url.main);
+  group('custom route barrier dismissible', custom_route_barrier_dismissible.main);
   group('custom route current result', custom_route_current_result.main);
   group('custom route query params', custom_route_query_params.main);
   group('custom route transition', custom_route_transition.main);
