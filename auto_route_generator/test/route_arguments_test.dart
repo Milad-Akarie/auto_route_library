@@ -334,4 +334,23 @@ class Range {
       expect(result.errors.single, contains('valid types: [String, int, double, num, bool, dynamic]'));
     });
   });
+  // #1305: a page that takes a model from another library, as in "pass User
+  // from screen A to screen B", made the generated router fail with
+  // "Type 'User' not found" because the router file lacked the model's import.
+  group('an argument typed by a model in another library (#1305)', () {
+    test('gets its import in the generated router', () async {
+      final result = await generateRouter({
+        'lib/models/user.dart': 'class User {\n  User({this.name, this.age});\n  String? name;\n  String? age;\n}',
+        'lib/screens/b_screen.dart': _page(
+          'BScreen',
+          imports: "import '../models/user.dart';",
+          parameters: 'required this.user, this.friends = const []',
+          fields: '  final User user;\n  final List<User> friends;',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, contains('User user'));
+    });
+  });
 }
