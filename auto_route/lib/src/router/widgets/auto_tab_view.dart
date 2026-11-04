@@ -133,9 +133,7 @@ class AutoTabViewState extends State<AutoTabView> {
   void _onRouterUpdated() {
     _disposeInactiveChildren();
     if (mounted) {
-      setState(() {
-        _updateChildren();
-      });
+      setState(_updateChildren);
     }
   }
 
@@ -170,7 +168,7 @@ class AutoTabViewState extends State<AutoTabView> {
         child: ExcludeFocus(
           excluding: !isActive,
           child: KeepAliveTab(
-            key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, () => GlobalKey()),
+            key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, GlobalKey.new),
             initiallyLoaded: isActive,
             page: stack[index],
           ),
@@ -211,9 +209,7 @@ class AutoTabViewState extends State<AutoTabView> {
     }
 
     if (mounted) {
-      setState(() {
-        _updateChildren();
-      });
+      setState(_updateChildren);
     }
   }
 

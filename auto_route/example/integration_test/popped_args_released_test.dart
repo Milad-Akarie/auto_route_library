@@ -80,7 +80,7 @@ Future<void> _collectGarbage() async {
   final barrier = reachabilityBarrier;
   final garbage = <List<DateTime>>[];
   while (reachabilityBarrier < barrier + 2) {
-    garbage.add(List.generate(30000, (n) => DateTime(n)));
+    garbage.add(List.generate(30000, DateTime.new));
     if (garbage.length > 100) garbage.removeAt(0);
     await Future<void>.delayed(Duration.zero);
   }

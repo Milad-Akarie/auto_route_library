@@ -45,7 +45,7 @@ void main() {
       }
 
       await expectHomeInPlaceHalfway(() => router.push(const PageRouteInfo('Menu')));
-      await expectHomeInPlaceHalfway(() => router.maybePop());
+      await expectHomeInPlaceHalfway(router.maybePop);
     });
   }
 }

@@ -74,7 +74,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
       final jsonRes = jsonDecode(await buildStep.readAsString(asset));
       final generatedRes = RoutesList.fromJson(jsonRes);
       generatedResults.add(generatedRes);
-      if (generateForDir.any((dir) => asset.path.startsWith(dir))) {
+      if (generateForDir.any(asset.path.startsWith)) {
         routes.addAll(generatedRes.routes);
       }
     }

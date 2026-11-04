@@ -112,9 +112,7 @@ class AutoPageViewState extends State<AutoPageView> {
     final draggedIn = _draggedInTabs.remove(_matchIdAt(index));
     final didPreload = _tabKeyAt(index)?.currentState?.preload() == true;
     if (didPreload && mounted) {
-      setState(() {
-        _updateChildren();
-      });
+      setState(_updateChildren);
     }
     return didPreload || draggedIn;
   }
@@ -152,7 +150,7 @@ class AutoPageViewState extends State<AutoPageView> {
         child: ExcludeFocus(
           excluding: !isActive,
           child: KeepAliveTab(
-            key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, () => GlobalKey()),
+            key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, GlobalKey.new),
             initiallyLoaded: isActive,
             page: stack[index],
           ),
@@ -226,9 +224,7 @@ class AutoPageViewState extends State<AutoPageView> {
       await _warpToNonAdjacentTab(previousIndex);
     }
     if (mounted) {
-      setState(() {
-        _updateChildren();
-      });
+      setState(_updateChildren);
     }
   }
 
