@@ -51,14 +51,17 @@ class _DeferredWidgetState extends State<DeferredWidget> {
 
   @override
   void initState() {
+    super.initState();
+
     /// If module was already loaded immediately create widget instead of
     /// waiting for future or zone turn.
     if (DeferredWidget._loadedModules.contains(widget.libraryLoader)) {
+      // The same method runs later from the load future, where setState is needed.
+      // ignore: avoid-unnecessary-setstate
       _onLibraryLoaded();
     } else {
       unawaited(DeferredWidget._preload(widget.libraryLoader).then((dynamic _) => _onLibraryLoaded()));
     }
-    super.initState();
   }
 
   void _onLibraryLoaded() {

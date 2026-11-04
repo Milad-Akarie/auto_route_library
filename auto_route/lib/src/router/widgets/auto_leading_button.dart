@@ -136,8 +136,8 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
 
   @override
   void dispose() {
-    super.dispose();
     _pagelessRoutesObserver.removeListener(_handleRebuild);
+    super.dispose();
   }
 
   @override

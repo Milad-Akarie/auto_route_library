@@ -20,7 +20,7 @@ class RouteData<R> {
   }) : _match = route,
        _ownQueryParams = route.queryParams,
        _ownFragment = route.fragment,
-       _pendingChildren = List<RouteMatch<dynamic>>.from(pendingChildren);
+       _pendingChildren = List<RouteMatch<dynamic>>.of(pendingChildren);
   RouteMatch<dynamic> _match;
   RouteData<dynamic>? _parent;
   final Completer<R?>? _popCompleter;
@@ -64,6 +64,8 @@ class RouteData<R> {
 
   String get _baseRestorationId => _match.restorationId == null ? _match.name : _match.restorationId!(_match);
 
+  // Assigned in routing_controller.dart, a part of this library.
+  // ignore: avoid-unassigned-fields
   String? _restorationId;
 
   /// Whether is route is in the visible url-segments
@@ -93,7 +95,7 @@ class RouteData<R> {
     if (router.ignorePopCompleters || _popCompleter == null) {
       return SynchronousFuture(null);
     }
-    return _popCompleter!.future;
+    return _popCompleter.future;
   }
 
   /// Validates and returns [args] casted as [T]
@@ -133,10 +135,6 @@ class RouteData<R> {
     }
   }
 
-  void _updateParentData(RouteData<dynamic> value) {
-    _parent = value;
-  }
-
   /// Reruns the raw [RouteMatch]
   RouteMatch<dynamic> get route => _match;
 
@@ -157,6 +155,8 @@ class RouteData<R> {
   /// Helper to access [RouteMatch.args]
   ///
   /// this method is unsafe prefer using [argsAs]
+  // Public API: changing it is the maintainer's call.
+  // ignore: avoid-unnecessary-nullable-return-type
   Object? get args => _match.args;
 
   /// Helper to access [RouteMatch.stringMatch]
@@ -211,6 +211,7 @@ class RouteData<R> {
     return _match.buildPage<T>(this);
   }
 
+  // Set while a guard reevaluates this route; kept for debugging.
   // ignore: unused_field
   bool _isReevaluating = false;
 
@@ -222,7 +223,7 @@ class RouteData<R> {
     _pendingChildren = List<RouteMatch<dynamic>>.from(newMatch.children ?? []);
   }
 
-  void _onEndReevaluating(RouteMatch<dynamic> newMatch) {
+  void _onEndReevaluating() {
     _isReevaluating = false;
   }
 
@@ -242,14 +243,16 @@ class RouteData<R> {
       // if pop completers are ignored then we don't complete the pop completer
       return;
     }
-    if (_popCompleter != null && !_popCompleter!.isCompleted) {
-      _popCompleter?.complete(result);
+    if (_popCompleter != null && !_popCompleter.isCompleted) {
+      _popCompleter.complete(result);
     }
   }
 
   Animation<dynamic>? _animation;
 
   /// The main animation that is used by the Route
+  // Public API: changing it is the maintainer's call.
+  // ignore: use_setters_to_change_properties
   void setAnimation(Animation<dynamic>? animation) {
     _animation = animation;
   }
@@ -263,7 +266,7 @@ class RouteData<R> {
       if (animation.isAnimating) {
         // if the current route is animating, we wait for it to complete
         final completer = Completer<void>();
-        void listener(AnimationStatus status) {
+        void listener(AnimationStatus _) {
           if (!animation.isAnimating) {
             completer.complete();
             animation.removeStatusListener(listener);

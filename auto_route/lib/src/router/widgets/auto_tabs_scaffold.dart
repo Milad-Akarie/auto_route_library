@@ -199,6 +199,8 @@ class AutoTabsScaffold extends StatelessWidget {
               ? null
               : AnimatedBuilder(
                   animation: tabsRouter,
+                  // Hands the builder the scaffold's context, as it always has.
+                  // ignore: use-closest-build-context
                   builder: (_, _) => bottomNavigationBuilder!(context, tabsRouter),
                 ),
         );

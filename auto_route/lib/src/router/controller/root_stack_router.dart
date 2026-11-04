@@ -79,6 +79,7 @@ abstract class RootStackRouter extends StackRouter {
   /// The default animation
   RouteType get defaultRouteType => const .material();
 
+  // Set by the router widgets of this library.
   // ignore: prefer_final_fields
   bool _managedByWidget = false;
   late final NavigationHistory _navigationHistory;
@@ -131,6 +132,8 @@ abstract class RootStackRouter extends StackRouter {
   }) => .new(
     matcher,
     includePrefixMatches: includePrefixMatches,
+    // A DeepLinkTransformer returns a Future, and a SynchronousFuture would change timing.
+    // ignore: avoid-unnecessary-futures
     deepLinkTransformer: deepLinkTransformer ?? (uri) async => uri,
   );
 

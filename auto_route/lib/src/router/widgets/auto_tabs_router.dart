@@ -24,6 +24,8 @@ typedef AutoTabsPageViewBuilder = Widget Function(BuildContext context, Widget c
 /// Signature for a wrapper builder used by [_AutoTabsRouterTabBar]
 typedef AutoTabsTabBarBuilder = Widget Function(BuildContext context, Widget child, TabController tabController);
 
+// Public API: changing it is the maintainer's call.
+// ignore: inference_failure_on_function_return_type
 /// Signature for a callback function used by [_AutoTabsRouterBuilder]
 typedef OnNavigationChanged = Function(TabsRouter tabsRouter);
 
@@ -294,6 +296,9 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
     _controller!.setupRoutes(widget.routes);
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
+    // A listener that can never be removed. Left for the leak hunt, which proves
+    // and fixes it.
+    // ignore: avoid-unremovable-callbacks-in-listeners
     _controller!.addListener(() {
       if (_controller!.activeIndex != _index) {
         setState(() {
@@ -312,9 +317,8 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
     if (!const ListEquality<dynamic>().equals(widget.routes, oldWidget.routes)) {
       _controller!.replaceAll(widget.routes, _index);
       _tabsHash = const ListEquality<dynamic>().hash(widget.routes);
-      setState(() {
-        _index = _controller!.activeIndex;
-      });
+      // didUpdateWidget is always followed by build, so no setState.
+      _index = _controller!.activeIndex;
     }
   }
 
@@ -326,6 +330,8 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
     final stateHash = controller!.stateHash;
 
     final builderChild = stack.isEmpty
+        // A Container with no child fills its space; a ColoredBox would shrink to nothing.
+        // ignore: banned-usage
         ? Container(color: Theme.of(context).scaffoldBackgroundColor)
         : _IndexedStackBuilder(
             key: _indexedStackKey,
@@ -620,6 +626,8 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
   }) : duration = duration ?? (animatePageTransition ? null : .zero),
        super._();
   final AutoTabsTabBarBuilder? builder;
+  // Mirrors the deprecated public parameter, which it still serves.
+  // ignore: deprecated_consistency
   final bool animatePageTransition;
   final Duration? duration;
   final Curve curve;
@@ -643,6 +651,9 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     _controller!.setupRoutes(widget.routes);
     _updateTabController();
     _didInitTabRoute(_controller!.activeIndex);
+    // A listener that can never be removed. Left for the leak hunt, which proves
+    // and fixes it.
+    // ignore: avoid-unremovable-callbacks-in-listeners
     _controller!.addListener(() {
       // Also brings the tab bar back from a tab whose guards kept it out.
       if (_tabController.index != _controller!.activeIndex) {
@@ -667,6 +678,9 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
       length: _controller!.pageCount,
       vsync: this,
     );
+    // A listener that can never be removed. Left for the leak hunt, which proves
+    // and fixes it.
+    // ignore: avoid-unremovable-callbacks-in-listeners
     _tabController.addListener(() {
       _controller!.setActiveIndex(_tabController.index);
     });
@@ -778,6 +792,9 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
     _controller!.setupRoutes(widget.routes);
     widget.onRouterReady?.call(_controller!);
     _didInitTabRoute(_controller!.activeIndex);
+    // A listener that can never be removed. Left for the leak hunt, which proves
+    // and fixes it.
+    // ignore: avoid-unremovable-callbacks-in-listeners
     _controller!.addListener(() {
       if (_controller!.activeIndex != _controller!.previousIndex) {
         _didChangeTabRoute(_controller!.activeIndex, _controller!.previousIndex ?? 0);

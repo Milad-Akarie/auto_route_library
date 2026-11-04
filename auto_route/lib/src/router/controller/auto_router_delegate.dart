@@ -358,8 +358,8 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
 
   @override
   void dispose() {
-    super.dispose();
     router.removeListener(_handleRebuild);
+    super.dispose();
   }
 
   void _handleRebuild() {
@@ -433,6 +433,8 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
     _scheduleTabsReport();
     return NotificationListener<NavigationNotification>(
       onNotification: _handleNavigationNotification,
+      // A widget class would add an element and move the state below it.
+      // ignore: avoid-returning-widgets
       child: _buildRouterScope(),
     );
   }

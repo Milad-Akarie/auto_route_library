@@ -171,6 +171,8 @@ class RouteMatch<T> {
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden values
+  // Its parameter names are public API; renaming them is the maintainer's call.
+  // ignore: avoid-incomplete-copy-with
   RouteMatch<dynamic> copyWith({
     String? stringMatch,
     Parameters? pathParams,
@@ -280,6 +282,9 @@ class RouteMatch<T> {
 /// to hold [currentPage] instance which will be used in-case there's no need
 /// to create a new one
 @immutable
+// Inherits RouteMatch's ==, so it equals a match of the same route, params
+// and args whichever page it re-evaluates; changing that is a behavior change.
+// ignore: prefer-overriding-parent-equality
 class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   /// Creates a new instance of [ReevaluatableRouteMatch]
   ReevaluatableRouteMatch({required this.currentPage, required this.originalMatch})
@@ -306,6 +311,8 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   final RouteMatch<dynamic> originalMatch;
 
   @override
+  // Its parameter names are public API; renaming them is the maintainer's call.
+  // ignore: avoid-incomplete-copy-with
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
     Parameters? pathParams,
@@ -363,7 +370,10 @@ class HierarchySegment {
   final List<HierarchySegment> children;
 
   /// The path parameters of the route
-  final Parameters? pathParams, queryParams;
+  final Parameters? pathParams;
+
+  /// The overridden query params
+  final Parameters? queryParams;
 
   /// Returns a pretty json output of this hierarchy
   Map<String, dynamic> toJson() {

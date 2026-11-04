@@ -84,7 +84,8 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
     }
 
     widget.route.handleStartBackGesture(progress: 1 - backEvent.progress);
-    startBackEvent = currentBackEvent = backEvent;
+    startBackEvent = backEvent;
+    currentBackEvent = backEvent;
     return true;
   }
 
@@ -101,14 +102,16 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
     phase = .cancel;
 
     widget.route.handleCancelBackGesture();
-    startBackEvent = currentBackEvent = null;
+    startBackEvent = null;
+    currentBackEvent = null;
   }
 
   @override
   void handleCommitBackGesture() {
     phase = .commit;
     widget.route.handleCommitBackGesture();
-    startBackEvent = currentBackEvent = null;
+    startBackEvent = null;
+    currentBackEvent = null;
   }
 
   // End WidgetsBindingObserver.
@@ -266,9 +269,8 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
         // The y position before commit is given by the vertical drag, not by an
         // animation.
         begin: switch (widget.currentBackEvent?.swipeEdge) {
-          .left => Offset(xShift, _getYShiftPosition(screenSize.height)),
           .right => Offset(-xShift, _getYShiftPosition(screenSize.height)),
-          null => Offset(xShift, _getYShiftPosition(screenSize.height)),
+          .left || null => Offset(xShift, _getYShiftPosition(screenSize.height)),
         },
         end: Offset.zero,
       ),
@@ -285,11 +287,6 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
   // TODO(justinmc): Should have a delegatedTransition to animate the incoming
   // route regardless of its page transition.
   // https://github.com/flutter/flutter/issues/153577
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void didUpdateWidget(_PredictiveBackSharedElementPageTransition oldWidget) {

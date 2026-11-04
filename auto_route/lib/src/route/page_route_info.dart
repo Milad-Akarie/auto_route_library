@@ -150,12 +150,8 @@ class PageRouteInfo<T extends Object?> {
   // ignore: avoid-incomplete-copy-with
   PageRouteInfo copyWith({
     String? name,
-    // Kept so existing calls keep compiling.
-    // ignore: avoid-unused-parameters
     String? path,
     T? args,
-    // Kept so existing calls keep compiling.
-    // ignore: avoid-unused-parameters
     RouteMatch<dynamic>? match,
     Map<String, dynamic>? params,
     Map<String, dynamic>? queryParams,

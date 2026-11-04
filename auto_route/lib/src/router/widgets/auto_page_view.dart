@@ -59,6 +59,8 @@ class AutoPageView extends StatefulWidget {
 /// State implementation of [AutoPageView]
 class AutoPageViewState extends State<AutoPageView> {
   PageController get _controller => widget.controller;
+  // The router belongs to the parent widget, not to this state.
+  // ignore: dispose-fields
   late final TabsRouter _router = widget.router;
   late List<Widget> _children;
   int _warpUnderwayCount = 0;
@@ -231,6 +233,8 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   // Called when the PageView scrolls
+  // Returns false so the notification keeps bubbling up.
+  // ignore: function-always-returns-same-value
   bool _handleScrollNotification(ScrollNotification notification) {
     if (_warpUnderwayCount > 0 || _scrollUnderwayCount > 0) {
       return false;

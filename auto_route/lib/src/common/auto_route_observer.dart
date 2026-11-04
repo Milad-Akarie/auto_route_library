@@ -19,9 +19,13 @@ extension RouteX<T> on Route<T> {
 /// Tab-int and tab-change events observation
 class AutoRouterObserver extends NavigatorObserver {
   /// called when a tab route activates
+  // A hook for subclasses: the default does nothing with what it is told.
+  // ignore: avoid-unused-parameters
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {}
 
   /// called when tab route reactivates
+  // A hook for subclasses: the default does nothing with what it is told.
+  // ignore: avoid-unused-parameters
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {}
 }
 
@@ -43,9 +47,13 @@ mixin class AutoRouteAware {
   void didPushNext() {}
 
   /// called when a tab route activates
+  // A hook for implementers: the default does nothing with what it is told.
+  // ignore: avoid-unused-parameters
   void didInitTabRoute(TabPageRoute? previousRoute) {}
 
   /// called when tab route reactivates
+  // A hook for implementers: the default does nothing with what it is told.
+  // ignore: avoid-unused-parameters
   void didChangeTabRoute(TabPageRoute previousRoute) {}
 }
 
@@ -70,8 +78,8 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T> implements 
 
   @override
   void dispose() {
-    super.dispose();
     _observer?.unsubscribe(this);
+    super.dispose();
   }
 
   @override

@@ -22,6 +22,7 @@ part 'auto_router_delegate.dart';
 part 'root_stack_router.dart';
 part 'routes_restoration.dart';
 
+// The controllers still serve the deprecated members they declare.
 // ignore_for_file: deprecated_member_use_from_same_package
 /// Signature of a predicate to select [RouteData]
 typedef RouteDataPredicate = bool Function(RouteData<dynamic> route);
@@ -89,7 +90,7 @@ abstract class RoutingController with ChangeNotifier {
     _childControllers.remove(childController);
   }
 
-  RoutingController? _topInnerControllerOf(Key? key) {
+  RoutingController? _topInnerControllerOf(Key key) {
     return _childControllers.lastWhereOrNull((c) => c.key == key);
   }
 
@@ -430,7 +431,7 @@ abstract class RoutingController with ChangeNotifier {
     return _RouterScopeResult(router, matches);
   }
 
-  RoutingController _findScope<T extends RoutingController>(PageRouteInfo route) {
+  RoutingController _findScope(PageRouteInfo route) {
     return _topMostRouter(ignorePagelessRoutes: true)
         ._buildRoutersHierarchy()
         .firstWhere((r) => r._canHandleNavigation(route), orElse: () => this);
@@ -545,7 +546,7 @@ abstract class RoutingController with ChangeNotifier {
   ///
   /// returns null if [_parent]
   T? parent<T extends RoutingController>() {
-    return _parent == null ? null : _parent as T;
+    return _parent as T?;
   }
 
   /// See [NavigationHistory.canNavigateBack]
@@ -787,7 +788,7 @@ class TabsRouter extends RoutingController {
   void updateRouteData(RouteData<dynamic> data) {
     _routeData = data;
     for (final page in _pages) {
-      page.routeData._updateParentData(data);
+      page.routeData._parent = data;
     }
   }
 
@@ -1074,11 +1075,16 @@ class TabsRouter extends RoutingController {
 
   void _pushAll(List<RouteMatch<dynamic>> routes, {required bool fromDefault}) {
     for (final route in routes) {
-      final data = _createRouteData(route, routeData);
+      final data = _createRouteData<dynamic>(route, routeData);
       try {
         _pages.add(data.buildPage());
+        // A page that needs args it can't get is reported with the reason;
+        // that is the error to catch.
+        // ignore: avoid_catching_errors
       } on MissingRequiredParameterError catch (e) {
         if (fromDefault) {
+          // The new error carries the original message.
+          // ignore: avoid-throw-in-catch-block
           throw FlutterError(
             'Can not automatically navigate to ${route.name} because it has required parameters. '
             'Routes must be added manually to AutoTabsRouter'
@@ -1201,9 +1207,9 @@ class TabsRouter extends RoutingController {
 
     if (mayUpdateRoute is ReevaluatableRouteMatch) {
       _pages[index] = mayUpdateRoute.currentPage;
-      mayUpdateRoute.currentPage.routeData._onEndReevaluating(routeToBeUpdated);
+      mayUpdateRoute.currentPage.routeData._onEndReevaluating();
     } else {
-      final data = _createRouteData(routeToBeUpdated, routeData);
+      final data = _createRouteData<dynamic>(routeToBeUpdated, routeData);
       _pages[index] = data.buildPage();
     }
     return routeToBeUpdated;
@@ -1401,16 +1407,12 @@ abstract class StackRouter extends RoutingController {
   final pagelessRoutesObserver = PagelessRoutesObserver();
 
   /// The active guards observer of this controller
+  // Never disposed with the router. Left for the leak hunt to prove or clear.
+  // ignore: dispose-class-fields
   final activeGuardObserver = ActiveGuardObserver();
 
   /// Navigator key passed to [Navigator.key]
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
-
-  @override
-  RouteCollection get routeCollection;
-
-  @override
-  RouteMatcher get matcher;
 
   @override
   bool canPop({bool ignoreChildRoutes = false, bool ignoreParentRoutes = false, bool ignorePagelessRoutes = false}) {
@@ -1635,7 +1637,10 @@ abstract class StackRouter extends RoutingController {
     List<RouteMatch<dynamic>> matches, {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
+    // Optional: only a guard reevaluation passes them.
+    // ignore: avoid-unnecessary-nullable-parameters
     Completer<void>? pushed,
+    // ignore: avoid-unnecessary-nullable-parameters
     ValueChanged<RouteMatch<dynamic>>? onLastRouteAdded,
   }) async {
     final anchor = matches.first;
@@ -1723,7 +1728,7 @@ abstract class StackRouter extends RoutingController {
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
     bool replace = false,
-    required Function(StackRouter scope, RouteMatch<dynamic> match) onMatch,
+    required void Function(StackRouter scope, RouteMatch<dynamic> match) onMatch,
   }) {
     final scope = _findStackScope(route);
     if (replace) {
@@ -1749,7 +1754,7 @@ abstract class StackRouter extends RoutingController {
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
-  Future<void> popAndPushAll(List<PageRouteInfo> routes, {onFailure}) {
+  Future<void> popAndPushAll(List<PageRouteInfo> routes, {dynamic onFailure}) {
     assert(routes.isNotEmpty, 'routes must not be empty.');
     final scope = _findStackScope(routes.first);
     scope.pop();
@@ -1911,9 +1916,11 @@ abstract class StackRouter extends RoutingController {
 
   /// Replaces the list of [_pages] with given [routes] result
   /// used by declarative routing widgets
+  // Public API: changing it is the maintainer's call. Removing async would also make an error throw
+  // at the caller instead of reaching the zone.
+  // ignore: avoid_void_async, avoid-unnecessary-futures
   void updateDeclarativeRoutes(List<PageRouteInfo> routes) async {
     _pages.clear();
-    final routesToPush = <RouteMatch<dynamic>>[];
     for (final route in routes) {
       final match = _matchOrReportFailure(route);
       if (match == null) {
@@ -1922,8 +1929,7 @@ abstract class StackRouter extends RoutingController {
       if (match.guards.isNotEmpty) {
         throw FlutterError('Declarative routes can not have guards');
       }
-      routesToPush.add(match);
-      final data = _createRouteData(match, routeData);
+      final data = _createRouteData<dynamic>(match, routeData);
       _pages.add(data.buildPage());
     }
 
@@ -1933,6 +1939,8 @@ abstract class StackRouter extends RoutingController {
     );
   }
 
+  // async, so a match failure reaches the returned future, not the caller's stack.
+  // ignore: avoid-unnecessary-futures
   Future<void> _pushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure, bool notify = true}) async {
     final matches = _matchAllOrReportFailure(routes, onFailure);
     if (matches != null) {
@@ -2009,7 +2017,7 @@ abstract class StackRouter extends RoutingController {
   void _addReevaluatedPage(ReevaluatableRouteMatch<dynamic, dynamic> match, {bool notify = true}) {
     var page = match.currentPage;
     final data = page.routeData;
-    data._onEndReevaluating(match.originalMatch);
+    data._onEndReevaluating();
     // args a guard set are shown by a page built with them, which keeps the route and its state
     if (match.args != data.args) {
       data._updateRoute(match.originalMatch);
@@ -2027,7 +2035,7 @@ abstract class StackRouter extends RoutingController {
     }
   }
 
-  Future<T?>? _addNewPage<T extends Object?>(RouteMatch<dynamic> route, {bool notify = true, int? index}) {
+  Future<T?> _addNewPage<T extends Object?>(RouteMatch<dynamic> route, {bool notify = true, int? index}) {
     final topRoute = _pages.lastOrNull?.routeData;
     if (topRoute != null && !topRoute._match.keepHistory) {
       markUrlStateForReplace();
@@ -2364,7 +2372,7 @@ class NestedStackRouter extends StackRouter {
   void updateRouteData(RouteData<dynamic> data) {
     _routeData = data;
     for (final page in _pages) {
-      page.routeData._updateParentData(data);
+      page.routeData._parent = data;
     }
   }
 
@@ -2405,11 +2413,14 @@ class NestedStackRouter extends StackRouter {
 
   @internal
   /// pushes the initial routes to the stack
+  // Public API: changing it is the maintainer's call. Removing async would also make an error throw
+  // at the caller instead of reaching the zone.
+  // ignore: avoid_void_async, avoid-unnecessary-futures
   void setupInitialRoutes() async {
     if (_routeData.hasPendingChildren) {
       final initialRoutes = List<RouteMatch<dynamic>>.unmodifiable(_routeData.pendingChildren);
       if (managedByWidget) {
-        pendingRoutesHandler._setPendingRoutes(initialRoutes.map((e) => e.toPageRouteInfo()).toList());
+        pendingRoutesHandler._initialPendingRoutes = initialRoutes.map((e) => e.toPageRouteInfo()).toList();
       } else {
         unawaited(_pushAllGuarded(initialRoutes, returnLastRouteCompleter: false));
       }
@@ -2440,10 +2451,6 @@ class PendingRoutesHandler {
 
   /// Whether [_initialPendingRoutes] is not empty
   bool get hasPendingRoutes => _initialPendingRoutes?.isNotEmpty == true;
-
-  void _setPendingRoutes(List<PageRouteInfo>? routes) {
-    _initialPendingRoutes = routes;
-  }
 
   /// Reads [_initialPendingRoutes] without deleting it's value
   List<PageRouteInfo<dynamic>>? get peek => _initialPendingRoutes;

@@ -40,7 +40,7 @@ class Parameters {
 
   /// returns the value corresponding with [key] as is, without type checking
   /// if null returns [defaultValue]
-  dynamic get(String key, [defaultValue]) {
+  dynamic get(String key, [dynamic defaultValue]) {
     return _params[key] ?? defaultValue;
   }
 

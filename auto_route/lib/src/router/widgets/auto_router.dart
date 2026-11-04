@@ -195,13 +195,13 @@ class AutoRouterState extends State<AutoRouter> {
 
   @override
   void dispose() {
-    super.dispose();
     if (_controller != null) {
       _controller!.removeListener(_rebuildListener);
       _controller!.dispose();
       _parentController.removeChildController(_controller!);
       _controller = null;
     }
+    super.dispose();
   }
 
   @override
@@ -241,6 +241,8 @@ class _DeclarativeAutoRouter extends StatefulWidget {
 
 class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   StackRouter? _controller;
+  // A leak: never disposed. Left for the leak hunt, which proves and fixes it.
+  // ignore: dispose-fields
   late HeroController _heroController;
 
   StackRouter? get controller => _controller;
@@ -281,12 +283,12 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
 
   @override
   void dispose() {
-    super.dispose();
     if (_controller != null) {
       _controller!.dispose();
       _parentController.removeChildController(_controller!);
       _controller = null;
     }
+    super.dispose();
   }
 
   @override

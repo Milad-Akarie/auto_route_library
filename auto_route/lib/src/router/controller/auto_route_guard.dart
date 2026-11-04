@@ -241,6 +241,8 @@ class NavigationResolver {
   ///      resolver.redirectUntil(LoginRoute());
   ///    }
   ///  }
+  // Public API: changing it is the maintainer's call.
+  // ignore: avoid_void_async
   void redirectUntil(PageRouteInfo route, {OnNavigationFailure? onFailure, bool replace = false}) async {
     if (_isRedirecting) return null;
     // This route was opened by the redirect of a guard still waiting; sending it to itself again never ends.

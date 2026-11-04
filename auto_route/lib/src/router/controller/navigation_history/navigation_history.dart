@@ -4,6 +4,8 @@ import 'package:auto_route/src/router/controller/routing_controller.dart' show S
 /// A stub implementation of [NavigationHistory]
 class NavigationHistoryImpl extends NavigationHistory {
   /// Default constructor
+  // A stub for conditional imports: its constructor matches the real ones.
+  // ignore: avoid_unused_constructor_parameters
   NavigationHistoryImpl(StackRouter router);
 
   @override
@@ -26,6 +28,8 @@ class NavigationHistoryImpl extends NavigationHistory {
   StackRouter get router => throw Exception('Stub implementation');
 
   @override
+  // Overrides a nullable getter.
+  // ignore: avoid-unnecessary-nullable-return-type
   Object? get pathState => throw Exception('Stub implementation');
 
   @override

@@ -15,6 +15,8 @@ final _shownPages = Expando<bool>();
 class AutoRoutePage<T> extends Page<T> {
   /// Default constructor
   AutoRoutePage({required this.routeData, required Widget child})
+    // A false positive: a widget can implement AutoRouteWrapper.
+    // ignore: avoid-unrelated-type-assertions, avoid-unrelated-type-casts
     : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
       super(
         restorationId: routeData.restorationId,
@@ -92,7 +94,7 @@ class AutoRoutePage<T> extends Page<T> {
           ..onPopInvoked(result);
         final router = routeData.router;
         // a workaround to fix pop flicker issue
-        // Todo: remove this workaround after flutter issue is fixed
+        // TODO(maintainer): remove this workaround after the Flutter issue is fixed.
         // https://github.com/flutter/flutter/issues/178570
         if (router is StackRouter) {
           router.onPopPage(this);
@@ -103,6 +105,8 @@ class AutoRoutePage<T> extends Page<T> {
 
   /// Builds a the widget that's scoped
   /// with [routeData]
+  // Public API: changing it is the maintainer's call.
+  // ignore: avoid-unused-parameters
   Widget buildPage(BuildContext context) {
     return RouteDataScope(routeData: routeData, child: _child);
   }
@@ -168,6 +172,8 @@ class _CurrentPageChild extends StatefulWidget {
 }
 
 class _CurrentPageChildState extends State<_CurrentPageChild> {
+  // The router belongs to the route data, not to this state.
+  // ignore: dispose-fields
   late final RoutingController _router = widget.page.routeData.router;
 
   @override

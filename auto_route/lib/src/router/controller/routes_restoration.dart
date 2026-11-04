@@ -105,7 +105,9 @@ List<RouteMatch<dynamic>> _buildableMatches(List<RouteMatch<dynamic>> matches, R
         stackKey: UniqueKey(),
         pendingChildren: const [],
         type: match.type ?? router.root.defaultRouteType,
-      ).buildPage();
+      ).buildPage<dynamic>();
+      // A page that needs args it can't get is skipped; that is the error to catch.
+      // ignore: avoid_catching_errors
     } on MissingRequiredParameterError {
       continue;
     }

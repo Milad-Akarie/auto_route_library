@@ -284,7 +284,7 @@ class AutoRoute {
       page: page ?? this.page,
       path: path ?? this.path,
       usesPathAsKey: usesPathAsKey ?? this.usesPathAsKey,
-      guards: guards ?? List.from(this.guards),
+      guards: guards ?? List.of(this.guards),
       //copy
       fullMatch: fullMatch ?? this.fullMatch,
       meta: meta ?? this.meta,
@@ -350,6 +350,8 @@ class MaterialRoute extends AutoRoute {
 
 /// Builds an [AutoRoute] instance with [RouteType.cupertino] type
 @immutable
+// Public API: changing it is the maintainer's call.
+// ignore: avoid-unused-generics
 class CupertinoRoute<R> extends AutoRoute {
   /// Default constructor
   CupertinoRoute({
@@ -372,6 +374,8 @@ class CupertinoRoute<R> extends AutoRoute {
 
 /// Builds an [AutoRoute] instance with [RouteType.adaptive] type
 @immutable
+// Public API: changing it is the maintainer's call.
+// ignore: avoid-unused-generics
 class AdaptiveRoute<R> extends AutoRoute {
   /// Default constructor
   AdaptiveRoute({
@@ -403,6 +407,8 @@ class AdaptiveRoute<R> extends AutoRoute {
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
 @immutable
+// Public API: changing it is the maintainer's call.
+// ignore: avoid-unused-generics
 class CustomRoute<R> extends AutoRoute {
   /// Default constructor
   CustomRoute({
@@ -443,10 +449,10 @@ class CustomRoute<R> extends AutoRoute {
            customRouteBuilder: customRouteBuilder,
            duration: duration,
            reverseDuration: reverseDuration,
-           // todo: remove deprecated members
+           // TODO(maintainer): remove deprecated members.
            // ignore: deprecated_member_use_from_same_package
            durationInMilliseconds: durationInMilliseconds,
-           // todo: remove deprecated members
+           // TODO(maintainer): remove deprecated members.
            // ignore: deprecated_member_use_from_same_package
            reverseDurationInMilliseconds: reverseDurationInMilliseconds,
            opaque: opaque,
@@ -588,6 +594,8 @@ class RouteCollection {
         subCollections[r.name] = RouteCollection.fromList(r.children!, onGeneratePath: onGeneratePath);
       }
 
+      // Replaced below when the route's path is generated.
+      // ignore: avoid-unnecessary-local-variable
       var routeToUse = r;
       if (r._path != null) {
         throwIf(!root && r.path.startsWith('/'), 'Sub-paths can not start with a "/": ${r.path}');

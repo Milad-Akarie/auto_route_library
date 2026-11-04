@@ -59,6 +59,8 @@ class AutoTabView extends StatefulWidget {
 /// State implementation of [AutoTabView]
 class AutoTabViewState extends State<AutoTabView> {
   TabController get _controller => widget.controller;
+  // A leak: never disposed. Left for the leak hunt, which proves and fixes it.
+  // ignore: dispose-fields
   late PageController _pageController;
   late List<Widget> _children;
   int? _currentIndex;
@@ -119,6 +121,8 @@ class AutoTabViewState extends State<AutoTabView> {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller.animation?.removeListener(_handleTabControllerAnimationTick);
+      // Removed in didUpdateWidget and dispose.
+      // ignore: always-remove-listener
       _controller.animation?.addListener(_handleTabControllerAnimationTick);
       _updateChildren();
       // Load the active tab, it may not have been opened yet.
@@ -265,6 +269,8 @@ class AutoTabViewState extends State<AutoTabView> {
   }
 
   // Called when the PageView scrolls
+  // Returns false so the notification keeps bubbling up.
+  // ignore: function-always-returns-same-value
   bool _handleScrollNotification(ScrollNotification notification) {
     if (_warpUnderwayCount > 0 || _scrollUnderwayCount > 0) {
       return false;

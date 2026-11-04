@@ -60,6 +60,8 @@ class AutoRouteNavigator extends StatefulWidget {
 /// State of [AutoRouteNavigator]
 class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
   List<PageRouteInfo>? _routesSnapshot;
+  // The ancestors' routers, owned by them; this state only listens.
+  // ignore: dispose-fields
   List<TabsRouter> _ancestorTabs = const [];
   late bool _inActiveTabs = widget.router.isInActiveTabs;
 
@@ -76,6 +78,8 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     }
     _ancestorTabs = widget.router.isRoot ? const [] : widget.router.ancestorTabsRouters;
     for (final tabs in _ancestorTabs) {
+      // Removed again when the ancestors change and in dispose.
+      // ignore: always-remove-listener
       tabs.addListener(_handleAncestorTabsChanged);
     }
   }
@@ -129,6 +133,8 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 
   @override
   Widget build(BuildContext context) {
+    // A widget class would add an element and move the state below it.
+    // ignore: avoid-returning-widgets
     final navigator = _buildNavigator(context);
     if (widget.router.isRoot) return navigator;
     // A nested navigator sits on a page of its parent's navigator. While it
@@ -173,7 +179,10 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
               }
             },
           )
-        : widget.placeholder?.call(context) ?? Container(color: Theme.of(context).scaffoldBackgroundColor);
+        : (widget.placeholder?.call(context) ??
+              // A Container with no child fills its space; a ColoredBox would shrink to nothing.
+              // ignore: banned-usage
+              Container(color: Theme.of(context).scaffoldBackgroundColor));
   }
 
   @override

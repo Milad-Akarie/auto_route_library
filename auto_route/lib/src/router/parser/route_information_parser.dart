@@ -38,7 +38,8 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
       UrlState(
         routeInformation.uri,
         matches ?? const [],
-        pathState: savedRoutes == null ? state : (state as Map)[UrlState._pathStateKey],
+        // savedRoutes is only set when state is a Map.
+        pathState: state is Map && savedRoutes != null ? state[UrlState._pathStateKey] : state,
         savedRoutes: savedRoutes,
       ),
     );
@@ -417,13 +418,11 @@ class UrlState {
     if (value is Iterable) {
       return value.map((el) => el?.toString()).toList();
     }
-    if (value is! String) {
-      value = value.toString();
-    }
-    if (value.isEmpty) {
+    final text = value is String ? value : value.toString();
+    if (text.isEmpty) {
       return null;
     }
-    return value;
+    return text;
   }
 
   @override
