@@ -47,20 +47,6 @@ extension _RouteConfigList on List<RouteConfig> {
       if (routeConfig.pageType?.import == importPath) {
         return (routeConfig.deferredLoading ?? defaultDeferredLoading) ? .deferred : .none;
       }
-      // TODO(maintainer): handle this.
-      // if (routeConfig.childRouterConfig == null) {
-      // } else {
-      //   final deferredStatus = routeConfig.childRouterConfig!.routes
-      //       .mapRouteToDeferredType(importPath, defaultDeferredLoading: defaultDeferredLoading);
-      //   if (deferredStatus == _DeferredStatus.Deferred) {
-      //     return _DeferredStatus.Deferred;
-      //   }
-      //   if (deferredStatus == _DeferredStatus.None) {
-      //     return defaultDeferredLoading
-      //         ? _DeferredStatus.Deferred
-      //         : _DeferredStatus.None;
-      //   }
-      // }
     }
     return .notFound;
   }
