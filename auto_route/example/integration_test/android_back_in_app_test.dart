@@ -31,7 +31,7 @@ void main() {
       routes: [
         _fade(_page('WelcomeRoute'), '/'),
         _fade(_page('LoginRoute'), '/login'),
-        CustomRoute<dynamic>(
+        CustomRoute(
           page: PageInfo('AuthorizedRoute', builder: (_) => const AutoRouter()),
           path: '/authorized',
           transitionsBuilder: TransitionsBuilders.fadeIn,
@@ -65,7 +65,7 @@ void main() {
   });
 }
 
-CustomRoute<dynamic> _fade(PageInfo page, String path, {bool initial = false}) => .new(
+CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => .new(
   page: page,
   path: path,
   initial: initial,

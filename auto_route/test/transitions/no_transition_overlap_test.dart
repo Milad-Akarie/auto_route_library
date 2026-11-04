@@ -25,19 +25,19 @@ void main() {
         '${overlaps ? 'keeps' : 'does not keep'} the old page on screen', (tester) async {
       final router = RootStackRouter.build(
         routes: [
-          CustomRoute<dynamic>(
+          CustomRoute(
             page: _dashboardPage,
             path: '/dashboard',
             transitionsBuilder: TransitionsBuilders.noTransition,
             children: [
-              CustomRoute<dynamic>(
+              CustomRoute(
                 page: _page('Home'),
                 path: 'home',
                 initial: true,
                 transitionsBuilder: TransitionsBuilders.noTransition,
                 duration: duration,
               ),
-              CustomRoute<dynamic>(
+              CustomRoute(
                 page: _page('Brands'),
                 path: 'brands',
                 transitionsBuilder: TransitionsBuilders.noTransition,

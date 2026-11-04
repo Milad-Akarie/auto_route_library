@@ -21,7 +21,7 @@ void main() {
         defaultRouteType: type,
         routes: [
           AutoRoute(page: _page('Home'), path: '/'),
-          CustomRoute<dynamic>(page: _page('Menu'), path: '/menu', transitionsBuilder: TransitionsBuilders.slideTop),
+          CustomRoute(page: _page('Menu'), path: '/menu', transitionsBuilder: TransitionsBuilders.slideTop),
         ],
       );
       addTearDown(router.dispose);

@@ -25,7 +25,7 @@ void main() {
           path: '/',
           page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
         ),
-        CustomRoute<dynamic>(
+        CustomRoute(
           path: '/products',
           page: _productsPage,
           customRouteBuilder: <T>(context, child, page) => PageRouteBuilder<T>(

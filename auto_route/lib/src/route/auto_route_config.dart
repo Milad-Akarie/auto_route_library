@@ -350,9 +350,7 @@ class MaterialRoute extends AutoRoute {
 
 /// Builds an [AutoRoute] instance with [RouteType.cupertino] type
 @immutable
-// Public API: changing it is the maintainer's call.
-// ignore: avoid-unused-generics
-class CupertinoRoute<R> extends AutoRoute {
+class CupertinoRoute extends AutoRoute {
   /// Default constructor
   CupertinoRoute({
     required super.page,
@@ -374,9 +372,7 @@ class CupertinoRoute<R> extends AutoRoute {
 
 /// Builds an [AutoRoute] instance with [RouteType.adaptive] type
 @immutable
-// Public API: changing it is the maintainer's call.
-// ignore: avoid-unused-generics
-class AdaptiveRoute<R> extends AutoRoute {
+class AdaptiveRoute extends AutoRoute {
   /// Default constructor
   AdaptiveRoute({
     required super.page,
@@ -407,9 +403,7 @@ class AdaptiveRoute<R> extends AutoRoute {
 
 /// Builds an [AutoRoute] instance with [RouteType.custom] type
 @immutable
-// Public API: changing it is the maintainer's call.
-// ignore: avoid-unused-generics
-class CustomRoute<R> extends AutoRoute {
+class CustomRoute extends AutoRoute {
   /// Default constructor
   CustomRoute({
     required super.page,

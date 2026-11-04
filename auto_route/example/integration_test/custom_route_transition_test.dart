@@ -41,7 +41,7 @@ void main() {
           usesPathAsKey: true,
           children: [
             AutoRoute(page: _page('AddRoute'), path: 'add'),
-            CustomRoute<dynamic>(
+            CustomRoute(
               page: _page('ControllerRoute'),
               path: ':id/controller',
               transitionsBuilder: recording('slideTop'),

@@ -1,4 +1,6 @@
 ## Unreleased
+- **BREAKING CHANGE**: `CupertinoRoute`, `AdaptiveRoute` and `CustomRoute` no longer take a type
+  argument, which they never used. Write `CustomRoute(...)` instead of `CustomRoute<void>(...)`.
 - **BREAKING CHANGE**: `OnNavigationChanged` is `void Function(TabsRouter)`, and `popAndPushAll`'s
   `onFailure` is an `OnNavigationFailure?` instead of `dynamic`. Callbacks written as closures
   compile as before; pass `onFailure` a `void Function(NavigationFailure)`, as `pushAll` takes.
