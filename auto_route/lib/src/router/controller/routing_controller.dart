@@ -861,6 +861,12 @@ class TabsRouter extends RoutingController {
   /// Updates [_activeIndex] and triggers a rebuild
   void setActiveIndex(int index, {bool notify = true}) {
     assert(index >= 0 && index < _pages.length);
+    _changeTab(index, notify: notify);
+  }
+
+  // Every change of the active tab goes through here: setActiveIndex, which
+  // the tabs views call too, back to the home tab, and navigating to a tab.
+  void _changeTab(int index, {bool notify = true}) {
     if (_activeIndex != index) {
       final didPreload = preload(index);
       _previousIndex = _activeIndex;
@@ -899,7 +905,7 @@ class TabsRouter extends RoutingController {
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) {
     if (homeIndex != -1 && _activeIndex != homeIndex) {
-      setActiveIndex(homeIndex);
+      _changeTab(homeIndex);
       return SynchronousFuture<bool>(true);
     } else if (_parent != null) {
       return _parent!.maybePop<T>(result);
@@ -912,7 +918,7 @@ class TabsRouter extends RoutingController {
   @optionalTypeArgs
   void pop<T extends Object?>([T? result]) {
     if (homeIndex != -1 && _activeIndex != homeIndex) {
-      setActiveIndex(homeIndex);
+      _changeTab(homeIndex);
     } else if (_parent != null) {
       _parent!.pop(result);
     }
@@ -1095,7 +1101,7 @@ class TabsRouter extends RoutingController {
         final mayUpdateController = _innerControllerOfMatch(routeToBeUpdated.id);
 
         if (!isReevaluating && _activeIndex != pageToUpdateIndex) {
-          setActiveIndex(pageToUpdateIndex);
+          _changeTab(pageToUpdateIndex);
         } else if (shouldNotify) {
           notifyAll();
         }
