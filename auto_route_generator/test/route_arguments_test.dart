@@ -515,4 +515,42 @@ class Range {
       );
     });
   });
+
+  // flutter/flutter#170870: go_router_builder refused an extension type such
+  // as `ArticleId`, over String, as a path parameter. auto_route takes one as
+  // an argument, and as a path parameter fails the build naming the types a
+  // path can give, as it does for any other type; reading one from the url
+  // is not supported.
+  group('an extension type argument (flutter/flutter#170870)', () {
+    const articleId = 'extension type const ArticleId(String value) {}';
+
+    test('is passed as it is', () async {
+      final result = await generateRouter({
+        'lib/article_id.dart': articleId,
+        'lib/article_page.dart': _page(
+          'ArticlePage',
+          imports: "import 'article_id.dart';",
+          parameters: 'required this.id',
+          fields: '  final ArticleId id;',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, contains('required _i4.ArticleId id'));
+    });
+
+    test('as a path param fails the build naming the types a path can give', () async {
+      final result = await generateRouter({
+        'lib/article_id.dart': articleId,
+        'lib/article_page.dart': _page(
+          'ArticlePage',
+          imports: "import 'article_id.dart';",
+          parameters: '@PathParam() required this.id',
+          fields: '  final ArticleId id;',
+        ),
+      });
+      expect(result.errors.join(), contains('Parameter [id] must be of a type that can be parsed from a [String]'));
+      expect(result.errors.join(), contains('valid types: [String, int, double, num, bool, dynamic]'));
+    });
+  });
 }
