@@ -6,10 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-PageInfo _sizePage(String name) => .new(
-  name,
-  builder: (_) => Builder(builder: (context) => Text('$name ${MediaQuery.sizeOf(context).width.round()}')),
-);
+PageInfo _sizePage(String name) =>
+    .new(name, builder: (_) => Builder(builder: (context) => Text('$name ${MediaQuery.widthOf(context).round()}')));
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1746

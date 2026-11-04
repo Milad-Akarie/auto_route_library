@@ -33,7 +33,7 @@ void main() {
     await pumpRouterAppWithConfig(tester, router);
     unawaited(router.push(const _ShellRoute()));
     await _pumpIntoFlight(tester);
-    _expectHeroInFlight(tester);
+    _expectHeroInFlight();
     await tester.pumpAndSettle();
     expect(find.text('to'), findsOneWidget);
   });
@@ -65,7 +65,7 @@ void main() {
     expect(find.text('from'), findsOneWidget);
     unawaited(router.push(const _ShellRoute()));
     await _pumpIntoFlight(tester);
-    _expectHeroInFlight(tester);
+    _expectHeroInFlight();
     await tester.pumpAndSettle();
     expect(find.text('to'), findsOneWidget);
   });
@@ -79,7 +79,7 @@ Future<void> _pumpIntoFlight(WidgetTester tester) async {
 
 // While the Hero flies, the overlay shows its child and the first page does
 // not. The runner's clock is real, so the check leaves out where the Hero is.
-void _expectHeroInFlight(WidgetTester tester) {
+void _expectHeroInFlight() {
   expect(find.text('from'), findsNothing, reason: 'the source Hero should have left its page');
   expect(find.text('to'), findsOneWidget);
 }
@@ -133,6 +133,12 @@ class _HeroShell extends StatefulWidget {
 
 class _HeroShellState extends State<_HeroShell> {
   final _controller = HeroController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

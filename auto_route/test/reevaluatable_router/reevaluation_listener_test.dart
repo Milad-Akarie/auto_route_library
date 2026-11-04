@@ -44,7 +44,7 @@ void main() {
     expect(find.text(FirstRoute.name), findsOneWidget);
   });
 
-  testWidgets('Reevaluation should call the guard', (tester) async {
+  testWidgets('Reevaluation should call the guard when reevaluateGuards is called', (tester) async {
     await pumpRouterApp(tester, router);
     unawaited(router.navigate(const SecondRoute()));
     await tester.pumpAndSettle();
@@ -54,7 +54,7 @@ void main() {
     verify(mockListener(captureAny, router)).called(1);
   });
 
-  testWidgets('Reevaluation should call the guard', (tester) async {
+  testWidgets('Reevaluation should call the guard when the reevaluation notifier changes', (tester) async {
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluationNotifier);
     unawaited(router.navigate(const SecondRoute()));
     await tester.pumpAndSettle();

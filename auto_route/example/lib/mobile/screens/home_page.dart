@@ -109,6 +109,8 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           );
   }
 
+  // The signature of AutoTabsScaffold's bottomNavigationBuilder.
+  // ignore: avoid-unused-parameters
   Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
     final hideBottomNav = tabsRouter.topMatch.meta['hideBottomNav'] == true;
     return hideBottomNav

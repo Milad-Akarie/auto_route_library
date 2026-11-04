@@ -16,7 +16,7 @@ import 'router_test_utils.dart';
 // the fragment out of the copy.
 // Should: the url is /books#top, as it is for a route without children.
 void main() {
-  RootStackRouter buildRouter() => RootStackRouter.build(
+  RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(
         path: '/',

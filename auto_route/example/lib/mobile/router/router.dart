@@ -5,6 +5,7 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
 import 'package:material_ui/material_ui.dart';
 
+// Route names here are written as the paths they stand for.
 // ignore_for_file: constant_identifier_names
 @AutoRouterConfig(generateForDir: ['lib/mobile'])
 class AppRouter extends RootStackRouter {
@@ -65,6 +66,8 @@ abstract class RouteDef {
   Widget build(BuildContext context, RouteData<dynamic> data);
 
   RouteDef buildFromData(RouteData<dynamic> data) {
+    // A route that does not depend on its data is its own definition.
+    // ignore: avoid_returning_this
     return this;
   }
 }

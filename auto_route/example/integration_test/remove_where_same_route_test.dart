@@ -38,7 +38,7 @@ void main() {
     unawaited(router.push(_InfoRoute(title: 'Success')));
     await tester.pumpAndSettle();
 
-    router.removeWhere((route) => route.args is _InfoRouteArgs && (route.args as _InfoRouteArgs).key == loaderKey);
+    router.removeWhere((route) => route.args is _InfoRouteArgs && (route.args! as _InfoRouteArgs).key == loaderKey);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name]);

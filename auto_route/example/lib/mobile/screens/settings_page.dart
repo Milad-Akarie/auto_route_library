@@ -75,11 +75,11 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
 
   @override
   void didInitTabRoute(TabPageRoute? previousRoute) {
-    print('init tab route from ${previousRoute?.name}');
+    debugPrint('init tab route from ${previousRoute?.name}');
   }
 
   @override
   void didChangeTabRoute(TabPageRoute previousRoute) {
-    print('did change tab route from ${previousRoute.name}');
+    debugPrint('did change tab route from ${previousRoute.name}');
   }
 }

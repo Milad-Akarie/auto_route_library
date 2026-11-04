@@ -35,7 +35,7 @@ void main() {
     expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name, _InfoRoute.name]);
 
     // The reporter's check: whether the route is an InfoRoute holding the key.
-    router.removeWhere((route) => route.args is _InfoRouteArgs && (route.args as _InfoRouteArgs).key == loaderKey);
+    router.removeWhere((route) => route.args is _InfoRouteArgs && (route.args! as _InfoRouteArgs).key == loaderKey);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name]);
@@ -55,7 +55,9 @@ void main() {
     await tester.pumpAndSettle();
     final topState = tester.state(find.byType(_InfoPage));
 
-    router.removeWhere((route) => route.args is _InfoRouteArgs && (route.args as _InfoRouteArgs).title == 'Processing');
+    router.removeWhere(
+      (route) => route.args is _InfoRouteArgs && (route.args! as _InfoRouteArgs).title == 'Processing',
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(router.stack.map((p) => p.name), [_HomeRoute.name, _InfoRoute.name]);

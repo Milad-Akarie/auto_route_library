@@ -48,6 +48,6 @@ void main() {
 PageInfo _sizePage(String name) => .new(
   name,
   builder: (_) => Builder(
-    builder: (context) => Scaffold(body: Text('$name ${MediaQuery.sizeOf(context).width.round()}')),
+    builder: (context) => Scaffold(body: Text('$name ${MediaQuery.widthOf(context).round()}')),
   ),
 );

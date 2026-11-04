@@ -4,6 +4,8 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:material_ui/material_ui.dart';
 
 @RoutePage()
+// An example page, kept as written so the example shows the same code.
+// ignore: avoid-unnecessary-stateful-widgets
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key});
 
@@ -18,7 +20,7 @@ class _BookListScreenState extends State<BookListScreen> {
     return Scaffold(
       body: ListView(
         children: [
-          for (final book in [...?booksDb?.books])
+          for (final book in booksDb?.books ?? const <Book>[])
             Card(
               margin: const .symmetric(horizontal: 16, vertical: 8),
               child: ListTile(
@@ -26,7 +28,7 @@ class _BookListScreenState extends State<BookListScreen> {
                 subtitle: Text(book.genre),
                 onTap: () async {
                   final result = await context.pushRoute<String>(BookDetailsRoute(id: book.id));
-                  print('BookDetailsRoute result: $result');
+                  debugPrint('BookDetailsRoute result: $result');
                 },
               ),
             ),

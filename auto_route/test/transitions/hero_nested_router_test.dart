@@ -200,6 +200,12 @@ class _HeroShellState extends State<_HeroShell> {
   final _controller = HeroController();
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return HeroControllerScope(controller: _controller, child: const AutoRouter());
   }

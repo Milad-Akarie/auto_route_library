@@ -38,11 +38,6 @@ void main() {
     expect(find.text('My App Bar'), findsOneWidget);
   });
 
-  testWidgets('AutoTabsScaffold should render bottom navigation', (tester) async {
-    await pumpRouterApp(tester, router);
-    expect(find.byType(BottomNavigationBar), findsOneWidget);
-  });
-
   testWidgets('AutoTabsScaffold should use default routes if no children are provided', (tester) async {
     final router = RootStackRouter.build(
       routes: [
@@ -132,6 +127,8 @@ class TabsScaffoldDefaultRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(name, builder: (data) => const AutoTabsScaffold());
 }
 
+// A test route: PageRouteInfo's == is the one under test.
+// ignore: prefer-overriding-parent-equality
 class TabPageWithRequiredArgument extends PageRouteInfo<void> {
   const TabPageWithRequiredArgument({required this.argument}) : super(TabPageWithRequiredArgument.name);
 

@@ -39,7 +39,7 @@ void main() {
           name: 'LoginRoute',
           path: '/login',
           builder: (_, data) {
-            final next = data.args as VoidCallback;
+            final next = data.args! as VoidCallback;
             WidgetsBinding.instance.addPostFrameCallback((_) => next());
             return const Scaffold(body: Text('LoginRoute'));
           },

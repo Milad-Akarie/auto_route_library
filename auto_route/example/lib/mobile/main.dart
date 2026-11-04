@@ -20,6 +20,13 @@ class _MyAppState extends State<MyApp> {
   late final _rootRouter = AppRouter(authService);
 
   @override
+  void dispose() {
+    _rootRouter.dispose();
+    authService.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: _rootRouter.config(

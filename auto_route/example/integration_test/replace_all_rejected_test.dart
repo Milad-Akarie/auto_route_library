@@ -24,7 +24,7 @@ void main() {
         path: '/login',
         builder: (_, data) => Scaffold(
           body: SafeArea(
-            child: TextButton(onPressed: data.args as VoidCallback, child: const Text('Cancel login')),
+            child: TextButton(onPressed: data.args! as VoidCallback, child: const Text('Cancel login')),
           ),
         ),
       ),

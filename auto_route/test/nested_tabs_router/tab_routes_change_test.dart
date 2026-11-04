@@ -5,9 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 void main() {
-  for (final kind in _TabsKind.values) {
-    _runRoutesChangeTests(kind);
-  }
+  _TabsKind.values.forEach(_runRoutesChangeTests);
 }
 
 void _runRoutesChangeTests(_TabsKind kind) {

@@ -29,7 +29,7 @@ void main() {
         ],
       );
       await pumpRouterConfigApp(tester, router.config());
-      AutoTabsRouter.of(_keptContext!).setActiveIndex(1);
+      AutoTabsRouter.of(_keptContext).setActiveIndex(1);
       await tester.pumpAndSettle();
       expect(find.text(_SecondTabRoute.name), findsOneWidget);
 
@@ -46,7 +46,7 @@ enum _TabsKind { indexedStack, pageView, tabBar, builder }
 _TabsKind _tabsKind = .indexedStack;
 
 // The context of the AutoTabsRouter's builder, kept for the tab pages.
-BuildContext? _keptContext;
+late BuildContext _keptContext;
 
 class _TabsHostRoute extends PageRouteInfo<void> {
   const _TabsHostRoute() : super(name);
@@ -108,7 +108,7 @@ class _SecondTabRoute extends PageRouteInfo<void> {
         children: [
           const Text(name),
           TextButton(
-            onPressed: () => AutoTabsRouter.of(_keptContext!).setActiveIndex(0),
+            onPressed: () => AutoTabsRouter.of(_keptContext).setActiveIndex(0),
             child: const Text('Back to the first tab'),
           ),
         ],

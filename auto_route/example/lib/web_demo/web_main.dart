@@ -18,11 +18,21 @@ class App extends StatefulWidget {
 
 class AppState extends State<App> {
   late final authService = AuthService()
+    // Disposed with the service in dispose, so the listener goes with it.
+    // ignore: avoid-unremovable-callbacks-in-listeners
     ..addListener(() {
       setState(() {});
     });
 
   late final _router = WebAppRouter(authService);
+
+  @override
+  void dispose() {
+    _router.dispose();
+    authService.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(

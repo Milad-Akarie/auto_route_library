@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 
 class UserDataPage extends StatelessWidget {
   const UserDataPage({super.key, this.onResult});
+  // The generated router copies this type into its args class.
+  // ignore: inference_failure_on_function_return_type
   final Function(UserData data)? onResult;
 
   @override
@@ -18,13 +20,11 @@ class UserDataPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: .center,
           crossAxisAlignment: .stretch,
+          spacing: 24,
           children: [
             const Text('Success'),
-            const SizedBox(height: 24),
             Text('Name: ${userData.name}'),
-            const SizedBox(height: 24),
             Text('Favorite book: ${userData.favoriteBook}'),
-            const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
                 unawaited(context.router.maybePopTop(userData));

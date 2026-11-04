@@ -42,7 +42,7 @@ class WebAppRouter extends RootStackRouter {
           guards: [
             AutoRouteGuard.simple(
               (resolver, scope) {
-                print('Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
+                debugPrint('Verify Guard: ${resolver.routeName}, isRev: ${resolver.isReevaluating}');
                 if (authService.isVerified) {
                   resolver.next();
                 } else {
@@ -64,13 +64,16 @@ class WebAppRouter extends RootStackRouter {
 }
 
 @RoutePage()
+// An example page, kept as written so the example shows the same code.
+// ignore: avoid-unnecessary-stateful-widgets
 class MainWebPage extends StatefulWidget {
   const MainWebPage({
     super.key,
     this.navigate,
     this.showUserPosts,
   });
-  final VoidCallback? navigate, showUserPosts;
+  final VoidCallback? navigate;
+  final VoidCallback? showUserPosts;
 
   @override
   State<MainWebPage> createState() => _MainWebPageState();
@@ -227,6 +230,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
 }
 
 @RoutePage()
+// An example page, kept as written so the example shows the same code.
+// ignore: avoid-unnecessary-stateful-widgets
 class UserPostsPage extends StatefulWidget {
   const UserPostsPage({super.key, @PathParam.inherit('userID') required this.id});
   final int id;
@@ -248,7 +253,7 @@ class UserPostsPageState extends State<UserPostsPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                showDialog(
+                showDialog<void>(
                   context: context,
                   builder: (_) => const AlertDialog(
                     title: Text('Alert'),
@@ -277,6 +282,8 @@ class UserPostsPageState extends State<UserPostsPage> {
 }
 
 @RoutePage()
+// An example page, kept as written so the example shows the same code.
+// ignore: avoid-unnecessary-stateful-widgets
 class UserPage extends StatefulWidget {
   const UserPage({
     super.key,

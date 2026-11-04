@@ -139,7 +139,7 @@ void main() {
   });
 }
 
-bool _isWide(BuildContext context) => MediaQuery.sizeOf(context).width >= 600;
+bool _isWide(BuildContext context) => MediaQuery.widthOf(context) >= 600;
 
 final _mailPage = PageInfo('MailRoute', builder: (_) => const _MailPage());
 final _inboxPage = PageInfo('InboxRoute', builder: (_) => const _InboxPage());

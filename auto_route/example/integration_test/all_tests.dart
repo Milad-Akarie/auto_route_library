@@ -129,6 +129,8 @@ import 'wrapper_push_from_child_test.dart' as wrapper_push_from_child;
 // Runs every integration test file in one app launch. Run this file, not the
 // folder: desktop runners fail to relaunch the app for a second file, and
 // `flutter drive` on web takes a single target. Add each new test file here.
+// Runs the other files; it is not a test file itself.
+// ignore: prefer-correct-test-file-name
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 

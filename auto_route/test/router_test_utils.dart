@@ -23,11 +23,7 @@ Future<void> pumpRouterApp(
       .then((_) => tester.pumpAndSettle());
 }
 
-Future<void> pumpRouterConfigApp(
-  WidgetTester tester,
-  RouterConfig<UrlState> config, {
-  NavigatorObserversBuilder observers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
-}) {
+Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> config) {
   return tester.pumpWidget(MaterialApp.router(routerConfig: config)).then((_) => tester.pumpAndSettle());
 }
 

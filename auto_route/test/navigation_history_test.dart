@@ -193,7 +193,7 @@ void main() {
       expect(history.urlState.hasSegments, true);
     });
 
-    test('Should not add entry if URL has no segments', () async {
+    test('Should not add entry if URL has no segments', () {
       final initialLength = history.length;
 
       // Create a URL state with no segments

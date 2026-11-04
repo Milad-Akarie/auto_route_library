@@ -89,11 +89,10 @@ class ProfilePageState extends State<ProfilePage> {
               else
                 Column(
                   mainAxisAlignment: .center,
+                  spacing: 24,
                   children: [
                     const Text('Your Data is complete'),
-                    const SizedBox(height: 24),
                     Text('Name: ${userData!.name}'),
-                    const SizedBox(height: 24),
                     Text('Favorite book: ${userData!.favoriteBook}'),
                   ],
                 ),

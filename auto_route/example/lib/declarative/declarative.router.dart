@@ -46,6 +46,12 @@ class _MainScreenState extends State<MainScreen> {
   final _profileNotifier = ValueNotifier<Profile>(const Profile());
 
   @override
+  void dispose() {
+    _profileNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Declarative Navigation Example')),

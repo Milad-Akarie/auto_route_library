@@ -34,7 +34,7 @@ void main() {
       NamedRouteDef(
         name: 'RouteARedirected',
         builder: (_, data) {
-          final next = data.args as VoidCallback;
+          final next = data.args! as VoidCallback;
           WidgetsBinding.instance.addPostFrameCallback((_) => next());
           return const Scaffold(body: Center(child: Text('PageARedirected')));
         },
@@ -52,7 +52,7 @@ void main() {
         name: 'RouteCRedirected',
         builder: (_, data) => Scaffold(
           body: Center(
-            child: ElevatedButton(onPressed: data.args as VoidCallback, child: const Text('Go back')),
+            child: ElevatedButton(onPressed: data.args! as VoidCallback, child: const Text('Go back')),
           ),
         ),
       ),

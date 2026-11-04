@@ -40,7 +40,7 @@ class SecondHostPage extends StatelessWidget {
                   } else if (leadingType.isNoLeading) {
                     return const SizedBox.shrink();
                   }
-                  throw 'Invalid leading type';
+                  throw StateError('Invalid leading type');
                 },
               )
             : const AutoLeadingButton(),
@@ -152,7 +152,7 @@ class TabsHostPage extends StatelessWidget {
       return AutoTabsRouter.tabBar(routes: routes);
     }
 
-    throw 'unsupported tabs type';
+    throw StateError('unsupported tabs type');
   }
 }
 

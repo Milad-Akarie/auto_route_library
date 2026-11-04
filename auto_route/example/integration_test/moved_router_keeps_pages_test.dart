@@ -65,7 +65,7 @@ void main() {
   });
 }
 
-bool _isWide(BuildContext context) => MediaQuery.sizeOf(context).width >= 600;
+bool _isWide(BuildContext context) => MediaQuery.widthOf(context) >= 600;
 
 class _MailPage extends StatelessWidget {
   const _MailPage();

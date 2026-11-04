@@ -141,7 +141,7 @@ class AutoRouteAwareTestPageState extends State<AutoRouteAwareTestPage> with Aut
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Container());
+    return const Scaffold(body: SizedBox.expand());
   }
 
   @override
