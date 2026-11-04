@@ -108,4 +108,25 @@ void main() {
     expect(find.text('tags {x} ids [3] sorts [asc]'), findsOneWidget);
     expect(router.urlState.url, '/tags?tags=x&ids=3&sorts=asc');
   });
+
+  // flutter/flutter#127825: go_router_builder compared a Set query param to
+  // `const {}` to leave its default out of the url, a comparison that is
+  // never true, so a route at its default ended its url with '?'.
+  // auto_route leaves an empty Set out of the url (flutter/flutter#127373)
+  // and compares the generated args by their items.
+  // Steps: push TagsRoute() with tags at its default, `const {}`.
+  // Should: the url is '/tags', and its args equal args with a new empty
+  // Set.
+  testWidgets('a Set query param at its default leaves no ? in the url (flutter/flutter#127825)', (tester) async {
+    final router = ListRouter();
+    await pumpRouterApp(tester, router);
+    unawaited(router.push(TagsRoute()));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('tags {} ids null sorts null'), findsOneWidget);
+    expect(router.urlState.url, '/tags');
+    final newEmptySet = <String>{};
+    expect(const TagsRouteArgs(), TagsRouteArgs(tags: newEmptySet));
+    expect(const TagsRouteArgs().hashCode, TagsRouteArgs(tags: newEmptySet).hashCode);
+  });
 }
