@@ -1,4 +1,7 @@
 ## Unreleased
+- **BREAKING CHANGE** (an analyzer warning only): `Parameters`, `PageInfo`, `RouteType`,
+  `RouteCollection`, `HierarchySegment` and `AutoRouteInformation` are `@immutable`, since they
+  define `==`. A subclass with a field that isn't `final` now gets `must_be_immutable`; make it final.
 - **DEPRECATION**: `copyWith` takes each field's own name. On `PageRouteInfo`, write `rawPathParams`,
   `rawQueryParams` and `initialChildren` instead of `params`, `queryParams` and `children`, and drop
   `path` and `match`, which did nothing; it can now also set `stringMatch`, `redirectedFrom` and

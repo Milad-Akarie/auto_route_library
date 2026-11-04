@@ -144,6 +144,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   }
 }
 
+@immutable
 class _HistoryEntry {
   const _HistoryEntry(this.route, this.url, this.pageId);
   final RouteMatch<dynamic> route;

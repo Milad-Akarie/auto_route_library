@@ -69,6 +69,7 @@ class _HostPageState extends State<_HostPage> {
   }
 }
 
+@immutable
 class _HomeRouteArgs {
   const _HomeRouteArgs({required this.id});
 

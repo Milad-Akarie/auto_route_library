@@ -556,6 +556,7 @@ typedef OnGeneratePath = String Function(AutoRoute route);
 /// to deal with config-entries
 ///
 /// Mainly used by `RouteMatcher`
+@immutable
 class RouteCollection {
   /// Default constructor
   RouteCollection(this._routesMap, [this._subCollections = const {}])

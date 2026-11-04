@@ -7,6 +7,7 @@ typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget c
 
 /// An abstraction of route types used by
 /// [AutoRoutePage.onCreateRoute] to decide transition animations
+@immutable
 abstract class RouteType {
   /// Builds a [MaterialRouteType] route type
   const factory RouteType.material({

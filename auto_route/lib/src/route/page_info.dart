@@ -4,6 +4,7 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 /// Holds information of the generated [RoutePage] page
 ///
 /// Might hold more info in the future
+@immutable
 class PageInfo {
   /// Default constructor
   const PageInfo(this.name, {required this.builder});

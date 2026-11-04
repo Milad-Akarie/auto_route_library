@@ -1,8 +1,10 @@
 import 'package:auto_route/src/route/errors.dart';
 import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
 
 /// This class helps read typed data from
 /// raw maps, it's used for both path-parameters and query-parameters
+@immutable
 class Parameters {
   /// default construct
   const Parameters(Map<String, dynamic>? params) : _params = params ?? const {};

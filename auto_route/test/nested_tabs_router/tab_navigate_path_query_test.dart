@@ -56,6 +56,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(name, builder: (_) => AutoTabsRouter(routes: [_SettingsTab()]));
 }
 
+@immutable
 class _SettingsTabArgs {
   const _SettingsTabArgs({this.query = 'none'});
 

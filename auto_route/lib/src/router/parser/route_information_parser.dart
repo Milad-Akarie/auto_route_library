@@ -81,6 +81,7 @@ Uri escapeForWebEngine(Uri uri) => Uri.parse(uri.toString().replaceAll('%', '%25
 /// The engine gets the string. Flutter's own route information provider
 /// compares the parts with those of the uri the engine reported, so a report
 /// of the url the browser shows replaces its entry instead of adding one.
+@immutable
 class _WebEngineUri implements Uri {
   _WebEngineUri(this._uri);
 
@@ -205,6 +206,7 @@ class _WebEngineUri implements Uri {
 /// An extended type of [RouteInformation] that holds
 /// an extra property [replace] which forces the current
 /// route to be replaced
+@immutable
 class AutoRouteInformation extends RouteInformation {
   /// Default constructor
   const AutoRouteInformation({required Uri super.uri, super.state, this.replace = true}) : appUri = null;

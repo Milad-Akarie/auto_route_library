@@ -366,6 +366,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
 ///         ]),
 ///      ]
 ///  );
+@immutable
 class HierarchySegment {
   /// Default constructor
   const HierarchySegment(this.name, {this.pathParams, this.queryParams, this.children = const []});

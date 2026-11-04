@@ -36,10 +36,6 @@ linter:
     # (`resolver.next(false)`, `getBool(key, true)`), and the few internal
     # helpers are kept in the same style.
     avoid_positional_boolean_parameters: false
-    # Off: the classes it flags (RouteMatch, PageRouteInfo, the args classes)
-    # define == on purpose; marking them @immutable binds every subclass apps
-    # write, which is the maintainer's call.
-    avoid_equals_and_hash_code_on_mutable_classes: false
     # Off: its hits are steps run one after another, such as
     # `router.popUntilRoot(); router.popUntilRoot();` in a test, which read as
     # steps and not as one cascade.

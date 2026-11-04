@@ -1,11 +1,13 @@
 import 'package:code_builder/code_builder.dart' show FunctionType, RecordType, Reference, TypeReference;
+import 'package:meta/meta.dart';
 
 /// A class that represents a resolved type.
 ///
 /// holds the type name, import, type arguments and nullability
+@immutable
 class ResolvedType {
   /// Default constructor
-  ResolvedType({
+  const ResolvedType({
     required this.name,
     this.import,
     this.typeArguments = const [],
@@ -15,7 +17,7 @@ class ResolvedType {
   }) : _isRecordType = false,
        functionParts = null;
 
-  ResolvedType._({
+  const ResolvedType._({
     required this.name,
     this.import,
     this.typeArguments = const [],
@@ -27,7 +29,7 @@ class ResolvedType {
   });
 
   /// Constructor for a record types
-  ResolvedType.record({
+  const ResolvedType.record({
     required this.name,
     this.import,
     this.typeArguments = const [],
@@ -39,7 +41,7 @@ class ResolvedType {
 
   /// Constructor for a function type, such as `void Function(String url)`,
   /// when it is a type argument or a record field
-  ResolvedType.function({required FunctionTypeParts parts, this.isNullable = false, this.nameInRecord})
+  const ResolvedType.function({required FunctionTypeParts parts, this.isNullable = false, this.nameInRecord})
     : name = 'Function',
       import = null,
       typeArguments = const [],
@@ -70,16 +72,16 @@ class ResolvedType {
   }
 
   /// the import path of the type
-  String? import;
+  final String? import;
 
   /// the type name
-  String name;
+  final String name;
 
   /// whether the type is nullable
-  bool isNullable;
+  final bool isNullable;
 
   /// the type arguments
-  List<ResolvedType> typeArguments;
+  final List<ResolvedType> typeArguments;
   final bool _isRecordType;
 
   /// the name of the field in the record
