@@ -101,6 +101,7 @@ import 'push_same_route_twice_test.dart' as push_same_route_twice;
 import 'push_unknown_relative_path_test.dart' as push_unknown_relative_path;
 import 'query_param_rebuild_test.dart' as query_param_rebuild;
 import 'query_params_on_pop_test.dart' as query_params_on_pop;
+import 'query_toggle_back_test.dart' as query_toggle_back;
 import 'rapid_pops_test.dart' as rapid_pops;
 import 'redirect_cycle_test.dart' as redirect_cycle;
 import 'redirect_history_test.dart' as redirect_history;
@@ -275,6 +276,7 @@ void main() {
   group('push unknown relative path', push_unknown_relative_path.main);
   group('query param rebuild', query_param_rebuild.main);
   group('query params on pop', query_params_on_pop.main);
+  group('query toggle back', query_toggle_back.main);
   group('rapid pops', rapid_pops.main);
   group('redirect cycle', redirect_cycle.main);
   group('redirect history', redirect_history.main);

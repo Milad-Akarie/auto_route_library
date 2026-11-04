@@ -124,7 +124,9 @@ class NavigationHistoryImpl extends NavigationHistory {
     // others; navigating to it alone would update the current page in place.
     if (pageId != null) {
       removePagesAbove(pageId);
-      if (router.topMatch.id == pageId) return const [];
+      // The same page can show another url, as when its query params changed
+      // in place; then the entry still needs to be shown.
+      if (router.topMatch.id == pageId && _isSameUrl(urlState.url, entry.url)) return const [];
     }
     return [UrlState.toHierarchy(entry.segments)];
   }

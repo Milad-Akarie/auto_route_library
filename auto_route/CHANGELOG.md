@@ -98,6 +98,8 @@
 - **FIX**: on web, a deep link to an app that builds its router after the first frame keeps one
   history entry.
 - **FIX**: on web, a deep link with an encoded character adds no second history entry.
+- **FIX**: on web, the browser's back button leaves a page whose query params changed in place (`/page` to
+  `/page?p=true`): it shows `/page` again, instead of staying on `/page?p=true`, flutter/flutter#108714.
 - **FIX**: on web, the browser forward button returns to a page pushed over one with the same url.
 - **FIX**: on web, going back returns to a previous page with the same url, such as a `Book` page
   pushed twice with different args.
