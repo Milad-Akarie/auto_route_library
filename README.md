@@ -903,6 +903,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
 You could also obtain access to inner-routers from outside their scope without a global key, as long as they're initiated.
 
+**Note:** a tab's page, and so its inner router, is only built once the tab has been shown, because `AutoTabsRouter` and `AutoTabsScaffold` load tabs lazily by default. `innerRouterOf` answers null for a tab that was never opened; open the tab first, or pass `lazyLoad: false` to build every tab at once.
+
 ```dart
 // assuming this is the root router
 context.innerRouterOf<StackRouter>(UserRoute.name);
