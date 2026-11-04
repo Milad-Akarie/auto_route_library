@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:path/path.dart' as p;
 
 /// Matches paths and [PageRouteInfo]s with
 /// the given [collection]
@@ -106,7 +105,23 @@ class RouteMatcher {
     );
   }
 
-  List<String> _split(String path) => p.split(path);
+  // Splits a url's path at each '/': the root '/' first when the path has one,
+  // then each segment that isn't empty. Escapes stay as they are, so an
+  // encoded '/' stays inside its segment. A url's separator is '/' on every
+  // platform, so this doesn't split at a backslash on Windows.
+  static List<String> _split(String path) {
+    final segments = <String>[if (path.startsWith('/')) '/'];
+    for (final segment in path.split('/')) {
+      if (segment.isNotEmpty) segments.add(segment);
+    }
+    return segments;
+  }
+
+  // Joins segments split by [_split] back into a path.
+  static String _join(List<String> segments) {
+    if (segments.isNotEmpty && segments.first == '/') return '/${segments.skip(1).join('/')}';
+    return segments.join('/');
+  }
 
   // The segments of each route's path. A route's path never changes, and
   // matching a url compares it with every route until one matches, so each
@@ -153,7 +168,7 @@ class RouteMatcher {
       extractedSegments = List.of(segments);
     }
 
-    final stringMatch = p.joinAll(extractedSegments);
+    final stringMatch = _join(extractedSegments);
     return RouteMatch(
       config: config,
       key: ValueKey(config.usesPathAsKey ? stringMatch : config.name),

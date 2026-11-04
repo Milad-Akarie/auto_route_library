@@ -36,6 +36,9 @@
   the removed routes is not asked; their push futures complete with null. They are removed only
   once the new page's guards let it through, so a rejected push leaves the stack as it was,
   fixes #1797
+- **BEHAVIOR CHANGE**: urls split only at '/' on every platform, so on Windows a backslash in a
+  route path no longer separates segments, and `RouteData.match` joins segments with '/', not '\'.
+- **FIX**: on web, a url whose first segment ends in ':' (like `/c:/files`) keeps its leading '/'.
 ## 11.2.0
 - **CHORE:** Migrate to material_ui and cupertino_ui packages
 ## 11.1.0
