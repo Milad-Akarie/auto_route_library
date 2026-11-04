@@ -99,7 +99,7 @@ class RouteConfig {
     if (name != null) {
       nameToUse = name!;
     } else if (replacementInRouteName != null && replacementInRouteName.split(',').length == 2) {
-      final parts = replacementInRouteName.split(',');
+      final parts = replacementInRouteName.split(',').map((part) => part.trim()).toList();
       nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
     } else {
       nameToUse = '${className}Route';

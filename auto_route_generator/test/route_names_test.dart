@@ -1,0 +1,62 @@
+import 'package:test/test.dart';
+
+import 'support/generate.dart';
+
+const _homePage = '''
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
+
+@RoutePage()
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+''';
+
+/// A router library whose `@AutoRouterConfig` sets `replaceInRouteName` to
+/// [replaceInRouteName].
+String _router(String replaceInRouteName) =>
+    '''
+import 'package:auto_route/auto_route.dart';
+
+import 'router.gr.dart';
+
+@AutoRouterConfig(replaceInRouteName: '$replaceInRouteName')
+class AppRouter extends RootStackRouter {
+  @override
+  List<AutoRoute> get routes => [];
+}
+''';
+
+void main() {
+  // #994: `replaceInRouteName: 'Page, Route'`, with a space after the comma,
+  // named the route `Home Route`, so the build failed with "Could not format
+  // because the source could not be parsed". A value without exactly one
+  // comma was ignored without a word, so every route kept its `Route`
+  // suffix.
+  group('replaceInRouteName (#994)', () {
+    test('ignores spaces around its comma', () async {
+      final result = await generateRouter({'lib/home_page.dart': _homePage, 'lib/router.dart': _router('Page, Route')});
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, contains('class HomeRoute '));
+    });
+
+    test('without exactly one comma fails the build naming the option', () async {
+      final result = await generateRouter({
+        'lib/home_page.dart': _homePage,
+        'lib/router.dart': _router('Page,Route,X'),
+      });
+      expect(result.errors.join(), contains('replaceInRouteName must be a pattern and its replacement'));
+      expect(result.errors.join(), contains("'Page,Route,X'"));
+    });
+
+    test('with a replacement a name cannot hold fails the build naming the option', () async {
+      final result = await generateRouter({'lib/home_page.dart': _homePage, 'lib/router.dart': _router('Page,Ro ute')});
+      expect(result.errors.join(), contains('The replacement in replaceInRouteName'));
+      expect(result.errors.join(), contains("'Ro ute'"));
+    });
+  });
+}
