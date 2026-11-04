@@ -175,7 +175,11 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
       child: NavigatorPopHandler<Object?>(
         enabled: widget.router.hasEntries && _inActiveTabs,
         onPopWithResult: (result) => widget.router.navigatorKey.currentState?.maybePop(result),
-        child: navigator,
+        // Flutter drops the semantics of widgets painted before a nested
+        // Navigator when their common parent merges its nodes upward
+        // (flutter/flutter#150978). A container node of its own keeps the
+        // Navigator's route from blocking them.
+        child: Semantics(container: true, child: navigator),
       ),
     );
   }
