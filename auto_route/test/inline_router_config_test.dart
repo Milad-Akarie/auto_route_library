@@ -64,6 +64,19 @@ void main() {
     await tester.pumpAndSettle();
     expectStackAndStateKept();
   });
+
+  // flutter/flutter#127206: go_router asked how to handle a router config
+  // created inline in MaterialApp.router, which a hot reload builds again.
+  // With the router kept in a field, a hot reload keeps the stack and state.
+  // Steps: push CounterRoute, count to 1, then reassemble the app as a hot
+  // reload does.
+  // Should: the stack and the page's State are kept.
+  testWidgets('config() called inline keeps the stack and page state through a hot reload', (tester) async {
+    await pumpInlineConfigApp(tester);
+    unawaited(tester.binding.reassembleApplication());
+    await tester.pumpAndSettle();
+    expectStackAndStateKept();
+  });
 }
 
 class _CounterPage extends StatefulWidget {
