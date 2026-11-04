@@ -94,4 +94,25 @@ enum Fruit {
       expect(source, contains("count:queryParams.getInt('count',3)"));
     });
   });
+
+  // flutter/flutter#116837: a non-nullable enum query param with a default,
+  // `HomeTab tab = HomeTab.home`, generated a _fromState that didn't compile.
+  group('an enum query parameter with a default (flutter/flutter#116837)', () {
+    test('compiles and reads the default when the url has none', () async {
+      final result = await generateRouter({
+        'lib/tabs.dart': 'enum HomeTab { home, profile, settings }',
+        'lib/home_page.dart': _page(
+          'HomePage',
+          imports: "import 'tabs.dart';",
+          parameters: '@QueryParam() this.tab = HomeTab.home',
+          fields: '  final HomeTab tab;',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      final source = _flat(result);
+      expect(source, contains("tab:HomeTab.values.asNameMap()[queryParams.optString('tab')]??HomeTab.home"));
+      expect(source, contains("'tab':tab.name"));
+    });
+  });
 }
