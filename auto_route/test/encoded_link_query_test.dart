@@ -46,4 +46,11 @@ void main() {
     await expectLinkReads(tester, 'myapp://host/login?email=test%2B2%40example.com', 'email=test+2@example.com');
     await expectLinkReads(tester, '/login?q=a%26b%3Dc%2Fd%25e', 'q=a&b=c/d%e');
   });
+
+  // flutter/flutter#137151: an encoded '+' ('%2B') in a query param read back
+  // as nothing. Open the app at /login?email=test%2B23%40example.com, and send
+  // it while the app runs: the page reads test+23@example.com.
+  testWidgets('A link keeps "%2B" in a query param as "+"', (tester) async {
+    await expectLinkReads(tester, '/login?email=test%2B23%40example.com', 'email=test+23@example.com');
+  });
 }
