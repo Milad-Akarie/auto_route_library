@@ -2048,6 +2048,25 @@ abstract class StackRouter extends RoutingController {
     }
   }
 
+  // Like [popUntil], but the last navigator it walks keeps its first route,
+  // so a predicate no route satisfies doesn't pop every page and leave the
+  // screen blank. popUntil itself still pops them all, as clearing the stack
+  // with `popUntil((_) => false)` relies on.
+  void _popUntilKeepingFirstPage(RoutePredicate predicate, {required bool scoped}) {
+    if (scoped) {
+      return _navigatorKey.currentState?.popUntil((route) => predicate(route) || route.isFirst);
+    }
+    final routers = _topMostRouter()._buildRoutersHierarchy().whereType<StackRouter>().toList();
+    var predicateWasSatisfied = false;
+    for (final router in routers) {
+      final navState = router._navigatorKey.currentState;
+      if (navState == null) break;
+      final isLast = router == routers.last;
+      navState.popUntil((route) => (predicateWasSatisfied = predicate(route)) || isLast && route.isFirst);
+      if (predicateWasSatisfied) break;
+    }
+  }
+
   bool _removeUntil(RouteDataPredicate predicate, {bool notify = true}) {
     var didRemove = false;
     for (final candidate in List<AutoRoutePage<dynamic>>.unmodifiable(_pages).reversed) {
@@ -2529,14 +2548,20 @@ abstract class StackRouter extends RoutingController {
 
   /// Helper to pop all routes until route with [name] is found
   /// see [popUntil]
+  ///
+  /// When no route has [name], it pops down to the first page and keeps it,
+  /// instead of leaving no page.
   void popUntilRouteWithName(String name, {bool scoped = true}) {
-    popUntil(ModalRoute.withName(name), scoped: scoped);
+    _popUntilKeepingFirstPage(ModalRoute.withName(name), scoped: scoped);
   }
 
   /// Helper to pop all routes until route with [path] is found
   /// see [popUntil]
+  ///
+  /// When no route has [path], it pops down to the first page and keeps it,
+  /// instead of leaving no page.
   void popUntilRouteWithPath(String path, {bool scoped = true}) {
-    popUntil((route) {
+    _popUntilKeepingFirstPage((route) {
       if (route.settings is AutoRoutePage) {
         return (route.settings as AutoRoutePage).routeData.match == path;
       }

@@ -82,6 +82,7 @@ import 'pop_right_after_push_test.dart' as pop_right_after_push;
 import 'pop_scope_once_test.dart' as pop_scope_once;
 import 'pop_scope_test.dart' as pop_scope;
 import 'pop_until_hides_middle_test.dart' as pop_until_hides_middle;
+import 'pop_until_missing_route_test.dart' as pop_until_missing_route;
 import 'pop_while_reevaluating_test.dart' as pop_while_reevaluating;
 import 'popped_args_released_test.dart' as popped_args_released;
 import 'predictive_back_nested_under_root_test.dart' as predictive_back_nested_under_root;
@@ -252,6 +253,7 @@ void main() {
   group('pop scope once', pop_scope_once.main);
   group('pop scope', pop_scope.main);
   group('pop until hides middle', pop_until_hides_middle.main);
+  group('pop until missing route', pop_until_missing_route.main);
   group('pop while reevaluating', pop_while_reevaluating.main);
   group('popped args released', popped_args_released.main);
   group('predictive back nested under root', predictive_back_nested_under_root.main);
