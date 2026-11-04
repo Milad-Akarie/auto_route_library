@@ -24,7 +24,7 @@ void main() {
 
     for (var visit = 0; visit < 3; visit++) {
       unawaited(router.pushPath('/host'));
-      await tester.pumpAndSettle();
+      await pumpUntilFound(tester, find.text('FirstChildRoute'));
       expect(find.text('FirstChildRoute'), findsOneWidget);
 
       await systemBack(tester);
@@ -43,7 +43,7 @@ void main() {
     await pumpRouterApp(tester, router);
     final observers = DisposalTracker<ActiveGuardObserver>();
     unawaited(router.pushPath('/host'));
-    await tester.pumpAndSettle();
+    await pumpUntilFound(tester, find.text('FirstChildRoute'));
     final nested = router.innerRouterOf<StackRouter>('HostRoute')!;
     unawaited(nested.push(const NamedRoute('SecondChildRoute')));
     await tester.pump();

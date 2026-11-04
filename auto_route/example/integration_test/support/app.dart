@@ -96,6 +96,25 @@ void _bringAppToForeground(WidgetTester tester) {
   tester.binding.handleAppLifecycleStateChanged(.resumed);
 }
 
+/// Pumps frames until [finder] finds a widget, for at most [timeout], then
+/// waits for the frames to stop.
+///
+/// For a navigation the test starts without waiting for it, such as
+/// `unawaited(router.pushPath('/host'))`: the test then waits for the page
+/// itself, not only for a moment with no frame scheduled. Gives up quietly at
+/// [timeout], so the test's own expect reports what is missing.
+Future<void> pumpUntilFound(
+  WidgetTester tester,
+  Finder finder, {
+  Duration timeout = const Duration(seconds: 10),
+}) async {
+  final clock = Stopwatch()..start();
+  while (finder.evaluate().isEmpty && clock.elapsed < timeout) {
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  await tester.pumpAndSettle();
+}
+
 void expectCurrentPage(StackRouter router, String name) {
   expect(router.current.name, name);
   expect(find.text(name), findsOneWidget);

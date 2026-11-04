@@ -44,7 +44,7 @@ void main() {
 
     for (var visit = 0; visit < 3; visit++) {
       unawaited(router.pushPath('/tabs'));
-      await tester.pumpAndSettle();
+      await pumpUntilFound(tester, find.text('Tab1Route'));
       router.innerRouterOf<TabsRouter>('TabsHostRoute')!.setActiveIndex(1);
       await tester.pumpAndSettle();
       expect(find.text('Tab2Route'), findsOneWidget);

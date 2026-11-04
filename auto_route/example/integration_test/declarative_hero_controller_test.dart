@@ -44,7 +44,7 @@ void main() {
 
     for (var visit = 0; visit < 3; visit++) {
       unawaited(router.pushPath('/host'));
-      await tester.pumpAndSettle();
+      await pumpUntilFound(tester, find.text('ChildRoute'));
       expect(find.text('ChildRoute'), findsOneWidget);
 
       await systemBack(tester);

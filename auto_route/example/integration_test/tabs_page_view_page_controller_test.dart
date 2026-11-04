@@ -44,7 +44,7 @@ void main() {
 
     for (var visit = 0; visit < 3; visit++) {
       unawaited(router.pushPath('/tabs'));
-      await tester.pumpAndSettle();
+      await pumpUntilFound(tester, find.text('Tab1Route'));
       // Four fifths of the screen: a slow frame can zero the fling's speed,
       // and the page then settles by position.
       final width = tester.view.physicalSize.width / tester.view.devicePixelRatio;
