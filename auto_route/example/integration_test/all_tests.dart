@@ -46,6 +46,7 @@ import 'navigate_after_dialog_test.dart' as navigate_after_dialog;
 import 'navigate_awaits_test.dart' as navigate_awaits;
 import 'navigate_inherited_path_params_test.dart' as navigate_inherited_path_params;
 import 'navigate_nested_update_test.dart' as navigate_nested_update;
+import 'navigate_over_pageless_route_test.dart' as navigate_over_pageless_route;
 import 'nested_back_test.dart' as nested_back;
 import 'nested_browser_back_test.dart' as nested_browser_back;
 import 'nested_did_pop_test.dart' as nested_did_pop;
@@ -193,6 +194,7 @@ void main() {
   group('navigate awaits', navigate_awaits.main);
   group('navigate inherited path params', navigate_inherited_path_params.main);
   group('navigate nested update', navigate_nested_update.main);
+  group('navigate over pageless route', navigate_over_pageless_route.main);
   group('nested back', nested_back.main);
   group('nested browser back', nested_browser_back.main);
   group('nested did pop', nested_did_pop.main);

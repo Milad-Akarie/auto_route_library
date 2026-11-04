@@ -12,6 +12,10 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   // The routes the navigator holds, in no particular order.
   final _routes = <Route<dynamic>>[];
 
+  // The page route each pageless route was pushed over, directly or over
+  // other pageless routes on that page.
+  final _pageUnder = <Route<dynamic>, Route<dynamic>>{};
+
   /// The top-most visible route inside [Navigator]
   Route<dynamic>? current;
 
@@ -25,24 +29,54 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
     return _routes.lastWhereOrNull((route) => route.settings == page);
   }
 
+  /// The last route the [Navigator] holds that passes [test].
+  @internal
+  Route<dynamic>? routeWhere(bool Function(Route<dynamic> route) test) {
+    return _routes.lastWhereOrNull((route) => route.navigator != null && test(route));
+  }
+
+  /// The pageless routes, such as dialogs, the [Navigator] holds over the
+  /// route of [pageRoute], below the next page.
+  @internal
+  List<Route<dynamic>> pagelessRoutesOver(Route<dynamic> pageRoute) {
+    return [
+      for (final MapEntry(key: route, value: pageUnder) in _pageUnder.entries)
+        if (pageUnder == pageRoute && route.navigator != null) route,
+    ];
+  }
+
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     // A navigator that was disposed leaves its routes without a navigator.
     _routes
       ..removeWhere((route) => route.navigator == null)
       ..add(route);
+    _pageUnder.removeWhere((route, _) => route.navigator == null);
+    if (route.settings is! Page && previousRoute != null) {
+      final pageUnder = previousRoute.settings is Page ? previousRoute : _pageUnder[previousRoute];
+      if (pageUnder != null) _pageUnder[route] = pageUnder;
+    }
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => _routes.remove(route);
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => _forget(route);
 
   @override
-  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) => _routes.remove(route);
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) => _forget(route);
 
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     _routes.remove(oldRoute);
-    if (newRoute != null) _routes.add(newRoute);
+    final pageUnder = _pageUnder.remove(oldRoute);
+    if (newRoute != null) {
+      _routes.add(newRoute);
+      if (pageUnder != null && newRoute.settings is! Page) _pageUnder[newRoute] = pageUnder;
+    }
+  }
+
+  void _forget(Route<dynamic> route) {
+    _routes.remove(route);
+    _pageUnder.remove(route);
   }
 
   @override

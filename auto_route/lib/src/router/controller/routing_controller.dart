@@ -2184,6 +2184,8 @@ abstract class StackRouter extends RoutingController {
           _pages
             ..removeWhere((page) => !wasReevaluated(page))
             ..addAll([...pushedMeanwhile, ...pushedDuring]);
+        } else if (pushed.isCompleted) {
+          _closePagelessRoutesOverTop();
         }
       } else {
         _onNavigate(routes);
@@ -2211,6 +2213,28 @@ abstract class StackRouter extends RoutingController {
   void _reset() {
     _pages.clear();
     _childControllers.clear();
+  }
+
+  // After navigate or replaceAll lands on a page the navigator already shows,
+  // that page is updated in place, so the routes pushed over it with
+  // Navigator.push, such as dialogs, would stay on screen. They close: those
+  // on top are popped, those under pages leaving now are removed unseen.
+  // A guard reevaluation keeps them, since a guard may be showing one.
+  void _closePagelessRoutesOverTop() {
+    final top = _pages.lastOrNull;
+    if (top == null) return;
+    final shownRoute = pagelessRoutesObserver.routeWhere(
+      (route) => route.settings is AutoRoutePage && top.canUpdate(route.settings as Page<dynamic>),
+    );
+    if (shownRoute == null) return;
+    final pageless = pagelessRoutesObserver.pagelessRoutesOver(shownRoute);
+    final navigator = shownRoute.navigator;
+    if (pageless.isEmpty || navigator == null) return;
+    if (pageless.contains(pagelessRoutesObserver.current)) {
+      navigator.popUntil((route) => route == shownRoute);
+    } else {
+      pageless.forEach(navigator.removeRoute);
+    }
   }
 
   /// Pushes the given [route] and removes the routes below it until the
