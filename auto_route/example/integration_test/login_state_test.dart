@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -23,7 +25,7 @@ void main() {
       if (!isHome || authStore.isLoggedIn) {
         resolver.next();
       } else {
-        resolver.redirectUntil(const PageRouteInfo(_LoginPage.routeName));
+        unawaited(resolver.redirectUntil(const PageRouteInfo(_LoginPage.routeName)));
       }
     });
     final router = RootStackRouter.build(

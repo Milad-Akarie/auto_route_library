@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:example/web_demo/router/web_router.gr.dart';
 
@@ -12,7 +14,7 @@ class AuthGuard extends AutoRouteGuard {
     if (authService.isAuthenticated) {
       resolver.next();
     } else {
-      resolver.redirectUntil(WebLoginRoute());
+      unawaited(resolver.redirectUntil(WebLoginRoute()));
     }
   }
 }

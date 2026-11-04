@@ -219,7 +219,7 @@ final _loginGuard = AutoRouteGuard.simple((resolver, _) {
   if (_allow) {
     resolver.next();
   } else {
-    resolver.redirectUntil(const NamedRoute('LoginRoute'));
+    unawaited(resolver.redirectUntil(const NamedRoute('LoginRoute')));
   }
 });
 

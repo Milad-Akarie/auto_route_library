@@ -241,10 +241,12 @@ class NavigationResolver {
   ///      resolver.redirectUntil(LoginRoute());
   ///    }
   ///  }
-  // Public API: changing it is the maintainer's call.
-  // ignore: avoid_void_async
-  void redirectUntil(PageRouteInfo route, {OnNavigationFailure? onFailure, bool replace = false}) async {
-    if (_isRedirecting) return null;
+  ///
+  /// The returned future completes once [route] is closed, whether by
+  /// [next] or by a pop, and at once when a redirect is already running or
+  /// [route] can't be opened.
+  Future<void> redirectUntil(PageRouteInfo route, {OnNavigationFailure? onFailure, bool replace = false}) async {
+    if (_isRedirecting) return;
     // This route was opened by the redirect of a guard still waiting; sending it to itself again never ends.
     final redirectedBy = _redirectingResolvers[this.route.id];
     if (redirectedBy != null && !redirectedBy.isResolved && route.routeName == this.route.name) {

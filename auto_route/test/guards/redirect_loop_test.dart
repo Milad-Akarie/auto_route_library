@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -60,7 +62,7 @@ void main() {
           AutoRouteGuard.simple((resolver, _) async {
             if (loopedTooLong()) return;
             if (isAsync) await Future<void>.delayed(.zero);
-            resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
+            unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
           }),
         ],
       );
@@ -83,7 +85,7 @@ void main() {
           if (resolver.routeName == 'LoginRoute') {
             resolver.next();
           } else {
-            resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
+            unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
           }
         }),
       ],
@@ -113,7 +115,7 @@ void main() {
           if (skipAuth == true) {
             resolver.next();
           } else {
-            resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
+            unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
           }
         }),
       ],

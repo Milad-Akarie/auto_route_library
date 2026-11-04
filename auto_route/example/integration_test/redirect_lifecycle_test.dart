@@ -38,7 +38,7 @@ void main() {
       if (n.connected) {
         resolver.nextOrBack();
       } else {
-        resolver.redirectUntil(const NamedRoute('SignInRoute'));
+        unawaited(resolver.redirectUntil(const NamedRoute('SignInRoute')));
       }
     });
     final anonymous = AutoRouteGuard.simple((resolver, router) => resolver.nextOrBack(!n.connected));

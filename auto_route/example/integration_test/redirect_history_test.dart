@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -19,7 +21,7 @@ void main() {
         initial: true,
         guards: [
           AutoRouteGuard.simple((resolver, _) {
-            resolver.redirectUntil(NamedRoute('RouteARedirected', args: resolver.next));
+            unawaited(resolver.redirectUntil(NamedRoute('RouteARedirected', args: resolver.next)));
           }),
         ],
         builder: (context, _) => Scaffold(
@@ -43,7 +45,7 @@ void main() {
         name: 'RouteC',
         guards: [
           AutoRouteGuard.simple((resolver, _) {
-            resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.nextOrBack(false)));
+            unawaited(resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.nextOrBack(false))));
           }),
         ],
         builder: (_, _) => const Scaffold(body: Center(child: Text('Page C'))),

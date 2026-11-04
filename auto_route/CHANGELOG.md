@@ -1,4 +1,7 @@
 ## Unreleased
+- **BREAKING CHANGE**: `NavigationResolver.redirectUntil` returns `Future<void>` instead of `void`,
+  completing once the redirect route closes. Calls compile as before; a class that overrides it
+  must return `Future<void>`, and a lint that asks for it is answered with `unawaited(...)`.
 - **CHORE**: require Dart 3.13, the version Flutter 3.47 ships. The package already required
   Flutter 3.47, so no app that could use it before is left out.
 - **BEHAVIOR CHANGE**: `pushAndPopUntil` now removes the routes below the new page instead of

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -43,7 +45,7 @@ void main() {
         AutoRouteGuard.simple((resolver, _) {
           // past a few calls the guard stops answering, so the test still ends where the loop ran forever
           if (++guardCalls > 20) return;
-          resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
+          unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
         }),
       ],
     );

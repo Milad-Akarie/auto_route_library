@@ -34,7 +34,7 @@ void main() {
               if (isAllowed) {
                 resolver.next();
               } else {
-                resolver.redirectUntil(const NamedRoute('LoginRoute'));
+                unawaited(resolver.redirectUntil(const NamedRoute('LoginRoute')));
               }
             }),
           ],

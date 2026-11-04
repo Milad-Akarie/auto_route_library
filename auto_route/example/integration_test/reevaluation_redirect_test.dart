@@ -33,7 +33,7 @@ void main() {
             if (isLoggedIn.value) {
               resolver.next();
             } else {
-              resolver.redirectUntil(const SecondRoute());
+              unawaited(resolver.redirectUntil(const SecondRoute()));
             }
           },
         ),
@@ -64,7 +64,7 @@ void main() {
           page: SecondRoute.page,
           onNavigation: (resolver, router) {
             if (reevaluationNotifier.value) {
-              resolver.redirectUntil(const ThirdRoute());
+              unawaited(resolver.redirectUntil(const ThirdRoute()));
             } else {
               resolver.next();
             }

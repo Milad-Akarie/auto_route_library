@@ -22,7 +22,7 @@ class WebAppRouter extends RootStackRouter {
             if (authService.isAuthenticated) {
               resolver.next();
             } else {
-              resolver.redirectUntil(WebLoginRoute());
+              unawaited(resolver.redirectUntil(WebLoginRoute()));
             }
           },
           debugLabel: 'AuthGuard',
@@ -46,7 +46,7 @@ class WebAppRouter extends RootStackRouter {
                 if (authService.isVerified) {
                   resolver.next();
                 } else {
-                  resolver.redirectUntil(WebVerifyRoute());
+                  unawaited(resolver.redirectUntil(WebVerifyRoute()));
                 }
               },
               debugLabel: 'VerifyGuard',

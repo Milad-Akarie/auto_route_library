@@ -179,7 +179,7 @@ void main() {
             if (reevaluationNotifier.value) {
               resolver.next();
             } else {
-              resolver.redirectUntil(const ThirdRoute());
+              unawaited(resolver.redirectUntil(const ThirdRoute()));
             }
           },
         ),
@@ -263,7 +263,7 @@ void main() {
             if (isLoggedIn.value) {
               resolver.next();
             } else {
-              resolver.redirectUntil(const SecondRoute());
+              unawaited(resolver.redirectUntil(const SecondRoute()));
             }
           },
         ),
@@ -297,7 +297,7 @@ void main() {
           page: SecondRoute.page,
           onNavigation: (resolver, router) {
             if (reevaluationNotifier.value) {
-              resolver.redirectUntil(const ThirdRoute());
+              unawaited(resolver.redirectUntil(const ThirdRoute()));
             } else {
               resolver.next();
             }
@@ -374,7 +374,7 @@ void main() {
       if (!isHome || authStore.isLoggedIn) {
         resolver.next();
       } else {
-        resolver.redirectUntil(const PageRouteInfo(_LoginPage.routeName));
+        unawaited(resolver.redirectUntil(const PageRouteInfo(_LoginPage.routeName)));
       }
     });
     final router = RootStackRouter.build(

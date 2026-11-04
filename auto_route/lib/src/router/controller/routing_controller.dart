@@ -1915,10 +1915,7 @@ abstract class StackRouter extends RoutingController {
 
   /// Replaces the list of [_pages] with given [routes] result
   /// used by declarative routing widgets
-  // Public API: changing it is the maintainer's call. Removing async would also make an error throw
-  // at the caller instead of reaching the zone.
-  // ignore: avoid_void_async, avoid-unnecessary-futures
-  void updateDeclarativeRoutes(List<PageRouteInfo> routes) async {
+  void updateDeclarativeRoutes(List<PageRouteInfo> routes) {
     _pages.clear();
     for (final route in routes) {
       final match = _matchOrReportFailure(route);
@@ -2412,10 +2409,7 @@ class NestedStackRouter extends StackRouter {
 
   @internal
   /// pushes the initial routes to the stack
-  // Public API: changing it is the maintainer's call. Removing async would also make an error throw
-  // at the caller instead of reaching the zone.
-  // ignore: avoid_void_async, avoid-unnecessary-futures
-  void setupInitialRoutes() async {
+  void setupInitialRoutes() {
     if (_routeData.hasPendingChildren) {
       final initialRoutes = List<RouteMatch<dynamic>>.unmodifiable(_routeData.pendingChildren);
       if (managedByWidget) {

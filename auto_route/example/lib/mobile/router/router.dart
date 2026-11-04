@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:example/mobile/router/auth_guard.dart';
@@ -35,7 +37,7 @@ class AppRouter extends RootStackRouter {
                 if (authService.isAuthenticated) {
                   return resolver.next();
                 }
-                resolver.redirectUntil(LoginRoute());
+                unawaited(resolver.redirectUntil(LoginRoute()));
               },
               title: (ctx, data) {
                 return 'Book Details ${data.params.get('id')}';

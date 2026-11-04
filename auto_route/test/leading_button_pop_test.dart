@@ -35,7 +35,7 @@ void main() {
                   if (verified) {
                     resolver.next();
                   } else {
-                    resolver.redirectUntil(const _VerifyRoute());
+                    unawaited(resolver.redirectUntil(const _VerifyRoute()));
                   }
                 }),
               ],

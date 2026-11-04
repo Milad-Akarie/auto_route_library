@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -37,7 +39,7 @@ void main() {
       if (n.connected) {
         resolver.nextOrBack();
       } else {
-        resolver.redirectUntil(const NamedRoute('SignInRoute'));
+        unawaited(resolver.redirectUntil(const NamedRoute('SignInRoute')));
       }
     });
     final anonymous = AutoRouteGuard.simple((resolver, router) => resolver.nextOrBack(!n.connected));

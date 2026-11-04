@@ -1,6 +1,8 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -30,7 +32,7 @@ void main() {
           path: '/',
           guards: [
             AutoRouteGuard.simple((resolver, _) {
-              resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
+              unawaited(resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next)));
             }),
           ],
           builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
