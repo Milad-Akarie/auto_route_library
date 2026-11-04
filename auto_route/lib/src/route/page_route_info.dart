@@ -121,8 +121,9 @@ class PageRouteInfo<T extends Object?> {
     if (mapNullOrEmpty(params)) {
       return template;
     }
-    // Escaped, so a name such as `user$id` matches as it is written.
-    final paramsRegex = RegExp(":(${params.keys.map(RegExp.escape).join('|')})");
+    // Escaped, so a name such as `user$id` matches as it is written. A name runs to the end of its segment,
+    // so ':id' is never read out of ':idx'.
+    final paramsRegex = RegExp(":(${params.keys.map(RegExp.escape).join('|')})(?=[/?#]|\$)");
     final path = template.replaceAllMapped(paramsRegex, (match) {
       final value = params[match.group(1)]?.toString();
       // Encoded as a path segment, so a '/', '?' or '#' in the value stays part of it.

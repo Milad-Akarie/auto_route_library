@@ -107,6 +107,7 @@ import 'redirect_cycle_test.dart' as redirect_cycle;
 import 'redirect_history_test.dart' as redirect_history;
 import 'redirect_lifecycle_test.dart' as redirect_lifecycle;
 import 'redirect_loop_test.dart' as redirect_loop;
+import 'redirect_param_name_prefix_test.dart' as redirect_param_name_prefix;
 import 'redirect_path_param_test.dart' as redirect_path_param;
 import 'redirect_route_cycle_test.dart' as redirect_route_cycle;
 import 'reevaluate_deep_link_test.dart' as reevaluate_deep_link;
@@ -282,6 +283,7 @@ void main() {
   group('redirect history', redirect_history.main);
   group('redirect lifecycle', redirect_lifecycle.main);
   group('redirect loop', redirect_loop.main);
+  group('redirect param name prefix', redirect_param_name_prefix.main);
   group('redirect path param', redirect_path_param.main);
   group('redirect route cycle', redirect_route_cycle.main);
   group('reevaluate deep link', reevaluate_deep_link.main);

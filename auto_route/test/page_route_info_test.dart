@@ -90,4 +90,20 @@ void main() {
       expect(route(['a']), isNot(equals(route(['b']))));
     });
   });
+
+  // With path params 'id' and 'idx', '/a/:idx' expanded to '/a/1x': the pattern ':(id|idx)' had no segment end,
+  // so ':id' matched the start of ':idx' and its value replaced it, keeping the 'x'.
+  group('PageRouteInfo.expandPath with a param whose name starts another', () {
+    test('expands the longer name whole', () {
+      expect(PageRouteInfo.expandPath('/a/:idx', {'id': '1', 'idx': '2'}), '/a/2');
+    });
+
+    test('expands both names in one path', () {
+      expect(PageRouteInfo.expandPath('/a/:id/b/:idx', {'id': '1', 'idx': '2'}), '/a/1/b/2');
+    });
+
+    test('keeps a param that has no value whole', () {
+      expect(PageRouteInfo.expandPath('/a/:idx', {'id': '1'}), '/a/:idx');
+    });
+  });
 }

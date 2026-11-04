@@ -13,6 +13,7 @@ void main() {
         AutoRoute(page: FirstRoute.page, path: '/', initial: true),
         AutoRoute(page: _CmsRoute.page, path: '/cms/:path'),
         RedirectRoute(path: '/test1/:path', redirectTo: '/cms/:path'),
+        RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path'),
       ],
     );
   });
@@ -35,6 +36,16 @@ void main() {
     await pumpRouterApp(tester, router, initialLink: '/test1/a%2Fb');
     expect(find.text('Cms a/b'), findsOneWidget);
     expect(router.urlState.uri.toString(), '/cms/a%2Fb');
+  });
+
+  // A redirect read ':path' as the param ':pa' followed by 'th': the params were matched by name with no
+  // segment end, and 'pa' came first.
+  // Open '/old/1/2', which RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path') sends on.
+  // Should: the page reads '2' and the url is '/cms/2', not '/cms/1th'.
+  testWidgets('A redirect expands a param whose name starts another whole', (tester) async {
+    await pumpRouterApp(tester, router, initialLink: '/old/1/2');
+    expect(find.text('Cms 2'), findsOneWidget);
+    expect(router.urlState.uri.toString(), '/cms/2');
   });
 }
 
