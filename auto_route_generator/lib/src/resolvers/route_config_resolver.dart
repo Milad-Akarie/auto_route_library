@@ -62,6 +62,20 @@ class RouteConfigResolver {
       }
     }
 
+    // A query param is read from the url unless a required argument keeps
+    // the page from being opened by one, so its type must be one the url
+    // gives; any other was read as `dynamic` and threw when a link opened
+    // the page.
+    final readsUrl = !parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+    for (final qParam in parameters.where((p) => p.isQueryParam && readsUrl)) {
+      final type = qParam.type;
+      throwIf(
+        !validPathParamTypes.contains(type.name) && type.name != 'Object' && !type.isEnum && !qParam.isUrlCollection,
+        'Parameter [${qParam.name}] is a @QueryParam of type ${type.name}, which a url can not give.\n'
+        'valid types: $validPathParamTypes, Object, an enum, or a ${urlCollectionTypes.join(', ')} of those',
+      );
+    }
+
     for (final pParam in pathParameters) {
       throwIf(
         !validPathParamTypes.contains(pParam.type.name),

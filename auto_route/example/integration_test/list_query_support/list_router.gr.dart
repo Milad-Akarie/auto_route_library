@@ -160,3 +160,88 @@ class ListHomeRoute extends PageRouteInfo<void> {
     },
   );
 }
+
+/// generated route for
+/// [TagsView]
+class TagsRoute extends PageRouteInfo<TagsRouteArgs> {
+  TagsRoute({
+    Key? key,
+    Set<String> tags = const {},
+    Iterable<int>? ids,
+    Set<Sort>? sorts,
+    List<PageRouteInfo>? children,
+  }) : super(
+         TagsRoute.name,
+         args: TagsRouteArgs(key: key, tags: tags, ids: ids, sorts: sorts),
+         rawQueryParams: {
+           'tags': tags,
+           'ids': ids,
+           'sorts': sorts?.map((item) => item.name).toList(),
+         },
+         initialChildren: children,
+       );
+
+  static const String name = 'TagsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final queryParams = data.queryParams;
+      final args = data.argsAs<TagsRouteArgs>(
+        orElse: () => TagsRouteArgs(
+          tags: queryParams.optList('tags')?.toSet() ?? const {},
+          ids: queryParams
+              .optList('ids')
+              ?.map(int.tryParse)
+              .whereType<int>()
+              .toList(),
+          sorts: queryParams
+              .optList('sorts')
+              ?.map((name) => Sort.values.asNameMap()[name])
+              .whereType<Sort>()
+              .toSet(),
+        ),
+      );
+      return TagsView(
+        key: args.key,
+        tags: args.tags,
+        ids: args.ids,
+        sorts: args.sorts,
+      );
+    },
+  );
+}
+
+class TagsRouteArgs {
+  const TagsRouteArgs({this.key, this.tags = const {}, this.ids, this.sorts});
+
+  final Key? key;
+
+  final Set<String> tags;
+
+  final Iterable<int>? ids;
+
+  final Set<Sort>? sorts;
+
+  @override
+  String toString() {
+    return 'TagsRouteArgs{key: $key, tags: $tags, ids: $ids, sorts: $sorts}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! TagsRouteArgs) return false;
+    return key == other.key &&
+        const SetEquality<String>().equals(tags, other.tags) &&
+        const IterableEquality<int>().equals(ids, other.ids) &&
+        const SetEquality<Sort>().equals(sorts, other.sorts);
+  }
+
+  @override
+  int get hashCode =>
+      key.hashCode ^
+      const SetEquality<String>().hash(tags) ^
+      const IterableEquality<int>().hash(ids) ^
+      const SetEquality<Sort>().hash(sorts);
+}

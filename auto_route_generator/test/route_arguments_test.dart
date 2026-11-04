@@ -435,4 +435,84 @@ class Range {
     expect(result.source, contains('final List<({int id, String? name})> items;'));
     expect(result.source, contains('data.argsAs<ItemsRouteArgs>()'));
   });
+
+  // flutter/flutter#108437: a query param typed `Set<String>`, `Iterable<int>`,
+  // `DateTime` or any type the url can't give was read with the untyped
+  // `queryParams.get`, so the router compiled and opening the page from a
+  // link threw a TypeError: the url gives text or a list of it. A Set or an
+  // Iterable is now read as a List is; any other type fails the build.
+  group('a Set or Iterable query param (flutter/flutter#108437)', () {
+    test('is read from the url as its own type', () async {
+      final result = await generateRouter({
+        'lib/sort.dart': 'enum Sort { asc, desc }',
+        'lib/tags_page.dart': _page(
+          'TagsPage',
+          imports: "import 'sort.dart';",
+          parameters:
+              '@QueryParam() this.tags = const {}, @QueryParam() this.ids, @QueryParam() this.sorts, '
+              '@QueryParam() this.names',
+          fields:
+              '  final Set<String> tags;\n  final Iterable<int>? ids;\n  final Set<Sort>? sorts;\n'
+              '  final Iterable<String>? names;',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, contains("tags: queryParams.optList('tags')?.toSet() ?? const {}"));
+      final source = result.source!.replaceAll(RegExp(r'\s+'), '');
+      expect(source, contains("ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()"));
+      expect(
+        source,
+        contains(
+          "sorts:queryParams.optList('sorts')?.map((name)=>_i4.Sort.values.asNameMap()[name]).whereType<_i4.Sort>().toSet()",
+        ),
+      );
+      expect(result.source, contains("names: queryParams.optList('names')"));
+      expect(result.source, isNot(contains('queryParams.get(')));
+    });
+
+    for (final (type, field) in [
+      ('DateTime', 'final DateTime? at;'),
+      ('Uri', 'final Uri? at;'),
+      ('ArticleId', 'final ArticleId? at;'),
+    ]) {
+      test('of another type, $type, fails the build naming the param', () async {
+        final result = await generateRouter({
+          'lib/article_id.dart': 'extension type const ArticleId(String value) {}',
+          'lib/at_page.dart': _page(
+            'AtPage',
+            imports: "import 'article_id.dart';",
+            parameters: '@QueryParam() this.at',
+            fields: '  $field',
+          ),
+        });
+        expect(
+          result.errors.join(),
+          contains('Parameter [at] is a @QueryParam of type $type, which a url can not give'),
+        );
+      });
+    }
+
+    test('of a type the url can not give is allowed when a required argument keeps links out', () async {
+      final result = await generateRouter({
+        'lib/at_page.dart': _page(
+          'AtPage',
+          parameters: 'required this.title, @QueryParam() this.at',
+          fields: '  final String title;\n  final DateTime? at;',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+    });
+
+    test('of items the url can not give fails the build', () async {
+      final result = await generateRouter({
+        'lib/at_page.dart': _page('AtPage', parameters: '@QueryParam() this.at', fields: '  final Set<DateTime>? at;'),
+      });
+      expect(
+        result.errors.join(),
+        contains('at: a Set query param can hold String, int, double, num, bool or enum items'),
+      );
+    });
+  });
 }

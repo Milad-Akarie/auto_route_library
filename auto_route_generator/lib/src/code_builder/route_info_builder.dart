@@ -396,21 +396,25 @@ Expression _getUrlPartAssignment(ParamConfig p) {
         .index(refer('queryParams').property('optString').call([_plainString(p.paramName)]));
     if (p.defaultValueCode == null) return value;
     return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
-  } else if (p.isQueryParam && p.listItemType != null) {
+  } else if (p.isQueryParam && p.isUrlCollection && (p.listItemType != null || !p.type.isList)) {
     // `optList` reads the items as text, so each is converted to its type:
     // a number or bool by parsing it, an enum by its name, as the single enum
-    // above. An item that doesn't convert is left out.
-    final item = p.listItemType!;
-    final itemType = refer(item.name, item.import);
-    final value = refer('queryParams')
-        .property('optList')
-        .call([_plainString(p.paramName)])
-        .nullSafeProperty('map')
-        .call([_listItemParser(item, itemType)])
-        .property('whereType')
-        .call([], {}, [itemType])
-        .property('toList')
-        .call([]);
+    // above. An item that doesn't convert is left out. A Set is made of the
+    // items; a List of text needs nothing more, and takes `getterMethodName`
+    // below.
+    final item = p.listItemType;
+    var value = refer('queryParams').property('optList').call([_plainString(p.paramName)]);
+    if (item != null) {
+      final itemType = refer(item.name, item.import);
+      value = value.nullSafeProperty('map').call([_listItemParser(item, itemType)]).property('whereType').call([], {}, [
+        itemType,
+      ]);
+    }
+    if (p.type.isSet) {
+      value = (item == null ? value.nullSafeProperty('toSet') : value.property('toSet')).call([]);
+    } else if (item != null) {
+      value = value.property('toList').call([]);
+    }
     if (p.defaultValueCode == null) return value;
     return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
   } else if (p.isQueryParam) {

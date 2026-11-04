@@ -72,7 +72,7 @@ class RouteParameterResolver {
     );
 
     final isUrlParam = pathParamAnnotation != null || queryParamAnnotation != null;
-    if (isUrlParam && type.name == 'List' && type.typeArguments.length == 1) {
+    if (isUrlParam && urlCollectionTypes.contains(type.name) && type.typeArguments.length == 1) {
       final item = type.typeArguments.single;
       final isText = const {'String', 'Object', 'dynamic'}.contains(item.name);
       // Only a query param converts its items.
@@ -81,7 +81,7 @@ class RouteParameterResolver {
       final kind = queryParamAnnotation != null ? 'query' : 'path';
       throwIf(
         !isText && !isConverted,
-        '${parameterElement.displayName}: a List $kind param can hold '
+        '${parameterElement.displayName}: a ${type.name} $kind param can hold '
         '${queryParamAnnotation != null ? 'String, int, double, num, bool or enum' : 'String'} items, not ${item.name}',
         element: parameterElement,
       );

@@ -7,6 +7,10 @@ const _reservedVarNames = ['children'];
 /// that can be parsed from a path string
 const validPathParamTypes = ['String', 'int', 'double', 'num', 'bool', 'dynamic'];
 
+/// The collections a query param can be, read from its key repeated in the
+/// url.
+const urlCollectionTypes = {'List', 'Set', 'Iterable'};
+
 /// holds constructor parameter info to be used
 /// in generating route parameters.
 class ParamConfig {
@@ -108,10 +112,15 @@ class ParamConfig {
     return name;
   }
 
-  /// The type of the items when this is a `List` of a type the url gives as
-  /// text and the generated code converts, such as `int`, otherwise `null`.
+  /// Whether this is a `List`, `Set` or `Iterable` of one item type, the
+  /// collections a query param reads from its key repeated in the url.
+  bool get isUrlCollection => urlCollectionTypes.contains(type.name) && type.typeArguments.length == 1;
+
+  /// The type of the items when this is a `List`, `Set` or `Iterable` of a
+  /// type the url gives as text and the generated code converts, such as
+  /// `int`, otherwise `null`.
   ResolvedType? get listItemType {
-    if (type.name != 'List' || type.typeArguments.length != 1) return null;
+    if (!isUrlCollection) return null;
     final item = type.typeArguments.single;
     return item.isEnum || const {'int', 'double', 'num', 'bool'}.contains(item.name) ? item : null;
   }

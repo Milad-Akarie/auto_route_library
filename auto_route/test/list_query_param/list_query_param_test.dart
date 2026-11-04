@@ -82,4 +82,30 @@ void main() {
     expect(router.urlState.url, '/items');
     expect(router.urlState.uri.hasQuery, isFalse);
   });
+
+  // flutter/flutter#108437: a query param typed `Set<String>`,
+  // `Iterable<int>` or `Set` of an enum was read untyped, so a link to the
+  // page threw a TypeError: the url gives text or a list of it.
+  // Steps: open /tags with repeated tags, ids and sorts; then push TagsRoute.
+  // Should: each param holds its own type, a repeated tag once; the push
+  // writes them back in the url.
+  testWidgets('a deep link reads a Set and an Iterable (flutter/flutter#108437)', (tester) async {
+    await openItems(tester, '/tags?tags=a&tags=b&tags=a&ids=1&ids=x&ids=2&sorts=desc&sorts=desc');
+    expect(find.text('tags {a, b} ids [1, 2] sorts [desc]'), findsOneWidget);
+  });
+
+  testWidgets('a Set left out of the url is its default (flutter/flutter#108437)', (tester) async {
+    await openItems(tester, '/tags');
+    expect(find.text('tags {} ids null sorts null'), findsOneWidget);
+  });
+
+  testWidgets('pushing a Set and an Iterable writes their items in the url (flutter/flutter#108437)', (tester) async {
+    final router = ListRouter();
+    await pumpRouterApp(tester, router);
+    unawaited(router.push(TagsRoute(tags: const {'x'}, ids: const [3], sorts: const {.asc})));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('tags {x} ids [3] sorts [asc]'), findsOneWidget);
+    expect(router.urlState.url, '/tags?tags=x&ids=3&sorts=asc');
+  });
 }

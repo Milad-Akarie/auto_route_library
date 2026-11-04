@@ -12,6 +12,7 @@ class ListRouter extends RootStackRouter {
   List<AutoRoute> get routes => [
     AutoRoute(path: '/', page: ListHomeRoute.page),
     AutoRoute(path: '/items', page: ItemsRoute.page),
+    AutoRoute(path: '/tags', page: TagsRoute.page),
   ];
 }
 
@@ -47,4 +48,19 @@ class ItemsView extends StatelessWidget {
       'ids $ids prices $prices flags $flags sorts ${sorts?.map((s) => s.name).toList()} picked $picked',
     ),
   );
+}
+
+// A page whose query params are a Set and an Iterable, as in
+// flutter/flutter#108437.
+@RoutePage()
+class TagsView extends StatelessWidget {
+  const TagsView({super.key, @QueryParam() this.tags = const {}, @QueryParam() this.ids, @QueryParam() this.sorts});
+
+  final Set<String> tags;
+  final Iterable<int>? ids;
+  final Set<Sort>? sorts;
+
+  @override
+  Widget build(BuildContext context) =>
+      Scaffold(body: Text('tags $tags ids ${ids?.toList()} sorts ${sorts?.map((s) => s.name).toList()}'));
 }
