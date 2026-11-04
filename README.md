@@ -883,6 +883,21 @@ getIt<AppRouter>().push(...);
 
 **AutoRoute** will automatically handle deep-links coming from the platform, but native platforms require some setup, see [Deep linking topic](https://docs.flutter.dev/ui/navigation/deep-linking) in flutter documentation.
 
+### How a link is processed
+
+A link from the platform goes through these steps, in this order:
+
+1. The `deepLinkTransformer` gets the `Uri` and returns the one to match.
+2. The result is matched against your routes.
+3. The `deepLinkBuilder` gets the link and returns the one to open.
+
+The builder is not called in every case:
+
+- For the link that opens the app, it's always called, even when no route matches. Returning the platform link as it is then reports an error that names the link.
+- For a link that arrives while the app is running, it's called only when at least one route matched. A link no route matches is ignored.
+
+So to handle links that aren't meant to be routes, such as an e-mail sign-in link, either shape them in the transformer so they match a route, for example by dropping the segments that aren't routable, or add a wildcard `RedirectRoute(path: '*', redirectTo: '/')` as the last route (see [Wildcards](#wildcards)) so every link matches something.
+
 ### Using Deep-link Transformer
 
 Deep link transformer intercepts deep-links before they're processed by the matcher, it's useful for stripping or modifying deep-links before they're matched.
