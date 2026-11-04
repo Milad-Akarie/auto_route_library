@@ -259,6 +259,7 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
 class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRouterIndexedStack>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
+  late CurvedAnimation _curvedAnimation;
   late Animation<double> _animation;
   int _index = 0;
   late int _tabsHash;
@@ -268,15 +269,14 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this, duration: widget.duration);
-    _animation = Tween(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _animationController, curve: widget.curve));
+    _curvedAnimation = CurvedAnimation(parent: _animationController, curve: widget.curve);
+    _animation = Tween(begin: 0.0, end: 1.0).animate(_curvedAnimation);
     _tabsHash = const ListEquality<dynamic>().hash(widget.routes);
   }
 
   @override
   void dispose() {
+    _curvedAnimation.dispose();
     _animationController.dispose();
     super.dispose();
   }
