@@ -1601,11 +1601,13 @@ abstract class StackRouter extends RoutingController {
 
   // Removes the top page when the navigator has not built it yet, as right
   // after a push, and completes it with [result]. Navigator.pop would pop
-  // the page below it instead.
+  // the page below it instead. The last page is never removed this way: right
+  // after replaceAll or navigate it is the only page, and the pop goes to what
+  // the navigator has built, as a back on a single-page router does.
   bool _popUnbuiltTop(Object? result) {
     final navigator = _navigatorKey.currentState;
     final top = _pages.lastOrNull;
-    if (navigator == null || top == null || navigator.widget.pages.contains(top)) {
+    if (navigator == null || top == null || _pages.length < 2 || navigator.widget.pages.contains(top)) {
       return false;
     }
     top.routeData.onPopInvoked(result);
