@@ -46,17 +46,30 @@ class Parameters {
 
   /// returns the value corresponding with [key] corresponding with [key] as nullable [String]
   /// if null returns [defaultValue]
-  String? optString(String key, [String? defaultValue]) => _params[key] ?? defaultValue;
+  ///
+  /// A key repeated in the url (`?tag=red&tag=blue`) gives its last value, as
+  /// [Uri.queryParameters] does; any other value gives its `toString()`.
+  String? optString(String key, [String? defaultValue]) => _stringOf(_params[key]) ?? defaultValue;
 
   /// returns the value corresponding with [key] as [String]
   /// if null returns [defaultValue]
+  ///
+  /// Reads a repeated key or a non-String value as [optString] does.
   String getString(String key, [String? defaultValue]) {
-    final val = _params[key] ?? defaultValue;
+    final val = _stringOf(_params[key]) ?? defaultValue;
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [String] $key value from ${_params[key]}');
     }
     return val;
   }
+
+  // The router keeps a repeated query key as a list of its values.
+  static String? _stringOf(Object? value) => switch (value) {
+    null => null,
+    final String value => value,
+    final List<Object?> values => values.isEmpty ? null : values.last?.toString(),
+    _ => value.toString(),
+  };
 
   /// returns the value corresponding with [key] as nullable [Int]
   /// if null returns [defaultValue]

@@ -84,6 +84,7 @@ import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
 import 'reload_guard_test.dart' as reload_guard;
 import 'reload_hero_test.dart' as reload_hero;
 import 'remove_where_same_route_test.dart' as remove_where_same_route;
+import 'repeated_query_key_test.dart' as repeated_query_key;
 import 'replace_all_from_deep_stack_test.dart' as replace_all_from_deep_stack;
 import 'replace_all_on_reevaluation_test.dart' as replace_all_on_reevaluation;
 import 'replace_all_rejected_test.dart' as replace_all_rejected;
@@ -212,6 +213,7 @@ void main() {
   group('reload guard', reload_guard.main);
   group('reload hero', reload_hero.main);
   group('remove where same route', remove_where_same_route.main);
+  group('repeated query key', repeated_query_key.main);
   group('replace all from deep stack', replace_all_from_deep_stack.main);
   group('replace all on reevaluation', replace_all_on_reevaluation.main);
   group('replace all rejected', replace_all_rejected.main);
