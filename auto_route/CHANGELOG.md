@@ -113,6 +113,9 @@
 - **FIX**: a guard's redirect page leaves no history entry behind, fixes #2331
 - **FIX**: awaiting `pushAll` waits for its guards to decide (see the breaking change).
 - **FIX**: `pushAndPopUntil` no longer shows the pages it removes, fixes #1797
+- **FIX**: `pushAndPopUntil(scopedPopUntil: false)` removes the pages a nested router's predicate
+  rejects instead of animating them out, and leaves the page of a nested router that goes with its
+  shell under the new page, not a blank shell (#1797).
 - **FIX**: `navigate()` opens the right tab when two tabs share a route, keeps the path params it
   inherits (#1816), and fills a path param into the parent path that holds it (#2066).
 - **FIX**: `navigatePath()` with an absolute path from a nested page opens its page, fixes #2317

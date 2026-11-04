@@ -2185,7 +2185,10 @@ abstract class StackRouter extends RoutingController {
   /// [route] leaves the stack as it was.
   ///
   /// if [scopedPopUntil] is false the [predicate] visits all StackRouters
-  /// in hierarchy starting from the top-most one until satisfied
+  /// in hierarchy starting from the top-most one until satisfied. The routes
+  /// it rejects in a nested router are removed the same way, and a nested
+  /// router whose own page is removed keeps its pages on screen under
+  /// [route] until it goes.
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
@@ -2202,30 +2205,46 @@ abstract class StackRouter extends RoutingController {
       onFailure: onFailure,
       onAccepted: () {
         if (scopedPopUntil) {
-          scope._removeUntilRoute(predicate);
+          scope._removePagesUntil(scope._rejectedPagesUntil(predicate).rejected, withPush: true);
           return;
         }
-        for (final router in _topMostRouter()._buildRoutersHierarchy().whereType<StackRouter>()) {
-          // the push notifies its own scope
-          if (router._removeUntilRoute(predicate, notify: router != scope)) break;
+        // The predicate is asked about every router first, so a nested
+        // router whose own page goes too is left as it is: its top page stays
+        // under [route] while it slides in, as the scope's old top does.
+        final routers = _topMostRouter()._buildRoutersHierarchy().whereType<StackRouter>().toList();
+        final rejectedPages = <int>[];
+        for (final router in routers) {
+          final (:accepted, :rejected) = router._rejectedPagesUntil(predicate);
+          rejectedPages.add(rejected);
+          if (accepted) break;
+        }
+        // Each router sits on the top page of the next one.
+        var staysShown = true;
+        for (var i = rejectedPages.length - 1; i >= 0; i--) {
+          if (staysShown) {
+            routers[i]._removePagesUntil(rejectedPages[i], withPush: routers[i] == scope);
+          }
+          staysShown = staysShown && rejectedPages[i] == 0;
         }
       },
     );
   }
 
-  // Removes the routes from the top down until [predicate] accepts one, and
-  // returns whether one did.
-  bool _removeUntilRoute(RoutePredicate predicate, {bool notify = false}) {
+  // Asks [predicate] about the routes from the top down until it accepts one.
+  // Pageless routes it rejects, such as dialogs, are removed on the way; the
+  // pages it rejects are only counted, for [_removePagesUntil].
+  ({bool accepted, int rejected}) _rejectedPagesUntil(RoutePredicate predicate) {
     // Pageless routes, such as dialogs, sit above the top page.
     while (hasPagelessTopRoute) {
       final top = pagelessRoutesObserver.current!;
-      if (predicate(top)) return true;
+      if (predicate(top)) return (accepted: true, rejected: 0);
       top.navigator?.removeRoute(top);
       if (pagelessRoutesObserver.current == top) break;
     }
-    var accepted = false;
-    for (final page in List.of(_pages.reversed)) {
+    var rejected = 0;
+    for (final page in _pages.reversed) {
       final shownRoute = pagelessRoutesObserver.routeOf(page);
+      final bool accepted;
       if (shownRoute != null) {
         accepted = predicate(shownRoute);
       } else {
@@ -2234,7 +2253,20 @@ abstract class StackRouter extends RoutingController {
         accepted = predicate(unshownRoute);
         unshownRoute.release();
       }
-      if (accepted) break;
+      if (accepted) return (accepted: true, rejected: rejected);
+      rejected++;
+    }
+    return (accepted: false, rejected: rejected);
+  }
+
+  // Removes the [count] top pages without animating them out. With [withPush]
+  // a page pushed in the same update makes the navigator remove them and keep
+  // the old top under the new page; otherwise each is removed from the
+  // navigator here, and this router is notified.
+  void _removePagesUntil(int count, {required bool withPush}) {
+    for (var i = 0; i < count; i++) {
+      final shownRoute = pagelessRoutesObserver.routeOf(_pages.last);
+      if (!withPush) shownRoute?.navigator?.removeRoute(shownRoute);
       _removeLast(notify: false);
       if (shownRoute != null) {
         // drops the removed page's history entry, as a pop does
@@ -2244,10 +2276,9 @@ abstract class StackRouter extends RoutingController {
         markUrlStateForReplace();
       }
     }
-    if (notify) {
+    if (!withPush && count > 0) {
       notifyAll(forceUrlRebuild: true);
     }
-    return accepted;
   }
 
   /// Removes last entry in stack and pushes given [path]
