@@ -78,8 +78,7 @@ void main() {
       final router = _buildRouter(kind, _rejectingGuard);
       await pumpRouterApp(tester, router);
 
-      await tester.fling(find.text('FeedRoute'), const Offset(-300, 0), 1000);
-      await tester.pumpAndSettle();
+      await _swipeToProfile(tester);
 
       _expectTab(router, 'FeedRoute');
       await expectBrowserUrl('/feed');
@@ -90,8 +89,7 @@ void main() {
       final router = _buildRouter(kind, _rejectingGuard);
       await pumpRouterApp(tester, router);
 
-      await tester.fling(find.text('FeedRoute'), const Offset(-300, 0), 1000);
-      await tester.pumpAndSettle();
+      await _swipeToProfile(tester);
 
       _expectTab(router, 'ProfileRoute');
       await expectBrowserUrl('/profile');
@@ -172,6 +170,16 @@ RootStackRouter _buildRouter(_Tabs kind, AutoRouteGuard guard) {
       ),
     ],
   );
+}
+
+// Swipes the page view or tab bar view from the feed tab to the profile tab.
+// The swipe covers four fifths of the page, so it reaches the profile tab even when its speed reads zero:
+// in an integration test the gesture's velocity tracker runs on the wall clock, and a slow frame before the
+// finger lifts zeroes it. A shorter swipe then falls back to the feed tab, guard or not.
+Future<void> _swipeToProfile(WidgetTester tester) async {
+  final width = tester.view.physicalSize.width / tester.view.devicePixelRatio;
+  await tester.fling(find.text('FeedRoute'), Offset(-width * 0.8, 0), 1000);
+  await tester.pumpAndSettle();
 }
 
 // [name] is the active tab, and the only one on screen.
