@@ -797,6 +797,26 @@ class TabsRouter extends RoutingController {
     super._reassemble();
   }
 
+  // A child route of this router's parent route that is not one of the tabs
+  // has no place here: report it, as any route no router can show is, instead
+  // of leaving the tabs as they are without a word.
+  @override
+  Future<T?> _navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
+    final match = _matchOrReportFailure(route, onFailure);
+    if (match == null) return SynchronousFuture(null);
+    if (_pages.isNotEmpty && _tabIndexOf(match) == -1) {
+      if (onFailure != null) {
+        onFailure(RouteNotFoundFailure(route.routeName));
+        return SynchronousFuture(null);
+      }
+      throw FlutterError(
+        'Can not navigate to ${route.routeName}: it is not one of the tabs of the tabs router of '
+        '${routeData.name}. Add it to the routes of its AutoTabsRouter, or show it in a router of its own.',
+      );
+    }
+    return _navigateAll([match], onFailure: onFailure);
+  }
+
   RouteData<dynamic> _routeData;
   int _activeIndex = 0;
   int? _previousIndex;
