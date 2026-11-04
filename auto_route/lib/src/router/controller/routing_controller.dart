@@ -533,8 +533,9 @@ abstract class RoutingController with ChangeNotifier {
 
   RoutingController? get _parent;
 
-  /// Whether this controller has the top-most visible page
-  bool get isTopMost => this == _topMostRouter();
+  /// Whether this controller has the top-most visible page of the whole
+  /// router tree, not only of its own subtree.
+  bool get isTopMost => this == topMostRouter();
 
   /// Whether every tabs router above this controller shows the tab that
   /// holds it.

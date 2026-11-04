@@ -82,6 +82,7 @@ import 'pop_scope_once_test.dart' as pop_scope_once;
 import 'pop_scope_test.dart' as pop_scope;
 import 'pop_while_reevaluating_test.dart' as pop_while_reevaluating;
 import 'popped_args_released_test.dart' as popped_args_released;
+import 'predictive_back_nested_under_root_test.dart' as predictive_back_nested_under_root;
 import 'prefix_matches_nested_test.dart' as prefix_matches_nested;
 import 'prefix_matches_tabs_test.dart' as prefix_matches_tabs;
 import 'push_all_nested_routes_test.dart' as push_all_nested_routes;
@@ -246,6 +247,7 @@ void main() {
   group('pop scope', pop_scope.main);
   group('pop while reevaluating', pop_while_reevaluating.main);
   group('popped args released', popped_args_released.main);
+  group('predictive back nested under root', predictive_back_nested_under_root.main);
   group('prefix matches nested', prefix_matches_nested.main);
   group('prefix matches tabs', prefix_matches_tabs.main);
   group('push all nested routes', push_all_nested_routes.main);
