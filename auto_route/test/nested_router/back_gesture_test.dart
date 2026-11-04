@@ -116,7 +116,7 @@ void main() {
       router.push(SecondHostRoute());
       await tester.pumpAndSettle();
       final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!;
-      nested.push(Tab2Route());
+      nested.push(const Tab2Route());
       await tester.pumpAndSettle();
       nested.innerRouterOf<StackRouter>(Tab2Route.name)!.push(const Tab2Nested2Route());
       await tester.pumpAndSettle();

@@ -13,7 +13,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login page'),
+        title: const Text('Login page'),
         automaticallyImplyLeading: showBackButton,
       ),
       body: Center(
@@ -21,7 +21,7 @@ class LoginPage extends StatelessWidget {
           onPressed: () {
             context.read<AuthService>().login();
           },
-          child: Text('Login'),
+          child: const Text('Login'),
         ),
       ),
     );

@@ -32,7 +32,7 @@ void main() {
     );
     await pumpRouterConfigApp(
       tester,
-      router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.path('/dashboard') : link),
+      router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/dashboard') : link),
     );
     await tester.pump(const Duration(milliseconds: 200));
     await tester.pumpAndSettle();

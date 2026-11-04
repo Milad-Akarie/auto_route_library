@@ -22,8 +22,8 @@ void main() {
           path: '/',
           page: PageInfo(
             'TabsRoute',
-            builder: (_) => AutoTabsRouter.pageView(
-              routes: const [NamedRoute('Tab1Route'), NamedRoute('Tab2Route'), NamedRoute('Tab3Route')],
+            builder: (_) => const AutoTabsRouter.pageView(
+              routes: [NamedRoute('Tab1Route'), NamedRoute('Tab2Route'), NamedRoute('Tab3Route')],
             ),
           ),
           children: [

@@ -23,7 +23,7 @@ class BookDetailsPageState extends State<BookDetailsPage> {
     final booksDb = BooksDBProvider.of(context);
     final book = booksDb?.findBookById(widget.id);
     return book == null
-        ? Text('Book null')
+        ? const Text('Book null')
         : Scaffold(
             body: SizedBox(
               width: double.infinity,
@@ -39,7 +39,7 @@ class BookDetailsPageState extends State<BookDetailsPage> {
                         padding: const EdgeInsets.only(top: 24),
                         child: Text(
                           'Reads  $counter',
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ),
                       const SizedBox(height: 32),
@@ -50,7 +50,7 @@ class BookDetailsPageState extends State<BookDetailsPage> {
                             counter++;
                           });
                         },
-                        child: Icon(Icons.add),
+                        child: const Icon(Icons.add),
                       ),
                     ],
                   ),

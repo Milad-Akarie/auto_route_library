@@ -98,7 +98,7 @@ void main() {
         routerConfig: router.config(
           reevaluateListenable: n,
           // on web the browser's url would otherwise carry over from the previous test
-          deepLinkBuilder: (link) => link.initial ? DeepLink.path('/') : link,
+          deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link,
         ),
       ),
     );

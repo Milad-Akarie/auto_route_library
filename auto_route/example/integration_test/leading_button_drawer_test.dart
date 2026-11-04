@@ -46,7 +46,7 @@ void main() {
           key: key,
           theme: ThemeData(brightness: brightness),
           locale: locale,
-          routerConfig: router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.path('/') : link),
+          routerConfig: router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link),
         ),
       );
       await tester.pumpAndSettle();

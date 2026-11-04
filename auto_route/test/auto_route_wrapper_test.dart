@@ -135,7 +135,7 @@ class WrapperRoute extends PageRouteInfo<void> {
   const WrapperRoute({List<PageRouteInfo>? children}) : super(WrapperRoute.name, initialChildren: children);
 
   static const String name = 'WrapperRoute';
-  static PageInfo page = PageInfo(name, builder: (data) => WrappedRoute(child: WrapperPage()));
+  static PageInfo page = PageInfo(name, builder: (data) => const WrappedRoute(child: WrapperPage()));
 }
 
 class WrapperPage extends StatelessWidget implements AutoRouteWrapper {

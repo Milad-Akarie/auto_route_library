@@ -17,7 +17,7 @@ class WebVerifyPage extends StatelessWidget {
           onPressed: () {
             App.of(context).authService.isVerified = true;
           },
-          child: Text('verify'),
+          child: const Text('verify'),
         ),
       ),
     );

@@ -6,24 +6,24 @@ void main() {
   test('Test RouteMatch Equality', () {
     final match = RouteMatch(
       config: TestRoute('Test'),
-      segments: ['/'],
+      segments: const ['/'],
       stringMatch: '/',
-      key: ValueKey('Test'),
+      key: const ValueKey('Test'),
       args: "Args",
-      params: Parameters({"id": 1}),
-      queryParams: Parameters({"foo": "bar"}),
+      params: const Parameters({"id": 1}),
+      queryParams: const Parameters({"foo": "bar"}),
       fragment: 'fragment',
       redirectedFrom: 'redirectedFrom',
       autoFilled: false,
       children: [
         RouteMatch(
           config: TestRoute('Test'),
-          segments: ['/'],
+          segments: const ['/'],
           stringMatch: '/',
-          key: ValueKey('Test'),
+          key: const ValueKey('Test'),
           args: "Args",
-          params: Parameters({"id": 1}),
-          queryParams: Parameters({"foo": "bar"}),
+          params: const Parameters({"id": 1}),
+          queryParams: const Parameters({"foo": "bar"}),
           fragment: 'fragment',
           redirectedFrom: 'redirectedFrom',
           autoFilled: false,
@@ -35,7 +35,7 @@ void main() {
   });
 
   test('Test PageRouteInfo Equality', () {
-    final pageRouteInfo = PageRouteInfo(
+    const pageRouteInfo = PageRouteInfo(
       'Test',
       args: "Args",
       rawPathParams: {"id": 1},

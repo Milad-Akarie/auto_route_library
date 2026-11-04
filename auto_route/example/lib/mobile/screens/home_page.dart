@@ -95,7 +95,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
             builder: (context, child) {
               return Scaffold(
                 appBar: AppBar(
-                  leading: AutoLeadingButton(),
+                  leading: const AutoLeadingButton(),
                   title: Text(context.topRoute.title(context)),
                   // bottom: TabBar(
                   //   controller: controller,
@@ -112,21 +112,21 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget buildBottomNav(BuildContext context, TabsRouter tabsRouter) {
     final hideBottomNav = tabsRouter.topMatch.meta['hideBottomNav'] == true;
     return hideBottomNav
-        ? SizedBox.shrink()
+        ? const SizedBox.shrink()
         : BottomNavigationBar(
             currentIndex: tabsRouter.activeIndex,
             onTap: tabsRouter.setActiveIndex,
             items: [
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Icon(Icons.source),
                 label: 'Books',
               ),
-              BottomNavigationBarItem(
+              const BottomNavigationBarItem(
                 icon: Icon(Icons.person),
                 label: 'Profile',
               ),
               if (_showSettingsTap)
-                BottomNavigationBarItem(
+                const BottomNavigationBarItem(
                   icon: Icon(Icons.settings),
                   label: 'Settings',
                 ),
@@ -146,14 +146,14 @@ class WelcomeScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             leading: leading,
-            title: Text('Welcome'),
+            title: const Text('Welcome'),
             centerTitle: false,
           ),
           body: Center(
             child: ElevatedButton(
-              child: Text('Dashboard'),
+              child: const Text('Dashboard'),
               onPressed: () {
-                context.pushRoute(HomeRoute());
+                context.pushRoute(const HomeRoute());
               },
             ),
           ),

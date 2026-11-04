@@ -18,7 +18,7 @@ class UserDataPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Success'),
+            const Text('Success'),
             const SizedBox(height: 24),
             Text('Name: ${userData.name}'),
             const SizedBox(height: 24),
@@ -28,7 +28,7 @@ class UserDataPage extends StatelessWidget {
               onPressed: () {
                 context.router.maybePopTop(userData);
               },
-              child: Text('Done'),
+              child: const Text('Done'),
             ),
           ],
         ),

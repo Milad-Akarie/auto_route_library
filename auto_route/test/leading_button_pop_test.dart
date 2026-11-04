@@ -97,7 +97,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
-      appBar: AppBar(leading: AutoLeadingButton()),
+      appBar: AppBar(leading: const AutoLeadingButton()),
       body: const Text(name),
     ),
   );
@@ -110,7 +110,7 @@ class _VerifyRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
-      appBar: AppBar(leading: AutoLeadingButton()),
+      appBar: AppBar(leading: const AutoLeadingButton()),
       body: const Text(name),
     ),
   );
@@ -123,7 +123,7 @@ class _UserRoute extends PageRouteInfo<void> {
   static PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
-      appBar: AppBar(leading: AutoLeadingButton()),
+      appBar: AppBar(leading: const AutoLeadingButton()),
       body: const AutoRouter(),
     ),
   );

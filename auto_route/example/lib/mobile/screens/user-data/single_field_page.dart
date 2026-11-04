@@ -37,7 +37,7 @@ class SingleFieldPageState extends State<SingleFieldPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
               child: TextField(
-                decoration: InputDecoration(border: OutlineInputBorder()),
+                decoration: const InputDecoration(border: OutlineInputBorder()),
                 onChanged: (t) {
                   setState(() {
                     _text = t;
@@ -51,7 +51,7 @@ class SingleFieldPageState extends State<SingleFieldPage> {
                   : () {
                       widget.onNext?.call(_text);
                     },
-              child: Text('Next'),
+              child: const Text('Next'),
             ),
           ],
         ),

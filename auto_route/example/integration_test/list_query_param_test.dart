@@ -42,7 +42,17 @@ void main() {
   testWidgets('Pushing the route writes the items in the url', (tester) async {
     final router = ListRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(ItemsRoute(ids: [4, 5], prices: [1.5], flags: [true], sorts: [Sort.desc], picked: [9])));
+    unawaited(
+      router.push(
+        ItemsRoute(
+          ids: const [4, 5],
+          prices: const [1.5],
+          flags: const [true],
+          sorts: const [Sort.desc],
+          picked: const [9],
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('ids [4, 5] prices [1.5] flags [true] sorts [desc] picked [9]'), findsOneWidget);

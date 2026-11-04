@@ -42,7 +42,7 @@ void main() {
         MaterialApp.router(
           routerConfig: router.config(
             reevaluateListenable: withListenable ? auth : null,
-            deepLinkBuilder: (link) => link.initial ? DeepLink.path('/') : link,
+            deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link,
           ),
         ),
       );

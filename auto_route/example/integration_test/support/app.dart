@@ -45,7 +45,7 @@ Future<void> pumpRouterApp(
 Future<void> pumpRouterAppWithConfig(WidgetTester tester, RootStackRouter router) {
   return pumpRouterConfigApp(
     tester,
-    router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.path('/') : link),
+    router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link),
   );
 }
 

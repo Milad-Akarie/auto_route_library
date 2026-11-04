@@ -109,7 +109,7 @@ class _FirstTabRoute extends PageRouteInfo<void> {
     builder: (_) => _CounterPage(
       label: 'First',
       actions: [
-        _TabButton('Go to second tab', index: 1),
+        const _TabButton('Go to second tab', index: 1),
         TextButton(onPressed: () => _signedInNotifier.value = true, child: const Text('Sign in')),
       ],
     ),

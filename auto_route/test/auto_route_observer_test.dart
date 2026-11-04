@@ -243,7 +243,7 @@ class TabsRoute extends PageRouteInfo<void> {
   const TabsRoute({List<PageRouteInfo>? children}) : super(TabsRoute.name, initialChildren: children);
 
   static const String name = 'TabsRoute';
-  static PageInfo page = PageInfo(name, builder: (data) => AutoTabsRouter(routes: const [Tab1Route(), Tab2Route()]));
+  static PageInfo page = PageInfo(name, builder: (data) => const AutoTabsRouter(routes: [Tab1Route(), Tab2Route()]));
 }
 
 class Tab1Route extends PageRouteInfo<void> {

@@ -37,7 +37,7 @@ void main() {
           path: '/',
           page: PageInfo(
             'TabsRoute',
-            builder: (_) => AutoTabsRouter.pageView(routes: const [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')]),
+            builder: (_) => const AutoTabsRouter.pageView(routes: [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')]),
           ),
           children: [
             AutoRoute(path: 'tab1', page: _tabPage('Tab1')),

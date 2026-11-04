@@ -114,7 +114,7 @@ class _ShellRoute extends PageRouteInfo<void> {
   const _ShellRoute() : super(name);
 
   static const String name = 'ShellRoute';
-  static PageInfo page = PageInfo.emptyShell(name);
+  static PageInfo page = const PageInfo.emptyShell(name);
 }
 
 class _HeroShellRoute extends PageRouteInfo<void> {

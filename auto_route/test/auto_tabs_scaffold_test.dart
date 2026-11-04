@@ -129,7 +129,7 @@ class TabsScaffoldDefaultRoute extends PageRouteInfo<void> {
   const TabsScaffoldDefaultRoute() : super(TabsScaffoldDefaultRoute.name);
 
   static const String name = 'TabsScaffoldDefaultRoute';
-  static PageInfo page = PageInfo(name, builder: (data) => AutoTabsScaffold());
+  static PageInfo page = PageInfo(name, builder: (data) => const AutoTabsScaffold());
 }
 
 class TabPageWithRequiredArgument extends PageRouteInfo<void> {

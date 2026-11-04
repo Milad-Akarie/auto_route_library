@@ -80,13 +80,13 @@ class _MainWebPageState extends State<MainWebPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: AutoLeadingButton(),
+        leading: const AutoLeadingButton(),
       ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               'HomePage',
               style: TextStyle(fontSize: 30),
             ),
@@ -104,7 +104,7 @@ class _MainWebPageState extends State<MainWebPage> {
                         ),
                       );
                     },
-                child: Text('Navigate to user/2'),
+                child: const Text('Navigate to user/2'),
               ),
             ),
             Padding(
@@ -113,7 +113,7 @@ class _MainWebPageState extends State<MainWebPage> {
                 onPressed: () {
                   App.of(context).authService.isAuthenticated = false;
                 },
-                child: Text('Logout'),
+                child: const Text('Logout'),
               ),
             ),
             if (kIsWeb)
@@ -181,11 +181,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
           children: [
             Text(
               'User Profile : ${widget.userId}  likes: ${widget.likes}}',
-              style: TextStyle(fontSize: 30),
+              style: const TextStyle(fontSize: 30),
             ),
             Text(
               '${context.routeData.queryParams}',
-              style: TextStyle(fontSize: 30),
+              style: const TextStyle(fontSize: 30),
             ),
             const SizedBox(height: 16),
             MaterialButton(
@@ -193,9 +193,9 @@ class _UserProfilePageState extends State<UserProfilePage> {
               onPressed:
                   widget.navigate ??
                   () {
-                    context.pushRoute(UserFavoritePostsRoute());
+                    context.pushRoute(const UserFavoritePostsRoute());
                   },
-              child: Text('Posts -> '),
+              child: const Text('Posts -> '),
             ),
             const SizedBox(height: 8),
             Padding(
@@ -215,7 +215,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 onPressed: () {
                   App.of(context).authService.isAuthenticated = false;
                 },
-                child: Text('Logout'),
+                child: const Text('Logout'),
               ),
             ),
           ],
@@ -243,19 +243,19 @@ class UserPostsPageState extends State<UserPostsPage> {
           children: [
             Text(
               'User Posts ${widget.id}',
-              style: TextStyle(fontSize: 30),
+              style: const TextStyle(fontSize: 30),
             ),
             ElevatedButton(
               onPressed: () {
                 showDialog(
                   context: context,
                   useRootNavigator: true,
-                  builder: (_) => AlertDialog(
+                  builder: (_) => const AlertDialog(
                     title: Text('Alert'),
                   ),
                 );
               },
-              child: Text('Show Dialog'),
+              child: const Text('Show Dialog'),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -263,10 +263,10 @@ class UserPostsPageState extends State<UserPostsPage> {
                 onPressed: () {
                   App.of(context).authService.isAuthenticated = false;
                 },
-                child: Text('Logout'),
+                child: const Text('Logout'),
               ),
             ),
-            Expanded(
+            const Expanded(
               child: AutoRouter(),
             ),
           ],
@@ -298,7 +298,7 @@ class UserPageState extends State<UserPage> {
     return Scaffold(
       backgroundColor: Colors.red,
       appBar: AppBar(
-        leading: AutoLeadingButton(),
+        leading: const AutoLeadingButton(),
         title: Builder(
           builder: (context) {
             return Text(
@@ -307,7 +307,7 @@ class UserPageState extends State<UserPage> {
           },
         ),
       ),
-      body: AutoRouter(),
+      body: const AutoRouter(),
     );
   }
 }
@@ -318,7 +318,7 @@ class NotFoundScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Text(
           '404!',
@@ -340,7 +340,7 @@ class UserAllPostsPage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            Text(
+            const Text(
               'All Posts',
               style: TextStyle(fontSize: 28),
             ),
@@ -349,14 +349,14 @@ class UserAllPostsPage extends StatelessWidget {
               onPressed:
                   navigate ??
                   () {
-                    context.pushRoute(UserFavoritePostsRoute());
+                    context.pushRoute(const UserFavoritePostsRoute());
                   },
-              child: Text('Favorite'),
+              child: const Text('Favorite'),
             ),
             MaterialButton(
               color: Colors.red,
               onPressed: navigate ?? () => context.back(),
-              child: Text('back'),
+              child: const Text('back'),
             ),
           ],
         ),
@@ -371,7 +371,7 @@ class UserFavoritePostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(
           children: [

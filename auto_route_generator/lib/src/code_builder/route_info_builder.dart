@@ -155,9 +155,9 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                   ..body = Block(
                     (b) => b
                       ..statements.addAll([
-                        Code('if (identical(this, other)) return true;'),
+                        const Code('if (identical(this, other)) return true;'),
                         Code('if (other is! ${argsClassRefer.symbol}) return false;'),
-                        Code('return '),
+                        const Code('return '),
                         ...[
                           for (final p in equatableParams)
                             if (p.type.isList)
@@ -186,8 +186,8 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                                   .code
                             else
                               Code('${p.name} == other.${p.name}'),
-                        ].insertBetween(Code(' && ')),
-                        Code(';'),
+                        ].insertBetween(const Code(' && ')),
+                        const Code(';'),
                       ]),
                   ),
               ),
@@ -229,7 +229,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                             ).constInstance([]).property('hash').call([refer(p.name)]).code
                           else
                             Code('${p.name}.hashCode'),
-                      ].insertBetween(Code(' ^ ')),
+                      ].insertBetween(const Code(' ^ ')),
                     ),
                   ),
               ),
@@ -255,9 +255,9 @@ Iterable<Parameter> buildArgParams(
       if (p.defaultValueCode != null) {
         if (_constKeyword.hasMatch(p.defaultValueCode!)) {
           if (p.defaultValueCode!.contains('[]')) {
-            defaultCode = Code('const []');
+            defaultCode = const Code('const []');
           } else if (p.defaultValueCode!.contains('{}')) {
-            defaultCode = Code('const {}');
+            defaultCode = const Code('const {}');
           } else {
             defaultCode = Code(
               'const ${refer(p.defaultValueCode!.replaceFirst(_constKeyword, ''), p.defaultValueImport ?? p.type.import).accept(emitter).toString()}',
@@ -421,7 +421,7 @@ Expression _listItemParser(ResolvedType item, Expression itemType) {
     ).closure;
   }
   return switch (item.name) {
-    'bool' => CodeExpression(
+    'bool' => const CodeExpression(
       Code("(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null"),
     ),
     _ => itemType.property('tryParse'),

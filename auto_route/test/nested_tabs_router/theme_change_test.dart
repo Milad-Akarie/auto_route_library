@@ -24,7 +24,7 @@ void main() {
           initial: true,
           children: [
             AutoRoute(
-              page: PageInfo.emptyShell('EmptyRouter'),
+              page: const PageInfo.emptyShell('EmptyRouter'),
               path: 'empty',
               children: [
                 AutoRoute(page: _page('A'), path: 'a'),

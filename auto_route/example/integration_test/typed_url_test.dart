@@ -46,7 +46,7 @@ void main() {
   testWidgets('The app opens on the path it is given', (tester) async {
     await pumpRouterConfigApp(
       tester,
-      router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.path('/test/7') : link),
+      router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/test/7') : link),
     );
     expect(router.topRoute.name, 'TestRoute');
     expect(find.text('Test 7'), findsOneWidget);

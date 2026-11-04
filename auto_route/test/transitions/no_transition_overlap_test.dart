@@ -45,7 +45,7 @@ void main() {
           ),
         ],
       );
-      await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.path('/dashboard/home')));
+      await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => const DeepLink.path('/dashboard/home')));
       expect(find.text('Home'), findsOneWidget);
 
       router.navigatePath('/dashboard/brands');

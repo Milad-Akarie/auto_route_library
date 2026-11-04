@@ -45,7 +45,7 @@ void main() {
       tester,
       router.config(
         reevaluateListenable: auth,
-        deepLinkBuilder: (link) => link.initial ? DeepLink.path('/') : link,
+        deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link,
       ),
     );
     unawaited(router.push(_ProfileRoute(userId: 'u-1')));

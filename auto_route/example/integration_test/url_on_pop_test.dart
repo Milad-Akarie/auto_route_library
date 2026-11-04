@@ -75,7 +75,7 @@ class _PatientsShellRoute extends PageRouteInfo<void> {
   const _PatientsShellRoute() : super(name);
 
   static const String name = '_PatientsShellRoute';
-  static PageInfo page = PageInfo.emptyShell(name);
+  static PageInfo page = const PageInfo.emptyShell(name);
 }
 
 class _PatientShellRoute extends PageRouteInfo<void> {
@@ -83,7 +83,7 @@ class _PatientShellRoute extends PageRouteInfo<void> {
     : super(name, rawPathParams: {'patientId': patientId}, rawQueryParams: {'source': null});
 
   static const String name = '_PatientShellRoute';
-  static PageInfo page = PageInfo.emptyShell(name);
+  static PageInfo page = const PageInfo.emptyShell(name);
 }
 
 class _PatientsListRoute extends PageRouteInfo<void> {

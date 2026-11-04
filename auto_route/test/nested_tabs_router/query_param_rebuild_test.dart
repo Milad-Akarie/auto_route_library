@@ -54,7 +54,7 @@ void main() {
               path: 'nested1',
               page: PageInfo(
                 'NestedRoutingRoute',
-                builder: (_) => AutoTabsRouter.tabBar(routes: const [NamedRoute('PageThatRequiresQueryParamRoute')]),
+                builder: (_) => const AutoTabsRouter.tabBar(routes: [NamedRoute('PageThatRequiresQueryParamRoute')]),
               ),
               children: [
                 AutoRoute(

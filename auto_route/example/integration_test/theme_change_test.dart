@@ -24,7 +24,7 @@ void main() {
           initial: true,
           children: [
             AutoRoute(
-              page: PageInfo.emptyShell('EmptyRouter'),
+              page: const PageInfo.emptyShell('EmptyRouter'),
               path: 'empty',
               children: [
                 AutoRoute(page: _page('A'), path: 'a'),
@@ -36,7 +36,7 @@ void main() {
         AutoRoute(page: _page('F'), path: '/f'),
       ],
     );
-    final config = router.config(deepLinkBuilder: (_) => DeepLink.path('/dashboardView'));
+    final config = router.config(deepLinkBuilder: (_) => const DeepLink.path('/dashboardView'));
     Widget app(ThemeMode mode) => MaterialApp.router(
       themeMode: mode,
       theme: ThemeData.light(),

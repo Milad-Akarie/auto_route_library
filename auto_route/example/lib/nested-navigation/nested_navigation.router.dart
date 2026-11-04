@@ -42,12 +42,12 @@ class HostScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Host Screen'),
+        title: const Text('Host Screen'),
 
         /// This will automatically display a back button if the nested router can pop
-        leading: AutoLeadingButton(),
+        leading: const AutoLeadingButton(),
       ),
-      body: AutoRouter(),
+      body: const AutoRouter(),
     );
   }
 }
@@ -61,8 +61,8 @@ class FirstScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-          onPressed: () => context.pushRoute(SecondRoute()),
-          child: Text('Go to second screen'),
+          onPressed: () => context.pushRoute(const SecondRoute()),
+          child: const Text('Go to second screen'),
         ),
       ),
     );
@@ -79,7 +79,7 @@ class SecondScreen extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () => context.maybePop(),
-          child: Text('Go Back'),
+          child: const Text('Go Back'),
         ),
       ),
     );

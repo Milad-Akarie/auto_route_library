@@ -29,7 +29,7 @@ void main() {
       tester,
       router.config(
         includePrefixMatches: true,
-        deepLinkBuilder: (link) => link.initial ? DeepLink.path('/second') : link,
+        deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/second') : link,
       ),
     );
     expect(router.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);

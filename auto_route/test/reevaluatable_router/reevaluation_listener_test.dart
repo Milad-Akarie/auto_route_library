@@ -118,7 +118,7 @@ void main() {
   testWidgets('Reevaluation should call the guard and navigate to protected page [with TabRouter]', (
     WidgetTester tester,
   ) async {
-    final tab2Router = EmptyShellRoute('Tab2Router');
+    const tab2Router = EmptyShellRoute('Tab2Router');
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -155,7 +155,7 @@ void main() {
           TabsHostRoute(
             useDefaultRoutes: true,
             children: [
-              tab2Router(children: [Tab2Nested2Route()]),
+              tab2Router(children: [const Tab2Nested2Route()]),
             ],
           ),
         ),
@@ -178,7 +178,7 @@ void main() {
             if (reevaluationNotifier.value) {
               resolver.next(true);
             } else {
-              resolver.redirectUntil(ThirdRoute());
+              resolver.redirectUntil(const ThirdRoute());
             }
           },
         ),
@@ -191,7 +191,7 @@ void main() {
     router.push(const SecondRoute());
     await tester.pumpAndSettle();
     verify(mockListener(captureAny, router)).called(1);
-    await tester.pumpAndSettle(Duration(milliseconds: 800));
+    await tester.pumpAndSettle(const Duration(milliseconds: 800));
     expectTopPage(router, ThirdRoute.name);
     reevaluationNotifier.value = true;
     await tester.pumpAndSettle();

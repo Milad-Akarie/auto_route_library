@@ -29,7 +29,7 @@ void main() {
               path: 'nested1',
               page: PageInfo(
                 'NestedRoutingRoute',
-                builder: (_) => AutoTabsRouter.tabBar(routes: const [NamedRoute('ParamRoute')]),
+                builder: (_) => const AutoTabsRouter.tabBar(routes: [NamedRoute('ParamRoute')]),
               ),
               children: [
                 AutoRoute(
@@ -46,7 +46,7 @@ void main() {
         ),
       ],
     );
-    final config = router.config(deepLinkBuilder: (link) => link.initial ? DeepLink.path('/') : link);
+    final config = router.config(deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link);
     late StateSetter setParentState;
     await tester.pumpWidget(
       StatefulBuilder(

@@ -41,7 +41,7 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
     final tabsRouter = router.innerRouterOf<TabsRouter>(TabsHostRoute.name);
     expect(tabsRouter, isNotNull);
     tabsRouter!.setActiveIndex(2);
-    await tester.pumpAndSettle(Duration(milliseconds: 400));
+    await tester.pumpAndSettle(const Duration(milliseconds: 400));
     expectTopPage(router, Tab3Nested1Route.name);
     expect(router.urlState.url, '/tab3');
   });

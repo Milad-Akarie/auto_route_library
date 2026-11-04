@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 //ignore_for_file: public_member_api_docs
 void main() {
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatefulWidget {
@@ -43,7 +43,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login to continue'),
+        title: const Text('Login to continue'),
       ),
       body: Center(
         child: Column(
@@ -52,20 +52,20 @@ class LoginPage extends StatelessWidget {
               onPressed: () {
                 App.of(context).authService.isAuthenticated = true;
               },
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
             ElevatedButton(
               onPressed: () {
                 App.of(context).authService.isVerified = true;
               },
-              child: Text('Verify'),
+              child: const Text('Verify'),
             ),
             ElevatedButton(
               onPressed: () {
                 final authService = App.of(context).authService;
                 authService.loginAndVerify();
               },
-              child: Text('Login & Verify'),
+              child: const Text('Login & Verify'),
             ),
           ],
         ),

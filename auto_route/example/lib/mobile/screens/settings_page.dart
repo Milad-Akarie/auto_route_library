@@ -53,13 +53,13 @@ class _SettingsPageState extends State<SettingsPage> with AutoRouteAwareStateMix
                   ),
                 );
               },
-              child: Text('Navigate to book details/1'),
+              child: const Text('Navigate to book details/1'),
             ),
             ElevatedButton(
               onPressed: () {
                 context.read<AuthService>().logout();
               },
-              child: Text('Logout'),
+              child: const Text('Logout'),
             ),
           ],
         ),

@@ -48,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Declarative Navigation Example')),
+      appBar: AppBar(title: const Text('Declarative Navigation Example')),
       body: ValueListenableBuilder(
         valueListenable: _profileNotifier,
         builder: (context, profile, _) {
@@ -110,14 +110,14 @@ class _NameInputScreenState extends State<NameInputScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text('Enter your name'),
+              const Text('Enter your name'),
               TextField(controller: _controller, textAlign: TextAlign.center),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   widget.onNameSubmitted(_controller.text);
                 },
-                child: Text('Submit'),
+                child: const Text('Submit'),
               ),
             ],
           ),
@@ -155,14 +155,14 @@ class _AgeInputScreenState extends State<AgeInputScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Text('Enter your age'),
+              const Text('Enter your age'),
               TextField(controller: _controller, textAlign: TextAlign.center),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   widget.onAgeSubmitted(int.parse(_controller.text));
                 },
-                child: Text('Submit'),
+                child: const Text('Submit'),
               ),
             ],
           ),
@@ -189,8 +189,8 @@ class ResultScreen extends StatelessWidget {
             children: [
               Text('Name: ${profile.name}'),
               Text('Age: ${profile.age}'),
-              SizedBox(height: 16),
-              ElevatedButton(onPressed: onReset, child: Text('Reset State')),
+              const SizedBox(height: 16),
+              ElevatedButton(onPressed: onReset, child: const Text('Reset State')),
             ],
           ),
         ),

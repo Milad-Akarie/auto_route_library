@@ -7,9 +7,9 @@ import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:source_gen/source_gen.dart';
 
-final _pathParamChecker = TypeChecker.typeNamed(PathParam, inPackage: 'auto_route');
-final _queryParamChecker = TypeChecker.typeNamed(QueryParam, inPackage: 'auto_route');
-final _urlFragmentChecker = TypeChecker.typeNamed(UrlFragment, inPackage: 'auto_route');
+const _pathParamChecker = TypeChecker.typeNamed(PathParam, inPackage: 'auto_route');
+const _queryParamChecker = TypeChecker.typeNamed(QueryParam, inPackage: 'auto_route');
+const _urlFragmentChecker = TypeChecker.typeNamed(UrlFragment, inPackage: 'auto_route');
 
 /// Resolves route parameters
 class RouteParameterResolver {

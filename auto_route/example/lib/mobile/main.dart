@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 
 //ignore_for_file: public_member_api_docs
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

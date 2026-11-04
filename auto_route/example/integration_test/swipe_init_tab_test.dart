@@ -58,7 +58,7 @@ void main() {
   }
 
   testWidgets('swiping a page view to a tab never opened fires didInitTabRoute', (tester) async {
-    await expectSwipesInitNewTabs(tester, buildRouter(() => AutoTabsRouter.pageView(routes: tabs)));
+    await expectSwipesInitNewTabs(tester, buildRouter(() => const AutoTabsRouter.pageView(routes: tabs)));
   });
 
   testWidgets('swiping a tab bar to a tab never opened fires didInitTabRoute', (tester) async {

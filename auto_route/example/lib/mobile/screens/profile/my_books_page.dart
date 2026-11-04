@@ -31,15 +31,15 @@ class MyBooksPage extends StatelessWidget {
                   SettingsTab(tab: 'newSegment', query: 'newQuery'),
                 );
               },
-              child: Text('navigate to /settings/newSegment'),
+              child: const Text('navigate to /settings/newSegment'),
             ),
             ElevatedButton(
               onPressed: () => context.back(),
-              child: Text('Navigate back'),
+              child: const Text('Navigate back'),
             ),
             ElevatedButton(
-              onPressed: () => context.router.root.pushAndPopUntil(HomeRoute(), predicate: (_) => false),
-              child: Text('Pop until /home'),
+              onPressed: () => context.router.root.pushAndPopUntil(const HomeRoute(), predicate: (_) => false),
+              child: const Text('Pop until /home'),
             ),
           ],
         ),

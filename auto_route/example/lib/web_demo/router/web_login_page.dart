@@ -20,7 +20,7 @@ class WebLoginPage extends StatelessWidget {
               onResult!(true);
             }
           },
-          child: Text('Login'),
+          child: const Text('Login'),
         ),
       ),
     );

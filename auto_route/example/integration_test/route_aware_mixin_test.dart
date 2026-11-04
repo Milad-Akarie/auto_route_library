@@ -34,7 +34,7 @@ void main() {
       tester,
       router.config(
         navigatorObservers: () => [AutoRouteObserver()],
-        deepLinkBuilder: (link) => link.initial ? DeepLink.path('/') : link,
+        deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/') : link,
       ),
     );
     expectTopPage(router, 'BookListRoute');

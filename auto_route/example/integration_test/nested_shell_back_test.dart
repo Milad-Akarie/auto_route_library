@@ -44,7 +44,7 @@ void main() {
       await pumpRouterConfigApp(
         tester,
         router.config(
-          deepLinkBuilder: (link) => link.initial ? DeepLink.path('/dashboard') : link,
+          deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/dashboard') : link,
           navigatorObservers: () => [_PushRecorder(pushes)],
         ),
       );

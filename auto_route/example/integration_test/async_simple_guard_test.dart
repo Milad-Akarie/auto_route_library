@@ -47,7 +47,7 @@ void main() {
       tester,
       router.config(
         reevaluateListenable: auth,
-        deepLinkBuilder: (link) => link.initial ? DeepLink.path('/profile') : link,
+        deepLinkBuilder: (link) => link.initial ? const DeepLink.path('/profile') : link,
       ),
     );
 

@@ -647,7 +647,7 @@ void main() {
     final matcher = RouteMatcher(routeCollection);
 
     test('Should build path to root route', () {
-      final routeInfo = PageRouteInfo('A');
+      const routeInfo = PageRouteInfo('A');
       final result = matcher.buildPathTo(routeInfo);
       expect(result, isNotNull);
       expect(result!.name, 'A');
@@ -656,7 +656,7 @@ void main() {
     });
 
     test('Should build path to nested route', () {
-      final routeInfo = PageRouteInfo('C1', rawPathParams: {'id': '123'});
+      const routeInfo = PageRouteInfo('C1', rawPathParams: {'id': '123'});
       final result = matcher.buildPathTo(routeInfo);
       expect(result, isNotNull);
       expect(result!.name, 'C');
@@ -667,7 +667,7 @@ void main() {
     });
 
     test('Should return null for non-existing route', () {
-      final routeInfo = PageRouteInfo('NonExisting');
+      const routeInfo = PageRouteInfo('NonExisting');
       final result = matcher.buildPathTo(routeInfo);
       expect(result, isNull);
     });

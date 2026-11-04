@@ -36,7 +36,7 @@ void main() {
       routes: [
         AutoRoute(page: _page('HomeRoute'), path: '/'),
         AutoRoute(
-          page: PageInfo.emptyShell('ShellRoute'),
+          page: const PageInfo.emptyShell('ShellRoute'),
           path: '/devices',
           usesPathAsKey: true,
           children: [

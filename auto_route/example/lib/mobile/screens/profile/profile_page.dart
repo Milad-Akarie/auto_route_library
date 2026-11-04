@@ -33,26 +33,26 @@ class ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   context.router.push(MyBooksRoute());
                 },
-                child: Text('My Books'),
+                child: const Text('My Books'),
               ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
                   context.findRootAncestorStateOfType<HomePageState>()?.toggleSettingsTap();
                 },
-                child: Text('Toggle Settings Tab'),
+                child: const Text('Toggle Settings Tab'),
               ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () => context.back(),
-                child: Text('Navigate Back'),
+                child: const Text('Navigate Back'),
               ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
                   context.navigateToPath('settings/tab1');
                 },
-                child: Text('Navigate to settings/tab1'),
+                child: const Text('Navigate to settings/tab1'),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -67,7 +67,7 @@ class ProfilePageState extends State<ProfilePage> {
                     updateExistingRoutes: false,
                   );
                 },
-                child: Text('ReplaceAll'),
+                child: const Text('ReplaceAll'),
               ),
               const SizedBox(height: 32),
               userData == null
@@ -81,12 +81,12 @@ class ProfilePageState extends State<ProfilePage> {
                         //   // }),
                         // );
                       },
-                      child: Text('Collect user data'),
+                      child: const Text('Collect user data'),
                     )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Your Data is complete'),
+                        const Text('Your Data is complete'),
                         const SizedBox(height: 24),
                         Text('Name: ${userData!.name}'),
                         const SizedBox(height: 24),
