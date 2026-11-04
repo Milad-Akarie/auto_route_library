@@ -139,8 +139,8 @@ jobs:
           # fails after 3 minutes instead of the default 10.
           emulator-boot-timeout: 180
           working-directory: auto_route/example
-          # The action runs each line with sh; bash adds pipefail, so the step fails with the tests despite tee.
-          script: bash -o pipefail -c 'flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart --total-shards 2 --shard-index ${{ matrix.shard-index }} -d emulator-5554 2>&1 | tee "$RUNNER_TEMP/test-output.txt"'
+          # The script retries once when the tool can't connect to the app in time.
+          script: bash ../../.github/scripts/android_integration_tests.sh ${{ matrix.shard-index }}
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
