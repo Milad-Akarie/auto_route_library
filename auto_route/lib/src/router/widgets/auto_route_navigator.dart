@@ -202,6 +202,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
             observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
             restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
             pages: widget.router.stack,
+            transitionDelegate: const _PoppedPagelessTransitionDelegate(),
             onDidRemovePage: (page) {
               if (page is AutoRoutePage) {
                 widget.router.onPopPage(page);
@@ -225,5 +226,47 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     properties.add(DiagnosticsProperty<Clip>('clipBehavior', widget.clipBehavior));
     properties.add(DiagnosticsProperty<String?>('navRestorationScopeId', widget.navRestorationScopeId));
     properties.add(DiagnosticsProperty<RoutePopCallBack>('didPop', widget.didPop));
+  }
+}
+
+/// Flutter's [DefaultTransitionDelegate], except that the top page leaving
+/// animates out when the pageless routes above it, such as a dialog, are
+/// already popping.
+///
+/// The default completes a leaving page that has pageless routes above it,
+/// with no animation, so that only the top-most route animates. When the app
+/// pops a dialog and then removes the page under it, as in a 'discard
+/// changes?' dialog, the page vanished and cut the dialog's animation short
+/// (flutter/flutter#111137). Navigator.pop twice animates both; so does this.
+class _PoppedPagelessTransitionDelegate<T> extends DefaultTransitionDelegate<T> {
+  const _PoppedPagelessTransitionDelegate();
+
+  @override
+  Iterable<RouteTransitionRecord> resolve({
+    required List<RouteTransitionRecord> newPageRouteHistory,
+    required Map<RouteTransitionRecord?, RouteTransitionRecord> locationToExitingPageRoute,
+    required Map<RouteTransitionRecord?, List<RouteTransitionRecord>> pageRouteToPagelessRoutes,
+  }) {
+    // The top-most leaving page: the last of those above the new top page.
+    RouteTransitionRecord? topExiting;
+    for (
+      var exiting = locationToExitingPageRoute[newPageRouteHistory.lastOrNull];
+      exiting != null;
+      exiting = locationToExitingPageRoute[exiting]
+    ) {
+      topExiting = exiting;
+    }
+    final pageless = pageRouteToPagelessRoutes[topExiting];
+    if (topExiting != null &&
+        topExiting.isWaitingForExitingDecision &&
+        pageless != null &&
+        pageless.every((route) => !route.isWaitingForExitingDecision)) {
+      topExiting.markForPop(topExiting.route.currentResult);
+    }
+    return super.resolve(
+      newPageRouteHistory: newPageRouteHistory,
+      locationToExitingPageRoute: locationToExitingPageRoute,
+      pageRouteToPagelessRoutes: pageRouteToPagelessRoutes,
+    );
   }
 }
