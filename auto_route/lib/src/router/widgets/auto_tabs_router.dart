@@ -534,6 +534,12 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   bool onPreload(int index) {
     final didPreload = _pageViewKey.currentState?.preload(index) == true;
     if (didPreload & mounted) {

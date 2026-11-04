@@ -11,8 +11,6 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   LeakTesting.settings = LeakTesting.settings.withIgnored(
     notDisposed: {
       // Leaks in auto_route, each removed by the commit that fixes it.
-      // AutoTabsRouter.pageView never disposes the PageController it creates.
-      'PageController': null,
       // AutoTabsRouter's indexed stack never disposes its CurvedAnimation.
       'CurvedAnimation': null,
       // A StackRouter never disposes its ActiveGuardObserver.

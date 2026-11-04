@@ -116,6 +116,7 @@ import 'tab_shared_parent_url_test.dart' as tab_shared_parent_url;
 import 'tab_shared_route_navigate_test.dart' as tab_shared_route_navigate;
 import 'tab_view_page_controller_test.dart' as tab_view_page_controller;
 import 'tabs_deep_link_test.dart' as tabs_deep_link;
+import 'tabs_page_view_page_controller_test.dart' as tabs_page_view_page_controller;
 import 'tabs_pop_scope_test.dart' as tabs_pop_scope;
 import 'tabs_scaffold_build_count_test.dart' as tabs_scaffold_build_count;
 import 'tabs_url_without_initial_test.dart' as tabs_url_without_initial;
@@ -251,6 +252,7 @@ void main() {
   group('tab shared route navigate', tab_shared_route_navigate.main);
   group('tab view page controller', tab_view_page_controller.main);
   group('tabs deep link', tabs_deep_link.main);
+  group('tabs page view page controller', tabs_page_view_page_controller.main);
   group('tabs pop scope', tabs_pop_scope.main);
   group('tabs scaffold build count', tabs_scaffold_build_count.main);
   group('tabs url without initial', tabs_url_without_initial.main);
