@@ -1,0 +1,70 @@
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+
+// Canary for Flutter bug https://github.com/flutter/flutter/issues/178570,
+// behind https://github.com/Milad-Akarie/auto_route_library/issues/2289 and
+// https://github.com/Milad-Akarie/auto_route_library/issues/2290 and the
+// pop flicker workaround in AutoRoutePage.onPopInvoked
+// (lib/src/router/auto_route_page.dart).
+// Setup, as in the Flutter report, without auto_route: a Navigator built
+// from a pages list that its parent keeps, removing a page in
+// onDidRemovePage.
+// Steps: push a second page, pop it, and rebuild the parent before the pop
+// animation ends.
+// On Flutter 3.38 to 3.41, Navigator called onDidRemovePage only when the
+// popped route was disposed, after its animation. A parent rebuild in
+// between handed the Navigator the popped page again, and it was pushed
+// back: the flicker. auto_route works around it by removing the page from
+// its stack as soon as the pop is invoked. Flutter fixed it in 3.44.0
+// (flutter/flutter#182315): onDidRemovePage now runs during the pop itself.
+// This test pins that fix. If it fails after a Flutter upgrade, the bug is
+// back: keep the workaround in AutoRoutePage.onPopInvoked, or restore it.
+void main() {
+  testWidgets('popping a page calls onDidRemovePage before the pop animation ends, so a parent '
+      'rebuild does not push the page again', (tester) async {
+    final pushed = <String?>[];
+    final removed = <String?>[];
+    final pages = <Page<void>>[const MaterialPage(name: 'first', child: Text('first'))];
+    late StateSetter setParentState;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (context, setState) {
+            setParentState = setState;
+            return Navigator(
+              observers: [_PushObserver(pushed)],
+              pages: List.of(pages),
+              onDidRemovePage: (page) => setState(() {
+                removed.add(page.name);
+                pages.remove(page);
+              }),
+            );
+          },
+        ),
+      ),
+    );
+    setParentState(() => pages.add(const MaterialPage(name: 'second', child: Text('second'))));
+    await tester.pumpAndSettle();
+    expect(pushed, ['first', 'second']);
+
+    tester.state<NavigatorState>(find.byType(Navigator).last).pop();
+    expect(removed, ['second']);
+
+    setParentState(() {});
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(find.text('second'), findsOneWidget, reason: 'the pop animation is still running');
+    await tester.pumpAndSettle();
+    expect(pushed, ['first', 'second']);
+    expect(find.text('second'), findsNothing);
+  });
+}
+
+class _PushObserver extends NavigatorObserver {
+  _PushObserver(this.pushed);
+
+  final List<String?> pushed;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => pushed.add(route.settings.name);
+}
