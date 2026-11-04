@@ -550,6 +550,28 @@ finally you can create a shell route without code generation using the `EmptyShe
 1. Each router manages its own pages stack.
 2. Navigation actions like push, pop and friends are handled by the topmost router and bubble up if it couldn't be handled.
 
+### Navigating to a nested route
+
+A route's `children` are the pages of the nested router it builds, so to open a nested route, pass its parents with it. That's also how arguments reach a child: they're the child route's own.
+
+```dart
+context.router.navigate(
+  DashboardRoute(children: [UsersRoute(filter: 'active')]),
+);
+```
+
+The children you pass are the whole stack of the nested router. If the page that normally sits below should stay there, so the back button has somewhere to go, list it as well:
+
+```dart
+context.navigateTo(
+  BooksTab(children: [BooksRoute(), BookDetailsRoute(id: 1)]),
+);
+// the stack of BooksTab is now [BooksRoute, BookDetailsRoute]
+// with only [BookDetailsRoute(id: 1)] it would hold that page alone
+```
+
+A route is looked up from the router you call it on, up through its parents. A route that lives in a sibling router, such as another tab, isn't found from there and fails with `Failed to navigate to ...`, so give its parent as well, as above. When you call from the root router, or from a place without a context, give the whole chain, `MainRoute(children: [BooksTab(children: [...])])`.
+
 ## Tab Navigation
 
 If you're working with flutter mobile, you're most likely to implement tabs navigation, that's why `auto_route` makes tabs navigation as easy and straightforward as possible.
