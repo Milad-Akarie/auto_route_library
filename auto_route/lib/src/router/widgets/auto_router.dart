@@ -66,6 +66,7 @@ class AutoRouter extends StatefulWidget {
     Clip clipBehavior = .hardEdge,
     TraversalEdgeBehavior? traversalEdgeBehavior,
   }) => _DeclarativeAutoRouter(
+    key: key,
     onPopRoute: onPopRoute,
     navigatorKey: navigatorKey,
     navRestorationScopeId: navRestorationScopeId,
@@ -213,6 +214,7 @@ class AutoRouterState extends State<AutoRouter> {
 
 class _DeclarativeAutoRouter extends StatefulWidget {
   const _DeclarativeAutoRouter({
+    super.key,
     required this.routes,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
