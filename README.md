@@ -1639,7 +1639,7 @@ class BooksListPage extends State<BookListPage> with AutoRouteAwareStateMixin<Bo
 }
 ```
 
-The page that leaves always hears first: on a push, the covered page hears `didPushNext` before the new page hears `didPush`; on a pop, the popped page hears `didPop` before the page under it hears `didPopNext`.
+The page that leaves always hears first: on a push, the covered page hears `didPushNext` before the new page hears `didPush`; on a pop, the popped page hears `didPop` before the page under it hears `didPopNext`. A page built while covered, such as the pages a deep link stacks under its top page, hears `didPush` and then `didPushNext`.
 
 ## Customizations
 

@@ -45,10 +45,19 @@ PageInfo _stackHost(String name) => .new(name, builder: (_) => const AutoRouter(
 
 /// Shows [routes] with a fresh [AutoRouteObserver] for each router, as the
 /// README asks, then clears the calls the first pages got.
-Future<RootStackRouter> _pumpApp(WidgetTester tester, List<AutoRoute> routes) async {
+///
+/// With [deepLink], the app opens there and the calls its pages got are kept.
+Future<RootStackRouter> _pumpApp(WidgetTester tester, List<AutoRoute> routes, {String? deepLink}) async {
   final router = RootStackRouter.build(routes: routes);
-  await pumpRouterConfigApp(tester, router.config(navigatorObservers: () => [AutoRouteObserver()]));
   _events.clear();
+  await pumpRouterConfigApp(
+    tester,
+    router.config(
+      navigatorObservers: () => [AutoRouteObserver()],
+      deepLinkBuilder: (link) => deepLink == null ? link : DeepLink.path(deepLink),
+    ),
+  );
+  if (deepLink == null) _events.clear();
   return router;
 }
 
@@ -202,5 +211,41 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expect(_events, ['B.didPop', 'Home.didPopNext']);
+  });
+
+  // Reproduces https://github.com/flutter/flutter/issues/70272 in auto_route.
+  // Steps: Home and B both have AutoRouteAwareStateMixin. Open the app on the
+  // deep link /b, which stacks B on Home at once, then pop B.
+  // Happened: Home heard didPush only. The navigator reported B's push before
+  // Home's state existed to subscribe, so Home never heard didPushNext,
+  // though B covers it; an app pausing work on didPushNext kept it running.
+  // Should: Home hears didPush, then didPushNext, since B covers it.
+  testWidgets('A page built under another by a deep link hears didPushNext', (tester) async {
+    final router = await _pumpApp(tester, [
+      AutoRoute(path: '/', page: _awarePage('Home')),
+      AutoRoute(path: '/b', page: _awarePage('B')),
+    ], deepLink: '/b');
+    expectTopPage(router, 'B');
+    expect(_events, unorderedEquals(['Home.didPush', 'Home.didPushNext', 'B.didPush']));
+    expect(_events.indexOf('Home.didPush'), lessThan(_events.indexOf('Home.didPushNext')));
+
+    _events.clear();
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(_events, ['B.didPop', 'Home.didPopNext']);
+  });
+
+  // Same as above with Home hosting a nested router that shows Child: Child
+  // is on top of its own router, but its host is covered at the root.
+  testWidgets('A page in a nested router built under a deep link hears didPushNext', (tester) async {
+    await _pumpApp(tester, [
+      AutoRoute(
+        path: '/',
+        page: _stackHost('Home'),
+        children: [AutoRoute(path: '', page: _awarePage('Child'))],
+      ),
+      AutoRoute(path: '/b', page: _awarePage('B')),
+    ], deepLink: '/b');
+    expect(_events, unorderedEquals(['Child.didPush', 'Child.didPushNext', 'B.didPush']));
   });
 }

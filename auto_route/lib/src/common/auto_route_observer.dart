@@ -143,8 +143,33 @@ class AutoRouteObserver extends AutoRouterObserver {
         }
       } else {
         routeAware.didPush();
+        // A page built while covered, as under a deep link's top page, missed
+        // the push that covered it: the navigator reported it before this
+        // page existed to subscribe.
+        if (_isCovered(routeAware, route)) routeAware.didPushNext();
       }
     }
+  }
+
+  // Whether another page covers [route] in its own router, or covers a host
+  // route of it in an ancestor router whose observer tells [routeAware] when
+  // that host shows again.
+  bool _isCovered(AutoRouteAware routeAware, RouteData<dynamic> route) {
+    if (_isBelowTop(route)) return true;
+    final ancestorObservers = _ancestorObservers[routeAware] ?? const <AutoRouteObserver>{};
+    for (var host = route.parent; host != null && host.parent != null; host = host.parent) {
+      if (!_isBelowTop(host)) continue;
+      final hostKey = host.key;
+      if (ancestorObservers.any((observer) => observer._nestedListeners[hostKey]?.containsKey(routeAware) ?? false)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static bool _isBelowTop(RouteData<dynamic> route) {
+    final router = route.router;
+    return router is StackRouter && router.stackData.isNotEmpty && router.stackData.last.key != route.key;
   }
 
   /// Unsubscribe [AutoRouteAware].
