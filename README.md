@@ -1183,6 +1183,34 @@ class AppRouter extends RootStackRouter{
 }
 ```
 
+#### Waiting inside a guard, and redirecting without waiting
+
+`onNavigation` can be `async`. The guarded route is not shown until `resolver.next()` is called, so a guard is the place for a check that has to finish before the first page, such as reading a stored session.
+
+`redirectUntil` suits a flow that comes back, like a login that resumes the navigation. When nothing has to resume, for example an onboarding that ends on the home page, there's no result to wait for. `AutoRouteGuard.redirect` takes a function that returns the route to open instead, or `null` to let the navigation through (`AutoRouteGuard.redirectPath` does the same with a path):
+
+```dart
+AutoRouteGuard.redirect((resolver) {
+  if (isAuthenticated || resolver.routeName == LoginRoute.name) return null;
+  return const LoginRoute();
+})
+```
+
+The redirect route is pushed on top of the stack. To start over instead, abort the guarded navigation and replace the whole stack from the guard:
+
+```dart
+AutoRouteGuard.simple((resolver, router) {
+  if (isAuthenticated || resolver.routeName == LoginRoute.name) {
+    resolver.next();
+  } else {
+    resolver.next(false);
+    router.replaceAll([const LoginRoute()]);
+  }
+})
+```
+
+**Note:** a global guard runs for the route it redirects to as well, so let that route through, as both examples do.
+
 ### Using a Reevaluate Listenable
 
 Route guards can prevent users from accessing private pages until they're logged in, but auth state may change when the user is already navigated to the private page, to make sure private pages are only accessed by logged-in users all the time, we need a listenable that tells the router that the auth state has changed and you need to re-evaluate your stack.
