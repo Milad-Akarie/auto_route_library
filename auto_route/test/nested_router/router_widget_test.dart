@@ -146,10 +146,7 @@ void main() {
   testWidgets(
     'Initializing App with ${SecondHostRoute.name} with no drawer  should show empty leading in AutoLeadingButton',
     (tester) async {
-      await pumpRouterConfigApp(
-        tester,
-        router.config(deepLinkBuilder: (_) => DeepLink.single(SecondHostRoute(hasDrawer: false))),
-      );
+      await pumpRouterConfigApp(tester, router.config(deepLinkBuilder: (_) => DeepLink.single(SecondHostRoute())));
       expect(find.byIcon(Icons.menu), findsNothing);
     },
   );

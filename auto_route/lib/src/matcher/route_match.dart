@@ -11,7 +11,7 @@ import 'package:path/path.dart' as p;
 class RouteMatch<T> {
   /// Default constructor
   RouteMatch({
-    required AutoRoute config,
+    required this._config,
     required this.segments,
     required this.stringMatch,
     required this.key,
@@ -22,12 +22,11 @@ class RouteMatch<T> {
     this.fragment = '',
     this.redirectedFrom,
     this.autoFilled = false,
-  }) : _config = config,
-       _evaluatedGuards = const [],
+  }) : _evaluatedGuards = const [],
        id = UniqueKey();
 
   const RouteMatch._internal({
-    required AutoRoute config,
+    required this._config,
     required this.segments,
     required this.stringMatch,
     required this.key,
@@ -39,9 +38,8 @@ class RouteMatch<T> {
     this.redirectedFrom,
     this.autoFilled = false,
     required this.id,
-    List<AutoRouteGuard> evaluatedGuards = const [],
-  }) : _config = config,
-       _evaluatedGuards = evaluatedGuards;
+    this._evaluatedGuards = const [],
+  });
 
   /// The extracted path params either from rawPath or
   /// [PageRouteInfo] implementation

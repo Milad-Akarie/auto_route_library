@@ -23,7 +23,7 @@ void main() {
       final user = ValueNotifier(0);
       final router = RootStackRouter.build(
         routes: [
-          NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => _page('HomeRoute')),
+          NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
           NamedRouteDef(
             name: 'DialogRoute',
             path: '/dialog',
@@ -34,7 +34,7 @@ void main() {
                 resolver.next();
               }),
             ],
-            builder: (_, __) => _page('DialogRoute'),
+            builder: (_, _) => _page('DialogRoute'),
           ),
         ],
       );
@@ -63,7 +63,7 @@ void main() {
     var guardRuns = 0;
     final router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => _page('HomeRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
         NamedRouteDef(
           name: 'DialogRoute',
           path: '/dialog',
@@ -75,7 +75,7 @@ void main() {
               resolver.next();
             }),
           ],
-          builder: (_, __) => _page('DialogRoute'),
+          builder: (_, _) => _page('DialogRoute'),
         ),
       ],
     );
@@ -120,13 +120,13 @@ void main() {
               }
             }),
           ],
-          builder: (_, __) => _page('HomeRoute'),
+          builder: (_, _) => _page('HomeRoute'),
         ),
         NamedRouteDef(
           name: 'AppGuardRoute',
           path: '/locked',
           type: RouteType.custom(opaque: false),
-          builder: (_, __) => _page('AppGuardRoute'),
+          builder: (_, _) => _page('AppGuardRoute'),
         ),
       ],
     );

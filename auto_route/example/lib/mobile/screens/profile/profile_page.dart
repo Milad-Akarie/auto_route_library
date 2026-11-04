@@ -4,7 +4,6 @@ import 'package:example/mobile/screens/home_page.dart';
 import 'package:example/mobile/screens/user-data/data_collector.dart';
 import 'package:material_ui/material_ui.dart';
 
-//ignore_for_file: public_member_api_docs
 @RoutePage()
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -70,29 +69,30 @@ class ProfilePageState extends State<ProfilePage> {
                 child: const Text('ReplaceAll'),
               ),
               const SizedBox(height: 32),
-              userData == null
-                  ? ElevatedButton(
-                      onPressed: () {
-                        // context.pushRoute(
-                        //   // UserDataCollectorRoute(onResult: (data) {
-                        //   //   setState(() {
-                        //   //     userData = data;
-                        //   //   });
-                        //   // }),
-                        // );
-                      },
-                      child: const Text('Collect user data'),
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Your Data is complete'),
-                        const SizedBox(height: 24),
-                        Text('Name: ${userData!.name}'),
-                        const SizedBox(height: 24),
-                        Text('Favorite book: ${userData!.favoriteBook}'),
-                      ],
-                    ),
+              if (userData == null)
+                ElevatedButton(
+                  onPressed: () {
+                    // context.pushRoute(
+                    //   // UserDataCollectorRoute(onResult: (data) {
+                    //   //   setState(() {
+                    //   //     userData = data;
+                    //   //   });
+                    //   // }),
+                    // );
+                  },
+                  child: const Text('Collect user data'),
+                )
+              else
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Your Data is complete'),
+                    const SizedBox(height: 24),
+                    Text('Name: ${userData!.name}'),
+                    const SizedBox(height: 24),
+                    Text('Favorite book: ${userData!.favoriteBook}'),
+                  ],
+                ),
             ],
           ),
         ),

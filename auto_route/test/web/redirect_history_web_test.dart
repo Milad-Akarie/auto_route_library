@@ -33,7 +33,7 @@ void main() {
               resolver.redirectUntil(NamedRoute('LoginRoute', args: resolver.next));
             }),
           ],
-          builder: (_, __) => const Scaffold(body: Text('HomeRoute')),
+          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
         ),
         NamedRouteDef(
           name: 'LoginRoute',

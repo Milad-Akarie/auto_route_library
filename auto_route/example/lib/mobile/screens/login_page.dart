@@ -3,7 +3,6 @@ import 'package:example/mobile/router/auth_guard.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 
-//ignore_for_file: public_member_api_docs
 @RoutePage()
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key, this.showBackButton = true});

@@ -20,7 +20,7 @@ void main() {
     });
 
     test('Creating sub RouteCollection with a sub route starting with "/" should throw', () {
-      expect(() => RouteCollection.fromList([TestRoute('A', path: '/a')], root: false), throwsFlutterError);
+      expect(() => RouteCollection.fromList([TestRoute('A', path: '/a')]), throwsFlutterError);
     });
 
     test('Auto-generated root paths for routes marked as initial should be "/"', () {
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('Auto-generated sub-paths for routes marked as initial should be empty""', () {
-      expect(RouteCollection.fromList([TestRoute('A', initial: true)], root: false).routes.first.path, '');
+      expect(RouteCollection.fromList([TestRoute('A', initial: true)]).routes.first.path, '');
     });
 
     test('Creating a RouteCollection with more than one routes marked as initial should throw', () {
@@ -55,9 +55,7 @@ void main() {
     test(
       'Creating a sub RouteCollection with no initialPath with initial set to true should add a RedirectRoute(path:"")',
       () {
-        final firstResolvedRoute = RouteCollection.fromList([
-          TestRoute('A', path: 'a', initial: true),
-        ], root: false).routes.first;
+        final firstResolvedRoute = RouteCollection.fromList([TestRoute('A', path: 'a', initial: true)]).routes.first;
         expect(firstResolvedRoute, isA<RedirectRoute>());
         expect(firstResolvedRoute.path, '');
       },
@@ -86,7 +84,7 @@ void main() {
         RedirectRoute(path: 'c', redirectTo: 'b'),
         TestRoute('D', path: 'd'),
         RedirectRoute(path: '*', redirectTo: 'a'),
-      ], root: false);
+      ]);
       expect(routeCollection.routes.length, 5);
     });
 
@@ -103,7 +101,7 @@ void main() {
     });
 
     test('Extracting sub collection of a branch route should return sub collection', () {
-      final expectedCollection = RouteCollection.fromList([subRouteC1], root: false);
+      final expectedCollection = RouteCollection.fromList([subRouteC1]);
       expect(collection.subCollectionOf('C'), expectedCollection);
     });
 

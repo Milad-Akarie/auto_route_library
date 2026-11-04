@@ -22,26 +22,26 @@ void main() {
 
   RootStackRouter buildRouter() => RootStackRouter.build(
     routes: [
-      NamedRouteDef(name: 'InitialRoute', path: '/', builder: (_, __) => page('InitialRoute')),
-      NamedRouteDef(name: 'FooRoute', path: '/foo', builder: (_, __) => page('FooRoute')),
-      NamedRouteDef(name: 'OtherRoute', path: '/other', builder: (_, __) => page('OtherRoute')),
+      NamedRouteDef(name: 'InitialRoute', path: '/', builder: (_, _) => page('InitialRoute')),
+      NamedRouteDef(name: 'FooRoute', path: '/foo', builder: (_, _) => page('FooRoute')),
+      NamedRouteDef(name: 'OtherRoute', path: '/other', builder: (_, _) => page('OtherRoute')),
       NamedRouteDef(
         name: 'ProtectedRoute',
         path: '/protected',
         guards: [protectedGuard()],
-        builder: (_, __) => page('ProtectedRoute'),
+        builder: (_, _) => page('ProtectedRoute'),
       ),
       NamedRouteDef.shell(
         name: 'ShellRoute',
         path: '/shell',
         children: [
-          NamedRouteDef(name: 'NestedInitialRoute', path: '', builder: (_, __) => page('NestedInitialRoute')),
-          NamedRouteDef(name: 'NestedFooRoute', path: 'foo', builder: (_, __) => page('NestedFooRoute')),
+          NamedRouteDef(name: 'NestedInitialRoute', path: '', builder: (_, _) => page('NestedInitialRoute')),
+          NamedRouteDef(name: 'NestedFooRoute', path: 'foo', builder: (_, _) => page('NestedFooRoute')),
           NamedRouteDef(
             name: 'NestedProtectedRoute',
             path: 'protected',
             guards: [protectedGuard()],
-            builder: (_, __) => page('NestedProtectedRoute'),
+            builder: (_, _) => page('NestedProtectedRoute'),
           ),
         ],
       ),

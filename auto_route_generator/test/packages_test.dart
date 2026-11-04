@@ -45,7 +45,7 @@ class HomePage extends StatelessWidget {
       expect(result.source, isNot(contains('LoginRoute')));
     });
 
-    test('are routed through the package\'s own router', () async {
+    test("are routed through the package's own router", () async {
       final result = await generateRouter({
         'skeleton|lib/src/router/login_page.dart': _loginPage,
         'skeleton|lib/skeleton_router.dart': '''

@@ -4,7 +4,6 @@ import 'package:example/web_demo/web_main.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
-//ignore_for_file: public_member_api_docs
 @AutoRouterConfig(generateForDir: ['lib/web_demo'])
 class WebAppRouter extends RootStackRouter {
   WebAppRouter(this.authService);
@@ -119,7 +118,7 @@ class _MainWebPageState extends State<MainWebPage> {
             if (kIsWeb)
               ElevatedButton(
                 onPressed: () {
-                  final currentState = ((context.router.pathState as int?) ?? 0);
+                  final currentState = (context.router.pathState as int?) ?? 0;
                   context.router.pushPathState(currentState + 1);
                 },
                 child: AnimatedBuilder(
@@ -249,7 +248,6 @@ class UserPostsPageState extends State<UserPostsPage> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  useRootNavigator: true,
                   builder: (_) => const AlertDialog(
                     title: Text('Alert'),
                   ),

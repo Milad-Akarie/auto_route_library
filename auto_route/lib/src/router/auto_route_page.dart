@@ -437,7 +437,7 @@ abstract class _PageRoute<T> extends PageRoute<T> {
       // detector still listens; the gesture belongs to the tab on screen.
       if (!router.isInActiveTabs) return false;
       final topMostRouter = router.topMostRouter();
-      return (router.isTopMost || !topMostRouter.canPop(ignoreParentRoutes: true, ignorePagelessRoutes: true));
+      return router.isTopMost || !topMostRouter.canPop(ignoreParentRoutes: true, ignorePagelessRoutes: true);
     }
     return false;
   }

@@ -20,11 +20,11 @@ class ResolvedType {
     this.import,
     this.typeArguments = const [],
     this.isNullable = false,
-    required bool isRecordType,
+    required this._isRecordType,
     this.nameInRecord,
     this.functionParts,
     this.isEnum = false,
-  }) : _isRecordType = isRecordType;
+  });
 
   /// Constructor for a record types
   ResolvedType.record({
@@ -90,7 +90,7 @@ class ResolvedType {
   final bool isEnum;
 
   /// the unique identity of the type
-  String get identity => "$import#$name";
+  String get identity => '$import#$name';
 
   /// whether the type is for a named record field
   bool get isNamedRecordField => nameInRecord != null;

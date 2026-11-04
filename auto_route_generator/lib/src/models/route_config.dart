@@ -81,7 +81,7 @@ class RouteConfig {
 
   /// Returns all the path/query params
   List<ParamConfig> get pathQueryParams {
-    return parameters.where((p) => (p.isPathParam || p.isQueryParam)).toList();
+    return parameters.where((p) => p.isPathParam || p.isQueryParam).toList();
   }
 
   /// Returns all the required params
@@ -102,7 +102,7 @@ class RouteConfig {
       final parts = replacementInRouteName.split(',');
       nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
     } else {
-      nameToUse = "${className}Route";
+      nameToUse = '${className}Route';
     }
     return capitalize(nameToUse);
   }

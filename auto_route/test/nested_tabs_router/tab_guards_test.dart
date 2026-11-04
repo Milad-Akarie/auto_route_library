@@ -141,7 +141,7 @@ void main() {
         expect(router.urlState.url, '/b');
       });
 
-      testWidgets('another tab chosen while back waits for the home tab\'s guard keeps the tabs', (tester) async {
+      testWidgets("another tab chosen while back waits for the home tab's guard keeps the tabs", (tester) async {
         _allow = true;
         final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
         await pumpRouterApp(tester, router);

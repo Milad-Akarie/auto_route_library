@@ -30,7 +30,7 @@ void main() {
             guards: [
               AutoRouteGuard.simple((resolver, _) async {
                 await Future<void>.delayed(const Duration(milliseconds: 100));
-                resolver.next(true);
+                resolver.next();
               }),
             ],
           ),

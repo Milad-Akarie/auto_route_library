@@ -51,7 +51,7 @@ void main() {
             resolver.redirectUntil(NamedRoute('RouteCRedirected', args: () => resolver.nextOrBack(false)));
           }),
         ],
-        builder: (_, __) => const Scaffold(body: Center(child: Text('Page C'))),
+        builder: (_, _) => const Scaffold(body: Center(child: Text('Page C'))),
       ),
       NamedRouteDef(
         name: 'RouteCRedirected',

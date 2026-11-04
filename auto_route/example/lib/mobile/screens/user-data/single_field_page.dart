@@ -1,6 +1,5 @@
 import 'package:material_ui/material_ui.dart';
 
-//ignore_for_file: public_member_api_docs
 class SingleFieldPage extends StatefulWidget {
   const SingleFieldPage({
     super.key,

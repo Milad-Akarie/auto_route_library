@@ -1,4 +1,3 @@
-//ignore_for_file: public_member_api_docs
 import 'package:cupertino_ui/cupertino_ui.dart';
 
 class Book {
@@ -26,7 +25,7 @@ class BooksDB {
   Book findBookById(int id) {
     return books.firstWhere(
       (book) => book.id == id,
-      orElse: () => throw ('Can not find book with id $id'),
+      orElse: () => throw 'Can not find book with id $id',
     );
   }
 }
@@ -72,7 +71,7 @@ class UsersDB {
   User findUserById(int id) {
     return users.firstWhere(
       (user) => user.id == id,
-      orElse: () => throw ('Can not find user with id $id'),
+      orElse: () => throw 'Can not find user with id $id',
     );
   }
 }

@@ -8,28 +8,28 @@ class NavigationHistoryImpl extends NavigationHistory {
 
   @override
   void back() {
-    throw Exception("Stub implementation");
+    throw Exception('Stub implementation');
   }
 
   @override
-  bool get canNavigateBack => throw Exception("Stub implementation");
+  bool get canNavigateBack => throw Exception('Stub implementation');
 
   @override
   void forward() {
-    throw Exception("Stub implementation");
+    throw Exception('Stub implementation');
   }
 
   @override
-  int get length => throw Exception("Stub implementation");
+  int get length => throw Exception('Stub implementation');
 
   @override
-  StackRouter get router => throw Exception("Stub implementation");
+  StackRouter get router => throw Exception('Stub implementation');
 
   @override
-  Object? get pathState => throw Exception("Stub implementation");
+  Object? get pathState => throw Exception('Stub implementation');
 
   @override
   void pushPathState(Object? state) {
-    throw Exception("Stub implementation");
+    throw Exception('Stub implementation');
   }
 }

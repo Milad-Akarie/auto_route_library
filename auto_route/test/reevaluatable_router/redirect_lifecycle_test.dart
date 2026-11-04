@@ -34,7 +34,7 @@ void main() {
     final n = GuardChangeNotifier();
     final login = AutoRouteGuard.simple((resolver, router) {
       if (n.connected) {
-        resolver.nextOrBack(true);
+        resolver.nextOrBack();
       } else {
         resolver.redirectUntil(const NamedRoute('SignInRoute'));
       }
@@ -66,7 +66,7 @@ void main() {
           name: 'ProfileRoute',
           path: '/profile',
           guards: [login],
-          builder: (_, __) => Scaffold(
+          builder: (_, _) => Scaffold(
             appBar: AppBar(title: const Text('Profile Page')),
             body: ElevatedButton(onPressed: n.disconnect, child: const Text('Click to logout')),
           ),
@@ -75,7 +75,7 @@ void main() {
           name: 'SignInRoute',
           path: '/signin',
           guards: [anonymous],
-          builder: (_, __) => Scaffold(
+          builder: (_, _) => Scaffold(
             appBar: AppBar(title: const Text('SignIn Page')),
             body: ElevatedButton(onPressed: n.connect, child: const Text('Click to login')),
           ),
@@ -84,7 +84,7 @@ void main() {
           name: 'SubscriptionPaywallRoute',
           path: '/paywall',
           guards: [noPro, login],
-          builder: (_, __) => Scaffold(
+          builder: (_, _) => Scaffold(
             appBar: AppBar(title: const Text('Subscription Paywall Page')),
             body: const Text('paywall body'),
           ),

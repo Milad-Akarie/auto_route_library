@@ -1,7 +1,6 @@
 import 'package:example/web_demo/router/web_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-//ignore_for_file: public_member_api_docs
 void main() {
   runApp(const App());
 }

@@ -25,12 +25,12 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
   final parameters = r.parameters;
   final fragmentParam = parameters.where((p) => p.isUrlFragment).firstOrNull;
   final nonInheritedParameters = parameters.where((p) => !p.isInheritedPathParam).toList();
-  final equatableParams = nonInheritedParameters.where((p) => (p is! FunctionParamConfig)).toList();
+  final equatableParams = nonInheritedParameters.where((p) => p is! FunctionParamConfig).toList();
   final pageInfoRefer = refer('PageInfo', autoRouteImport);
   return [
     Class(
       (b) => b
-        ..docs.addAll(['/// generated route for \n/// [${r.pageType?.refer.accept(emitter).toString()}]'])
+        ..docs.addAll(['/// generated route for \n/// [${r.pageType?.refer.accept(emitter)}]'])
         ..name = r.getName(router.replaceInRouteName)
         ..extend = TypeReference((b) {
           b
@@ -260,7 +260,7 @@ Iterable<Parameter> buildArgParams(
             defaultCode = const Code('const {}');
           } else {
             defaultCode = Code(
-              'const ${refer(p.defaultValueCode!.replaceFirst(_constKeyword, ''), p.defaultValueImport ?? p.type.import).accept(emitter).toString()}',
+              'const ${refer(p.defaultValueCode!.replaceFirst(_constKeyword, ''), p.defaultValueImport ?? p.type.import).accept(emitter)}',
             );
           }
         } else {

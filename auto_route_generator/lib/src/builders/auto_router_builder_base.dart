@@ -70,7 +70,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     final generateForDir = item.generateForDir;
     final generatedResults = <RoutesList>[];
     final routes = <RouteConfig>[];
-    await for (final asset in buildStep.findAssets(Glob("**.route.json"))) {
+    await for (final asset in buildStep.findAssets(Glob('**.route.json'))) {
       final jsonRes = jsonDecode(await buildStep.readAsString(asset));
       final generatedRes = RoutesList.fromJson(jsonRes);
       generatedResults.add(generatedRes);
@@ -128,7 +128,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   File _buildRouterFile(BuildStep buildStep, {bool toCache = false}) {
     final path = [
       '.dart_tool/build',
-      toCache ? 'cache' : 'generated',
+      if (toCache) 'cache' else 'generated',
       buildStep.inputId.package,
       buildStep.inputId.changeExtension('.router_config.json').path,
     ].join('/');

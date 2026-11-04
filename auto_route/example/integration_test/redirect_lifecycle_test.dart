@@ -36,7 +36,7 @@ void main() {
     final n = GuardChangeNotifier();
     final login = AutoRouteGuard.simple((resolver, router) {
       if (n.connected) {
-        resolver.nextOrBack(true);
+        resolver.nextOrBack();
       } else {
         resolver.redirectUntil(const NamedRoute('SignInRoute'));
       }

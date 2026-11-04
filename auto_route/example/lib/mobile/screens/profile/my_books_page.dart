@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:material_ui/material_ui.dart';
 
-//ignore_for_file: public_member_api_docs
 @RoutePage()
 class MyBooksPage extends StatelessWidget {
   const MyBooksPage({super.key, @queryParam this.filter = 'none2'});

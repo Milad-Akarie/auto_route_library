@@ -60,7 +60,7 @@ class AutoRoute {
   }
 
   AutoRoute._({
-    String? path,
+    this._path,
     required this.page,
     this.usesPathAsKey = false,
     this.guards = const [],
@@ -75,12 +75,11 @@ class AutoRoute {
     this.allowSnapshotting = true,
     this.initial = false,
     this.children,
-  }) : _path = path,
-       _pageBuilder = page.builder;
+  }) : _pageBuilder = page.builder;
 
   AutoRoute._change({
     required this.page,
-    required String path,
+    required String this._path,
     required this.usesPathAsKey,
     required this.guards,
     required this.fullMatch,
@@ -94,8 +93,7 @@ class AutoRoute {
     required this.children,
     required this.initial,
     required this.allowSnapshotting,
-  }) : _path = path,
-       _pageBuilder = page.builder;
+  }) : _pageBuilder = page.builder;
 
   /// Creates an AutoRoute with a single [AutoRouteGuard]
   /// callback
@@ -318,7 +316,7 @@ class RedirectRoute extends AutoRoute {
   final String redirectTo;
 
   @override
-  String get name => "${page.name}-$path-$redirectTo";
+  String get name => '${page.name}-$path-$redirectTo';
 }
 
 /// Builds an [AutoRoute] instance with [RouteType.material] type
@@ -639,7 +637,7 @@ class RouteCollection {
   ///
   /// Throws and error if corresponding route has not children
   RouteCollection subCollectionOf(String key) {
-    assert(_subCollections[key] != null, "$key does not have children");
+    assert(_subCollections[key] != null, '$key does not have children');
     return _subCollections[key]!;
   }
 

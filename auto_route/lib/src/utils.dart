@@ -3,7 +3,7 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 /// A utility to check whether the given map
 /// is null or empty
 bool mapNullOrEmpty(Map? map) {
-  return (map == null || map.isEmpty);
+  return map == null || map.isEmpty;
 }
 
 /// A utility to re-case a string to kabab-case

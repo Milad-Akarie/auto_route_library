@@ -103,7 +103,7 @@ class ParamConfig {
   /// otherwise return the name as is
   String getSafeName() {
     if (_reservedVarNames.contains(name)) {
-      return "${name}0";
+      return '${name}0';
     } else {
       return name;
     }

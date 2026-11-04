@@ -25,7 +25,7 @@ class RouteParameterResolver {
     }
     var paramName = parameterElement.name ?? '';
     if (paramName.startsWith('_')) {
-      paramName = paramName.replaceFirst("_", '');
+      paramName = paramName.replaceFirst('_', '');
     }
     final pathParamAnnotation = _pathParamChecker.firstAnnotationOfExact(parameterElement);
     final queryParamAnnotation = _queryParamChecker.firstAnnotationOfExact(parameterElement);
@@ -139,7 +139,7 @@ class RouteParameterResolver {
 
   /// Extracts path parameters from a route path
   static List<PathParamConfig> extractPathParams(String path) {
-    return RegExp(r':([^/]+)').allMatches(path).map((m) {
+    return RegExp(':([^/]+)').allMatches(path).map((m) {
       var paramName = m.group(1);
       var isOptional = false;
       if (paramName!.endsWith('?')) {

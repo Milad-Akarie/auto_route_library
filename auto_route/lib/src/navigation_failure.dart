@@ -21,7 +21,7 @@ class RouteNotFoundFailure extends NavigationFailure {
 
   // coverage:ignore-start
   @override
-  String toString() => "Failed to navigate to $path";
+  String toString() => 'Failed to navigate to $path';
   // coverage:ignore-end
 }
 

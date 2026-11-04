@@ -4,8 +4,6 @@ import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
-//ignore_for_file: public_member_api_docs
-
 @RoutePage()
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

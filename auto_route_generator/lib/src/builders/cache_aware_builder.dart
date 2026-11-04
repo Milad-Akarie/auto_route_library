@@ -127,7 +127,7 @@ source formatter.''',
   }
 
   @override
-  String toString() => 'Generating $generatedExtension: ${runtimeType.toString()}';
+  String toString() => 'Generating $generatedExtension: $runtimeType';
 
   /// Checks if the current compilation unit has any top level annotations
   Future<bool> hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep, [CompilationUnit? unit]) async {

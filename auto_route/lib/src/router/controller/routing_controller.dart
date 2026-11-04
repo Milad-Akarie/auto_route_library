@@ -293,7 +293,7 @@ abstract class RoutingController with ChangeNotifier {
           onFailure(RouteNotFoundFailure(route.routeName));
           return null;
         } else {
-          throw FlutterError("Failed to navigate to ${route.routeName}");
+          throw FlutterError('Failed to navigate to ${route.routeName}');
         }
       } else {
         return _reuseOpenAncestors(match);
@@ -626,7 +626,7 @@ abstract class RoutingController with ChangeNotifier {
     if (_childControllers.isEmpty) {
       return null;
     }
-    return _childControllers.whereType<T>().lastWhereOrNull(((c) => c.routeData.name == routeName));
+    return _childControllers.whereType<T>().lastWhereOrNull((c) => c.routeData.name == routeName);
   }
 
   /// Clients can either pop their own [_pages] stack
@@ -749,14 +749,12 @@ class TabsRouter extends RoutingController {
   TabsRouter({
     required this.routeCollection,
     required this.key,
-    required RouteData routeData,
+    required this._routeData,
     this.homeIndex = -1,
     required this.preload,
     required this.matchId,
-    RoutingController? parent,
-  }) : matcher = RouteMatcher(routeCollection),
-       _parent = parent,
-       _routeData = routeData;
+    this._parent,
+  }) : matcher = RouteMatcher(routeCollection);
   @override
   final RoutingController? _parent;
   @override
@@ -1181,11 +1179,7 @@ class TabsRouter extends RoutingController {
         }
       }
       if (!isReevaluating && pageToUpdateIndex == -1) {
-        _updateSharedPathData(
-          queryParams: mayUpdateRoute.queryParams.rawMap,
-          fragment: mayUpdateRoute.fragment,
-          includeAncestors: false,
-        );
+        _updateSharedPathData(queryParams: mayUpdateRoute.queryParams.rawMap, fragment: mayUpdateRoute.fragment);
       }
     }
 
@@ -1305,11 +1299,10 @@ abstract class StackRouter extends RoutingController {
     required this.key,
     required this.matchId,
     OnNestedNavigateCallBack? onNavigate,
-    RoutingController? parent,
+    this._parent,
     GlobalKey<NavigatorState>? navigatorKey,
   }) : _navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
-       _onNavigateCallback = onNavigate,
-       _parent = parent;
+       _onNavigateCallback = onNavigate;
   @override
   final RoutingController? _parent;
   @override
@@ -1745,7 +1738,7 @@ abstract class StackRouter extends RoutingController {
   /// otherwise they'll be thrown
   Future<void> pushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure}) {
     assert(routes.isNotEmpty);
-    return _findStackScope(routes.first)._pushAll(routes, onFailure: onFailure, notify: true);
+    return _findStackScope(routes.first)._pushAll(routes, onFailure: onFailure);
   }
 
   /// Pop the current route off the navigator and push all given [routes] in its place.
@@ -1759,7 +1752,7 @@ abstract class StackRouter extends RoutingController {
     assert(routes.isNotEmpty);
     final scope = _findStackScope(routes.first);
     scope.pop();
-    return scope._pushAll(routes, onFailure: onFailure, notify: true);
+    return scope._pushAll(routes, onFailure: onFailure);
   }
 
   /// Remove the whole current pages stack and push all given [routes]
@@ -1927,7 +1920,7 @@ abstract class StackRouter extends RoutingController {
         break;
       }
       if (match.guards.isNotEmpty) {
-        throw FlutterError("Declarative routes can not have guards");
+        throw FlutterError('Declarative routes can not have guards');
       }
       routesToPush.add(match);
       final data = _createRouteData(match, routeData);
@@ -2036,7 +2029,7 @@ abstract class StackRouter extends RoutingController {
 
   Future<T?>? _addNewPage<T extends Object?>(RouteMatch route, {bool notify = true, int? index}) {
     final topRoute = _pages.lastOrNull?.routeData;
-    if (topRoute != null && topRoute._match.keepHistory == false) {
+    if (topRoute != null && !topRoute._match.keepHistory) {
       markUrlStateForReplace();
       _removeRoute(topRoute._match, notify: false);
     }
@@ -2317,7 +2310,7 @@ abstract class StackRouter extends RoutingController {
   /// see [popUntil]
   void popUntilRouteWithPath(String path, {bool scoped = true}) {
     popUntil((route) {
-      if ((route.settings is AutoRoutePage)) {
+      if (route.settings is AutoRoutePage) {
         return (route.settings as AutoRoutePage).routeData.match == path;
       }
       // Assuming pageless routes are either dialogs or bottomSheetModals

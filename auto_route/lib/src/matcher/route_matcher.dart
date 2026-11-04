@@ -131,13 +131,13 @@ class RouteMatcher {
       final part = parts[index];
       if (part.startsWith(':')) {
         pathParams[part.substring(1)] = Uri.decodeComponent(segment);
-      } else if (Uri.decodeComponent(segment) != part && part != "*") {
+      } else if (Uri.decodeComponent(segment) != part && part != '*') {
         return null;
       }
     }
 
     var extractedSegments = segments.sublist(0, parts.length);
-    if (parts.isNotEmpty && parts.last == "*") {
+    if (parts.isNotEmpty && parts.last == '*') {
       extractedSegments = segments;
     }
 

@@ -58,7 +58,6 @@ class _First1Route extends PageRouteInfo<void> {
     builder: (_) => Builder(
       builder: (context) => Scaffold(
         body: Align(
-          alignment: Alignment.center,
           child: FilledButton(
             onPressed: () => context.pushRoute(const _Modal1Route()),
             child: const Text('Open modal'),

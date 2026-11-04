@@ -9,24 +9,22 @@ void main() {
       segments: const ['/'],
       stringMatch: '/',
       key: const ValueKey('Test'),
-      args: "Args",
-      params: const Parameters({"id": 1}),
-      queryParams: const Parameters({"foo": "bar"}),
+      args: 'Args',
+      params: const Parameters({'id': 1}),
+      queryParams: const Parameters({'foo': 'bar'}),
       fragment: 'fragment',
       redirectedFrom: 'redirectedFrom',
-      autoFilled: false,
       children: [
         RouteMatch(
           config: TestRoute('Test'),
           segments: const ['/'],
           stringMatch: '/',
           key: const ValueKey('Test'),
-          args: "Args",
-          params: const Parameters({"id": 1}),
-          queryParams: const Parameters({"foo": "bar"}),
+          args: 'Args',
+          params: const Parameters({'id': 1}),
+          queryParams: const Parameters({'foo': 'bar'}),
           fragment: 'fragment',
           redirectedFrom: 'redirectedFrom',
-          autoFilled: false,
         ),
       ],
     );
@@ -37,11 +35,11 @@ void main() {
   test('Test PageRouteInfo Equality', () {
     const pageRouteInfo = PageRouteInfo(
       'Test',
-      args: "Args",
-      rawPathParams: {"id": 1},
-      rawQueryParams: {"foo": "bar"},
+      args: 'Args',
+      rawPathParams: {'id': 1},
+      rawQueryParams: {'foo': 'bar'},
       initialChildren: [
-        PageRouteInfo('Test', args: "Args", rawPathParams: {"id": 1}, rawQueryParams: {"foo": "bar"}),
+        PageRouteInfo('Test', args: 'Args', rawPathParams: {'id': 1}, rawQueryParams: {'foo': 'bar'}),
       ],
       fragment: 'fragment',
     );

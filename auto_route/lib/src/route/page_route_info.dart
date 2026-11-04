@@ -195,7 +195,7 @@ class PageRouteInfo<T extends Object?> {
       other is PageRouteInfo &&
           _name == other._name &&
           fragment == other.fragment &&
-          (argsEquality ? args == other.args : true) &&
+          (!argsEquality || args == other.args) &&
           const ListEquality().equals(initialChildren, other.initialChildren) &&
           const MapEquality().equals(rawPathParams, other.rawPathParams) &&
           const MapEquality().equals(rawQueryParams, other.rawQueryParams);

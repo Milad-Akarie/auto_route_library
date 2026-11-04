@@ -1,6 +1,5 @@
 part of 'routing_controller.dart';
 
-// ignore_for_file: deprecated_member_use_from_same_package
 /// Signature for on navigation function used by [AutoRouteGuard]
 typedef OnNavigation = FutureOr<void> Function(NavigationResolver resolver, StackRouter router);
 
@@ -147,8 +146,8 @@ class NavigationResolver {
     this._completer,
     this.route, {
     this.pendingRoutes = const [],
-    bool isReevaluating = false,
-  }) : _isReevaluating = isReevaluating;
+    this._isReevaluating = false,
+  });
   final StackRouter _router;
   final Completer<ResolverResult> _completer;
 
@@ -363,7 +362,7 @@ class RouteOverrides {
         final match = subMatcher.matchByRoute(child);
         if (match == null) {
           throw FlutterError(
-            "Failed to navigate to overridden child ${child.routeName}.\nPlease make sure the route is declared as a child of ${route.name}",
+            'Failed to navigate to overridden child ${child.routeName}.\nPlease make sure the route is declared as a child of ${route.name}',
           );
         }
         matches.add(match);

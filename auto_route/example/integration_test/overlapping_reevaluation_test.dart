@@ -32,7 +32,7 @@ void main() {
             AutoRouteGuard.simple((resolver, router) async {
               calls++;
               await Future<void>.delayed(const Duration(milliseconds: 50));
-              if (reevaluationNotifier.value) resolver.next(true);
+              if (reevaluationNotifier.value) resolver.next();
             }),
           ],
         ),

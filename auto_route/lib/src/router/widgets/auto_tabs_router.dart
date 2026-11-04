@@ -593,7 +593,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
     );
   }
 
-  Widget _defaultPageViewBuilder(BuildContext _, Widget child, PageController __) {
+  Widget _defaultPageViewBuilder(BuildContext _, Widget child, PageController _) {
     return child;
   }
 
@@ -740,7 +740,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     );
   }
 
-  Widget _defaultPageViewBuilder(BuildContext _, Widget child, TabController __) {
+  Widget _defaultPageViewBuilder(BuildContext _, Widget child, TabController _) {
     return child;
   }
 

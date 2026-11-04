@@ -12,16 +12,14 @@ class RouteData<R> {
   RouteData({
     required RouteMatch route,
     required this.router,
-    Completer<R?>? popCompleter,
-    RouteData? parent,
+    this._popCompleter,
+    this._parent,
     required this.stackKey,
     required List<RouteMatch> pendingChildren,
     required this.type,
   }) : _match = route,
        _ownQueryParams = route.queryParams,
        _ownFragment = route.fragment,
-       _popCompleter = popCompleter,
-       _parent = parent,
        _pendingChildren = List<RouteMatch>.from(pendingChildren);
   RouteMatch _match;
   RouteData? _parent;
@@ -107,7 +105,7 @@ class RouteData<R> {
     final args = _match.args;
     if (args == null) {
       if (orElse == null) {
-        final messages = ['${T.toString()} can not be null because the corresponding page has a required parameter'];
+        final messages = ['$T can not be null because the corresponding page has a required parameter'];
         if (_match.autoFilled) {
           messages.add('${_match.name} is an auto created ancestor of target route ${_match.flattened.last.name}');
           messages.add(
@@ -120,7 +118,7 @@ class RouteData<R> {
         return orElse();
       }
     } else if (args is! T) {
-      throw MissingRequiredParameterError('Expected [${T.toString()}],  found [${args.runtimeType}]');
+      throw MissingRequiredParameterError('Expected [$T],  found [${args.runtimeType}]');
     } else {
       return args;
     }

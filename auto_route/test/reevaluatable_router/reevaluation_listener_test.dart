@@ -28,7 +28,7 @@ void main() {
             AutoRouteGuard.simple((resolver, router) {
               mockListener.call(resolver, router);
               if (reevaluationNotifier.value) {
-                resolver.next(true);
+                resolver.next();
               }
             }),
           ],
@@ -88,7 +88,7 @@ void main() {
             AutoRouteGuard.simple((resolver, router) {
               mockListener.call(resolver, router);
               if (reevaluationNotifier.value) {
-                resolver.next(true);
+                resolver.next();
               }
             }),
           ],
@@ -134,7 +134,7 @@ void main() {
                     AutoRouteGuard.simple((resolver, router) {
                       mockListener.call(resolver, router);
                       if (reevaluationNotifier.value) {
-                        resolver.next(true);
+                        resolver.next();
                       }
                     }),
                   ],
@@ -174,7 +174,7 @@ void main() {
           onNavigation: (resolver, router) async {
             mockListener.call(resolver, router);
             if (reevaluationNotifier.value) {
-              resolver.next(true);
+              resolver.next();
             } else {
               resolver.redirectUntil(const ThirdRoute());
             }
@@ -331,7 +331,7 @@ void main() {
             AutoRouteGuard.simple((resolver, router) async {
               calls++;
               await Future<void>.delayed(const Duration(milliseconds: 50));
-              if (reevaluationNotifier.value) resolver.next(true);
+              if (reevaluationNotifier.value) resolver.next();
             }),
           ],
         ),

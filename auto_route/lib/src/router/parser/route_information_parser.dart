@@ -30,7 +30,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 
   @override
   Future<UrlState> parseRouteInformation(RouteInformation routeInformation) async {
-    final resolvedUri = _normalize(await deepLinkTransformer?.call((routeInformation.uri)) ?? routeInformation.uri);
+    final resolvedUri = _normalize(await deepLinkTransformer?.call(routeInformation.uri) ?? routeInformation.uri);
     final matches = _matcher.matchUri(resolvedUri, includePrefixMatches: includePrefixMatches);
     final state = routeInformation.state;
     final savedRoutes = state is Map ? state[UrlState._savedRoutesKey] : null;
@@ -287,7 +287,7 @@ class UrlState {
   /// and '%' in the query, so a param such as 'a&b' reads back whole.
   String get url => _readable(uri.toString());
 
-  static final _escapes = RegExp(r'(?:%[0-9A-Fa-f]{2})+');
+  static final _escapes = RegExp('(?:%[0-9A-Fa-f]{2})+');
 
   static String _readable(String encoded) {
     final queryStart = encoded.indexOf('?');
@@ -401,7 +401,7 @@ class UrlState {
     }
 
     String? fragment;
-    if (lastSegment.fragment.isNotEmpty == true) {
+    if (lastSegment.fragment.isNotEmpty) {
       fragment = lastSegment.fragment;
     }
     return Uri(path: normalized, queryParameters: queryParams.isNotEmpty ? queryParams : null, fragment: fragment);

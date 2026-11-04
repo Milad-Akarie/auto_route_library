@@ -23,7 +23,7 @@ const Reference pageRouteType = Reference('PageRouteInfo', autoRouteImport);
 /// Builds a list type reference of type [reference]
 TypeReference listRefer(Reference reference, {bool nullable = false}) => TypeReference(
   (b) => b
-    ..symbol = "List"
+    ..symbol = 'List'
     ..isNullable = nullable
     ..types.add(reference),
 );
@@ -95,9 +95,9 @@ String generateLibrary(
           Directive.partOf(p.posix.relative(router.path, from: p.posix.dirname(outputPath ?? router.path))),
       ])
       ..comments.addAll([
-        "ignore_for_file: type=lint",
-        "coverage:ignore-file",
-        for (final ignore in ignoreForFile) "ignore_for_file: $ignore",
+        'ignore_for_file: type=lint',
+        'coverage:ignore-file',
+        for (final ignore in ignoreForFile) 'ignore_for_file: $ignore',
       ])
       ..body.addAll([
         if (routes.isNotEmpty)

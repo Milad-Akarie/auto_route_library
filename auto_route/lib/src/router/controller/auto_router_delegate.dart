@@ -199,7 +199,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   static String _unresolvedMessage(DeepLink deepLink) {
     if (deepLink is! PlatformDeepLink) return 'Can not resolve initial route';
     return 'Can not resolve initial route: no route matches "${deepLink.uri}". '
-        'Add RedirectRoute(path: \'*\', redirectTo: \'/\') last in your routes to open '
+        "Add RedirectRoute(path: '*', redirectTo: '/') last in your routes to open "
         'links no route matches on your initial page.';
   }
 

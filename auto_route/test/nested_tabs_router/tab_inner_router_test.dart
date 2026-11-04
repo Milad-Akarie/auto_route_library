@@ -15,7 +15,7 @@ void main() {
     // Reported: innerRouterOf returns null after the routes change, with the
     // page-view kind only.
     // Should: it returns the nested router, which pops to its first page.
-    testWidgets('${kind.name}: innerRouterOf finds the tab\'s nested router after the routes change', (tester) async {
+    testWidgets("${kind.name}: innerRouterOf finds the tab's nested router after the routes change", (tester) async {
       addTearDown(() => _extraNotifier.value = false);
       _tabsKind = kind;
       final router = RootStackRouter.build(

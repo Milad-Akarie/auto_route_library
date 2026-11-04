@@ -104,7 +104,7 @@ void main() {
     expect(stackOf(tabs, 0), ['BookListRoute', 'BookDetailsRoute']);
   }, skip: kIsWeb);
 
-  testWidgets("the predictive back gesture should pop only the page of the tab on screen", (tester) async {
+  testWidgets('the predictive back gesture should pop only the page of the tab on screen', (tester) async {
     final tabs = await pumpApp(tester, theme: androidTheme);
     await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
     await showTab(tester, tabs, 1);

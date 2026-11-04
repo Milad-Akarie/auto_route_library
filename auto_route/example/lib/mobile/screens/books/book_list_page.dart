@@ -3,7 +3,6 @@ import 'package:example/data/db.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:material_ui/material_ui.dart';
 
-//ignore_for_file: public_member_api_docs
 @RoutePage()
 class BookListScreen extends StatefulWidget {
   const BookListScreen({super.key});

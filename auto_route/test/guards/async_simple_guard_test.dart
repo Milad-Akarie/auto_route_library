@@ -22,7 +22,7 @@ void main() {
         NamedRouteDef(
           name: 'HomeRoute',
           path: '/',
-          builder: (_, __) => const Scaffold(body: Text('HomeRoute')),
+          builder: (_, _) => const Scaffold(body: Text('HomeRoute')),
         ),
         NamedRouteDef(
           name: 'ProfileRoute',
@@ -34,7 +34,7 @@ void main() {
               resolver.next();
             }),
           ],
-          builder: (_, __) => const Scaffold(body: Text('ProfileRoute')),
+          builder: (_, _) => const Scaffold(body: Text('ProfileRoute')),
         ),
       ],
     );

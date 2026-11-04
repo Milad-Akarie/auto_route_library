@@ -21,12 +21,12 @@ void main() {
   Widget page(String name) => Scaffold(body: Center(child: Text(name)));
 
   final routes = [
-    NamedRouteDef(name: 'HomeRoute', path: '/', meta: const {'skipAuth': false}, builder: (_, __) => page('HomeRoute')),
+    NamedRouteDef(name: 'HomeRoute', path: '/', meta: const {'skipAuth': false}, builder: (_, _) => page('HomeRoute')),
     NamedRouteDef(
       name: 'LoginRoute',
       path: '/login',
       meta: const {'skipAuth': true},
-      builder: (_, __) => page('LoginRoute'),
+      builder: (_, _) => page('LoginRoute'),
     ),
   ];
 

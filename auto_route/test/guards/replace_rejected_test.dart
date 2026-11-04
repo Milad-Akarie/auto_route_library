@@ -21,9 +21,9 @@ void main() {
     isAllowed = false;
     router = RootStackRouter.build(
       routes: [
-        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, __) => page('HomeRoute')),
-        NamedRouteDef(name: 'DetailsRoute', path: '/details', builder: (_, __) => page('DetailsRoute')),
-        NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, __) => page('LoginRoute')),
+        NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => page('HomeRoute')),
+        NamedRouteDef(name: 'DetailsRoute', path: '/details', builder: (_, _) => page('DetailsRoute')),
+        NamedRouteDef(name: 'LoginRoute', path: '/login', builder: (_, _) => page('LoginRoute')),
         NamedRouteDef(
           name: 'ProtectedRoute',
           path: '/protected',
@@ -36,13 +36,13 @@ void main() {
               }
             }),
           ],
-          builder: (_, __) => page('ProtectedRoute'),
+          builder: (_, _) => page('ProtectedRoute'),
         ),
         NamedRouteDef(
           name: 'ForbiddenRoute',
           path: '/forbidden',
           guards: [AutoRouteGuard.simple((resolver, _) => resolver.next(false))],
-          builder: (_, __) => page('ForbiddenRoute'),
+          builder: (_, _) => page('ForbiddenRoute'),
         ),
       ],
     );

@@ -18,7 +18,7 @@ void main() {
     // route changes.
     // Should: the first tab still shows 2 taps, the second still shows 1, and
     // the third tab shows the account page.
-    testWidgets('${kind.name}: signing in swaps the third tab and keeps the other tabs\' state', (tester) async {
+    testWidgets("${kind.name}: signing in swaps the third tab and keeps the other tabs' state", (tester) async {
       addTearDown(() => _signedInNotifier.value = false);
       _tabsKind = kind;
       final router = RootStackRouter.build(

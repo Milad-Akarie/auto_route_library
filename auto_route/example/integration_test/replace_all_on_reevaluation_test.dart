@@ -25,7 +25,7 @@ void main() {
           guards: [
             AutoRouteGuard.simple((resolver, router) {
               if (authRepo.isLoggedIn) {
-                resolver.next(true);
+                resolver.next();
                 return;
               }
               resolver.next(false);
