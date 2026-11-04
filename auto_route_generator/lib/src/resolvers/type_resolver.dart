@@ -1,5 +1,4 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/nullability_suffix.dart' show NullabilitySuffix;
 import 'package:analyzer/dart/element/type.dart' show DartType, FunctionType, ParameterizedType, RecordType;
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
@@ -65,12 +64,10 @@ class TypeResolver {
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
         return fileUri.pathSegments.last;
-      } else {
-        return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
       }
-    } else {
-      return fileUri.toString();
+      return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
     }
+    return fileUri.toString();
   }
 
   bool _isCoreDartType(Element element) {

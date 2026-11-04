@@ -449,7 +449,6 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
           _initializedPagesTracker[i] = true;
         }
       }
-      return;
     }
   }
 

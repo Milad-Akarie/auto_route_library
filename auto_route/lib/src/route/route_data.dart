@@ -92,9 +92,8 @@ class RouteData<R> {
   Future<R?> get popped {
     if (router.ignorePopCompleters || _popCompleter == null) {
       return SynchronousFuture(null);
-    } else {
-      return _popCompleter!.future;
     }
+    return _popCompleter!.future;
   }
 
   /// Validates and returns [args] casted as [T]
@@ -114,14 +113,12 @@ class RouteData<R> {
           messages.add('try navigating to ${_match.flattened.map((e) => e.name).join(' -> ')}');
         }
         throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
-      } else {
-        return orElse();
       }
+      return orElse();
     } else if (args is! T) {
       throw MissingRequiredParameterError('Expected [$T],  found [${args.runtimeType}]');
-    } else {
-      return args;
     }
+    return args;
   }
 
   // The query params and fragment this route was opened with. A route pushed
@@ -195,9 +192,8 @@ class RouteData<R> {
   RouteMatch _getTopMatch(RouteMatch routeMatch) {
     if (routeMatch.hasChildren) {
       return _getTopMatch(routeMatch.children!.last);
-    } else {
-      return routeMatch;
     }
+    return routeMatch;
   }
 
   /// Returns the top most [RouteMatch] in the

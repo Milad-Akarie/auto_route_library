@@ -60,15 +60,12 @@ class RouteConfigResolver {
       }
     }
 
-    if (pathParameters.isNotEmpty) {
-      for (final pParam in pathParameters) {
-        throwIf(
-          !validPathParamTypes.contains(pParam.type.name),
-          "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
-        );
-      }
+    for (final pParam in pathParameters) {
+      throwIf(
+        !validPathParamTypes.contains(pParam.type.name),
+        "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: $validPathParamTypes",
+      );
     }
-
     return RouteConfig(
       className: className,
       name: name,

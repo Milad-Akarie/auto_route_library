@@ -104,9 +104,8 @@ class ParamConfig {
   String getSafeName() {
     if (_reservedVarNames.contains(name)) {
       return '${name}0';
-    } else {
-      return name;
     }
+    return name;
   }
 
   /// The type of the items when this is a `List` of a type the url gives as

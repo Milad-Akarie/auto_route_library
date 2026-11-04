@@ -66,9 +66,8 @@ class Parameters {
       return defaultValue;
     } else if (param is int) {
       return param;
-    } else {
-      return int.tryParse(param.toString()) ?? defaultValue;
     }
+    return int.tryParse(param.toString()) ?? defaultValue;
   }
 
   /// returns the value corresponding with [key] as [Int]
@@ -89,9 +88,8 @@ class Parameters {
       return defaultValue;
     } else if (param is double) {
       return param;
-    } else {
-      return double.tryParse(param.toString()) ?? defaultValue;
     }
+    return double.tryParse(param.toString()) ?? defaultValue;
   }
 
   /// returns the value corresponding with [key] as [double]
@@ -112,9 +110,8 @@ class Parameters {
       return defaultValue;
     } else if (param is num) {
       return param;
-    } else {
-      return num.tryParse(param.toString()) ?? defaultValue;
     }
+    return num.tryParse(param.toString()) ?? defaultValue;
   }
 
   /// returns the value corresponding with [key] as  [num]
@@ -164,9 +161,8 @@ class Parameters {
     }
     if (val is List) {
       return val.map((e) => e.toString()).toList();
-    } else {
-      return [val.toString()];
     }
+    return [val.toString()];
   }
 
   /// returns the value corresponding with [key] as nullable [List<String>]
@@ -178,8 +174,7 @@ class Parameters {
     }
     if (val is List) {
       return val.map((e) => e.toString()).toList();
-    } else {
-      return [val.toString()];
     }
+    return [val.toString()];
   }
 }

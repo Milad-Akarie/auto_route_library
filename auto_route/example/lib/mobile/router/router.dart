@@ -33,9 +33,8 @@ class AppRouter extends RootStackRouter {
               onNavigation: (resolver, _) {
                 if (authService.isAuthenticated) {
                   return resolver.next();
-                } else {
-                  resolver.redirectUntil(LoginRoute());
                 }
+                resolver.redirectUntil(LoginRoute());
               },
               title: (ctx, data) {
                 return 'Book Details ${data.params.get('id')}';

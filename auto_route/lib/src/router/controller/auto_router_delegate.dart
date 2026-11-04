@@ -145,9 +145,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       return _handleDeepLink(await deepLinkBuilder!(platformDeepLink));
     } else if (platformDeepLink.isValid) {
       return _handleDeepLink(platformDeepLink);
-    } else {
-      throw FlutterError(_unresolvedMessage(platformDeepLink));
     }
+    throw FlutterError(_unresolvedMessage(platformDeepLink));
   }
 
   Future<void> _handleDeepLink(DeepLink deepLink) {
@@ -160,18 +159,15 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     } else if (deepLink is _PathDeepLink) {
       if (deepLink.navigate) {
         return controller.navigatePath(deepLink.path, includePrefixMatches: deepLink.includePrefixMatches);
-      } else {
-        return controller.pushPath(deepLink.path, includePrefixMatches: deepLink.includePrefixMatches);
       }
+      return controller.pushPath(deepLink.path, includePrefixMatches: deepLink.includePrefixMatches);
     } else if (deepLink is _RoutesDeepLink) {
       if (deepLink.navigate) {
         return controller._navigateAllRoutes(deepLink.routes);
-      } else {
-        return controller.pushAll(deepLink.routes);
       }
-    } else {
-      throw FlutterError('Unsupported DeepLink ${deepLink.runtimeType}');
+      return controller.pushAll(deepLink.routes);
     }
+    throw FlutterError('Unsupported DeepLink ${deepLink.runtimeType}');
   }
 
   /// Rebuilds the pages of every router from [UrlState.savedRoutes] when the

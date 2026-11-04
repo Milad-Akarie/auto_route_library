@@ -339,9 +339,8 @@ class UrlState {
   static RouteMatch toHierarchy(List<RouteMatch> segments) {
     if (segments.length == 1) {
       return segments.first;
-    } else {
-      return segments.first.copyWith(children: [toHierarchy(segments.sublist(1, segments.length))]);
     }
+    return segments.first.copyWith(children: [toHierarchy(segments.sublist(1, segments.length))]);
   }
 
   /// Returns a new instance of [UrlState]

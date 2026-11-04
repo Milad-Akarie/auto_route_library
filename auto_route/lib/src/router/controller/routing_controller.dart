@@ -286,19 +286,16 @@ abstract class RoutingController with ChangeNotifier {
     var match = matcher.matchByRoute(route);
     if (match != null) {
       return match;
-    } else {
-      match = matcher.buildPathTo(route);
-      if (match == null) {
-        if (onFailure != null) {
-          onFailure(RouteNotFoundFailure(route.routeName));
-          return null;
-        } else {
-          throw FlutterError('Failed to navigate to ${route.routeName}');
-        }
-      } else {
-        return _reuseOpenAncestors(match);
-      }
     }
+    match = matcher.buildPathTo(route);
+    if (match == null) {
+      if (onFailure != null) {
+        onFailure(RouteNotFoundFailure(route.routeName));
+        return null;
+      }
+      throw FlutterError('Failed to navigate to ${route.routeName}');
+    }
+    return _reuseOpenAncestors(match);
   }
 
   // [RouteMatcher.buildPathTo] makes up the ancestors of a route nested deeper
@@ -471,9 +468,8 @@ abstract class RoutingController with ChangeNotifier {
     final match = _matchOrReportFailure(route, onFailure);
     if (match != null) {
       return _navigateAll([match], onFailure: onFailure);
-    } else {
-      return SynchronousFuture(null);
     }
+    return SynchronousFuture(null);
   }
 
   List<RoutingController> _buildRoutersHierarchy() {
@@ -800,9 +796,8 @@ class TabsRouter extends RoutingController {
   RouteData? get currentChild {
     if (_activeIndex < _pages.length) {
       return _pages[_activeIndex].routeData;
-    } else {
-      return null;
     }
+    return null;
   }
 
   /// The index of active page
@@ -971,9 +966,8 @@ class TabsRouter extends RoutingController {
   Future<bool> _maybePopParent<T extends Object?>(T? result) {
     if (_parent != null) {
       return _parent!.maybePop<T>(result);
-    } else {
-      return SynchronousFuture<bool>(false);
     }
+    return SynchronousFuture<bool>(false);
   }
 
   @override
@@ -1080,9 +1074,8 @@ class TabsRouter extends RoutingController {
             'Routes must be added manually to AutoTabsRouter'
             '\n${e.message}',
           );
-        } else {
-          rethrow;
         }
+        rethrow;
       }
     }
   }
@@ -1251,9 +1244,8 @@ class TabsRouter extends RoutingController {
     final innerRouter = _innerControllerOfMatch(matchId);
     if (innerRouter is StackRouter) {
       return innerRouter;
-    } else {
-      return null;
     }
+    return null;
   }
 
   @override
@@ -1530,9 +1522,8 @@ abstract class StackRouter extends RoutingController {
       return true;
     } else if (_parent != null) {
       return _parent!.maybePop<T>(result);
-    } else {
-      return false;
     }
+    return false;
   }
 
   /// Pop current route regardless if it's the last
@@ -1881,10 +1872,9 @@ abstract class StackRouter extends RoutingController {
     for (final candidate in List.unmodifiable(_pages).reversed) {
       if (predicate(candidate.routeData)) {
         break;
-      } else {
-        _removeLast(notify: false);
-        didRemove = true;
       }
+      _removeLast(notify: false);
+      didRemove = true;
     }
     if (didRemove && notify) {
       notifyAll(forceUrlRebuild: true);

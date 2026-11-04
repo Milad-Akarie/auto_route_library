@@ -66,9 +66,8 @@ class RouterScope extends InheritedWidget {
     final typedObservers = navigatorObservers.whereType<T>();
     if (typedObservers.isNotEmpty) {
       return typedObservers.first;
-    } else {
-      return null;
     }
+    return null;
   }
 
   @override

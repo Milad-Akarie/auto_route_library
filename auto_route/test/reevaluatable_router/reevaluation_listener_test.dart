@@ -26,7 +26,7 @@ void main() {
           page: ThirdRoute.page,
           guards: [
             AutoRouteGuard.simple((resolver, router) {
-              mockListener.call(resolver, router);
+              mockListener(resolver, router);
               if (reevaluationNotifier.value) {
                 resolver.next();
               }
@@ -86,7 +86,7 @@ void main() {
           page: FirstRoute.page,
           guards: [
             AutoRouteGuard.simple((resolver, router) {
-              mockListener.call(resolver, router);
+              mockListener(resolver, router);
               if (reevaluationNotifier.value) {
                 resolver.next();
               }
@@ -132,7 +132,7 @@ void main() {
                   page: Tab2Nested2Route.page,
                   guards: [
                     AutoRouteGuard.simple((resolver, router) {
-                      mockListener.call(resolver, router);
+                      mockListener(resolver, router);
                       if (reevaluationNotifier.value) {
                         resolver.next();
                       }
@@ -172,7 +172,7 @@ void main() {
         AutoRoute.guarded(
           page: SecondRoute.page,
           onNavigation: (resolver, router) async {
-            mockListener.call(resolver, router);
+            mockListener(resolver, router);
             if (reevaluationNotifier.value) {
               resolver.next();
             } else {

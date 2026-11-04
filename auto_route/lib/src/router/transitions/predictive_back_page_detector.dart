@@ -165,7 +165,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
     with SingleTickerProviderStateMixin {
   // Constants as per the motion specs
   // https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back#motion-specs
-  static const double _kMinScale = 0.90;
+  static const double _kMinScale = 0.9;
   static const double _kDivisionFactor = 20.0;
   static const double _kMargin = 8.0;
   static const double _kYPositionFactor = 0.1;

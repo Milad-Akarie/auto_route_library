@@ -122,7 +122,7 @@ class AutoRoutePage<T> extends Page<T> {
       return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
     } else if (type is CustomRouteType) {
       if (type.customRouteBuilder != null) {
-        return type.customRouteBuilder!.call<T>(context, _CurrentPageChild(page: this), this);
+        return type.customRouteBuilder!<T>(context, _CurrentPageChild(page: this), this);
       }
       return _CustomPageBasedPageRouteBuilder<T>(
         page: this,
@@ -135,13 +135,12 @@ class AutoRoutePage<T> extends Page<T> {
         return _NoAnimationPageRouteBuilder(page: this);
       } else if ([TargetPlatform.macOS, TargetPlatform.iOS].contains(defaultTargetPlatform)) {
         return _PageBasedCupertinoPageRoute<T>(page: this, title: title);
-      } else {
-        return _PageBasedMaterialPageRoute<T>(
-          page: this,
-          enablePredictiveBackGesture: type.enablePredictiveBackGesture,
-          predictiveBackPageTransitionsBuilder: type.predictiveBackPageTransitionsBuilder,
-        );
       }
+      return _PageBasedMaterialPageRoute<T>(
+        page: this,
+        enablePredictiveBackGesture: type.enablePredictiveBackGesture,
+        predictiveBackPageTransitionsBuilder: type.predictiveBackPageTransitionsBuilder,
+      );
     }
     return _PageBasedMaterialPageRoute<T>(page: this);
   }
@@ -412,10 +411,9 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
       route: this,
       builder: (context, phase, startBackEvent, currentBackEvent) {
         if (popGestureInProgress) {
-          return predictiveBackPageTransitionsBuilder!.call(context, animation, secondaryAnimation, child);
-        } else {
-          return super.buildTransitions(context, animation, secondaryAnimation, child);
+          return predictiveBackPageTransitionsBuilder!(context, animation, secondaryAnimation, child);
         }
+        return super.buildTransitions(context, animation, secondaryAnimation, child);
       },
     );
   }

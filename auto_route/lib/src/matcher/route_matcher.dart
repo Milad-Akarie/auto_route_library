@@ -177,9 +177,8 @@ class RouteMatcher {
           final match = _matchByRoute(childRoute.copyWith(fragment: route.fragment), subRoutes);
           if (match == null) {
             return null;
-          } else {
-            childMatches.add(match);
           }
+          childMatches.add(match);
         }
       } else {
         // include default matches if exist

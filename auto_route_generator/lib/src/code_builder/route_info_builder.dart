@@ -74,7 +74,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                       [refer(r.getName(router.replaceInRouteName)).property('name')],
                       {
                         if (nonInheritedParameters.isNotEmpty)
-                          'args': argsClassRefer.call(
+                          'args': argsClassRefer(
                             [],
                             Map.fromEntries(
                               nonInheritedParameters.map((p) => MapEntry(p.name, refer(p.getSafeName()))),
@@ -405,9 +405,8 @@ Expression _getUrlPartAssignment(ParamConfig p) {
       literalString(p.paramName),
       if (p.defaultValueCode != null) refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import),
     ]);
-  } else {
-    return refer('data').property('fragment');
   }
+  return refer('data').property('fragment');
 }
 
 /// The function that converts the text of one list item to [item].

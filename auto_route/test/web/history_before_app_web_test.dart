@@ -65,7 +65,7 @@ void main() {
 /// The replacement keeps the browser where it is, so the test page never
 /// navigates to one of the pages from before the app.
 int _countBrowserBackCalls(void Function() body) {
-  final history = window.history as JSObject;
+  final history = window.history;
   var calls = 0;
   history['back'] = () {
     calls++;
