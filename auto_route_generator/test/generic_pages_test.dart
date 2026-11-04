@@ -75,4 +75,71 @@ class ViewAllNamesPage extends StatelessWidget {
     expect(result.compileErrors, isEmpty);
     expect(result.source, matches(RegExp(r'final _i\d+\.IndexCubit<_i\d+\.Failure, String> indexCubit;')));
   });
+
+  // #1296: `DetailScreen<T>` with an optional `T? detail`, routed as
+  // `DetailScreen<Scale>`, lost its type: the route took the argument as
+  // dynamic. A generic page class fails the build as #332 above; a page for
+  // the one type keeps it, with the path param read from the url.
+  group('a generic optional argument (#1296)', () {
+    const scale = 'class Scale {}';
+
+    test('on a generic page class fails the build naming it', () async {
+      final result = await generateRouter({
+        'lib/scale.dart': scale,
+        'lib/detail_screen.dart': '''
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
+
+@RoutePage()
+class DetailScreen<T> extends StatelessWidget {
+  const DetailScreen({super.key, @PathParam() required this.detailName, this.detail});
+
+  final String detailName;
+  final T? detail;
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+''',
+      });
+      expect(result.errors.join(), contains('DetailScreen has type parameters'));
+    });
+
+    test('on a page for one type keeps the type', () async {
+      final result = await generateRouter({
+        'lib/scale.dart': scale,
+        'lib/detail_screen.dart': '''
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
+
+import 'scale.dart';
+
+class DetailScreen<T> extends StatelessWidget {
+  const DetailScreen({super.key, required this.detailName, this.detail});
+
+  final String detailName;
+  final T? detail;
+
+  @override
+  Widget build(BuildContext context) => const SizedBox();
+}
+
+@RoutePage()
+class ScaleDetailScreen extends StatelessWidget {
+  const ScaleDetailScreen({super.key, @PathParam() required this.detailName, this.detail});
+
+  final String detailName;
+  final Scale? detail;
+
+  @override
+  Widget build(BuildContext context) => DetailScreen<Scale>(detailName: detailName, detail: detail);
+}
+''',
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, matches(RegExp(r'final _i\d+\.Scale\? detail;')));
+      expect(result.source, contains("detailName: pathParams.getString('detailName')"));
+    });
+  });
 }
