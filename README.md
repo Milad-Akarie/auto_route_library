@@ -363,6 +363,14 @@ router.push(BookDetailsRoute(book: book));
 
 **Note:** All arguments are generated as named parameters regardless of their original type.
 
+#### Arguments a link can't carry
+
+A link, a typed web address or a deep link holds only text, so it can fill path and query parameters, but not an object or a callback. A page with such a required parameter can only be opened by pushing its route in code, as above. Opening it from a link fails with `... can not be null because the corresponding page has a required parameter`.
+
+If the page has to be reachable by link, make the link carry what the page needs, an id for example, with `@PathParam` or `@QueryParam`, and look the object up inside the page. Or make the parameter an optional named one, nullable or with a default, and the page decides what to show without it. A deep link into several nested pages builds each of them the same way, so every page on the way needs that too.
+
+When a page has both kinds of parameters, the generator prints `WARNING => Because [Page] has required parameters ... that can not be parsed from path`. It's a warning, not an error; it tells you the page can't be built from a link alone and generation goes on. It has no option to turn it off; it goes away once every required parameter is a path or query parameter, or the others are optional named parameters.
+
 ## Returning Results
 
 You can return results by either using the pop completer or by passing a callback function as an argument the same way you'd pass an object.
