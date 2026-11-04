@@ -152,4 +152,36 @@ enum Fruit {
       expect(_flat(result), isNot(contains('constPlainPage(')));
     });
   });
+
+  // flutter/flutter#126796: go_router_builder asked for required query
+  // params. A url may leave a query param out, so auto_route refuses a
+  // non-null query param without a default at build time, by design; a value
+  // a page always needs is a @PathParam.
+  group('a required query parameter (flutter/flutter#126796)', () {
+    test('without a default is a build error', () async {
+      final result = await generateRouter({
+        'lib/my_page.dart': _page(
+          'MyPage',
+          parameters: "@QueryParam('my-param') required this.myParam",
+          fields: '  final String myParam;',
+        ),
+      });
+      expect(result.errors, hasLength(1));
+      expect(result.errors.single, contains('QueryParams must be nullable or have default value'));
+    });
+
+    test('with a path param next to it compiles', () async {
+      final result = await generateRouter({
+        'lib/my_page.dart': _page(
+          'MyPage',
+          parameters: "@PathParam('routeId') required this.routeId, @QueryParam('my-param') this.myParam",
+          fields: '''
+  final String routeId;
+  final String? myParam;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+    });
+  });
 }
