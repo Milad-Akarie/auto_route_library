@@ -3,8 +3,9 @@
 # generator's tests, then the example app's integration tests
 # (auto_route/example/integration_test) on an Android emulator, an iOS
 # simulator, web through `flutter drive`, and macOS desktop.
-# Every job stops after 15 minutes. The macOS jobs run on arm64 runners;
-# Intel macOS isn't supported.
+# Every job stops after 15 minutes, so Android and iOS each run the suite
+# in two halves, one job each. The macOS jobs run on arm64 runners; Intel
+# macOS isn't supported.
 name: tests
 
 on:
@@ -87,9 +88,18 @@ jobs:
         run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   android:
-    name: Integration tests on Android
+    name: Integration tests on Android (half ${{ matrix.half }} of 2)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    # Two jobs, each running half of the suite in one launch of the app.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - half: 1
+            shard-index: 0
+          - half: 2
+            shard-index: 1
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-java@v6.1.0
@@ -114,7 +124,7 @@ jobs:
           arch: x86_64
           working-directory: auto_route/example
           # The action runs each line with sh; bash adds pipefail, so the step fails with the tests despite tee.
-          script: bash -o pipefail -c 'flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart -d emulator-5554 2>&1 | tee "$RUNNER_TEMP/test-output.txt"'
+          script: bash -o pipefail -c 'flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart --total-shards 2 --shard-index ${{ matrix.shard-index }} -d emulator-5554 2>&1 | tee "$RUNNER_TEMP/test-output.txt"'
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
@@ -122,9 +132,18 @@ jobs:
         run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   ios:
-    name: Integration tests on iOS
+    name: Integration tests on iOS (half ${{ matrix.half }} of 2)
     runs-on: macos-26
     timeout-minutes: 15
+    # Two jobs, each running half of the suite in one launch of the app.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - half: 1
+            shard-index: 0
+          - half: 2
+            shard-index: 1
     # GitHub never picked up an arm64 macOS runner in five runs; the maintainer's Mac runs iOS and macOS before every merge.
     continue-on-error: true
     steps:
@@ -156,7 +175,7 @@ jobs:
         working-directory: auto_route/example
         timeout-minutes: ${{ fromJSON(env.TEST_MINUTES) }}
         shell: bash
-        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart -d "$SIMULATOR_UDID" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+        run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart --total-shards 2 --shard-index ${{ matrix.shard-index }} -d "$SIMULATOR_UDID" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
