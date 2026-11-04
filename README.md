@@ -952,6 +952,20 @@ Now you can access your router anywhere inside of your app without using context
 getIt<AppRouter>().push(...);
 ```
 
+If a package asks for your `navigatorKey`, for example to show dialogs without a context, give your router the key and pass the same key to that package. `MaterialApp.router` has no `navigatorKey` parameter, the router owns it:
+
+```dart
+class AppRouter extends RootStackRouter {
+  AppRouter({super.navigatorKey});
+  ...
+}
+
+final navigatorKey = GlobalKey<NavigatorState>();
+final appRouter = AppRouter(navigatorKey: navigatorKey);
+```
+
+Without a key the router makes its own, which you can read as `appRouter.navigatorKey`.
+
 **Note:** Navigating without context is not recommended in nested navigation unless you use `navigate` instead of `push` and you provide a full hierarchy, e.g `router.navigate(SecondRoute(children: [SubChild2Route()]))`
 
 ## Deep Linking
