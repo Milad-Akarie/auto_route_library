@@ -1621,6 +1621,23 @@ CustomRoute(
 )
 ```
 
+Any `Route` can be returned, as long as it gets the page as its `settings`. For example, a page that opens as a modal bottom sheet:
+
+```dart
+CustomRoute(
+  page: FilterRoute.page,
+  customRouteBuilder: <T>(BuildContext context, Widget child, AutoRoutePage<T> page) {
+    return ModalBottomSheetRoute<T>(
+      settings: page,
+      isScrollControlled: true,
+      builder: (_) => child,
+    );
+  },
+)
+```
+
+It's pushed and popped like any other route: `context.router.push(const FilterRoute())`, `context.router.maybePop()`.
+
 ## Others
 
 ### Including Micro/External Packages
