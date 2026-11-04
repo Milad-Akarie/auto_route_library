@@ -131,6 +131,8 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// throws an error if it does not find it
   static TabsRouter of(BuildContext context, {bool watch = false}) {
     final scope = TabsRouterScope.of(context, watch: watch);
+    // The check throws its own FlutterError.
+    // ignore: prefer_asserts_with_message
     assert(() {
       if (scope == null) {
         throw FlutterError(
@@ -288,7 +290,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
 
   @override
   void _setupController() {
-    assert(_controller != null);
+    assert(_controller != null, 'The tabs controller is not set up yet.');
     _controller!.setupRoutes(widget.routes);
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
@@ -318,7 +320,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
 
   @override
   Widget build(BuildContext context) {
-    assert(_controller != null);
+    assert(_controller != null, 'The tabs controller is not set up yet.');
     final stack = _controller!.stack;
     final builder = widget.builder ?? _defaultBuilder;
     final stateHash = controller!.stateHash;
@@ -515,7 +517,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
 
   @override
   void _setupController() {
-    assert(_controller != null);
+    assert(_controller != null, 'The tabs controller is not set up yet.');
     _controller!.setupRoutes(widget.routes);
     _updatePageController();
     _didInitTabRoute(_controller!.activeIndex);
@@ -555,7 +557,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
 
   @override
   Widget build(BuildContext context) {
-    assert(_controller != null);
+    assert(_controller != null, 'The tabs controller is not set up yet.');
     final builder = widget._pageViewModeBuilder ?? _defaultPageViewBuilder;
     final stateHash = controller!.stateHash;
     return RouterScope(
@@ -637,7 +639,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
 
   @override
   void _setupController() {
-    assert(_controller != null);
+    assert(_controller != null, 'The tabs controller is not set up yet.');
     _controller!.setupRoutes(widget.routes);
     _updateTabController();
     _didInitTabRoute(_controller!.activeIndex);
@@ -704,7 +706,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
 
   @override
   Widget build(BuildContext context) {
-    assert(_controller != null);
+    assert(_controller != null, 'The tabs controller is not set up yet.');
     final builder = widget.builder ?? _defaultPageViewBuilder;
     final stateHash = controller!.stateHash;
     return RouterScope(
@@ -771,7 +773,7 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
     with _RouteAwareTabsMixin<_AutoTabsRouterBuilder> {
   @override
   void _setupController() {
-    assert(_controller != null);
+    assert(_controller != null, 'The tabs controller is not set up yet.');
 
     _controller!.setupRoutes(widget.routes);
     widget.onRouterReady?.call(_controller!);
@@ -801,7 +803,7 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
 
   @override
   Widget build(BuildContext context) {
-    assert(_controller != null);
+    assert(_controller != null, 'The tabs controller is not set up yet.');
     final stack = _controller!.stack;
     final builder = widget.builder;
     final stateHash = controller!.stateHash;

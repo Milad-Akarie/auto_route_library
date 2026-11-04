@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Copied from Flutter: its asserts stay as Flutter wrote them, so the two
+// can still be compared line by line.
+// ignore_for_file: prefer_asserts_with_message
+
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/rendering.dart';
 import 'package:material_ui/material_ui.dart'

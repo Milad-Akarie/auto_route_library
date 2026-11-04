@@ -89,6 +89,8 @@ class AutoRouter extends StatefulWidget {
   /// throws an error if it does not find it
   static StackRouter of(BuildContext context, {bool watch = false}) {
     final scope = StackRouterScope.of(context, watch: watch);
+    // The check throws its own FlutterError.
+    // ignore: prefer_asserts_with_message
     assert(() {
       if (scope == null) {
         throw FlutterError(
@@ -166,7 +168,7 @@ class AutoRouterState extends State<AutoRouter> {
 
   @override
   Widget build(BuildContext context) {
-    assert(_controller != null);
+    assert(_controller != null, 'The router controller is not set up yet.');
     final navigator = AutoRouteNavigator(
       router: _controller!,
       clipBehavior: widget.clipBehavior,
@@ -289,7 +291,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
 
   @override
   Widget build(BuildContext context) {
-    assert(_controller != null);
+    assert(_controller != null, 'The router controller is not set up yet.');
     final stateHash = controller!.stateHash;
     return RouterScope(
       key: _controller!.globalRouterKey,

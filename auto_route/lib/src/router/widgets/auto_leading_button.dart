@@ -65,7 +65,7 @@ class AutoLeadingButton extends StatefulWidget {
     this.showIfChildCanPop = true,
     this.ignorePagelessRoutes = false,
     this.builder,
-  }) : assert(color == null || builder == null),
+  }) : assert(color == null || builder == null, 'Pass either color or builder, not both.'),
        _nullableBuilder = null,
        _showIfParentCanPop = showIfParentCanPop ?? true;
 

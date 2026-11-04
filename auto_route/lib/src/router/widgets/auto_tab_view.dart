@@ -237,7 +237,7 @@ class AutoTabViewState extends State<AutoTabView> {
 
   Future<void> _warpToNonAdjacentTab(Duration duration) async {
     final previousIndex = _controller.previousIndex;
-    assert((_currentIndex! - previousIndex).abs() > 1);
+    assert((_currentIndex! - previousIndex).abs() > 1, 'Only a jump of more than one tab warps.');
 
     // initialPage defines which page is shown when starting the animation.
     // This page is adjacent to the destination page.

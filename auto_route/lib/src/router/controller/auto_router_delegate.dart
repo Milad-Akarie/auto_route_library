@@ -91,7 +91,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// Looks up and casts the scoped [Router] to [AutoRouterDelegate]
   static AutoRouterDelegate of(BuildContext context) {
     final delegate = Router.of(context).routerDelegate;
-    assert(delegate is AutoRouterDelegate);
+    assert(delegate is AutoRouterDelegate, 'The nearest Router does not use an AutoRouterDelegate.');
     return delegate as AutoRouterDelegate;
   }
 

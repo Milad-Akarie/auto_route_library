@@ -111,7 +111,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
 
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
-    assert(hasListeners);
+    assert(hasListeners, 'The route information provider has no listener to report to.');
     _platformReportsNewRouteInformation(routeInformation);
     return SynchronousFuture<bool>(true);
   }

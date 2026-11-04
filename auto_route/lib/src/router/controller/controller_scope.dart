@@ -46,6 +46,8 @@ class RouterScope extends InheritedWidget {
     } else {
       scope = context.findAncestorWidgetOfExactType<RouterScope>();
     }
+    // The check throws its own FlutterError.
+    // ignore: prefer_asserts_with_message
     assert(() {
       if (scope == null) {
         throw FlutterError(

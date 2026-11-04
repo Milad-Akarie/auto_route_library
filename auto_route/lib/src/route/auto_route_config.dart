@@ -558,7 +558,8 @@ typedef OnGeneratePath = String Function(AutoRoute route);
 /// Mainly used by `RouteMatcher`
 class RouteCollection {
   /// Default constructor
-  RouteCollection(this._routesMap, [this._subCollections = const {}]) : assert(_routesMap.isNotEmpty);
+  RouteCollection(this._routesMap, [this._subCollections = const {}])
+    : assert(_routesMap.isNotEmpty, 'A route collection needs at least one route.');
 
   /// Creates a Map of config-entries from [routes]
   ///

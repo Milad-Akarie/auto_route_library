@@ -5,6 +5,10 @@
 // The adjustments made to this code is to disable unwanted shadow
 // of routes when used as nested routes, e.g inside of a TabsRouter
 
+// Copied from Flutter: its asserts stay as Flutter wrote them, so the two
+// can still be compared line by line.
+// ignore_for_file: prefer_asserts_with_message
+
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
 

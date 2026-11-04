@@ -193,7 +193,7 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   Future<void> _warpToNonAdjacentTab(int previousIndex) async {
-    assert((_router.activeIndex - previousIndex).abs() > 1);
+    assert((_router.activeIndex - previousIndex).abs() > 1, 'Only a jump of more than one page warps.');
     final initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
 
     setState(() {

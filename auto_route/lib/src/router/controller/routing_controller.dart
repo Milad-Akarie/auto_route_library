@@ -80,7 +80,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Adds the given controller to the list of [childControllers]
   void attachChildController(RoutingController childController) {
-    assert(!_childControllers.contains(childController));
+    assert(!_childControllers.contains(childController), 'This child controller is already attached.');
     _childControllers.add(childController);
   }
 
@@ -816,7 +816,7 @@ class TabsRouter extends RoutingController {
   /// When a guard decides later, the current tab stays active until then,
   /// and the change always notifies once it happens.
   void setActiveIndex(int index, {bool notify = true}) {
-    assert(index >= 0 && index < _pages.length);
+    assert(index >= 0 && index < _pages.length, 'Tab index $index is out of range for ${_pages.length} tabs.');
     // A change waits on the tab's guards when it has any; nothing here waits for it.
     if (_changeTab(index, notify: notify) case final Future<void> change) unawaited(change);
   }
@@ -1455,7 +1455,7 @@ abstract class StackRouter extends RoutingController {
     bool opaque = true,
   }) {
     final navigator = _navigatorKey.currentState;
-    assert(navigator != null);
+    assert(navigator != null, 'The navigator of this router is not mounted.');
     return navigator!.push<T>(
       AutoPageRouteBuilder<T>(
         child: widget,
@@ -1473,7 +1473,7 @@ abstract class StackRouter extends RoutingController {
   /// don't have paths nor effect url
   Future<T?> pushNativeRoute<T extends Object?>(Route<T> route) {
     final navigator = _navigatorKey.currentState;
-    assert(navigator != null);
+    assert(navigator != null, 'The navigator of this router is not mounted.');
     return navigator!.push<T>(route);
   }
 
@@ -1738,7 +1738,7 @@ abstract class StackRouter extends RoutingController {
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
   Future<void> pushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure}) {
-    assert(routes.isNotEmpty);
+    assert(routes.isNotEmpty, 'routes must not be empty.');
     return _findStackScope(routes.first)._pushAll(routes, onFailure: onFailure);
   }
 
@@ -1750,7 +1750,7 @@ abstract class StackRouter extends RoutingController {
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
   Future<void> popAndPushAll(List<PageRouteInfo> routes, {onFailure}) {
-    assert(routes.isNotEmpty);
+    assert(routes.isNotEmpty, 'routes must not be empty.');
     final scope = _findStackScope(routes.first);
     scope.pop();
     return scope._pushAll(routes, onFailure: onFailure as OnNavigationFailure?);
@@ -1814,7 +1814,7 @@ abstract class StackRouter extends RoutingController {
 
   /// Pop the whole stack except for the first entry
   void popUntilRoot() {
-    assert(_navigatorKey.currentState != null);
+    assert(_navigatorKey.currentState != null, 'The navigator of this router is not mounted.');
     _navigatorKey.currentState?.popUntil((route) => route.isFirst);
   }
 
