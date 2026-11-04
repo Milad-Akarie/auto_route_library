@@ -16,7 +16,7 @@ Also: never push (the maintainer merges into `dev` and pushes), run `dart format
 ## Branches
 - `dev` is where work happens. Branch every piece of work from `dev`; finished work lands on `dev`.
 - `master` holds stable releases. Only the maintainer moves it, when `dev` reaches a new stable.
-- CI runs on every push to any branch.
+- CI runs on every push to any branch. So the maintainer lands each finished piece on the local `dev` and pushes `dev` once, when the last piece of a batch has landed, not after each fix: CI then runs once per batch.
 
 ## Proving a fix
 1. A headless test in `auto_route/test/` that fails before the fix and passes after it. Its comment names the issue and the steps.
