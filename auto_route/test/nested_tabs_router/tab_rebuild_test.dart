@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 void main() {
+  tearDownAll(_layoutNotifier.dispose);
   RootStackRouter buildRouter() => .build(
     routes: [
       AutoRoute(

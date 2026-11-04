@@ -54,6 +54,7 @@ void main() {
   late BackGestureRouter router;
   setUp(() {
     router = BackGestureRouter();
+    addTearDown(router.dispose);
   });
 
   // Regression guard for https://github.com/Milad-Akarie/auto_route_library/issues/1932

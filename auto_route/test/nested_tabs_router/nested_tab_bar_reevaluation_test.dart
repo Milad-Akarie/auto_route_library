@@ -17,6 +17,7 @@ void main() {
   // Should: feed shows its first tab, forYou.
   testWidgets('a nested tab bar opened after a reevaluation shows its first tab', (tester) async {
     final reevaluateNotifier = ValueNotifier(0);
+    addTearDown(reevaluateNotifier.dispose);
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _SplashRoute.page, path: '/', initial: true),

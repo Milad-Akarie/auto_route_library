@@ -40,6 +40,7 @@ void main() {
         AutoRoute(page: _page('G'), path: '/g'),
       ],
     );
+    addTearDown(router.dispose);
     config = router.config();
   });
 

@@ -41,6 +41,7 @@ void main() {
   // NestedStackRouter was used after being disposed".
   testWidgets('a reevaluation stops when its nested router is disposed meanwhile', (tester) async {
     final reevaluate = ValueNotifier(0);
+    addTearDown(reevaluate.dispose);
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluate);
     unawaited(router.push(const NamedRoute('WalletRoute')));
     await tester.pump(const Duration(seconds: 3));

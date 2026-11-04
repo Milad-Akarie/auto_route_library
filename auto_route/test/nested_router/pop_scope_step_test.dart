@@ -43,6 +43,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
   });
 
   Future<void> openIdNumberForm(WidgetTester tester, {ThemeData? theme}) async {

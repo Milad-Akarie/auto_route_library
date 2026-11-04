@@ -21,6 +21,7 @@ void main() {
       tester,
     ) async {
       final user = ValueNotifier(0);
+      addTearDown(user.dispose);
       final router = RootStackRouter.build(
         routes: [
           NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
@@ -60,6 +61,7 @@ void main() {
   // the dialog. The dialog must stay closed once the guard lets it through.
   testWidgets('A dialog popped while its guard is reevaluated stays closed (#1643)', (tester) async {
     final user = ValueNotifier(0);
+    addTearDown(user.dispose);
     var guardRuns = 0;
     final router = RootStackRouter.build(
       routes: [
@@ -130,7 +132,9 @@ void main() {
         ),
       ],
     );
-    await pumpRouterApp(tester, router, reevaluationNotifier: ReevaluateListenable.stream(settings.stream));
+    final reevaluation = ReevaluateListenable.stream(settings.stream);
+    addTearDown(reevaluation.dispose);
+    await pumpRouterApp(tester, router, reevaluationNotifier: reevaluation);
     isAppGuarded = true;
     settings.add(true);
     await tester.pumpAndSettle();

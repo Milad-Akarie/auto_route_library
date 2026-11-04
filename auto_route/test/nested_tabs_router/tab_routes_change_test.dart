@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 void main() {
+  tearDownAll(_signedInNotifier.dispose);
   _TabsKind.values.forEach(_runRoutesChangeTests);
 }
 

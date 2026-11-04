@@ -33,6 +33,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
     frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
     await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
     await tester.pumpAndSettle();

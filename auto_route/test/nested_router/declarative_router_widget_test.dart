@@ -14,6 +14,7 @@ void main() {
 
   testWidgets('Simple Declarative routing test', (tester) async {
     final pageNotifier = ValueNotifier(1);
+    addTearDown(pageNotifier.dispose);
     await pumpRouterConfigApp(
       tester,
       router.config(deepLinkBuilder: (_) => DeepLink.single(DeclarativeRouterHostRoute(pageNotifier: pageNotifier))),

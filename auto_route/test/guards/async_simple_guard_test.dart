@@ -17,6 +17,7 @@ void main() {
     addTearDown(tester.binding.platformDispatcher.clearDefaultRouteNameTestValue);
     var guardCalls = 0;
     final auth = ValueNotifier(0);
+    addTearDown(auth.dispose);
     final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(
@@ -38,6 +39,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: auth)));
     auth.value++;

@@ -18,9 +18,13 @@ class RestorableRouterApp extends StatefulWidget {
 }
 
 class _RestorableRouterAppState extends State<RestorableRouterApp> {
-  // Shared across a restart, so the restored app finds the same router.
-  // ignore: dispose-fields
   late final RootStackRouter router = RestorableRouterApp.router = widget.buildRouter();
+
+  @override
+  void dispose() {
+    router.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

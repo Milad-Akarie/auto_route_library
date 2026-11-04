@@ -23,6 +23,7 @@ void main() {
         AutoRoute(page: SecondRoute.page, path: '/second'),
       ],
     );
+    addTearDown(router.dispose);
     await rewindBrowserHistory();
   });
 
@@ -90,6 +91,7 @@ void main() {
       await rewindBrowserHistory();
       openBrowserAt(tester, link);
       final linkedRouter = RootStackRouter.build(routes: router.routes);
+      addTearDown(linkedRouter.dispose);
       await pumpAsRunApp(
         tester,
         MaterialApp.router(

@@ -35,6 +35,7 @@ void main() {
     ) async {
       openBrowserAt(tester, '/second');
       final router = buildRouter();
+      addTearDown(router.dispose);
       await pumpAsRunApp(tester, _Splash(builder: () => buildApp(router)));
       expect(find.text('SecondRoute'), findsOneWidget);
       expect(router.urlState.url, '/second');

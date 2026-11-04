@@ -43,6 +43,7 @@ void main() {
             ),
           ],
         );
+        addTearDown(router.dispose);
       });
 
       Future<void> openHost(WidgetTester tester, {ThemeData? theme}) async {
@@ -104,6 +105,7 @@ void main() {
               ),
             ],
           );
+          addTearDown(router.dispose);
           final frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
           await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
           await tester.pumpAndSettle();

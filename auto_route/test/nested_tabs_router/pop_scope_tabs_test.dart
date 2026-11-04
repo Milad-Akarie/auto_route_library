@@ -58,6 +58,7 @@ void main() {
         final router = RootStackRouter.build(
           routes: [AutoRoute(page: _tabsScreen, path: '/', children: tabs)],
         );
+        addTearDown(router.dispose);
         final frameworkHandlesBack = FrameworkHandlesBackRecorder()..listen(tester);
         await tester.pumpWidget(MaterialApp.router(theme: androidTheme, routerConfig: router.config()));
         await tester.pumpAndSettle();

@@ -24,6 +24,7 @@ void main() {
           CustomRoute<dynamic>(page: _page('Menu'), path: '/menu', transitionsBuilder: TransitionsBuilders.slideTop),
         ],
       );
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           theme: ThemeData(platform: platform),

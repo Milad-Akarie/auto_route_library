@@ -2,6 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Shows [router] in a [MaterialApp] and waits for its first page. The router
+/// is disposed when the test ends.
 Future<void> pumpRouterApp(
   WidgetTester tester,
   RootStackRouter router, {
@@ -9,6 +11,7 @@ Future<void> pumpRouterApp(
   Listenable? reevaluationNotifier,
   NavigatorObserversBuilder observers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
 }) {
+  addTearDown(router.dispose);
   return tester
       .pumpWidget(
         MaterialApp.router(
@@ -23,7 +26,10 @@ Future<void> pumpRouterApp(
       .then((_) => tester.pumpAndSettle());
 }
 
+/// Shows [config] in a [MaterialApp] and waits for its first page. The
+/// config's delegate, with its router, is disposed when the test ends.
 Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> config) {
+  if (config.routerDelegate case final AutoRouterDelegate delegate) addTearDown(delegate.dispose);
   return tester.pumpWidget(MaterialApp.router(routerConfig: config)).then((_) => tester.pumpAndSettle());
 }
 

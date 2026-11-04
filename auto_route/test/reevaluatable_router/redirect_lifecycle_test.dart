@@ -32,6 +32,7 @@ void main() {
     tester,
   ) async {
     final n = GuardChangeNotifier();
+    addTearDown(n.dispose);
     final login = AutoRouteGuard.simple((resolver, router) {
       if (n.connected) {
         resolver.nextOrBack();
@@ -91,6 +92,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: n)));
     await tester.pumpAndSettle();
     Future<void> tap(String t) async {

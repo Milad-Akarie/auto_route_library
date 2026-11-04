@@ -71,6 +71,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
     late StateSetter setParentState;
     await tester.pumpWidget(
       StatefulBuilder(

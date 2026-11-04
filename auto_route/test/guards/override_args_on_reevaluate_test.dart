@@ -20,6 +20,7 @@ void main() {
 
   testWidgets('a guard re-check overriding the args of a page shows them', (tester) async {
     final auth = ValueNotifier(0);
+    addTearDown(auth.dispose);
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _HomeRoute.page, path: '/'),

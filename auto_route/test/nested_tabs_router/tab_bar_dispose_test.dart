@@ -5,6 +5,8 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 void main() {
+  tearDownAll(_routesNotifier.dispose);
+  tearDownAll(_showTabsNotifier.dispose);
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/1765
   // Steps: an AutoTabsRouter.tabBar has routes [first, second, third]. Start
   // moving to the third tab, change the routes while the tab bar animates,

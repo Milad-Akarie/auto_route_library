@@ -16,6 +16,7 @@ void main() {
   // package:auto_route/auto_route.dart) for the mock to return, the button
   // builds, and shows a back button when canPop is true.
   Widget buttonWith(_MockStackRouter router) {
+    addTearDown(router.pagelessRoutesObserver.dispose);
     return MaterialApp(
       home: RouterScope(
         controller: router,

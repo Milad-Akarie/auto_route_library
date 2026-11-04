@@ -21,6 +21,7 @@ void main() {
   // back to '/profile'.
   testWidgets('On web, a deep link into a tab opens the nested page and keeps it', (tester) async {
     final reevaluate = ValueNotifier(0);
+    addTearDown(reevaluate.dispose);
     tester.binding.platformDispatcher.defaultRouteNameTestValue = '/profile/account';
     final router = RootStackRouter.build(
       routes: [

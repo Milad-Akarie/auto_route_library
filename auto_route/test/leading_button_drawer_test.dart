@@ -38,6 +38,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
   });
 
   void expectDrawerIcon() {

@@ -41,6 +41,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
   });
 
   Future<void> openCountedPage(WidgetTester tester, {required bool nested, ThemeData? theme}) async {
@@ -85,6 +86,7 @@ void main() {
         AutoRoute(page: _CountedRoute.page),
       ],
     );
+    addTearDown(reportRouter.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: reportRouter.config()));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Next page'));

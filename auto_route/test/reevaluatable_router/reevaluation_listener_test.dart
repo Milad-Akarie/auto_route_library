@@ -20,6 +20,7 @@ void main() {
   setUp(() {
     mockListener = MockOnNavigationListener();
     reevaluationNotifier = ValueNotifier(false);
+    addTearDown(reevaluationNotifier.dispose);
     router = RootStackRouter.build(
       routes: [
         AutoRoute(page: FirstRoute.page, initial: true),
@@ -252,6 +253,7 @@ void main() {
   // with the counter still at 1.
   testWidgets('Reevaluation with redirectUntil should keep the state of the reevaluated page', (tester) async {
     final isLoggedIn = ValueNotifier(true);
+    addTearDown(isLoggedIn.dispose);
     final router = RootStackRouter.build(
       routes: [
         AutoRoute.guarded(
@@ -366,6 +368,7 @@ void main() {
   // Should happen: HomeRoute comes back with its counter still at 3.
   testWidgets('Logging out and back in should keep the state of the guarded home page (#2338)', (tester) async {
     final authStore = _AuthStore();
+    addTearDown(authStore.dispose);
     final authGuard = AutoRouteGuard.simple((resolver, router) {
       final isHome = resolver.route.name == _HomePage.routeName;
       if (!isHome || authStore.isLoggedIn) {

@@ -28,6 +28,7 @@ void main() {
 
   testWidgets('a guard re-check overriding the children of a nested router opens them', (tester) async {
     final auth = ValueNotifier(0);
+    addTearDown(auth.dispose);
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -54,6 +55,7 @@ void main() {
 
   testWidgets('a guard re-check overriding the children of a tabs router opens that tab', (tester) async {
     final auth = ValueNotifier(0);
+    addTearDown(auth.dispose);
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(

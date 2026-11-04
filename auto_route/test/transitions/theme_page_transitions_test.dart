@@ -33,6 +33,7 @@ void main() {
             AutoRoute(page: _DetailsRoute.page, path: '/details'),
           ],
         );
+        addTearDown(router.dispose);
         await tester.pumpWidget(
           MaterialApp.router(
             theme: ThemeData(
@@ -72,6 +73,7 @@ void main() {
             AutoRoute(page: _DetailsRoute.flutterPage, path: '/details'),
           ],
         );
+        addTearDown(router.dispose);
         await tester.pumpWidget(
           flutter.MaterialApp.router(
             theme: flutter.ThemeData(
@@ -117,6 +119,7 @@ void main() {
         AutoRoute(page: _DetailsRoute.page, path: '/details'),
       ],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(
       flutter.Theme(
         data: flutter.ThemeData(
@@ -152,6 +155,7 @@ void main() {
     final router = RootStackRouter.build(
       routes: [AutoRoute(page: _HomeRoute.page, path: '/')],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: router.config()));
     await tester.pumpAndSettle();
 
@@ -172,6 +176,7 @@ void main() {
     final router = RootStackRouter.build(
       routes: [AutoRoute(page: _HomeRoute.flutterPage, path: '/')],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(
       flutter.MaterialApp.router(
         theme: flutter.ThemeData(

@@ -23,6 +23,7 @@ void main() {
       tester,
     ) async {
       final auth = ValueNotifier(0);
+      addTearDown(auth.dispose);
       final router = RootStackRouter.build(
         routes: [
           NamedRouteDef(
@@ -38,6 +39,7 @@ void main() {
           ),
         ],
       );
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router.config(

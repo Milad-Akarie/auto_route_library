@@ -10,6 +10,7 @@ void main() {
     router = RootStackRouter.build(
       routes: [AutoRoute(page: FirstRoute.page, path: '/', initial: true)],
     );
+    addTearDown(router.dispose);
   });
 
   Future<UrlState> parse(String link) {

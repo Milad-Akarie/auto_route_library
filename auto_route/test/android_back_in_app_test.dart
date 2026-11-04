@@ -40,6 +40,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
   });
 
   final backs = {'system back': systemBack, 'the predictive back gesture': predictiveBack};

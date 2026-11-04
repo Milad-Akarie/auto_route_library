@@ -23,6 +23,7 @@ void main() {
   late RootStackRouter router;
   setUp(() {
     authRepo = _AuthRepo();
+    addTearDown(authRepo.dispose);
     router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _LoginRoute.page(authRepo)),
@@ -42,6 +43,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
   });
 
   Future<void> pumpApp(WidgetTester tester) async {

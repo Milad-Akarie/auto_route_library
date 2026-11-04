@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 void main() {
+  tearDownAll(_extraNotifier.dispose);
   for (final kind in _TabsKind.values) {
     // Guards https://github.com/Milad-Akarie/auto_route_library/issues/2189
     // Steps: an AutoTabsRouter.pageView has routes [nestedHost, if (extra)

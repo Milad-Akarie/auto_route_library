@@ -30,7 +30,9 @@ void main() {
     tester.binding.platformDispatcher.defaultRouteNameTestValue = '/profile';
     addTearDown(tester.binding.platformDispatcher.clearDefaultRouteNameTestValue);
     final auth = ValueNotifier(0);
+    addTearDown(auth.dispose);
     final router = buildRouter();
+    addTearDown(router.dispose);
 
     await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: auth)));
     auth.value++;
@@ -45,7 +47,9 @@ void main() {
 
   testWidgets('A url the platform pushes opens its page with reevaluateListenable set (#2173)', (tester) async {
     final auth = ValueNotifier(0);
+    addTearDown(auth.dispose);
     final router = buildRouter();
+    addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: router.config(reevaluateListenable: auth)));
     await tester.pumpAndSettle();
 

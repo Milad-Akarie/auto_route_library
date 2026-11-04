@@ -50,6 +50,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
   });
 
   late FrameworkHandlesBackRecorder frameworkHandlesBack;
