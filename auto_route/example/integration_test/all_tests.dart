@@ -83,6 +83,7 @@ import 'push_same_route_twice_test.dart' as push_same_route_twice;
 import 'query_param_rebuild_test.dart' as query_param_rebuild;
 import 'query_params_on_pop_test.dart' as query_params_on_pop;
 import 'rapid_pops_test.dart' as rapid_pops;
+import 'redirect_cycle_test.dart' as redirect_cycle;
 import 'redirect_history_test.dart' as redirect_history;
 import 'redirect_lifecycle_test.dart' as redirect_lifecycle;
 import 'redirect_loop_test.dart' as redirect_loop;
@@ -226,6 +227,7 @@ void main() {
   group('query param rebuild', query_param_rebuild.main);
   group('query params on pop', query_params_on_pop.main);
   group('rapid pops', rapid_pops.main);
+  group('redirect cycle', redirect_cycle.main);
   group('redirect history', redirect_history.main);
   group('redirect lifecycle', redirect_lifecycle.main);
   group('redirect loop', redirect_loop.main);

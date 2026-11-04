@@ -46,7 +46,8 @@ class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
-      unawaited(router.push(redirectTo));
+      final scope = router._findStackScope(redirectTo);
+      unawaited(scope._push(redirectTo, onMatch: (match) => _redirectingResolvers[match.id] = resolver));
     }
     if (redirectTo == null) {
       resolver.next();
@@ -64,7 +65,13 @@ class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
   void onNavigation(NavigationResolver resolver, StackRouter router) {
     final redirectTo = redirect(resolver);
     if (redirectTo != null) {
-      unawaited(router.pushPath(redirectTo));
+      final scope = router._findPathScopeOrReportFailure<StackRouter>(redirectTo);
+      if (scope != null) {
+        for (final match in scope.matches) {
+          _redirectingResolvers[match.id] = resolver;
+        }
+        unawaited(scope.router._pushAllGuarded(scope.matches));
+      }
     }
     if (redirectTo == null) {
       resolver.next();
@@ -145,7 +152,8 @@ class ResolverResult {
   }
 }
 
-// The resolver whose redirectUntil() opened a route, by the route's match id.
+// The resolver whose redirect opened a route, by the route's match id: the
+// redirectUntil() or the AutoRouteGuard.redirect() of the guard that sent the user there.
 final _redirectingResolvers = Expando<NavigationResolver>('redirectingResolvers');
 
 /// Represents a guarded navigation event
@@ -288,28 +296,6 @@ class NavigationResolver {
   /// [route] can't be opened.
   Future<void> redirectUntil(PageRouteInfo route, {OnNavigationFailure? onFailure, bool replace = false}) async {
     if (_isRedirecting) return;
-    // This route was opened by the redirect of a guard still waiting; sending it to itself again never ends.
-    final redirectedBy = _redirectingResolvers[this.route.id];
-    if (redirectedBy != null && !redirectedBy.isResolved && route.routeName == this.route.name) {
-      FlutterError.reportError(
-        FlutterErrorDetails(
-          exception: FlutterError.fromParts([
-            ErrorSummary('A guard redirected ${route.routeName} to itself.'),
-            ErrorDescription(
-              '${route.routeName} was opened by the redirectUntil() of a guard still waiting, and a guard '
-              'redirected it to ${route.routeName} again, which would repeat without end.',
-            ),
-            ErrorHint(
-              'A guard in RootStackRouter.guards runs for every route, including the one it redirects to. '
-              'Let that route through, e.g. call resolver.next() when resolver.routeName is ${route.routeName}.',
-            ),
-          ]),
-          library: 'auto_route',
-        ),
-      );
-      reject();
-      return;
-    }
     _isRedirecting = true;
     // keep the page being reevaluated under the redirect route so its state is preserved
     final reevaluatedRoute = this.route;
@@ -356,6 +342,48 @@ class NavigationResolver {
     }
   }
 
+  // Rejects [route] when the guards that redirected the user here opened the
+  // same route earlier in this chain of redirects, which would repeat without end.
+  bool _reportRedirectLoop() {
+    final chain = <RouteMatch<dynamic>>[];
+    for (var by = _redirectingResolvers[route.id]; by != null; by = _redirectingResolvers[by.route.id]) {
+      chain.insert(0, by.route);
+      final isSame = by.route.name == route.name && by.route.fullPath == route.fullPath;
+      if (isSame) {
+        _reportLoop([...chain, route]);
+        reject();
+        return true;
+      }
+      // A re-check starts its own chain; the redirects that once opened its route are over.
+      if (by.isReevaluating) break;
+    }
+    return false;
+  }
+
+  void _reportLoop(List<RouteMatch<dynamic>> loop) {
+    final name = route.name;
+    final names = loop.map((match) => match.name).join(' → ');
+    FlutterError.reportError(
+      FlutterErrorDetails(
+        exception: FlutterError.fromParts([
+          if (loop.length == 2)
+            ErrorSummary('A guard redirected $name to itself.')
+          else
+            ErrorSummary('Guards redirected in a loop: $names.'),
+          ErrorDescription(
+            '$name was opened by the redirect of a guard, and guards redirected the user to $name again, which '
+            'would repeat without end. $name is not opened.',
+          ),
+          ErrorHint(
+            'A guard in RootStackRouter.guards runs for every route, including the one it redirects to. '
+            'Let a route in the loop through, e.g. call resolver.next() when resolver.routeName is $name.',
+          ),
+        ]),
+        library: 'auto_route',
+      ),
+    );
+  }
+
   /// Whether [_completer] is completed
   /// see [Completer.isCompleted]
   bool get isResolved => _completer.isCompleted;
@@ -371,6 +399,7 @@ class NavigationResolver {
   /// before checking the provided [guard]
   /// returns the [ResolverResult] of the guard check
   Future<ResolverResult> checkGuard(AutoRouteGuard guard, StackRouter router) async {
+    if (_reportRedirectLoop()) return future;
     // Several reevaluations can wait for the same check; each takes its own turn.
     while (_waitingCompleter != null) {
       await _waitingCompleter!.future;
