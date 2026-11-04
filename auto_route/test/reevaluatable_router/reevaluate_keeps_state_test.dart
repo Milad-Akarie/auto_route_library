@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -66,7 +65,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('DetailsRoute'), findsOneWidget);
 
-    router.reevaluateGuards();
+    unawaited(router.reevaluateGuards());
     await tester.pumpAndSettle();
     expect(find.text('DetailsRoute'), findsOneWidget);
 

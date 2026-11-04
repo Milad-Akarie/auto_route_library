@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
-RootStackRouter _router() => RootStackRouter.build(
+RootStackRouter _router() => .build(
   routes: [
     AutoRoute(page: _page('HomeRoute'), path: '/'),
     AutoRoute(page: _page('ReportRoute'), path: '/report'),

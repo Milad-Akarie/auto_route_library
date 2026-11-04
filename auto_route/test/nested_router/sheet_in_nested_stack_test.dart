@@ -6,14 +6,13 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-PageInfo _page(String name, {Widget? extra}) => .new(
+PageInfo _page(String name) => .new(
   name,
   builder: (_) => Builder(
     builder: (context) => Scaffold(
       body: Column(
         children: [
           Text(name),
-          if (extra != null) extra,
           TextButton(
             onPressed: () => showModalBottomSheet<void>(
               context: context,
@@ -35,7 +34,7 @@ PageInfo _page(String name, {Widget? extra}) => .new(
 // page open a bottom sheet and close it with context.router.maybePop().
 // Should: the sheet closes and the second page stays.
 void main() {
-  testWidgets('A bottom sheet over the second page of a tab\'s stack closes with maybePop and leaves the page '
+  testWidgets("A bottom sheet over the second page of a tab's stack closes with maybePop and leaves the page "
       '(flutter/flutter#148214)', (tester) async {
     final router = RootStackRouter.build(
       routes: [

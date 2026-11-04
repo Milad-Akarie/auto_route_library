@@ -14,7 +14,7 @@ PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(na
 // with RedirectRoutes and once with a guard on '/a' that redirects.
 // Should: the app ends on '/b', with the query and fragment of the link.
 void main() {
-  testWidgets('Chained RedirectRoutes end on the last page with the link\'s query and fragment '
+  testWidgets("Chained RedirectRoutes end on the last page with the link's query and fragment "
       '(flutter/flutter#178984)', (tester) async {
     final router = RootStackRouter.build(
       routes: [

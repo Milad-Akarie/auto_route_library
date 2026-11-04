@@ -41,7 +41,7 @@ PageInfo _detail = .new('DetailRoute', builder: (_) => const _CountingPage('deta
 void main() {
   setUp(_builds.clear);
 
-  RootStackRouter router() => RootStackRouter.build(
+  RootStackRouter router() => .build(
     routes: [
       AutoRoute(page: _home, path: '/'),
       AutoRoute(page: _detail, path: '/detail'),
