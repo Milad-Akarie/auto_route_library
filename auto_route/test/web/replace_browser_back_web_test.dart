@@ -38,4 +38,29 @@ void main() {
     expectCurrentPage(router, FirstRoute.name);
     expect(browserPath, '/');
   });
+
+  // flutter/flutter#149585: in go_router, after going to a second page and
+  // then go() home, the browser back button returned to the second page.
+  // go_router closed it as intended: go() adds a browser entry, as
+  // auto_route's navigate() does. replaceAll() takes the current entry.
+  // Steps: open FirstRoute, push SecondRoute, replaceAll with FirstRoute,
+  // then press the browser back button.
+  // Should: back stays on FirstRoute at '/'; SecondRoute doesn't come back.
+  testWidgets('On web, the browser back button after replaceAll home skips the page left (flutter/flutter#149585)', (
+    tester,
+  ) async {
+    final router = SimpleRouter();
+    await pumpRouterConfigApp(tester, router.config());
+    await settleBrowser(tester);
+    unawaited(router.push(const SecondRoute()));
+    await settleBrowser(tester);
+    unawaited(router.replaceAll([const FirstRoute()]));
+    await settleBrowser(tester);
+    expectCurrentPage(router, FirstRoute.name);
+
+    await pressBrowserBack(tester);
+    expectCurrentPage(router, FirstRoute.name);
+    expect(router.stack.map((page) => page.name), [FirstRoute.name]);
+    expect(browserPath, '/');
+  });
 }
