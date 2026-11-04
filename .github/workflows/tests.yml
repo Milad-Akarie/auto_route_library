@@ -116,8 +116,12 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      # The step stops two minutes before the job's limit, so a run that
+      # doesn't fit fails instead of being canceled, and the next step names
+      # the test it was on.
       - name: Integration tests on an Android emulator
         uses: ReactiveCircus/android-emulator-runner@v2.38.0
+        timeout-minutes: 13
         with:
           api-level: 35
           target: google_apis
