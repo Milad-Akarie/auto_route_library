@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -54,7 +55,12 @@ void main() {
 
   // The reporter's second combination, popUntilRouteWithName then push, should
   // end the same way: the pages above the named one are disposed.
-  testWidgets('popUntilRouteWithName then push of the same route disposes the pages above it', (tester) async {
+  // Not in Chrome's headless runner: it keeps no browser history, so the pop
+  // and the push each report the url another way in one frame and Flutter's
+  // Router asserts. pop_until_then_push_web_test.dart runs it on real history.
+  testWidgets('popUntilRouteWithName then push of the same route disposes the pages above it', skip: kIsWeb, (
+    tester,
+  ) async {
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(_ShellRoute(children: [_tracked2('B1'), _tracked2('B2')])));
     await tester.pumpAndSettle();
