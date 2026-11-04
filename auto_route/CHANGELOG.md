@@ -39,6 +39,107 @@
 - **BEHAVIOR CHANGE**: urls split only at '/' on every platform, so on Windows a backslash in a
   route path no longer separates segments, and `RouteData.match` joins segments with '/', not '\'.
 - **FIX**: on web, a url whose first segment ends in ':' (like `/c:/files`) keeps its leading '/'.
+- **BREAKING CHANGE**: `auto_route` requires Flutter 3.47 (its pubspec now says so; it imported
+  `material_ui` and `cupertino_ui`, which already needed it, and on older Flutter pub's error named
+  those packages instead of this one). Upgrade Flutter, or stay on the release you use.
+- **BEHAVIOR CHANGE**: an enum query parameter is read and written by its name. Before, a page
+  with `@QueryParam('type') CartType? type` opened from `/cart?type=rm` threw a type error, and a
+  push wrote `type=CartType.rm`. Now the url holds `type=rm`; an unknown name reads as null, or as
+  the default. Regenerate your router; a link you saved in the old `CartType.rm` form no longer
+  reads, fixes #2148
+- **BEHAVIOR CHANGE**: a path param holding '/', '?' or '#' is encoded in the url and read back
+  whole: `FilesRoute(path: 'reports/2024')` is `/files/reports%2F2024`, and a link with `%2F` no
+  longer splits into two segments. `currentUrl` also keeps `=`, `&`, `+` and the other delimiters
+  of a param encoded, so opening `currentUrl` again reads the same query, fixes #2070, #1925
+- **BEHAVIOR CHANGE**: every tab change asks the tab route's guards, as a stack asks before a push.
+  A tab whose guard rejects no longer shows when you call `setActiveIndex`, navigate to it, open
+  its url or swipe to it; a guard that decides later (`redirectUntil`) keeps the current tab until
+  then. Guards in `RootStackRouter.guards` are still not asked for tabs. A guard on a tab route
+  that rejected without anyone noticing now takes effect, fixes #2218
+- **BEHAVIOR CHANGE**: a guard that redirects a route to itself (`redirectUntil` to a route its
+  own guard sends back) now reports a `FlutterError` naming the route and rejects the navigation,
+  instead of looping to a white screen, fixes #2213, #1818
+- **BEHAVIOR CHANGE**: `replace()` removes the page only once the new route's guards let it
+  through, so a rejected `replace()` keeps the page and the url, fixes #2046. `replaceAll()` keeps
+  the old pages until then and, when a guard rejects one of the new routes, puts them back: a
+  rejected route rejects the whole batch, in nested routers too, fixes #2299
+- **BEHAVIOR CHANGE**: a page whose required args weren't saved is left out of a restored stack
+  instead of failing, fixes #2098
+- **FEAT**: routers save their pages for state restoration (off the web): every page's name, path,
+  query params and fragment, and each nested router's pages. Route args are your own objects and
+  are not saved, so a page that needs required args is left out when restored.
+- **FIX**: state restoration brings back every page of every stack and every tab, not only the
+  one in the url, fixes #2040, #2041, #2099
+- **FIX**: `Parameters.optBool` and `getBool` no longer crash on a bool pushed in code
+  (`NamedRoute('Flag', queryParams: {'f': true})`) or restored by state restoration, fixes #2222
+- **FIX**: `optString` and `getString` no longer throw a `TypeError` when the url repeats a query
+  key (`/products?tag=red&tag=blue` reads the last value, `blue`) or when a number was pushed
+  (`{'page': 2}` reads as '2').
+- **FIX**: `AutoRouter.declarative(key: ...)` uses the key it is given.
+- **FIX**: since 11.2.0 pages ignored the app's `Theme.pageTransitionsTheme` when the app's
+  `MaterialApp` came from `package:flutter/material.dart`; they use it again, fixes #2340
+- **FIX**: a deferred page popped before its library loads no longer throws "setState() called
+  after dispose()".
+- **FIX**: leaving a page no longer leaks, one more object on each visit, in a nested router, an
+  `AutoTabsRouter` (the tab fade animation, and the `PageController` of `.pageView` and the tab-bar
+  view) or an `AutoRouter.declarative` (its `HeroController`). Disposing a `RootStackRouter` now
+  disposes its delegate, url provider and navigation history too, and disposing them twice is safe.
+- **FIX**: a navigation stops when its nested router is disposed while a guard runs, fixes #2248
+- **FIX**: a nested router keeps its open pages when its page builds it in another place, such as a
+  list-detail page when a foldable phone folds.
+- **FIX**: a pushed route with children keeps its fragment in the url (`/books#top`, not `/books`);
+  `PageRouteInfo.copyWith` no longer drops `fragment`, `stringMatch`, `redirectedFrom` or
+  `argsEquality`.
+- **FIX**: on web, a deep link to an app that builds its router after the first frame keeps one
+  history entry.
+- **FIX**: on web, a deep link with an encoded character adds no second history entry.
+- **FIX**: on web, the browser forward button returns to a page pushed over one with the same url.
+- **FIX**: on web, going back returns to a previous page with the same url, such as a `Book` page
+  pushed twice with different args.
+- **FIX**: on web, a url with a letter outside ASCII follows the pages; a '#' in a path param
+  survives a refresh, fixes #1812
+- **FIX**: `back()` and the browser's back button return to the first of a route pushed twice with
+  equal arguments, instead of the page before both; `back()` twice in a row works, and on native
+  platforms `back()` over two pages with the same url returns to the first.
+- **FIX**: the args and the children a guard sets with `overrideNext` show on the page and open
+  in its nested router, also on a guard re-check.
+- **FIX**: a guard re-check no longer runs an async simple guard twice.
+- **FIX**: a page popped while guards are reevaluated stays closed, fixes #1643, #1785
+- **FIX**: `replaceAll()` right after the reevaluate listenable changes replaces the stack, fixes #2172
+- **FIX**: `replaceAll` and `pushAll` open routes of a closed nested router together, fixes #2214
+- **FIX**: `popAndPushAll` from a router's only page replaces that page, fixes #1948
+- **FIX**: `removeWhere` on a page below a page of the same route no longer removes the top page,
+  fixes #1943
+- **FIX**: a guard's redirect page leaves no history entry behind, fixes #2331
+- **FIX**: awaiting `pushAll` waits for its guards to decide (see the breaking change).
+- **FIX**: `pushAndPopUntil` no longer shows the pages it removes, fixes #1797
+- **FIX**: `navigate()` opens the right tab when two tabs share a route, keeps the path params it
+  inherits (#1816), and fills a path param into the parent path that holds it (#2066).
+- **FIX**: `navigatePath()` with an absolute path from a nested page opens its page, fixes #2317
+- **FIX**: `currentHierarchy()` lists the children of a router nested twice, fixes #2321
+- **FIX**: a tabs page opened at its own url (`/tabs`) now records its first tab in the url, so
+  going back to that entry from another tab shows the first tab.
+- **FIX**: observers hear `didInitTabRoute`, not `didChangeTabRoute`, when a swipe opens a tab
+  for the first time.
+- **FIX**: the url follows the active tab when two tabs share a parent route, fixes #1874
+- **FIX**: removing a tab before the active tab keeps the active tab shown (#1786, also in the page-view kind); removing the
+  active tab no longer throws a `RangeError` (#2308); a tab-bar `AutoTabsRouter` removed
+  mid-animation no longer crashes (#1765).
+- **FIX**: screen readers work again in `AutoTabsRouter.pageView` and `.tabBar`: tabs beside the
+  open tab no longer reach them, fixes #2170
+- **FIX**: back on a tab away from the home tab shows the home tab instead of closing the app on
+  Android 13 and later, fixes #2059; back acts on the tab on screen, not a hidden one, fixes #2225
+- **FIX**: a `PopScope` on a declarative nested router's page blocks the back gesture, fixes #2023
+- **FIX**: a Hero flies from a page to the first page of a nested router, fixes #2024, #1873
+- **FIX**: a `customRouteBuilder` page shows new query params after `replace()`, fixes #1857
+- **FIX**: observers hear the right events: `navigateTo()` back to a page right after closing a
+  dialog tells it `didPopNext` (#1774); a page in a nested router hears `didPop` when its host
+  route is popped (#1863) and hears its host route covered and uncovered (#1954).
+- **FIX**: "Can not resolve initial route" names the link no route matched and the catch-all
+  `RedirectRoute(path: '*', redirectTo: '/')` that answers it, fixes #2119
+- **FIX**: the example app builds for Android again on Flutter 3.47.
+- **PERF**: a url is matched against the routes several times faster, and the matcher splits urls
+  at '/' itself; a tab switch builds the readable url once instead of on every read.
 ## 11.2.0
 - **CHORE:** Migrate to material_ui and cupertino_ui packages
 ## 11.1.0

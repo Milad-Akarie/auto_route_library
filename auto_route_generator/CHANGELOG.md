@@ -1,5 +1,24 @@
 ## Unreleased
 - **CHORE**: require Dart 3.13, the version Flutter 3.47 ships.
+- **BEHAVIOR CHANGE**: an enum query parameter is read with `values.asNameMap()` and written with
+  `.name`, so the url holds `type=rm`, not `type=CartType.rm`. Regenerate the router, fixes #2148
+- **BREAKING CHANGE**: a router in a part file whose route would share its page's name (a page
+  `CostsTab` that `replaceInRouteName` does not rename) now fails the build with a message listing
+  each page and the `@RoutePage(name: ...)` that fixes it. Before, the build left a router that did
+  not compile. Add the name; routers in libraries of their own build as before, fixes #1870
+- **BREAKING CHANGE**: a `List` query param of a type other than `String`, `int`, `double`, `num`,
+  `bool` or an enum, and a `List` path param of anything but `String`, fail the build with a
+  message naming the param, instead of producing code that does not compile.
+- **FIX**: a `List<int>`, `List<double>`, `List<num>`, `List<bool>` or enum list query param
+  compiles; an item that doesn't convert is left out, fixes #2061
+- **FIX**: `build_extensions` can move the generated router, for example
+  `'^lib/{{}}.dart': 'lib/generated/{{}}.gr.dart'`, fixes #1686
+- **FIX**: a default value from another library gets its import, fixes #1968
+- **FIX**: path and query parameters typed by a typedef build, fixes #2053
+- **FIX**: function types inside route argument types keep their signature, fixes #2106
+- **FIX**: a route argument whose record holds another record builds, fixes #1801
+- **FIX**: a default value named after `const` (`this.title = constTitle`) is no longer written
+  as `const`.
 ## 10.6.0
 - **CHORE**: update analyzer constraints to support versions >=10.0.0 <14.0.0
 - **CHORE**: update lean_builder dependency to ^1.2.0
