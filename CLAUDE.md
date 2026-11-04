@@ -87,8 +87,3 @@ A `flutter_canary_*` test pins a Flutter bug or fix that auto_route depends on. 
 - On Android, system back in the tests calls the activity's back handler through a channel in `MainActivity.kt`. An app can't inject a real key press into itself.
 - If a test fails with "Android would close the app on back", Flutter has told Android the app doesn't handle back, so on Android 13 and later a real back would close the app. If the app should take that back, it's a real bug. It's also how a test fails when it pumps its own app and then calls `systemBack`: the test binding forgets the app's lifecycle state after every test, and Flutter sends that signal only while the state is known. Pump the app with `pumpRouterApp` or `pumpRouterConfigApp` from `support/app.dart`, which first mark it in the foreground, or call `tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed)` before `pumpWidget`.
 - The repo is a Dart pub workspace of `auto_route` and `auto_route/example`: `flutter pub get` at the root resolves both, with one `pubspec.lock` at the root. `auto_route_generator` stays outside it and runs its own `flutter pub get`, with an override to `../auto_route` so its tests use the fork's auto_route. On Flutter 3.47.9, flutter_test pins test_api 0.7.12, and every release of package:test that allows analyzer 14, which the generator needs, requires test_api 0.7.13 or later. Once flutter_test allows that, the generator joins the workspace; the root `pubspec.yaml` says how.
-- `flutter pub get` and builds rewrite generated files that are tracked. Never commit them; restore them from the repo root:
-
-  ```bash
-  git checkout -- auto_route/example/ios/Flutter/ephemeral/flutter_native_integration.env auto_route/example/macos/Flutter/ephemeral
-  ```
