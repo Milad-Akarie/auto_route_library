@@ -1,11 +1,209 @@
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.yaml
+
+# The repository's own formatter settings, kept from before very_good_analysis.
 formatter:
   page_width: 120
 
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  exclude:
+    # A build directory is output, and analysing it says nothing about the
+    # code that produced it.
+    - build/**
+    # The example app is its own package, with its own analysis options.
+    - example/**
+    # Written by auto_route_generator: its output is proven by the generator's
+    # tests, and a lint fix here would be overwritten on the next build.
+    - "**/*.gr.dart"
+    - "**/*.g.dart"
+  # The template's two `errors:` lines are left out: they exist for Riverpod
+  # and Freezed, and this package uses neither.
+
 linter:
   rules:
+    # Wrong about a factory or a named constructor, where neither form it
+    # proposes is valid Dart: `dart fix` turns `factory State.of(...)` into
+    # `factory of(...)` and `const State._()` into `const new _()`. The rule
+    # stays off until it stops flagging them.
+    unnecessary_type_name_in_constructor: false
+    # A published package: every public member is documented on pub.dev,
+    # as the repository required before very_good_analysis.
     public_member_api_docs: true
-    avoid_print: true
-analyzer:
+    # Off: the package's hits are public API apps call every day
+    # (`resolver.next(false)`, `getBool(key, true)`), and the few internal
+    # helpers are kept in the same style.
+    avoid_positional_boolean_parameters: false
+    # Off: the classes it flags (RouteMatch, PageRouteInfo, the args classes)
+    # define == on purpose; marking them @immutable binds every subclass apps
+    # write, which is the maintainer's call.
+    avoid_equals_and_hash_code_on_mutable_classes: false
+    # Off: its hits are steps run one after another, such as
+    # `router.popUntilRoot(); router.popUntilRoot();` in a test, which read as
+    # steps and not as one cascade.
+    cascade_invocations: false
+    # Off: none of its hits sits in a try block, where a missing await would
+    # matter. Adding one elsewhere only adds a microtask turn, and the
+    # router's timing can feel that.
+    async_return_with_no_await: false
+    # Off: PageRouteInfo's first parameter is the private `_name`, which a
+    # route's `super.name` cannot match.
+    matching_super_parameters: false
+    sort_pub_dependencies: false
+    lines_longer_than_80_chars: false
+    always_put_required_named_parameters_first: false
+    prefer_int_literals: false
+
+# Learn more: https://dcm.dev/docs/individuals/configuration
+dart_code_metrics:
+  extends:
+    - recommended
+  metrics:
+    lines-of-code:
+      threshold: 100
+    cyclomatic-complexity:
+      threshold: 20
+    number-of-parameters:
+      threshold: 10
+    maximum-nesting-level:
+      threshold: 5
+    widgets-nesting-level:
+      threshold: 10
+    weighted-methods-per-class:
+      threshold: 35
+    technical-debt:
+      threshold: 1
+      todo-cost: 161
+      ignore-cost: 320
+      ignore-for-file-cost: 396
+      as-dynamic-cost: 322
+      deprecated-annotations-cost: 37
+      file-nullsafety-migration-cost: 41
+      unit-type: "USD"
+  metrics-exclude:
+    - test/**
+    - build/**
+    - "**/*.g.dart"
+    - "**/*.gr.dart"
+  # The analyzer's exclusions, repeated: DCM does not read them.
   exclude:
     - build/**
+    - example/**
+    - "**/*.g.dart"
+    - "**/*.gr.dart"
+  rules:
+    - prefer-single-widget-per-file: false
+    # Left on, unlike the template: its reason was Riverpod's fixed
+    # signatures, and DCM already skips overrides.
+    - avoid-unused-parameters: true
+    - prefer-trailing-comma: false
+    - unnecessary-trailing-comma: false
+    - avoid-inferrable-type-arguments: false
+    - no-boolean-literal-compare: true
+    # Off, unlike the template: the public names copy Flutter's own
+    # (`fullscreenDialog`, `maintainState`, `opaque`), and renaming them would
+    # break every app and stop them reading like the Flutter API they mirror.
+    - prefer-boolean-prefixes: false
+    - double-literal-format: true
+    - avoid-unsafe-collection-methods: false
+    # A body is always a widget class, never a method returning one: a method
+    # has no element of its own, cannot be const, and rebuilds with its parent.
+    - avoid-returning-widgets:
+        # Tests build their pages with small helper functions.
+        exclude: [test/**, integration_test/**]
+    - avoid-dynamic: false
+    - avoid-duplicate-constant-values: false
+    # Off, unlike the template. A library file holds a public type with the
+    # helpers it needs, and a test file holds the pages it tests; renaming
+    # `lib/src` files would also break every app that imports one directly.
+    - prefer-match-file-name: false
+    # Off: tests check the same thing again after each step on purpose, to
+    # prove the step did not change it.
+    - avoid-duplicate-test-assertions: false
+    # Off: a false positive. Groups here take their tests as a tear-off,
+    # `group('name', other_test.main)`, which the rule reads as empty.
+    - avoid-empty-test-groups: false
+    # Off: nearly every hit is a named parameter that must share a field's
+    # name, as in `copyWith({String? path})` and `Uri.replace`-style methods.
+    # Named parameters are public API, so they cannot be renamed.
+    - avoid-shadowing: false
+    # Off: every hit is a toString, a debug label or a test page, where
+    # printing `null` for a missing value is the point.
+    - avoid-nullable-interpolation: false
+    # Off: a false positive on prose. It reads comments with a `;` or a `(`
+    # in them, such as issue links and explanations, as code.
+    - avoid-commented-out-code: false
+    # Off: Effective Dart says not to use prefix letters such as `k`, and the
+    # package's public constants are named without one.
+    - prefer-prefixed-global-constants: false
+    # Off: `T extends Object?` is written out on purpose, so readers of a
+    # public signature see that null is allowed.
+    - avoid-unnecessary-extends: false
+    # Off: removing `async` from a method that throws makes it throw
+    # synchronously instead of returning a failed future, which changes what
+    # callers see.
+    - avoid-redundant-async: false
+    # Off: a const constructor promises every caller the class stays
+    # immutable, and adding one to a public class is the maintainer's call.
+    - prefer-declaring-const-constructor: false
+    # Off: a getter named for what it returns (`route`) over a field named for
+    # what it stores (`_match`) is deliberate.
+    - match-getter-setter-field-names: false
+    # Test code keeps these: a flag set for a guard closure to read, a page
+    # built by a helper function, a stateful page that only exists to be
+    # rebuilt, an == test that compares a route with itself, a mock handler
+    # that answers null, a listener that lives as long as the test. The rules
+    # cannot see why, and the tests need them.
+    - avoid-unused-assignment:
+        exclude: [test/**, integration_test/**]
+    - avoid-unnecessary-reassignment:
+        exclude: [test/**, integration_test/**]
+    - avoid-unnecessary-stateful-widgets:
+        exclude: [test/**, integration_test/**]
+    - function-always-returns-null:
+        exclude: [test/**, integration_test/**]
+    - avoid-unnecessary-local-late:
+        exclude: [test/**, integration_test/**]
+    - avoid-self-compare:
+        exclude: [test/**, integration_test/**]
+    - avoid-duplicate-initializers:
+        exclude: [test/**, integration_test/**]
+    - avoid-unremovable-callbacks-in-listeners:
+        exclude: [test/**, integration_test/**]
+    # Off: every hit rebuilds for a change that lives outside the State, such
+    # as the router's stack, so there is nothing to move inside the callback.
+    - avoid-empty-setstate: false
+    # Off: its hits read a value before a later step changes it, such as a
+    # copy of the stack before a pop or the browser's entry before a push.
+    # Moving the read would change what it reads.
+    - move-variable-closer-to-its-usage: false
+    # Off: its hits are Flutter callbacks that take an async function by
+    # design, such as `onPressed: () async {...}` or a listener that starts a
+    # guard check. Their futures' errors still reach the zone.
+    - avoid-passing-async-when-sync-expected: false
+    # Off: removing a route from its own navigator and navigating a router to
+    # its own url are what those calls are for.
+    - avoid-passing-self-as-argument: false
+    # Off: its hits read JSON by string key (`map['params']`) or a list whose
+    # first item was just checked, which it mistakes for an index.
+    - avoid-accessing-collections-by-constant-index: false
+    # Off: in a switch on the back-gesture phase, `_` means every phase but the
+    # one named, and listing them would hide that.
+    - avoid-wildcard-cases-with-enums: false
+    # Off: its hits are debug strings and the generator's code_builder objects,
+    # whose toString is the code the generator writes.
+    - avoid-default-tostring: false
+    # Off: `if (hasChildren) ...children!.last.flattened` says what it checks;
+    # the null-aware spread it asks for would hide the empty-list case.
+    - prefer-null-aware-spread: false
+    - no-empty-block: false
+    - prefer-correct-callback-field-name: false
+    - banned-usage:
+        entries:
+          - type: Widget
+          - ident: Container
+            description: >-
+              Avoid Container. Use SizedBox, ColoredBox or DecoratedBox, which
+              say which of Container's jobs is actually wanted.
