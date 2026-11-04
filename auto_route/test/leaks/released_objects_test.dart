@@ -171,4 +171,35 @@ void main() {
       expect(_pageStates['Tab2Route']!.target, isNull);
     }, skip: kIsWeb);
   }
+
+  // https://github.com/flutter/flutter/issues/151808: with Navigator.pages,
+  // a page removed while another page covers it stayed in memory, held by
+  // the BuildOwner. auto_route removes pages this way in removeWhere,
+  // navigate() and replaceAll().
+  // Steps: 20 times, push DetailRoute, push StackHostRoute over it, remove
+  // DetailRoute with removeWhere, then pop StackHostRoute. Force a garbage
+  // collection.
+  // Should: no state of a removed DetailRoute stays in memory.
+  testWidgets('A page removed from under the top page releases its state', (tester) async {
+    final router = _buildRouter();
+    await pumpRouterApp(tester, router);
+    final states = <WeakReference<State>>[];
+    final datas = <WeakReference<Object>>[];
+    for (var i = 0; i < 20; i++) {
+      unawaited(router.pushPath('/detail'));
+      await tester.pumpAndSettle();
+      states.add(_pageStates['DetailRoute']!);
+      datas.add(WeakReference(router.current));
+      unawaited(router.pushPath('/stack'));
+      await tester.pumpAndSettle();
+      router.removeWhere((route) => route.name == 'DetailRoute');
+      await tester.pumpAndSettle();
+      expect(router.stack.map((page) => page.name), ['HomeRoute', 'StackHostRoute']);
+      router.pop();
+      await tester.pumpAndSettle();
+    }
+    await _settleAndCollect(tester, [...states, ...datas]);
+    expect(states.where((state) => state.target != null), isEmpty);
+    expect(datas.where((data) => data.target != null), isEmpty);
+  }, skip: kIsWeb);
 }
