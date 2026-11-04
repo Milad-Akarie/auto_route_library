@@ -51,8 +51,8 @@ class ResolvedType {
   factory ResolvedType.fromJson(Map<String, dynamic> map) {
     final typedArgs = <ResolvedType>[];
     if (map['typeArguments'] != null) {
-      for (final arg in map['typeArguments']) {
-        typedArgs.add(ResolvedType.fromJson(arg));
+      for (final arg in map['typeArguments'] as List<dynamic>) {
+        typedArgs.add(ResolvedType.fromJson(arg as Map<String, dynamic>));
       }
     }
     return ResolvedType._(
@@ -62,7 +62,9 @@ class ResolvedType {
       isRecordType: map['isRecordType'] as bool,
       nameInRecord: map['nameInRecord'] as String?,
       typeArguments: typedArgs,
-      functionParts: map['functionParts'] == null ? null : FunctionTypeParts.fromJson(map['functionParts']),
+      functionParts: map['functionParts'] == null
+          ? null
+          : FunctionTypeParts.fromJson(map['functionParts'] as Map<String, dynamic>),
       isEnum: map['isEnum'] == true,
     );
   }
@@ -185,12 +187,15 @@ class FunctionTypeParts {
 
   /// deserializes the parts from json
   factory FunctionTypeParts.fromJson(Map<String, dynamic> map) {
-    List<ResolvedType> list(String key) => [for (final e in map[key] as List<dynamic>) ResolvedType.fromJson(e)];
+    List<ResolvedType> list(String key) => [
+      for (final e in map[key] as List<dynamic>) ResolvedType.fromJson(e as Map<String, dynamic>),
+    ];
     Map<String, ResolvedType> named(String key) => {
-      for (final e in (map[key] as Map<String, dynamic>).entries) e.key: ResolvedType.fromJson(e.value),
+      for (final e in (map[key] as Map<String, dynamic>).entries)
+        e.key: ResolvedType.fromJson(e.value as Map<String, dynamic>),
     };
     return FunctionTypeParts(
-      returnType: ResolvedType.fromJson(map['returnType']),
+      returnType: ResolvedType.fromJson(map['returnType'] as Map<String, dynamic>),
       requiredParameters: list('requiredParameters'),
       optionalParameters: list('optionalParameters'),
       namedParameters: named('namedParameters'),

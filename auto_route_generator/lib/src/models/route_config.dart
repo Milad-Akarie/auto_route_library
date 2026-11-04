@@ -21,22 +21,22 @@ class RouteConfig {
   factory RouteConfig.fromJson(Map<String, dynamic> map) {
     final pathParams = <PathParamConfig>[];
     if (map['pathParams'] != null) {
-      for (final arg in map['pathParams']) {
-        pathParams.add(PathParamConfig.fromJson(arg));
+      for (final arg in map['pathParams'] as List<dynamic>) {
+        pathParams.add(PathParamConfig.fromJson(arg as Map<String, dynamic>));
       }
     }
 
     final parameters = <ParamConfig>[];
     if (map['parameters'] != null) {
-      for (final arg in map['parameters']) {
-        parameters.add(ParamConfig.fromJson(arg));
+      for (final arg in map['parameters'] as List<dynamic>) {
+        parameters.add(ParamConfig.fromJson(arg as Map<String, dynamic>));
       }
     }
 
     return RouteConfig(
       name: map['name'] as String?,
       pathParams: pathParams,
-      pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType']),
+      pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType'] as Map<String, dynamic>),
       className: map['className'] as String,
       parameters: parameters,
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,

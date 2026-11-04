@@ -37,7 +37,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     if (await cachedRouterFile.exists()) {
       final json = jsonDecode(await cachedRouterFile.readAsString());
       if (json['cacheHash'] == stepHash) {
-        return RouterConfig.fromJson(json);
+        return RouterConfig.fromJson(json as Map<String, dynamic>);
       }
     }
     return null;
@@ -72,7 +72,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     final routes = <RouteConfig>[];
     await for (final asset in buildStep.findAssets(Glob('**.route.json'))) {
       final jsonRes = jsonDecode(await buildStep.readAsString(asset));
-      final generatedRes = RoutesList.fromJson(jsonRes);
+      final generatedRes = RoutesList.fromJson(jsonRes as Map<String, dynamic>);
       generatedResults.add(generatedRes);
       if (generateForDir.any(asset.path.startsWith)) {
         routes.addAll(generatedRes.routes);

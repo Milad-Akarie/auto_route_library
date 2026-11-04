@@ -296,7 +296,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
         id: originalMatch.id,
         children: originalMatch.children,
         evaluatedGuards: originalMatch.evaluatedGuards,
-        args: originalMatch.args,
+        args: originalMatch.args as T?,
       );
 
   /// The current page instance

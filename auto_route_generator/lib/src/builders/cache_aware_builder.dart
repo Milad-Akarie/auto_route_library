@@ -52,7 +52,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
   }
 
   /// Custom ignore for file rules passed from the options
-  Set<String> get ignoreForFile => options?.config['ignore_for_file']?.cast<String>()?.toSet() ?? {};
+  Set<String> get ignoreForFile => (options?.config['ignore_for_file'] as List<dynamic>?)?.cast<String>().toSet() ?? {};
 
   @override
   final Map<String, List<String>> buildExtensions;
@@ -117,7 +117,7 @@ source formatter.''',
     }
   }
 
-  Future<void> _writeContent(BuildStep buildStep, LibraryLanguageVersion libVersion, generated) async {
+  Future<void> _writeContent(BuildStep buildStep, LibraryLanguageVersion libVersion, T generated) async {
     var output = await onGenerateContent(buildStep, generated);
     final outputId = buildStep.allowedOutputs.first;
     if (outputId.extension.endsWith('.dart')) {

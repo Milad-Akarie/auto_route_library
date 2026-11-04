@@ -35,7 +35,7 @@ class ParamConfig {
     }
 
     return ParamConfig(
-      type: ResolvedType.fromJson(map['type']),
+      type: ResolvedType.fromJson(map['type'] as Map<String, dynamic>),
       name: map['name'] as String,
       alias: map['alias'] as String?,
       isPositional: map['isPositional'] as bool,
@@ -185,13 +185,13 @@ class FunctionParamConfig extends ParamConfig {
   factory FunctionParamConfig.fromJson(Map<String, dynamic> map) {
     final params = <ParamConfig>[];
     if (map['params'] != null) {
-      for (final pJson in map['params']) {
-        params.add(ParamConfig.fromJson(pJson));
+      for (final pJson in map['params'] as List<dynamic>) {
+        params.add(ParamConfig.fromJson(pJson as Map<String, dynamic>));
       }
     }
     return FunctionParamConfig(
-      type: ResolvedType.fromJson(map['type']),
-      returnType: ResolvedType.fromJson(map['returnType']),
+      type: ResolvedType.fromJson(map['type'] as Map<String, dynamic>),
+      returnType: ResolvedType.fromJson(map['returnType'] as Map<String, dynamic>),
       name: map['name'] as String,
       params: params,
       alias: map['alias'] as String?,

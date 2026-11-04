@@ -1752,7 +1752,7 @@ abstract class StackRouter extends RoutingController {
     assert(routes.isNotEmpty);
     final scope = _findStackScope(routes.first);
     scope.pop();
-    return scope._pushAll(routes, onFailure: onFailure);
+    return scope._pushAll(routes, onFailure: onFailure as OnNavigationFailure?);
   }
 
   /// Remove the whole current pages stack and push all given [routes]
@@ -1878,7 +1878,7 @@ abstract class StackRouter extends RoutingController {
 
   bool _removeUntil(RouteDataPredicate predicate, {bool notify = true}) {
     var didRemove = false;
-    for (final candidate in List<dynamic>.unmodifiable(_pages).reversed) {
+    for (final candidate in List<AutoRoutePage<dynamic>>.unmodifiable(_pages).reversed) {
       if (predicate(candidate.routeData)) {
         break;
       }

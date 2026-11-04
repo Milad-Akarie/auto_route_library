@@ -42,7 +42,7 @@ class PageRouteInfo<T extends Object?> {
       fragment: match.fragment,
       redirectedFrom: match.redirectedFrom,
       stringMatch: match.stringMatch,
-      args: match.args,
+      args: match.args as T?,
       initialChildren: match.children?.map(PageRouteInfo.fromMatch).toList(),
     );
   }

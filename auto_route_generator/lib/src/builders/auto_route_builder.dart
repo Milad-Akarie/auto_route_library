@@ -22,7 +22,7 @@ final _cacheResource = Resource<Map<String, RoutesList>>(() async {
   final cachedRes = <String, RoutesList>{};
   final jsonRes = jsonDecode(await routesCacheFile.readAsString());
   for (final json in jsonRes as List<dynamic>) {
-    final generated = RoutesList.fromJson(json);
+    final generated = RoutesList.fromJson(json as Map<String, dynamic>);
     cachedRes[generated.inputPath] = generated;
   }
 
