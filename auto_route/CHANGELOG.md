@@ -1,4 +1,6 @@
 ## Unreleased
+- `NavigationHistory`, the type of `router.navigationHistory`, is exported from `package:auto_route/auto_route.dart`,
+  so an app can name it in a variable, a parameter or a test.
 - **DEPRECATION**: passing a bool to `NavigationResolver.next` is deprecated; call `next()` to
   continue and the new `reject()` to stop, so `resolver.next(false)` becomes `resolver.reject()`.
 - **DEPRECATION**: passing a bool to `NavigationResolver.nextOrBack` is deprecated;

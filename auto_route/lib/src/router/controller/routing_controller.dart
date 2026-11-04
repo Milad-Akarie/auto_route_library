@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:auto_route/src/matcher/route_matcher.dart';
 import 'package:auto_route/src/route/auto_route_config.dart';
 import 'package:auto_route/src/route/errors.dart';
-import 'package:auto_route/src/router/controller/navigation_history/navigation_history_base.dart';
 import 'package:auto_route/src/router/transitions/custom_page_route.dart';
 import 'package:auto_route/src/utils.dart';
 import 'package:collection/collection.dart';
