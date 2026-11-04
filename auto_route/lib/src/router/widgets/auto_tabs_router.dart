@@ -296,8 +296,8 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
     _controller!.setupRoutes(widget.routes);
     _index = _controller!.activeIndex;
     _animationController.value = 1.0;
-    // A listener that can never be removed. Left for the leak hunt, which proves
-    // and fixes it.
+    // Not removable, and needs no removal: this state disposes the tabs
+    // router when it is disposed, which drops the listener.
     // ignore: avoid-unremovable-callbacks-in-listeners
     _controller!.addListener(() {
       if (_controller!.activeIndex != _index) {
@@ -657,8 +657,8 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     _controller!.setupRoutes(widget.routes);
     _updateTabController();
     _didInitTabRoute(_controller!.activeIndex);
-    // A listener that can never be removed. Left for the leak hunt, which proves
-    // and fixes it.
+    // Not removable, and needs no removal: this state disposes the tabs
+    // router when it is disposed, which drops the listener.
     // ignore: avoid-unremovable-callbacks-in-listeners
     _controller!.addListener(() {
       // Also brings the tab bar back from a tab whose guards kept it out.
@@ -684,8 +684,9 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
       length: _controller!.pageCount,
       vsync: this,
     );
-    // A listener that can never be removed. Left for the leak hunt, which proves
-    // and fixes it.
+    // Not removable, and needs no removal: this state disposes each tab
+    // controller it replaces, and the last one when it is disposed, which
+    // drops the listener.
     // ignore: avoid-unremovable-callbacks-in-listeners
     _tabController.addListener(() {
       _controller!.setActiveIndex(_tabController.index);
@@ -798,8 +799,8 @@ class _AutoTabsRouterBuilderState extends AutoTabsRouterState<_AutoTabsRouterBui
     _controller!.setupRoutes(widget.routes);
     widget.onRouterReady?.call(_controller!);
     _didInitTabRoute(_controller!.activeIndex);
-    // A listener that can never be removed. Left for the leak hunt, which proves
-    // and fixes it.
+    // Not removable, and needs no removal: this state disposes the tabs
+    // router when it is disposed, which drops the listener.
     // ignore: avoid-unremovable-callbacks-in-listeners
     _controller!.addListener(() {
       if (_controller!.activeIndex != _controller!.previousIndex) {
