@@ -243,8 +243,6 @@ class _DeclarativeAutoRouter extends StatefulWidget {
 
 class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   StackRouter? _controller;
-  // A leak: never disposed. Left for the leak hunt, which proves and fixes it.
-  // ignore: dispose-fields
   late HeroController _heroController;
 
   StackRouter? get controller => _controller;
@@ -286,6 +284,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   void dispose() {
     if (_controller != null) {
+      _heroController.dispose();
       _controller!.dispose();
       _parentController.removeChildController(_controller!);
       _controller = null;

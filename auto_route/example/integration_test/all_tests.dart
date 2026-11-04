@@ -15,6 +15,7 @@ import 'current_url_test.dart' as current_url;
 import 'custom_route_query_params_test.dart' as custom_route_query_params;
 import 'custom_route_transition_test.dart' as custom_route_transition;
 import 'custom_route_underneath_test.dart' as custom_route_underneath;
+import 'declarative_hero_controller_test.dart' as declarative_hero_controller;
 import 'declarative_router_key_test.dart' as declarative_router_key;
 import 'declarative_routes_update_test.dart' as declarative_routes_update;
 import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
@@ -148,6 +149,7 @@ void main() {
   group('custom route query params', custom_route_query_params.main);
   group('custom route transition', custom_route_transition.main);
   group('custom route underneath', custom_route_underneath.main);
+  group('declarative hero controller', declarative_hero_controller.main);
   group('declarative router key', declarative_router_key.main);
   group('declarative routes update', declarative_routes_update.main);
   group('dialog then page pop', dialog_then_page_pop.main);
