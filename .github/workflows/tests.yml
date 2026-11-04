@@ -67,9 +67,19 @@ jobs:
         run: python3 ../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/generator-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/generator-output.txt"
 
   headless-chrome:
-    name: Headless tests in Chrome
+    name: Headless tests in Chrome (half ${{ matrix.half }} of 2)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    # The whole suite took 695 s and then 757 s here, too close to the job's
+    # limit, so two jobs each run half of it.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - half: 1
+            shard-index: 0
+          - half: 2
+            shard-index: 1
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: subosito/flutter-action@v2.23.0
@@ -84,7 +94,9 @@ jobs:
         working-directory: auto_route
         timeout-minutes: 13
         shell: bash
-        run: flutter test --reporter github --platform chrome --file-reporter "json:$RUNNER_TEMP/test-results.json" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
+        run: >-
+          flutter test --reporter github --platform chrome --file-reporter "json:$RUNNER_TEMP/test-results.json"
+          --total-shards 2 --shard-index ${{ matrix.shard-index }} 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
