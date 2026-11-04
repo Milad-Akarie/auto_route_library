@@ -1811,7 +1811,7 @@ abstract class StackRouter extends RoutingController {
       onAccepted?.call();
       _updateSharedPathData(queryParams: route.rawQueryParams, fragment: route.fragment, includeAncestors: true);
 
-      return _addNewPage<T>(result.route, notify: notify, index: insertAt);
+      return _addNewPage<T>(result.route, notify: notify, index: insertAt, onFailure: onFailure);
     }
     return null;
   }
@@ -1828,37 +1828,17 @@ abstract class StackRouter extends RoutingController {
   Future<T?> replace<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) {
     final scope = _findStackScope(route);
     final replaced = scope._pages.lastOrNull?.routeData;
-    RouteMatch<dynamic>? match;
     return scope._push<T>(
       route,
       onFailure: onFailure,
-      onMatch: (m) => match = m,
       onAccepted: () {
         // a guard may have removed it already, e.g. with redirectUntil(replace: true)
         if (replaced != null && scope._pages.any((page) => page.routeData == replaced)) {
           scope._removeRoute(replaced._match, notify: false);
         }
         markUrlStateForReplace();
-        scope._openChildrenInKeptRouter(replaced, match, onFailure: onFailure);
       },
     );
-  }
-
-  // A page replaced by one of the same route hands its Flutter route, and
-  // with it its nested router, to the new page, so the nested router would
-  // keep its pages: open the children [match] carries in it instead.
-  void _openChildrenInKeptRouter(
-    RouteData<dynamic>? replaced,
-    RouteMatch<dynamic>? match, {
-    OnNavigationFailure? onFailure,
-  }) {
-    final children = match?.children;
-    if (replaced == null || match == null || children == null || children.isEmpty) return;
-    if (replaced.key != match.key) return;
-    final kept = _innerControllerOfPage(replaced);
-    if (kept == null) return;
-    kept._markedForDataUpdate = true;
-    unawaited(kept._navigateAll(children, onFailure: onFailure));
   }
 
   Future<T?> _redirect<T extends Object?>(
@@ -1921,37 +1901,40 @@ abstract class StackRouter extends RoutingController {
   }) async {
     final matches = _matchAllOrReportFailure(routes, onFailure);
     if (matches != null) {
-      // A guard can reject the new routes; the whole batch is then rejected and the stack restored.
-      final previousPages = List.of(_pages);
-      final previousStackKey = _stackKey;
-      var rejected = false;
-      _pages.clear();
-      if (!updateExistingRoutes) {
-        _stackKey = UniqueKey();
-      }
-      markUrlStateForReplace();
-      await _navigateAll(
-        matches,
-        onFailure: (failure) {
-          if (failure is RejectedByGuardFailure && matches.any((match) => match.id == failure.route.id)) {
-            rejected = true;
-          }
-        },
-      );
-      if (rejected) {
-        for (final page in _pages.where((page) => !previousPages.contains(page))) {
-          page.routeData.onPopInvoked(null);
-        }
-        _pages
-          ..clear()
-          ..addAll(previousPages);
-        _stackKey = previousStackKey;
-        markUrlStateForReplace();
-        notifyAll(forceUrlRebuild: true);
-      }
-      return;
+      return _replaceAllMatches(matches, updateExistingRoutes: updateExistingRoutes);
     }
     return SynchronousFuture(null);
+  }
+
+  Future<void> _replaceAllMatches(List<RouteMatch<dynamic>> matches, {required bool updateExistingRoutes}) async {
+    // A guard can reject the new routes; the whole batch is then rejected and the stack restored.
+    final previousPages = List.of(_pages);
+    final previousStackKey = _stackKey;
+    var rejected = false;
+    _pages.clear();
+    if (!updateExistingRoutes) {
+      _stackKey = UniqueKey();
+    }
+    markUrlStateForReplace();
+    await _navigateAll(
+      matches,
+      onFailure: (failure) {
+        if (failure is RejectedByGuardFailure && matches.any((match) => match.id == failure.route.id)) {
+          rejected = true;
+        }
+      },
+    );
+    if (rejected) {
+      for (final page in _pages.where((page) => !previousPages.contains(page))) {
+        page.routeData.onPopInvoked(null);
+      }
+      _pages
+        ..clear()
+        ..addAll(previousPages);
+      _stackKey = previousStackKey;
+      markUrlStateForReplace();
+      notifyAll(forceUrlRebuild: true);
+    }
   }
 
   /// Pop the whole stack except for the first entry
@@ -2241,13 +2224,30 @@ abstract class StackRouter extends RoutingController {
     }
   }
 
-  Future<T?> _addNewPage<T extends Object?>(RouteMatch<dynamic> route, {bool notify = true, int? index}) {
+  Future<T?> _addNewPage<T extends Object?>(
+    RouteMatch<dynamic> route, {
+    bool notify = true,
+    int? index,
+    OnNavigationFailure? onFailure,
+  }) {
     final topRoute = _pages.lastOrNull?.routeData;
     if (topRoute != null && !topRoute._match.keepHistory) {
       markUrlStateForReplace();
       _removeRoute(topRoute._match, notify: false);
     }
-    final data = _createRouteData<T>(route, routeData, popCompleter: Completer<T?>());
+    var match = route;
+    final takenOver = index == null ? _shownTopTakenOverBy(route) : null;
+    if (takenOver != null) {
+      // The page takes over the route and the nested router of [takenOver],
+      // so it keeps its match id, as navigate does, for the router to stay its own.
+      match = route.withId(takenOver.matchId);
+      for (final ctr in _childControllers) {
+        if (ctr.matchId == takenOver.matchId) {
+          ctr._markedForDataUpdate = true;
+        }
+      }
+    }
+    final data = _createRouteData<T>(match, routeData, popCompleter: Completer<T?>());
     final page = data.buildPage<T>();
     if (index != null) {
       _pages.insert(index, page);
@@ -2257,7 +2257,45 @@ abstract class StackRouter extends RoutingController {
     if (notify) {
       notifyAll();
     }
+    // After the notification, so the url this page makes keeps its own replace
+    // mark and the nested router's url gets one of its own.
+    if (takenOver != null) {
+      _openChildrenInTakenOverRouter(data, onFailure: onFailure);
+    }
     return data.popped;
+  }
+
+  // The data of the page the navigator shows on top, once that page has left
+  // the stack and [route] is about to go on top in its place. The new page
+  // then takes over its route, see [AutoRoutePage.canUpdate], with the nested
+  // router built inside it. A [route] that already has the page's match id,
+  // as navigate gives it, comes with a caller that updates that router.
+  RouteData<dynamic>? _shownTopTakenOverBy(RouteMatch<dynamic> route) {
+    final shownRoute = pagelessRoutesObserver.topPageRoute;
+    final shownPage = shownRoute?.settings;
+    if (shownRoute == null || !shownRoute.isActive || shownPage is! AutoRoutePage || _pages.contains(shownPage)) {
+      return null;
+    }
+    final data = shownPage.routeData;
+    final takesOver = data.key == route.key && data.stackKey == _stackKey && data.matchId != route.id;
+    return takesOver ? data : null;
+  }
+
+  // A fresh nested router opens the children of its page's route; the one a
+  // page took over already shows the children of the page before, so it is
+  // sent to the new ones, as if built anew. A route given no children comes
+  // with its initial child, as with navigate; with no initial child either,
+  // the router keeps the children it shows.
+  void _openChildrenInTakenOverRouter(RouteData<dynamic> data, {OnNavigationFailure? onFailure}) {
+    final inner = _innerControllerOfMatch(data.matchId);
+    if (inner == null || !data.hasPendingChildren) return;
+    final children = List<RouteMatch<dynamic>>.unmodifiable(data.pendingChildren);
+    data.pendingChildren.clear();
+    if (inner is StackRouter && !inner.managedByWidget) {
+      unawaited(inner._replaceAllMatches(children, updateExistingRoutes: true));
+    } else {
+      unawaited(inner._navigateAll(children, onFailure: onFailure));
+    }
   }
 
   Future<ResolverResult> _canNavigate(

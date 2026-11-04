@@ -29,6 +29,14 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
     return _routes.lastWhereOrNull((route) => route.settings == page);
   }
 
+  /// The page route on top of the [Navigator], under the pageless routes
+  /// over it, or null before the first route shows.
+  @internal
+  Route<dynamic>? get topPageRoute {
+    final top = current;
+    return top == null || top.settings is Page ? top : _pageUnder[top];
+  }
+
   /// The last route the [Navigator] holds that passes [test].
   @internal
   Route<dynamic>? routeWhere(bool Function(Route<dynamic> route) test) {
