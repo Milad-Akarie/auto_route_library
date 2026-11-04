@@ -18,11 +18,13 @@ void main() {
   late RootStackRouter router;
   setUp(() async {
     _popAttempts = 0;
+    _canLeave.value = false;
     router = RootStackRouter.build(
       routes: [
         AutoRoute(page: FirstRoute.page, path: '/'),
         AutoRoute(page: _FormRoute.page, path: '/form'),
         AutoRoute(page: _LegacyFormRoute.page, path: '/legacy-form'),
+        AutoRoute(page: _ToggleFormRoute.page, path: '/toggle-form'),
       ],
     );
     await rewindBrowserHistory();
@@ -67,6 +69,42 @@ void main() {
     expect(browserPath, '/legacy-form');
     expect(browserSerialCount, formEntry);
   });
+
+  // flutter/flutter#174674: each refused exit added a browser entry, so the
+  // browser's back button then took one press per refusal.
+  // Push a page whose PopScope refuses, press the browser's back button three
+  // times, then let the page go and press it once more: FirstRoute shows, on
+  // the entry it had. The same with the three refusals from the app's own
+  // back, maybePop.
+  for (final fromApp in [false, true]) {
+    testWidgets('Refused exits on web add no browser entries, refused from the app: $fromApp', (tester) async {
+      await pumpRouterConfigApp(tester, router.config());
+      await settleBrowser(tester);
+      final start = browserSerialCount;
+      unawaited(router.push(const _ToggleFormRoute()));
+      await settleBrowser(tester);
+
+      for (var i = 0; i < 3; i++) {
+        if (fromApp) {
+          await router.maybePop();
+          await settleBrowser(tester);
+        } else {
+          await pressBrowserBackOn(tester, router);
+        }
+        expectCurrentPage(router, _ToggleFormRoute.name);
+        expect(browserSerialCount, start + 1);
+      }
+      expect(_popAttempts, 3);
+
+      _canLeave.value = true;
+      await tester.pump();
+      await pressBrowserBack(tester);
+      expectCurrentPage(router, FirstRoute.name);
+      expect(router.stack.map((p) => p.name), [FirstRoute.name]);
+      expect(browserPath, '/');
+      expect(browserSerialCount, start);
+    });
+  }
 }
 
 var _popAttempts = 0;
@@ -120,6 +158,27 @@ class _LegacyFormRoute extends PageRouteInfo<void> {
         return false;
       },
       child: const Scaffold(body: Text(name)),
+    ),
+  );
+}
+
+final ValueNotifier<bool> _canLeave = ValueNotifier(false);
+
+class _ToggleFormRoute extends PageRouteInfo<void> {
+  const _ToggleFormRoute() : super(name);
+
+  static const String name = 'ToggleFormRoute';
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => ValueListenableBuilder(
+      valueListenable: _canLeave,
+      builder: (_, canLeave, _) => PopScope(
+        canPop: canLeave,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _popAttempts++;
+        },
+        child: const Scaffold(body: Text(name)),
+      ),
     ),
   );
 }
