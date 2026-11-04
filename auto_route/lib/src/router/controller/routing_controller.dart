@@ -115,6 +115,30 @@ abstract class RoutingController with ChangeNotifier {
     );
   }
 
+  // The pages open in this router, in the shape a nested router opens from
+  // its route's pending children: each holds the pages of its own nested
+  // router, and a tabs router lists all its tabs, the active one last. Their
+  // guards already let them open, so they aren't checked again.
+  List<RouteMatch> _openMatches() {
+    final pages = _pages.map((page) => page.routeData).toList();
+    if (this case final TabsRouter tabs when tabs.activeIndex < pages.length) {
+      pages.add(pages.removeAt(tabs.activeIndex));
+    }
+    return [
+      for (final data in pages)
+        data.route.copyWith(
+          queryParams: data._ownQueryParams,
+          fragment: data._ownFragment,
+          children: switch (_innerControllerOfMatch(data.matchId)) {
+            null => data.pendingChildren,
+            final child when child.managedByWidget => null,
+            final child => child._openMatches(),
+          },
+          evaluatedGuards: data.route.guards,
+        ),
+    ];
+  }
+
   /// Helper to access [NavigationHistory.urlState]
   UrlState get urlState => navigationHistory.urlState;
 
@@ -2324,7 +2348,19 @@ class NestedStackRouter extends StackRouter {
     super.onNavigate,
     super.navigatorKey,
   })  : matcher = RouteMatcher(routeCollection),
-        _routeData = routeData;
+        _routeData = routeData {
+    // When a widget above AutoRouter builds it anew, such as in another place
+    // of its page when a two-pane layout becomes one pane, the new router is
+    // created before the outgoing one of the same page is disposed, so it
+    // opens the pages the outgoing router has open.
+    final outgoing = _parent?._innerControllerOfMatch(matchId);
+    if (!managedByWidget &&
+        !routeData.hasPendingChildren &&
+        outgoing is NestedStackRouter &&
+        !outgoing.managedByWidget) {
+      routeData.pendingChildren.addAll(outgoing._openMatches());
+    }
+  }
 
   @override
   RouteData get routeData => _routeData;

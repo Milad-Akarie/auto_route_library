@@ -596,7 +596,7 @@ class ChatsShellPage extends StatefulWidget {
 }
 
 class _ChatsShellPageState extends State<ChatsShellPage> {
-  // keeps the nested stack when the layout switches
+  // also keeps the pages' widget state, such as a scroll position, when the layout switches
   final _routerKey = GlobalKey<AutoRouterState>();
 
   @override
@@ -610,7 +610,7 @@ class _ChatsShellPageState extends State<ChatsShellPage> {
 }
 ```
 
-The first child, with the path `''`, shows `ChatList` when the screen is narrow and a hint such as "Pick a chat" when it's wide. The list opens a chat with `context.router.push(ChatRoute(id: id))`. Without the `GlobalKey`, resizing the window builds a new `AutoRouter`, which starts again from the first child and loses the open chat.
+The first child, with the path `''`, shows `ChatList` when the screen is narrow and a hint such as "Pick a chat" when it's wide. The list opens a chat with `context.router.push(ChatRoute(id: id))`. Without the `GlobalKey`, resizing the window builds a new `AutoRouter`. It keeps the open chat and its address, but the pages are built again, so they lose their widget state, such as a scroll position or text typed into a field.
 
 The address holds one location, so two routers on the same level can't both be in it. If two panes have to navigate on their own, make them two tabs of an [`AutoTabsRouter`](#tab-navigation) and arrange them in its `builder`.
 
