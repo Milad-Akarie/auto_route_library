@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -27,7 +26,7 @@ void main() {
     late BuildContext context;
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(platform: TargetPlatform.iOS),
+        theme: ThemeData(platform: .iOS),
         home: Builder(
           builder: (c) {
             context = c;

@@ -20,7 +20,7 @@ void main() {
     late BuildContext context;
     await tester.pumpWidget(
       MaterialApp(
-        theme: ThemeData(platform: TargetPlatform.android),
+        theme: ThemeData(platform: .android),
         home: Builder(
           builder: (c) {
             context = c;
