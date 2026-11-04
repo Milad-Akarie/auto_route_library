@@ -1918,6 +1918,31 @@ Things to keep in mind:
 - On iOS, the app's `FlutterViewController` needs a restoration ID, or nothing is saved. In Xcode, open `ios/Runner/Base.lproj/Main.storyboard`, select the Flutter View Controller, and enter an ID under Restoration ID in the Identity inspector. In the storyboard's source this is `restorationIdentifier="FlutterViewController"` on its `viewController`.
 - Android needs nothing more. To try it, turn on "Don't keep activities" in the developer options, then send the app to the background and open it again.
 
+### Testing
+
+Pages read their router from the context, with `context.router` or `RouteData.of(context)`, so a page has to be built by the router. Pumping a page on its own fails with `RouteData operation requested with a context that does not include an RouteData`.
+
+In a widget test, build a router that holds the page and pump it in a `MaterialApp.router`. `RootStackRouter.build` needs no generated code, and your generated `AppRouter` works the same way:
+
+```dart
+testWidgets('opens the details page', (tester) async {
+  final router = RootStackRouter.build(routes: [
+    AutoRoute(path: '/', page: PageInfo('HomeRoute', builder: (_) => const HomePage())),
+    AutoRoute(path: '/details', page: PageInfo('DetailsRoute', builder: (_) => const DetailsPage())),
+  ]);
+
+  await tester.pumpWidget(MaterialApp.router(routerConfig: router.config()));
+  await tester.pumpAndSettle();
+
+  await tester.tap(find.text('Details'));
+  await tester.pumpAndSettle();
+
+  expect(router.current.name, 'DetailsRoute');
+});
+```
+
+A page under test that needs a bloc or another provider gets it from above `MaterialApp.router`, as in any Flutter test. A provider created by an [`AutoRouteWrapper`](#wrapping-routes) is created by the page itself; to replace it with a mock, make its `create` read from your service locator and register the mock there.
+
 ## Examples
 
 - [Declarative Navigation](https://github.com/Milad-Akarie/auto_route_library/blob/master/auto_route/example/lib/declarative/declarative.router.dart)
