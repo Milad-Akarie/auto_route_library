@@ -32,6 +32,7 @@ import 'enum_query_param_test.dart' as enum_query_param;
 import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
 import 'host_back_button_test.dart' as host_back_button;
+import 'hot_reload_routes_test.dart' as hot_reload_routes;
 import 'indexed_stack_curved_animation_test.dart' as indexed_stack_curved_animation;
 import 'inherited_id_child_test.dart' as inherited_id_child;
 import 'inherited_order_id_test.dart' as inherited_order_id;
@@ -183,6 +184,7 @@ void main() {
   group('hero nested router', hero_nested_router.main);
   group('home index back', home_index_back.main);
   group('host back button', host_back_button.main);
+  group('hot reload routes', hot_reload_routes.main);
   group('indexed stack curved animation', indexed_stack_curved_animation.main);
   group('inherited id child', inherited_id_child.main);
   group('inherited order id', inherited_order_id.main);

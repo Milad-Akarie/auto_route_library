@@ -368,6 +368,13 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
     super.dispose();
   }
 
+  // A hot reload may have changed the routes the router was built from.
+  @override
+  void reassemble() {
+    super.reassemble();
+    router._reassemble();
+  }
+
   void _handleRebuild() {
     if (mounted) {
       setState(() {});

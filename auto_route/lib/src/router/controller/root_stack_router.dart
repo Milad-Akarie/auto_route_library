@@ -142,8 +142,10 @@ abstract class RootStackRouter extends StackRouter {
     throw FlutterError('Root RouteData should not update');
   }
 
+  // Reads routeCollection on every match, so the parsers made before a hot
+  // reload match the reloaded routes.
   @override
-  late final RouteMatcher matcher = RouteMatcher(routeCollection);
+  late final RouteMatcher matcher = _RootRouteMatcher(this);
 
   @override
   NavigationHistory get navigationHistory => _navigationHistory;
@@ -160,12 +162,18 @@ abstract class RootStackRouter extends StackRouter {
     _lazyRootDelegate?.dispose();
   }
 
+  RouteCollection? _routeCollection;
+
   @override
-  late final RouteCollection routeCollection = RouteCollection.fromList(
-    routes,
-    root: true,
-    onGeneratePath: onGeneratePath,
-  );
+  RouteCollection get routeCollection =>
+      _routeCollection ??= .fromList(routes, root: true, onGeneratePath: onGeneratePath);
+
+  // A hot reload may have changed what [routes] returns.
+  @override
+  void _reassemble() {
+    _routeCollection = null;
+    super._reassemble();
+  }
 
   /// Generates a path for a route with the provided `name`
   ///
@@ -204,4 +212,16 @@ class _RootStackRouterImpl extends RootStackRouter {
   String onGeneratePath(AutoRoute route) {
     return _onGeneratePath(route);
   }
+}
+
+class _RootRouteMatcher extends RouteMatcher {
+  _RootRouteMatcher(this._router) : super(_router.routeCollection);
+
+  final RootStackRouter _router;
+
+  // The collection passed to super is the one of the moment; a hot reload
+  // replaces it.
+  @override
+  // ignore: avoid-suspicious-super-overrides
+  RouteCollection get collection => _router.routeCollection;
 }

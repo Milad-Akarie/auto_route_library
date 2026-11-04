@@ -64,6 +64,22 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Holds track of the list of attached child controllers
   List<RoutingController> get childControllers => _childControllers;
+
+  // Called on hot reload. A router that copied its routes from its parent
+  // reads them again, so routes added or removed since it was built match.
+  void _reassemble() {
+    for (final child in _childControllers) {
+      child._reassemble();
+    }
+  }
+
+  // The routes of [name] in this controller's routes, if it still has
+  // children after a hot reload.
+  RouteCollection? _reassembledSubCollection(String name) {
+    final route = routeCollection[name];
+    return route != null && route.hasSubTree ? routeCollection.subCollectionOf(name) : null;
+  }
+
   final List<AutoRoutePage<dynamic>> _pages = [];
 
   /// The instance of [NavigationHistory] to be used by this router
@@ -748,24 +764,39 @@ abstract class RoutingController with ChangeNotifier {
 class TabsRouter extends RoutingController {
   /// Default constructor
   TabsRouter({
-    required this.routeCollection,
+    required RouteCollection routeCollection,
     required this.key,
     required this._routeData,
     this.homeIndex = -1,
     required this.preload,
     required this.matchId,
     this._parent,
-  }) : matcher = RouteMatcher(routeCollection);
+  }) : _routeCollection = routeCollection,
+       _matcher = RouteMatcher(routeCollection);
   @override
   final RoutingController? _parent;
   @override
   final Key key;
   @override
   final Key matchId;
+  RouteCollection _routeCollection;
+  RouteMatcher _matcher;
+
   @override
-  final RouteCollection routeCollection;
+  RouteCollection get routeCollection => _routeCollection;
+
   @override
-  final RouteMatcher matcher;
+  RouteMatcher get matcher => _matcher;
+
+  @override
+  void _reassemble() {
+    if (_parent?._reassembledSubCollection(_routeData.name) case final collection?) {
+      _routeCollection = collection;
+      _matcher = RouteMatcher(collection);
+    }
+    super._reassemble();
+  }
+
   RouteData<dynamic> _routeData;
   int _activeIndex = 0;
   int? _previousIndex;
@@ -2448,7 +2479,7 @@ abstract class StackRouter extends RoutingController {
 class NestedStackRouter extends StackRouter {
   /// Default constructor
   NestedStackRouter({
-    required this.routeCollection,
+    required RouteCollection routeCollection,
     required super.key,
     required super.matchId,
     required RouteData<dynamic> routeData,
@@ -2456,7 +2487,8 @@ class NestedStackRouter extends StackRouter {
     required RoutingController super.parent,
     super.onNavigate,
     super.navigatorKey,
-  }) : matcher = RouteMatcher(routeCollection),
+  }) : _routeCollection = routeCollection,
+       _matcher = RouteMatcher(routeCollection),
        _routeData = routeData {
     // When a widget above AutoRouter builds it anew, such as in another place
     // of its page when a two-pane layout becomes one pane, the new router is
@@ -2470,10 +2502,23 @@ class NestedStackRouter extends StackRouter {
       routeData.pendingChildren.addAll(outgoing._openMatches());
     }
   }
+  RouteCollection _routeCollection;
+  RouteMatcher _matcher;
+
   @override
-  final RouteMatcher matcher;
+  RouteCollection get routeCollection => _routeCollection;
+
   @override
-  final RouteCollection routeCollection;
+  RouteMatcher get matcher => _matcher;
+
+  @override
+  void _reassemble() {
+    if (_parent?._reassembledSubCollection(_routeData.name) case final collection?) {
+      _routeCollection = collection;
+      _matcher = RouteMatcher(collection);
+    }
+    super._reassemble();
+  }
 
   @override
   final bool managedByWidget;
