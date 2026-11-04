@@ -4,9 +4,10 @@
 # example app's integration tests (auto_route/example/integration_test) on an
 # Android emulator, an iOS simulator, web through `flutter drive`, and macOS
 # desktop.
-# Every job stops after 15 minutes, so Android and iOS each run the suite
-# in two halves, one job each. The macOS jobs run on arm64 runners; Intel
-# macOS isn't supported.
+# Every job's work stops within 15 minutes, so Android, iOS and Chrome each
+# run their suite in two halves, one job each. The macOS jobs run on arm64
+# runners; Intel macOS isn't supported. Those runners are often short, so the
+# macOS jobs may wait up to 30 minutes for one (see the ios job).
 name: tests
 
 on:
@@ -183,7 +184,12 @@ jobs:
   ios:
     name: Integration tests on iOS (half ${{ matrix.half }} of 2)
     runs-on: macos-26
-    timeout-minutes: 15
+    # GitHub seems to stop looking for a runner when the job's time limit runs out:
+    # in 40 runs, every macOS job that never got one was canceled 900 to 902 s
+    # after it was queued, while those that got one waited up to 602 s. A
+    # canceled job fails the run despite continue-on-error. So these jobs may
+    # wait 30 minutes, and their steps keep the work itself within 15.
+    timeout-minutes: 30
     # Two jobs, each running half of the suite in one launch of the app.
     strategy:
       fail-fast: false
@@ -218,9 +224,9 @@ jobs:
           (cd auto_route/example && flutter pub get)
           xcrun simctl bootstatus "$udid"
           echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
-          # The tests stop one to two minutes before the job's limit, so a run
-          # that doesn't fit fails, and the next step names how far it got
-          # before the cleanup steps, about 40 s, run out the limit.
+          # The tests stop 14 minutes after the job started on its runner, so a
+          # run that doesn't fit fails, and the next step names how far it got,
+          # with the cleanup steps, about 40 s, still inside 15 minutes.
           minutes=$(( (JOB_STARTED + 14 * 60 - $(date +%s)) / 60 ))
           echo "TEST_MINUTES=$(( minutes > 1 ? minutes : 1 ))" >> "$GITHUB_ENV"
       - name: Integration tests on the iOS simulator
@@ -277,7 +283,8 @@ jobs:
   macos:
     name: Integration tests on macOS
     runs-on: macos-26
-    timeout-minutes: 15
+    # May wait 30 minutes for a runner, as the ios job explains.
+    timeout-minutes: 30
     # GitHub never picked up an arm64 macOS runner in five runs; the maintainer's Mac runs iOS and macOS before every merge.
     continue-on-error: true
     steps:
@@ -287,8 +294,10 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+      # The work stops within 15 minutes, as in every job.
       - name: Integration tests on macOS desktop
         working-directory: auto_route/example
+        timeout-minutes: 13
         shell: bash
         run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart -d macos 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
