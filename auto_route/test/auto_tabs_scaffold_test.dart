@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'main_router.dart';
@@ -78,6 +79,9 @@ void main() {
       await pumpRouterApp(tester, router);
       expect(tester.takeException(), isA<FlutterError>());
     },
+    // The tabs router throws while Flutter mounts it, so Flutter never
+    // unmounts it and never disposes its state, ticker and animation.
+    experimentalLeakTesting: LeakTesting.settings.withIgnoredAll(),
   );
 }
 
