@@ -5,7 +5,7 @@ part 'cart_router.gr.dart';
 
 enum MfUserCartTypes { rm, mf }
 
-@AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['integration_test/support'])
+@AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['integration_test/support/cart_router'])
 class CartRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
