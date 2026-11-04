@@ -64,6 +64,8 @@ Also: never push (the maintainer merges into `dev` and pushes), run `dart format
 
 If a test fails on one platform because of a real bug, skip it on that platform only, with a comment naming the issue and the platform, and give that bug its own chat (rule 4).
 
+A `flutter_canary_*` test pins a Flutter bug or fix that auto_route depends on. If one fails after a Flutter upgrade, Flutter changed that behavior: don't skip it. Read its top comment, then rework or drop the workaround or report it names and the canary together, as their own issue.
+
 ## Devices
 - Always pass `-d` with an emulator, simulator, `macos`, `chrome` or `web-server`. Never use a plugged-in phone. List devices with `flutter devices`.
 - Android: the shared `Pixel_9`, `Pixel_9_Pro_Fold` and `Wear_OS` emulators. Never create one. Before booting one, check nothing else drives it: `pgrep -fl qemu-system` prints nothing. Boot it, then shut it down when done:
