@@ -1377,6 +1377,45 @@ class ProductsScreen extends StatelessWidget implements AutoRouteWrapper {
 }
 ```
 
+#### Wrapping every page
+
+To wrap all your pages with the same widget, give them a custom route in `defaultRouteType` and put the wrapper around the `child` it receives:
+
+```dart
+@override
+RouteType get defaultRouteType => RouteType.custom(
+  customRouteBuilder: <T>(context, child, page) => MaterialPageRoute<T>(
+    settings: page,
+    builder: (_) => MyPageWrapper(child: child),
+  ),
+);
+```
+
+Pass `page` as the route's `settings`, as in [Custom Route Builder](#custom-route-builder). A widget that should wrap the whole navigator once, not each page, goes in the `builder` of `MaterialApp.router`.
+
+#### Sharing a provider between pages
+
+Pages that share a provider, a bloc for example, can be children of a shell route that provides it. The provider lives as long as the shell route is in the stack, and each page below it reads it from its context:
+
+```dart
+@RoutePage()
+class BooksShellPage extends AutoRouter implements AutoRouteWrapper {
+  const BooksShellPage({super.key});
+
+  @override
+  Widget wrappedRoute(BuildContext context) {
+    return BlocProvider(create: (_) => BooksBloc(), child: this);
+  }
+}
+```
+
+```dart
+AutoRoute(page: BooksShellRoute.page, children: [
+  AutoRoute(page: BookListRoute.page, initial: true),
+  AutoRoute(page: BookDetailsRoute.page),
+]),
+```
+
 ## Navigation Observers
 
 Navigation observers are used to observe when routes are pushed ,replaced or popped ..etc.
