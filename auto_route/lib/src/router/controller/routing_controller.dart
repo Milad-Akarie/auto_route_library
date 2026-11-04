@@ -1753,11 +1753,11 @@ abstract class StackRouter extends RoutingController {
   ///
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
-  Future<void> popAndPushAll(List<PageRouteInfo> routes, {dynamic onFailure}) {
+  Future<void> popAndPushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure}) {
     assert(routes.isNotEmpty, 'routes must not be empty.');
     final scope = _findStackScope(routes.first);
     scope.pop();
-    return scope._pushAll(routes, onFailure: onFailure as OnNavigationFailure?);
+    return scope._pushAll(routes, onFailure: onFailure);
   }
 
   /// Remove the whole current pages stack and push all given [routes]

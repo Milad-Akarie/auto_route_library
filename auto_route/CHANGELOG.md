@@ -1,4 +1,7 @@
 ## Unreleased
+- **BREAKING CHANGE**: `OnNavigationChanged` is `void Function(TabsRouter)`, and `popAndPushAll`'s
+  `onFailure` is an `OnNavigationFailure?` instead of `dynamic`. Callbacks written as closures
+  compile as before; pass `onFailure` a `void Function(NavigationFailure)`, as `pushAll` takes.
 - **DEPRECATION**: `RouteData.setAnimation(a)` is deprecated; write `routeData.animation = a`.
   `RouteData.animation` can now be read too. `RouteData.args` stays `Object?`: a route's args can be
   any class, so read them typed with `argsAs<T>()`.

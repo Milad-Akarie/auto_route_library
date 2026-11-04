@@ -24,10 +24,8 @@ typedef AutoTabsPageViewBuilder = Widget Function(BuildContext context, Widget c
 /// Signature for a wrapper builder used by [_AutoTabsRouterTabBar]
 typedef AutoTabsTabBarBuilder = Widget Function(BuildContext context, Widget child, TabController tabController);
 
-// Public API: changing it is the maintainer's call.
-// ignore: inference_failure_on_function_return_type
 /// Signature for a callback function used by [_AutoTabsRouterBuilder]
-typedef OnNavigationChanged = Function(TabsRouter tabsRouter);
+typedef OnNavigationChanged = void Function(TabsRouter tabsRouter);
 
 /// An implementation of a router widget that handles parallel routeing
 abstract class AutoTabsRouter extends StatefulWidget {
