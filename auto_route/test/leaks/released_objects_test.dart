@@ -73,10 +73,17 @@ RootStackRouter _buildRouter({String tabsType = 'IndexedStack'}) => .build(
   ],
 );
 
-/// Pumps until settled, then forces two full garbage collections.
-Future<void> _settleAndCollect(WidgetTester tester) async {
+/// Pumps until settled, then forces full garbage collections until every one
+/// of [references] is cleared, for at most 10 rounds.
+///
+/// One round can fall short on a busy machine: a collection that began before
+/// the pop still counts as one of its cycles. Gives up quietly after the last
+/// round, so the test's own expects report what is still held.
+Future<void> _settleAndCollect(WidgetTester tester, List<WeakReference<Object>> references) async {
   await tester.pumpAndSettle();
-  await tester.runAsync(() => forceGC(fullGcCycles: 2));
+  for (var round = 0; round < 10 && references.any((reference) => reference.target != null); round++) {
+    await tester.runAsync(() => forceGC(fullGcCycles: 2));
+  }
 }
 
 void main() {
@@ -95,7 +102,7 @@ void main() {
       final routeData = WeakReference(router.current);
 
       router.pop();
-      await _settleAndCollect(tester);
+      await _settleAndCollect(tester, [routeData, _pageStates['DetailRoute']!]);
       expect(find.text('DetailRoute'), findsNothing);
       expect(routeData.target, isNull);
       expect(_pageStates['DetailRoute']!.target, isNull);
@@ -117,7 +124,7 @@ void main() {
       router.pop();
       await tester.pumpAndSettle();
     }
-    await _settleAndCollect(tester);
+    await _settleAndCollect(tester, states);
     expect(states.where((state) => state.target != null), isEmpty);
   }, skip: kIsWeb);
 
@@ -133,7 +140,7 @@ void main() {
     final childData = WeakReference(nested.target!.current);
 
     router.pop();
-    await _settleAndCollect(tester);
+    await _settleAndCollect(tester, [nested, childData, _pageStates['StackChildRoute']!]);
     expect(router.childControllers, isEmpty);
     expect(nested.target, isNull);
     expect(childData.target, isNull);
@@ -157,7 +164,7 @@ void main() {
       expect(_pageStates.keys, containsAll(['Tab1Route', 'Tab2Route']));
 
       router.pop();
-      await _settleAndCollect(tester);
+      await _settleAndCollect(tester, [tabsRouter, _pageStates['Tab1Route']!, _pageStates['Tab2Route']!]);
       expect(router.childControllers, isEmpty);
       expect(tabsRouter.target, isNull);
       expect(_pageStates['Tab1Route']!.target, isNull);
