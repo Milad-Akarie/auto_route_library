@@ -1762,7 +1762,7 @@ targets:
     builders:
       auto_route_generator:auto_router_generator:
        options:
-         ignore_fore_file:
+         ignore_for_file:
            - custom_rule_1
            - custom_rule_2
 ```
