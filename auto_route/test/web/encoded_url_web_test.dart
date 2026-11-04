@@ -79,6 +79,35 @@ void main() {
     expect(browserPath, encoded);
   });
 
+  // flutter/flutter#186052: the browser's back button stopped working once a
+  // path param held a ':', or another character that encodeComponent encodes.
+  // Push the same route three times, with path params holding ':', '@', '+'
+  // and ' ', then press the browser's back button three times: each press
+  // should show the page before, with its param whole, and the last one the
+  // first page. The same route with other params is what broke it here, not
+  // the characters.
+  testWidgets('On web, the back button walks back through one route pushed with different params', (tester) async {
+    await pumpRouterConfigApp(tester, router.config());
+    await settleBrowser(tester);
+    final start = browserSerialCount;
+    const ids = ['some:information:blabla', 'a@b', 'a+b c'];
+    for (final id in ids) {
+      unawaited(router.push(_SecondsRoute(id: id)));
+      await settleBrowser(tester);
+    }
+    expect(browserSerialCount, start + 3);
+
+    for (final id in ids.reversed.skip(1)) {
+      await pressBrowserBack(tester);
+      expect(find.text('id $id, query null'), findsOneWidget);
+    }
+    await pressBrowserBack(tester);
+    expectCurrentPage(router, FirstRoute.name);
+    expect(router.stack.map((p) => p.name), [FirstRoute.name]);
+    expect(browserPath, '/');
+    expect(browserSerialCount, start);
+  });
+
   // https://github.com/Milad-Akarie/auto_route_library/issues/1812
   // With Flutter's own route information provider, open the app at a deep
   // link whose path param holds an encoded '#'. The browser should keep one

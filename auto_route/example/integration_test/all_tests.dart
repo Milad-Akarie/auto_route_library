@@ -7,6 +7,7 @@ import 'android_back_in_app_test.dart' as android_back_in_app;
 import 'app_smoke_test.dart' as app_smoke;
 import 'async_simple_guard_test.dart' as async_simple_guard;
 import 'back_in_tabs_test.dart' as back_in_tabs;
+import 'back_same_route_params_test.dart' as back_same_route_params;
 import 'back_same_url_test.dart' as back_same_url;
 import 'back_twice_test.dart' as back_twice;
 import 'bool_query_param_test.dart' as bool_query_param;
@@ -159,6 +160,7 @@ void main() {
   group('app smoke', app_smoke.main);
   group('async simple guard', async_simple_guard.main);
   group('back in tabs', back_in_tabs.main);
+  group('back same route params', back_same_route_params.main);
   group('back same url', back_same_url.main);
   group('back twice', back_twice.main);
   group('bool query param', bool_query_param.main);

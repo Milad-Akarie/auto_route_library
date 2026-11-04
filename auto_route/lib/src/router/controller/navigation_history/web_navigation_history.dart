@@ -120,10 +120,10 @@ class NavigationHistoryImpl extends NavigationHistory {
     final entry = _entries[_currentIndex];
     if (entry == null || !entry.hasSegments || !_isSameUrl(entry.url, configuration.url)) return null;
     final pageId = entry.topMatch?.id;
-    // The entry's page may still be under the current one with the same url,
-    // as when the same route was pushed twice; navigating to it alone would
-    // update the current page in place.
-    if (pageId != null && _isSameUrl(urlState.url, entry.url)) removePagesAbove(pageId);
+    // The entry's page may still be under the current one with the same route
+    // name, as when the same route was pushed twice, with the same params or
+    // others; navigating to it alone would update the current page in place.
+    if (pageId != null) removePagesAbove(pageId);
     return [UrlState.toHierarchy(entry.segments)];
   }
 
