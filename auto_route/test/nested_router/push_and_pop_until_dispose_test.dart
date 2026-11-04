@@ -1,0 +1,110 @@
+import 'dart:async';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+
+import '../router_test_utils.dart';
+
+final _disposed = <String>[];
+
+void main() {
+  late RootStackRouter router;
+  setUp(() {
+    _disposed.clear();
+    router = RootStackRouter.build(
+      routes: [
+        AutoRoute(page: _ARoute.page, path: '/', initial: true),
+        AutoRoute(
+          page: _shellPage,
+          path: '/b',
+          children: [
+            AutoRoute(page: _tracked('B1'), path: '', initial: true),
+            AutoRoute(page: _tracked('B2'), path: 'two'),
+          ],
+        ),
+      ],
+    );
+  });
+
+  // https://github.com/Milad-Akarie/auto_route_library/issues/1044
+  // Open A, then the shell B holding B1 and B2. From inside B, call
+  // pushAndPopUntil(A, predicate: (_) => false). Reported: nothing was pushed
+  // or popped, and the widgets of the pages that should go were not disposed.
+  // Should: only A is on the stack and B1 and B2 are disposed. A new page with
+  // the key of a page it replaces in the same update takes over its route (see
+  // AutoRoutePage), so the first A keeps its state instead of being disposed.
+  testWidgets('pushAndPopUntil with a predicate that keeps nothing disposes the nested pages it removes', (
+    tester,
+  ) async {
+    await pumpRouterConfigApp(tester, router.config());
+    unawaited(router.push(_ShellRoute(children: [_tracked2('B1'), _tracked2('B2')])));
+    await tester.pumpAndSettle();
+    expect(find.text('B2'), findsOneWidget);
+    _disposed.clear();
+    final nested = router.innerRouterOf<StackRouter>(_shellName)!;
+
+    unawaited(nested.pushAndPopUntil(const _ARoute(), predicate: (_) => false));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(router.stack.map((m) => m.name), [_ARoute.name]);
+    expect(find.text('A'), findsOneWidget);
+    expect(_disposed, unorderedEquals(['B1', 'B2']));
+  });
+
+  // The reporter's second combination, popUntilRouteWithName then push, should
+  // end the same way: the pages above the named one are disposed.
+  testWidgets('popUntilRouteWithName then push of the same route disposes the pages above it', (tester) async {
+    await pumpRouterConfigApp(tester, router.config());
+    unawaited(router.push(_ShellRoute(children: [_tracked2('B1'), _tracked2('B2')])));
+    await tester.pumpAndSettle();
+    _disposed.clear();
+
+    router.popUntilRouteWithName(_ARoute.name);
+    unawaited(router.push(const _ARoute()));
+    await tester.pumpAndSettle();
+    expect(find.text('A'), findsOneWidget);
+    // The first test's A is disposed after its teardown, so it can land here.
+    expect(_disposed.where((label) => label != 'A'), unorderedEquals(['B1', 'B2']));
+  });
+}
+
+const _shellName = 'ShellRoute';
+
+PageInfo _tracked(String name) => .new(name, builder: (_) => _Tracked(name));
+
+PageRouteInfo _tracked2(String name) => .new(name);
+
+PageInfo _shellPage = const PageInfo(_shellName, builder: _buildShell);
+
+Widget _buildShell(RouteData<dynamic> _) => const AutoRouter();
+
+class _ShellRoute extends PageRouteInfo<void> {
+  const _ShellRoute({List<PageRouteInfo>? children}) : super(_shellName, initialChildren: children);
+}
+
+class _ARoute extends PageRouteInfo<void> {
+  const _ARoute() : super(name);
+
+  static const String name = 'ARoute';
+  static PageInfo page = PageInfo(name, builder: (_) => const _Tracked('A'));
+}
+
+class _Tracked extends StatefulWidget {
+  const _Tracked(this.label);
+  final String label;
+
+  @override
+  State<_Tracked> createState() => _TrackedState();
+}
+
+class _TrackedState extends State<_Tracked> {
+  @override
+  void dispose() {
+    _disposed.add(widget.label);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Text(widget.label);
+}
