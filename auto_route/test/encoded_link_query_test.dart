@@ -53,4 +53,16 @@ void main() {
   testWidgets('A link keeps "%2B" in a query param as "+"', (tester) async {
     await expectLinkReads(tester, '/login?email=test%2B23%40example.com', 'email=test+23@example.com');
   });
+
+  // flutter/flutter#140139: a query param holding an encoded url, which holds
+  // another encoded url, read back as two params, decoded twice. Open the app
+  // at the reporter's link, and send it while the app runs: the page reads one
+  // param, url, decoded once, its inner url still encoded.
+  testWidgets('A link decodes a query param holding an encoded url once', (tester) async {
+    await expectLinkReads(
+      tester,
+      'myapp:///login?url=https%3A%2F%2Fwww.example.com%3Ffoo%3Dbar%26url2%3Dhttps%253A%252F%252Fwww.example.com',
+      'url=https://www.example.com?foo=bar&url2=https%3A%2F%2Fwww.example.com',
+    );
+  });
 }
