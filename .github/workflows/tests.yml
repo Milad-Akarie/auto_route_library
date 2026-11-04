@@ -180,12 +180,15 @@ jobs:
           print(iphones[-1]["udid"])
           ')
           xcrun simctl boot "$udid"
+          # While the simulator boots, start Flutter and fetch the packages,
+          # which the tests would otherwise do after it: about 75 s here.
+          (cd auto_route/example && flutter pub get)
           xcrun simctl bootstatus "$udid"
           echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
-          # The tests stop two minutes before the job's limit, so a run that
-          # doesn't fit fails, and the next step names how far it got before
-          # the cleanup steps run out the limit.
-          minutes=$(( (JOB_STARTED + 13 * 60 - $(date +%s)) / 60 ))
+          # The tests stop one to two minutes before the job's limit, so a run
+          # that doesn't fit fails, and the next step names how far it got
+          # before the cleanup steps, about 40 s, run out the limit.
+          minutes=$(( (JOB_STARTED + 14 * 60 - $(date +%s)) / 60 ))
           echo "TEST_MINUTES=$(( minutes > 1 ? minutes : 1 ))" >> "$GITHUB_ENV"
       - name: Integration tests on the iOS simulator
         working-directory: auto_route/example
