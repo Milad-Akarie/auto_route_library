@@ -83,10 +83,22 @@ String generateLibrary(
     );
   }
 
+  // Dart defers a whole library, so every page imported from one file loads
+  // the way the file does: on demand when any of its pages asks for it, else
+  // eagerly when any opts out, else by the router default.
+  final deferredByImport = <String?, bool>{};
+  for (final route in routes) {
+    final import = route.pageType?.import;
+    final current = deferredByImport[import];
+    if (current != true && route.deferredLoading != null) {
+      deferredByImport[import] = route.deferredLoading!;
+    }
+  }
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];
-    if (deferredRoutes.any((e) => e.pageType == route.pageType && route.deferredLoading != true)) {
-      routes[i] = route.copyWith(deferredLoading: true);
+    final deferredLoading = deferredByImport[route.pageType?.import];
+    if (route.pageType != null && deferredLoading != null && route.deferredLoading != deferredLoading) {
+      routes[i] = route.copyWith(deferredLoading: deferredLoading);
     }
   }
 

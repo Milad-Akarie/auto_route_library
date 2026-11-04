@@ -22,6 +22,7 @@ import 'declarative_hero_controller_test.dart' as declarative_hero_controller;
 import 'declarative_router_key_test.dart' as declarative_router_key;
 import 'declarative_routes_update_test.dart' as declarative_routes_update;
 import 'deep_link_parent_build_test.dart' as deep_link_parent_build;
+import 'deferred_and_eager_page_test.dart' as deferred_and_eager_page;
 import 'deferred_page_popped_test.dart' as deferred_page_popped;
 import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
 import 'disposed_nested_router_test.dart' as disposed_nested_router;
@@ -177,6 +178,7 @@ void main() {
   group('declarative router key', declarative_router_key.main);
   group('declarative routes update', declarative_routes_update.main);
   group('deep link parent build', deep_link_parent_build.main);
+  group('deferred and eager page', deferred_and_eager_page.main);
   group('deferred page popped', deferred_page_popped.main);
   group('dialog then page pop', dialog_then_page_pop.main);
   group('disposed nested router', disposed_nested_router.main);
