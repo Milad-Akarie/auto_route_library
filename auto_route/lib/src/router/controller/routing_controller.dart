@@ -1936,13 +1936,12 @@ abstract class StackRouter extends RoutingController {
   }
 
   // async, so a match failure reaches the returned future, not the caller's stack.
-  // ignore: avoid-unnecessary-futures
+  // Completes once every guard has decided, not when the last page is popped.
   Future<void> _pushAll(List<PageRouteInfo> routes, {OnNavigationFailure? onFailure, bool notify = true}) async {
     final matches = _matchAllOrReportFailure(routes, onFailure);
     if (matches != null) {
-      unawaited(_pushAllGuarded(matches, onFailure: onFailure, notify: notify));
+      await _pushAllGuarded<void>(matches, onFailure: onFailure, notify: notify, returnLastRouteCompleter: false);
     }
-    return SynchronousFuture(null);
   }
 
   @optionalTypeArgs

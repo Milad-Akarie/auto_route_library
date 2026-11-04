@@ -1,4 +1,8 @@
 ## Unreleased
+- **BREAKING CHANGE** (behavior): the futures of `pushAll` and `popAndPushAll` complete once every
+  guard has decided, instead of at once, as `replaceAll`'s already did. Code after `await router.pushAll(...)` now sees
+  the new stack, or the old one when a guard rejected it; don't await it inside a guard of the same
+  routes.
 - **BREAKING CHANGE** (an analyzer warning only): `Parameters`, `PageInfo`, `RouteType`,
   `RouteCollection`, `HierarchySegment` and `AutoRouteInformation` are `@immutable`, since they
   define `==`. A subclass with a field that isn't `final` now gets `must_be_immutable`; make it final.
