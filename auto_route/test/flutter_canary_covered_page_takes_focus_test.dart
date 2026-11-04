@@ -59,6 +59,49 @@ void main() {
     expect(router.topRoute.name, 'SecondRoute');
     expect(_focusedField(), const Key('home'));
   });
+
+  // Canary for Flutter bug https://github.com/flutter/flutter/issues/46235,
+  // the same cause with a dialog on top.
+  // Steps: open a dialog whose button has autofocus over HomeRoute, then show
+  // HomeRoute's autofocus field, as a page does when a login expires under a
+  // dialog.
+  // Today the field under the dialog takes focus from the dialog's button.
+  // If this test fails after a Flutter upgrade, drop it with the test above.
+  testWidgets('a page under a dialog that builds an autofocus field takes focus from the dialog', (tester) async {
+    final showField = ValueNotifier(false);
+    addTearDown(showField.dispose);
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          page: PageInfo(
+            'HomeRoute',
+            builder: (_) => Scaffold(
+              body: ValueListenableBuilder(
+                valueListenable: showField,
+                builder: (_, show, _) =>
+                    show ? const TextField(key: Key('home'), autofocus: true) : const Text('HomeRoute'),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+    await pumpRouterApp(tester, router);
+    showDialog<void>(
+      context: router.navigatorKey.currentContext!,
+      builder: (_) => AlertDialog(
+        actions: [TextButton(autofocus: true, onPressed: () {}, child: const Text('OK'))],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextButton>(), isNotNull);
+
+    showField.value = true;
+    await tester.pumpAndSettle();
+    expect(find.text('OK'), findsOneWidget);
+    expect(_focusedField(), const Key('home'));
+  });
 }
 
 Key? _focusedField() => FocusManager.instance.primaryFocus?.context?.findAncestorWidgetOfExactType<TextField>()?.key;
