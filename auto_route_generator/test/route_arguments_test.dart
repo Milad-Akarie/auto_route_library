@@ -396,4 +396,24 @@ class Range {
       });
     }
   });
+
+  // #1603: a `Color? color` argument came out as `final InvalidType color`,
+  // an analyzer failure of the time (dart-lang/source_gen#650, also #1438).
+  // A Color from dart:ui or Flutter keeps its type; without an import it
+  // fails the build with a message, as #1507 above.
+  for (final import in ["import 'dart:ui';", "import 'package:flutter/painting.dart';"]) {
+    test('a Color argument keeps its type with $import (#1603)', () async {
+      final result = await generateRouter({
+        'lib/webkit_screen.dart': _page(
+          'WebkitScreen',
+          imports: import,
+          parameters: 'this.title, this.color',
+          fields: '  final String? title;\n  final Color? color;',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, matches(RegExp(r'final _i\d+\.Color\? color;')));
+    });
+  }
 }
