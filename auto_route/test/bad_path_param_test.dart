@@ -59,6 +59,21 @@ void main() {
     expect(find.text('Book 5'), findsOneWidget);
   });
 
+  // flutter/flutter#155598: an app catches the error by its type. This file
+  // compiles only while auto_route.dart exports MissingRequiredParameterError.
+  testWidgets('A bad path param fails with a MissingRequiredParameterError', (tester) async {
+    await pumpRouterApp(tester, router);
+    Object? caught;
+    try {
+      await router.navigatePath('/book/abc');
+      // The error is what the issue asks apps to catch.
+      // ignore: avoid_catching_errors
+    } on MissingRequiredParameterError catch (e) {
+      caught = e;
+    }
+    expect(caught, isA<MissingRequiredParameterError>());
+  });
+
   // flutter/flutter#155598, the same for a decimal where an int is expected.
   testWidgets('A required int path param given a decimal fails with its name and value', (tester) async {
     await pumpRouterApp(tester, router);

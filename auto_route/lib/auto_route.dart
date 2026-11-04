@@ -2,6 +2,7 @@ export 'src/common/common.dart';
 export 'src/matcher/route_match.dart';
 export 'src/navigation_failure.dart';
 export 'src/route/auto_route_config.dart' hide DummyRootRoute;
+export 'src/route/errors.dart' show MissingRequiredParameterError;
 export 'src/route/page_info.dart';
 export 'src/route/page_route_info.dart';
 export 'src/route/route_data_scope.dart';

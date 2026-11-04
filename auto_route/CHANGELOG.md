@@ -1,4 +1,6 @@
 ## Unreleased
+- **FIX**: an app can catch a bad path param's error by its type: `MissingRequiredParameterError` is exported
+  from `package:auto_route/auto_route.dart` (flutter/flutter#155598).
 - **FIX**: a page view tabs router with a zero duration switches tabs without animating (#1150).
 - `NavigationHistory`, the type of `router.navigationHistory`, is exported from `package:auto_route/auto_route.dart`,
   so an app can name it in a variable, a parameter or a test.
