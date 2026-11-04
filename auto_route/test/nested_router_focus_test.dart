@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -56,5 +58,66 @@ void main() {
     setHostState(() {});
     await tester.pumpAndSettle();
     expect(FocusManager.instance.primaryFocus, same(outerFocus));
+  });
+
+  // https://github.com/flutter/flutter/issues/94249: with a nested Navigator,
+  // after the user focused a field on its page and tapped outside to close
+  // the keyboard, pushing the next page in the nested Navigator opened the
+  // keyboard and closed it again at once.
+  // Steps: HostRoute's nested AutoRouter shows a page with a TextField. Tap
+  // the field, tap outside it, where HostRoute unfocuses its focus scope,
+  // then push the next page in the nested router.
+  // Should: the push neither shows nor hides the keyboard.
+  testWidgets('Pushing in a nested router after closing the keyboard does not open it again', (tester) async {
+    final router = RootStackRouter.build(
+      routes: [
+        AutoRoute(
+          path: '/',
+          page: PageInfo(
+            'HostRoute',
+            builder: (_) => Builder(
+              builder: (context) => Scaffold(
+                body: GestureDetector(
+                  onTap: () => FocusScope.of(context).unfocus(),
+                  child: const Column(
+                    children: [
+                      SizedBox(height: 100, child: Text('outside')),
+                      Expanded(child: AutoRouter()),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          children: [
+            AutoRoute(
+              path: '',
+              page: PageInfo('FirstStepRoute', builder: (_) => const TextField(key: Key('first step'))),
+            ),
+            AutoRoute(
+              path: 'next',
+              page: PageInfo('NextStepRoute', builder: (_) => const TextField(key: Key('next step'))),
+            ),
+          ],
+        ),
+      ],
+    );
+    await pumpRouterApp(tester, router);
+    await tester.tap(find.byKey(const Key('first step')));
+    await tester.pump();
+    expect(tester.testTextInput.isVisible, isTrue);
+    await tester.tap(find.text('outside'));
+    await tester.pump();
+    expect(tester.testTextInput.isVisible, isFalse);
+
+    tester.testTextInput.log.clear();
+    unawaited(router.innerRouterOf<StackRouter>('HostRoute')!.pushPath('/next'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('next step')), findsOneWidget);
+    expect(
+      tester.testTextInput.log.map((call) => call.method),
+      isNot(anyOf(contains('TextInput.show'), contains('TextInput.hide'))),
+    );
+    expect(tester.testTextInput.isVisible, isFalse);
   });
 }
