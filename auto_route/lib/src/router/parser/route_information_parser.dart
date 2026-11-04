@@ -286,11 +286,16 @@ class UrlState {
   /// Escapes are decoded, except those of characters that would change what
   /// the url means: '/', '?', '#' and '%' in the path, and '&', '=', '+', '#'
   /// and '%' in the query, so a param such as 'a&b' reads back whole.
-  String get url => _readable(uri.toString());
+  String get url => _urls[this] ??= _readable(uri.toString());
+
+  // [url] of each state, built on first read: one navigation reads it
+  // several times, and [uri] never changes.
+  static final _urls = Expando<String>('url');
 
   static final _escapes = RegExp('(?:%[0-9A-Fa-f]{2})+');
 
   static String _readable(String encoded) {
+    if (!encoded.contains('%')) return encoded;
     final queryStart = encoded.indexOf('?');
     final fragmentStart = encoded.indexOf('#');
     final pathEnd = queryStart >= 0 ? queryStart : (fragmentStart >= 0 ? fragmentStart : encoded.length);
