@@ -1,10 +1,11 @@
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:path/path.dart' as p;
 
 /// Allocates symbols for deferred pages
 class DeferredPagesAllocator implements Allocator {
   /// Default constructor
-  DeferredPagesAllocator(this.routes, {required this.defaultDeferredLoading});
+  DeferredPagesAllocator(this.routes, {required this.defaultDeferredLoading, this.outputPath});
   static const _doNotPrefix = ['dart:core'];
 
   final _imports = <String, int>{};
@@ -15,6 +16,12 @@ class DeferredPagesAllocator implements Allocator {
 
   /// The default deferred loading value
   final bool defaultDeferredLoading;
+
+  /// Where the router is written, as a path inside its package.
+  ///
+  /// Imports of files outside `lib/` are written relative to it, since they
+  /// have no `package:` URI and a Flutter build rejects `asset:` imports.
+  final String? outputPath;
 
   @override
   String allocate(Reference reference) {
@@ -30,11 +37,20 @@ class DeferredPagesAllocator implements Allocator {
 
   @override
   Iterable<Directive> get imports => _imports.keys.map((importPath) {
+    final uri = _importUri(importPath);
     if (routes.isDeferred(importPath, defaultDeferredLoading: defaultDeferredLoading)) {
-      return Directive.importDeferredAs(importPath, '_i${_imports[importPath]}');
+      return Directive.importDeferredAs(uri, '_i${_imports[importPath]}');
     }
-    return Directive.import(importPath, as: '_i${_imports[importPath]}');
+    return Directive.import(uri, as: '_i${_imports[importPath]}');
   });
+
+  String _importUri(String importPath) {
+    final uri = Uri.parse(importPath);
+    final output = outputPath;
+    if (uri.scheme != 'asset' || output == null || uri.pathSegments.length < 2) return importPath;
+    // The first segment of an asset: URI is the package.
+    return p.posix.relative(uri.pathSegments.skip(1).join('/'), from: p.posix.dirname(output));
+  }
 }
 
 extension _RouteConfigList on List<RouteConfig> {

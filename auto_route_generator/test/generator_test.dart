@@ -46,6 +46,47 @@ class HomePage extends StatelessWidget {
     expect(result.source, contains("import 'package:app/home_page.dart' as _i"));
   });
 
+  // A router library outside `lib/` (in `integration_test/`) with pages
+  // outside `lib/` got `import 'asset:app/integration_test/...'`, which the
+  // analyzer accepts but a Flutter build rejects. Pages under `lib/` keep
+  // their `package:` import.
+  group('a router outside lib/', () {
+    const router = '''
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
+
+import 'home_page.dart';
+import 'pages/detail_page.dart';
+import '../lib/shared_page.dart';
+
+import 'router.gr.dart';
+
+@AutoRouterConfig(generateForDir: ['integration_test', 'lib'])
+class AppRouter extends RootStackRouter {
+  @override
+  List<AutoRoute> get routes => [
+    AutoRoute(page: HomeRoute.page),
+    AutoRoute(page: DetailRoute.page),
+    AutoRoute(page: SharedRoute.page),
+  ];
+}
+''';
+
+    test('imports its pages by relative path and keeps package: for lib/', () async {
+      final result = await generateRouter({
+        'integration_test/router.dart': router,
+        'integration_test/home_page.dart': _page('HomePage'),
+        'integration_test/pages/detail_page.dart': _page('DetailPage'),
+        'lib/shared_page.dart': _page('SharedPage'),
+      }, routerPath: 'integration_test/router.dart');
+      expect(result.errors, isEmpty);
+      expect(result.source, isNot(contains('asset:')));
+      expect(result.source, contains("import 'home_page.dart' as _i"));
+      expect(result.source, contains("import 'pages/detail_page.dart' as _i"));
+      expect(result.source, contains("import 'package:app/shared_page.dart' as _i"));
+    });
+  });
+
   // #1870: a page whose name `replaceInRouteName` does not change, such as
   // `CostsTab`, got a route with the page's own name. In a part file that
   // route is declared in the library that imports the page, so it shadowed
