@@ -133,6 +133,7 @@ import 'theme_page_transitions_test.dart' as theme_page_transitions;
 import 'typed_url_test.dart' as typed_url;
 import 'universal_link_test.dart' as universal_link;
 import 'unmatched_deep_link_test.dart' as unmatched_deep_link;
+import 'url_after_tab_switch_test.dart' as url_after_tab_switch;
 import 'url_on_pop_test.dart' as url_on_pop;
 import 'url_on_push_in_shell_test.dart' as url_on_push_in_shell;
 import 'window_resize_test.dart' as window_resize;
@@ -278,6 +279,7 @@ void main() {
   group('typed url', typed_url.main);
   group('universal link', universal_link.main);
   group('unmatched deep link', unmatched_deep_link.main);
+  group('url after tab switch', url_after_tab_switch.main);
   group('url on pop', url_on_pop.main);
   group('url on push in shell', url_on_push_in_shell.main);
   group('window resize', window_resize.main);
