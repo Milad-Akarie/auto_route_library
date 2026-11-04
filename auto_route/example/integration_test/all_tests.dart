@@ -134,6 +134,7 @@ import 'typed_url_test.dart' as typed_url;
 import 'universal_link_test.dart' as universal_link;
 import 'unmatched_deep_link_test.dart' as unmatched_deep_link;
 import 'url_on_pop_test.dart' as url_on_pop;
+import 'url_on_push_in_shell_test.dart' as url_on_push_in_shell;
 import 'window_resize_test.dart' as window_resize;
 import 'wrapper_push_from_child_test.dart' as wrapper_push_from_child;
 
@@ -278,6 +279,7 @@ void main() {
   group('universal link', universal_link.main);
   group('unmatched deep link', unmatched_deep_link.main);
   group('url on pop', url_on_pop.main);
+  group('url on push in shell', url_on_push_in_shell.main);
   group('window resize', window_resize.main);
   group('wrapper push from child', wrapper_push_from_child.main);
 }
