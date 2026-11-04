@@ -1,13 +1,10 @@
-import 'dart:async';
-
 import 'package:auto_route/auto_route.dart';
-import 'package:auto_route/src/router/widgets/auto_page_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-PageInfo _tab(String name) => PageInfo(name, builder: (_) => Center(child: Text(name)));
+PageInfo _tab(String name) => .new(name, builder: (_) => Center(child: Text(name)));
 
 enum _Kind { pageView, tabBar }
 
@@ -36,7 +33,7 @@ RootStackRouter _router(Widget Function(List<PageRouteInfo> routes) tabs) {
 // shows the new tab at once, without an animation.
 void main() {
   testWidgets('pageView with a vertical scrollDirection changes tab by a vertical drag only', (tester) async {
-    final router = _router((routes) => AutoTabsRouter.pageView(routes: routes, scrollDirection: Axis.vertical));
+    final router = _router((routes) => AutoTabsRouter.pageView(routes: routes, scrollDirection: .vertical));
     await pumpRouterApp(tester, router);
     final tabs = router.innerRouterOf<TabsRouter>('HostRoute')!;
 
@@ -53,8 +50,8 @@ void main() {
     testWidgets('${kind.name} with NeverScrollableScrollPhysics ignores a drag', (tester) async {
       final router = _router(
         (routes) => switch (kind) {
-          _Kind.pageView => AutoTabsRouter.pageView(routes: routes, physics: const NeverScrollableScrollPhysics()),
-          _Kind.tabBar => AutoTabsRouter.tabBar(routes: routes, physics: const NeverScrollableScrollPhysics()),
+          .pageView => AutoTabsRouter.pageView(routes: routes, physics: const NeverScrollableScrollPhysics()),
+          .tabBar => AutoTabsRouter.tabBar(routes: routes, physics: const NeverScrollableScrollPhysics()),
         },
       );
       await pumpRouterApp(tester, router);
@@ -68,8 +65,8 @@ void main() {
     testWidgets('${kind.name} with its animation off shows the new tab after one frame', (tester) async {
       final router = _router(
         (routes) => switch (kind) {
-          _Kind.pageView => AutoTabsRouter.pageView(routes: routes, animatePageTransition: false),
-          _Kind.tabBar => AutoTabsRouter.tabBar(routes: routes, duration: Duration.zero),
+          .pageView => AutoTabsRouter.pageView(routes: routes, animatePageTransition: false),
+          .tabBar => AutoTabsRouter.tabBar(routes: routes, duration: .zero),
         },
       );
       await pumpRouterApp(tester, router);

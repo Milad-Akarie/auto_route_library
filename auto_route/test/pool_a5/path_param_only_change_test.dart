@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-PageInfo _quiz() => PageInfo('QuizRoute', builder: (data) => Text('Quiz ${data.inheritedPathParams.getString('id')}'));
+PageInfo _quiz() => .new('QuizRoute', builder: (data) => Text('Quiz ${data.inheritedPathParams.getString('id')}'));
 
 // https://github.com/Milad-Akarie/auto_route_library/issues/1112
 // Steps: under /quiz, a nested route ':id' shows quiz 1. Go to quiz 2, which
@@ -28,7 +28,7 @@ void main() {
     );
   });
 
-  PageRouteInfo quiz(String id) => PageRouteInfo(
+  PageRouteInfo quiz(String id) => .new(
     'QuizHostRoute',
     initialChildren: [
       PageRouteInfo('QuizRoute', rawPathParams: {'id': id}),

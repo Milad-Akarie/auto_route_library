@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-PageInfo _page(String name) => PageInfo(name, builder: (_) => Text(name));
+PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 
 // https://github.com/Milad-Akarie/auto_route_library/issues/1078 and #1184
 // Steps: open the app from a link while it isn't running, with a link to a
