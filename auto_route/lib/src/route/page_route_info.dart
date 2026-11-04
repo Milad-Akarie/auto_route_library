@@ -219,16 +219,17 @@ class PageRouteInfo<T extends Object?> {
           fragment == other.fragment &&
           (!argsEquality || args == other.args) &&
           const ListEquality<dynamic>().equals(initialChildren, other.initialChildren) &&
-          const MapEquality<dynamic, dynamic>().equals(rawPathParams, other.rawPathParams) &&
-          const MapEquality<dynamic, dynamic>().equals(rawQueryParams, other.rawQueryParams);
+          // Deep, so params holding equal lists or sets are equal.
+          const DeepCollectionEquality().equals(rawPathParams, other.rawPathParams) &&
+          const DeepCollectionEquality().equals(rawQueryParams, other.rawQueryParams);
 
   @override
   int get hashCode =>
       _name.hashCode ^
       fragment.hashCode ^
       args.hashCode ^
-      const MapEquality<dynamic, dynamic>().hash(rawPathParams) ^
-      const MapEquality<dynamic, dynamic>().hash(rawQueryParams) ^
+      const DeepCollectionEquality().hash(rawPathParams) ^
+      const DeepCollectionEquality().hash(rawQueryParams) ^
       const ListEquality<dynamic>().hash(initialChildren);
 }
 

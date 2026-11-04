@@ -66,4 +66,28 @@ void main() {
   test(r'expandPath fills in a path parameter named with a $ (#1163)', () {
     expect(PageRouteInfo.expandPath(r'/users/:user$id', {r'user$id': '8'}), '/users/8');
   });
+
+  // Routes with list or set url params, built twice with equal values, were unequal: equality compared
+  // the params' values by identity, so two lists holding 'a' differed unless they were one list.
+  group('PageRouteInfo with equal list or set params', () {
+    PageRouteInfo route(Object tags) => .new('Tags', rawPathParams: {'tags': tags}, rawQueryParams: {'q': tags});
+
+    test('are equal and hash equally when the params are equal lists', () {
+      final a = route(['a', 'b']);
+      final b = route(['a', 'b']);
+      expect(a, equals(b));
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('are equal and hash equally when the params are equal sets', () {
+      final a = route({'a', 'b'});
+      final b = route({'b', 'a'});
+      expect(a, equals(b));
+      expect(a.hashCode, b.hashCode);
+    });
+
+    test('differ when the lists differ', () {
+      expect(route(['a']), isNot(equals(route(['b']))));
+    });
+  });
 }
