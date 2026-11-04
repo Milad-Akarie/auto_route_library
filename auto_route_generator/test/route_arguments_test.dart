@@ -122,6 +122,27 @@ required this.url,
     });
   });
 
+  // #629: the example's `@queryParam this.filter = 'none'` failed the build
+  // with "QueryParams must be nullable or have default value", though it has a
+  // default. #590: a bool with a default gave a `num?` type error.
+  group('a query parameter with a default value (#629, #590)', () {
+    test('builds with the default and reads the url by type', () async {
+      final result = await generateRouter({
+        'lib/my_books_page.dart': _page(
+          'MyBooksPage',
+          parameters: "@queryParam this.filter = 'none', @QueryParam('update') this.forUpdate = false",
+          fields: '''
+  final String filter;
+  final bool forUpdate;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(result.source, contains("queryParams.getString('filter', 'none')"));
+      expect(result.source, contains("queryParams.getBool('update', false)"));
+    });
+  });
+
   // #1968: a default value naming a function from another library, as in
   // `this.titleResolver = defaultTitleResolver`, was written into the route
   // without that library's import: "Undefined name 'defaultTitleResolver'".
