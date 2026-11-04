@@ -30,6 +30,7 @@ class ParamConfig {
     this.alias,
     this.defaultValueCode,
     this.defaultValueImport,
+    this.defaultValueSymbol,
   });
 
   /// Deserializes the parameter from a json map
@@ -53,6 +54,7 @@ class ParamConfig {
       isUrlFragment: map['isUrlFragment'] as bool,
       defaultValueCode: map['defaultValueCode'] as String?,
       defaultValueImport: map['defaultValueImport'] as String?,
+      defaultValueSymbol: map['defaultValueSymbol'] as String?,
     );
   }
 
@@ -98,6 +100,11 @@ class ParamConfig {
   /// the import of the declaration the default value names, such as a
   /// function or a constant from another library
   final String? defaultValueImport;
+
+  /// The name of the declaration [defaultValueImport] imports, when the
+  /// default value is a list or set holding it, such as `Sort` in
+  /// `const [Sort.asc]`; `null` when the whole value is that declaration.
+  final String? defaultValueSymbol;
 
   /// If the parameter name conflicts with a reserved name
   /// add a zero to the end of the name
@@ -167,6 +174,7 @@ class ParamConfig {
       'isQueryParam': isQueryParam,
       'defaultValueCode': defaultValueCode,
       'defaultValueImport': defaultValueImport,
+      'defaultValueSymbol': defaultValueSymbol,
     };
   }
 }

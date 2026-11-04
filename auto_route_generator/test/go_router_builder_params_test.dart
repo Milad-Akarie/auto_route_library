@@ -184,4 +184,36 @@ enum Fruit {
       expect(result.compileErrors, isEmpty);
     });
   });
+
+  // flutter/flutter#122003 and #122181: go_router_builder dropped the default
+  // value of an iterable param and wrote no enum map for the items of an
+  // iterable of enums. auto_route supports a List of enums with a default,
+  // read and written by name. Iterable and Set are not supported (batch gen).
+  group('a list query parameter with a default (flutter/flutter#122003, #122181)', () {
+    test('of enums keeps the default and the item names', () async {
+      final result = await generateRouter({
+        'lib/types.dart': 'enum MyEnum { value0, value1 }',
+        'lib/my_page.dart': _page(
+          'MyPage',
+          imports: "import 'types.dart';",
+          parameters: '@QueryParam() this.values = const [MyEnum.value0], @QueryParam() this.texts = const ["a"]',
+          fields: '''
+  final List<MyEnum> values;
+  final List<String> texts;''',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      final source = _flat(result);
+      expect(
+        source,
+        contains(
+          "values:queryParams.optList('values')?.map((name)=>MyEnum.values.asNameMap()[name])"
+          '.whereType<MyEnum>().toList()??const[MyEnum.value0]',
+        ),
+      );
+      expect(source, contains("'values':values.map((item)=>item.name).toList()"));
+      expect(source, contains('texts:queryParams.getList(\'texts\',const["a"])'));
+    });
+  });
 }

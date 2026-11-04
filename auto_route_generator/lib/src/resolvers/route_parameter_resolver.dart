@@ -1,4 +1,5 @@
 import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
@@ -111,6 +112,7 @@ class RouteParameterResolver {
       isUrlFragment: isUrlFragment,
       defaultValueCode: parameterElement.defaultValueCode,
       defaultValueImport: _resolveDefaultValueImport(parameterElement),
+      defaultValueSymbol: _defaultValueSymbol(parameterElement),
     );
   }
 
@@ -146,16 +148,37 @@ class RouteParameterResolver {
 
   /// Resolves the import of the declaration a default value names: a
   /// top-level function or constant such as `defaultTitleResolver`, or the
-  /// class or enum in `Colors.red`. Returns `null` for any other value.
+  /// class or enum in `Colors.red`. In a list or set literal such as
+  /// `const [Sort.asc]`, the first such declaration. Returns `null` for any
+  /// other value.
   String? _resolveDefaultValueImport(FormalParameterElement parameterElement) {
     final initializer = parameterElement.constantInitializer;
     final element = switch (initializer) {
       SimpleIdentifier() => initializer.element,
       PrefixedIdentifier() => initializer.prefix.element,
+      final ListLiteral literal => _firstDeclarationIn(literal),
+      final SetOrMapLiteral literal => _firstDeclarationIn(literal),
       _ => null,
     };
     if (element == null || element.enclosingElement is! LibraryElement) return null;
     return _typeResolver.resolveImport(element);
+  }
+
+  /// The name of the declaration a list or set default holds, which the
+  /// generated code writes with the import's prefix; `null` for any other
+  /// default.
+  String? _defaultValueSymbol(FormalParameterElement parameterElement) {
+    final initializer = parameterElement.constantInitializer;
+    if (initializer is! ListLiteral && initializer is! SetOrMapLiteral) return null;
+    return _firstDeclarationIn(initializer!)?.name;
+  }
+
+  /// The first top-level declaration, such as the enum in `Sort.asc`, that
+  /// the collection literal [literal] names, or `null` when it names none.
+  Element? _firstDeclarationIn(Expression literal) {
+    final finder = _DeclarationFinder();
+    literal.accept(finder);
+    return finder.found;
   }
 
   /// Extracts path parameters from a route path
@@ -169,5 +192,20 @@ class RouteParameterResolver {
       }
       return PathParamConfig(name: paramName, isOptional: isOptional);
     }).toList();
+  }
+}
+
+/// Finds the first identifier in an expression that names a top-level
+/// declaration.
+class _DeclarationFinder extends RecursiveAstVisitor<void> {
+  /// The declaration found, or `null`.
+  Element? found;
+
+  @override
+  void visitSimpleIdentifier(SimpleIdentifier node) {
+    final element = node.element;
+    if (found == null && element != null && element.enclosingElement is LibraryElement) {
+      found = element;
+    }
   }
 }

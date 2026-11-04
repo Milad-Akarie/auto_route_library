@@ -255,6 +255,21 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
 /// contains the text, such as `constTitle`.
 final _constKeyword = RegExp(r'^const\b');
 
+/// The default value of [p], written as [code] when given. A list or set
+/// holding a declaration from another library, such as `const [Sort.asc]`,
+/// gets that declaration's import prefix.
+Expression _defaultValue(ParamConfig p, [String? code]) {
+  code ??= p.defaultValueCode!;
+  final symbol = p.defaultValueSymbol;
+  final import = p.defaultValueImport;
+  if (symbol == null || import == null) return refer(code, import ?? p.type.import);
+  return CodeExpression(
+    Code.scope(
+      (allocate) => code!.replaceAll(RegExp('\\b${RegExp.escape(symbol)}\\b'), allocate(refer(symbol, import))),
+    ),
+  );
+}
+
 /// Builds a list of [Parameter]s from the given [parameters]
 Iterable<Parameter> buildArgParams(
   List<ParamConfig> parameters,
@@ -273,11 +288,11 @@ Iterable<Parameter> buildArgParams(
             defaultCode = const Code('const {}');
           } else {
             defaultCode = Code(
-              'const ${refer(p.defaultValueCode!.replaceFirst(_constKeyword, ''), p.defaultValueImport ?? p.type.import).accept(emitter)}',
+              'const ${_defaultValue(p, p.defaultValueCode!.replaceFirst(_constKeyword, '')).accept(emitter)}',
             );
           }
         } else {
-          defaultCode = refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import).code;
+          defaultCode = _defaultValue(p).code;
         }
       }
       b
@@ -383,10 +398,9 @@ Expression _getPageInstance(RouteConfig r) {
 
 Expression _getUrlPartAssignment(ParamConfig p) {
   if (p.isPathParam) {
-    return refer('pathParams').property(p.getterMethodName).call([
-      _plainString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import),
-    ]);
+    return refer('pathParams')
+        .property(p.getterMethodName)
+        .call([_plainString(p.paramName), if (p.defaultValueCode != null) _defaultValue(p)]);
   } else if (p.isQueryParam && p.type.isEnum) {
     // An enum is read by its name, the form [_getUrlPartValue] writes.
     final value = refer(p.type.name, p.type.import)
@@ -395,7 +409,7 @@ Expression _getUrlPartAssignment(ParamConfig p) {
         .call([])
         .index(refer('queryParams').property('optString').call([_plainString(p.paramName)]));
     if (p.defaultValueCode == null) return value;
-    return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
+    return value.ifNullThen(_defaultValue(p));
   } else if (p.isQueryParam && p.isUrlCollection && (p.listItemType != null || !p.type.isList)) {
     // `optList` reads the items as text, so each is converted to its type:
     // a number or bool by parsing it, an enum by its name, as the single enum
@@ -416,12 +430,11 @@ Expression _getUrlPartAssignment(ParamConfig p) {
       value = value.property('toList').call([]);
     }
     if (p.defaultValueCode == null) return value;
-    return value.ifNullThen(refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import));
+    return value.ifNullThen(_defaultValue(p));
   } else if (p.isQueryParam) {
-    return refer('queryParams').property(p.getterMethodName).call([
-      _plainString(p.paramName),
-      if (p.defaultValueCode != null) refer(p.defaultValueCode!, p.defaultValueImport ?? p.type.import),
-    ]);
+    return refer('queryParams')
+        .property(p.getterMethodName)
+        .call([_plainString(p.paramName), if (p.defaultValueCode != null) _defaultValue(p)]);
   }
   return refer('data').property('fragment');
 }
