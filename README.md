@@ -1639,6 +1639,8 @@ class BooksListPage extends State<BookListPage> with AutoRouteAwareStateMixin<Bo
 }
 ```
 
+The page that leaves always hears first: on a push, the covered page hears `didPushNext` before the new page hears `didPush`; on a pop, the popped page hears `didPop` before the page under it hears `didPopNext`.
+
 ## Customizations
 
 ##### AutoRouterConfig

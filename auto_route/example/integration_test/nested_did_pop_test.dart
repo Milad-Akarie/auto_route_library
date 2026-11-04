@@ -15,7 +15,7 @@ void main() {
 
   // Steps: HomeRoute, then push HostRoute, which hosts a nested router
   // showing NestedRoute; both pages have AutoRouteAwareStateMixin. Go back.
-  // Should: HomeRoute gets didPopNext and NestedRoute gets didPop.
+  // Should: NestedRoute gets didPop, then HomeRoute gets didPopNext.
   testWidgets('a page in a nested router hears didPop when its host route is popped', (tester) async {
     final router = RootStackRouter.build(
       routes: [
@@ -43,6 +43,6 @@ void main() {
     routeAwareEvents.clear();
     await systemBack(tester);
     expectTopPage(router, 'HomeRoute');
-    expect(routeAwareEvents, ['HomeRoute.didPopNext', 'NestedRoute.didPop']);
+    expect(routeAwareEvents, ['NestedRoute.didPop', 'HomeRoute.didPopNext']);
   });
 }

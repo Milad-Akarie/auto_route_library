@@ -75,7 +75,7 @@ void main() {
     _events.clear();
     router.pop();
     await tester.pumpAndSettle();
-    expect(_events, ['B.didPopNext', 'C.didPop']);
+    expect(_events, ['C.didPop', 'B.didPopNext']);
   });
 
   // Same as above with two pages in the nested router: only the one on top
@@ -104,7 +104,7 @@ void main() {
     _events.clear();
     router.pop();
     await tester.pumpAndSettle();
-    expect(_events, ['B2.didPopNext', 'C.didPop']);
+    expect(_events, ['C.didPop', 'B2.didPopNext']);
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2306
@@ -180,6 +180,27 @@ void main() {
     _events.clear();
     router.pop();
     await tester.pumpAndSettle();
-    expect(_events, ['Home.didPopNext', 'B.didPop']);
+    expect(_events, ['B.didPop', 'Home.didPopNext']);
+  });
+
+  // Reproduces https://github.com/flutter/flutter/issues/26902 in auto_route.
+  // Steps: Home and B both have AutoRouteAwareStateMixin. Push B, then pop it.
+  // Happened: Home heard didPopNext before B heard didPop, the reverse of a
+  // push, where the page covered hears didPushNext before the new page hears
+  // didPush. An app that flips a flag on each call ended with B's value.
+  // Should: the page that leaves hears first, then the page that shows again.
+  testWidgets('Popping a page tells it didPop before the page under it hears didPopNext', (tester) async {
+    final router = await _pumpApp(tester, [
+      AutoRoute(path: '/', page: _awarePage('Home')),
+      AutoRoute(path: '/b', page: _awarePage('B')),
+    ]);
+    unawaited(router.push(const _Route('B')));
+    await tester.pumpAndSettle();
+    expect(_events, ['Home.didPushNext', 'B.didPush']);
+
+    _events.clear();
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(_events, ['B.didPop', 'Home.didPopNext']);
   });
 }

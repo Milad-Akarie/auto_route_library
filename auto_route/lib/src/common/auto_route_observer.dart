@@ -233,6 +233,19 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   void _notifyPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     if (route.settings is AutoRoutePage && previousRoute?.settings is AutoRoutePage) {
+      // The page that leaves hears first, then the page that shows again, as
+      // on a push, where the covered page hears didPushNext before the new
+      // page subscribes and hears didPush.
+      final key = (route.settings as AutoRoutePage).routeKey;
+      final subscribers = _listeners[key]?.toList();
+
+      if (subscribers != null) {
+        for (final routeAware in subscribers) {
+          routeAware.didPop();
+        }
+      }
+      _notifyNested(key, (routeAware) => routeAware.didPop());
+
       final previousKey = (previousRoute!.settings as AutoRoutePage).routeKey;
       final previousSubscribers = _listeners[previousKey]?.toList();
 
@@ -242,16 +255,6 @@ class AutoRouteObserver extends AutoRouterObserver {
         }
       }
       _notifyNested(previousKey, (routeAware) => routeAware.didPopNext());
-      final key = (route.settings as AutoRoutePage).routeKey;
-
-      final subscribers = _listeners[key]?.toList();
-
-      if (subscribers != null) {
-        for (final routeAware in subscribers) {
-          routeAware.didPop();
-        }
-      }
-      _notifyNested(key, (routeAware) => routeAware.didPop());
     }
   }
 

@@ -47,6 +47,6 @@ void main() {
     routeAwareEvents.clear();
     await systemBack(tester);
     expectTopPage(router, 'NestedRoute');
-    expect(routeAwareEvents, ['NestedRoute.didPopNext', 'CoverRoute.didPop']);
+    expect(routeAwareEvents, ['CoverRoute.didPop', 'NestedRoute.didPopNext']);
   });
 }

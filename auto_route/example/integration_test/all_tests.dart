@@ -118,6 +118,7 @@ import 'restore_with_link_test.dart' as restore_with_link;
 import 'root_bottom_sheet_aware_test.dart' as root_bottom_sheet_aware;
 import 'root_router_dispose_test.dart' as root_router_dispose;
 import 'route_aware_mixin_test.dart' as route_aware_mixin;
+import 'route_aware_pop_order_test.dart' as route_aware_pop_order;
 import 'simultaneous_taps_test.dart' as simultaneous_taps;
 import 'swipe_init_tab_test.dart' as swipe_init_tab;
 import 'tab_bar_dispose_test.dart' as tab_bar_dispose;
@@ -275,6 +276,7 @@ void main() {
   group('root bottom sheet aware', root_bottom_sheet_aware.main);
   group('root router dispose', root_router_dispose.main);
   group('route aware mixin', route_aware_mixin.main);
+  group('route aware pop order', route_aware_pop_order.main);
   group('simultaneous taps', simultaneous_taps.main);
   group('swipe init tab', swipe_init_tab.main);
   group('tab bar dispose', tab_bar_dispose.main);
