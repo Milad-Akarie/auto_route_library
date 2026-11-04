@@ -148,6 +148,10 @@
 - **FIX**: "Can not resolve initial route" names the link no route matched and the catch-all
   `RedirectRoute(path: '*', redirectTo: '/')` that answers it, fixes #2119
 - **FIX**: the example app builds for Android again on Flutter 3.47.
+- **FIX**: routes with equal list or set url params are equal and hash equally, so
+  `TagsRoute(tags: {'a'}) == TagsRoute(tags: {'a'})`.
+- **FIX**: a path param whose name starts another param's name expands whole: with params `id`
+  and `idx`, `/a/:idx` no longer becomes `/a/1x`, also through a `RedirectRoute`.
 - **PERF**: a url is matched against the routes several times faster, and the matcher splits urls
   at '/' itself; a tab switch builds the readable url once instead of on every read.
 ## 11.2.0
