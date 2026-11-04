@@ -759,6 +759,27 @@ AutoRoute(page: BooksTab.page, children: [
 context.router.push(const BookDetailsRoute());
 ```
 
+### Popping inside a tab's stack
+
+Each tab that has children keeps its own stack, and `context.router` from outside that stack is the tabs router, not the tab's stack. Reach a tab's stack with `stackRouterOfIndex`, or with `innerRouterOf` using the route name of the tab, then pop on it:
+
+```dart
+final tabsRouter = AutoTabsRouter.of(context);
+
+// the stack of the visible tab: pop back to a route inside it
+tabsRouter.stackRouterOfIndex(tabsRouter.activeIndex)?.popUntilRouteWithName('YourRouteInsideTab');
+// the same, found by the tab's route name
+tabsRouter.innerRouterOf<StackRouter>(tabsRouter.current.name)?.popUntilRouteWithName('YourRouteInsideTab');
+```
+
+To send every tab back to its first page, for example after a login, pop each stack down to its root. A tab that was never opened has no stack, hence the `?.`:
+
+```dart
+for (var i = 0; i < tabsRouter.pageCount; i++) {
+  tabsRouter.stackRouterOfIndex(i)?.popUntilRoot();
+}
+```
+
 ## Finding The Right Router
 
 Every nested `AutoRouter` has its own routing controller to manage the stack inside of it and the easiest way to obtain a scoped controller is by using the `BuildContext`.
