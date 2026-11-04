@@ -26,7 +26,7 @@ void main() {
             'SettingsRoute',
             builder: (_) => Builder(
               builder: (context) => TextButton(
-                onPressed: () => unawaited(showDialog<void>(context: context, builder: (_) => const Text('Dialog'))),
+                onPressed: () => showDialog<void>(context: context, builder: (_) => const Text('Dialog')),
                 child: const Text('Show'),
               ),
             ),

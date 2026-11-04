@@ -13,7 +13,7 @@ import 'router_test_utils.dart';
 // Steps: open '/list/7/a?q=1', switch to tab B.
 // Should: tab B shows id 7 and the url is '/list/7/b'.
 PageInfo _tabPage(String name) =>
-    PageInfo(name, builder: (data) => Text('$name ${data.inheritedPathParams.getString('id')}'));
+    .new(name, builder: (data) => Text('$name ${data.inheritedPathParams.getString('id')}'));
 
 void main() {
   testWidgets('The path param of the route above the tabs stays after a tab switch', (tester) async {

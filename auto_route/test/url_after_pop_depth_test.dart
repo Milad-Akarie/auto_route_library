@@ -17,7 +17,7 @@ import 'router_test_utils.dart';
 // a trailing slash.
 Widget _page(String name) => Scaffold(body: Text(name));
 
-RootStackRouter _router() => RootStackRouter.build(
+RootStackRouter _router() => .build(
   routes: [
     NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
     NamedRouteDef(name: 'ARoute', path: '/a', builder: (_, _) => _page('ARoute')),

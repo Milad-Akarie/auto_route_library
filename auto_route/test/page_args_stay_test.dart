@@ -16,7 +16,7 @@ import 'router_test_utils.dart';
 // Should: each page keeps its own args, and the tab page is built once.
 final _builds = <String>[];
 
-PageInfo _argsPage(String name) => PageInfo(
+PageInfo _argsPage(String name) => .new(
   name,
   builder: (data) {
     _builds.add(name);
@@ -64,7 +64,7 @@ void main() {
           path: '/',
           page: PageInfo(
             'TabsRoute',
-            builder: (_) => AutoTabsScaffold(
+            builder: (_) => const AutoTabsScaffold(
               routes: [
                 NamedRoute('ARoute'),
                 NamedRoute('BRoute', args: 'b'),

@@ -19,7 +19,7 @@ import 'router_test_utils.dart';
 // visible page every time.
 Widget _page(String name) => Scaffold(body: Text(name));
 
-RootStackRouter _router() => RootStackRouter.build(
+RootStackRouter _router() => .build(
   routes: [
     NamedRouteDef(name: 'HomeRoute', path: '/', builder: (_, _) => _page('HomeRoute')),
     NamedRouteDef(name: 'SettingsRoute', path: '/settings', builder: (_, _) => _page('SettingsRoute')),

@@ -13,7 +13,7 @@ import 'router_test_utils.dart';
 // Steps: open each url, and push each route by its name with params.
 // Should: every url shows its own page with its own param.
 PageInfo _page(String name, String param) =>
-    PageInfo(name, builder: (data) => Text('$name ${data.pathParams.getString(param)}'));
+    .new(name, builder: (data) => Text('$name ${data.params.getString(param)}'));
 
 void main() {
   late RootStackRouter router;

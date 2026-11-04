@@ -16,7 +16,7 @@ import '../router_test_utils.dart';
 // Should: the old page is still in the tree halfway, and gone at the end.
 Widget _page(String name) => Scaffold(body: Text(name));
 
-CustomRoute _fade(String path, PageInfo page, {List<AutoRoute>? children}) => CustomRoute(
+CustomRoute _fade(String path, PageInfo page, {List<AutoRoute>? children}) => .new(
   path: path,
   page: page,
   children: children,
@@ -24,8 +24,8 @@ CustomRoute _fade(String path, PageInfo page, {List<AutoRoute>? children}) => Cu
   duration: const Duration(milliseconds: 400),
 );
 
-PageInfo _shell(String name) => PageInfo(name, builder: (_) => const AutoRouter());
-PageInfo _leaf(String name) => PageInfo(name, builder: (_) => _page(name));
+PageInfo _shell(String name) => .new(name, builder: (_) => const AutoRouter());
+PageInfo _leaf(String name) => .new(name, builder: (_) => _page(name));
 
 void main() {
   testWidgets('Navigating between two shells keeps the old page while the new one fades in', (tester) async {
@@ -59,7 +59,7 @@ void main() {
         AutoRoute(
           path: '/',
           page: _shell('Shell'),
-          children: [_fade('one', _leaf('OnePage'), children: null), _fade('two', _leaf('TwoPage'))],
+          children: [_fade('one', _leaf('OnePage')), _fade('two', _leaf('TwoPage'))],
         ),
       ],
     );
