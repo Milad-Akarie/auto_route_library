@@ -115,4 +115,41 @@ enum Fruit {
       expect(source, contains("'tab':tab.name"));
     });
   });
+
+  // flutter/flutter#121934 and #131211: go_router_builder wrote `const` before
+  // a route data constructor call, which failed to compile when the call took
+  // a runtime value (`$extra`) or when the class had no const constructor.
+  // auto_route builds the page with its args as `Page(args.x)` and marks the
+  // route const only when the page has no parameters and a const constructor.
+  group('a page with a parameter (flutter/flutter#121934, #131211)', () {
+    test('with a const constructor is built without const', () async {
+      final result = await generateRouter({
+        'lib/booking_page.dart': _page(
+          'BookingPage',
+          parameters: '@QueryParam() this.hotel',
+          fields: '  final String? hotel;',
+        ),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(_flat(result), contains('returnBookingPage(key:args.key,hotel:args.hotel)'));
+      expect(_flat(result), isNot(contains('constBookingPage(')));
+    });
+
+    test('without a const constructor compiles', () async {
+      final result = await generateRouter({
+        'lib/shell_page.dart': _page(
+          'ShellPage',
+          constructor: '',
+          parameters: '@QueryParam() this.title',
+          fields: '  final String? title;',
+        ),
+        'lib/plain_page.dart': _page('PlainPage', constructor: '', parameters: '', fields: ''),
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(_flat(result), isNot(contains('constShellPage(')));
+      expect(_flat(result), isNot(contains('constPlainPage(')));
+    });
+  });
 }
