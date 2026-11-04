@@ -1917,7 +1917,59 @@ abstract class StackRouter extends RoutingController {
   /// Pop the whole stack except for the first entry
   void popUntilRoot() {
     assert(_navigatorKey.currentState != null, 'The navigator of this router is not mounted.');
-    _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+    _popUntilShowingNoneBetween((route) => route.isFirst);
+  }
+
+  // Navigator.popUntil pops every route with its exit animation, so each
+  // page in between shows while it leaves (flutter/flutter#59990). This
+  // removes the routes in between first, while the top route still covers
+  // them, then pops the top route with its animation over the route that
+  // meets [predicate]. Returns whether a route met it.
+  bool _popUntilShowingNoneBetween(RoutePredicate predicate) {
+    final navigator = _navigatorKey.currentState;
+    if (navigator == null) return false;
+    // The navigator's routes, top first: each page's route under the
+    // pageless routes pushed over it, newest first.
+    final routes = <Route<dynamic>>[
+      for (final page in _pages.reversed)
+        if (pagelessRoutesObserver.routeOf(page) case final pageRoute?) ...[
+          ...pagelessRoutesObserver.pagelessRoutesOver(pageRoute).reversed,
+          pageRoute,
+        ],
+    ];
+    if (routes.isEmpty || routes.first != _topRouteOf(navigator)) {
+      // A route the router doesn't know of is on top; pop as Flutter does.
+      var met = false;
+      navigator.popUntil((route) => met = predicate(route));
+      return met;
+    }
+    final target = routes.indexWhere(predicate);
+    if (target == 0) return true;
+    for (final route in routes.sublist(1, target == -1 ? routes.length : target)) {
+      final page = route.settings;
+      // As a pop would, complete the page's push future first, while its
+      // route is still known, then take the page off the stack, or the
+      // navigator would build it again.
+      if (page is AutoRoutePage) page.onPopInvoked(true, null);
+      navigator.removeRoute(route);
+      if (page is AutoRoutePage) onPopPage(page);
+    }
+    // A pop may close the top route's own history first, such as an open
+    // drawer, so pop until the route leaves, as Navigator.popUntil does.
+    final top = routes.first;
+    navigator.popUntil((route) => route != top);
+    return target != -1;
+  }
+
+  // The top route of [navigator] that is not leaving: popUntil hands it to
+  // the predicate first and stops as the predicate returns true.
+  static Route<dynamic>? _topRouteOf(NavigatorState navigator) {
+    Route<dynamic>? top;
+    navigator.popUntil((route) {
+      top = route;
+      return true;
+    });
+    return top;
   }
 
   /// Pop the current route off the navigator and push the given [route] in its place.
@@ -1965,17 +2017,14 @@ abstract class StackRouter extends RoutingController {
   /// top until satisfied
   void popUntil(RoutePredicate predicate, {bool scoped = true}) {
     if (scoped) {
-      return _navigatorKey.currentState?.popUntil(predicate);
+      _popUntilShowingNoneBetween(predicate);
+      return;
     }
     final routers = _topMostRouter()._buildRoutersHierarchy();
-    var predicateWasSatisfied = false;
     for (final router in routers.whereType<StackRouter>()) {
       final navState = router._navigatorKey.currentState;
       if (navState == null) break;
-      navState.popUntil((route) {
-        return predicateWasSatisfied = predicate(route);
-      });
-      if (predicateWasSatisfied) break;
+      if (router._popUntilShowingNoneBetween(predicate)) break;
     }
   }
 
