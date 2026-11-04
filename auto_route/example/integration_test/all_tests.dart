@@ -120,6 +120,7 @@ import 'repeated_query_key_test.dart' as repeated_query_key;
 import 'replace_all_from_deep_stack_test.dart' as replace_all_from_deep_stack;
 import 'replace_all_on_reevaluation_test.dart' as replace_all_on_reevaluation;
 import 'replace_all_rejected_test.dart' as replace_all_rejected;
+import 'replace_changed_path_param_test.dart' as replace_changed_path_param;
 import 'replace_rejected_test.dart' as replace_rejected;
 import 'replace_with_new_children_test.dart' as replace_with_new_children;
 import 'replaced_push_future_test.dart' as replaced_push_future;
@@ -296,6 +297,7 @@ void main() {
   group('replace all from deep stack', replace_all_from_deep_stack.main);
   group('replace all on reevaluation', replace_all_on_reevaluation.main);
   group('replace all rejected', replace_all_rejected.main);
+  group('replace changed path param', replace_changed_path_param.main);
   group('replace rejected', replace_rejected.main);
   group('replace with new children', replace_with_new_children.main);
   group('replaced push future', replaced_push_future.main);
