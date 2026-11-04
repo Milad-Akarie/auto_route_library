@@ -77,8 +77,12 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
+      # The step stops two minutes before the job's limit, so a run that
+      # doesn't fit fails instead of being canceled, and the next step names
+      # the test it was on.
       - name: Headless tests in Chrome
         working-directory: auto_route
+        timeout-minutes: 13
         shell: bash
         run: flutter test --reporter github --platform chrome --file-reporter "json:$RUNNER_TEMP/test-results.json" 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
