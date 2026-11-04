@@ -10,7 +10,7 @@ part 'transitions/predictive_back_page_detector.dart';
 // The pages a navigator has shown; see [AutoRoutePage.markShown].
 final _shownPages = Expando<bool>();
 
-/// Creates a RoutePage based on [routeData.type],
+/// Creates a RoutePage based on `routeData.type`,
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
   /// Default constructor
@@ -108,7 +108,7 @@ class AutoRoutePage<T> extends Page<T> {
   }
 
   /// Creates a PageRoute variant based on
-  /// [routeData.type]
+  /// `routeData.type`
   Route<T> onCreateRoute(BuildContext context) {
     final type = routeData.type;
     final title = routeData.title(context);

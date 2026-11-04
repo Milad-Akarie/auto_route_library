@@ -31,7 +31,7 @@ import 'package:material_ui/material_ui.dart'
         Widget,
         debugCheckHasDirectionality;
 
-/// This is a copy of the [PageView] widget from Flutter, with the following
+/// This is a copy of the `PageView` widget from Flutter, with the following
 /// changes:
 /// - it allows for custom cacheExtent to be set
 /// - it does not allow for setting allowImplicitScrolling because it is always
@@ -80,7 +80,7 @@ void correctToPage(PageController controller, int page) {
 /// {@youtube 560 315 https://www.youtube.com/watch?v=J1gE9xvph-A}
 ///
 /// {@tool dartpad}
-/// Here is an example of [EagerPageView]. It creates a centered [Text] in each of the three pages
+/// Here is an example of [EagerPageView]. It creates a centered `Text` in each of the three pages
 /// which scroll horizontally.
 ///
 /// ** See code in examples/api/lib/widgets/page_view/page_view.0.dart **
@@ -88,20 +88,20 @@ void correctToPage(PageController controller, int page) {
 ///
 /// ## Persisting the scroll position during a session
 ///
-/// Scroll views attempt to persist their scroll position using [PageStorage].
+/// Scroll views attempt to persist their scroll position using `PageStorage`.
 /// For a [EagerPageView], this can be disabled by setting [PageController.keepPage]
-/// to false on the [controller]. If it is enabled, using a [PageStorageKey] for
+/// to false on the [controller]. If it is enabled, using a `PageStorageKey` for
 /// the [key] of this widget is recommended to help disambiguate different
 /// scroll views from each other.
 ///
 /// See also:
 ///
 ///  * [PageController], which controls which page is visible in the view.
-///  * [SingleChildScrollView], when you need to make a single child scrollable.
-///  * [ListView], for a scrollable list of boxes.
-///  * [GridView], for a scrollable grid of boxes.
+///  * `SingleChildScrollView`, when you need to make a single child scrollable.
+///  * `ListView`, for a scrollable list of boxes.
+///  * `GridView`, for a scrollable grid of boxes.
 ///  * [ScrollNotification] and [NotificationListener], which can be used to watch
-///    the scroll position without using a [ScrollController].
+///    the scroll position without using a `ScrollController`.
 class EagerPageView extends StatefulWidget {
   /// Creates a scrollable list that works page by page from an explicit [List]
   /// of widgets.
@@ -189,9 +189,9 @@ class EagerPageView extends StatefulWidget {
 
   /// A delegate that provides the children for the [EagerPageView].
   ///
-  /// The [PageView.custom] constructor lets you specify this delegate
-  /// explicitly. The [EagerPageView] and [PageView.builder] constructors create a
-  /// [childrenDelegate] that wraps the given [List] and [IndexedWidgetBuilder],
+  /// The `PageView.custom` constructor lets you specify this delegate
+  /// explicitly. The [EagerPageView] and `PageView.builder` constructors create a
+  /// [childrenDelegate] that wraps the given [List] and `IndexedWidgetBuilder`,
   /// respectively.
   final SliverChildDelegate childrenDelegate;
 

@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 /// An app with state restoration that builds a new router each time it
 /// starts, as an app the platform ended and restored does.
 ///
-/// [WidgetTester.restartAndRestore] rebuilds it from scratch; [router] is
+/// `WidgetTester.restartAndRestore` rebuilds it from scratch; [router] is
 /// the router of the last start.
 class RestorableRouterApp extends StatefulWidget {
   const RestorableRouterApp(this.buildRouter, {super.key});

@@ -58,7 +58,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// This key is passed to the router scope
   /// it's used to provide build context inside auto_route guards instead of
-  /// using [navigatorKey.currentContext] because it maybe null at times
+  /// using `navigatorKey.currentContext` because it maybe null at times
   final GlobalObjectKey<State<StatefulWidget>> globalRouterKey = GlobalObjectKey(UniqueKey());
 
   /// Holds track of the list of attached child controllers
@@ -133,10 +133,10 @@ abstract class RoutingController with ChangeNotifier {
   /// Helper to access [NavigationHistory.urlState]
   UrlState get urlState => navigationHistory.urlState;
 
-  /// Helper to access [NavigationHistory.urlState.path]
+  /// Helper to access `NavigationHistory.urlState.path`
   String get currentPath => urlState.path;
 
-  /// Helper to access [NavigationHistory.urlState.url]
+  /// Helper to access `NavigationHistory.urlState.url`
   String get currentUrl => urlState.url;
 
   /// Notify this controller for changes then notify root controller
@@ -1125,7 +1125,7 @@ class TabsRouter extends RoutingController {
   }
 
   /// Resets [_pages] stack with given [routes]
-  /// and sets [previousActiveRoute] as active index if provided
+  /// and sets `previousActiveRoute` as active index if provided
   void replaceAll(List<PageRouteInfo>? routes, int previousIndex) {
     final routesToPush = _resolveRoutes(routes);
     final previousActiveRoute = stackData[previousIndex];
@@ -2464,12 +2464,12 @@ class ActiveGuardObserver extends ValueNotifier<List<GuardEntry>> {
   /// Default controller
   ActiveGuardObserver() : super([]);
 
-  /// Adds [guard] to the list of active guards
+  /// Adds `guard` to the list of active guards
   void _add(GuardEntry entry) {
     value = [...value, entry];
   }
 
-  /// Removes [guard] from the list of active guards
+  /// Removes `guard` from the list of active guards
   void _remove(GuardEntry entry) {
     value = [...value..remove(entry)];
   }

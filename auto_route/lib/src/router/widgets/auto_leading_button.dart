@@ -71,7 +71,7 @@ class AutoLeadingButton extends StatefulWidget {
 
   /// builds a nullable leading widget based on the current router state
   ///
-  /// This meant to be used above the AppBar so the [leading] property
+  /// This meant to be used above the AppBar so the `leading` property
   /// is passed to the AppBar's leading property,
   ///
   /// e.g

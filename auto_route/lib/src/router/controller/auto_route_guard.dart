@@ -171,7 +171,7 @@ class NavigationResolver {
   /// the first route to be processed is Route1 and that's assigned to [route]
   /// and pending routes will contain [Route2, Route3]
   ///
-  /// when we process  Rout2 next pending routes will contain [Route3] only
+  /// when we process  Rout2 next pending routes will contain `Route3` only
   final List<RouteMatch<dynamic>> pendingRoutes;
 
   /// returns the navigator context
@@ -192,7 +192,7 @@ class NavigationResolver {
   /// or false to abort navigation
   ///
   /// if [reevaluateNext] is set to true pending routes will also be re-pushed
-  /// to stack on [RoutingController.reevaluateGuards]
+  /// to stack on `RoutingController.reevaluateGuards`
   void resolveNext(bool continueNavigation, {bool reevaluateNext = true}) {
     assert(!isResolved, 'Make sure `resolver.next()` is only called once.');
     _complete(ResolverResult(continueNavigation: continueNavigation, reevaluateNext: reevaluateNext, route: route));
@@ -338,7 +338,7 @@ class RouteOverrides {
   /// Default constructor
   const RouteOverrides({this.children, this.args, this.queryParams, this.fragment});
 
-  /// The override value of [PageRouteInfo.children]
+  /// The override value of `PageRouteInfo.children`
   final List<PageRouteInfo>? children;
 
   /// The override value of [PageRouteInfo.args]

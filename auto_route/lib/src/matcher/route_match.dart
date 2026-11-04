@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:path/path.dart' as p;
 
-/// This is the result returned by [RouteMatcher]
+/// This is the result returned by `RouteMatcher`
 /// when a match is found
 @immutable
 class RouteMatch<T> {
@@ -76,7 +76,7 @@ class RouteMatch<T> {
 
   final AutoRoute _config;
 
-  /// Whether this matched is a result of [RouteMatcher.buildPathTo]
+  /// Whether this matched is a result of `RouteMatcher.buildPathTo`
   ///
   /// this is true if match is a parent route
   /// that's not added by the user

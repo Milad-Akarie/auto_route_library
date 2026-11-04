@@ -66,7 +66,7 @@ class MaterialRouteType extends RouteType with PredictiveBackGestureMixin {
   final RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder;
 }
 
-/// Generates a route that uses [CupertinoRouteTransitionMixin]
+/// Generates a route that uses `CupertinoRouteTransitionMixin`
 class CupertinoRouteType extends RouteType {
   /// Default constructor
   const CupertinoRouteType() : super._(opaque: true);
@@ -74,7 +74,7 @@ class CupertinoRouteType extends RouteType {
 
 /// Generates a route transitions based on platform
 ///
-/// ios,macos => [CupertinoRouteTransitionMixin]
+/// ios,macos => `CupertinoRouteTransitionMixin`
 /// web => NoTransition
 /// any other platform => [MaterialRouteTransitionMixin]
 class AdaptiveRouteType extends RouteType with PredictiveBackGestureMixin {
@@ -133,7 +133,7 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
   final RouteTransitionsBuilder? transitionsBuilder;
 
   /// this builder function is passed to customRouteBuilder property
-  /// in [CustomPage]
+  /// in `CustomPage`
   ///
   /// I couldn't type this function from here but it should match
   /// typedef [CustomRouteBuilder] = Route Function(BuildContext context, CustomPage page);
@@ -157,12 +157,12 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
 
   /// route transition duration
   /// is passed to [PageRouteBuilder]
-  /// this property is ignored unless a [transitionBuilder] is provided
+  /// this property is ignored unless a `transitionBuilder` is provided
   final Duration? duration;
 
   /// route reverse transition duration
   /// is passed to [PageRouteBuilder]
-  /// this property is ignored unless a [transitionBuilder] is provided
+  /// this property is ignored unless a `transitionBuilder` is provided
   final Duration? reverseDuration;
 
   /// passed to the barrierDismissible property in [PageRouteBuilder]

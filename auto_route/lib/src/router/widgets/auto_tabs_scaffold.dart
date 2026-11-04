@@ -70,7 +70,7 @@ class AutoTabsScaffold extends StatelessWidget {
   /// If this is true routes will only be loaded once navigated to
   final bool lazyLoad;
 
-  /// Builds a BottomNavigation to [Scaffold.bottomNavigation]
+  /// Builds a BottomNavigation to `Scaffold.bottomNavigation`
   final BottomNavigationBuilder? bottomNavigationBuilder;
 
   /// The AutoRouteObservers to be used by [AutoTabsRouter]
@@ -147,7 +147,7 @@ class AutoTabsScaffold extends StatelessWidget {
   /// Builds a BottomNavigation to [Scaffold.appBar]
   final AppBarBuilder? appBarBuilder;
 
-  /// Passed to  [Scaffold.scaffoldKey]
+  /// Passed to  `Scaffold.scaffoldKey`
   final GlobalKey<ScaffoldState>? scaffoldKey;
 
   /// Passed to  [Scaffold.  final GlobalKey<ScaffoldState>? scaffoldKey;]

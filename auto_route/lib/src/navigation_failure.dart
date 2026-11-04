@@ -11,7 +11,7 @@ abstract class NavigationFailure {
 }
 
 /// A failure indicates that the request route or path
-/// has not been found by the [RouteMatcher]
+/// has not been found by the `RouteMatcher`
 class RouteNotFoundFailure extends NavigationFailure {
   /// default constructor
   const RouteNotFoundFailure(this.path);

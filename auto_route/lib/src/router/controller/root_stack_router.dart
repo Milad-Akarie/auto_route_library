@@ -1,6 +1,6 @@
 part of 'routing_controller.dart';
 
-/// Signature for a function uses [pagesMap] to build an [AutoRoutePage]
+/// Signature for a function uses `pagesMap` to build an [AutoRoutePage]
 typedef PageBuilder = AutoRoutePage<dynamic> Function(RouteData<dynamic> data);
 
 const ValueKey<String> _kRootKey = ValueKey('%__Root__%');
@@ -152,12 +152,12 @@ abstract class RootStackRouter extends StackRouter {
     onGeneratePath: onGeneratePath,
   );
 
-  /// Generates a path for a route with the provided [name]
+  /// Generates a path for a route with the provided `name`
   ///
   /// routes with defined path will use the defined path
   /// and will not use this method
   ///
-  /// routes marked with [initial] will use either '/' or an empty string
+  /// routes marked with `initial` will use either '/' or an empty string
   /// for such routes
   ///
   /// use [isRoot] to determine if the route needs to start with '/'

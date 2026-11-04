@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Most of the code here is taking from flutter's [TabView]
+/// Most of the code here is taking from flutter's `TabView`
 class AutoPageView extends StatefulWidget {
   /// Default constructor
   const AutoPageView({

@@ -46,8 +46,8 @@ class RouteData<R> {
   /// Used inside of [AutoRoutePage.canUpdate]
   final Key stackKey;
 
-  /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
-  /// where it can be used by [CupertinoNavigationBar]
+  /// Builds page title that's passed to `_PageBasedCupertinoPageRoute.title`
+  /// where it can be used by `CupertinoNavigationBar`
   ///
   /// it can also be used manually by calling [RouteData.title] inside widgets
   String Function(BuildContext context) get title =>

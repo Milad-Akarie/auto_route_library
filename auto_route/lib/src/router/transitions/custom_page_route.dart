@@ -2,7 +2,7 @@ import 'package:auto_route/src/router/transitions/flutter_material_theme.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// A default implementation of [PageRoute]
-/// used by [StackRouter.pushWidget]
+/// used by `StackRouter.pushWidget`
 class AutoPageRouteBuilder<T> extends PageRoute<T> {
   /// Default constructor
   AutoPageRouteBuilder({
@@ -13,7 +13,7 @@ class AutoPageRouteBuilder<T> extends PageRoute<T> {
     super.fullscreenDialog,
   });
 
-  /// See [PageRouteBuilder.transitionBuilder]
+  /// See `PageRouteBuilder.transitionBuilder`
   final RouteTransitionsBuilder? transitionBuilder;
 
   /// The page to be displayed

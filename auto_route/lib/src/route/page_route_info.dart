@@ -200,7 +200,7 @@ class PageRouteInfo<T extends Object?> {
   }
 
   /// Returns the match result of this route
-  /// which internally calls [router.matcher.matchByRoute]
+  /// which internally calls `router.matcher.matchByRoute`
   RouteMatch<dynamic>? match(BuildContext context) {
     return context.router.match(this);
   }

@@ -132,7 +132,7 @@ abstract class NavigationHistory with ChangeNotifier {
 
   UrlState _urlState = UrlState.fromSegments(const []);
 
-  /// Notifies [AutoRouteDelegate] of url configuration changed
+  /// Notifies `AutoRouteDelegate` of url configuration changed
   /// if [newState] is different from current
   void onNewUrlState(UrlState newState, {bool notify = true}) {
     // Two pages of the same route with equal arguments have equal url states;

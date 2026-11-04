@@ -11,7 +11,7 @@ class TypeResolver {
   /// Default constructor
   TypeResolver(this.libs, [this.targetFile]);
 
-  /// The list of resolved libraries in [BuildStep]
+  /// The list of resolved libraries in `BuildStep`
   final List<LibraryElement> libs;
 
   /// The target file to resolve relative paths to

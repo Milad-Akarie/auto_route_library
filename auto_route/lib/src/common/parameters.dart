@@ -32,10 +32,10 @@ class Parameters {
   @override
   int get hashCode => const MapEquality<dynamic, dynamic>().hash(_params);
 
-  /// Helper getter to [_params.isNotEmpty]
+  /// Helper getter to `_params.isNotEmpty`
   bool get isNotEmpty => _params.isNotEmpty;
 
-  /// Helper getter to [_params.isEmpty]
+  /// Helper getter to `_params.isEmpty`
   bool get isEmpty => _params.isEmpty;
 
   /// returns the value corresponding with [key] as is, without type checking
@@ -71,7 +71,7 @@ class Parameters {
     _ => value.toString(),
   };
 
-  /// returns the value corresponding with [key] as nullable [Int]
+  /// returns the value corresponding with [key] as nullable `Int`
   /// if null returns [defaultValue]
   int? optInt(String key, [int? defaultValue]) {
     final param = _params[key];
@@ -83,7 +83,7 @@ class Parameters {
     return int.tryParse(param.toString()) ?? defaultValue;
   }
 
-  /// returns the value corresponding with [key] as [Int]
+  /// returns the value corresponding with [key] as `Int`
   /// if null returns [defaultValue]
   int getInt(String key, [int? defaultValue]) {
     final val = optInt(key, defaultValue);

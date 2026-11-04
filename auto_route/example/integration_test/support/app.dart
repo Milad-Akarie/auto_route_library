@@ -63,7 +63,7 @@ Future<void> pumpRouterConfigApp(WidgetTester tester, RouterConfig<UrlState> con
 /// is already there, so pumpWidget builds the app inside a frame, where the
 /// Router reports its empty route before the link's page is in. On web the
 /// browser's current entry holds [link], as when the browser opens it, and
-/// keeps its [browserEntryIndex]. [link] is the app's initial route until the
+/// keeps its `browserEntryIndex`. [link] is the app's initial route until the
 /// test ends.
 Future<void> pumpAppAtDeepLink(WidgetTester tester, String link, Widget app) async {
   final dispatcher = tester.binding.platformDispatcher;

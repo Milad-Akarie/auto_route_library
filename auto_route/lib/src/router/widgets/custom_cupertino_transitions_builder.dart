@@ -310,7 +310,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
 
 /// A controller for an iOS-style back gesture.
 ///
-/// This is created by a [CupertinoPageRoute] in response from a gesture caught
+/// This is created by a `CupertinoPageRoute` in response from a gesture caught
 /// by a [_CupertinoBackGestureDetector] widget, which then also feeds it input
 /// from the gesture. It controls the animation controller owned by the route,
 /// based on the input provided by the gesture detector.
@@ -331,14 +331,14 @@ class _CupertinoBackGestureController<T> {
   final AnimationController controller;
   final NavigatorState navigator;
 
-  /// The drag gesture has changed by [fractionalDelta]. The total range of the
+  /// The drag gesture has changed by `fractionalDelta`. The total range of the
   /// drag should be 0.0 to 1.0.
   void dragUpdate(double delta) {
     controller.value -= delta;
   }
 
   /// The drag gesture has ended with a horizontal motion of
-  /// [fractionalVelocity] as a fraction of screen width per second.
+  /// `fractionalVelocity` as a fraction of screen width per second.
   void dragEnd(double velocity) {
     // Fling in the appropriate direction.
     // AnimationController.fling is guaranteed to

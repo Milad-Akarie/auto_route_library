@@ -18,7 +18,7 @@ import 'package:source_gen/source_gen.dart';
 
 const _typeChecker = TypeChecker.typeNamed(AutoRouterConfig, inPackage: 'auto_route');
 
-/// Base class for [AutoRouterBuilder] and [AutoRouterModuleBuilder]
+/// Base class for `AutoRouterBuilder` and `AutoRouterModuleBuilder`
 abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   /// Default constructor
   AutoRouterBuilderBase({

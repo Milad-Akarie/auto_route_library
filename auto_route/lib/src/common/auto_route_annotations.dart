@@ -2,7 +2,7 @@ import 'package:meta/meta.dart' show optionalTypeArgs;
 import 'package:meta/meta_meta.dart' show Target;
 
 /// Classes annotated with AutoRouteConfig will generate
-/// an abstract class that extends [RootStackRouter] that
+/// an abstract class that extends `RootStackRouter` that
 /// can be extended by the annotated class to be used as the RootRouter of the App
 @Target({.classType})
 class AutoRouterConfig {
@@ -15,7 +15,7 @@ class AutoRouterConfig {
   });
 
   /// Auto generated route names can be a bit long with
-  /// the [Route] suffix
+  /// the `Route` suffix
   /// e.g ProductDetailsPage would be ProductDetailsPageRoute
   ///
   /// You can replace some relative parts in your route names
@@ -56,7 +56,7 @@ class RoutePage {
 
   /// The name of the generated route
   /// if not provided, a name will be generated from class name
-  /// and maybe altered by [replaceInRouteName]
+  /// and maybe altered by `replaceInRouteName`
   final String? name;
 
   /// Use for web for lazy loading

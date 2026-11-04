@@ -14,11 +14,11 @@ typedef TitleBuilder = String Function(BuildContext context, RouteData<dynamic> 
 /// Signature for a function that builds a widget with [RouteData]
 typedef WidgetBuilderWithData = Widget Function(BuildContext context, RouteData<dynamic> data);
 
-/// Signature for a function that builds the page [restorationId]
+/// Signature for a function that builds the page `restorationId`
 /// Used in [AutoRoutePage]
 typedef RestorationIdBuilder = String Function(RouteMatch<dynamic> match);
 
-/// A route entry configuration used in [RouteMatcher]
+/// A route entry configuration used in `RouteMatcher`
 /// to create [RouteMatch]'s from paths and [PageRouteInfo]'s
 @immutable
 class AutoRoute {
@@ -191,7 +191,7 @@ class AutoRoute {
   final Map<String, dynamic> meta;
 
   /// Indicates what kind of [PageRoute] this route will use
-  /// e.g [MaterialRouteType] will create [_PageBasedMaterialPageRoute]
+  /// e.g [MaterialRouteType] will create `_PageBasedMaterialPageRoute`
   final RouteType? type;
 
   /// Whether to treat the target route as a fullscreenDialog.
@@ -206,7 +206,7 @@ class AutoRoute {
   /// Passed To [PageRoute.allowSnapshotting]
   final bool allowSnapshotting;
 
-  /// Builds page title that's passed to [_PageBasedCupertinoPageRoute.title]
+  /// Builds page title that's passed to `_PageBasedCupertinoPageRoute.title`
   /// where it can be used by [CupertinoNavigationBar]
   ///
   /// it can also be used manually by calling [RouteData.title] inside widgets
@@ -555,7 +555,7 @@ typedef OnGeneratePath = String Function(AutoRoute route);
 /// it also has some helper-methods and getters
 /// to deal with config-entries
 ///
-/// Mainly used by [RouteMatcher]
+/// Mainly used by `RouteMatcher`
 class RouteCollection {
   /// Default constructor
   RouteCollection(this._routesMap, [this._subCollections = const {}]) : assert(_routesMap.isNotEmpty);

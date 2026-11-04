@@ -29,7 +29,7 @@ class AutoRouteNavigator extends StatefulWidget {
 
   /// A builder for the placeholder page that is shown
   /// before the first route can be rendered. Defaults to
-  /// an empty page with [Theme.scaffoldBackgroundColor].
+  /// an empty page with `Theme.scaffoldBackgroundColor`.
   final WidgetBuilder? placeholder;
 
   /// The observers to observer navigator's navigation events

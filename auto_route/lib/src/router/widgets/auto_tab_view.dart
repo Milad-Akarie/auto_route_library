@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// The adjustments made to this code from [TabView] is to fix children not
+/// The adjustments made to this code from `TabView` is to fix children not
 /// updating in sync with TabRouter changes
 /// and to set pageController.offset.round() to [TabController.index]
 /// so page is set when the scroll pos is rounded to it

@@ -74,8 +74,8 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
 @internal
 Uri escapeForWebEngine(Uri uri) => Uri.parse(uri.toString().replaceAll('%', '%25'));
 
-/// [uri] as the web engine needs it: its string is escaped for the engine, as
-/// [escapeForWebEngine] does, and its parts are [uri]'s own.
+/// `uri` as the web engine needs it: its string is escaped for the engine, as
+/// [escapeForWebEngine] does, and its parts are `uri`'s own.
 ///
 /// The engine gets the string. Flutter's own route information provider
 /// compares the parts with those of the uri the engine reported, so a report
@@ -231,7 +231,7 @@ class AutoRouteInformation extends RouteInformation {
 }
 
 /// [UrlState] Holds current url state in a more structured way
-/// it's used by [Router] as configuration state
+/// it's used by `Router` as configuration state
 @immutable
 class UrlState {
   /// Default constructor
@@ -261,7 +261,7 @@ class UrlState {
   /// [RootStackRouter] fills it off the web, where Flutter's state
   /// restoration runs, and rebuilds its pages from it when the app is
   /// restored. [DefaultRouteParser] keeps it in [RouteInformation.state],
-  /// which [Router] saves, next to [pathState]; it's not sent to the
+  /// which `Router` saves, next to [pathState]; it's not sent to the
   /// platform.
   @internal
   final Object? savedRoutes;

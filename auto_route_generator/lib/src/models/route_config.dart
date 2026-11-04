@@ -3,7 +3,7 @@ import 'package:auto_route_generator/src/models/route_parameter_config.dart';
 import 'package:auto_route_generator/utils.dart';
 
 /// holds the extracted route configs
-/// to be used in [RouterClassGenerator]
+/// to be used in `RouterClassGenerator`
 class RouteConfig {
   /// Default constructor
   RouteConfig({

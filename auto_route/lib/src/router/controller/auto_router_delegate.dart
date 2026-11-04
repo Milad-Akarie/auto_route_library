@@ -60,7 +60,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   /// A builder for the placeholder page that is shown
   /// before the first route can be rendered. Defaults to
-  /// an empty page with [Theme.scaffoldBackgroundColor].
+  /// an empty page with `Theme.scaffoldBackgroundColor`.
   final WidgetBuilder? placeholder;
 
   /// if set to true the new stack
@@ -338,7 +338,7 @@ class _AutoRootRouter extends StatefulWidget {
 
   /// A builder for the placeholder page that is shown
   /// before the first route can be rendered. Defaults to
-  /// an empty page with [Theme.scaffoldBackgroundColor].
+  /// an empty page with `Theme.scaffoldBackgroundColor`.
   final WidgetBuilder? placeholder;
 
   final TraversalEdgeBehavior? routeTraversalEdgeBehavior;
@@ -464,10 +464,10 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
 
 /// Holds deep-link information
 abstract class DeepLink {
-  /// Builds a deep-link from a list of [PageRouteInf]s
+  /// Builds a deep-link from a list of `PageRouteInfo`s
   const factory DeepLink(List<PageRouteInfo> routes, {bool navigate}) = _RoutesDeepLink;
 
-  /// Builds a deep-link from a single [PageRouteInf]
+  /// Builds a deep-link from a single `PageRouteInfo`
   factory DeepLink.single(PageRouteInfo route, {bool navigate = true}) {
     return _RoutesDeepLink([route], navigate: navigate);
   }
@@ -489,7 +489,7 @@ abstract class DeepLink {
 
   /// Helper function to remove the prefix path of a [Uri]
   /// You can use this method to remove the prefix of a path
-  /// the prefix should start with a [/]
+  /// the prefix should start with a `/`
   ///
   /// If not able to parse the resulting Uri, return the original
   static DeepLinkTransformer prefixStripper(String prefix) {

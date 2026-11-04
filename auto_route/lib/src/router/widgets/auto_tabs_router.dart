@@ -70,7 +70,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   }) = _AutoTabsRouterPageView;
 
   /// Builds an [AutoTabsRouter] to uses
-  /// a [TabView] to render pages
+  /// a `TabView` to render pages
   const factory AutoTabsRouter.tabBar({
     Key? key,
     List<PageRouteInfo>? routes,
@@ -123,7 +123,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// else pop parent
   final int homeIndex;
 
-  /// Looks up and returns the scoped [controller]
+  /// Looks up and returns the scoped `controller`
   ///
   /// if watch is true dependent widget will watch changes
   /// of this scope otherwise it would just read it
