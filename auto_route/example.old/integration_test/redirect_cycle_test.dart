@@ -78,7 +78,7 @@ void main() {
 
       expect(errors, hasLength(1));
       expect(
-        errors.single.exception.toString(),
+        errors.singleOrNull?.exception.toString(),
         contains('A guard redirected LoginRoute to itself.'),
       );
       expect(guardCalls, 2);
@@ -125,7 +125,7 @@ void main() {
 
       expect(errors, hasLength(1));
       expect(
-        errors.single.exception.toString(),
+        errors.singleOrNull?.exception.toString(),
         contains('Guards redirected in a loop: ARoute → BRoute → ARoute.'),
       );
       expect(guardCalls, 2);

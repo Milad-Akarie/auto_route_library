@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -133,9 +134,10 @@ enum _Tabs {
 double _median(List<int> values) {
   final sorted = [...values]..sort();
   final middle = sorted.length ~/ 2;
-  return sorted.length.isOdd
-      ? sorted[middle].toDouble()
-      : (sorted[middle - 1] + sorted[middle]) / 2;
+  return sorted
+      .skip(middle - (sorted.length.isOdd ? 0 : 1))
+      .take(sorted.length.isOdd ? 1 : 2)
+      .average;
 }
 
 // '/level0/7/level1/7/...', a different id each step so every step changes the stack.

@@ -33,7 +33,7 @@ void main() {
             .setActiveIndex(kEagerTabNames.length - 1);
         await tester.pumpAndSettle();
 
-        expect(find.text(kEagerTabNames.last), findsOneWidget);
+        expect(find.text(kEagerLastTabName), findsOneWidget);
         expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
       },
     );

@@ -59,16 +59,19 @@ void main() {
         double end, {
         double tolerance = 1e-6,
       }) {
-        final rising = end > values.first;
-        for (var i = 1; i < values.length; i++) {
-          final step = values[i] - values[i - 1];
+        final [first, ...rest] = values;
+        final rising = end > first;
+        var previous = first;
+        for (final (i, value) in rest.indexed) {
+          final step = value - previous;
           expect(
             rising ? step >= -1e-9 : step <= 1e-9,
             isTrue,
-            reason: 'frame $i of $values',
+            reason: 'frame ${i + 1} of $values',
           );
+          previous = value;
         }
-        expect(values.last, closeTo(end, tolerance));
+        expect(values.lastOrNull, closeTo(end, tolerance));
       }
 
       await tester.tap(find.byType(Tab).at(2));

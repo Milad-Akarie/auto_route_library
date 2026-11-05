@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:example/mobile/router/router.dart';
 import 'package:example/mobile/router/router.gr.dart';
 import 'package:flutter/foundation.dart';
@@ -91,7 +92,10 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     onDestinationSelected: (index) {
                       // use navigate instead of push so you won't have
                       // many useless route stacks
-                      unawaited(context.navigateTo(destinations[index].route));
+                      final destination = destinations.elementAtOrNull(index);
+                      if (destination != null) {
+                        unawaited(context.navigateTo(destination.route));
+                      }
                     },
                   ),
                   // child is the rendered route stack

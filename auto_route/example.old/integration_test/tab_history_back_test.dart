@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -41,7 +42,9 @@ void main() {
 
   void expectTab(TabsRouter tabs, int index) {
     expect(tabs.activeIndex, index);
-    expect(find.text(kTabHistoryTabNames[index]), findsOneWidget);
+    final name = kTabHistoryTabNames.elementAtOrNull(index);
+    expect(name, isNotNull);
+    expect(find.text(name!), findsOneWidget);
   }
 
   testWidgets(
@@ -56,7 +59,8 @@ void main() {
       expectTab(tabs, 0);
       await systemBack(tester);
       expect(find.text(kTabHistoryFirstPageName), findsOneWidget);
-      expect(find.text(kTabHistoryTabNames[0]), findsNothing);
+      final [firstTab, ...] = kTabHistoryTabNames;
+      expect(find.text(firstTab), findsNothing);
     },
   );
 

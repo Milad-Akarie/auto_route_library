@@ -56,7 +56,7 @@ void main() {
         await tester.tap(find.text('Open cashless'));
         await tester.pumpAndSettle();
         expect(find.text('CashlessSchoolApplyRoute'), findsOneWidget);
-        expect(pushes.last, 'CashlessSchoolApplyRoute after null');
+        expect(pushes.lastOrNull, 'CashlessSchoolApplyRoute after null');
         await expectBrowserUrl('/dashboard/cashless');
 
         if (back == 'system back') {

@@ -28,7 +28,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      (failures.single as RouteNotFoundFailure).toString(),
+      (failures.singleOrNull as RouteNotFoundFailure?).toString(),
       allOf(
         contains('Can not navigate to /shop/1/reviews'),
         contains(kRouteTreeOfRouteTreeRouter),

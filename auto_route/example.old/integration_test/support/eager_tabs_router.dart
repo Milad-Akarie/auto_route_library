@@ -5,7 +5,14 @@ import 'package:material_ui/material_ui.dart';
 // eager_tabs_test.dart.
 
 /// The tabs' route names, each page showing its name.
-const kEagerTabNames = ['NewsRoute', 'FeedRoute', 'ProfileRoute'];
+const List<String> kEagerTabNames = [
+  'NewsRoute',
+  'FeedRoute',
+  kEagerLastTabName,
+];
+
+/// The name of the last of the [kEagerTabNames].
+const kEagerLastTabName = 'ProfileRoute';
 
 /// The route name of the page holding the tabs.
 const kEagerTabsName = 'TabsRoute';

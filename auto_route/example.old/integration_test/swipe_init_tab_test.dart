@@ -60,17 +60,17 @@ void main() {
     await tester.fling(find.text('Tab1Route'), -swipe, 1000);
     await tester.pumpAndSettle();
     expect(tabsRouter.activeIndex, 1);
-    expect(tabEvents.last, 'init Tab2Route from Tab1Route');
+    expect(tabEvents.lastOrNull, 'init Tab2Route from Tab1Route');
 
     await tester.fling(find.text('Tab2Route'), swipe, 1000);
     await tester.pumpAndSettle();
     expect(tabsRouter.activeIndex, 0);
-    expect(tabEvents.last, 'change Tab1Route from Tab2Route');
+    expect(tabEvents.lastOrNull, 'change Tab1Route from Tab2Route');
 
     await tester.fling(find.text('Tab1Route'), -swipe, 1000);
     await tester.pumpAndSettle();
     expect(tabsRouter.activeIndex, 1);
-    expect(tabEvents.last, 'change Tab2Route from Tab1Route');
+    expect(tabEvents.lastOrNull, 'change Tab2Route from Tab1Route');
   }
 
   testWidgets(

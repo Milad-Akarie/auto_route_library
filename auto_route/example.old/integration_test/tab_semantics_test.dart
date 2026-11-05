@@ -55,7 +55,7 @@ void main() {
           tester
               .binding
               .renderViews
-              .first
+              .firstOrNull!
               .owner!
               .semanticsOwner!
               .rootSemanticsNode!,

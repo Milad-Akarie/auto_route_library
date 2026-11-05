@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -93,9 +94,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      router.removeRoute(
-        router.stackData.firstWhere((route) => route.name == SecondRoute.name),
+      final second = router.stackData.firstWhereOrNull(
+        (route) => route.name == SecondRoute.name,
       );
+      expect(second, isNotNull);
+      router.removeRoute(second!);
       await tester.pumpAndSettle();
 
       expectCurrentPage(router, ThirdRoute.name);

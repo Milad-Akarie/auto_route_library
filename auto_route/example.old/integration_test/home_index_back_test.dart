@@ -49,7 +49,8 @@ void main() {
     await systemBack(tester);
 
     expect(tabs.activeIndex, 0);
-    expect(find.text(_kTabNames[0]), findsOneWidget);
+    final [newsTab, ...] = _kTabNames;
+    expect(find.text(newsTab), findsOneWidget);
     expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
   });
 
@@ -62,7 +63,8 @@ void main() {
       await systemBack(tester);
 
       expect(tabs.activeIndex, 1);
-      expect(find.text(_kTabNames[1]), findsOneWidget);
+      final [_, feedTab, ...] = _kTabNames;
+      expect(find.text(feedTab), findsOneWidget);
     },
   );
 }
