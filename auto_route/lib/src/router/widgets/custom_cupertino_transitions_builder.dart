@@ -7,7 +7,6 @@
 
 // Copied from Flutter: the code stays as Flutter wrote it, so the two can
 // still be compared line by line.
-// ignore_for_file: avoid-unused-generics, avoid-collection-equality-checks
 
 import 'dart:math';
 import 'dart:ui' show lerpDouble;
@@ -215,14 +214,14 @@ class _CupertinoBackGestureDetector<T> extends StatefulWidget {
 
   final ValueGetter<bool> enabledCallback;
 
-  final ValueGetter<_CupertinoBackGestureController<T>> onStartPopGesture;
+  final ValueGetter<_CupertinoBackGestureController> onStartPopGesture;
 
   @override
   _CupertinoBackGestureDetectorState<T> createState() => .new();
 }
 
 class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureDetector<T>> {
-  _CupertinoBackGestureController<T>? _backGestureController;
+  _CupertinoBackGestureController? _backGestureController;
 
   late HorizontalDragGestureRecognizer _recognizer;
 
@@ -316,10 +315,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
 ///
 /// This class works entirely in logical coordinates (0.0 is new page dismissed,
 /// 1.0 is new page on top).
-///
-/// The type `T` specifies the return type of the route with which this gesture
-/// detector controller is associated.
-class _CupertinoBackGestureController<T> {
+class _CupertinoBackGestureController {
   /// Creates a controller for an iOS-style back gesture.
   ///
   /// The [navigator] and [controller] arguments must not be null.
