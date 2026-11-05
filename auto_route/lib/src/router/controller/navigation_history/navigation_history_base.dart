@@ -110,7 +110,9 @@ abstract class NavigationHistory with ChangeNotifier {
   /// [consumeOwnBrowserMove] matches that report. Does nothing on native
   /// platforms, or when [isBrowserBehindApp] is false.
   @internal
-  void returnBrowserToApp() {}
+  void returnBrowserToApp() {
+    // Native platforms have no browser to move.
+  }
 
   /// Pushes a new browser entry with given state
   ///

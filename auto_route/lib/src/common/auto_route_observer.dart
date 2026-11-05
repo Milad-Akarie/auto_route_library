@@ -21,12 +21,16 @@ class AutoRouterObserver extends NavigatorObserver {
   /// called when a tab route activates
   // A hook for subclasses: the default does nothing with what it is told.
   // ignore: avoid-unused-parameters
-  void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {}
+  void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
+    // Does nothing: a hook for subclasses.
+  }
 
   /// called when tab route reactivates
   // A hook for subclasses: the default does nothing with what it is told.
   // ignore: avoid-unused-parameters
-  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {}
+  void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
+    // Does nothing: a hook for subclasses.
+  }
 }
 
 /// An interface used to mark classes as AutoRouteAware entities
@@ -34,27 +38,39 @@ class AutoRouterObserver extends NavigatorObserver {
 mixin class AutoRouteAware {
   /// Called when the top route has been popped off, and the current route
   /// shows up.
-  void didPopNext() {}
+  void didPopNext() {
+    // Does nothing: a hook for implementers.
+  }
 
   /// Called when the current route has been pushed.
-  void didPush() {}
+  void didPush() {
+    // Does nothing: a hook for implementers.
+  }
 
   /// Called when the current route has been popped off.
-  void didPop() {}
+  void didPop() {
+    // Does nothing: a hook for implementers.
+  }
 
   /// Called when a new route has been pushed, and the current route is no
   /// longer visible.
-  void didPushNext() {}
+  void didPushNext() {
+    // Does nothing: a hook for implementers.
+  }
 
   /// called when a tab route activates
   // A hook for implementers: the default does nothing with what it is told.
   // ignore: avoid-unused-parameters
-  void didInitTabRoute(TabPageRoute? previousRoute) {}
+  void didInitTabRoute(TabPageRoute? previousRoute) {
+    // Does nothing: a hook for implementers.
+  }
 
   /// called when tab route reactivates
   // A hook for implementers: the default does nothing with what it is told.
   // ignore: avoid-unused-parameters
-  void didChangeTabRoute(TabPageRoute previousRoute) {}
+  void didChangeTabRoute(TabPageRoute previousRoute) {
+    // Does nothing: a hook for implementers.
+  }
 }
 
 /// a helper mixin to utilises [AutoRouteAware] in a better manner
@@ -86,22 +102,34 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T> implements 
   }
 
   @override
-  void didChangeTabRoute(TabPageRoute previousRoute) {}
+  void didChangeTabRoute(TabPageRoute previousRoute) {
+    // Does nothing: a hook for the state that uses this mixin.
+  }
 
   @override
-  void didInitTabRoute(TabPageRoute? previousRoute) {}
+  void didInitTabRoute(TabPageRoute? previousRoute) {
+    // Does nothing: a hook for the state that uses this mixin.
+  }
 
   @override
-  void didPop() {}
+  void didPop() {
+    // Does nothing: a hook for the state that uses this mixin.
+  }
 
   @override
-  void didPush() {}
+  void didPush() {
+    // Does nothing: a hook for the state that uses this mixin.
+  }
 
   @override
-  void didPopNext() {}
+  void didPopNext() {
+    // Does nothing: a hook for the state that uses this mixin.
+  }
 
   @override
-  void didPushNext() {}
+  void didPushNext() {
+    // Does nothing: a hook for the state that uses this mixin.
+  }
 }
 
 /// A [Navigator] observer that notifies [AutoRouteAware]s of changes to the

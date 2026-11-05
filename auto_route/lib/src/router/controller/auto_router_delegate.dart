@@ -203,7 +203,9 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     final routes = _restoredRoutes(saved is Map ? saved[_routesKey] : saved);
     final matches = routes == null || routes.isEmpty || controller.hasEntries
         ? null
-        : controller._matchAllOrReportFailure(routes, (_) {});
+        : controller._matchAllOrReportFailure(routes, (_) {
+            // A saved route that no longer matches is dropped rather than thrown.
+          });
     final buildable = matches == null ? const <RouteMatch<Object?>>[] : _buildableMatches(matches, controller);
     if (buildable.isEmpty) {
       return setNewRoutePath(configuration);

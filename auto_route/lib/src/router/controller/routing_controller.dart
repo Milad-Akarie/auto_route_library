@@ -488,8 +488,6 @@ abstract class RoutingController with ChangeNotifier {
     return SynchronousFuture(null);
   }
 
-  void _onNavigate(List<RouteMatch<Object?>> routes);
-
   Future<T?> _navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
     final match = _matchOrReportFailure(route, onFailure);
     if (match != null) {
@@ -1462,9 +1460,6 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  void _onNavigate(List<RouteMatch<Object?>> routes) {}
-
-  @override
   bool get managedByWidget => false;
 }
 
@@ -1893,7 +1888,6 @@ abstract class StackRouter extends RoutingController {
     );
   }
 
-  @override
   void _onNavigate(List<RouteMatch<Object?>> routes) {
     _onNavigateCallback?.call(routes);
   }
@@ -2643,7 +2637,8 @@ abstract class StackRouter extends RoutingController {
       final mayUpdateController = _topInnerControllerOf(mayUpdateRoute.key);
       if (mayUpdateController != null) {
         final newChildren = mayUpdateRoute.children ?? const [];
-        if (mayUpdateController.managedByWidget) {
+        // Only a declarative stack router is managed by its widget.
+        if (mayUpdateController is StackRouter && mayUpdateController.managedByWidget) {
           mayUpdateController._onNavigate(newChildren);
         }
         // children a guard set while reevaluating are new routes, not pages being reevaluated
