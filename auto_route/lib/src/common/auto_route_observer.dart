@@ -20,14 +20,12 @@ extension RouteX<T> on Route<T> {
 class AutoRouterObserver extends NavigatorObserver {
   /// called when a tab route activates
   // A hook for subclasses: the default does nothing with what it is told.
-  // ignore: avoid-unused-parameters
   void didInitTabRoute(TabPageRoute route, TabPageRoute? previousRoute) {
     // Does nothing: a hook for subclasses.
   }
 
   /// called when tab route reactivates
   // A hook for subclasses: the default does nothing with what it is told.
-  // ignore: avoid-unused-parameters
   void didChangeTabRoute(TabPageRoute route, TabPageRoute previousRoute) {
     // Does nothing: a hook for subclasses.
   }
@@ -60,14 +58,12 @@ mixin class AutoRouteAware {
 
   /// called when a tab route activates
   // A hook for implementers: the default does nothing with what it is told.
-  // ignore: avoid-unused-parameters
   void didInitTabRoute(TabPageRoute? previousRoute) {
     // Does nothing: a hook for implementers.
   }
 
   /// called when tab route reactivates
   // A hook for implementers: the default does nothing with what it is told.
-  // ignore: avoid-unused-parameters
   void didChangeTabRoute(TabPageRoute previousRoute) {
     // Does nothing: a hook for implementers.
   }
