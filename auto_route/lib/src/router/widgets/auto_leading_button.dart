@@ -4,33 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// AppBar Leading button types
-enum LeadingType {
-  /// Whether to show a back button
-  back,
-
-  /// Whether to show a close button
-  close,
-
-  /// Whether to show a drawer toggle
-  drawer,
-
-  /// Whether to show no leading at all
-  noLeading;
-
-  /// Helper to check if this instance is [back]
-  bool get isBack => this == back;
-
-  /// Helper to check if this instance is [close]
-  bool get isClose => this == close;
-
-  /// Helper to check if this instance is [drawer]
-  bool get isDrawer => this == drawer;
-
-  /// Helper to check if this instance is [noLeading]
-  bool get isNoLeading => this == noLeading;
-}
-
 /// Signature function to customize the
 /// build of a leading button
 typedef AutoLeadingButtonBuilder = Widget Function(
@@ -210,4 +183,31 @@ class _AutoLeadingButtonState extends State<AutoLeadingButton> {
     properties.add(DiagnosticsProperty<RouterScope>('scope', RouterScope.of(context)));
     properties.add(DiagnosticsProperty<PagelessRoutesObserver>('pagelessRoutesObserver', _pagelessRoutesObserver));
   }
+}
+
+/// AppBar Leading button types
+enum LeadingType {
+  /// Whether to show a back button
+  back,
+
+  /// Whether to show a close button
+  close,
+
+  /// Whether to show a drawer toggle
+  drawer,
+
+  /// Whether to show no leading at all
+  noLeading;
+
+  /// Helper to check if this instance is [back]
+  bool get isBack => this == back;
+
+  /// Helper to check if this instance is [close]
+  bool get isClose => this == close;
+
+  /// Helper to check if this instance is [drawer]
+  bool get isDrawer => this == drawer;
+
+  /// Helper to check if this instance is [noLeading]
+  bool get isNoLeading => this == noLeading;
 }
