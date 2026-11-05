@@ -465,7 +465,7 @@ abstract class _PageRoute<T> extends PageRoute<T> {
   bool get opaque => _page.opaque;
 
   @override
-  String get debugLabel => '${super.debugLabel}(${_page.name})';
+  String get debugLabel => '${super.debugLabel}(${_page.routeData.name})';
 
   @override
   bool canTransitionTo(TransitionRoute<Object?> nextRoute) {

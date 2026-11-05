@@ -8,7 +8,8 @@ bool mapNullOrEmpty(Map<Object?, Object?>? map) {
 
 /// A utility to re-case a string to kabab-case
 String toKebabCase(String s) {
-  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)}-${match.group(2)}'.toLowerCase());
+  // Both groups of the pattern take part in every match, so neither is null.
+  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)!}-${match.group(2)!}'.toLowerCase());
 }
 
 /// A helper assertion method that throws
