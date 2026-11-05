@@ -26,6 +26,8 @@
 **/doc/api/
 .dart_tool/
 .flutter-plugins
+.flutter-plugins-dependencies
+**/Flutter/ephemeral/
 .packages
 .pub-cache/
 .pub/
