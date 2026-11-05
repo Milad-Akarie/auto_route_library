@@ -6,10 +6,10 @@ class RouterConfig {
     required this.path,
     required this._cacheHash,
     required this.generateForDir,
-    this.replaceInRouteName,
-    this.deferredLoading = false,
-    this.isPartOfLibrary = false,
-    this.argsEquality = false,
+    required this.replaceInRouteName,
+    required this.deferredLoading,
+    required this.isPartOfLibrary,
+    required this.argsEquality,
   });
 
   /// Deserializes a map to an instance of [RouterConfig]

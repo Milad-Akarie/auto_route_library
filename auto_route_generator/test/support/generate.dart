@@ -44,14 +44,12 @@ Future<TestReaderWriter> _loadPackages() async {
 /// [sources] maps paths inside the `app` package (`lib/home_page.dart`) to
 /// their content; a path in another package names it first, as in
 /// `skeleton|lib/login_page.dart`. When none of them holds `router.dart`,
-/// [kDefaultRouterSource] is added as `lib/router.dart`.
+/// `kDefaultRouterSource` is added as `lib/router.dart`.
 ///
-/// [options] go to both builders, as `build.yaml` options of the package;
 /// [routerOptions] go to the router builder alone. [outputPath] is where the
 /// router builder writes, next to the router by default.
 Future<GeneratedRouter> generateRouter(
   Map<String, String> sources, {
-  Map<String, Object> options = const {},
   Map<String, Object> routerOptions = const {},
   String routerPath = 'lib/router.dart',
   String? outputPath,
@@ -69,8 +67,8 @@ Future<GeneratedRouter> generateRouter(
   outputPath ??= routerPath.replaceFirst(RegExp(r'\.dart$'), '.gr.dart');
   final result = await testBuilders(
     [
-      autoRouteBuilder(BuilderOptions(options)),
-      autoRouterBuilder(BuilderOptions({...options, ...routerOptions})),
+      autoRouteBuilder(.empty),
+      autoRouterBuilder(BuilderOptions(routerOptions)),
       CompileCheckBuilder(routerPath, outputPath),
     ],
     assets,

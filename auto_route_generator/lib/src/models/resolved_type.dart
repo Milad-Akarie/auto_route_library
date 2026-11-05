@@ -20,20 +20,20 @@ class ResolvedType {
   const new _({
     required this.name,
     required this._isRecordType,
-    this.import,
-    this.typeArguments = const [],
-    this.isNullable = false,
-    this._nameInRecord,
-    this._functionParts,
-    this.isEnum = false,
+    required this.import,
+    required this.typeArguments,
+    required this.isNullable,
+    required this._nameInRecord,
+    required this._functionParts,
+    required this.isEnum,
   });
 
   /// Constructor for a record types
   const new record({
     required this.name,
-    this.import,
-    this.typeArguments = const [],
-    this.isNullable = false,
+    required this.import,
+    required this.typeArguments,
+    required this.isNullable,
     this._nameInRecord,
   }) : _isRecordType = true,
        _functionParts = null,
@@ -41,7 +41,7 @@ class ResolvedType {
 
   /// Constructor for a function type, such as `void Function(String url)`,
   /// when it is a type argument or a record field
-  const new function({required FunctionTypeParts parts, this.isNullable = false, this._nameInRecord})
+  const new function({required FunctionTypeParts parts, required this.isNullable, required this._nameInRecord})
     : name = 'Function',
       import = null,
       typeArguments = const [],
@@ -102,7 +102,7 @@ class ResolvedType {
 
   /// Creates a [TypeReference] from the type
   Reference get refer {
-    final functionParts = this._functionParts;
+    final functionParts = _functionParts;
     if (functionParts != null) {
       return FunctionType(
         (b) => b
@@ -183,10 +183,10 @@ class FunctionTypeParts {
   /// Default constructor
   const new({
     required this._returnType,
-    this._requiredParameters = const [],
-    this._optionalParameters = const [],
-    this._namedParameters = const {},
-    this._namedRequiredParameters = const {},
+    required this._requiredParameters,
+    required this._optionalParameters,
+    required this._namedParameters,
+    required this._namedRequiredParameters,
   });
 
   /// deserializes the parts from json

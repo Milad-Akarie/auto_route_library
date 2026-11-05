@@ -2,20 +2,16 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart' show DartType, FunctionType, ParameterizedType, RecordType;
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
-import 'package:path/path.dart' as p;
 
 const _kUnPreferredImports = {'dart:ui'};
 
 /// A Helper class that resolves types
 class TypeResolver {
   /// Default constructor
-  const new(this._libs, [this._targetFile]);
+  const new(this._libs);
 
   /// The list of resolved libraries in `BuildStep`
   final List<LibraryElement> _libs;
-
-  /// The target file to resolve relative paths to
-  final Uri? _targetFile;
 
   /// Resolved the import path of the given [element]
   String? resolveImport(Element? element) {
@@ -35,7 +31,7 @@ class TypeResolver {
         if (uri.scheme == 'asset') {
           return _assetToPackage(lib.uri);
         }
-        return _targetFile == null ? lib.uri.toString() : _relative(uri, _targetFile!);
+        return lib.uri.toString();
       }
     }
     return fallBackImports.firstOrNull;
@@ -51,18 +47,6 @@ class TypeResolver {
       }
     }
     return uri.toString();
-  }
-
-  String _relative(Uri fileUri, Uri to) {
-    final libName = to.pathSegments.firstOrNull;
-    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.firstOrNull == libName) ||
-        (to.scheme == 'asset' && fileUri.scheme != 'package')) {
-      if (fileUri.path == to.path) {
-        return p.posix.basename(fileUri.path);
-      }
-      return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
-    }
-    return fileUri.toString();
   }
 
   bool _isCoreDartType(Element element) {

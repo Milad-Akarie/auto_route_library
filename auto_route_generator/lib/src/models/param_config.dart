@@ -123,7 +123,7 @@ class ParamConfig {
   /// How the generated code reads this param from the url and writes it
   /// back, or `null` when a url can not give its type.
   UrlParamType? get urlType {
-    final converter = this._converter;
+    final converter = _converter;
     return converter == null ? UrlParamType.of(type) : UrlParamType.converter(converter._name, converter._import);
   }
 
@@ -166,7 +166,7 @@ class FunctionParamConfig extends ParamConfig {
     required super.isOptional,
     required super.isNamed,
     required super.isRequired,
-    this._params = const [],
+    required this._params,
     super.alias,
     super.defaultValueCode,
     super.defaultValueImport,
@@ -278,7 +278,7 @@ class PathParamConfig {
 /// with.
 class ParamConverterRef {
   /// Default constructor
-  const new({required this._name, this._import});
+  const new({required this._name, required this._import});
 
   /// Deserializes the reference from a json map
   factory _fromJson(Map<String, dynamic> map) {

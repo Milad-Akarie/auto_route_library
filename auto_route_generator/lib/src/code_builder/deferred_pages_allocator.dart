@@ -5,7 +5,7 @@ import 'package:path/path.dart' as p;
 /// Allocates symbols for deferred pages
 class DeferredPagesAllocator implements Allocator {
   /// Default constructor
-  new(this._routes, {required this._defaultDeferredLoading, this._outputPath});
+  new(this._routes, {required this._defaultDeferredLoading, required this._outputPath});
   static const _doNotPrefix = ['dart:core'];
 
   final _imports = <String, int>{};
@@ -21,7 +21,7 @@ class DeferredPagesAllocator implements Allocator {
   ///
   /// Imports of files outside `lib/` are written relative to it, since they
   /// have no `package:` URI and a Flutter build rejects `asset:` imports.
-  final String? _outputPath;
+  final String _outputPath;
 
   @override
   String allocate(Reference reference) {
@@ -47,10 +47,9 @@ class DeferredPagesAllocator implements Allocator {
 
   String _importUri(String importPath) {
     final uri = Uri.parse(importPath);
-    final output = _outputPath;
-    if (uri.scheme != 'asset' || output == null || uri.pathSegments.length < 2) return importPath;
+    if (uri.scheme != 'asset' || uri.pathSegments.length < 2) return importPath;
     // The first segment of an asset: URI is the package.
-    return p.posix.relative(uri.pathSegments.skip(1).join('/'), from: p.posix.dirname(output));
+    return p.posix.relative(uri.pathSegments.skip(1).join('/'), from: p.posix.dirname(_outputPath));
   }
 }
 

@@ -14,8 +14,8 @@ class RouterConfigResolver {
     ConstantReader autoRouter,
     AssetId input,
     ClassElement clazz, {
-    bool isPartOfLibrary = false,
-    int? cacheHash,
+    required bool isPartOfLibrary,
+    required int cacheHash,
   }) {
     final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
     final replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;

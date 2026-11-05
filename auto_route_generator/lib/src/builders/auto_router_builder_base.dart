@@ -128,7 +128,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     routerFile.writeAsStringSync(jsonEncode(router.toJson()));
   }
 
-  File _buildRouterFile(BuildStep buildStep, {bool toCache = false}) {
+  File _buildRouterFile(BuildStep buildStep, {required bool toCache}) {
     final path = [
       '.dart_tool/build',
       if (toCache) 'cache' else 'generated',

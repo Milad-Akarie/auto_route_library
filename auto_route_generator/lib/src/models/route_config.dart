@@ -9,14 +9,14 @@ class RouteConfig {
   /// Default constructor
   const new({
     required this.className,
-    this.name,
+    required this.name,
+    required this.pageType,
+    required this.parameters,
+    required this.hasWrappedRoute,
+    required this.hasConstConstructor,
+    required this.deferredLoading,
+    required this.typeParameters,
     this._pathParams = const [],
-    this.pageType,
-    this.parameters = const [],
-    this.hasWrappedRoute,
-    this.hasConstConstructor = false,
-    this.deferredLoading,
-    this.typeParameters = const [],
   });
 
   /// Deserializes the route config from json
@@ -96,7 +96,7 @@ class RouteConfig {
   Iterable<ParamConfig> get namedParams => parameters.where((p) => p.isNamed);
 
   /// Resolves the route name
-  String getName([String? replacementInRouteName]) {
+  String getName(String? replacementInRouteName) {
     String nameToUse;
     if (name != null) {
       nameToUse = name!;
@@ -115,28 +115,18 @@ class RouteConfig {
   bool get hasUnparsableRequiredArgs =>
       parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
 
-  /// Clones the route config with the given parameters
-  RouteConfig copyWith({
-    String? name,
-    List<PathParamConfig>? pathParams,
-    ResolvedType? pageType,
-    String? className,
-    List<ParamConfig>? parameters,
-    bool? hasWrappedRoute,
-    bool? hasConstConstructor,
-    bool? deferredLoading,
-    List<RouteTypeParameter>? typeParameters,
-  }) {
+  /// Clones the route config with its deferred loading set to [isDeferred]
+  RouteConfig withDeferredLoading({required bool isDeferred}) {
     return RouteConfig(
-      typeParameters: typeParameters ?? this.typeParameters,
-      name: name ?? this.name,
-      pathParams: pathParams ?? this._pathParams,
-      pageType: pageType ?? this.pageType,
-      className: className ?? this.className,
-      parameters: parameters ?? this.parameters,
-      hasWrappedRoute: hasWrappedRoute ?? this.hasWrappedRoute,
-      hasConstConstructor: hasConstConstructor ?? this.hasConstConstructor,
-      deferredLoading: deferredLoading ?? this.deferredLoading,
+      typeParameters: typeParameters,
+      name: name,
+      pathParams: _pathParams,
+      pageType: pageType,
+      className: className,
+      parameters: parameters,
+      hasWrappedRoute: hasWrappedRoute,
+      hasConstConstructor: hasConstConstructor,
+      deferredLoading: isDeferred,
     );
   }
 
@@ -160,7 +150,7 @@ class RouteConfig {
 /// `PickerPage<T extends Item>`.
 class RouteTypeParameter {
   /// Default constructor
-  const new({required this.name, this._bound});
+  const new({required this.name, required this._bound});
 
   /// Deserializes the type parameter from json
   factory _fromJson(Map<String, dynamic> map) {
