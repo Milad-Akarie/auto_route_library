@@ -170,10 +170,10 @@ const firstPage = 1;
     });
   });
 
-  // #2148: an enum query parameter was read with `queryParams.get('type')`,
-  // which hands the url's string ('rm' from /cart?type=rm) to the enum
+  // Issue #2148 was an enum query parameter read with the untyped queryParams
+  // get, which hands the url's string, rm from /cart?type=rm, to the enum
   // argument and throws a type error. It was also written into the url with
-  // toString(), as `MfUserCartTypes.rm`. It is now written and read by name.
+  // its toString, as MfUserCartTypes.rm. It is now written and read by name.
   group('an enum query parameter (#2148)', () {
     test('is read and written by its name', () async {
       final result = await generateRouter({
@@ -402,9 +402,10 @@ class Range {
     }
   });
 
-  // #1603: a `Color? color` argument came out as `final InvalidType color`,
-  // an analyzer failure of the time (dart-lang/source_gen#650, also #1438).
-  // A Color from dart:ui or Flutter keeps its type; without an import it
+  // Issue #1603 was a nullable Color argument that came out as a final
+  // InvalidType field, an analyzer failure of the time. See
+  // dart-lang/source_gen#650 and #1438.
+  // A Color from dart:ui or Flutter keeps its type. Without an import it
   // fails the build with a message, as #1507 above.
   for (final import in ["import 'dart:ui';", "import 'package:flutter/painting.dart';"]) {
     test('a Color argument keeps its type with $import (#1603)', () async {
@@ -441,10 +442,10 @@ class Range {
     expect(result.source, contains('data.argsAs<ItemsRouteArgs>()'));
   });
 
-  // flutter/flutter#108437: a query param typed `Set<String>`, `Iterable<int>`,
-  // `DateTime` or any type the url can't give was read with the untyped
-  // `queryParams.get`, so the router compiled and opening the page from a
-  // link threw a TypeError: the url gives text or a list of it. A Set or an
+  // flutter/flutter#108437: a query param typed as a Set of String, an
+  // Iterable of int, a DateTime or any type the url can't give was read with
+  // the untyped queryParams get, so the router compiled and opening the page
+  // from a link threw a TypeError, since the url gives text or a list of it. A Set or an
   // Iterable is now read as a List is; any other type fails the build.
   group('a Set or Iterable query param (flutter/flutter#108437)', () {
     test('is read from the url as its own type', () async {

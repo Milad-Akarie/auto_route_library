@@ -3,14 +3,14 @@ import 'package:test/test.dart';
 import 'support/generate.dart';
 
 void main() {
-  // https://github.com/Milad-Akarie/auto_route_library/issues/1348
-  // (also #1356, #1438). Steps: a page whose constructor takes types that it
-  // imports with a prefix (`import '...' as model_brand;`), two of them
-  // named Data, one inside a List, a Color and a function type; build the
-  // router.
-  // Reported: the generated route class named the types without their
+  // Issue 1348 of Milad-Akarie/auto_route_library, also #1356 and #1438.
+  // Steps were a page whose constructor takes types that it
+  // imports with a prefix such as model_brand, two of them
+  // named Data, one inside a List, a Color and a function type. Then build
+  // the router.
+  // The report was that the generated route class named the types without their
   // prefix, or typed them dynamic, so the router didn't compile.
-  // Should: the build gives no error and the generated library compiles,
+  // The build should give no error and the generated library should compile
   // with each Data from its own import.
   test('types imported with a prefix are generated with their own import', () async {
     final result = await generateRouter({

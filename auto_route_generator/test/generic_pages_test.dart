@@ -111,8 +111,8 @@ class EditingPage<T extends EditingController> extends StatelessWidget {
       expect(source, contains('orElse:()=>constEditingRouteArgs()'));
     });
 
-    // #1296: `DetailScreen<T>` with a path param and an optional `T? detail`,
-    // opened from a url, gets its type's bound and reads the path param.
+    // #1296: a DetailScreen of T with a path param and an optional detail of
+    // type T, opened from a url, gets its type's bound and reads the path param.
     test('with a path param reads it from the url', () async {
       final result = await generateRouter({
         'lib/detail_screen.dart': '''

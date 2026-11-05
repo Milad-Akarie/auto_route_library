@@ -95,8 +95,9 @@ enum Fruit {
     });
   });
 
-  // flutter/flutter#116837: a non-nullable enum query param with a default,
-  // `HomeTab tab = HomeTab.home`, generated a _fromState that didn't compile.
+  // Issue flutter/flutter#116837 was a non-nullable enum query param with a
+  // default, such as HomeTab.home for a HomeTab, that generated a _fromState
+  // that didn't compile.
   group('an enum query parameter with a default (flutter/flutter#116837)', () {
     test('compiles and reads the default when the url has none', () async {
       final result = await generateRouter({

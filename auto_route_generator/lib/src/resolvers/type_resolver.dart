@@ -131,8 +131,8 @@ class TypeResolver {
         nameInRecord: nameInRecord,
       );
     } else if (type.element case final TypeParameterElement element) {
-      // A type parameter of the page class is one the route declares too;
-      // any other, such as a generic function's, has no name there.
+      // A type parameter of the page class is one the route declares too.
+      // Any other, such as a generic function's, has no name there.
       if (element.enclosingElement is! InterfaceElement) {
         return ResolvedType(name: 'dynamic', nameInRecord: nameInRecord);
       }

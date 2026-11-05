@@ -31,11 +31,11 @@ class AppRouter extends RootStackRouter {
 ''';
 
 void main() {
-  // #994: `replaceInRouteName: 'Page, Route'`, with a space after the comma,
-  // named the route `Home Route`, so the build failed with "Could not format
-  // because the source could not be parsed". A value without exactly one
-  // comma was ignored without a word, so every route kept its `Route`
-  // suffix.
+  // Issue #994 was a replaceInRouteName of 'Page, Route', with a space after
+  // the comma, that named the route Home Route, so the build failed with a message that it
+  // could not format because the source could not be parsed. A value without
+  // exactly one comma was ignored without a word, so every route kept its
+  // Route suffix.
   group('replaceInRouteName (#994)', () {
     test('ignores spaces around its comma', () async {
       final result = await generateRouter({
