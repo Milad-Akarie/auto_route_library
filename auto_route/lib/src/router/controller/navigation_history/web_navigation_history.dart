@@ -20,10 +20,12 @@ class NavigationHistoryImpl extends NavigationHistory {
   // app writes it and checked again whenever the browser shows it.
   final _entries = <int, UrlState>{};
 
-  // The serial count of the entry that holds the app's current url, as far as known.
+  // The serial count of the entry that holds the app's current url, as far as
+  // known.
   int? _appIndex;
 
-  // The url of the entry this history moved the browser to, until the browser reports it.
+  // The url of the entry this history moved the browser to, until the browser
+  // reports it.
   String? _ownMoveUrl;
 
   bool _isSteppingBack = false;
@@ -48,8 +50,9 @@ class NavigationHistoryImpl extends NavigationHistory {
         _isPushedOverSameUrl(newState);
     _addsEntryWithSameUrl = notify && isPushedOverSameUrl;
     try {
-      // While stepping back, the browser reports the new url once it gets there.
-      // A notification now would make the router write it as a new entry.
+      // While stepping back, the browser reports the new url once it gets
+      // there. A notification now would make the router write it as a new
+      // entry.
       super.onNewUrlState(newState, notify: notify && !_isSteppingBack);
     } finally {
       _addsEntryWithSameUrl = false;
@@ -81,8 +84,8 @@ class NavigationHistoryImpl extends NavigationHistory {
     final isSameUrl = newUrl == popped.url;
     _recordCurrentEntry();
     final index = _currentIndex;
-    // Whether the entry at index i holds the page on top of [state]; two
-    // pages with the same url, pushed one over the other, are told apart by page.
+    // Whether the entry at index i holds the page on top of [state]; two pages
+    // with the same url, pushed one over the other, are told apart by page.
     bool holds(int i, UrlState state) {
       final entry = _entries[i];
       return entry != null &&
@@ -248,10 +251,12 @@ class NavigationHistoryImpl extends NavigationHistory {
   @override
   void forward() => _history.forward();
 
-  /// The number of the app's browser entries up to and including the current one.
+  /// The number of the app's browser entries up to and including the current
+  /// one.
   ///
-  /// Counts by the engine's serial count, which starts at the app's first entry,
-  /// so pages from before the app and entries ahead of the current one are left out.
+  /// Counts by the engine's serial count, which starts at the app's first
+  /// entry, so pages from before the app and entries ahead of the current one
+  /// are left out.
   @override
   int get length => _currentIndex + 1;
 

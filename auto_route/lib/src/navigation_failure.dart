@@ -34,7 +34,8 @@ class RouteNotFoundFailure extends NavigationFailure {
   String toString() {
     final tree = routeTree;
     if (tree == null) return 'Can not navigate to $path: no route matches it.';
-    return 'Can not navigate to $path: no route matches it. The routes of the app, by full path:\n$tree';
+    return 'Can not navigate to $path: no route matches it. The routes of the '
+        'app, by full path:\n$tree';
   }
 }
 

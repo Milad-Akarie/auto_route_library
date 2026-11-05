@@ -7,10 +7,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-/// The route information provider that propagates the platform route information changes.
+/// The route information provider that propagates the platform route
+/// information changes.
 ///
-/// This provider also reports the new route information from the [Router] widget
-/// back to engine using message channel method, the
+/// This provider also reports the new route information from the [Router]
+/// widget back to engine using message channel method, the
 /// [SystemNavigator.routeInformationUpdated].
 ///
 /// Each time [SystemNavigator.routeInformationUpdated] is called, the
@@ -21,8 +22,8 @@ class AutoRouteInformationProvider extends RouteInformationProvider
     with WidgetsBindingObserver, ChangeNotifier {
   /// Create a platform route information provider.
   ///
-  /// Use the [initialRouteInformation] to set the default route information for this
-  /// provider.
+  /// Use the [initialRouteInformation] to set the default route information for
+  /// this provider.
   factory({
     RouteInformation? initialRouteInformation,
     bool Function(String? location)? neglectWhen,

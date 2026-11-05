@@ -4,7 +4,8 @@ import 'package:collection/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:meta/meta.dart';
 
-/// A Signature for a function that passes the [RouteData] and returns a [PageRoute]
+/// A Signature for a function that passes the [RouteData] and returns a
+/// [PageRoute]
 typedef AutoRoutePageBuilder = Widget Function(RouteData<Object?> data);
 
 /// Signature for a function that builds the route title
@@ -588,7 +589,8 @@ class RouteCollection {
     final routesMarkedInitial = routes.where((e) => e.initial);
     if (routesMarkedInitial.length > 1) {
       throw FlutterError(
-        'Invalid data\nThere are more than one initial route in this collection\n${routesMarkedInitial.map((e) => e.name)}',
+        'Invalid data\nThere are more than one initial route in this '
+        'collection\n${routesMarkedInitial.map((e) => e.name)}',
       );
     }
 
@@ -682,7 +684,8 @@ class RouteCollection {
               ? '$first and $second have the same path, $path,'
               : '$first, $otherPath, and $second, $path, have the same path,';
           throw FlutterError(
-            '$named so a link to it opens only $first. Give one of them another path.',
+            '$named so a link to it opens only $first. Give one of them '
+            'another path.',
           );
         }
         others.add((route, path));

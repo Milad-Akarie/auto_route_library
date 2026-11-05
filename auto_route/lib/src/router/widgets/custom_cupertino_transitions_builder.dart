@@ -62,8 +62,8 @@ mixin CupertinoRouteTransitionOverrideMixin<T> on PageRoute<T> {
 
 /// Provides an iOS-style page transition animation.
 ///
-/// The page slides in from the right and exits in reverse. It also shifts to the left in
-/// a parallax motion when another page enters to cover it.
+/// The page slides in from the right and exits in reverse. It also shifts to
+/// the left in a parallax motion when another page enters to cover it.
 class CupertinoPageTransition extends StatelessWidget {
   /// Creates an iOS-style page transition.
   ///
@@ -83,12 +83,14 @@ class CupertinoPageTransition extends StatelessWidget {
            (linearTransition
                    ? primaryRouteAnimation
                    : CurvedAnimation(
-                       // The curves below have been rigorously derived from plots of native
-                       // iOS animation frames. Specifically, a video was taken of a page
-                       // transition animation and the distance in each frame that the page
-                       // moved was measured. A best fit bezier curve was the fitted to the
-                       // point set, which is linearToEaseIn. Conversely, easeInToLinear is the
-                       // reflection over the origin of linearToEaseIn.
+                       // The curves below have been rigorously derived from
+                       // plots of native iOS animation frames. Specifically, a
+                       // video was taken of a page transition animation and the
+                       // distance in each frame that the page moved was
+                       // measured. A best fit bezier curve was the fitted to
+                       // the point set, which is linearToEaseIn. Conversely,
+                       // easeInToLinear is the reflection over the origin of
+                       // linearToEaseIn.
                        parent: primaryRouteAnimation,
                        curve: Curves.linearToEaseOut,
                        reverseCurve: Curves.easeInToLinear,

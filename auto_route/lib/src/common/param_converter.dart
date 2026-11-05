@@ -27,7 +27,10 @@
 ///
 /// @RoutePage()
 /// class UserPage extends StatelessWidget {
-///   const UserPage({super.key, @PathParam('id', userIdConverter) required this.id});
+///   const UserPage({
+///     super.key,
+///     @PathParam('id', userIdConverter) required this.id,
+///   });
 ///
 ///   final UserId id;
 ///   // ...

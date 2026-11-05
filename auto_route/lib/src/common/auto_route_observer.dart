@@ -135,11 +135,11 @@ mixin AutoRouteAwareStateMixin<T extends StatefulWidget> on State<T>
 /// A [Navigator] observer that notifies [AutoRouteAware]s of changes to the
 /// state of their [Route].
 ///
-/// [AutoRouteObserver] informs subscribers whenever a route of type `R` is pushed
-/// on top of their own route of type `R` or popped from it. This is for example
-/// useful to keep track of page transitions, e.g. a `RouteObserver<PageRoute>`
-/// will inform subscribed [AutoRouteAware]s whenever the user navigates away from
-/// the current page route to another page route.
+/// [AutoRouteObserver] informs subscribers whenever a route of type `R` is
+/// pushed on top of their own route of type `R` or popped from it. This is for
+/// example useful to keep track of page transitions, e.g. a
+/// `RouteObserver<PageRoute>` will inform subscribed [AutoRouteAware]s whenever
+/// the user navigates away from the current page route to another page route.
 class AutoRouteObserver extends AutoRouterObserver {
   final Map<LocalKey, Set<AutoRouteAware>> _listeners =
       <LocalKey, Set<AutoRouteAware>>{};
@@ -160,7 +160,8 @@ class AutoRouteObserver extends AutoRouterObserver {
   ///
   /// When [route] is inside a nested router, [AutoRouteAware] is also informed
   /// while [route] shows inside its host route, when the host route is covered,
-  /// uncovered or popped in an ancestor navigator that has an [AutoRouteObserver].
+  /// uncovered or popped in an ancestor navigator that has an
+  /// [AutoRouteObserver].
   void subscribe(AutoRouteAware routeAware, RouteData<Object?> route) {
     final subscribers = _listeners.putIfAbsent(
       route.key,
@@ -229,8 +230,9 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   /// Unsubscribe [AutoRouteAware].
   ///
-  /// [AutoRouteAware] is no longer informed about changes to its route. If the given argument was
-  /// subscribed to multiple types, this will unregister it (once) from each type.
+  /// [AutoRouteAware] is no longer informed about changes to its route. If the
+  /// given argument was subscribed to multiple types, this will unregister it
+  /// (once) from each type.
 
   void unsubscribe(AutoRouteAware routeAware) {
     for (final route in _listeners.keys) {
@@ -252,7 +254,8 @@ class AutoRouteObserver extends AutoRouterObserver {
     AutoRouteAware routeAware,
     RouteData<Object?> route,
   ) {
-    // The root router's own route data has no parent and no navigator around it.
+    // The root router's own route data has no parent and no navigator around
+    // it.
     for (
       var host = route.parent;
       host != null && host.parent != null;

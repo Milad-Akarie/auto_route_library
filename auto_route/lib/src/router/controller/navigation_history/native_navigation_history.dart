@@ -39,8 +39,9 @@ class NavigationHistoryImpl extends NavigationHistory {
     if (_isNavigatingBack) return;
 
     if (_isRebuildingAfterPop) {
-      // The last entry belongs to the popped page; drop it so back() can't return to it.
-      // If the page now on top is the entry before, _addEntry skips it as the same page.
+      // The last entry belongs to the popped page; drop it so back() can't
+      // return to it. If the page now on top is the entry before, _addEntry
+      // skips it as the same page.
       if (_entries.isNotEmpty) _entries.removeLast();
       _addEntry(newState.copyWith(shouldReplace: false));
       return;
@@ -79,10 +80,11 @@ class NavigationHistoryImpl extends NavigationHistory {
     final newEntry = _HistoryEntry(route, urlState.url, urlState.topMatch!.id);
 
     if (_isLastEntry(urlState)) return;
-    // A page with the same url as the last entry's is a new entry only while the
-    // last entry's page stays in a stack under it, as when the same route is
-    // pushed twice. Otherwise it took that page's place, as navigate() does with
-    // new arguments, or the router rebuilt its pages, so it takes the entry.
+    // A page with the same url as the last entry's is a new entry only while
+    // the last entry's page stays in a stack under it, as when the same route
+    // is pushed twice. Otherwise it took that page's place, as navigate() does
+    // with new arguments, or the router rebuilt its pages, so it takes the
+    // entry.
     final last = _entries.lastOrNull;
     if (last != null &&
         last.url == urlState.url &&
@@ -96,7 +98,8 @@ class NavigationHistoryImpl extends NavigationHistory {
     }
     if (urlState.shouldReplace && length > 0) {
       _entries.removeLast();
-      // The entry before may already hold this url, e.g. the page a redirect was shown for.
+      // The entry before may already hold this url, e.g. the page a redirect
+      // was shown for.
       if (_entries.lastOrNull?.url == urlState.url) return;
     }
     _entries.add(newEntry);
@@ -114,9 +117,10 @@ class NavigationHistoryImpl extends NavigationHistory {
         return;
       }
 
-      // navigateAll completes only when the page it lands on is popped, which may
-      // be during a later back(), so back navigation ends once the router reports
-      // the entry's url, or when this navigation completes, if it is still the latest.
+      // navigateAll completes only when the page it lands on is popped, which
+      // may be during a later back(), so back navigation ends once the router
+      // reports the entry's url, or when this navigation completes, if it is
+      // still the latest.
       final backCount = ++_backCount;
       _backTargetUrl = last.url;
       removePagesAbove(last.pageId);

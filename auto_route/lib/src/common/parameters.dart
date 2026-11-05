@@ -49,8 +49,8 @@ class Parameters {
     return _rawMap[key] ?? defaultValue;
   }
 
-  /// returns the value corresponding with [key] corresponding with [key] as nullable [String]
-  /// if null returns [defaultValue]
+  /// returns the value corresponding with [key] corresponding with [key] as
+  /// nullable [String] if null returns [defaultValue]
   ///
   /// A key repeated in the url (`?tag=red&tag=blue`) gives its last value, as
   /// [Uri.queryParameters] does; any other value gives its `toString()`.

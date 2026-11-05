@@ -11,7 +11,8 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
   ///    when this screen is being pushed.
   ///  * `secondaryRouteAnimation` is a linear route animation from 0.0 to 1.0
   ///    when another screen is being pushed on top of this one.
-  ///  * `linearTransition` is whether to perform the secondary transition linearly.
+  /// * `linearTransition` is whether to perform the secondary transition
+  /// linearly.
   ///    Used to precisely track back gesture drags.
   new({
     required Animation<double> primaryRouteAnimation,

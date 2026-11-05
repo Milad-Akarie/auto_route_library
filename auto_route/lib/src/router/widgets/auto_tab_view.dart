@@ -76,7 +76,8 @@ class AutoTabViewState extends State<AutoTabView> {
   int _scrollUnderwayCount = 0;
   // Keyed by tab, not index, so a tab moved by a routes change keeps its state.
   final _tabKeys = <LocalKey, GlobalKey<KeepAliveTabState>>{};
-  // Tabs a drag loaded before they were opened; observers have not heard of them.
+  // Tabs a drag loaded before they were opened; observers have not heard of
+  // them.
   final _draggedInTabs = <LocalKey>{};
 
   TabsRouter get _router => widget._router;

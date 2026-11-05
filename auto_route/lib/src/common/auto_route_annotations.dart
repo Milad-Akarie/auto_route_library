@@ -2,9 +2,9 @@ import 'package:auto_route/src/common/param_converter.dart';
 import 'package:meta/meta.dart' show optionalTypeArgs;
 import 'package:meta/meta_meta.dart' show Target;
 
-/// Classes annotated with AutoRouteConfig will generate
-/// an abstract class that extends `RootStackRouter` that
-/// can be extended by the annotated class to be used as the RootRouter of the App
+/// Classes annotated with AutoRouteConfig will generate an abstract class that
+/// extends `RootStackRouter` that can be extended by the annotated class to be
+/// used as the RootRouter of the App
 @Target({.classType})
 class AutoRouterConfig {
   /// default constructor

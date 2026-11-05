@@ -272,7 +272,10 @@ class RouteMatch<T> {
 
   @override
   String toString() {
-    return 'RouteMatch{ routeName: $name, pathParams: $params, queryParams: $queryParams, children: $children, fragment: $fragment, segments: $segments, redirectedFrom: $redirectedFrom,  path: $path, stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
+    return 'RouteMatch{ routeName: $name, pathParams: $params, queryParams: '
+        '$queryParams, children: $children, fragment: $fragment, segments: '
+        '$segments, redirectedFrom: $redirectedFrom,  path: $path, '
+        'stringMatch: $stringMatch, args: $args, guards: $guards, key: $key}';
   }
 
   /// Returns a new instance of [PageRouteInfo] from
@@ -312,8 +315,9 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   final RouteMatch<Object?> originalMatch;
 
   @override
-  // An override of RouteMatch.copyWith: it changes the original match and keeps the page being
-  // reevaluated, so currentPage and originalMatch are not its to set.
+  // An override of RouteMatch.copyWith: it changes the original match and keeps
+  // the page being reevaluated, so currentPage and originalMatch are not its to
+  // set.
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
     Parameters? params,
@@ -399,7 +403,8 @@ class HierarchySegment {
 
   @override
   String toString() {
-    return '$name: {pathParams: $pathParams, queryParams: $queryParams, children: $children}';
+    return '$name: {pathParams: $pathParams, queryParams: $queryParams, '
+        'children: $children}';
   }
 
   @override

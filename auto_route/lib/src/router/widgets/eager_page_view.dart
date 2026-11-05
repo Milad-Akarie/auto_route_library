@@ -77,19 +77,19 @@ void correctToPage(PageController controller, int page) {
 ///
 /// You can use a [PageController] to control which page is visible in the view.
 /// In addition to being able to control the pixel offset of the content inside
-/// the [EagerPageView], a [PageController] also lets you control the offset in terms
-/// of pages, which are increments of the viewport size.
+/// the [EagerPageView], a [PageController] also lets you control the offset in
+/// terms of pages, which are increments of the viewport size.
 ///
 /// The [PageController] can also be used to control the
 /// [PageController.initialPage], which determines which page is shown when the
-/// [EagerPageView] is first constructed, and the [PageController.viewportFraction],
-/// which determines the size of the pages as a fraction of the viewport size.
+/// [EagerPageView] is first constructed, and the
+/// [PageController.viewportFraction], which determines the size of the pages as
+/// a fraction of the viewport size.
 ///
 /// {@youtube 560 315 https://www.youtube.com/watch?v=J1gE9xvph-A}
 ///
-/// {@tool dartpad}
-/// Here is an example of [EagerPageView]. It creates a centered `Text` in each of the three pages
-/// which scroll horizontally.
+/// {@tool dartpad} Here is an example of [EagerPageView]. It creates a centered
+/// `Text` in each of the three pages which scroll horizontally.
 ///
 /// ** See code in examples/api/lib/widgets/page_view/page_view.0.dart **
 /// {@end-tool}
@@ -97,18 +97,18 @@ void correctToPage(PageController controller, int page) {
 /// ## Persisting the scroll position during a session
 ///
 /// Scroll views attempt to persist their scroll position using `PageStorage`.
-/// For a [EagerPageView], this can be disabled by setting [PageController.keepPage]
-/// to false on the [_controller]. If it is enabled, using a `PageStorageKey` for
-/// the [key] of this widget is recommended to help disambiguate different
-/// scroll views from each other.
+/// For a [EagerPageView], this can be disabled by setting
+/// [PageController.keepPage] to false on the [_controller]. If it is enabled,
+/// using a `PageStorageKey` for the [key] of this widget is recommended to help
+/// disambiguate different scroll views from each other.
 ///
 /// See also:
 ///
-///  * [PageController], which controls which page is visible in the view.
-///  * `SingleChildScrollView`, when you need to make a single child scrollable.
-///  * `ListView`, for a scrollable list of boxes.
-///  * `GridView`, for a scrollable grid of boxes.
-///  * [ScrollNotification] and [NotificationListener], which can be used to watch
+/// * [PageController], which controls which page is visible in the view. *
+/// `SingleChildScrollView`, when you need to make a single child scrollable. *
+/// `ListView`, for a scrollable list of boxes. * `GridView`, for a scrollable
+/// grid of boxes. * [ScrollNotification] and [NotificationListener], which can
+/// be used to watch
 ///    the scroll position without using a `ScrollController`.
 class EagerPageView extends StatefulWidget {
   /// Creates a scrollable list that works page by page from an explicit [List]
@@ -119,9 +119,9 @@ class EagerPageView extends StatefulWidget {
   /// child that could possibly be displayed in the page view, instead of just
   /// those children that are actually visible.
   ///
-  /// Like other widgets in the framework, this widget expects that
-  /// the [children] list will not be mutated after it has been passed in here.
-  /// See the documentation at [SliverChildListDelegate.children] for more details.
+  /// Like other widgets in the framework, this widget expects that the
+  /// [children] list will not be mutated after it has been passed in here. See
+  /// the documentation at [SliverChildListDelegate.children] for more details.
   ///
 
   new({
@@ -198,9 +198,9 @@ class EagerPageView extends StatefulWidget {
   /// A delegate that provides the children for the [EagerPageView].
   ///
   /// The `PageView.custom` constructor lets you specify this delegate
-  /// explicitly. The [EagerPageView] and `PageView.builder` constructors create a
-  /// [_childrenDelegate] that wraps the given [List] and `IndexedWidgetBuilder`,
-  /// respectively.
+  /// explicitly. The [EagerPageView] and `PageView.builder` constructors create
+  /// a [_childrenDelegate] that wraps the given [List] and
+  /// `IndexedWidgetBuilder`, respectively.
   final SliverChildDelegate _childrenDelegate;
 
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
@@ -227,9 +227,10 @@ class EagerPageView extends StatefulWidget {
 
   /// Whether to add padding to both ends of the list.
   ///
-  /// If this is set to true and [PageController.viewportFraction] < 1.0, padding will be added
-  /// such that the first and last child slivers will be in the center of
-  /// the viewport when scrolled all the way to the start or end, respectively.
+  /// If this is set to true and [PageController.viewportFraction] < 1.0,
+  /// padding will be added such that the first and last child slivers will be
+  /// in the center of the viewport when scrolled all the way to the start or
+  /// end, respectively.
   ///
   /// If [PageController.viewportFraction] >= 1.0, this property has no effect.
   ///

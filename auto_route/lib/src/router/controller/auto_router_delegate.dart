@@ -225,7 +225,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     final matches = routes == null || routes.isEmpty || controller.hasEntries
         ? null
         : controller._matchAllOrReportFailure(routes, (_) {
-            // A saved route that no longer matches is dropped rather than thrown.
+            // A saved route that no longer matches is dropped rather than
+            // thrown.
           });
     final buildable = matches == null
         ? const <RouteMatch<Object?>>[]
@@ -262,7 +263,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     if (deepLink is! PlatformDeepLink) return 'Can not resolve initial route';
     return 'Can not resolve initial route: no route matches "${deepLink.uri}". '
         "Add RedirectRoute(path: '*', redirectTo: '/') last in your routes to open "
-        'links no route matches on your initial page. The routes of the app, by full path:\n'
+        'links no route matches on your initial page. The routes of the '
+        'app, by full path:\n'
         '${controller.routeCollection.toTreeString()}';
   }
 
@@ -319,7 +321,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     final topMost = controller.topMostRouter();
     if (topMost is! StackRouter) return false;
     Route<Object?>? topRoute;
-    // The predicate stops at the first route it's given, the top one, so nothing is popped.
+    // The predicate stops at the first route it's given, the top one, so
+    // nothing is popped.
     topMost.navigatorKey.currentState?.popUntil((route) {
       topRoute = route;
       return true;
@@ -448,11 +451,11 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
     router._reassemble();
   }
 
-  // Flutter tells Android whether the app takes back from the root
-  // navigator's stack alone; while it says no, Android closes the app
-  // itself. A tabs router away from its home tab, or with tabs in its
-  // history, takes back too: it shows another tab (TabsRouter.maybePop). So this corrects the value, and sends
-  // it again after a tab switch, which the navigator never reports.
+  // Flutter tells Android whether the app takes back from the root navigator's
+  // stack alone; while it says no, Android closes the app itself. A tabs router
+  // away from its home tab, or with tabs in its history, takes back too: it
+  // shows another tab (TabsRouter.maybePop). So this corrects the value, and
+  // sends it again after a tab switch, which the navigator never reports.
   bool? _reportedCanHandlePop;
   bool _tabsTookBack = false;
   bool _reportScheduled = false;
@@ -504,7 +507,8 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
     if (navigator == null) return false;
     if (navigator.canPop()) return true;
     Route<Object?>? topRoute;
-    // The predicate stops at the first route it's given, the top one, so nothing is popped.
+    // The predicate stops at the first route it's given, the top one, so
+    // nothing is popped.
     navigator.popUntil((route) {
       topRoute = route;
       return true;

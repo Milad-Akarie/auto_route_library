@@ -96,7 +96,8 @@ class AutoRouter extends StatefulWidget {
     final scope = StackRouterScope.of(context, watch: watch);
     if (kDebugMode && scope == null) {
       throw FlutterError(
-        'AutoRouter operation requested with a context that does not include an AutoRouter.\n'
+        'AutoRouter operation requested with a context that does not '
+        'include an AutoRouter.\n'
         'The context used to retrieve the Router must be that of a widget that '
         'is a descendant of an AutoRouter widget.',
       );

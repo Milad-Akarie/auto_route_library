@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
-/// all of the methods in this file map to existing, already-tested flutter widgets
-/// so no-need to include them in test-coverage
+/// all of the methods in this file map to existing, already-tested flutter
+/// widgets so no-need to include them in test-coverage
 
 // coverage:ignore-file
 /// a class that holds presets of common route transition builder

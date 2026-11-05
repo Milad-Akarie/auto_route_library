@@ -24,7 +24,8 @@ extension on RoutingController {
       // A declarative router builds its pages from the app's own state.
       children = child.managedByWidget ? null : child._savedRoutes();
     } else {
-      // A nested router that isn't built yet holds its routes as pending children.
+      // A nested router that isn't built yet holds its routes as pending
+      // children.
       children = [for (final match in data.pendingChildren) _savedMatch(match)];
     }
     // A route pushed on top shares its query params and fragment with the
@@ -68,7 +69,8 @@ Map<String, Object?> _plainValues(Map<String, Object?> values) {
   return {for (final entry in values.entries) entry.key: plain(entry.value)};
 }
 
-// Reads back the routes saved by _savedRoutes; null if [saved] isn't such a list.
+// Reads back the routes saved by _savedRoutes; null if [saved] isn't such a
+// list.
 List<PageRouteInfo>? _restoredRoutes(Object? saved) {
   if (saved is! List) return null;
   final routes = <PageRouteInfo>[];
@@ -119,7 +121,8 @@ List<RouteMatch<Object?>> _buildableMatches(
         pendingChildren: const [],
         type: match.type ?? router.root.defaultRouteType,
       ).buildPage<Object?>();
-      // A page that needs args it can't get is skipped; that is the error to catch.
+      // A page that needs args it can't get is skipped; that is the error to
+      // catch.
     } on MissingRequiredParameterError {
       continue;
     }

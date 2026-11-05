@@ -74,9 +74,12 @@ class RouteMatcher {
           );
           if (redirectChain.contains(redirectFrom)) {
             throw FlutterError(
-              'Redirect loop detected: ${[...redirectChain, redirectFrom].join(' -> ')}\n'
-              'The RedirectRoutes above send the url back to one that was already redirected. '
-              'Change the redirectTo of one of them so the chain ends at a page.',
+              'Redirect loop detected: '
+              '${[...redirectChain, redirectFrom].join(' -> ')}\n'
+              'The RedirectRoutes above send the url back to one that was '
+              'already redirected. '
+              'Change the redirectTo of one of them so the chain ends at a '
+              'page.',
             );
           }
           return _handleRedirect(
@@ -251,7 +254,8 @@ class RouteMatcher {
 
     var extractedSegments = segments.sublist(0, parts.length);
     if (parts.isNotEmpty && parts.last == '*') {
-      // A copy: [segments] is shared by every route this url is matched against.
+      // A copy: [segments] is shared by every route this url is matched
+      // against.
       extractedSegments = List.of(segments);
     }
 

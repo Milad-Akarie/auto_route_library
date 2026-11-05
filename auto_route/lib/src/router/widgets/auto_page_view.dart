@@ -21,10 +21,12 @@ class AutoPageView extends StatefulWidget {
     this.scrollDirection = Axis.horizontal,
   });
 
-  /// Whether to use [PageController.animateToPage] or [PageController.jumpToPage]
+  /// Whether to use [PageController.animateToPage] or
+  /// [PageController.jumpToPage]
   final bool animatePageTransition;
 
-  /// The duration of the transition animation passed to [PageController.animateToPage]
+  /// The duration of the transition animation passed to
+  /// [PageController.animateToPage]
   final Duration duration;
 
   /// The page controller used by [PageView]
@@ -78,7 +80,8 @@ class AutoPageViewState extends State<AutoPageView> {
   final _tabKeys = <LocalKey, GlobalKey<KeepAliveTabState>>{};
   // The tabs [_children] were built for, to tell when the routes change.
   var _matchIds = <LocalKey>[];
-  // Tabs a drag loaded before they were opened; observers have not heard of them.
+  // Tabs a drag loaded before they were opened; observers have not heard of
+  // them.
   final _draggedInTabs = <LocalKey>{};
 
   @override

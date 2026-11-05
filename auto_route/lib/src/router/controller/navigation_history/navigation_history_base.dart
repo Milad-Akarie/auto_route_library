@@ -54,8 +54,8 @@ abstract class NavigationHistory with ChangeNotifier {
   /// The web history sometimes moves the browser on its own, for example to
   /// step back over a page that was popped in the app. The browser then reports
   /// the entry it lands on like any navigation by the user, although the app
-  /// already shows that route. [AutoRouterDelegate.setNewRoutePath] skips such a
-  /// report instead of handling it as a deep link, which would close dialogs,
+  /// already shows that route. [AutoRouterDelegate.setNewRoutePath] skips such
+  /// a report instead of handling it as a deep link, which would close dialogs,
   /// rerun the deep link builder and rebuild the stack.
   ///
   /// Each call consumes the expected move, matched or not: only the first
@@ -194,7 +194,8 @@ abstract class NavigationHistory with ChangeNotifier {
     return null;
   }
 
-  /// Removes the pages above the page with [pageId] from the stack that holds it.
+  /// Removes the pages above the page with [pageId] from the stack that holds
+  /// it.
   ///
   /// Going back to a page that is still under the current one with the same
   /// route name, as when the same route was pushed twice, needs this first:

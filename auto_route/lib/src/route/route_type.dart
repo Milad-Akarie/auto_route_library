@@ -121,9 +121,10 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
   ///
-  /// I couldn't type this function from here but it should match
-  /// typedef [RouteTransitionsBuilder] = Widget Function(BuildContext context, Animation&lt;double&gt; animation,
-  /// Animation&lt;double&gt; secondaryAnimation, Widget child);
+  /// I couldn't type this function from here but it should match typedef
+  /// [RouteTransitionsBuilder] = Widget Function(BuildContext context,
+  /// Animation&lt;double&gt; animation, Animation&lt;double&gt;
+  /// secondaryAnimation, Widget child);
   ///
   /// you should only reference the function so
   /// the generator can import it into the generated file
@@ -134,16 +135,16 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
   /// this builder function is passed to customRouteBuilder property
   /// in `CustomPage`
   ///
-  /// I couldn't type this function from here but it should match
-  /// typedef [CustomRouteBuilder] = Route Function(BuildContext context, CustomPage page);
+  /// I couldn't type this function from here but it should match typedef
+  /// [CustomRouteBuilder] = Route Function(BuildContext context, CustomPage
+  /// page);
   ///
   /// this builder function accepts a BuildContext and a CustomPage
   /// that has all the other properties assigned to it
   /// so using them then is totally up to you.
   ///
-  /// Make sure you pass the Return Type &lt;T&gt; to the Route&lt;T&gt; function
-  /// ex:
-  ///  CustomRoute(
+  /// Make sure you pass the Return Type &lt;T&gt; to the Route&lt;T&gt;
+  /// function ex: CustomRoute(
   ///     path: '/user/:userID',
   ///     page: UserRoute.page,
   ///     customRouteBuilder: &lt;T&gt;(context, child, page) {
@@ -230,9 +231,11 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
 mixin PredictiveBackGestureMixin {
   /// Whether to enable predictive back gesture on Android
   ///
-  /// Make sure your app supports Android API 33 or higher, as predictive back won't work on older versions of Android.
-  /// Then, set the flag android:enableOnBackInvokedCallback="true" in android/app/src/main/AndroidManifest.xml.
-  /// read more here https://docs.flutter.dev/platform-integration/android/predictive-back
+  /// Make sure your app supports Android API 33 or higher, as predictive back
+  /// won't work on older versions of Android. Then, set the flag
+  /// android:enableOnBackInvokedCallback="true" in
+  /// android/app/src/main/AndroidManifest.xml. read more here
+  /// https://docs.flutter.dev/platform-integration/android/predictive-back
   ///
   /// make sure to also opt-in into this feature in your device settings
   /// Settings => System => Developer => Predictive back animations
@@ -240,6 +243,7 @@ mixin PredictiveBackGestureMixin {
   /// defaults to false
   bool get enablePredictiveBackGesture;
 
-  /// The transitions builder to use for when the predictive back gesture is in progress
+  /// The transitions builder to use for when the predictive back gesture is in
+  /// progress
   RouteTransitionsBuilder? get predictiveBackPageTransitionsBuilder;
 }

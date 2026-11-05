@@ -352,7 +352,8 @@ abstract class RoutingController with ChangeNotifier {
         );
         open = data?.route;
         if (data != null) {
-          // A nested router that isn't built yet holds its routes as pending children.
+          // A nested router that isn't built yet holds its routes as pending
+          // children.
           pending = data.pendingChildren;
           controller = controller._innerControllerOfMatch(data.matchId);
         }
@@ -515,11 +516,11 @@ abstract class RoutingController with ChangeNotifier {
         .firstWhere((r) => r._canHandleNavigation(route), orElse: () => this);
   }
 
-  /// Pops until given [route], if it already exists in stack
-  /// otherwise adds it to the stack (good for web Apps and to avoid duplicate entries).
+  /// Pops until given [route], if it already exists in stack otherwise adds it
+  /// to the stack (good for web Apps and to avoid duplicate entries).
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   Future<T?> navigate<T extends Object?>(
     PageRouteInfo route, {
     OnNavigationFailure? onFailure,
@@ -534,8 +535,8 @@ abstract class RoutingController with ChangeNotifier {
   /// will be added to to target destination
   /// see [RouteMatcher.matchUri]
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   Future<void> navigatePath(
     String path, {
     bool includePrefixMatches = false,
@@ -852,8 +853,9 @@ abstract class RoutingController with ChangeNotifier {
     return segments;
   }
 
-  /// this is an indicator for controller state changes,
-  /// every controller's state is considered updated if it's stateHash or any of it's children's stateHash changes
+  /// this is an indicator for controller state changes, every controller's
+  /// state is considered updated if it's stateHash or any of it's children's
+  /// stateHash changes
   List<RouteMatch<Object?>> get _addedSegments {
     final currentData = currentChild;
     final segments = <RouteMatch<Object?>>[];
@@ -969,8 +971,10 @@ class TabsRouter extends RoutingController {
         return null;
       }
       throw FlutterError(
-        'Can not navigate to ${route.routeName}: it is not one of the tabs of the tabs router of '
-        '${routeData.name}. Add it to the routes of its AutoTabsRouter, or show it in a router of its own.',
+        'Can not navigate to ${route.routeName}: it is not one of the tabs '
+        'of the tabs router of '
+        '${routeData.name}. Add it to the routes of its AutoTabsRouter, or '
+        'show it in a router of its own.',
       );
     }
     return await _navigateAll([match], onFailure: onFailure);
@@ -1013,8 +1017,9 @@ class TabsRouter extends RoutingController {
       (backThroughHistory && _tabHistory.isNotEmpty) ||
       (homeIndex != -1 && _activeIndex != homeIndex);
 
-  /// Called to preload a page before other navigation events occur
-  /// if it returns true, the page has been preloaded, otherwise we assume it's already loaded
+  /// Called to preload a page before other navigation events occur if it
+  /// returns true, the page has been preloaded, otherwise we assume it's
+  /// already loaded
   bool Function(int index) preload;
 
   @override
@@ -1054,7 +1059,8 @@ class TabsRouter extends RoutingController {
       index >= 0 && index < _pages.length,
       'Tab index $index is out of range for ${_pages.length} tabs.',
     );
-    // A change waits on the tab's guards when it has any; nothing here waits for it.
+    // A change waits on the tab's guards when it has any; nothing here waits
+    // for it.
     if (_changeTab(index, notify: notify) case final Future<void> change) {
       unawaited(change);
     }
@@ -1399,7 +1405,8 @@ class TabsRouter extends RoutingController {
           // The new error carries the original message and stack trace.
           Error.throwWithStackTrace(
             FlutterError(
-              'Can not automatically navigate to ${route.name} because it has required parameters. '
+              'Can not automatically navigate to ${route.name} because it '
+              'has required parameters. '
               'Routes must be added manually to AutoTabsRouter'
               '\n${e.message}',
             ),
@@ -1583,7 +1590,8 @@ class TabsRouter extends RoutingController {
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
   }) {
-    // By match id: a tab sharing its route with another has its own nested router.
+    // By match id: a tab sharing its route with another has its own nested
+    // router.
     final mayUpdateController = _innerControllerOfMatch(route.id);
     if (mayUpdateController != null) {
       final newRoutes = route.children ?? const [];
@@ -2171,8 +2179,8 @@ abstract class StackRouter extends RoutingController {
 
   /// Adds the corresponding page to given [route] to the [_pages] stack
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   @optionalTypeArgs
   Future<T?> push<T extends Object?>(
     PageRouteInfo route, {
@@ -2193,8 +2201,8 @@ abstract class StackRouter extends RoutingController {
 
   /// Inserts the corresponding page to given [route] to the [_pages] stack
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   Future<void> insert(
     PageRouteInfo route, {
     int index = 0,
@@ -2272,9 +2280,12 @@ abstract class StackRouter extends RoutingController {
   // Why a router that AutoRouter.declarative builds can't push its own pages,
   // and what to do instead.
   String get _managedByWidgetMessage =>
-      'The router of ${routeData.name} is built by AutoRouter.declarative, so the list its routes callback '
-      'returns decides its pages, and push, replace and their kin can not change them. Add the route to the list '
-      'that routes callback returns, from state your app updates, or build this router with AutoRouter() to '
+      'The router of ${routeData.name} is built by AutoRouter.declarative, '
+      'so the list its routes callback '
+      'returns decides its pages, and push, replace and their kin can not '
+      'change them. Add the route to the list '
+      'that routes callback returns, from state your app updates, or build '
+      'this router with AutoRouter() to '
       'navigate it with push and replace.';
 
   @optionalTypeArgs
@@ -2327,8 +2338,8 @@ abstract class StackRouter extends RoutingController {
   /// The last entry is removed only once the guards of [route] let it
   /// through; a rejected [route] leaves the stack as it was.
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   @optionalTypeArgs
   Future<T?> replace<T extends Object?>(
     PageRouteInfo route, {
@@ -2340,7 +2351,8 @@ abstract class StackRouter extends RoutingController {
       route,
       onFailure: onFailure,
       onAccepted: () {
-        // a guard may have removed it already, e.g. with redirectUntil(replace: true)
+        // a guard may have removed it already, e.g. with redirectUntil(replace:
+        // true)
         if (replaced != null &&
             scope._pages.any((page) => page.routeData == replaced)) {
           scope
@@ -2376,10 +2388,11 @@ abstract class StackRouter extends RoutingController {
     );
   }
 
-  /// Adds the corresponding pages to given [routes] list to the [_pages] stack at once
+  /// Adds the corresponding pages to given [routes] list to the [_pages] stack
+  /// at once
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   Future<void> pushAll(
     List<PageRouteInfo> routes, {
     OnNavigationFailure? onFailure,
@@ -2388,13 +2401,14 @@ abstract class StackRouter extends RoutingController {
     return _findStackScope(routes.first)._pushAll(routes, onFailure: onFailure);
   }
 
-  /// Pop the current route off the navigator and push all given [routes] in its place.
+  /// Pop the current route off the navigator and push all given [routes] in its
+  /// place.
   ///
   /// Like [popAndPush], the pop is forced: it happens before the push, even
   /// when the current route is the only one in its router.
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   Future<void> popAndPushAll(
     List<PageRouteInfo> routes, {
     OnNavigationFailure? onFailure,
@@ -2406,8 +2420,8 @@ abstract class StackRouter extends RoutingController {
 
   /// Remove the whole current pages stack and push all given [routes]
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   ///
   /// if [updateExistingRoutes] is set to false a fresh stack
   /// will be initiated.
@@ -2442,7 +2456,8 @@ abstract class StackRouter extends RoutingController {
     required bool updateExistingRoutes,
   }) async {
     _markLeaving(_pages, .replaced);
-    // A guard can reject the new routes; the whole batch is then rejected and the stack restored.
+    // A guard can reject the new routes; the whole batch is then rejected and
+    // the stack restored.
     final previousPages = List.of(_pages);
     final previousStackKey = _stackKey;
     var rejected = false;
@@ -2539,10 +2554,11 @@ abstract class StackRouter extends RoutingController {
     return top;
   }
 
-  /// Pop the current route off the navigator and push the given [route] in its place.
+  /// Pop the current route off the navigator and push the given [route] in its
+  /// place.
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   @optionalTypeArgs
   Future<T?> popAndPush<T extends Object?, TO extends Object?>(
     PageRouteInfo route, {
@@ -2574,7 +2590,8 @@ abstract class StackRouter extends RoutingController {
     return predicateWasSatisfied;
   }
 
-  /// Calls [maybePop] repeatedly on the navigator until the predicate returns true.
+  /// Calls [maybePop] repeatedly on the navigator until the predicate returns
+  /// true.
   ///
   /// see [Navigator.popUntil]
   ///
@@ -2688,8 +2705,9 @@ abstract class StackRouter extends RoutingController {
     );
   }
 
-  // async, so a match failure reaches the returned future, not the caller's stack.
-  // Completes once every guard has decided, not when the last page is popped.
+  // async, so a match failure reaches the returned future, not the caller's
+  // stack. Completes once every guard has decided, not when the last page is
+  // popped.
   Future<void> _pushAll(
     List<PageRouteInfo> routes, {
     OnNavigationFailure? onFailure,
@@ -2719,7 +2737,8 @@ abstract class StackRouter extends RoutingController {
   }) async {
     assert(!managedByWidget, _managedByWidgetMessage);
 
-    // A page popped since the stack was collected for reevaluation stays closed, with the pages above it.
+    // A page popped since the stack was collected for reevaluation stays
+    // closed, with the pages above it.
     bool wasPopped(RouteMatch<Object?> match) =>
         match is ReevaluatableRouteMatch &&
         match.currentPage.routeData._isPoppedByNavigator;
@@ -2789,7 +2808,8 @@ abstract class StackRouter extends RoutingController {
   }) {
     var page = match.currentPage;
     final data = page.routeData;
-    // args a guard set are shown by a page built with them, which keeps the route and its state
+    // args a guard set are shown by a page built with them, which keeps the
+    // route and its state
     if (match.args != data.args) {
       data._updateRoute(match.originalMatch);
       page = page.rebuild();
@@ -2820,8 +2840,9 @@ abstract class StackRouter extends RoutingController {
     var match = route;
     final takenOver = index == null ? _shownTopTakenOverBy(route) : null;
     if (takenOver != null) {
-      // The page takes over the route and the nested router of [takenOver],
-      // so it keeps its match id, as navigate does, for the router to stay its own.
+      // The page takes over the route and the nested router of [takenOver], so
+      // it keeps its match id, as navigate does, for the router to stay its
+      // own.
       match = route.withId(takenOver.matchId);
       for (final ctr in _childControllers) {
         if (ctr.matchId == takenOver.matchId) {
@@ -2956,8 +2977,8 @@ abstract class StackRouter extends RoutingController {
   /// Preforms pop-until finds cosponsoring route with [routes].first
   /// then pushes all [routes]
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   Future<void> navigateAll(
     List<RouteMatch<Object?>> routes, {
     OnNavigationFailure? onFailure,
@@ -2979,8 +3000,9 @@ abstract class StackRouter extends RoutingController {
             _navigateAll<T>(routes, onFailure: onFailure, isReevaluating: true),
       );
     }
-    // pages pushed after the stack was composed for reevaluation are not in [routes].
-    // A reevaluated page may be rebuilt, so it's known by its route data
+    // pages pushed after the stack was composed for reevaluation are not in
+    // [routes]. A reevaluated page may be rebuilt, so it's known by its route
+    // data
     final reevaluatedRoutes = {
       for (final route in routes)
         if (route is ReevaluatableRouteMatch) route.currentPage.routeData,
@@ -2996,8 +3018,9 @@ abstract class StackRouter extends RoutingController {
     if (routes.isNotEmpty) {
       var mayUpdateRoute = routes.last;
       if (!managedByWidget) {
-        // The future of a pushed page completes when the page is popped, so wait only until
-        // the page is added, to keep updating nested routers right away.
+        // The future of a pushed page completes when the page is popped, so
+        // wait only until the page is added, to keep updating nested routers
+        // right away.
         final pushed = Completer<void>();
         popped = _popUntilOrPushAll<T>(
           routes,
@@ -3009,7 +3032,8 @@ abstract class StackRouter extends RoutingController {
         );
         await Future.any([pushed.future, popped]);
         if (isReevaluating) {
-          // put pages pushed before or during the reevaluation back on top of the reevaluated ones
+          // put pages pushed before or during the reevaluation back on top of
+          // the reevaluated ones
           final pushedDuring = _pages.whereNot(wasReevaluated).toList();
           _pages
             ..removeWhere((page) => !wasReevaluated(page))
@@ -3028,7 +3052,8 @@ abstract class StackRouter extends RoutingController {
             mayUpdateController.managedByWidget) {
           mayUpdateController._onNavigate(newChildren);
         }
-        // children a guard set while reevaluating are new routes, not pages being reevaluated
+        // children a guard set while reevaluating are new routes, not pages
+        // being reevaluated
         final childrenOverridden = newChildren.any(
           (child) => child is! ReevaluatableRouteMatch,
         );
@@ -3091,8 +3116,8 @@ abstract class StackRouter extends RoutingController {
   /// router whose own page is removed keeps its pages on screen under
   /// [route] until it goes.
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   @optionalTypeArgs
   Future<T?> pushAndPopUntil<T extends Object?>(
     PageRouteInfo route, {
@@ -3205,8 +3230,8 @@ abstract class StackRouter extends RoutingController {
   /// will be added to to target destination
   /// see [RouteMatcher.matchUri]
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   @optionalTypeArgs
   Future<T?> replacePath<T extends Object?>(
     String path, {
@@ -3234,8 +3259,8 @@ abstract class StackRouter extends RoutingController {
   /// will be added to to target destination
   /// see [RouteMatcher.matchUri]
   ///
-  /// if [onFailure] callback is provided, navigation errors will be passed to it
-  /// otherwise they'll be thrown
+  /// if [onFailure] callback is provided, navigation errors will be passed to
+  /// it otherwise they'll be thrown
   @optionalTypeArgs
   Future<T?> pushPath<T extends Object?>(
     String path, {
@@ -3272,8 +3297,8 @@ abstract class StackRouter extends RoutingController {
       if (route.settings is AutoRoutePage) {
         return (route.settings as AutoRoutePage).routeData.match == path;
       }
-      // Assuming pageless routes are either dialogs or bottomSheetModals
-      // and the user set a path as in RouteSettings(name: path) when showing theme
+      // Assuming pageless routes are either dialogs or bottomSheetModals and
+      // the user set a path as in RouteSettings(name: path) when showing theme
       return route.settings.name == path;
     }, scoped: scoped);
   }

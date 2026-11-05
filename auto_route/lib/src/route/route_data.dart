@@ -127,19 +127,23 @@ class RouteData<R> {
     final given = _route.args;
     if (given == null) {
       if (orElse == null) {
-        final messages = [
-          '$T can not be null because the corresponding page has a required parameter',
-        ];
+        const reason =
+            'because the corresponding page has a required parameter';
+        final messages = ['$T can not be null $reason'];
         if (_route.autoFilled) {
           messages
             ..add(
-              '${_route.name} is an auto created ancestor of target route ${_route.flattened.last.name}',
+              '${_route.name} is an auto created ancestor of target route '
+              '${_route.flattened.last.name}',
             )
             ..add(
-              'This usually happens when you try to navigate to a route that is inside of a nested-router\nbefore adding the nested-router to the stack first',
+              'This usually happens when you try to navigate to a route '
+              'that is inside of a nested-router\nbefore adding the '
+              'nested-router to the stack first',
             )
             ..add(
-              'try navigating to ${_route.flattened.map((e) => e.name).join(' -> ')}',
+              'try navigating to '
+              '${_route.flattened.map((e) => e.name).join(' -> ')}',
             );
         }
         throw MissingRequiredParameterError('\n${messages.join('\n')}\n');
@@ -284,7 +288,8 @@ class RouteData<R> {
   /// Sets [animation].
   // Deprecated in 12.0.0, removed in 13.0.0.
   @Deprecated('Set animation instead')
-  // The old name, kept as a method so existing calls still compile until it is removed.
+  // The old name, kept as a method so existing calls still compile until it is
+  // removed.
   void setAnimation(Animation<Object?>? value) => animation = value;
 
   /// Returns the current animation completion future

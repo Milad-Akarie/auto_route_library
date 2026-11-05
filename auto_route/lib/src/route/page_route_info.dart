@@ -121,15 +121,16 @@ class PageRouteInfo<T extends Object?> {
     if (params.isEmpty) {
       return template;
     }
-    // Escaped, so a name such as `user$id` matches as it is written. A name runs to the end of its segment,
-    // so ':id' is never read out of ':idx'.
+    // Escaped, so a name such as `user$id` matches as it is written. A name
+    // runs to the end of its segment, so ':id' is never read out of ':idx'.
     final paramsRegex = RegExp(
       ":(${params.keys.map(RegExp.escape).join('|')})(?=[/?#]|\$)",
     );
     final path = template.replaceAllMapped(paramsRegex, (match) {
       final value = params[match.group(1)]?.toString();
-      // Encoded as a path segment, so a '/', '?' or '#' in the value stays part of it.
-      // The leading empty segment keeps a ':' in the value from being escaped as a scheme.
+      // Encoded as a path segment, so a '/', '?' or '#' in the value stays part
+      // of it. The leading empty segment keeps a ':' in the value from being
+      // escaped as a scheme.
       return value == null
           ? ''
           : Uri(pathSegments: ['', value]).path.substring(1);
@@ -209,7 +210,8 @@ class PageRouteInfo<T extends Object?> {
 
   @override
   String toString() {
-    return 'Route{name: $_routeName,  params: $rawPathParams}, children: ${initialChildren?.map((e) => e.routeName)}';
+    return 'Route{name: $_routeName,  params: $rawPathParams}, children: '
+        '${initialChildren?.map((e) => e.routeName)}';
   }
 
   /// Calls [StackRouter.push] with this route on the nearest router

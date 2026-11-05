@@ -102,9 +102,11 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder>
               : _dummyWidget;
           final isInactive = index != widget.activeIndex;
 
-          // Always wrap with ExcludeSemantics and ExcludeFocus but control with excluding property
+          // Always wrap with ExcludeSemantics and ExcludeFocus but control with
+          // excluding property
           return ExcludeSemantics(
-            // Keyed by page so a tab kept across a routes change keeps its state
+            // Keyed by page so a tab kept across a routes change keeps its
+            // state
             key: ObjectKey(widget.stack[index]),
             excluding: isInactive,
             child: ExcludeFocus(excluding: isInactive, child: child),
