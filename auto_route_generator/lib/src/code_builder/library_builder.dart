@@ -12,9 +12,6 @@ import 'package:path/path.dart' as p;
 /// AutoRoute imports
 const kAutoRouteImport = 'package:auto_route/auto_route.dart';
 
-/// Material imports
-const kMaterialImport = 'package:flutter/material.dart';
-
 /// String type reference
 const Reference kStringRefer = Reference('String');
 

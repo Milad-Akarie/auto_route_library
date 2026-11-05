@@ -225,19 +225,6 @@ class RouteParameterResolver {
     literal.accept(finder);
     return finder.found;
   }
-
-  /// Extracts path parameters from a route path
-  static List<PathParamConfig> extractPathParams(String path) {
-    return RegExp(':([^/]+)').allMatches(path).map((m) {
-      var paramName = m.group(1);
-      var isOptional = false;
-      if (paramName!.endsWith('?')) {
-        isOptional = true;
-        paramName = paramName.substring(0, paramName.length - 1);
-      }
-      return PathParamConfig(name: paramName, isOptional: isOptional);
-    }).toList();
-  }
 }
 
 /// Finds the first identifier in an expression that names a top-level

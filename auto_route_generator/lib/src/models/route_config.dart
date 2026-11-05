@@ -84,23 +84,10 @@ class RouteConfig {
   /// Whether the page class has type parameters.
   bool get isGeneric => typeParameters.isNotEmpty;
 
-  /// The class name for ArgumentsHolder
-  String get argumentsHolderClassName {
-    return '${className}Arguments';
-  }
-
-  /// Returns all the non path/query params
-  List<ParamConfig> get argParams {
-    return parameters.where((p) => !p.isPathParam && !p.isQueryParam).toList();
-  }
-
   /// Returns all the path/query params
   List<ParamConfig> get pathQueryParams {
     return parameters.where((p) => p.isPathParam || p.isQueryParam).toList();
   }
-
-  /// Returns all the required params
-  Iterable<ParamConfig> get requiredParams => parameters.where((p) => p.isPositional && !p.isOptional);
 
   /// Returns all the optional params
   Iterable<ParamConfig> get positionalParams => parameters.where((p) => p.isPositional);
