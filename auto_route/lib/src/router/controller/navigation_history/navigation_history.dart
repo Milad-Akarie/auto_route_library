@@ -26,9 +26,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   final StackRouter router;
 
   @override
-  // Overrides a nullable getter.
-  // ignore: avoid-unnecessary-nullable-return-type
-  Object? get pathState => throw Exception('Stub implementation');
+  Object get pathState => throw Exception('Stub implementation');
 
   @override
   void pushPathState(Object? state) {

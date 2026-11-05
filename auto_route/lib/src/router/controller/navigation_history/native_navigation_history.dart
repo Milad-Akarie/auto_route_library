@@ -134,9 +134,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   }
 
   @override
-  // Overrides a nullable getter.
-  // ignore: avoid-unnecessary-nullable-return-type
-  Object? get pathState => throw FlutterError('pathState is not supported for non-web platforms');
+  Object get pathState => throw FlutterError('pathState is not supported for non-web platforms');
 
   @override
   void pushPathState(Object? state) {

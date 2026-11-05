@@ -174,8 +174,6 @@ class RouteData<R> {
   /// Helper to access [RouteMatch.args]
   ///
   /// this method is unsafe prefer using [argsAs]
-  // Null for a route pushed without args. The rule reads RouteMatch<Object?>'s args as never null.
-  // ignore: avoid-unnecessary-nullable-return-type
   Object? get args => _route.args;
 
   /// Helper to access [RouteMatch.stringMatch]
