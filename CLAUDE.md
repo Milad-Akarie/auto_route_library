@@ -13,6 +13,8 @@ This repository is its own product: a maintained fork of the auto_route package.
 
 Also: never push (the maintainer merges into `dev` and pushes), run `dart format` on every file you change, American English, made-up names in code and fixtures.
 
+The old example app lives in `auto_route/example.old/` until the new one in `auto_route/example/` takes over its tests.
+
 ## Branches
 - `dev` is where work happens. Branch every piece of work from `dev`; finished work lands on `dev`.
 - `master` holds stable releases. Only the maintainer moves it, when `dev` reaches a new stable.
@@ -21,7 +23,7 @@ Also: never push (the maintainer merges into `dev` and pushes), run `dart format
 ## Proving a fix
 1. A headless test in `auto_route/test/` that fails before the fix and passes after it. Its comment names the issue and the steps.
    For a fix in the code generator, the test goes in `auto_route_generator/test/` instead, built on `test/support/generate.dart`, which runs both builders on source strings and reports whether the generated router compiles. Run it from `auto_route_generator/` with `dart test`. The committed `.gr.dart` files must then regenerate the same as before, except where the fix means to change them.
-2. An integration test in `auto_route/example/integration_test/`, one file per fix, that drives the example app through the same steps. Add the file to `integration_test/all_tests.dart`; that file runs every test in one app launch.
+2. An integration test in `auto_route/example.old/integration_test/`, one file per fix, that drives the example app through the same steps. Add the file to `integration_test/all_tests.dart`; that file runs every test in one app launch.
 3. Run here, from `auto_route/` for the headless tests:
 
    ```bash
@@ -32,7 +34,7 @@ Also: never push (the maintainer merges into `dev` and pushes), run `dart format
    flutter test --platform chrome
    ```
 
-   The integration tests run on all four platforms at the same time, not one after another: each platform runs from its own worktree so the builds don't clash, and a run waits only for a device that another chat's run is using. Give each chat its own ChromeDriver port (`--port=<n>` and `flutter drive --driver-port=<n>`), and use `Pixel_9_Pro_Fold` (`-port 5556`, so `emulator-5556`) when `Pixel_9` is busy. From `auto_route/example/`, on macOS, the Pixel_9 emulator and the iOS simulator:
+   The integration tests run on all four platforms at the same time, not one after another: each platform runs from its own worktree so the builds don't clash, and a run waits only for a device that another chat's run is using. Give each chat its own ChromeDriver port (`--port=<n>` and `flutter drive --driver-port=<n>`), and use `Pixel_9_Pro_Fold` (`-port 5556`, so `emulator-5556`) when `Pixel_9` is busy. From `auto_route/example.old/`, on macOS, the Pixel_9 emulator and the iOS simulator:
 
    ```bash
    flutter test integration_test/all_tests.dart -d macos
@@ -60,7 +62,7 @@ Also: never push (the maintainer merges into `dev` and pushes), run `dart format
    pkill -f "chromedriver --port=4444"
    ```
 
-4. Who runs what. A chat working on a change runs the headless tests (both commands above), the generator's tests when it touched the generator, analyze and DCM, the fix's tests on its parent (they must fail), and the integration tests on the platform its change touches, or on macOS when it touches every platform. The maintainer runs every step-3 run, on all four platforms and on Phil's S25 and iPhone, once per batch, on all the batch's changes together, before pushing `dev`; a failure there is traced to its commit and sent back to that change's chat. Every device run waits for its device and has a time limit. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, a check that every committed router regenerates unchanged from `auto_route/`, `auto_route/example/` and the root, the headless tests on the VM and in Chrome, the generator's tests, and the integration tests on Android, iOS, web and macOS. A CI failure on `dev` or `master` is fixed as its own issue.
+4. Who runs what. A chat working on a change runs the headless tests (both commands above), the generator's tests when it touched the generator, analyze and DCM, the fix's tests on its parent (they must fail), and the integration tests on the platform its change touches, or on macOS when it touches every platform. The maintainer runs every step-3 run, on all four platforms and on Phil's S25 and iPhone, once per batch, on all the batch's changes together, before pushing `dev`; a failure there is traced to its commit and sent back to that change's chat. Every device run waits for its device and has a time limit. CI (`.github/workflows/tests.yml`) runs the same checks on every push, as the backstop: analyze, a check that every committed router regenerates unchanged from `auto_route/`, `auto_route/example.old/` and the root, the headless tests on the VM and in Chrome, the generator's tests, and the integration tests on Android, iOS, web and macOS. A CI failure on `dev` or `master` is fixed as its own issue.
 
 If a test fails on one platform because of a real bug, skip it on that platform only, with a comment naming the issue and the platform, and give that bug its own chat (rule 4).
 
@@ -86,4 +88,4 @@ A `flutter_canary_*` test pins a Flutter bug or fix that auto_route depends on. 
 - `flutter test -d chrome` refuses integration tests. The headless test runner in Chrome never updates the address bar, so the browser url checks in `support/app.dart` prove something only under `flutter drive`.
 - On Android, system back in the tests calls the activity's back handler through a channel in `MainActivity.kt`. An app can't inject a real key press into itself.
 - If a test fails with "Android would close the app on back", Flutter has told Android the app doesn't handle back, so on Android 13 and later a real back would close the app. If the app should take that back, it's a real bug. It's also how a test fails when it pumps its own app and then calls `systemBack`: the test binding forgets the app's lifecycle state after every test, and Flutter sends that signal only while the state is known. Pump the app with `pumpRouterApp` or `pumpRouterConfigApp` from `support/app.dart`, which first mark it in the foreground, or call `tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed)` before `pumpWidget`.
-- The repo is a Dart pub workspace of `auto_route` and `auto_route/example`: `flutter pub get` at the root resolves both, with one `pubspec.lock` at the root. `auto_route_generator` stays outside it and runs its own `flutter pub get`, with an override to `../auto_route` so its tests use the fork's auto_route. On Flutter 3.47.9, flutter_test pins test_api 0.7.12, and every release of package:test that allows analyzer 14, which the generator needs, requires test_api 0.7.13 or later. Once flutter_test allows that, the generator joins the workspace; the root `pubspec.yaml` says how.
+- The repo is a Dart pub workspace of `auto_route` and `auto_route/example.old`: `flutter pub get` at the root resolves both, with one `pubspec.lock` at the root. `auto_route_generator` stays outside it and runs its own `flutter pub get`, with an override to `../auto_route` so its tests use the fork's auto_route. On Flutter 3.47.9, flutter_test pins test_api 0.7.12, and every release of package:test that allows analyzer 14, which the generator needs, requires test_api 0.7.13 or later. Once flutter_test allows that, the generator joins the workspace; the root `pubspec.yaml` says how.

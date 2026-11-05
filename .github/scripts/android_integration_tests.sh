@@ -13,7 +13,7 @@
 # Either way the run starts once more; the app is already built, so the retry
 # costs little.
 #
-# Usage, from auto_route/example: android_integration_tests.sh <shard index>
+# Usage, from auto_route/example.old: android_integration_tests.sh <shard index>
 # The results and the output go to $RUNNER_TEMP, as the report step expects.
 
 set -o pipefail

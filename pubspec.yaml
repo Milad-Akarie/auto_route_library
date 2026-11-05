@@ -16,7 +16,7 @@ environment:
 
 workspace:
   - auto_route
-  - auto_route/example
+  - auto_route/example.old
 
 dependency_overrides:
   auto_route_generator:

@@ -1,7 +1,7 @@
 # Proves every fix in this fork on each platform, on every push and pull
 # request: that the committed routers regenerate unchanged, the headless
 # tests on the Dart VM and in Chrome, the code generator's tests, then the
-# example app's integration tests (auto_route/example/integration_test) on an
+# example app's integration tests (auto_route/example.old/integration_test) on an
 # Android emulator, an iOS simulator, web through `flutter drive`, and macOS
 # desktop.
 # Every job's work stops within 15 minutes, so the headless tests, Android
@@ -40,7 +40,7 @@ jobs:
         working-directory: auto_route
         run: flutter analyze
       - name: Analyze the example app and its integration tests
-        working-directory: auto_route/example
+        working-directory: auto_route/example.old
         run: flutter analyze
       - name: Analyze the generator
         if: success() || failure()
@@ -182,13 +182,13 @@ jobs:
           # A healthy boot takes about 40 s, so an emulator that died at once
           # fails after 3 minutes instead of the default 10.
           emulator-boot-timeout: 180
-          working-directory: auto_route/example
+          working-directory: auto_route/example.old
           # The script retries once when the tool can't connect to the app in time.
           script: bash ../../.github/scripts/android_integration_tests.sh ${{ matrix.shard-index }}
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
-        working-directory: auto_route/example
+        working-directory: auto_route/example.old
         run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   ios:
@@ -242,7 +242,7 @@ jobs:
           xcrun simctl boot "$udid"
           # While the simulator boots, start Flutter and fetch the packages,
           # which the tests would otherwise do after it: about 75 s here.
-          (cd auto_route/example && flutter pub get)
+          (cd auto_route/example.old && flutter pub get)
           xcrun simctl bootstatus "$udid"
           echo "SIMULATOR_UDID=$udid" >> "$GITHUB_ENV"
           # The tests stop 14 minutes after the job started on its runner, so a
@@ -251,7 +251,7 @@ jobs:
           minutes=$(( (JOB_STARTED + 14 * 60 - $(date +%s)) / 60 ))
           echo "TEST_MINUTES=$(( minutes > 1 ? minutes : 1 ))" >> "$GITHUB_ENV"
       - name: Integration tests on the iOS simulator
-        working-directory: auto_route/example
+        working-directory: auto_route/example.old
         timeout-minutes: ${{ fromJSON(env.TEST_MINUTES) }}
         shell: bash
         # Verbose, with the time on each line, so a run that stops before its
@@ -266,7 +266,7 @@ jobs:
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
-        working-directory: auto_route/example
+        working-directory: auto_route/example.old
         run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   web:
@@ -286,7 +286,7 @@ jobs:
           "$CHROMEWEBDRIVER/chromedriver" --port=4444 &
           sleep 2
       - name: Integration tests in headless Chrome
-        working-directory: auto_route/example
+        working-directory: auto_route/example.old
         shell: bash
         run: >-
           flutter drive
@@ -298,7 +298,7 @@ jobs:
       # flutter drive writes no results file, so this names the failure by its last lines.
       - name: Name the failure
         if: failure()
-        working-directory: auto_route/example
+        working-directory: auto_route/example.old
         run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   macos:
@@ -317,12 +317,12 @@ jobs:
           cache: true
       # The work stops within 15 minutes, as in every job.
       - name: Integration tests on macOS desktop
-        working-directory: auto_route/example
+        working-directory: auto_route/example.old
         timeout-minutes: 13
         shell: bash
         run: flutter test --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json" integration_test/all_tests.dart -d macos 2>&1 | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
       - name: Name each failed test
         if: failure()
-        working-directory: auto_route/example
+        working-directory: auto_route/example.old
         run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"

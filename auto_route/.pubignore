@@ -8,6 +8,7 @@ example/ios/
 example/web/
 example/build/
 example/pubspec.lock
+example.old/
 
 # Coverage reports
 coverage/

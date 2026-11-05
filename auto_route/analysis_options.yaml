@@ -15,6 +15,7 @@ analyzer:
     - build/**
     # The example app is its own package, with its own analysis options.
     - example/**
+    - example.old/**
     # Written by auto_route_generator: its output is proven by the generator's
     # tests, and a lint fix here would be overwritten on the next build.
     - "**/*.gr.dart"
@@ -83,6 +84,7 @@ dart_code_metrics:
   exclude:
     - build/**
     - example/**
+    - example.old/**
     - "**/*.g.dart"
     - "**/*.gr.dart"
   rules:

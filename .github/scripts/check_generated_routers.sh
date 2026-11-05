@@ -4,7 +4,7 @@
 #
 # A build from auto_route/ used to build the example's files too, as part of
 # auto_route, and rewrote the example's six routers to empty. auto_route's
-# build.yaml now leaves example/ to the example's own build.
+# build.yaml now leaves example/ and example.old/ to the example's own build.
 #
 # Usage, from the repository root, once `flutter pub get` has run there:
 # check_generated_routers.sh
@@ -41,6 +41,6 @@ check_build() {
 }
 
 check_build auto_route
-check_build auto_route/example
+check_build auto_route/example.old
 check_build . --workspace
 echo "Every committed router regenerated unchanged."
