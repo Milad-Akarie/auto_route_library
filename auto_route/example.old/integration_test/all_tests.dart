@@ -177,6 +177,7 @@ import 'tab_routes_index_test.dart' as tab_routes_index;
 import 'tab_semantics_test.dart' as tab_semantics;
 import 'tab_shared_parent_url_test.dart' as tab_shared_parent_url;
 import 'tab_shared_route_navigate_test.dart' as tab_shared_route_navigate;
+import 'tab_switch_then_dispose_test.dart' as tab_switch_then_dispose;
 import 'tab_view_page_controller_test.dart' as tab_view_page_controller;
 import 'tabs_deep_link_test.dart' as tabs_deep_link;
 import 'tabs_page_view_page_controller_test.dart'
@@ -374,6 +375,7 @@ void main() {
   tab_semantics.main();
   tab_shared_parent_url.main();
   tab_shared_route_navigate.main();
+  tab_switch_then_dispose.main();
   tab_view_page_controller.main();
   tabs_deep_link.main();
   tabs_page_view_page_controller.main();

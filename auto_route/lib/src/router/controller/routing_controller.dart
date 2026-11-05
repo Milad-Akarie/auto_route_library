@@ -1169,7 +1169,8 @@ class TabsRouter extends RoutingController {
     if (notify) {
       if (didPreload && SchedulerBinding.instance.schedulerPhase != .idle) {
         SchedulerBinding.instance.addPostFrameCallback((_) {
-          notifyAll();
+          // The tabs may be disposed by the end of the frame.
+          if (!_isDisposed) notifyAll();
         });
       } else {
         notifyAll();
