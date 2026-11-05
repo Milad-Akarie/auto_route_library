@@ -8,43 +8,43 @@ import 'package:meta/meta.dart';
 @immutable
 class Parameters {
   /// default construct
-  const Parameters(Map<String, Object?>? params) : _params = params ?? const {};
-  final Map<String, Object?> _params;
+  const Parameters(Map<String, Object?>? params) : _rawMap = params ?? const {};
+  final Map<String, Object?> _rawMap;
 
   /// returns the raw map passed to the constructor
-  Map<String, Object?> get rawMap => _params;
+  Map<String, Object?> get rawMap => _rawMap;
 
   // coverage:ignore-start
   @override
   String toString() {
-    return _params.toString();
+    return _rawMap.toString();
   }
   // coverage:ignore-end
 
   /// merges the value of two instances of [Parameters] classes
   /// and returns a new instance containing the merged values.
-  Parameters operator +(Parameters other) => .new({..._params, ...other._params});
+  Parameters operator +(Parameters other) => .new({..._rawMap, ...other._rawMap});
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Parameters &&
           runtimeType == other.runtimeType &&
-          const MapEquality<Object?, Object?>(values: DeepCollectionEquality()).equals(_params, other._params);
+          const MapEquality<Object?, Object?>(values: DeepCollectionEquality()).equals(_rawMap, other._rawMap);
 
   @override
-  int get hashCode => const MapEquality<Object?, Object?>().hash(_params);
+  int get hashCode => const MapEquality<Object?, Object?>().hash(_rawMap);
 
-  /// Helper getter to `_params.isNotEmpty`
-  bool get isNotEmpty => _params.isNotEmpty;
+  /// Helper getter to `_rawMap.isNotEmpty`
+  bool get isNotEmpty => _rawMap.isNotEmpty;
 
-  /// Helper getter to `_params.isEmpty`
-  bool get isEmpty => _params.isEmpty;
+  /// Helper getter to `_rawMap.isEmpty`
+  bool get isEmpty => _rawMap.isEmpty;
 
   /// returns the value corresponding with [key] as is, without type checking
   /// if null returns [defaultValue]
   dynamic get(String key, [dynamic defaultValue]) {
-    return _params[key] ?? defaultValue;
+    return _rawMap[key] ?? defaultValue;
   }
 
   /// returns the value corresponding with [key] corresponding with [key] as nullable [String]
@@ -52,16 +52,16 @@ class Parameters {
   ///
   /// A key repeated in the url (`?tag=red&tag=blue`) gives its last value, as
   /// [Uri.queryParameters] does; any other value gives its `toString()`.
-  String? optString(String key, [String? defaultValue]) => _stringOf(_params[key]) ?? defaultValue;
+  String? optString(String key, [String? defaultValue]) => _stringOf(_rawMap[key]) ?? defaultValue;
 
   /// returns the value corresponding with [key] as [String]
   /// if null returns [defaultValue]
   ///
   /// Reads a repeated key or a non-String value as [optString] does.
   String getString(String key, [String? defaultValue]) {
-    final val = _stringOf(_params[key]) ?? defaultValue;
+    final val = _stringOf(_rawMap[key]) ?? defaultValue;
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [String] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError('Failed to parse [String] $key value from ${_rawMap[key]}');
     }
     return val;
   }
@@ -77,7 +77,7 @@ class Parameters {
   /// returns the value corresponding with [key] as nullable `Int`
   /// if null returns [defaultValue]
   int? optInt(String key, [int? defaultValue]) {
-    final param = _params[key];
+    final param = _rawMap[key];
     if (param == null) {
       return defaultValue;
     } else if (param is int) {
@@ -91,7 +91,7 @@ class Parameters {
   int getInt(String key, [int? defaultValue]) {
     final val = optInt(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [int] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError('Failed to parse [int] $key value from ${_rawMap[key]}');
     }
     return val;
   }
@@ -99,7 +99,7 @@ class Parameters {
   /// returns the value corresponding with [key] as nullable [double]
   /// if null returns [defaultValue]
   double? optDouble(String key, [double? defaultValue]) {
-    final param = _params[key];
+    final param = _rawMap[key];
     if (param == null) {
       return defaultValue;
     } else if (param is double) {
@@ -113,7 +113,7 @@ class Parameters {
   double getDouble(String key, [double? defaultValue]) {
     final val = optDouble(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [double] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError('Failed to parse [double] $key value from ${_rawMap[key]}');
     }
     return val;
   }
@@ -121,7 +121,7 @@ class Parameters {
   /// returns the value corresponding with [key] as  nullable [num]
   /// if null returns [defaultValue]
   num? optNum(String key, [num? defaultValue]) {
-    final param = _params[key];
+    final param = _rawMap[key];
     if (param == null) {
       return defaultValue;
     } else if (param is num) {
@@ -135,7 +135,7 @@ class Parameters {
   num getNum(String key, [num? defaultValue]) {
     final val = optNum(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [num] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError('Failed to parse [num] $key value from ${_rawMap[key]}');
     }
     return val;
   }
@@ -149,7 +149,7 @@ class Parameters {
   // The bool is a default value, placed like getInt(key, 5), not a flag.
   // ignore: avoid_positional_boolean_parameters
   bool? optBool(String key, [bool? defaultValue]) {
-    final param = _params[key];
+    final param = _rawMap[key];
     if (param is bool) return param;
     switch (param?.toString().toLowerCase()) {
       case 'true':
@@ -168,7 +168,7 @@ class Parameters {
   bool getBool(String key, [bool? defaultValue]) {
     final val = optBool(key, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [bool] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError('Failed to parse [bool] $key value from ${_rawMap[key]}');
     }
     return val;
   }
@@ -186,7 +186,7 @@ class Parameters {
   /// The generated route calls this for a nullable param, or one with a
   /// default, that has a converter on its annotation.
   T? optTyped<T>(String key, ParamConverter<T> converter, [T? defaultValue]) {
-    final param = _params[key];
+    final param = _rawMap[key];
     if (param is T && param != null) return param;
     final text = _stringOf(param);
     if (text == null) return defaultValue;
@@ -202,16 +202,16 @@ class Parameters {
   T getTyped<T>(String key, ParamConverter<T> converter, [T? defaultValue]) {
     final val = optTyped(key, converter, defaultValue);
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [$T] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError('Failed to parse [$T] $key value from ${_rawMap[key]}');
     }
     return val;
   }
 
   /// returns the value corresponding with [key] as nullable [List<String>]
   List<String> getList(String key, [List<String>? defaultValue]) {
-    final val = _params[key] ?? defaultValue;
+    final val = _rawMap[key] ?? defaultValue;
     if (val == null) {
-      throw MissingRequiredParameterError('Failed to parse [List<String>] $key value from ${_params[key]}');
+      throw MissingRequiredParameterError('Failed to parse [List<String>] $key value from ${_rawMap[key]}');
     }
     if (val is List) {
       return val.map((e) => e.toString()).toList();
@@ -222,7 +222,7 @@ class Parameters {
   /// returns the value corresponding with [key] as nullable [List<String>]
   /// if null returns [defaultValue]
   List<String>? optList(String key, [List<String>? defaultValue]) {
-    final val = _params[key];
+    final val = _rawMap[key];
     if (val == null) {
       return defaultValue;
     }

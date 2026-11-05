@@ -22,7 +22,7 @@ import 'package:flutter/widgets.dart';
 class PageRouteInfo<T extends Object?> {
   /// Default constructor
   const PageRouteInfo(
-    String name, {
+    this._routeName, {
     this.initialChildren,
     this.args,
     this.rawPathParams = const {},
@@ -31,8 +31,7 @@ class PageRouteInfo<T extends Object?> {
     this.stringMatch,
     this.redirectedFrom,
     this.argsEquality = true,
-  }) : _name = name,
-       fragment = fragment ?? '';
+  }) : fragment = fragment ?? '';
 
   /// Creates a new instance form [RouteMatch]
   factory PageRouteInfo.fromMatch(RouteMatch<Object?> match) {
@@ -57,7 +56,7 @@ class PageRouteInfo<T extends Object?> {
     Map<String, Object?> queryParams,
     String? fragment,
   }) = NamedRoute<T>;
-  final String _name;
+  final String _routeName;
 
   /// The  typed arguments of the route
   ///
@@ -97,7 +96,7 @@ class PageRouteInfo<T extends Object?> {
   final bool argsEquality;
 
   /// The name of the route
-  String get routeName => _name;
+  String get routeName => _routeName;
 
   /// Whether this route has initial child routes
   bool get hasChildren => initialChildren?.isNotEmpty == true;
@@ -172,7 +171,7 @@ class PageRouteInfo<T extends Object?> {
     final newPathParams = rawPathParams ?? params;
     final newQueryParams = rawQueryParams ?? queryParams;
     final newChildren = initialChildren ?? children;
-    if ((name == null || identical(name, _name)) &&
+    if ((name == null || identical(name, _routeName)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
         (newPathParams == null || identical(newPathParams, this.rawPathParams)) &&
@@ -185,7 +184,7 @@ class PageRouteInfo<T extends Object?> {
     }
 
     return PageRouteInfo(
-      name ?? _name,
+      name ?? _routeName,
       args: args ?? this.args,
       rawPathParams: newPathParams ?? this.rawPathParams,
       rawQueryParams: newQueryParams ?? this.rawQueryParams,
@@ -199,7 +198,7 @@ class PageRouteInfo<T extends Object?> {
 
   @override
   String toString() {
-    return 'Route{name: $_name,  params: $rawPathParams}, children: ${initialChildren?.map((e) => e.routeName)}';
+    return 'Route{name: $_routeName,  params: $rawPathParams}, children: ${initialChildren?.map((e) => e.routeName)}';
   }
 
   /// Calls [StackRouter.push] with this route on the nearest router
@@ -222,7 +221,7 @@ class PageRouteInfo<T extends Object?> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is PageRouteInfo &&
-          _name == other._name &&
+          _routeName == other._routeName &&
           fragment == other.fragment &&
           (!argsEquality || args == other.args) &&
           const ListEquality<Object?>().equals(initialChildren, other.initialChildren) &&
@@ -232,7 +231,7 @@ class PageRouteInfo<T extends Object?> {
 
   @override
   int get hashCode =>
-      _name.hashCode ^
+      _routeName.hashCode ^
       fragment.hashCode ^
       args.hashCode ^
       const DeepCollectionEquality().hash(rawPathParams) ^

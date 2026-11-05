@@ -75,7 +75,7 @@ class AutoRoute {
     this.allowSnapshotting = true,
     this.initial = false,
     this.children,
-  }) : _pageBuilder = page.builder;
+  }) : _builder = page.builder;
 
   AutoRoute._change({
     required this.page,
@@ -93,7 +93,7 @@ class AutoRoute {
     required this.children,
     required this.initial,
     required this.allowSnapshotting,
-  }) : _pageBuilder = page.builder;
+  }) : _builder = page.builder;
 
   /// Creates an AutoRoute with a single [AutoRouteGuard]
   /// callback
@@ -232,10 +232,10 @@ class AutoRoute {
   /// Helper getter to get the name of the page
   String get name => page.name;
 
-  final AutoRoutePageBuilder _pageBuilder;
+  final AutoRoutePageBuilder _builder;
 
   /// Returns the Widget builder function of the page
-  AutoRoutePageBuilder get builder => _pageBuilder;
+  AutoRoutePageBuilder get builder => _builder;
 
   /// Builds a [AutoRoutePage] from [RouteData]
   AutoRoutePage<T> buildPage<T>(RouteData<Object?> data) {

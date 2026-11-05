@@ -969,7 +969,7 @@ class TabsRouter extends RoutingController {
     // A view asks again for the tab it moved to while its guards decide.
     if (route == null && _pendingTab == index) return _pendingChange!;
     final change = ++_tabChanges;
-    final match = route ?? _pages[index].routeData._match;
+    final match = route ?? _pages[index].routeData._route;
     final checked = _checkTabGuards(match, onFailure: onFailure);
     if (checked is ResolverResult) {
       return _endTabChange(
@@ -1253,7 +1253,7 @@ class TabsRouter extends RoutingController {
   Future<List<ReevaluatableRouteMatch<Object?, Object?>>> _composeMatchesForReevaluate() async {
     final matches = <ReevaluatableRouteMatch<Object?, Object?>>[];
     for (final page in stack) {
-      final match = page.routeData._match;
+      final match = page.routeData._route;
       final ReevaluatableRouteMatch<Object?, Object?> reMatch;
       final childCtrl = _innerControllerOfMatch(match.id);
       if (childCtrl != null) {
@@ -1345,7 +1345,7 @@ class TabsRouter extends RoutingController {
         if (!isReevaluating && _activeIndex != pageToUpdateIndex) {
           _changeTab(pageToUpdateIndex, route: mayUpdateRoute, onFailure: onFailure);
         } else {
-          final shouldNotify = mayUpdateRoute != _pages[pageToUpdateIndex].routeData._match;
+          final shouldNotify = mayUpdateRoute != _pages[pageToUpdateIndex].routeData._route;
           final routeToBeUpdated = _updateTabPage(pageToUpdateIndex, mayUpdateRoute);
           if (shouldNotify) {
             notifyAll();
@@ -1364,7 +1364,7 @@ class TabsRouter extends RoutingController {
   // Puts [mayUpdateRoute] in the page of the tab at [index], and answers the
   // route the page now holds.
   RouteMatch<Object?> _updateTabPage(int index, RouteMatch<Object?> mayUpdateRoute) {
-    final routeToBeUpdated = mayUpdateRoute.withId(_pages[index].routeData._match.id);
+    final routeToBeUpdated = mayUpdateRoute.withId(_pages[index].routeData._route.id);
     for (final ctr in _childControllers) {
       if (ctr.matchId == _pages[index].routeData.matchId) {
         ctr._markedForDataUpdate = true;
@@ -1641,7 +1641,7 @@ abstract class StackRouter extends RoutingController {
 
     final matches = <ReevaluatableRouteMatch<Object?, Object?>>[];
     for (final page in stack) {
-      var match = page.routeData._match;
+      var match = page.routeData._route;
       if (alreadyEvaluated.containsKey(match.id)) {
         match = match.copyWith(evaluatedGuards: alreadyEvaluated[match.id]);
       }
@@ -1653,7 +1653,7 @@ abstract class StackRouter extends RoutingController {
       page.routeData._onStartReevaluating(match);
 
       /// the route maybe removed from stack at this point
-      if (stackData.any((e) => e._match.id == match.id)) {
+      if (stackData.any((e) => e._route.id == match.id)) {
         matches.add(ReevaluatableRouteMatch(currentPage: page, originalMatch: match));
       }
     }
@@ -1834,7 +1834,7 @@ abstract class StackRouter extends RoutingController {
       return false;
     }
     top.routeData.onPopInvoked(result);
-    _removeRoute(top.routeData._match);
+    _removeRoute(top.routeData._route);
     return true;
   }
 
@@ -1849,7 +1849,7 @@ abstract class StackRouter extends RoutingController {
   /// finally calls [notifyAll] if notify is true
   void removeRoute(RouteData<Object?> route, {bool notify = true}) {
     _markLeaving(_pages.where((page) => page.routeData == route), .removed);
-    _removeRoute(route._match, notify: notify);
+    _removeRoute(route._route, notify: notify);
   }
 
   /// Called when Page route is popped
@@ -1897,7 +1897,7 @@ abstract class StackRouter extends RoutingController {
     if (_pages.isNotEmpty) {
       // Not removeRoute, which counts the page as removed: callers that push
       // in its place count it as replaced.
-      _removeRoute(_pages.last.routeData._match, notify: notify);
+      _removeRoute(_pages.last.routeData._route, notify: notify);
       didRemove = true;
     }
     return didRemove;
@@ -1980,7 +1980,7 @@ abstract class StackRouter extends RoutingController {
     var kept = 0;
     while (kept < matches.length - 1 && start + kept < _pages.length) {
       final data = _pages[start + kept].routeData;
-      if (data._match != matches[kept] || _innerControllerOfMatch(data.matchId) != null) break;
+      if (data._route != matches[kept] || _innerControllerOfMatch(data.matchId) != null) break;
       kept++;
     }
     if (kept == 0) return 0;
@@ -2053,7 +2053,7 @@ abstract class StackRouter extends RoutingController {
         if (replaced != null && scope._pages.any((page) => page.routeData == replaced)) {
           scope
             .._markLeaving(scope._pages.where((page) => page.routeData == replaced), .replaced)
-            .._removeRoute(replaced._match, notify: false);
+            .._removeRoute(replaced._route, notify: false);
         }
         markUrlStateForReplace();
       },
@@ -2458,9 +2458,9 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
   }) {
     final shownTop = _pages.lastOrNull?.routeData;
-    if (shownTop != null && !shownTop._match.keepHistory) {
+    if (shownTop != null && !shownTop._route.keepHistory) {
       markUrlStateForReplace();
-      _removeRoute(shownTop._match, notify: false);
+      _removeRoute(shownTop._route, notify: false);
     }
     var match = route;
     final takenOver = index == null ? _shownTopTakenOverBy(route) : null;
