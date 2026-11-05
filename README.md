@@ -813,6 +813,28 @@ AutoTabsRouter.tabBar(
 );
 ```
 
+### Choosing the start tab
+
+The tabs open on the first route in `routes` unless the navigation that opens them names a tab. Name it as a child of the tabs' route, or with a url:
+
+```dart
+context.router.navigate(const DashboardRoute(children: [PostsRoute()]));
+// or
+context.router.navigatePath('/dashboard/posts');
+```
+
+To make another tab the default, mark its route `initial: true`. The tabs' own url, `/dashboard`, then leads to that tab, `/dashboard/posts`, and so does `DashboardRoute()` without children:
+
+```dart
+AutoRoute(path: '/dashboard', page: DashboardRoute.page, children: [
+  AutoRoute(path: 'users', page: UsersRoute.page),
+  AutoRoute(path: 'posts', page: PostsRoute.page, initial: true),
+  AutoRoute(path: 'settings', page: SettingsRoute.page),
+]),
+```
+
+`homeIndex` doesn't choose the start tab: it's the tab back goes to (see [Back between tabs](#back-between-tabs)).
+
 ### Building every tab up front
 
 Tabs load lazily: a tab's page is built the first time the tab shows. Pass `lazyLoad: false` to `AutoTabsRouter`, `AutoTabsRouter.pageView`, `AutoTabsRouter.tabBar` or `AutoTabsScaffold` to build every tab's page with the tabs, so its state and inner router are there before the first visit.
