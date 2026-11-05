@@ -20,7 +20,7 @@ class RouteData<R> {
   }) : _match = route,
        _ownQueryParams = route.queryParams,
        _ownFragment = route.fragment,
-       _pendingChildren = List<RouteMatch<dynamic>>.of(pendingChildren);
+       _pendingChildren = List.of(pendingChildren);
   RouteMatch<dynamic> _match;
   RouteData<dynamic>? _parent;
   final Completer<R?>? _popCompleter;
@@ -213,7 +213,7 @@ class RouteData<R> {
 
   /// Builds the [AutoRoutePage] page
   AutoRoutePage<T> buildPage<T>() {
-    return _match.buildPage<T>(this);
+    return _match.buildPage(this);
   }
 
   // Set while a guard reevaluates this route; kept for debugging.

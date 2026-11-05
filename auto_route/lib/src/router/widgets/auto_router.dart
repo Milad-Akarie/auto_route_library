@@ -107,7 +107,7 @@ class AutoRouter extends StatefulWidget {
 
   /// Helper to access [RoutingController.innerRouterOf]
   static StackRouter? innerRouterOf(BuildContext context, String routeName) {
-    return of(context).innerRouterOf<StackRouter>(routeName);
+    return of(context).innerRouterOf(routeName);
   }
 }
 

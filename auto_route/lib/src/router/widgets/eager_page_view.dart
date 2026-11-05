@@ -291,7 +291,7 @@ class _EagerPageViewState extends State<EagerPageView> {
             axisDirection: axisDirection,
             offset: position,
             clipBehavior: widget.clipBehavior,
-            slivers: <Widget>[
+            slivers: [
               SliverFillViewport(
                 viewportFraction: widget.controller.viewportFraction,
                 delegate: widget.childrenDelegate,

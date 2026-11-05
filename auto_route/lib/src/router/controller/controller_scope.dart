@@ -111,9 +111,9 @@ class StackRouterScope extends InheritedWidget {
   /// returns null if it does not find it
   static StackRouterScope? of(BuildContext context, {bool watch = false}) {
     if (watch) {
-      return context.dependOnInheritedWidgetOfExactType<StackRouterScope>();
+      return context.dependOnInheritedWidgetOfExactType();
     }
-    return context.findAncestorWidgetOfExactType<StackRouterScope>();
+    return context.findAncestorWidgetOfExactType();
   }
 
   @override
@@ -152,9 +152,9 @@ class TabsRouterScope extends InheritedWidget {
   /// returns null if it does not find it
   static TabsRouterScope? of(BuildContext context, {bool watch = false}) {
     if (watch) {
-      return context.dependOnInheritedWidgetOfExactType<TabsRouterScope>();
+      return context.dependOnInheritedWidgetOfExactType();
     }
-    return context.findAncestorWidgetOfExactType<TabsRouterScope>();
+    return context.findAncestorWidgetOfExactType();
   }
 
   @override

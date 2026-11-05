@@ -34,7 +34,7 @@ class DefaultRouteParser extends RouteInformationParser<UrlState> {
     final matches = _matcher.matchUri(resolvedUri, includePrefixMatches: includePrefixMatches);
     final state = routeInformation.state;
     final savedRoutes = state is Map ? state[UrlState._savedRoutesKey] : null;
-    return SynchronousFuture<UrlState>(
+    return SynchronousFuture(
       UrlState(
         routeInformation.uri,
         matches ?? const [],

@@ -66,7 +66,7 @@ class AutoRoutePage<T> extends Page<T> {
   ///
   /// The new page has the same key, so it takes over this page's route.
   @internal
-  AutoRoutePage<T> rebuild() => routeData.buildPage<T>();
+  AutoRoutePage<T> rebuild() => routeData.buildPage();
 
   /// Whether this page can take over the route that [other] is showing.
   ///
@@ -285,7 +285,7 @@ mixin _FlutterMaterialThemeTransitionMixin<T> on MaterialRouteTransitionMixin<T>
   ) {
     final theme = flutterMaterialThemeOf(context);
     if (theme == null) return super.buildTransitions(context, animation, secondaryAnimation, child);
-    return theme.pageTransitionsTheme.buildTransitions<T>(this, context, animation, secondaryAnimation, child);
+    return theme.pageTransitionsTheme.buildTransitions(this, context, animation, secondaryAnimation, child);
   }
 }
 
@@ -395,7 +395,7 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
     // moves nothing when its animations stand still. The gesture drives this
     // route's own animation, so the page follows the finger through its
     // custom transition.
-    return CupertinoRouteTransitionMixin.buildPageTransitions<T>(
+    return CupertinoRouteTransitionMixin.buildPageTransitions(
       this,
       context,
       kAlwaysCompleteAnimation,

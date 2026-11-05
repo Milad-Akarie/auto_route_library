@@ -407,7 +407,7 @@ abstract class RoutingController with ChangeNotifier {
     if (path.startsWith('/')) {
       final scope = root._absolutePathScope(path, includePrefixMatches: includePrefixMatches);
       if (scope != null && scope.router is T) {
-        return _RouterScopeResult<T>(scope.router as T, scope.matches);
+        return _RouterScopeResult(scope.router as T, scope.matches);
       }
     }
     final routers = _topMostRouter(ignorePagelessRoutes: true)._buildRoutersHierarchy().whereType<T>();
@@ -415,7 +415,7 @@ abstract class RoutingController with ChangeNotifier {
     for (final router in routers) {
       final matches = router.matcher.match(path, includePrefixMatches: includePrefixMatches);
       if (matches != null) {
-        return _RouterScopeResult<T>(router, matches);
+        return _RouterScopeResult(router, matches);
       }
     }
     final failure = _notFound(path);
@@ -506,7 +506,7 @@ abstract class RoutingController with ChangeNotifier {
       }
     }
 
-    final routers = <RoutingController>[this];
+    final routers = [this];
     if (_parent != null) {
       collectRouters(_parent!, routers);
     }
@@ -625,7 +625,7 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   /// Returns parent route as [StackRouter]
-  StackRouter? get parentAsStackRouter => parent<StackRouter>();
+  StackRouter? get parentAsStackRouter => parent();
 
   /// Whether is controller is the root of all controllers
   bool get isRoot => _parent == null;
@@ -699,7 +699,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Calls [maybePop] on the controller with the top-most visible page
   @optionalTypeArgs
-  Future<bool> maybePopTop<T extends Object?>([T? result]) => _topMostRouter().maybePop<T>(result);
+  Future<bool> maybePopTop<T extends Object?>([T? result]) => _topMostRouter().maybePop(result);
 
   /// Clients can either pop their own [_pages] stack
   /// or defer the call to a parent controller
@@ -710,7 +710,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Calls [pop] on the controller with the top-most visible page
   @optionalTypeArgs
-  void popTop<T extends Object?>([T? result]) => _topMostRouter().pop<T>(result);
+  void popTop<T extends Object?>([T? result]) => _topMostRouter().pop(result);
 
   /// Whether this controller can preform [maybePop]
   ///
@@ -1049,7 +1049,7 @@ class TabsRouter extends RoutingController {
     }
     final guard = guards[from];
     final router = _guardRouter;
-    final resolver = NavigationResolver(router, Completer<ResolverResult>(), route);
+    final resolver = NavigationResolver(router, Completer(), route);
     final entry = GuardEntry(guard, resolver);
     router.activeGuardObserver._add(entry);
     FutureOr<ResolverResult> onResult(ResolverResult result) {
@@ -1105,15 +1105,15 @@ class TabsRouter extends RoutingController {
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) {
     final shown = _showTabOnBack();
-    if (shown is bool) return shown ? SynchronousFuture<bool>(true) : _maybePopParent<T>(result);
+    if (shown is bool) return shown ? SynchronousFuture(true) : _maybePopParent(result);
     return shown.then((shown) => shown ? true : _maybePopParent<T>(result));
   }
 
   Future<bool> _maybePopParent<T extends Object?>(T? result) {
     if (_parent != null) {
-      return _parent!.maybePop<T>(result);
+      return _parent!.maybePop(result);
     }
-    return SynchronousFuture<bool>(false);
+    return SynchronousFuture(false);
   }
 
   @override
@@ -1739,7 +1739,7 @@ abstract class StackRouter extends RoutingController {
   Future<T?> pushNativeRoute<T extends Object?>(Route<T> route) {
     final navigator = _navigatorKey.currentState;
     assert(navigator != null, 'The navigator of this router is not mounted.');
-    return navigator!.push<T>(route);
+    return navigator!.push(route);
   }
 
   @override
@@ -1800,7 +1800,7 @@ abstract class StackRouter extends RoutingController {
     if (await navigator?.maybePop<T>(result) ?? false) {
       return true;
     } else if (_parent != null) {
-      return _parent!.maybePop<T>(result);
+      return _parent!.maybePop(result);
     }
     return false;
   }
@@ -1918,7 +1918,7 @@ abstract class StackRouter extends RoutingController {
   /// otherwise they'll be thrown
   @optionalTypeArgs
   Future<T?> push<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
-    return _findStackScope(route)._push<T>(route, onFailure: onFailure);
+    return _findStackScope(route)._push(route, onFailure: onFailure);
   }
 
   StackRouter _findStackScope(PageRouteInfo route) {
@@ -2034,7 +2034,7 @@ abstract class StackRouter extends RoutingController {
       onAccepted?.call();
       _updateSharedPathData(queryParams: route.rawQueryParams, fragment: route.fragment, includeAncestors: true);
 
-      return _addNewPage<T>(result.route, notify: notify, index: insertAt, onFailure: onFailure);
+      return _addNewPage(result.route, notify: notify, index: insertAt, onFailure: onFailure);
     }
     return null;
   }
@@ -2051,7 +2051,7 @@ abstract class StackRouter extends RoutingController {
   Future<T?> replace<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) {
     final scope = _findStackScope(route);
     final replaced = scope._pages.lastOrNull?.routeData;
-    return scope._push<T>(
+    return scope._push(
       route,
       onFailure: onFailure,
       onAccepted: () {
@@ -2079,7 +2079,7 @@ abstract class StackRouter extends RoutingController {
         .._removeLast(notify: false);
       markUrlStateForReplace();
     }
-    return scope._push<T>(route, onFailure: onFailure, onMatch: (match) => onMatch(scope, match));
+    return scope._push(route, onFailure: onFailure, onMatch: (match) => onMatch(scope, match));
   }
 
   /// Adds the corresponding pages to given [routes] list to the [_pages] stack at once
@@ -2235,7 +2235,7 @@ abstract class StackRouter extends RoutingController {
   }) {
     final scope = _findStackScope(route);
     scope.pop<TO>(result);
-    return scope._push<T>(route, onFailure: onFailure);
+    return scope._push(route, onFailure: onFailure);
   }
 
   /// Calls [removeRoute] repeatedly until the predicate returns true.
@@ -2712,7 +2712,7 @@ abstract class StackRouter extends RoutingController {
     OnNavigationFailure? onFailure,
   }) {
     final scope = _findStackScope(route);
-    return scope._push<T>(
+    return scope._push(
       route,
       onFailure: onFailure,
       onAccepted: () {

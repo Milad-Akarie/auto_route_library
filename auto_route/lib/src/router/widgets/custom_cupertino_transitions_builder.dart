@@ -39,13 +39,13 @@ const Color kCupertinoModalBarrierColor = CupertinoDynamicColor.withBrightness(
 );
 
 // Offset from offscreen to the right to fully on screen.
-final Animatable<Offset> _kRightMiddleTween = Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero);
+final Animatable<Offset> _kRightMiddleTween = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero);
 
 // Offset from fully on screen to 1/3 offscreen to the left.
-final Animatable<Offset> _kMiddleLeftTween = Tween<Offset>(begin: Offset.zero, end: const Offset(-1.0 / 3.0, 0.0));
+final Animatable<Offset> _kMiddleLeftTween = Tween(begin: Offset.zero, end: const Offset(-1.0 / 3.0, 0.0));
 
 // Offset from offscreen below to fully on screen.
-final Animatable<Offset> _kBottomUpTween = Tween<Offset>(begin: const Offset(0.0, 1.0), end: Offset.zero);
+final Animatable<Offset> _kBottomUpTween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero);
 
 /// A mixin that implements methods and/or parameters of a [PageRoute].
 ///
@@ -224,7 +224,7 @@ class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   final ValueGetter<_CupertinoBackGestureController<T>> onStartPopGesture;
 
   @override
-  _CupertinoBackGestureDetectorState<T> createState() => _CupertinoBackGestureDetectorState<T>();
+  _CupertinoBackGestureDetectorState<T> createState() => _CupertinoBackGestureDetectorState();
 }
 
 class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureDetector<T>> {
@@ -299,7 +299,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
     dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
     return Stack(
       fit: .passthrough,
-      children: <Widget>[
+      children: [
         widget.child,
         PositionedDirectional(
           start: 0.0,
@@ -422,7 +422,7 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
     begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
     end: _CupertinoEdgeShadowDecoration._(
       // Eyeballed gradient used to mimic a drop shadow on the start side only.
-      withShadow ? const <Color>[Color(0x38000000), Color(0x12000000), Color(0x04000000), Color(0x00000000)] : const [],
+      withShadow ? const [Color(0x38000000), Color(0x12000000), Color(0x04000000), Color(0x00000000)] : const [],
     ),
   );
 
@@ -477,7 +477,7 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
     // If it ever becomes necessary, we could allow decorations with different
     // length' here, similarly to how it is handled in [LinearGradient.lerp].
     assert(bColors == null || aColors == null || aColors.length == bColors.length);
-    return _CupertinoEdgeShadowDecoration._(<Color>[
+    return _CupertinoEdgeShadowDecoration._([
       for (int i = 0; i < bColors!.length; i += 1) Color.lerp(a._colors?[i], bColors[i], t)!,
     ]);
   }

@@ -204,7 +204,7 @@ class PageRouteInfo<T extends Object?> {
 
   /// Calls [StackRouter.push] with this route on the nearest router
   Future<E?> push<E>(BuildContext context) {
-    return context.router.push<E>(this);
+    return context.router.push(this);
   }
 
   /// Calls [StackRouter.navigate] with this route on the nearest router

@@ -82,8 +82,8 @@ List<PageRouteInfo>? _restoredRoutes(Object? saved) {
     routes.add(
       PageRouteInfo(
         name,
-        rawPathParams: path == null ? const {} : Map<String, dynamic>.from(path as Map),
-        rawQueryParams: query == null ? const {} : Map<String, dynamic>.from(query as Map),
+        rawPathParams: path == null ? const {} : Map.from(path as Map),
+        rawQueryParams: query == null ? const {} : Map.from(query as Map),
         fragment: fragment as String?,
         initialChildren: restoredChildren,
       ),

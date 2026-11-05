@@ -13,20 +13,20 @@ extension AutoRouterX on BuildContext {
   /// see [StackRouter.push]
   @optionalTypeArgs
   Future<T?> pushRoute<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
-      router.push<T>(route, onFailure: onFailure);
+      router.push(route, onFailure: onFailure);
 
   /// see [StackRouter.replace]
   @optionalTypeArgs
   Future<T?> replaceRoute<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
-      router.replace<T>(route, onFailure: onFailure);
+      router.replace(route, onFailure: onFailure);
 
   /// see [StackRouter.maybePop]
   @optionalTypeArgs
-  Future<bool> maybePop<T extends Object?>([T? result]) => router.maybePop<T>(result);
+  Future<bool> maybePop<T extends Object?>([T? result]) => router.maybePop(result);
 
   /// see [StackRouter.pop]
   @optionalTypeArgs
-  void pop<T extends Object?>([T? result]) => router.pop<T>(result);
+  void pop<T extends Object?>([T? result]) => router.pop(result);
 
   /// see [RoutingController.navigate]
   Future<T?> navigateTo<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) =>
@@ -54,7 +54,7 @@ extension AutoRouterX on BuildContext {
 
   /// see [RoutingController.innerRouterOf]
   T? innerRouterOf<T extends RoutingController>(String routeKey) =>
-      RouterScope.of(this).controller.innerRouterOf<T>(routeKey);
+      RouterScope.of(this).controller.innerRouterOf(routeKey);
 
   /// Helper to read the scoped [RouteData] of a route
   RouteData<dynamic> get routeData => RouteData.of(this);

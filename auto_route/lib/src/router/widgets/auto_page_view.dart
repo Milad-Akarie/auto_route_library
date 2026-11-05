@@ -204,7 +204,7 @@ class AutoPageViewState extends State<AutoPageView> {
       _jumpToPage(_router.activeIndex);
     }
 
-    return Future<void>.value();
+    return Future.value();
   }
 
   Future<void> _warpToNonAdjacentTab(int previousIndex) async {
@@ -212,7 +212,7 @@ class AutoPageViewState extends State<AutoPageView> {
     final initialPage = _router.activeIndex > previousIndex ? _router.activeIndex - 1 : _router.activeIndex + 1;
 
     setState(() {
-      _children = List<Widget>.of(_children, growable: false);
+      _children = List.of(_children, growable: false);
       final temp = _children[initialPage];
       _children[initialPage] = _children[previousIndex];
       _children[previousIndex] = temp;
@@ -227,7 +227,7 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   Future<void> _warpToCurrentIndex() async {
-    if (!mounted) return Future<void>.value();
+    if (!mounted) return Future.value();
 
     _disposeInactiveChildren();
     // From the page on screen: it's the tab before the active one, or the

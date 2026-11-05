@@ -120,7 +120,7 @@ class RouteMatch<T> {
   TitleBuilder? get titleBuilder => _config.title;
 
   /// Helper to access [AutoRoute.buildPage]
-  AutoRoutePage<R> buildPage<R>(RouteData<dynamic> data) => _config.buildPage<R>(data);
+  AutoRoutePage<R> buildPage<R>(RouteData<dynamic> data) => _config.buildPage(data);
 
   /// The unique key of this match
   ///
@@ -331,7 +331,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
     List<AutoRouteGuard>? evaluatedGuards,
     LocalKey? id,
   }) {
-    return ReevaluatableRouteMatch<T, R>(
+    return ReevaluatableRouteMatch(
       currentPage: currentPage,
       originalMatch: super.copyWith(
         stringMatch: stringMatch,

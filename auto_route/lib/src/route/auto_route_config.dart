@@ -239,7 +239,7 @@ class AutoRoute {
 
   /// Builds a [AutoRoutePage] from [RouteData]
   AutoRoutePage<T> buildPage<T>(RouteData<dynamic> data) {
-    return AutoRoutePage<T>(child: builder(data), routeData: data);
+    return AutoRoutePage(child: builder(data), routeData: data);
   }
 
   /// The path defined by user or automatically-added

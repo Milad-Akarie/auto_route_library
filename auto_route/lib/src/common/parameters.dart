@@ -200,7 +200,7 @@ class Parameters {
   /// when there is neither a value nor a default, or when the converter
   /// returns `null` for the text and there is no default.
   T getTyped<T>(String key, ParamConverter<T> converter, [T? defaultValue]) {
-    final val = optTyped<T>(key, converter, defaultValue);
+    final val = optTyped(key, converter, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [$T] $key value from ${_params[key]}');
     }

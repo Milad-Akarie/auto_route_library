@@ -245,7 +245,7 @@ class AutoTabViewState extends State<AutoTabView> {
       await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
     }
 
-    return Future<void>.value();
+    return Future.value();
   }
 
   Future<void> _warpToNonAdjacentTab(Duration duration) async {
@@ -260,7 +260,7 @@ class AutoTabViewState extends State<AutoTabView> {
       // Needed for `RenderSliverMultiBoxAdaptor.move` and kept alive children.
       // For motivation, see https://github.com/flutter/flutter/pull/29188 and
       // https://github.com/flutter/flutter/issues/27010#issuecomment-486475152.
-      _children = List<Widget>.of(_children, growable: false);
+      _children = List.of(_children, growable: false);
       final temp = _children[initialPage];
       _children[initialPage] = _children[previousIndex];
       _children[previousIndex] = temp;
