@@ -35,6 +35,8 @@ dev_dependencies:
   auto_route_generator: ^11.1.0
   flutter_test:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   leak_tracker: ^11.0.2
   leak_tracker_flutter_testing: ^3.0.10
   very_good_analysis: ^11.0.0
