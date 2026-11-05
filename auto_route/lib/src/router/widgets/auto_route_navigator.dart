@@ -150,15 +150,41 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
     }
   }
 
+  // The pages handed to the Navigator by the previous build.
+  List<AutoRoutePage<Object?>> _shownPages = const [];
+
   @override
   Widget build(BuildContext context) {
+    // Each page of the previous build now holds a route; mark it before the
+    // Navigator matches the new pages to its routes.
+    for (final page in _shownPages) {
+      page.markShown();
+    }
+    _shownPages = widget.router.hasEntries ? widget.router.stack : const [];
+    final shown = widget.router.hasEntries
+        ? Navigator(
+            key: widget.router.navigatorKey,
+            clipBehavior: widget.clipBehavior,
+            routeTraversalEdgeBehavior: widget.routeTraversalEdgeBehavior ?? kDefaultRouteTraversalEdgeBehavior,
+            observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
+            restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
+            pages: widget.router.stack,
+            transitionDelegate: const _PoppedPagelessTransitionDelegate(),
+            onDidRemovePage: (page) {
+              if (page is AutoRoutePage) {
+                widget.router.onPopPage(page);
+                widget.didPop?.call(page.routeData.route, page);
+              }
+            },
+          )
+        : (widget.placeholder?.call(context) ??
+              // A Container with no child fills its space; a ColoredBox would shrink to nothing.
+              Container(color: Theme.of(context).scaffoldBackgroundColor));
     final navigator = Listener(
       onPointerDown: (event) => _activePointers.add(event.pointer),
       onPointerUp: (event) => _activePointers.remove(event.pointer),
       onPointerCancel: (event) => _activePointers.remove(event.pointer),
-      // A widget class would add an element and move the state below it.
-      // ignore: avoid-returning-widgets
-      child: _buildNavigator(context),
+      child: shown,
     );
     if (widget.router.isRoot) return navigator;
     // A nested navigator sits on a page of its parent's navigator. While it
@@ -180,37 +206,6 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
         child: Semantics(container: true, child: navigator),
       ),
     );
-  }
-
-  // The pages handed to the Navigator by the previous build.
-  List<AutoRoutePage<Object?>> _shownPages = const [];
-
-  Widget _buildNavigator(BuildContext context) {
-    // Each page of the previous build now holds a route; mark it before the
-    // Navigator matches the new pages to its routes.
-    for (final page in _shownPages) {
-      page.markShown();
-    }
-    _shownPages = widget.router.hasEntries ? widget.router.stack : const [];
-    return widget.router.hasEntries
-        ? Navigator(
-            key: widget.router.navigatorKey,
-            clipBehavior: widget.clipBehavior,
-            routeTraversalEdgeBehavior: widget.routeTraversalEdgeBehavior ?? kDefaultRouteTraversalEdgeBehavior,
-            observers: [widget.router.pagelessRoutesObserver, ...widget.navigatorObservers],
-            restorationScopeId: widget.navRestorationScopeId ?? widget.router.routeData.restorationId,
-            pages: widget.router.stack,
-            transitionDelegate: const _PoppedPagelessTransitionDelegate(),
-            onDidRemovePage: (page) {
-              if (page is AutoRoutePage) {
-                widget.router.onPopPage(page);
-                widget.didPop?.call(page.routeData.route, page);
-              }
-            },
-          )
-        : (widget.placeholder?.call(context) ??
-              // A Container with no child fills its space; a ColoredBox would shrink to nothing.
-              Container(color: Theme.of(context).scaffoldBackgroundColor));
   }
 
   @override
