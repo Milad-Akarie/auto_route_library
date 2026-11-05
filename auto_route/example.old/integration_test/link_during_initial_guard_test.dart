@@ -79,7 +79,7 @@ void main() {
                 'state': null,
               }),
             ),
-            (_) {},
+            null,
           ),
         );
         await tester.pump(const Duration(seconds: 3));

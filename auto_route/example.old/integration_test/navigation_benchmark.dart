@@ -21,7 +21,6 @@ import 'package:material_ui/material_ui.dart';
 // build/navigation_benchmark.json, and prints them as `RESULT` lines.
 // Pages show no transition, so each step's frames are the router's own work.
 // A benchmark run on its own, so not a `_test` file.
-// ignore: prefer-correct-test-file-name
 void main() {
   final syncMicros = <String, double>{};
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized()

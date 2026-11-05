@@ -31,7 +31,7 @@ void main() {
                   'state': null,
                 }),
               ),
-              (_) {},
+              null,
             );
         await tester.pumpAndSettle();
         expect(reply == null ? null : codec.decodeEnvelope(reply), isTrue);

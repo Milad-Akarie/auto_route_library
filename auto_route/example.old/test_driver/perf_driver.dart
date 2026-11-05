@@ -9,7 +9,6 @@ import 'package:integration_test/integration_test_driver.dart';
 // `RESULT <case>.<measure> <value>` line per number, the lines
 // auto_route/test/benchmark/summarize.dart reads.
 // The host side of `flutter drive`, not a test.
-// ignore: prefer-correct-test-file-name
 Future<void> main() => integrationDriver(responseDataCallback: _summarize);
 
 Future<void> _summarize(Map<String, dynamic>? data) async {

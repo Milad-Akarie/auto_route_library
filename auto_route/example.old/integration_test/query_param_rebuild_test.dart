@@ -73,8 +73,7 @@ void main() {
         expect(find.text('param true'), findsOneWidget);
         expect(_ParamPageState.created, 1);
 
-        _ParamPageState.builds = 0;
-        setParentState(() {});
+        setParentState(() => _ParamPageState.builds = 0);
         await tester.pumpAndSettle();
         expect(_ParamPageState.builds, 0);
 

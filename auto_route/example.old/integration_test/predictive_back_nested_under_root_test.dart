@@ -62,7 +62,7 @@ void main() {
           return tester.binding.defaultBinaryMessenger.handlePlatformMessage(
             SystemChannels.backGesture.name,
             message,
-            (_) {},
+            null,
           );
         }
 

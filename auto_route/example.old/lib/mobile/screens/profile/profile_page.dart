@@ -75,12 +75,7 @@ class ProfilePageState extends State<ProfilePage> {
                 child: const Text('ReplaceAll'),
               ),
               const SizedBox(height: 32),
-              if (userData == null)
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Collect user data'),
-                )
-              else
+              if (userData != null)
                 Column(
                   mainAxisAlignment: .center,
                   spacing: 24,
