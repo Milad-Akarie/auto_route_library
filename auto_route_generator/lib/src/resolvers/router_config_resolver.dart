@@ -22,8 +22,9 @@ class RouterConfigResolver {
     final replaceInRouteName = autoRouter
         .peek('replaceInRouteName')
         ?.stringValue;
-    if (replaceInRouteName != null)
+    if (replaceInRouteName != null) {
       _checkReplaceInRouteName(replaceInRouteName, clazz);
+    }
     final argsEquality = autoRouter.peek('argsEquality')?.boolValue ?? false;
     final generateForDir = autoRouter
         .read('generateForDir')

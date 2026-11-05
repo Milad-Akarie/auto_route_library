@@ -584,8 +584,9 @@ Method _buildPageMethod(RouteConfig r) {
 }
 
 Expression _getUrlPartAssignment(ParamConfig p) {
-  if (!p.isPathParam && !p.isQueryParam)
+  if (!p.isPathParam && !p.isQueryParam) {
     return refer('data').property('fragment');
+  }
   final params = refer(p.isPathParam ? 'pathParams' : 'queryParams');
   final key = _plainString(p.paramName);
   final defaultValue = p.defaultValueCode == null ? null : _defaultValue(p);

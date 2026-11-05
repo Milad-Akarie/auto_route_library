@@ -257,8 +257,9 @@ class RouteParameterResolver {
       final SetOrMapLiteral literal => _firstDeclarationIn(literal),
       _ => null,
     };
-    if (element == null || element.enclosingElement is! LibraryElement)
+    if (element == null || element.enclosingElement is! LibraryElement) {
       return null;
+    }
     return _typeResolver.resolveImport(element);
   }
 
@@ -267,8 +268,9 @@ class RouteParameterResolver {
   /// default.
   String? _defaultValueSymbol(FormalParameterElement parameterElement) {
     final initializer = parameterElement.constantInitializer;
-    if (initializer is! ListLiteral && initializer is! SetOrMapLiteral)
+    if (initializer is! ListLiteral && initializer is! SetOrMapLiteral) {
       return null;
+    }
     return _firstDeclarationIn(initializer!)?.name;
   }
 

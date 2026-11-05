@@ -22,8 +22,9 @@ sealed class UrlParamType {
   static UrlParamType? of(ResolvedType type) {
     if (type.isEnum) return const _EnumParam();
     if (kUrlCollectionTypes.contains(type.name) &&
-        type.typeArguments.length == 1)
+        type.typeArguments.length == 1) {
       return const _CollectionParam();
+    }
     return _byName[type.name];
   }
 
