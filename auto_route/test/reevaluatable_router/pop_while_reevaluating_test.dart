@@ -105,7 +105,8 @@ void main() {
   // settings pops AppGuardRoute.
   // The dialog closed and opened again at once, as in #1643.
   testWidgets('A dialog popped by a listener of the reevaluation stream stays closed (#1785)', (tester) async {
-    var isAppGuarded = false;
+    final isAppGuarded = ValueNotifier(false);
+    addTearDown(isAppGuarded.dispose);
     final settings = StreamController<bool>.broadcast();
     addTearDown(settings.close);
     final router = RootStackRouter.build(
@@ -116,7 +117,7 @@ void main() {
           guards: [
             AutoRouteGuard.simple((resolver, router) {
               resolver.next();
-              if (isAppGuarded && !router.isRouteActive('AppGuardRoute')) {
+              if (isAppGuarded.value && !router.isRouteActive('AppGuardRoute')) {
                 unawaited(router.push(const NamedRoute('AppGuardRoute')));
               }
             }),
@@ -134,7 +135,7 @@ void main() {
     final reevaluation = ReevaluateListenable.stream(settings.stream);
     addTearDown(reevaluation.dispose);
     await pumpRouterApp(tester, router, reevaluationNotifier: reevaluation);
-    isAppGuarded = true;
+    isAppGuarded.value = true;
     settings.add(true);
     await tester.pumpAndSettle();
     expect(router.stack.map((e) => e.routeData.name), ['HomeRoute', 'AppGuardRoute']);
@@ -143,7 +144,7 @@ void main() {
     });
     addTearDown(unlockListener.cancel);
 
-    isAppGuarded = false;
+    isAppGuarded.value = false;
     settings.add(false);
     await tester.pumpAndSettle();
 
