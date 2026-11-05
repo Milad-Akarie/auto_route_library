@@ -29,13 +29,14 @@ void main() {
       );
       await pumpRouterAppWithConfig(tester, router);
       expect(find.text('Home 1'), findsOneWidget);
-      final homeState = tester.state(find.byType(_HomePage));
+      final homeState = tester.state<_HomePageState>(find.byType(_HomePage));
 
       await tester.tap(find.text('Next id'));
       await tester.pumpAndSettle();
       expect(find.text('Home 1'), findsNothing);
       expect(find.text('Home 2'), findsOneWidget);
       expect(tester.state(find.byType(_HomePage)), same(homeState));
+      expect(homeState.firstId, 1);
     },
   );
 }
@@ -109,6 +110,9 @@ class _HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<_HomePage> {
+  /// The id the page was first built with, which an in-place update keeps.
+  late final int firstId = widget.id;
+
   @override
   Widget build(BuildContext context) => Text('Home ${widget.id}');
 }

@@ -29,28 +29,24 @@ void main() {
         ],
       );
       await pumpRouterApp(tester, router);
-      _HomePageState.builds = 0;
+      _HomePage.builds = 0;
 
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
       expect(find.text('Not registered'), findsOneWidget);
-      expect(_HomePageState.builds, 0);
+      expect(_HomePage.builds, 0);
 
       await systemBack(tester);
       expect(find.text('Open'), findsOneWidget);
-      expect(_HomePageState.builds, 0);
+      expect(_HomePage.builds, 0);
     },
   );
 }
 
-class _HomePage extends StatefulWidget {
+class _HomePage extends StatelessWidget {
   const new();
 
-  @override
-  State<_HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<_HomePage> {
+  /// How many times a [_HomePage] has been built.
   static int builds = 0;
 
   @override
