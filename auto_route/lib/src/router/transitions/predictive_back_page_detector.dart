@@ -249,23 +249,23 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
   void _updateAnimations(Size screenSize) {
     _animation.parent = switch (widget.phase) {
       .commit => _curvedAnimationReversed,
-      _ => widget.animation,
+      .idle || .start || .update || .cancel => widget.animation,
     };
 
     _bounceAnimation.parent = switch (widget.phase) {
       .commit => Tween(begin: 0.0, end: _lastBounceAnimationValue).animate(_curvedAnimation!),
-      _ => ReverseAnimation(widget.animation),
+      .idle || .start || .update || .cancel => ReverseAnimation(widget.animation),
     };
 
     _commitAnimation.parent = switch (widget.phase) {
       .commit => _animation,
-      _ => kAlwaysDismissedAnimation,
+      .idle || .start || .update || .cancel => kAlwaysDismissedAnimation,
     };
 
     final xShift = (screenSize.width / _kDivisionFactor) - _kMargin;
     _positionAnimation = _animation.drive(switch (widget.phase) {
       .commit => Tween(begin: _lastDrag, end: Offset(screenSize.height * _kYPositionFactor, 0.0)),
-      _ => Tween(
+      .idle || .start || .update || .cancel => Tween(
         // The y position before commit is given by the vertical drag, not by an
         // animation.
         begin: switch (widget.currentBackEvent?.swipeEdge) {
@@ -325,7 +325,10 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
           child: Transform.translate(
             offset: switch (widget.phase) {
               .commit => _positionAnimation.value,
-              _ => _lastDrag = Offset(_positionAnimation.value.dx, _getYShiftPosition(MediaQuery.heightOf(context))),
+              .idle || .start || .update || .cancel => _lastDrag = Offset(
+                _positionAnimation.value.dx,
+                _getYShiftPosition(MediaQuery.heightOf(context)),
+              ),
             },
             child: Opacity(
               opacity: _opacityTween.evaluate(_commitAnimation),
@@ -476,7 +479,7 @@ class _PredictiveBackFullscreenPageTransitionState extends State<_PredictiveBack
           child: AnimatedOpacity(
             opacity: switch (widget.phase) {
               .commit => 0.0,
-              _ => widget.animation.value < _kCommitAt ? 0.0 : 1.0,
+              .idle || .start || .update || .cancel => widget.animation.value < _kCommitAt ? 0.0 : 1.0,
             },
             duration: _kCommitDuration,
             child: child,
