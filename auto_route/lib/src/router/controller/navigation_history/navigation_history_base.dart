@@ -165,7 +165,7 @@ abstract class NavigationHistory with ChangeNotifier {
   ///
   /// Compares the page too, since the same route can be pushed twice with
   /// equal arguments.
-  bool isRouteDataActive(RouteData<dynamic> data) {
+  bool isRouteDataActive(RouteData<Object?> data) {
     return urlState.segments.any(
       (route) => route == data.route && route.id == data.route.id,
     );

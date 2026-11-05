@@ -60,7 +60,7 @@ extension AutoRouterX on BuildContext {
   TabsRouter get watchTabsRouter => AutoTabsRouter.of(this, watch: true);
 
   /// Returns the top most rendered route
-  RouteData<dynamic> get topRoute => watchRouter.topRoute;
+  RouteData<Object?> get topRoute => watchRouter.topRoute;
 
   /// Returns the top most match rendered or pending
   RouteMatch<Object?> get topRouteMatch => watchRouter.topMatch;
@@ -70,5 +70,5 @@ extension AutoRouterX on BuildContext {
       RouterScope.of(this).controller.innerRouterOf(routeKey);
 
   /// Helper to read the scoped [RouteData] of a route
-  RouteData<dynamic> get routeData => RouteData.of(this);
+  RouteData<Object?> get routeData => RouteData.of(this);
 }

@@ -6,19 +6,19 @@ import 'package:meta/meta.dart';
 
 /// A Signature for a function that passes the [RouteData] and returns a
 /// [PageRoute]
-typedef AutoRoutePageBuilder = Widget Function(RouteData<dynamic> data);
+typedef AutoRoutePageBuilder = Widget Function(RouteData<Object?> data);
 
 /// Signature for a function that builds the route title
 /// Used in [AutoRoutePage]
 typedef TitleBuilder = String Function(
   BuildContext context,
-  RouteData<dynamic> data,
+  RouteData<Object?> data,
 );
 
 /// Signature for a function that builds a widget with [RouteData]
 typedef WidgetBuilderWithData = Widget Function(
   BuildContext context,
-  RouteData<dynamic> data,
+  RouteData<Object?> data,
 );
 
 /// Signature for a function that builds the page `restorationId`
@@ -245,7 +245,7 @@ class AutoRoute {
   AutoRoutePageBuilder get builder => _builder;
 
   /// Builds a [AutoRoutePage] from [RouteData]
-  AutoRoutePage<T> buildPage<T>(RouteData<dynamic> data) {
+  AutoRoutePage<T> buildPage<T>(RouteData<Object?> data) {
     return AutoRoutePage(child: builder(data), routeData: data);
   }
 

@@ -120,7 +120,7 @@ class RouteMatch<T> {
   TitleBuilder? get titleBuilder => _config.title;
 
   /// Helper to access [AutoRoute.buildPage]
-  AutoRoutePage<R> buildPage<R>(RouteData<dynamic> data) =>
+  AutoRoutePage<R> buildPage<R>(RouteData<Object?> data) =>
       _config.buildPage(data);
 
   /// The unique key of this match

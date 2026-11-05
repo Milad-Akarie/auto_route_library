@@ -105,7 +105,7 @@ class RouteData<R> {
   /// Looks up and returns the scoped instance
   ///
   /// throws an error if it does not find it
-  static RouteData<dynamic> of(BuildContext context) {
+  static RouteData<Object?> of(BuildContext context) {
     return RouteDataScope.of(context).routeData;
   }
 
@@ -181,7 +181,7 @@ class RouteData<R> {
   /// Returns the parent [RouteData] of this instance
   ///
   /// Returns null if this is a root entry
-  RouteData<dynamic>? get parent => _parent;
+  RouteData<Object?>? get parent => _parent;
 
   /// Helper to access [RouteMatch.meta]
   Map<String, dynamic> get meta => _route.meta;

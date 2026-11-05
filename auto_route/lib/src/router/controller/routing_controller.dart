@@ -17,7 +17,7 @@ part 'route_leave.dart';
 part 'routes_restoration.dart';
 
 /// Signature of a predicate to select [RouteData]
-typedef RouteDataPredicate = bool Function(RouteData<dynamic> route);
+typedef RouteDataPredicate = bool Function(RouteData<Object?> route);
 
 /// Signature of a callback used by declarative
 typedef OnNestedNavigateCallBack = void Function(
@@ -257,7 +257,7 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   /// Returns an unmodifiable lis of current pages stack data
-  List<RouteData<dynamic>> get stackData =>
+  List<RouteData<Object?>> get stackData =>
       .unmodifiable(_pages.map((e) => e.routeData));
 
   /// See [NavigationHistory.isRouteActive]
@@ -266,7 +266,7 @@ abstract class RoutingController with ChangeNotifier {
   }
 
   /// See [NavigationHistory.isRouteDataActive]
-  bool isRouteDataActive(RouteData<dynamic> data) {
+  bool isRouteDataActive(RouteData<Object?> data) {
     return navigationHistory.isRouteDataActive(data);
   }
 
@@ -740,23 +740,23 @@ abstract class RoutingController with ChangeNotifier {
   ///
   /// e.g it could be the top-most route of a [StackRouter] or
   /// the child corresponding with activeIndex in [TabsRouter]
-  RouteData<dynamic>? get currentChild;
+  RouteData<Object?>? get currentChild;
 
   /// Returns [currentChild] if it's rendered
   /// otherwise returns parent [routeData]
-  RouteData<dynamic> get current;
+  RouteData<Object?> get current;
 
   /// The top-most rendered route
-  RouteData<dynamic> get topRoute => _topMostRouter().current;
+  RouteData<Object?> get topRoute => _topMostRouter().current;
 
   /// The top-most rendered or pending route match
   RouteMatch<Object?> get topMatch => topRoute.topMatch;
 
   /// The data of the parent route
-  RouteData<dynamic> get routeData;
+  RouteData<Object?> get routeData;
 
   /// Updates the value of [routeData]
-  void updateRouteData(RouteData<dynamic> data);
+  void updateRouteData(RouteData<Object?> data);
 
   /// The list of routes consumed by this controller
   RouteCollection get routeCollection;
@@ -1033,10 +1033,10 @@ class TabsRouter extends RoutingController {
   bool Function(int index) preload;
 
   @override
-  RouteData<dynamic> get routeData => _routeData;
+  RouteData<Object?> get routeData => _routeData;
 
   @override
-  void updateRouteData(RouteData<dynamic> data) {
+  void updateRouteData(RouteData<Object?> data) {
     _routeData = data;
     for (final page in _pages) {
       page.routeData._parent = data;
@@ -1044,12 +1044,12 @@ class TabsRouter extends RoutingController {
   }
 
   @override
-  RouteData<dynamic> get current {
+  RouteData<Object?> get current {
     return currentChild ?? routeData;
   }
 
   @override
-  RouteData<dynamic>? get currentChild {
+  RouteData<Object?>? get currentChild {
     return _pages.elementAtOrNull(_activeIndex)?.routeData;
   }
 
@@ -1964,10 +1964,10 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  RouteData<dynamic> get current => currentChild ?? routeData;
+  RouteData<Object?> get current => currentChild ?? routeData;
 
   @override
-  RouteData<dynamic>? get currentChild {
+  RouteData<Object?>? get currentChild {
     if (_pages.isNotEmpty) {
       return _pages.last.routeData;
     }
@@ -2023,7 +2023,7 @@ abstract class StackRouter extends RoutingController {
   }
 
   @override
-  RouteData<dynamic> get topRoute =>
+  RouteData<Object?> get topRoute =>
       _topMostRouter(ignorePagelessRoutes: true).current;
 
   /// Whether the top-most route of this controller is page-less
@@ -2134,7 +2134,7 @@ abstract class StackRouter extends RoutingController {
   /// Removes given [route] and any corresponding controllers
   ///
   /// finally calls [notifyAll] if notify is true
-  void removeRoute(RouteData<dynamic> route, {bool notify = true}) {
+  void removeRoute(RouteData<Object?> route, {bool notify = true}) {
     _markRemovedByApp(_pages.where((page) => page.routeData == route));
     _removeRoute(route._route, notify: notify);
   }
@@ -3414,7 +3414,7 @@ class NestedStackRouter extends StackRouter {
     required RouteCollection routeCollection,
     required super.key,
     required super.matchId,
-    required RouteData<dynamic> routeData,
+    required RouteData<Object?> routeData,
     required RoutingController super.parent,
     this.managedByWidget = false,
     super.onNavigate,
@@ -3459,10 +3459,10 @@ class NestedStackRouter extends StackRouter {
   RouteData<Object?> _routeData;
 
   @override
-  RouteData<dynamic> get routeData => _routeData;
+  RouteData<Object?> get routeData => _routeData;
 
   @override
-  void updateRouteData(RouteData<dynamic> data) {
+  void updateRouteData(RouteData<Object?> data) {
     _routeData = data;
     for (final page in _pages) {
       page.routeData._parent = data;

@@ -32,7 +32,7 @@ class AutoRoutePage<T> extends Page<T> {
       );
 
   /// The Route Data that's used to build the page
-  final RouteData<dynamic> routeData;
+  final RouteData<Object?> routeData;
   final Widget _child;
 
   /// Whether to treat the built route as a fullscreenDialog.

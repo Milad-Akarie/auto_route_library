@@ -9,6 +9,10 @@
   `RouteData.topMatch`, `RoutingController.topMatch`, `NavigationResolver.route` and `RouteMatch.children`, so a match's
   `args` is `Object?`, no longer `dynamic`. Read it with a cast, `match.args as MyArgs`, or with
   `routeData.argsAs<MyArgs>()`.
+- **BREAKING CHANGE**: every `RouteData<dynamic>` in the API is `RouteData<Object?>`, among them `RouteData.of`,
+  `context.routeData`, `context.topRoute`, `RoutingController.current`, `topRoute` and `stackData`,
+  `AutoRoutePage.routeData` and the `AutoRoutePageBuilder` and `RouteDataPredicate` callbacks, so the result `popped`
+  completes with is `Object?`. Read it with a cast, `await routeData.popped as bool?`.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

@@ -7,7 +7,7 @@ extension RouteX<T> on Route<T> {
   /// Returns RouteData of this page if
   /// it's an [AutoRoutePage] otherwise it
   /// returns null
-  RouteData<dynamic>? get data {
+  RouteData<Object?>? get data {
     if (settings is AutoRoutePage) {
       return (settings as AutoRoutePage).routeData;
     }
@@ -162,7 +162,7 @@ class AutoRouteObserver extends AutoRouterObserver {
   /// while [route] shows inside its host route, when the host route is covered,
   /// uncovered or popped in an ancestor navigator that has an
   /// [AutoRouteObserver].
-  void subscribe(AutoRouteAware routeAware, RouteData<dynamic> route) {
+  void subscribe(AutoRouteAware routeAware, RouteData<Object?> route) {
     final subscribers = _listeners.putIfAbsent(
       route.key,
       () => <AutoRouteAware>{},
