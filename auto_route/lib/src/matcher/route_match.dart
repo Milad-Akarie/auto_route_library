@@ -312,7 +312,6 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   @override
   // An override of RouteMatch.copyWith: it changes the original match and keeps the page being
   // reevaluated, so currentPage and originalMatch are not its to set.
-  // ignore: avoid-incomplete-copy-with
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
     Parameters? params,
