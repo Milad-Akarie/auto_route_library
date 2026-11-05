@@ -81,7 +81,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// the top page: there is nothing to navigate to, and navigating to it
   /// again would run its guards again. Always null on native platforms.
   @internal
-  List<RouteMatch<dynamic>>? routesOfBrowserEntry(UrlState configuration) =>
+  List<RouteMatch<Object?>>? routesOfBrowserEntry(UrlState configuration) =>
       null;
 
   /// The page to push, and the stack to push it on, to follow the browser to
@@ -95,7 +95,7 @@ abstract class NavigationHistory with ChangeNotifier {
   /// name, so [AutoRouterDelegate.setNewRoutePath] pushes this page instead.
   /// Null otherwise, and always on native platforms.
   @internal
-  (StackRouter, RouteMatch<dynamic>)? pageToPushForBrowserEntry(
+  (StackRouter, RouteMatch<Object?>)? pageToPushForBrowserEntry(
     UrlState configuration,
   ) => null;
 

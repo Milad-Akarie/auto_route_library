@@ -689,7 +689,7 @@ class PlatformDeepLink extends DeepLink {
   final bool initial;
 
   /// The pre-matched routes from the row path
-  List<RouteMatch<dynamic>> get matches => configuration.segments;
+  List<RouteMatch<Object?>> get matches => configuration.segments;
 
   @override
   bool get isValid => configuration.hasSegments;

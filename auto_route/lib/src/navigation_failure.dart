@@ -47,7 +47,7 @@ class RejectedByGuardFailure extends NavigationFailure {
   const new(this.route, this.guard);
 
   /// The rejected route
-  final RouteMatch<dynamic> route;
+  final RouteMatch<Object?> route;
 
   /// The guard that did the rejection
   final AutoRouteGuard guard;

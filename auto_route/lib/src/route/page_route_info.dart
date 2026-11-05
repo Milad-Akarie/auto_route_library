@@ -34,7 +34,7 @@ class PageRouteInfo<T extends Object?> {
        fragment = fragment ?? '';
 
   /// Creates a new instance form [RouteMatch]
-  factory fromMatch(RouteMatch<dynamic> match) {
+  factory fromMatch(RouteMatch<Object?> match) {
     return PageRouteInfo(
       match.name,
       rawPathParams: match.params.rawMap,
@@ -211,7 +211,7 @@ class PageRouteInfo<T extends Object?> {
 
   /// Returns the match result of this route
   /// which internally calls `router.matcher.matchByRoute`
-  RouteMatch<dynamic>? match(BuildContext context) {
+  RouteMatch<Object?>? match(BuildContext context) {
     return context.router.match(this);
   }
 

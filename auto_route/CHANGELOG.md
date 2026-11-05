@@ -5,6 +5,10 @@
   flutter/flutter#90103).
 - **BEHAVIOR CHANGE**: `AutoRouter.declarative` no longer creates a hero controller by itself; pass
   `heroControllerBuilder` to keep hero animations between its pages.
+- **BREAKING CHANGE**: every `RouteMatch<dynamic>` in the API is `RouteMatch<Object?>`, among them `RouteData.route`,
+  `RouteData.topMatch`, `RoutingController.topMatch`, `NavigationResolver.route` and `RouteMatch.children`, so a match's
+  `args` is `Object?`, no longer `dynamic`. Read it with a cast, `match.args as MyArgs`, or with
+  `routeData.argsAs<MyArgs>()`.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

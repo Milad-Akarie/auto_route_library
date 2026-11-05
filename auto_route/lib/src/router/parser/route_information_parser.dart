@@ -283,7 +283,7 @@ class UrlState {
   /// Builds UrlState from list of
   /// route matches instead of uri
   factory fromSegments(
-    List<RouteMatch<dynamic>> routes, {
+    List<RouteMatch<Object?>> routes, {
     bool shouldReplace = false,
     Object? state,
   }) {
@@ -299,7 +299,7 @@ class UrlState {
   final Uri uri;
 
   /// The list of segments representing the current [uri]
-  final List<RouteMatch<dynamic>> segments;
+  final List<RouteMatch<Object?>> segments;
 
   /// This is passed to [AutoRouteInformation.replace]
   /// when location is restored
@@ -400,7 +400,7 @@ class UrlState {
   /// to a hierarchy of routes
   /// e.g [Match1,Match2,Match3]
   /// will be [Match1[Match2[Match3]]]
-  static RouteMatch<dynamic> toHierarchy(List<RouteMatch<dynamic>> segments) {
+  static RouteMatch<Object?> toHierarchy(List<RouteMatch<Object?>> segments) {
     return switch (segments) {
       [final only] => only,
       [final first, ...final rest] => first.copyWith(
@@ -428,7 +428,7 @@ class UrlState {
 
   /// Returns to topMost item in the segments list
   /// Witch is the last
-  RouteMatch<dynamic>? get topMatch => segments.lastOrNull;
+  RouteMatch<Object?>? get topMatch => segments.lastOrNull;
 
   RouteMatch<Object?>? _findSegment(
     List<RouteMatch<Object?>> among,
@@ -448,7 +448,7 @@ class UrlState {
   }
 
   /// re
-  List<RouteMatch<dynamic>> childrenOfSegmentNamed(String routeName) {
+  List<RouteMatch<Object?>> childrenOfSegmentNamed(String routeName) {
     return _findSegment(
           segments,
           (match) => match.name == routeName,
@@ -518,7 +518,7 @@ class UrlState {
   /// Returns a new [UrlState] instance
   /// with replaced properties
   UrlState copyWith({
-    List<RouteMatch<dynamic>>? segments,
+    List<RouteMatch<Object?>>? segments,
     Uri? uri,
     bool? shouldReplace,
     Object? pathState,

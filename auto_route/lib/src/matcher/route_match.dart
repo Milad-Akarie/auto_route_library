@@ -50,7 +50,7 @@ class RouteMatch<T> {
   final Parameters queryParams;
 
   /// The list of child matches of this match
-  final List<RouteMatch<dynamic>>? children;
+  final List<RouteMatch<Object?>>? children;
 
   /// The url fragment form [Uri.fragment]
   final String fragment;
@@ -164,7 +164,7 @@ class RouteMatch<T> {
   /// Returns a flattened list of this match and it's sub-matches
   /// e.g if we have = RouteMatch1[RouteMatch2[RouteMatch3]]
   /// the result is [RouteMatch1,RouteMatch2,RouteMatch3]
-  List<RouteMatch<dynamic>> get flattened {
+  List<RouteMatch<Object?>> get flattened {
     return [this, if (children case [..., final last]) ...last.flattened];
   }
 
@@ -172,11 +172,11 @@ class RouteMatch<T> {
   /// with the overridden values
   ///
   /// Each parameter is named after the field it sets.
-  RouteMatch<dynamic> copyWith({
+  RouteMatch<Object?> copyWith({
     String? stringMatch,
     Parameters? params,
     Parameters? queryParams,
-    List<RouteMatch<dynamic>>? children,
+    List<RouteMatch<Object?>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,
@@ -206,7 +206,7 @@ class RouteMatch<T> {
 
   /// Returns a new instance of [RouteMatch]
   /// with the overridden id
-  RouteMatch<dynamic> withId(LocalKey newId) {
+  RouteMatch<Object?> withId(LocalKey newId) {
     return RouteMatch._internal(
       id: newId,
       config: _config,
@@ -310,7 +310,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   final AutoRoutePage<R> currentPage;
 
   /// The original match that was used to create this instance
-  final RouteMatch<dynamic> originalMatch;
+  final RouteMatch<Object?> originalMatch;
 
   @override
   // An override of RouteMatch.copyWith: it changes the original match and keeps
@@ -320,7 +320,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
     String? stringMatch,
     Parameters? params,
     Parameters? queryParams,
-    List<RouteMatch<dynamic>>? children,
+    List<RouteMatch<Object?>>? children,
     String? fragment,
     List<String>? segments,
     String? redirectedFrom,

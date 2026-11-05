@@ -21,7 +21,7 @@ typedef RouteDataPredicate = bool Function(RouteData<dynamic> route);
 
 /// Signature of a callback used by declarative
 typedef OnNestedNavigateCallBack = void Function(
-  List<RouteMatch<dynamic>> routes,
+  List<RouteMatch<Object?>> routes,
 );
 
 /// Signature of a callback used in declarative routing
@@ -31,7 +31,7 @@ typedef RoutesBuilder = List<PageRouteInfo> Function(
 
 /// Signature of a callback to report route pop events
 typedef RoutePopCallBack = void Function(
-  RouteMatch<dynamic> route,
+  RouteMatch<Object?> route,
   Page<Object?> page,
 );
 
@@ -312,7 +312,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Helper to find route match
   /// See [RouteMatcher.matchByRoute]
-  RouteMatch<dynamic>? match(PageRouteInfo route) {
+  RouteMatch<Object?>? match(PageRouteInfo route) {
     return matcher.matchByRoute(route);
   }
 
@@ -750,7 +750,7 @@ abstract class RoutingController with ChangeNotifier {
   RouteData<dynamic> get topRoute => _topMostRouter().current;
 
   /// The top-most rendered or pending route match
-  RouteMatch<dynamic> get topMatch => topRoute.topMatch;
+  RouteMatch<Object?> get topMatch => topRoute.topMatch;
 
   /// The data of the parent route
   RouteData<dynamic> get routeData;
@@ -848,7 +848,7 @@ abstract class RoutingController with ChangeNotifier {
 
   /// Collects the top-most visitable current-child of
   /// every top-most nested controller considering this controller as root
-  List<RouteMatch<dynamic>> get currentSegments {
+  List<RouteMatch<Object?>> get currentSegments {
     final currentData = currentChild;
     final segments = <RouteMatch<Object?>>[];
     if (currentData != null) {
@@ -3072,7 +3072,7 @@ abstract class StackRouter extends RoutingController {
   /// if [onFailure] callback is provided, navigation errors will be passed to
   /// it otherwise they'll be thrown
   Future<void> navigateAll(
-    List<RouteMatch<dynamic>> routes, {
+    List<RouteMatch<Object?>> routes, {
     OnNavigationFailure? onFailure,
   }) {
     return _navigateAll(routes, onFailure: onFailure);

@@ -23,7 +23,7 @@ typedef WidgetBuilderWithData = Widget Function(
 
 /// Signature for a function that builds the page `restorationId`
 /// Used in [AutoRoutePage]
-typedef RestorationIdBuilder = String Function(RouteMatch<dynamic> match);
+typedef RestorationIdBuilder = String Function(RouteMatch<Object?> match);
 
 /// A route entry configuration used in `RouteMatcher`
 /// to create [RouteMatch]'s from paths and [PageRouteInfo]'s

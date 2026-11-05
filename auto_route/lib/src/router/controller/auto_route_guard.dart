@@ -162,13 +162,13 @@ class ResolverResult {
   final bool reevaluateNext;
 
   /// Holds the route to be used in the navigation event
-  final RouteMatch<dynamic> route;
+  final RouteMatch<Object?> route;
 
   //// clones this instance with the provided values
   ResolverResult copyWith({
     bool? continueNavigation,
     bool? reevaluateNext,
-    RouteMatch<dynamic>? route,
+    RouteMatch<Object?>? route,
   }) {
     return ResolverResult(
       continueNavigation: continueNavigation ?? this.continueNavigation,
@@ -207,7 +207,7 @@ class NavigationResolver {
   bool _isReevaluating = false;
 
   /// The route being processing by the guard
-  final RouteMatch<dynamic> route;
+  final RouteMatch<Object?> route;
 
   /// Helper to get [RouteMatch.name]
   String get routeName => route.name;
@@ -221,7 +221,7 @@ class NavigationResolver {
   /// and pending routes will contain [Route2, Route3]
   ///
   /// when we process  Rout2 next pending routes will contain `Route3` only
-  final List<RouteMatch<dynamic>> pendingRoutes;
+  final List<RouteMatch<Object?>> pendingRoutes;
 
   /// The context of the router that runs this guard, which sits above that
   /// router's navigator.
@@ -495,8 +495,8 @@ class RouteOverrides {
   final String? fragment;
 
   /// Builds a new [PageRouteInfo] with the provided overrides
-  RouteMatch<dynamic> override(
-    RouteMatch<dynamic> route,
+  RouteMatch<Object?> override(
+    RouteMatch<Object?> route,
     RouteMatcher matcher,
   ) {
     final matches = <RouteMatch<Object?>>[];

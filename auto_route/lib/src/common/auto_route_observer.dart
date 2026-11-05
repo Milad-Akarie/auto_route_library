@@ -387,7 +387,7 @@ class TabPageRoute {
   const new({required this.routeInfo, required this.index});
 
   /// match information of the target tab
-  final RouteMatch<dynamic> routeInfo;
+  final RouteMatch<Object?> routeInfo;
 
   /// index of the target tab
   final int index;

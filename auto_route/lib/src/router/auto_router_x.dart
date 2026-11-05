@@ -63,7 +63,7 @@ extension AutoRouterX on BuildContext {
   RouteData<dynamic> get topRoute => watchRouter.topRoute;
 
   /// Returns the top most match rendered or pending
-  RouteMatch<dynamic> get topRouteMatch => watchRouter.topMatch;
+  RouteMatch<Object?> get topRouteMatch => watchRouter.topMatch;
 
   /// see [RoutingController.innerRouterOf]
   T? innerRouterOf<T extends RoutingController>(String routeKey) =>

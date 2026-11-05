@@ -10,10 +10,10 @@ part of '../router/controller/routing_controller.dart';
 class RouteData<R> {
   /// Default constructor
   new({
-    required RouteMatch<dynamic> route,
+    required RouteMatch<Object?> route,
     required this.router,
     required this.stackKey,
-    required List<RouteMatch<dynamic>> pendingChildren,
+    required List<RouteMatch<Object?>> pendingChildren,
     required this.type,
     this._popCompleter,
     this._parent,
@@ -100,7 +100,7 @@ class RouteData<R> {
   /// The pre-matched sub-routes of this route
   ///
   /// These are consumed by the sub-router once it's created
-  List<RouteMatch<dynamic>> get pendingChildren => _pendingChildren;
+  List<RouteMatch<Object?>> get pendingChildren => _pendingChildren;
 
   /// Looks up and returns the scoped instance
   ///
@@ -170,7 +170,7 @@ class RouteData<R> {
   }
 
   /// Reruns the raw [RouteMatch]
-  RouteMatch<dynamic> get route => _route;
+  RouteMatch<Object?> get route => _route;
 
   /// Helper to access [RouteMatch.name]
   String get name => _route.name;
@@ -200,7 +200,7 @@ class RouteData<R> {
   /// The track to the very first ancestor match
   ///
   /// This can be used to render visual breadcrumbs in UI
-  List<RouteMatch<dynamic>> get breadcrumbs =>
+  List<RouteMatch<Object?>> get breadcrumbs =>
       .unmodifiable([...?_parent?.breadcrumbs, _route]);
 
   /// Collects all path params form all previous ancestors
@@ -229,7 +229,7 @@ class RouteData<R> {
   /// Returns the top most [RouteMatch] in the
   /// pending children, if it has not pending children
   /// this [route] is returned
-  RouteMatch<dynamic> get topMatch {
+  RouteMatch<Object?> get topMatch {
     if (pendingChildren case [..., final last]) {
       return _getTopMatch(last);
     }
