@@ -10,6 +10,8 @@
   (flutter/flutter#190741).
 - **FEAT**: `AutoTabsRouter` and `AutoTabsScaffold` take `backThroughHistory`: back shows the tabs visited before,
   the latest first, then leaves the tabs (#1789, #830).
+- **FEAT**: `AutoTabsRouter.tabBar` and `AutoTabsRouter.pageView` take `lazyLoad`; `false` builds every tab's page
+  up front (#2013).
 
 ## 12.0.0
 - **BREAKING CHANGE**: `RouteMatch.pathParams` and `RouteData.pathParams`, deprecated since 11.2.0, are removed;

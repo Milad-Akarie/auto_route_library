@@ -800,6 +800,10 @@ AutoTabsRouter.tabBar(
 );
 ```
 
+### Building every tab up front
+
+Tabs load lazily: a tab's page is built the first time the tab shows. Pass `lazyLoad: false` to `AutoTabsRouter`, `AutoTabsRouter.pageView`, `AutoTabsRouter.tabBar` or `AutoTabsScaffold` to build every tab's page with the tabs, so its state and inner router are there before the first visit.
+
 ### Back between tabs
 
 By default back leaves the tabs from whichever tab is showing. Every `AutoTabsRouter` constructor and `AutoTabsScaffold` take two options that keep it inside them:

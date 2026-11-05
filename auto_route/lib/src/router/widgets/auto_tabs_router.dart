@@ -56,10 +56,15 @@ abstract class AutoTabsRouter extends StatefulWidget {
 
   /// Builds an [AutoTabsRouter] to uses
   /// a [PageView] to render pages
+  ///
+  /// With [lazyLoad] true, the default, each tab's page is built once the
+  /// tab is first shown; with false, every tab's page is built with the
+  /// tabs. See [AutoPageView.lazyLoad].
   const factory AutoTabsRouter.pageView({
     Key? key,
     List<PageRouteInfo>? routes,
     AutoTabsPageViewBuilder? builder,
+    bool lazyLoad,
     int homeIndex,
     bool backThroughHistory,
     bool animatePageTransition,
@@ -74,10 +79,15 @@ abstract class AutoTabsRouter extends StatefulWidget {
 
   /// Builds an [AutoTabsRouter] to uses
   /// a `TabView` to render pages
+  ///
+  /// With [lazyLoad] true, the default, each tab's page is built once the
+  /// tab is first shown; with false, every tab's page is built with the
+  /// tabs. See [AutoTabView.lazyLoad].
   const factory AutoTabsRouter.tabBar({
     Key? key,
     List<PageRouteInfo>? routes,
     AutoTabsTabBarBuilder? builder,
+    bool lazyLoad,
     int homeIndex,
     bool backThroughHistory,
     Duration? duration,
@@ -507,6 +517,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
     super.key,
     super.routes,
     AutoTabsPageViewBuilder? builder,
+    this.lazyLoad = true,
     super.homeIndex,
     super.backThroughHistory,
     this.scrollDirection = Axis.horizontal,
@@ -520,6 +531,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
   }) : _pageViewModeBuilder = builder,
        super._();
   final AutoTabsPageViewBuilder? _pageViewModeBuilder;
+  final bool lazyLoad;
   final bool animatePageTransition;
   final Duration duration;
   final Curve curve;
@@ -541,7 +553,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
     assert(_controller != null, 'The tabs controller is not set up yet.');
     _controller!.setupRoutes(widget.routes);
     _updatePageController();
-    _didInitTabRoute(_controller!.activeIndex);
+    _didInitTabRoutes(lazyLoad: widget.lazyLoad, activeIndex: _controller!.activeIndex);
   }
 
   void _updatePageController() {
@@ -610,6 +622,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
                 dragStartBehavior: widget.dragStartBehavior,
                 controller: _pageController,
                 router: _controller!,
+                lazyLoad: widget.lazyLoad,
               ),
               _pageController,
             );
@@ -636,6 +649,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     super.routes,
     this.scrollDirection = Axis.horizontal,
     this.builder,
+    this.lazyLoad = true,
     super.homeIndex,
     super.backThroughHistory,
     this.duration,
@@ -646,6 +660,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     this.dragStartBehavior = DragStartBehavior.start,
   }) : super._();
   final AutoTabsTabBarBuilder? builder;
+  final bool lazyLoad;
   final Duration? duration;
   final Curve curve;
   final ScrollPhysics? physics;
@@ -667,7 +682,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
     assert(_controller != null, 'The tabs controller is not set up yet.');
     _controller!.setupRoutes(widget.routes);
     _updateTabController();
-    _didInitTabRoute(_controller!.activeIndex);
+    _didInitTabRoutes(lazyLoad: widget.lazyLoad, activeIndex: _controller!.activeIndex);
     // Not removable, and needs no removal: this state disposes the tabs
     // router when it is disposed, which drops the listener.
     // ignore: avoid-unremovable-callbacks-in-listeners
@@ -762,6 +777,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
                 dragStartBehavior: widget.dragStartBehavior,
                 controller: _tabController,
                 router: _controller!,
+                lazyLoad: widget.lazyLoad,
               ),
               _tabController,
             );
@@ -885,6 +901,18 @@ mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
       }
       observer.didInitTabRoute(TabPageRoute(routeInfo: routes[index], index: index), previousRoute);
     });
+  }
+
+  // The tabs built with the router: the active one, or every one when they
+  // don't load lazily, as the IndexedStack tabs report them.
+  void _didInitTabRoutes({required bool lazyLoad, required int activeIndex}) {
+    if (lazyLoad) {
+      _didInitTabRoute(activeIndex);
+      return;
+    }
+    for (var i = 0; i < routes.length; i++) {
+      _didInitTabRoute(i);
+    }
   }
 
   void _didChangeTabRoute(int index, int previous) {

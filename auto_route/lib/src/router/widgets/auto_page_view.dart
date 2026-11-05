@@ -16,6 +16,7 @@ class AutoPageView extends StatefulWidget {
     required this.controller,
     this.physics,
     required this.router,
+    this.lazyLoad = true,
     this.dragStartBehavior = DragStartBehavior.start,
     this.scrollDirection = Axis.horizontal,
   });
@@ -51,6 +52,15 @@ class AutoPageView extends StatefulWidget {
 
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
   final DragStartBehavior dragStartBehavior;
+
+  /// Whether each tab's page is built only once the tab is first shown.
+  ///
+  /// Defaults to true. When false, every tab's page is built with the tabs,
+  /// so a tab's state and inner router exist before its first visit, and
+  /// observers hear of every tab through
+  /// [AutoRouterObserver.didInitTabRoute] at once. A tab whose route doesn't
+  /// `maintainState` is still dropped when another tab shows.
+  final bool lazyLoad;
 
   @override
   State<AutoPageView> createState() => AutoPageViewState();
@@ -155,7 +165,7 @@ class AutoPageViewState extends State<AutoPageView> {
           excluding: !isActive,
           child: KeepAliveTab(
             key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, GlobalKey.new),
-            initiallyLoaded: isActive,
+            initiallyLoaded: isActive || !widget.lazyLoad,
             page: stack[index],
           ),
         ),
