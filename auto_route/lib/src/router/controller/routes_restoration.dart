@@ -107,7 +107,6 @@ List<RouteMatch<Object?>> _buildableMatches(List<RouteMatch<Object?>> matches, R
         type: match.type ?? router.root.defaultRouteType,
       ).buildPage<Object?>();
       // A page that needs args it can't get is skipped; that is the error to catch.
-      // ignore: avoid_catching_errors
     } on MissingRequiredParameterError {
       continue;
     }

@@ -1236,7 +1236,6 @@ class TabsRouter extends RoutingController {
         _pages.add(data.buildPage());
         // A page that needs args it can't get is reported with the reason.
         // That is the error to catch.
-        // ignore: avoid_catching_errors
       } on MissingRequiredParameterError catch (e, stackTrace) {
         if (fromDefault) {
           // The new error carries the original message and stack trace.
