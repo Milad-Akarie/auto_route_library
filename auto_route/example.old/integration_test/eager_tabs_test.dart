@@ -28,10 +28,12 @@ void main() {
 
         expect(eagerTabBuilds, {for (final name in eagerTabNames) name: 1});
 
-        router.innerRouterOf<TabsRouter>(eagerTabsName)!.setActiveIndex(2);
+        router
+            .innerRouterOf<TabsRouter>(eagerTabsName)!
+            .setActiveIndex(eagerTabNames.length - 1);
         await tester.pumpAndSettle();
 
-        expect(find.text(eagerTabNames[2]), findsOneWidget);
+        expect(find.text(eagerTabNames.last), findsOneWidget);
         expect(eagerTabBuilds, {for (final name in eagerTabNames) name: 1});
       },
     );
