@@ -42,6 +42,7 @@ import 'encoded_path_params_test.dart' as encoded_path_params;
 import 'encoded_url_test.dart' as encoded_url;
 import 'enum_query_param_test.dart' as enum_query_param;
 import 'generic_page_test.dart' as generic_page;
+import 'hero_controller_builder_test.dart' as hero_controller_builder;
 import 'hero_nested_router_test.dart' as hero_nested_router;
 import 'home_index_back_test.dart' as home_index_back;
 import 'host_back_button_test.dart' as host_back_button;
@@ -247,6 +248,7 @@ void main() {
   encoded_url.main();
   enum_query_param.main();
   generic_page.main();
+  hero_controller_builder.main();
   hero_nested_router.main();
   home_index_back.main();
   host_back_button.main();

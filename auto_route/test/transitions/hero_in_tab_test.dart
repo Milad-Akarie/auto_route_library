@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../hero_box_page.dart';
-import '../hero_scoped_router.dart';
 import '../router_test_utils.dart';
 
 void main() {
@@ -16,21 +15,28 @@ void main() {
   // Flutter gives a HeroController only to the app's root Navigator and hides
   // it from nested ones (Navigator builds its Overlay in
   // HeroControllerScope.none), so a nested Navigator flies Heroes only under a
-  // HeroControllerScope of its own. That is the answer given on #1873, and
-  // the same holds for the stack router of a tab.
+  // HeroControllerScope of its own, which heroControllerBuilder gives the
+  // tab's stack router.
   group('Between two pages of one tab', () {
-    testWidgets('a Hero flies when the tab has a HeroControllerScope', (
-      tester,
-    ) async {
-      await pumpRouterConfigApp(tester, _router(hasScope: true).config());
-      await _pushTo(tester);
-      _expectHeroInFlight(tester);
-      await tester.pumpAndSettle();
-      expect(find.text('to'), findsOneWidget);
-    });
+    testWidgets(
+      'a Hero flies when the tab router has a heroControllerBuilder',
+      (tester) async {
+        await pumpRouterConfigApp(
+          tester,
+          _router(hasHeroControllerBuilder: true).config(),
+        );
+        await _pushTo(tester);
+        _expectHeroInFlight(tester);
+        await tester.pumpAndSettle();
+        expect(find.text('to'), findsOneWidget);
+      },
+    );
 
     testWidgets('a Hero stays put when the tab has none', (tester) async {
-      await pumpRouterConfigApp(tester, _router(hasScope: false).config());
+      await pumpRouterConfigApp(
+        tester,
+        _router(hasHeroControllerBuilder: false).config(),
+      );
       await _pushTo(tester);
       expect(
         find.text('from'),
@@ -55,7 +61,7 @@ const NamedRoute<void> _kToRoute = NamedRoute('ToRoute');
 
 const _kTabRouteName = 'TabRoute';
 
-RootStackRouter _router({required bool hasScope}) => .build(
+RootStackRouter _router({required bool hasHeroControllerBuilder}) => .build(
   routes: [
     NamedRouteDef(
       name: 'TabsHostRoute',
@@ -67,8 +73,11 @@ RootStackRouter _router({required bool hasScope}) => .build(
         NamedRouteDef(
           name: _kTabRouteName,
           path: 'tab',
-          builder: (_, _) =>
-              hasScope ? const HeroScopedRouter() : const AutoRouter(),
+          builder: (_, _) => AutoRouter(
+            heroControllerBuilder: hasHeroControllerBuilder
+                ? MaterialApp.createMaterialHeroController
+                : null,
+          ),
           children: [
             NamedRouteDef(
               name: 'FromRoute',

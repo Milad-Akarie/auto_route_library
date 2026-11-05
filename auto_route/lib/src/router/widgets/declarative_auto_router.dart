@@ -12,6 +12,7 @@ class _DeclarativeAutoRouter extends StatefulWidget {
     required this.placeholderBuilder,
     required this.clipBehavior,
     required this.traversalEdgeBehavior,
+    required this.heroControllerBuilder,
     super.key,
   });
   final RoutesBuilder routesBuilder;
@@ -24,14 +25,19 @@ class _DeclarativeAutoRouter extends StatefulWidget {
   final WidgetBuilder? placeholderBuilder;
   final Clip clipBehavior;
   final TraversalEdgeBehavior? traversalEdgeBehavior;
+  final HeroController Function()? heroControllerBuilder;
 
   @override
   _DeclarativeAutoRouterState createState() => .new();
 }
 
-class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
+class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter>
+    with _HeroControllerOwner<_DeclarativeAutoRouter> {
   StackRouter? _controller;
-  late HeroController _heroController;
+
+  @override
+  HeroController Function()? get _heroControllerBuilder =>
+      widget.heroControllerBuilder;
 
   StackRouter? get controller => _controller;
   late List<NavigatorObserver> _navigatorObservers;
@@ -43,7 +49,6 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
     super.didChangeDependencies();
     final parentData = RouteData.of(context);
     if (_controller == null) {
-      _heroController = HeroController();
       final parentScope = RouterScope.of(context);
       _inheritableObserversBuilder = () {
         final observers = widget.navigatorObserversBuilder();
@@ -74,7 +79,6 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   @override
   void dispose() {
     if (_controller != null) {
-      _heroController.dispose();
       _controller!.dispose();
       _parentController.removeChildController(_controller!);
       _controller = null;
@@ -86,26 +90,27 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
   Widget build(BuildContext context) {
     assert(_controller != null, 'The router controller is not set up yet.');
     final stateHash = controller!.stateHash;
+    final navigator = AutoRouteNavigator(
+      router: _controller!,
+      clipBehavior: widget.clipBehavior,
+      key: GlobalObjectKey(_controller.hashCode),
+      declarativeRoutesBuilder: widget.routesBuilder,
+      navRestorationScopeId: widget.navRestorationScopeId,
+      navigatorObservers: _navigatorObservers,
+      didPop: widget.onPopRoute,
+      placeholder: widget.placeholderBuilder,
+      routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
+    );
+    final heroController = _heroController;
     return RouterScope(
       key: _controller!.globalRouterKey,
       controller: _controller!,
       inheritableObserversBuilder: _inheritableObserversBuilder,
       navigatorObservers: _navigatorObservers,
       stateHash: stateHash,
-      child: HeroControllerScope(
-        controller: _heroController,
-        child: AutoRouteNavigator(
-          router: _controller!,
-          clipBehavior: widget.clipBehavior,
-          key: GlobalObjectKey(_controller.hashCode),
-          declarativeRoutesBuilder: widget.routesBuilder,
-          navRestorationScopeId: widget.navRestorationScopeId,
-          navigatorObservers: _navigatorObservers,
-          didPop: widget.onPopRoute,
-          placeholder: widget.placeholderBuilder,
-          routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
-        ),
-      ),
+      child: heroController == null
+          ? navigator
+          : HeroControllerScope(controller: heroController, child: navigator),
     );
   }
 

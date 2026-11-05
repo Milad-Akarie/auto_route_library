@@ -596,37 +596,25 @@ finally you can create a shell route without code generation using the `EmptyShe
 
 ### Heroes inside a nested router
 
-Flutter gives a `HeroController` only to the app's root navigator, so a Hero flies between two pages of the root router, and from a root page into the first page of a nested router it opens. Between two pages of the same nested router, such as two pages of one tab, a Hero stays put unless that router's `AutoRouter` has a `HeroControllerScope` of its own:
+Flutter gives a `HeroController` only to the app's root navigator, so a Hero flies between two pages of the root router, and from a root page into the first page of a nested router it opens. Between two pages of the same nested router, such as two pages of one tab, a Hero stays put unless that router's `AutoRouter` is given a `heroControllerBuilder`:
 
 ```dart
 @RoutePage()
-class BooksTabPage extends StatefulWidget {
+class BooksTabPage extends StatelessWidget {
   const BooksTabPage({super.key});
 
   @override
-  State<BooksTabPage> createState() => _BooksTabPageState();
-}
-
-class _BooksTabPageState extends State<BooksTabPage> {
-  final _heroController = HeroController();
-
-  @override
-  void dispose() {
-    _heroController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return HeroControllerScope(
-      controller: _heroController,
-      child: const AutoRouter(),
+    return const AutoRouter(
+      heroControllerBuilder: MaterialApp.createMaterialHeroController,
     );
   }
 }
 ```
 
-Keep the controller in the page's state, as above: each navigator needs its own, so one controller can't be shared by two nested routers.
+The router calls the builder once, puts the controller it returns around its navigator, and disposes it when the router leaves; there is nothing to own or dispose. `MaterialApp.createMaterialHeroController` flies Heroes along Material's arc, and `CupertinoApp.createCupertinoHeroController` in a straight line. `AutoRouter.declarative` takes the same parameter. Left out, a nested router flies no Heroes between its pages.
+
+`AutoTabsRouter` needs nothing: it shows its tabs in an indexed stack or a page view, not a navigator, so a Hero flies only between the pages of a tab's own nested `AutoRouter`, which is where the builder goes.
 
 ### Navigating to a nested route
 

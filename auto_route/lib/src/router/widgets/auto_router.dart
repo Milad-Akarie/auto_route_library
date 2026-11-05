@@ -18,6 +18,7 @@ class AutoRouter extends StatefulWidget {
     this.placeholder,
     this.clipBehavior = Clip.hardEdge,
     this.traversalEdgeBehavior,
+    this.heroControllerBuilder,
   });
 
   /// A builder function that returns a list of observes
@@ -54,8 +55,36 @@ class AutoRouter extends StatefulWidget {
   /// The traversal edge behavior of the navigator
   final TraversalEdgeBehavior? traversalEdgeBehavior;
 
+  /// Creates the [HeroController] that flies Heroes between this router's
+  /// pages, or `null` to fly none.
+  ///
+  /// Flutter gives a [HeroController] only to the app's root navigator, so
+  /// without one a Hero stays put between two pages of a nested router.
+  /// Passing a builder turns flights on: the router calls it once, puts a
+  /// [HeroControllerScope] with the controller around its navigator, and
+  /// disposes the controller when the router leaves the tree. Flutter's own
+  /// controllers plug in as they are: pass
+  /// [MaterialApp.createMaterialHeroController] for Material's arc, or
+  /// `CupertinoApp.createCupertinoHeroController` for a straight line.
+  ///
+  /// A rebuild that sets the builder creates a controller, and one that clears
+  /// it disposes the controller; a rebuild that passes a different builder
+  /// keeps the controller it has. Each router needs its own controller, which
+  /// is why this takes a builder and not a controller.
+  ///
+  /// [AutoTabsRouter] needs none: it shows its tabs without a navigator, so a
+  /// Hero flies only between the pages of a tab's own nested [AutoRouter],
+  /// which is where this goes.
+  final HeroController Function()? heroControllerBuilder;
+
   /// Builds a [_DeclarativeAutoRouter] which uses
   /// a declarative list of routes to update navigator stack
+  ///
+  /// [heroControllerBuilder] works as [AutoRouter.heroControllerBuilder]
+  /// does: pass [MaterialApp.createMaterialHeroController] or
+  /// `CupertinoApp.createCupertinoHeroController` to fly Heroes between this
+  /// router's pages, and the router disposes the controller it creates.
+  /// [AutoTabsRouter] needs none.
   static Widget declarative({
     required RoutesBuilder routes,
     Key? key,
@@ -69,6 +98,7 @@ class AutoRouter extends StatefulWidget {
     WidgetBuilder? placeholder,
     Clip clipBehavior = .hardEdge,
     TraversalEdgeBehavior? traversalEdgeBehavior,
+    HeroController Function()? heroControllerBuilder,
   }) => _DeclarativeAutoRouter(
     key: key,
     onPopRoute: onPopRoute,
@@ -81,6 +111,7 @@ class AutoRouter extends StatefulWidget {
     routesBuilder: routes,
     clipBehavior: clipBehavior,
     traversalEdgeBehavior: traversalEdgeBehavior,
+    heroControllerBuilder: heroControllerBuilder ?? HeroController.new,
   );
 
   @override
@@ -112,7 +143,12 @@ class AutoRouter extends StatefulWidget {
 }
 
 /// State implementation of [AutoRouter]
-class AutoRouterState extends State<AutoRouter> {
+class AutoRouterState extends State<AutoRouter>
+    with _HeroControllerOwner<AutoRouter> {
+  @override
+  HeroController Function()? get _heroControllerBuilder =>
+      widget.heroControllerBuilder;
+
   NestedStackRouter? _controller;
 
   /// The StackRouter controlling this router widget
@@ -177,6 +213,10 @@ class AutoRouterState extends State<AutoRouter> {
           placeholder: widget.placeholder,
           routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
         );
+        final heroController = _heroController;
+        final scopedNavigator = heroController == null
+            ? navigator
+            : HeroControllerScope(controller: heroController, child: navigator);
         final stateHash = _controller!.stateHash;
         return RouterScope(
           key: _controller!.globalRouterKey,
@@ -188,8 +228,10 @@ class AutoRouterState extends State<AutoRouter> {
             controller: _controller!,
             stateHash: stateHash,
             child: widget.builder == null
-                ? navigator
-                : Builder(builder: (ctx) => widget.builder!(ctx, navigator)),
+                ? scopedNavigator
+                : Builder(
+                    builder: (ctx) => widget.builder!(ctx, scopedNavigator),
+                  ),
           ),
         );
       },
@@ -210,5 +252,40 @@ class AutoRouterState extends State<AutoRouter> {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<StackRouter>('controller', controller));
+  }
+}
+
+/// Owns the [HeroController] a router's `heroControllerBuilder` creates.
+///
+/// Creates it when the state starts or when a rebuild sets the builder, and
+/// disposes it when a rebuild clears the builder or the state leaves the tree.
+mixin _HeroControllerOwner<T extends StatefulWidget> on State<T> {
+  HeroController? _heroController;
+
+  HeroController Function()? get _heroControllerBuilder;
+
+  @override
+  void initState() {
+    super.initState();
+    _heroController = _heroControllerBuilder?.call();
+  }
+
+  @override
+  void didUpdateWidget(T oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final builder = _heroControllerBuilder;
+    if (builder == null) {
+      _heroController?.dispose();
+      _heroController = null;
+    } else {
+      _heroController ??= builder();
+    }
+  }
+
+  @override
+  void dispose() {
+    _heroController?.dispose();
+    _heroController = null;
+    super.dispose();
   }
 }
