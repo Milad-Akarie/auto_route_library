@@ -35,7 +35,12 @@ void main() {
         addTearDown(router.dispose);
         // The router reports a route list it can't use with a FlutterError.
         await expectLater(
-          tester.pumpWidget(MaterialApp.router(routerConfig: router.config())),
+          // An async closure, so the error from config() is caught too.
+          () async {
+            await tester.pumpWidget(
+              MaterialApp.router(routerConfig: router.config()),
+            );
+          }(),
           throwsA(
             isA<FlutterError>().having(
               (error) => error.toString(),

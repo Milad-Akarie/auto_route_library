@@ -113,7 +113,13 @@ class _HomePage extends StatefulWidget {
 
 class _HomePageState extends State<_HomePage> {
   /// The id the page was first built with, which an in-place update keeps.
-  late final int firstId = widget.id;
+  late final int firstId;
+
+  @override
+  void initState() {
+    super.initState();
+    firstId = widget.id;
+  }
 
   @override
   Widget build(BuildContext context) => Text('Home ${widget.id}');
