@@ -8,7 +8,7 @@ const _kReservedVarNames = ['children'];
 /// in generating route parameters.
 class ParamConfig {
   /// Default constructor
-  ParamConfig({
+  const ParamConfig({
     required this.type,
     required this.name,
     required this.isNamed,
@@ -155,7 +155,7 @@ class ParamConfig {
 /// in generating route parameters.
 class FunctionParamConfig extends ParamConfig {
   /// Default constructor
-  FunctionParamConfig({
+  const FunctionParamConfig({
     required this.returnType,
     this.params = const [],
     required super.type,

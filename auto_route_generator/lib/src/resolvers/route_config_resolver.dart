@@ -10,7 +10,7 @@ import 'package:source_gen/source_gen.dart';
 /// extracts route configs from class fields and their meta data
 class RouteConfigResolver {
   /// Default constructor
-  RouteConfigResolver(this._typeResolver);
+  const RouteConfigResolver(this._typeResolver);
   final TypeResolver _typeResolver;
 
   /// Resolves a [ClassElement] into a consumable [RouteConfig]

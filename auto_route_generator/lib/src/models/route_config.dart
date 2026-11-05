@@ -7,7 +7,7 @@ import 'package:code_builder/code_builder.dart' show TypeReference;
 /// to be used in `RouterClassGenerator`
 class RouteConfig {
   /// Default constructor
-  RouteConfig({
+  const RouteConfig({
     this.name,
     this.pathParams = const [],
     this.pageType,

@@ -37,7 +37,7 @@ Future<TestReaderWriter> _loadPackages() async {
 /// What one run of both builders produced.
 class GeneratedRouter {
   /// Creates the result of one run.
-  GeneratedRouter(this.source, this.errors, this.compileErrors);
+  const GeneratedRouter(this.source, this.errors, this.compileErrors);
 
   /// The generated `.gr.dart` source, or `null` when the build wrote none.
   final String? source;
@@ -109,7 +109,7 @@ const _kCompileErrorsExtension = '.compile_errors.txt';
 /// the output too when it is a library of its own, and writes the analyzer
 /// errors in them, one per line.
 class _CompileCheckBuilder implements Builder {
-  _CompileCheckBuilder(this.routerPath, this.outputPath);
+  const _CompileCheckBuilder(this.routerPath, this.outputPath);
   final String routerPath;
   final String outputPath;
 

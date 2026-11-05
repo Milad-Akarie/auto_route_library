@@ -16,7 +16,7 @@ sealed class UrlParamType {
 
   /// The entry for a param read and written by the `ParamConverter`
   /// constant [name], declared in [import].
-  factory UrlParamType.converter(String name, String? import) = _ConverterParam;
+  const factory UrlParamType.converter(String name, String? import) = _ConverterParam;
 
   /// The entry for [type], or `null` when a url can not give it.
   static UrlParamType? of(ResolvedType type) {
