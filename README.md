@@ -1105,6 +1105,22 @@ The builder is not called in every case:
 
 So to handle links that aren't meant to be routes, such as an e-mail sign-in link, either shape them in the transformer so they match a route, for example by dropping the segments that aren't routable, or add a wildcard `RedirectRoute(path: '*', redirectTo: '/')` as the last route (see [Wildcards](#wildcards)) so every link matches something.
 
+### Deep links on desktop
+
+On Android, iOS and the web, Flutter hands links to the router. The macOS, Windows and Linux embedders don't: a link that opens a desktop app never reaches it, so the steps above don't run. Take the links from a plugin instead, such as [app_links](https://pub.dev/packages/app_links), and open each one with the router:
+
+```dart
+// links: the plugin's stream of links, such as AppLinks().uriLinkStream
+StreamSubscription<Uri> openDesktopLinks(Stream<Uri> links, StackRouter router) {
+  return links.listen((uri) {
+    // keep the path and query, drop the scheme and host
+    router.navigatePath(Uri(path: uri.path, query: uri.hasQuery ? uri.query : null).toString());
+  });
+}
+```
+
+A link opened this way is a navigation of your own, so the `deepLinkTransformer` and `deepLinkBuilder` don't see it, while route guards do.
+
 ### Using Deep-link Transformer
 
 Deep link transformer intercepts deep-links before they're processed by the matcher, it's useful for stripping or modifying deep-links before they're matched.
