@@ -90,7 +90,7 @@ class _TabsHostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_TabsHostRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => ListenableBuilder(
       listenable: Listenable.merge([_routesNotifier, _showTabsNotifier]),
@@ -106,26 +106,26 @@ class _FirstTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _FourthTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FourthTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }

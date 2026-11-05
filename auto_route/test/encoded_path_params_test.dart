@@ -53,7 +53,7 @@ class _FileRoute extends PageRouteInfo<void> {
   new({required String name}) : super(pageName, rawPathParams: {'name': name});
 
   static const String pageName = 'FileRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Text('File ${data.inheritedPathParams.getString('name')}'),
   );

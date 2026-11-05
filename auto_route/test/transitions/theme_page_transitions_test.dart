@@ -218,16 +218,16 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
-  static PageInfo flutterPage = PageInfo(name, builder: (_) => const flutter.Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo flutterPage = PageInfo(name, builder: (_) => const flutter.Scaffold(body: Text('Home')));
 }
 
 class _DetailsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'DetailsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Details')));
-  static PageInfo flutterPage = PageInfo(name, builder: (_) => const flutter.Scaffold(body: Text('Details')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Details')));
+  static final PageInfo flutterPage = PageInfo(name, builder: (_) => const flutter.Scaffold(body: Text('Details')));
 }
 
 class _FlutterRecordingTransitionsBuilder extends flutter.PageTransitionsBuilder {

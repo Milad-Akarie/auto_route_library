@@ -46,21 +46,21 @@ class _OrdersWrapperRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'OrdersWrapperRoute';
-  static PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
 }
 
 class _OrdersRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'OrdersRoute';
-  static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Orders'));
+  static final PageInfo page = PageInfo(pageName, builder: (_) => const Text('Orders'));
 }
 
 class _OrderRoute extends PageRouteInfo<void> {
   new({required String orderId}) : super(pageName, rawPathParams: {'orderId': orderId});
 
   static const String pageName = 'OrderRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     // As generated for a constructor parameter marked @pathParam.
     builder: (data) => Column(
@@ -76,7 +76,7 @@ class _OrderPaymentProofRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'OrderPaymentProofRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     // As generated for a constructor parameter marked @PathParam.inherit().
     builder: (data) => Text('Payment proof of ${data.inheritedPathParams.getString('orderId')}'),

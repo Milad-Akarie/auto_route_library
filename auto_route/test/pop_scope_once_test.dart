@@ -137,7 +137,7 @@ class _ReportHomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ReportHomeRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
       body: Builder(
@@ -156,14 +156,14 @@ class _HostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HostRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _CountedRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'CountedRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => PopScope(
       canPop: _canPop,

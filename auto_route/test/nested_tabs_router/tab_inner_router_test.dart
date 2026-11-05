@@ -72,7 +72,7 @@ class _HostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_HostRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => ValueListenableBuilder<bool>(
       valueListenable: _extraNotifier,
@@ -96,33 +96,33 @@ class _NestedHostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_NestedHostRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _NestedFirstRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_NestedFirstRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _NestedSecondRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_NestedSecondRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _ExtraRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ExtraRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _SecondRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }

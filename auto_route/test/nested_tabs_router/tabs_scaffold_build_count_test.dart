@@ -42,7 +42,7 @@ class _NavigationRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_NavigationRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => AutoTabsScaffold(
       extendBodyBehindAppBar: true,
@@ -66,12 +66,12 @@ class _UsersRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_UsersRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _PostsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_PostsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }

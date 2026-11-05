@@ -71,7 +71,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'HomeRoute';
-  static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Home'));
+  static final PageInfo page = PageInfo(pageName, builder: (_) => const Text('Home'));
 }
 
 class _BusinessRoute extends PageRouteInfo<void> {
@@ -79,7 +79,7 @@ class _BusinessRoute extends PageRouteInfo<void> {
     : super(pageName, rawPathParams: {'businessCustomId': businessCustomId}, initialChildren: children);
 
   static const String pageName = 'BusinessRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Column(
       children: [
@@ -94,7 +94,7 @@ class _FinishOrderingRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'FinishOrderingRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     // As generated for a constructor parameter marked @PathParam.inherit('businessCustomId').
     builder: (data) => Text('New order at ${data.inheritedPathParams.getString('businessCustomId')}'),
@@ -105,7 +105,7 @@ class _BookShellRoute extends PageRouteInfo<void> {
   const new({List<PageRouteInfo>? children}) : super(pageName, initialChildren: children);
 
   static const String pageName = 'BookShellRoute';
-  static PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
 }
 
 class _BookRoute extends PageRouteInfo<void> {
@@ -114,7 +114,7 @@ class _BookRoute extends PageRouteInfo<void> {
     : super(pageName, rawPathParams: {'id': id}, rawQueryParams: {'someQueryParam': someQueryParam});
 
   static const String pageName = 'BookRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Column(
       children: [

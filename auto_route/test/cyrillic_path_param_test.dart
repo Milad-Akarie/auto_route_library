@@ -51,14 +51,14 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text('Home'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Home'));
 }
 
 class _FavoriteRoute extends PageRouteInfo<void> {
   new({required String name}) : super(pageName, rawPathParams: {'name': name});
 
   static const String pageName = 'FavoriteRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Text('Favorite ${data.inheritedPathParams.getString('name')}'),
   );

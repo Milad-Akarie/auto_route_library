@@ -56,14 +56,14 @@ class _SplashRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SplashRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _HomeWrapperRoute extends PageRouteInfo<void> {
   const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = '_HomeWrapperRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => const AutoTabsRouter(routes: [_FeedRoute(), _MyProfileRoute()]),
   );
@@ -73,7 +73,7 @@ class _FeedRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FeedRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => AutoTabsRouter.tabBar(
       routes: const [_ForYouFeedRoute(), _FollowingFeedRoute()],
@@ -97,19 +97,19 @@ class _ForYouFeedRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ForYouFeedRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _FollowingFeedRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FollowingFeedRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _MyProfileRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_MyProfileRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }

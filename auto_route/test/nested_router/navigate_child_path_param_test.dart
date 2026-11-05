@@ -92,7 +92,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text('Home'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Home'));
 }
 
 class _AccountRoute extends PageRouteInfo<void> {
@@ -100,7 +100,7 @@ class _AccountRoute extends PageRouteInfo<void> {
     : super(pageName, rawPathParams: {'accountId': accountId}, initialChildren: children);
 
   static const String pageName = 'AccountRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Column(
       children: [
@@ -115,7 +115,7 @@ class _ContactRoute extends PageRouteInfo<void> {
   new({required String contactId}) : super(pageName, rawPathParams: {'contactId': contactId});
 
   static const String pageName = 'ContactRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Text(
       'Contact ${data.inheritedPathParams.getString('contactId')} of ${data.inheritedPathParams.getString('accountId')}',

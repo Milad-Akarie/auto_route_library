@@ -183,28 +183,28 @@ class _FromRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'FromRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('from', .bottomLeft));
+  static final PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('from', .bottomLeft));
 }
 
 class _ToRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ToRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('to', .topRight));
+  static final PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('to', .topRight));
 }
 
 class _ShellRoute extends PageRouteInfo<void> {
   const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = 'ShellRoute';
-  static PageInfo page = const PageInfo.emptyShell(name);
+  static const PageInfo page = .emptyShell(name);
 }
 
 class _HeroShellRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HeroShellRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const _HeroShell());
+  static final PageInfo page = PageInfo(name, builder: (_) => const _HeroShell());
 }
 
 class _HeroShell extends StatefulWidget {

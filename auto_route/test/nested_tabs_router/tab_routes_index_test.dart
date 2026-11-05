@@ -86,7 +86,7 @@ class _TabsHostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_TabsHostRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => ValueListenableBuilder<List<PageRouteInfo>>(
       valueListenable: _routesNotifier,
@@ -107,12 +107,12 @@ class _FirstTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }

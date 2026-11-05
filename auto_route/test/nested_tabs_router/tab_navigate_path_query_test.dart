@@ -53,7 +53,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_DashboardRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => AutoTabsRouter(routes: [_SettingsTab()]));
+  static final PageInfo page = PageInfo(name, builder: (_) => AutoTabsRouter(routes: [_SettingsTab()]));
 }
 
 @immutable
@@ -79,7 +79,7 @@ class _SettingsTab extends PageRouteInfo<_SettingsTabArgs> {
       );
 
   static const String name = '_SettingsTab';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<_SettingsTabArgs>(

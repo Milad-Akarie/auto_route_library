@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 /// The reporter's notifier of the login and subscription state.
 class GuardChangeNotifier extends ChangeNotifier {
   bool connected = false;
-  bool hasProSubscription = false;
+  final bool hasProSubscription = false;
   void connect() {
     connected = true;
     notifyListeners();

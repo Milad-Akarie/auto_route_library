@@ -123,7 +123,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => const Scaffold(
       body: Column(
@@ -140,7 +140,7 @@ class _ContentRoute extends PageRouteInfo<void> {
   new(String index) : super(name, rawPathParams: {'index': index});
 
   static const String name = 'ContentRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (data) => Builder(
       builder: (context) => Scaffold(
@@ -157,5 +157,5 @@ class _OtherRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'OtherRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Other')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Other')));
 }

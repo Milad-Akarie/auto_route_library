@@ -131,7 +131,7 @@ class _HostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HostRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
       appBar: AppBar(leading: const AutoLeadingButton()),
@@ -144,7 +144,7 @@ class _GuardedRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'GuardedRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => PopScope(
       canPop: false,

@@ -98,28 +98,28 @@ class _DashboardRoute extends PageRouteInfo<void> {
   const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = 'DashboardRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _VendorsRoute extends PageRouteInfo<void> {
   const new({required List<PageRouteInfo> children}) : super(name, initialChildren: children);
 
   static const String name = 'VendorsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _VendorListRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'VendorListRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text('Vendors'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Vendors'));
 }
 
 class _EditVendorRoute extends PageRouteInfo<void> {
   new({required String vendorId}) : super(name, rawPathParams: {'vendor-id': vendorId});
 
   static const String name = 'EditVendorRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (data) {
       // As generated for a constructor parameter marked @PathParam('vendor-id').
@@ -138,7 +138,7 @@ class _VendorBranchesRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'VendorBranchesRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     // As generated for a constructor parameter marked @PathParam.inherit('vendor-id').
     builder: (data) => Text('Branches of ${data.inheritedPathParams.getString('vendor-id')}'),
@@ -149,5 +149,5 @@ class _SettingsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'SettingsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text('Settings'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Settings'));
 }

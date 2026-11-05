@@ -64,7 +64,7 @@ class _HostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HostRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => ValueListenableBuilder<String>(
       valueListenable: _channel,
@@ -82,7 +82,10 @@ class _ChannelRoute extends PageRouteInfo<_ChannelArgs> {
   new({required String channel}) : super(name, args: _ChannelArgs(channel));
 
   static const String name = 'ChannelRoute';
-  static PageInfo page = PageInfo(name, builder: (data) => Text('Channel ${data.argsAs<_ChannelArgs>().channel}'));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (data) => Text('Channel ${data.argsAs<_ChannelArgs>().channel}'),
+  );
 }
 
 class _ChannelArgs {
@@ -94,5 +97,5 @@ class _SelectionRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'SelectionRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text('Selection'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Selection'));
 }

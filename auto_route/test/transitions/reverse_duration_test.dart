@@ -76,19 +76,19 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _SlowRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'SlowRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Slow')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Slow')));
 }
 
 class _InstantRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'InstantRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Instant')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Instant')));
 }

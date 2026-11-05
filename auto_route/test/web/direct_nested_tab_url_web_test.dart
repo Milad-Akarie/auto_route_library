@@ -76,7 +76,7 @@ PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 PageInfo _shell(String name) => .new(name, builder: (_) => const AutoRouter());
 
 class _MerchantRoute {
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     'MerchantRoute',
     builder: (data) => Column(
       children: [

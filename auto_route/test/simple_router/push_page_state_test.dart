@@ -35,8 +35,8 @@ class _CountingPageState extends State<_CountingPage> {
   }
 }
 
-PageInfo _home = .new('HomeRoute', builder: (_) => const _CountingPage('home'));
-PageInfo _detail = .new('DetailRoute', builder: (_) => const _CountingPage('detail'));
+final PageInfo _home = .new('HomeRoute', builder: (_) => const _CountingPage('home'));
+final PageInfo _detail = .new('DetailRoute', builder: (_) => const _CountingPage('detail'));
 
 void main() {
   setUp(_builds.clear);

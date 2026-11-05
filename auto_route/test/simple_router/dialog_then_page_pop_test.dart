@@ -48,14 +48,14 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _FormRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'FormRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const _FormPage());
+  static final PageInfo page = PageInfo(name, builder: (_) => const _FormPage());
 }
 
 class _FormPage extends StatelessWidget {

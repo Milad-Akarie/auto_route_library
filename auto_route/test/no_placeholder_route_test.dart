@@ -54,9 +54,9 @@ class _Recorder extends NavigatorObserver {
 }
 
 class _PageRoute {
-  static PageInfo home = PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('Home')));
-  static PageInfo other = PageInfo('OtherRoute', builder: (_) => const Scaffold(body: Text('Other')));
-  static PageInfo third = PageInfo('ThirdRoute', builder: (_) => const Scaffold(body: Text('Third')));
+  static final PageInfo home = PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo other = PageInfo('OtherRoute', builder: (_) => const Scaffold(body: Text('Other')));
+  static final PageInfo third = PageInfo('ThirdRoute', builder: (_) => const Scaffold(body: Text('Third')));
 }
 
 class _OtherRoute extends PageRouteInfo<void> {

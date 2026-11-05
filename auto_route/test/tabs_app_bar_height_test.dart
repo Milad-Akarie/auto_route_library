@@ -34,7 +34,7 @@ class _HostRoute extends PageRouteInfo<void> {
   const new({List<PageRouteInfo>? children}) : super(name, initialChildren: children);
 
   static const String name = 'HostRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => AutoTabsScaffold(
       routes: const [_TabRoute()],
@@ -54,5 +54,5 @@ class _TabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'TabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text('Tab'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text('Tab'));
 }

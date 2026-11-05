@@ -82,7 +82,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_HomeRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => AutoTabsRouter.tabBar(
       routes: const [_AllNotesTabRoute(), _PinnedTabRoute(), _FoldersTabRoute()],
@@ -122,19 +122,19 @@ class _AllNotesTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_AllNotesTabRoute';
-  static PageInfo page = _listPage(name);
+  static final PageInfo page = _listPage(name);
 }
 
 class _PinnedTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_PinnedTabRoute';
-  static PageInfo page = _listPage(name);
+  static final PageInfo page = _listPage(name);
 }
 
 class _FoldersTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FoldersTabRoute';
-  static PageInfo page = _listPage(name);
+  static final PageInfo page = _listPage(name);
 }

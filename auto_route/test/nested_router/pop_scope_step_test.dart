@@ -114,7 +114,7 @@ class _OnboardingRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'OnboardingRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
       appBar: AppBar(leading: const AutoLeadingButton()),
@@ -127,14 +127,14 @@ class _WelcomeStepRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'WelcomeStepRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _IdStepRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'IdStepRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const _IdStep());
+  static final PageInfo page = PageInfo(name, builder: (_) => const _IdStep());
 }
 
 class _IdStep extends StatefulWidget {

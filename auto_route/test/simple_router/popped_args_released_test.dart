@@ -19,7 +19,10 @@ class _DetailArgs {
 // test checks.
 NamedRoute<_DetailArgs> _detailRoute(int counter) => .new('DetailRoute', args: _DetailArgs(counter));
 
-PageInfo _detailPage = PageInfo('DetailRoute', builder: (data) => Text('Detail ${data.argsAs<_DetailArgs>().counter}'));
+final PageInfo _detailPage = PageInfo(
+  'DetailRoute',
+  builder: (data) => Text('Detail ${data.argsAs<_DetailArgs>().counter}'),
+);
 
 /// Allocates garbage until the VM has run two full collections.
 ///

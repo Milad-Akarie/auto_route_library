@@ -69,14 +69,14 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _FormRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'FormRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Form')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Form')));
 }
 
 class _InfoRouteArgs {
@@ -94,7 +94,7 @@ class _InfoRoute extends PageRouteInfo<_InfoRouteArgs> {
       );
 
   static const String name = 'InfoRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<_InfoRouteArgs>();

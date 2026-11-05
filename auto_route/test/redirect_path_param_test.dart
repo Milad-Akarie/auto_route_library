@@ -53,7 +53,7 @@ class _CmsRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'CmsRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Text('Cms ${data.inheritedPathParams.getString('path')}'),
   );

@@ -55,7 +55,7 @@ class _First1Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'First1Route';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Builder(
       builder: (context) => Scaffold(
@@ -75,7 +75,7 @@ class _Modal1Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'Modal1Route';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Builder(
       builder: (context) => Column(

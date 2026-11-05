@@ -78,7 +78,7 @@ class _ParentRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ParentRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const _ParentPage());
+  static final PageInfo page = PageInfo(name, builder: (_) => const _ParentPage());
 }
 
 class _ParentPage extends AutoRouter implements AutoRouteWrapper {
@@ -111,7 +111,7 @@ class _ProvidedState extends State<_Provided> {
   Widget build(BuildContext context) => widget.child;
 }
 
-PageInfo _aPage = PageInfo('ARoute', builder: (_) => const Scaffold(body: _AChild()));
+final PageInfo _aPage = PageInfo('ARoute', builder: (_) => const Scaffold(body: _AChild()));
 
 class _AChild extends StatelessWidget {
   const new();
@@ -133,7 +133,7 @@ class WrapperRoute extends PageRouteInfo<void> {
   const new({List<PageRouteInfo>? children}) : super(WrapperRoute.name, initialChildren: children);
 
   static const String name = 'WrapperRoute';
-  static PageInfo page = PageInfo(name, builder: (data) => const WrappedRoute(child: WrapperPage()));
+  static final PageInfo page = PageInfo(name, builder: (data) => const WrappedRoute(child: WrapperPage()));
 }
 
 class WrapperPage extends StatelessWidget implements AutoRouteWrapper {

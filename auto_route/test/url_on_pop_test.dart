@@ -56,14 +56,14 @@ class _TabsHostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_TabsHostRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const AutoTabsRouter(routes: [_PatientsShellRoute()]));
+  static final PageInfo page = PageInfo(name, builder: (_) => const AutoTabsRouter(routes: [_PatientsShellRoute()]));
 }
 
 class _PatientsShellRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_PatientsShellRoute';
-  static PageInfo page = const PageInfo.emptyShell(name);
+  static const PageInfo page = .emptyShell(name);
 }
 
 class _PatientShellRoute extends PageRouteInfo<void> {
@@ -71,14 +71,14 @@ class _PatientShellRoute extends PageRouteInfo<void> {
     : super(name, rawPathParams: {'patientId': patientId}, rawQueryParams: {'source': null});
 
   static const String name = '_PatientShellRoute';
-  static PageInfo page = const PageInfo.emptyShell(name);
+  static const PageInfo page = .emptyShell(name);
 }
 
 class _PatientsListRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_PatientsListRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Builder(
       builder: (context) => Scaffold(
@@ -100,7 +100,7 @@ class _PatientInfoRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_PatientInfoRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Builder(
       builder: (context) => Scaffold(

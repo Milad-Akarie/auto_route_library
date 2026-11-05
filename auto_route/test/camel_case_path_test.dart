@@ -38,12 +38,12 @@ class _AccountRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'AccountRoute';
-  static PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
 }
 
 class _ConsentManagementRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'AccountConsentManagementScreenRoute';
-  static PageInfo page = PageInfo(pageName, builder: (_) => const Text('Consent management'));
+  static final PageInfo page = PageInfo(pageName, builder: (_) => const Text('Consent management'));
 }

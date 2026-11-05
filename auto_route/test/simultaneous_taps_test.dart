@@ -90,7 +90,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'HomeRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Builder(
       builder: (context) => _TwoButtons(

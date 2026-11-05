@@ -66,12 +66,12 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _ChildRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ChildRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Child')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Child')));
 }

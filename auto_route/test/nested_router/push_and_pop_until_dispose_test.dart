@@ -81,7 +81,7 @@ PageInfo _tracked(String name) => .new(name, builder: (_) => _Tracked(name));
 
 PageRouteInfo _tracked2(String name) => .new(name);
 
-PageInfo _shellPage = PageInfo(_kShellName, builder: (_) => const AutoRouter());
+final PageInfo _shellPage = PageInfo(_kShellName, builder: (_) => const AutoRouter());
 
 class _ShellRoute extends PageRouteInfo<void> {
   const new({required List<PageRouteInfo> children}) : super(_kShellName, initialChildren: children);
@@ -91,7 +91,7 @@ class _ARoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ARoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const _Tracked('A'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const _Tracked('A'));
 }
 
 class _Tracked extends StatefulWidget {

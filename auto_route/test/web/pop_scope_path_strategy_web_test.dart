@@ -58,7 +58,7 @@ class _FormRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'PathFormRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => PopScope(
       canPop: false,

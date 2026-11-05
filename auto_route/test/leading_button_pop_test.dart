@@ -92,7 +92,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_HomeRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
       appBar: AppBar(leading: const AutoLeadingButton()),
@@ -105,7 +105,7 @@ class _VerifyRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_VerifyRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
       appBar: AppBar(leading: const AutoLeadingButton()),
@@ -118,7 +118,7 @@ class _UserRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_UserRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(
       appBar: AppBar(leading: const AutoLeadingButton()),
@@ -131,7 +131,7 @@ class _ProfileRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ProfileRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Builder(
       builder: (context) => Column(
@@ -148,5 +148,5 @@ class _PostsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_PostsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }

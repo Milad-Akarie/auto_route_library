@@ -90,7 +90,7 @@ class _TabsHostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_TabsHostRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) {
       const routes = [_FirstTabRoute(), _SecondTabRoute(), _ThirdTabRoute()];
@@ -107,19 +107,19 @@ class _FirstTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('First'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('First'));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Second'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Second'));
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Third'));
+  static final PageInfo page = PageInfo(name, builder: (_) => const TitledTabPage('Third'));
 }

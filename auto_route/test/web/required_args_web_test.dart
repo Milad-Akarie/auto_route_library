@@ -70,7 +70,7 @@ class _SignInRoute extends PageRouteInfo<_SignInArgs> {
   new({required String email}) : super(name, args: _SignInArgs(email));
 
   static const String name = 'SignInRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (data) => Scaffold(body: Text('Sign in as ${data.argsAs<_SignInArgs>().email}')),
   );

@@ -79,14 +79,17 @@ class _BookRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'BookRoute';
-  static PageInfo page = PageInfo(pageName, builder: (data) => Text('Book ${data.inheritedPathParams.getInt('id')}'));
+  static final PageInfo page = PageInfo(
+    pageName,
+    builder: (data) => Text('Book ${data.inheritedPathParams.getInt('id')}'),
+  );
 }
 
 class _PriceRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'PriceRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Text('Price ${data.inheritedPathParams.getDouble('amount')}'),
   );
@@ -96,7 +99,7 @@ class _SearchRoute extends PageRouteInfo<void> {
   const new() : super(pageName);
 
   static const String pageName = 'SearchRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     pageName,
     builder: (data) => Text('Search ${data.queryParams.optInt('n') ?? 'null'}'),
   );

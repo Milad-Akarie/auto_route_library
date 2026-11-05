@@ -67,33 +67,33 @@ class _SplashRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'SplashRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Splash')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Splash')));
 }
 
 class _AppRouterRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'app_router';
-  static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
 
 class _OtherRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'OtherRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Other')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Other')));
 }
 
 class _TestRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'TestRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Test')));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Test')));
 }

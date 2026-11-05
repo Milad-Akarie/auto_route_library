@@ -104,7 +104,7 @@ class TabsScaffoldRoute extends PageRouteInfo<void> {
   const new({List<PageRouteInfo>? children}) : super(TabsScaffoldRoute.name, initialChildren: children);
 
   static const String name = 'TabsScaffoldRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (data) => AutoTabsScaffold(
       routes: const [FirstRoute(), SecondRoute()],
@@ -128,7 +128,7 @@ class TabsScaffoldDefaultRoute extends PageRouteInfo<void> {
   const new() : super(TabsScaffoldDefaultRoute.name);
 
   static const String name = 'TabsScaffoldDefaultRoute';
-  static PageInfo page = PageInfo(name, builder: (data) => const AutoTabsScaffold());
+  static final PageInfo page = PageInfo(name, builder: (data) => const AutoTabsScaffold());
 }
 
 // A test route whose page reads a required argument.
@@ -136,7 +136,7 @@ class TabPageWithRequiredArgument extends PageRouteInfo<String> {
   const new({required String argument}) : super(TabPageWithRequiredArgument.name, args: argument);
 
   static const String name = 'TabPageWithRequiredArgument';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<String>();

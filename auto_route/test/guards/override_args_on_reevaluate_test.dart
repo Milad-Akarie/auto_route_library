@@ -64,7 +64,7 @@ class _HomeRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_HomeRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _ProfileArgs {
@@ -77,7 +77,10 @@ class _ProfileRoute extends PageRouteInfo<_ProfileArgs> {
   new({required String userId}) : super(name, args: _ProfileArgs(userId: userId));
 
   static const String name = '_ProfileRoute';
-  static PageInfo page = PageInfo(name, builder: (data) => _ProfileView(userId: data.argsAs<_ProfileArgs>().userId));
+  static final PageInfo page = PageInfo(
+    name,
+    builder: (data) => _ProfileView(userId: data.argsAs<_ProfileArgs>().userId),
+  );
 }
 
 var _profileStates = 0;
@@ -106,5 +109,5 @@ class _SettingsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SettingsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }

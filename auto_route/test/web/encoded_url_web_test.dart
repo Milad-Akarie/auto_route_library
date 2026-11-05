@@ -141,7 +141,7 @@ class _SecondsRoute extends PageRouteInfo<void> {
   new({required String id, String? query}) : super(name, rawPathParams: {'id': id}, rawQueryParams: {'query': query});
 
   static const String name = 'SecondsRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (data) =>
         Text('id ${data.inheritedPathParams.getString('id')}, query ${data.queryParams.optString('query') ?? 'null'}'),

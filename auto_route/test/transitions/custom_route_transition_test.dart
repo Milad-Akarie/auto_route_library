@@ -86,13 +86,13 @@ class _ShellRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ShellRoute';
-  static PageInfo page = const PageInfo.emptyShell(name);
+  static const PageInfo page = .emptyShell(name);
 }
 
 class _PageRoute {
-  static PageInfo homePage = PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('Home')));
-  static PageInfo addPage = PageInfo('AddRoute', builder: (_) => const Scaffold(body: Text('Add')));
-  static PageInfo controllerPage = PageInfo(
+  static final PageInfo homePage = PageInfo('HomeRoute', builder: (_) => const Scaffold(body: Text('Home')));
+  static final PageInfo addPage = PageInfo('AddRoute', builder: (_) => const Scaffold(body: Text('Add')));
+  static final PageInfo controllerPage = PageInfo(
     'ControllerRoute',
     builder: (_) => const Scaffold(body: Text('Controller')),
   );

@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import 'router_test_utils.dart';
 
-PageInfo _productsPage = PageInfo(
+final PageInfo _productsPage = PageInfo(
   'ProductsRoute',
   builder: (data) => Scaffold(body: Text('Products page ${data.queryParams.optString('page') ?? 'null'}')),
 );

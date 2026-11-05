@@ -112,7 +112,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_DashboardRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => const AutoTabsRouter(routes: [_Test1Route(), _Test2Route(), _Test3Route()]),
   );
@@ -122,26 +122,26 @@ class _TestsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_TestsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
+  static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
 class _Test1Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_Test1Route';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _Test2Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_Test2Route';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }
 
 class _Test3Route extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_Test3Route';
-  static PageInfo page = PageInfo(name, builder: (_) => const Text(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }

@@ -132,7 +132,7 @@ class _FormRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'FormRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => PopScope(
       canPop: false,
@@ -148,7 +148,7 @@ class _LegacyFormRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'LegacyFormRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     // #1588 reports the deprecated WillPopScope, which apps still use.
     // ignore: deprecated_member_use
@@ -168,7 +168,7 @@ class _ToggleFormRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'ToggleFormRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => ValueListenableBuilder(
       valueListenable: _canLeave,

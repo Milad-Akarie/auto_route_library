@@ -70,7 +70,7 @@ class _TabsHostRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_TabsHostRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => ValueListenableBuilder<List<PageRouteInfo>>(
       valueListenable: _routesNotifier,
@@ -91,21 +91,21 @@ class _FirstTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const _CounterPage(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const _CounterPage(name));
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const _CounterPage(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const _CounterPage(name));
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const _CounterPage(name));
+  static final PageInfo page = PageInfo(name, builder: (_) => const _CounterPage(name));
 }
 
 // A tab page with a tap counter, the state the active page must keep.

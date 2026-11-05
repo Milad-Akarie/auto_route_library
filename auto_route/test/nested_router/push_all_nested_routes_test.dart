@@ -126,21 +126,21 @@ class _BootRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'BootRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'DashboardRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: AutoRouter()));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: AutoRouter()));
 }
 
 class _TabsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'TabsRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => const AutoTabsRouter(routes: [_UsersRoute(), _UserRoute(userId: 1)]),
   );
@@ -150,14 +150,14 @@ class _MetricsRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'MetricsRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
+  static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
 
 class _UsersRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = 'UsersRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(appBar: AppBar(), body: const Text(name)),
   );
@@ -167,7 +167,7 @@ class _UserRoute extends PageRouteInfo<int> {
   const new({required int userId}) : super(name, args: userId);
 
   static const String name = 'UserRoute';
-  static PageInfo page = PageInfo(
+  static final PageInfo page = PageInfo(
     name,
     builder: (_) => Scaffold(appBar: AppBar(), body: const Text(name)),
   );
