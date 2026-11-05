@@ -130,9 +130,9 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     final annotation = annotated.annotation;
 
     throwIf(
-      element is! ClassElement,
       '${element.displayName} is not a class element',
       element: element,
+      shouldThrow: element is! ClassElement,
     );
     final clazz = element as ClassElement;
 

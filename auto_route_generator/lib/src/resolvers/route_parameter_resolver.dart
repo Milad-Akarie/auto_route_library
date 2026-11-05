@@ -40,13 +40,13 @@ class RouteParameterResolver {
         parameterElement.enclosingElement?.enclosingElement?.displayName ??
         'its declaration';
     throwIf(
-      _isInvalidType(paramType),
       'The type of ${parameterElement.displayName} in $declaration '
       'could not be resolved. '
       'If it is declared in a file another builder generates, make that '
       'builder run before auto_route_generator, '
       'with runs_before in its build.yaml or global_options in yours.',
       element: parameterElement,
+      shouldThrow: _isInvalidType(paramType),
     );
     if (paramType is FunctionType && paramType.alias == null) {
       return _resolveFunctionType(parameterElement);
@@ -92,22 +92,23 @@ class RouteParameterResolver {
         nameOrAlias = paramAlias;
       }
       throwIf(
-        !type.isNullable && !parameterElement.hasDefaultValue,
         'QueryParams must be nullable or have default value',
         element: parameterElement,
+        shouldThrow: !type.isNullable && !parameterElement.hasDefaultValue,
       );
     }
 
     throwIf(
-      [
+      '${parameterElement.displayName} can only be annotated with one of '
+      '@PathParam, @QueryParam or @urlFragment',
+      element: parameterElement,
+      shouldThrow:
+          [
             isUrlFragment,
             pathParamAnnotation != null,
             queryParamAnnotation != null,
           ].where((isSet) => isSet).length >
           1,
-      '${parameterElement.displayName} can only be annotated with one of '
-      '@PathParam, @QueryParam or @urlFragment',
-      element: parameterElement,
     );
 
     final converter = _resolveConverter(
@@ -132,23 +133,23 @@ class RouteParameterResolver {
           ? 'String, int, double, num, bool or enum'
           : 'String';
       throwIf(
-        !isText && !isConverted,
         '${parameterElement.displayName}: a ${type.name} $kind param can hold '
         '$allowedTypes items, not ${item.name}',
         element: parameterElement,
+        shouldThrow: !isText && !isConverted,
       );
     }
 
     if (isUrlFragment) {
       throwIf(
-        type.name != 'String',
         'UrlFragments must be of type String',
         element: parameterElement,
+        shouldThrow: type.name != 'String',
       );
       throwIf(
-        !type.isNullable && !parameterElement.hasDefaultValue,
         'UrlFragments must be nullable or have default value',
         element: parameterElement,
+        shouldThrow: !type.isNullable && !parameterElement.hasDefaultValue,
       );
     }
 
@@ -187,12 +188,13 @@ class RouteParameterResolver {
     final name = parameterElement.displayName;
     final variable = converter.variable;
     throwIf(
-      variable == null || variable.enclosingElement is! LibraryElement,
       'The converter on $name must be a top-level const variable, which '
       'the generated route can name. '
       'Declare it once, as in `const userIdConverter = '
       'UserIdConverter();`, and give the annotation that name.',
       element: parameterElement,
+      shouldThrow:
+          variable == null || variable.enclosingElement is! LibraryElement,
     );
     final converterType = converter.type;
     final converted = converterType is InterfaceType
@@ -205,13 +207,14 @@ class RouteParameterResolver {
     final typeSystem = parameterElement.library!.typeSystem;
     final paramType = typeSystem.promoteToNonNull(parameterElement.type);
     throwIf(
-      convertedType == null ||
-          !typeSystem.isSubtypeOf(convertedType, paramType) ||
-          !typeSystem.isSubtypeOf(paramType, convertedType),
       'The converter on $name converts '
       '${convertedType?.getDisplayString() ?? 'nothing'}, '
       'but $name is a ${paramType.getDisplayString()}.',
       element: parameterElement,
+      shouldThrow:
+          convertedType == null ||
+          !typeSystem.isSubtypeOf(convertedType, paramType) ||
+          !typeSystem.isSubtypeOf(paramType, convertedType),
     );
     // A library exports a top-level variable through its getter.
     final import =

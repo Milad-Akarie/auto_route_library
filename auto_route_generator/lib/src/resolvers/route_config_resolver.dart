@@ -18,9 +18,9 @@ class RouteConfigResolver {
   RouteConfig resolve(Element element, ConstantReader routePage) {
     final isDeferred = routePage.peek('deferredLoading')?.boolValue;
     throwIf(
-      element is! ClassElement,
       '${element.displayName} is not a class element',
       element: element,
+      shouldThrow: element is! ClassElement,
     );
 
     final classElement = element as ClassElement;
@@ -42,8 +42,8 @@ class RouteConfigResolver {
     final name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
     throwIf(
-      constructor == null,
       'Route pages must have an unnamed constructor',
+      shouldThrow: constructor == null,
     );
     var hasConstConstructor = false;
     final params = constructor!.formalParameters;
@@ -64,9 +64,9 @@ class RouteConfigResolver {
     }
 
     throwIf(
-      parameters.where((e) => e.isUrlFragment).length > 1,
       'Only one parameter can be annotated with @urlFragment',
       element: element,
+      shouldThrow: parameters.where((e) => e.isUrlFragment).length > 1,
     );
 
     final pathParameters = parameters.where(
@@ -103,17 +103,16 @@ class RouteConfigResolver {
     )) {
       final type = qParam.type;
       throwIf(
-        qParam.urlType == null,
         'Parameter [${qParam.name}] is a @QueryParam of type ${type.name}, '
         'which a url can not give.\n'
         'valid types: ${UrlParamType.pathTypeNames}, Object, an enum, or a '
         '${kUrlCollectionTypes.join(', ')} of those',
+        shouldThrow: qParam.urlType == null,
       );
     }
 
     for (final pParam in pathParameters) {
       throwIf(
-        !(pParam.urlType?.isInPath ?? false),
         'Parameter [${pParam.name}] must be of a type that can be parsed '
         "from a [String] because it will also obtain it's value from a "
         'path\nvalid types: ${UrlParamType.pathTypeNames}\n'
@@ -121,6 +120,7 @@ class RouteConfigResolver {
         'ParamConverter<${pParam.type.name}>, '
         "as in @PathParam('${pParam.paramName}', "
         '${_lowerFirst(pParam.type.name)}Converter).',
+        shouldThrow: !(pParam.urlType?.isInPath ?? false),
       );
     }
     return RouteConfig(
