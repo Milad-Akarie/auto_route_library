@@ -10,6 +10,10 @@ part 'transitions/predictive_back_page_detector.dart';
 // The pages a navigator has shown; see [AutoRoutePage.markShown].
 final _shownPages = Expando<bool>();
 
+// The routes of the pages the app took off the stack itself; see
+// [AutoRoutePage.markRemoved].
+final _removedRoutes = Expando<bool>();
+
 /// Creates a RoutePage based on `routeData.type`,
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
@@ -63,6 +67,19 @@ class AutoRoutePage<T> extends Page<T> {
   @internal
   void markShown() => _shownPages[this] = true;
 
+  /// Records that the app took this page off the stack itself, with
+  /// [StackRouter.removeLast], [StackRouter.removeRoute],
+  /// [StackRouter.removeWhere] or [StackRouter.removeUntil].
+  ///
+  /// The route of a removed page leaves with it: a new page of the same route
+  /// pushed before the navigator rebuilds is a page of its own (#1204).
+  @internal
+  void markRemoved() => _removedRoutes[routeData] = true;
+
+  /// Whether the app took this page off the stack itself; see [markRemoved].
+  @internal
+  bool get isRemoved => _removedRoutes[routeData] ?? false;
+
   /// Builds a new page of the same type for [routeData], e.g. after its args
   /// changed.
   ///
@@ -76,14 +93,15 @@ class AutoRoutePage<T> extends Page<T> {
   /// same stack, so replacing a route with itself updates the page in place.
   /// A page the navigator already shows keeps its own route: when a page with
   /// the same [routeKey] is removed from below it, the page must not take the
-  /// removed page's route and leave its own to be popped.
+  /// removed page's route and leave its own to be popped. Nor does a new page
+  /// take the route of a page the app removed itself, see [markRemoved].
   @override
   bool canUpdate(Page<dynamic> other) {
     final canUpdate =
         other.runtimeType == runtimeType &&
         (other as AutoRoutePage).routeKey == routeKey &&
         routeData.stackKey == other.routeData.stackKey &&
-        (_shownPages[this] != true || other.key == key);
+        (other.key == key || (_shownPages[this] != true && !other.isRemoved));
     return canUpdate;
   }
 

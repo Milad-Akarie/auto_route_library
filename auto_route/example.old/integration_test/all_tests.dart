@@ -131,6 +131,7 @@ import 'reevaluation_nested_tabs_test.dart' as reevaluation_nested_tabs;
 import 'reevaluation_redirect_test.dart' as reevaluation_redirect;
 import 'reload_guard_test.dart' as reload_guard;
 import 'reload_hero_test.dart' as reload_hero;
+import 'remove_last_then_push_same_test.dart' as remove_last_then_push_same;
 import 'remove_where_same_route_test.dart' as remove_where_same_route;
 import 'repeated_query_key_test.dart' as repeated_query_key;
 import 'replace_all_from_deep_stack_test.dart' as replace_all_from_deep_stack;
@@ -324,6 +325,7 @@ void main() {
   reevaluation_redirect.main();
   reload_guard.main();
   reload_hero.main();
+  remove_last_then_push_same.main();
   remove_where_same_route.main();
   repeated_query_key.main();
   replace_all_from_deep_stack.main();

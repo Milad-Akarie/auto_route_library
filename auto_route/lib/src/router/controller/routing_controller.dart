@@ -2126,7 +2126,7 @@ abstract class StackRouter extends RoutingController {
 
   /// Removes the very last entry from [_pages]
   bool removeLast() {
-    _markLeaving(_pages.reversed.take(1), .removed);
+    _markRemovedByApp(_pages.reversed.take(1));
     return _removeLast();
   }
 
@@ -2134,8 +2134,17 @@ abstract class StackRouter extends RoutingController {
   ///
   /// finally calls [notifyAll] if notify is true
   void removeRoute(RouteData<dynamic> route, {bool notify = true}) {
-    _markLeaving(_pages.where((page) => page.routeData == route), .removed);
+    _markRemovedByApp(_pages.where((page) => page.routeData == route));
     _removeRoute(route._route, notify: notify);
+  }
+
+  // The app takes [pages] off the stack by its own call, so each leaves as
+  // removed and keeps its route from a new page of the same route.
+  void _markRemovedByApp(Iterable<AutoRoutePage<Object?>> pages) {
+    for (final page in pages) {
+      page.markRemoved();
+    }
+    _markLeaving(pages, .removed);
   }
 
   /// Called when Page route is popped
@@ -2667,7 +2676,7 @@ abstract class StackRouter extends RoutingController {
       if (predicate(candidate.routeData)) {
         break;
       }
-      _markLeaving([candidate], .removed);
+      _markRemovedByApp([candidate]);
       _removeLast(notify: false);
       didRemove = true;
     }
@@ -2893,13 +2902,15 @@ abstract class StackRouter extends RoutingController {
   // the stack and [route] is about to go on top in its place. The new page
   // then takes over its route, see [AutoRoutePage.canUpdate], with the nested
   // router built inside it. A [route] that already has the page's match id,
-  // as navigate gives it, comes with a caller that updates that router.
+  // as navigate gives it, comes with a caller that updates that router. A page
+  // the app removed itself keeps its route (#1204).
   RouteData<Object?>? _shownTopTakenOverBy(RouteMatch<Object?> route) {
     final shownRoute = pagelessRoutesObserver.topPageRoute;
     final shownPage = shownRoute?.settings;
     if (shownRoute == null ||
         !shownRoute.isActive ||
         shownPage is! AutoRoutePage<Object?> ||
+        shownPage.isRemoved ||
         _pages.contains(shownPage)) {
       return null;
     }
