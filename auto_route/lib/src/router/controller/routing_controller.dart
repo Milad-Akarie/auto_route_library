@@ -8,10 +8,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:material_ui/material_ui.dart';
-// keep meta import, some users complain it's causing issues with
-// older flutter versions
-// ignore: unnecessary_import
-import 'package:meta/meta.dart';
 
 part '../../route/route_data.dart';
 part 'auto_route_guard.dart';
