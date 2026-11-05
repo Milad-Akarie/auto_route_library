@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 
+part 'deferred_loading_placeholder.dart';
+
 /// Signature for a function that returns a void future
 /// Used in [DeferredWidget] to load deferred libraries
 typedef LibraryLoader = Future<void> Function();
@@ -83,17 +85,5 @@ class _DeferredWidgetState extends State<DeferredWidget> {
 
     final placeHolder = AutoRouterDelegate.of(context).placeholder?.call(context) ?? const DeferredLoadingPlaceholder();
     return _loadedChild ?? placeHolder;
-  }
-}
-
-/// Displays a progress indicator when the widget is a deferred component
-/// and is currently being installed.
-class DeferredLoadingPlaceholder extends StatelessWidget {
-  /// default constructor
-  const new({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
