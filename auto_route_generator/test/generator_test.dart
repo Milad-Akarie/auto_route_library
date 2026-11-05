@@ -112,8 +112,7 @@ class AppRouter extends RootStackRouter {
         'lib/costs_tab.dart': _page('CostsTab'),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors.single, contains('CostsTab'));
-      expect(result.errors.single, contains("@RoutePage(name: 'CostsTabRoute')"));
+      expect(result.errors.join(), allOf(contains('CostsTab'), contains("@RoutePage(name: 'CostsTabRoute')")));
     });
 
     test('compiles in a part file once the page is named', () async {

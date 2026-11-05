@@ -46,10 +46,9 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   @override
   int calculateUpdatableHash(CompilationUnit unit) {
     var calculatedHash = 0;
-    for (final clazz in unit.declarations.whereType<ClassDeclaration>().where(
-      (e) => e.metadata.any((annotation) => annotation.name.name == annotationName),
-    )) {
-      final routerAnnotation = clazz.metadata.firstWhere((e) => e.name.name == annotationName);
+    for (final clazz in unit.declarations.whereType<ClassDeclaration>()) {
+      final routerAnnotation = clazz.metadata.where((e) => e.name.name == annotationName).firstOrNull;
+      if (routerAnnotation == null) continue;
       final partDirectives = unit.directives.whereType<PartDirective>().fold<int>(
         0,
         (acc, a) => acc ^ a.toSource().hashCode,
@@ -96,20 +95,21 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
       print('Could not write config routerCache');
     }
 
-    return '$_kHeader\n${generateLibrary(item, routes: routes..sort((a, b) => a.className.compareTo(b.className)), ignoreForFile: ignoreForFile, outputPath: buildStep.allowedOutputs.first.path)}';
+    return '$_kHeader\n${generateLibrary(item, routes: routes..sort((a, b) => a.className.compareTo(b.className)), ignoreForFile: ignoreForFile, outputPath: buildStep.primaryOutput.path)}';
   }
 
   @override
   Future<RouterConfig?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash) async {
     final annotatedElements = library.annotatedWith(_kTypeChecker);
-    if (annotatedElements.isEmpty) return null;
-    final element = annotatedElements.first.element;
-    final annotation = annotatedElements.first.annotation;
+    final annotated = annotatedElements.firstOrNull;
+    if (annotated == null) return null;
+    final element = annotated.element;
+    final annotation = annotated.annotation;
 
     throwIf(element is! ClassElement, '${element.displayName} is not a class element', element: element);
     final clazz = element as ClassElement;
 
-    final usesPartBuilder = _hasPartDirective(clazz, buildStep.allowedOutputs.first);
+    final usesPartBuilder = _hasPartDirective(clazz, buildStep.primaryOutput);
 
     final router = RouterConfigResolver().resolve(
       annotation,

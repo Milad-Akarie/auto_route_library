@@ -6,6 +6,14 @@ import 'package:build/build.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:source_gen/source_gen.dart';
 
+/// The output a builder with one output writes.
+extension BuildStepPrimaryOutput on BuildStep {
+  /// The first of [BuildStep.allowedOutputs], failing with a message that
+  /// names the input when the builder has none.
+  AssetId get primaryOutput =>
+      allowedOutputs.firstOrNull ?? (throw StateError('${inputId.path} has no allowed output to write.'));
+}
+
 /// A comment configuring `dart_style` to use the default code width so no
 /// configuration discovery is required.
 const kDartFormatWidth = '// dart format width=80';
@@ -109,7 +117,7 @@ abstract class CacheAwareBuilder<T> extends Builder {
 An error `${e.runtimeType}` occurred while formatting the generated source for
   `${buildStep.inputId.path}`
 which was output to
-  `${buildStep.allowedOutputs.first.path}`.
+  `${buildStep.primaryOutput.path}`.
 This may indicate an issue in the generator, the input source code, or in the
 source formatter.''',
         e,
@@ -121,7 +129,7 @@ source formatter.''',
 
   Future<void> _writeContent(BuildStep buildStep, LibraryLanguageVersion libVersion, T generated) async {
     var output = await onGenerateContent(buildStep, generated);
-    final outputId = buildStep.allowedOutputs.first;
+    final outputId = buildStep.primaryOutput;
     if (outputId.extension.endsWith('.dart')) {
       output = validateAndFormatDartCode(buildStep, libVersion, output);
     }
@@ -176,7 +184,7 @@ Map<String, List<String>> validatedBuildExtensionsFrom(
     throw ArgumentError('Configured build_extensions should be a map from inputs to outputs.');
   }
 
-  final defaultOutput = defaultExtensions.values.first.first;
+  final [[defaultOutput, ...], ...] = defaultExtensions.values.toList();
   final outputSuffix = defaultOutput.endsWith('.dart') ? '.dart' : defaultOutput;
   final result = <String, List<String>>{};
   for (final entry in extensionsOption.entries) {
@@ -186,7 +194,10 @@ Map<String, List<String>> validatedBuildExtensionsFrom(
     }
     // One output, given as a string or as a list of one string.
     final value = entry.value;
-    final output = value is List && value.length == 1 ? value.single : value;
+    final output = switch (value) {
+      [final single] => single,
+      _ => value,
+    };
     if (output is! String || !output.endsWith(outputSuffix)) {
       throw ArgumentError('Invalid output extension `$value`. It should be a string ending with `$outputSuffix`');
     }

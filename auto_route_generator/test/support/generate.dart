@@ -133,11 +133,12 @@ class _CompileCheckBuilder implements Builder {
         final result = await library.session.getErrors(fragment.source.fullName);
         if (result is ErrorsResult) {
           for (final e in result.diagnostics.where((diagnostic) => diagnostic.severity == .error)) {
-            errors.add('${fragment.source.uri.pathSegments.last}: ${e.message}');
+            errors.add('${fragment.source.uri.pathSegments.lastOrNull}: ${e.message}');
           }
         }
       }
     }
-    await buildStep.writeAsString(buildStep.allowedOutputs.single, errors.join('\n'));
+    final [output] = buildStep.allowedOutputs.toList();
+    await buildStep.writeAsString(output, errors.join('\n'));
   }
 }

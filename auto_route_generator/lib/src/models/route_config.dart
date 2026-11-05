@@ -111,9 +111,11 @@ class RouteConfig {
     String nameToUse;
     if (name != null) {
       nameToUse = name!;
-    } else if (replacementInRouteName != null && replacementInRouteName.split(',').length == 2) {
-      final parts = replacementInRouteName.split(',').map((part) => part.trim()).toList();
-      nameToUse = className.replaceAll(RegExp(parts[0]), parts[1]);
+    } else if (replacementInRouteName?.split(',').map((part) => part.trim()).toList() case [
+      final pattern,
+      final replacement,
+    ]) {
+      nameToUse = className.replaceAll(RegExp(pattern), replacement);
     } else {
       nameToUse = '${className}Route';
     }

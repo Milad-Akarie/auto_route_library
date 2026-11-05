@@ -167,7 +167,7 @@ enum Fruit {
         ),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors.single, contains('QueryParams must be nullable or have default value'));
+      expect(result.errors.join(), contains('QueryParams must be nullable or have default value'));
     });
 
     test('with a path param next to it compiles', () async {

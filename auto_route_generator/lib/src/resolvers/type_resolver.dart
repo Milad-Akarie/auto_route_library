@@ -43,27 +43,22 @@ class TypeResolver {
 
   String _assetToPackage(Uri uri) {
     if (uri.scheme == 'asset') {
-      final validSegments = <String>[];
-      for (var i = 0; i < uri.pathSegments.length; i++) {
-        if (uri.pathSegments[i] == 'lib') {
-          if (i > 0 && i + 1 < uri.pathSegments.length) {
-            validSegments.add(uri.pathSegments[i - 1]);
-            validSegments.addAll(uri.pathSegments.sublist(i + 1));
-            return 'package:${validSegments.join('/')}';
-          }
-          break;
-        }
+      final segments = uri.pathSegments;
+      final libIndex = segments.indexOf('lib');
+      if (libIndex > 0 && libIndex + 1 < segments.length) {
+        final validSegments = [...segments.sublist(libIndex - 1, libIndex), ...segments.sublist(libIndex + 1)];
+        return 'package:${validSegments.join('/')}';
       }
     }
     return uri.toString();
   }
 
   String _relative(Uri fileUri, Uri to) {
-    final libName = to.pathSegments.first;
-    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.first == libName) ||
+    final libName = to.pathSegments.firstOrNull;
+    if ((to.scheme == 'package' && fileUri.scheme == 'package' && fileUri.pathSegments.firstOrNull == libName) ||
         (to.scheme == 'asset' && fileUri.scheme != 'package')) {
       if (fileUri.path == to.path) {
-        return fileUri.pathSegments.last;
+        return p.posix.basename(fileUri.path);
       }
       return p.posix.relative(fileUri.path, from: to.path).replaceFirst('../', '');
     }

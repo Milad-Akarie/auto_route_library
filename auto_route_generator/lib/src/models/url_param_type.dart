@@ -137,7 +137,7 @@ final class _CollectionParam extends UrlParamType {
 
   @override
   Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue) {
-    final item = type.typeArguments.single;
+    final [item] = type.typeArguments;
     final itemType = UrlParamType.of(item);
     final parses = itemType != null && itemType.isListItem && !itemType.isTextItem;
     if (type.isList && !parses) {
@@ -164,7 +164,7 @@ final class _CollectionParam extends UrlParamType {
 
   @override
   Expression write(Expression value, ResolvedType type) {
-    final item = type.typeArguments.single;
+    final [item] = type.typeArguments;
     if (!item.isEnum) return value;
     final name = Method(
       (b) => b

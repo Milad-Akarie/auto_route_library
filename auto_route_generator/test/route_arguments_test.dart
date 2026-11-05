@@ -317,8 +317,9 @@ class Range {
         ),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors.single, contains('a List query param can hold String, int, double, num, bool or enum'));
-      expect(result.errors.single, contains('not Color'));
+      expect(result.errors, [
+        allOf(contains('a List query param can hold String, int, double, num, bool or enum'), contains('not Color')),
+      ]);
     });
 
     test('of ints as a path param is a build error', () async {
@@ -330,7 +331,7 @@ class Range {
         ),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors.single, contains('a List path param can hold String items, not int'));
+      expect(result.errors.join(), contains('a List path param can hold String items, not int'));
     });
   });
 
@@ -351,8 +352,12 @@ class Range {
         ),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors.single, contains('Parameter [mode] must be of a type that can be parsed from a [String]'));
-      expect(result.errors.single, contains('valid types: [String, int, double, num, bool, dynamic]'));
+      expect(result.errors, [
+        allOf(
+          contains('Parameter [mode] must be of a type that can be parsed from a [String]'),
+          contains('valid types: [String, int, double, num, bool, dynamic]'),
+        ),
+      ]);
     });
   });
   // #1305: a page that takes a model from another library, as in "pass User

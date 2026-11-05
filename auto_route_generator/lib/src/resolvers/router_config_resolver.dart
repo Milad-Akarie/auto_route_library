@@ -41,19 +41,20 @@ class RouterConfigResolver {
   /// that don't compile or quietly keep their `Route` suffix.
   void _checkReplaceInRouteName(String value, ClassElement clazz) {
     final parts = value.split(',');
-    if (parts.length != 2 || parts.first.trim().isEmpty) {
-      throwError(
-        "replaceInRouteName must be a pattern and its replacement split by one comma, like 'Page|Screen,Route', "
-        "but ${clazz.displayName} has '$value'.",
-        element: clazz,
-      );
+    if (parts case [final pattern, final replacement] when pattern.trim().isNotEmpty) {
+      if (!RegExp(r'^[A-Za-z0-9_$]*$').hasMatch(replacement.trim())) {
+        throwError(
+          r"The replacement in replaceInRouteName must be letters, digits, '_' or '$' to make a route name, "
+          "but ${clazz.displayName} has '${replacement.trim()}' in '$value'.",
+          element: clazz,
+        );
+      }
+      return;
     }
-    if (!RegExp(r'^[A-Za-z0-9_$]*$').hasMatch(parts.last.trim())) {
-      throwError(
-        r"The replacement in replaceInRouteName must be letters, digits, '_' or '$' to make a route name, "
-        "but ${clazz.displayName} has '${parts.last.trim()}' in '$value'.",
-        element: clazz,
-      );
-    }
+    throwError(
+      "replaceInRouteName must be a pattern and its replacement split by one comma, like 'Page|Screen,Route', "
+      "but ${clazz.displayName} has '$value'.",
+      element: clazz,
+    );
   }
 }
