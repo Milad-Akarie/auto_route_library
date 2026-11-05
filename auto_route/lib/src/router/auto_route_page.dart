@@ -96,7 +96,7 @@ class AutoRoutePage<T> extends Page<T> {
   /// removed page's route and leave its own to be popped. Nor does a new page
   /// take the route of a page the app removed itself, see [markRemoved].
   @override
-  bool canUpdate(Page<dynamic> other) {
+  bool canUpdate(Page<Object?> other) {
     final canUpdate =
         other.runtimeType == runtimeType &&
         (other as AutoRoutePage).routeKey == routeKey &&

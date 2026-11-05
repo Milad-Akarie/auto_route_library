@@ -28,7 +28,7 @@ class PagelessRoutesObserver extends NavigatorObserver with ChangeNotifier {
   /// The route the [Navigator] shows [page] with, or null while it has not
   /// built one for it yet.
   @internal
-  Route<Object?>? routeOf(Page<dynamic> page) {
+  Route<Object?>? routeOf(Page<Object?> page) {
     return _routes.keys.lastWhereOrNull((route) => route.settings == page);
   }
 

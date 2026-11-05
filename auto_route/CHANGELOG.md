@@ -21,6 +21,9 @@
 - **BREAKING CHANGE**: every `AutoRoutePage<dynamic>` in the API is `AutoRoutePage<Object?>`: `RoutingController.stack`
   and `topPage`, `KeepAliveTab.page` and the `PageBuilder` callback. Code that declares one of these types names
   `AutoRoutePage<Object?>`, and a value read through it is `Object?`, read with a cast.
+- **BREAKING CHANGE**: `AutoRoutePage.canUpdate` and `PagelessRoutesObserver.routeOf` take a `Page<Object?>`, not a
+  `Page<dynamic>`. A subclass that overrides `canUpdate` with `Page<dynamic>` still compiles; write `Page<Object?>` to
+  match.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:
