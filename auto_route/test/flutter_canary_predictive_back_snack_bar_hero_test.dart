@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'no_op.dart';
 import 'router_test_utils.dart';
 
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/194447.
@@ -89,6 +88,6 @@ Future<void> _sendBackGesture(WidgetTester tester, String method) {
   return tester.binding.defaultBinaryMessenger.handlePlatformMessage(
     'flutter/backgesture',
     const StandardMethodCodec().encodeMethodCall(MethodCall(method, arguments)),
-    ignoreArgument,
+    null,
   );
 }

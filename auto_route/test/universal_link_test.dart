@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'main_router.dart';
-import 'no_op.dart';
 import 'router_test_utils.dart';
 
 // Sends a link the way the engine does when the platform opens one, and
@@ -19,7 +18,7 @@ Future<bool?> didSendPlatformLink(WidgetTester tester, String location) async {
             'state': null,
           }),
         ),
-        ignoreArgument,
+        null,
       );
   await tester.pumpAndSettle();
   return reply == null ? null : codec.decodeEnvelope(reply) as bool?;

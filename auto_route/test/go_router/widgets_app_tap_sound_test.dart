@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../no_op.dart';
-
 // The same scenario as flutter/flutter#117342 in go_router: under
 // WidgetsApp.router, a tap on an empty part of a page beeped on macOS. The
 // tap fell through the page to the modal barrier beneath it, which plays the
@@ -74,10 +72,8 @@ void main() {
         tester,
         WidgetsApp(
           color: const Color(0xFFFFFFFF),
-          builder: (_, _) => Navigator(
-            pages: [flutterPage()],
-            onDidRemovePage: ignoreArgument,
-          ),
+          builder: (_, _) =>
+              Navigator(pages: [flutterPage()], onDidRemovePage: (_) {}),
         ),
       );
       expect(autoRouteSounds, flutterSounds);

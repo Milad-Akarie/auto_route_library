@@ -1,8 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'no_op.dart';
-
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/178570,
 // behind https://github.com/Milad-Akarie/auto_route_library/issues/2289 and
 // https://github.com/Milad-Akarie/auto_route_library/issues/2290, and the
@@ -63,7 +61,7 @@ void main() {
       tester.state<NavigatorState>(find.byType(Navigator).last).pop();
       expect(removed, ['second']);
 
-      setParentState(noOp);
+      setParentState(() {});
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
       expect(

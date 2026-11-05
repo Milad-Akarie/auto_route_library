@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../named_page.dart';
-import '../no_op.dart';
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1668
@@ -96,7 +95,7 @@ void _sendPlatformLink(WidgetTester tester, String location) {
           'state': null,
         }),
       ),
-      ignoreArgument,
+      null,
     ),
   );
 }

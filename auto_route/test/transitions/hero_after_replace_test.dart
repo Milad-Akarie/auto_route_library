@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../hero_label_page.dart';
-import '../no_op.dart';
 import '../router_test_utils.dart';
 
 class _Route extends PageRouteInfo<void> {
@@ -86,7 +85,7 @@ void main() {
       Widget fabPage(String label) => Scaffold(
         body: Text(label),
         floatingActionButton: FloatingActionButton(
-          onPressed: noOp,
+          onPressed: () {},
           child: Text('$label fab'),
         ),
       );

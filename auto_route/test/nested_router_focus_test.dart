@@ -4,7 +4,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'no_op.dart';
 import 'router_test_utils.dart';
 
 void main() {
@@ -64,7 +63,7 @@ void main() {
       const Key('outer'),
     );
 
-    setHostState(noOp);
+    setHostState(() {});
     await tester.pumpAndSettle();
     expect(FocusManager.instance.primaryFocus, same(outerFocus));
   });

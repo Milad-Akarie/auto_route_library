@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import 'no_op.dart';
 import 'router_test_utils.dart';
 
 // Canary for Flutter bug https://github.com/flutter/flutter/issues/151061.
@@ -84,7 +83,7 @@ RootStackRouter _buildRouter({required bool hasNestedPageButton}) => .build(
                       IconButton(
                         key: ValueKey('outer $i'),
                         icon: const Icon(Icons.help),
-                        onPressed: noOp,
+                        onPressed: () {},
                       ),
                   ],
                 ),
@@ -104,10 +103,10 @@ RootStackRouter _buildRouter({required bool hasNestedPageButton}) => .build(
               appBar: AppBar(
                 actions: [
                   if (hasNestedPageButton)
-                    const IconButton(
-                      key: ValueKey('nested'),
-                      icon: Icon(Icons.help),
-                      onPressed: noOp,
+                    IconButton(
+                      key: const ValueKey('nested'),
+                      icon: const Icon(Icons.help),
+                      onPressed: () {},
                     ),
                 ],
               ),

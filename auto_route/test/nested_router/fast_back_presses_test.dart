@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../back_test_utils.dart';
-import '../no_op.dart';
 import '../router_test_utils.dart';
 
 // flutter/flutter#118856: on Android, with a Router nested in a page of the
@@ -25,7 +24,7 @@ void main() {
     return tester.binding.defaultBinaryMessenger.handlePlatformMessage(
       'flutter/navigation',
       message,
-      ignoreArgument,
+      null,
     );
   }
 

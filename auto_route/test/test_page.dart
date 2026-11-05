@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'main_router.dart';
-import 'no_op.dart';
 
 class _TestPage extends StatelessWidget {
   const new({super.key});
@@ -45,9 +44,9 @@ class SecondHostPage extends StatelessWidget {
                   } else if (leadingType.isClose) {
                     return const CloseButton();
                   } else if (leadingType.isDrawer) {
-                    return const IconButton(
-                      icon: Icon(Icons.menu),
-                      onPressed: noOp,
+                    return IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () {},
                     );
                   } else if (leadingType.isNoLeading) {
                     return const SizedBox.shrink();
