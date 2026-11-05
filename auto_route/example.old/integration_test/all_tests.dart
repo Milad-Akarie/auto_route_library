@@ -27,6 +27,7 @@ import 'declarative_routes_update_test.dart' as declarative_routes_update;
 import 'deep_link_parent_build_test.dart' as deep_link_parent_build;
 import 'deferred_and_eager_page_test.dart' as deferred_and_eager_page;
 import 'deferred_page_popped_test.dart' as deferred_page_popped;
+import 'dialog_args_route_information_test.dart' as dialog_args_route_information;
 import 'dialog_then_page_animates_test.dart' as dialog_then_page_animates;
 import 'dialog_then_page_pop_test.dart' as dialog_then_page_pop;
 import 'disposed_nested_router_test.dart' as disposed_nested_router;
@@ -218,6 +219,7 @@ void main() {
   group('deep link parent build', deep_link_parent_build.main);
   group('deferred and eager page', deferred_and_eager_page.main);
   group('deferred page popped', deferred_page_popped.main);
+  group('dialog args route information', dialog_args_route_information.main);
   group('dialog then page animates', dialog_then_page_animates.main);
   group('dialog then page pop', dialog_then_page_pop.main);
   group('disposed nested router', disposed_nested_router.main);
