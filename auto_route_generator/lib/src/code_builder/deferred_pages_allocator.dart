@@ -5,7 +5,7 @@ import 'package:path/path.dart' as p;
 /// Allocates symbols for deferred pages
 class DeferredPagesAllocator implements Allocator {
   /// Default constructor
-  DeferredPagesAllocator(this.routes, {required this.defaultDeferredLoading, this.outputPath});
+  new(this.routes, {required this.defaultDeferredLoading, this.outputPath});
   static const _doNotPrefix = ['dart:core'];
 
   final _imports = <String, int>{};

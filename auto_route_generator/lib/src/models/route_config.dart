@@ -7,7 +7,7 @@ import 'package:code_builder/code_builder.dart' show TypeReference;
 /// to be used in `RouterClassGenerator`
 class RouteConfig {
   /// Default constructor
-  const RouteConfig({
+  const new({
     this.name,
     this.pathParams = const [],
     this.pageType,
@@ -20,7 +20,7 @@ class RouteConfig {
   });
 
   /// Deserializes the route config from json
-  factory RouteConfig.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     final pathParams = <PathParamConfig>[];
     final pathParamsJson = map['pathParams'] as List<Object?>?;
     if (pathParamsJson != null) {
@@ -173,10 +173,10 @@ class RouteConfig {
 /// `PickerPage<T extends Item>`.
 class RouteTypeParameter {
   /// Default constructor
-  const RouteTypeParameter({required this.name, this.bound});
+  const new({required this.name, this.bound});
 
   /// Deserializes the type parameter from json
-  factory RouteTypeParameter.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     final bound = map['bound'];
     return RouteTypeParameter(
       name: map['name'] as String,

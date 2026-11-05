@@ -14,7 +14,7 @@ const kDartFormatWidth = '// dart format width=80';
 /// A [Builder] which skips resolving cached files
 abstract class CacheAwareBuilder<T> extends Builder {
   /// Default constructor
-  CacheAwareBuilder({
+  new({
     this.generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
     this.allowSyntaxErrors = false,

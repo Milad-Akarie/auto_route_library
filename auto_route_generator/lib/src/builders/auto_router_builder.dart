@@ -3,7 +3,7 @@ import 'package:auto_route_generator/src/builders/auto_router_builder_base.dart'
 /// a `Builder` for router generation
 class AutoRouterBuilder extends AutoRouterBuilderBase {
   /// Default constructor
-  AutoRouterBuilder({super.options})
+  new({super.options})
     : super(
         // gr stands for generated router.
         generatedExtension: '.gr.dart',

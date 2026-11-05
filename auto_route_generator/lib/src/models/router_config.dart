@@ -1,7 +1,7 @@
 /// RouterConfig
 class RouterConfig {
   /// Default constructor
-  const RouterConfig({
+  const new({
     required this.routerClassName,
     this.replaceInRouteName,
     this.deferredLoading = false,
@@ -13,7 +13,7 @@ class RouterConfig {
   });
 
   /// Deserializes a map to an instance of [RouterConfig]
-  factory RouterConfig.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     return RouterConfig(
       routerClassName: map['routerClassName'] as String,
       replaceInRouteName: map['replaceInRouteName'] as String?,

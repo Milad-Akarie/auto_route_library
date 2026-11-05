@@ -1,7 +1,7 @@
 /// What one run of both builders produced.
 class GeneratedRouter {
   /// Creates the result of one run.
-  const GeneratedRouter(this.source, this.errors, this.compileErrors);
+  const new(this.source, this.errors, this.compileErrors);
 
   /// The generated `.gr.dart` source, or `null` when the build wrote none.
   final String? source;

@@ -8,7 +8,7 @@ const kCompileErrorsExtension = '.compile_errors.txt';
 /// the output too when it is a library of its own, and writes the analyzer
 /// errors in them, one per line.
 class CompileCheckBuilder implements Builder {
-  const CompileCheckBuilder(this.routerPath, this.outputPath);
+  const new(this.routerPath, this.outputPath);
   final String routerPath;
   final String outputPath;
 

@@ -12,11 +12,11 @@ const kUrlCollectionTypes = {'List', 'Set', 'Iterable'};
 /// resolvers ask it what the type allows, and the route builder asks it for
 /// the code. A type with no entry is one a url can not give.
 sealed class UrlParamType {
-  const UrlParamType();
+  const new();
 
   /// The entry for a param read and written by the `ParamConverter`
   /// constant [name], declared in [import].
-  const factory UrlParamType.converter(String name, String? import) = _ConverterParam;
+  const factory converter(String name, String? import) = _ConverterParam;
 
   /// The entry for [type], or `null` when a url can not give it.
   static UrlParamType? of(ResolvedType type) {
@@ -69,7 +69,7 @@ sealed class UrlParamType {
 /// A type `Parameters` has a pair of readers for, `opt<name>` for a nullable
 /// type and `get<name>` for the rest, or `get` alone when [name] is `null`.
 final class _GetterParam extends UrlParamType {
-  const _GetterParam(this.name, {this.inPath = false, this.parsesItems = false});
+  const new(this.name, {this.inPath = false, this.parsesItems = false});
 
   final String? name;
 
@@ -103,7 +103,7 @@ final class _GetterParam extends UrlParamType {
 
 /// An enum, read and written by its name.
 final class _EnumParam extends UrlParamType {
-  const _EnumParam();
+  const new();
 
   @override
   bool get isListItem => true;
@@ -133,7 +133,7 @@ final class _EnumParam extends UrlParamType {
 /// A `List`, `Set` or `Iterable`, read from its key repeated in the url,
 /// with each item read by its own type's entry.
 final class _CollectionParam extends UrlParamType {
-  const _CollectionParam();
+  const new();
 
   @override
   Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue) {
@@ -181,7 +181,7 @@ final class _CollectionParam extends UrlParamType {
 
 /// A param of any type, read and written by a `ParamConverter` constant.
 final class _ConverterParam extends UrlParamType {
-  const _ConverterParam(this.name, this.import);
+  const new(this.name, this.import);
 
   final String name;
   final String? import;

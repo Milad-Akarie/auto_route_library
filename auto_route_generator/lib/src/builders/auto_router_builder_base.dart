@@ -22,7 +22,7 @@ const _kTypeChecker = TypeChecker.typeNamed(AutoRouterConfig, inPackage: 'auto_r
 /// Base class for `AutoRouterBuilder` and `AutoRouterModuleBuilder`
 abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   /// Default constructor
-  AutoRouterBuilderBase({
+  new({
     required super.generatedExtension,
     required super.allowSyntaxErrors,
     required super.annotationName,

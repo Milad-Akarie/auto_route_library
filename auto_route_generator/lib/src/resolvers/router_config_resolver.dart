@@ -7,7 +7,7 @@ import 'package:source_gen/source_gen.dart';
 /// Extracts and holds router configs
 class RouterConfigResolver {
   /// Default constructor
-  const RouterConfigResolver();
+  const new();
 
   /// Resolves a [ClassElement] into a consumable [RouterConfig]
   RouterConfig resolve(

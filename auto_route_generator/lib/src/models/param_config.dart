@@ -8,7 +8,7 @@ const _kReservedVarNames = ['children'];
 /// in generating route parameters.
 class ParamConfig {
   /// Default constructor
-  const ParamConfig({
+  const new({
     required this.type,
     required this.name,
     required this.isNamed,
@@ -28,7 +28,7 @@ class ParamConfig {
   });
 
   /// Deserializes the parameter from a json map
-  factory ParamConfig.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     if (map['isFunctionParam'] == true) {
       return FunctionParamConfig.fromJson(map);
     }
@@ -155,7 +155,7 @@ class ParamConfig {
 /// in generating route parameters.
 class FunctionParamConfig extends ParamConfig {
   /// Default constructor
-  const FunctionParamConfig({
+  const new({
     required this.returnType,
     this.params = const [],
     required super.type,
@@ -171,7 +171,7 @@ class FunctionParamConfig extends ParamConfig {
   }) : super(isPathParam: false, isQueryParam: false, isInheritedPathParam: false, isUrlFragment: false);
 
   /// Deserializes the parameter from a json map
-  factory FunctionParamConfig.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     final params = <ParamConfig>[];
     final paramsJson = map['params'] as List<Object?>?;
     if (paramsJson != null) {
@@ -250,10 +250,10 @@ class FunctionParamConfig extends ParamConfig {
 /// Holds information about a path parameter
 class PathParamConfig {
   /// Default constructor
-  const PathParamConfig({required this.name, required this.isOptional});
+  const new({required this.name, required this.isOptional});
 
   /// Deserializes the path parameter from a json map
-  factory PathParamConfig.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     return PathParamConfig(name: map['name'] as String, isOptional: map['isOptional'] as bool);
   }
 
@@ -274,10 +274,10 @@ class PathParamConfig {
 /// with.
 class ParamConverterRef {
   /// Default constructor
-  const ParamConverterRef({required this.name, this.import});
+  const new({required this.name, this.import});
 
   /// Deserializes the reference from a json map
-  factory ParamConverterRef.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     return ParamConverterRef(name: map['name'] as String, import: map['import'] as String?);
   }
 

@@ -32,8 +32,7 @@ final _cacheResource = Resource<Map<String, RoutesList>>(() async {
 /// A [Builder] which generates json route files for annotated pages
 class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   /// Default constructor
-  AutoRouteBuilder({super.options})
-    : super(generatedExtension: '.route.json', allowSyntaxErrors: true, annotationName: 'RoutePage');
+  new({super.options}) : super(generatedExtension: '.route.json', allowSyntaxErrors: true, annotationName: 'RoutePage');
 
   @override
   bool get cacheEnabled => options?.config['enable_cached_builds'] == true;

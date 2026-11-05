@@ -18,7 +18,7 @@ const _kParamConverterChecker = TypeChecker.typeNamed(ParamConverter, inPackage:
 /// Resolves route parameters
 class RouteParameterResolver {
   /// Default constructor
-  const RouteParameterResolver(this._typeResolver);
+  const new(this._typeResolver);
   final TypeResolver _typeResolver;
 
   /// Resolves a ParameterElement into a consumable [ParamConfig]

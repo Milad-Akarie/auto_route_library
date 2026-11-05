@@ -7,7 +7,7 @@ import 'package:meta/meta.dart';
 @immutable
 class ResolvedType {
   /// Default constructor
-  const ResolvedType({
+  const new({
     required this.name,
     this.import,
     this.typeArguments = const [],
@@ -17,7 +17,7 @@ class ResolvedType {
   }) : _isRecordType = false,
        functionParts = null;
 
-  const ResolvedType._({
+  const new _({
     required this.name,
     this.import,
     this.typeArguments = const [],
@@ -29,7 +29,7 @@ class ResolvedType {
   });
 
   /// Constructor for a record types
-  const ResolvedType.record({
+  const new record({
     required this.name,
     this.import,
     this.typeArguments = const [],
@@ -41,7 +41,7 @@ class ResolvedType {
 
   /// Constructor for a function type, such as `void Function(String url)`,
   /// when it is a type argument or a record field
-  const ResolvedType.function({required FunctionTypeParts parts, this.isNullable = false, this.nameInRecord})
+  const new function({required FunctionTypeParts parts, this.isNullable = false, this.nameInRecord})
     : name = 'Function',
       import = null,
       typeArguments = const [],
@@ -50,7 +50,7 @@ class ResolvedType {
       isEnum = false;
 
   /// deserializes the type from json
-  factory ResolvedType.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     final typedArgs = <ResolvedType>[];
     final typeArguments = map['typeArguments'] as List<Object?>?;
     if (typeArguments != null) {
@@ -180,7 +180,7 @@ class ResolvedType {
 /// The return type and parameter types of a function type.
 class FunctionTypeParts {
   /// Default constructor
-  const FunctionTypeParts({
+  const new({
     required this.returnType,
     this.requiredParameters = const [],
     this.optionalParameters = const [],
@@ -189,7 +189,7 @@ class FunctionTypeParts {
   });
 
   /// deserializes the parts from json
-  factory FunctionTypeParts.fromJson(Map<String, dynamic> map) {
+  factory fromJson(Map<String, dynamic> map) {
     List<ResolvedType> list(String key) => [
       for (final e in map[key] as List<Object?>) ResolvedType.fromJson(e as Map<String, dynamic>),
     ];

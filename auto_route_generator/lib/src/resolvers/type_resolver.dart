@@ -9,7 +9,7 @@ const _kUnPreferredImports = {'dart:ui'};
 /// A Helper class that resolves types
 class TypeResolver {
   /// Default constructor
-  const TypeResolver(this.libs, [this.targetFile]);
+  const new(this.libs, [this.targetFile]);
 
   /// The list of resolved libraries in `BuildStep`
   final List<LibraryElement> libs;
