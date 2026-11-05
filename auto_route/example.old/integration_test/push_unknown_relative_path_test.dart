@@ -69,7 +69,7 @@ void main() {
       unawaited(home.pushPath('nowhere', onFailure: failures.add));
       await tester.pumpAndSettle();
 
-      expect(failures, [isA<RouteNotFoundFailure>()]);
+      expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
       expect(home.stack.map((p) => p.name), ['HomeRoute']);
       await expectBrowserUrl('/home');
     },

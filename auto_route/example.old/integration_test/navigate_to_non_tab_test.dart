@@ -66,7 +66,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(failures, [isA<RouteNotFoundFailure>()]);
+    expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
     expect(find.text('Pager 1'), findsOneWidget);
     expect(find.text('Other'), findsNothing);
   });

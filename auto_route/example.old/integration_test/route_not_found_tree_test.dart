@@ -28,10 +28,14 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      (failures.singleOrNull as RouteNotFoundFailure?).toString(),
-      allOf(
-        contains('Can not navigate to /shop/1/reviews'),
-        contains(kRouteTreeOfRouteTreeRouter),
+      failures.singleOrNull,
+      isA<RouteNotFoundFailure>().having(
+        (failure) => failure.toString(),
+        'message',
+        allOf(
+          contains('Can not navigate to /shop/1/reviews'),
+          contains(kRouteTreeOfRouteTreeRouter),
+        ),
       ),
     );
     expect(router.current.name, 'HomeRoute');
