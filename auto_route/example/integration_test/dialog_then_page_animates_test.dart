@@ -34,14 +34,14 @@ void main() {
     await tester.tap(find.text('Close editor'));
     await tester.pumpAndSettle();
     final editorRoute = ModalRoute.of(tester.element(find.text('Close editor')))!;
+    // Recorded rather than sampled at a fixed time: on a slow device the
+    // exit animation can be over before any later frame is pumped.
+    final statuses = <AnimationStatus>[];
+    editorRoute.animation!.addStatusListener(statuses.add);
 
     await tester.tap(find.text('Discard'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(editorRoute.animation!.status, AnimationStatus.reverse);
-    expect(find.text('Close editor'), findsOneWidget);
-
     await tester.pumpAndSettle();
+    expect(statuses, containsAllInOrder([AnimationStatus.reverse, AnimationStatus.dismissed]));
     expect(tester.takeException(), isNull);
     expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
     expectCurrentPage(router, _HomeRoute.name);
