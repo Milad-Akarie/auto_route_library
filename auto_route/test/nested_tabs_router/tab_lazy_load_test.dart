@@ -23,7 +23,7 @@ void main() {
         tester,
       ) async {
         final observer = _TabObserver();
-        final router = _buildRouter(kind, lazyLoad: false);
+        final router = _buildRouter(kind, shouldLazyLoad: false);
         await pumpRouterApp(tester, router, observers: () => [observer]);
 
         expect(_builds, {for (final name in _kTabNames) name: 1});
@@ -71,14 +71,14 @@ const List<String> _kTabNames = [_kFirstTab, 'FeedRoute', _kLastTab];
 // How often each tab's page was built.
 final _builds = <String, int>{};
 
-RootStackRouter _buildRouter(_Kind kind, {bool? lazyLoad}) {
+RootStackRouter _buildRouter(_Kind kind, {bool? shouldLazyLoad}) {
   final routes = [for (final name in _kTabNames) _Route(name)];
   return RootStackRouter.build(
     routes: [
       AutoRoute(
         page: PageInfo(
           'TabsRoute',
-          builder: (_) => switch ((kind, lazyLoad)) {
+          builder: (_) => switch ((kind, shouldLazyLoad)) {
             (.tabBar, final bool explicitLazyLoad) => AutoTabsRouter.tabBar(
               routes: routes,
               lazyLoad: explicitLazyLoad,

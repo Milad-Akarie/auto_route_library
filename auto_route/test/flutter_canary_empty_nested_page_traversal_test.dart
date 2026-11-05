@@ -23,7 +23,7 @@ void main() {
   testWidgets('Tab never leaves a nested page that has nothing to focus', (
     tester,
   ) async {
-    final router = _buildRouter(nestedPageButton: false);
+    final router = _buildRouter(hasNestedPageButton: false);
     await pumpRouterApp(tester, router);
     final nestedScope = FocusScope.of(
       tester.element(find.byKey(const Key('nested page'))),
@@ -43,7 +43,7 @@ void main() {
   testWidgets(
     'control: Tab cycles through both panes when the nested page has a button',
     (tester) async {
-      final router = _buildRouter(nestedPageButton: true);
+      final router = _buildRouter(hasNestedPageButton: true);
       await pumpRouterApp(tester, router);
       final focused = <String?>[];
       for (var i = 0; i < 8; i++) {
@@ -67,7 +67,7 @@ void main() {
   );
 }
 
-RootStackRouter _buildRouter({required bool nestedPageButton}) => .build(
+RootStackRouter _buildRouter({required bool hasNestedPageButton}) => .build(
   routes: [
     AutoRoute(
       path: '/',
@@ -103,7 +103,7 @@ RootStackRouter _buildRouter({required bool nestedPageButton}) => .build(
               key: const Key('nested page'),
               appBar: AppBar(
                 actions: [
-                  if (nestedPageButton)
+                  if (hasNestedPageButton)
                     const IconButton(
                       key: ValueKey('nested'),
                       icon: Icon(Icons.help),

@@ -14,8 +14,8 @@ import '../router_test_utils.dart';
 void main() {
   testWidgets('The not-found page, alone, can not pop and its pop does nothing '
       '(flutter/flutter#147465, flutter/flutter#165588)', (tester) async {
-    bool? routerCanPop;
-    bool? navigatorCanPop;
+    bool? canRouterPop;
+    bool? canNavigatorPop;
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -28,8 +28,8 @@ void main() {
             'NotFoundRoute',
             builder: (_) => Builder(
               builder: (context) {
-                routerCanPop = context.router.canPop();
-                navigatorCanPop = Navigator.canPop(context);
+                canRouterPop = context.router.canPop();
+                canNavigatorPop = Navigator.canPop(context);
                 return Scaffold(
                   body: TextButton(
                     onPressed: () => context.router.maybePop(),
@@ -46,8 +46,8 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('NotFoundRoute'), findsOneWidget);
-    expect(routerCanPop, isFalse);
-    expect(navigatorCanPop, isFalse);
+    expect(canRouterPop, isFalse);
+    expect(canNavigatorPop, isFalse);
 
     await tester.tap(find.text('NotFoundRoute'));
     await tester.pumpAndSettle();

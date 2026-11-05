@@ -55,19 +55,19 @@ void main() {
       );
       await tester.pumpAndSettle();
       expectTopPage(router, 'FirstRoute');
-      expect(frameworkHandlesBack.last, isFalse);
+      expect(frameworkHandlesBack.isHandlingBack, isFalse);
 
       final inner = router
           .innerRouterOf<StackRouter>('OuterRoute')!
           .innerRouterOf<StackRouter>('InnerRoute')!;
       unawaited(inner.push(const NamedRoute('SecondRoute')));
       await tester.pumpAndSettle();
-      expect(frameworkHandlesBack.last, isTrue);
+      expect(frameworkHandlesBack.isHandlingBack, isTrue);
 
       await systemBack(tester);
       expectTopPage(router, 'FirstRoute');
       expect(
-        frameworkHandlesBack.last,
+        frameworkHandlesBack.isHandlingBack,
         isFalse,
         reason: 'after systemBack(tester)',
       );

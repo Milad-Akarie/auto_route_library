@@ -28,8 +28,8 @@ void main() {
             'ShellRoute',
             builder: (_) => ValueListenableBuilder(
               valueListenable: showNested,
-              builder: (_, show, _) =>
-                  show ? const AutoRouter() : const Text('Hidden'),
+              builder: (_, isShown, _) =>
+                  isShown ? const AutoRouter() : const Text('Hidden'),
             ),
           ),
           children: [

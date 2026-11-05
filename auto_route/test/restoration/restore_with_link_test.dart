@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../universal_link_test.dart' show sendPlatformLink;
+import '../universal_link_test.dart' show didSendPlatformLink;
 import 'restoration_test_utils.dart';
 
 // flutter/flutter#161858: a link that reached an app the platform had ended
@@ -56,7 +56,7 @@ void main() {
       RestorableRouterApp.router.push(const NamedRoute('SettingsRoute')),
     );
     await tester.pumpAndSettle();
-    await sendPlatformLink(tester, '/offer');
+    await didSendPlatformLink(tester, '/offer');
     final running = RestorableRouterApp.router.stack
         .map((p) => p.name)
         .toList();

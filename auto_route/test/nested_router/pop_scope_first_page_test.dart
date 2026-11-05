@@ -129,11 +129,11 @@ void main() {
             );
             await tester.pumpAndSettle();
             expectTopPage(router, _GuardedRoute.name);
-            expect(frameworkHandlesBack.last, isTrue);
+            expect(frameworkHandlesBack.isHandlingBack, isTrue);
 
             for (var attempt = 1; attempt <= 2; attempt++) {
               await back(tester);
-              expect(frameworkHandlesBack.last, isTrue);
+              expect(frameworkHandlesBack.isHandlingBack, isTrue);
               expectTopPage(router, _GuardedRoute.name);
               expect(_popAttempts, attempt);
             }

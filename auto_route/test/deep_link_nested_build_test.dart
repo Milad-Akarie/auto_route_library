@@ -33,7 +33,12 @@ void main() {
     tester,
   ) async {
     final router = buildRouter();
-    await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: false);
+    await pumpAtDeepLink(
+      tester,
+      router,
+      '/1',
+      shouldIncludePrefixMatches: false,
+    );
     expect(router.topRoute.name, 'ChildRoute');
     expect(find.text('ChildRoute'), findsOneWidget);
     expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
@@ -49,7 +54,12 @@ void main() {
     tester,
   ) async {
     final router = buildRouter();
-    await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);
+    await pumpAtDeepLink(
+      tester,
+      router,
+      '/1',
+      shouldIncludePrefixMatches: true,
+    );
     expect(router.topRoute.name, 'ChildRoute');
     expect(find.text('ChildRoute'), findsOneWidget);
     expect(builds, {'ParentRoute': 1, 'HomeRoute': 1, 'ChildRoute': 1});

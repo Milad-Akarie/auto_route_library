@@ -7,7 +7,7 @@ import '../main_router.dart';
 import '../router_test_utils.dart';
 import 'router.dart';
 
-void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
+void runGeneralTests(String tabsType, {bool shouldUseDefaultRoutes = false}) {
   late NestedTabsRouter router;
   setUp(() => router = NestedTabsRouter());
 
@@ -15,7 +15,10 @@ void runGeneralTests(String tabsType, {bool useDefaultRoutes = false}) {
     tester,
     router.config(
       deepLinkBuilder: (_) => DeepLink.single(
-        TabsHostRoute(tabsType: tabsType, useDefaultRoutes: useDefaultRoutes),
+        TabsHostRoute(
+          tabsType: tabsType,
+          shouldUseDefaultRoutes: shouldUseDefaultRoutes,
+        ),
       ),
     ),
   );

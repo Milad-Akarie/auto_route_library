@@ -41,11 +41,11 @@ void main() {
       (tester) async {
         await pumpRouterConfigApp(tester, router.config());
         String? result;
-        var completed = false;
+        var isCompleted = false;
         unawaited(
           push(router).then((value) {
             result = value;
-            completed = true;
+            isCompleted = true;
           }),
         );
         await tester.pumpAndSettle();
@@ -59,7 +59,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         expect(find.text('Home'), findsOneWidget);
-        expect(completed, isTrue);
+        expect(isCompleted, isTrue);
         expect(result, 'from details');
       },
     );

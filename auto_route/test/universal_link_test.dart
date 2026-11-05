@@ -8,7 +8,7 @@ import 'router_test_utils.dart';
 
 // Sends a link the way the engine does when the platform opens one, and
 // returns the app's answer: whether it handled the link.
-Future<bool?> sendPlatformLink(WidgetTester tester, String location) async {
+Future<bool?> didSendPlatformLink(WidgetTester tester, String location) async {
   const codec = JSONMethodCodec();
   final reply = await tester.binding.defaultBinaryMessenger
       .handlePlatformMessage(
@@ -42,7 +42,7 @@ void main() {
       );
       await pumpRouterConfigApp(tester, router.config());
       expect(
-        await sendPlatformLink(tester, 'https://example.com/second-route'),
+        await didSendPlatformLink(tester, 'https://example.com/second-route'),
         isTrue,
       );
       expectCurrentPage(router, SecondRoute.name);

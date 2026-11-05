@@ -82,7 +82,7 @@ void main() {
     return reply;
   }
 
-  bool animatingBack(WidgetTester tester) =>
+  bool isAnimatingBack(WidgetTester tester) =>
       ModalRoute.of(tester.element(find.text('SecondRoute')))!
           .popGestureInProgress;
 
@@ -97,7 +97,7 @@ void main() {
     };
     expect(await send(tester, 'startBackGesture', swipe(5, 0)), isTrue);
     await send(tester, 'updateBackGestureProgress', swipe(150, 0.5));
-    expect(animatingBack(tester), isTrue);
+    expect(isAnimatingBack(tester), isTrue);
 
     await send(tester, 'commitBackGesture');
     await tester.pumpAndSettle();
@@ -125,7 +125,7 @@ void main() {
         ),
       );
       await send(tester, 'updateBackGestureProgress', button(0.5));
-      expect(animatingBack(tester), isFalse);
+      expect(isAnimatingBack(tester), isFalse);
 
       await send(tester, 'commitBackGesture');
       await tester.pumpAndSettle();
@@ -146,7 +146,7 @@ void main() {
         'swipeEdge': 0,
       });
       expect(started, isFalse);
-      expect(animatingBack(tester), isFalse);
+      expect(isAnimatingBack(tester), isFalse);
     },
   );
 }

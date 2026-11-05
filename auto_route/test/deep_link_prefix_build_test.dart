@@ -16,16 +16,17 @@ void main() {
   final builds = <String, int>{};
   setUp(builds.clear);
 
-  RootStackRouter buildRouter({required bool maintainParentState}) => .build(
-    routes: [
-      AutoRoute(
-        path: '/',
-        page: countedPage('ParentRoute', builds),
-        maintainState: maintainParentState,
-      ),
-      AutoRoute(path: '/:id', page: countedPage('ChildRoute', builds)),
-    ],
-  );
+  RootStackRouter buildRouter({required bool shouldMaintainParentState}) =>
+      .build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: countedPage('ParentRoute', builds),
+            maintainState: shouldMaintainParentState,
+          ),
+          AutoRoute(path: '/:id', page: countedPage('ChildRoute', builds)),
+        ],
+      );
 
   // Steps: open the app at '/1', then go back.
   // Should: the parent builds once, offstage, while the child shows, and back
@@ -33,8 +34,13 @@ void main() {
   testWidgets(
     'A deep link builds the covered parent once, and back reuses it',
     (tester) async {
-      final router = buildRouter(maintainParentState: true);
-      await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);
+      final router = buildRouter(shouldMaintainParentState: true);
+      await pumpAtDeepLink(
+        tester,
+        router,
+        '/1',
+        shouldIncludePrefixMatches: true,
+      );
       expect(router.stack.map((page) => page.name), [
         'ParentRoute',
         'ChildRoute',
@@ -60,8 +66,13 @@ void main() {
     'A deep link does not build a parent with maintainState false until back '
     'shows it',
     (tester) async {
-      final router = buildRouter(maintainParentState: false);
-      await pumpAtDeepLink(tester, router, '/1', includePrefixMatches: true);
+      final router = buildRouter(shouldMaintainParentState: false);
+      await pumpAtDeepLink(
+        tester,
+        router,
+        '/1',
+        shouldIncludePrefixMatches: true,
+      );
       expect(router.stack.map((page) => page.name), [
         'ParentRoute',
         'ChildRoute',

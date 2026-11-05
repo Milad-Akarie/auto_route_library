@@ -53,12 +53,12 @@ void main() {
         double tolerance = 1e-6,
       }) {
         final [first, ...rest] = values;
-        final rising = end > first;
+        final isRising = end > first;
         var previous = first;
         for (final (index, value) in rest.indexed) {
           final step = value - previous;
           expect(
-            rising ? step >= -1e-9 : step <= 1e-9,
+            isRising ? step >= -1e-9 : step <= 1e-9,
             isTrue,
             reason: 'frame ${index + 1} of $values',
           );
@@ -110,7 +110,7 @@ abstract final class _HomeRoute {
       ],
       builder: (context, child, tabController) => Scaffold(
         body: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+          headerSliverBuilder: (context, isInnerBoxScrolled) => [
             SliverAppBar(
               snap: true,
               floating: true,

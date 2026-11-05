@@ -38,7 +38,7 @@ void main() {
               builder: (_) => Scaffold(
                 body: ValueListenableBuilder(
                   valueListenable: showField,
-                  builder: (_, show, _) => show
+                  builder: (_, isShown, _) => isShown
                       ? const TextField(key: Key('home'), autofocus: true)
                       : const Text('HomeRoute'),
                 ),
@@ -90,7 +90,7 @@ void main() {
               builder: (_) => Scaffold(
                 body: ValueListenableBuilder(
                   valueListenable: showField,
-                  builder: (_, show, _) => show
+                  builder: (_, isShown, _) => isShown
                       ? const TextField(key: Key('home'), autofocus: true)
                       : const Text('HomeRoute'),
                 ),

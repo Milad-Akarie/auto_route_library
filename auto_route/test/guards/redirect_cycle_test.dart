@@ -24,7 +24,7 @@ void main() {
 
   // Stands in for the guard's own logic; past this many calls it stops
   // redirecting, so the test still ends where the loop used to run forever.
-  bool loopedTooLong() => ++guardCalls > 100;
+  bool isLoopedTooLong() => ++guardCalls > 100;
 
   Future<List<FlutterErrorDetails>> collectErrors(
     WidgetTester tester,
@@ -65,7 +65,7 @@ void main() {
         ],
         guards: [
           AutoRouteGuard.redirect(
-            (_) => loopedTooLong() ? null : const NamedRoute('LoginRoute'),
+            (_) => isLoopedTooLong() ? null : const NamedRoute('LoginRoute'),
           ),
         ],
       );
@@ -90,11 +90,11 @@ void main() {
     'Two guards whose redirectUntil sends to each other report the loop (flutter/flutter#118061)',
     (tester) async {
       final aGuard = AutoRouteGuard.simple((resolver, _) {
-        if (loopedTooLong()) return resolver.next();
+        if (isLoopedTooLong()) return resolver.next();
         unawaited(resolver.redirectUntil(const NamedRoute('BRoute')));
       });
       final bGuard = AutoRouteGuard.simple((resolver, _) {
-        if (loopedTooLong()) return resolver.next();
+        if (isLoopedTooLong()) return resolver.next();
         unawaited(resolver.redirectUntil(const NamedRoute('ARoute')));
       });
       final router = _AppRouter(
@@ -153,7 +153,9 @@ void main() {
           ),
         ],
         guards: [
-          AutoRouteGuard.redirectPath((_) => loopedTooLong() ? null : '/login'),
+          AutoRouteGuard.redirectPath(
+            (_) => isLoopedTooLong() ? null : '/login',
+          ),
         ],
       );
 
@@ -184,7 +186,7 @@ void main() {
             builder: (_, _) => const AutoRouter(),
             guards: [
               AutoRouteGuard.redirectPath(
-                (resolver) => resolver.route.hasChildren || loopedTooLong()
+                (resolver) => resolver.route.hasChildren || isLoopedTooLong()
                     ? null
                     : '/feed',
               ),
@@ -232,12 +234,12 @@ void main() {
         ],
         guards: [
           AutoRouteGuard.redirect((resolver) {
-            if (loopedTooLong()) return null;
-            final onLogin = resolver.routeName == 'LoginRoute';
+            if (isLoopedTooLong()) return null;
+            final isOnLogin = resolver.routeName == 'LoginRoute';
             if (auth.value) {
-              return onLogin ? const NamedRoute('HomeRoute') : null;
+              return isOnLogin ? const NamedRoute('HomeRoute') : null;
             }
-            return onLogin ? null : const NamedRoute('LoginRoute');
+            return isOnLogin ? null : const NamedRoute('LoginRoute');
           }),
         ],
       );

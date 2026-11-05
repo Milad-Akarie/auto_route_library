@@ -72,7 +72,7 @@ class _FormPage extends StatelessWidget {
   Future<void> _callAsyncCubitMethod() => .delayed(const Duration(seconds: 5));
 
   Future<void> _closeForm(BuildContext context) async {
-    final result = await showDialog<bool>(
+    final wasResult = await showDialog<bool>(
       context: context,
       builder: (context) => Dialog(
         child: ElevatedButton(
@@ -84,7 +84,7 @@ class _FormPage extends StatelessWidget {
 
     unawaited(_callAsyncCubitMethod());
 
-    if (result == true && context.mounted) {
+    if (wasResult == true && context.mounted) {
       unawaited(context.router.maybePop(true));
     }
   }

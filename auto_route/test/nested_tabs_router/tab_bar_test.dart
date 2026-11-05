@@ -10,7 +10,7 @@ import 'tabs_router_tests.dart';
 
 void main() {
   runGeneralTests('TabBar');
-  runGeneralTests('TabBar', useDefaultRoutes: true);
+  runGeneralTests('TabBar', shouldUseDefaultRoutes: true);
   late NestedTabsRouter router;
   setUp(() => router = NestedTabsRouter());
 

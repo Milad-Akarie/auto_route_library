@@ -46,14 +46,14 @@ void main() {
 
   Future<void> openCountedPage(
     WidgetTester tester, {
-    required bool nested,
+    required bool isNested,
     ThemeData? theme,
   }) async {
     await tester.pumpWidget(
       MaterialApp.router(theme: theme, routerConfig: router.config()),
     );
     await tester.pumpAndSettle();
-    if (nested) {
+    if (isNested) {
       unawaited(router.push(const _HostRoute()));
       await tester.pumpAndSettle();
       unawaited(
@@ -120,7 +120,7 @@ void main() {
       testWidgets('$name $where should call onPopInvokedWithResult once', (
         tester,
       ) async {
-        await openCountedPage(tester, nested: nested, theme: theme);
+        await openCountedPage(tester, isNested: nested, theme: theme);
 
         await back(tester);
 
@@ -136,7 +136,7 @@ void main() {
         'back',
         (tester) async {
           _canPop = false;
-          await openCountedPage(tester, nested: nested, theme: theme);
+          await openCountedPage(tester, isNested: nested, theme: theme);
 
           await back(tester);
           expect(_heard, [false]);

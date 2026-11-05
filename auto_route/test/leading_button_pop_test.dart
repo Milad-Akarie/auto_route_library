@@ -13,11 +13,11 @@ void main() {
   // a profile page. A posts route in that nested router has a guard that
   // redirects to a verify page on the root router until the user is
   // verified.
-  late bool verified;
+  late bool isVerified;
   late RootStackRouter router;
 
   setUp(() {
-    verified = false;
+    isVerified = false;
     router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
@@ -32,7 +32,7 @@ void main() {
               path: 'posts',
               guards: [
                 AutoRouteGuard.simple((resolver, _) {
-                  if (verified) {
+                  if (isVerified) {
                     resolver.next();
                   } else {
                     unawaited(resolver.redirectUntil(const _VerifyRoute()));

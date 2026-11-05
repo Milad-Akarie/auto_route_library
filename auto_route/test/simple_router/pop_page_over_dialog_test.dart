@@ -39,7 +39,7 @@ void main() {
     unawaited(
       router
           .push<bool>(const PageRouteInfo('Cancel'))
-          .then((value) => result = value),
+          .then((wasPopped) => result = wasPopped),
     );
     await tester.pumpAndSettle();
     router.pop(true);
@@ -63,7 +63,7 @@ void main() {
     unawaited(
       router
           .push<bool>(const PageRouteInfo('Cancel'))
-          .then((value) => result = value),
+          .then((wasPopped) => result = wasPopped),
     );
     router.pop(true);
     tester.state<NavigatorState>(find.byType(Navigator).first).pop();

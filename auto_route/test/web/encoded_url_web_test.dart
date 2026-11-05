@@ -151,7 +151,7 @@ void main() {
         expect(find.text('id $id, query null'), findsOneWidget);
         expect(browserPath, link);
         expect(browserSerialCount, 0, reason: link);
-        expect(appWroteBrowserEntry, isTrue);
+        expect(didAppWriteBrowserEntry, isTrue);
         await tester.pumpWidget(const SizedBox());
       }
     },

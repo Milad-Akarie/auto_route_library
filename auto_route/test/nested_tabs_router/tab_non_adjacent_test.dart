@@ -30,26 +30,26 @@ void main() {
         )!;
         final viewport = tester.getRect(find.byType(Scrollable).first);
 
-        bool onScreen(String text) {
+        bool isOnScreen(String text) {
           final finder = find.text(text, skipOffstage: false);
           return finder.evaluate().isNotEmpty &&
               tester.getRect(finder).overlaps(viewport);
         }
 
         tabsRouter.setActiveIndex(2);
-        var sawFirst = false;
+        var didSeeFirst = false;
         for (var i = 0; i < 20; i++) {
           await tester.pump(const Duration(milliseconds: 20));
-          sawFirst |= onScreen(Tab1Route.name);
+          didSeeFirst |= isOnScreen(Tab1Route.name);
           expect(
-            onScreen(Tab2Nested1Route.name),
+            isOnScreen(Tab2Nested1Route.name),
             isFalse,
             reason: 'the tab between is on screen at frame $i',
           );
         }
         await tester.pumpAndSettle();
         expect(
-          sawFirst,
+          didSeeFirst,
           isTrue,
           reason: 'the first tab should slide out, not vanish',
         );

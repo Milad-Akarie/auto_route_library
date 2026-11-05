@@ -7,11 +7,11 @@ import 'package:material_ui/material_ui.dart';
 import '../router_test_utils.dart';
 
 class _Auth extends ChangeNotifier {
-  bool loggedIn = false;
+  bool isLoggedIn = false;
 
   Future<void> tryAutoLogin() async {
     await Future<void>.delayed(const Duration(milliseconds: 50));
-    loggedIn = true;
+    isLoggedIn = true;
     notifyListeners();
   }
 }
@@ -35,7 +35,7 @@ void main() {
         guards: [
           AutoRouteGuard.simple((resolver, _) async {
             guardCalls++;
-            if (!auth.loggedIn) await auth.tryAutoLogin();
+            if (!auth.isLoggedIn) await auth.tryAutoLogin();
             resolver.next();
           }),
         ],

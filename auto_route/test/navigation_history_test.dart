@@ -131,14 +131,14 @@ void main() {
     });
 
     test('Should notify listeners on URL state change', () async {
-      var notified = false;
-      void onChange() => notified = true;
+      var wasNotified = false;
+      void onChange() => wasNotified = true;
       history.addListener(onChange);
       addTearDown(() => history.removeListener(onChange));
 
       await router.push(const FirstRoute());
 
-      expect(notified, true);
+      expect(wasNotified, true);
     });
 
     test('Should track route as active after navigation', () async {

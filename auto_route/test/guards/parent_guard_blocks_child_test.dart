@@ -15,7 +15,7 @@ void main() {
   testWidgets(
     "A parent's guard runs for a deep link to its child (flutter/flutter#101183)",
     (tester) async {
-      var open = false;
+      var isOpen = false;
       final calls = <String>[];
       final router = RootStackRouter.build(
         routes: [
@@ -29,7 +29,7 @@ void main() {
             path: '/bar',
             onNavigation: (resolver, _) {
               calls.add('bar');
-              open ? resolver.next() : resolver.reject();
+              isOpen ? resolver.next() : resolver.reject();
             },
             builder: (_, _) => const AutoRouter(),
             children: [
@@ -61,7 +61,7 @@ void main() {
       expect(find.text('BazRoute'), findsNothing);
       expect(calls.where((e) => e == 'baz'), isEmpty);
 
-      open = true;
+      isOpen = true;
       unawaited(router.pushPath('/bar/baz'));
       await tester.pumpAndSettle();
       expect(find.text('BazRoute'), findsOneWidget);

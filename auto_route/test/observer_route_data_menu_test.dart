@@ -50,9 +50,9 @@ void main() {
 
   Future<void> openAndPickFromMenu(
     WidgetTester tester, {
-    required bool useRootNavigator,
+    required bool shouldUseRootNavigator,
   }) async {
-    await tester.tap(find.text(useRootNavigator ? 'Root menu' : 'Menu'));
+    await tester.tap(find.text(shouldUseRootNavigator ? 'Root menu' : 'Menu'));
     await tester.pumpAndSettle();
     expect(find.text('Item'), findsOneWidget);
     await tester.tap(find.text('Item'));
@@ -71,7 +71,7 @@ void main() {
     'its host page',
     (tester) async {
       await pumpRouterApp(tester, router, observers: () => [rootObserver]);
-      await openAndPickFromMenu(tester, useRootNavigator: false);
+      await openAndPickFromMenu(tester, shouldUseRootNavigator: false);
       expect(shellObserver.found, ['ShellRoute']);
       expect(rootObserver.found, isEmpty);
     },
@@ -85,7 +85,7 @@ void main() {
     'gets an error it can catch',
     (tester) async {
       await pumpRouterApp(tester, router, observers: () => [rootObserver]);
-      await openAndPickFromMenu(tester, useRootNavigator: true);
+      await openAndPickFromMenu(tester, shouldUseRootNavigator: true);
       expect(
         rootObserver.found.singleOrNull,
         startsWith('error: RouteData operation requested with a context'),

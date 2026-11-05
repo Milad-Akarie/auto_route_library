@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'build_counts.dart';
-import 'universal_link_test.dart' show sendPlatformLink;
+import 'universal_link_test.dart' show didSendPlatformLink;
 
 // flutter/flutter#150666: a link with repeated slashes, such as
 // /items///1, matched no route.
@@ -29,7 +29,12 @@ void main() {
 
   Future<RootStackRouter> pumpAtLink(WidgetTester tester, String link) async {
     final router = buildRouter();
-    await pumpAtDeepLink(tester, router, link, includePrefixMatches: false);
+    await pumpAtDeepLink(
+      tester,
+      router,
+      link,
+      shouldIncludePrefixMatches: false,
+    );
     return router;
   }
 
@@ -40,11 +45,11 @@ void main() {
     await tester.pumpWidget(const SizedBox());
 
     final running = await pumpAtLink(tester, '/');
-    await sendPlatformLink(tester, '/items//1//');
+    await didSendPlatformLink(tester, '/items//1//');
     expect(
       find.text('Item 1'),
       findsOneWidget,
-      reason: 'after sendPlatformLink(tester, /items//1//)',
+      reason: 'after didSendPlatformLink(tester, /items//1//)',
     );
     expect(running.currentUrl, '/items/1');
   });

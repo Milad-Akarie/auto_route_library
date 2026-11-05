@@ -147,7 +147,7 @@ void main() {
   testWidgets(
     'Removing a login flow should resume a guard awaiting its push future',
     (tester) async {
-      var guardResumed = false;
+      var didGuardResume = false;
       final guardedRouter = RootStackRouter.build(
         routes: [
           AutoRoute(page: FirstRoute.page, initial: true),
@@ -157,7 +157,7 @@ void main() {
             page: FourthRoute.page,
             onNavigation: (resolver, routerBeingGuarded) async {
               await routerBeingGuarded.push(const SecondRoute());
-              guardResumed = true;
+              didGuardResume = true;
               resolver.next();
             },
           ),
@@ -176,7 +176,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(guardResumed, isTrue);
+      expect(didGuardResume, isTrue);
       expectCurrentPage(guardedRouter, FourthRoute.name);
     },
   );
@@ -191,9 +191,11 @@ void main() {
     'original push future',
     (tester) async {
       await pumpRouterApp(tester, router);
-      var completed = false;
+      var isCompleted = false;
       unawaited(
-        router.push<String>(const SecondRoute()).then((_) => completed = true),
+        router
+            .push<String>(const SecondRoute())
+            .then((_) => isCompleted = true),
       );
       await tester.pumpAndSettle();
 
@@ -205,7 +207,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expectCurrentPage(router, FirstRoute.name);
-      expect(completed, isTrue);
+      expect(isCompleted, isTrue);
     },
   );
 
@@ -218,25 +220,25 @@ void main() {
     'navigate() should complete with the result the opened page is popped with',
     (tester) async {
       await pumpRouterApp(tester, router);
-      var completed = false;
+      var isCompleted = false;
       Object? result;
       unawaited(
         router.navigate(const SecondRoute()).then((value) {
-          completed = true;
+          isCompleted = true;
           result = value;
         }),
       );
       await tester.pumpAndSettle();
       expectCurrentPage(router, SecondRoute.name);
       expect(
-        completed,
+        isCompleted,
         isFalse,
         reason: 'navigate() completed before the page was popped',
       );
 
       router.pop('done');
       await tester.pumpAndSettle();
-      expect(completed, isTrue);
+      expect(isCompleted, isTrue);
       expect(result, 'done');
     },
   );

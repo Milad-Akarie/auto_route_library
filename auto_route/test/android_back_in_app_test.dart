@@ -37,7 +37,7 @@ void main() {
           transitionsBuilder: TransitionsBuilders.fadeIn,
           duration: const Duration(milliseconds: 200),
           children: [
-            _fade(_page('HomeRoute'), 'home', initial: true),
+            _fade(_page('HomeRoute'), 'home', isInitial: true),
             _fade(_page('ActivityRoute'), 'activity'),
           ],
         ),
@@ -64,11 +64,11 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(frameworkHandlesBack.last, isFalse);
+        expect(frameworkHandlesBack.isHandlingBack, isFalse);
 
         unawaited(router.push(const _Route('LoginRoute')));
         await tester.pumpAndSettle();
-        expect(frameworkHandlesBack.last, isTrue);
+        expect(frameworkHandlesBack.isHandlingBack, isTrue);
         await back(tester);
         expectTopPage(router, 'WelcomeRoute');
 
@@ -82,7 +82,7 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(
-          frameworkHandlesBack.last,
+          frameworkHandlesBack.isHandlingBack,
           isTrue,
           reason:
               'after router.innerRouterOf<StackRouter>(AuthorizedRoute)!.push',
@@ -91,7 +91,7 @@ void main() {
         await back(tester);
         expectTopPage(router, 'HomeRoute');
         expect(
-          frameworkHandlesBack.last,
+          frameworkHandlesBack.isHandlingBack,
           isFalse,
           reason: 'after back(tester)',
         );
@@ -103,10 +103,10 @@ void main() {
   }
 }
 
-CustomRoute _fade(PageInfo page, String path, {bool initial = false}) => .new(
+CustomRoute _fade(PageInfo page, String path, {bool isInitial = false}) => .new(
   page: page,
   path: path,
-  initial: initial,
+  initial: isInitial,
   transitionsBuilder: TransitionsBuilders.fadeIn,
   duration: const Duration(milliseconds: 200),
 );

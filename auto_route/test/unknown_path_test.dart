@@ -8,7 +8,7 @@ import 'main_router.dart';
 import 'router_test_utils.dart';
 
 void main() {
-  RootStackRouter buildRouter({required bool withWildcard}) => .build(
+  RootStackRouter buildRouter({required bool hasWildcard}) => .build(
     routes: [
       AutoRoute(page: FirstRoute.page, path: '/', initial: true),
       AutoRoute(
@@ -16,7 +16,7 @@ void main() {
         path: '/shell',
         children: [
           AutoRoute(page: SecondRoute.page, path: '', initial: true),
-          if (withWildcard)
+          if (hasWildcard)
             AutoRoute(
               page: PageInfo(
                 'ShellNotFoundRoute',
@@ -26,7 +26,7 @@ void main() {
             ),
         ],
       ),
-      if (withWildcard)
+      if (hasWildcard)
         AutoRoute(
           page: PageInfo(
             'NotFoundRoute',
@@ -61,7 +61,7 @@ void main() {
     // Steps: with a '*' route, open '/nope' with [name].
     // Should: the '*' page shows.
     testWidgets('$name to an unknown path shows the "*" page', (tester) async {
-      final router = buildRouter(withWildcard: true);
+      final router = buildRouter(hasWildcard: true);
       await pumpRouterApp(tester, router);
       unawaited(open(router, '/nope', null));
       await tester.pumpAndSettle();
@@ -75,7 +75,7 @@ void main() {
     testWidgets('$name to an unknown path without "*" reports it', (
       tester,
     ) async {
-      final router = buildRouter(withWildcard: false);
+      final router = buildRouter(hasWildcard: false);
       await pumpRouterApp(tester, router);
       final failures = <NavigationFailure>[];
       unawaited(open(router, '/nope', failures.add));
@@ -104,7 +104,7 @@ void main() {
     testWidgets(
       '$name to an unknown relative path in a nested router shows its "*" page',
       (tester) async {
-        final router = buildRouter(withWildcard: true);
+        final router = buildRouter(hasWildcard: true);
         await pumpRouterApp(tester, router, initialLink: '/shell');
         final nested = router.innerRouterOf<StackRouter>('ShellRoute')!;
         unawaited(open(nested, 'nope', null));

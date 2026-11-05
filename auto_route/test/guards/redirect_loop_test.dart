@@ -39,7 +39,7 @@ void main() {
 
   // Stands in for the guard's own logic; past a few calls it stops answering,
   // so the test still ends where the loop used to run forever.
-  bool loopedTooLong() => ++guardCalls > 20;
+  bool isLoopedTooLong() => ++guardCalls > 20;
 
   Future<FlutterErrorDetails?> pumpAndTakeError(
     WidgetTester tester,
@@ -69,7 +69,7 @@ void main() {
           routes: routes,
           guards: [
             AutoRouteGuard.simple((resolver, _) async {
-              if (loopedTooLong()) return;
+              if (isLoopedTooLong()) return;
               if (isAsync) await Future<void>.delayed(.zero);
               unawaited(
                 resolver.redirectUntil(
@@ -104,7 +104,7 @@ void main() {
         routes: routes,
         guards: [
           AutoRouteGuard.simple((resolver, _) {
-            if (loopedTooLong()) return;
+            if (isLoopedTooLong()) return;
             if (resolver.routeName == 'LoginRoute') {
               resolver.next();
             } else {
@@ -140,9 +140,10 @@ void main() {
         routes: routes,
         guards: [
           AutoRouteGuard.simple((resolver, guardedRouter) {
-            if (loopedTooLong()) return;
-            final skipAuth = guardedRouter.current.meta['skipAuth'] as bool?;
-            if (skipAuth == true) {
+            if (isLoopedTooLong()) return;
+            final shouldSkipAuth =
+                guardedRouter.current.meta['skipAuth'] as bool?;
+            if (shouldSkipAuth == true) {
               resolver.next();
             } else {
               unawaited(

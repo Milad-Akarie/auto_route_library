@@ -88,10 +88,10 @@ abstract final class _HostRoute {
     name,
     builder: (_) => ValueListenableBuilder<bool>(
       valueListenable: _extraNotifier,
-      builder: (context, extra, _) {
+      builder: (context, hasExtra, _) {
         final routes = [
           const _NestedHostRoute(),
-          if (extra) const _ExtraRoute(),
+          if (hasExtra) const _ExtraRoute(),
           const _SecondRoute(),
         ];
         return switch (_tabsKind) {

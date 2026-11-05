@@ -11,7 +11,7 @@ void main() {
   // before the finger on B is lifted, as when B is held while A opens.
   Future<void> tapAThenB(
     WidgetTester tester, {
-    bool settleBeforeB = false,
+    bool shouldSettleBeforeB = false,
   }) async {
     final a = await tester.startGesture(
       tester.getCenter(find.text('Open A')),
@@ -22,7 +22,7 @@ void main() {
       pointer: 2,
     );
     await a.up();
-    if (settleBeforeB) await tester.pumpAndSettle();
+    if (shouldSettleBeforeB) await tester.pumpAndSettle();
     await b.up();
     await tester.pumpAndSettle();
   }
@@ -55,7 +55,7 @@ void main() {
           ),
         ),
       );
-      await tapAThenB(tester, settleBeforeB: settleBeforeB);
+      await tapAThenB(tester, shouldSettleBeforeB: settleBeforeB);
       expect(find.text('A'), findsOneWidget);
       expect(find.text('B'), findsNothing);
     });
@@ -73,7 +73,7 @@ void main() {
     ) async {
       final router = buildRouter();
       await pumpRouterApp(tester, router);
-      await tapAThenB(tester, settleBeforeB: settleBeforeB);
+      await tapAThenB(tester, shouldSettleBeforeB: settleBeforeB);
 
       expect(router.stack.map((p) => p.name), [
         _HomeRoute.pageName,

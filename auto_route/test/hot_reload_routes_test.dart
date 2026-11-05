@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'main_router.dart';
 import 'router_test_utils.dart';
-import 'universal_link_test.dart' show sendPlatformLink;
+import 'universal_link_test.dart' show didSendPlatformLink;
 
 // flutter/flutter#105553: a route added to the router's list while the app
 // runs is not found after a hot reload.
@@ -62,7 +62,7 @@ void main() {
     unawaited(tester.binding.reassembleApplication());
     await tester.pumpAndSettle();
 
-    await sendPlatformLink(tester, '/second-route');
+    await didSendPlatformLink(tester, '/second-route');
     expectCurrentPage(router, SecondRoute.name);
   });
 

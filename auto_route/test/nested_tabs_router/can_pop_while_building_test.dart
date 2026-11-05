@@ -17,7 +17,7 @@ void main() {
     'canPop in the app bar builder answers on the first frame and after a '
     'push in a tab',
     (tester) async {
-      final heard = <({bool tabs, bool root})>[];
+      final heard = <({bool canPopTabs, bool canPopRoot})>[];
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(
@@ -30,8 +30,8 @@ void main() {
                 ],
                 appBarBuilder: (context, tabsRouter) {
                   heard.add((
-                    tabs: tabsRouter.canPop(),
-                    root: context.router.root.canPop(),
+                    canPopTabs: tabsRouter.canPop(),
+                    canPopRoot: context.router.root.canPop(),
                   ));
                   return AppBar(title: const Text('Shell'));
                 },
@@ -55,7 +55,7 @@ void main() {
       await pumpRouterApp(tester, router);
 
       expect(tester.takeException(), isNull);
-      expect(heard.firstOrNull, (tabs: false, root: false));
+      expect(heard.firstOrNull, (canPopTabs: false, canPopRoot: false));
 
       unawaited(router.navigatePath('/feed/post'));
       await tester.pumpAndSettle();
@@ -71,7 +71,7 @@ void main() {
             'after router.innerRouterOf<TabsRouter>(TabsScreen)!.notifyAll(',
       );
       expect(router.topRoute.name, 'FeedPost');
-      expect(heard.lastOrNull, (tabs: true, root: true));
+      expect(heard.lastOrNull, (canPopTabs: true, canPopRoot: true));
     },
   );
 }

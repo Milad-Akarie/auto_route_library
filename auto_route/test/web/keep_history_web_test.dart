@@ -38,7 +38,7 @@ void main() {
       testWidgets(
         'Pushing from a page without history on web replaces its browser entry',
         (tester) async {
-          await _pumpApp(tester, router, withConfig: withConfig);
+          await _pumpApp(tester, router, shouldUseConfig: withConfig);
           await settleBrowser(tester);
           final start = browserSerialCount;
 
@@ -70,7 +70,7 @@ void main() {
         'replaceAll from a page without history on web replaces its browser '
         'entry',
         (tester) async {
-          await _pumpApp(tester, router, withConfig: withConfig);
+          await _pumpApp(tester, router, shouldUseConfig: withConfig);
           await settleBrowser(tester);
           final start = browserSerialCount;
 
@@ -88,8 +88,8 @@ void main() {
 Future<void> _pumpApp(
   WidgetTester tester,
   RootStackRouter router, {
-  required bool withConfig,
+  required bool shouldUseConfig,
 }) {
-  if (withConfig) return pumpRouterConfigApp(tester, router.config());
+  if (shouldUseConfig) return pumpRouterConfigApp(tester, router.config());
   return pumpRouterApp(tester, router);
 }

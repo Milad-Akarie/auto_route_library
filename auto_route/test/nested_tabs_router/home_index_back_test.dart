@@ -57,17 +57,17 @@ void main() {
       '$name on another tab should show the home tab, and keep the app open',
       (tester) async {
         final tabs = await pumpApp(tester, homeIndex: 0);
-        expect(frameworkHandlesBack.last, isFalse);
+        expect(frameworkHandlesBack.isHandlingBack, isFalse);
         tabs.setActiveIndex(2);
         await tester.pumpAndSettle();
-        expect(frameworkHandlesBack.last, isTrue);
+        expect(frameworkHandlesBack.isHandlingBack, isTrue);
 
         await back(tester);
 
         expect(tabs.activeIndex, 0);
         expect(find.text(_kFirstTab), findsOneWidget);
         expect(
-          frameworkHandlesBack.last,
+          frameworkHandlesBack.isHandlingBack,
           isFalse,
           reason: 'after back(tester)',
         );
@@ -82,12 +82,12 @@ void main() {
     (tester) async {
       final tabs = await pumpApp(tester, homeIndex: 1);
       expect(tabs.activeIndex, 0);
-      expect(frameworkHandlesBack.last, isTrue);
+      expect(frameworkHandlesBack.isHandlingBack, isTrue);
 
       await systemBack(tester);
 
       expect(tabs.activeIndex, 1);
-      expect(frameworkHandlesBack.last, isFalse);
+      expect(frameworkHandlesBack.isHandlingBack, isFalse);
     },
     skip: kIsWeb,
   );

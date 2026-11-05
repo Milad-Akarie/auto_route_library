@@ -80,13 +80,13 @@ class _SecondPage extends StatefulWidget {
 }
 
 class _SecondPageState extends State<_SecondPage> {
-  bool _saving = false;
+  bool _isSaving = false;
 
   Future<void> _save() async {
-    setState(() => _saving = true);
+    setState(() => _isSaving = true);
     await Future<void>.delayed(const Duration(milliseconds: 100));
     if (!mounted) return;
-    setState(() => _saving = false);
+    setState(() => _isSaving = false);
     SchedulerBinding.instance.addPostFrameCallback((_) {
       if (mounted) context.router.pop();
     });
@@ -99,7 +99,7 @@ class _SecondPageState extends State<_SecondPage> {
         onPressed: () => unawaited(_save()),
         child: const Text('save'),
       ),
-      floatingActionButton: _saving
+      floatingActionButton: _isSaving
           ? null
           : const FloatingActionButton(
               onPressed: noOp,

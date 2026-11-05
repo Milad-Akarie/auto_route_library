@@ -74,10 +74,10 @@ void main() {
     await openAThenC(tester);
 
     unawaited(router.push(const PageRouteInfo('B')));
-    final popped = router.maybePop();
+    final wasPopped = router.maybePop();
     await tester.pumpAndSettle();
 
-    expect(await popped, isTrue);
+    expect(await wasPopped, isTrue);
     expect(names(), ['A', 'C']);
     expectTopPage(router, 'C');
   });

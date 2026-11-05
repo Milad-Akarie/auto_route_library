@@ -65,10 +65,10 @@ Future<void> tapLeadingBackButton(WidgetTester tester) async {
 /// On Android 13 and later, back goes to Flutter only while the last value
 /// is true; while it is false, Android closes the app itself.
 class FrameworkHandlesBackRecorder {
-  bool? _last;
+  bool? _isHandlingBack;
 
   /// The last value Flutter sent, or null if it sent none.
-  bool? get last => _last;
+  bool? get isHandlingBack => _isHandlingBack;
 
   /// Starts recording; call it before pumping the app.
   void listen(WidgetTester tester) {
@@ -77,7 +77,7 @@ class FrameworkHandlesBackRecorder {
     final messenger = tester.binding.defaultBinaryMessenger
       ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
         if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
-          _last = call.arguments as bool;
+          _isHandlingBack = call.arguments as bool;
         }
         return null;
       });

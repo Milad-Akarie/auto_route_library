@@ -221,7 +221,7 @@ void main() {
         tester,
         router.config(
           deepLinkBuilder: (_) => DeepLink.single(
-            SecondHostRoute(hasDrawer: true, useCustomLeading: true),
+            SecondHostRoute(hasDrawer: true, shouldUseCustomLeading: true),
           ),
         ),
       );
@@ -250,7 +250,7 @@ void main() {
         tester,
         router.config(
           deepLinkBuilder: (_) =>
-              DeepLink.single(SecondHostRoute(useCustomLeading: true)),
+              DeepLink.single(SecondHostRoute(shouldUseCustomLeading: true)),
         ),
       );
       unawaited(router.push(const SecondNested2Route()));
@@ -332,10 +332,10 @@ void main() {
       await tester.pumpAndSettle();
       expect(nested.stack, isEmpty);
 
-      final popped = await nested.maybePop();
+      final wasPopped = await nested.maybePop();
       await tester.pumpAndSettle();
 
-      expect(popped, isTrue);
+      expect(wasPopped, isTrue);
       expectTopPage(router, FirstRoute.name);
       expect(router.childControllers, isEmpty);
     },

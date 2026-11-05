@@ -24,16 +24,20 @@ class _TestPage extends StatelessWidget {
 
 @RoutePage()
 class SecondHostPage extends StatelessWidget {
-  const new({super.key, this.useCustomLeading = false, this.hasDrawer = false});
+  const new({
+    super.key,
+    this.shouldUseCustomLeading = false,
+    this.hasDrawer = false,
+  });
 
-  final bool useCustomLeading;
+  final bool shouldUseCustomLeading;
   final bool hasDrawer;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: useCustomLeading
+        leading: shouldUseCustomLeading
             ? AutoLeadingButton(
                 builder: (context, leadingType, action) {
                   if (leadingType.isBack) {
@@ -139,14 +143,14 @@ class TabsHostPage extends StatelessWidget {
   const new({
     super.key,
     @queryParam this.tabsType = 'IndexedStack',
-    @queryParam this.useDefaultRoutes = false,
+    @queryParam this.shouldUseDefaultRoutes = false,
   });
   final String tabsType;
-  final bool useDefaultRoutes;
+  final bool shouldUseDefaultRoutes;
 
   @override
   Widget build(BuildContext context) {
-    final routes = useDefaultRoutes
+    final routes = shouldUseDefaultRoutes
         ? null
         : [const Tab1Route(), const Tab2Route(), const Tab3Route()];
 

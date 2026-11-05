@@ -7,9 +7,9 @@ import 'package:material_ui/material_ui.dart';
 import '../no_op.dart';
 
 class _ParamPage extends StatefulWidget {
-  const new({required this.param});
+  const new({required this.isParam});
 
-  final bool param;
+  final bool isParam;
 
   @override
   State<_ParamPage> createState() => _ParamPageState();
@@ -28,7 +28,7 @@ class _ParamPageState extends State<_ParamPage> {
   @override
   Widget build(BuildContext context) {
     builds++;
-    return Text('param ${widget.param}');
+    return Text('param ${widget.isParam}');
   }
 }
 
@@ -69,7 +69,7 @@ void main() {
                     page: PageInfo(
                       'PageThatRequiresQueryParamRoute',
                       builder: (data) => _ParamPage(
-                        param: data.queryParams.getBool('param', false),
+                        isParam: data.queryParams.getBool('param', false),
                       ),
                     ),
                   ),

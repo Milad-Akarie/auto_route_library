@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-RootStackRouter _buildRouter({bool usersIsInitial = false}) => .build(
+RootStackRouter _buildRouter({bool isUsersInitial = false}) => .build(
   routes: [
     NamedRouteDef(
       name: 'HomeRoute',
@@ -21,7 +21,7 @@ RootStackRouter _buildRouter({bool usersIsInitial = false}) => .build(
         NamedRouteDef(
           name: 'UsersRoute',
           path: 'users',
-          initial: usersIsInitial,
+          initial: isUsersInitial,
           builder: (_, _) => const Text('UsersRoute'),
         ),
         NamedRouteDef(
@@ -95,7 +95,7 @@ void main() {
     'replace() with the same parent route and no children opens its initial '
     'child',
     (tester) async {
-      final router = _buildRouter(usersIsInitial: true);
+      final router = _buildRouter(isUsersInitial: true);
       await pumpRouterApp(tester, router);
       unawaited(router.push(_kOther));
       await tester.pumpAndSettle();

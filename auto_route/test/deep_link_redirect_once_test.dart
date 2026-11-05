@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'build_counts.dart';
-import 'universal_link_test.dart' show sendPlatformLink;
+import 'universal_link_test.dart' show didSendPlatformLink;
 
 // flutter/flutter#137037: an app opened by a link to a route that redirects
 // opened the target page twice, the reporter's log showing its builder run
@@ -40,7 +40,7 @@ void main() {
       tester,
       router,
       '/details',
-      includePrefixMatches: false,
+      shouldIncludePrefixMatches: false,
     );
     expect(router.stack.map((page) => page.name), ['DetailsRoute']);
     expect(opened, {'DetailsRoute': 1});
@@ -56,10 +56,10 @@ void main() {
       tester,
       router,
       '/details',
-      includePrefixMatches: false,
+      shouldIncludePrefixMatches: false,
     );
 
-    await sendPlatformLink(tester, '/details');
+    await didSendPlatformLink(tester, '/details');
     expect(router.stack.map((page) => page.name), ['DetailsRoute']);
     expect(opened, {'DetailsRoute': 1});
     expect(router.currentUrl, '/my_details');

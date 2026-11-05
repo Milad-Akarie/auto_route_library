@@ -89,7 +89,7 @@ Future<void> pressBrowserBack(WidgetTester tester) =>
 ///
 /// The entry keeps the engine's serial number, so [browserSerialCount] stays
 /// where it was, and is marked as the browser's until the app writes it; see
-/// [appWroteBrowserEntry]. Clears the initial route when the test ends.
+/// [didAppWriteBrowserEntry]. Clears the initial route when the test ends.
 void openBrowserAt(WidgetTester tester, String path) {
   final dispatcher = tester.binding.platformDispatcher;
   addTearDown(dispatcher.clearDefaultRouteNameTestValue);
@@ -112,7 +112,7 @@ const _kOpenedByBrowser = 'openedByBrowser';
 
 /// Whether the app has written the browser's current entry since
 /// [openBrowserAt] made it, as it does when it reports its route.
-bool get appWroteBrowserEntry {
+bool get didAppWriteBrowserEntry {
   final state = window.history.state.dartify();
   return !(state is Map && state[_kOpenedByBrowser] == true);
 }

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'named_page.dart';
 import 'router_test_utils.dart';
-import 'universal_link_test.dart' show sendPlatformLink;
+import 'universal_link_test.dart' show didSendPlatformLink;
 
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/608
@@ -34,10 +34,10 @@ void main() {
       );
       await pumpRouterConfigApp(tester, router.config());
 
-      await sendPlatformLink(tester, '/login?otp=1');
+      await didSendPlatformLink(tester, '/login?otp=1');
       expect(find.text('otp 1'), findsOneWidget);
 
-      await sendPlatformLink(tester, '/login?otp=2');
+      await didSendPlatformLink(tester, '/login?otp=2');
       expect(find.text('otp 2'), findsOneWidget);
       expect(router.urlState.url, '/login?otp=2');
 

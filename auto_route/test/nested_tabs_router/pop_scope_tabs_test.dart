@@ -68,7 +68,7 @@ void main() {
         'page',
         (tester) async {
           _popAttempts = 0;
-          _scopeAroundTabs = scopeAroundTabs;
+          _hasScopeAroundTabs = scopeAroundTabs;
           final router = RootStackRouter.build(
             routes: [AutoRoute(page: _tabsScreen, path: '/', children: tabs)],
           );
@@ -98,11 +98,11 @@ void main() {
             await tester.pumpAndSettle();
           }
           final page = router.topRoute.name;
-          expect(frameworkHandlesBack.last, isTrue);
+          expect(frameworkHandlesBack.isHandlingBack, isTrue);
 
           for (var attempt = 1; attempt <= 2; attempt++) {
             await back(tester);
-            expect(frameworkHandlesBack.last, isTrue);
+            expect(frameworkHandlesBack.isHandlingBack, isTrue);
             expectTopPage(router, page);
             expect(_popAttempts, attempt);
           }
@@ -116,7 +116,7 @@ void main() {
 }
 
 var _popAttempts = 0;
-var _scopeAroundTabs = false;
+var _hasScopeAroundTabs = false;
 
 void _countBlockedPop() => _popAttempts++;
 
@@ -124,7 +124,7 @@ final _tabsScreen = PageInfo(
   'TabsScreenRoute',
   builder: (_) {
     const tabs = AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')]);
-    return _scopeAroundTabs
+    return _hasScopeAroundTabs
         ? const BlockedPopScope(onBlockedPop: _countBlockedPop, child: tabs)
         : tabs;
   },

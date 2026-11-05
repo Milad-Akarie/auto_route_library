@@ -25,13 +25,13 @@ Future<void> pumpAtDeepLink(
   WidgetTester tester,
   RootStackRouter router,
   String link, {
-  required bool includePrefixMatches,
+  required bool shouldIncludePrefixMatches,
 }) {
   final dispatcher = tester.binding.platformDispatcher;
   addTearDown(dispatcher.clearDefaultRouteNameTestValue);
   dispatcher.defaultRouteNameTestValue = link;
   return pumpRouterConfigApp(
     tester,
-    router.config(includePrefixMatches: includePrefixMatches),
+    router.config(includePrefixMatches: shouldIncludePrefixMatches),
   );
 }

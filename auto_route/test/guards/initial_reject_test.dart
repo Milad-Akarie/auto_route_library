@@ -43,7 +43,7 @@ void main() {
         tester,
         router,
         '/protected',
-        includePrefixMatches: false,
+        shouldIncludePrefixMatches: false,
       );
       expect(tester.takeException(), isNull);
       expect(router.stack, isEmpty);
@@ -68,7 +68,7 @@ void main() {
           tester,
           router,
           '/protected',
-          includePrefixMatches: false,
+          shouldIncludePrefixMatches: false,
         );
         expect(tester.takeException(), isNull);
         expect(router.stack.map((p) => p.name), ['FallbackRoute']);

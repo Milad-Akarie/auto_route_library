@@ -96,12 +96,12 @@ void main() {
         await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
         await showTab(tester, tabs, 1);
         await showTab(tester, tabs, 0);
-        expect(frameworkHandlesBack.last, isTrue);
+        expect(frameworkHandlesBack.isHandlingBack, isTrue);
 
         await back(tester);
 
         expect(stackOf(tabs, 0), ['BookListRoute']);
-        expect(frameworkHandlesBack.last, isFalse);
+        expect(frameworkHandlesBack.isHandlingBack, isFalse);
       },
       skip: kIsWeb,
     );
@@ -114,7 +114,7 @@ void main() {
       await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
       await showTab(tester, tabs, 1);
 
-      expect(frameworkHandlesBack.last, isFalse);
+      expect(frameworkHandlesBack.isHandlingBack, isFalse);
       expect(await tester.binding.handlePopRoute(), isFalse);
       await tester.pumpAndSettle();
 

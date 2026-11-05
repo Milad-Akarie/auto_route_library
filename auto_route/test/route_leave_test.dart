@@ -18,12 +18,12 @@ import 'router_test_utils.dart';
 // refuses is not reported.
 void main() {
   late List<RouteLeaveKind> leaves;
-  late bool editorCanPop;
+  late bool canEditorPop;
   late RootStackRouter router;
 
   setUp(() {
     leaves = [];
-    editorCanPop = true;
+    canEditorPop = true;
     router = RootStackRouter.build(
       routes: [
         AutoRoute(
@@ -35,7 +35,7 @@ void main() {
           page: PageInfo(
             'EditorRoute',
             builder: (_) => PopScope(
-              canPop: editorCanPop,
+              canPop: canEditorPop,
               child: AutoRouteLeaveListener(
                 onLeave: leaves.add,
                 child: const Text('EditorRoute'),
@@ -81,7 +81,7 @@ void main() {
   });
 
   testWidgets('a back the PopScope refuses is not reported', (tester) async {
-    editorCanPop = false;
+    canEditorPop = false;
     await openEditor(tester);
     await systemBack(tester);
     unawaited(router.maybePop());

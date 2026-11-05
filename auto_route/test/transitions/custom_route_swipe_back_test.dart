@@ -7,8 +7,8 @@ import 'package:material_ui/material_ui.dart';
 import '../back_test_utils.dart';
 
 RootStackRouter _router({
-  required bool enableCupertinoBackGesture,
-  bool fullscreenDialog = false,
+  required bool shouldEnableCupertinoBackGesture,
+  bool isFullscreenDialog = false,
 }) {
   return RootStackRouter.build(
     routes: [
@@ -26,8 +26,8 @@ RootStackRouter _router({
           builder: (_) => const Scaffold(body: Text('DetailsRoute')),
         ),
         transitionsBuilder: TransitionsBuilders.fadeIn,
-        fullscreenDialog: fullscreenDialog,
-        enableCupertinoBackGesture: enableCupertinoBackGesture,
+        fullscreenDialog: isFullscreenDialog,
+        enableCupertinoBackGesture: shouldEnableCupertinoBackGesture,
       ),
     ],
   );
@@ -53,7 +53,7 @@ void main() {
     'A custom-transition page with enableCupertinoBackGesture pops on a back '
     'swipe',
     (tester) async {
-      final router = _router(enableCupertinoBackGesture: true);
+      final router = _router(shouldEnableCupertinoBackGesture: true);
       await _pumpAtDetails(tester, router);
 
       // Halfway through the swipe, the page's own fade follows the finger.
@@ -84,7 +84,7 @@ void main() {
   testWidgets(
     'A back swipe that is let go early brings the custom-transition page back',
     (tester) async {
-      final router = _router(enableCupertinoBackGesture: true);
+      final router = _router(shouldEnableCupertinoBackGesture: true);
       await _pumpAtDetails(tester, router);
 
       final gesture = await tester.startGesture(const Offset(5, 300));
@@ -106,7 +106,7 @@ void main() {
   testWidgets(
     'A custom-transition page without the option ignores a back swipe',
     (tester) async {
-      final router = _router(enableCupertinoBackGesture: false);
+      final router = _router(shouldEnableCupertinoBackGesture: false);
       await _pumpAtDetails(tester, router);
 
       await swipeBack(tester);
@@ -124,7 +124,7 @@ void main() {
   testWidgets('enableCupertinoBackGesture adds no back swipe on Android', (
     tester,
   ) async {
-    final router = _router(enableCupertinoBackGesture: true);
+    final router = _router(shouldEnableCupertinoBackGesture: true);
     await _pumpAtDetails(tester, router);
 
     await swipeBack(tester);
@@ -141,8 +141,8 @@ void main() {
     'A full screen dialog with enableCupertinoBackGesture ignores a back swipe',
     (tester) async {
       final router = _router(
-        enableCupertinoBackGesture: true,
-        fullscreenDialog: true,
+        shouldEnableCupertinoBackGesture: true,
+        isFullscreenDialog: true,
       );
       await _pumpAtDetails(tester, router);
 

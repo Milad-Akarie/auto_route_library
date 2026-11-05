@@ -37,8 +37,8 @@ void main() {
     );
     await pumpRouterApp(tester, router);
     final nested = router.innerRouterOf<StackRouter>('HostRoute')!;
-    var bClosed = false;
-    unawaited(nested.pushPath('b').then((_) => bClosed = true));
+    var isBClosed = false;
+    unawaited(nested.pushPath('b').then((_) => isBClosed = true));
     await tester.pumpAndSettle();
     unawaited(nested.pushPath('c'));
     await tester.pumpAndSettle();
@@ -55,7 +55,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(shown, {'A', 'C'});
-    expect(bClosed, isTrue);
+    expect(isBClosed, isTrue);
     expect(nested.stack.map((page) => page.name), ['A']);
     expect(find.text('A'), findsOneWidget);
   });

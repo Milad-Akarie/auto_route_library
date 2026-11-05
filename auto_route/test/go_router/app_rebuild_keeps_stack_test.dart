@@ -10,9 +10,11 @@ import 'package:material_ui/material_ui.dart';
 // rebuild closed the pages over the root one.
 void main() {
   final changes = {
-    'showPerformanceOverlay': const _AppSettings(showPerformanceOverlay: true),
-    'showSemanticsDebugger': const _AppSettings(showSemanticsDebugger: true),
-    'builder': const _AppSettings(wrap: true),
+    'showPerformanceOverlay': const _AppSettings(
+      isShowPerformanceOverlay: true,
+    ),
+    'showSemanticsDebugger': const _AppSettings(isShowSemanticsDebugger: true),
+    'builder': const _AppSettings(isWrap: true),
   };
 
   for (final MapEntry(key: change, value: settings) in changes.entries) {
@@ -48,9 +50,9 @@ void main() {
           valueListenable: app,
           builder: (_, appSettings, _) => MaterialApp.router(
             routerConfig: config,
-            showPerformanceOverlay: appSettings.showPerformanceOverlay,
-            showSemanticsDebugger: appSettings.showSemanticsDebugger,
-            builder: appSettings.wrap
+            showPerformanceOverlay: appSettings.isShowPerformanceOverlay,
+            showSemanticsDebugger: appSettings.isShowSemanticsDebugger,
+            builder: appSettings.isWrap
                 ? (_, child) => ColoredBox(color: Colors.white, child: child)
                 : null,
           ),
@@ -79,14 +81,14 @@ void main() {
 
 class _AppSettings {
   const new({
-    this.showPerformanceOverlay = false,
-    this.showSemanticsDebugger = false,
-    this.wrap = false,
+    this.isShowPerformanceOverlay = false,
+    this.isShowSemanticsDebugger = false,
+    this.isWrap = false,
   });
 
-  final bool showPerformanceOverlay;
-  final bool showSemanticsDebugger;
-  final bool wrap;
+  final bool isShowPerformanceOverlay;
+  final bool isShowSemanticsDebugger;
+  final bool isWrap;
 }
 
 class _CountingPage extends StatefulWidget {

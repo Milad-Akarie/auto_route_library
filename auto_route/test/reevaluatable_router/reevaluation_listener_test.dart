@@ -195,7 +195,7 @@ void main() {
           reevaluateListenable: reevaluationNotifier,
           deepLinkBuilder: (_) => DeepLink.single(
             TabsHostRoute(
-              useDefaultRoutes: true,
+              shouldUseDefaultRoutes: true,
               children: [
                 tab2Router(children: [const Tab2Nested2Route()]),
               ],
@@ -291,7 +291,7 @@ void main() {
         localRouter.config(
           reevaluateListenable: reevaluationNotifier,
           deepLinkBuilder: (_) =>
-              DeepLink.single(TabsHostRoute(useDefaultRoutes: true)),
+              DeepLink.single(TabsHostRoute(shouldUseDefaultRoutes: true)),
         ),
       );
       expectTopPage(localRouter, Tab1Route.name);

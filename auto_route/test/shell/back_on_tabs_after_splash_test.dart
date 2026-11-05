@@ -63,11 +63,11 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('Explore'), findsOneWidget);
         expect(router.stack.map((page) => page.name), ['HomeRoute']);
-        expect(frameworkHandlesBack.last, isFalse);
+        expect(frameworkHandlesBack.isHandlingBack, isFalse);
 
         unawaited(router.push(const _Route('ProfileRoute')));
         await tester.pumpAndSettle();
-        expect(frameworkHandlesBack.last, isTrue);
+        expect(frameworkHandlesBack.isHandlingBack, isTrue);
         await back(tester);
         expect(
           find.text('Explore'),
@@ -75,7 +75,7 @@ void main() {
           reason: 'after back(tester)',
         );
         expect(
-          frameworkHandlesBack.last,
+          frameworkHandlesBack.isHandlingBack,
           isFalse,
           reason: 'after back(tester)',
         );

@@ -46,14 +46,14 @@ void main() {
       // The semantics nodes a screen reader gets whose label holds [text].
       List<SemanticsNode> nodesLabeled(String text) {
         final nodes = <SemanticsNode>[];
-        bool visit(SemanticsNode node) {
+        bool shouldVisitNext(SemanticsNode node) {
           if (node.label.split('\n').contains(text)) nodes.add(node);
-          node.visitChildren(visit);
+          node.visitChildren(shouldVisitNext);
           return true;
         }
 
         final [view] = tester.binding.renderViews.toList();
-        visit(view.owner!.semanticsOwner!.rootSemanticsNode!);
+        shouldVisitNext(view.owner!.semanticsOwner!.rootSemanticsNode!);
         return nodes;
       }
 

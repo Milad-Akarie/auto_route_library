@@ -37,17 +37,17 @@ void main() {
         ],
       );
       await pumpRouterApp(tester, router);
-      var completed = false;
+      var isCompleted = false;
       String? result = 'not completed';
       router.push<String>(const NamedRoute('DetailsRoute')).then((value) {
-        completed = true;
+        isCompleted = true;
         result = value;
       }).ignore();
       await tester.pumpAndSettle();
 
       unawaited(router.replace(const NamedRoute('Details2Route')));
       await tester.pumpAndSettle();
-      expect(completed, isTrue);
+      expect(isCompleted, isTrue);
       expect(result, isNull);
       expect(router.stack.map((e) => e.routeData.name), [
         'HomeRoute',

@@ -57,12 +57,12 @@ void main() {
       tester,
     ) async {
       await pumpRouterConfigApp(tester, router.config());
-      bool? result;
-      var completed = false;
+      bool? wasResult;
+      var isCompleted = false;
       unawaited(
-        push(router).then((value) {
-          result = value;
-          completed = true;
+        push(router).then((wasPopped) {
+          wasResult = wasPopped;
+          isCompleted = true;
         }),
       );
       await tester.pumpAndSettle();
@@ -79,8 +79,8 @@ void main() {
       );
       expect(find.text('Content 1'), findsNothing);
       expect(find.text('Home'), findsOneWidget);
-      expect(completed, isTrue);
-      expect(result, isTrue);
+      expect(isCompleted, isTrue);
+      expect(wasResult, isTrue);
     });
   }
 
@@ -88,11 +88,11 @@ void main() {
     "pushPath('/home/content/1') with the home on top returns the content's bool",
     (tester) async {
       await pumpRouterConfigApp(tester, router.config());
-      bool? result;
+      bool? wasResult;
       unawaited(
         router
             .pushPath<bool>('/home/content/1')
-            .then((value) => result = value),
+            .then((wasPopped) => wasResult = wasPopped),
       );
       await tester.pumpAndSettle();
       expect(router.stack.map((page) => page.name), ['HomeRoute']);
@@ -100,7 +100,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      expect(result, isTrue);
+      expect(wasResult, isTrue);
     },
   );
 
@@ -134,8 +134,8 @@ void main() {
           'HomeRoute',
           'OtherRoute',
         ]);
-        var completed = false;
-        unawaited(push(router).then((_) => completed = true));
+        var isCompleted = false;
+        unawaited(push(router).then((_) => isCompleted = true));
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         expect(router.stack.map((page) => page.name), [
@@ -152,7 +152,7 @@ void main() {
           isNull,
           reason: 'after tester.tap(find.byIcon(Icons.arrow_back))',
         );
-        expect(completed, isFalse);
+        expect(isCompleted, isFalse);
       },
     );
   }

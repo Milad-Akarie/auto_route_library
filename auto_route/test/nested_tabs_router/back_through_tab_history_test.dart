@@ -21,18 +21,18 @@ void main() {
 
   Future<TabsRouter> pumpApp(
     WidgetTester tester, {
-    bool backThroughHistory = true,
+    bool shouldGoBackThroughHistory = true,
     int homeIndex = -1,
-    bool overFirstPage = false,
+    bool isOverFirstPage = false,
   }) async {
-    _backThroughHistory = backThroughHistory;
+    _shouldGoBackThroughHistory = shouldGoBackThroughHistory;
     _homeIndex = homeIndex;
     final router = RootStackRouter.build(
       routes: [
-        if (overFirstPage) AutoRoute(page: _page('FirstRoute'), path: '/'),
+        if (isOverFirstPage) AutoRoute(page: _page('FirstRoute'), path: '/'),
         AutoRoute(
           page: _tabsPage,
-          path: overFirstPage ? '/tabs' : '/',
+          path: isOverFirstPage ? '/tabs' : '/',
           children: [
             for (final name in _kTabNames)
               AutoRoute(
@@ -42,7 +42,7 @@ void main() {
                   if (name == _kGuardedTab)
                     AutoRouteGuard.simple(
                       (resolver, _) =>
-                          _reject ? resolver.reject() : resolver.next(),
+                          _shouldReject ? resolver.reject() : resolver.next(),
                     ),
                 ],
               ),
@@ -56,7 +56,7 @@ void main() {
       MaterialApp.router(theme: androidTheme, routerConfig: router.config()),
     );
     await tester.pumpAndSettle();
-    if (overFirstPage) {
+    if (isOverFirstPage) {
       unawaited(router.push(const _Route('TabsRoute')));
       await tester.pumpAndSettle();
     }
@@ -79,7 +79,7 @@ void main() {
     expect(find.text(_kTabNames.elementAtOrNull(index)!), findsOneWidget);
   }
 
-  setUp(() => _reject = false);
+  setUp(() => _shouldReject = false);
 
   for (final MapEntry(key: name, value: back) in {
     'system back': systemBack,
@@ -89,18 +89,22 @@ void main() {
       '$name after tabs 0, 2, 1 shows 2, then 0, then Android closes the app',
       (tester) async {
         final tabs = await pumpApp(tester);
-        expect(frameworkHandlesBack.last, isFalse);
+        expect(frameworkHandlesBack.isHandlingBack, isFalse);
         await visit(tester, tabs, [2, 1]);
-        expect(frameworkHandlesBack.last, isTrue);
+        expect(frameworkHandlesBack.isHandlingBack, isTrue);
 
         await back(tester);
         expectTab(tabs, 2);
-        expect(frameworkHandlesBack.last, isTrue, reason: 'after back(tester)');
+        expect(
+          frameworkHandlesBack.isHandlingBack,
+          isTrue,
+          reason: 'after back(tester)',
+        );
 
         await back(tester);
         expectTab(tabs, 0);
         expect(
-          frameworkHandlesBack.last,
+          frameworkHandlesBack.isHandlingBack,
           isFalse,
           reason: 'after back(tester)',
         );
@@ -112,7 +116,7 @@ void main() {
   testWidgets('back after tabs 0, 2, 1 shows 2, then 0, then leaves the tabs', (
     tester,
   ) async {
-    final tabs = await pumpApp(tester, overFirstPage: true);
+    final tabs = await pumpApp(tester, isOverFirstPage: true);
     await visit(tester, tabs, [2, 1]);
 
     await systemBack(tester);
@@ -125,7 +129,7 @@ void main() {
   });
 
   testWidgets('popping the tabs router walks the same history', (tester) async {
-    final tabs = await pumpApp(tester, overFirstPage: true);
+    final tabs = await pumpApp(tester, isOverFirstPage: true);
     await visit(tester, tabs, [2, 1]);
 
     expect(await tabs.maybePop(), isTrue);
@@ -142,7 +146,7 @@ void main() {
   testWidgets(
     'a tab visited again is gone back to once, from where it was visited last',
     (tester) async {
-      final tabs = await pumpApp(tester, overFirstPage: true);
+      final tabs = await pumpApp(tester, isOverFirstPage: true);
       await visit(tester, tabs, [1, 0, 2]);
 
       await systemBack(tester);
@@ -155,9 +159,9 @@ void main() {
   );
 
   testWidgets('back skips a tab whose guards keep it out', (tester) async {
-    final tabs = await pumpApp(tester, overFirstPage: true);
+    final tabs = await pumpApp(tester, isOverFirstPage: true);
     await visit(tester, tabs, [2, 1]);
-    _reject = true;
+    _shouldReject = true;
 
     await systemBack(tester);
     expectTab(tabs, 0);
@@ -167,7 +171,7 @@ void main() {
     'with a homeIndex, back shows the home tab once the history is gone '
     'through',
     (tester) async {
-      final tabs = await pumpApp(tester, homeIndex: 0, overFirstPage: true);
+      final tabs = await pumpApp(tester, homeIndex: 0, isOverFirstPage: true);
       await visit(tester, tabs, [1, 0, 3]);
 
       await systemBack(tester);
@@ -186,8 +190,8 @@ void main() {
   ) async {
     final tabs = await pumpApp(
       tester,
-      backThroughHistory: false,
-      overFirstPage: true,
+      shouldGoBackThroughHistory: false,
+      isOverFirstPage: true,
     );
     await visit(tester, tabs, [2, 1]);
 
@@ -204,14 +208,14 @@ const List<String> _kTabNames = [
   _kGuardedTab,
   'ProfileRoute',
 ];
-var _backThroughHistory = true;
+var _shouldGoBackThroughHistory = true;
 var _homeIndex = -1;
-var _reject = false;
+var _shouldReject = false;
 
 final _tabsPage = PageInfo(
   'TabsRoute',
   builder: (_) => AutoTabsRouter(
-    backThroughHistory: _backThroughHistory,
+    backThroughHistory: _shouldGoBackThroughHistory,
     homeIndex: _homeIndex,
     routes: [for (final name in _kTabNames) _Route(name)],
   ),

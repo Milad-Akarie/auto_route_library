@@ -17,13 +17,13 @@ void main() {
 
   Future<RootStackRouter> openDetails(
     WidgetTester tester, {
-    required bool withWildcard,
+    required bool hasWildcard,
   }) async {
     final router = RootStackRouter.build(
       routes: [
         AutoRoute(page: _page('Home'), path: '/', initial: true),
         AutoRoute(page: _page('Details'), path: '/details'),
-        if (withWildcard) AutoRoute(page: _page('Unknown'), path: '*'),
+        if (hasWildcard) AutoRoute(page: _page('Unknown'), path: '*'),
       ],
     );
     await pumpRouterApp(tester, router);
@@ -35,7 +35,7 @@ void main() {
   testWidgets(
     'with a wildcard route, the unknown page goes on top and back returns',
     (tester) async {
-      final router = await openDetails(tester, withWildcard: true);
+      final router = await openDetails(tester, hasWildcard: true);
 
       unawaited(router.pushPath('/nope'));
       await tester.pumpAndSettle();
@@ -54,7 +54,7 @@ void main() {
   testWidgets(
     'without one, onFailure hears RouteNotFoundFailure and the stack stays',
     (tester) async {
-      final router = await openDetails(tester, withWildcard: false);
+      final router = await openDetails(tester, hasWildcard: false);
       final failures = <NavigationFailure>[];
 
       unawaited(router.pushPath('/nope', onFailure: failures.add));
@@ -69,7 +69,7 @@ void main() {
   testWidgets('without one or onFailure, the push throws and the stack stays', (
     tester,
   ) async {
-    final router = await openDetails(tester, withWildcard: false);
+    final router = await openDetails(tester, hasWildcard: false);
 
     expect(() => router.pushPath('/nope'), throwsFlutterError);
     await tester.pumpAndSettle();

@@ -117,14 +117,14 @@ class NotFoundRoute extends PageRouteInfo<void> {
 class SecondHostRoute extends PageRouteInfo<SecondHostRouteArgs> {
   SecondHostRoute({
     Key? key,
-    bool useCustomLeading = false,
+    bool shouldUseCustomLeading = false,
     bool hasDrawer = false,
     List<PageRouteInfo>? children,
   }) : super(
          SecondHostRoute.name,
          args: SecondHostRouteArgs(
            key: key,
-           useCustomLeading: useCustomLeading,
+           shouldUseCustomLeading: shouldUseCustomLeading,
            hasDrawer: hasDrawer,
          ),
          initialChildren: children,
@@ -140,7 +140,7 @@ class SecondHostRoute extends PageRouteInfo<SecondHostRouteArgs> {
       );
       return SecondHostPage(
         key: args.key,
-        useCustomLeading: args.useCustomLeading,
+        shouldUseCustomLeading: args.shouldUseCustomLeading,
         hasDrawer: args.hasDrawer,
       );
     },
@@ -150,19 +150,19 @@ class SecondHostRoute extends PageRouteInfo<SecondHostRouteArgs> {
 class SecondHostRouteArgs {
   const SecondHostRouteArgs({
     this.key,
-    this.useCustomLeading = false,
+    this.shouldUseCustomLeading = false,
     this.hasDrawer = false,
   });
 
   final Key? key;
 
-  final bool useCustomLeading;
+  final bool shouldUseCustomLeading;
 
   final bool hasDrawer;
 
   @override
   String toString() {
-    return 'SecondHostRouteArgs{key: $key, useCustomLeading: $useCustomLeading, hasDrawer: $hasDrawer}';
+    return 'SecondHostRouteArgs{key: $key, shouldUseCustomLeading: $shouldUseCustomLeading, hasDrawer: $hasDrawer}';
   }
 
   @override
@@ -170,13 +170,13 @@ class SecondHostRouteArgs {
     if (identical(this, other)) return true;
     if (other is! SecondHostRouteArgs) return false;
     return key == other.key &&
-        useCustomLeading == other.useCustomLeading &&
+        shouldUseCustomLeading == other.shouldUseCustomLeading &&
         hasDrawer == other.hasDrawer;
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^ useCustomLeading.hashCode ^ hasDrawer.hashCode;
+      key.hashCode ^ shouldUseCustomLeading.hashCode ^ hasDrawer.hashCode;
 }
 
 /// generated route for
@@ -361,18 +361,18 @@ class TabsHostRoute extends PageRouteInfo<TabsHostRouteArgs> {
   TabsHostRoute({
     Key? key,
     String tabsType = 'IndexedStack',
-    bool useDefaultRoutes = false,
+    bool shouldUseDefaultRoutes = false,
     List<PageRouteInfo>? children,
   }) : super(
          TabsHostRoute.name,
          args: TabsHostRouteArgs(
            key: key,
            tabsType: tabsType,
-           useDefaultRoutes: useDefaultRoutes,
+           shouldUseDefaultRoutes: shouldUseDefaultRoutes,
          ),
          rawQueryParams: {
            'tabsType': tabsType,
-           'useDefaultRoutes': useDefaultRoutes,
+           'shouldUseDefaultRoutes': shouldUseDefaultRoutes,
          },
          initialChildren: children,
        );
@@ -386,13 +386,16 @@ class TabsHostRoute extends PageRouteInfo<TabsHostRouteArgs> {
       final args = data.argsAs<TabsHostRouteArgs>(
         orElse: () => TabsHostRouteArgs(
           tabsType: queryParams.getString('tabsType', 'IndexedStack'),
-          useDefaultRoutes: queryParams.getBool('useDefaultRoutes', false),
+          shouldUseDefaultRoutes: queryParams.getBool(
+            'shouldUseDefaultRoutes',
+            false,
+          ),
         ),
       );
       return TabsHostPage(
         key: args.key,
         tabsType: args.tabsType,
-        useDefaultRoutes: args.useDefaultRoutes,
+        shouldUseDefaultRoutes: args.shouldUseDefaultRoutes,
       );
     },
   );
@@ -402,18 +405,18 @@ class TabsHostRouteArgs {
   const TabsHostRouteArgs({
     this.key,
     this.tabsType = 'IndexedStack',
-    this.useDefaultRoutes = false,
+    this.shouldUseDefaultRoutes = false,
   });
 
   final Key? key;
 
   final String tabsType;
 
-  final bool useDefaultRoutes;
+  final bool shouldUseDefaultRoutes;
 
   @override
   String toString() {
-    return 'TabsHostRouteArgs{key: $key, tabsType: $tabsType, useDefaultRoutes: $useDefaultRoutes}';
+    return 'TabsHostRouteArgs{key: $key, tabsType: $tabsType, shouldUseDefaultRoutes: $shouldUseDefaultRoutes}';
   }
 
   @override
@@ -422,12 +425,12 @@ class TabsHostRouteArgs {
     if (other is! TabsHostRouteArgs) return false;
     return key == other.key &&
         tabsType == other.tabsType &&
-        useDefaultRoutes == other.useDefaultRoutes;
+        shouldUseDefaultRoutes == other.shouldUseDefaultRoutes;
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^ tabsType.hashCode ^ useDefaultRoutes.hashCode;
+      key.hashCode ^ tabsType.hashCode ^ shouldUseDefaultRoutes.hashCode;
 }
 
 /// generated route for

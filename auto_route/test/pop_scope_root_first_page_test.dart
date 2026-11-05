@@ -39,14 +39,14 @@ void main() {
           ],
         );
         addTearDown(router.dispose);
-        var appClosed = false;
-        bool? frameworkHandlesBack;
+        var wasAppClosed = false;
+        bool? doesFrameworkHandleBack;
         tester.binding.handleAppLifecycleStateChanged(.resumed);
         final messenger = tester.binding.defaultBinaryMessenger
           ..setMockMethodCallHandler(SystemChannels.platform, (call) async {
-            if (call.method == 'SystemNavigator.pop') appClosed = true;
+            if (call.method == 'SystemNavigator.pop') wasAppClosed = true;
             if (call.method == 'SystemNavigator.setFrameworkHandlesBack') {
-              frameworkHandlesBack = call.arguments as bool;
+              doesFrameworkHandleBack = call.arguments as bool;
             }
             return null;
           });
@@ -61,14 +61,14 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(frameworkHandlesBack, isTrue);
+        expect(doesFrameworkHandleBack, isTrue);
 
         await back(tester);
         await back(tester);
 
         expect(heard, [false, false]);
-        expect(appClosed, isFalse);
-        expect(frameworkHandlesBack, isTrue, reason: 'after back(tester)');
+        expect(wasAppClosed, isFalse);
+        expect(doesFrameworkHandleBack, isTrue, reason: 'after back(tester)');
         expect(find.text('Home'), findsOneWidget);
       },
       skip: kIsWeb,

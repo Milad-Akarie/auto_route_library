@@ -59,18 +59,18 @@ void main() {
     decision = Completer<bool>();
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
-    var completed = false;
+    var isCompleted = false;
     unawaited(
       router
           .pushAll(const [NamedRoute('ListRoute'), NamedRoute('CheckoutRoute')])
-          .then((_) => completed = true),
+          .then((_) => isCompleted = true),
     );
     await tester.pumpAndSettle();
-    expect(completed, isFalse);
+    expect(isCompleted, isFalse);
 
     decision.complete(true);
     await tester.pumpAndSettle();
-    expect(completed, isTrue);
+    expect(isCompleted, isTrue);
     expect(namesOf(router), ['HomeRoute', 'ListRoute', 'CheckoutRoute']);
   });
 
@@ -80,18 +80,18 @@ void main() {
     decision = Completer<bool>();
     final router = buildRouter();
     await pumpRouterConfigApp(tester, router.config());
-    var completed = false;
+    var isCompleted = false;
     unawaited(
       router
           .pushAll(const [NamedRoute('ListRoute'), NamedRoute('CheckoutRoute')])
-          .then((_) => completed = true),
+          .then((_) => isCompleted = true),
     );
     await tester.pumpAndSettle();
-    expect(completed, isFalse);
+    expect(isCompleted, isFalse);
 
     decision.complete(false);
     await tester.pumpAndSettle();
-    expect(completed, isTrue);
+    expect(isCompleted, isTrue);
     expect(namesOf(router).lastOrNull, isNot('CheckoutRoute'));
   });
 
@@ -103,18 +103,18 @@ void main() {
     await pumpRouterConfigApp(tester, router.config());
     unawaited(router.push(const NamedRoute('ListRoute')));
     await tester.pumpAndSettle();
-    var completed = false;
+    var isCompleted = false;
     unawaited(
       router
           .popAndPushAll(const [NamedRoute('CheckoutRoute')])
-          .then((_) => completed = true),
+          .then((_) => isCompleted = true),
     );
     await tester.pumpAndSettle();
-    expect(completed, isFalse);
+    expect(isCompleted, isFalse);
 
     decision.complete(true);
     await tester.pumpAndSettle();
-    expect(completed, isTrue);
+    expect(isCompleted, isTrue);
     expect(namesOf(router), ['HomeRoute', 'CheckoutRoute']);
   });
 }

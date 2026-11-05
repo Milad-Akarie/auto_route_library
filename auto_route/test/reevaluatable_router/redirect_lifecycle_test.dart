@@ -6,15 +6,15 @@ import 'package:material_ui/material_ui.dart';
 
 /// The reporter's notifier of the login and subscription state.
 class _GuardChangeNotifier extends ChangeNotifier {
-  bool connected = false;
+  bool isConnected = false;
   final bool hasProSubscription = false;
   void connect() {
-    connected = true;
+    isConnected = true;
     notifyListeners();
   }
 
   void disconnect() {
-    connected = false;
+    isConnected = false;
     notifyListeners();
   }
 }
@@ -37,7 +37,7 @@ void main() {
       final n = _GuardChangeNotifier();
       addTearDown(n.dispose);
       final login = AutoRouteGuard.simple((resolver, router) {
-        if (n.connected) {
+        if (n.isConnected) {
           resolver.nextOrBack();
         } else {
           unawaited(resolver.redirectUntil(const NamedRoute('SignInRoute')));
@@ -45,7 +45,7 @@ void main() {
       });
       final anonymous = AutoRouteGuard.simple(
         (resolver, router) =>
-            n.connected ? resolver.reject(goBack: true) : resolver.next(),
+            n.isConnected ? resolver.reject(goBack: true) : resolver.next(),
       );
       final noPro = AutoRouteGuard.simple(
         (resolver, router) => n.hasProSubscription

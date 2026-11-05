@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'build_counts.dart';
-import 'universal_link_test.dart' show sendPlatformLink;
+import 'universal_link_test.dart' show didSendPlatformLink;
 
 // Links from the platform whose query params hold encoded characters: each
 // param should read back decoded once, whether the link opens the app or
@@ -38,7 +38,7 @@ void main() {
       tester,
       buildRouter(),
       link,
-      includePrefixMatches: false,
+      shouldIncludePrefixMatches: false,
     );
     expect(find.text(params), findsOneWidget, reason: 'opened at $link');
     await tester.pumpWidget(const SizedBox());
@@ -47,9 +47,9 @@ void main() {
       tester,
       buildRouter(),
       '/',
-      includePrefixMatches: false,
+      shouldIncludePrefixMatches: false,
     );
-    await sendPlatformLink(tester, link);
+    await didSendPlatformLink(tester, link);
     expect(
       find.text(params),
       findsOneWidget,

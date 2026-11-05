@@ -164,8 +164,8 @@ void main() {
         'HomeRoute',
         'AppGuardRoute',
       ]);
-      final unlockListener = settings.stream.listen((guarded) {
-        if (!guarded) router.pop();
+      final unlockListener = settings.stream.listen((isGuarded) {
+        if (!isGuarded) router.pop();
       });
       addTearDown(unlockListener.cancel);
 

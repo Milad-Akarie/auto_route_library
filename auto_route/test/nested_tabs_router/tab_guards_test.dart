@@ -19,7 +19,7 @@ import '../router_test_utils.dart';
 // that was showing, and its url.
 void main() {
   setUp(() {
-    _allow = false;
+    _isAllowed = false;
     _decision = null;
     _guardCalls = 0;
   });
@@ -43,7 +43,7 @@ void main() {
       testWidgets('setActiveIndex to a tab whose guard lets it in shows it', (
         tester,
       ) async {
-        _allow = true;
+        _isAllowed = true;
         final router = _buildRouter(kind);
         await pumpRouterApp(tester, router);
         final tabs = _tabsOf(router)..setActiveIndex(1);
@@ -90,7 +90,7 @@ void main() {
       testWidgets('opening the url of a tab whose guard lets it in shows it', (
         tester,
       ) async {
-        _allow = true;
+        _isAllowed = true;
         final router = _buildRouter(kind);
         await pumpRouterApp(tester, router, initialLink: '/b');
         final tabs = _tabsOf(router);
@@ -129,7 +129,7 @@ void main() {
           await tester.pumpAndSettle();
           expectTopPage(router, 'LoginRoute');
 
-          _allow = true;
+          _isAllowed = true;
           await tester.tap(find.text('LoginRoute'));
           await tester.pumpAndSettle();
 
@@ -144,14 +144,14 @@ void main() {
       testWidgets(
         'back to a home tab whose guard rejects is not taken by the tabs',
         (tester) async {
-          _allow = true;
+          _isAllowed = true;
           final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
           await pumpRouterApp(tester, router);
           final tabs = _tabsOf(router)..setActiveIndex(1);
           await tester.pumpAndSettle();
           _expectTab(tabs, 1);
 
-          _allow = false;
+          _isAllowed = false;
           expect(await tabs.maybePop(), isFalse);
           await tester.pumpAndSettle();
 
@@ -165,20 +165,20 @@ void main() {
         "another tab chosen while back waits for the home tab's guard keeps "
         'the tabs',
         (tester) async {
-          _allow = true;
+          _isAllowed = true;
           final router = _buildRouter(kind, guardedTab: 0, homeIndex: 0);
           await pumpRouterApp(tester, router);
           final tabs = _tabsOf(router)..setActiveIndex(1);
           await tester.pumpAndSettle();
 
           final decision = _decision = Completer<bool>();
-          final back = tabs.maybePop();
+          final wasBackHandled = tabs.maybePop();
           tabs.setActiveIndex(2);
           await tester.pumpAndSettle();
           decision.complete(false);
           await tester.pumpAndSettle();
 
-          expect(await back, isTrue);
+          expect(await wasBackHandled, isTrue);
           expect(router.stack.map((page) => page.routeData.name), [
             'HomeRoute',
           ]);
@@ -207,7 +207,7 @@ void main() {
         testWidgets('swiping to a tab whose guard lets it in shows it', (
           tester,
         ) async {
-          _allow = true;
+          _isAllowed = true;
           final router = _buildRouter(kind);
           await pumpRouterApp(tester, router);
           final tabs = _tabsOf(router);
@@ -229,7 +229,7 @@ enum _Tabs { indexedStack, pageView, tabBar }
 const _kTabNames = ['TabA', 'TabB', 'TabC'];
 
 // Whether the tab guard lets the tab in, and how often it was asked.
-var _allow = false;
+var _isAllowed = false;
 var _guardCalls = 0;
 
 // When set, the tab guard waits for it to decide.
@@ -244,7 +244,7 @@ final _guard = AutoRouteGuard.simple((resolver, _) async {
       resolver.reject();
     }
   } else {
-    if (_allow) {
+    if (_isAllowed) {
       resolver.next();
     } else {
       resolver.reject();
@@ -254,7 +254,7 @@ final _guard = AutoRouteGuard.simple((resolver, _) async {
 
 final _loginGuard = AutoRouteGuard.simple((resolver, _) {
   _guardCalls++;
-  if (_allow) {
+  if (_isAllowed) {
     resolver.next();
   } else {
     unawaited(resolver.redirectUntil(const NamedRoute('LoginRoute')));

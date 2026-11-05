@@ -25,10 +25,10 @@ void main() {
 
   for (final MapEntry(key: name, value: leave) in leaves.entries) {
     // On web, back steps through the browser's history instead.
-    final skip = kIsWeb && name == 'back';
+    final shouldSkip = kIsWeb && name == 'back';
     testWidgets(
       '$name right after popping a dialog animates the page out',
-      skip: skip,
+      skip: shouldSkip,
       (tester) async {
         final router = RootStackRouter.build(
           routes: [

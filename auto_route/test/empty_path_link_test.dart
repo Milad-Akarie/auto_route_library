@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'main_router.dart';
 import 'router_test_utils.dart';
 import 'simple_router/router.dart';
-import 'universal_link_test.dart' show sendPlatformLink;
+import 'universal_link_test.dart' show didSendPlatformLink;
 
 // flutter/flutter#132044: a link with no path, such as
 // myapp://com.example.app, threw while the app was in the background, where the reporter wanted the
@@ -24,7 +24,10 @@ void main() {
     unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
 
-    expect(await sendPlatformLink(tester, 'myapp://com.example.app'), isTrue);
+    expect(
+      await didSendPlatformLink(tester, 'myapp://com.example.app'),
+      isTrue,
+    );
     expect(tester.takeException(), isNull);
     expectCurrentPage(router, FirstRoute.name);
   });
@@ -43,7 +46,7 @@ void main() {
     unawaited(router.push(const SecondRoute()));
     await tester.pumpAndSettle();
 
-    await sendPlatformLink(tester, 'myapp://com.example.app');
+    await didSendPlatformLink(tester, 'myapp://com.example.app');
     expect(tester.takeException(), isNull);
     expectCurrentPage(router, SecondRoute.name);
     expect(router.stack.map((p) => p.name), [
