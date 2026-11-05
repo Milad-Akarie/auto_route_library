@@ -7,7 +7,6 @@
 
 // Copied from Flutter: the code stays as Flutter wrote it, so the two can
 // still be compared line by line.
-// ignore_for_file: prefer-dedicated-media-query-methods
 // ignore_for_file: avoid-unused-generics, avoid-collection-equality-checks
 
 import 'dart:math';
@@ -289,8 +288,8 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
     var dragAreaWidth = Directionality.of(context) == .ltr
-        ? MediaQuery.of(context).padding.left
-        : MediaQuery.of(context).padding.right;
+        ? MediaQuery.paddingOf(context).left
+        : MediaQuery.paddingOf(context).right;
     dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
     return Stack(
       fit: .passthrough,
