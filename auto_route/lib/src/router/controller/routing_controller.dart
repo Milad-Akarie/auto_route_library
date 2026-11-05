@@ -16,8 +16,6 @@ part 'root_stack_router.dart';
 part 'route_leave.dart';
 part 'routes_restoration.dart';
 
-// The controllers still serve the deprecated members they declare.
-// ignore_for_file: deprecated_member_use_from_same_package
 /// Signature of a predicate to select [RouteData]
 typedef RouteDataPredicate = bool Function(RouteData<Object?> route);
 
@@ -342,7 +340,7 @@ abstract class RoutingController with ChangeNotifier {
       chain[i] = chain[i].copyWith(
         stringMatch: open.stringMatch,
         segments: open.segments,
-        pathParams: open.params,
+        params: open.params,
         args: open.args,
         key: open.key,
       );
