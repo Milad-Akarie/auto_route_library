@@ -27,12 +27,7 @@ class App extends StatefulWidget {
 /// State of [App]; holds the [AuthService].
 class AppState extends State<App> {
   /// The mock sign-in state, shared with the router and the pages.
-  late final authService = AuthService()
-    // Disposed with the service in dispose, so the listener goes with it.
-    // ignore: avoid-unremovable-callbacks-in-listeners
-    ..addListener(() {
-      setState(() {});
-    });
+  late final authService = AuthService();
 
   late final _router = WebAppRouter(authService);
 
@@ -45,10 +40,13 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      theme: ThemeData.dark(),
-      debugShowCheckedModeBanner: false,
-      routerConfig: _router.config(reevaluateListenable: authService),
+    return ListenableBuilder(
+      listenable: authService,
+      builder: (_, _) => MaterialApp.router(
+        theme: ThemeData.dark(),
+        debugShowCheckedModeBanner: false,
+        routerConfig: _router.config(reevaluateListenable: authService),
+      ),
     );
   }
 }
