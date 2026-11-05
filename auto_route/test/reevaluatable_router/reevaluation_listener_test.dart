@@ -74,8 +74,7 @@ void main() {
     verifyNever(mockListener(captureAny, router));
     reevaluationNotifier.value = true;
     await tester.pumpAndSettle();
-    final resolver2 = verify(mockListener(captureAny, router)).captured[0] as NavigationResolver;
-    expect(resolver2.isReevaluating, true);
+    expect((verify(mockListener(captureAny, router)).captured[0] as NavigationResolver).isReevaluating, true);
     await tester.pumpAndSettle();
     verifyNever(mockListener(captureAny, router));
     expectTopPage(router, ThirdRoute.name);

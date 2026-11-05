@@ -52,9 +52,8 @@ void main() {
     await send('updateBackGestureProgress', event(150, 0.5));
     final dragged = route.animation!.value;
     await send('commitBackGesture');
-    final afterCommit = route.animation!.value;
     expect(dragged, closeTo(0.5, 0.1));
-    expect(afterCommit, 1.0);
+    expect(route.animation!.value, 1.0);
     await tester.pumpAndSettle();
     expect(route.animation!.value, 0.0);
   });

@@ -23,15 +23,19 @@ void main() {
     ],
   );
 
+  Future<RootStackRouter> pumpAtLink(WidgetTester tester, String link) async {
+    final router = buildRouter();
+    await pumpAtDeepLink(tester, router, link, includePrefixMatches: false);
+    return router;
+  }
+
   testWidgets('A link with repeated slashes opens its page', (tester) async {
-    final opened = buildRouter();
-    await pumpAtDeepLink(tester, opened, '/items///1', includePrefixMatches: false);
+    final opened = await pumpAtLink(tester, '/items///1');
     expect(find.text('Item 1'), findsOneWidget);
     expect(opened.currentUrl, '/items/1');
     await tester.pumpWidget(const SizedBox());
 
-    final running = buildRouter();
-    await pumpAtDeepLink(tester, running, '/', includePrefixMatches: false);
+    final running = await pumpAtLink(tester, '/');
     await sendPlatformLink(tester, '/items//1//');
     expect(find.text('Item 1'), findsOneWidget);
     expect(running.currentUrl, '/items/1');

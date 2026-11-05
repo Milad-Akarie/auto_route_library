@@ -11,8 +11,7 @@ void main() {
       initialChildren: const [PageRouteInfo('sub')],
     );
     final first = build('Name');
-    final second = build('Name');
-    expect(first == second, true);
+    expect(first == build('Name'), true);
   });
 
   test('Calling PageRouteInfo.fromRedirect on an redirected instance should return true', () {
@@ -67,9 +66,8 @@ void main() {
 
     test('are equal and hash equally when the params are equal lists', () {
       final a = route(['a', 'b']);
-      final b = route(['a', 'b']);
-      expect(a, equals(b));
-      expect(a.hashCode, b.hashCode);
+      expect(a, equals(route(['a', 'b'])));
+      expect(a.hashCode, route(['a', 'b']).hashCode);
     });
 
     test('are equal and hash equally when the params are equal sets', () {

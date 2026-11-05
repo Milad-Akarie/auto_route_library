@@ -26,13 +26,11 @@ void main() {
   );
 
   Future<void> expectLinkReads(WidgetTester tester, String link, String params) async {
-    final opened = buildRouter();
-    await pumpAtDeepLink(tester, opened, link, includePrefixMatches: false);
+    await pumpAtDeepLink(tester, buildRouter(), link, includePrefixMatches: false);
     expect(find.text(params), findsOneWidget, reason: 'opened at $link');
     await tester.pumpWidget(const SizedBox());
 
-    final running = buildRouter();
-    await pumpAtDeepLink(tester, running, '/', includePrefixMatches: false);
+    await pumpAtDeepLink(tester, buildRouter(), '/', includePrefixMatches: false);
     await sendPlatformLink(tester, link);
     expect(find.text(params), findsOneWidget, reason: '$link sent while running');
   }
