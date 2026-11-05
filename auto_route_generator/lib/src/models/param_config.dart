@@ -173,8 +173,9 @@ class FunctionParamConfig extends ParamConfig {
   /// Deserializes the parameter from a json map
   factory FunctionParamConfig.fromJson(Map<String, dynamic> map) {
     final params = <ParamConfig>[];
-    if (map['params'] != null) {
-      for (final pJson in map['params'] as List<Object?>) {
+    final paramsJson = map['params'] as List<Object?>?;
+    if (paramsJson != null) {
+      for (final pJson in paramsJson) {
         params.add(ParamConfig.fromJson(pJson as Map<String, dynamic>));
       }
     }

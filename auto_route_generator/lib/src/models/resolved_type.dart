@@ -52,8 +52,9 @@ class ResolvedType {
   /// deserializes the type from json
   factory ResolvedType.fromJson(Map<String, dynamic> map) {
     final typedArgs = <ResolvedType>[];
-    if (map['typeArguments'] != null) {
-      for (final arg in map['typeArguments'] as List<Object?>) {
+    final typeArguments = map['typeArguments'] as List<Object?>?;
+    if (typeArguments != null) {
+      for (final arg in typeArguments) {
         typedArgs.add(ResolvedType.fromJson(arg as Map<String, dynamic>));
       }
     }
