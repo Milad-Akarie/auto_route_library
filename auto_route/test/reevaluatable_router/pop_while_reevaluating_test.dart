@@ -108,8 +108,7 @@ void main() {
     var isAppGuarded = false;
     final settings = StreamController<bool>.broadcast();
     addTearDown(settings.close);
-    late final RootStackRouter router;
-    router = RootStackRouter.build(
+    final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(
           name: 'HomeRoute',
