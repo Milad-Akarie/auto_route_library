@@ -22,7 +22,7 @@ void main() {
     tester,
   ) async {
     addTearDown(() {
-      _routesNotifier.value = _initialRoutes;
+      _routesNotifier.value = _kInitialRoutes;
       _showTabsNotifier.value = true;
     });
     final router = RootStackRouter.build(
@@ -44,7 +44,7 @@ void main() {
     router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.setActiveIndex(2);
     await tester.pump(const Duration(milliseconds: 50));
 
-    _routesNotifier.value = [..._initialRoutes, const _FourthTabRoute()];
+    _routesNotifier.value = [..._kInitialRoutes, const _FourthTabRoute()];
     await tester.pump(const Duration(milliseconds: 20));
 
     _showTabsNotifier.value = false;
@@ -80,9 +80,9 @@ void main() {
   });
 }
 
-const _initialRoutes = <PageRouteInfo>[_FirstTabRoute(), _SecondTabRoute(), _ThirdTabRoute()];
+const _kInitialRoutes = <PageRouteInfo>[_FirstTabRoute(), _SecondTabRoute(), _ThirdTabRoute()];
 
-final _routesNotifier = ValueNotifier<List<PageRouteInfo>>(_initialRoutes);
+final _routesNotifier = ValueNotifier<List<PageRouteInfo>>(_kInitialRoutes);
 
 final ValueNotifier<bool> _showTabsNotifier = ValueNotifier(true);
 

@@ -23,7 +23,7 @@ class _Route extends PageRouteInfo<void> {
 
 PageInfo _tabPage(String name) => .new(name, builder: (_) => Center(child: Text(name)));
 
-const _tabs = [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')];
+const _kTabs = [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')];
 
 RootStackRouter _router(Widget Function() tabsRouter) => .build(
   routes: [
@@ -74,7 +74,7 @@ void main() {
   // observers, so when the swipe makes it active it looks already opened.
   // Should: a tab's first opening fires didInitTabRoute, as a tap does.
   testWidgets('Swiping AutoTabsRouter.pageView to a tab never opened fires didInitTabRoute', (tester) async {
-    await _expectSwipesInitNewTabs(tester, _router(() => const AutoTabsRouter.pageView(routes: _tabs)));
+    await _expectSwipesInitNewTabs(tester, _router(() => const AutoTabsRouter.pageView(routes: _kTabs)));
   });
 
   // Same steps with AutoTabsRouter.tabBar, whose tab view loads the neighbor
@@ -82,7 +82,7 @@ void main() {
   testWidgets('Swiping AutoTabsRouter.tabBar to a tab never opened fires didInitTabRoute', (tester) async {
     await _expectSwipesInitNewTabs(
       tester,
-      _router(() => AutoTabsRouter.tabBar(routes: _tabs, builder: (context, child, controller) => child)),
+      _router(() => AutoTabsRouter.tabBar(routes: _kTabs, builder: (context, child, controller) => child)),
     );
   });
 }

@@ -30,8 +30,8 @@ RootStackRouter _buildRouter({bool usersIsInitial = false}) => .build(
   ],
 );
 
-const NamedRoute _users = NamedRoute('AppRoute', children: [NamedRoute('UsersRoute')]);
-const NamedRoute _other = NamedRoute('AppRoute', children: [NamedRoute('OtherRoute')]);
+const NamedRoute _kUsers = NamedRoute('AppRoute', children: [NamedRoute('UsersRoute')]);
+const NamedRoute _kOther = NamedRoute('AppRoute', children: [NamedRoute('OtherRoute')]);
 
 StackRouter _shell(RootStackRouter router) => router.innerRouterOf('AppRoute')!;
 
@@ -47,12 +47,12 @@ void main() {
   testWidgets('replace() with the same parent route shows only its new children', (tester) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(_users));
+    unawaited(router.push(_kUsers));
     await tester.pumpAndSettle();
     expect(find.text('UsersRoute'), findsOneWidget);
     expect(router.urlState.path, '/app/users');
 
-    unawaited(router.replace(_other));
+    unawaited(router.replace(_kOther));
     await tester.pumpAndSettle();
     expect(find.text('OtherRoute'), findsOneWidget);
     expect(find.text('UsersRoute'), findsNothing);
@@ -61,7 +61,7 @@ void main() {
     expect(router.urlState.path, '/app/other');
 
     // The shell's router still answers for the page that holds it.
-    unawaited(router.navigate(_users));
+    unawaited(router.navigate(_kUsers));
     await tester.pumpAndSettle();
     expect(find.text('UsersRoute'), findsOneWidget);
     expect(router.urlState.path, '/app/users');
@@ -73,7 +73,7 @@ void main() {
   testWidgets('replace() with the same parent route and no children opens its initial child', (tester) async {
     final router = _buildRouter(usersIsInitial: true);
     await pumpRouterApp(tester, router);
-    unawaited(router.push(_other));
+    unawaited(router.push(_kOther));
     await tester.pumpAndSettle();
 
     unawaited(router.replace(const NamedRoute('AppRoute')));
@@ -89,7 +89,7 @@ void main() {
   ) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(_users));
+    unawaited(router.push(_kUsers));
     await tester.pumpAndSettle();
 
     unawaited(router.replace(const NamedRoute('AppRoute')));
@@ -104,7 +104,7 @@ void main() {
   testWidgets('replacePath() to another child of the same parent route opens it', (tester) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(_users));
+    unawaited(router.push(_kUsers));
     await tester.pumpAndSettle();
 
     unawaited(router.replacePath('/app/other'));
@@ -120,10 +120,10 @@ void main() {
   testWidgets('pushAndPopUntil() with the same parent route opens its new children', (tester) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(_users));
+    unawaited(router.push(_kUsers));
     await tester.pumpAndSettle();
 
-    unawaited(router.pushAndPopUntil(_other, predicate: (route) => route.settings.name == 'HomeRoute'));
+    unawaited(router.pushAndPopUntil(_kOther, predicate: (route) => route.settings.name == 'HomeRoute'));
     await tester.pumpAndSettle();
     expect(find.text('OtherRoute'), findsOneWidget);
     expect(find.text('UsersRoute'), findsNothing);
@@ -134,10 +134,10 @@ void main() {
   testWidgets('popAndPush() with the same parent route opens its new children', (tester) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(_users));
+    unawaited(router.push(_kUsers));
     await tester.pumpAndSettle();
 
-    unawaited(router.popAndPush(_other));
+    unawaited(router.popAndPush(_kOther));
     await tester.pumpAndSettle();
     expect(find.text('OtherRoute'), findsOneWidget);
     expect(find.text('UsersRoute'), findsNothing);
@@ -148,7 +148,7 @@ void main() {
   testWidgets('replace() inside the shell replaces its child', (tester) async {
     final router = _buildRouter();
     await pumpRouterApp(tester, router);
-    unawaited(router.push(_users));
+    unawaited(router.push(_kUsers));
     await tester.pumpAndSettle();
 
     unawaited(_shell(router).replace(const NamedRoute('OtherRoute')));

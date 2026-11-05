@@ -43,7 +43,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('B2'), findsOneWidget);
     _disposed.clear();
-    final nested = router.innerRouterOf<StackRouter>(_shellName)!;
+    final nested = router.innerRouterOf<StackRouter>(_kShellName)!;
 
     unawaited(nested.pushAndPopUntil(const _ARoute(), predicate: (_) => false));
     await tester.pumpAndSettle();
@@ -75,18 +75,18 @@ void main() {
   });
 }
 
-const _shellName = 'ShellRoute';
+const _kShellName = 'ShellRoute';
 
 PageInfo _tracked(String name) => .new(name, builder: (_) => _Tracked(name));
 
 PageRouteInfo _tracked2(String name) => .new(name);
 
-PageInfo _shellPage = const PageInfo(_shellName, builder: _buildShell);
+PageInfo _shellPage = const PageInfo(_kShellName, builder: _buildShell);
 
 Widget _buildShell(RouteData<dynamic> _) => const AutoRouter();
 
 class _ShellRoute extends PageRouteInfo<void> {
-  const _ShellRoute({List<PageRouteInfo>? children}) : super(_shellName, initialChildren: children);
+  const _ShellRoute({List<PageRouteInfo>? children}) : super(_kShellName, initialChildren: children);
 }
 
 class _ARoute extends PageRouteInfo<void> {

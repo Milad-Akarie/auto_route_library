@@ -29,7 +29,7 @@ class UserIdConverter extends ParamConverter<UserId> {
   String toParam(UserId value) => 'u-${value.value}';
 }
 
-const userIdConverter = UserIdConverter();
+const kUserIdConverter = UserIdConverter();
 
 @AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['test/param_converter'])
 class UserRouter extends RootStackRouter {
@@ -52,8 +52,8 @@ class UserHomeView extends StatelessWidget {
 class UserProfileView extends StatelessWidget {
   const UserProfileView({
     super.key,
-    @PathParam('id', userIdConverter) required this.id,
-    @QueryParam('by', userIdConverter) this.by,
+    @PathParam('id', kUserIdConverter) required this.id,
+    @QueryParam('by', kUserIdConverter) this.by,
   });
 
   final UserId id;

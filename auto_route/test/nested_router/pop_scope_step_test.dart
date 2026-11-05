@@ -53,16 +53,16 @@ void main() {
     await tester.pumpAndSettle();
     unawaited(router.innerRouterOf<StackRouter>(_OnboardingRoute.name)!.push(const _IdStepRoute()));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(_chooseType));
+    await tester.tap(find.text(_kChooseType));
     await tester.pumpAndSettle();
-    expect(find.text(_numberForm), findsOneWidget);
+    expect(find.text(_kNumberForm), findsOneWidget);
   }
 
   void expectOnIdStep({required bool showingForm}) {
     expect(router.current.name, _OnboardingRoute.name);
     expect(router.topRoute.name, _IdStepRoute.name);
-    expect(find.text(_numberForm), showingForm ? findsOneWidget : findsNothing);
-    expect(find.text(_chooseType), showingForm ? findsNothing : findsOneWidget);
+    expect(find.text(_kNumberForm), showingForm ? findsOneWidget : findsNothing);
+    expect(find.text(_kChooseType), showingForm ? findsNothing : findsOneWidget);
   }
 
   void expectOnWelcomeStep() {
@@ -98,16 +98,16 @@ void main() {
     await swipeBack(tester);
     expectOnIdStep(showingForm: true);
 
-    await tester.tap(find.text(_backToChoice));
+    await tester.tap(find.text(_kBackToChoice));
     await tester.pumpAndSettle();
     await swipeBack(tester);
     expectOnWelcomeStep();
   });
 }
 
-const _chooseType = 'Choose national ID';
-const _numberForm = 'National ID number';
-const _backToChoice = 'Change ID type';
+const _kChooseType = 'Choose national ID';
+const _kNumberForm = 'National ID number';
+const _kBackToChoice = 'Change ID type';
 var _popAttempts = 0;
 
 class _OnboardingRoute extends PageRouteInfo<void> {
@@ -150,7 +150,7 @@ class _IdStepState extends State<_IdStep> {
   @override
   Widget build(BuildContext context) {
     if (!_showingForm) {
-      return TextButton(onPressed: () => setState(() => _showingForm = true), child: const Text(_chooseType));
+      return TextButton(onPressed: () => setState(() => _showingForm = true), child: const Text(_kChooseType));
     }
     return PopScope(
       canPop: false,
@@ -161,8 +161,8 @@ class _IdStepState extends State<_IdStep> {
       },
       child: Column(
         children: [
-          const Text(_numberForm),
-          TextButton(onPressed: () => setState(() => _showingForm = false), child: const Text(_backToChoice)),
+          const Text(_kNumberForm),
+          TextButton(onPressed: () => setState(() => _showingForm = false), child: const Text(_kBackToChoice)),
         ],
       ),
     );

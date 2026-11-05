@@ -29,7 +29,7 @@ void main() {
         AutoRoute(
           page: _tabsPage,
           path: '/',
-          children: [for (final name in _tabNames) AutoRoute(page: _page(name), path: name)],
+          children: [for (final name in _kTabNames) AutoRoute(page: _page(name), path: name)],
         ),
       ],
     );
@@ -54,7 +54,7 @@ void main() {
       await back(tester);
 
       expect(tabs.activeIndex, 0);
-      expect(find.text(_tabNames[0]), findsOneWidget);
+      expect(find.text(_kTabNames[0]), findsOneWidget);
       expect(frameworkHandlesBack.last, isFalse);
     }, skip: kIsWeb);
   }
@@ -71,12 +71,12 @@ void main() {
   }, skip: kIsWeb);
 }
 
-const _tabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
+const _kTabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
 var _homeIndex = 0;
 
 final _tabsPage = PageInfo(
   'HomeRoute',
-  builder: (_) => AutoTabsScaffold(homeIndex: _homeIndex, routes: [for (final name in _tabNames) _Route(name)]),
+  builder: (_) => AutoTabsScaffold(homeIndex: _homeIndex, routes: [for (final name in _kTabNames) _Route(name)]),
 );
 
 PageInfo _page(String name) => .new(name, builder: (_) => Text(name));

@@ -56,8 +56,8 @@ void main() {
     });
 
     test('constructors with a converter (#1794)', () {
-      expect(const PathParam('id', _converter).converter, same(_converter));
-      expect(const PathParam.inherit('id', _converter).converter, same(_converter));
+      expect(const PathParam('id', _kConverter).converter, same(_kConverter));
+      expect(const PathParam.inherit('id', _kConverter).converter, same(_kConverter));
       expect(const PathParam('id').converter, null);
     });
   });
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('constructor with a converter (#1794)', () {
-      expect(const QueryParam('foo', _converter).converter, same(_converter));
+      expect(const QueryParam('foo', _kConverter).converter, same(_kConverter));
       expect(const QueryParam('foo').converter, null);
     });
   });
@@ -99,4 +99,4 @@ class _TextConverter extends ParamConverter<String> {
   String toParam(String value) => value;
 }
 
-const _converter = _TextConverter();
+const _kConverter = _TextConverter();

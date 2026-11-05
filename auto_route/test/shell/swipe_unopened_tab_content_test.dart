@@ -12,8 +12,8 @@ import '../router_test_utils.dart';
 // never blank space.
 void main() {
   for (final (kind, tabsRouter) in [
-    ('AutoTabsRouter.tabBar', () => AutoTabsRouter.tabBar(routes: _tabs, builder: (context, child, _) => child)),
-    ('AutoTabsRouter.pageView', () => const AutoTabsRouter.pageView(routes: _tabs)),
+    ('AutoTabsRouter.tabBar', () => AutoTabsRouter.tabBar(routes: _kTabs, builder: (context, child, _) => child)),
+    ('AutoTabsRouter.pageView', () => const AutoTabsRouter.pageView(routes: _kTabs)),
   ]) {
     testWidgets('Swiping $kind to a tab never opened shows its page', (tester) async {
       final router = _router(tabsRouter);
@@ -41,7 +41,7 @@ void main() {
   }
 }
 
-const _tabs = [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')];
+const _kTabs = [_Route('Tab1'), _Route('Tab2'), _Route('Tab3')];
 
 RootStackRouter _router(Widget Function() tabsRouter) => .build(
   routes: [

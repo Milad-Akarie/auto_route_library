@@ -26,8 +26,11 @@ void main() {
           AutoRoute(path: '/splash', page: _page('SplashRoute'), initial: true),
           AutoRoute(
             path: '/home',
-            page: PageInfo('HomeRoute', builder: (_) => AutoTabsRouter(routes: [for (final tab in _tabs) _Route(tab)])),
-            children: [for (final tab in _tabs) AutoRoute(path: tab.toLowerCase(), page: _page(tab))],
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => AutoTabsRouter(routes: [for (final tab in _kTabs) _Route(tab)]),
+            ),
+            children: [for (final tab in _kTabs) AutoRoute(path: tab.toLowerCase(), page: _page(tab))],
           ),
           AutoRoute(path: '/profile', page: _page('ProfileRoute')),
         ],
@@ -55,7 +58,7 @@ void main() {
   }
 }
 
-const _tabs = ['Explore', 'Dialogs', 'Notifications', 'Settings'];
+const _kTabs = ['Explore', 'Dialogs', 'Notifications', 'Settings'];
 
 PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 

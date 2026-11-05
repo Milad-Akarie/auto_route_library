@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../router_test_utils.dart';
 
-const _duration = Duration(milliseconds: 400);
+const _kDuration = Duration(milliseconds: 400);
 
 PageInfo _page(String name) => .new(name, builder: (_) => Scaffold(body: Text(name)));
 
@@ -18,15 +18,15 @@ RootStackRouter _router({CustomRouteBuilder? customRouteBuilder}) {
         path: '/a',
         page: _page('ARoute'),
         transitionsBuilder: TransitionsBuilders.fadeIn,
-        duration: _duration,
-        reverseDuration: _duration,
+        duration: _kDuration,
+        reverseDuration: _kDuration,
       ),
       CustomRoute(
         path: '/b',
         page: _page('BRoute'),
         transitionsBuilder: TransitionsBuilders.fadeIn,
-        duration: _duration,
-        reverseDuration: _duration,
+        duration: _kDuration,
+        reverseDuration: _kDuration,
       ),
       CustomRoute(path: '/built', page: _page('BuiltRoute'), customRouteBuilder: customRouteBuilder),
       AutoRoute(
@@ -38,7 +38,7 @@ RootStackRouter _router({CustomRouteBuilder? customRouteBuilder}) {
             path: 'second',
             page: _page('SecondChildRoute'),
             transitionsBuilder: TransitionsBuilders.fadeIn,
-            duration: _duration,
+            duration: _kDuration,
           ),
         ],
       ),
@@ -57,7 +57,7 @@ Animation<double> _animationOf(WidgetTester tester, String name) {
 Future<double> _pumpUntilDone(WidgetTester tester, Future<void> done, String name) async {
   var isDone = false;
   unawaited(done.then((_) => isDone = true));
-  for (var elapsed = Duration.zero; elapsed < _duration * 2; elapsed += const Duration(milliseconds: 16)) {
+  for (var elapsed = Duration.zero; elapsed < _kDuration * 2; elapsed += const Duration(milliseconds: 16)) {
     await tester.pump(const Duration(milliseconds: 16));
     if (isDone) return _animationOf(tester, name).value;
   }
@@ -111,10 +111,10 @@ void main() {
     var isDone = false;
     unawaited(router.waitForTransitions().then((_) => isDone = true));
     await tester.pump();
-    await tester.pump(_duration ~/ 2);
+    await tester.pump(_kDuration ~/ 2);
     expect(animation.isAnimating, isTrue);
     expect(isDone, isFalse);
-    await tester.pump(_duration ~/ 2 + const Duration(milliseconds: 16));
+    await tester.pump(_kDuration ~/ 2 + const Duration(milliseconds: 16));
 
     expect(animation.status, AnimationStatus.dismissed);
     expect(isDone, isTrue);
@@ -136,7 +136,7 @@ void main() {
     final router = _router(
       customRouteBuilder: <T>(context, child, page) => PageRouteBuilder<T>(
         settings: page,
-        transitionDuration: _duration,
+        transitionDuration: _kDuration,
         pageBuilder: (_, _, _) => child,
         transitionsBuilder: TransitionsBuilders.fadeIn,
       ),

@@ -196,7 +196,7 @@ void main() {
 
 enum _Tabs { indexedStack, pageView, tabBar }
 
-const _tabNames = ['TabA', 'TabB', 'TabC'];
+const _kTabNames = ['TabA', 'TabB', 'TabC'];
 
 // Whether the tab guard lets the tab in, and how often it was asked.
 var _allow = false;
@@ -232,7 +232,7 @@ final _loginGuard = AutoRouteGuard.simple((resolver, _) {
 });
 
 RootStackRouter _buildRouter(_Tabs kind, {AutoRouteGuard? guard, int guardedTab = 1, int homeIndex = -1}) {
-  final routes = [for (final name in _tabNames) NamedRoute(name)];
+  final routes = [for (final name in _kTabNames) NamedRoute(name)];
   final host = switch (kind) {
     .indexedStack => AutoTabsRouter(routes: routes, homeIndex: homeIndex),
     .pageView => AutoTabsRouter.pageView(routes: routes, homeIndex: homeIndex),
@@ -244,7 +244,7 @@ RootStackRouter _buildRouter(_Tabs kind, {AutoRouteGuard? guard, int guardedTab 
         page: PageInfo('HomeRoute', builder: (_) => Scaffold(body: host)),
         path: '/',
         children: [
-          for (final (index, name) in _tabNames.indexed)
+          for (final (index, name) in _kTabNames.indexed)
             AutoRoute(
               page: PageInfo(name, builder: (_) => Center(child: Text(name))),
               path: name.substring(3).toLowerCase(),
@@ -272,7 +272,7 @@ TabsRouter _tabsOf(RootStackRouter router) => router.innerRouterOf('HomeRoute')!
 // The tab at [index] is the active one, and the only one on screen.
 void _expectTab(TabsRouter tabs, int index) {
   expect(tabs.activeIndex, index);
-  for (final (i, name) in _tabNames.indexed) {
+  for (final (i, name) in _kTabNames.indexed) {
     expect(find.text(name), i == index ? findsOneWidget : findsNothing, reason: name);
   }
 }

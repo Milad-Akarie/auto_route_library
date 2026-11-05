@@ -24,24 +24,24 @@ void main() {
         final router = _buildRouter(kind, lazyLoad: false);
         await pumpRouterApp(tester, router, observers: () => [observer]);
 
-        expect(_builds, {for (final name in _tabNames) name: 1});
-        expect(observer.initialized, _tabNames);
+        expect(_builds, {for (final name in _kTabNames) name: 1});
+        expect(observer.initialized, _kTabNames);
         expect(router.innerRouterOf<TabsRouter>('TabsRoute')!.activeIndex, 0);
 
         router.innerRouterOf<TabsRouter>('TabsRoute')!.setActiveIndex(2);
         await tester.pumpAndSettle();
 
-        expect(find.text(_tabNames[2]), findsOneWidget);
-        expect(_builds, {for (final name in _tabNames) name: 1});
-        expect(observer.initialized, _tabNames);
-        expect(observer.changed, [_tabNames[2]]);
+        expect(find.text(_kTabNames[2]), findsOneWidget);
+        expect(_builds, {for (final name in _kTabNames) name: 1});
+        expect(observer.initialized, _kTabNames);
+        expect(observer.changed, [_kTabNames[2]]);
       });
 
       testWidgets('by default only the active tab is built before the first switch', (tester) async {
         final router = _buildRouter(kind);
         await pumpRouterApp(tester, router);
 
-        expect(_builds, {_tabNames[0]: 1});
+        expect(_builds, {_kTabNames[0]: 1});
       });
     });
   }
@@ -49,13 +49,13 @@ void main() {
 
 enum _Kind { tabBar, pageView }
 
-const _tabNames = ['NewsRoute', 'FeedRoute', 'ProfileRoute'];
+const _kTabNames = ['NewsRoute', 'FeedRoute', 'ProfileRoute'];
 
 // How often each tab's page was built.
 final _builds = <String, int>{};
 
 RootStackRouter _buildRouter(_Kind kind, {bool? lazyLoad}) {
-  final routes = [for (final name in _tabNames) _Route(name)];
+  final routes = [for (final name in _kTabNames) _Route(name)];
   return RootStackRouter.build(
     routes: [
       AutoRoute(
@@ -69,7 +69,7 @@ RootStackRouter _buildRouter(_Kind kind, {bool? lazyLoad}) {
           },
         ),
         path: '/',
-        children: [for (final name in _tabNames) AutoRoute(page: _page(name), path: name)],
+        children: [for (final name in _kTabNames) AutoRoute(page: _page(name), path: name)],
       ),
     ],
   );

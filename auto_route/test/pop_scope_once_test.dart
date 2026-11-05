@@ -59,7 +59,7 @@ void main() {
   }
 
   Future<void> tapMaybePop(WidgetTester tester) async {
-    await tester.tap(find.text(_maybePopLabel));
+    await tester.tap(find.text(_kMaybePopLabel));
     await tester.pumpAndSettle();
   }
 
@@ -129,7 +129,7 @@ void main() {
   }
 }
 
-const _maybePopLabel = 'Go back';
+const _kMaybePopLabel = 'Go back';
 final _heard = <bool>[];
 var _canPop = true;
 
@@ -174,7 +174,7 @@ class _CountedRoute extends PageRouteInfo<void> {
           builder: (context) => Column(
             children: [
               const Text(name),
-              TextButton(onPressed: () => Navigator.maybePop(context), child: const Text(_maybePopLabel)),
+              TextButton(onPressed: () => Navigator.maybePop(context), child: const Text(_kMaybePopLabel)),
             ],
           ),
         ),

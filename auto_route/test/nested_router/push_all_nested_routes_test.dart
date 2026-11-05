@@ -17,7 +17,7 @@ void main() {
           children: [
             AutoRoute(page: _MetricsRoute.page, initial: true),
             AutoRoute(
-              page: const EmptyShellRoute(_usersShell),
+              page: const EmptyShellRoute(_kUsersShell),
               children: [
                 AutoRoute(page: _UsersRoute.page, initial: true),
                 AutoRoute(page: _UserRoute.page),
@@ -48,8 +48,8 @@ void main() {
 
     unawaited(dashboard.replaceAll([const _UsersRoute(), const _UserRoute(userId: 1)]));
     await tester.pumpAndSettle();
-    expect(dashboard.stack.map((p) => p.name), [_usersShell]);
-    final shell = dashboard.innerRouterOf<StackRouter>(_usersShell)!;
+    expect(dashboard.stack.map((p) => p.name), [_kUsersShell]);
+    final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
     expect(shell.stack.map((p) => p.name), [_UsersRoute.name, _UserRoute.name]);
     expectTopPage(router, _UserRoute.name);
     expect(find.byType(BackButton), findsOneWidget);
@@ -66,8 +66,8 @@ void main() {
 
     unawaited(dashboard.pushAll([const _UsersRoute(), const _UserRoute(userId: 1)]));
     await tester.pumpAndSettle();
-    expect(dashboard.stack.map((p) => p.name), [_MetricsRoute.name, _usersShell]);
-    final shell = dashboard.innerRouterOf<StackRouter>(_usersShell)!;
+    expect(dashboard.stack.map((p) => p.name), [_MetricsRoute.name, _kUsersShell]);
+    final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
     expect(shell.stack.map((p) => p.name), [_UsersRoute.name, _UserRoute.name]);
     expectTopPage(router, _UserRoute.name);
   });
@@ -79,12 +79,12 @@ void main() {
 
     unawaited(
       dashboard.pushAll([
-        const PageRouteInfo(_usersShell, initialChildren: [_UsersRoute()]),
-        const PageRouteInfo(_usersShell, initialChildren: [_UserRoute(userId: 1)]),
+        const PageRouteInfo(_kUsersShell, initialChildren: [_UsersRoute()]),
+        const PageRouteInfo(_kUsersShell, initialChildren: [_UserRoute(userId: 1)]),
       ]),
     );
     await tester.pumpAndSettle();
-    expect(dashboard.stack.map((p) => p.name), [_MetricsRoute.name, _usersShell, _usersShell]);
+    expect(dashboard.stack.map((p) => p.name), [_MetricsRoute.name, _kUsersShell, _kUsersShell]);
   });
 
   // https://github.com/Milad-Akarie/auto_route_library/issues/2214
@@ -99,7 +99,7 @@ void main() {
           initial: true,
           children: [
             AutoRoute(
-              page: const EmptyShellRoute(_usersShell),
+              page: const EmptyShellRoute(_kUsersShell),
               children: [
                 AutoRoute(page: _UsersRoute.page, initial: true),
                 AutoRoute(page: _UserRoute.page),
@@ -111,7 +111,7 @@ void main() {
     );
     await pumpRouterConfigApp(tester, tabsApp.config());
     final tabs = tabsApp.innerRouterOf<TabsRouter>(_TabsRoute.name)!;
-    expect(tabs.stack.map((p) => p.name), [_usersShell, _usersShell]);
+    expect(tabs.stack.map((p) => p.name), [_kUsersShell, _kUsersShell]);
     expect(find.text(_UsersRoute.name), findsOneWidget);
 
     tabs.setActiveIndex(1);
@@ -120,7 +120,7 @@ void main() {
   });
 }
 
-const _usersShell = 'UsersSellRoute';
+const _kUsersShell = 'UsersSellRoute';
 
 class _BootRoute extends PageRouteInfo<void> {
   const _BootRoute() : super(name);

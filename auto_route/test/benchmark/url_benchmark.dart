@@ -34,7 +34,7 @@ void main() {
         (matcher) => matcher.match('/missing') == null ? 'no match' : null,
       ),
       _Benchmark('match.deep.5', _deepMatcher, (matcher) => matcher.match(_deepUrl)),
-      _Benchmark('match.query.12', _flatMatcher(10), (matcher) => matcher.match('/page9?$_query')),
+      _Benchmark('match.query.12', _flatMatcher(10), (matcher) => matcher.match('/page9?$_kQuery')),
       _Benchmark('match.byRoute.deep.5', _deepMatcher, (matcher) => matcher.matchByRoute(_deepRoute)),
       _Benchmark('match.buildPathTo.deep.5', _deepMatcher, (matcher) => matcher.buildPathTo(_deepestRoute)),
       _Benchmark('urlState.deep.5', _deepMatcher, (_) => UrlState.fromSegments(_deepMatches).url),
@@ -75,42 +75,42 @@ RouteMatcher _flatMatcher(int count) => .new(
   ], root: true),
 );
 
-const _depth = 5;
-const _siblings = 10;
+const _kDepth = 5;
+const _kSiblings = 10;
 
-/// Routes [_depth] levels deep. Each level has [_siblings] routes, the last
+/// Routes [_kDepth] levels deep. Each level has [_kSiblings] routes, the last
 /// of which takes an id and holds the next level: '/level0-9/:id0/level1-9/:id1'.
 final _deepMatcher = RouteMatcher(RouteCollection.fromList(_level(0), root: true));
 
 List<AutoRoute> _level(int depth) => [
-  for (var i = 0; i < _siblings; i++)
+  for (var i = 0; i < _kSiblings; i++)
     NamedRouteDef(
       name: 'Level$depth-$i',
       path: '${depth == 0 ? '/' : ''}level$depth-$i/:id$depth',
       builder: _page,
-      children: depth < _depth - 1 && i == _siblings - 1 ? _level(depth + 1) : null,
+      children: depth < _kDepth - 1 && i == _kSiblings - 1 ? _level(depth + 1) : null,
     ),
 ];
 
-final _deepUrl = '/${[for (var depth = 0; depth < _depth; depth++) 'level$depth-${_siblings - 1}/$depth'].join('/')}';
+final _deepUrl = '/${[for (var depth = 0; depth < _kDepth; depth++) 'level$depth-${_kSiblings - 1}/$depth'].join('/')}';
 
 final List<RouteMatch<dynamic>> _deepMatches = _deepMatcher.match(_deepUrl)!.last.flattened;
 
-const _query =
+const _kQuery =
     'search=blue%20shoes&page=2&sort=price&order=asc&size=9&color=blue&brand=acme&tag=new&tag=sale'
     '&min=10&max=90&ref=home';
 
-final List<RouteMatch<dynamic>> _queryMatches = _flatMatcher(10).match('/page9?$_query')!;
+final List<RouteMatch<dynamic>> _queryMatches = _flatMatcher(10).match('/page9?$_kQuery')!;
 
 PageRouteInfo _deepRouteFrom(int depth) => .new(
-  'Level$depth-${_siblings - 1}',
+  'Level$depth-${_kSiblings - 1}',
   rawPathParams: {'id$depth': '$depth'},
-  initialChildren: depth < _depth - 1 ? [_deepRouteFrom(depth + 1)] : null,
+  initialChildren: depth < _kDepth - 1 ? [_deepRouteFrom(depth + 1)] : null,
 );
 
 final PageRouteInfo _deepRoute = _deepRouteFrom(0);
 
 final PageRouteInfo _deepestRoute = .new(
-  'Level${_depth - 1}-${_siblings - 1}',
-  rawPathParams: {for (var depth = 0; depth < _depth; depth++) 'id$depth': '$depth'},
+  'Level${_kDepth - 1}-${_kSiblings - 1}',
+  rawPathParams: {for (var depth = 0; depth < _kDepth; depth++) 'id$depth': '$depth'},
 );

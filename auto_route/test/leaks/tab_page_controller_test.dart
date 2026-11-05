@@ -30,7 +30,7 @@ RootStackRouter _buildRouter(Widget Function() tabsRouter) => .build(
   ],
 );
 
-const List<PageRouteInfo> _tabs = [NamedRoute('Tab1Route'), NamedRoute('Tab2Route')];
+const List<PageRouteInfo> _kTabs = [NamedRoute('Tab1Route'), NamedRoute('Tab2Route')];
 
 void main() {
   // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.tabBar
@@ -41,7 +41,7 @@ void main() {
   testWidgets('Popping an AutoTabView disposes its PageController', (tester) async {
     final router = _buildRouter(
       () => AutoTabsRouter.tabBar(
-        routes: _tabs,
+        routes: _kTabs,
         builder: (context, child, controller) => Column(
           children: [
             TabBar(
@@ -77,7 +77,7 @@ void main() {
   // one more on each visit.
   // Should: popping the host disposes it.
   testWidgets('Popping an AutoTabsRouter.pageView disposes its PageController', (tester) async {
-    final router = _buildRouter(() => const AutoTabsRouter.pageView(routes: _tabs));
+    final router = _buildRouter(() => const AutoTabsRouter.pageView(routes: _kTabs));
     await pumpRouterApp(tester, router);
     final pageControllers = DisposalTracker<PageController>();
     unawaited(router.pushPath('/tabs'));
