@@ -261,7 +261,6 @@ class RouteData<R> {
   // Deprecated in 12.0.0, removed in 13.0.0.
   @Deprecated('Set animation instead')
   // The old name, kept as a method so existing calls still compile until it is removed.
-  // ignore: use_setters_to_change_properties
   void setAnimation(Animation<Object?>? value) => animation = value;
 
   /// Returns the current animation completion future
