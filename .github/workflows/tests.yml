@@ -192,7 +192,7 @@ jobs:
         run: python3 ../../.github/scripts/report_failed_tests.py "$RUNNER_TEMP/test-results.json" "$GITHUB_WORKSPACE" "$RUNNER_TEMP/test-output.txt"
 
   ios:
-    name: Integration tests on iOS (part ${{ matrix.part }} of 3)
+    name: Integration tests on iOS (part ${{ matrix.part }} of 4)
     runs-on: macos-26
     # GitHub seems to stop looking for a runner when the job's time limit runs out:
     # in 40 runs, every macOS job that never got one was canceled 900 to 902 s
@@ -200,11 +200,14 @@ jobs:
     # canceled job fails the run despite continue-on-error. So these jobs may
     # wait 30 minutes, and their steps keep the work itself within 15.
     timeout-minutes: 30
-    # Three jobs, each running a third of the suite in one launch of the app.
+    # Four jobs, each running a quarter of the suite in one launch of the app.
     # With 271 tests, half of them took 451 s to build and run on one runner,
     # while on a slower one, whose Xcode build took 266 s instead of 99 s and
     # whose simulator took 244 s to boot, half ran out of time after 13 tests.
-    # A third leaves room for a slow runner.
+    # A third took 426 to 614 s of test time, and on a slow runner its step ran
+    # out of its limit (the step stops 14 minutes after the job started). A
+    # quarter takes about 320 to 460 s. Four iOS jobs and the macOS job are the
+    # five macOS jobs that can run at once.
     strategy:
       fail-fast: false
       matrix:
@@ -215,6 +218,8 @@ jobs:
             shard-index: 1
           - part: 3
             shard-index: 2
+          - part: 4
+            shard-index: 3
     # GitHub never picked up an arm64 macOS runner in five runs; the maintainer's Mac runs iOS and macOS before every merge.
     continue-on-error: true
     steps:
@@ -255,7 +260,7 @@ jobs:
         # keep their start.
         run: >-
           flutter test -v --reporter github --file-reporter "json:$RUNNER_TEMP/test-results.json"
-          integration_test/all_tests.dart --total-shards 3 --shard-index ${{ matrix.shard-index }} -d "$SIMULATOR_UDID" 2>&1
+          integration_test/all_tests.dart --total-shards 4 --shard-index ${{ matrix.shard-index }} -d "$SIMULATOR_UDID" 2>&1
           | perl -MPOSIX -pe 'BEGIN { $| = 1 } print strftime("[%H:%M:%S] ", gmtime) unless /^::/'
           | tee "$RUNNER_TEMP/test-output.txt"
       # The job logs need a sign-in; annotations and the summary don't.
