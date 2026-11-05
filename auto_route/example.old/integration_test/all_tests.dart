@@ -62,6 +62,7 @@ import 'navigate_awaits_test.dart' as navigate_awaits;
 import 'navigate_inherited_path_params_test.dart' as navigate_inherited_path_params;
 import 'navigate_nested_update_test.dart' as navigate_nested_update;
 import 'navigate_over_pageless_route_test.dart' as navigate_over_pageless_route;
+import 'navigate_root_from_nested_test.dart' as navigate_root_from_nested;
 import 'navigate_to_non_tab_test.dart' as navigate_to_non_tab;
 import 'nested_back_test.dart' as nested_back;
 import 'nested_browser_back_test.dart' as nested_browser_back;
@@ -252,6 +253,7 @@ void main() {
   group('navigate inherited path params', navigate_inherited_path_params.main);
   group('navigate nested update', navigate_nested_update.main);
   group('navigate over pageless route', navigate_over_pageless_route.main);
+  group('navigate root from nested', navigate_root_from_nested.main);
   group('navigate to non tab', navigate_to_non_tab.main);
   group('nested back', nested_back.main);
   group('nested browser back', nested_browser_back.main);
