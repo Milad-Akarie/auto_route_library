@@ -210,7 +210,7 @@ class NavigationResolver {
   /// is the deprecated way to reject it.
   void next([
     // The old way to reject, kept so existing guards compile until it is removed in 13.0.0.
-    // ignore: avoid_positional_boolean_parameters, remove_deprecations_in_breaking_versions
+    // ignore: avoid_positional_boolean_parameters
     @Deprecated('Call next() to continue or reject() to stop') bool continueNavigation = true,
   ]) => _resolve(continueNavigation: continueNavigation, reevaluateNext: true);
 
@@ -234,7 +234,6 @@ class NavigationResolver {
   /// if [reevaluateNext] is set to true pending routes will also be re-pushed
   /// to stack on `RoutingController.reevaluateGuards`
   // Deprecated in 12.0.0, removed in 13.0.0.
-  // ignore: remove_deprecations_in_breaking_versions
   @Deprecated(
     'Call next() or reject(reevaluateNext: false), or overrideNext(reevaluateNext: false) to continue without '
     'pushing the pending routes again',
@@ -333,7 +332,7 @@ class NavigationResolver {
   /// replaces the deprecated `nextOrBack(false)`.
   void nextOrBack([
     // The old way to reject, kept so existing guards compile until it is removed in 13.0.0.
-    // ignore: avoid_positional_boolean_parameters, remove_deprecations_in_breaking_versions
+    // ignore: avoid_positional_boolean_parameters
     @Deprecated('Call nextOrBack() to continue or reject(goBack: true) to stop and go back')
     bool continueNavigation = true,
   ]) {

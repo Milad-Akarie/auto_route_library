@@ -158,19 +158,14 @@ class PageRouteInfo<T extends Object?> {
     String? redirectedFrom,
     bool? argsEquality,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    // ignore: remove_deprecations_in_breaking_versions
     @Deprecated('Use rawPathParams instead') Map<String, dynamic>? params,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    // ignore: remove_deprecations_in_breaking_versions
     @Deprecated('Use rawQueryParams instead') Map<String, dynamic>? queryParams,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    // ignore: remove_deprecations_in_breaking_versions
     @Deprecated('Use initialChildren instead') List<PageRouteInfo>? children,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    // ignore: remove_deprecations_in_breaking_versions
     @Deprecated('A PageRouteInfo holds no path; this is ignored') String? path,
     // Deprecated in 12.0.0, removed in 13.0.0.
-    // ignore: remove_deprecations_in_breaking_versions
     @Deprecated('A PageRouteInfo holds no match; this is ignored') RouteMatch<dynamic>? match,
   }) {
     final newPathParams = rawPathParams ?? params;

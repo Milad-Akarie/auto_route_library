@@ -1,4 +1,4 @@
-## Unreleased
+## 11.1.0
 - **FEAT**: a `ParamConverter` on `@PathParam` or `@QueryParam` reads and writes a param of any type; a custom type
   without one fails the build saying how to give one (#1794).
 - **FIX**: a `const` default from another library, such as `= const UserId('me')`, no longer gets its import

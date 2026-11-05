@@ -1,4 +1,4 @@
-## Unreleased
+## 12.1.0
 - **FEAT**: path and query params can be the app's own types: give `@PathParam` or `@QueryParam` a
   `ParamConverter<T>`, a top-level const, and the route reads the param with the new `Parameters.getTyped` or
   `optTyped` and writes it back with `toParam` (#1794).
