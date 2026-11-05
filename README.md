@@ -1550,9 +1550,8 @@ class AuthGuard extends AutoRouteGuard {
             // if success == true the navigation will be resumed
             // else it will be aborted
             success ? resolver.next() : resolver.reject();
-          },
+          }),
         );
-      );
     }
   }
 }
