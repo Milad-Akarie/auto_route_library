@@ -152,8 +152,7 @@ abstract class RootStackRouter extends StackRouter {
     matcher,
     includePrefixMatches: includePrefixMatches,
     // A DeepLinkTransformer returns a Future, and a SynchronousFuture would change timing.
-    // ignore: avoid-unnecessary-futures
-    deepLinkTransformer: deepLinkTransformer ?? (uri) async => uri,
+    deepLinkTransformer: deepLinkTransformer ?? Future.value,
   );
 
   @override
