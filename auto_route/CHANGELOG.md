@@ -24,6 +24,8 @@
 - **BREAKING CHANGE**: `AutoRoutePage.canUpdate` and `PagelessRoutesObserver.routeOf` take a `Page<Object?>`, not a
   `Page<dynamic>`. A subclass that overrides `canUpdate` with `Page<dynamic>` still compiles; write `Page<Object?>` to
   match.
+- **BREAKING CHANGE**: `PendingRoutesHandler.peek` and `initialPendingRoutes` return `List<PageRouteInfo<Object?>>?`,
+  not `List<PageRouteInfo<dynamic>>?`. Code that stores the list names `PageRouteInfo<Object?>`.
 
 ## 12.3.0
 - **BREAKING CHANGE**: `Parameters.optBool` and `getBool` take their default by name:

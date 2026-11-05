@@ -3557,12 +3557,12 @@ class PendingRoutesHandler {
   bool get hasPendingRoutes => _initialPendingRoutes?.isNotEmpty == true;
 
   /// Reads [_initialPendingRoutes] without deleting it's value
-  List<PageRouteInfo<dynamic>>? get peek => _initialPendingRoutes;
+  List<PageRouteInfo<Object?>>? get peek => _initialPendingRoutes;
 
   /// One time read pending routes
   ///
   /// [_initialPendingRoutes] is deleted after the read
-  List<PageRouteInfo<dynamic>>? get initialPendingRoutes {
+  List<PageRouteInfo<Object?>>? get initialPendingRoutes {
     if (_initialPendingRoutes == null) return null;
     final routes = List.of(_initialPendingRoutes!);
     _initialPendingRoutes = null;
