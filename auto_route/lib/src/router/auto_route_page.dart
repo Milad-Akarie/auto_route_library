@@ -397,7 +397,7 @@ class _PageBasedCupertinoPageRoute<T> extends _PageRoute<T>
 }
 
 mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements PredictiveBackGestureMixin {
-  late final _predictiveBackPageTransitionsBuilder = const PredictiveBackPageTransitionsBuilder();
+  late final _predictiveBackTransitions = const PredictiveBackPageTransitionsBuilder();
   @override
   Widget buildTransitions(
     BuildContext context,
@@ -411,13 +411,7 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
     }
 
     if (predictiveBackPageTransitionsBuilder == null) {
-      return _predictiveBackPageTransitionsBuilder.buildTransitions(
-        this,
-        context,
-        animation,
-        secondaryAnimation,
-        child,
-      );
+      return _predictiveBackTransitions.buildTransitions(this, context, animation, secondaryAnimation, child);
     }
     return _PredictiveBackGestureDetector(
       route: this,

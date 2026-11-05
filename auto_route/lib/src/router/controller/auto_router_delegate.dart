@@ -318,7 +318,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     navigatorObservers: _navigatorObservers,
     navigatorObserversBuilder: navigatorObservers,
     navRestorationScopeId: navRestorationScopeId,
-    placeholder: placeholder,
+    placeholderBuilder: placeholder,
     clipBehavior: clipBehavior,
     routeTraversalEdgeBehavior: routeTraversalEdgeBehavior,
   );
@@ -375,7 +375,7 @@ class _AutoRootRouter extends StatefulWidget {
     this.navRestorationScopeId,
     this.navigatorObservers = const [],
     required this.navigatorObserversBuilder,
-    this.placeholder,
+    this.placeholderBuilder,
     this.clipBehavior = Clip.hardEdge,
     this.routeTraversalEdgeBehavior,
   });
@@ -389,7 +389,7 @@ class _AutoRootRouter extends StatefulWidget {
   /// A builder for the placeholder page that is shown
   /// before the first route can be rendered. Defaults to
   /// an empty page with `Theme.scaffoldBackgroundColor`.
-  final WidgetBuilder? placeholder;
+  final WidgetBuilder? placeholderBuilder;
 
   final TraversalEdgeBehavior? routeTraversalEdgeBehavior;
 
@@ -489,7 +489,7 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
                 router: router,
                 clipBehavior: widget.clipBehavior,
                 key: GlobalObjectKey(widget.router.hashCode),
-                placeholder: widget.placeholder,
+                placeholder: widget.placeholderBuilder,
                 navRestorationScopeId: widget.navRestorationScopeId,
                 navigatorObservers: widget.navigatorObservers,
                 routeTraversalEdgeBehavior: widget.routeTraversalEdgeBehavior,

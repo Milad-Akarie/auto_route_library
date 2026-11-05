@@ -47,7 +47,7 @@ class _DeferredWidgetState extends State<DeferredWidget> {
   _DeferredWidgetState();
 
   Widget? _loadedChild;
-  DeferredWidgetBuilder? _loadedCreator;
+  DeferredWidgetBuilder? _loadedBuilder;
 
   @override
   void initState() {
@@ -71,8 +71,8 @@ class _DeferredWidgetState extends State<DeferredWidget> {
 
   void _onLibraryLoaded() {
     setState(() {
-      _loadedCreator = widget.createWidget;
-      _loadedChild = _loadedCreator!();
+      _loadedBuilder = widget.createWidget;
+      _loadedChild = _loadedBuilder!();
     });
   }
 
@@ -80,9 +80,9 @@ class _DeferredWidgetState extends State<DeferredWidget> {
   Widget build(BuildContext context) {
     /// If closure to create widget changed, create new instance, otherwise
     /// treat as const Widget.
-    if (_loadedCreator != widget.createWidget && _loadedCreator != null) {
-      _loadedCreator = widget.createWidget;
-      _loadedChild = _loadedCreator!();
+    if (_loadedBuilder != widget.createWidget && _loadedBuilder != null) {
+      _loadedBuilder = widget.createWidget;
+      _loadedChild = _loadedBuilder!();
     }
 
     final placeHolder = AutoRouterDelegate.of(context).placeholder?.call(context) ?? const DeferredLoadingPlaceholder();

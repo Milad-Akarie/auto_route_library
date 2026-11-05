@@ -70,11 +70,11 @@ class AutoRouter extends StatefulWidget {
     onPopRoute: onPopRoute,
     navigatorKey: navigatorKey,
     navRestorationScopeId: navRestorationScopeId,
-    navigatorObservers: navigatorObservers,
+    navigatorObserversBuilder: navigatorObservers,
     inheritNavigatorObservers: inheritNavigatorObservers,
     onNavigate: onNavigate,
-    placeholder: placeholder,
-    routes: routes,
+    placeholderBuilder: placeholder,
+    routesBuilder: routes,
     clipBehavior: clipBehavior,
     traversalEdgeBehavior: traversalEdgeBehavior,
   );
@@ -212,25 +212,25 @@ class AutoRouterState extends State<AutoRouter> {
 class _DeclarativeAutoRouter extends StatefulWidget {
   const _DeclarativeAutoRouter({
     super.key,
-    required this.routes,
-    this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
+    required this.routesBuilder,
+    this.navigatorObserversBuilder = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.onPopRoute,
     this.navigatorKey,
     this.navRestorationScopeId,
     this.inheritNavigatorObservers = true,
     this.onNavigate,
-    this.placeholder,
+    this.placeholderBuilder,
     this.clipBehavior = Clip.hardEdge,
     this.traversalEdgeBehavior,
   });
-  final RoutesBuilder routes;
+  final RoutesBuilder routesBuilder;
   final RoutePopCallBack? onPopRoute;
-  final NavigatorObserversBuilder navigatorObservers;
+  final NavigatorObserversBuilder navigatorObserversBuilder;
   final String? navRestorationScopeId;
   final bool inheritNavigatorObservers;
   final GlobalKey<NavigatorState>? navigatorKey;
   final OnNestedNavigateCallBack? onNavigate;
-  final WidgetBuilder? placeholder;
+  final WidgetBuilder? placeholderBuilder;
   final Clip clipBehavior;
   final TraversalEdgeBehavior? traversalEdgeBehavior;
 
@@ -255,7 +255,7 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
       _heroController = HeroController();
       final parentScope = RouterScope.of(context);
       _inheritableObserversBuilder = () {
-        final observers = widget.navigatorObservers();
+        final observers = widget.navigatorObserversBuilder();
         if (!widget.inheritNavigatorObservers) {
           return observers;
         }
@@ -305,11 +305,11 @@ class _DeclarativeAutoRouterState extends State<_DeclarativeAutoRouter> {
           router: _controller!,
           clipBehavior: widget.clipBehavior,
           key: GlobalObjectKey(_controller.hashCode),
-          declarativeRoutesBuilder: widget.routes,
+          declarativeRoutesBuilder: widget.routesBuilder,
           navRestorationScopeId: widget.navRestorationScopeId,
           navigatorObservers: _navigatorObservers,
           didPop: widget.onPopRoute,
-          placeholder: widget.placeholder,
+          placeholder: widget.placeholderBuilder,
           routeTraversalEdgeBehavior: widget.traversalEdgeBehavior,
         ),
       ),
