@@ -12,6 +12,13 @@
   the latest first, then leaves the tabs (#1789, #830).
 - **FEAT**: `AutoTabsRouter.tabBar` and `AutoTabsRouter.pageView` take `lazyLoad`; `false` builds every tab's page
   up front (#2013).
+- **FEAT**: every page's semantics carry its route name as their identifier, so UI testing tools such as Appium and
+  Maestro, and `find.bySemanticsIdentifier` in widget tests, find a page by its route name, whatever its route
+  type (#2115).
+- **FEAT**: `CustomRoute(enableCupertinoBackGesture: true)`, also on `RouteType.custom`, keeps the iOS back swipe on a
+  page with a custom transition, on iOS and macOS (flutter/flutter#183252).
+- **FEAT**: `router.waitForTransitions()` completes once every page has stopped moving after a push, a replace or a
+  pop, for example to open a bottom sheet once a page has come in (flutter/flutter#162789).
 
 ## 12.0.0
 - **BREAKING CHANGE**: `RouteMatch.pathParams` and `RouteData.pathParams`, deprecated since 11.2.0, are removed;
