@@ -1382,7 +1382,6 @@ class TabsRouter extends RoutingController {
 
     if (mayUpdateRoute is ReevaluatableRouteMatch) {
       _pages[index] = mayUpdateRoute.currentPage;
-      mayUpdateRoute.currentPage.routeData._onEndReevaluating();
     } else {
       final data = _createRouteData<Object?>(routeToBeUpdated, routeData);
       _pages[index] = data.buildPage();
@@ -2440,7 +2439,7 @@ abstract class StackRouter extends RoutingController {
 
   void _addReevaluatedPage(ReevaluatableRouteMatch<Object?, Object?> match, {bool notify = true}) {
     var page = match.currentPage;
-    final data = page.routeData.._onEndReevaluating();
+    final data = page.routeData;
     // args a guard set are shown by a page built with them, which keeps the route and its state
     if (match.args != data.args) {
       data._updateRoute(match.originalMatch);

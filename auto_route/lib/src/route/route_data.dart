@@ -216,20 +216,11 @@ class RouteData<R> {
     return _route.buildPage(this);
   }
 
-  // Set while a guard reevaluates this route; kept for debugging.
-  // ignore: unused_field
-  bool _isReevaluating = false;
-
   void _onStartReevaluating(RouteMatch<Object?> newMatch) {
-    _isReevaluating = true;
     _updateRoute(newMatch);
     _ownQueryParams = newMatch.queryParams;
     _ownFragment = newMatch.fragment;
     _pendingChildren = List<RouteMatch<Object?>>.from(newMatch.children ?? []);
-  }
-
-  void _onEndReevaluating() {
-    _isReevaluating = false;
   }
 
   bool _isPoppedByNavigator = false;
