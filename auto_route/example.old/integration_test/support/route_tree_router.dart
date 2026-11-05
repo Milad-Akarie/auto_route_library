@@ -31,7 +31,7 @@ RootStackRouter buildRouteTreeRouter() => .build(
 );
 
 /// The tree [RouteNotFoundFailure] lists for [buildRouteTreeRouter].
-const routeTreeOfRouteTreeRouter =
+const kRouteTreeOfRouteTreeRouter =
     '├─ /  HomeRoute\n'
     '├─ /shop  ShopRoute\n'
     '│  ├─ /shop  ProductsRoute\n'

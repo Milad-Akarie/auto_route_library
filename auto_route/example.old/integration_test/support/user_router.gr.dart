@@ -37,9 +37,9 @@ class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
   }) : super(
          UserProfileRoute.name,
          args: UserProfileRouteArgs(id: id, key: key, by: by),
-         rawPathParams: {'id': userIdConverter.toParam(id)},
+         rawPathParams: {'id': kUserIdConverter.toParam(id)},
          rawQueryParams: {
-           'by': by == null ? null : userIdConverter.toParam(by),
+           'by': by == null ? null : kUserIdConverter.toParam(by),
          },
          initialChildren: children,
        );
@@ -53,8 +53,8 @@ class UserProfileRoute extends PageRouteInfo<UserProfileRouteArgs> {
       final queryParams = data.queryParams;
       final args = data.argsAs<UserProfileRouteArgs>(
         orElse: () => UserProfileRouteArgs(
-          id: pathParams.getTyped<UserId>('id', userIdConverter),
-          by: queryParams.optTyped<UserId>('by', userIdConverter),
+          id: pathParams.getTyped<UserId>('id', kUserIdConverter),
+          by: queryParams.optTyped<UserId>('by', kUserIdConverter),
         ),
       );
       return UserProfileView(id: args.id, key: args.key, by: args.by);

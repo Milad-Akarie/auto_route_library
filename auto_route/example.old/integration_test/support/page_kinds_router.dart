@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 // has, whatever its route type.
 
 /// The name of each route [pageKindsRouter] holds, the home page first.
-const pageKindNames = [
+const kPageKindNames = [
   'HomeRoute',
   'MaterialKindRoute',
   'CupertinoKindRoute',

@@ -31,7 +31,7 @@ void main() {
       (failures.single as RouteNotFoundFailure).toString(),
       allOf(
         contains('Can not navigate to /shop/1/reviews'),
-        contains(routeTreeOfRouteTreeRouter),
+        contains(kRouteTreeOfRouteTreeRouter),
       ),
     );
     expect(router.current.name, 'HomeRoute');

@@ -23,7 +23,7 @@ void main() {
       final router = pageKindsRouter();
       await pumpRouterApp(tester, router);
 
-      for (final name in pageKindNames) {
+      for (final name in kPageKindNames) {
         if (name != 'HomeRoute') {
           unawaited(router.push(NamedRoute(name)));
           await tester.pumpAndSettle();

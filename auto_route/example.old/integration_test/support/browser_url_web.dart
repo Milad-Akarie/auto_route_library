@@ -37,7 +37,11 @@ void pressBrowserForward() => _history.forward();
 void openBrowserAt(String path) {
   final serialCount = browserEntryIndex() ?? 0;
   _history.replaceState(
-    {'serialCount': serialCount, 'state': null, _openedByBrowser: true}.jsify(),
+    {
+      'serialCount': serialCount,
+      'state': null,
+      _kOpenedByBrowser: true,
+    }.jsify(),
     '',
     '#$path',
   );
@@ -56,13 +60,13 @@ void saveBrowserEntryState(String path, Object state) {
   );
 }
 
-const _openedByBrowser = 'openedByBrowser';
+const _kOpenedByBrowser = 'openedByBrowser';
 
 /// Whether the app has written the browser's current entry since
 /// [openBrowserAt] made it, as it does when it reports its route.
 bool appWroteBrowserEntry() {
   final state = _history.state.dartify();
-  return !(state is Map && state[_openedByBrowser] == true);
+  return !(state is Map && state[_kOpenedByBrowser] == true);
 }
 
 /// Types [path] into the address bar and presses enter.

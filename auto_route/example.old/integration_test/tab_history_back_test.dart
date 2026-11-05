@@ -28,10 +28,10 @@ void main() {
     final router = buildTabHistoryRouter(overFirstPage: overFirstPage);
     await pumpRouterApp(tester, router);
     if (overFirstPage) {
-      unawaited(router.push(tabHistoryTabsRoute));
+      unawaited(router.push(kTabHistoryTabsRoute));
       await tester.pumpAndSettle();
     }
-    final tabs = router.innerRouterOf<TabsRouter>(tabHistoryTabsName)!;
+    final tabs = router.innerRouterOf<TabsRouter>(kTabHistoryTabsName)!;
     for (final index in [2, 1]) {
       tabs.setActiveIndex(index);
       await tester.pumpAndSettle();
@@ -41,7 +41,7 @@ void main() {
 
   void expectTab(TabsRouter tabs, int index) {
     expect(tabs.activeIndex, index);
-    expect(find.text(tabHistoryTabNames[index]), findsOneWidget);
+    expect(find.text(kTabHistoryTabNames[index]), findsOneWidget);
   }
 
   testWidgets(
@@ -55,8 +55,8 @@ void main() {
       await systemBack(tester);
       expectTab(tabs, 0);
       await systemBack(tester);
-      expect(find.text(tabHistoryFirstPageName), findsOneWidget);
-      expect(find.text(tabHistoryTabNames[0]), findsNothing);
+      expect(find.text(kTabHistoryFirstPageName), findsOneWidget);
+      expect(find.text(kTabHistoryTabNames[0]), findsNothing);
     },
   );
 

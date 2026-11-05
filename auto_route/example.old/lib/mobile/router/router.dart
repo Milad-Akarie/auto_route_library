@@ -30,7 +30,7 @@ class AppRouter extends RootStackRouter {
       children: [
         AutoRoute(
           path: 'books',
-          page: BooksTab.page,
+          page: kBooksTab.page,
           initial: true,
           children: [
             AutoRoute(
@@ -63,10 +63,10 @@ class AppRouter extends RootStackRouter {
 }
 
 /// Shell route of the books tab, which only holds the book pages.
-const BooksTab = EmptyShellRoute('BooksTab');
+const kBooksTab = EmptyShellRoute('BooksTab');
 
 /// Shell route of the profile tab, which only holds the profile pages.
-const ProfileTab = EmptyShellRoute('ProfileTab');
+const kProfileTab = EmptyShellRoute('ProfileTab');
 
 /// A named route that can build its own page.
 abstract class RouteDef {

@@ -39,9 +39,9 @@ class RouteDestination {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   /// The destinations of the navigation rail shown on the web.
   final destinations = [
-    RouteDestination(route: BooksTab(), icon: Icons.source, label: 'Books'),
+    RouteDestination(route: kBooksTab(), icon: Icons.source, label: 'Books'),
     RouteDestination(
-      route: ProfileTab(),
+      route: kProfileTab(),
       icon: Icons.person,
       label: 'Profile',
     ),

@@ -48,10 +48,10 @@ void main() {
   }
 }
 
-const _users = _Route('AppRoute', children: [_Route('UsersRoute')]);
-const _other = _Route('AppRoute', children: [_Route('OtherRoute')]);
+const _kUsers = _Route('AppRoute', children: [_Route('UsersRoute')]);
+const _kOther = _Route('AppRoute', children: [_Route('OtherRoute')]);
 
-// HomeRoute's button pushes [_users]; UsersRoute's button puts [_other] over
+// HomeRoute's button pushes [_kUsers]; UsersRoute's button puts [_kOther] over
 // the shell's page with replace, or with pushAndPopUntil down to HomeRoute.
 RootStackRouter _buildRouter({required bool replace}) => .build(
   routes: [
@@ -60,7 +60,7 @@ RootStackRouter _buildRouter({required bool replace}) => .build(
       page: _page(
         'HomeRoute',
         label: 'Open users',
-        onPressed: (router) => router.push(_users),
+        onPressed: (router) => router.push(_kUsers),
       ),
     ),
     AutoRoute(
@@ -73,9 +73,9 @@ RootStackRouter _buildRouter({required bool replace}) => .build(
             'UsersRoute',
             label: 'Show other',
             onPressed: (router) => replace
-                ? router.replace(_other)
+                ? router.replace(_kOther)
                 : router.pushAndPopUntil(
-                    _other,
+                    _kOther,
                     predicate: (route) => route.settings.name == 'HomeRoute',
                   ),
           ),

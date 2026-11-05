@@ -61,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage>
               onPressed: () {
                 unawaited(
                   context.navigateTo(
-                    BooksTab(children: [BookDetailsRoute(id: 1)]),
+                    kBooksTab(children: [BookDetailsRoute(id: 1)]),
                   ),
                 );
               },

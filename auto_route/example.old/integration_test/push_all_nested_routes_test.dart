@@ -25,7 +25,7 @@ void main() {
           children: [
             AutoRoute(page: _MetricsRoute.page, path: '', initial: true),
             AutoRoute(
-              page: const EmptyShellRoute(_usersShell),
+              page: const EmptyShellRoute(_kUsersShell),
               path: 'users',
               children: [
                 AutoRoute(page: _UsersRoute.page, path: '', initial: true),
@@ -61,8 +61,8 @@ void main() {
         ]),
       );
       await tester.pumpAndSettle();
-      expect(dashboard.stack.map((p) => p.name), [_usersShell]);
-      final shell = dashboard.innerRouterOf<StackRouter>(_usersShell)!;
+      expect(dashboard.stack.map((p) => p.name), [_kUsersShell]);
+      final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
       expect(shell.stack.map((p) => p.name), [
         _UsersRoute.name,
         _UserRoute.name,
@@ -77,7 +77,7 @@ void main() {
   );
 }
 
-const _usersShell = 'UsersSellRoute';
+const _kUsersShell = 'UsersSellRoute';
 
 class _BootRoute extends PageRouteInfo<void> {
   const new() : super(name);

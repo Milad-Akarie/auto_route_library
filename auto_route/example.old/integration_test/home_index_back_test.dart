@@ -31,7 +31,7 @@ void main() {
           page: _tabsPage,
           path: '/',
           children: [
-            for (final name in _tabNames)
+            for (final name in _kTabNames)
               AutoRoute(page: _page(name), path: name),
           ],
         ),
@@ -49,7 +49,7 @@ void main() {
     await systemBack(tester);
 
     expect(tabs.activeIndex, 0);
-    expect(find.text(_tabNames[0]), findsOneWidget);
+    expect(find.text(_kTabNames[0]), findsOneWidget);
     expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
   });
 
@@ -62,19 +62,19 @@ void main() {
       await systemBack(tester);
 
       expect(tabs.activeIndex, 1);
-      expect(find.text(_tabNames[1]), findsOneWidget);
+      expect(find.text(_kTabNames[1]), findsOneWidget);
     },
   );
 }
 
-const _tabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
+const _kTabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];
 var _homeIndex = 0;
 
 final _tabsPage = PageInfo(
   'HomeRoute',
   builder: (_) => AutoTabsScaffold(
     homeIndex: _homeIndex,
-    routes: [for (final name in _tabNames) _Route(name)],
+    routes: [for (final name in _kTabNames) _Route(name)],
   ),
 );
 

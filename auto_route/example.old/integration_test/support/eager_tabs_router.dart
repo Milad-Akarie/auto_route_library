@@ -5,10 +5,10 @@ import 'package:material_ui/material_ui.dart';
 // eager_tabs_test.dart.
 
 /// The tabs' route names, each page showing its name.
-const eagerTabNames = ['NewsRoute', 'FeedRoute', 'ProfileRoute'];
+const kEagerTabNames = ['NewsRoute', 'FeedRoute', 'ProfileRoute'];
 
 /// The route name of the page holding the tabs.
-const eagerTabsName = 'TabsRoute';
+const kEagerTabsName = 'TabsRoute';
 
 /// How many times each tab's page was created, by route name.
 final eagerTabBuilds = <String, int>{};
@@ -22,15 +22,15 @@ enum EagerTabsKind {
   pageView,
 }
 
-/// A router whose first page shows [eagerTabNames] as [kind] tabs, with
+/// A router whose first page shows [kEagerTabNames] as [kind] tabs, with
 /// lazyLoad: false.
 RootStackRouter buildEagerTabsRouter(EagerTabsKind kind) {
-  final routes = [for (final name in eagerTabNames) _Route(name)];
+  final routes = [for (final name in kEagerTabNames) _Route(name)];
   return RootStackRouter.build(
     routes: [
       AutoRoute(
         page: PageInfo(
-          eagerTabsName,
+          kEagerTabsName,
           builder: (_) => switch (kind) {
             .tabBar => AutoTabsRouter.tabBar(routes: routes, lazyLoad: false),
             .pageView => AutoTabsRouter.pageView(
@@ -41,7 +41,7 @@ RootStackRouter buildEagerTabsRouter(EagerTabsKind kind) {
         ),
         path: '/',
         children: [
-          for (final name in eagerTabNames)
+          for (final name in kEagerTabNames)
             AutoRoute(page: _page(name), path: name),
         ],
       ),

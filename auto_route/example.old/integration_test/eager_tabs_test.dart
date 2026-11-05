@@ -26,15 +26,15 @@ void main() {
         final router = buildEagerTabsRouter(kind);
         await pumpRouterApp(tester, router);
 
-        expect(eagerTabBuilds, {for (final name in eagerTabNames) name: 1});
+        expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
 
         router
-            .innerRouterOf<TabsRouter>(eagerTabsName)!
-            .setActiveIndex(eagerTabNames.length - 1);
+            .innerRouterOf<TabsRouter>(kEagerTabsName)!
+            .setActiveIndex(kEagerTabNames.length - 1);
         await tester.pumpAndSettle();
 
-        expect(find.text(eagerTabNames.last), findsOneWidget);
-        expect(eagerTabBuilds, {for (final name in eagerTabNames) name: 1});
+        expect(find.text(kEagerTabNames.last), findsOneWidget);
+        expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
       },
     );
   }

@@ -36,7 +36,7 @@ void main() {
     final calls = <int>[];
     await binding.traceAction(
       () async {
-        for (var index = 0; index < _steps; index++) {
+        for (var index = 0; index < _kSteps; index++) {
           final call = Stopwatch();
           await step(index, call);
           calls.add(call.elapsedMicroseconds);
@@ -93,7 +93,7 @@ void main() {
         unawaited(router.navigatePath(_deepLink(index)));
         call.stop();
         await tester.pumpAndSettle();
-        expect(router.topMatch.name, 'Level${_depth - 1}');
+        expect(router.topMatch.name, 'Level${_kDepth - 1}');
         unawaited(router.navigatePath('/'));
         await tester.pumpAndSettle();
       });
@@ -104,7 +104,7 @@ void main() {
         final tabs = router.innerRouterOf<TabsRouter>('${kind.parent}Route')!;
         await run('tabs_${kind.name}', (index, call) async {
           call.start();
-          tabs.setActiveIndex((index + 1) % _tabCount);
+          tabs.setActiveIndex((index + 1) % _kTabCount);
           call.stop();
           await tester.pumpAndSettle();
         });
@@ -115,9 +115,9 @@ void main() {
   });
 }
 
-const _steps = 40;
-const _depth = 5;
-const _tabCount = 4;
+const _kSteps = 40;
+const _kDepth = 5;
+const _kTabCount = 4;
 
 /// The kinds of tabs auto_route builds, by the parent route that holds them.
 enum _Tabs {
@@ -140,7 +140,7 @@ double _median(List<int> values) {
 
 // '/level0/7/level1/7/...', a different id each step so every step changes the stack.
 String _deepLink(int index) =>
-    '/${[for (var depth = 0; depth < _depth; depth++) 'level$depth/$index'].join('/')}';
+    '/${[for (var depth = 0; depth < _kDepth; depth++) 'level$depth/$index'].join('/')}';
 
 final _alwaysLetIn = AutoRouteGuard.simple((resolver, _) => resolver.next());
 
@@ -172,7 +172,7 @@ RootStackRouter _buildRouter() {
           ),
           path: '/${kind.name}',
           children: [
-            for (var i = 0; i < _tabCount; i++)
+            for (var i = 0; i < _kTabCount; i++)
               _route('${kind.parent}Tab$i', path: 'tab$i'),
           ],
         ),
@@ -196,7 +196,7 @@ AutoRoute _route(
 AutoRoute _level(int depth) {
   final name = 'Level$depth';
   final path = '${depth == 0 ? '/' : ''}level$depth/:id$depth';
-  if (depth == _depth - 1) return _route(name, path: path);
+  if (depth == _kDepth - 1) return _route(name, path: path);
   return AutoRoute(
     page: PageInfo.emptyShell(name),
     path: path,
@@ -230,7 +230,7 @@ class _TabsHost extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final routes = [
-      for (var i = 0; i < _tabCount; i++) NamedRoute('${kind.parent}Tab$i'),
+      for (var i = 0; i < _kTabCount; i++) NamedRoute('${kind.parent}Tab$i'),
     ];
     return switch (kind) {
       .indexedStack => AutoTabsRouter(
@@ -264,7 +264,7 @@ class _TabsScaffold extends StatelessWidget {
         onTap: tabs.setActiveIndex,
         type: .fixed,
         items: [
-          for (var i = 0; i < _tabCount; i++)
+          for (var i = 0; i < _kTabCount; i++)
             BottomNavigationBarItem(
               icon: const Icon(Icons.circle),
               label: 'Tab $i',

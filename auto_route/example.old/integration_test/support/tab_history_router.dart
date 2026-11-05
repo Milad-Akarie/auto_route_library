@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 // (AutoTabsRouter.backThroughHistory), for tab_history_back_test.dart.
 
 /// The tabs' route names, each page showing its name.
-const tabHistoryTabNames = [
+const kTabHistoryTabNames = [
   'NewsRoute',
   'FeedRoute',
   'RankingRoute',
@@ -13,10 +13,10 @@ const tabHistoryTabNames = [
 ];
 
 /// The route name of the page under the tabs, when there is one.
-const tabHistoryFirstPageName = 'FirstRoute';
+const kTabHistoryFirstPageName = 'FirstRoute';
 
 /// The route name of the page holding the tabs.
-const tabHistoryTabsName = 'TabsRoute';
+const kTabHistoryTabsName = 'TabsRoute';
 
 /// A router whose tabs page is the first page, or, with [overFirstPage],
 /// sits at `/tabs` over a first page at `/`.
@@ -24,12 +24,12 @@ RootStackRouter buildTabHistoryRouter({bool overFirstPage = false}) {
   return RootStackRouter.build(
     routes: [
       if (overFirstPage)
-        AutoRoute(page: _page(tabHistoryFirstPageName), path: '/'),
+        AutoRoute(page: _page(kTabHistoryFirstPageName), path: '/'),
       AutoRoute(
         page: _tabsPage,
         path: overFirstPage ? '/tabs' : '/',
         children: [
-          for (final name in tabHistoryTabNames)
+          for (final name in kTabHistoryTabNames)
             AutoRoute(page: _page(name), path: name),
         ],
       ),
@@ -38,13 +38,13 @@ RootStackRouter buildTabHistoryRouter({bool overFirstPage = false}) {
 }
 
 /// The route of the tabs page, to push over the first page.
-const tabHistoryTabsRoute = _Route(tabHistoryTabsName);
+const kTabHistoryTabsRoute = _Route(kTabHistoryTabsName);
 
 final _tabsPage = PageInfo(
-  tabHistoryTabsName,
+  kTabHistoryTabsName,
   builder: (_) => AutoTabsRouter(
     backThroughHistory: true,
-    routes: [for (final name in tabHistoryTabNames) _Route(name)],
+    routes: [for (final name in kTabHistoryTabNames) _Route(name)],
   ),
 );
 
