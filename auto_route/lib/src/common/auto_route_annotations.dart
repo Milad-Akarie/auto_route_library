@@ -96,7 +96,6 @@ class PathParam {
   final ParamConverter<Object?>? converter;
 
   // Read by the generator from the annotation's source, never by Dart code.
-  // ignore: unused_field
   final bool _inherited;
 }
 
