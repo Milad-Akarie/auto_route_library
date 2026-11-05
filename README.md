@@ -1534,6 +1534,21 @@ class AppRouter extends RootStackRouter{
 }
 ```
 
+#### The order guards run in
+
+For each route it opens, a stack router runs the root router's global `guards` first, then the route's own `guards`, each in the order listed. Each guard waits for the one before it to answer, so a later guard can use what an earlier one loaded, and the first one that rejects stops the rest. A route with children is checked before its children, and each child goes through the global guards again:
+
+```dart
+// AppRouter.guards: [authGuard], and
+AutoRoute(page: AdminRoute.page, guards: [adminGuard], children: [
+  AutoRoute(page: UsersRoute.page, guards: [usersGuard]),
+]),
+// navigate(AdminRoute(children: [UsersRoute()])) runs
+// authGuard (AdminRoute), adminGuard, authGuard (UsersRoute), usersGuard
+```
+
+When several routes are opened at once, as by `pushAll` or a deep link, they're checked one after another, from the bottom of the stack up, and a rejected route keeps the routes above it from opening too. The guards of tab routes run when their tab is about to show, without the global guards (see [Guarding tab routes](#guarding-tab-routes)).
+
 #### Waiting inside a guard, and redirecting without waiting
 
 `onNavigation` can be `async`. The guarded route is not shown until `resolver.next()` is called, so a guard is the place for a check that has to finish before the first page, such as reading a stored session.
