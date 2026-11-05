@@ -16,8 +16,9 @@ import 'pop_scope_web_test.dart' show pressBrowserBackOn;
 
 // https://github.com/flutter/flutter/issues/82660
 // With the path url strategy (urls without '#'), the browser's back button
-// did not reach WillPopScope. Push a page whose PopScope refuses, then press
-// the browser's back button: the page stays and PopScope hears of the attempt.
+// skipped WillPopScope. This test checks PopScope, which replaced it: push a
+// page whose PopScope refuses, then press the browser's back button: the page
+// stays and PopScope hears of the attempt.
 void main() {
   useRealBrowserHistory();
   usePathUrlStrategy();

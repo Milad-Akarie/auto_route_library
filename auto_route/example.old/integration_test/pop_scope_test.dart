@@ -9,7 +9,7 @@ import 'package:material_ui/material_ui.dart';
 import 'support/app.dart';
 import 'support/pages.dart';
 
-// PopScope and WillPopScope block the browser's back button.
+// PopScope blocks the browser's back button.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1944
 // https://github.com/Milad-Akarie/auto_route_library/issues/1588
 // Headless test: auto_route/test/web/pop_scope_web_test.dart
@@ -26,7 +26,6 @@ void main() {
         routes: [
           AutoRoute(page: FirstRoute.page, path: '/'),
           AutoRoute(page: _FormRoute.page, path: '/form'),
-          AutoRoute(page: _LegacyFormRoute.page, path: '/legacy-form'),
         ],
       );
     });
@@ -49,26 +48,6 @@ void main() {
         await expectBrowserUrl('/form');
         expect(browserEntryIndex(), formEntry);
         expect(router.current.name, _FormRoute.name);
-      },
-      skip: !kIsWeb,
-    );
-
-    // Steps: the same with the older WillPopScope, whose onWillPop returns
-    // false.
-    testWidgets(
-      'WillPopScope blocks the browser back button',
-      (tester) async {
-        await pumpRouterAppWithConfig(tester, router);
-        unawaited(router.push(const _LegacyFormRoute()));
-        await tester.pumpAndSettle();
-        await expectBrowserUrl('/legacy-form');
-        final formEntry = browserEntryIndex();
-
-        pressBrowserBack();
-        await _waitForPopAttempt(tester);
-        await expectBrowserUrl('/legacy-form');
-        expect(browserEntryIndex(), formEntry);
-        expect(router.current.name, _LegacyFormRoute.name);
       },
       skip: !kIsWeb,
     );
@@ -98,24 +77,6 @@ class _FormRoute extends PageRouteInfo<void> {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _popAttempts++;
-      },
-      child: const Scaffold(body: Text(name)),
-    ),
-  );
-}
-
-class _LegacyFormRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
-  static const String name = 'LegacyFormRoute';
-  static PageInfo page = PageInfo(
-    name,
-    // #1588 reports the deprecated WillPopScope, which apps still use.
-    // ignore: deprecated_member_use
-    builder: (_) => WillPopScope(
-      onWillPop: () async {
-        _popAttempts++;
-        return false;
       },
       child: const Scaffold(body: Text(name)),
     ),

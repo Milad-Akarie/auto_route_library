@@ -314,8 +314,8 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   // Whether the route on top of the top-most navigator refuses to be popped,
-  // through a PopScope or a WillPopScope; asks it the way Navigator.maybePop
-  // does, so it hears of the attempt.
+  // through a PopScope; asks it the way Navigator.maybePop does, so it hears
+  // of the attempt.
   Future<bool> _doesTopRouteRefusePop() async {
     final topMost = controller.topMostRouter();
     if (topMost is! StackRouter) return false;
@@ -328,8 +328,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     });
     final route = topRoute;
     if (route == null) return false;
-    // WillPopScope answers only through the deprecated willPop.
-    if (await route.willPop() == .doNotPop) return true;
     if (route.popDisposition == .doNotPop) {
       route.onPopInvokedWithResult(false, null);
       return true;

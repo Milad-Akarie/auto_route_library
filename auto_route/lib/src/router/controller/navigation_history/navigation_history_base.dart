@@ -104,7 +104,7 @@ abstract class NavigationHistory with ChangeNotifier {
   ///
   /// [AutoRouterDelegate.setNewRoutePath] asks this before following a route
   /// the browser reported, so that a page that refuses to be popped, through
-  /// a PopScope or a WillPopScope, can refuse the browser's back button too.
+  /// a PopScope, can refuse the browser's back button too.
   /// Always false on native platforms, which have no browser.
   @internal
   bool get isBrowserBehindApp => false;

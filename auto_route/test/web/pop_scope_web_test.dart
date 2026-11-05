@@ -23,7 +23,6 @@ void main() {
       routes: [
         AutoRoute(page: FirstRoute.page, path: '/'),
         AutoRoute(page: _FormRoute.page, path: '/form'),
-        AutoRoute(page: _LegacyFormRoute.page, path: '/legacy-form'),
         AutoRoute(page: _ToggleFormRoute.page, path: '/toggle-form'),
       ],
     );
@@ -52,24 +51,6 @@ void main() {
     router.removeLast();
     await settleBrowser(tester);
     expectCurrentPage(router, FirstRoute.name);
-  });
-
-  // https://github.com/Milad-Akarie/auto_route_library/issues/1588
-  // The same with the older WillPopScope, whose onWillPop returns false.
-  testWidgets('WillPopScope on web blocks the browser back button', (
-    tester,
-  ) async {
-    await pumpRouterConfigApp(tester, router.config());
-    await settleBrowser(tester);
-    unawaited(router.push(const _LegacyFormRoute()));
-    await settleBrowser(tester);
-    final formEntry = browserSerialCount;
-
-    await pressBrowserBackOn(tester, router);
-    expectCurrentPage(router, _LegacyFormRoute.name);
-    expect(_popAttempts, 1);
-    expect(browserPath, '/legacy-form');
-    expect(browserSerialCount, formEntry);
   });
 
   // flutter/flutter#174674: each refused exit added a browser entry, so the
@@ -150,24 +131,6 @@ class _FormRoute extends PageRouteInfo<void> {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _popAttempts++;
-      },
-      child: const Scaffold(body: Text(name)),
-    ),
-  );
-}
-
-class _LegacyFormRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
-  static const String name = 'LegacyFormRoute';
-  static final PageInfo page = PageInfo(
-    name,
-    // #1588 reports the deprecated WillPopScope, which apps still use.
-    // ignore: deprecated_member_use
-    builder: (_) => WillPopScope(
-      onWillPop: () async {
-        _popAttempts++;
-        return false;
       },
       child: const Scaffold(body: Text(name)),
     ),

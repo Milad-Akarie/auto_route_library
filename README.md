@@ -321,7 +321,7 @@ context.router.popUntilRoot();
 // observers hear didRemove, PopScopes are not asked, and they never show
 context.router.pushAndPopUntil(const HomeRoute(), predicate: (route) => route.isFirst);
 // removes the top most page in stack even if it's the last
-// remove != pop, it doesn't respect WillPopScopes it just
+// remove != pop, it doesn't respect PopScopes it just
 // removes the entry.
 context.router.removeLast();
 // removes any route in stack that satisfies the predicate
