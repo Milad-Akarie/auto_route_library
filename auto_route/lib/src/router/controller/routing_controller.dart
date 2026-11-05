@@ -476,7 +476,7 @@ abstract class RoutingController with ChangeNotifier {
   /// if [onFailure] callback is provided, navigation errors will be passed to it
   /// otherwise they'll be thrown
   Future<T?> navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
-    return _findScope(route)._navigate(route, onFailure: onFailure);
+    return await _findScope(route)._navigate(route, onFailure: onFailure);
   }
 
   /// Pops until given [path], if it already exists in stack
@@ -503,9 +503,9 @@ abstract class RoutingController with ChangeNotifier {
   Future<T?> _navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
     final match = _matchOrReportFailure(route, onFailure);
     if (match != null) {
-      return _navigateAll([match], onFailure: onFailure);
+      return await _navigateAll([match], onFailure: onFailure);
     }
-    return SynchronousFuture(null);
+    return null;
   }
 
   List<RoutingController> _buildRoutersHierarchy() {
@@ -858,18 +858,18 @@ class TabsRouter extends RoutingController {
   @override
   Future<T?> _navigate<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
     final match = _matchOrReportFailure(route, onFailure);
-    if (match == null) return SynchronousFuture(null);
+    if (match == null) return null;
     if (_pages.isNotEmpty && _tabIndexOf(match) == -1) {
       if (onFailure != null) {
         onFailure(RouteNotFoundFailure(route.routeName));
-        return SynchronousFuture(null);
+        return null;
       }
       throw FlutterError(
         'Can not navigate to ${route.routeName}: it is not one of the tabs of the tabs router of '
         '${routeData.name}. Add it to the routes of its AutoTabsRouter, or show it in a router of its own.',
       );
     }
-    return _navigateAll([match], onFailure: onFailure);
+    return await _navigateAll([match], onFailure: onFailure);
   }
 
   RouteData<Object?> _routeData;
@@ -1368,7 +1368,7 @@ class TabsRouter extends RoutingController {
       }
     }
 
-    return SynchronousFuture(null);
+    return null;
   }
 
   // Puts [mayUpdateRoute] in the page of the tab at [index], and answers the
@@ -1808,7 +1808,7 @@ abstract class StackRouter extends RoutingController {
     if (await navigator?.maybePop<T>(result) ?? false) {
       return true;
     } else if (_parent != null) {
-      return _parent!.maybePop(result);
+      return await _parent!.maybePop(result);
     }
     return false;
   }
@@ -1925,7 +1925,7 @@ abstract class StackRouter extends RoutingController {
   /// otherwise they'll be thrown
   @optionalTypeArgs
   Future<T?> push<T extends Object?>(PageRouteInfo route, {OnNavigationFailure? onFailure}) async {
-    return _findStackScope(route)._push(route, onFailure: onFailure);
+    return await _findStackScope(route)._push(route, onFailure: onFailure);
   }
 
   StackRouter _findStackScope(PageRouteInfo route) {
@@ -1970,7 +1970,7 @@ abstract class StackRouter extends RoutingController {
         }
       }
     }
-    return _pushAllGuarded(
+    return await _pushAllGuarded(
       toPush,
       onFailure: onFailure,
       updateAncestorsPathData: false,
@@ -2040,7 +2040,7 @@ abstract class StackRouter extends RoutingController {
       onAccepted?.call();
       _updateSharedPathData(queryParams: route.rawQueryParams, fragment: route.fragment, includeAncestors: true);
 
-      return _addNewPage(result.route, notify: notify, index: insertAt, onFailure: onFailure);
+      return await _addNewPage(result.route, notify: notify, index: insertAt, onFailure: onFailure);
     }
     return null;
   }
@@ -2133,9 +2133,8 @@ abstract class StackRouter extends RoutingController {
   }) async {
     final matches = _matchAllOrReportFailure(routes, onFailure);
     if (matches != null) {
-      return _replaceAllMatches(matches, updateExistingRoutes: updateExistingRoutes);
+      await _replaceAllMatches(matches, updateExistingRoutes: updateExistingRoutes);
     }
-    return SynchronousFuture(null);
   }
 
   Future<void> _replaceAllMatches(List<RouteMatch<Object?>> matches, {required bool updateExistingRoutes}) async {
@@ -2419,7 +2418,7 @@ abstract class StackRouter extends RoutingController {
             final completer = _addNewPage<T>(match, notify: notify);
             if (pushed != null && !pushed.isCompleted) pushed.complete();
             if (returnLastRouteCompleter) {
-              return completer;
+              return await completer;
             }
           }
         }
@@ -2437,7 +2436,7 @@ abstract class StackRouter extends RoutingController {
         break;
       }
     }
-    return SynchronousFuture(null);
+    return null;
   }
 
   void _addReevaluatedPage(ReevaluatableRouteMatch<Object?, Object?> match, {bool notify = true}) {
@@ -2546,7 +2545,9 @@ abstract class StackRouter extends RoutingController {
     var routeToCheck = route;
     final guards = <AutoRouteGuard>[...root.guards, ...routeToCheck.guards];
     if (guards.isEmpty) {
-      return SynchronousFuture(ResolverResult(continueNavigation: true, reevaluateNext: true, route: routeToCheck));
+      return await SynchronousFuture(
+        ResolverResult(continueNavigation: true, reevaluateNext: true, route: routeToCheck),
+      );
     }
     var reevaluateNext = true;
     for (final guard in guards) {
@@ -2601,7 +2602,7 @@ abstract class StackRouter extends RoutingController {
     // A reevaluation takes every page off and puts back the ones its guards
     // keep, so only the pages it closes are reported, once it ends.
     if (isReevaluating && _leaveReportHolds == 0) {
-      return _holdingLeaveReports(() => _navigateAll<T>(routes, onFailure: onFailure, isReevaluating: true));
+      return await _holdingLeaveReports(() => _navigateAll<T>(routes, onFailure: onFailure, isReevaluating: true));
     }
     // pages pushed after the stack was composed for reevaluation are not in [routes].
     // A reevaluated page may be rebuilt, so it's known by its route data
@@ -2652,7 +2653,7 @@ abstract class StackRouter extends RoutingController {
         }
         // children a guard set while reevaluating are new routes, not pages being reevaluated
         final childrenOverridden = newChildren.any((child) => child is! ReevaluatableRouteMatch);
-        return mayUpdateController._navigateAll(
+        return await mayUpdateController._navigateAll(
           newChildren,
           onFailure: onFailure,
           isReevaluating: isReevaluating && !childrenOverridden,
@@ -2661,7 +2662,7 @@ abstract class StackRouter extends RoutingController {
     } else if (!managedByWidget) {
       _reset();
     }
-    return popped;
+    return await popped;
   }
 
   void _reset() {

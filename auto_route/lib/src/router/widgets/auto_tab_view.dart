@@ -244,8 +244,6 @@ class AutoTabViewState extends State<AutoTabView> {
     } else {
       await _animateToPage(_currentIndex!, duration: duration, curve: Curves.ease);
     }
-
-    return Future.value();
   }
 
   Future<void> _warpToNonAdjacentTab(Duration duration) async {

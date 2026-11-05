@@ -203,8 +203,6 @@ class AutoPageViewState extends State<AutoPageView> {
     } else {
       _jumpToPage(_router.activeIndex);
     }
-
-    return Future.value();
   }
 
   Future<void> _warpToNonAdjacentTab(int previousIndex) async {
@@ -227,7 +225,7 @@ class AutoPageViewState extends State<AutoPageView> {
   }
 
   Future<void> _warpToCurrentIndex() async {
-    if (!mounted) return Future.value();
+    if (!mounted) return;
 
     _disposeInactiveChildren();
     // From the page on screen: it's the tab before the active one, or the

@@ -102,7 +102,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   }
 
   @override
-  Future<bool> popRoute() async => controller.maybePopTop();
+  Future<bool> popRoute() async => await controller.maybePopTop();
 
   late List<NavigatorObserver> _navigatorObservers;
 
@@ -147,13 +147,13 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
     if (controller.hasEntries) {
-      return SynchronousFuture(null);
+      return;
     }
     final platformDeepLink = PlatformDeepLink._(configuration, true);
     if (deepLinkBuilder != null) {
-      return _handleDeepLink(await deepLinkBuilder!(platformDeepLink));
+      return await _handleDeepLink(await deepLinkBuilder!(platformDeepLink));
     } else if (platformDeepLink.isValid) {
-      return _handleDeepLink(platformDeepLink);
+      return await _handleDeepLink(platformDeepLink);
     }
     throw FlutterError(_unresolvedMessage(platformDeepLink));
   }
@@ -241,7 +241,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   Future<void> setNewRoutePath(UrlState configuration) async {
     final history = controller.navigationHistory;
     if (history.consumeOwnBrowserMove(configuration)) {
-      return SynchronousFuture(null);
+      return;
     }
     if (history.isBrowserBehindApp && await _topRouteRefusesPop()) {
       history.returnBrowserToApp();
@@ -261,7 +261,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
       final entryRoutes = controller.navigationHistory.routesOfBrowserEntry(configuration);
       if (entryRoutes != null && entryRoutes.isEmpty) {
         notifyListeners();
-        return SynchronousFuture(null);
+        return;
       }
       final platLink = PlatformDeepLink._(
         entryRoutes == null ? configuration : configuration.copyWith(segments: entryRoutes),
@@ -275,7 +275,6 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
 
     notifyListeners();
-    return SynchronousFuture(null);
   }
 
   // Whether the route on top of the top-most navigator refuses to be popped,
