@@ -79,7 +79,8 @@ void main() {
       );
     });
 
-    test('reads and writes an optional query param, with or without a default', () async {
+    test('reads and writes an optional query param, '
+        'with or without a default', () async {
       final result = await generateRouter({
         'lib/user_id.dart': _kUserId,
         'lib/user_page.dart': _userPage(
@@ -103,7 +104,8 @@ void main() {
       expect(
         source,
         contains(
-          "to:queryParams.getTyped<UserId>('to',userIdConverter,constUserId('me'))",
+          "to:queryParams.getTyped<UserId>('to',userIdConverter,constUserId"
+          "('me'))",
         ),
       );
     });
@@ -172,7 +174,8 @@ const levelConverter = LevelConverter();
       );
     });
 
-    test('written in the annotation fails the build asking for a top-level constant', () async {
+    test('written in the annotation fails the build asking for a top-level '
+        'constant', () async {
       final result = await generateRouter({
         'lib/user_id.dart': _kUserId,
         'lib/user_page.dart': _userPage(

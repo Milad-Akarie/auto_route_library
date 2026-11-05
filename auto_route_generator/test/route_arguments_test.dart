@@ -36,7 +36,9 @@ void main() {
         'lib/card_page.dart': _page(
           'CardPage',
           parameters: 'required this.card',
-          fields: '  final ({String id, bool isActivated, ({String id, String name})? resource}) card;',
+          fields:
+              '  final ({String id, bool isActivated, ({String id, String '
+              'name})? resource}) card;',
         ),
       });
       expect(result.errors, isEmpty);
@@ -105,7 +107,8 @@ required this.url,
       expect(
         source,
         contains(
-          'Option<void Function({required bool isMainFrame, int? code})> onFrame',
+          'Option<void Function({required bool isMainFrame, int? code})> '
+          'onFrame',
         ),
       );
       expect(source, contains('Option<UrlCallback> onPageStarted'));
@@ -122,7 +125,9 @@ required this.url,
         'lib/inbox_page.dart': _page(
           'InboxMessageDetailsPage',
           imports: "import 'types.dart';",
-          parameters: '@PathParam() required this.inboxMessageId, @QueryParam() this.page',
+          parameters:
+              '@PathParam() required this.inboxMessageId, @QueryParam() '
+              'this.page',
           fields: '''
   final TypedefParameter inboxMessageId;
   final TypedefParameter? page;''',
@@ -143,7 +148,9 @@ required this.url,
       final result = await generateRouter({
         'lib/my_books_page.dart': _page(
           'MyBooksPage',
-          parameters: "@queryParam this.filter = 'none', @QueryParam('update') this.forUpdate = false",
+          parameters:
+              "@queryParam this.filter = 'none', @QueryParam('update') "
+              'this.forUpdate = false',
           fields: '''
   final String filter;
   final bool forUpdate;''',
@@ -173,7 +180,9 @@ const firstPage = 1;
         'lib/home_screen.dart': _page(
           'HomeScreen',
           imports: "import 'defaults.dart';",
-          parameters: 'this.titleResolver = defaultTitleResolver, @QueryParam() this.page = firstPage',
+          parameters:
+              'this.titleResolver = defaultTitleResolver, @QueryParam() '
+              'this.page = firstPage',
           fields: '''
   final String Function() titleResolver;
   final int page;''',
@@ -203,7 +212,9 @@ const firstPage = 1;
         'lib/cart_page.dart': _page(
           'MfUserCartView',
           imports: "import 'types.dart';",
-          parameters: "@QueryParam('type') required this.userCartType, @QueryParam() this.sort = MfUserCartTypes.mf",
+          parameters:
+              "@QueryParam('type') required this.userCartType, @QueryParam() "
+              'this.sort = MfUserCartTypes.mf',
           fields: '''
   final MfUserCartTypes? userCartType;
   final MfUserCartTypes sort;''',
@@ -222,13 +233,15 @@ const firstPage = 1;
       expect(
         source,
         contains(
-          "userCartType:MfUserCartTypes.values.asNameMap()[queryParams.optString('type')]",
+          'userCartType:MfUserCartTypes.values.asNameMap()[queryParams.optS'
+          "tring('type')]",
         ),
       );
       expect(
         source,
         contains(
-          "sort:MfUserCartTypes.values.asNameMap()[queryParams.optString('sort')]??MfUserCartTypes.mf",
+          "sort:MfUserCartTypes.values.asNameMap()[queryParams.optString('s"
+          "ort')]??MfUserCartTypes.mf",
         ),
       );
     });
@@ -327,38 +340,44 @@ class Range {
       expect(
         source,
         contains(
-          "ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()",
+          "ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>"
+          '().toList()',
         ),
       );
       expect(
         source,
         contains(
-          "prices:queryParams.optList('prices')?.map(double.tryParse).whereType<double>().toList()",
+          "prices:queryParams.optList('prices')?.map(double.tryParse).where"
+          'Type<double>().toList()',
         ),
       );
       expect(
         source,
         contains(
-          "sizes:queryParams.optList('sizes')?.map(num.tryParse).whereType<num>().toList()",
+          "sizes:queryParams.optList('sizes')?.map(num.tryParse).whereType<"
+          'num>().toList()',
         ),
       );
       expect(
         source,
         contains(
-          "flags:queryParams.optList('flags')?.map((text)=>text.toLowerCase()=='true'",
+          "flags:queryParams.optList('flags')?.map((text)=>text.toLowerCase"
+          "()=='true'",
         ),
       );
       expect(source, contains("tags:queryParams.optList('tags')"));
       expect(
         source,
         contains(
-          "picked:queryParams.optList('picked')?.map(int.tryParse).whereType<int>().toList()??const[1,2]",
+          "picked:queryParams.optList('picked')?.map(int.tryParse).whereTyp"
+          'e<int>().toList()??const[1,2]',
         ),
       );
       expect(
         source,
         contains(
-          "sorts:queryParams.optList('sorts')?.map((name)=>Sort.values.asNameMap()[name]).whereType<Sort>().toList()",
+          "sorts:queryParams.optList('sorts')?.map((name)=>Sort.values.asNa"
+          'meMap()[name]).whereType<Sort>().toList()',
         ),
       );
       expect(
@@ -385,7 +404,8 @@ class Range {
         result.errors.join(),
         allOf(
           contains(
-            'a List query param can hold String, int, double, num, bool or enum',
+            'a List query param can hold String, int, double, num, bool or '
+            'enum',
           ),
           contains('not Color'),
         ),
@@ -429,7 +449,8 @@ class Range {
         result.errors.join(),
         allOf(
           contains(
-            'Parameter [mode] must be of a type that can be parsed from a [String]',
+            'Parameter [mode] must be of a type that can be parsed from a '
+            '[String]',
           ),
           contains('valid types: [String, int, double, num, bool, dynamic]'),
         ),
@@ -539,8 +560,9 @@ class Range {
   // flutter/flutter#108437: a query param typed as a Set of String, an
   // Iterable of int, a DateTime or any type the url can't give was read with
   // the untyped queryParams get, so the router compiled and opening the page
-  // from a link threw a TypeError, since the url gives text or a list of it. A Set or an
-  // Iterable is now read as a List is; any other type fails the build.
+  // from a link threw a TypeError, since the url gives text or a list of it.
+  // A Set or an Iterable is now read as a List is; any other type fails the
+  // build.
   group('a Set or Iterable query param (flutter/flutter#108437)', () {
     test('is read from the url as its own type', () async {
       final result = await generateRouter({
@@ -549,10 +571,12 @@ class Range {
           'TagsPage',
           imports: "import 'sort.dart';",
           parameters:
-              '@QueryParam() this.tags = const {}, @QueryParam() this.ids, @QueryParam() this.sorts, '
+              '@QueryParam() this.tags = const {}, @QueryParam() this.ids, '
+              '@QueryParam() this.sorts, '
               '@QueryParam() this.names',
           fields:
-              '  final Set<String> tags;\n  final Iterable<int>? ids;\n  final Set<Sort>? sorts;\n'
+              '  final Set<String> tags;\n  final Iterable<int>? ids;\n  '
+              'final Set<Sort>? sorts;\n'
               '  final Iterable<String>? names;',
         ),
       });
@@ -566,13 +590,15 @@ class Range {
       expect(
         source,
         contains(
-          "ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()",
+          "ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>"
+          '().toList()',
         ),
       );
       expect(
         source,
         contains(
-          "sorts:queryParams.optList('sorts')?.map((name)=>_i4.Sort.values.asNameMap()[name]).whereType<_i4.Sort>().toSet()",
+          "sorts:queryParams.optList('sorts')?.map((name)=>_i4.Sort.values."
+          'asNameMap()[name]).whereType<_i4.Sort>().toSet()',
         ),
       );
       expect(result.source, contains("names: queryParams.optList('names')"));
@@ -584,27 +610,32 @@ class Range {
       ('Uri', 'final Uri? at;'),
       ('ArticleId', 'final ArticleId? at;'),
     ]) {
-      test('of another type, $type, fails the build naming the param', () async {
-        final result = await generateRouter({
-          'lib/article_id.dart':
-              'extension type const ArticleId(String value) {}',
-          'lib/at_page.dart': _page(
-            'AtPage',
-            imports: "import 'article_id.dart';",
-            parameters: '@QueryParam() this.at',
-            fields: '  $field',
-          ),
-        });
-        expect(
-          result.errors.join(),
-          contains(
-            'Parameter [at] is a @QueryParam of type $type, which a url can not give',
-          ),
-        );
-      });
+      test(
+        'of another type, $type, fails the build naming the param',
+        () async {
+          final result = await generateRouter({
+            'lib/article_id.dart':
+                'extension type const ArticleId(String value) {}',
+            'lib/at_page.dart': _page(
+              'AtPage',
+              imports: "import 'article_id.dart';",
+              parameters: '@QueryParam() this.at',
+              fields: '  $field',
+            ),
+          });
+          expect(
+            result.errors.join(),
+            contains(
+              'Parameter [at] is a @QueryParam of type $type, which a url '
+              'can not give',
+            ),
+          );
+        },
+      );
     }
 
-    test('of a type the url can not give is allowed when a required argument keeps links out', () async {
+    test('of a type the url can not give is allowed when a required argument '
+        'keeps links out', () async {
       final result = await generateRouter({
         'lib/at_page.dart': _page(
           'AtPage',
@@ -627,7 +658,8 @@ class Range {
       expect(
         result.errors.join(),
         contains(
-          'at: a Set query param can hold String, int, double, num, bool or enum items',
+          'at: a Set query param can hold String, int, double, num, bool '
+          'or enum items',
         ),
       );
     });
@@ -656,7 +688,8 @@ class Range {
       expect(result.source, contains('required _i4.ArticleId id'));
     });
 
-    test('as a path param fails the build naming the types a path can give', () async {
+    test('as a path param fails the build naming '
+        'the types a path can give', () async {
       final result = await generateRouter({
         'lib/article_id.dart': articleId,
         'lib/article_page.dart': _page(

@@ -113,7 +113,8 @@ final class _GetterParam extends UrlParamType {
   Expression _parseItem(ResolvedType type) => switch (type.name) {
     'bool' => const CodeExpression(
       Code(
-        "(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null",
+        "(text) => text.toLowerCase() == 'true' ? true : "
+        "text.toLowerCase() == 'false' ? false : null",
       ),
     ),
     _ => refer(type.name, type.import).property('tryParse'),

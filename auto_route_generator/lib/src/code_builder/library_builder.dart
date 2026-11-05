@@ -40,7 +40,8 @@ void _throwOnRouteNamedLikePage(RouterConfig router, List<RouteConfig> routes) {
       .toList();
   if (clashes.isEmpty) return;
   throwError(
-    'A route in the part file ${router.path} gets the name of a page, which hides the page. '
+    'A route in the part file ${router.path} gets the name of a page, '
+    'which hides the page. '
     'Give the page a route name of its own:\n${clashes.map((r) {
       final name = r.getName(router.replaceInRouteName);
       return "  @RoutePage(name: '${name}Route') on ${r.className}";
@@ -60,7 +61,8 @@ String generateLibrary(
 }) {
   if (router.isPartOfLibrary && router.isDeferredLoading) {
     throw ArgumentError(
-      'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
+      'Part-file approach will not work with deferred loading because '
+      'allocator needs to mark all deferred imports!',
     );
   }
 
@@ -84,7 +86,9 @@ String generateLibrary(
 
   if (router.isPartOfLibrary && deferredRoutes.isNotEmpty) {
     throw ArgumentError(
-      'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports! ${deferredRoutes.map((e) => e.name)}',
+      'Part-file approach will not work with deferred loading because '
+      'allocator needs to mark all deferred imports! '
+      '${deferredRoutes.map((e) => e.name)}',
     );
   }
 

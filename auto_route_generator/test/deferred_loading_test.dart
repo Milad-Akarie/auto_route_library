@@ -194,25 +194,23 @@ class AppRouter extends RootStackRouter {
     }
 
     for (final optedOut in ['first', 'second']) {
-      test(
-        'loads neither on demand when the $optedOut opts out of the router default',
-        () async {
-          const annotation = '@RoutePage(deferredLoading: false)';
-          final result = await generateRouter({
-            'lib/pages.dart': optedOut == 'first'
-                ? twoPages(first: annotation)
-                : twoPages(second: annotation),
-            'lib/router.dart': router(
-              annotation: '@AutoRouterConfig(deferredLoading: true)',
-            ),
-          });
-          expect(result.errors, isEmpty);
-          expect(result.compileErrors, isEmpty);
-          final source = result.source!;
-          expect(_importOf(source, 'pages.dart'), isNot(contains('deferred')));
-          expect(source, isNot(contains('DeferredWidget')));
-        },
-      );
+      test('loads neither on demand when the $optedOut opts out of the router '
+          'default', () async {
+        const annotation = '@RoutePage(deferredLoading: false)';
+        final result = await generateRouter({
+          'lib/pages.dart': optedOut == 'first'
+              ? twoPages(first: annotation)
+              : twoPages(second: annotation),
+          'lib/router.dart': router(
+            annotation: '@AutoRouterConfig(deferredLoading: true)',
+          ),
+        });
+        expect(result.errors, isEmpty);
+        expect(result.compileErrors, isEmpty);
+        final source = result.source!;
+        expect(_importOf(source, 'pages.dart'), isNot(contains('deferred')));
+        expect(source, isNot(contains('DeferredWidget')));
+      });
     }
   });
 }

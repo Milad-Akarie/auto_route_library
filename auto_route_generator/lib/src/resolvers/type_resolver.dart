@@ -155,8 +155,9 @@ class TypeResolver {
 
   /// Resolves the given [type] to a [ResolvedType]
   ///
-  /// A type named by a typedef resolves to the typedef, unless [shouldSkipAlias]
-  /// is true: then it resolves to the type the typedef stands for.
+  /// A type named by a typedef resolves to the typedef, unless
+  /// [shouldSkipAlias] is true: then it resolves to the type the typedef
+  /// stands for.
   ResolvedType resolveType(DartType type, {bool shouldSkipAlias = false}) {
     final alias = shouldSkipAlias ? null : type.alias;
     final effectiveElement = alias?.element ?? type.element;

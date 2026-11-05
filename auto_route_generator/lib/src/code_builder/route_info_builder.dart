@@ -54,6 +54,9 @@ List<Class> buildRouteInfoAndArgs(
   final nonInheritedParameters = parameters
       .where((p) => !p.isInheritedPathParam)
       .toList();
+  final argsText = nonInheritedParameters
+      .map((p) => '${_escapeDollar(p.name)}: ${_interpolation(p.name)}')
+      .join(', ');
   final equatableParams = nonInheritedParameters
       .where((p) => p is! FunctionParamConfig)
       .toList();
@@ -216,7 +219,8 @@ List<Class> buildRouteInfoAndArgs(
                 ..annotations.add(refer('override'))
                 ..returns = kStringRefer
                 ..body = literalString(
-                  '${_escapeDollar(r.getName(router.replaceInRouteName))}Args{${nonInheritedParameters.map((p) => '${_escapeDollar(p.name)}: ${_interpolation(p.name)}').join(', ')}}',
+                  '${_escapeDollar(r.getName(router.replaceInRouteName))}Args{'
+                  '$argsText}',
                 ).returned.statement,
             ),
             if (router.hasArgsEquality)
@@ -238,7 +242,9 @@ List<Class> buildRouteInfoAndArgs(
                       ..statements.addAll([
                         const Code('if (identical(this, other)) return true;'),
                         Code(
-                          'if (other is! ${emitSource(typedArgsClassRefer, emitter)}) return false;',
+                          'if (other is! '
+                          '${emitSource(typedArgsClassRefer, emitter)}) '
+                          'return false;',
                         ),
                         const Code('return '),
                         // Args with nothing to compare, such as a generic
@@ -394,9 +400,12 @@ Iterable<Parameter> _buildArgParams(
           } else if (p.defaultValueCode!.contains('{}')) {
             defaultCode = const Code('const {}');
           } else {
-            defaultCode = Code(
-              'const ${emitSource(_defaultValue(p, p.defaultValueCode!.replaceFirst(_constKeyword, '')), emitter)}',
+            final defaultValue = _defaultValue(
+              p,
+              p.defaultValueCode!.replaceFirst(_constKeyword, ''),
             );
+            final defaultValueSource = emitSource(defaultValue, emitter);
+            defaultCode = Code('const $defaultValueSource');
           }
         } else {
           defaultCode = _defaultValue(p).code;
@@ -442,6 +451,7 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
   }
   final inheritedParameters = r.parameters.where((p) => p.isInheritedPathParam);
 
+  final argsClass = refer('${r.getName(router.replaceInRouteName)}Args');
   final nonInheritedParameters = r.parameters.where(
     (p) => !p.isInheritedPathParam,
   );
@@ -476,10 +486,8 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
                               (methodBuilder) => methodBuilder
                                 ..lambda = true
                                 ..body = r.pathQueryParams.isEmpty
-                                    ? refer(
-                                        '${r.getName(router.replaceInRouteName)}Args',
-                                      ).constInstance([]).code
-                                    : refer('${r.getName(router.replaceInRouteName)}Args')
+                                    ? argsClass.constInstance([]).code
+                                    : argsClass
                                           .newInstance(
                                             [],
                                             Map.fromEntries(

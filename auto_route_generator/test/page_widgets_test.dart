@@ -87,13 +87,16 @@ class AppRouter extends RootStackRouter {
         expect(
           source,
           contains(
-            'class InitializationInvitationMissingRoute extends PageRouteInfo<void>',
+            'class InitializationInvitationMissingRoute extends '
+            'PageRouteInfo<void>',
           ),
         );
         expect(
           source,
           contains(
-            'const InitializationInvitationMissingRoute({List<PageRouteInfo>? children,})',
+            'const '
+            'InitializationInvitationMissingRoute({List<PageRouteInfo>? '
+            'children,})',
           ),
         );
         expect(
@@ -114,7 +117,8 @@ class AppRouter extends RootStackRouter {
         expect(
           source,
           contains(
-            'InitializationInvitationMissingRoute({Key? key, List<PageRouteInfo>? children,})',
+            'InitializationInvitationMissingRoute({Key? key, '
+            'List<PageRouteInfo>? children,})',
           ),
         );
         expect(

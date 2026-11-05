@@ -82,8 +82,10 @@ class RouteConfigResolver {
       );
       if (unParsableRequiredArgs.isNotEmpty) {
         log.warning(
-          'Because [$className] has required parameters ${unParsableRequiredArgs.map((e) => e.paramName)} '
-          'that can not be parsed from path, @PathParam() and @QueryParam() annotations will be ignored.',
+          'Because [$className] has required parameters '
+          '${unParsableRequiredArgs.map((e) => e.paramName)} '
+          'that can not be parsed from path, @PathParam() and '
+          '@QueryParam() annotations will be ignored.',
         );
       }
     }
@@ -102,17 +104,23 @@ class RouteConfigResolver {
       final type = qParam.type;
       throwIf(
         qParam.urlType == null,
-        'Parameter [${qParam.name}] is a @QueryParam of type ${type.name}, which a url can not give.\n'
-        'valid types: ${UrlParamType.pathTypeNames}, Object, an enum, or a ${kUrlCollectionTypes.join(', ')} of those',
+        'Parameter [${qParam.name}] is a @QueryParam of type ${type.name}, '
+        'which a url can not give.\n'
+        'valid types: ${UrlParamType.pathTypeNames}, Object, an enum, or a '
+        '${kUrlCollectionTypes.join(', ')} of those',
       );
     }
 
     for (final pParam in pathParameters) {
       throwIf(
         !(pParam.urlType?.isInPath ?? false),
-        "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: ${UrlParamType.pathTypeNames}\n"
-        'For any other type, give @PathParam a ParamConverter<${pParam.type.name}>, '
-        "as in @PathParam('${pParam.paramName}', ${_lowerFirst(pParam.type.name)}Converter).",
+        'Parameter [${pParam.name}] must be of a type that can be parsed '
+        "from a [String] because it will also obtain it's value from a "
+        'path\nvalid types: ${UrlParamType.pathTypeNames}\n'
+        'For any other type, give @PathParam a '
+        'ParamConverter<${pParam.type.name}>, '
+        "as in @PathParam('${pParam.paramName}', "
+        '${_lowerFirst(pParam.type.name)}Converter).',
       );
     }
     return RouteConfig(

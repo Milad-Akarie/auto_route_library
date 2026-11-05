@@ -36,11 +36,15 @@ class RouteParameterResolver {
   /// Resolves a ParameterElement into a consumable [ParamConfig]
   ParamConfig resolve(FormalParameterElement parameterElement) {
     final paramType = parameterElement.type;
+    final declaration =
+        parameterElement.enclosingElement?.enclosingElement?.displayName ??
+        'its declaration';
     throwIf(
       _isInvalidType(paramType),
-      'The type of ${parameterElement.displayName} in ${parameterElement.enclosingElement?.enclosingElement?.displayName ?? 'its declaration'} '
+      'The type of ${parameterElement.displayName} in $declaration '
       'could not be resolved. '
-      'If it is declared in a file another builder generates, make that builder run before auto_route_generator, '
+      'If it is declared in a file another builder generates, make that '
+      'builder run before auto_route_generator, '
       'with runs_before in its build.yaml or global_options in yours.',
       element: parameterElement,
     );
@@ -101,7 +105,8 @@ class RouteParameterResolver {
             queryParamAnnotation != null,
           ].where((isSet) => isSet).length >
           1,
-      '${parameterElement.displayName} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
+      '${parameterElement.displayName} can only be annotated with one of '
+      '@PathParam, @QueryParam or @urlFragment',
       element: parameterElement,
     );
 
@@ -123,10 +128,13 @@ class RouteParameterResolver {
       final isConverted =
           queryParamAnnotation != null && (itemType?.isListItem ?? false);
       final kind = queryParamAnnotation != null ? 'query' : 'path';
+      final allowedTypes = queryParamAnnotation != null
+          ? 'String, int, double, num, bool or enum'
+          : 'String';
       throwIf(
         !isText && !isConverted,
         '${parameterElement.displayName}: a ${type.name} $kind param can hold '
-        '${queryParamAnnotation != null ? 'String, int, double, num, bool or enum' : 'String'} items, not ${item.name}',
+        '$allowedTypes items, not ${item.name}',
         element: parameterElement,
       );
     }
@@ -180,8 +188,10 @@ class RouteParameterResolver {
     final variable = converter.variable;
     throwIf(
       variable == null || variable.enclosingElement is! LibraryElement,
-      'The converter on $name must be a top-level const variable, which the generated route can name. '
-      'Declare it once, as in `const userIdConverter = UserIdConverter();`, and give the annotation that name.',
+      'The converter on $name must be a top-level const variable, which '
+      'the generated route can name. '
+      'Declare it once, as in `const userIdConverter = '
+      'UserIdConverter();`, and give the annotation that name.',
       element: parameterElement,
     );
     final converterType = converter.type;
@@ -198,7 +208,8 @@ class RouteParameterResolver {
       convertedType == null ||
           !typeSystem.isSubtypeOf(convertedType, paramType) ||
           !typeSystem.isSubtypeOf(paramType, convertedType),
-      'The converter on $name converts ${convertedType?.getDisplayString() ?? 'nothing'}, '
+      'The converter on $name converts '
+      '${convertedType?.getDisplayString() ?? 'nothing'}, '
       'but $name is a ${paramType.getDisplayString()}.',
       element: parameterElement,
     );

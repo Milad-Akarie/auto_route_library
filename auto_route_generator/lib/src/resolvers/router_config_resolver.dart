@@ -53,7 +53,8 @@ class RouterConfigResolver {
         when pattern.trim().isNotEmpty) {
       if (!RegExp(r'^[A-Za-z0-9_$]*$').hasMatch(replacement.trim())) {
         throwError(
-          r"The replacement in replaceInRouteName must be letters, digits, '_' or '$' to make a route name, "
+          'The replacement in replaceInRouteName must be letters, digits, '
+          r"'_' or '$' to make a route name, "
           "but ${clazz.displayName} has '${replacement.trim()}' in '$value'.",
           element: clazz,
         );
@@ -61,7 +62,8 @@ class RouterConfigResolver {
       return;
     }
     throwError(
-      "replaceInRouteName must be a pattern and its replacement split by one comma, like 'Page|Screen,Route', "
+      'replaceInRouteName must be a pattern and its replacement split by '
+      "one comma, like 'Page|Screen,Route', "
       "but ${clazz.displayName} has '$value'.",
       element: clazz,
     );

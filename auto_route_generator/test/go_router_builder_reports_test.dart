@@ -83,7 +83,8 @@ class AppRouter extends RootStackRouter {
       expect(
         _squash(result.source!),
         contains(
-          "queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()??const[]",
+          "queryParams.optList('ids')?.map(int.tryParse).whereType<int>().t"
+          'oList()??const[]',
         ),
       );
     });

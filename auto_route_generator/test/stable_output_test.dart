@@ -28,7 +28,8 @@ void main() {
   // #1513: the generated file was kept in version control and changed with
   // no code change, because the order of the routes and of the import aliases
   // followed the order build_runner visited the files in.
-  test('the generated router is the same whatever order the files are visited in (#1513)', () async {
+  test('the generated router is the same whatever order the files are visited '
+      'in (#1513)', () async {
     final forward = await generateRouter(pages);
     final reversed = await generateRouter({
       for (final key in pages.keys.toList().reversed) key: pages[key]!,

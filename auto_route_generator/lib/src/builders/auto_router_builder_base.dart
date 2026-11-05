@@ -108,7 +108,13 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
       log.warning('Could not write config routerCache', e);
     }
 
-    return '$_kHeader\n${generateLibrary(item, routes: routes..sort((a, b) => a.className.compareTo(b.className)), ignoreForFile: ignoreForFile, outputPath: buildStep.primaryOutput.path)}';
+    final library = generateLibrary(
+      item,
+      routes: routes..sort((a, b) => a.className.compareTo(b.className)),
+      ignoreForFile: ignoreForFile,
+      outputPath: buildStep.primaryOutput.path,
+    );
+    return '$_kHeader\n$library';
   }
 
   @override

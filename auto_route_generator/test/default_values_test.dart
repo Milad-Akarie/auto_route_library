@@ -59,7 +59,9 @@ void main() {
       final result = await generateRouter({
         'lib/viewer_page.dart': _page(
           'ViewerPage',
-          parameters: "Key? inner = const Key(''), this.backgroundColor = const Color(0xFF000000)",
+          parameters:
+              "Key? inner = const Key(''), this.backgroundColor = const "
+              'Color(0xFF000000)',
           fields: '  final Color backgroundColor;',
         ),
       });

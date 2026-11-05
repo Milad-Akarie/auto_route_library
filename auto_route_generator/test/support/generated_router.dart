@@ -15,5 +15,6 @@ class GeneratedRouter {
 
   @override
   String toString() =>
-      'build errors: $errors\ncompile errors: $compileErrors\n${source ?? 'no source'}';
+      'build errors: $errors\ncompile errors: '
+      '$compileErrors\n${source ?? 'no source'}';
 }

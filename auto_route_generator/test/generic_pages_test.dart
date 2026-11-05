@@ -23,7 +23,8 @@ void main() {
   // refused such a page. Now the route and its args take the page's type
   // parameters, so `PickerRoute<int>(...)` opens `PickerPage<int>`.
   group('a generic page (#2050)', () {
-    test('gives a generic route and args class that build the page with their type', () async {
+    test('gives a generic route and args class that build the page with their '
+        'type', () async {
       final result = await generateRouter({
         'lib/picker_page.dart': '''
 import 'package:auto_route/auto_route.dart';
@@ -52,7 +53,8 @@ class PickerPage<T> extends StatelessWidget {
       expect(
         source,
         contains(
-          'args:PickerRouteArgs<T>(key:key,items:items,selected:selected,onPicked:onPicked)',
+          'args:PickerRouteArgs<T>(key:key,items:items,selected:selected,on'
+          'Picked:onPicked)',
         ),
       );
       expect(source, contains('classPickerRouteArgs<T>{'));
@@ -96,7 +98,8 @@ class ViewAllPage<F extends Failure, T> extends StatelessWidget {
       expect(
         source,
         contains(
-          'classViewAllRoute<FextendsFailure,T>extendsPageRouteInfo<ViewAllRouteArgs<F,T>>',
+          'classViewAllRoute<FextendsFailure,T>extendsPageRouteInfo<ViewAll'
+          'RouteArgs<F,T>>',
         ),
       );
       expect(source, contains('finalIndexCubit<F,T>indexCubit;'));
@@ -125,7 +128,8 @@ class EditingPage<T extends EditingController> extends StatelessWidget {
       expect(
         source,
         contains(
-          'classEditingRoute<TextendsEditingController>extendsPageRouteInfo<EditingRouteArgs<T>>',
+          'classEditingRoute<TextendsEditingController>extendsPageRouteInfo'
+          '<EditingRouteArgs<T>>',
         ),
       );
       expect(source, contains('args:EditingRouteArgs<T>(key:key)'));
@@ -133,7 +137,8 @@ class EditingPage<T extends EditingController> extends StatelessWidget {
     });
 
     // #1296: a DetailScreen of T with a path param and an optional detail of
-    // type T, opened from a url, gets its type's bound and reads the path param.
+    // type T, opened from a url, gets its type's bound and reads the path
+    // param.
     test('with a path param reads it from the url', () async {
       final result = await generateRouter({
         'lib/detail_screen.dart': '''
@@ -157,7 +162,8 @@ class DetailScreen<T> extends StatelessWidget {
       expect(
         _flat(result),
         contains(
-          "orElse:()=>DetailRouteArgs(detailName:pathParams.getString('detailName'))",
+          "orElse:()=>DetailRouteArgs(detailName:pathParams.getString('deta"
+          "ilName'))",
         ),
       );
     });

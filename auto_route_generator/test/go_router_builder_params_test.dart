@@ -57,7 +57,9 @@ enum Fruit {
         'lib/fruit_page.dart': _page(
           'FruitPage',
           imports: "import 'fruit.dart';",
-          parameters: '@QueryParam() this.fruit, @QueryParam() this.other = Fruit.banana',
+          parameters:
+              '@QueryParam() this.fruit, @QueryParam() this.other = '
+              'Fruit.banana',
           fields: '''
   final Fruit? fruit;
   final Fruit other;''',
@@ -87,7 +89,9 @@ enum Fruit {
       final result = await generateRouter({
         'lib/home_page.dart': _page(
           'HomePage',
-          parameters: '@QueryParam() this.first, @QueryParam() this.second = "default", @QueryParam() this.count = 3',
+          parameters:
+              '@QueryParam() this.first, @QueryParam() this.second = '
+              '"default", @QueryParam() this.count = 3',
           fields: '''
   final String? first;
   final String second;
@@ -126,7 +130,8 @@ enum Fruit {
       expect(
         source,
         contains(
-          "tab:HomeTab.values.asNameMap()[queryParams.optString('tab')]??HomeTab.home",
+          "tab:HomeTab.values.asNameMap()[queryParams.optString('tab')]??Ho"
+          'meTab.home',
         ),
       );
       expect(source, contains("'tab':tab.name"));
@@ -202,7 +207,9 @@ enum Fruit {
       final result = await generateRouter({
         'lib/my_page.dart': _page(
           'MyPage',
-          parameters: "@PathParam('routeId') required this.routeId, @QueryParam('my-param') this.myParam",
+          parameters:
+              "@PathParam('routeId') required this.routeId, "
+              "@QueryParam('my-param') this.myParam",
           fields: '''
   final String routeId;
   final String? myParam;''',
@@ -226,7 +233,9 @@ enum Fruit {
           'lib/my_page.dart': _page(
             'MyPage',
             imports: "import 'types.dart';",
-            parameters: '@QueryParam() this.values = const [MyEnum.value0], @QueryParam() this.texts = const ["a"]',
+            parameters:
+                '@QueryParam() this.values = const [MyEnum.value0], '
+                '@QueryParam() this.texts = const ["a"]',
             fields: '''
   final List<MyEnum> values;
   final List<String> texts;''',
@@ -238,7 +247,8 @@ enum Fruit {
         expect(
           source,
           contains(
-            "values:queryParams.optList('values')?.map((name)=>MyEnum.values.asNameMap()[name])"
+            "values:queryParams.optList('values')?.map((name)=>MyEnum.value"
+            's.asNameMap()[name])'
             '.whereType<MyEnum>().toList()??const[MyEnum.value0]',
           ),
         );

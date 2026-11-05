@@ -230,7 +230,8 @@ Map<String, List<String>> _validatedBuildExtensionsFrom(
     final input = entry.key;
     if (input is! String || !input.endsWith('.dart')) {
       throw ArgumentError(
-        'Invalid key in build_extensions option: `$input` should be a string ending with `.dart`',
+        'Invalid key in build_extensions option: `$input` should be a '
+        'string ending with `.dart`',
       );
     }
     // One output, given as a string or as a list of one string.
@@ -241,7 +242,8 @@ Map<String, List<String>> _validatedBuildExtensionsFrom(
     };
     if (output is! String || !output.endsWith(outputSuffix)) {
       throw ArgumentError(
-        'Invalid output extension `$value`. It should be a string ending with `$outputSuffix`',
+        'Invalid output extension `$value`. It should be a string ending '
+        'with `$outputSuffix`',
       );
     }
     result[input] = [output];

@@ -3,7 +3,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Helper to through flutter errors if [shouldThrow] is true
-// A condition first and its message after, read like assert(condition, message).
+// A condition first and its message after, read like assert.
 void throwIf(bool shouldThrow, String message, {Element? element}) {
   if (shouldThrow) {
     throwError(message, element: element);
