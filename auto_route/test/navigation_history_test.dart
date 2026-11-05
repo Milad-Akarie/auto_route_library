@@ -118,9 +118,9 @@ void main() {
 
     test('Should notify listeners on URL state change', () async {
       var notified = false;
-      history.addListener(() {
-        notified = true;
-      });
+      void onChange() => notified = true;
+      history.addListener(onChange);
+      addTearDown(() => history.removeListener(onChange));
 
       await router.push(const FirstRoute());
 
@@ -278,8 +278,16 @@ void main() {
       var listener1Count = 0;
       var listener2Count = 0;
 
-      history.addListener(() => listener1Count++);
-      history.addListener(() => listener2Count++);
+      void onFirst() => listener1Count++;
+      void onSecond() => listener2Count++;
+      history
+        ..addListener(onFirst)
+        ..addListener(onSecond);
+      addTearDown(() {
+        history
+          ..removeListener(onFirst)
+          ..removeListener(onSecond);
+      });
 
       await router.push(const FirstRoute());
 

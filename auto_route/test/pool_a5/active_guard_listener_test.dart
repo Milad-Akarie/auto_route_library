@@ -39,7 +39,9 @@ void main() {
     );
     await pumpRouterApp(tester, router);
     final seen = <bool>[];
-    router.activeGuardObserver.addListener(() => seen.add(router.activeGuardObserver.guardInProgress));
+    void onChange() => seen.add(router.activeGuardObserver.guardInProgress);
+    router.activeGuardObserver.addListener(onChange);
+    addTearDown(() => router.activeGuardObserver.removeListener(onChange));
 
     unawaited(router.pushPath('/guarded'));
     await tester.pump();

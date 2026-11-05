@@ -29,7 +29,9 @@ void main() {
     expect(find.text('person p1'), findsOneWidget);
 
     var notified = 0;
-    router.addListener(() => notified++);
+    void onChange() => notified++;
+    router.addListener(onChange);
+    addTearDown(() => router.removeListener(onChange));
     unawaited(router.navigatePath('/family/f1/person/p2'));
     await tester.pumpAndSettle();
 
