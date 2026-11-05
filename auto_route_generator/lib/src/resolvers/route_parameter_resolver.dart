@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:auto_route/annotations.dart';
@@ -12,6 +13,7 @@ import 'package:source_gen/source_gen.dart';
 const _pathParamChecker = TypeChecker.typeNamed(PathParam, inPackage: 'auto_route');
 const _queryParamChecker = TypeChecker.typeNamed(QueryParam, inPackage: 'auto_route');
 const _urlFragmentChecker = TypeChecker.typeNamed(UrlFragment, inPackage: 'auto_route');
+const _paramConverterChecker = TypeChecker.typeNamed(ParamConverter, inPackage: 'auto_route');
 
 /// Resolves route parameters
 class RouteParameterResolver {
@@ -73,8 +75,10 @@ class RouteParameterResolver {
       element: parameterElement,
     );
 
+    final converter = _resolveConverter(parameterElement, pathParamAnnotation ?? queryParamAnnotation);
+
     final isUrlParam = pathParamAnnotation != null || queryParamAnnotation != null;
-    if (isUrlParam && urlCollectionTypes.contains(type.name) && type.typeArguments.length == 1) {
+    if (isUrlParam && converter == null && urlCollectionTypes.contains(type.name) && type.typeArguments.length == 1) {
       final item = type.typeArguments.single;
       final itemType = UrlParamType.of(item);
       final isText = itemType?.isTextItem ?? false;
@@ -114,7 +118,47 @@ class RouteParameterResolver {
       defaultValueCode: parameterElement.defaultValueCode,
       defaultValueImport: _resolveDefaultValueImport(parameterElement),
       defaultValueSymbol: _defaultValueSymbol(parameterElement),
+      converter: converter,
     );
+  }
+
+  /// The `ParamConverter` constant the url param [annotation] on
+  /// [parameterElement] names, or `null` when it names none.
+  ///
+  /// Fails the build when the converter is not a top-level constant, which
+  /// the generated code could not name, or converts another type than the
+  /// param's.
+  ParamConverterRef? _resolveConverter(FormalParameterElement parameterElement, DartObject? annotation) {
+    final converter = annotation?.getField('converter');
+    if (converter == null || converter.isNull) return null;
+    final name = parameterElement.displayName;
+    final variable = converter.variable;
+    throwIf(
+      variable == null || variable.enclosingElement is! LibraryElement,
+      'The converter on $name must be a top-level const variable, which the generated route can name. '
+      'Declare it once, as in `const userIdConverter = UserIdConverter();`, and give the annotation that name.',
+      element: parameterElement,
+    );
+    final converterType = converter.type;
+    final converted = converterType is InterfaceType
+        ? [converterType, ...converterType.allSupertypes].where(_paramConverterChecker.isExactlyType).firstOrNull
+        : null;
+    final convertedType = converted?.typeArguments.singleOrNull;
+    final typeSystem = parameterElement.library!.typeSystem;
+    final paramType = typeSystem.promoteToNonNull(parameterElement.type);
+    throwIf(
+      convertedType == null ||
+          !typeSystem.isSubtypeOf(convertedType, paramType) ||
+          !typeSystem.isSubtypeOf(paramType, convertedType),
+      'The converter on $name converts ${convertedType?.getDisplayString()}, '
+      'but $name is a ${paramType.getDisplayString()}.',
+      element: parameterElement,
+    );
+    // A library exports a top-level variable through its getter.
+    final import =
+        _typeResolver.resolveImport(variable) ??
+        _typeResolver.resolveImport((variable! as TopLevelVariableElement).getter);
+    return ParamConverterRef(name: variable!.displayName, import: import);
   }
 
   /// Whether [type] or a type inside it is one the analyzer could not

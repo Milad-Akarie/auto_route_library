@@ -1,0 +1,64 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:material_ui/material_ui.dart';
+
+part 'user_router.gr.dart';
+
+/// An id kept in its own class, the kind of value #1794 asks to take from
+/// the url.
+@immutable
+class UserId {
+  const UserId(this.value);
+
+  final String value;
+
+  @override
+  bool operator ==(Object other) => other is UserId && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+}
+
+/// Reads a [UserId] from `u-` and its digits, and refuses any other text.
+class UserIdConverter extends ParamConverter<UserId> {
+  const UserIdConverter();
+
+  @override
+  UserId? fromParam(String value) => RegExp(r'^u-\d+$').hasMatch(value) ? .new(value.substring(2)) : null;
+
+  @override
+  String toParam(UserId value) => 'u-${value.value}';
+}
+
+const userIdConverter = UserIdConverter();
+
+@AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['test/param_converter'])
+class UserRouter extends RootStackRouter {
+  @override
+  List<AutoRoute> get routes => [
+    AutoRoute(path: '/', page: UserHomeRoute.page),
+    AutoRoute(path: '/user/:id', page: UserProfileRoute.page),
+  ];
+}
+
+@RoutePage()
+class UserHomeView extends StatelessWidget {
+  const UserHomeView({super.key});
+
+  @override
+  Widget build(BuildContext context) => const Scaffold(body: Text('Home'));
+}
+
+@RoutePage()
+class UserProfileView extends StatelessWidget {
+  const UserProfileView({
+    super.key,
+    @PathParam('id', userIdConverter) required this.id,
+    @QueryParam('by', userIdConverter) this.by,
+  });
+
+  final UserId id;
+  final UserId? by;
+
+  @override
+  Widget build(BuildContext context) => Scaffold(body: Text('User ${id.value} by ${by?.value}'));
+}

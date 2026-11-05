@@ -91,7 +91,9 @@ class RouteConfigResolver {
     for (final pParam in pathParameters) {
       throwIf(
         !(pParam.urlType?.inPath ?? false),
-        "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: ${UrlParamType.pathTypeNames}",
+        "Parameter [${pParam.name}] must be of a type that can be parsed from a [String] because it will also obtain it's value from a path\nvalid types: ${UrlParamType.pathTypeNames}\n"
+        'For any other type, give @PathParam a ParamConverter<${pParam.type.name}>, '
+        "as in @PathParam('${pParam.paramName}', ${_lowerFirst(pParam.type.name)}Converter).",
       );
     }
     return RouteConfig(
@@ -105,3 +107,5 @@ class RouteConfigResolver {
     );
   }
 }
+
+String _lowerFirst(String text) => text.isEmpty ? text : text[0].toLowerCase() + text.substring(1);

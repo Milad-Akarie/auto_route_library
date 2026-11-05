@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:meta/meta.dart';
 
 void main() {
   test('Calling Parameters.get on a any-type value should return a <dynamic>', () {
@@ -152,4 +153,85 @@ void main() {
     expect(params.optBool('missing', false), false);
     expect(() => params.getBool('c'), throwsFlutterError);
   });
+
+  // #1794: a param read by a ParamConverter.
+  group('Parameters.optTyped and getTyped (#1794)', () {
+    test('read the text by the converter, the last one for a repeated key', () {
+      const params = Parameters({
+        'id': '7',
+        'ids': ['1', '2'],
+      });
+      expect(params.optTyped('id', const _NumberConverter()), const _Number(7));
+      expect(params.getTyped('ids', const _NumberConverter()), const _Number(2));
+    });
+
+    test('return a value that already has the type as it is', () {
+      const params = Parameters({'id': _Number(5)});
+      expect(params.getTyped('id', const _NumberConverter()), const _Number(5));
+    });
+
+    test('fall back to the default when the value is missing or the converter refuses it', () {
+      const params = Parameters({'id': 'seven'});
+      expect(params.optTyped('id', const _NumberConverter()), null);
+      expect(params.optTyped('id', const _NumberConverter(), const _Number(1)), const _Number(1));
+      expect(params.getTyped('missing', const _NumberConverter(), const _Number(2)), const _Number(2));
+    });
+
+    test('getTyped throws naming the key and the text when there is no value', () {
+      const params = Parameters({'id': 'seven'});
+      expect(
+        () => params.getTyped('id', const _NumberConverter()),
+        throwsA(
+          isA<MissingRequiredParameterError>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Failed to parse [_Number] id value from seven'),
+          ),
+        ),
+      );
+    });
+
+    // A converter's own error is the app's bug, so it is not hidden behind
+    // the default.
+    test("don't catch an error the converter throws", () {
+      const params = Parameters({'id': '7'});
+      expect(() => params.optTyped('id', const _ThrowingConverter(), const _Number(1)), throwsStateError);
+    });
+  });
+}
+
+@immutable
+class _Number {
+  const _Number(this.value);
+
+  final int value;
+
+  @override
+  bool operator ==(Object other) => other is _Number && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+}
+
+class _NumberConverter extends ParamConverter<_Number> {
+  const _NumberConverter();
+
+  @override
+  _Number? fromParam(String value) {
+    final number = int.tryParse(value);
+    return number == null ? null : _Number(number);
+  }
+
+  @override
+  String toParam(_Number value) => '${value.value}';
+}
+
+class _ThrowingConverter extends ParamConverter<_Number> {
+  const _ThrowingConverter();
+
+  @override
+  _Number fromParam(String value) => throw StateError('broken converter');
+
+  @override
+  String toParam(_Number value) => '${value.value}';
 }

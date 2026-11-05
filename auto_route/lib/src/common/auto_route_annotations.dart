@@ -1,3 +1,4 @@
+import 'package:auto_route/src/common/param_converter.dart';
 import 'package:meta/meta.dart' show optionalTypeArgs;
 import 'package:meta/meta_meta.dart' show Target;
 
@@ -73,11 +74,11 @@ const routePage = RoutePage();
 @Target({.parameter})
 class PathParam {
   /// default constructor
-  const PathParam([this.name]) : _inherited = false;
+  const PathParam([this.name, this.converter]) : _inherited = false;
 
   /// Use this constructor to inherit a dynamic-segment
   /// from a parent path
-  const PathParam.inherit([this.name]) : _inherited = true;
+  const PathParam.inherit([this.name, this.converter]) : _inherited = true;
 
   /// name of the dynamic segment declared in path
   /// e.g /path/:id -> name = id
@@ -85,6 +86,14 @@ class PathParam {
   /// if not provided the name of the parameter will be used
   /// (@PathParam() int id); -> name = id
   final String? name;
+
+  /// The converter that reads the param from its path segment and writes it
+  /// back, or `null` for a type a path gives by itself: `String`, `int`,
+  /// `double`, `num`, `bool` or `dynamic`.
+  ///
+  /// Any other type needs one, as in `@PathParam('id', userIdConverter)`;
+  /// it must be a top-level `const` variable. See [ParamConverter].
+  final ParamConverter<Object?>? converter;
 
   // Read by the generator from the annotation's source, never by Dart code.
   // ignore: unused_field
@@ -104,13 +113,23 @@ const inheritPathParam = PathParam.inherit();
 @Target({.parameter})
 class QueryParam {
   /// default constructor
-  const QueryParam([this.name]);
+  const QueryParam([this.name, this.converter]);
 
   /// name of the query param from url
   ///
   /// if not provided the name of the parameter will be used
   /// (@QueryParam() String foo); -> name = foo
   final String? name;
+
+  /// The converter that reads the param from the query and writes it back,
+  /// or `null` for a type a query gives by itself: `String`, `int`,
+  /// `double`, `num`, `bool`, `Object`, `dynamic`, an enum (read by its
+  /// name), or a `List`, `Set` or `Iterable` of those.
+  ///
+  /// Any other type needs one, as in `@QueryParam('by', userIdConverter)`;
+  /// it must be a top-level `const` variable. A converter on an enum
+  /// replaces reading it by its name. See [ParamConverter].
+  final ParamConverter<Object?>? converter;
 }
 
 /// default QueryParam()

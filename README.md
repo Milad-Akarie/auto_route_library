@@ -1199,6 +1199,54 @@ class BookDetailsPage extends StatelessWidget {
 }
 ```
 
+### Your Own Types in Path and Query Parameters
+
+A path parameter can be a `String`, `int`, `double`, `num` or `bool`; a query parameter can also be an enum, read by
+its name, or a `List`, `Set` or `Iterable` of those. For any other type, such as a class that holds an id, give the
+annotation a `ParamConverter`. It reads the value from its text in the url, and writes it back when the route is
+built in code.
+
+```dart
+class UserId {
+  const UserId(this.value);
+  final String value;
+}
+
+class UserIdConverter extends ParamConverter<UserId> {
+  const UserIdConverter();
+
+  // Return null when the text isn't a UserId.
+  @override
+  UserId? fromParam(String value) => value.isEmpty ? null : UserId(value);
+
+  @override
+  String toParam(UserId value) => value.value;
+}
+
+// The converter must be a top-level const variable.
+const userIdConverter = UserIdConverter();
+
+@RoutePage()
+class UserPage extends StatelessWidget {
+  const UserPage({
+    super.key,
+    @PathParam('id', userIdConverter) required this.id,
+    @QueryParam('invitedBy', userIdConverter) this.invitedBy,
+  });
+
+  final UserId id;
+  final UserId? invitedBy;
+  ...
+}
+```
+
+`/user/7?invitedBy=3` opens `UserPage` with `UserId('7')` and `UserId('3')`, and
+`context.router.push(UserRoute(id: UserId('7')))` writes `/user/7`. When `fromParam` returns `null`, an optional
+parameter takes its default, or `null`, and a required one fails with a `MissingRequiredParameterError` naming the key
+and the text. An error `fromParam` throws reaches the app as it is. A converter on an enum parameter replaces reading
+it by its name. Outside a page, `context.routeData.queryParams.optTyped('invitedBy', userIdConverter)` reads the same
+way.
+
 ### Redirecting Paths
 
 Paths can be redirected using `RedirectRoute`. The following setup will navigate us to `/books` when `/` is matched.

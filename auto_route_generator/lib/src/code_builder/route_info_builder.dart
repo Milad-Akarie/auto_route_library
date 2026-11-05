@@ -98,7 +98,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                             Map.fromEntries(
                               nonInheritedParameters
                                   .where((p) => p.isPathParam)
-                                  .map((p) => MapEntry(_plainString(p.paramName), refer(p.name))),
+                                  .map((p) => MapEntry(_plainString(p.paramName), _getUrlPartValue(p))),
                             ),
                           ),
                         if (parameters.any((p) => p.isQueryParam))
@@ -262,7 +262,15 @@ Expression _defaultValue(ParamConfig p, [String? code]) {
   code ??= p.defaultValueCode!;
   final symbol = p.defaultValueSymbol;
   final import = p.defaultValueImport;
-  if (symbol == null || import == null) return refer(code, import ?? p.type.import);
+  if (symbol == null || import == null) {
+    final url = import ?? p.type.import;
+    // The prefix goes on the class in `const UserId('me')`, not on `const`.
+    if (url != null && _constKeyword.hasMatch(code)) {
+      final value = code.replaceFirst(_constKeyword, '').trimLeft();
+      return CodeExpression(Code.scope((allocate) => 'const ${allocate(refer(value, url))}'));
+    }
+    return refer(code, url);
+  }
   return CodeExpression(
     Code.scope(
       (allocate) => code!.replaceAll(RegExp('\\b${RegExp.escape(symbol)}\\b'), allocate(refer(symbol, import))),

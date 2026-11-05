@@ -1,3 +1,4 @@
+import 'package:auto_route/src/common/param_converter.dart';
 import 'package:auto_route/src/route/errors.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
@@ -168,6 +169,40 @@ class Parameters {
     final val = optBool(key, defaultValue);
     if (val == null) {
       throw MissingRequiredParameterError('Failed to parse [bool] $key value from ${_params[key]}');
+    }
+    return val;
+  }
+
+  /// Returns the value of [key] read by [converter], or [defaultValue] when
+  /// there is none.
+  ///
+  /// A value that is already a [T], as in a route pushed with
+  /// `queryParams: {'id': UserId('7')}`, is returned as it is. Any other is
+  /// read from its text, the last one for a key repeated in the url, by
+  /// [ParamConverter.fromParam]; when that returns `null`, so the text is not
+  /// a [T], this returns [defaultValue]. An error the converter throws is not
+  /// caught.
+  ///
+  /// The generated route calls this for a nullable param, or one with a
+  /// default, that has a converter on its annotation.
+  T? optTyped<T>(String key, ParamConverter<T> converter, [T? defaultValue]) {
+    final param = _params[key];
+    if (param is T && param != null) return param;
+    final text = _stringOf(param);
+    if (text == null) return defaultValue;
+    return converter.fromParam(text) ?? defaultValue;
+  }
+
+  /// Returns the value of [key] read by [converter], or [defaultValue] when
+  /// there is none, as [optTyped] does.
+  ///
+  /// Throws a [MissingRequiredParameterError] naming the key and its text
+  /// when there is neither a value nor a default, or when the converter
+  /// returns `null` for the text and there is no default.
+  T getTyped<T>(String key, ParamConverter<T> converter, [T? defaultValue]) {
+    final val = optTyped<T>(key, converter, defaultValue);
+    if (val == null) {
+      throw MissingRequiredParameterError('Failed to parse [$T] $key value from ${_params[key]}');
     }
     return val;
   }

@@ -77,6 +77,7 @@ import 'override_children_on_reevaluate_test.dart' as override_children_on_reeva
 import 'page_view_swipe_back_test.dart' as page_view_swipe_back;
 import 'page_view_zero_duration_test.dart' as page_view_zero_duration;
 import 'pageless_push_rebuild_test.dart' as pageless_push_rebuild;
+import 'param_converter_test.dart' as param_converter;
 import 'parent_pages_build_test.dart' as parent_pages_build;
 import 'pop_and_back_test.dart' as pop_and_back;
 import 'pop_and_push_all_test.dart' as pop_and_push_all;
@@ -256,6 +257,7 @@ void main() {
   group('page view swipe back', page_view_swipe_back.main);
   group('page view zero duration', page_view_zero_duration.main);
   group('pageless push rebuild', pageless_push_rebuild.main);
+  group('param converter', param_converter.main);
   group('parent pages build', parent_pages_build.main);
   group('pop and back', pop_and_back.main);
   group('pop and push all', pop_and_push_all.main);

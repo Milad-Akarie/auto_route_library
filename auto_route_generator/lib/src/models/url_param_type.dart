@@ -14,6 +14,10 @@ const urlCollectionTypes = {'List', 'Set', 'Iterable'};
 sealed class UrlParamType {
   const UrlParamType();
 
+  /// The entry for a param read and written by the `ParamConverter`
+  /// constant [name], declared in [import].
+  factory UrlParamType.converter(String name, String? import) = _ConverterParam;
+
   /// The entry for [type], or `null` when a url can not give it.
   static UrlParamType? of(ResolvedType type) {
     if (type.isEnum) return const _EnumParam();
@@ -172,5 +176,36 @@ final class _CollectionParam extends UrlParamType {
         .call([name])
         .property('toList')
         .call([]);
+  }
+}
+
+/// A param of any type, read and written by a `ParamConverter` constant.
+final class _ConverterParam extends UrlParamType {
+  const _ConverterParam(this.name, this.import);
+
+  final String name;
+  final String? import;
+
+  @override
+  bool get inPath => true;
+
+  @override
+  Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue) {
+    // The reader is given the type without its `?`: optTyped gives the `?`.
+    final valueType = TypeReference(
+      (b) => b
+        ..symbol = type.name
+        ..url = type.import
+        ..types.addAll(type.typeArguments.map((e) => e.refer)),
+    );
+    return params
+        .property(type.isNullable ? 'optTyped' : 'getTyped')
+        .call([key, refer(name, import), ?defaultValue], {}, [valueType]);
+  }
+
+  @override
+  Expression write(Expression value, ResolvedType type) {
+    final text = refer(name, import).property('toParam').call([value]);
+    return type.isNullable ? value.equalTo(literalNull).conditional(literalNull, text) : text;
   }
 }

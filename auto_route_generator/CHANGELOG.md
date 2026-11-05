@@ -1,3 +1,9 @@
+## Unreleased
+- **FEAT**: a `ParamConverter` on `@PathParam` or `@QueryParam` reads and writes a param of any type; a custom type
+  without one fails the build saying how to give one (#1794).
+- **FIX**: a `const` default from another library, such as `= const UserId('me')`, no longer gets its import
+  prefix in front of `const` in the generated reader.
+
 ## 11.0.0
 - **CHORE**: require Dart 3.13, the version Flutter 3.47 ships.
 - **BEHAVIOR CHANGE**: an enum query parameter is read with `values.asNameMap()` and written with

@@ -1,3 +1,8 @@
+## Unreleased
+- **FEAT**: path and query params can be the app's own types: give `@PathParam` or `@QueryParam` a
+  `ParamConverter<T>`, a top-level const, and the route reads the param with the new `Parameters.getTyped` or
+  `optTyped` and writes it back with `toParam` (#1794).
+
 ## 12.0.0
 - **BREAKING CHANGE**: `RouteMatch.pathParams` and `RouteData.pathParams`, deprecated since 11.2.0, are removed;
   use `params`.

@@ -24,6 +24,7 @@ class ParamConfig {
     this.defaultValueCode,
     this.defaultValueImport,
     this.defaultValueSymbol,
+    this.converter,
   });
 
   /// Deserializes the parameter from a json map
@@ -48,6 +49,7 @@ class ParamConfig {
       defaultValueCode: map['defaultValueCode'] as String?,
       defaultValueImport: map['defaultValueImport'] as String?,
       defaultValueSymbol: map['defaultValueSymbol'] as String?,
+      converter: map['converter'] == null ? null : ParamConverterRef.fromJson(map['converter'] as Map<String, dynamic>),
     );
   }
 
@@ -99,6 +101,10 @@ class ParamConfig {
   /// `const [Sort.asc]`; `null` when the whole value is that declaration.
   final String? defaultValueSymbol;
 
+  /// The `ParamConverter` the param's `@PathParam` or `@QueryParam` names,
+  /// or `null` when it names none.
+  final ParamConverterRef? converter;
+
   /// If the parameter name conflicts with a reserved name
   /// add a zero to the end of the name
   ///
@@ -114,7 +120,10 @@ class ParamConfig {
 
   /// How the generated code reads this param from the url and writes it
   /// back, or `null` when a url can not give its type.
-  UrlParamType? get urlType => UrlParamType.of(type);
+  UrlParamType? get urlType {
+    final converter = this.converter;
+    return converter == null ? UrlParamType.of(type) : UrlParamType.converter(converter.name, converter.import);
+  }
 
   /// Returns the alias if exists otherwise the name
   String get paramName => alias ?? name;
@@ -137,6 +146,7 @@ class ParamConfig {
       'defaultValueCode': defaultValueCode,
       'defaultValueImport': defaultValueImport,
       'defaultValueSymbol': defaultValueSymbol,
+      'converter': ?converter?.toJson(),
     };
   }
 }
@@ -256,4 +266,26 @@ class PathParamConfig {
   Map<String, dynamic> toJson() {
     return {'name': name, 'isOptional': isOptional};
   }
+}
+
+/// The top-level constant a `@PathParam` or `@QueryParam` names as its
+/// `ParamConverter`, which the generated code reads and writes the param
+/// with.
+class ParamConverterRef {
+  /// Default constructor
+  const ParamConverterRef({required this.name, this.import});
+
+  /// Deserializes the reference from a json map
+  factory ParamConverterRef.fromJson(Map<String, dynamic> map) {
+    return ParamConverterRef(name: map['name'] as String, import: map['import'] as String?);
+  }
+
+  /// The name of the constant, such as `userIdConverter`.
+  final String name;
+
+  /// The import of the library that declares the constant.
+  final String? import;
+
+  /// Serializes the reference to a json map
+  Map<String, dynamic> toJson() => {'name': name, 'import': import};
 }
