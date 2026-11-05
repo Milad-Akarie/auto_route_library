@@ -3,23 +3,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('PageRouteInfo equality test', () {
-    expect(
-      const PageRouteInfo(
-            'Name',
-            rawPathParams: {'foo': 'baz'},
-            rawQueryParams: {'foo': 'bar'},
-            args: 'Args',
-            initialChildren: [PageRouteInfo('sub')],
-          ) ==
-          const PageRouteInfo(
-            'Name',
-            rawPathParams: {'foo': 'baz'},
-            rawQueryParams: {'foo': 'bar'},
-            args: 'Args',
-            initialChildren: [PageRouteInfo('sub')],
-          ),
-      true,
+    PageRouteInfo build(String name) => .new(
+      name,
+      rawPathParams: const {'foo': 'baz'},
+      rawQueryParams: const {'foo': 'bar'},
+      args: 'Args',
+      initialChildren: const [PageRouteInfo('sub')],
     );
+    final first = build('Name');
+    final second = build('Name');
+    expect(first == second, true);
   });
 
   test('Calling PageRouteInfo.fromRedirect on an redirected instance should return true', () {
