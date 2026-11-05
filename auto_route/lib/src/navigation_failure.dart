@@ -10,19 +10,32 @@ abstract class NavigationFailure {
   const NavigationFailure();
 }
 
-/// A failure indicates that the request route or path
-/// has not been found by the `RouteMatcher`
+/// A failure reporting that no route matches the path or route name a
+/// navigation asked for.
+///
+/// A router passes it to the `onFailure` callback of the navigation; without
+/// one, the navigation throws a `FlutterError` with the same message. The
+/// message names [path] and lists the app's routes as [routeTree], so the
+/// developer sees which paths exist next to the one that matched nothing.
 class RouteNotFoundFailure extends NavigationFailure {
-  /// default constructor
-  const RouteNotFoundFailure(this.path);
+  /// Reports [path]; [routeTree] is the app's routes from
+  /// [RouteCollection.toTreeString], or null to leave them out of the message.
+  const RouteNotFoundFailure(this.path, {this.routeTree});
 
-  /// the path or name of the target route
+  /// The path, or for a navigation to a [PageRouteInfo] the route name, that
+  /// no route matches.
   final String path;
 
-  // coverage:ignore-start
+  /// The routes of the app as a tree, by full path and name, as
+  /// [RouteCollection.toTreeString] lists them; null when not given.
+  final String? routeTree;
+
   @override
-  String toString() => 'Failed to navigate to $path';
-  // coverage:ignore-end
+  String toString() {
+    final tree = routeTree;
+    if (tree == null) return 'Can not navigate to $path: no route matches it.';
+    return 'Can not navigate to $path: no route matches it. The routes of the app, by full path:\n$tree';
+  }
 }
 
 /// A failure indicates that the one of the guards

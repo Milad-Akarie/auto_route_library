@@ -686,6 +686,45 @@ class RouteCollection {
     return _subCollections[key]!;
   }
 
+  /// Lists these routes, and the routes nested under each, as a tree with one
+  /// route a line: its full path and its name.
+  ///
+  /// A full path joins the paths of the route's parents with its own, so
+  /// `/shop` with the child `:id` reads `/shop/:id`, and an initial child with
+  /// the path `''` reads as its parent's path. A [RedirectRoute] shows the path
+  /// it redirects to, as `→ /shop`, in place of a name. Routes keep the order
+  /// they were declared in, which is the order the matcher tries them.
+  ///
+  /// The collection of a [RootStackRouter] lists every route of the app; a
+  /// nested router's collection lists its own routes, with paths relative to
+  /// it. A [RouteNotFoundFailure] carries the root's tree, and printing
+  /// `router.routeCollection.toTreeString()` shows the app's routes while
+  /// debugging:
+  ///
+  /// ```text
+  /// ├─ /  HomeRoute
+  /// ├─ /shop  ShopRoute
+  /// │  ├─ /shop  ProductsRoute
+  /// │  └─ /shop/:id  ProductRoute
+  /// └─ /old-shop  → /shop
+  /// ```
+  String toTreeString() => _treeLines('', '').join('\n');
+
+  List<String> _treeLines(String parentPath, String indent) {
+    final lines = <String>[];
+    final all = routes.toList();
+    for (final (index, route) in all.indexed) {
+      final isLast = index == all.length - 1;
+      final fullPath = _joinPaths(parentPath, route.path);
+      final label = route is RedirectRoute ? '→ ${route.redirectTo}' : route.name;
+      lines.add('$indent${isLast ? '└─' : '├─'} $fullPath  $label');
+      if (_subCollections[route.name] case final children?) {
+        lines.addAll(children._treeLines(fullPath, '$indent${isLast ? '   ' : '│  '}'));
+      }
+    }
+    return lines;
+  }
+
   /// Finds the track to a certain route in the routes-tree
   ///
   /// This is mainly used to try adding parent routes to the

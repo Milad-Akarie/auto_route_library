@@ -71,7 +71,7 @@ void main() {
       } on FlutterError catch (e) {
         error = e;
       }
-      expect(error, isA<FlutterError>().having((e) => e.message, 'message', 'Can not navigate to /nope'));
+      expect(error, isA<FlutterError>().having((e) => e.message, 'message', startsWith('Can not navigate to /nope')));
       expectCurrentPage(router, FirstRoute.name);
     });
 

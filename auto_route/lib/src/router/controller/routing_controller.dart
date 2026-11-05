@@ -308,11 +308,12 @@ abstract class RoutingController with ChangeNotifier {
     }
     match = matcher.buildPathTo(route);
     if (match == null) {
+      final failure = _notFound(route.routeName);
       if (onFailure != null) {
-        onFailure(RouteNotFoundFailure(route.routeName));
+        onFailure(failure);
         return null;
       }
-      throw FlutterError('Failed to navigate to ${route.routeName}');
+      throw FlutterError(failure.toString());
     }
     return _reuseOpenAncestors(match);
   }
@@ -416,13 +417,18 @@ abstract class RoutingController with ChangeNotifier {
         return _RouterScopeResult<T>(router, matches);
       }
     }
+    final failure = _notFound(path);
     if (onFailure != null) {
-      onFailure(RouteNotFoundFailure(path));
+      onFailure(failure);
     } else {
-      throw FlutterError('Can not navigate to $path');
+      throw FlutterError(failure.toString());
     }
     return null;
   }
+
+  // Reports [target], with the app's routes, so the message shows the paths
+  // that exist next to the one that matched nothing.
+  RouteNotFoundFailure _notFound(String target) => .new(target, routeTree: root.routeCollection.toTreeString());
 
   // Matches an absolute path from this router, the root, the way a deep link
   // is matched: a nested router's relative paths never see the leading '/',

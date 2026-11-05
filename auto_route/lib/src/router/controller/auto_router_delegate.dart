@@ -227,11 +227,12 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   // Names the link no route matched, which on a phone can come from another
   // app, so the error says what to look for.
-  static String _unresolvedMessage(DeepLink deepLink) {
+  String _unresolvedMessage(DeepLink deepLink) {
     if (deepLink is! PlatformDeepLink) return 'Can not resolve initial route';
     return 'Can not resolve initial route: no route matches "${deepLink.uri}". '
         "Add RedirectRoute(path: '*', redirectTo: '/') last in your routes to open "
-        'links no route matches on your initial page.';
+        'links no route matches on your initial page. The routes of the app, by full path:\n'
+        '${controller.routeCollection.toTreeString()}';
   }
 
   @override

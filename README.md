@@ -1342,6 +1342,25 @@ RedirectRoute(
 
 **Note:** Be sure to always add your wildcards at the end of your route list because routes are matched in order.
 
+### When no route matches
+
+Without a wildcard, a navigation to a path or route no router has fails. With an `onFailure` callback it gets a `RouteNotFoundFailure`; without one, the navigation throws. Either way the message names what was asked for and lists every route of the app as a tree, by full path and name, so a typo or a route declared under the wrong parent shows at a glance:
+
+```text
+Can not navigate to /shop/1/reviews: no route matches it. The routes of the app, by full path:
+├─ /  HomeRoute
+├─ /shop  ShopRoute
+│  ├─ /shop  ProductsRoute
+│  └─ /shop/:id  ProductRoute
+└─ /old-shop  → /shop
+```
+
+The same tree prints at any time while debugging:
+
+```dart
+debugPrint(appRouter.routeCollection.toTreeString());
+```
+
 ## Route Guards
 
 Think of route guards as middleware or interceptors, routes can not be added to the stack without going through their assigned guards. Guards are useful for restricting access to certain routes.
