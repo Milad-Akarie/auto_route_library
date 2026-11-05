@@ -84,7 +84,13 @@ class AppRouter extends RootStackRouter {
             'build_extensions': {'^lib/{{}}.dart': 'lib/generated/{{}}.gr.txt'},
           },
         ),
-        throwsA(isA<ArgumentError>().having((e) => e.message, 'message', contains('ending with `.dart`'))),
+        throwsA(
+          isA<ArgumentError>().having(
+            (e) => e.message,
+            'message',
+            contains('ending with `.dart`'),
+          ),
+        ),
       );
     });
   });

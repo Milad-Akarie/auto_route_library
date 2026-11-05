@@ -17,7 +17,10 @@ import 'package:build/build.dart';
 import 'package:glob/glob.dart';
 import 'package:source_gen/source_gen.dart';
 
-const _kTypeChecker = TypeChecker.typeNamed(AutoRouterConfig, inPackage: 'auto_route');
+const _kTypeChecker = TypeChecker.typeNamed(
+  AutoRouterConfig,
+  inPackage: 'auto_route',
+);
 
 /// Base class for `AutoRouterBuilder` and `AutoRouterModuleBuilder`
 abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
@@ -36,7 +39,9 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   Future<RouterConfig?> loadFromCache(BuildStep buildStep, int stepHash) async {
     final cachedRouterFile = _buildRouterFile(buildStep, toCache: true);
     if (cachedRouterFile.existsSync()) {
-      final json = jsonDecode(await cachedRouterFile.readAsString()) as Map<String, dynamic>;
+      final json = jsonDecode(
+        await cachedRouterFile.readAsString(),
+      ) as Map<String, dynamic>;
       if (json['cacheHash'] == stepHash) {
         return RouterConfig.fromJson(json);
       }
@@ -48,25 +53,36 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   int calculateUpdatableHash(CompilationUnit unit) {
     var calculatedHash = 0;
     for (final clazz in unit.declarations.whereType<ClassDeclaration>()) {
-      final routerAnnotation = clazz.metadata.where((e) => e.name.name == annotationName).firstOrNull;
+      final routerAnnotation = clazz.metadata
+          .where((e) => e.name.name == annotationName)
+          .firstOrNull;
       if (routerAnnotation == null) continue;
-      final partDirectives = unit.directives.whereType<PartDirective>().fold<int>(
-        0,
-        (acc, a) => acc ^ a.toSource().hashCode,
-      );
+      final partDirectives = unit.directives
+          .whereType<PartDirective>()
+          .fold<int>(0, (acc, a) => acc ^ a.toSource().hashCode);
       calculatedHash =
-          calculatedHash ^ clazz.namePart.toString().hashCode ^ routerAnnotation.toSource().hashCode ^ partDirectives;
+          calculatedHash ^
+          clazz.namePart.toString().hashCode ^
+          routerAnnotation.toSource().hashCode ^
+          partDirectives;
     }
     return calculatedHash;
   }
 
   bool _hasPartDirective(ClassElement clazz, AssetId output) {
-    final uriIncludes = clazz.library.firstFragment.partIncludes.map((e) => e.uri);
-    return uriIncludes.whereType<DirectiveUriWithSource>().any((e) => e.source.fullName.endsWith(output.path));
+    final uriIncludes = clazz.library.firstFragment.partIncludes.map(
+      (e) => e.uri,
+    );
+    return uriIncludes.whereType<DirectiveUriWithSource>().any(
+      (e) => e.source.fullName.endsWith(output.path),
+    );
   }
 
   @override
-  Future<String> onGenerateContent(BuildStep buildStep, RouterConfig item) async {
+  Future<String> onGenerateContent(
+    BuildStep buildStep,
+    RouterConfig item,
+  ) async {
     final generateForDir = item.generateForDir;
     final generatedResults = <RoutesList>[];
     final routes = <RouteConfig>[];
@@ -97,14 +113,22 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
   }
 
   @override
-  Future<RouterConfig?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash) async {
+  Future<RouterConfig?> onResolve(
+    LibraryReader library,
+    BuildStep buildStep,
+    int stepHash,
+  ) async {
     final annotatedElements = library.annotatedWith(_kTypeChecker);
     final annotated = annotatedElements.firstOrNull;
     if (annotated == null) return null;
     final element = annotated.element;
     final annotation = annotated.annotation;
 
-    throwIf(element is! ClassElement, '${element.displayName} is not a class element', element: element);
+    throwIf(
+      element is! ClassElement,
+      '${element.displayName} is not a class element',
+      element: element,
+    );
     final clazz = element as ClassElement;
 
     final isPartOfLibrary = _hasPartDirective(clazz, buildStep.primaryOutput);
@@ -120,7 +144,11 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     return router;
   }
 
-  void _writeRouterFile(BuildStep buildStep, RouterConfig router, {bool toCache = false}) {
+  void _writeRouterFile(
+    BuildStep buildStep,
+    RouterConfig router, {
+    bool toCache = false,
+  }) {
     final routerFile = _buildRouterFile(buildStep, toCache: toCache);
     if (!routerFile.existsSync()) {
       routerFile.createSync(recursive: true);

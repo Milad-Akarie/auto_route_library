@@ -2,7 +2,7 @@ include: package:very_good_analysis/analysis_options.yaml
 
 # The repository's own formatter settings, kept from before very_good_analysis.
 formatter:
-  page_width: 120
+  page_width: 80
 
 analyzer:
   language:

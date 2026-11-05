@@ -12,11 +12,13 @@ void main() {
   // prefix, or typed them dynamic, so the router didn't compile.
   // The build should give no error and the generated library should compile
   // with each Data from its own import.
-  test('types imported with a prefix are generated with their own import', () async {
-    final result = await generateRouter({
-      'lib/brand_model.dart': 'class Data { const Data(); }',
-      'lib/treatment_model.dart': 'class Data { const Data(); }',
-      'lib/booking_page.dart': '''
+  test(
+    'types imported with a prefix are generated with their own import',
+    () async {
+      final result = await generateRouter({
+        'lib/brand_model.dart': 'class Data { const Data(); }',
+        'lib/treatment_model.dart': 'class Data { const Data(); }',
+        'lib/booking_page.dart': '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
@@ -42,16 +44,17 @@ class BookingPage extends StatelessWidget {
   Widget build(BuildContext context) => const SizedBox();
 }
 ''',
-    });
-    expect(result.errors, isEmpty);
-    expect(result.compileErrors, isEmpty);
-    final source = result.source!;
-    expect(source, isNot(contains('dynamic')));
-    expect(source, matches(RegExp(r'required (_i\d+\.)?Color color')));
-    // Each Data is imported from its own library, under its own prefix.
-    expect(source, contains('brand_model.dart'));
-    expect(source, contains('treatment_model.dart'));
-    expect(source, matches(RegExp(r'_i\d+\.Data brand')));
-    expect(source, matches(RegExp(r'List<_i\d+\.Data> treatments')));
-  });
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      final source = result.source!;
+      expect(source, isNot(contains('dynamic')));
+      expect(source, matches(RegExp(r'required (_i\d+\.)?Color color')));
+      // Each Data is imported from its own library, under its own prefix.
+      expect(source, contains('brand_model.dart'));
+      expect(source, contains('treatment_model.dart'));
+      expect(source, matches(RegExp(r'_i\d+\.Data brand')));
+      expect(source, matches(RegExp(r'List<_i\d+\.Data> treatments')));
+    },
+  );
 }

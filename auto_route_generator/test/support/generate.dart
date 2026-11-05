@@ -61,8 +61,10 @@ Future<GeneratedRouter> generateRouter(
   }
   final assets = {
     for (final entry in sources.entries)
-      entry.key.contains('|') ? entry.key : '$_kTestPackage|${entry.key}': entry.value,
-    if (!sources.containsKey(routerPath)) '$_kTestPackage|$routerPath': _kDefaultRouterSource,
+      entry.key.contains('|') ? entry.key : '$_kTestPackage|${entry.key}':
+          entry.value,
+    if (!sources.containsKey(routerPath))
+      '$_kTestPackage|$routerPath': _kDefaultRouterSource,
   };
   outputPath ??= routerPath.replaceFirst(RegExp(r'\.dart$'), '.gr.dart');
   final result = await testBuilders(
@@ -78,10 +80,15 @@ Future<GeneratedRouter> generateRouter(
   );
   final files = result.readerWriter.testing;
   final outputId = AssetId(_kTestPackage, outputPath);
-  final checkId = AssetId(_kTestPackage, routerPath.replaceFirst(RegExp(r'\.dart$'), kCompileErrorsExtension));
+  final checkId = AssetId(
+    _kTestPackage,
+    routerPath.replaceFirst(RegExp(r'\.dart$'), kCompileErrorsExtension),
+  );
   return GeneratedRouter(
     files.exists(outputId) ? files.readString(outputId) : null,
     result.errors.toList(),
-    files.exists(checkId) ? const LineSplitter().convert(files.readString(checkId)) : const [],
+    files.exists(checkId)
+        ? const LineSplitter().convert(files.readString(checkId))
+        : const [],
   );
 }

@@ -47,23 +47,35 @@ void main() {
       expect(result.source, contains('class HomeRoute '));
     });
 
-    test('without exactly one comma fails the build naming the option', () async {
-      final result = await generateRouter({
-        'lib/home_page.dart': _kHomePage,
-        'lib/router.dart': _router('Page,Route,X'),
-      });
-      expect(result.errors.join(), contains('replaceInRouteName must be a pattern and its replacement'));
-      expect(result.errors.join(), contains("'Page,Route,X'"));
-    });
+    test(
+      'without exactly one comma fails the build naming the option',
+      () async {
+        final result = await generateRouter({
+          'lib/home_page.dart': _kHomePage,
+          'lib/router.dart': _router('Page,Route,X'),
+        });
+        expect(
+          result.errors.join(),
+          contains('replaceInRouteName must be a pattern and its replacement'),
+        );
+        expect(result.errors.join(), contains("'Page,Route,X'"));
+      },
+    );
 
-    test('with a replacement a name cannot hold fails the build naming the option', () async {
-      final result = await generateRouter({
-        'lib/home_page.dart': _kHomePage,
-        'lib/router.dart': _router('Page,Ro ute'),
-      });
-      expect(result.errors.join(), contains('The replacement in replaceInRouteName'));
-      expect(result.errors.join(), contains("'Ro ute'"));
-    });
+    test(
+      'with a replacement a name cannot hold fails the build naming the option',
+      () async {
+        final result = await generateRouter({
+          'lib/home_page.dart': _kHomePage,
+          'lib/router.dart': _router('Page,Ro ute'),
+        });
+        expect(
+          result.errors.join(),
+          contains('The replacement in replaceInRouteName'),
+        );
+        expect(result.errors.join(), contains("'Ro ute'"));
+      },
+    );
   });
 
   // #1163: a page parameter named with a `$`, such as `venue$id`, gave a
@@ -97,8 +109,16 @@ class Venue$Page extends StatelessWidget {
     });
     expect(result.errors, isEmpty);
     expect(result.compileErrors, isEmpty);
-    expect(result.source, contains(r"static const String name = 'Venue\$Route';"));
-    expect(result.source, contains(r"'Venue\$RouteArgs{key: $key, venue\$id: ${venue$id}, user\$id: ${user$id}"));
+    expect(
+      result.source,
+      contains(r"static const String name = 'Venue\$Route';"),
+    );
+    expect(
+      result.source,
+      contains(
+        r"'Venue\$RouteArgs{key: $key, venue\$id: ${venue$id}, user\$id: ${user$id}",
+      ),
+    );
     expect(result.source, contains(r"rawPathParams: {'user\$id': user$id}"));
     expect(result.source, contains(r"rawQueryParams: {'tab\$name': tab$name}"));
     expect(result.source, contains(r"pathParams.getString('user\$id')"));

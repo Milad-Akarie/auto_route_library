@@ -26,7 +26,8 @@ void main() {
     test('are not collected by the app router', () async {
       final result = await generateRouter({
         'skeleton|lib/src/router/login_page.dart': _kLoginPage,
-        'skeleton|lib/skeleton.dart': "library skeleton;\n\nexport 'src/router/login_page.dart';\n",
+        'skeleton|lib/skeleton.dart':
+            "library skeleton;\n\nexport 'src/router/login_page.dart';\n",
         'lib/home_page.dart': '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';

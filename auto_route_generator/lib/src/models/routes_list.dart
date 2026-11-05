@@ -3,13 +3,19 @@ import 'package:auto_route_generator/src/models/route_config.dart';
 /// A list of [RouteConfig]s
 class RoutesList {
   /// Default constructor
-  const new({required this.routes, required this.inputPath, required this.inputHash});
+  const new({
+    required this.routes,
+    required this.inputPath,
+    required this.inputHash,
+  });
 
   /// Deserializes this instance from a JSON object.
   factory fromJson(Map<String, dynamic> map) {
     return RoutesList(
       routes: List.unmodifiable(
-        (map['routes'] as List<Object?>).cast<Map<String, dynamic>>().map(RouteConfig.fromJson),
+        (map['routes'] as List<Object?>).cast<Map<String, dynamic>>().map(
+          RouteConfig.fromJson,
+        ),
       ),
       inputPath: map['inputPath'] as String,
       inputHash: map['inputHash'] as int?,

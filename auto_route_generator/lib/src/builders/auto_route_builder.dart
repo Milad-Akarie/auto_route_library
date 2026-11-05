@@ -32,7 +32,12 @@ final _cacheResource = Resource<Map<String, RoutesList>>(() async {
 /// A [Builder] which generates json route files for annotated pages
 class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   /// Default constructor
-  new({super.options}) : super(generatedExtension: '.route.json', allowSyntaxErrors: true, annotationName: 'RoutePage');
+  new({super.options})
+    : super(
+        generatedExtension: '.route.json',
+        allowSyntaxErrors: true,
+        annotationName: 'RoutePage',
+      );
 
   @override
   bool get cacheEnabled => options?.config['enable_cached_builds'] == true;
@@ -60,7 +65,9 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
         if (child is ConstructorDeclaration || child is FieldDeclaration) {
           calculatedHash = calculatedHash ^ child.toSource().hashCode;
         }
-        final routePageMeta = clazz.metadata.firstWhereOrNull((e) => e.name.name == annotationName);
+        final routePageMeta = clazz.metadata.firstWhereOrNull(
+          (e) => e.name.name == annotationName,
+        );
         if (routePageMeta != null) {
           calculatedHash = calculatedHash ^ routePageMeta.toSource().hashCode;
         }
@@ -75,13 +82,28 @@ class AutoRouteBuilder extends CacheAwareBuilder<RoutesList> {
   }
 
   @override
-  Future<RoutesList?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash) async {
-    final routeResolver = RouteConfigResolver(TypeResolver(await buildStep.resolver.libraries.toList()));
+  Future<RoutesList?> onResolve(
+    LibraryReader library,
+    BuildStep buildStep,
+    int stepHash,
+  ) async {
+    final routeResolver = RouteConfigResolver(
+      TypeResolver(await buildStep.resolver.libraries.toList()),
+    );
     final routes = <RouteConfig>[];
     for (final annotatedElement in library.annotatedWith(_kTypeChecker)) {
-      final route = routeResolver.resolve(annotatedElement.element, annotatedElement.annotation);
+      final route = routeResolver.resolve(
+        annotatedElement.element,
+        annotatedElement.annotation,
+      );
       routes.add(route);
     }
-    return routes.isEmpty ? null : RoutesList(routes: routes, inputPath: buildStep.inputId.path, inputHash: stepHash);
+    return routes.isEmpty
+        ? null
+        : RoutesList(
+            routes: routes,
+            inputPath: buildStep.inputId.path,
+            inputHash: stepHash,
+          );
   }
 }

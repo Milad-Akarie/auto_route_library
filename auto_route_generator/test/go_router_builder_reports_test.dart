@@ -20,7 +20,9 @@ $fields
 }
 ''';
 
-String _squash(String source) => source.replaceAll(RegExp(r'\s+'), '').replaceAll(RegExp(r',(?=[)}\]])'), '');
+String _squash(String source) => source
+    .replaceAll(RegExp(r'\s+'), '')
+    .replaceAll(RegExp(r',(?=[)}\]])'), '');
 
 // Each group guards a bug that go_router_builder had, for the same scenario
 // in auto_route's generator.
@@ -33,7 +35,10 @@ void main() {
     test('compiles', () async {
       final result = await generateRouter({
         'lib/details_page.dart': _page('DetailsPage', parameters: ''),
-        'lib/shell_page.dart': _page('ShellAPage', parameters: '').replaceAll('DetailsPage', 'ShellAPage'),
+        'lib/shell_page.dart': _page(
+          'ShellAPage',
+          parameters: '',
+        ).replaceAll('DetailsPage', 'ShellAPage'),
         'lib/router.dart': '''
 import 'package:auto_route/auto_route.dart';
 
@@ -53,7 +58,10 @@ class AppRouter extends RootStackRouter {
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect('class DetailsRoute extends'.allMatches(result.source!), hasLength(1));
+      expect(
+        'class DetailsRoute extends'.allMatches(result.source!),
+        hasLength(1),
+      );
     });
   });
 
@@ -74,7 +82,9 @@ class AppRouter extends RootStackRouter {
       expect(result.compileErrors, isEmpty);
       expect(
         _squash(result.source!),
-        contains("queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()??const[]"),
+        contains(
+          "queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()??const[]",
+        ),
       );
     });
 
@@ -86,28 +96,38 @@ class AppRouter extends RootStackRouter {
           fields: '  final List<int> ids;',
         ),
       });
-      expect(result.errors.join(), contains('QueryParams must be nullable or have default value'));
+      expect(
+        result.errors.join(),
+        contains('QueryParams must be nullable or have default value'),
+      );
     });
   });
 
   // flutter/flutter#164354: a required enum query param could not be parsed.
   // Should: an enum with a default compiles and reads by name.
-  test('an enum query param with a default compiles (flutter/flutter#164354)', () async {
-    final result = await generateRouter({
-      'lib/mode_page.dart':
-          '''
+  test(
+    'an enum query param with a default compiles (flutter/flutter#164354)',
+    () async {
+      final result = await generateRouter({
+        'lib/mode_page.dart':
+            '''
 ${_page('ModePage', parameters: '@QueryParam() this.mode = Mode.foo', fields: '  final Mode mode;')}
 
 enum Mode { foo, bar }
 ''',
-    });
-    expect(result.errors, isEmpty);
-    expect(result.compileErrors, isEmpty);
-    expect(
-      _squash(result.source!),
-      matches(RegExp(r"Mode\.values\.asNameMap\(\)\[queryParams\.optString\('mode'\)\]\?\?(_i\d+\.)?Mode\.foo")),
-    );
-  });
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(
+        _squash(result.source!),
+        matches(
+          RegExp(
+            r"Mode\.values\.asNameMap\(\)\[queryParams\.optString\('mode'\)\]\?\?(_i\d+\.)?Mode\.foo",
+          ),
+        ),
+      );
+    },
+  );
 
   // flutter/flutter#164621: `int.parse(...)!` made the analyzer warn that the
   // `!` has no effect; #170241: the generated mixin warned about overriding.

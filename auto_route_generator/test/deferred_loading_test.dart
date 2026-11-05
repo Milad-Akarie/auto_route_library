@@ -49,8 +49,10 @@ class AppRouter extends RootStackRouter {
 ''';
 
 /// The import line the generated router has for [file], whatever its prefix.
-String? _importOf(String source, String file) =>
-    RegExp("^import 'package:app/$file'.*\$", multiLine: true).firstMatch(source)?.group(0);
+String? _importOf(String source, String file) => RegExp(
+  "^import 'package:app/$file'.*\$",
+  multiLine: true,
+).firstMatch(source)?.group(0);
 
 void main() {
   // A page that sits only in a nested router's `children` loads on demand
@@ -63,26 +65,44 @@ void main() {
       final result = await generateRouter({
         'lib/shell_page.dart': _kShellPage,
         'lib/nested_page.dart': _nestedPage(),
-        'lib/router.dart': _router(annotation: '@AutoRouterConfig(deferredLoading: true)'),
+        'lib/router.dart': _router(
+          annotation: '@AutoRouterConfig(deferredLoading: true)',
+        ),
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = result.source!;
       expect(_importOf(source, 'nested_page.dart'), contains('deferred as'));
-      expect(source, matches(RegExp(r'DeferredWidget\(\s*_i\d+\.loadLibrary,\s*\(\) => _i\d+\.NestedPage\(\)')));
+      expect(
+        source,
+        matches(
+          RegExp(
+            r'DeferredWidget\(\s*_i\d+\.loadLibrary,\s*\(\) => _i\d+\.NestedPage\(\)',
+          ),
+        ),
+      );
     });
 
     test('is deferred by its own @RoutePage, and its shell is not', () async {
       final result = await generateRouter({
         'lib/shell_page.dart': _kShellPage,
-        'lib/nested_page.dart': _nestedPage(annotation: '@RoutePage(deferredLoading: true)'),
+        'lib/nested_page.dart': _nestedPage(
+          annotation: '@RoutePage(deferredLoading: true)',
+        ),
         'lib/router.dart': _router(),
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = result.source!;
       expect(_importOf(source, 'nested_page.dart'), contains('deferred as'));
-      expect(source, matches(RegExp(r'DeferredWidget\(\s*_i\d+\.loadLibrary,\s*\(\) => _i\d+\.NestedPage\(\)')));
+      expect(
+        source,
+        matches(
+          RegExp(
+            r'DeferredWidget\(\s*_i\d+\.loadLibrary,\s*\(\) => _i\d+\.NestedPage\(\)',
+          ),
+        ),
+      );
       expect(_importOf(source, 'shell_page.dart'), isNot(contains('deferred')));
       expect(source, isNot(matches(RegExp(r'DeferredWidget\([^;]*ShellPage'))));
     });
@@ -97,7 +117,10 @@ void main() {
   // other page's route did not compile: a `const` page from a deferred
   // library, or `loadLibrary` on a plain import.
   group('two pages in one file', () {
-    String twoPages({String first = '@RoutePage()', String second = '@RoutePage()'}) =>
+    String twoPages({
+      String first = '@RoutePage()',
+      String second = '@RoutePage()',
+    }) =>
         '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
@@ -155,29 +178,41 @@ class AppRouter extends RootStackRouter {
     }
 
     for (final deferred in ['first', 'second']) {
-      test('loads both on demand when the $deferred is deferred by its @RoutePage', () async {
-        const annotation = '@RoutePage(deferredLoading: true)';
-        final result = await generateRouter({
-          'lib/pages.dart': deferred == 'first' ? twoPages(first: annotation) : twoPages(second: annotation),
-          'lib/router.dart': router(),
-        });
-        expectBothDeferred(result);
-      });
+      test(
+        'loads both on demand when the $deferred is deferred by its @RoutePage',
+        () async {
+          const annotation = '@RoutePage(deferredLoading: true)';
+          final result = await generateRouter({
+            'lib/pages.dart': deferred == 'first'
+                ? twoPages(first: annotation)
+                : twoPages(second: annotation),
+            'lib/router.dart': router(),
+          });
+          expectBothDeferred(result);
+        },
+      );
     }
 
     for (final optedOut in ['first', 'second']) {
-      test('loads neither on demand when the $optedOut opts out of the router default', () async {
-        const annotation = '@RoutePage(deferredLoading: false)';
-        final result = await generateRouter({
-          'lib/pages.dart': optedOut == 'first' ? twoPages(first: annotation) : twoPages(second: annotation),
-          'lib/router.dart': router(annotation: '@AutoRouterConfig(deferredLoading: true)'),
-        });
-        expect(result.errors, isEmpty);
-        expect(result.compileErrors, isEmpty);
-        final source = result.source!;
-        expect(_importOf(source, 'pages.dart'), isNot(contains('deferred')));
-        expect(source, isNot(contains('DeferredWidget')));
-      });
+      test(
+        'loads neither on demand when the $optedOut opts out of the router default',
+        () async {
+          const annotation = '@RoutePage(deferredLoading: false)';
+          final result = await generateRouter({
+            'lib/pages.dart': optedOut == 'first'
+                ? twoPages(first: annotation)
+                : twoPages(second: annotation),
+            'lib/router.dart': router(
+              annotation: '@AutoRouterConfig(deferredLoading: true)',
+            ),
+          });
+          expect(result.errors, isEmpty);
+          expect(result.compileErrors, isEmpty);
+          final source = result.source!;
+          expect(_importOf(source, 'pages.dart'), isNot(contains('deferred')));
+          expect(source, isNot(contains('DeferredWidget')));
+        },
+      );
     }
   });
 }

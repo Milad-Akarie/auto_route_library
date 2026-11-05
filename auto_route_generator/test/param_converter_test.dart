@@ -61,13 +61,22 @@ void main() {
     test('reads and writes a path param of its type', () async {
       final result = await generateRouter({
         'lib/user_id.dart': _kUserId,
-        'lib/user_page.dart': _userPage("@PathParam('id', userIdConverter) required this.id", 'final UserId id;'),
+        'lib/user_page.dart': _userPage(
+          "@PathParam('id', userIdConverter) required this.id",
+          'final UserId id;',
+        ),
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
-      expect(source, contains("rawPathParams:{'id':userIdConverter.toParam(id)}"));
-      expect(source, contains("id:pathParams.getTyped<UserId>('id',userIdConverter)"));
+      expect(
+        source,
+        contains("rawPathParams:{'id':userIdConverter.toParam(id)}"),
+      );
+      expect(
+        source,
+        contains("id:pathParams.getTyped<UserId>('id',userIdConverter)"),
+      );
     });
 
     test('reads and writes an optional query param, with or without a default', () async {
@@ -82,10 +91,21 @@ void main() {
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
-      expect(source, contains("'by':by==null?null:userIdConverter.toParam(by)"));
+      expect(
+        source,
+        contains("'by':by==null?null:userIdConverter.toParam(by)"),
+      );
       expect(source, contains("'to':userIdConverter.toParam(to)"));
-      expect(source, contains("by:queryParams.optTyped<UserId>('by',userIdConverter)"));
-      expect(source, contains("to:queryParams.getTyped<UserId>('to',userIdConverter,constUserId('me'))"));
+      expect(
+        source,
+        contains("by:queryParams.optTyped<UserId>('by',userIdConverter)"),
+      );
+      expect(
+        source,
+        contains(
+          "to:queryParams.getTyped<UserId>('to',userIdConverter,constUserId('me'))",
+        ),
+      );
     });
 
     test('on an inherited path param reads it from the parent', () async {
@@ -98,7 +118,10 @@ void main() {
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(_flat(result), contains("id:pathParams.getTyped<UserId>('id',userIdConverter)"));
+      expect(
+        _flat(result),
+        contains("id:pathParams.getTyped<UserId>('id',userIdConverter)"),
+      );
     });
 
     test('on an enum replaces reading it by its name', () async {
@@ -120,37 +143,64 @@ class LevelConverter extends ParamConverter<Level> {
 
 const levelConverter = LevelConverter();
 ''',
-        'lib/user_page.dart': _userPage("@QueryParam('level', levelConverter) this.level", 'final Level? level;'),
+        'lib/user_page.dart': _userPage(
+          "@QueryParam('level', levelConverter) this.level",
+          'final Level? level;',
+        ),
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
-      expect(source, contains("level:queryParams.optTyped<Level>('level',levelConverter)"));
+      expect(
+        source,
+        contains("level:queryParams.optTyped<Level>('level',levelConverter)"),
+      );
       expect(source, isNot(contains('asNameMap')));
     });
 
     test('for another type fails the build naming both', () async {
       final result = await generateRouter({
         'lib/user_id.dart': _kUserId,
-        'lib/user_page.dart': _userPage("@PathParam('id', userIdConverter) required this.id", 'final int id;'),
+        'lib/user_page.dart': _userPage(
+          "@PathParam('id', userIdConverter) required this.id",
+          'final int id;',
+        ),
       });
-      expect(result.errors.join(), contains('The converter on id converts UserId, but id is a int.'));
+      expect(
+        result.errors.join(),
+        contains('The converter on id converts UserId, but id is a int.'),
+      );
     });
 
     test('written in the annotation fails the build asking for a top-level constant', () async {
       final result = await generateRouter({
         'lib/user_id.dart': _kUserId,
-        'lib/user_page.dart': _userPage("@PathParam('id', UserIdConverter()) required this.id", 'final UserId id;'),
+        'lib/user_page.dart': _userPage(
+          "@PathParam('id', UserIdConverter()) required this.id",
+          'final UserId id;',
+        ),
       });
-      expect(result.errors.join(), contains('The converter on id must be a top-level const variable'));
+      expect(
+        result.errors.join(),
+        contains('The converter on id must be a top-level const variable'),
+      );
     });
 
-    test('missing on a type a url can not give fails the build asking for one', () async {
-      final result = await generateRouter({
-        'lib/user_id.dart': _kUserId,
-        'lib/user_page.dart': _userPage("@PathParam('id') required this.id", 'final UserId id;'),
-      });
-      expect(result.errors.join(), contains('give @PathParam a ParamConverter<UserId>'));
-    });
+    test(
+      'missing on a type a url can not give fails the build asking for one',
+      () async {
+        final result = await generateRouter({
+          'lib/user_id.dart': _kUserId,
+          'lib/user_page.dart': _userPage(
+            "@PathParam('id') required this.id",
+            'final UserId id;',
+          ),
+        });
+        expect(
+          result.errors.join(),
+          contains('give @PathParam a ParamConverter<UserId>'),
+        );
+      },
+    );
   });
 }

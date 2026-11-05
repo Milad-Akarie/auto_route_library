@@ -4,7 +4,12 @@ import 'support/generate.dart';
 
 /// A page library named [name] whose constructor takes [parameters], each
 /// also declared as a field in [fields].
-String _page(String name, {required String parameters, required String fields, String imports = ''}) =>
+String _page(
+  String name, {
+  required String parameters,
+  required String fields,
+  String imports = '',
+}) =>
     '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
@@ -93,8 +98,16 @@ required this.url,
       final source = result.source!.replaceAll(RegExp(r'_i\d+\.'), '');
       expect(source, contains('Option<void Function(UrlChange)> onUrlChange'));
       expect(source, contains('Option<void Function(String)?> onPageFinished'));
-      expect(source, contains('Option<bool Function(String, [int?])> onRequest'));
-      expect(source, contains('Option<void Function({required bool isMainFrame, int? code})> onFrame'));
+      expect(
+        source,
+        contains('Option<bool Function(String, [int?])> onRequest'),
+      );
+      expect(
+        source,
+        contains(
+          'Option<void Function({required bool isMainFrame, int? code})> onFrame',
+        ),
+      );
       expect(source, contains('Option<UrlCallback> onPageStarted'));
     });
   });
@@ -138,7 +151,10 @@ required this.url,
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(result.source, contains("queryParams.getString('filter', 'none')"));
+      expect(
+        result.source,
+        contains("queryParams.getString('filter', 'none')"),
+      );
       expect(result.source, contains("queryParams.getBool('update', false)"));
     });
   });
@@ -165,8 +181,14 @@ const firstPage = 1;
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(result.source, matches(RegExp(r'titleResolver = _i\d+\.defaultTitleResolver')));
-      expect(result.source, matches(RegExp(r"queryParams.getInt\('page', _i\d+\.firstPage\)")));
+      expect(
+        result.source,
+        matches(RegExp(r'titleResolver = _i\d+\.defaultTitleResolver')),
+      );
+      expect(
+        result.source,
+        matches(RegExp(r"queryParams.getInt\('page', _i\d+\.firstPage\)")),
+      );
     });
   });
 
@@ -193,11 +215,21 @@ const firstPage = 1;
           .replaceAll(RegExp(r'_i\d+\.'), '')
           .replaceAll(RegExp(r'\s+'), '')
           .replaceAll(RegExp(r',(?=[)}\]])'), '');
-      expect(source, contains("rawQueryParams:{'type':userCartType?.name,'sort':sort.name}"));
-      expect(source, contains("userCartType:MfUserCartTypes.values.asNameMap()[queryParams.optString('type')]"));
       expect(
         source,
-        contains("sort:MfUserCartTypes.values.asNameMap()[queryParams.optString('sort')]??MfUserCartTypes.mf"),
+        contains("rawQueryParams:{'type':userCartType?.name,'sort':sort.name}"),
+      );
+      expect(
+        source,
+        contains(
+          "userCartType:MfUserCartTypes.values.asNameMap()[queryParams.optString('type')]",
+        ),
+      );
+      expect(
+        source,
+        contains(
+          "sort:MfUserCartTypes.values.asNameMap()[queryParams.optString('sort')]??MfUserCartTypes.mf",
+        ),
       );
     });
   });
@@ -220,7 +252,10 @@ const constTitle = 'Home';
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(result.source, matches(RegExp(r'this\.title = _i\d+\.constTitle')));
+      expect(
+        result.source,
+        matches(RegExp(r'this\.title = _i\d+\.constTitle')),
+      );
     });
 
     test('keeps a const value const', () async {
@@ -234,7 +269,8 @@ class Range {
         'lib/home_screen.dart': _page(
           'HomeScreen',
           imports: "import 'defaults.dart';",
-          parameters: 'this.range = const Range(1), this.tags = const <String>[]',
+          parameters:
+              'this.range = const Range(1), this.tags = const <String>[]',
           fields: '''
   final Range range;
   final List<String> tags;''',
@@ -242,7 +278,10 @@ class Range {
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(result.source, matches(RegExp(r'this\.range = const _i\d+\.Range\(1\)')));
+      expect(
+        result.source,
+        matches(RegExp(r'this\.range = const _i\d+\.Range\(1\)')),
+      );
     });
   });
 
@@ -285,17 +324,36 @@ class Range {
           .replaceAll(RegExp(r'_i\d+\.'), '')
           .replaceAll(RegExp(r'\s+'), '')
           .replaceAll(RegExp(r',(?=[)}\]])'), '');
-      expect(source, contains("ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()"));
       expect(
         source,
-        contains("prices:queryParams.optList('prices')?.map(double.tryParse).whereType<double>().toList()"),
+        contains(
+          "ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()",
+        ),
       );
-      expect(source, contains("sizes:queryParams.optList('sizes')?.map(num.tryParse).whereType<num>().toList()"));
-      expect(source, contains("flags:queryParams.optList('flags')?.map((text)=>text.toLowerCase()=='true'"));
+      expect(
+        source,
+        contains(
+          "prices:queryParams.optList('prices')?.map(double.tryParse).whereType<double>().toList()",
+        ),
+      );
+      expect(
+        source,
+        contains(
+          "sizes:queryParams.optList('sizes')?.map(num.tryParse).whereType<num>().toList()",
+        ),
+      );
+      expect(
+        source,
+        contains(
+          "flags:queryParams.optList('flags')?.map((text)=>text.toLowerCase()=='true'",
+        ),
+      );
       expect(source, contains("tags:queryParams.optList('tags')"));
       expect(
         source,
-        contains("picked:queryParams.optList('picked')?.map(int.tryParse).whereType<int>().toList()??const[1,2]"),
+        contains(
+          "picked:queryParams.optList('picked')?.map(int.tryParse).whereType<int>().toList()??const[1,2]",
+        ),
       );
       expect(
         source,
@@ -303,8 +361,14 @@ class Range {
           "sorts:queryParams.optList('sorts')?.map((name)=>Sort.values.asNameMap()[name]).whereType<Sort>().toList()",
         ),
       );
-      expect(source, contains("'sorts':sorts?.map((item)=>item.name).toList()"));
-      expect(source, contains("'orders':orders.map((item)=>item.name).toList()"));
+      expect(
+        source,
+        contains("'sorts':sorts?.map((item)=>item.name).toList()"),
+      );
+      expect(
+        source,
+        contains("'orders':orders.map((item)=>item.name).toList()"),
+      );
     });
 
     test('of another type is a build error', () async {
@@ -319,7 +383,12 @@ class Range {
       expect(result.errors, hasLength(1));
       expect(
         result.errors.join(),
-        allOf(contains('a List query param can hold String, int, double, num, bool or enum'), contains('not Color')),
+        allOf(
+          contains(
+            'a List query param can hold String, int, double, num, bool or enum',
+          ),
+          contains('not Color'),
+        ),
       );
     });
 
@@ -332,7 +401,10 @@ class Range {
         ),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors.join(), contains('a List path param can hold String items, not int'));
+      expect(
+        result.errors.join(),
+        contains('a List path param can hold String items, not int'),
+      );
     });
   });
 
@@ -356,7 +428,9 @@ class Range {
       expect(
         result.errors.join(),
         allOf(
-          contains('Parameter [mode] must be of a type that can be parsed from a [String]'),
+          contains(
+            'Parameter [mode] must be of a type that can be parsed from a [String]',
+          ),
           contains('valid types: [String, int, double, num, bool, dynamic]'),
         ),
       );
@@ -388,19 +462,28 @@ class Range {
   // written yet as auto_route's builder ran. The build now fails naming the
   // argument and how to order the builders.
   group('an argument whose type is not resolved (#1507)', () {
-    for (final (label, type) in [('itself', r'Query$Artist?'), ('inside a type argument', r'List<Query$Artist>?')]) {
-      test('fails the build naming the argument when the type is $label', () async {
-        final result = await generateRouter({
-          'lib/artist_page.dart': _page(
-            'ArtistPage',
-            imports: "import 'artist.graphql.dart';",
-            parameters: 'this.artist',
-            fields: '  final $type artist;',
-          ),
-        });
-        expect(result.errors.join(), contains('The type of artist in ArtistPage could not be resolved'));
-        expect(result.errors.join(), contains('runs_before'));
-      });
+    for (final (label, type) in [
+      ('itself', r'Query$Artist?'),
+      ('inside a type argument', r'List<Query$Artist>?'),
+    ]) {
+      test(
+        'fails the build naming the argument when the type is $label',
+        () async {
+          final result = await generateRouter({
+            'lib/artist_page.dart': _page(
+              'ArtistPage',
+              imports: "import 'artist.graphql.dart';",
+              parameters: 'this.artist',
+              fields: '  final $type artist;',
+            ),
+          });
+          expect(
+            result.errors.join(),
+            contains('The type of artist in ArtistPage could not be resolved'),
+          );
+          expect(result.errors.join(), contains('runs_before'));
+        },
+      );
     }
   });
 
@@ -409,7 +492,10 @@ class Range {
   // dart-lang/source_gen#650 and #1438.
   // A Color from dart:ui or Flutter keeps its type. Without an import it
   // fails the build with a message, as #1507 above.
-  for (final import in ["import 'dart:ui';", "import 'package:flutter/painting.dart';"]) {
+  for (final import in [
+    "import 'dart:ui';",
+    "import 'package:flutter/painting.dart';",
+  ]) {
     test('a Color argument keeps its type with $import (#1603)', () async {
       final result = await generateRouter({
         'lib/webkit_screen.dart': _page(
@@ -439,8 +525,14 @@ class Range {
     });
     expect(result.errors, isEmpty);
     expect(result.compileErrors, isEmpty);
-    expect(result.source, contains('required List<({int id, String? name})> items'));
-    expect(result.source, contains('final List<({int id, String? name})> items;'));
+    expect(
+      result.source,
+      contains('required List<({int id, String? name})> items'),
+    );
+    expect(
+      result.source,
+      contains('final List<({int id, String? name})> items;'),
+    );
     expect(result.source, contains('data.argsAs<ItemsRouteArgs>()'));
   });
 
@@ -466,9 +558,17 @@ class Range {
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(result.source, contains("tags: queryParams.optList('tags')?.toSet() ?? const {}"));
+      expect(
+        result.source,
+        contains("tags: queryParams.optList('tags')?.toSet() ?? const {}"),
+      );
       final source = result.source!.replaceAll(RegExp(r'\s+'), '');
-      expect(source, contains("ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()"));
+      expect(
+        source,
+        contains(
+          "ids:queryParams.optList('ids')?.map(int.tryParse).whereType<int>().toList()",
+        ),
+      );
       expect(
         source,
         contains(
@@ -486,7 +586,8 @@ class Range {
     ]) {
       test('of another type, $type, fails the build naming the param', () async {
         final result = await generateRouter({
-          'lib/article_id.dart': 'extension type const ArticleId(String value) {}',
+          'lib/article_id.dart':
+              'extension type const ArticleId(String value) {}',
           'lib/at_page.dart': _page(
             'AtPage',
             imports: "import 'article_id.dart';",
@@ -496,7 +597,9 @@ class Range {
         });
         expect(
           result.errors.join(),
-          contains('Parameter [at] is a @QueryParam of type $type, which a url can not give'),
+          contains(
+            'Parameter [at] is a @QueryParam of type $type, which a url can not give',
+          ),
         );
       });
     }
@@ -515,11 +618,17 @@ class Range {
 
     test('of items the url can not give fails the build', () async {
       final result = await generateRouter({
-        'lib/at_page.dart': _page('AtPage', parameters: '@QueryParam() this.at', fields: '  final Set<DateTime>? at;'),
+        'lib/at_page.dart': _page(
+          'AtPage',
+          parameters: '@QueryParam() this.at',
+          fields: '  final Set<DateTime>? at;',
+        ),
       });
       expect(
         result.errors.join(),
-        contains('at: a Set query param can hold String, int, double, num, bool or enum items'),
+        contains(
+          'at: a Set query param can hold String, int, double, num, bool or enum items',
+        ),
       );
     });
   });
@@ -557,8 +666,16 @@ class Range {
           fields: '  final ArticleId id;',
         ),
       });
-      expect(result.errors.join(), contains('Parameter [id] must be of a type that can be parsed from a [String]'));
-      expect(result.errors.join(), contains('valid types: [String, int, double, num, bool, dynamic]'));
+      expect(
+        result.errors.join(),
+        contains(
+          'Parameter [id] must be of a type that can be parsed from a [String]',
+        ),
+      );
+      expect(
+        result.errors.join(),
+        contains('valid types: [String, int, double, num, bool, dynamic]'),
+      );
     });
   });
 }

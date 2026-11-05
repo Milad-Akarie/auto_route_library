@@ -22,16 +22,21 @@ class CompileCheckBuilder implements Builder {
     if (buildStep.inputId.path != _routerPath) return;
     final libraries = [buildStep.inputId];
     final outputId = AssetId(buildStep.inputId.package, _outputPath);
-    if (await buildStep.canRead(outputId) && await buildStep.resolver.isLibrary(outputId)) {
+    if (await buildStep.canRead(outputId) &&
+        await buildStep.resolver.isLibrary(outputId)) {
       libraries.add(outputId);
     }
     final errors = <String>[];
     for (final id in libraries) {
       final library = await buildStep.resolver.libraryFor(id);
       for (final fragment in library.fragments) {
-        final result = await library.session.getErrors(fragment.source.fullName);
+        final result = await library.session.getErrors(
+          fragment.source.fullName,
+        );
         if (result is ErrorsResult) {
-          for (final e in result.diagnostics.where((diagnostic) => diagnostic.severity == .error)) {
+          for (final e in result.diagnostics.where(
+            (diagnostic) => diagnostic.severity == .error,
+          )) {
             errors.add('${fragment.source.shortName}: ${e.message}');
           }
         }

@@ -34,7 +34,9 @@ TypeReference listRefer(Reference reference, {required bool nullable}) => .new(
 /// change, such as `CostsTab`, unless its `@RoutePage` names the route.
 void _throwOnRouteNamedLikePage(RouterConfig router, List<RouteConfig> routes) {
   final pageNames = routes.map((r) => r.className).toSet();
-  final clashes = routes.where((r) => pageNames.contains(r.getName(router.replaceInRouteName))).toList();
+  final clashes = routes
+      .where((r) => pageNames.contains(r.getName(router.replaceInRouteName)))
+      .toList();
   if (clashes.isEmpty) return;
   throwError(
     'A route in the part file ${router.path} gets the name of a page, which hides the page. '
@@ -64,7 +66,11 @@ String generateLibrary(
   final emitter = DartEmitter(
     allocator: router.isPartOfLibrary
         ? .none
-        : DeferredPagesAllocator(routes, defaultDeferredLoading: router.deferredLoading, outputPath: outputPath),
+        : DeferredPagesAllocator(
+            routes,
+            defaultDeferredLoading: router.deferredLoading,
+            outputPath: outputPath,
+          ),
     orderDirectives: true,
     useNullSafetySyntax: true,
   );
@@ -95,7 +101,9 @@ String generateLibrary(
   for (var i = 0; i < routes.length; i++) {
     final route = routes[i];
     final deferredLoading = deferredByImport[route.pageType?.import];
-    if (route.pageType != null && deferredLoading != null && route.deferredLoading != deferredLoading) {
+    if (route.pageType != null &&
+        deferredLoading != null &&
+        route.deferredLoading != deferredLoading) {
       routes[i] = route.withDeferredLoading(isDeferred: deferredLoading);
     }
   }
@@ -103,7 +111,10 @@ String generateLibrary(
   final library = Library(
     (b) => b
       ..directives.addAll([
-        if (router.isPartOfLibrary) Directive.partOf(p.posix.relative(router.path, from: p.posix.dirname(outputPath))),
+        if (router.isPartOfLibrary)
+          Directive.partOf(
+            p.posix.relative(router.path, from: p.posix.dirname(outputPath)),
+          ),
       ])
       ..comments.addAll([
         'ignore_for_file: type=lint',
@@ -119,5 +130,6 @@ String generateLibrary(
       ]),
   );
 
-  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion).format(emitSource(library, emitter));
+  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion)
+      .format(emitSource(library, emitter));
 }

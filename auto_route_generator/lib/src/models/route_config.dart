@@ -22,7 +22,8 @@ class RouteConfig {
   /// Deserializes the route config from json
   factory fromJson(Map<String, dynamic> map) {
     final pathParams = <PathParamConfig>[];
-    final pathParamsJson = (map['pathParams'] as List<Object?>?)?.cast<Map<String, dynamic>>();
+    final pathParamsJson = (map['pathParams'] as List<Object?>?)
+        ?.cast<Map<String, dynamic>>();
     if (pathParamsJson != null) {
       for (final arg in pathParamsJson) {
         pathParams.add(PathParamConfig.fromJson(arg));
@@ -30,7 +31,8 @@ class RouteConfig {
     }
 
     final parameters = <ParamConfig>[];
-    final parametersJson = (map['parameters'] as List<Object?>?)?.cast<Map<String, dynamic>>();
+    final parametersJson = (map['parameters'] as List<Object?>?)
+        ?.cast<Map<String, dynamic>>();
     if (parametersJson != null) {
       for (final arg in parametersJson) {
         parameters.add(ParamConfig.fromJson(arg));
@@ -44,7 +46,9 @@ class RouteConfig {
       ],
       name: map['name'] as String?,
       pathParams: pathParams,
-      pageType: map['pageType'] == null ? null : ResolvedType.fromJson(map['pageType'] as Map<String, dynamic>),
+      pageType: map['pageType'] == null
+          ? null
+          : ResolvedType.fromJson(map['pageType'] as Map<String, dynamic>),
       className: map['className'] as String,
       parameters: parameters,
       hasWrappedRoute: map['hasWrappedRoute'] as bool?,
@@ -90,7 +94,8 @@ class RouteConfig {
   }
 
   /// Returns all the optional params
-  Iterable<ParamConfig> get positionalParams => parameters.where((p) => p.isPositional);
+  Iterable<ParamConfig> get positionalParams =>
+      parameters.where((p) => p.isPositional);
 
   /// Returns all the named params
   Iterable<ParamConfig> get namedParams => parameters.where((p) => p.isNamed);
@@ -100,10 +105,11 @@ class RouteConfig {
     String nameToUse;
     if (name != null) {
       nameToUse = name!;
-    } else if (replacementInRouteName?.split(',').map((part) => part.trim()).toList() case [
-      final pattern,
-      final replacement,
-    ]) {
+    } else if (replacementInRouteName
+            ?.split(',')
+            .map((part) => part.trim())
+            .toList()
+        case [final pattern, final replacement]) {
       nameToUse = className.replaceAll(RegExp(pattern), replacement);
     } else {
       nameToUse = '${className}Route';
@@ -112,8 +118,10 @@ class RouteConfig {
   }
 
   /// Whether this route has arguments that can't be parsed
-  bool get hasUnparsableRequiredArgs =>
-      parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+  bool get hasUnparsableRequiredArgs => parameters.any(
+    (p) =>
+        (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
+  );
 
   /// Clones the route config with its deferred loading set to [isDeferred]
   RouteConfig withDeferredLoading({required bool isDeferred}) {
@@ -141,7 +149,8 @@ class RouteConfig {
       'hasWrappedRoute': hasWrappedRoute,
       'hasConstConstructor': hasConstConstructor,
       'deferredLoading': deferredLoading,
-      if (isGeneric) 'typeParameters': typeParameters.map((e) => e.toJson()).toList(),
+      if (isGeneric)
+        'typeParameters': typeParameters.map((e) => e.toJson()).toList(),
     };
   }
 }
@@ -157,7 +166,9 @@ class RouteTypeParameter {
     final bound = map['bound'];
     return RouteTypeParameter(
       name: map['name'] as String,
-      bound: bound == null ? null : ResolvedType.fromJson(bound as Map<String, dynamic>),
+      bound: bound == null
+          ? null
+          : ResolvedType.fromJson(bound as Map<String, dynamic>),
     );
   }
 

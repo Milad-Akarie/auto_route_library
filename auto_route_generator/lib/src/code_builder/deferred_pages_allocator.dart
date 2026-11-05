@@ -5,7 +5,11 @@ import 'package:path/path.dart' as p;
 /// Allocates symbols for deferred pages
 class DeferredPagesAllocator implements Allocator {
   /// Default constructor
-  new(this._routes, {required this._defaultDeferredLoading, required this._outputPath});
+  new(
+    this._routes, {
+    required this._defaultDeferredLoading,
+    required this._outputPath,
+  });
   static const _doNotPrefix = ['dart:core'];
 
   final _imports = <String, int>{};
@@ -39,7 +43,10 @@ class DeferredPagesAllocator implements Allocator {
   Iterable<Directive> get imports => _imports.entries.map((entry) {
     final importPath = entry.key;
     final uri = _importUri(importPath);
-    if (_routes.isDeferred(importPath, defaultDeferredLoading: _defaultDeferredLoading)) {
+    if (_routes.isDeferred(
+      importPath,
+      defaultDeferredLoading: _defaultDeferredLoading,
+    )) {
       return Directive.importDeferredAs(uri, '_i${entry.value}');
     }
     return Directive.import(uri, as: '_i${entry.value}');
@@ -49,19 +56,31 @@ class DeferredPagesAllocator implements Allocator {
     final uri = Uri.parse(importPath);
     if (uri.scheme != 'asset' || uri.pathSegments.length < 2) return importPath;
     // The first segment of an asset: URI is the package.
-    return p.posix.relative(uri.pathSegments.skip(1).join('/'), from: p.posix.dirname(_outputPath));
+    return p.posix.relative(
+      uri.pathSegments.skip(1).join('/'),
+      from: p.posix.dirname(_outputPath),
+    );
   }
 }
 
 extension _RouteConfigList on List<RouteConfig> {
   bool isDeferred(String importPath, {required bool defaultDeferredLoading}) {
-    return mapRouteToDeferredType(importPath, defaultDeferredLoading: defaultDeferredLoading) == .deferred;
+    return mapRouteToDeferredType(
+          importPath,
+          defaultDeferredLoading: defaultDeferredLoading,
+        ) ==
+        .deferred;
   }
 
-  _DeferredStatus mapRouteToDeferredType(String importPath, {required bool defaultDeferredLoading}) {
+  _DeferredStatus mapRouteToDeferredType(
+    String importPath, {
+    required bool defaultDeferredLoading,
+  }) {
     for (final routeConfig in this) {
       if (routeConfig.pageType?.import == importPath) {
-        return (routeConfig.deferredLoading ?? defaultDeferredLoading) ? .deferred : .none;
+        return (routeConfig.deferredLoading ?? defaultDeferredLoading)
+            ? .deferred
+            : .none;
       }
     }
     return .notFound;

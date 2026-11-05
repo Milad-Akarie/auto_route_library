@@ -17,22 +17,34 @@ class RouteConfigResolver {
   /// Resolves a [ClassElement] into a consumable [RouteConfig]
   RouteConfig resolve(Element element, ConstantReader routePage) {
     final isDeferred = routePage.peek('deferredLoading')?.boolValue;
-    throwIf(element is! ClassElement, '${element.displayName} is not a class element', element: element);
+    throwIf(
+      element is! ClassElement,
+      '${element.displayName} is not a class element',
+      element: element,
+    );
 
     final classElement = element as ClassElement;
     final page = classElement.thisType;
-    final hasWrappedRoute = classElement.allSupertypes.any((e) => e.nameWithoutSuffix == 'AutoRouteWrapper');
+    final hasWrappedRoute = classElement.allSupertypes.any(
+      (e) => e.nameWithoutSuffix == 'AutoRouteWrapper',
+    );
     final pageType = _typeResolver.resolveType(page);
     // The name alone: the type's display name has the type parameters.
     final className = classElement.displayName;
     final typeParameters = [
       for (final t in classElement.typeParameters)
-        RouteTypeParameter(name: t.displayName, bound: t.bound == null ? null : _typeResolver.resolveType(t.bound!)),
+        RouteTypeParameter(
+          name: t.displayName,
+          bound: t.bound == null ? null : _typeResolver.resolveType(t.bound!),
+        ),
     ];
 
     final name = routePage.peek('name')?.stringValue;
     final constructor = classElement.unnamedConstructor;
-    throwIf(constructor == null, 'Route pages must have an unnamed constructor');
+    throwIf(
+      constructor == null,
+      'Route pages must have an unnamed constructor',
+    );
     var hasConstConstructor = false;
     final params = constructor!.formalParameters;
     final parameters = <ParamConfig>[];
@@ -57,11 +69,16 @@ class RouteConfigResolver {
       element: element,
     );
 
-    final pathParameters = parameters.where((candidate) => candidate.isPathParam);
+    final pathParameters = parameters.where(
+      (candidate) => candidate.isPathParam,
+    );
 
     if (parameters.any((p) => p.isPathParam || p.isQueryParam)) {
       final unParsableRequiredArgs = parameters.where(
-        (p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
+        (p) =>
+            (p.isRequired || p.isPositional) &&
+            !p.isPathParam &&
+            !p.isQueryParam,
       );
       if (unParsableRequiredArgs.isNotEmpty) {
         log.warning(
@@ -75,7 +92,10 @@ class RouteConfigResolver {
     // the page from being opened by one, so its type must be one the url
     // gives; any other was read as `dynamic` and threw when a link opened
     // the page.
-    final readsUrl = !parameters.any((p) => (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam);
+    final readsUrl = !parameters.any(
+      (p) =>
+          (p.isRequired || p.isPositional) && !p.isPathParam && !p.isQueryParam,
+    );
     for (final qParam in parameters.where((p) => p.isQueryParam && readsUrl)) {
       final type = qParam.type;
       throwIf(
@@ -106,4 +126,5 @@ class RouteConfigResolver {
   }
 }
 
-String _lowerFirst(String text) => text.isEmpty ? text : text[0].toLowerCase() + text.substring(1);
+String _lowerFirst(String text) =>
+    text.isEmpty ? text : text[0].toLowerCase() + text.substring(1);

@@ -12,7 +12,10 @@ String capitalize(String s) {
 
 /// Recase a string to kabab-case
 String toKababCase(String s) {
-  return s.replaceAllMapped(RegExp('(.+?)([A-Z])'), (match) => '${match.group(1)!}-${match.group(2)!}'.toLowerCase());
+  return s.replaceAllMapped(
+    RegExp('(.+?)([A-Z])'),
+    (match) => '${match.group(1)!}-${match.group(2)!}'.toLowerCase(),
+  );
 }
 
 /// Extension methods for [Iterable]

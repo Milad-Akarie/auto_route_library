@@ -17,11 +17,18 @@ class RouterConfigResolver {
     required bool isPartOfLibrary,
     required int cacheHash,
   }) {
-    final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
-    final replaceInRouteName = autoRouter.peek('replaceInRouteName')?.stringValue;
-    if (replaceInRouteName != null) _checkReplaceInRouteName(replaceInRouteName, clazz);
+    final deferredLoading =
+        autoRouter.peek('deferredLoading')?.boolValue ?? false;
+    final replaceInRouteName = autoRouter
+        .peek('replaceInRouteName')
+        ?.stringValue;
+    if (replaceInRouteName != null)
+      _checkReplaceInRouteName(replaceInRouteName, clazz);
     final argsEquality = autoRouter.peek('argsEquality')?.boolValue ?? false;
-    final generateForDir = autoRouter.read('generateForDir').listValue.map((e) => e.toStringValue()!);
+    final generateForDir = autoRouter
+        .read('generateForDir')
+        .listValue
+        .map((e) => e.toStringValue()!);
 
     return RouterConfig(
       routerClassName: clazz.displayName,
@@ -41,7 +48,8 @@ class RouterConfigResolver {
   /// that don't compile or quietly keep their `Route` suffix.
   void _checkReplaceInRouteName(String value, ClassElement clazz) {
     final parts = value.split(',');
-    if (parts case [final pattern, final replacement] when pattern.trim().isNotEmpty) {
+    if (parts case [final pattern, final replacement]
+        when pattern.trim().isNotEmpty) {
       if (!RegExp(r'^[A-Za-z0-9_$]*$').hasMatch(replacement.trim())) {
         throwError(
           r"The replacement in replaceInRouteName must be letters, digits, '_' or '$' to make a route name, "

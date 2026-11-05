@@ -19,7 +19,8 @@ Expression _plainString(String value) => literalString(_escapeDollar(value));
 /// The interpolation of the variable [name] in a string literal, braced
 /// when [name] holds a `$`, which would otherwise start an interpolation of
 /// its own.
-String _interpolation(String name) => name.contains(r'$') ? '\${$name}' : '\$$name';
+String _interpolation(String name) =>
+    name.contains(r'$') ? '\${$name}' : '\$$name';
 
 /// [value] with each `$` escaped, to stand for itself in a string literal.
 String _escapeDollar(String value) => value.replaceAll(r'$', r'\$');
@@ -35,7 +36,11 @@ TypeReference _genericRef(String symbol, List<ResolvedType> args, String url) {
 }
 
 /// Builds a route info class and args class for the given [RouteConfig]
-List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitter emitter) {
+List<Class> buildRouteInfoAndArgs(
+  RouteConfig r,
+  RouterConfig router,
+  DartEmitter emitter,
+) {
   final argsClassRefer = refer('${r.getName(router.replaceInRouteName)}Args');
   // A generic route's args carry its type arguments, which build its page.
   final typeArguments = r.typeParameters.map((t) => refer(t.name));
@@ -46,18 +51,28 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
   );
   final parameters = r.parameters;
   final fragmentParam = parameters.where((p) => p.isUrlFragment).firstOrNull;
-  final nonInheritedParameters = parameters.where((p) => !p.isInheritedPathParam).toList();
-  final equatableParams = nonInheritedParameters.where((p) => p is! FunctionParamConfig).toList();
+  final nonInheritedParameters = parameters
+      .where((p) => !p.isInheritedPathParam)
+      .toList();
+  final equatableParams = nonInheritedParameters
+      .where((p) => p is! FunctionParamConfig)
+      .toList();
   final hasArgs = nonInheritedParameters.isNotEmpty || r.isGeneric;
   // A constant can't name a type parameter, so a generic route's
   // `const ListEquality<dynamic>()` and the like compare items as dynamic.
-  List<ResolvedType> equalityTypes(ParamConfig p) =>
-      r.isGeneric ? [for (final _ in p.type.typeArguments) const ResolvedType(name: 'dynamic')] : p.type.typeArguments;
+  List<ResolvedType> equalityTypes(ParamConfig p) => r.isGeneric
+      ? [
+          for (final _ in p.type.typeArguments)
+            const ResolvedType(name: 'dynamic'),
+        ]
+      : p.type.typeArguments;
   final pageInfoRefer = refer('PageInfo', kAutoRouteImport);
   return [
     Class(
       (b) => b
-        ..docs.addAll(['/// generated route for \n/// [${_pageClassRefer(r)?.accept(emitter) ?? 'null'}]'])
+        ..docs.addAll([
+          '/// generated route for \n/// [${_pageClassRefer(r)?.accept(emitter) ?? 'null'}]',
+        ])
         ..name = r.getName(router.replaceInRouteName)
         ..types.addAll(r.typeParameters.map((t) => t.declaration))
         ..extend = TypeReference((typeReferenceBuilder) {
@@ -73,14 +88,20 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..name = 'name'
               ..static = true
               ..type = kStringRefer
-              ..assignment = _plainString(r.getName(router.replaceInRouteName)).code,
+              ..assignment = _plainString(r.getName(router.replaceInRouteName))
+                  .code,
           ),
           Field(
             (fieldBuilder) => fieldBuilder
               ..name = 'page'
               ..static = true
               ..type = pageInfoRefer
-              ..assignment = pageInfoRefer.newInstance([refer('name')], {'builder': _buildMethod(r, router)}).code,
+              ..assignment = pageInfoRefer
+                  .newInstance(
+                    [refer('name')],
+                    {'builder': _buildMethod(r, router)},
+                  )
+                  .code,
           ),
         ])
         ..constructors.addAll([
@@ -89,7 +110,11 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               // A type argument can't be part of a constant.
               ..constant = parameters.isEmpty && !r.isGeneric
               ..optionalParameters.addAll([
-                ..._buildArgParams(nonInheritedParameters, emitter, toThis: false),
+                ..._buildArgParams(
+                  nonInheritedParameters,
+                  emitter,
+                  toThis: false,
+                ),
                 Parameter(
                   (parameterBuilder) => parameterBuilder
                     ..named = true
@@ -100,13 +125,18 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
               ..initializers.add(
                 refer('super')
                     .call(
-                      [refer(r.getName(router.replaceInRouteName)).property('name')],
+                      [
+                        refer(r.getName(router.replaceInRouteName))
+                            .property('name'),
+                      ],
                       {
                         if (hasArgs)
                           'args': typedArgsClassRefer(
                             [],
                             Map.fromEntries(
-                              nonInheritedParameters.map((p) => MapEntry(p.name, refer(p.getSafeName()))),
+                              nonInheritedParameters.map(
+                                (p) => MapEntry(p.name, refer(p.getSafeName())),
+                              ),
                             ),
                           ),
                         if (nonInheritedParameters.any((p) => p.isPathParam))
@@ -114,7 +144,12 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                             Map.fromEntries(
                               nonInheritedParameters
                                   .where((p) => p.isPathParam)
-                                  .map((p) => MapEntry(_plainString(p.paramName), _getUrlPartValue(p))),
+                                  .map(
+                                    (p) => MapEntry(
+                                      _plainString(p.paramName),
+                                      _getUrlPartValue(p),
+                                    ),
+                                  ),
                             ),
                           ),
                         if (parameters.any((p) => p.isQueryParam))
@@ -122,12 +157,19 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                             Map.fromEntries(
                               parameters
                                   .where((p) => p.isQueryParam)
-                                  .map((p) => MapEntry(_plainString(p.paramName), _getUrlPartValue(p))),
+                                  .map(
+                                    (p) => MapEntry(
+                                      _plainString(p.paramName),
+                                      _getUrlPartValue(p),
+                                    ),
+                                  ),
                             ),
                           ),
-                        if (fragmentParam != null) 'fragment': refer(fragmentParam.name),
+                        if (fragmentParam != null)
+                          'fragment': refer(fragmentParam.name),
                         'initialChildren': refer('children'),
-                        if (!router.argsEquality) 'argsEquality': literalBool(false),
+                        if (!router.argsEquality)
+                          'argsEquality': literalBool(false),
                       },
                     )
                     .code,
@@ -146,7 +188,9 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                 (fieldBuilder) => fieldBuilder
                   ..modifier = .final$
                   ..name = param.name
-                  ..type = param is FunctionParamConfig ? param.funRefer : param.type.refer,
+                  ..type = param is FunctionParamConfig
+                      ? param.funRefer
+                      : param.type.refer,
               ),
             ),
           ])
@@ -154,7 +198,13 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
             Constructor(
               (constructorBuilder) => constructorBuilder
                 ..constant = true
-                ..optionalParameters.addAll(_buildArgParams(nonInheritedParameters, emitter, useSafeName: false)),
+                ..optionalParameters.addAll(
+                  _buildArgParams(
+                    nonInheritedParameters,
+                    emitter,
+                    useSafeName: false,
+                  ),
+                ),
             ),
           )
           ..methods.addAll([
@@ -187,7 +237,9 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                     (blockBuilder) => blockBuilder
                       ..statements.addAll([
                         const Code('if (identical(this, other)) return true;'),
-                        Code('if (other is! ${emitSource(typedArgsClassRefer, emitter)}) return false;'),
+                        Code(
+                          'if (other is! ${emitSource(typedArgsClassRefer, emitter)}) return false;',
+                        ),
                         const Code('return '),
                         // Args with nothing to compare, such as a generic
                         // route's without params, are equal.
@@ -195,29 +247,41 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                         ...[
                           for (final p in equatableParams)
                             if (p.type.isList)
-                              _genericRef('ListEquality', equalityTypes(p), _kCollectionsImport)
-                                  .constInstance([])
-                                  .property('equals')
-                                  .call([refer(p.name), refer('other').property(p.name)])
-                                  .code
+                              _genericRef(
+                                'ListEquality',
+                                equalityTypes(p),
+                                _kCollectionsImport,
+                              ).constInstance([]).property('equals').call([
+                                refer(p.name),
+                                refer('other').property(p.name),
+                              ]).code
                             else if (p.type.isSet)
-                              _genericRef('SetEquality', equalityTypes(p), _kCollectionsImport)
-                                  .constInstance([])
-                                  .property('equals')
-                                  .call([refer(p.name), refer('other').property(p.name)])
-                                  .code
+                              _genericRef(
+                                'SetEquality',
+                                equalityTypes(p),
+                                _kCollectionsImport,
+                              ).constInstance([]).property('equals').call([
+                                refer(p.name),
+                                refer('other').property(p.name),
+                              ]).code
                             else if (p.type.isMap)
-                              _genericRef('MapEquality', equalityTypes(p), _kCollectionsImport)
-                                  .constInstance([])
-                                  .property('equals')
-                                  .call([refer(p.name), refer('other').property(p.name)])
-                                  .code
+                              _genericRef(
+                                'MapEquality',
+                                equalityTypes(p),
+                                _kCollectionsImport,
+                              ).constInstance([]).property('equals').call([
+                                refer(p.name),
+                                refer('other').property(p.name),
+                              ]).code
                             else if (p.type.isIterable)
-                              _genericRef('IterableEquality', equalityTypes(p), _kCollectionsImport)
-                                  .constInstance([])
-                                  .property('equals')
-                                  .call([refer(p.name), refer('other').property(p.name)])
-                                  .code
+                              _genericRef(
+                                'IterableEquality',
+                                equalityTypes(p),
+                                _kCollectionsImport,
+                              ).constInstance([]).property('equals').call([
+                                refer(p.name),
+                                refer('other').property(p.name),
+                              ]).code
                             else
                               Code('${p.name} == other.${p.name}'),
                         ].insertBetween(const Code(' && ')),
@@ -243,25 +307,33 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                               'ListEquality',
                               equalityTypes(p),
                               _kCollectionsImport,
-                            ).constInstance([]).property('hash').call([refer(p.name)]).code
+                            ).constInstance([]).property('hash').call([
+                              refer(p.name),
+                            ]).code
                           else if (p.type.isSet)
                             _genericRef(
                               'SetEquality',
                               equalityTypes(p),
                               _kCollectionsImport,
-                            ).constInstance([]).property('hash').call([refer(p.name)]).code
+                            ).constInstance([]).property('hash').call([
+                              refer(p.name),
+                            ]).code
                           else if (p.type.isMap)
                             _genericRef(
                               'MapEquality',
                               equalityTypes(p),
                               _kCollectionsImport,
-                            ).constInstance([]).property('hash').call([refer(p.name)]).code
+                            ).constInstance([]).property('hash').call([
+                              refer(p.name),
+                            ]).code
                           else if (p.type.isIterable)
                             _genericRef(
                               'IterableEquality',
                               equalityTypes(p),
                               _kCollectionsImport,
-                            ).constInstance([]).property('hash').call([refer(p.name)]).code
+                            ).constInstance([]).property('hash').call([
+                              refer(p.name),
+                            ]).code
                           else
                             Code('${p.name}.hashCode'),
                       ].insertBetween(const Code(' ^ ')),
@@ -289,13 +361,18 @@ Expression _defaultValue(ParamConfig p, [String? code]) {
     // The prefix goes on the class in `const UserId('me')`, not on `const`.
     if (url != null && _constKeyword.hasMatch(code)) {
       final value = code.replaceFirst(_constKeyword, '').trimLeft();
-      return CodeExpression(Code.scope((allocate) => 'const ${allocate(refer(value, url))}'));
+      return CodeExpression(
+        Code.scope((allocate) => 'const ${allocate(refer(value, url))}'),
+      );
     }
     return refer(code, url);
   }
   return CodeExpression(
     Code.scope(
-      (allocate) => code!.replaceAll(RegExp('\\b${RegExp.escape(symbol)}\\b'), allocate(refer(symbol, import))),
+      (allocate) => code!.replaceAll(
+        RegExp('\\b${RegExp.escape(symbol)}\\b'),
+        allocate(refer(symbol, import)),
+      ),
     ),
   );
 }
@@ -339,18 +416,24 @@ Iterable<Parameter> _buildArgParams(
 }
 
 Expression _buildMethod(RouteConfig r, RouterConfig router) {
-  final useConsConstructor = r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
+  final useConsConstructor =
+      r.hasConstConstructor && !(r.deferredLoading ?? router.deferredLoading);
   var constructedPage = useConsConstructor
       ? r.pageType!.refer.constInstance([])
       : r.isGeneric
       ? refer('args').property('buildPage').call([], {
-          for (final p in r.parameters.where((parameter) => parameter.isInheritedPathParam))
+          for (final p in r.parameters.where(
+            (parameter) => parameter.isInheritedPathParam,
+          ))
             p.name: _getUrlPartAssignment(p),
         })
       : _getPageInstance(r, (p) => refer('args').property(p.name));
 
   if (r.hasWrappedRoute == true) {
-    constructedPage = refer('WrappedRoute', kAutoRouteImport).newInstance([], {'child': constructedPage});
+    constructedPage = refer(
+      'WrappedRoute',
+      kAutoRouteImport,
+    ).newInstance([], {'child': constructedPage});
   }
 
   if ((r.deferredLoading ?? router.deferredLoading) && r.pageType != null) {
@@ -358,17 +441,27 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
   }
   final inheritedParameters = r.parameters.where((p) => p.isInheritedPathParam);
 
-  final nonInheritedParameters = r.parameters.where((p) => !p.isInheritedPathParam);
+  final nonInheritedParameters = r.parameters.where(
+    (p) => !p.isInheritedPathParam,
+  );
   return Method(
     (b) => b
-      ..requiredParameters.add(Parameter((parameterBuilder) => parameterBuilder.name = 'data'))
+      ..requiredParameters.add(
+        Parameter((parameterBuilder) => parameterBuilder.name = 'data'),
+      )
       ..body = Block(
         (blockBuilder) => blockBuilder.statements.addAll([
-          if ((!r.hasUnparsableRequiredArgs) && r.parameters.any((p) => p.isPathParam) ||
+          if ((!r.hasUnparsableRequiredArgs) &&
+                  r.parameters.any((p) => p.isPathParam) ||
               inheritedParameters.isNotEmpty)
-            declareFinal('pathParams').assign(refer('data').property('inheritedPathParams')).statement,
-          if (!r.hasUnparsableRequiredArgs && r.parameters.any((p) => p.isQueryParam))
-            declareFinal('queryParams').assign(refer('data').property('queryParams')).statement,
+            declareFinal('pathParams')
+                .assign(refer('data').property('inheritedPathParams'))
+                .statement,
+          if (!r.hasUnparsableRequiredArgs &&
+              r.parameters.any((p) => p.isQueryParam))
+            declareFinal('queryParams')
+                .assign(refer('data').property('queryParams'))
+                .statement,
           if (nonInheritedParameters.isNotEmpty || r.isGeneric)
             declareFinal('args')
                 .assign(
@@ -382,14 +475,26 @@ Expression _buildMethod(RouteConfig r, RouterConfig router) {
                               (methodBuilder) => methodBuilder
                                 ..lambda = true
                                 ..body = r.pathQueryParams.isEmpty
-                                    ? refer('${r.getName(router.replaceInRouteName)}Args').constInstance([]).code
+                                    ? refer(
+                                        '${r.getName(router.replaceInRouteName)}Args',
+                                      ).constInstance([]).code
                                     : refer('${r.getName(router.replaceInRouteName)}Args')
                                           .newInstance(
                                             [],
                                             Map.fromEntries(
                                               nonInheritedParameters
-                                                  .where((p) => (p.isPathParam || p.isQueryParam || p.isUrlFragment))
-                                                  .map((p) => MapEntry(p.name, _getUrlPartAssignment(p))),
+                                                  .where(
+                                                    (p) =>
+                                                        (p.isPathParam ||
+                                                        p.isQueryParam ||
+                                                        p.isUrlFragment),
+                                                  )
+                                                  .map(
+                                                    (p) => MapEntry(
+                                                      p.name,
+                                                      _getUrlPartAssignment(p),
+                                                    ),
+                                                  ),
                                             ),
                                           )
                                           .code,
@@ -422,11 +527,19 @@ Expression _getDeferredBuilder(RouteConfig r, Expression page) {
 
 /// The page built with each argument [arg] gives, and each inherited path
 /// param read from the url.
-Expression _getPageInstance(RouteConfig r, Expression Function(ParamConfig p) arg) {
+Expression _getPageInstance(
+  RouteConfig r,
+  Expression Function(ParamConfig p) arg,
+) {
   return r.pageType!.refer.newInstance(
     r.positionalParams.map(arg),
     Map.fromEntries(
-      r.namedParams.map((p) => MapEntry(p.name, p.isInheritedPathParam ? _getUrlPartAssignment(p) : arg(p))),
+      r.namedParams.map(
+        (p) => MapEntry(
+          p.name,
+          p.isInheritedPathParam ? _getUrlPartAssignment(p) : arg(p),
+        ),
+      ),
     ),
   );
 }
@@ -462,14 +575,17 @@ Method _buildPageMethod(RouteConfig r) {
       ..body = r.pageType!.refer
           .newInstance(
             r.positionalParams.map((p) => refer(p.name)),
-            Map.fromEntries(r.namedParams.map((p) => MapEntry(p.name, refer(p.name)))),
+            Map.fromEntries(
+              r.namedParams.map((p) => MapEntry(p.name, refer(p.name))),
+            ),
           )
           .code,
   );
 }
 
 Expression _getUrlPartAssignment(ParamConfig p) {
-  if (!p.isPathParam && !p.isQueryParam) return refer('data').property('fragment');
+  if (!p.isPathParam && !p.isQueryParam)
+    return refer('data').property('fragment');
   final params = refer(p.isPathParam ? 'pathParams' : 'queryParams');
   final key = _plainString(p.paramName);
   final defaultValue = p.defaultValueCode == null ? null : _defaultValue(p);
@@ -481,4 +597,5 @@ Expression _getUrlPartAssignment(ParamConfig p) {
 }
 
 /// The value a url parameter puts in the url.
-Expression _getUrlPartValue(ParamConfig p) => p.urlType?.write(refer(p.name), p.type) ?? refer(p.name);
+Expression _getUrlPartValue(ParamConfig p) =>
+    p.urlType?.write(refer(p.name), p.type) ?? refer(p.name);

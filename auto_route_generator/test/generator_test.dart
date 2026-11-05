@@ -36,14 +36,22 @@ class HomePage extends StatelessWidget {
     });
     expect(result.errors, isEmpty);
     expect(result.compileErrors, isEmpty);
-    expect(result.source, contains('HomeRoute({Key? key, required String title'));
+    expect(
+      result.source,
+      contains('HomeRoute({Key? key, required String title'),
+    );
   });
 
   test('generates a route that compiles in its own library', () async {
-    final result = await generateRouter({'lib/home_page.dart': _page('HomePage')});
+    final result = await generateRouter({
+      'lib/home_page.dart': _page('HomePage'),
+    });
     expect(result.errors, isEmpty);
     expect(result.compileErrors, isEmpty);
-    expect(result.source, contains("import 'package:app/home_page.dart' as _i"));
+    expect(
+      result.source,
+      contains("import 'package:app/home_page.dart' as _i"),
+    );
   });
 
   // A router library outside `lib/` (in `integration_test/`) with pages
@@ -72,19 +80,28 @@ class AppRouter extends RootStackRouter {
 }
 ''';
 
-    test('imports its pages by relative path and keeps package: for lib/', () async {
-      final result = await generateRouter({
-        'integration_test/router.dart': router,
-        'integration_test/home_page.dart': _page('HomePage'),
-        'integration_test/pages/detail_page.dart': _page('DetailPage'),
-        'lib/shared_page.dart': _page('SharedPage'),
-      }, routerPath: 'integration_test/router.dart');
-      expect(result.errors, isEmpty);
-      expect(result.source, isNot(contains('asset:')));
-      expect(result.source, contains("import 'home_page.dart' as _i"));
-      expect(result.source, contains("import 'pages/detail_page.dart' as _i"));
-      expect(result.source, contains("import 'package:app/shared_page.dart' as _i"));
-    });
+    test(
+      'imports its pages by relative path and keeps package: for lib/',
+      () async {
+        final result = await generateRouter({
+          'integration_test/router.dart': router,
+          'integration_test/home_page.dart': _page('HomePage'),
+          'integration_test/pages/detail_page.dart': _page('DetailPage'),
+          'lib/shared_page.dart': _page('SharedPage'),
+        }, routerPath: 'integration_test/router.dart');
+        expect(result.errors, isEmpty);
+        expect(result.source, isNot(contains('asset:')));
+        expect(result.source, contains("import 'home_page.dart' as _i"));
+        expect(
+          result.source,
+          contains("import 'pages/detail_page.dart' as _i"),
+        );
+        expect(
+          result.source,
+          contains("import 'package:app/shared_page.dart' as _i"),
+        );
+      },
+    );
   });
 
   // #1870: a page whose name `replaceInRouteName` does not change, such as
@@ -112,28 +129,38 @@ class AppRouter extends RootStackRouter {
         'lib/costs_tab.dart': _page('CostsTab'),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors.join(), allOf(contains('CostsTab'), contains("@RoutePage(name: 'CostsTabRoute')")));
+      expect(
+        result.errors.join(),
+        allOf(
+          contains('CostsTab'),
+          contains("@RoutePage(name: 'CostsTabRoute')"),
+        ),
+      );
     });
 
     test('compiles in a part file once the page is named', () async {
       final result = await generateRouter({
         'lib/router.dart': router(part: true),
-        'lib/costs_tab.dart': _page('CostsTab').replaceFirst('@RoutePage()', "@RoutePage(name: 'CostsTabRoute')"),
+        'lib/costs_tab.dart': _page('CostsTab')
+            .replaceFirst('@RoutePage()', "@RoutePage(name: 'CostsTabRoute')"),
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       expect(result.source, contains('class CostsTabRoute extends'));
     });
 
-    test('compiles in its own library, where the page is imported with a prefix', () async {
-      final result = await generateRouter({
-        'lib/router.dart': router(part: false),
-        'lib/costs_tab.dart': _page('CostsTab'),
-      });
-      expect(result.errors, isEmpty);
-      expect(result.compileErrors, isEmpty);
-      expect(result.source, contains('class CostsTab extends'));
-    });
+    test(
+      'compiles in its own library, where the page is imported with a prefix',
+      () async {
+        final result = await generateRouter({
+          'lib/router.dart': router(part: false),
+          'lib/costs_tab.dart': _page('CostsTab'),
+        });
+        expect(result.errors, isEmpty);
+        expect(result.compileErrors, isEmpty);
+        expect(result.source, contains('class CostsTab extends'));
+      },
+    );
   });
 }
 

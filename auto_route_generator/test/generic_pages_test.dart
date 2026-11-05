@@ -45,15 +45,26 @@ class PickerPage<T> extends StatelessWidget {
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
-      expect(source, contains('classPickerRoute<T>extendsPageRouteInfo<PickerRouteArgs<T>>'));
-      expect(source, contains('args:PickerRouteArgs<T>(key:key,items:items,selected:selected,onPicked:onPicked)'));
+      expect(
+        source,
+        contains('classPickerRoute<T>extendsPageRouteInfo<PickerRouteArgs<T>>'),
+      );
+      expect(
+        source,
+        contains(
+          'args:PickerRouteArgs<T>(key:key,items:items,selected:selected,onPicked:onPicked)',
+        ),
+      );
       expect(source, contains('classPickerRouteArgs<T>{'));
       expect(source, contains('finalList<T>items;'));
       expect(source, contains('finalT?selected;'));
       expect(source, contains('PickerPage<T>buildPage()'));
       expect(source, contains('returnargs.buildPage();'));
       // A constant can't name T, so the items are compared as dynamic.
-      expect(source, contains('constListEquality<dynamic>().equals(items,other.items)'));
+      expect(
+        source,
+        contains('constListEquality<dynamic>().equals(items,other.items)'),
+      );
     });
 
     // #332's page: two type parameters, one with a bound from another
@@ -82,7 +93,12 @@ class ViewAllPage<F extends Failure, T> extends StatelessWidget {
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
-      expect(source, contains('classViewAllRoute<FextendsFailure,T>extendsPageRouteInfo<ViewAllRouteArgs<F,T>>'));
+      expect(
+        source,
+        contains(
+          'classViewAllRoute<FextendsFailure,T>extendsPageRouteInfo<ViewAllRouteArgs<F,T>>',
+        ),
+      );
       expect(source, contains('finalIndexCubit<F,T>indexCubit;'));
     });
 
@@ -106,7 +122,12 @@ class EditingPage<T extends EditingController> extends StatelessWidget {
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
-      expect(source, contains('classEditingRoute<TextendsEditingController>extendsPageRouteInfo<EditingRouteArgs<T>>'));
+      expect(
+        source,
+        contains(
+          'classEditingRoute<TextendsEditingController>extendsPageRouteInfo<EditingRouteArgs<T>>',
+        ),
+      );
       expect(source, contains('args:EditingRouteArgs<T>(key:key)'));
       expect(source, contains('orElse:()=>constEditingRouteArgs()'));
     });
@@ -133,7 +154,12 @@ class DetailScreen<T> extends StatelessWidget {
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(_flat(result), contains("orElse:()=>DetailRouteArgs(detailName:pathParams.getString('detailName'))"));
+      expect(
+        _flat(result),
+        contains(
+          "orElse:()=>DetailRouteArgs(detailName:pathParams.getString('detailName'))",
+        ),
+      );
     });
 
     test('with an inherited path param passes it to the page', () async {
@@ -156,16 +182,21 @@ class DetailScreen<T> extends StatelessWidget {
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(_flat(result), contains("args.buildPage(id:pathParams.getString('id'))"));
+      expect(
+        _flat(result),
+        contains("args.buildPage(id:pathParams.getString('id'))"),
+      );
     });
   });
 
   // What works without a generic route: a page class without type
   // parameters that builds the generic widget with its type.
-  test('a page that builds a generic widget with its type compiles (#332)', () async {
-    final result = await generateRouter({
-      'lib/failure.dart': _kFailure,
-      'lib/view_all_page.dart': '''
+  test(
+    'a page that builds a generic widget with its type compiles (#332)',
+    () async {
+      final result = await generateRouter({
+        'lib/failure.dart': _kFailure,
+        'lib/view_all_page.dart': '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';
 
@@ -190,9 +221,17 @@ class ViewAllNamesPage extends StatelessWidget {
   Widget build(BuildContext context) => ViewAll<Failure, String>(indexCubit: indexCubit);
 }
 ''',
-    });
-    expect(result.errors, isEmpty);
-    expect(result.compileErrors, isEmpty);
-    expect(result.source, matches(RegExp(r'final _i\d+\.IndexCubit<_i\d+\.Failure, String> indexCubit;')));
-  });
+      });
+      expect(result.errors, isEmpty);
+      expect(result.compileErrors, isEmpty);
+      expect(
+        result.source,
+        matches(
+          RegExp(
+            r'final _i\d+\.IndexCubit<_i\d+\.Failure, String> indexCubit;',
+          ),
+        ),
+      );
+    },
+  );
 }

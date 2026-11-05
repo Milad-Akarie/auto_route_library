@@ -51,7 +51,9 @@ class ParamConfig {
       defaultValueSymbol: map['defaultValueSymbol'] as String?,
       converter: map['converter'] == null
           ? null
-          : ParamConverterRef._fromJson(map['converter'] as Map<String, dynamic>),
+          : ParamConverterRef._fromJson(
+              map['converter'] as Map<String, dynamic>,
+            ),
     );
   }
 
@@ -124,7 +126,9 @@ class ParamConfig {
   /// back, or `null` when a url can not give its type.
   UrlParamType? get urlType {
     final converter = _converter;
-    return converter == null ? UrlParamType.of(type) : UrlParamType.converter(converter._name, converter._import);
+    return converter == null
+        ? UrlParamType.of(type)
+        : UrlParamType.converter(converter._name, converter._import);
   }
 
   /// Returns the alias if exists otherwise the name
@@ -170,12 +174,18 @@ class FunctionParamConfig extends ParamConfig {
     super.alias,
     super.defaultValueCode,
     super.defaultValueImport,
-  }) : super(isPathParam: false, isQueryParam: false, isInheritedPathParam: false, isUrlFragment: false);
+  }) : super(
+         isPathParam: false,
+         isQueryParam: false,
+         isInheritedPathParam: false,
+         isUrlFragment: false,
+       );
 
   /// Deserializes the parameter from a json map
   factory _fromJson(Map<String, dynamic> map) {
     final params = <ParamConfig>[];
-    final paramsJson = (map['params'] as List<Object?>?)?.cast<Map<String, dynamic>>();
+    final paramsJson = (map['params'] as List<Object?>?)
+        ?.cast<Map<String, dynamic>>();
     if (paramsJson != null) {
       for (final pJson in paramsJson) {
         params.add(ParamConfig.fromJson(pJson));
@@ -183,7 +193,9 @@ class FunctionParamConfig extends ParamConfig {
     }
     return FunctionParamConfig(
       type: ResolvedType.fromJson(map['type'] as Map<String, dynamic>),
-      returnType: ResolvedType.fromJson(map['returnType'] as Map<String, dynamic>),
+      returnType: ResolvedType.fromJson(
+        map['returnType'] as Map<String, dynamic>,
+      ),
       name: map['name'] as String,
       params: params,
       alias: map['alias'] as String?,
@@ -226,10 +238,12 @@ class FunctionParamConfig extends ParamConfig {
   }
 
   /// Returns the list of required parameters
-  List<ParamConfig> get _requiredParams => _params.where((p) => p.isPositional && !p._isOptional).toList();
+  List<ParamConfig> get _requiredParams =>
+      _params.where((p) => p.isPositional && !p._isOptional).toList();
 
   /// Returns the list of optional parameters
-  List<ParamConfig> get _optionalParams => _params.where((p) => p.isPositional && p._isOptional).toList();
+  List<ParamConfig> get _optionalParams =>
+      _params.where((p) => p.isPositional && p._isOptional).toList();
 
   /// Returns the list of named parameters
   List<ParamConfig> get _namedOptionalParams =>
@@ -246,8 +260,16 @@ class FunctionParamConfig extends ParamConfig {
       ..requiredParameters.addAll(_requiredParams.map((e) => e.type.refer))
       ..optionalParameters.addAll(_optionalParams.map((e) => e.type.refer))
       ..isNullable = type.isNullable
-      ..namedParameters.addAll({}..addEntries(_namedOptionalParams.map((e) => MapEntry(e.name, e.type.refer))))
-      ..namedRequiredParameters.addAll({}..addEntries(_namedRequiredParams.map((e) => MapEntry(e.name, e.type.refer)))),
+      ..namedParameters.addAll(
+        {}..addEntries(
+          _namedOptionalParams.map((e) => MapEntry(e.name, e.type.refer)),
+        ),
+      )
+      ..namedRequiredParameters.addAll(
+        {}..addEntries(
+          _namedRequiredParams.map((e) => MapEntry(e.name, e.type.refer)),
+        ),
+      ),
   );
 }
 
@@ -258,7 +280,10 @@ class PathParamConfig {
 
   /// Deserializes the path parameter from a json map
   factory fromJson(Map<String, dynamic> map) {
-    return PathParamConfig._(name: map['name'] as String, isOptional: map['isOptional'] as bool);
+    return PathParamConfig._(
+      name: map['name'] as String,
+      isOptional: map['isOptional'] as bool,
+    );
   }
 
   /// The name of the path parameter
@@ -282,7 +307,10 @@ class ParamConverterRef {
 
   /// Deserializes the reference from a json map
   factory _fromJson(Map<String, dynamic> map) {
-    return ParamConverterRef(name: map['name'] as String, import: map['import'] as String?);
+    return ParamConverterRef(
+      name: map['name'] as String,
+      import: map['import'] as String?,
+    );
   }
 
   /// The name of the constant, such as `userIdConverter`.

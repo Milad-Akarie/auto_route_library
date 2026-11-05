@@ -1,5 +1,6 @@
 import 'package:analyzer/dart/element/element.dart';
-import 'package:analyzer/dart/element/type.dart' show DartType, FunctionType, ParameterizedType, RecordType;
+import 'package:analyzer/dart/element/type.dart'
+    show DartType, FunctionType, ParameterizedType, RecordType;
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/models/resolved_type.dart';
 
@@ -16,13 +17,16 @@ class TypeResolver {
   /// Resolved the import path of the given [element]
   String? resolveImport(Element? element) {
     // return early if source is null or element is a core type
-    if (_libs.isEmpty || element?.library?.uri == null || _isCoreDartType(element!)) {
+    if (_libs.isEmpty ||
+        element?.library?.uri == null ||
+        _isCoreDartType(element!)) {
       return null;
     }
 
     final fallBackImports = <String>{};
     for (final lib in _libs) {
-      if (!_isCoreDartType(lib) && lib.exportNamespace.definedNames2.values.contains(element)) {
+      if (!_isCoreDartType(lib) &&
+          lib.exportNamespace.definedNames2.values.contains(element)) {
         final uri = lib.uri;
         if (_kUnPreferredImports.contains(uri.toString())) {
           fallBackImports.add(uri.toString());
@@ -42,7 +46,10 @@ class TypeResolver {
       final segments = uri.pathSegments;
       final libIndex = segments.indexOf('lib');
       if (libIndex > 0 && libIndex + 1 < segments.length) {
-        final validSegments = [...segments.sublist(libIndex - 1, libIndex), ...segments.sublist(libIndex + 1)];
+        final validSegments = [
+          ...segments.sublist(libIndex - 1, libIndex),
+          ...segments.sublist(libIndex + 1),
+        ];
         return 'package:${validSegments.join('/')}';
       }
     }
@@ -60,7 +67,9 @@ class TypeResolver {
         types.add(_resolveNestedType(recordField.type));
       }
       for (final recordField in typeToCheck.namedFields) {
-        types.add(_resolveNestedType(recordField.type, nameInRecord: recordField.name));
+        types.add(
+          _resolveNestedType(recordField.type, nameInRecord: recordField.name),
+        );
       }
     } else if (typeToCheck is ParameterizedType) {
       for (final type in typeToCheck.typeArguments) {
@@ -78,19 +87,27 @@ class TypeResolver {
         parts: FunctionTypeParts(
           returnType: _resolveNestedType(type.returnType),
           requiredParameters: [
-            for (final p in type.formalParameters.where((parameter) => parameter.isRequiredPositional))
+            for (final p in type.formalParameters.where(
+              (parameter) => parameter.isRequiredPositional,
+            ))
               _resolveNestedType(p.type),
           ],
           optionalParameters: [
-            for (final p in type.formalParameters.where((parameter) => parameter.isOptionalPositional))
+            for (final p in type.formalParameters.where(
+              (parameter) => parameter.isOptionalPositional,
+            ))
               _resolveNestedType(p.type),
           ],
           namedParameters: {
-            for (final p in type.formalParameters.where((parameter) => parameter.isOptionalNamed))
+            for (final p in type.formalParameters.where(
+              (parameter) => parameter.isOptionalNamed,
+            ))
               p.name!: _resolveNestedType(p.type),
           },
           namedRequiredParameters: {
-            for (final p in type.formalParameters.where((parameter) => parameter.isRequiredNamed))
+            for (final p in type.formalParameters.where(
+              (parameter) => parameter.isRequiredNamed,
+            ))
               p.name!: _resolveNestedType(p.type),
           },
         ),

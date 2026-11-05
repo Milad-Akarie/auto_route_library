@@ -66,8 +66,16 @@ enum Fruit {
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
-      expect(source, contains("rawQueryParams:{'fruit':fruit?.name,'other':other.name}"));
-      expect(source, contains("fruit:Fruit.values.asNameMap()[queryParams.optString('fruit')]"));
+      expect(
+        source,
+        contains("rawQueryParams:{'fruit':fruit?.name,'other':other.name}"),
+      );
+      expect(
+        source,
+        contains(
+          "fruit:Fruit.values.asNameMap()[queryParams.optString('fruit')]",
+        ),
+      );
     });
   });
 
@@ -90,7 +98,10 @@ enum Fruit {
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
       expect(source, contains("first:queryParams.optString('first')"));
-      expect(source, contains('second:queryParams.getString(\'second\',"default")'));
+      expect(
+        source,
+        contains('second:queryParams.getString(\'second\',"default")'),
+      );
       expect(source, contains("count:queryParams.getInt('count',3)"));
     });
   });
@@ -112,7 +123,12 @@ enum Fruit {
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
       final source = _flat(result);
-      expect(source, contains("tab:HomeTab.values.asNameMap()[queryParams.optString('tab')]??HomeTab.home"));
+      expect(
+        source,
+        contains(
+          "tab:HomeTab.values.asNameMap()[queryParams.optString('tab')]??HomeTab.home",
+        ),
+      );
       expect(source, contains("'tab':tab.name"));
     });
   });
@@ -133,7 +149,10 @@ enum Fruit {
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
-      expect(_flat(result), contains('returnBookingPage(key:args.key,hotel:args.hotel)'));
+      expect(
+        _flat(result),
+        contains('returnBookingPage(key:args.key,hotel:args.hotel)'),
+      );
       expect(_flat(result), isNot(contains('constBookingPage(')));
     });
 
@@ -145,7 +164,12 @@ enum Fruit {
           parameters: '@QueryParam() this.title',
           fields: '  final String? title;',
         ),
-        'lib/plain_page.dart': _page('PlainPage', constructor: '', parameters: '', fields: ''),
+        'lib/plain_page.dart': _page(
+          'PlainPage',
+          constructor: '',
+          parameters: '',
+          fields: '',
+        ),
       });
       expect(result.errors, isEmpty);
       expect(result.compileErrors, isEmpty);
@@ -168,7 +192,10 @@ enum Fruit {
         ),
       });
       expect(result.errors, hasLength(1));
-      expect(result.errors.join(), contains('QueryParams must be nullable or have default value'));
+      expect(
+        result.errors.join(),
+        contains('QueryParams must be nullable or have default value'),
+      );
     });
 
     test('with a path param next to it compiles', () async {
@@ -190,31 +217,40 @@ enum Fruit {
   // value of an iterable param and wrote no enum map for the items of an
   // iterable of enums. auto_route supports a List of enums with a default,
   // read and written by name. Iterable and Set are not supported (batch gen).
-  group('a list query parameter with a default (flutter/flutter#122003, #122181)', () {
-    test('of enums keeps the default and the item names', () async {
-      final result = await generateRouter({
-        'lib/types.dart': 'enum MyEnum { value0, value1 }',
-        'lib/my_page.dart': _page(
-          'MyPage',
-          imports: "import 'types.dart';",
-          parameters: '@QueryParam() this.values = const [MyEnum.value0], @QueryParam() this.texts = const ["a"]',
-          fields: '''
+  group(
+    'a list query parameter with a default (flutter/flutter#122003, #122181)',
+    () {
+      test('of enums keeps the default and the item names', () async {
+        final result = await generateRouter({
+          'lib/types.dart': 'enum MyEnum { value0, value1 }',
+          'lib/my_page.dart': _page(
+            'MyPage',
+            imports: "import 'types.dart';",
+            parameters: '@QueryParam() this.values = const [MyEnum.value0], @QueryParam() this.texts = const ["a"]',
+            fields: '''
   final List<MyEnum> values;
   final List<String> texts;''',
-        ),
+          ),
+        });
+        expect(result.errors, isEmpty);
+        expect(result.compileErrors, isEmpty);
+        final source = _flat(result);
+        expect(
+          source,
+          contains(
+            "values:queryParams.optList('values')?.map((name)=>MyEnum.values.asNameMap()[name])"
+            '.whereType<MyEnum>().toList()??const[MyEnum.value0]',
+          ),
+        );
+        expect(
+          source,
+          contains("'values':values.map((item)=>item.name).toList()"),
+        );
+        expect(
+          source,
+          contains('texts:queryParams.getList(\'texts\',const["a"])'),
+        );
       });
-      expect(result.errors, isEmpty);
-      expect(result.compileErrors, isEmpty);
-      final source = _flat(result);
-      expect(
-        source,
-        contains(
-          "values:queryParams.optList('values')?.map((name)=>MyEnum.values.asNameMap()[name])"
-          '.whereType<MyEnum>().toList()??const[MyEnum.value0]',
-        ),
-      );
-      expect(source, contains("'values':values.map((item)=>item.name).toList()"));
-      expect(source, contains('texts:queryParams.getList(\'texts\',const["a"])'));
-    });
-  });
+    },
+  );
 }

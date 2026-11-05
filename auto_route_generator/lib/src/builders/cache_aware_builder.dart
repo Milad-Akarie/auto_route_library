@@ -20,11 +20,18 @@ abstract class CacheAwareBuilder<T> extends Builder {
     List<String> additionalOutputExtensions = const [],
     this._allowSyntaxErrors = false,
     this.options,
-  }) : buildExtensions = _validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
-         '.dart': [_generatedExtension, ...additionalOutputExtensions],
-       }) {
+  }) : buildExtensions = _validatedBuildExtensionsFrom(
+         options != null ? Map.of(options.config) : null,
+         {
+           '.dart': [_generatedExtension, ...additionalOutputExtensions],
+         },
+       ) {
     if (_generatedExtension.isEmpty || !_generatedExtension.startsWith('.')) {
-      throw ArgumentError.value(_generatedExtension, 'generatedExtension', 'Extension must be in the format of .*');
+      throw ArgumentError.value(
+        _generatedExtension,
+        'generatedExtension',
+        'Extension must be in the format of .*',
+      );
     }
 
     if (options != null && additionalOutputExtensions.isNotEmpty) {
@@ -48,11 +55,18 @@ abstract class CacheAwareBuilder<T> extends Builder {
   bool get cacheEnabled;
 
   String _defaultFormatOutput(LibraryLanguageVersion libVersion, String code) {
-    return DartFormatter(languageVersion: libVersion.effective, pageWidth: 80).format('$_kDartFormatWidth\n$code');
+    return DartFormatter(
+      languageVersion: libVersion.effective,
+      pageWidth: 80,
+    ).format('$_kDartFormatWidth\n$code');
   }
 
   /// Custom ignore for file rules passed from the options
-  Set<String> get ignoreForFile => (options?.config['ignore_for_file'] as List<Object?>?)?.cast<String>().toSet() ?? {};
+  Set<String> get ignoreForFile =>
+      (options?.config['ignore_for_file'] as List<Object?>?)
+          ?.cast<String>()
+          .toSet() ??
+      {};
 
   @override
   final Map<String, List<String>> buildExtensions;
@@ -64,8 +78,15 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<void> build(BuildStep buildStep) async {
     final resolver = buildStep.resolver;
     if (!await resolver.isLibrary(buildStep.inputId)) return;
-    final unit = await resolver.compilationUnitFor(buildStep.inputId, allowSyntaxErrors: _allowSyntaxErrors);
-    if (!(await _hasAnyTopLevelAnnotations(buildStep.inputId, buildStep, unit))) {
+    final unit = await resolver.compilationUnitFor(
+      buildStep.inputId,
+      allowSyntaxErrors: _allowSyntaxErrors,
+    );
+    if (!(await _hasAnyTopLevelAnnotations(
+      buildStep.inputId,
+      buildStep,
+      unit,
+    ))) {
       return;
     }
 
@@ -80,7 +101,10 @@ abstract class CacheAwareBuilder<T> extends Builder {
       }
     }
 
-    final lib = await resolver.libraryFor(buildStep.inputId, allowSyntaxErrors: _allowSyntaxErrors);
+    final lib = await resolver.libraryFor(
+      buildStep.inputId,
+      allowSyntaxErrors: _allowSyntaxErrors,
+    );
     final generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return;
     await _writeContent(buildStep, lib.languageVersion, generated);
@@ -96,10 +120,18 @@ abstract class CacheAwareBuilder<T> extends Builder {
   Future<String> onGenerateContent(BuildStep buildStep, T item);
 
   /// Resolves the current compilation unit
-  Future<T?> onResolve(LibraryReader library, BuildStep buildStep, int stepHash);
+  Future<T?> onResolve(
+    LibraryReader library,
+    BuildStep buildStep,
+    int stepHash,
+  );
 
   /// Validates the generated content and prepares it for writing
-  String _validateAndFormatDartCode(BuildStep buildStep, LibraryLanguageVersion libVersion, String generated) {
+  String _validateAndFormatDartCode(
+    BuildStep buildStep,
+    LibraryLanguageVersion libVersion,
+    String generated,
+  ) {
     try {
       return _defaultFormatOutput(libVersion, generated);
       // Any formatter failure is logged with the unformatted output, so the
@@ -120,7 +152,11 @@ source formatter.''',
     }
   }
 
-  Future<void> _writeContent(BuildStep buildStep, LibraryLanguageVersion libVersion, T generated) async {
+  Future<void> _writeContent(
+    BuildStep buildStep,
+    LibraryLanguageVersion libVersion,
+    T generated,
+  ) async {
     var output = await onGenerateContent(buildStep, generated);
     final outputId = buildStep.primaryOutput;
     if (outputId.extension.endsWith('.dart')) {
@@ -133,7 +169,11 @@ source formatter.''',
   String toString() => 'Generating $_generatedExtension: $runtimeType';
 
   /// Checks if the current compilation unit has any top level annotations
-  Future<bool> _hasAnyTopLevelAnnotations(AssetId input, BuildStep buildStep, [CompilationUnit? unit]) async {
+  Future<bool> _hasAnyTopLevelAnnotations(
+    AssetId input,
+    BuildStep buildStep, [
+    CompilationUnit? unit,
+  ]) async {
     if (!await buildStep.canRead(input)) return false;
     final parsed = unit ?? await buildStep.resolver.compilationUnitFor(input);
     final partIds = <AssetId>[];
@@ -142,7 +182,9 @@ source formatter.''',
         return true;
       }
       if (directive is PartDirective) {
-        partIds.add(AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input));
+        partIds.add(
+          AssetId.resolve(Uri.parse(directive.uri.stringValue!), from: input),
+        );
       }
     }
     for (final declaration in parsed.declarations) {
@@ -174,16 +216,22 @@ Map<String, List<String>> _validatedBuildExtensionsFrom(
   if (extensionsOption == null) return defaultExtensions;
 
   if (extensionsOption is! Map) {
-    throw ArgumentError('Configured build_extensions should be a map from inputs to outputs.');
+    throw ArgumentError(
+      'Configured build_extensions should be a map from inputs to outputs.',
+    );
   }
 
   final [[defaultOutput, ...], ...] = defaultExtensions.values.toList();
-  final outputSuffix = defaultOutput.endsWith('.dart') ? '.dart' : defaultOutput;
+  final outputSuffix = defaultOutput.endsWith('.dart')
+      ? '.dart'
+      : defaultOutput;
   final result = <String, List<String>>{};
   for (final entry in extensionsOption.entries) {
     final input = entry.key;
     if (input is! String || !input.endsWith('.dart')) {
-      throw ArgumentError('Invalid key in build_extensions option: `$input` should be a string ending with `.dart`');
+      throw ArgumentError(
+        'Invalid key in build_extensions option: `$input` should be a string ending with `.dart`',
+      );
     }
     // One output, given as a string or as a list of one string.
     final value = entry.value;
@@ -192,7 +240,9 @@ Map<String, List<String>> _validatedBuildExtensionsFrom(
       _ => value,
     };
     if (output is! String || !output.endsWith(outputSuffix)) {
-      throw ArgumentError('Invalid output extension `$value`. It should be a string ending with `$outputSuffix`');
+      throw ArgumentError(
+        'Invalid output extension `$value`. It should be a string ending with `$outputSuffix`',
+      );
     }
     result[input] = [output];
   }

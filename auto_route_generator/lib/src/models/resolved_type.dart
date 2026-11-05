@@ -1,4 +1,5 @@
-import 'package:code_builder/code_builder.dart' show FunctionType, RecordType, Reference, TypeReference;
+import 'package:code_builder/code_builder.dart'
+    show FunctionType, RecordType, Reference, TypeReference;
 import 'package:meta/meta.dart';
 
 /// A class that represents a resolved type.
@@ -41,18 +42,22 @@ class ResolvedType {
 
   /// Constructor for a function type, such as `void Function(String url)`,
   /// when it is a type argument or a record field
-  const new function({required FunctionTypeParts parts, required this.isNullable, required this._nameInRecord})
-    : name = 'Function',
-      import = null,
-      typeArguments = const [],
-      _isRecordType = false,
-      _functionParts = parts,
-      isEnum = false;
+  const new function({
+    required FunctionTypeParts parts,
+    required this.isNullable,
+    required this._nameInRecord,
+  }) : name = 'Function',
+       import = null,
+       typeArguments = const [],
+       _isRecordType = false,
+       _functionParts = parts,
+       isEnum = false;
 
   /// deserializes the type from json
   factory fromJson(Map<String, dynamic> map) {
     final typedArgs = <ResolvedType>[];
-    final typeArguments = (map['typeArguments'] as List<Object?>?)?.cast<Map<String, dynamic>>();
+    final typeArguments = (map['typeArguments'] as List<Object?>?)
+        ?.cast<Map<String, dynamic>>();
     if (typeArguments != null) {
       for (final arg in typeArguments) {
         typedArgs.add(ResolvedType.fromJson(arg));
@@ -67,7 +72,9 @@ class ResolvedType {
       typeArguments: typedArgs,
       functionParts: map['functionParts'] == null
           ? null
-          : FunctionTypeParts._fromJson(map['functionParts'] as Map<String, dynamic>),
+          : FunctionTypeParts._fromJson(
+              map['functionParts'] as Map<String, dynamic>,
+            ),
       isEnum: map['isEnum'] == true,
     );
   }
@@ -108,13 +115,19 @@ class ResolvedType {
         (b) => b
           ..isNullable = isNullable
           ..returnType = functionParts._returnType.refer
-          ..requiredParameters.addAll(functionParts._requiredParameters.map((e) => e.refer))
-          ..optionalParameters.addAll(functionParts._optionalParameters.map((e) => e.refer))
+          ..requiredParameters.addAll(
+            functionParts._requiredParameters.map((e) => e.refer),
+          )
+          ..optionalParameters.addAll(
+            functionParts._optionalParameters.map((e) => e.refer),
+          )
           ..namedParameters.addAll({
-            for (final entry in functionParts._namedParameters.entries) entry.key: entry.value.refer,
+            for (final entry in functionParts._namedParameters.entries)
+              entry.key: entry.value.refer,
           })
           ..namedRequiredParameters.addAll({
-            for (final entry in functionParts._namedRequiredParameters.entries) entry.key: entry.value.refer,
+            for (final entry in functionParts._namedRequiredParameters.entries)
+              entry.key: entry.value.refer,
           }),
       );
     }
@@ -123,9 +136,16 @@ class ResolvedType {
         (b) => b
           ..url = import
           ..isNullable = isNullable
-          ..positionalFieldTypes.addAll(typeArguments.where((e) => !e._isNamedRecordField).map((e) => e.refer))
+          ..positionalFieldTypes.addAll(
+            typeArguments
+                .where((e) => !e._isNamedRecordField)
+                .map((e) => e.refer),
+          )
           ..namedFieldTypes.addAll({
-            for (final entry in typeArguments.where((e) => e._isNamedRecordField)) entry._nameInRecord!: entry.refer,
+            for (final entry in typeArguments.where(
+              (e) => e._isNamedRecordField,
+            ))
+              entry._nameInRecord!: entry.refer,
           }),
       );
     }
@@ -146,7 +166,9 @@ class ResolvedType {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ResolvedType && runtimeType == other.runtimeType && _identity == other._identity;
+      other is ResolvedType &&
+          runtimeType == other.runtimeType &&
+          _identity == other._identity;
 
   @override
   int get hashCode => import.hashCode ^ name.hashCode;
@@ -159,7 +181,8 @@ class ResolvedType {
       'isNullable': isNullable,
       'isRecordType': _isRecordType,
       'nameInRecord': ?_nameInRecord,
-      if (typeArguments.isNotEmpty) 'typeArguments': typeArguments.map((e) => e.toJson()).toList(),
+      if (typeArguments.isNotEmpty)
+        'typeArguments': typeArguments.map((e) => e.toJson()).toList(),
       'functionParts': ?_functionParts?.toJson(),
       if (isEnum) 'isEnum': true,
     };
@@ -192,14 +215,17 @@ class FunctionTypeParts {
   /// deserializes the parts from json
   factory _fromJson(Map<String, dynamic> map) {
     List<ResolvedType> list(String key) => [
-      for (final e in (map[key] as List<Object?>).cast<Map<String, dynamic>>()) ResolvedType.fromJson(e),
+      for (final e in (map[key] as List<Object?>).cast<Map<String, dynamic>>())
+        ResolvedType.fromJson(e),
     ];
     Map<String, ResolvedType> named(String key) => {
       for (final e in (map[key] as Map<String, dynamic>).entries)
         e.key: ResolvedType.fromJson(e.value as Map<String, dynamic>),
     };
     return FunctionTypeParts(
-      returnType: ResolvedType.fromJson(map['returnType'] as Map<String, dynamic>),
+      returnType: ResolvedType.fromJson(
+        map['returnType'] as Map<String, dynamic>,
+      ),
       requiredParameters: list('requiredParameters'),
       optionalParameters: list('optionalParameters'),
       namedParameters: named('namedParameters'),
@@ -228,8 +254,12 @@ class FunctionTypeParts {
       'returnType': _returnType.toJson(),
       'requiredParameters': _requiredParameters.map((e) => e.toJson()).toList(),
       'optionalParameters': _optionalParameters.map((e) => e.toJson()).toList(),
-      'namedParameters': _namedParameters.map((k, v) => MapEntry(k, v.toJson())),
-      'namedRequiredParameters': _namedRequiredParameters.map((k, v) => MapEntry(k, v.toJson())),
+      'namedParameters': _namedParameters.map(
+        (k, v) => MapEntry(k, v.toJson()),
+      ),
+      'namedRequiredParameters': _namedRequiredParameters.map(
+        (k, v) => MapEntry(k, v.toJson()),
+      ),
     };
   }
 }

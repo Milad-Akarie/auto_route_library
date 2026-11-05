@@ -21,7 +21,9 @@ sealed class UrlParamType {
   /// The entry for [type], or `null` when a url can not give it.
   static UrlParamType? of(ResolvedType type) {
     if (type.isEnum) return const _EnumParam();
-    if (kUrlCollectionTypes.contains(type.name) && type.typeArguments.length == 1) return const _CollectionParam();
+    if (kUrlCollectionTypes.contains(type.name) &&
+        type.typeArguments.length == 1)
+      return const _CollectionParam();
     return _byName[type.name];
   }
 
@@ -56,11 +58,17 @@ sealed class UrlParamType {
   /// The code that reads the param [key] of [type] from [params], the
   /// `pathParams` or `queryParams` of the route data, falling back to
   /// [defaultValue] when given.
-  Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue);
+  Expression read(
+    Expression params,
+    Expression key,
+    ResolvedType type,
+    Expression? defaultValue,
+  );
 
   /// The function that converts the text of one item to [type], for a
   /// [isListItem] type that is not [isTextItem].
-  Expression _parseItem(ResolvedType type) => throw UnsupportedError('${type.name} items are not parsed');
+  Expression _parseItem(ResolvedType type) =>
+      throw UnsupportedError('${type.name} items are not parsed');
 
   /// The code that gives the url's value for [value], a variable of [type].
   Expression write(Expression value, ResolvedType type) => value;
@@ -69,7 +77,8 @@ sealed class UrlParamType {
 /// A type `Parameters` has a pair of readers for, `opt<name>` for a nullable
 /// type and `get<name>` for the rest, or `get` alone when [name] is `null`.
 final class _GetterParam extends UrlParamType {
-  const new(this.name, {this.inPath = false, this.parsesItems = false}) : super._();
+  const new(this.name, {this.inPath = false, this.parsesItems = false})
+    : super._();
 
   final String? name;
 
@@ -86,16 +95,25 @@ final class _GetterParam extends UrlParamType {
   bool get isTextItem => !parsesItems;
 
   @override
-  Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue) {
+  Expression read(
+    Expression params,
+    Expression key,
+    ResolvedType type,
+    Expression? defaultValue,
+  ) {
     final name = this.name;
-    final method = name == null ? 'get' : '${type.isNullable ? 'opt' : 'get'}$name';
+    final method = name == null
+        ? 'get'
+        : '${type.isNullable ? 'opt' : 'get'}$name';
     return params.property(method).call([key, ?defaultValue]);
   }
 
   @override
   Expression _parseItem(ResolvedType type) => switch (type.name) {
     'bool' => const CodeExpression(
-      Code("(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null"),
+      Code(
+        "(text) => text.toLowerCase() == 'true' ? true : text.toLowerCase() == 'false' ? false : null",
+      ),
     ),
     _ => refer(type.name, type.import).property('tryParse'),
   };
@@ -109,7 +127,12 @@ final class _EnumParam extends UrlParamType {
   bool get isListItem => true;
 
   @override
-  Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue) {
+  Expression read(
+    Expression params,
+    Expression key,
+    ResolvedType type,
+    Expression? defaultValue,
+  ) {
     final value = _byName(type).index(params.property('optString').call([key]));
     return defaultValue == null ? value : value.ifNullThen(defaultValue);
   }
@@ -117,7 +140,9 @@ final class _EnumParam extends UrlParamType {
   @override
   Expression _parseItem(ResolvedType type) => Method(
     (b) => b
-      ..requiredParameters.add(Parameter((parameterBuilder) => parameterBuilder..name = 'name'))
+      ..requiredParameters.add(
+        Parameter((parameterBuilder) => parameterBuilder..name = 'name'),
+      )
       ..lambda = true
       ..body = _byName(type).index(refer('name')).code,
   ).closure;
@@ -126,8 +151,10 @@ final class _EnumParam extends UrlParamType {
   Expression write(Expression value, ResolvedType type) =>
       type.isNullable ? value.nullSafeProperty('name') : value.property('name');
 
-  Expression _byName(ResolvedType type) =>
-      refer(type.name, type.import).property('values').property('asNameMap').call([]);
+  Expression _byName(ResolvedType type) => refer(
+    type.name,
+    type.import,
+  ).property('values').property('asNameMap').call([]);
 }
 
 /// A `List`, `Set` or `Iterable`, read from its key repeated in the url,
@@ -136,13 +163,22 @@ final class _CollectionParam extends UrlParamType {
   const new() : super._();
 
   @override
-  Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue) {
+  Expression read(
+    Expression params,
+    Expression key,
+    ResolvedType type,
+    Expression? defaultValue,
+  ) {
     final [item] = type.typeArguments;
     final itemType = UrlParamType.of(item);
-    final parses = itemType != null && itemType.isListItem && !itemType.isTextItem;
+    final parses =
+        itemType != null && itemType.isListItem && !itemType.isTextItem;
     if (type.isList && !parses) {
       // A List of text is what `optList` and `getList` give.
-      return params.property(type.isNullable ? 'optList' : 'getList').call([key, ?defaultValue]);
+      return params.property(type.isNullable ? 'optList' : 'getList').call([
+        key,
+        ?defaultValue,
+      ]);
     }
     // `optList` reads the items as text, so each is converted to its type:
     // a number or bool by parsing it, an enum by its name. An item that
@@ -150,12 +186,16 @@ final class _CollectionParam extends UrlParamType {
     var value = params.property('optList').call([key]);
     if (parses) {
       final itemRefer = refer(item.name, item.import);
-      value = value.nullSafeProperty('map').call([itemType._parseItem(item)]).property('whereType').call([], {}, [
-        itemRefer,
-      ]);
+      value = value
+          .nullSafeProperty('map')
+          .call([itemType._parseItem(item)])
+          .property('whereType')
+          .call([], {}, [itemRefer]);
     }
     if (type.isSet) {
-      value = (parses ? value.property('toSet') : value.nullSafeProperty('toSet')).call([]);
+      value =
+          (parses ? value.property('toSet') : value.nullSafeProperty('toSet'))
+              .call([]);
     } else if (parses) {
       value = value.property('toList').call([]);
     }
@@ -168,11 +208,15 @@ final class _CollectionParam extends UrlParamType {
     if (!item.isEnum) return value;
     final name = Method(
       (b) => b
-        ..requiredParameters.add(Parameter((parameterBuilder) => parameterBuilder..name = 'item'))
+        ..requiredParameters.add(
+          Parameter((parameterBuilder) => parameterBuilder..name = 'item'),
+        )
         ..lambda = true
         ..body = UrlParamType.of(item)!.write(refer('item'), item).code,
     ).closure;
-    return (type.isNullable ? value.nullSafeProperty('map') : value.property('map'))
+    return (type.isNullable
+            ? value.nullSafeProperty('map')
+            : value.property('map'))
         .call([name])
         .property('toList')
         .call([]);
@@ -190,7 +234,12 @@ final class _ConverterParam extends UrlParamType {
   bool get inPath => true;
 
   @override
-  Expression read(Expression params, Expression key, ResolvedType type, Expression? defaultValue) {
+  Expression read(
+    Expression params,
+    Expression key,
+    ResolvedType type,
+    Expression? defaultValue,
+  ) {
     // The reader is given the type without its `?`: optTyped gives the `?`.
     final valueType = TypeReference(
       (b) => b
@@ -206,6 +255,8 @@ final class _ConverterParam extends UrlParamType {
   @override
   Expression write(Expression value, ResolvedType type) {
     final text = refer(name, import).property('toParam').call([value]);
-    return type.isNullable ? value.equalTo(literalNull).conditional(literalNull, text) : text;
+    return type.isNullable
+        ? value.equalTo(literalNull).conditional(literalNull, text)
+        : text;
   }
 }

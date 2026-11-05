@@ -30,19 +30,29 @@ void main() {
   // followed the order build_runner visited the files in.
   test('the generated router is the same whatever order the files are visited in (#1513)', () async {
     final forward = await generateRouter(pages);
-    final reversed = await generateRouter({for (final key in pages.keys.toList().reversed) key: pages[key]!});
+    final reversed = await generateRouter({
+      for (final key in pages.keys.toList().reversed) key: pages[key]!,
+    });
     expect(forward.errors, isEmpty);
     expect(forward.source, isNotNull);
     expect(reversed.source, forward.source);
     final source = forward.source!;
-    expect(source.indexOf('class AlphaRoute '), lessThan(source.indexOf('class MidRoute ')));
-    expect(source.indexOf('class MidRoute '), lessThan(source.indexOf('class ZetaRoute ')));
+    expect(
+      source.indexOf('class AlphaRoute '),
+      lessThan(source.indexOf('class MidRoute ')),
+    );
+    expect(
+      source.indexOf('class MidRoute '),
+      lessThan(source.indexOf('class ZetaRoute ')),
+    );
   });
 
   // #1636: generated route args had no == and hashCode, so a popUntil
   // predicate could not compare `previous.settings.arguments == route.args`.
   test('route args define == and hashCode by default (#1636)', () async {
-    final result = await generateRouter({'lib/alpha_page.dart': _page('AlphaPage', 'alpha')});
+    final result = await generateRouter({
+      'lib/alpha_page.dart': _page('AlphaPage', 'alpha'),
+    });
     expect(result.errors, isEmpty);
     expect(result.compileErrors, isEmpty);
     expect(result.source, contains('operator ==('));

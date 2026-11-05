@@ -10,10 +10,22 @@ import 'package:auto_route_generator/src/models/url_param_type.dart';
 import 'package:auto_route_generator/src/resolvers/type_resolver.dart';
 import 'package:source_gen/source_gen.dart';
 
-const _kPathParamChecker = TypeChecker.typeNamed(PathParam, inPackage: 'auto_route');
-const _kQueryParamChecker = TypeChecker.typeNamed(QueryParam, inPackage: 'auto_route');
-const _kUrlFragmentChecker = TypeChecker.typeNamed(UrlFragment, inPackage: 'auto_route');
-const _kParamConverterChecker = TypeChecker.typeNamed(ParamConverter, inPackage: 'auto_route');
+const _kPathParamChecker = TypeChecker.typeNamed(
+  PathParam,
+  inPackage: 'auto_route',
+);
+const _kQueryParamChecker = TypeChecker.typeNamed(
+  QueryParam,
+  inPackage: 'auto_route',
+);
+const _kUrlFragmentChecker = TypeChecker.typeNamed(
+  UrlFragment,
+  inPackage: 'auto_route',
+);
+const _kParamConverterChecker = TypeChecker.typeNamed(
+  ParamConverter,
+  inPackage: 'auto_route',
+);
 
 /// Resolves route parameters
 class RouteParameterResolver {
@@ -39,19 +51,32 @@ class RouteParameterResolver {
     if (paramName.startsWith('_')) {
       paramName = paramName.replaceFirst('_', '');
     }
-    final pathParamAnnotation = _kPathParamChecker.firstAnnotationOfExact(parameterElement);
-    final queryParamAnnotation = _kQueryParamChecker.firstAnnotationOfExact(parameterElement);
+    final pathParamAnnotation = _kPathParamChecker.firstAnnotationOfExact(
+      parameterElement,
+    );
+    final queryParamAnnotation = _kQueryParamChecker.firstAnnotationOfExact(
+      parameterElement,
+    );
 
     var nameOrAlias = paramName;
     var isInheritedPathParam = false;
-    final isUrlFragment = _kUrlFragmentChecker.hasAnnotationOfExact(parameterElement);
+    final isUrlFragment = _kUrlFragmentChecker.hasAnnotationOfExact(
+      parameterElement,
+    );
 
     // A value parsed from the url is parsed by the type a typedef stands for.
-    final isParsedFromUrl = pathParamAnnotation != null || queryParamAnnotation != null || isUrlFragment;
-    final type = _typeResolver.resolveType(paramType, skipAlias: isParsedFromUrl);
+    final isParsedFromUrl =
+        pathParamAnnotation != null ||
+        queryParamAnnotation != null ||
+        isUrlFragment;
+    final type = _typeResolver.resolveType(
+      paramType,
+      skipAlias: isParsedFromUrl,
+    );
 
     if (pathParamAnnotation != null) {
-      isInheritedPathParam = pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
+      isInheritedPathParam =
+          pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
       final paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
@@ -70,20 +95,33 @@ class RouteParameterResolver {
     }
 
     throwIf(
-      [isUrlFragment, pathParamAnnotation != null, queryParamAnnotation != null].where((e) => e).length > 1,
+      [
+            isUrlFragment,
+            pathParamAnnotation != null,
+            queryParamAnnotation != null,
+          ].where((e) => e).length >
+          1,
       '${parameterElement.displayName} can only be annotated with one of @PathParam, @QueryParam or @urlFragment',
       element: parameterElement,
     );
 
-    final converter = _resolveConverter(parameterElement, pathParamAnnotation ?? queryParamAnnotation);
+    final converter = _resolveConverter(
+      parameterElement,
+      pathParamAnnotation ?? queryParamAnnotation,
+    );
 
-    final isUrlParam = pathParamAnnotation != null || queryParamAnnotation != null;
-    if (isUrlParam && converter == null && kUrlCollectionTypes.contains(type.name) && type.typeArguments.length == 1) {
+    final isUrlParam =
+        pathParamAnnotation != null || queryParamAnnotation != null;
+    if (isUrlParam &&
+        converter == null &&
+        kUrlCollectionTypes.contains(type.name) &&
+        type.typeArguments.length == 1) {
       final item = type.typeArguments.single;
       final itemType = UrlParamType.of(item);
       final isText = itemType?.isTextItem ?? false;
       // Only a query param converts its items.
-      final isConverted = queryParamAnnotation != null && (itemType?.isListItem ?? false);
+      final isConverted =
+          queryParamAnnotation != null && (itemType?.isListItem ?? false);
       final kind = queryParamAnnotation != null ? 'query' : 'path';
       throwIf(
         !isText && !isConverted,
@@ -94,7 +132,11 @@ class RouteParameterResolver {
     }
 
     if (isUrlFragment) {
-      throwIf(type.name != 'String', 'UrlFragments must be of type String', element: parameterElement);
+      throwIf(
+        type.name != 'String',
+        'UrlFragments must be of type String',
+        element: parameterElement,
+      );
       throwIf(
         !type.isNullable && !parameterElement.hasDefaultValue,
         'UrlFragments must be nullable or have default value',
@@ -128,7 +170,10 @@ class RouteParameterResolver {
   /// Fails the build when the converter is not a top-level constant, which
   /// the generated code could not name, or converts another type than the
   /// param's.
-  ParamConverterRef? _resolveConverter(FormalParameterElement parameterElement, DartObject? annotation) {
+  ParamConverterRef? _resolveConverter(
+    FormalParameterElement parameterElement,
+    DartObject? annotation,
+  ) {
     final converter = annotation?.getField('converter');
     if (converter == null || converter.isNull) return null;
     final name = parameterElement.displayName;
@@ -141,7 +186,10 @@ class RouteParameterResolver {
     );
     final converterType = converter.type;
     final converted = converterType is InterfaceType
-        ? [converterType, ...converterType.allSupertypes].where(_kParamConverterChecker.isExactlyType).firstOrNull
+        ? [
+            converterType,
+            ...converterType.allSupertypes,
+          ].where(_kParamConverterChecker.isExactlyType).firstOrNull
         : null;
     final convertedType = converted?.typeArguments.singleOrNull;
     final typeSystem = parameterElement.library!.typeSystem;
@@ -157,7 +205,9 @@ class RouteParameterResolver {
     // A library exports a top-level variable through its getter.
     final import =
         _typeResolver.resolveImport(variable) ??
-        _typeResolver.resolveImport((variable! as TopLevelVariableElement).getter);
+        _typeResolver.resolveImport(
+          (variable! as TopLevelVariableElement).getter,
+        );
     return ParamConverterRef(name: variable!.displayName, import: import);
   }
 
@@ -168,9 +218,11 @@ class RouteParameterResolver {
     InvalidType() => true,
     InterfaceType(:final typeArguments) => typeArguments.any(_holdsInvalidType),
     FunctionType(:final returnType, :final formalParameters) =>
-      _holdsInvalidType(returnType) || formalParameters.any((p) => _holdsInvalidType(p.type)),
+      _holdsInvalidType(returnType) ||
+          formalParameters.any((p) => _holdsInvalidType(p.type)),
     RecordType(:final positionalFields, :final namedFields) =>
-      positionalFields.any((f) => _holdsInvalidType(f.type)) || namedFields.any((f) => _holdsInvalidType(f.type)),
+      positionalFields.any((f) => _holdsInvalidType(f.type)) ||
+          namedFields.any((f) => _holdsInvalidType(f.type)),
     _ => false,
   };
 
@@ -205,7 +257,8 @@ class RouteParameterResolver {
       final SetOrMapLiteral literal => _firstDeclarationIn(literal),
       _ => null,
     };
-    if (element == null || element.enclosingElement is! LibraryElement) return null;
+    if (element == null || element.enclosingElement is! LibraryElement)
+      return null;
     return _typeResolver.resolveImport(element);
   }
 
@@ -214,7 +267,8 @@ class RouteParameterResolver {
   /// default.
   String? _defaultValueSymbol(FormalParameterElement parameterElement) {
     final initializer = parameterElement.constantInitializer;
-    if (initializer is! ListLiteral && initializer is! SetOrMapLiteral) return null;
+    if (initializer is! ListLiteral && initializer is! SetOrMapLiteral)
+      return null;
     return _firstDeclarationIn(initializer!)?.name;
   }
 
@@ -236,7 +290,9 @@ class _DeclarationFinder extends RecursiveAstVisitor<void> {
   @override
   void visitSimpleIdentifier(SimpleIdentifier node) {
     final element = node.element;
-    if (found == null && element != null && element.enclosingElement is LibraryElement) {
+    if (found == null &&
+        element != null &&
+        element.enclosingElement is LibraryElement) {
       found = element;
     }
   }
