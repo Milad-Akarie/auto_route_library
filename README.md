@@ -1131,7 +1131,7 @@ MaterialApp.router(
 - `/products`
 - `/products/:id`
 
-Now, receiving this deep-link `/products/123` will add all above routes to the stack. This of course requires `includePrefixMatches` to be true in the root config (default is `!kWeb`) or when using `pushNamed`, `navigateNamed` and `replaceNamed`.
+Now, receiving this deep-link `/products/123` will add all above routes to the stack. This requires `includePrefixMatches` to be true. The root config sets it for platform links, true by default off the web (`!kIsWeb`). `pushPath`, `navigatePath` and `replacePath` take it as an argument, false by default, so pass `includePrefixMatches: true` to build the stack from a path you open yourself.
 
 **Things to keep in mind**:
 
@@ -1165,7 +1165,7 @@ AutoRouter.declarative(
 
 ## Working with Paths
 
-Working with paths in **AutoRoute** is optional because `PageRouteInfo` objects are matched by name unless pushed as a string using the `deepLinkBuilder` property in root delegate or `pushNamed`, `replaceNamed` `navigateNamed` methods.
+Working with paths in **AutoRoute** is optional because `PageRouteInfo` objects are matched by name unless pushed as a string using the `deepLinkBuilder` property in root delegate or the `pushPath`, `replacePath` and `navigatePath` methods.
 
 If you don’t specify a path it’s going to be generated from the page name e.g. `BookListPage` will have ‘book-list-page’ as a path, if initial arg is set to true the path will be `/`, unless it's relative then it will be an empty string `''`.
 
