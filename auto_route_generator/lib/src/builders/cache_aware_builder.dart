@@ -75,14 +75,15 @@ abstract class CacheAwareBuilder<T> extends Builder {
       final cached = await loadFromCache(buildStep, cacheHash);
       if (cached != null) {
         final lib = await buildStep.inputLibrary;
-        return _writeContent(buildStep, lib.languageVersion, cached);
+        await _writeContent(buildStep, lib.languageVersion, cached);
+        return;
       }
     }
 
     final lib = await resolver.libraryFor(buildStep.inputId, allowSyntaxErrors: allowSyntaxErrors);
     final generated = await onResolve(LibraryReader(lib), buildStep, cacheHash);
     if (generated == null) return;
-    return _writeContent(buildStep, lib.languageVersion, generated);
+    await _writeContent(buildStep, lib.languageVersion, generated);
   }
 
   /// Loads the cached content from the cache
@@ -126,7 +127,7 @@ source formatter.''',
     if (outputId.extension.endsWith('.dart')) {
       output = validateAndFormatDartCode(buildStep, libVersion, output);
     }
-    return buildStep.writeAsString(outputId, output);
+    await buildStep.writeAsString(outputId, output);
   }
 
   @override
