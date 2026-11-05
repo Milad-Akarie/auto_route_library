@@ -37,7 +37,8 @@ void main() {
     expect(router.currentUrl, '/second-page?redirectTo=/first-page?redirectTo%3D/random-page');
     expect(find.text('SecondRoute to /first-page?redirectTo=/random-page'), findsOneWidget);
 
-    unawaited(router.navigatePath(router.currentUrl));
+    final url = router.currentUrl;
+    unawaited(router.navigatePath(url));
     await tester.pumpAndSettle();
     expect(router.current.queryParams.rawMap, {'redirectTo': '/first-page?redirectTo=/random-page'});
   });
@@ -51,7 +52,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(router.currentUrl, '/first-page?redirectTo=?%3D:http://%26');
 
-    unawaited(router.navigatePath(router.currentUrl));
+    final url = router.currentUrl;
+    unawaited(router.navigatePath(url));
     await tester.pumpAndSettle();
     expect(router.current.queryParams.rawMap, {'redirectTo': '?=:http://&'});
   });
