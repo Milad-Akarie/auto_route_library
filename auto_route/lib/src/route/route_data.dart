@@ -177,10 +177,6 @@ class RouteData<R> {
   }
 
   /// Helper to access [RouteMatch.params]
-  @Deprecated('use the shorthand (params) instead')
-  Parameters get pathParams => _match.params;
-
-  /// Helper to access [RouteMatch.params]
   Parameters get params => _match.params;
 
   /// Helper to access [RouteMatch.queryParams]

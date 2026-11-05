@@ -128,10 +128,6 @@ class RouteMatch<T> {
   /// it's used to link Routing controllers to their matches
   final LocalKey id;
 
-  /// The path parameters of the route
-  @Deprecated('Use the shorthand [params] instead')
-  Parameters get pathParams => params;
-
   final List<AutoRouteGuard> _evaluatedGuards;
 
   /// Holds a list of already evaluated guards for this match

@@ -232,7 +232,7 @@ abstract class RoutingController with ChangeNotifier {
         HierarchySegment(
           segmentName,
           children: childSegments,
-          pathParams: ignoreParams || data.pathParams.isEmpty ? null : data.pathParams,
+          pathParams: ignoreParams || data.params.isEmpty ? null : data.params,
           queryParams: ignoreParams || data.queryParams.isEmpty ? null : data.queryParams,
         ),
       );

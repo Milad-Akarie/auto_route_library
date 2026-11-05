@@ -1,4 +1,10 @@
 ## Unreleased
+- **BREAKING CHANGE**: `RouteMatch.pathParams` and `RouteData.pathParams`, deprecated since 11.2.0, are removed;
+  use `params`.
+- **BREAKING CHANGE**: the `durationInMilliseconds` and `reverseDurationInMilliseconds` parameters of `CustomRoute`
+  and `RouteType.custom`, deprecated since 11.2.0, are removed; pass `duration` and `reverseDuration`.
+- **BREAKING CHANGE**: the `animatePageTransition` parameter of `AutoTabsRouter.tabBar`, deprecated since 11.2.0, is
+  removed; pass `duration: Duration.zero` to switch tabs without animating.
 - **FIX**: an app can catch a bad path param's error by its type: `MissingRequiredParameterError` is exported
   from `package:auto_route/auto_route.dart` (flutter/flutter#155598).
 - **FIX**: a page view tabs router with a zero duration switches tabs without animating (#1150).

@@ -26,16 +26,7 @@ void main() {
           duration: const Duration(milliseconds: 600),
           reverseDuration: .zero,
         ),
-        CustomRoute(
-          page: _InstantRoute.page,
-          path: '/instant',
-          // The spelling the reporter used.
-          // ignore: deprecated_member_use_from_same_package
-          durationInMilliseconds: 0,
-          // The spelling the reporter used.
-          // ignore: deprecated_member_use_from_same_package
-          reverseDurationInMilliseconds: 0,
-        ),
+        CustomRoute(page: _InstantRoute.page, path: '/instant', duration: .zero, reverseDuration: .zero),
       ],
     );
   });

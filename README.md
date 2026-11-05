@@ -1182,7 +1182,7 @@ Query parameters are accessed the same way, simply annotate the constructor para
 You could also access path/query parameters using the scoped `RouteData` object.
 
 ```dart
-RouteData.of(context).pathParams;
+RouteData.of(context).params;
 // or using the extension
 context.routeData.queryParams;
 ```

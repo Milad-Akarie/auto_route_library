@@ -421,8 +421,6 @@ class CustomRoute extends AutoRoute {
     super.allowSnapshotting = true,
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
-    @Deprecated('Use duration instead') int? durationInMilliseconds,
-    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
     Duration? duration,
     Duration? reverseDuration,
     bool opaque = true,
@@ -432,23 +430,12 @@ class CustomRoute extends AutoRoute {
     Color? barrierColor,
     bool enablePredictiveBackGesture = false,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
-  }) : assert(durationInMilliseconds == null || duration == null, 'Use duration instead of durationInMilliseconds'),
-       assert(
-         reverseDurationInMilliseconds == null || reverseDuration == null,
-         'Use reverseDuration instead of reverseDurationInMilliseconds',
-       ),
-       super._(
+  }) : super._(
          type: RouteType.custom(
            transitionsBuilder: transitionsBuilder,
            customRouteBuilder: customRouteBuilder,
            duration: duration,
            reverseDuration: reverseDuration,
-           // TODO(maintainer): remove deprecated members.
-           // ignore: deprecated_member_use_from_same_package
-           durationInMilliseconds: durationInMilliseconds,
-           // TODO(maintainer): remove deprecated members.
-           // ignore: deprecated_member_use_from_same_package
-           reverseDurationInMilliseconds: reverseDurationInMilliseconds,
            opaque: opaque,
            barrierDismissible: barrierDismissible,
            barrierLabel: barrierLabel,

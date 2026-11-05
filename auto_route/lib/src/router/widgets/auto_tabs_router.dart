@@ -76,7 +76,6 @@ abstract class AutoTabsRouter extends StatefulWidget {
     List<PageRouteInfo>? routes,
     AutoTabsTabBarBuilder? builder,
     int homeIndex,
-    @Deprecated('Set Duration to zero to disable animation') bool animatePageTransition,
     Duration? duration,
     Axis scrollDirection,
     Curve curve,
@@ -620,19 +619,14 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     this.scrollDirection = Axis.horizontal,
     this.builder,
     super.homeIndex,
-    @Deprecated('Set Duration to zero to disable animation') this.animatePageTransition = true,
-    Duration? duration,
+    this.duration,
     this.curve = Curves.ease,
     super.inheritNavigatorObservers,
     super.navigatorObservers,
     this.physics,
     this.dragStartBehavior = DragStartBehavior.start,
-  }) : duration = duration ?? (animatePageTransition ? null : .zero),
-       super._();
+  }) : super._();
   final AutoTabsTabBarBuilder? builder;
-  // Mirrors the deprecated public parameter, which it still serves.
-  // ignore: deprecated_consistency
-  final bool animatePageTransition;
   final Duration? duration;
   final Curve curve;
   final ScrollPhysics? physics;

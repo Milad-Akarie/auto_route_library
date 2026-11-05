@@ -29,8 +29,6 @@ abstract class RouteType {
   factory RouteType.custom({
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
-    @Deprecated('Use duration instead') int? durationInMilliseconds,
-    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
     Duration? duration,
     Duration? reverseDuration,
     bool opaque,
@@ -105,20 +103,9 @@ class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
     this.barrierDismissible = false,
     this.enablePredictiveBackGesture = false,
     this.predictiveBackPageTransitionsBuilder,
-    @Deprecated('Use duration instead') int? durationInMilliseconds,
-    @Deprecated('Use reverseDuration instead') int? reverseDurationInMilliseconds,
-    Duration? duration,
-    Duration? reverseDuration,
-  }) : assert(durationInMilliseconds == null || duration == null, 'Use either duration or durationInMilliseconds'),
-       assert(
-         reverseDurationInMilliseconds == null || reverseDuration == null,
-         'Use either reverseDuration or reverseDurationInMilliseconds',
-       ),
-       duration = duration ?? (durationInMilliseconds != null ? Duration(milliseconds: durationInMilliseconds) : null),
-       reverseDuration =
-           reverseDuration ??
-           (reverseDurationInMilliseconds != null ? Duration(milliseconds: reverseDurationInMilliseconds) : null),
-       super._();
+    this.duration,
+    this.reverseDuration,
+  }) : super._();
 
   /// this builder function is passed to the transition builder
   /// function in [PageRouteBuilder]
