@@ -1,4 +1,4 @@
-## Unreleased
+## 12.0.0
 - **BREAKING CHANGE**: `RouteMatch.pathParams` and `RouteData.pathParams`, deprecated since 11.2.0, are removed;
   use `params`.
 - **BREAKING CHANGE**: the `durationInMilliseconds` and `reverseDurationInMilliseconds` parameters of `CustomRoute`

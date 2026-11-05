@@ -173,6 +173,8 @@ class RouteMatch<T> {
   RouteMatch<dynamic> copyWith({
     String? stringMatch,
     Parameters? params,
+    // Deprecated in 12.0.0, removed in 13.0.0.
+    // ignore: remove_deprecations_in_breaking_versions
     @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
     List<RouteMatch<dynamic>>? children,
@@ -316,6 +318,8 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
     Parameters? params,
+    // Deprecated in 12.0.0, removed in 13.0.0.
+    // ignore: remove_deprecations_in_breaking_versions
     @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
     List<RouteMatch<dynamic>>? children,
