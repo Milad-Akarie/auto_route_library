@@ -13,7 +13,6 @@ class UserDataPage extends StatelessWidget {
 
   /// Called with the collected data when the flow ends.
   // The generated router copies this type into its args class.
-  // ignore: inference_failure_on_function_return_type
   final Function(UserData data)? onResult;
 
   @override
