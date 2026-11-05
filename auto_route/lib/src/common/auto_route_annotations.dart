@@ -74,11 +74,11 @@ const routePage = RoutePage();
 @Target({.parameter})
 class PathParam {
   /// default constructor
-  const new([this.name, this.converter]) : _inherited = false;
+  const new([this.name, this.converter]) : isInherited = false;
 
   /// Use this constructor to inherit a dynamic-segment
   /// from a parent path
-  const new inherit([this.name, this.converter]) : _inherited = true;
+  const new inherit([this.name, this.converter]) : isInherited = true;
 
   /// name of the dynamic segment declared in path
   /// e.g /path/:id -> name = id
@@ -95,8 +95,10 @@ class PathParam {
   /// it must be a top-level `const` variable. See [ParamConverter].
   final ParamConverter<Object?>? converter;
 
-  // Read by the generator from the annotation's source, never by Dart code.
-  final bool _inherited;
+  /// Whether the param takes its value from a dynamic segment of a parent
+  /// route's path, as [PathParam.inherit] declares it, rather than from this
+  /// route's own path.
+  final bool isInherited;
 }
 
 /// default PathParam()

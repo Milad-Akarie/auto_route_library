@@ -80,7 +80,7 @@ class RouteParameterResolver {
 
     if (pathParamAnnotation != null) {
       isInheritedPathParam =
-          pathParamAnnotation.getField('_inherited')?.toBoolValue() == true;
+          pathParamAnnotation.getField('isInherited')?.toBoolValue() == true;
       final paramAlias = pathParamAnnotation.getField('name')?.toStringValue();
       if (paramAlias != null) {
         nameOrAlias = paramAlias;
