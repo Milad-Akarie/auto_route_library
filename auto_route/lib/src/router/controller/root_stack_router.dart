@@ -101,13 +101,10 @@ abstract class RootStackRouter extends StackRouter {
   /// The default animation
   RouteType get defaultRouteType => const .material();
 
-  // Set by the router widgets of this library.
-  // ignore: prefer_final_fields
-  bool _managedByWidget = false;
   late final NavigationHistory _navigationHistory;
 
   @override
-  bool get managedByWidget => _managedByWidget;
+  bool get managedByWidget => false;
 
   AutoRouteInformationProvider? _lazyInformationProvider;
 
