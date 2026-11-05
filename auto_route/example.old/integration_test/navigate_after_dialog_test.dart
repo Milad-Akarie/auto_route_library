@@ -71,10 +71,11 @@ class _DetailPage extends StatelessWidget {
                     await dialogContext.maybePop();
                     // The page's context: the dialog's is gone once it pops.
                     // ignore: use-closest-build-context
-                    if (context.mounted)
+                    if (context.mounted) {
                       unawaited(
                         context.navigateTo(const NamedRoute('ListRoute')),
                       );
+                    }
                   },
                   child: const Text('Confirm'),
                 ),

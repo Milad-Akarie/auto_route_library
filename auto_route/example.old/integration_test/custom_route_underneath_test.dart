@@ -49,8 +49,9 @@ void main() {
           await tester.pump(const Duration(milliseconds: 16));
           expect(tester.getTopLeft(home).dx, restingX);
           if (menu.evaluate().isNotEmpty == menuOpen &&
-              !tester.binding.hasScheduledFrame)
+              !tester.binding.hasScheduledFrame) {
             return;
+          }
         }
         fail(
           'The Menu page did not ${menuOpen ? 'open' : 'close'} within 300 '

@@ -163,8 +163,9 @@ class _NestedSecondRoute extends PageRouteInfo<void> {
                   final innerRouter = tabsRouter.innerRouterOf<StackRouter>(
                     tabsRouter.current.name,
                   );
-                  if (innerRouter?.canPop() ?? false)
+                  if (innerRouter?.canPop() ?? false) {
                     innerRouter!.popUntilRoot();
+                  }
                 },
                 child: const Text('Re-tap active tab'),
               ),

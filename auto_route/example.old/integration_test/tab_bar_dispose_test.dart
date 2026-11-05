@@ -72,8 +72,9 @@ class _TabsHostRoute extends PageRouteInfo<void> {
     builder: (_) => ListenableBuilder(
       listenable: Listenable.merge([_fourthAddedNotifier, _showTabsNotifier]),
       builder: (context, _) {
-        if (!_showTabsNotifier.value)
+        if (!_showTabsNotifier.value) {
           return const Scaffold(body: SafeArea(child: Text('No tabs')));
+        }
         final labels = [
           'First',
           'Second',

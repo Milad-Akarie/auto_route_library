@@ -28,8 +28,9 @@ void main() {
     unawaited(done.then((_) => isDone = true));
     final stopwatch = Stopwatch()..start();
     while (!isDone) {
-      if (stopwatch.elapsed > duration * 5)
+      if (stopwatch.elapsed > duration * 5) {
         fail('waitForTransitions() did not complete');
+      }
       await tester.pump(const Duration(milliseconds: 16));
     }
   }
