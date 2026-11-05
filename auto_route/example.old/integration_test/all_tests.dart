@@ -162,6 +162,7 @@ import 'set_query_param_test.dart' as set_query_param;
 import 'simultaneous_taps_test.dart' as simultaneous_taps;
 import 'state_after_reload_test.dart' as state_after_reload;
 import 'swipe_init_tab_test.dart' as swipe_init_tab;
+import 'switch_routers_test.dart' as switch_routers;
 import 'tab_bar_dispose_test.dart' as tab_bar_dispose;
 import 'tab_bar_indicator_test.dart' as tab_bar_indicator;
 import 'tab_cached_context_test.dart' as tab_cached_context;
@@ -357,6 +358,7 @@ void main() {
   simultaneous_taps.main();
   state_after_reload.main();
   swipe_init_tab.main();
+  switch_routers.main();
   tab_bar_dispose.main();
   tab_bar_indicator.main();
   tab_cached_context.main();

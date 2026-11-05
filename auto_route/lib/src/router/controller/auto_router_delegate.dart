@@ -155,8 +155,13 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   var _hadPage = false;
 
+  // Whether the Router handed this delegate a route, through
+  // setInitialRoutePath, setNewRoutePath or setRestoredRoutePath.
+  bool _wasGivenRoute = false;
+
   @override
   Future<void> setInitialRoutePath(UrlState configuration) async {
+    _wasGivenRoute = true;
     // setInitialRoutePath is re-fired on enabling
     // select widget mode from flutter inspector,
     // this check is preventing it from rebuilding the app
@@ -215,6 +220,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// its recent apps with the link that first opened it.
   @override
   Future<void> setRestoredRoutePath(UrlState configuration) {
+    _wasGivenRoute = true;
     final saved = configuration.savedRoutes;
     if (_launchLink != Navigator.defaultRouteName &&
         (saved is! Map || saved[_launchLinkKey] != _launchLink)) {
@@ -269,6 +275,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 
   @override
   Future<void> setNewRoutePath(UrlState configuration) async {
+    _wasGivenRoute = true;
     final history = controller.navigationHistory;
     if (history.consumeOwnBrowserMove(configuration)) {
       return;
@@ -311,6 +318,26 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  // A Router hands its route to the delegate it starts with alone. A delegate
+  // swapped into a running Router, as by an app that picks one of two routers
+  // when the user signs in, is never given one and would show no page. So it
+  // opens the route the Router shows, the way setInitialRoutePath would.
+  Future<void> _openRouteOfRunningRouter(BuildContext context) async {
+    if (_wasGivenRoute || controller.hasEntries) return;
+    final router = Router.of(context);
+    final information = router.routeInformationProvider?.value;
+    final parser = router.routeInformationParser;
+    if (information == null || parser == null) return;
+    final configuration = await parser.parseRouteInformationWithDependencies(
+      information,
+      context,
+    );
+    // The Router may have handed it a route while the parser ran.
+    if (configuration is UrlState && !_wasGivenRoute) {
+      await setInitialRoutePath(configuration);
+    }
   }
 
   // Whether the route on top of the top-most navigator refuses to be popped,
@@ -446,6 +473,28 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
   void reassemble() {
     super.reassemble();
     router._reassemble();
+  }
+
+  // A new router here means the Router swapped its delegate, which it hands
+  // no route: the new delegate opens the Router's route itself, after this
+  // frame, since opening it notifies the widgets being built.
+  @override
+  void didUpdateWidget(_AutoRootRouter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (identical(widget.router, oldWidget.router)) return;
+    WidgetsBinding.instance.addPostFrameCallback(
+      _openRouteOfSwappedDelegate,
+      debugLabel: 'AutoRootRouter.openRouteOfSwappedDelegate',
+    );
+  }
+
+  void _openRouteOfSwappedDelegate(Duration _) {
+    if (!mounted) return;
+    final delegate = Router.of(context).routerDelegate;
+    if (delegate is AutoRouterDelegate &&
+        identical(delegate.controller, router)) {
+      unawaited(delegate._openRouteOfRunningRouter(context));
+    }
   }
 
   // Flutter tells Android whether the app takes back from the root navigator's
