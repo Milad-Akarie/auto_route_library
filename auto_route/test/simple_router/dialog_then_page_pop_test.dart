@@ -62,7 +62,7 @@ class _FormPage extends StatelessWidget {
   const _FormPage();
 
   // Stands for the reporter's cubit call that takes 5 seconds.
-  Future<void> _callAsyncCubitMethod() => Future.delayed(const Duration(seconds: 5));
+  Future<void> _callAsyncCubitMethod() => .delayed(const Duration(seconds: 5));
 
   @override
   Widget build(BuildContext context) {
