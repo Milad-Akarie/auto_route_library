@@ -35,11 +35,12 @@ void main() {
       'again, with $name '
       '(flutter/flutter#149181)',
       (tester) async {
-        var isLoggedIn = false;
+        final isLoggedIn = ValueNotifier<bool>(false);
+        addTearDown(isLoggedIn.dispose);
         var guardCalls = 0;
         final loginGuard = guard(() {
           guardCalls++;
-          return isLoggedIn;
+          return isLoggedIn.value;
         });
         final router = RootStackRouter.build(
           routes: [
@@ -66,7 +67,7 @@ void main() {
         await settleBrowser(tester);
         expect(find.text('LoginRoute'), findsOneWidget);
         expect(browserPath, '/login');
-        isLoggedIn = true;
+        isLoggedIn.value = true;
 
         await pressBrowserBack(tester);
         expect(find.text('HomeRoute'), findsOneWidget);

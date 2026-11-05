@@ -21,7 +21,8 @@ void main() {
     WidgetTester tester,
     void Function(NavigationResolver resolver) onReevaluate,
   ) async {
-    var isReevaluating = false;
+    final isReevaluating = ValueNotifier<bool>(false);
+    addTearDown(isReevaluating.dispose);
     final router = RootStackRouter.build(
       routes: [
         NamedRouteDef(
@@ -34,7 +35,7 @@ void main() {
           path: '/guarded',
           guards: [
             AutoRouteGuard.simple((resolver, _) {
-              if (isReevaluating) {
+              if (isReevaluating.value) {
                 onReevaluate(resolver);
               } else {
                 resolver.next();
@@ -55,7 +56,7 @@ void main() {
     await tester.pumpAndSettle();
     unawaited(router.push(const NamedRoute('AboveRoute')));
     await tester.pumpAndSettle();
-    isReevaluating = true;
+    isReevaluating.value = true;
     unawaited(router.reevaluateGuards());
     await tester.pumpAndSettle();
     final names = router.stack.map((page) => page.routeData.name).toList();

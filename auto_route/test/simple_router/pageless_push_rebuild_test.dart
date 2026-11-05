@@ -12,7 +12,7 @@ class _HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<_HomePage> {
-  static int builds = 0;
+  int builds = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -50,18 +50,21 @@ void main() {
         ],
       );
       await pumpRouterApp(tester, router);
-      _HomePageState.builds = 0;
+      _HomePageState homeState() => tester.state<_HomePageState>(
+        find.byType(_HomePage, skipOffstage: false),
+      );
+      homeState().builds = 0;
 
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
       expect(find.text('Not registered'), findsOneWidget);
-      expect(_HomePageState.builds, 0);
+      expect(homeState().builds, 0);
 
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       expect(find.text('Open'), findsOneWidget);
       expect(
-        _HomePageState.builds,
+        homeState().builds,
         0,
         reason: 'after tester.binding.handlePopRoute()',
       );

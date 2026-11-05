@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../centered_named_page.dart';
@@ -15,7 +16,8 @@ void main() {
   testWidgets(
     "A parent's guard runs for a deep link to its child (flutter/flutter#101183)",
     (tester) async {
-      var isOpen = false;
+      final isOpen = ValueNotifier<bool>(false);
+      addTearDown(isOpen.dispose);
       final calls = <String>[];
       final router = RootStackRouter.build(
         routes: [
@@ -29,7 +31,7 @@ void main() {
             path: '/bar',
             onNavigation: (resolver, _) {
               calls.add('bar');
-              isOpen ? resolver.next() : resolver.reject();
+              isOpen.value ? resolver.next() : resolver.reject();
             },
             builder: (_, _) => const AutoRouter(),
             children: [
@@ -61,7 +63,7 @@ void main() {
       expect(find.text('BazRoute'), findsNothing);
       expect(calls.where((e) => e == 'baz'), isEmpty);
 
-      isOpen = true;
+      isOpen.value = true;
       unawaited(router.pushPath('/bar/baz'));
       await tester.pumpAndSettle();
       expect(find.text('BazRoute'), findsOneWidget);
