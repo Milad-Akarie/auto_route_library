@@ -119,33 +119,52 @@ class _TabsHostRoute extends PageRouteInfo<void> {
   );
 }
 
-Widget _tabPage(String label) => Scaffold(
-  appBar: AppBar(title: Text('$label title')),
-  body: Column(
-    children: [
-      Text('$label text'),
-      ElevatedButton(onPressed: () {}, child: Text('$label button')),
-    ],
-  ),
-);
+/// A page with a title, a text and a button, all named after [label].
+class _TabPage extends StatelessWidget {
+  const new(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('$label title')),
+      body: Column(
+        children: [
+          Text('$label text'),
+          ElevatedButton(onPressed: () {}, child: Text('$label button')),
+        ],
+      ),
+    );
+  }
+}
 
 class _FirstTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_FirstTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _tabPage('First'));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const _TabPage('First'),
+  );
 }
 
 class _SecondTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_SecondTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _tabPage('Second'));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const _TabPage('Second'),
+  );
 }
 
 class _ThirdTabRoute extends PageRouteInfo<void> {
   const new() : super(name);
 
   static const String name = '_ThirdTabRoute';
-  static PageInfo page = PageInfo(name, builder: (_) => _tabPage('Third'));
+  static PageInfo page = PageInfo(
+    name,
+    builder: (_) => const _TabPage('Third'),
+  );
 }

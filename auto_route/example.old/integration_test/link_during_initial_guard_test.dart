@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'support/pages.dart';
+
 // A link that comes while the first page waits on its guard keeps its pages:
 // the first navigation, once its guard lets it through, no longer opens its
 // page over them.
@@ -34,13 +36,13 @@ void main() {
                 resolver.next();
               }),
             ],
-            builder: (_, _) => _page('Main'),
+            builder: (_, _) => const TextPage('Main'),
           ),
           NamedRouteDef(
             name: 'InfoRoute',
             path: '/info',
             builder: (_, data) =>
-                _page('Info ${data.queryParams.optString('id')}'),
+                TextPage('Info ${data.queryParams.optString('id')}'),
           ),
         ],
       );
@@ -82,5 +84,3 @@ void main() {
     },
   );
 }
-
-Widget _page(String text) => Scaffold(body: SafeArea(child: Text(text)));

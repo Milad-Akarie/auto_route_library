@@ -6,6 +6,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
+import 'support/pages.dart';
 
 // pushPath of a relative path no route has reports a failure, even in a
 // nested router whose first page has the path ''.
@@ -42,7 +43,7 @@ void main() {
                   NamedRouteDef(
                     name: 'HomeRoute',
                     initial: true,
-                    builder: (_, _) => _page('Home'),
+                    builder: (_, _) => const TextPage('Home'),
                   ),
                 ],
               ),
@@ -53,7 +54,7 @@ void main() {
                   NamedRouteDef(
                     name: 'SecondRoute',
                     initial: true,
-                    builder: (_, _) => _page('Second'),
+                    builder: (_, _) => const TextPage('Second'),
                   ),
                 ],
               ),
@@ -74,5 +75,3 @@ void main() {
     },
   );
 }
-
-Widget _page(String text) => Scaffold(body: SafeArea(child: Text(text)));

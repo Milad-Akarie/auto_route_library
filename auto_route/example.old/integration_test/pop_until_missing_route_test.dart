@@ -6,6 +6,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
+import 'support/pages.dart';
 
 // popUntilRouteWithName for a page that isn't in the stack keeps the first
 // page instead of leaving a blank screen.
@@ -26,12 +27,12 @@ void main() {
         NamedRouteDef(
           name: 'Page1Route',
           path: '/',
-          builder: (_, _) => _page('Page 1'),
+          builder: (_, _) => const TextPage('Page 1'),
         ),
         NamedRouteDef(
           name: 'Page2Route',
           path: '/page2',
-          builder: (_, _) => _page('Page 2'),
+          builder: (_, _) => const TextPage('Page 2'),
         ),
       ],
     );
@@ -48,5 +49,3 @@ void main() {
     await expectBrowserUrl('/');
   });
 }
-
-Widget _page(String text) => Scaffold(body: SafeArea(child: Text(text)));

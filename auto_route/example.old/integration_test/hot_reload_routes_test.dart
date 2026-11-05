@@ -6,11 +6,11 @@ import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
+import 'support/pages.dart';
 
 // A route added to the router's list before a hot reload opens after it.
 // flutter/flutter#105553
 // Headless test: auto_route/test/hot_reload_routes_test.dart
-Widget _page(String name) => Scaffold(body: SafeArea(child: Text(name)));
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -31,13 +31,13 @@ void main() {
       final child1 = NamedRouteDef(
         name: 'Child1Route',
         path: '',
-        builder: (_, _) => _page('Child1Route'),
+        builder: (_, _) => const TextPage('Child1Route'),
       );
       final routes = [
         NamedRouteDef(
           name: 'HomeRoute',
           path: '/',
-          builder: (_, _) => _page('HomeRoute'),
+          builder: (_, _) => const TextPage('HomeRoute'),
         ),
         host([child1]),
       ];
@@ -52,14 +52,14 @@ void main() {
           NamedRouteDef(
             name: 'Child2Route',
             path: 'child2',
-            builder: (_, _) => _page('Child2Route'),
+            builder: (_, _) => const TextPage('Child2Route'),
           ),
         ])
         ..add(
           NamedRouteDef(
             name: 'AddedRoute',
             path: '/added',
-            builder: (_, _) => _page('AddedRoute'),
+            builder: (_, _) => const TextPage('AddedRoute'),
           ),
         );
       unawaited(tester.binding.reassembleApplication());

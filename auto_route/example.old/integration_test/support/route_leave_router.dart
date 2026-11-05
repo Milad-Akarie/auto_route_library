@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'pages.dart';
+
 /// A router with HomeRoute '/', EditorRoute '/editor' and PreviewRoute
 /// '/preview'. The editor's content sits in an [AutoRouteLeaveListener] that
 /// adds each leave to [leaves], inside a [PopScope] that refuses pops while
@@ -13,7 +15,7 @@ RootStackRouter buildRouteLeaveRouter({
     NamedRouteDef(
       name: 'HomeRoute',
       path: '/',
-      builder: (_, _) => _page('Home'),
+      builder: (_, _) => const TextPage('Home'),
     ),
     NamedRouteDef(
       name: 'EditorRoute',
@@ -24,7 +26,7 @@ RootStackRouter buildRouteLeaveRouter({
           canPop: canPop,
           child: AutoRouteLeaveListener(
             onLeave: leaves.add,
-            child: _page('Editor'),
+            child: const TextPage('Editor'),
           ),
         ),
       ),
@@ -32,9 +34,7 @@ RootStackRouter buildRouteLeaveRouter({
     NamedRouteDef(
       name: 'PreviewRoute',
       path: '/preview',
-      builder: (_, _) => _page('Preview'),
+      builder: (_, _) => const TextPage('Preview'),
     ),
   ],
 );
-
-Widget _page(String text) => Scaffold(body: SafeArea(child: Text(text)));

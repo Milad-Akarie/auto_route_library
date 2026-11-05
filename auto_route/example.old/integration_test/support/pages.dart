@@ -15,6 +15,18 @@ class TestPage extends StatelessWidget {
   }
 }
 
+/// Shows [text] on a plain page.
+class TextPage extends StatelessWidget {
+  const new(this.text, {super.key});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: SafeArea(child: Text(text)));
+  }
+}
+
 /// Each call a [RouteAwarePage] gets from its [AutoRouteObserver], as
 /// `'<route name>.<call>'`, in order. Tests clear it before the steps they
 /// check.

@@ -6,6 +6,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
+import 'support/pages.dart';
 
 // navigate from a tab to a child route of the tabs host that is not one of
 // its tabs reports a failure instead of doing nothing.
@@ -37,17 +38,17 @@ void main() {
             NamedRouteDef(
               name: 'PagerPage1Route',
               path: 'page1',
-              builder: (_, _) => _page('Pager 1'),
+              builder: (_, _) => const TextPage('Pager 1'),
             ),
             NamedRouteDef(
               name: 'PagerPage2Route',
               path: 'page2',
-              builder: (_, _) => _page('Pager 2'),
+              builder: (_, _) => const TextPage('Pager 2'),
             ),
             NamedRouteDef(
               name: 'OtherExternalPageRoute',
               path: 'other',
-              builder: (_, _) => _page('Other'),
+              builder: (_, _) => const TextPage('Other'),
             ),
           ],
         ),
@@ -70,5 +71,3 @@ void main() {
     expect(find.text('Other'), findsNothing);
   });
 }
-
-Widget _page(String text) => Scaffold(body: SafeArea(child: Text(text)));

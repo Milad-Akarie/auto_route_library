@@ -4,14 +4,13 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
+import 'support/pages.dart';
 
 // Going back from the login page a logout redirected to never comes back to it.
 // flutter/flutter#135359
 // Headless test: auto_route/test/web/redirect_history_web_test.dart
-Widget _page(String name) => Scaffold(body: SafeArea(child: Text(name)));
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +31,7 @@ void main() {
           NamedRouteDef(
             name: 'HomeRoute',
             path: '/',
-            builder: (_, _) => _page('HomeRoute'),
+            builder: (_, _) => const TextPage('HomeRoute'),
           ),
           NamedRouteDef(
             name: 'Screen3Route',
@@ -48,12 +47,12 @@ void main() {
                 }
               }),
             ],
-            builder: (_, _) => _page('Screen3Route'),
+            builder: (_, _) => const TextPage('Screen3Route'),
           ),
           NamedRouteDef(
             name: 'SignInRoute',
             path: '/signin',
-            builder: (_, _) => _page('SignInRoute'),
+            builder: (_, _) => const TextPage('SignInRoute'),
           ),
         ],
       );

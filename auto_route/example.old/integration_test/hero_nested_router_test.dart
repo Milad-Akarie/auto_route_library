@@ -93,16 +93,25 @@ void _expectHeroInFlight() {
   expect(find.text('to'), findsOneWidget);
 }
 
-Widget _heroPage(String name, Alignment alignment) {
-  return Scaffold(
-    body: Align(
-      alignment: alignment,
-      child: Hero(
-        tag: 'box',
-        child: SizedBox(width: 50, height: 50, child: Text(name)),
+/// A page with a Hero box showing [name], placed at [alignment].
+class _HeroPage extends StatelessWidget {
+  const new(this.name, this.alignment);
+
+  final String name;
+  final Alignment alignment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Align(
+        alignment: alignment,
+        child: Hero(
+          tag: 'box',
+          child: SizedBox(width: 50, height: 50, child: Text(name)),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _FromRoute extends PageRouteInfo<void> {
@@ -111,7 +120,7 @@ class _FromRoute extends PageRouteInfo<void> {
   static const String name = 'FromRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (_) => _heroPage('from', .bottomLeft),
+    builder: (_) => const _HeroPage('from', .bottomLeft),
   );
 }
 
@@ -121,7 +130,7 @@ class _ToRoute extends PageRouteInfo<void> {
   static const String name = 'ToRoute';
   static PageInfo page = PageInfo(
     name,
-    builder: (_) => _heroPage('to', .topRight),
+    builder: (_) => const _HeroPage('to', .topRight),
   );
 }
 

@@ -6,13 +6,13 @@ import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
+import 'support/pages.dart';
 
 // A page popped while guards are reevaluated stays closed.
 // https://github.com/Milad-Akarie/auto_route_library/issues/1643
 // https://github.com/Milad-Akarie/auto_route_library/issues/1785
 // Headless test:
 // auto_route/test/reevaluatable_router/pop_while_reevaluating_test.dart
-Widget _page(String name) => Scaffold(body: SafeArea(child: Text(name)));
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +36,7 @@ void main() {
             NamedRouteDef(
               name: 'HomeRoute',
               path: '/',
-              builder: (_, _) => _page('HomeRoute'),
+              builder: (_, _) => const TextPage('HomeRoute'),
             ),
             NamedRouteDef(
               name: 'DialogRoute',
@@ -50,7 +50,7 @@ void main() {
                   resolver.next();
                 }),
               ],
-              builder: (_, _) => _page('DialogRoute'),
+              builder: (_, _) => const TextPage('DialogRoute'),
             ),
           ],
         );
@@ -102,13 +102,13 @@ void main() {
                 }
               }),
             ],
-            builder: (_, _) => _page('HomeRoute'),
+            builder: (_, _) => const TextPage('HomeRoute'),
           ),
           NamedRouteDef(
             name: 'AppGuardRoute',
             path: '/locked',
             type: RouteType.custom(opaque: false),
-            builder: (_, _) => _page('AppGuardRoute'),
+            builder: (_, _) => const TextPage('AppGuardRoute'),
           ),
         ],
       );

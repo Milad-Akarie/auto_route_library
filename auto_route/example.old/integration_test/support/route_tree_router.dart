@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'pages.dart';
+
 /// A router with a nested ShopRoute and a redirect, and no wildcard, so an
 /// unknown path fails.
 RootStackRouter buildRouteTreeRouter() => .build(
@@ -8,7 +10,7 @@ RootStackRouter buildRouteTreeRouter() => .build(
     NamedRouteDef(
       name: 'HomeRoute',
       path: '/',
-      builder: (_, _) => _page('Home'),
+      builder: (_, _) => const TextPage('Home'),
     ),
     NamedRouteDef.shell(
       name: 'ShopRoute',
@@ -17,12 +19,12 @@ RootStackRouter buildRouteTreeRouter() => .build(
         NamedRouteDef(
           name: 'ProductsRoute',
           path: '',
-          builder: (_, _) => _page('Products'),
+          builder: (_, _) => const TextPage('Products'),
         ),
         NamedRouteDef(
           name: 'ProductRoute',
           path: ':id',
-          builder: (_, _) => _page('Product'),
+          builder: (_, _) => const TextPage('Product'),
         ),
       ],
     ),
@@ -37,5 +39,3 @@ const kRouteTreeOfRouteTreeRouter =
     '│  ├─ /shop  ProductsRoute\n'
     '│  └─ /shop/:id  ProductRoute\n'
     '└─ /old-shop  → /shop';
-
-Widget _page(String text) => Scaffold(body: SafeArea(child: Text(text)));

@@ -6,6 +6,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'support/app.dart';
+import 'support/pages.dart';
 
 // replace with the route already on top, given other nested children, opens
 // those children.
@@ -35,12 +36,12 @@ void main() {
                   NamedRouteDef(
                     name: 'PendingRoute',
                     path: '',
-                    builder: (_, _) => _page('Pending'),
+                    builder: (_, _) => const TextPage('Pending'),
                   ),
                   NamedRouteDef(
                     name: 'DoneRoute',
                     path: 'done',
-                    builder: (_, _) => _page('Done'),
+                    builder: (_, _) => const TextPage('Done'),
                   ),
                 ],
               ),
@@ -79,5 +80,3 @@ void main() {
     },
   );
 }
-
-Widget _page(String text) => Scaffold(body: SafeArea(child: Text(text)));

@@ -97,19 +97,29 @@ void main() {
 var _popAttempts = 0;
 var _scopeAroundTabs = false;
 
-Widget _popScope(Widget child) => PopScope(
-  canPop: false,
-  onPopInvokedWithResult: (didPop, _) {
-    if (!didPop) _popAttempts++;
-  },
-  child: child,
-);
+/// Blocks every pop of [child] and counts the attempts in [_popAttempts].
+class _BlockingPopScope extends StatelessWidget {
+  const new({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _popAttempts++;
+      },
+      child: child,
+    );
+  }
+}
 
 final _tabsScreen = PageInfo(
   'TabsScreenRoute',
   builder: (_) {
     const tabs = AutoTabsRouter(routes: [_Route('TabA'), _Route('TabB')]);
-    return _scopeAroundTabs ? _popScope(tabs) : tabs;
+    return _scopeAroundTabs ? const _BlockingPopScope(child: tabs) : tabs;
   },
 );
 
@@ -118,7 +128,7 @@ final _stackTab = PageInfo('TabB', builder: (_) => const AutoRouter());
 PageInfo _tab(String name) => .new(name, builder: (_) => Text(name));
 
 PageInfo _guarded(String name) =>
-    .new(name, builder: (_) => _popScope(Text(name)));
+    .new(name, builder: (_) => _BlockingPopScope(child: Text(name)));
 
 class _Route extends PageRouteInfo<void> {
   const new(super.name);
