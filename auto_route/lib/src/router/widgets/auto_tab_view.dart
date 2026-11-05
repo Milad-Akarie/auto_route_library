@@ -19,17 +19,17 @@ class AutoTabView extends StatefulWidget {
 
   const new({
     required this.controller,
-    required this.router,
+    required this._router,
     super.key,
-    this.physics,
-    this.lazyLoad = true,
-    this.scrollDirection = Axis.horizontal,
-    this.dragStartBehavior = DragStartBehavior.start,
+    this._physics,
+    this._lazyLoad = true,
+    this._scrollDirection = Axis.horizontal,
+    this._dragStartBehavior = DragStartBehavior.start,
   });
 
   /// The scroll direction of the [PageView]
   /// see [PageView.scrollDirection]
-  final Axis scrollDirection;
+  final Axis _scrollDirection;
 
   /// The page controller used by [PageView]
   /// see [PageView.controller]
@@ -37,7 +37,7 @@ class AutoTabView extends StatefulWidget {
 
   /// An object that controllers what page to display
   /// and navigates from one page to another
-  final TabsRouter router;
+  final TabsRouter _router;
 
   /// How the page view should respond to user input.
   ///
@@ -48,10 +48,10 @@ class AutoTabView extends StatefulWidget {
   /// [PageScrollPhysics] prior to being used.
   ///
   /// Defaults to matching platform conventions.
-  final ScrollPhysics? physics;
+  final ScrollPhysics? _physics;
 
   /// {@macro flutter.widgets.scrollable.dragStartBehavior}
-  final DragStartBehavior dragStartBehavior;
+  final DragStartBehavior _dragStartBehavior;
 
   /// Whether each tab's page is built only once the tab is first shown.
   ///
@@ -60,7 +60,7 @@ class AutoTabView extends StatefulWidget {
   /// observers hear of every tab through
   /// [AutoRouterObserver.didInitTabRoute] at once. A tab whose route doesn't
   /// `maintainState` is still dropped when another tab shows.
-  final bool lazyLoad;
+  final bool _lazyLoad;
 
   @override
   State<AutoTabView> createState() => AutoTabViewState();
@@ -79,7 +79,7 @@ class AutoTabViewState extends State<AutoTabView> {
   // Tabs a drag loaded before they were opened; observers have not heard of them.
   final _draggedInTabs = <LocalKey>{};
 
-  TabsRouter get _router => widget.router;
+  TabsRouter get _router => widget._router;
 
   // If the TabBarView is rebuilt with a new tab controller, the caller should
   // dispose the old one. In that case the old controller's animation will be
@@ -180,7 +180,7 @@ class AutoTabViewState extends State<AutoTabView> {
           excluding: !isActive,
           child: KeepAliveTab(
             key: _tabKeys.putIfAbsent(stack[index].routeData.matchId, GlobalKey.new),
-            initiallyLoaded: isActive || !widget.lazyLoad,
+            initiallyLoaded: isActive || !widget._lazyLoad,
             page: stack[index],
           ),
         ),
@@ -338,12 +338,12 @@ class AutoTabViewState extends State<AutoTabView> {
       },
       child: EagerPageView(
         cacheExtent: _children.length,
-        scrollDirection: widget.scrollDirection,
-        dragStartBehavior: widget.dragStartBehavior,
+        scrollDirection: widget._scrollDirection,
+        dragStartBehavior: widget._dragStartBehavior,
         controller: _pageController,
-        physics: widget.physics == null
+        physics: widget._physics == null
             ? const PageScrollPhysics().applyTo(const ClampingScrollPhysics())
-            : const PageScrollPhysics().applyTo(widget.physics),
+            : const PageScrollPhysics().applyTo(widget._physics),
         children: _children,
       ),
     );

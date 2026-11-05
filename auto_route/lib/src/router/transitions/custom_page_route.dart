@@ -6,18 +6,18 @@ import 'package:material_ui/material_ui.dart';
 class AutoPageRouteBuilder<T> extends PageRoute<T> {
   /// Default constructor
   new({
-    required this.child,
-    this.transitionBuilder,
+    required this._child,
+    this._transitionBuilder,
     this.transitionDuration = const Duration(milliseconds: 300),
     this.opaque = true,
     super.fullscreenDialog,
   });
 
   /// See `PageRouteBuilder.transitionBuilder`
-  final RouteTransitionsBuilder? transitionBuilder;
+  final RouteTransitionsBuilder? _transitionBuilder;
 
   /// The page to be displayed
-  final Widget child;
+  final Widget _child;
 
   @override
   Color? get barrierColor => null;
@@ -27,7 +27,7 @@ class AutoPageRouteBuilder<T> extends PageRoute<T> {
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
-    return child;
+    return _child;
   }
 
   @override
@@ -37,8 +37,8 @@ class AutoPageRouteBuilder<T> extends PageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    if (transitionBuilder != null) {
-      return transitionBuilder!(context, animation, secondaryAnimation, child);
+    if (_transitionBuilder != null) {
+      return _transitionBuilder(context, animation, secondaryAnimation, child);
     }
     final flutterTheme = flutterMaterialThemeOf(context);
     if (flutterTheme != null) {

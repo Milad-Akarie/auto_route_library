@@ -82,7 +82,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   ///
   /// With [lazyLoad] true, the default, each tab's page is built once the
   /// tab is first shown; with false, every tab's page is built with the
-  /// tabs. See [AutoTabView.lazyLoad].
+  /// tabs, as AutoTabView does with its own `lazyLoad`.
   const factory tabBar({
     Key? key,
     List<PageRouteInfo>? routes,
