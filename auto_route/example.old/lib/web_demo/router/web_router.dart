@@ -79,13 +79,13 @@ class WebAppRouter extends RootStackRouter {
 // ignore: avoid-unnecessary-stateful-widgets
 class MainWebPage extends StatefulWidget {
   /// All arguments are optional.
-  const new({super.key, this.navigate, this.showUserPosts});
+  const new({super.key, this.onNavigate, this.onShowUserPosts});
 
   /// Replaces the default of the button that opens user 2.
-  final VoidCallback? navigate;
+  final VoidCallback? onNavigate;
 
   /// Not used by this page.
-  final VoidCallback? showUserPosts;
+  final VoidCallback? onShowUserPosts;
 
   @override
   State<MainWebPage> createState() => _MainWebPageState();
@@ -105,7 +105,7 @@ class _MainWebPageState extends State<MainWebPage> {
               padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed:
-                    widget.navigate ??
+                    widget.onNavigate ??
                     () async {
                       await context.pushRoute(
                         UserRoute(
@@ -167,13 +167,13 @@ class UserProfilePage extends StatefulWidget {
   /// All arguments are optional.
   const new({
     super.key,
-    this.navigate,
+    this.onNavigate,
     @PathParam('userID') this.userId = -1,
     @queryParam this.likes = 0,
   });
 
   /// Replaces the default of the button that opens the favorite posts.
-  final VoidCallback? navigate;
+  final VoidCallback? onNavigate;
 
   /// The `likes` query parameter, 0 when the url has none.
   final int likes;
@@ -208,7 +208,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             MaterialButton(
               color: Colors.red,
               onPressed:
-                  widget.navigate ??
+                  widget.onNavigate ??
                   () {
                     unawaited(
                       context.pushRoute(const UserFavoritePostsRoute()),
@@ -364,11 +364,11 @@ class NotFoundScreen extends StatelessWidget {
 /// Lists all posts of a user, with buttons for the favorite posts and back.
 @RoutePage()
 class UserAllPostsPage extends StatelessWidget {
-  /// Takes [navigate].
-  const new({super.key, this.navigate});
+  /// Takes [onNavigate].
+  const new({super.key, this.onNavigate});
 
   /// Replaces the default action of both buttons.
-  final VoidCallback? navigate;
+  final VoidCallback? onNavigate;
 
   @override
   Widget build(BuildContext context) {
@@ -380,7 +380,7 @@ class UserAllPostsPage extends StatelessWidget {
             MaterialButton(
               color: Colors.red,
               onPressed:
-                  navigate ??
+                  onNavigate ??
                   () {
                     unawaited(
                       context.pushRoute(const UserFavoritePostsRoute()),
@@ -390,7 +390,7 @@ class UserAllPostsPage extends StatelessWidget {
             ),
             MaterialButton(
               color: Colors.red,
-              onPressed: navigate ?? () => context.back(),
+              onPressed: onNavigate ?? () => context.back(),
               child: const Text('back'),
             ),
           ],

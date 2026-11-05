@@ -8,9 +8,9 @@ import 'package:material_ui/material_ui.dart';
 /// [WidgetTester.restartAndRestore] rebuilds it from scratch with the saved
 /// restoration data; [router] is the router of the last start.
 class RestorableRouterApp extends StatefulWidget {
-  const new(this.buildRouter, {super.key});
+  const new(this.onBuildRouter, {super.key});
 
-  final RootStackRouter Function() buildRouter;
+  final RootStackRouter Function() onBuildRouter;
 
   static late RootStackRouter router;
 
@@ -22,7 +22,7 @@ class _RestorableRouterAppState extends State<RestorableRouterApp> {
   // Shared across a restart, so the restored app finds the same router.
   // ignore: dispose-fields
   late final RootStackRouter router = RestorableRouterApp.router = widget
-      .buildRouter();
+      .onBuildRouter();
 
   @override
   Widget build(BuildContext context) {

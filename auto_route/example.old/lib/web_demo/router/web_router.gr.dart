@@ -23,15 +23,15 @@ import 'package:material_ui/material_ui.dart' as _i7;
 class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
   MainWebRoute({
     _i5.Key? key,
-    _i5.VoidCallback? navigate,
-    _i5.VoidCallback? showUserPosts,
+    _i5.VoidCallback? onNavigate,
+    _i5.VoidCallback? onShowUserPosts,
     List<_i4.PageRouteInfo>? children,
   }) : super(
          MainWebRoute.name,
          args: MainWebRouteArgs(
            key: key,
-           navigate: navigate,
-           showUserPosts: showUserPosts,
+           onNavigate: onNavigate,
+           onShowUserPosts: onShowUserPosts,
          ),
          initialChildren: children,
        );
@@ -46,25 +46,25 @@ class MainWebRoute extends _i4.PageRouteInfo<MainWebRouteArgs> {
       );
       return _i1.MainWebPage(
         key: args.key,
-        navigate: args.navigate,
-        showUserPosts: args.showUserPosts,
+        onNavigate: args.onNavigate,
+        onShowUserPosts: args.onShowUserPosts,
       );
     },
   );
 }
 
 class MainWebRouteArgs {
-  const MainWebRouteArgs({this.key, this.navigate, this.showUserPosts});
+  const MainWebRouteArgs({this.key, this.onNavigate, this.onShowUserPosts});
 
   final _i5.Key? key;
 
-  final _i5.VoidCallback? navigate;
+  final _i5.VoidCallback? onNavigate;
 
-  final _i5.VoidCallback? showUserPosts;
+  final _i5.VoidCallback? onShowUserPosts;
 
   @override
   String toString() {
-    return 'MainWebRouteArgs{key: $key, navigate: $navigate, showUserPosts: $showUserPosts}';
+    return 'MainWebRouteArgs{key: $key, onNavigate: $onNavigate, onShowUserPosts: $onShowUserPosts}';
   }
 
   @override
@@ -72,12 +72,13 @@ class MainWebRouteArgs {
     if (identical(this, other)) return true;
     if (other is! MainWebRouteArgs) return false;
     return key == other.key &&
-        navigate == other.navigate &&
-        showUserPosts == other.showUserPosts;
+        onNavigate == other.onNavigate &&
+        onShowUserPosts == other.onShowUserPosts;
   }
 
   @override
-  int get hashCode => key.hashCode ^ navigate.hashCode ^ showUserPosts.hashCode;
+  int get hashCode =>
+      key.hashCode ^ onNavigate.hashCode ^ onShowUserPosts.hashCode;
 }
 
 /// generated route for
@@ -101,11 +102,11 @@ class NotFoundRoute extends _i4.PageRouteInfo<void> {
 class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
   UserAllPostsRoute({
     _i5.Key? key,
-    _i5.VoidCallback? navigate,
+    _i5.VoidCallback? onNavigate,
     List<_i4.PageRouteInfo>? children,
   }) : super(
          UserAllPostsRoute.name,
-         args: UserAllPostsRouteArgs(key: key, navigate: navigate),
+         args: UserAllPostsRouteArgs(key: key, onNavigate: onNavigate),
          initialChildren: children,
        );
 
@@ -117,32 +118,32 @@ class UserAllPostsRoute extends _i4.PageRouteInfo<UserAllPostsRouteArgs> {
       final args = data.argsAs<UserAllPostsRouteArgs>(
         orElse: () => const UserAllPostsRouteArgs(),
       );
-      return _i1.UserAllPostsPage(key: args.key, navigate: args.navigate);
+      return _i1.UserAllPostsPage(key: args.key, onNavigate: args.onNavigate);
     },
   );
 }
 
 class UserAllPostsRouteArgs {
-  const UserAllPostsRouteArgs({this.key, this.navigate});
+  const UserAllPostsRouteArgs({this.key, this.onNavigate});
 
   final _i5.Key? key;
 
-  final _i5.VoidCallback? navigate;
+  final _i5.VoidCallback? onNavigate;
 
   @override
   String toString() {
-    return 'UserAllPostsRouteArgs{key: $key, navigate: $navigate}';
+    return 'UserAllPostsRouteArgs{key: $key, onNavigate: $onNavigate}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! UserAllPostsRouteArgs) return false;
-    return key == other.key && navigate == other.navigate;
+    return key == other.key && onNavigate == other.onNavigate;
   }
 
   @override
-  int get hashCode => key.hashCode ^ navigate.hashCode;
+  int get hashCode => key.hashCode ^ onNavigate.hashCode;
 }
 
 /// generated route for
@@ -292,7 +293,7 @@ class UserPostsRouteArgs {
 class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
   UserProfileRoute({
     _i5.Key? key,
-    _i5.VoidCallback? navigate,
+    _i5.VoidCallback? onNavigate,
     int userId = -1,
     int likes = 0,
     List<_i4.PageRouteInfo>? children,
@@ -300,7 +301,7 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
          UserProfileRoute.name,
          args: UserProfileRouteArgs(
            key: key,
-           navigate: navigate,
+           onNavigate: onNavigate,
            userId: userId,
            likes: likes,
          ),
@@ -324,7 +325,7 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
       );
       return _i1.UserProfilePage(
         key: args.key,
-        navigate: args.navigate,
+        onNavigate: args.onNavigate,
         userId: args.userId,
         likes: args.likes,
       );
@@ -335,14 +336,14 @@ class UserProfileRoute extends _i4.PageRouteInfo<UserProfileRouteArgs> {
 class UserProfileRouteArgs {
   const UserProfileRouteArgs({
     this.key,
-    this.navigate,
+    this.onNavigate,
     this.userId = -1,
     this.likes = 0,
   });
 
   final _i5.Key? key;
 
-  final _i5.VoidCallback? navigate;
+  final _i5.VoidCallback? onNavigate;
 
   final int userId;
 
@@ -350,7 +351,7 @@ class UserProfileRouteArgs {
 
   @override
   String toString() {
-    return 'UserProfileRouteArgs{key: $key, navigate: $navigate, userId: $userId, likes: $likes}';
+    return 'UserProfileRouteArgs{key: $key, onNavigate: $onNavigate, userId: $userId, likes: $likes}';
   }
 
   @override
@@ -358,14 +359,14 @@ class UserProfileRouteArgs {
     if (identical(this, other)) return true;
     if (other is! UserProfileRouteArgs) return false;
     return key == other.key &&
-        navigate == other.navigate &&
+        onNavigate == other.onNavigate &&
         userId == other.userId &&
         likes == other.likes;
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^ navigate.hashCode ^ userId.hashCode ^ likes.hashCode;
+      key.hashCode ^ onNavigate.hashCode ^ userId.hashCode ^ likes.hashCode;
 }
 
 /// generated route for
