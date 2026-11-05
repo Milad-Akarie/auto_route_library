@@ -112,7 +112,7 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
 
     final isPartOfLibrary = _hasPartDirective(clazz, buildStep.primaryOutput);
 
-    final router = RouterConfigResolver().resolve(
+    final router = const RouterConfigResolver().resolve(
       annotation,
       buildStep.inputId,
       clazz,
