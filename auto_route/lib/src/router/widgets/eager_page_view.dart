@@ -4,7 +4,7 @@
 
 // Copied from Flutter: the code stays as Flutter wrote it, so the two can
 // still be compared line by line.
-// ignore_for_file: prefer_asserts_with_message, prefer-parentheses-with-if-null
+// ignore_for_file: prefer-parentheses-with-if-null
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/rendering.dart';
@@ -248,7 +248,7 @@ class _EagerPageViewState extends State<EagerPageView> {
   AxisDirection _getDirection(BuildContext context) {
     switch (widget.scrollDirection) {
       case .horizontal:
-        assert(debugCheckHasDirectionality(context));
+        assert(debugCheckHasDirectionality(context), 'A Directionality ancestor is required.');
         final textDirection = Directionality.of(context);
         final axisDirection = textDirectionToAxisDirection(textDirection);
         return widget.reverse ? flipAxisDirection(axisDirection) : axisDirection;

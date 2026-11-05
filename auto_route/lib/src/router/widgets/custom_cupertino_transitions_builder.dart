@@ -7,7 +7,7 @@
 
 // Copied from Flutter: the code stays as Flutter wrote it, so the two can
 // still be compared line by line.
-// ignore_for_file: prefer_asserts_with_message, prefer-dedicated-media-query-methods
+// ignore_for_file: prefer-dedicated-media-query-methods
 // ignore_for_file: avoid-unused-generics, avoid-collection-equality-checks
 
 import 'dart:math';
@@ -126,7 +126,7 @@ class CupertinoPageTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context));
+    assert(debugCheckHasDirectionality(context), 'A Directionality ancestor is required.');
     final textDirection = Directionality.of(context);
     return SlideTransition(
       position: _secondaryPositionAnimation,
@@ -187,7 +187,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context));
+    assert(debugCheckHasDirectionality(context), 'A Directionality ancestor is required.');
     final textDirection = Directionality.of(context);
     return SlideTransition(
       position: _secondaryPositionAnimation,
@@ -244,26 +244,26 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
   }
 
   void _handleDragStart(DragStartDetails details) {
-    assert(mounted);
-    assert(_backGestureController == null);
+    assert(mounted, 'The back gesture detector is no longer mounted.');
+    assert(_backGestureController == null, 'A back gesture is already in progress.');
     _backGestureController = widget.onStartPopGesture();
   }
 
   void _handleDragUpdate(DragUpdateDetails details) {
-    assert(mounted);
-    assert(_backGestureController != null);
+    assert(mounted, 'The back gesture detector is no longer mounted.');
+    assert(_backGestureController != null, 'No back gesture is in progress.');
     _backGestureController!.dragUpdate(_convertToLogical(details.primaryDelta! / context.size!.width));
   }
 
   void _handleDragEnd(DragEndDetails details) {
-    assert(mounted);
-    assert(_backGestureController != null);
+    assert(mounted, 'The back gesture detector is no longer mounted.');
+    assert(_backGestureController != null, 'No back gesture is in progress.');
     _backGestureController!.dragEnd(_convertToLogical(details.velocity.pixelsPerSecond.dx / context.size!.width));
     _backGestureController = null;
   }
 
   void _handleDragCancel() {
-    assert(mounted);
+    assert(mounted, 'The back gesture detector is no longer mounted.');
     // This can be called even if start is not called, paired with the "down" event
     // that we don't consider here.
     _backGestureController?.dragEnd(0);
@@ -285,7 +285,7 @@ class _CupertinoBackGestureDetectorState<T> extends State<_CupertinoBackGestureD
 
   @override
   Widget build(BuildContext context) {
-    assert(debugCheckHasDirectionality(context));
+    assert(debugCheckHasDirectionality(context), 'A Directionality ancestor is required.');
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
     var dragAreaWidth = Directionality.of(context) == .ltr
@@ -468,10 +468,13 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
           ? a
           : _CupertinoEdgeShadowDecoration._(aColors.map<Color>((color) => Color.lerp(null, color, 1.0 - t)!).toList());
     }
-    assert(bColors != null || aColors != null);
+    assert(bColors != null || aColors != null, 'At least one decoration has colors.');
     // If it ever becomes necessary, we could allow decorations with different
     // length' here, similarly to how it is handled in [LinearGradient.lerp].
-    assert(bColors == null || aColors == null || aColors.length == bColors.length);
+    assert(
+      bColors == null || aColors == null || aColors.length == bColors.length,
+      'Both decorations have the same number of colors.',
+    );
     return _CupertinoEdgeShadowDecoration._([
       for (int i = 0; i < bColors!.length; i += 1) Color.lerp(a._colors?[i], bColors[i], t)!,
     ]);
@@ -552,7 +555,7 @@ class _CupertinoEdgeShadowPainter extends BoxPainter {
     final bandWidth = shadowWidth / (colors.length - 1);
 
     final textDirection = configuration.textDirection;
-    assert(textDirection != null);
+    assert(textDirection != null, 'The shadow is painted for a text direction.');
     final double start;
     final double shadowDirection; // -1 for ltr, 1 for rtl.
     switch (textDirection!) {

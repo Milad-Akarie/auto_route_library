@@ -155,18 +155,13 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// throws an error if it does not find it
   static TabsRouter of(BuildContext context, {bool watch = false}) {
     final scope = TabsRouterScope.of(context, watch: watch);
-    // The check throws its own FlutterError.
-    // ignore: prefer_asserts_with_message
-    assert(() {
-      if (scope == null) {
-        throw FlutterError(
-          'AutoTabsRouter operation requested with a context that does not include an AutoTabsRouter.\n'
-          'The context used to retrieve the AutoTabsRouter must be that of a widget that '
-          'is a descendant of an AutoTabsRouter widget.',
-        );
-      }
-      return true;
-    }());
+    if (kDebugMode && scope == null) {
+      throw FlutterError(
+        'AutoTabsRouter operation requested with a context that does not include an AutoTabsRouter.\n'
+        'The context used to retrieve the AutoTabsRouter must be that of a widget that '
+        'is a descendant of an AutoTabsRouter widget.',
+      );
+    }
     return scope!.controller;
   }
 }
