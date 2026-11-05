@@ -49,16 +49,16 @@ void main() {
   }, timeout: .none);
 }
 
-/// Runs [body] against [matcher], reporting microseconds per run.
+/// Runs [onRun] against [matcher], reporting microseconds per run.
 class _Benchmark extends BenchmarkBase {
-  const _Benchmark(super.name, this.matcher, this.body);
+  const _Benchmark(super.name, this.matcher, this.onRun);
 
   final RouteMatcher matcher;
-  final Object? Function(RouteMatcher matcher) body;
+  final Object? Function(RouteMatcher matcher) onRun;
 
   @override
   void run() {
-    if (body(matcher) == null) throw StateError('$name matched nothing');
+    if (onRun(matcher) == null) throw StateError('$name matched nothing');
   }
 
   // One run per exercise, so the score is microseconds per run.

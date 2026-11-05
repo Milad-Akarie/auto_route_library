@@ -35,7 +35,7 @@ void main() {
           ),
           AutoRoute(
             path: '/editor',
-            page: PageInfo('EditorRoute', builder: (_) => _EditorPage(leave: leave)),
+            page: PageInfo('EditorRoute', builder: (_) => _EditorPage(onLeave: leave)),
           ),
         ],
       );
@@ -65,9 +65,9 @@ void main() {
 }
 
 class _EditorPage extends StatelessWidget {
-  const _EditorPage({required this.leave});
+  const _EditorPage({required this.onLeave});
 
-  final void Function(StackRouter) leave;
+  final void Function(StackRouter) onLeave;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,7 @@ class _EditorPage extends StatelessWidget {
               content: TextButton(
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
-                  leave(router);
+                  onLeave(router);
                 },
                 child: const Text('Discard'),
               ),

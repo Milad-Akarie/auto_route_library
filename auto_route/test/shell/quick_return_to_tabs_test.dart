@@ -50,9 +50,9 @@ void main() {
 }
 
 class _LoadingPage extends StatefulWidget {
-  const _LoadingPage(this.goHome);
+  const _LoadingPage(this.onGoHome);
 
-  final VoidCallback goHome;
+  final VoidCallback onGoHome;
 
   @override
   State<_LoadingPage> createState() => _LoadingPageState();
@@ -64,7 +64,7 @@ class _LoadingPageState extends State<_LoadingPage> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer(const Duration(milliseconds: 50), widget.goHome);
+    _timer = Timer(const Duration(milliseconds: 50), widget.onGoHome);
   }
 
   @override
