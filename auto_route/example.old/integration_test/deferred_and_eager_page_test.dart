@@ -14,8 +14,9 @@ void main() {
 
   group('deferred and eager page', () {
     // Steps: open the app on the deferred first page of
-    // lib/deferred/pages.dart, then push the second page of that
-    // file. Should: each page loads and shows; the app compiled at all.
+    // lib/deferred/deferred_first_page.dart, then push the second page of
+    // that library, which is a part of it. Should: each page loads and shows,
+    // and the app compiled at all.
     testWidgets('a deferred page and an eager page from one file both open', (
       tester,
     ) async {

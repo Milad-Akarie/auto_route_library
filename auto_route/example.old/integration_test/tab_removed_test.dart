@@ -52,12 +52,15 @@ void main() {
           await tester.pumpAndSettle();
           await tester.tap(find.text('Third: add one'));
           await tester.pumpAndSettle();
-          expect(find.text('Third taps: 1'), findsOneWidget);
+          final earlier1 = find.text('Third taps: 1').evaluate().length;
 
           await tester.tap(find.text('Remove second tab'));
           await tester.pumpAndSettle();
           expect(find.text('Second taps: 0'), findsNothing);
-          expect(find.text('Third taps: 1'), findsOneWidget);
+          expect(
+            (earlier1, find.text('Third taps: 1').evaluate().length),
+            (1, 1),
+          );
           _expectOnScreen(tester, find.text('Third taps: 1'));
 
           await tester.tap(find.text('Third: previous tab'));

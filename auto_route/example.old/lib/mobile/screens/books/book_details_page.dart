@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:example/data/db.dart';
+import 'package:example/data/books_db.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Shows one book, with a counter of reads that the user raises with a button.

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/mobile/router/app_router.gr.dart';
 import 'package:example/mobile/screens/home_page.dart';
-import 'package:example/mobile/screens/user-data/data_collector.dart';
+import 'package:example/mobile/screens/user-data/user_data.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Page of the profile tab with buttons that test navigation.

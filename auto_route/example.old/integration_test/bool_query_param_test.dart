@@ -75,12 +75,12 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.text('Flag true'), findsOneWidget);
+        final earlier1 = find.text('Flag true').evaluate().length;
 
         await tester.restartAndRestore();
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(find.text('Flag true'), findsOneWidget);
+        expect((earlier1, find.text('Flag true').evaluate().length), (1, 1));
       },
       skip: kIsWeb,
     );

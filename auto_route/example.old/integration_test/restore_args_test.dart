@@ -65,11 +65,11 @@ void main() {
         await pumpRestorableApp(tester, buildRouter);
         unawaited(RestorableRouterApp.router.push(_BookRoute(id: 7)));
         await tester.pumpAndSettle();
-        expect(find.text('Book 7'), findsOneWidget);
+        final earlier1 = find.text('Book 7').evaluate().length;
 
         await tester.restartAndRestore();
         await tester.pumpAndSettle();
-        expect(find.text('Book 7'), findsOneWidget);
+        expect((earlier1, find.text('Book 7').evaluate().length), (1, 1));
         await expectBrowserUrl('/book/7');
         await systemBack(tester);
         expect(find.text('HomeRoute'), findsOneWidget);

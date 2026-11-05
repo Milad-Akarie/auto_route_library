@@ -55,17 +55,20 @@ void main() {
         unawaited(router.navigate(const Tab2Route()));
         await tester.pumpAndSettle();
         await expectBrowserUrl('/tab2');
-        expect(find.text(Tab2Nested1Route.name), findsOneWidget);
+        final earlier2 = find.text(Tab2Nested1Route.name).evaluate().length;
 
         pressBrowserBack();
         await expectBrowserUrl('/');
         await tester.pumpAndSettle();
-        expect(find.text(Tab1Route.name), findsOneWidget);
+        final earlier1 = find.text(Tab1Route.name).evaluate().length;
 
         pressBrowserForward();
         await expectBrowserUrl('/tab2');
         await tester.pumpAndSettle();
-        expect(find.text(Tab2Nested1Route.name), findsOneWidget);
+        expect(
+          (earlier2, find.text(Tab2Nested1Route.name).evaluate().length),
+          (1, 1),
+        );
 
         typeBrowserUrl('/tab2/tab2Nested2');
         await expectBrowserUrl('/tab2/tab2Nested2');
@@ -75,7 +78,7 @@ void main() {
         typeBrowserUrl('/');
         await expectBrowserUrl('/');
         await tester.pumpAndSettle();
-        expect(find.text(Tab1Route.name), findsOneWidget);
+        expect((earlier1, find.text(Tab1Route.name).evaluate().length), (1, 1));
       },
       skip: !kIsWeb,
     );

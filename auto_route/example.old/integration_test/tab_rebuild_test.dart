@@ -45,14 +45,17 @@ void main() {
 
         await tester.tap(find.text('Go to second tab'));
         await tester.pumpAndSettle();
-        expect(find.text(_SecondTabRoute.name), findsOneWidget);
-        expect(router.urlState.path, '/second');
+        final earlier2 = find.text(_SecondTabRoute.name).evaluate().length;
+        final earlier1 = router.urlState.path;
 
         _layoutNotifier.value = !_layoutNotifier.value;
         await tester.pumpAndSettle();
         expect(find.text('Side panel'), findsOneWidget);
-        expect(find.text(_SecondTabRoute.name), findsOneWidget);
-        expect(router.urlState.path, '/second');
+        expect(
+          (earlier2, find.text(_SecondTabRoute.name).evaluate().length),
+          (1, 1),
+        );
+        expect((earlier1, router.urlState.path), ('/second', '/second'));
         await expectBrowserUrl('/second');
       },
     );

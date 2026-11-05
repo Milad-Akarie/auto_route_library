@@ -51,21 +51,33 @@ void main() {
       'stack',
       (tester) async {
         await pumpRouterApp(tester, router, reevaluationNotifier: authRepo);
-        expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
+        final earlier2 = router.stack.map((p) => p.name).toList();
 
         await tester.tap(find.text('Log In'));
         await tester.pumpAndSettle();
-        expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+        final earlier1 = router.stack.map((p) => p.name).toList();
         expect(find.text('Home Screen'), findsOneWidget);
         await expectBrowserUrl('/');
 
         await tester.tap(find.text('Log Out'));
         await tester.pumpAndSettle();
-        expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
+        expect(
+          [earlier2, router.stack.map((p) => p.name).toList()],
+          [
+            [_LoginRoute.name],
+            [_LoginRoute.name],
+          ],
+        );
 
         await tester.tap(find.text('Log In'));
         await tester.pumpAndSettle();
-        expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+        expect(
+          [earlier1, router.stack.map((p) => p.name).toList()],
+          [
+            [_HomeRoute.name],
+            [_HomeRoute.name],
+          ],
+        );
       },
     );
   });

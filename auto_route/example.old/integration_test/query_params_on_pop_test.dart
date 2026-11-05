@@ -26,7 +26,7 @@ void main() {
       'Popping a page restores the query params of the page underneath',
       (tester) async {
         await pumpRouterApp(tester, router, initialLink: '/?search=shoes');
-        expect(router.urlState.url, '/?search=shoes');
+        final earlier1 = router.urlState.url;
 
         unawaited(router.push(const SecondRoute()));
         await tester.pumpAndSettle();
@@ -35,7 +35,10 @@ void main() {
         router.pop();
         await tester.pumpAndSettle();
         expectCurrentPage(router, FirstRoute.name);
-        expect(router.urlState.url, '/?search=shoes');
+        expect(
+          (earlier1, router.urlState.url),
+          ('/?search=shoes', '/?search=shoes'),
+        );
         await expectBrowserUrl('/?search=shoes');
       },
     );

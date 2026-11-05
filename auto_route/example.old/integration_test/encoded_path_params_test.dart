@@ -34,7 +34,7 @@ void main() {
         await pumpRouterAppWithConfig(tester, router);
         unawaited(router.push(_FileRoute(name: 'reports/2024')));
         await tester.pumpAndSettle();
-        expect(find.text('File reports/2024'), findsOneWidget);
+        final earlier1 = find.text('File reports/2024').evaluate().length;
         const encoded = '/files/reports%2F2024';
         expect(router.urlState.uri.toString(), encoded);
         await expectBrowserUrl(encoded);
@@ -42,7 +42,10 @@ void main() {
         await tester.pumpWidget(const SizedBox());
         await pumpRouterApp(tester, buildRouter(), initialLink: encoded);
         expect(tester.takeException(), isNull);
-        expect(find.text('File reports/2024'), findsOneWidget);
+        expect(
+          (earlier1, find.text('File reports/2024').evaluate().length),
+          (1, 1),
+        );
       },
     );
   });

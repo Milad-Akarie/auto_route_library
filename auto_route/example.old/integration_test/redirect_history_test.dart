@@ -91,20 +91,29 @@ void main() {
       (tester) async {
         final router = buildRouter();
         await pumpRouterAppWithConfig(tester, router);
-        expect(router.stack.map((e) => e.routeData.name), ['RouteA']);
-        expect(router.canNavigateBack, isFalse);
+        final earlier2 = router.stack.map((e) => e.routeData.name).toList();
+        final wasBackPossible = router.canNavigateBack;
 
         await tester.tap(find.text('Go to Page C (replace)'));
         await tester.pumpAndSettle();
         await tester.tap(find.text('Go back'));
         await tester.pumpAndSettle();
-        expect(find.text('Go to Page C (replace)'), findsOneWidget);
-        expect(router.canNavigateBack, isFalse);
+        final earlier1 = find.text('Go to Page C (replace)').evaluate().length;
+        expect((wasBackPossible, router.canNavigateBack), (false, false));
 
         router.back();
         await tester.pumpAndSettle();
-        expect(router.stack.map((e) => e.routeData.name), ['RouteA']);
-        expect(find.text('Go to Page C (replace)'), findsOneWidget);
+        expect(
+          [earlier2, router.stack.map((e) => e.routeData.name).toList()],
+          [
+            ['RouteA'],
+            ['RouteA'],
+          ],
+        );
+        expect(
+          (earlier1, find.text('Go to Page C (replace)').evaluate().length),
+          (1, 1),
+        );
       },
       skip: kIsWeb,
     ); // on web, back() moves the browser's own history; see auto_route/test/web/redirect_history_web_test.dart

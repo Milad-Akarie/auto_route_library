@@ -50,7 +50,7 @@ void main() {
           ],
         );
         await pumpRouterApp(tester, router, initialLink: '/reports/sales');
-        expect(find.text('SalesRoute'), findsOneWidget);
+        final earlier1 = find.text('SalesRoute').evaluate().length;
         await expectBrowserUrl('/reports/sales');
 
         final salesRouter = tester.element(find.text('SalesRoute')).router;
@@ -62,7 +62,7 @@ void main() {
 
         salesRouter.pop();
         await tester.pumpAndSettle();
-        expect(find.text('SalesRoute'), findsOneWidget);
+        expect((earlier1, find.text('SalesRoute').evaluate().length), (1, 1));
         expect(router.urlState.url, '/reports/sales');
         await expectBrowserUrl('/reports/sales');
       });

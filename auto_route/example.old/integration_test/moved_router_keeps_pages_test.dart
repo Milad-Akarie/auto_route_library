@@ -57,19 +57,22 @@ void main() {
 
         await tester.tap(find.text('Message 2'));
         await tester.pumpAndSettle();
-        expect(find.text('Showing message 2'), findsOneWidget);
-        expect(find.text('Message 1'), findsOneWidget);
+        final earlier2 = find.text('Showing message 2').evaluate().length;
+        final earlier1 = find.text('Message 1').evaluate().length;
         await expectBrowserUrl('/mail/2');
 
         tester.view.physicalSize = const Size(400, 700);
         await tester.pumpAndSettle();
-        expect(find.text('Showing message 2'), findsOneWidget);
+        expect(
+          (earlier2, find.text('Showing message 2').evaluate().length),
+          (1, 1),
+        );
         expect(find.text('Message 1'), findsNothing);
         expect(router.currentPath, '/mail/2');
         await expectBrowserUrl('/mail/2');
 
         await systemBack(tester);
-        expect(find.text('Message 1'), findsOneWidget);
+        expect((earlier1, find.text('Message 1').evaluate().length), (1, 1));
         expect(router.currentPath, '/mail');
         await expectBrowserUrl('/mail');
       },

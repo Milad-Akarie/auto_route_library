@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:material_ui/material_ui.dart';
 
+part 'deferred_second_page.dart';
+
 // Two pages in one library, only the first asking to load on demand. Dart
 // defers a whole library, so the generated router loads both on demand.
 
@@ -16,16 +18,4 @@ class DeferredFirstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       const Scaffold(body: Text('First page'));
-}
-
-/// A page in the same library as [DeferredFirstPage], without its own request
-/// for deferred loading.
-@RoutePage()
-class DeferredSecondPage extends StatelessWidget {
-  /// Creates the page, which shows a fixed text.
-  const new({super.key});
-
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Text('Second page'));
 }

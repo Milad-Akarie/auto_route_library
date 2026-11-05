@@ -59,7 +59,7 @@ void main() {
           tester,
           router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
         );
-        expect(router.urlState.url, '/patients');
+        final earlier1 = router.urlState.url;
         await expectBrowserUrl('/patients');
 
         await tester.tap(find.text('Push patient'));
@@ -71,7 +71,7 @@ void main() {
         await tester.tap(find.byType(BackButton));
         await tester.pumpAndSettle();
         expect(find.text(_PatientsListRoute.name), findsOneWidget);
-        expect(router.urlState.url, '/patients');
+        expect((earlier1, router.urlState.url), ('/patients', '/patients'));
         await expectBrowserUrl('/patients');
       },
     );

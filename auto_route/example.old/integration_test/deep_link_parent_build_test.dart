@@ -79,12 +79,18 @@ void main() {
           'ParentRoute',
           'ChildRoute',
         ]);
-        expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
+        final earlier1 = builds;
 
         router.pop();
         await tester.pumpAndSettle();
         expect(find.text('ParentRoute'), findsOneWidget);
-        expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
+        expect(
+          [earlier1, builds],
+          [
+            {'ParentRoute': 1, 'ChildRoute': 1},
+            {'ParentRoute': 1, 'ChildRoute': 1},
+          ],
+        );
       },
     );
 

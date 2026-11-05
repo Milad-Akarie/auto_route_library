@@ -70,11 +70,12 @@ void main() {
       'lets the app close',
       (tester) async {
         final tabs = await pumpApp(tester);
-        expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isTrue));
+        final didSend = [await doesAndroidSendBackToFlutter()];
 
         await systemBack(tester);
         expectTab(tabs, 2);
-        expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isTrue));
+        didSend.add(await doesAndroidSendBackToFlutter());
+        expect(didSend, everyElement(anyOf(isNull, isTrue)));
         await systemBack(tester);
         expectTab(tabs, 0);
         expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));

@@ -77,7 +77,7 @@ void main() {
           RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
         );
         await tester.pumpAndSettle();
-        expect(find.text('InternalRoute'), findsOneWidget);
+        final earlier1 = find.text('InternalRoute').evaluate().length;
         await tapTab(tester, 'transitions');
 
         await tester.restartAndRestore();
@@ -86,7 +86,10 @@ void main() {
         await expectBrowserUrl('/bottom/transitions');
         await tapTab(tester, 'home');
         expect(find.text('HomeRoute'), findsNothing);
-        expect(find.text('InternalRoute'), findsOneWidget);
+        expect(
+          (earlier1, find.text('InternalRoute').evaluate().length),
+          (1, 1),
+        );
         await systemBack(tester);
         expect(find.text('HomeRoute'), findsOneWidget);
       },

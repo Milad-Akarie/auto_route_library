@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:collection/collection.dart';
-import 'package:example/mobile/router/router.dart';
-import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/mobile/router/app_router.dart';
+import 'package:example/mobile/router/app_router.gr.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -146,35 +146,5 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
             ],
           );
-  }
-}
-
-/// A page with a button that opens the home page.
-@RoutePage()
-class WelcomeScreen extends StatelessWidget {
-  /// Creates the page.
-  const new({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AutoLeadingButton.builder(
-      builder: (context, leading) {
-        return Scaffold(
-          appBar: AppBar(
-            leading: leading,
-            title: const Text('Welcome'),
-            centerTitle: false,
-          ),
-          body: Center(
-            child: ElevatedButton(
-              child: const Text('Dashboard'),
-              onPressed: () {
-                unawaited(context.pushRoute(const HomeRoute()));
-              },
-            ),
-          ),
-        );
-      },
-    );
   }
 }

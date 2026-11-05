@@ -57,12 +57,12 @@ void main() {
         expect(nested.activeGuardObserver.guardInProgress, isTrue);
 
         await systemBack(tester);
-        expect(find.text('HomeRoute'), findsOneWidget);
+        final earlier1 = find.text('HomeRoute').evaluate().length;
         expect(observers.undisposed, 0);
         guard.release.complete();
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(find.text('HomeRoute'), findsOneWidget);
+        expect((earlier1, find.text('HomeRoute').evaluate().length), (1, 1));
       },
     );
   });

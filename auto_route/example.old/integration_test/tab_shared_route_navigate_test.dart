@@ -74,7 +74,7 @@ void main() {
         expect(find.text(_Test2Route.name), findsOneWidget);
         expect(router.urlState.url, '/dashboard/tests/test2');
         await expectBrowserUrl('/dashboard/tests/test2');
-        expect(tabStacks(router), [_Test1Route.name, _Test2Route.name, '-']);
+        final earlier1 = tabStacks(router);
 
         await tester.tap(find.text('Third'));
         await tester.pumpAndSettle();
@@ -83,7 +83,13 @@ void main() {
         expect(find.text(_Test1Route.name), findsOneWidget);
         expect(router.urlState.url, '/dashboard/tests/test1');
         await expectBrowserUrl('/dashboard/tests/test1');
-        expect(tabStacks(router), [_Test1Route.name, _Test2Route.name, '-']);
+        expect(
+          [earlier1, tabStacks(router)],
+          [
+            [_Test1Route.name, _Test2Route.name, '-'],
+            [_Test1Route.name, _Test2Route.name, '-'],
+          ],
+        );
       },
     );
 

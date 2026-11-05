@@ -56,7 +56,7 @@ void main() {
               navigatorObservers: () => [_PushRecorder(pushes)],
             ),
           );
-          expect(find.text('DashboardRoute'), findsOneWidget);
+          final earlier1 = find.text('DashboardRoute').evaluate().length;
 
           await tester.tap(find.text('Open cashless'));
           await tester.pumpAndSettle();
@@ -70,7 +70,10 @@ void main() {
             await tester.tap(find.byType(BackButton));
             await tester.pumpAndSettle();
           }
-          expect(find.text('DashboardRoute'), findsOneWidget);
+          expect(
+            (earlier1, find.text('DashboardRoute').evaluate().length),
+            (1, 1),
+          );
           expect(router.currentPath, '/dashboard');
           await expectBrowserUrl('/dashboard');
         },

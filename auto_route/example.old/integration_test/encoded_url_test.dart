@@ -35,14 +35,23 @@ void main() {
         router.push(_SecondsRoute(id: '123#456#789', query: '123#456#789')),
       );
       await tester.pumpAndSettle();
-      expect(find.text('id 123#456#789, query 123#456#789'), findsOneWidget);
+      final earlier1 = find
+          .text('id 123#456#789, query 123#456#789')
+          .evaluate()
+          .length;
       const encoded = '/seconds/123%23456%23789?query=123%23456%23789';
       expect(router.urlState.uri.toString(), encoded);
       await expectBrowserUrl(encoded);
 
       await tester.pumpWidget(const SizedBox());
       await pumpRouterApp(tester, buildRouter(), initialLink: encoded);
-      expect(find.text('id 123#456#789, query 123#456#789'), findsOneWidget);
+      expect(
+        (
+          earlier1,
+          find.text('id 123#456#789, query 123#456#789').evaluate().length,
+        ),
+        (1, 1),
+      );
     });
   });
 }

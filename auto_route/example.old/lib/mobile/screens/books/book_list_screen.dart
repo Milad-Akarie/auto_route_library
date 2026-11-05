@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:example/data/db.dart';
-import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/data/book.dart';
+import 'package:example/data/books_db.dart';
+import 'package:example/mobile/router/app_router.gr.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Lists all books and opens the details page of the one the user taps.

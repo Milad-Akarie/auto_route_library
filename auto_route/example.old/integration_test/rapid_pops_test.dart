@@ -59,7 +59,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      final earlier1 = tester.takeException();
       expect(stackNames(), ['VerifyRoute']);
 
       unawaited(
@@ -76,7 +76,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expect((earlier1, tester.takeException()), (null, null));
       expect(stackNames(), ['MainRoute']);
     });
 

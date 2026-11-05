@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:example/mobile/router/auth_guard.dart';
-import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/mobile/router/app_router.gr.dart';
+import 'package:example/mobile/router/auth_service.dart';
 import 'package:example/mobile/screens/profile/routes.dart';
 import 'package:material_ui/material_ui.dart';
 

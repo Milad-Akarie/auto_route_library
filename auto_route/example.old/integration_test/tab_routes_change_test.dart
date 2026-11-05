@@ -52,23 +52,29 @@ void main() {
           await tester.tap(find.text('First: add one'));
           await tester.tap(find.text('First: add one'));
           await tester.pumpAndSettle();
-          expect(find.text('First taps: 2'), findsOneWidget);
+          final earlier2 = find.text('First taps: 2').evaluate().length;
 
           await tester.tap(find.text('Go to second tab'));
           await tester.pumpAndSettle();
           await tester.tap(find.text('Second: add one'));
           await tester.pumpAndSettle();
-          expect(find.text('Second taps: 1'), findsOneWidget);
+          final earlier1 = find.text('Second taps: 1').evaluate().length;
           await tester.tap(find.text('Go to first tab'));
           await tester.pumpAndSettle();
 
           await tester.tap(find.text('Sign in'));
           await tester.pumpAndSettle();
-          expect(find.text('First taps: 2'), findsOneWidget);
+          expect(
+            (earlier2, find.text('First taps: 2').evaluate().length),
+            (1, 1),
+          );
 
           await tester.tap(find.text('Go to second tab'));
           await tester.pumpAndSettle();
-          expect(find.text('Second taps: 1'), findsOneWidget);
+          expect(
+            (earlier1, find.text('Second taps: 1').evaluate().length),
+            (1, 1),
+          );
 
           await tester.tap(find.text('Go to third tab'));
           await tester.pumpAndSettle();

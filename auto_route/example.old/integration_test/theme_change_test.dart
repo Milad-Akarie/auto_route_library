@@ -52,13 +52,13 @@ void main() {
         await tester.pumpAndSettle();
         unawaited(router.pushPath('/f'));
         await tester.pumpAndSettle();
-        expect(find.text('F'), findsOneWidget);
+        final earlier1 = find.text('F').evaluate().length;
 
         await tester.pumpWidget(app(.dark));
         await tester.pumpAndSettle();
 
         expect(router.topRoute.name, 'F');
-        expect(find.text('F'), findsOneWidget);
+        expect((earlier1, find.text('F').evaluate().length), (1, 1));
       },
     );
   });

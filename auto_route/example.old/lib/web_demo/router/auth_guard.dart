@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:example/web_demo/router/web_router.gr.dart';
-
-import 'package:example/web_demo/web_main.dart';
+import 'package:example/web_demo/auth_service.dart';
+import 'package:example/web_demo/router/web_app_router.gr.dart';
 
 /// Sends users who are not signed in to the web login page, and lets the others
 /// through.

@@ -21,7 +21,7 @@ void main() {
       (tester) async {
         final router = buildDeclarativePushRouter();
         await pumpRouterApp(tester, router);
-        expect(find.text('A'), findsOneWidget);
+        final earlier1 = find.text('A').evaluate().length;
 
         await expectLater(
           router.push(const NamedRoute('BRoute')),
@@ -38,7 +38,7 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.text('A'), findsOneWidget);
+        expect((earlier1, find.text('A').evaluate().length), (1, 1));
         expect(find.text('B'), findsNothing);
       },
     );

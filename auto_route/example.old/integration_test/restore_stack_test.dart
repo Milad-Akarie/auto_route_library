@@ -54,12 +54,12 @@ void main() {
         await tester.pumpAndSettle();
         unawaited(router.push(const NamedRoute('ExternalRoute')));
         await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
+        final earlier2 = tester.takeException();
 
         await tester.restartAndRestore();
         await tester.pumpAndSettle();
         router = RestorableRouterApp.router;
-        expect(tester.takeException(), isNull);
+        expect((earlier2, tester.takeException()), (null, null));
         expect(router.stack.map((page) => page.name), [
           'ExternalRoute',
           'ExternalRoute',
@@ -95,12 +95,12 @@ void main() {
         await tester.pumpAndSettle();
         unawaited(router.pushPath('item/8'));
         await tester.pumpAndSettle();
-        expect(find.text('Item 8'), findsOneWidget);
+        final earlier1 = find.text('Item 8').evaluate().length;
 
         await tester.restartAndRestore();
         await tester.pumpAndSettle();
         router = RestorableRouterApp.router;
-        expect(find.text('Item 8'), findsOneWidget);
+        expect((earlier1, find.text('Item 8').evaluate().length), (1, 1));
         expect(router.currentPath, '/shelf/item/8');
         await expectBrowserUrl('/shelf/item/8');
 

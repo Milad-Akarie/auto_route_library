@@ -27,7 +27,7 @@ void main() {
           final router = buildEagerTabsRouter(kind);
           await pumpRouterApp(tester, router);
 
-          expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
+          final earlier1 = eagerTabBuilds;
 
           router
               .innerRouterOf<TabsRouter>(kEagerTabsName)!
@@ -35,7 +35,13 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(find.text(kEagerLastTabName), findsOneWidget);
-          expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
+          expect(
+            [earlier1, eagerTabBuilds],
+            [
+              {for (final name in kEagerTabNames) name: 1},
+              {for (final name in kEagerTabNames) name: 1},
+            ],
+          );
         },
       );
     }

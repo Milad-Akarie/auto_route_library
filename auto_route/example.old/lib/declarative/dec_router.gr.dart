@@ -10,17 +10,21 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:auto_route/auto_route.dart' as _i2;
-import 'package:example/declarative/declarative.router.dart' as _i1;
-import 'package:material_ui/material_ui.dart' as _i3;
+import 'package:auto_route/auto_route.dart' as _i5;
+import 'package:example/declarative/age_input_screen.dart' as _i1;
+import 'package:example/declarative/main_screen.dart' as _i2;
+import 'package:example/declarative/name_input_screen.dart' as _i3;
+import 'package:example/declarative/profile.dart' as _i7;
+import 'package:example/declarative/result_screen.dart' as _i4;
+import 'package:material_ui/material_ui.dart' as _i6;
 
 /// generated route for
 /// [_i1.AgeInputScreen]
-class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
+class AgeInputRoute extends _i5.PageRouteInfo<AgeInputRouteArgs> {
   AgeInputRoute({
-    required _i3.ValueChanged<int> onAgeSubmitted,
-    _i3.Key? key,
-    List<_i2.PageRouteInfo>? children,
+    required _i6.ValueChanged<int> onAgeSubmitted,
+    _i6.Key? key,
+    List<_i5.PageRouteInfo>? children,
   }) : super(
          AgeInputRoute.name,
          args: AgeInputRouteArgs(onAgeSubmitted: onAgeSubmitted, key: key),
@@ -29,7 +33,7 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
 
   static const String name = 'AgeInputRoute';
 
-  static _i2.PageInfo page = _i2.PageInfo(
+  static _i5.PageInfo page = _i5.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AgeInputRouteArgs>();
@@ -44,9 +48,9 @@ class AgeInputRoute extends _i2.PageRouteInfo<AgeInputRouteArgs> {
 class AgeInputRouteArgs {
   const AgeInputRouteArgs({required this.onAgeSubmitted, this.key});
 
-  final _i3.ValueChanged<int> onAgeSubmitted;
+  final _i6.ValueChanged<int> onAgeSubmitted;
 
-  final _i3.Key? key;
+  final _i6.Key? key;
 
   @override
   String toString() {
@@ -65,28 +69,28 @@ class AgeInputRouteArgs {
 }
 
 /// generated route for
-/// [_i1.MainScreen]
-class MainRoute extends _i2.PageRouteInfo<void> {
-  const MainRoute({List<_i2.PageRouteInfo>? children})
+/// [_i2.MainScreen]
+class MainRoute extends _i5.PageRouteInfo<void> {
+  const MainRoute({List<_i5.PageRouteInfo>? children})
     : super(MainRoute.name, initialChildren: children);
 
   static const String name = 'MainRoute';
 
-  static _i2.PageInfo page = _i2.PageInfo(
+  static _i5.PageInfo page = _i5.PageInfo(
     name,
     builder: (data) {
-      return const _i1.MainScreen();
+      return const _i2.MainScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i1.NameInputScreen]
-class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
+/// [_i3.NameInputScreen]
+class NameInputRoute extends _i5.PageRouteInfo<NameInputRouteArgs> {
   NameInputRoute({
-    required _i3.ValueChanged<String> onNameSubmitted,
-    _i3.Key? key,
-    List<_i2.PageRouteInfo>? children,
+    required _i6.ValueChanged<String> onNameSubmitted,
+    _i6.Key? key,
+    List<_i5.PageRouteInfo>? children,
   }) : super(
          NameInputRoute.name,
          args: NameInputRouteArgs(onNameSubmitted: onNameSubmitted, key: key),
@@ -95,11 +99,11 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
 
   static const String name = 'NameInputRoute';
 
-  static _i2.PageInfo page = _i2.PageInfo(
+  static _i5.PageInfo page = _i5.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<NameInputRouteArgs>();
-      return _i1.NameInputScreen(
+      return _i3.NameInputScreen(
         onNameSubmitted: args.onNameSubmitted,
         key: args.key,
       );
@@ -110,9 +114,9 @@ class NameInputRoute extends _i2.PageRouteInfo<NameInputRouteArgs> {
 class NameInputRouteArgs {
   const NameInputRouteArgs({required this.onNameSubmitted, this.key});
 
-  final _i3.ValueChanged<String> onNameSubmitted;
+  final _i6.ValueChanged<String> onNameSubmitted;
 
-  final _i3.Key? key;
+  final _i6.Key? key;
 
   @override
   String toString() {
@@ -131,13 +135,13 @@ class NameInputRouteArgs {
 }
 
 /// generated route for
-/// [_i1.ResultScreen]
-class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
+/// [_i4.ResultScreen]
+class ResultRoute extends _i5.PageRouteInfo<ResultRouteArgs> {
   ResultRoute({
-    required _i1.Profile profile,
-    required _i3.VoidCallback onReset,
-    _i3.Key? key,
-    List<_i2.PageRouteInfo>? children,
+    required _i7.Profile profile,
+    required _i6.VoidCallback onReset,
+    _i6.Key? key,
+    List<_i5.PageRouteInfo>? children,
   }) : super(
          ResultRoute.name,
          args: ResultRouteArgs(profile: profile, onReset: onReset, key: key),
@@ -146,11 +150,11 @@ class ResultRoute extends _i2.PageRouteInfo<ResultRouteArgs> {
 
   static const String name = 'ResultRoute';
 
-  static _i2.PageInfo page = _i2.PageInfo(
+  static _i5.PageInfo page = _i5.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ResultRouteArgs>();
-      return _i1.ResultScreen(
+      return _i4.ResultScreen(
         profile: args.profile,
         onReset: args.onReset,
         key: args.key,
@@ -166,11 +170,11 @@ class ResultRouteArgs {
     this.key,
   });
 
-  final _i1.Profile profile;
+  final _i7.Profile profile;
 
-  final _i3.VoidCallback onReset;
+  final _i6.VoidCallback onReset;
 
-  final _i3.Key? key;
+  final _i6.Key? key;
 
   @override
   String toString() {

@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/auth_guard.dart';
-import 'package:example/mobile/router/router.dart';
-import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/mobile/router/app_router.dart';
+import 'package:example/mobile/router/app_router.gr.dart';
+import 'package:example/mobile/router/auth_service.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 

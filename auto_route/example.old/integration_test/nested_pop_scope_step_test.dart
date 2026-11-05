@@ -96,11 +96,11 @@ void main() {
 
           await back(tester);
           expectOnIdStep(isShowingForm: false);
-          expect(_popAttempts, 1);
+          final earlier1 = _popAttempts;
 
           await back(tester);
           expectOnWelcomeStep();
-          expect(_popAttempts, 1);
+          expect((earlier1, _popAttempts), (1, 1));
         },
       );
     }

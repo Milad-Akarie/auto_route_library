@@ -50,8 +50,8 @@ void main() {
           );
           unawaited(router.navigate(const _TabsRoute()));
           await tester.pumpAndSettle();
-          expect(find.text('Tab 1'), findsOneWidget);
-          expect(router.currentUrl, '/tabs/tab-1');
+          final earlier2 = find.text('Tab 1').evaluate().length;
+          final earlier1 = router.currentUrl;
           await expectBrowserUrl('/tabs/tab-1');
           await tester.tap(find.text('Show tab 2'));
           await tester.pumpAndSettle();
@@ -65,8 +65,8 @@ void main() {
             router.back();
           }
           await tester.pumpAndSettle();
-          expect(find.text('Tab 1'), findsOneWidget);
-          expect(router.currentUrl, '/tabs/tab-1');
+          expect((earlier2, find.text('Tab 1').evaluate().length), (1, 1));
+          expect((earlier1, router.currentUrl), ('/tabs/tab-1', '/tabs/tab-1'));
           expect(router.stack.map((p) => p.name), [
             _HomeRoute.name,
             _TabsRoute.name,

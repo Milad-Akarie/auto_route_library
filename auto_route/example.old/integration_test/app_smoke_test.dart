@@ -1,5 +1,5 @@
 import 'package:example/mobile/main.dart';
-import 'package:example/mobile/screens/books/book_list_page.dart';
+import 'package:example/mobile/screens/books/book_list_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 

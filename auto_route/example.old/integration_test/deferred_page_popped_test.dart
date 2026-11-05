@@ -49,7 +49,7 @@ void main() {
         // loads.
         await _pumpFor(tester, const Duration(seconds: 1));
         expect(find.byType(DeferredWidget), findsOneWidget);
-        expect(find.text('DeferredRoute'), findsNothing);
+        final earlier1 = find.text('DeferredRoute').evaluate().length;
 
         router.pop();
         await _pumpFor(tester, const Duration(seconds: 1));
@@ -57,7 +57,10 @@ void main() {
         library.complete();
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(find.text('DeferredRoute'), findsNothing);
+        expect(
+          (earlier1, find.text('DeferredRoute').evaluate().length),
+          (0, 0),
+        );
       },
     );
   });

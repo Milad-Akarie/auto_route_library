@@ -33,12 +33,12 @@ void main() {
       (tester) async {
         await pumpRouterApp(tester, router);
         expectCurrentPage(router, FirstRoute.name);
-        expect(router.urlState.url, '/');
+        final earlier2 = router.urlState.url;
 
         unawaited(router.navigate(const SecondRoute()));
         await tester.pumpAndSettle();
         expectCurrentPage(router, SecondRoute.name);
-        expect(router.navigationHistory.length, 2);
+        final earlier3 = router.navigationHistory.length;
 
         unawaited(router.navigate(const ThirdRoute()));
         await tester.pumpAndSettle();
@@ -48,7 +48,7 @@ void main() {
         router.pop();
         await tester.pumpAndSettle();
         expectCurrentPage(router, SecondRoute.name);
-        expect(router.navigationHistory.length, 2);
+        expect((earlier3, router.navigationHistory.length), (2, 2));
         expect(router.urlState.url, '/second-route');
 
         router.back();
@@ -56,7 +56,7 @@ void main() {
         expectCurrentPage(router, FirstRoute.name);
         expect(router.stack.map((p) => p.name), [FirstRoute.name]);
         expect(router.navigationHistory.length, 1);
-        expect(router.urlState.url, '/');
+        expect((earlier2, router.urlState.url), ('/', '/'));
         expect(router.canNavigateBack, isFalse);
       },
       skip: kIsWeb,
@@ -73,12 +73,12 @@ void main() {
         unawaited(router.pushAll([const SecondRoute(), const ThirdRoute()]));
         await tester.pumpAndSettle();
         expectCurrentPage(router, ThirdRoute.name);
-        expect(router.navigationHistory.length, 2);
+        final earlier1 = router.navigationHistory.length;
 
         router.pop();
         await tester.pumpAndSettle();
         expectCurrentPage(router, SecondRoute.name);
-        expect(router.navigationHistory.length, 2);
+        expect((earlier1, router.navigationHistory.length), (2, 2));
         expect(router.urlState.url, '/second-route');
 
         router.back();

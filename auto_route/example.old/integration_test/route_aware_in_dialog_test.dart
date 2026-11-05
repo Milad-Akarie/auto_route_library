@@ -29,12 +29,12 @@ void main() {
 
       await tester.tap(find.text('Open dialog'));
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      final earlier1 = tester.takeException();
       expect(find.text('Aware'), findsOneWidget);
 
       router.navigatorKey.currentState!.pop();
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expect((earlier1, tester.takeException()), (null, null));
       expectCurrentPage(router, _HomeRoute.name);
     });
   });

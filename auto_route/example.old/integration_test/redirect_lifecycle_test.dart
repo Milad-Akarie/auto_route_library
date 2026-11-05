@@ -146,20 +146,32 @@ void main() {
         await tap('Click to open Subscription Paywall Page');
         expect(find.text('SignIn Page'), findsOneWidget);
         await tap('Click to login');
-        expect(stack(), ['HomeRoute', 'SubscriptionPaywallRoute']);
+        final snapshots = {'afterLogin': stack()};
         await back();
-        expect(stack(), ['HomeRoute']);
+        snapshots['afterBack'] = stack();
         await tap('Click to open Profile Page');
         expect(find.text('Profile Page'), findsOneWidget);
         await tap('Click to logout');
-        expect(find.text('SignIn Page'), findsOneWidget);
+        final earlier2 = find.text('SignIn Page').evaluate().length;
         await back();
-        expect(stack(), ['HomeRoute']);
+        expect(
+          [snapshots['afterBack'], stack()],
+          [
+            ['HomeRoute'],
+            ['HomeRoute'],
+          ],
+        );
         await tap('Click to open Subscription Paywall Page');
-        expect(find.text('SignIn Page'), findsOneWidget);
+        expect((earlier2, find.text('SignIn Page').evaluate().length), (1, 1));
         await tap('Click to login');
 
-        expect(stack(), ['HomeRoute', 'SubscriptionPaywallRoute']);
+        expect(
+          [snapshots['afterLogin'], stack()],
+          [
+            ['HomeRoute', 'SubscriptionPaywallRoute'],
+            ['HomeRoute', 'SubscriptionPaywallRoute'],
+          ],
+        );
         expect(find.text('Subscription Paywall Page'), findsOneWidget);
       },
     );

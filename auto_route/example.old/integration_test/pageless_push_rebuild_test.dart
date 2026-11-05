@@ -35,11 +35,11 @@ void main() {
         await tester.tap(find.text('Open'));
         await tester.pumpAndSettle();
         expect(find.text('Not registered'), findsOneWidget);
-        expect(_HomePage.builds, 0);
+        final earlier1 = _HomePage.builds;
 
         await systemBack(tester);
         expect(find.text('Open'), findsOneWidget);
-        expect(_HomePage.builds, 0);
+        expect((earlier1, _HomePage.builds), (0, 0));
       },
     );
   });

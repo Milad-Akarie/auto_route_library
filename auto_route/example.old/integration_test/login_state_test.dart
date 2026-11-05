@@ -59,14 +59,14 @@ void main() {
           await tester.tap(find.text('Increment'));
           await tester.pumpAndSettle();
         }
-        expect(find.text('Counter 3'), findsOneWidget);
+        final earlier1 = find.text('Counter 3').evaluate().length;
         await tester.tap(find.text('Log out'));
         await tester.pumpAndSettle();
         expect(router.topRoute.name, _LoginPage.routeName);
         await tester.tap(find.text('Log in'));
         await tester.pumpAndSettle();
         expect(router.topRoute.name, _HomePage.routeName);
-        expect(find.text('Counter 3'), findsOneWidget);
+        expect((earlier1, find.text('Counter 3').evaluate().length), (1, 1));
       },
     );
   });

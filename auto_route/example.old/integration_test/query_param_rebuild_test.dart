@@ -70,8 +70,8 @@ void main() {
         await tester.pumpAndSettle();
         unawaited(router.navigatePath('/nested1/nested2?param=true'));
         await tester.pumpAndSettle();
-        expect(find.text('param true'), findsOneWidget);
-        expect(_ParamPageState.created, 1);
+        final earlier2 = find.text('param true').evaluate().length;
+        final earlier1 = _ParamPageState.created;
 
         setParentState(() => _ParamPageState.builds = 0);
         await tester.pumpAndSettle();
@@ -79,8 +79,8 @@ void main() {
 
         unawaited(tester.binding.reassembleApplication());
         await tester.pumpAndSettle();
-        expect(find.text('param true'), findsOneWidget);
-        expect(_ParamPageState.created, 1);
+        expect((earlier2, find.text('param true').evaluate().length), (1, 1));
+        expect((earlier1, _ParamPageState.created), (1, 1));
       },
     );
   });

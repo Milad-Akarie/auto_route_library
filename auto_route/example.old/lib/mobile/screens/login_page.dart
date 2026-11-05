@@ -1,5 +1,5 @@
 import 'package:auto_route/annotations.dart';
-import 'package:example/mobile/router/auth_guard.dart';
+import 'package:example/mobile/router/auth_service.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 

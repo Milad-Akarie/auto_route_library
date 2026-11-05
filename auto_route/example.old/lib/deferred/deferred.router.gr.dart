@@ -11,7 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'package:auto_route/auto_route.dart' as _i2;
-import 'package:example/deferred/pages.dart' deferred as _i1;
+import 'package:example/deferred/deferred_first_page.dart' deferred as _i1;
 
 /// generated route for
 /// [_i1.DeferredFirstPage]

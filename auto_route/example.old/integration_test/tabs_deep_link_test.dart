@@ -57,12 +57,15 @@ void main() {
         tester,
         router.config(reevaluateListenable: reevaluate),
       );
-      expect(find.text('AccountContentRoute'), findsOneWidget);
+      final earlier1 = find.text('AccountContentRoute').evaluate().length;
       await expectBrowserUrl('/profile/account');
 
       reevaluate.value++;
       await tester.pumpAndSettle();
-      expect(find.text('AccountContentRoute'), findsOneWidget);
+      expect(
+        (earlier1, find.text('AccountContentRoute').evaluate().length),
+        (1, 1),
+      );
       expect(router.urlState.url, '/profile/account');
       await expectBrowserUrl('/profile/account');
     });

@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/screens/user-data/data_collector.dart';
+import 'package:example/mobile/screens/user-data/settings_state.dart';
+import 'package:example/mobile/screens/user-data/user_data.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 

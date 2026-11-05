@@ -52,13 +52,13 @@ void main() {
           ],
         );
         await pumpRouterApp(tester, router);
-        expect(_ProvidedState.created, 1);
+        final earlier1 = _ProvidedState.created;
 
         await tester.tap(find.text('Push B'));
         await tester.pumpAndSettle();
         expectTopPage(router, 'BRoute');
         expect(router.stack.map((page) => page.name), ['ParentRoute']);
-        expect(_ProvidedState.created, 1);
+        expect((earlier1, _ProvidedState.created), (1, 1));
       },
     );
   });

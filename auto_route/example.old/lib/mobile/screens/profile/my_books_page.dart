@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:example/mobile/router/router.gr.dart';
+import 'package:example/mobile/router/app_router.gr.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Page of the profile tab with buttons that test navigation: to settings, back

@@ -43,11 +43,11 @@ void main() {
       'the leading button on the user page goes back to the home page',
       (tester) async {
         await pumpRouterApp(tester, router, reevaluationNotifier: authService);
-        expect(find.text('HomePage'), findsOneWidget);
+        final earlier1 = find.text('HomePage').evaluate().length;
         await openUserPage(tester);
 
         await tapBack(tester);
-        expect(find.text('HomePage'), findsOneWidget);
+        expect((earlier1, find.text('HomePage').evaluate().length), (1, 1));
         expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
       },
     );

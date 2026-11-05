@@ -41,7 +41,7 @@ void main() {
         await pumpRouterAppWithConfig(tester, router);
         unawaited(router.push(_BookRoute(bookId: 'some-id')));
         await tester.pumpAndSettle();
-        expect(find.text('Book some-id'), findsOneWidget);
+        final earlier1 = find.text('Book some-id').evaluate().length;
         unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
         await tester.pumpAndSettle();
         expect(find.text('Chapter some-id-2'), findsOneWidget);
@@ -56,7 +56,7 @@ void main() {
         }
         expect(tester.takeException(), isNull);
         expect(router.current.name, _BookRoute.name);
-        expect(find.text('Book some-id'), findsOneWidget);
+        expect((earlier1, find.text('Book some-id').evaluate().length), (1, 1));
       },
     );
 

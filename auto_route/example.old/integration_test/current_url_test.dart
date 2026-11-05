@@ -60,10 +60,10 @@ void main() {
         router.currentUrl,
         '/second-page?redirectTo=/first-page?redirectTo%3D/random-page',
       );
-      expect(
-        find.text('SecondRoute to /first-page?redirectTo=/random-page'),
-        findsOneWidget,
-      );
+      final earlier = find
+          .text('SecondRoute to /first-page?redirectTo=/random-page')
+          .evaluate()
+          .length;
       await expectBrowserUrl(
         '/second-page?redirectTo=%2Ffirst-page%3FredirectTo%3D%2Frandom-page',
       );
@@ -72,8 +72,14 @@ void main() {
       unawaited(router.navigatePath(url));
       await tester.pumpAndSettle();
       expect(
-        find.text('SecondRoute to /first-page?redirectTo=/random-page'),
-        findsOneWidget,
+        (
+          earlier,
+          find
+              .text('SecondRoute to /first-page?redirectTo=/random-page')
+              .evaluate()
+              .length,
+        ),
+        (1, 1),
       );
     });
   });
