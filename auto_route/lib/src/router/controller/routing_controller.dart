@@ -1932,13 +1932,10 @@ abstract class StackRouter extends RoutingController {
 
   Future<T?> _popUntilOrPushAll<T extends Object?>(
     List<RouteMatch<Object?>> matches, {
+    required Completer<void> pushed,
+    required ValueChanged<RouteMatch<Object?>> onLastRouteAdded,
     OnNavigationFailure? onFailure,
     bool isReevaluating = false,
-    // Optional: only a guard reevaluation passes them.
-    // ignore: avoid-unnecessary-nullable-parameters
-    Completer<void>? pushed,
-    // ignore: avoid-unnecessary-nullable-parameters
-    ValueChanged<RouteMatch<Object?>>? onLastRouteAdded,
   }) async {
     final kept = isReevaluating ? 0 : _keepPagesUnderTarget(matches);
     final toPush = kept == 0 ? matches : matches.sublist(kept);
