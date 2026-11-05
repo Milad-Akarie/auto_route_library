@@ -222,8 +222,8 @@ class ResultScreen extends StatelessWidget {
           padding: const .all(16),
           child: Column(
             children: [
-              Text('Name: ${profile.name}'),
-              Text('Age: ${profile.age}'),
+              Text('Name: ${profile.name ?? 'null'}'),
+              Text('Age: ${profile.age ?? 'null'}'),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: onReset,

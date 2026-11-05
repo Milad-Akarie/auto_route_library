@@ -94,8 +94,8 @@ class ProfilePageState extends State<ProfilePage> {
                   spacing: 24,
                   children: [
                     const Text('Your Data is complete'),
-                    Text('Name: ${userData!.name}'),
-                    Text('Favorite book: ${userData!.favoriteBook}'),
+                    Text('Name: ${userData!.name ?? 'null'}'),
+                    Text('Favorite book: ${userData!.favoriteBook ?? 'null'}'),
                   ],
                 ),
             ],

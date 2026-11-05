@@ -15,7 +15,7 @@ class BookListScreen extends StatelessWidget {
     final result = await context.pushRoute<String>(
       BookDetailsRoute(id: book.id),
     );
-    debugPrint('BookDetailsRoute result: $result');
+    debugPrint('BookDetailsRoute result: ${result ?? 'null'}');
   }
 
   @override

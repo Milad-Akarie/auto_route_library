@@ -81,7 +81,7 @@ class _SettingsPageState extends State<SettingsPage>
 
   @override
   void didInitTabRoute(TabPageRoute? previousRoute) {
-    debugPrint('init tab route from ${previousRoute?.name}');
+    debugPrint('init tab route from ${previousRoute?.name ?? 'null'}');
   }
 
   @override

@@ -239,13 +239,13 @@ class _NamesObserver extends AutoRouterObserver {
 
   @override
   void didPush(Route<Object?> route, Route<Object?>? previousRoute) =>
-      events.add('push ${route.settings.name}');
+      events.add('push ${route.settings.name ?? 'null'}');
 
   @override
   void didPop(Route<Object?> route, Route<Object?>? previousRoute) =>
-      events.add('pop ${route.settings.name}');
+      events.add('pop ${route.settings.name ?? 'null'}');
 
   @override
   void didRemove(Route<Object?> route, Route<Object?>? previousRoute) =>
-      events.add('remove ${route.settings.name}');
+      events.add('remove ${route.settings.name ?? 'null'}');
 }

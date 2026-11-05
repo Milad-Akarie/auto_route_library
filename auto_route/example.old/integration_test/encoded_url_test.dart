@@ -53,7 +53,7 @@ class _SecondsRoute extends PageRouteInfo<void> {
     name,
     builder: (data) => Text(
       'id ${data.inheritedPathParams.getString('id')}, query '
-      '${data.queryParams.optString('query')}',
+      '${data.queryParams.optString('query') ?? 'null'}',
     ),
   );
 }

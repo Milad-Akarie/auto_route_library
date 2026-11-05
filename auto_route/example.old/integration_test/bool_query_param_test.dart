@@ -18,7 +18,9 @@ void main() {
   final flagPage = PageInfo(
     'FlagRoute',
     builder: (data) => Scaffold(
-      body: Center(child: Text('Flag ${data.queryParams.optBool('f')}')),
+      body: Center(
+        child: Text('Flag ${data.queryParams.optBool('f') ?? 'null'}'),
+      ),
     ),
   );
 

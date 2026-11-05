@@ -136,7 +136,9 @@ class _MainWebPageState extends State<MainWebPage> {
                 child: AnimatedBuilder(
                   animation: context.router.navigationHistory,
                   builder: (context, _) {
-                    return Text('Update State: ${context.router.pathState}');
+                    return Text(
+                      'Update State: ${context.router.pathState ?? 'null'}',
+                    );
                   },
                 ),
               ),
@@ -337,7 +339,8 @@ class UserPageState extends State<UserPage> {
           builder: (context) {
             return Text(
               '${context.topRouteMatch.name} ${widget.id} query: '
-              '${widget.query}, fragment: ${widget.fragment}',
+              '${widget.query ?? 'null'}, fragment: '
+              '${widget.fragment ?? 'null'}',
             );
           },
         ),

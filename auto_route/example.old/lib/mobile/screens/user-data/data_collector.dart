@@ -29,7 +29,8 @@ class UserData {
 
   @override
   String toString() {
-    return 'UserData{name: $name, favoriteBook: $favoriteBook}';
+    return 'UserData{name: ${name ?? 'null'}, '
+        'favoriteBook: ${favoriteBook ?? 'null'}}';
   }
 
   /// Whether both the name and the favorite book are given.

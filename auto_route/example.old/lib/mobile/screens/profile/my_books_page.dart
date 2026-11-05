@@ -24,7 +24,7 @@ class MyBooksPage extends StatelessWidget {
           mainAxisAlignment: .center,
           children: [
             Text(
-              'My Books -> filter: $filter',
+              'My Books -> filter: ${filter ?? 'null'}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),

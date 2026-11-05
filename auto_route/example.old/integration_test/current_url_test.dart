@@ -84,6 +84,6 @@ class _RedirectingRoute extends PageRouteInfo<void> {
   static PageInfo pageFor(String name) => .new(
     name,
     builder: (data) =>
-        Text('$name to ${data.queryParams.optString('redirectTo')}'),
+        Text('$name to ${data.queryParams.optString('redirectTo') ?? 'null'}'),
   );
 }

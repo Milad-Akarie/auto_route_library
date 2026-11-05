@@ -42,7 +42,7 @@ void main() {
             name: 'InfoRoute',
             path: '/info',
             builder: (_, data) =>
-                TextPage('Info ${data.queryParams.optString('id')}'),
+                TextPage('Info ${data.queryParams.optString('id') ?? 'null'}'),
           ),
         ],
       );

@@ -33,5 +33,5 @@ class MfUserCartView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Scaffold(body: Text('Cart ${userCartType?.name}'));
+      Scaffold(body: Text('Cart ${userCartType?.name ?? 'null'}'));
 }

@@ -166,7 +166,7 @@ Future<void> systemBack(WidgetTester tester) async {
           .invokeMethod<void>('pressBack');
     } on PlatformException catch (error) {
       if (error.code != 'appWouldClose') rethrow;
-      fail('Android would close the app on back: ${error.message}');
+      fail('Android would close the app on back: ${error.message ?? 'null'}');
     }
     // The back reaches Flutter as a separate platform message; give it time to
     // arrive.

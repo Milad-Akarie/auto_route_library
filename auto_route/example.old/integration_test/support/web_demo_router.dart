@@ -172,8 +172,9 @@ class UserPage extends StatelessWidget {
         title: Builder(
           builder: (context) {
             return Text(
-              '${context.topRouteMatch.name} $id query: $query, fragment: '
-              '$fragment',
+              '${context.topRouteMatch.name} $id query: ${query ?? 'null'}, '
+              'fragment: '
+              '${fragment ?? 'null'}',
             );
           },
         ),

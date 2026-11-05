@@ -35,7 +35,9 @@ void main() {
               'ProductsRoute',
               builder: (data) => Scaffold(
                 body: SafeArea(
-                  child: Text('Tag ${data.queryParams.optString('tag')}'),
+                  child: Text(
+                    'Tag ${data.queryParams.optString('tag') ?? 'null'}',
+                  ),
                 ),
               ),
             ),

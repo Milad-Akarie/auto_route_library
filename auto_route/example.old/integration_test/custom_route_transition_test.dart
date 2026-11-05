@@ -25,7 +25,9 @@ void main() {
       final used = <String>{};
       RouteTransitionsBuilder recording(String builder) {
         return (context, animation, secondaryAnimation, child) {
-          used.add('$builder:${ModalRoute.of(context)!.settings.name}');
+          used.add(
+            '$builder:${ModalRoute.of(context)!.settings.name ?? 'null'}',
+          );
           return child;
         };
       }

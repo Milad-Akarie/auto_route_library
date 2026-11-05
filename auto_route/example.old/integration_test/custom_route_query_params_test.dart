@@ -36,7 +36,8 @@ void main() {
               builder: (data) => Scaffold(
                 body: SafeArea(
                   child: Text(
-                    'Products page ${data.queryParams.optString('page')}',
+                    'Products page '
+                    '${data.queryParams.optString('page') ?? 'null'}',
                   ),
                 ),
               ),
