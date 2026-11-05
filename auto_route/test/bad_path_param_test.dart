@@ -75,9 +75,7 @@ void main() {
   });
 }
 
-class _BookRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _BookRoute {
   static const String pageName = 'BookRoute';
   static final PageInfo page = PageInfo(
     pageName,
@@ -85,9 +83,7 @@ class _BookRoute extends PageRouteInfo<void> {
   );
 }
 
-class _PriceRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _PriceRoute {
   static const String pageName = 'PriceRoute';
   static final PageInfo page = PageInfo(
     pageName,
@@ -95,9 +91,7 @@ class _PriceRoute extends PageRouteInfo<void> {
   );
 }
 
-class _SearchRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _SearchRoute {
   static const String pageName = 'SearchRoute';
   static final PageInfo page = PageInfo(
     pageName,

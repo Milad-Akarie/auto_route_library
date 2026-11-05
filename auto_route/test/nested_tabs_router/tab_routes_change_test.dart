@@ -100,9 +100,7 @@ _TabsKind _tabsKind = .indexedStack;
 
 final ValueNotifier<bool> _signedInNotifier = ValueNotifier(false);
 
-class _TabsHostRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _TabsHostRoute {
   static const String name = '_TabsHostRoute';
   static final PageInfo page = PageInfo(
     name,

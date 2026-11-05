@@ -118,7 +118,7 @@ void main() {
     expect(browserSerialCount, start + 1);
 
     for (var i = 0; i < 3 && browserSerialCount > start; i++) {
-      await pressBackAndExpectFewerEntries(tester);
+      await _pressBackAndExpectFewerEntries(tester);
     }
     expect(tester.takeException(), isNull);
   });
@@ -175,13 +175,13 @@ void main() {
     expect(browserSerialCount, start + 1);
 
     for (var i = 0; i < 3 && browserSerialCount > start; i++) {
-      await pressBackAndExpectFewerEntries(tester);
+      await _pressBackAndExpectFewerEntries(tester);
     }
     expect(tester.takeException(), isNull);
   });
 }
 
-Future<void> pressBackAndExpectFewerEntries(WidgetTester tester) async {
+Future<void> _pressBackAndExpectFewerEntries(WidgetTester tester) async {
   final before = browserSerialCount;
   await pressBrowserBack(tester);
   expect(browserSerialCount, lessThan(before));

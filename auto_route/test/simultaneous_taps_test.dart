@@ -86,9 +86,7 @@ class _TwoButtons extends StatelessWidget {
   }
 }
 
-class _HomeRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _HomeRoute {
   static const String pageName = 'HomeRoute';
   static final PageInfo page = PageInfo(
     pageName,

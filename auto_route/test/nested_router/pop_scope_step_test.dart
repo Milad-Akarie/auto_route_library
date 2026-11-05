@@ -123,9 +123,7 @@ class _OnboardingRoute extends PageRouteInfo<void> {
   );
 }
 
-class _WelcomeStepRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _WelcomeStepRoute {
   static const String name = 'WelcomeStepRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Text(name));
 }

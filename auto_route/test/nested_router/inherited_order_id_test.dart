@@ -42,16 +42,12 @@ void main() {
   });
 }
 
-class _OrdersWrapperRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _OrdersWrapperRoute {
   static const String pageName = 'OrdersWrapperRoute';
   static final PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
 }
 
-class _OrdersRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _OrdersRoute {
   static const String pageName = 'OrdersRoute';
   static final PageInfo page = PageInfo(pageName, builder: (_) => const Text('Orders'));
 }

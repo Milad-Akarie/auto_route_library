@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'main_router.dart';
 import 'no_op.dart';
 
-class TestPage extends StatelessWidget {
+class _TestPage extends StatelessWidget {
   const new({super.key});
 
   @override
@@ -53,47 +53,47 @@ class SecondHostPage extends StatelessWidget {
 }
 
 @RoutePage()
-class SecondNested1Page extends TestPage {
+class SecondNested1Page extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class SecondNested2Page extends TestPage {
+class SecondNested2Page extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class SecondNested3Page extends TestPage {
+class SecondNested3Page extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class NotFoundPage extends TestPage {
+class NotFoundPage extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class FirstPage extends TestPage {
+class FirstPage extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class SecondPage extends TestPage {
+class SecondPage extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class ThirdPage extends TestPage {
+class ThirdPage extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class FourthPage extends TestPage {
+class FourthPage extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class Tab1Page extends TestPage {
+class Tab1Page extends _TestPage {
   const new({super.key});
 }
 
@@ -108,22 +108,22 @@ class Tab3Page extends AutoRouter {
 }
 
 @RoutePage()
-class Tab2Nested1Page extends TestPage {
+class Tab2Nested1Page extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class Tab2Nested2Page extends TestPage {
+class Tab2Nested2Page extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class Tab3Nested1Page extends TestPage {
+class Tab3Nested1Page extends _TestPage {
   const new({super.key});
 }
 
 @RoutePage()
-class Tab3Nested2Page extends TestPage {
+class Tab3Nested2Page extends _TestPage {
   const new({super.key});
 }
 

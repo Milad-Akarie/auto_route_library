@@ -69,9 +69,7 @@ void main() {
   });
 }
 
-class _HomeRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _HomeRoute {
   static const String pageName = 'HomeRoute';
   static final PageInfo page = PageInfo(pageName, builder: (_) => const Text('Home'));
 }

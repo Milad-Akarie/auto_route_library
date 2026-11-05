@@ -128,9 +128,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
-class _DashboardTabsRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _DashboardTabsRoute {
   static const String name = '_DashboardTabsRoute';
   static final PageInfo page = PageInfo(
     name,

@@ -33,9 +33,7 @@ void main() {
   });
 }
 
-class _HostRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HostRoute {
   static const name = 'HostRoute';
   static final page = PageInfo(name, builder: (_) => const _HostPage());
 }

@@ -71,9 +71,7 @@ void main() {
 
 void Function(StackRouter router) _fromSheet = ignoreArgument;
 
-class _HomeRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HomeRoute {
   static const String name = 'Home';
   static final PageInfo page = PageInfo(
     name,

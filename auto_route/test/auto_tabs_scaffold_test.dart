@@ -7,10 +7,10 @@ import 'main_router.dart';
 import 'router_test_utils.dart';
 
 void main() {
-  late TabsScaffoldRouter router;
+  late _TabsScaffoldRouter router;
 
   setUp(() {
-    router = TabsScaffoldRouter();
+    router = _TabsScaffoldRouter();
   });
 
   testWidgets('AutoTabsScaffold should show first tab by default', (tester) async {
@@ -43,7 +43,7 @@ void main() {
     final localRouter = RootStackRouter.build(
       routes: [
         AutoRoute(
-          page: TabsScaffoldDefaultRoute.page,
+          page: _TabsScaffoldDefaultRoute.page,
           initial: true,
           children: [
             AutoRoute(page: FirstRoute.page),
@@ -53,7 +53,7 @@ void main() {
       ],
     );
     await pumpRouterApp(tester, localRouter);
-    final tabsRouter = localRouter.innerRouterOf(TabsScaffoldDefaultRoute.name);
+    final tabsRouter = localRouter.innerRouterOf(_TabsScaffoldDefaultRoute.name);
     expect(tabsRouter, isA<TabsRouter>());
     expect(tabsRouter!.pageCount, 2);
     expect(tabsRouter.stackData.map((e) => e.name), [FirstRoute.name, SecondRoute.name]);
@@ -67,11 +67,11 @@ void main() {
       final localRouter = RootStackRouter.build(
         routes: [
           AutoRoute(
-            page: TabsScaffoldDefaultRoute.page,
+            page: _TabsScaffoldDefaultRoute.page,
             initial: true,
             children: [
               AutoRoute(page: FirstRoute.page),
-              AutoRoute(page: TabPageWithRequiredArgument.page),
+              AutoRoute(page: _TabPageWithRequiredArgument.page),
             ],
           ),
         ],
@@ -86,11 +86,11 @@ void main() {
 }
 
 // Router Configuration
-class TabsScaffoldRouter extends RootStackRouter {
+class _TabsScaffoldRouter extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
     AutoRoute(
-      page: TabsScaffoldRoute.page,
+      page: _TabsScaffoldRoute.page,
       initial: true,
       children: [
         AutoRoute(page: FirstRoute.page),
@@ -100,9 +100,7 @@ class TabsScaffoldRouter extends RootStackRouter {
   ];
 }
 
-class TabsScaffoldRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(TabsScaffoldRoute.name, initialChildren: children);
-
+abstract final class _TabsScaffoldRoute {
   static const String name = 'TabsScaffoldRoute';
   static final PageInfo page = PageInfo(
     name,
@@ -124,17 +122,13 @@ class TabsScaffoldRoute extends PageRouteInfo<void> {
   );
 }
 
-class TabsScaffoldDefaultRoute extends PageRouteInfo<void> {
-  const new() : super(TabsScaffoldDefaultRoute.name);
-
+abstract final class _TabsScaffoldDefaultRoute {
   static const String name = 'TabsScaffoldDefaultRoute';
   static final PageInfo page = PageInfo(name, builder: (data) => const AutoTabsScaffold());
 }
 
 // A test route whose page reads a required argument.
-class TabPageWithRequiredArgument extends PageRouteInfo<String> {
-  const new({required String argument}) : super(TabPageWithRequiredArgument.name, args: argument);
-
+abstract final class _TabPageWithRequiredArgument {
   static const String name = 'TabPageWithRequiredArgument';
   static final PageInfo page = PageInfo(
     name,

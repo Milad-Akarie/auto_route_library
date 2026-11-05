@@ -68,9 +68,7 @@ _TabsKind _tabsKind = .indexedStack;
 
 final ValueNotifier<bool> _extraNotifier = ValueNotifier(false);
 
-class _HostRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HostRoute {
   static const String name = '_HostRoute';
   static final PageInfo page = PageInfo(
     name,
@@ -99,9 +97,7 @@ class _NestedHostRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
-class _NestedFirstRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _NestedFirstRoute {
   static const String name = '_NestedFirstRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }

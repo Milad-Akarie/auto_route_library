@@ -86,9 +86,7 @@ final _routesNotifier = ValueNotifier<List<PageRouteInfo>>(_kInitialRoutes);
 
 final ValueNotifier<bool> _showTabsNotifier = ValueNotifier(true);
 
-class _TabsHostRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _TabsHostRoute {
   static const String name = '_TabsHostRoute';
   static final PageInfo page = PageInfo(
     name,

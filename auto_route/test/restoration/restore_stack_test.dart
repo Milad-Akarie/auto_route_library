@@ -19,7 +19,7 @@ void main() {
         page: const EmptyShellRoute('ShelfRoute'),
         children: [
           AutoRoute(page: page('ShelfListRoute'), initial: true),
-          AutoRoute(path: 'item/:id', page: itemPage),
+          AutoRoute(path: 'item/:id', page: _itemPage),
         ],
       ),
     ],
@@ -155,4 +155,4 @@ void main() {
   }, skip: kIsWeb);
 }
 
-final itemPage = PageInfo('ItemRoute', builder: (data) => Text('Item ${data.inheritedPathParams.getString('id')}'));
+final _itemPage = PageInfo('ItemRoute', builder: (data) => Text('Item ${data.inheritedPathParams.getString('id')}'));

@@ -8,17 +8,17 @@ import 'package:mockito/mockito.dart';
 import '../main_router.dart';
 import '../router_test_utils.dart';
 
-class MockOnNavigationListener extends Mock {
+class _MockOnNavigationListener extends Mock {
   void call(NavigationResolver? resolver, StackRouter router);
 }
 
 void main() {
   late ValueNotifier<bool> reevaluationNotifier;
   late RootStackRouter router;
-  late MockOnNavigationListener mockListener;
+  late _MockOnNavigationListener mockListener;
 
   setUp(() {
-    mockListener = MockOnNavigationListener();
+    mockListener = _MockOnNavigationListener();
     reevaluationNotifier = ValueNotifier(false);
     addTearDown(reevaluationNotifier.dispose);
     router = RootStackRouter.build(

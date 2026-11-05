@@ -11,14 +11,14 @@ import '../no_op.dart';
 void main() {
   // https://github.com/Milad-Akarie/auto_route_library/issues/1668
   // On a cold start from a link, iOS first hands the app '/' and then the
-  // link. The app opened the link's pages, then MainRoute came back on top
+  // link. The app opened the link's pages, then _MainRoute came back on top
   // of them once the guard of the first '/' navigation, still waiting,
   // called resolver.next().
   // Steps: an async deepLinkBuilder returns '/' as it is and turns
-  // '/info?id=1' into DeepLink([MainRoute, InfoRoute]); MainRoute's guard
+  // '/info?id=1' into DeepLink([_MainRoute, InfoRoute]); MainRoute's guard
   // waits 10 seconds the first time and 1 second after; the link comes while
   // the first wait runs.
-  // Should: the stack ends as [MainRoute, InfoRoute] with InfoRoute on screen.
+  // Should: the stack ends as [_MainRoute, InfoRoute] with InfoRoute on screen.
   testWidgets('A link that comes while the first page waits on its guard keeps its pages', (tester) async {
     var mainGuardCalls = 0;
     final router = RootStackRouter.build(
@@ -55,7 +55,7 @@ void main() {
         routerDelegate: router.delegate(
           deepLinkBuilder: (link) async {
             if (link.path != '/info') return link;
-            return DeepLink([const MainRoute(), NamedRoute('InfoRoute', queryParams: link.uri.queryParameters)]);
+            return DeepLink([const _MainRoute(), NamedRoute('InfoRoute', queryParams: link.uri.queryParameters)]);
           },
         ),
       ),
@@ -71,7 +71,7 @@ void main() {
   });
 }
 
-class MainRoute extends PageRouteInfo<void> {
+class _MainRoute extends PageRouteInfo<void> {
   const new() : super('MainRoute');
 }
 

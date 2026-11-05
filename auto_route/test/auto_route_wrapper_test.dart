@@ -5,17 +5,17 @@ import 'package:material_ui/material_ui.dart';
 import 'router_test_utils.dart';
 
 void main() {
-  late WrapperRouter router;
+  late _WrapperRouter router;
 
   setUp(() {
-    router = WrapperRouter();
+    router = _WrapperRouter();
   });
 
   Future<void> pumpRouter(WidgetTester tester) => pumpRouterApp(tester, router);
 
   testWidgets('WrappedRoute should wrap the child widget', (tester) async {
     await pumpRouter(tester);
-    expect(find.byType(WrapperPage), findsOneWidget);
+    expect(find.byType(_WrapperPage), findsOneWidget);
     expect(find.text('Wrapped'), findsOneWidget);
 
     // Verify the wrapper widget is present in the tree above the page content
@@ -28,7 +28,7 @@ void main() {
     expect(find.text('Wrapped'), findsOneWidget, reason: 'after final wrapperFinder = find.text(Wrapped)');
     expect(find.text('Page Content'), findsOneWidget);
 
-    // Verify structure: Column -> [Text('Wrapped'), Expanded -> WrapperPage -> Scaffold -> Text('Page Content')]
+    // Verify structure: Column -> [Text('Wrapped'), Expanded -> _WrapperPage -> Scaffold -> Text('Page Content')]
     final columnFinder = find.byType(Column);
     expect(columnFinder, findsOneWidget);
 
@@ -74,9 +74,7 @@ void main() {
   });
 }
 
-class _ParentRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _ParentRoute {
   static const String name = 'ParentRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const _ParentPage());
 }
@@ -124,20 +122,18 @@ class _AChild extends StatelessWidget {
 
 // Router Configuration
 
-class WrapperRouter extends RootStackRouter {
+class _WrapperRouter extends RootStackRouter {
   @override
-  List<AutoRoute> get routes => [AutoRoute(page: WrapperRoute.page, initial: true)];
+  List<AutoRoute> get routes => [AutoRoute(page: _WrapperRoute.page, initial: true)];
 }
 
-class WrapperRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(WrapperRoute.name, initialChildren: children);
-
+abstract final class _WrapperRoute {
   static const String name = 'WrapperRoute';
-  static final PageInfo page = PageInfo(name, builder: (data) => const WrappedRoute(child: WrapperPage()));
+  static final PageInfo page = PageInfo(name, builder: (data) => const WrappedRoute(child: _WrapperPage()));
 }
 
-class WrapperPage extends StatelessWidget implements AutoRouteWrapper {
-  const new({super.key});
+class _WrapperPage extends StatelessWidget implements AutoRouteWrapper {
+  const new();
 
   @override
   Widget build(BuildContext context) {

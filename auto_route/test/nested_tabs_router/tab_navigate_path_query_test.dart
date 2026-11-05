@@ -49,9 +49,7 @@ void main() {
   });
 }
 
-class _DashboardRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _DashboardRoute {
   static const String name = '_DashboardRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => AutoTabsRouter(routes: [_SettingsTab()]));
 }

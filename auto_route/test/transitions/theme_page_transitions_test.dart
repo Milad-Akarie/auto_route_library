@@ -214,9 +214,7 @@ class _RecordingTransitionsBuilder extends PageTransitionsBuilder {
   }
 }
 
-class _HomeRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
   static final PageInfo flutterPage = PageInfo(name, builder: (_) => const flutter.Scaffold(body: Text('Home')));

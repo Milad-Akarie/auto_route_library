@@ -122,9 +122,7 @@ void main() {
 
 const _kUsersShell = 'UsersSellRoute';
 
-class _BootRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _BootRoute {
   static const String name = 'BootRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }
@@ -136,9 +134,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: AutoRouter()));
 }
 
-class _TabsRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _TabsRoute {
   static const String name = 'TabsRoute';
   static final PageInfo page = PageInfo(
     name,
@@ -146,9 +142,7 @@ class _TabsRoute extends PageRouteInfo<void> {
   );
 }
 
-class _MetricsRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _MetricsRoute {
   static const String name = 'MetricsRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }

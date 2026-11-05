@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// The reporter's notifier of the login and subscription state.
-class GuardChangeNotifier extends ChangeNotifier {
+class _GuardChangeNotifier extends ChangeNotifier {
   bool connected = false;
   final bool hasProSubscription = false;
   void connect() {
@@ -33,7 +33,7 @@ void main() {
   testWidgets('Logging in after leaving an earlier redirect opens the route that redirected last (#2178)', (
     tester,
   ) async {
-    final n = GuardChangeNotifier();
+    final n = _GuardChangeNotifier();
     addTearDown(n.dispose);
     final login = AutoRouteGuard.simple((resolver, router) {
       if (n.connected) {

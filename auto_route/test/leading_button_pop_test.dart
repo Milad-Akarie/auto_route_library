@@ -88,9 +88,7 @@ void main() {
   });
 }
 
-class _HomeRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HomeRoute {
   static const String name = '_HomeRoute';
   static final PageInfo page = PageInfo(
     name,
@@ -127,9 +125,7 @@ class _UserRoute extends PageRouteInfo<void> {
   );
 }
 
-class _ProfileRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _ProfileRoute {
   static const String name = '_ProfileRoute';
   static final PageInfo page = PageInfo(
     name,

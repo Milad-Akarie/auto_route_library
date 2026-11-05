@@ -48,9 +48,7 @@ _TabsKind _tabsKind = .indexedStack;
 // The context of the AutoTabsRouter's builder, kept for the tab pages.
 late BuildContext _keptContext;
 
-class _TabsHostRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _TabsHostRoute {
   static const String name = '_TabsHostRoute';
   static final PageInfo page = PageInfo(
     name,

@@ -52,9 +52,7 @@ void main() {
   });
 }
 
-class _SplashRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _SplashRoute {
   static const String name = '_SplashRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text(name)));
 }

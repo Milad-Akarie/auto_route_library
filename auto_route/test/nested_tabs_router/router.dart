@@ -6,12 +6,12 @@ import '../main_router.dart';
 class NestedTabsRouter extends MainRouter {
   @override
   final List<AutoRoute> routes = [
-    AutoRoute(path: '/', page: TabsHostRoute.page, children: tabRoutes),
+    AutoRoute(path: '/', page: TabsHostRoute.page, children: _tabRoutes),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];
 }
 
-final tabRoutes = [
+final _tabRoutes = [
   AutoRoute(path: '', page: Tab1Route.page),
   AutoRoute(
     path: 'tab2',

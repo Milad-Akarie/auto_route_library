@@ -67,17 +67,12 @@ void main() {
   });
 }
 
-class _HomeRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _HomeRoute {
   static const String pageName = 'HomeRoute';
   static final PageInfo page = PageInfo(pageName, builder: (_) => const Text('Home'));
 }
 
-class _BusinessRoute extends PageRouteInfo<void> {
-  new({required String businessCustomId, List<PageRouteInfo>? children})
-    : super(pageName, rawPathParams: {'businessCustomId': businessCustomId}, initialChildren: children);
-
+abstract final class _BusinessRoute {
   static const String pageName = 'BusinessRoute';
   static final PageInfo page = PageInfo(
     pageName,
@@ -101,9 +96,7 @@ class _FinishOrderingRoute extends PageRouteInfo<void> {
   );
 }
 
-class _BookShellRoute extends PageRouteInfo<void> {
-  const new({List<PageRouteInfo>? children}) : super(pageName, initialChildren: children);
-
+abstract final class _BookShellRoute {
   static const String pageName = 'BookShellRoute';
   static final PageInfo page = PageInfo(pageName, builder: (_) => const AutoRouter());
 }

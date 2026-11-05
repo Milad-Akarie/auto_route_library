@@ -108,9 +108,7 @@ void main() {
   }, skip: kIsWeb);
 }
 
-class _DashboardRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _DashboardRoute {
   static const String name = '_DashboardRoute';
   static final PageInfo page = PageInfo(
     name,
@@ -118,9 +116,7 @@ class _DashboardRoute extends PageRouteInfo<void> {
   );
 }
 
-class _TestsRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _TestsRoute {
   static const String name = '_TestsRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }

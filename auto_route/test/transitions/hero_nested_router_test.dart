@@ -179,9 +179,7 @@ void _expectHeroInFlight(WidgetTester tester) {
   expect(position.dx, lessThan(size.width / 2), reason: 'the Hero should still be on its way right');
 }
 
-class _FromRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _FromRoute {
   static const String name = 'FromRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const HeroBoxPage('from', .bottomLeft));
 }
@@ -200,9 +198,7 @@ class _ShellRoute extends PageRouteInfo<void> {
   static const PageInfo page = .emptyShell(name);
 }
 
-class _HeroShellRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HeroShellRoute {
   static const String name = 'HeroShellRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const _HeroShell());
 }

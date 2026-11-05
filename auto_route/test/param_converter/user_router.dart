@@ -19,7 +19,7 @@ class UserId {
 }
 
 /// Reads a [UserId] from `u-` and its digits, and refuses any other text.
-class UserIdConverter extends ParamConverter<UserId> {
+class _UserIdConverter extends ParamConverter<UserId> {
   const new();
 
   @override
@@ -29,7 +29,7 @@ class UserIdConverter extends ParamConverter<UserId> {
   String toParam(UserId value) => 'u-${value.value}';
 }
 
-const kUserIdConverter = UserIdConverter();
+const _kUserIdConverter = _UserIdConverter();
 
 @AutoRouterConfig(replaceInRouteName: 'View,Route', generateForDir: ['test/param_converter'])
 class UserRouter extends RootStackRouter {
@@ -51,9 +51,9 @@ class UserHomeView extends StatelessWidget {
 @RoutePage()
 class UserProfileView extends StatelessWidget {
   const new({
-    @PathParam('id', kUserIdConverter) required this.id,
+    @PathParam('id', _kUserIdConverter) required this.id,
     super.key,
-    @QueryParam('by', kUserIdConverter) this.by,
+    @QueryParam('by', _kUserIdConverter) this.by,
   });
 
   final UserId id;

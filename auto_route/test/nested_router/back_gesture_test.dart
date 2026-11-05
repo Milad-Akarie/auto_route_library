@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 import '../main_router.dart';
 import '../router_test_utils.dart';
 
-class BackGestureRouter extends MainRouter {
+class _BackGestureRouter extends MainRouter {
   @override
   final List<AutoRoute> routes = [
     AutoRoute(path: '/', page: FirstRoute.page),
@@ -30,7 +30,7 @@ class BackGestureRouter extends MainRouter {
   ];
 }
 
-Future<void> pumpIosApp(WidgetTester tester, RootStackRouter router) {
+Future<void> _pumpIosApp(WidgetTester tester, RootStackRouter router) {
   return tester
       .pumpWidget(
         MaterialApp.router(
@@ -42,18 +42,18 @@ Future<void> pumpIosApp(WidgetTester tester, RootStackRouter router) {
       .then((_) => tester.pumpAndSettle());
 }
 
-Future<void> swipeBack(WidgetTester tester) {
+Future<void> _swipeBack(WidgetTester tester) {
   return tester.dragFrom(const Offset(2, 300), const Offset(500, 0)).then((_) => tester.pumpAndSettle());
 }
 
-Future<void> systemBack(WidgetTester tester) {
+Future<void> _systemBack(WidgetTester tester) {
   return tester.binding.handlePopRoute().then((_) => tester.pumpAndSettle());
 }
 
 void main() {
-  late BackGestureRouter router;
+  late _BackGestureRouter router;
   setUp(() {
-    router = BackGestureRouter();
+    router = _BackGestureRouter();
     addTearDown(router.dispose);
   });
 
@@ -82,30 +82,30 @@ void main() {
       await pumpRouterApp(tester, router);
       final nested = await pushSubRoute(tester);
 
-      await systemBack(tester);
+      await _systemBack(tester);
 
       expect(find.text(SecondNested3Route.name), findsNothing);
       expect(router.current.name, SecondHostRoute.name);
       expectTopPage(router, SecondNested1Route.name);
       expect(nested.stack.length, 1);
 
-      await systemBack(tester);
+      await _systemBack(tester);
 
       expectTopPage(router, FirstRoute.name);
     });
 
     testWidgets('iOS back swipe should pop only the sub-route, then the host route', (tester) async {
-      await pumpIosApp(tester, router);
+      await _pumpIosApp(tester, router);
       final nested = await pushSubRoute(tester);
 
-      await swipeBack(tester);
+      await _swipeBack(tester);
 
       expect(find.text(SecondNested3Route.name), findsNothing);
       expect(router.current.name, SecondHostRoute.name);
       expectTopPage(router, SecondNested1Route.name);
       expect(nested.stack.length, 1);
 
-      await swipeBack(tester);
+      await _swipeBack(tester);
 
       expectTopPage(router, FirstRoute.name);
     });
@@ -139,14 +139,14 @@ void main() {
       await pumpRouterApp(tester, router);
       await pushDeepRoutes(tester);
 
-      await expectBackSteps(tester, systemBack);
+      await expectBackSteps(tester, _systemBack);
     });
 
     testWidgets('iOS back swipe should pop one route at a time', (tester) async {
-      await pumpIosApp(tester, router);
+      await _pumpIosApp(tester, router);
       await pushDeepRoutes(tester);
 
-      await expectBackSteps(tester, swipeBack);
+      await expectBackSteps(tester, _swipeBack);
     });
   });
 }

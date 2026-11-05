@@ -53,9 +53,7 @@ void main() {
 // panel next to them.
 final ValueNotifier<bool> _layoutNotifier = ValueNotifier(false);
 
-class _TabsHostRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _TabsHostRoute {
   static const String name = '_TabsHostRoute';
   static final PageInfo page = PageInfo(
     name,

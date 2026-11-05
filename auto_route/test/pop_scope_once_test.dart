@@ -133,9 +133,7 @@ const _kMaybePopLabel = 'Go back';
 final _heard = <bool>[];
 var _canPop = true;
 
-class _ReportHomeRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _ReportHomeRoute {
   static const String name = 'ReportHomeRoute';
   static final PageInfo page = PageInfo(
     name,

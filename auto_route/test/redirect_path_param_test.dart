@@ -49,9 +49,7 @@ void main() {
   });
 }
 
-class _CmsRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _CmsRoute {
   static const String pageName = 'CmsRoute';
   static final PageInfo page = PageInfo(
     pageName,

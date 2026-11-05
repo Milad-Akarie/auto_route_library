@@ -60,9 +60,7 @@ void main() {
   });
 }
 
-class _HostRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HostRoute {
   static const String name = 'HostRoute';
   static final PageInfo page = PageInfo(
     name,

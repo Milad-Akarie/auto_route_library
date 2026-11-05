@@ -88,9 +88,7 @@ PageInfo _page(String name) => .new(name, builder: (_) => Text(name));
 
 PageInfo _shell(String name) => .new(name, builder: (_) => const AutoRouter());
 
-class _HomeRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Text('Home'));
 }

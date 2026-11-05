@@ -63,9 +63,7 @@ void main() {
   });
 }
 
-class _ProfileRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _ProfileRoute {
   static const String name = '_ProfileRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
 }
@@ -77,9 +75,7 @@ class _AddressesShellRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
-class _ListRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _ListRoute {
   static const String name = '_ListRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const LeadingButtonPage(name));
 }

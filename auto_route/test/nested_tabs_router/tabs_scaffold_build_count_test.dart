@@ -38,9 +38,7 @@ void main() {
 
 var _bottomNavigationBuilds = 0;
 
-class _NavigationRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _NavigationRoute {
   static const String name = '_NavigationRoute';
   static final PageInfo page = PageInfo(
     name,

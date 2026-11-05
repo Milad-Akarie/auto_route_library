@@ -36,9 +36,7 @@ void main() {
   });
 }
 
-class _ShopRoute extends PageRouteInfo<void> {
-  const new() : super(pageName);
-
+abstract final class _ShopRoute {
   static const String pageName = 'ShopRoute';
   static final PageInfo page = PageInfo(
     pageName,

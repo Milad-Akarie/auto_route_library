@@ -82,9 +82,7 @@ void main() {
   });
 }
 
-class _ShellRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _ShellRoute {
   static const String name = 'ShellRoute';
   static const PageInfo page = .emptyShell(name);
 }

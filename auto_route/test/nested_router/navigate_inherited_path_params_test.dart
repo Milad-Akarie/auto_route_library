@@ -108,9 +108,7 @@ class _VendorsRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
-class _VendorListRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _VendorListRoute {
   static const String name = 'VendorListRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Text('Vendors'));
 }

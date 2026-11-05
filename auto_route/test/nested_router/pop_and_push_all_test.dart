@@ -63,9 +63,7 @@ void main() {
   });
 }
 
-class _SplashRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _SplashRoute {
   static const String name = 'SplashRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Splash')));
 }
@@ -77,9 +75,7 @@ class _AppRouterRoute extends PageRouteInfo<void> {
   static final PageInfo page = PageInfo(name, builder: (_) => const AutoRouter());
 }
 
-class _HomeRoute extends PageRouteInfo<void> {
-  const new() : super(name);
-
+abstract final class _HomeRoute {
   static const String name = 'HomeRoute';
   static final PageInfo page = PageInfo(name, builder: (_) => const Scaffold(body: Text('Home')));
 }
