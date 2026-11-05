@@ -66,7 +66,7 @@ void main() {
     router.pop();
     router.pop();
     await tester.pumpAndSettle();
-    expect(find.text('ATab'), findsOneWidget);
+    expect(find.text('ATab'), findsOneWidget, reason: 'after router.pop()');
   });
 }
 

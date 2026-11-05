@@ -76,7 +76,7 @@ void main() {
 
     await pressBrowserBack(tester);
     expect(find.text('id 1, query a&b=c/d?e#f'), findsOneWidget);
-    expect(browserPath, encoded);
+    expect(browserPath, encoded, reason: 'after pressBrowserBack(tester)');
   });
 
   // flutter/flutter#186052: the browser's back button stopped working once a

@@ -56,7 +56,7 @@ void main() {
       tester.view.physicalSize = const Size(500, 800);
       count.value = 4;
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expect(tester.takeException(), isNull, reason: 'after count.value = 4');
       expect(tabs.pageCount, 4);
       expect(find.text('Tab2Route'), findsOneWidget);
     });

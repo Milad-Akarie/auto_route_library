@@ -70,7 +70,7 @@ void main() {
 
       signedIn.value = false;
       await tester.pumpAndSettle();
-      expect(tabs.pageCount, 2);
+      expect(tabs.pageCount, 2, reason: 'after signedIn.value = false');
       expect(tabs.stackData.map((e) => e.name), ['ATab', 'BTab']);
       expect(find.text('AccountTab'), findsNothing);
     });

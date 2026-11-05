@@ -65,7 +65,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(router.stack.map((page) => page.name), ['ARoute']);
       expect(find.text('ARoute'), findsOneWidget);
-      expect(created, 1);
+      expect(created, 1, reason: 'after router.maybePop()');
     });
   }
 }

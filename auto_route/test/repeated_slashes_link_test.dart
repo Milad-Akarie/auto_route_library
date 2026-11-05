@@ -37,7 +37,7 @@ void main() {
 
     final running = await pumpAtLink(tester, '/');
     await sendPlatformLink(tester, '/items//1//');
-    expect(find.text('Item 1'), findsOneWidget);
+    expect(find.text('Item 1'), findsOneWidget, reason: 'after sendPlatformLink(tester, /items//1//)');
     expect(running.currentUrl, '/items/1');
   });
 }

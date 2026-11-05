@@ -49,7 +49,7 @@ void main() {
 
     await tester.restartAndRestore();
     await tester.pumpAndSettle();
-    expect(find.text('Book 7'), findsOneWidget);
+    expect(find.text('Book 7'), findsOneWidget, reason: 'after tester.restartAndRestore()');
     expect(RestorableRouterApp.router.stack.map((page) => page.name), ['HomeRoute', 'BookRoute']);
   }, skip: kIsWeb);
 }

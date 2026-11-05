@@ -29,7 +29,7 @@ void main() {
     expect(find.text('main'), findsOneWidget);
     expect(await router.maybePop(), isFalse);
     await tester.pumpAndSettle();
-    expect(find.text('main'), findsOneWidget);
+    expect(find.text('main'), findsOneWidget, reason: 'after pumpRouterConfigApp(tester, router.config())');
     expect(tester.takeException(), isNull);
   });
 }

@@ -26,7 +26,7 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expectCurrentPage(router, FirstRoute.name);
-    expect(router.urlState.url, '/?search=shoes');
+    expect(router.urlState.url, '/?search=shoes', reason: 'after router.pop()');
     expect(router.current.queryParams.rawMap, {'search': 'shoes'});
   });
 

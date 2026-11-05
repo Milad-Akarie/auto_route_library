@@ -80,12 +80,12 @@ void main() {
     await tester.tap(find.text('Go back'));
     await tester.pumpAndSettle();
     expect(find.text('Go to Page C (replace)'), findsOneWidget);
-    expect(router.canNavigateBack, isFalse);
+    expect(router.canNavigateBack, isFalse, reason: 'after tester.tap(find.text(Go back))');
 
     // A second back() has nowhere to go, rather than reopening RouteARedirected.
     router.back();
     await tester.pumpAndSettle();
-    expect(router.stack.map((e) => e.routeData.name), ['RouteA']);
-    expect(find.text('Go to Page C (replace)'), findsOneWidget);
+    expect(router.stack.map((e) => e.routeData.name), ['RouteA'], reason: 'after router.back()');
+    expect(find.text('Go to Page C (replace)'), findsOneWidget, reason: 'after router.back()');
   }, skip: kIsWeb); // on web, back() moves the browser's own history; see test/web/redirect_history_web_test.dart
 }

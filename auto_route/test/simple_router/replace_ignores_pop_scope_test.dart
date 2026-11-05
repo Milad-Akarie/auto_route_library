@@ -42,7 +42,7 @@ void main() {
 
     unawaited(router.replaceAll([const NamedRoute('OtherRoute')]));
     await tester.pumpAndSettle();
-    expect(asked, 1);
+    expect(asked, 1, reason: 'after router.replaceAll([const NamedRoute(OtherRoute)]))');
     expectCurrentPage(router, 'OtherRoute');
   });
 }

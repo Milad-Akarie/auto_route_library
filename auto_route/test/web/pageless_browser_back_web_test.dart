@@ -69,7 +69,7 @@ void main() {
     expectCurrentPage(router, SecondRoute.name);
     expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name]);
     expect(browserPath, '/second-route');
-    expect(browserSerialCount, start + 1);
+    expect(browserSerialCount, start + 1, reason: 'after pressBrowserForward(tester)');
     expect(tester.takeException(), isNull);
   });
 

@@ -43,7 +43,7 @@ void main() {
     await pressBrowserBack(tester);
     expectCurrentPage(router, SecondRoute.name);
     expect(router.currentUrl, '/second-route');
-    expect(browserPath, '/second-route');
+    expect(browserPath, '/second-route', reason: 'after pressBrowserBack(tester)');
 
     await pressBrowserBack(tester);
     expectCurrentPage(router, FirstRoute.name);

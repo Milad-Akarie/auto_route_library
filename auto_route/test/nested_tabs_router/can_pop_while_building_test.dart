@@ -55,7 +55,7 @@ void main() {
     router.innerRouterOf<TabsRouter>('TabsScreen')!.notifyAll();
     await tester.pumpAndSettle();
 
-    expect(tester.takeException(), isNull);
+    expect(tester.takeException(), isNull, reason: 'after router.innerRouterOf<TabsRouter>(TabsScreen)!.notifyAll(');
     expect(router.topRoute.name, 'FeedPost');
     expect(heard.lastOrNull, (tabs: true, root: true));
   });

@@ -116,7 +116,7 @@ void main() {
       unawaited(router.maybePop());
       await tester.pumpAndSettle();
       expect(router.childControllers.length, 1);
-      expect(router.urlState.url, '/second');
+      expect(router.urlState.url, '/second', reason: 'after router.maybePop())');
     },
   );
 
@@ -277,7 +277,7 @@ void main() {
     expectTopPage(router, SecondNested1Route.name);
     expect(router.urlState.url, '/second');
 
-    expect(await router.maybePop(), isTrue);
+    expect(await router.maybePop(), isTrue, reason: 'after router.innerRouterOf<StackRouter>(SecondHostRoute.name)!');
     await tester.pumpAndSettle();
     expectTopPage(router, FirstRoute.name);
     expect(router.childControllers, isEmpty);

@@ -123,14 +123,14 @@ void main() {
     await tap('Click to open Profile Page');
     expect(find.text('Profile Page'), findsOneWidget);
     await tap('Click to logout');
-    expect(find.text('SignIn Page'), findsOneWidget);
+    expect(find.text('SignIn Page'), findsOneWidget, reason: 'after tap(Click to logout)');
     await back();
-    expect(stack(), ['HomeRoute']);
+    expect(stack(), ['HomeRoute'], reason: 'after back()');
     await tap('Click to open Subscription Paywall Page');
-    expect(find.text('SignIn Page'), findsOneWidget);
+    expect(find.text('SignIn Page'), findsOneWidget, reason: 'after tap(Click to open Subscription Paywall Page)');
     await tap('Click to login');
 
-    expect(stack(), ['HomeRoute', 'SubscriptionPaywallRoute']);
+    expect(stack(), ['HomeRoute', 'SubscriptionPaywallRoute'], reason: 'after tap(Click to login)');
     expect(find.text('Subscription Paywall Page'), findsOneWidget);
   });
 }

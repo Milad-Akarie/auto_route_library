@@ -67,7 +67,7 @@ void main() {
 
     unawaited(router.reevaluateGuards());
     await tester.pumpAndSettle();
-    expect(find.text('DetailsRoute'), findsOneWidget);
+    expect(find.text('DetailsRoute'), findsOneWidget, reason: 'after router.reevaluateGuards())');
 
     loggedIn.value = false;
     await tester.pumpAndSettle();

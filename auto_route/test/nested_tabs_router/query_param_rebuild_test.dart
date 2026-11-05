@@ -96,7 +96,7 @@ void main() {
 
     unawaited(tester.binding.reassembleApplication());
     await tester.pumpAndSettle();
-    expect(find.text('param true'), findsOneWidget);
-    expect(_ParamPageState.created, 1);
+    expect(find.text('param true'), findsOneWidget, reason: 'after tester.binding.reassembleApplication())');
+    expect(_ParamPageState.created, 1, reason: 'after tester.binding.reassembleApplication())');
   });
 }

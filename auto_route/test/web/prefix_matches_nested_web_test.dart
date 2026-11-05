@@ -37,7 +37,7 @@ void main() {
     expect(find.text(Tab2Nested1Route.name), findsOneWidget);
 
     await browserMove(tester, () => window.history.forward());
-    expect(browserPath, '/tab3');
+    expect(browserPath, '/tab3', reason: 'after browserMove(tester, () => window.history.forward())');
     expect(find.text(Tab3Nested1Route.name), findsOneWidget);
 
     await browserMove(tester, () => window.location.hash = '/tab2/tab2Nested2');

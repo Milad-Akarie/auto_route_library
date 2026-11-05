@@ -35,7 +35,7 @@ void main() {
     expect(router.canPop(), isFalse);
     expect(heard.lastOrNull, isFalse);
     await tester.pumpAndSettle();
-    expect(router.canPop(), isFalse);
+    expect(router.canPop(), isFalse, reason: 'after router.pop()');
   });
 }
 

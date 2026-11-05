@@ -86,7 +86,7 @@ void main() {
 
       await back(tester);
       expectOnWelcomeStep();
-      expect(_popAttempts, 1);
+      expect(_popAttempts, 1, reason: 'after back(tester)');
     });
   }
 

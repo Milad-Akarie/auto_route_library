@@ -49,7 +49,7 @@ void main() {
 
         await pressBrowserBack(tester);
         expectCurrentPage(router, SecondRoute.name);
-        expect(browserSerialCount, start);
+        expect(browserSerialCount, start, reason: 'after pressBrowserBack(tester)');
       });
 
       // https://github.com/Milad-Akarie/auto_route_library/issues/2068

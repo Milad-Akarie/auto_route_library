@@ -71,7 +71,7 @@ void main() {
       stack.pop();
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      expect(find.text('Home'), findsOneWidget);
+      expect(find.text('Home'), findsOneWidget, reason: 'after stack.pop()');
       expect(find.text('Details 1'), findsNothing);
       expect(completions, 2);
     });

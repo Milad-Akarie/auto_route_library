@@ -65,7 +65,7 @@ void main() {
         await tester.tap(find.byType(BackButton));
       }
       await tester.pumpAndSettle();
-      expect(find.text('DashboardRoute'), findsOneWidget);
+      expect(find.text('DashboardRoute'), findsOneWidget, reason: 'after tester.tap(find.byType(BackButton))');
       expect(router.currentPath, '/dashboard');
     });
   }

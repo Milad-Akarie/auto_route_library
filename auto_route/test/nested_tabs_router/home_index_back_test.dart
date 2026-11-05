@@ -55,7 +55,7 @@ void main() {
 
       expect(tabs.activeIndex, 0);
       expect(find.text(_kFirstTab), findsOneWidget);
-      expect(frameworkHandlesBack.last, isFalse);
+      expect(frameworkHandlesBack.last, isFalse, reason: 'after back(tester)');
     }, skip: kIsWeb);
   }
 

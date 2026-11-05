@@ -45,7 +45,11 @@ void _runRemovedTabTests(_TabsKind kind) {
     _routesNotifier.value = const [_FirstTabRoute(), _ThirdTabRoute()];
     await tester.pumpAndSettle();
     expect(find.text('${_SecondTabRoute.name} taps: 0'), findsNothing);
-    expect(find.text('${_ThirdTabRoute.name} taps: 1'), findsOneWidget);
+    expect(
+      find.text('${_ThirdTabRoute.name} taps: 1'),
+      findsOneWidget,
+      reason: 'after _routesNotifier.value = const [_FirstTabRoute(), _ThirdT',
+    );
     expect(tester.getTopLeft(find.text('${_ThirdTabRoute.name} taps: 1')).dx, 0);
     expect(tabsRouter.activeIndex, 1);
 

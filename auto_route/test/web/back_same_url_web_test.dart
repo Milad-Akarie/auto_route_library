@@ -96,7 +96,7 @@ void main() {
     expect(browserSerialCount, 2);
 
     await browserMove(tester, router.back);
-    expect(find.text('Book some-id'), findsOneWidget);
+    expect(find.text('Book some-id'), findsOneWidget, reason: 'after browserMove(tester, router.back)');
     expect(router.stack.length, 2);
   });
 

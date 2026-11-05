@@ -48,7 +48,7 @@ void main() {
         await tester.restartAndRestore();
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
-        expect(find.text('Count 2'), findsOneWidget);
+        expect(find.text('Count 2'), findsOneWidget, reason: 'after tester.restartAndRestore()');
       }, skip: kIsWeb);
     }
   }

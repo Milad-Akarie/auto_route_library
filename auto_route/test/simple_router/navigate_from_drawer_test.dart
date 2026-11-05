@@ -55,7 +55,7 @@ void main() {
       expectTopPage(router, 'Screen2');
       await tester.tap(find.text('Go home'));
       await tester.pumpAndSettle();
-      expect(names(), ['Home']);
+      expect(names(), ['Home'], reason: 'after tester.tap(find.text(Go home))');
       expectTopPage(router, 'Home');
     });
   }

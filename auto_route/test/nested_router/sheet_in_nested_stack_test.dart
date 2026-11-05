@@ -68,7 +68,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(find.text('Close sheet'), findsNothing);
-    expect(find.text('Page2Route'), findsOneWidget);
+    expect(find.text('Page2Route'), findsOneWidget, reason: 'after tester.tap(find.text(Close sheet))');
     expect(tab.stack.map((p) => p.name), ['Page1Route', 'Page2Route']);
   });
 }

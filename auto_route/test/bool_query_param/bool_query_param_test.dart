@@ -51,6 +51,6 @@ void main() {
     await tester.restartAndRestore();
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(find.text('Flag true'), findsOneWidget);
+    expect(find.text('Flag true'), findsOneWidget, reason: 'after tester.restartAndRestore()');
   }, skip: kIsWeb);
 }

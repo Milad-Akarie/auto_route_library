@@ -67,7 +67,7 @@ void main() {
       await pressBrowserForward(tester);
       expect(guardCalls, 2);
       expect(find.text('LoginRoute'), findsNothing);
-      expect(find.text('HomeRoute'), findsOneWidget);
+      expect(find.text('HomeRoute'), findsOneWidget, reason: 'after pressBrowserForward(tester)');
       expect(router.stack.map((e) => e.routeData.name), isNot(contains('LoginRoute')));
       expect(router.topRoute.name, 'HomeRoute');
     });

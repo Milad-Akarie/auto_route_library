@@ -44,12 +44,12 @@ void main() {
       showAboutDialog(context: router.navigatorKey.currentContext!, applicationName: 'Sample');
       await tester.pumpAndSettle();
       expect(find.byType(AboutDialog), findsOneWidget);
-      expect(builds, 1);
+      expect(builds, 1, reason: 'after showAboutDialog(context: router.navigatorKey.currentCont');
 
       router.navigatorKey.currentState!.pop();
       await tester.pumpAndSettle();
       expect(find.byType(AboutDialog), findsNothing);
-      expect(builds, 1);
+      expect(builds, 1, reason: 'after router.navigatorKey.currentState!.pop()');
     });
   }
 }

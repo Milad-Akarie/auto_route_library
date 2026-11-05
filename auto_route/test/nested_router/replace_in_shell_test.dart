@@ -54,7 +54,11 @@ void main() {
 
     expect(await router.maybePop(), isFalse);
     await tester.pumpAndSettle();
-    expect(find.text('TwoRoute'), findsOneWidget);
-    expect(tester.takeException(), isNull);
+    expect(
+      find.text('TwoRoute'),
+      findsOneWidget,
+      reason: 'after final shellRouter = router.innerRouterOf<StackRouter>(Sh',
+    );
+    expect(tester.takeException(), isNull, reason: 'after final shellRouter = router.innerRouterOf<StackRouter>(Sh');
   });
 }

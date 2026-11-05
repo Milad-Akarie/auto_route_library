@@ -42,7 +42,7 @@ void main() {
 
     unawaited(router.pushPath('/chat'));
     await tester.pumpAndSettle();
-    expect(router.stack.map((e) => e.name), ['HomeRoute', 'ChatListRoute']);
+    expect(router.stack.map((e) => e.name), ['HomeRoute', 'ChatListRoute'], reason: 'after router.pushPath(/chat))');
     expect(router.urlState.url, '/chat_list');
 
     unawaited(router.pushPath('/chat?user=1'));

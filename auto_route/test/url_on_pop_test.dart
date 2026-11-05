@@ -48,7 +48,7 @@ void main() {
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
     expect(find.text(_PatientsListRoute.name), findsOneWidget);
-    expect(router.urlState.url, '/patients');
+    expect(router.urlState.url, '/patients', reason: 'after tester.tap(find.byType(BackButton))');
   });
 }
 

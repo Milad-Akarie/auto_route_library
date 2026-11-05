@@ -50,8 +50,8 @@ void main() {
 
     router.pop();
     await tester.pumpAndSettle();
-    expect(_focusedField(), const Key('home'));
-    expect(tester.testTextInput.isVisible, isTrue);
+    expect(_focusedField(), const Key('home'), reason: 'after router.pop()');
+    expect(tester.testTextInput.isVisible, isTrue, reason: 'after router.pop()');
   });
 }
 

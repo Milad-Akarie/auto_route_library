@@ -60,7 +60,7 @@ void main() {
 
         await router.maybePopTop();
         await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
+        expect(tester.takeException(), isNull, reason: 'after router.maybePopTop()');
         expect(find.text('BannerRoute'), findsNothing);
         expect(find.text('DevRoute'), findsOneWidget);
         expect(router.stack.map((page) => page.name), ['HomeRoute']);

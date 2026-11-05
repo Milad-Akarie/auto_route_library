@@ -63,7 +63,7 @@ void main() {
 
       await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expect(tester.takeException(), isNull, reason: 'after tester.tap(find.byIcon(Icons.arrow_back))');
       expect(find.text('Content 1'), findsNothing);
       expect(find.text('Home'), findsOneWidget);
       expect(completed, isTrue);
@@ -113,7 +113,7 @@ void main() {
 
       await tester.tap(find.byIcon(Icons.arrow_back));
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expect(tester.takeException(), isNull, reason: 'after tester.tap(find.byIcon(Icons.arrow_back))');
       expect(completed, isFalse);
     });
   }

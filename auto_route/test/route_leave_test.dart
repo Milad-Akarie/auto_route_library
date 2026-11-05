@@ -92,12 +92,12 @@ void main() {
 
     unawaited(router.push(const PageRouteInfo('HomeRoute')));
     await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.covered]);
+    expect(leaves, [RouteLeaveKind.covered], reason: 'after router.push(const PageRouteInfo(HomeRoute)))');
 
     // Back to the editor, then covered again: a second leave.
     router.popUntilRouteWithName('EditorRoute');
     await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.covered]);
+    expect(leaves, [RouteLeaveKind.covered], reason: 'after router.popUntilRouteWithName(EditorRoute)');
     unawaited(router.push(preview));
     await tester.pumpAndSettle();
     expect(leaves, [RouteLeaveKind.covered, RouteLeaveKind.covered]);

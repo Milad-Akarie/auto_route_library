@@ -44,7 +44,7 @@ void main() {
     await pressBrowserBack(tester);
     expectCurrentPage(router, FirstRoute.name);
     await pressBrowserForward(tester);
-    expect(tester.takeException(), isNull);
+    expect(tester.takeException(), isNull, reason: 'after pressBrowserForward(tester)');
     expect(router.current.name, SecondHostRoute.name);
   });
 }

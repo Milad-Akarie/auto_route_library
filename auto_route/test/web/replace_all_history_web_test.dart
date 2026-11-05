@@ -36,6 +36,6 @@ void main() {
     await settleBrowser(tester);
     expectCurrentPage(router, FirstRoute.name);
     expect(browserPath, '/');
-    expect(browserSerialCount, start);
+    expect(browserSerialCount, start, reason: 'after settleBrowser(tester)');
   });
 }

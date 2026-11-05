@@ -36,7 +36,7 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expectTopPage(router, 'ParentRoute');
-    expect(builds, {'ParentRoute': 1, 'ChildRoute': 1});
+    expect(builds, {'ParentRoute': 1, 'ChildRoute': 1}, reason: 'after router.pop()');
   });
 
   // Steps: with maintainState: false on the parent, open the app at

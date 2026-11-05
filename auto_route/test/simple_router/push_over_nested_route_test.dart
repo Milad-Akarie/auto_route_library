@@ -50,6 +50,6 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expect(find.text('ProfileRoute'), findsOneWidget);
-    expect(router.urlState.url, '/settings/profile');
+    expect(router.urlState.url, '/settings/profile', reason: 'after router.pop()');
   });
 }

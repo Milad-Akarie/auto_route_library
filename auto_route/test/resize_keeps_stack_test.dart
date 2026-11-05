@@ -44,7 +44,7 @@ void main() {
     expectTopPage(router, 'DetailsRoute');
     expect(router.currentUrl, '/details');
     expect(router.stack, hasLength(2));
-    expect(guardCalls, 1);
+    expect(guardCalls, 1, reason: 'after tester.view.physicalSize = const Size(1000, 700)');
   });
 }
 

@@ -67,8 +67,8 @@ void main() {
       await tester.tap(find.text('back'));
       await tester.pumpAndSettle();
       expect(router.topRoute.name, 'HomeRoute');
-      expect(_focusedField(), isNull);
-      expect(tester.testTextInput.isVisible, isFalse);
+      expect(_focusedField(), isNull, reason: 'after tester.tap(find.text(back))');
+      expect(tester.testTextInput.isVisible, isFalse, reason: 'after tester.tap(find.text(back))');
     },
     // A list too short to scroll closes the keyboard only where it bounces.
     variant: TargetPlatformVariant.only(.iOS),

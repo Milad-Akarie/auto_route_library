@@ -42,7 +42,7 @@ void main() {
     await pressBrowserBack(tester);
     expect(tester.takeException(), isNull);
     expect(router.current.name, _SignInRoute.name);
-    expect(find.text('Sign in as sam@example.com'), findsOneWidget);
+    expect(find.text('Sign in as sam@example.com'), findsOneWidget, reason: 'after pressBrowserBack(tester)');
     expect(browserPath, '/sign-in');
   });
 

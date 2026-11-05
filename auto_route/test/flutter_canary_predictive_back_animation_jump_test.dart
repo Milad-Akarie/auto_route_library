@@ -55,7 +55,7 @@ void main() {
     final dragged = route.animation!.value;
     await send('commitBackGesture');
     expect(dragged, closeTo(0.5, 0.1));
-    expect(route.animation!.value, 1.0);
+    expect(route.animation!.value, 1.0, reason: 'after send(commitBackGesture)');
     await tester.pumpAndSettle();
     expect(route.animation!.value, 0.0);
   });

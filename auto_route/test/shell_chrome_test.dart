@@ -66,7 +66,7 @@ void main() {
 
     unawaited(inner.replace(const NamedRoute('OtherRoute')));
     await tester.pumpAndSettle();
-    expect(find.text('NavBar'), findsOneWidget);
+    expect(find.text('NavBar'), findsOneWidget, reason: 'after inner.replace(const NamedRoute(OtherRoute)))');
     expect(find.text('OtherRoute'), findsOneWidget);
 
     unawaited(router.root.push(const NamedRoute('SettingsRoute')));
@@ -77,8 +77,8 @@ void main() {
 
     await router.maybePopTop();
     await tester.pumpAndSettle();
-    expect(find.text('NavBar'), findsOneWidget);
-    expect(find.text('OtherRoute'), findsOneWidget);
+    expect(find.text('NavBar'), findsOneWidget, reason: 'after router.maybePopTop()');
+    expect(find.text('OtherRoute'), findsOneWidget, reason: 'after router.maybePopTop()');
     expect(router.currentUrl, '/app/other');
     expect(router.topRoute.name, 'OtherRoute');
   });
@@ -98,7 +98,11 @@ void main() {
 
     unawaited(router.innerRouterOf<StackRouter>('AppRoute')!.replace(const NamedRoute('OtherRoute')));
     await tester.pumpAndSettle();
-    expect(find.text('NavBar'), findsOneWidget);
+    expect(
+      find.text('NavBar'),
+      findsOneWidget,
+      reason: 'after router.innerRouterOf<StackRouter>(AppRoute)!.replace(con',
+    );
     expect(find.text('OtherRoute'), findsOneWidget);
   });
 }

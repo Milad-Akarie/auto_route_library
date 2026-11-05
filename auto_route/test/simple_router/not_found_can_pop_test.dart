@@ -48,6 +48,6 @@ void main() {
 
     await tester.tap(find.text('NotFoundRoute'));
     await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
+    expect(tester.takeException(), isNull, reason: 'after tester.tap(find.text(NotFoundRoute))');
   });
 }

@@ -55,7 +55,7 @@ void _runRoutesChangeTests(_TabsKind kind) {
     await tester.pumpAndSettle();
     expect(find.text(_FirstTabRoute.name), findsOneWidget);
     expect(_CountedPageState.disposeCounts[_FirstTabRoute.name], isNull);
-    expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1);
+    expect(_CountedPageState.initCounts[_FirstTabRoute.name], 1, reason: 'after _signedInNotifier.value = true');
 
     // The swapped tab shows its new route.
     tabsRouterOf(tester).setActiveIndex(2);
@@ -85,8 +85,12 @@ void _runRoutesChangeTests(_TabsKind kind) {
     expect(_CountedPageState.disposeCounts[_SecondTabRoute.name], isNull);
     tabsRouterOf(tester).setActiveIndex(1);
     await tester.pumpAndSettle();
-    expect(find.text(_SecondTabRoute.name), findsOneWidget);
-    expect(_CountedPageState.initCounts[_SecondTabRoute.name], 1);
+    expect(find.text(_SecondTabRoute.name), findsOneWidget, reason: 'after tabsRouterOf(tester).setActiveIndex(1)');
+    expect(
+      _CountedPageState.initCounts[_SecondTabRoute.name],
+      1,
+      reason: 'after tabsRouterOf(tester).setActiveIndex(1)',
+    );
   });
 }
 

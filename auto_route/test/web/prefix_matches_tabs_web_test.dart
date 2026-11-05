@@ -50,13 +50,13 @@ void main() {
     expect(find.text('Tab 2'), findsOneWidget);
 
     await pressBrowserBack(tester);
-    expect(browserPath, '/tabs/tab-1');
+    expect(browserPath, '/tabs/tab-1', reason: 'after pressBrowserBack(tester)');
     expect(find.text('Tab 1'), findsOneWidget);
     expect(router.stack.map((p) => p.name), [_HomeRoute.name, _TabsRoute.name]);
 
     await browserMove(tester, () => window.history.forward());
-    expect(browserPath, '/tabs/tab-2');
-    expect(find.text('Tab 2'), findsOneWidget);
+    expect(browserPath, '/tabs/tab-2', reason: 'after browserMove(tester, () => window.history.forward())');
+    expect(find.text('Tab 2'), findsOneWidget, reason: 'after browserMove(tester, () => window.history.forward())');
   });
 }
 

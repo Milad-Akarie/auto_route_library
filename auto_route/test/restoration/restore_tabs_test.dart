@@ -67,7 +67,7 @@ void main() {
     expect(find.text('TransitionsRoute'), findsOneWidget);
     await selectTab(tester, 0);
     expect(find.text('HomeRoute'), findsNothing);
-    expect(find.text('InternalRoute'), findsOneWidget);
+    expect(find.text('InternalRoute'), findsOneWidget, reason: 'after selectTab(tester, 0)');
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.text('HomeRoute'), findsOneWidget);
@@ -122,7 +122,7 @@ void main() {
     expect(find.text('InternalRoute'), findsOneWidget);
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
-    expect(find.text('InternalRoute'), findsOneWidget);
+    expect(find.text('InternalRoute'), findsOneWidget, reason: 'after tester.binding.handlePopRoute()');
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.text('HomeRoute'), findsOneWidget);

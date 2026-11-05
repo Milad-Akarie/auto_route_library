@@ -74,7 +74,7 @@ void main() {
     await predictiveBack(tester);
     expect(find.text('A1'), findsOneWidget);
     expect(disposed, ['A3', 'A2']);
-    expect(stackOf(2), ['C1', 'C2']);
+    expect(stackOf(2), ['C1', 'C2'], reason: 'after predictiveBack(tester)');
   });
 }
 

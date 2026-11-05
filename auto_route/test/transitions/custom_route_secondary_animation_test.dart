@@ -56,6 +56,6 @@ void main() {
 
     router.pop();
     await tester.pumpAndSettle();
-    expect(secondary!.value, 0);
+    expect(secondary!.value, 0, reason: 'after router.pop()');
   });
 }

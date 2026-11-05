@@ -101,7 +101,7 @@ void main() {
     expect(_heard, isEmpty);
 
     await systemBack(tester);
-    expect(router.topRoute.name, 'TabA');
+    expect(router.topRoute.name, 'TabA', reason: 'after systemBack(tester)');
     expect(_heard, [false]);
   });
 }

@@ -58,7 +58,7 @@ void main() {
       guardAnswer.complete();
       await settleBrowser(tester);
       expect(find.text('ChildRoute'), findsOneWidget);
-      expect(browserPath, '/parent/child');
+      expect(browserPath, '/parent/child', reason: 'after settleBrowser(tester)');
     },
   );
 }

@@ -32,6 +32,6 @@ void main() {
     await systemBack(tester);
 
     expectTopPage(router, 'Modal1');
-    expect(builds, {'Home': 1, 'Modal1': 1, 'Modal2': 1});
+    expect(builds, {'Home': 1, 'Modal1': 1, 'Modal2': 1}, reason: 'after systemBack(tester)');
   });
 }

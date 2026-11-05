@@ -47,11 +47,15 @@ void main() {
     unawaited(router.push(const _AddressesShellRoute(children: [_AddRoute()])));
     await tester.pumpAndSettle();
     expect(find.text(_AddRoute.name), findsOneWidget);
-    expect(find.byType(BackButton), findsOneWidget);
+    expect(
+      find.byType(BackButton),
+      findsOneWidget,
+      reason: 'after router.push(const _AddressesShellRoute(children: [_AddRo',
+    );
 
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
-    expect(find.text(_ListRoute.name), findsOneWidget);
+    expect(find.text(_ListRoute.name), findsOneWidget, reason: 'after tester.tap(find.byType(BackButton))');
 
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();

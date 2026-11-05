@@ -39,7 +39,7 @@ void main() {
 
       router.navigatorKey.currentState!.pop();
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
+      expect(tester.takeException(), isNull, reason: 'after router.navigatorKey.currentState!.pop()');
       expect(find.text('Aware'), findsNothing);
     });
   }

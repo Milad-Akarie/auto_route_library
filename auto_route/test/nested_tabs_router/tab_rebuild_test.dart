@@ -40,8 +40,12 @@ void main() {
 
     _layoutNotifier.value = !_layoutNotifier.value;
     await tester.pumpAndSettle();
-    expect(find.text(_SecondTabRoute.name), findsOneWidget);
-    expect(router.urlState.path, '/second');
+    expect(
+      find.text(_SecondTabRoute.name),
+      findsOneWidget,
+      reason: 'after _layoutNotifier.value = !_layoutNotifier.value',
+    );
+    expect(router.urlState.path, '/second', reason: 'after _layoutNotifier.value = !_layoutNotifier.value');
   });
 }
 

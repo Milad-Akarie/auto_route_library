@@ -60,9 +60,9 @@ void main() {
     // The report's app rebuilds on sign-in state; reevaluate the guard.
     reevaluate.value++;
     await settleBrowser(tester);
-    expect(find.text('AccountContentRoute'), findsOneWidget);
+    expect(find.text('AccountContentRoute'), findsOneWidget, reason: 'after settleBrowser(tester)');
     expect(router.urlState.url, '/profile/account');
-    expect(browserPath, '/profile/account');
+    expect(browserPath, '/profile/account', reason: 'after settleBrowser(tester)');
   });
 }
 

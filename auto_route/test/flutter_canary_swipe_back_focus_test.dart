@@ -66,8 +66,8 @@ void main() {
     await gesture.up();
     await tester.pumpAndSettle();
     expect(router.topRoute.name, 'SecondRoute');
-    expect(_focusedField(), const Key('home'));
-    expect(tester.testTextInput.isVisible, isTrue);
+    expect(_focusedField(), const Key('home'), reason: 'after gesture.up()');
+    expect(tester.testTextInput.isVisible, isTrue, reason: 'after gesture.up()');
   }, variant: TargetPlatformVariant.only(.iOS));
 }
 

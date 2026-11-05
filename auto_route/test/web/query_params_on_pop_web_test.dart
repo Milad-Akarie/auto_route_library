@@ -39,7 +39,7 @@ void main() {
     router.pop();
     await settleBrowser(tester);
     expectCurrentPage(router, FirstRoute.name);
-    expect(browserPath, '/?search=shoes');
+    expect(browserPath, '/?search=shoes', reason: 'after settleBrowser(tester)');
     expect(browserSerialCount, start);
   });
 }

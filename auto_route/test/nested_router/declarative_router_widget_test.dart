@@ -33,7 +33,7 @@ void main() {
     expect(declarativeRouter.pageCount, 3);
     pageNotifier.value = 1;
     await tester.pumpAndSettle();
-    expect(find.text(SecondNested1Route.name), findsOneWidget);
-    expect(declarativeRouter.pageCount, 1);
+    expect(find.text(SecondNested1Route.name), findsOneWidget, reason: 'after pageNotifier.value = 1');
+    expect(declarativeRouter.pageCount, 1, reason: 'after pageNotifier.value = 1');
   });
 }

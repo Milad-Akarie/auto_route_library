@@ -58,8 +58,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(inner.activeIndex, 1);
-    expect(find.text('More'), findsOneWidget);
+    expect(inner.activeIndex, 1, reason: 'after outer.setActiveIndex(1)');
+    expect(find.text('More'), findsOneWidget, reason: 'after outer.setActiveIndex(1)');
     expect(inits['D'], 1);
     expect(inits['B'], 1);
   });

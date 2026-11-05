@@ -51,8 +51,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(frameworkHandlesBack.last, isTrue);
       await back(tester);
-      expect(find.text('Explore'), findsOneWidget);
-      expect(frameworkHandlesBack.last, isFalse);
+      expect(find.text('Explore'), findsOneWidget, reason: 'after back(tester)');
+      expect(frameworkHandlesBack.last, isFalse, reason: 'after back(tester)');
       expect(router.canPop(), isFalse);
     }, skip: kIsWeb); // Android only: on web Flutter never tells the platform whether it handles back.
   }

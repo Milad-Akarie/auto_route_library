@@ -69,13 +69,17 @@ void main() {
 
       tabs.setActiveIndex(1);
       await tester.pumpAndSettle();
-      expect(find.text('BRoute'), findsOneWidget);
+      expect(find.text('BRoute'), findsOneWidget, reason: 'after tabs.setActiveIndex(1)');
       expect(tabs.stackRouterOfIndex(1)!.stack.map((page) => page.name), ['BRoute']);
 
       unawaited(toDetail(tester.element(find.text('BRoute')).router));
       await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('DetailRoute'), findsOneWidget);
+      expect(tester.takeException(), isNull, reason: 'after toDetail(tester.element(find.text(BRoute)).router))');
+      expect(
+        find.text('DetailRoute'),
+        findsOneWidget,
+        reason: 'after toDetail(tester.element(find.text(BRoute)).router))',
+      );
       expect(router.urlState.url, '/b/detail');
     });
   }

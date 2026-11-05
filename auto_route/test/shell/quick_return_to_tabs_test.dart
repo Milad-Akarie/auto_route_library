@@ -43,7 +43,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(router.stack.map((page) => page.name), stack);
-      expect(find.text('TabRoute'), findsOneWidget);
+      expect(find.text('TabRoute'), findsOneWidget, reason: 'after router.replaceAll([const _Route(LoadingRoute)]))');
       expect(find.text('Loading'), findsNothing);
     });
   }

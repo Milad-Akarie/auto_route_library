@@ -50,6 +50,7 @@ void main() {
     expect(
       (verify(mockObserver.didPush(captureAny, any)).captured.singleOrNull as Route<Object?>?)?.settings.name,
       SecondRoute.name,
+      reason: 'after )',
     );
   });
 }

@@ -62,8 +62,12 @@ void main() {
     await tester.pumpAndSettle();
     Navigator.of(tester.element(find.text('DetailsRoute'))).pop();
     await tester.pumpAndSettle();
-    expect(find.text('ARoute'), findsOneWidget);
-    expect(router.currentUrl, '/a');
+    expect(
+      find.text('ARoute'),
+      findsOneWidget,
+      reason: 'after Navigator.of(tester.element(find.text(DetailsRoute))).po',
+    );
+    expect(router.currentUrl, '/a', reason: 'after Navigator.of(tester.element(find.text(DetailsRoute))).po');
     expect(router.urlState.url, '/a');
 
     await router.maybePopTop();

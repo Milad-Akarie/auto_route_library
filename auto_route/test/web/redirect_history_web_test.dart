@@ -56,8 +56,8 @@ void main() {
 
     await pressBrowserBack(tester);
     expect(browserSerialCount, entry);
-    expect(browserPath, '/');
-    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute']);
+    expect(browserPath, '/', reason: 'after pressBrowserBack(tester)');
+    expect(router.stack.map((e) => e.routeData.name), ['HomeRoute'], reason: 'after pressBrowserBack(tester)');
   });
 
   // flutter/flutter#135359: after a guard's redirect to the login page, the

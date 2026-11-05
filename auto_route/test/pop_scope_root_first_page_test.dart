@@ -55,7 +55,7 @@ void main() {
 
       expect(heard, [false, false]);
       expect(appClosed, isFalse);
-      expect(frameworkHandlesBack, isTrue);
+      expect(frameworkHandlesBack, isTrue, reason: 'after back(tester)');
       expect(find.text('Home'), findsOneWidget);
     }, skip: kIsWeb); // Android only: on web Flutter never tells the platform whether it handles back.
   }

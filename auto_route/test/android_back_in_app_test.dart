@@ -63,11 +63,15 @@ void main() {
       expectTopPage(router, 'HomeRoute');
       unawaited(router.innerRouterOf<StackRouter>('AuthorizedRoute')!.push(const _Route('ActivityRoute')));
       await tester.pumpAndSettle();
-      expect(frameworkHandlesBack.last, isTrue);
+      expect(
+        frameworkHandlesBack.last,
+        isTrue,
+        reason: 'after router.innerRouterOf<StackRouter>(AuthorizedRoute)!.push',
+      );
 
       await back(tester);
       expectTopPage(router, 'HomeRoute');
-      expect(frameworkHandlesBack.last, isFalse);
+      expect(frameworkHandlesBack.last, isFalse, reason: 'after back(tester)');
     }, skip: kIsWeb); // Android only: on web Flutter never tells the platform whether it handles back.
   }
 }

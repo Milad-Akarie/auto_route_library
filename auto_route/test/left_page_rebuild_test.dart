@@ -52,7 +52,7 @@ void main() {
       unawaited(leave());
       await tester.pumpAndSettle();
       expectTopPage(router, SecondRoute.name);
-      expect(builds, ['ARoute ARoute /']);
+      expect(builds, ['ARoute ARoute /'], reason: 'after leave())');
     });
   }
 }

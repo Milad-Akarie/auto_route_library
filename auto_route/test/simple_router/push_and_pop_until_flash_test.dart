@@ -120,7 +120,7 @@ void main() {
     unawaited(router.maybePop());
     await tester.pumpAndSettle();
     expectCurrentPage(router, 'Home');
-    expect(find.text('Dialog'), findsNothing);
+    expect(find.text('Dialog'), findsNothing, reason: 'after router.maybePop())');
   });
 }
 

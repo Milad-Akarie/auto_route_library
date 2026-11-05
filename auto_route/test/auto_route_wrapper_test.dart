@@ -25,7 +25,7 @@ void main() {
     expect(textFinder, findsOneWidget);
     expect(wrapperFinder, findsOneWidget);
 
-    expect(find.text('Wrapped'), findsOneWidget);
+    expect(find.text('Wrapped'), findsOneWidget, reason: 'after final wrapperFinder = find.text(Wrapped)');
     expect(find.text('Page Content'), findsOneWidget);
 
     // Verify structure: Column -> [Text('Wrapped'), Expanded -> WrapperPage -> Scaffold -> Text('Page Content')]
@@ -70,7 +70,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(localRouter.topRoute.name, 'BRoute');
     expect(localRouter.stack.map((page) => page.name), [_ParentRoute.name]);
-    expect(_ProvidedState.created, 1);
+    expect(_ProvidedState.created, 1, reason: 'after tester.tap(find.text(Push B))');
   });
 }
 

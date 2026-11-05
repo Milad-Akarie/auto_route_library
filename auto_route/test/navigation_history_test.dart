@@ -233,11 +233,11 @@ void main() {
 
       // An empty stack has no url to record, so the mark waits for the next one (#2331).
       history.rebuildUrl();
-      expect(history.isUrlStateMarkedForReplace, true);
+      expect(history.isUrlStateMarkedForReplace, true, reason: 'after history.rebuildUrl()');
 
       await router.push(const FirstRoute());
       history.rebuildUrl();
-      expect(history.isUrlStateMarkedForReplace, false);
+      expect(history.isUrlStateMarkedForReplace, false, reason: 'after history.rebuildUrl()');
     });
 
     test('Should handle navigation with shouldReplace flag', () async {
@@ -271,7 +271,7 @@ void main() {
       // Should not crash
       expect(() => history.back(), returnsNormally);
 
-      expect(history.length, 0);
+      expect(history.length, 0, reason: 'after }, skip: _kWebCountsBrowserEntries)');
     }, skip: _kWebBackMovesBrowser);
 
     test('Multiple listeners should all be notified', () async {
@@ -334,7 +334,7 @@ void main() {
 
       history.back();
       await Future<void>.delayed(const Duration(milliseconds: 10));
-      expect(history.length, 2);
+      expect(history.length, 2, reason: 'after Future<void>.delayed(const Duration(milliseconds: 10))');
     }, skip: _kWebCountsBrowserEntries);
   });
 
@@ -441,7 +441,11 @@ void main() {
       // If there's still one entry left, should be false (can't go back from single entry)
       // The flag should be reset, but canNavigateBack depends on having 2+ entries
       expect(history.length, 1);
-      expect(history.canNavigateBack, false); // Only one entry, can't go back
+      expect(
+        history.canNavigateBack,
+        false,
+        reason: 'after Future<void>.delayed(const Duration(milliseconds: 50))',
+      ); // Only one entry, can't go back
     }, skip: _kWebBackMovesBrowser);
 
     test('Should handle complex navigation patterns', () async {

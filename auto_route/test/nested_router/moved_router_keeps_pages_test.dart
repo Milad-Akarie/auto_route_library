@@ -65,13 +65,13 @@ void main() {
       expect(router.currentPath, '/mail/2');
 
       await setWidth(tester, 400);
-      expect(find.text('Showing message 2'), findsOneWidget);
+      expect(find.text('Showing message 2'), findsOneWidget, reason: 'after setWidth(tester, 400)');
       expect(find.text('Message 1'), findsNothing);
-      expect(router.currentPath, '/mail/2');
+      expect(router.currentPath, '/mail/2', reason: 'after setWidth(tester, 400)');
 
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
-      expect(find.text('Message 1'), findsOneWidget);
+      expect(find.text('Message 1'), findsOneWidget, reason: 'after tester.binding.handlePopRoute()');
       expect(router.currentPath, '/mail');
 
       await tester.tap(find.text('Message 1'));
@@ -95,10 +95,10 @@ void main() {
       expect(guardChecks, 1);
 
       await setWidth(tester, 400);
-      expect(find.text('Showing draft 3'), findsOneWidget);
+      expect(find.text('Showing draft 3'), findsOneWidget, reason: 'after setWidth(tester, 400)');
       expect(find.text('Message 1'), findsNothing);
       expect(router.currentPath, '/mail/drafts/3');
-      expect(guardChecks, 1);
+      expect(guardChecks, 1, reason: 'after setWidth(tester, 400)');
     });
   });
 
@@ -133,8 +133,8 @@ void main() {
       expect(router.currentPath, '/home/profile');
 
       await setWidth(tester, 400);
-      expect(find.text('Profile tab'), findsOneWidget);
-      expect(router.currentPath, '/home/profile');
+      expect(find.text('Profile tab'), findsOneWidget, reason: 'after setWidth(tester, 400)');
+      expect(router.currentPath, '/home/profile', reason: 'after setWidth(tester, 400)');
     });
   });
 }

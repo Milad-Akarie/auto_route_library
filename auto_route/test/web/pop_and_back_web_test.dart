@@ -68,7 +68,7 @@ void main() {
     await settleBrowser(tester);
     expectCurrentPage(router, SecondRoute.name);
     expect(browserPath, '/second-route');
-    expect(browserSerialCount, start + 1);
+    expect(browserSerialCount, start + 1, reason: 'after settleBrowser(tester)');
 
     await pressBrowserBack(tester);
     expectCurrentPage(router, FirstRoute.name);
@@ -154,7 +154,7 @@ void main() {
     await settleBrowser(tester);
     expect(tab2Router.current.name, Tab2Nested1Route.name);
     expect(tabsRouter.urlState.url, '/');
-    expect(browserPath, '/');
+    expect(browserPath, '/', reason: 'after settleBrowser(tester)');
     expect(browserSerialCount, serialCount);
   });
 

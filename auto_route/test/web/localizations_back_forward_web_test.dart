@@ -61,24 +61,24 @@ void main() {
     expect(browserPath, '/login_page');
 
     await pressBrowserBack(tester);
-    expect(find.text('HomeRoute'), findsOneWidget);
+    expect(find.text('HomeRoute'), findsOneWidget, reason: 'after pressBrowserBack(tester)');
     expect(browserPath, '/home_page');
     await pressBrowserForward(tester);
     expect(find.text('LoginRoute'), findsOneWidget);
-    expect(browserPath, '/login_page');
+    expect(browserPath, '/login_page', reason: 'after pressBrowserForward(tester)');
 
     // A reload starts a new app at the browser's url, with the history kept.
     await tester.pumpWidget(const SizedBox());
     openBrowserAt(tester, '/login_page');
     await startApp();
-    expect(find.text('LoginRoute'), findsOneWidget);
+    expect(find.text('LoginRoute'), findsOneWidget, reason: 'after startApp()');
 
     await pressBrowserBack(tester);
-    expect(find.text('HomeRoute'), findsOneWidget);
-    expect(browserPath, '/home_page');
+    expect(find.text('HomeRoute'), findsOneWidget, reason: 'after pressBrowserBack(tester) in the reloaded app');
+    expect(browserPath, '/home_page', reason: 'after pressBrowserBack(tester)');
     await pressBrowserForward(tester);
-    expect(find.text('LoginRoute'), findsOneWidget);
-    expect(browserPath, '/login_page');
+    expect(find.text('LoginRoute'), findsOneWidget, reason: 'after pressBrowserForward(tester)');
+    expect(browserPath, '/login_page', reason: 'after pressBrowserForward(tester) in the reloaded app');
     expect(tester.takeException(), isNull);
   });
 }

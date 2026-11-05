@@ -32,8 +32,14 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text(_kLastTab), findsOneWidget);
-        expect(_builds, {for (final name in _kTabNames) name: 1});
-        expect(observer.initialized, _kTabNames);
+        expect(_builds, {
+          for (final name in _kTabNames) name: 1,
+        }, reason: 'after router.innerRouterOf<TabsRouter>(TabsRoute)!.setActiveIn');
+        expect(
+          observer.initialized,
+          _kTabNames,
+          reason: 'after router.innerRouterOf<TabsRouter>(TabsRoute)!.setActiveIn',
+        );
         expect(observer.changed, [_kLastTab]);
       });
 

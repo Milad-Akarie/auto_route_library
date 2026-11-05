@@ -87,7 +87,7 @@ void main() {
     await tester.pumpAndSettle();
     tabs.setActiveIndex(1);
     await tester.pumpAndSettle();
-    expect(find.text('BRoute b'), findsOneWidget);
+    expect(find.text('BRoute b'), findsOneWidget, reason: 'after tabs.setActiveIndex(1)');
     expect(_builds.where((n) => n == 'BRoute'), hasLength(1));
   });
 }

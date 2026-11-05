@@ -52,11 +52,11 @@ void main() {
       tabs.setActiveIndex(1);
       await tester.pumpAndSettle();
       expect(find.text('SectionB'), findsOneWidget);
-      expect(find.byType(BackButton), findsOneWidget);
+      expect(find.byType(BackButton), findsOneWidget, reason: 'after tabs.setActiveIndex(1)');
 
       tabs.setActiveIndex(0);
       await tester.pumpAndSettle();
-      expect(find.byType(BackButton), findsOneWidget);
+      expect(find.byType(BackButton), findsOneWidget, reason: 'after tabs.setActiveIndex(0)');
 
       await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();

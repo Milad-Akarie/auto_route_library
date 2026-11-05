@@ -74,8 +74,8 @@ void main() {
       if (kIsWeb) return;
       router.back();
       await tester.pumpAndSettle();
-      expect(router.currentUrl, '/tabs/tab-1');
-      expect(find.text('Tab 1'), findsOneWidget);
+      expect(router.currentUrl, '/tabs/tab-1', reason: 'after router.back()');
+      expect(find.text('Tab 1'), findsOneWidget, reason: 'after router.back()');
       expect(router.stack.map((p) => p.name), ['HomeRoute', 'TabsRoute']);
 
       router.back();

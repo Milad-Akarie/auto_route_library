@@ -31,7 +31,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(router.innerRouterOf<TabsRouter>('TabsRoute')!.activeIndex, 1);
-      expect(find.text('Tab2Route'), findsOneWidget);
+      expect(find.text('Tab2Route'), findsOneWidget, reason: 'after gesture.up()');
 
       // And on to the third, also never opened.
       await tester.fling(find.text('Tab2Route'), const Offset(-400, 0), 1000);

@@ -50,7 +50,11 @@ void main() {
     expect(find.text('ProfileRoute'), findsOneWidget);
     router.innerRouterOf<TabsRouter>('AppRoute')!.setActiveIndex(0);
     await tester.pumpAndSettle();
-    expect(find.text('HomeRoute'), findsOneWidget);
+    expect(
+      find.text('HomeRoute'),
+      findsOneWidget,
+      reason: 'after router.innerRouterOf<TabsRouter>(AppRoute)!.setActiveInd',
+    );
     expect(router.currentUrl, '/app/home');
     // setActiveIndex stays inside the route and asks no guard of it.
     expect(guardCalls, callsAfterNavigate);

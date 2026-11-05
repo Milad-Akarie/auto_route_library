@@ -111,7 +111,11 @@ void main() {
     unawaited(router.navigate(const _DashboardRoute(children: [_ProfileRoute()])));
     await tester.pumpAndSettle();
 
-    expect(router.topRoute.name, _HomeRoute.name);
+    expect(
+      router.topRoute.name,
+      _HomeRoute.name,
+      reason: 'after router.navigate(const _DashboardRoute(children: [_Profil',
+    );
     expect(find.text(_HomeRoute.name), findsOneWidget);
     expect(router.urlState.url, '/');
   });

@@ -41,7 +41,7 @@ void main() {
       goBack();
       await tester.pumpAndSettle();
       expect(router.current.name, _BookRoute.name);
-      expect(find.text('Book some-id'), findsOneWidget);
+      expect(find.text('Book some-id'), findsOneWidget, reason: 'after goBack()');
       expect(router.urlState.url, '/book');
     }, skip: skip);
   }

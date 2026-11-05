@@ -56,8 +56,8 @@ void main() {
 
       salesRouter.pop();
       await tester.pumpAndSettle();
-      expect(find.text('SalesRoute'), findsOneWidget);
-      expect(sentUrls.lastOrNull, '/reports/sales');
+      expect(find.text('SalesRoute'), findsOneWidget, reason: 'after salesRouter.pop()');
+      expect(sentUrls.lastOrNull, '/reports/sales', reason: 'after salesRouter.pop()');
     });
   }
 }

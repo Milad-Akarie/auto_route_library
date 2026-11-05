@@ -48,6 +48,6 @@ void main() {
     library.complete();
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(find.text('DeferredRoute'), findsNothing);
+    expect(find.text('DeferredRoute'), findsNothing, reason: 'after library.complete()');
   });
 }

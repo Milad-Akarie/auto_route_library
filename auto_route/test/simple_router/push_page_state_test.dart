@@ -66,7 +66,7 @@ void main() {
     r.pop();
     await tester.pumpAndSettle();
 
-    expect(find.text('home taps 1'), findsOneWidget);
+    expect(find.text('home taps 1'), findsOneWidget, reason: 'after r.pop()');
   });
 
   // flutter/flutter#160173: pushNamed the same route again and again, each

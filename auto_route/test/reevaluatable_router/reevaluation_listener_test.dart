@@ -404,7 +404,7 @@ void main() {
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
     expect(localRouter.topRoute.name, _HomePage.routeName);
-    expect(find.text('Counter 3'), findsOneWidget);
+    expect(find.text('Counter 3'), findsOneWidget, reason: 'after tester.tap(find.text(Log in))');
   });
 
   // Reproduces https://github.com/Milad-Akarie/auto_route_library/issues/2327

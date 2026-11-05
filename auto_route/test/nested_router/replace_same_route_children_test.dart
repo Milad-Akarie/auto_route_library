@@ -63,8 +63,8 @@ void main() {
     // The shell's router still answers for the page that holds it.
     unawaited(router.navigate(_kUsers));
     await tester.pumpAndSettle();
-    expect(find.text('UsersRoute'), findsOneWidget);
-    expect(router.urlState.path, '/app/users');
+    expect(find.text('UsersRoute'), findsOneWidget, reason: 'after router.navigate(_kUsers))');
+    expect(router.urlState.path, '/app/users', reason: 'after router.navigate(_kUsers))');
   });
 
   // Given no children, replace() opens the route's initial child, as

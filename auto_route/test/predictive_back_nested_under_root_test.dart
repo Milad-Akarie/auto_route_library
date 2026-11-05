@@ -52,7 +52,10 @@ void main() {
     await predictiveBack(tester);
 
     expect(router.stack.map((page) => page.routeData.name), ['HostRoute']);
-    expect(host.stack.map((page) => page.routeData.name), ['FirstRoute', 'SecondRoute']);
+    expect(host.stack.map((page) => page.routeData.name), [
+      'FirstRoute',
+      'SecondRoute',
+    ], reason: 'after predictiveBack(tester)');
     expect(find.text('SecondRoute'), findsOneWidget);
   });
 }

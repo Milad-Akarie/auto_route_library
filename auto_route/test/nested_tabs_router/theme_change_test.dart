@@ -65,7 +65,7 @@ void main() {
 
     expect(router.topRoute.name, 'F');
     expect(router.currentPath, '/f');
-    expect(find.text('F'), findsOneWidget);
+    expect(find.text('F'), findsOneWidget, reason: 'after router.pushPath(/f))');
   });
 
   testWidgets('Changing the theme keeps the tab that is open', (tester) async {
@@ -79,7 +79,7 @@ void main() {
     await tester.pumpWidget(app(.dark));
     await tester.pumpAndSettle();
 
-    expect(router.topRoute.name, 'B');
+    expect(router.topRoute.name, 'B', reason: 'after router.navigatePath(/dashboardView/empty/b))');
     expect(find.text('B'), findsOneWidget);
   });
 }

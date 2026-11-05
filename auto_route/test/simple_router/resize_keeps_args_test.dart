@@ -42,6 +42,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Sauce mustard'), findsOneWidget);
+    expect(
+      find.text('Sauce mustard'),
+      findsOneWidget,
+      reason: 'after tester.view.physicalSize = const Size(1200, 600)',
+    );
   });
 }

@@ -63,7 +63,7 @@ void main() {
 
     router.pop();
     await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
+    expect(tester.takeException(), isNull, reason: 'after router.pop()');
     expect(names(), [_HomeRoute.name]);
     expectTopPage(router, _HomeRoute.name);
   });

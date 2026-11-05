@@ -45,16 +45,16 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name]);
-    expect(router.navigationHistory.length, 2);
-    expect(router.urlState.url, '/second-route');
+    expect(router.stack.map((p) => p.name), [FirstRoute.name, SecondRoute.name], reason: 'after router.pop()');
+    expect(router.navigationHistory.length, 2, reason: 'after router.pop()');
+    expect(router.urlState.url, '/second-route', reason: 'after router.pop()');
 
     router.back();
     await tester.pumpAndSettle();
     expectCurrentPage(router, FirstRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name]);
-    expect(router.navigationHistory.length, 1);
-    expect(router.urlState.url, '/');
+    expect(router.stack.map((p) => p.name), [FirstRoute.name], reason: 'after router.back()');
+    expect(router.navigationHistory.length, 1, reason: 'after router.back()');
+    expect(router.urlState.url, '/', reason: 'after router.back()');
     expect(router.canNavigateBack, isFalse);
   }, skip: kIsWeb);
 
@@ -71,7 +71,7 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expectCurrentPage(router, SecondRoute.name);
-    expect(router.navigationHistory.length, 2);
+    expect(router.navigationHistory.length, 2, reason: 'after router.pop()');
     expect(router.urlState.url, '/second-route');
 
     router.back();

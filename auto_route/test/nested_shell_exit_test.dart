@@ -51,7 +51,7 @@ void main() {
 
     await systemBack(tester);
     expectTopPage(router, 'FirstRoute');
-    expect(frameworkHandlesBack.last, isFalse);
+    expect(frameworkHandlesBack.last, isFalse, reason: 'after systemBack(tester)');
   }, skip: kIsWeb); // Android only: on web Flutter never tells the platform whether it handles back.
 }
 

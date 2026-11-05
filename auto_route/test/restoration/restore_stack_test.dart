@@ -46,7 +46,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(RestorableRouterApp.router, isNot(same(router)));
     router = RestorableRouterApp.router;
-    expect(tester.takeException(), isNull);
+    expect(tester.takeException(), isNull, reason: 'after router = RestorableRouterApp.router');
     expect(router.stack.map((page) => page.name), ['ExternalRoute', 'ExternalRoute', 'ExternalRoute']);
 
     await tester.binding.handlePopRoute();
@@ -100,8 +100,8 @@ void main() {
     await tester.restartAndRestore();
     await tester.pumpAndSettle();
     router = RestorableRouterApp.router;
-    expect(router.currentPath, '/shelf-route/item/8');
-    expect(find.text('Item 8'), findsOneWidget);
+    expect(router.currentPath, '/shelf-route/item/8', reason: 'after router = RestorableRouterApp.router');
+    expect(find.text('Item 8'), findsOneWidget, reason: 'after router = RestorableRouterApp.router');
     expect(router.currentHierarchy(ignoreParams: true), const [
       HierarchySegment('SignUpRoute'),
       HierarchySegment('SettingsRoute'),
@@ -148,7 +148,7 @@ void main() {
     expect(await tester.binding.handlePopRoute(), isTrue);
     await tester.pumpAndSettle();
     expect(find.text('ProductsRoute'), findsOneWidget);
-    expect(await tester.binding.handlePopRoute(), isTrue);
+    expect(await tester.binding.handlePopRoute(), isTrue, reason: 'after final router = RestorableRouterApp.router');
     await tester.pumpAndSettle();
     expect(find.text('HomeRoute'), findsOneWidget);
     expect(router.canPop(), isFalse);

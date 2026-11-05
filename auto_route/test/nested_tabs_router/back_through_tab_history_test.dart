@@ -84,11 +84,11 @@ void main() {
 
       await back(tester);
       expectTab(tabs, 2);
-      expect(frameworkHandlesBack.last, isTrue);
+      expect(frameworkHandlesBack.last, isTrue, reason: 'after back(tester)');
 
       await back(tester);
       expectTab(tabs, 0);
-      expect(frameworkHandlesBack.last, isFalse);
+      expect(frameworkHandlesBack.last, isFalse, reason: 'after back(tester)');
     }, skip: kIsWeb);
   }
 

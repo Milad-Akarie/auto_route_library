@@ -44,8 +44,8 @@ void main() {
 
     await pressBrowserBack(tester);
     expectCurrentPage(router, FirstRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name]);
-    expect(browserPath, '/');
+    expect(router.stack.map((p) => p.name), [FirstRoute.name], reason: 'after pressBrowserBack(tester)');
+    expect(browserPath, '/', reason: 'after pressBrowserBack(tester)');
     expect(browserSerialCount, start);
   });
 }

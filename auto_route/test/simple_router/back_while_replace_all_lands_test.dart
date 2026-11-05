@@ -43,7 +43,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
-      expect(router.stack.map((page) => page.routeData.name), ['Home']);
+      expect(router.stack.map((page) => page.routeData.name), ['Home'], reason: 'after back(tester)');
       expectTopPage(router, 'Home');
     });
   }

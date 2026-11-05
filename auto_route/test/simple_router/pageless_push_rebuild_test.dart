@@ -55,6 +55,6 @@ void main() {
     await tester.binding.handlePopRoute();
     await tester.pumpAndSettle();
     expect(find.text('Open'), findsOneWidget);
-    expect(_HomePageState.builds, 0);
+    expect(_HomePageState.builds, 0, reason: 'after tester.binding.handlePopRoute()');
   });
 }

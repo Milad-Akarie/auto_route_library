@@ -58,9 +58,9 @@ void main() {
 
       auth.value++;
       await settleBrowser(tester);
-      expect(router.topRoute.name, 'ProfileRoute');
+      expect(router.topRoute.name, 'ProfileRoute', reason: 'after settleBrowser(tester)');
       expect(find.text('ProfileRoute'), findsOneWidget);
-      expect(browserPath, '/profile');
+      expect(browserPath, '/profile', reason: 'after settleBrowser(tester)');
     });
   }
 }

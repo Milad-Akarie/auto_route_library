@@ -67,7 +67,11 @@ void _runIndexTests(_TabsKind kind) {
 
     _routesNotifier.value = const [_SecondTabRoute(), _FirstTabRoute()];
     await tester.pumpAndSettle();
-    expect(find.text(_FirstTabRoute.name), findsOneWidget);
+    expect(
+      find.text(_FirstTabRoute.name),
+      findsOneWidget,
+      reason: 'after _routesNotifier.value = const [_SecondTabRoute(), _First',
+    );
     expect(router.innerRouterOf<TabsRouter>(_TabsHostRoute.name)!.activeIndex, 1);
   });
 }
