@@ -129,8 +129,8 @@ void main() {
       );
     });
 
-    List<String> namesOf(StackRouter router) =>
-        router.stack.map((page) => page.routeData.name).toList();
+    List<String> namesOf(StackRouter stackRouter) =>
+        stackRouter.stack.map((page) => page.routeData.name).toList();
 
     // Opens HomeRoute, then ShellRoute with S1Route and S2Route, calls
     // pushAndPopUntil(DoneRoute, scopedPopUntil: false) from the nested router
