@@ -40,6 +40,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     AnimatedIndexedStackBuilder? builder,
     AnimatedIndexedStackTransitionBuilder transitionBuilder,
     int homeIndex,
+    bool backThroughHistory,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterIndexedStack;
@@ -48,6 +49,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     super.key,
     required this.routes,
     this.homeIndex = -1,
+    this.backThroughHistory = false,
     this.inheritNavigatorObservers = true,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
   });
@@ -59,6 +61,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     List<PageRouteInfo>? routes,
     AutoTabsPageViewBuilder? builder,
     int homeIndex,
+    bool backThroughHistory,
     bool animatePageTransition,
     Axis scrollDirection,
     Duration duration,
@@ -76,6 +79,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     List<PageRouteInfo>? routes,
     AutoTabsTabBarBuilder? builder,
     int homeIndex,
+    bool backThroughHistory,
     Duration? duration,
     Axis scrollDirection,
     Curve curve,
@@ -95,6 +99,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     OnNavigationChanged? onNavigate,
     OnNavigationChanged? onRouterReady,
     int homeIndex,
+    bool backThroughHistory,
     bool inheritNavigatorObservers,
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterBuilder;
@@ -121,6 +126,16 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// set activeIndex to homeIndex
   /// else pop parent
   final int homeIndex;
+
+  /// Whether back shows the tabs the user visited before the active one, the
+  /// latest first, before it leaves the tabs. Defaults to false: back goes
+  /// to the [homeIndex] tab, or out of the tabs when there is none.
+  ///
+  /// After tabs 0, 2 and 1, back shows 2, then 0, then leaves. A tab visited
+  /// again is gone back to once, from where it was left last. With a
+  /// [homeIndex], back shows the home tab once the history is gone through.
+  /// See [TabsRouter.backThroughHistory].
+  final bool backThroughHistory;
 
   /// Looks up and returns the scoped `controller`
   ///
@@ -177,6 +192,7 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
         key: parentRoute.key,
         matchId: parentRoute.matchId,
         homeIndex: widget.homeIndex,
+        backThroughHistory: widget.backThroughHistory,
         routeData: parentRoute,
         preload: onPreload,
         routeCollection: _parentController.routeCollection.subCollectionOf(parentRoute.name),
@@ -236,6 +252,7 @@ class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
     this.builder,
     this.transitionBuilder = _defaultTransitionBuilder,
     super.homeIndex,
+    super.backThroughHistory,
     super.inheritNavigatorObservers,
     super.navigatorObservers,
   }) : super._();
@@ -491,6 +508,7 @@ class _AutoTabsRouterPageView extends AutoTabsRouter {
     super.routes,
     AutoTabsPageViewBuilder? builder,
     super.homeIndex,
+    super.backThroughHistory,
     this.scrollDirection = Axis.horizontal,
     this.animatePageTransition = true,
     this.duration = kTabScrollDuration,
@@ -619,6 +637,7 @@ class _AutoTabsRouterTabBar extends AutoTabsRouter {
     this.scrollDirection = Axis.horizontal,
     this.builder,
     super.homeIndex,
+    super.backThroughHistory,
     this.duration,
     this.curve = Curves.ease,
     super.inheritNavigatorObservers,
@@ -771,6 +790,7 @@ class _AutoTabsRouterBuilder extends AutoTabsRouter {
     this.onRouterReady,
     required this.builder,
     super.homeIndex,
+    super.backThroughHistory,
     super.inheritNavigatorObservers,
     super.navigatorObservers,
   }) : super._();

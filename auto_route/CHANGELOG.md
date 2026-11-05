@@ -8,6 +8,8 @@
 - **FEAT**: in debug builds, two routes with the same full path make the router throw a `FlutterError` naming
   both when it first reads its routes; paths that differ only in param names count as the same
   (flutter/flutter#190741).
+- **FEAT**: `AutoTabsRouter` and `AutoTabsScaffold` take `backThroughHistory`: back shows the tabs visited before,
+  the latest first, then leaves the tabs (#1789, #830).
 
 ## 12.0.0
 - **BREAKING CHANGE**: `RouteMatch.pathParams` and `RouteData.pathParams`, deprecated since 11.2.0, are removed;

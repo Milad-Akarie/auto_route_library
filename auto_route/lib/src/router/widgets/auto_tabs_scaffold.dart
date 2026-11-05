@@ -23,6 +23,7 @@ class AutoTabsScaffold extends StatelessWidget {
     this.routes,
     this.lazyLoad = true,
     this.homeIndex = -1,
+    this.backThroughHistory = false,
     this.animationDuration = const Duration(milliseconds: 300),
     this.animationCurve = Curves.ease,
     this.transitionBuilder,
@@ -157,6 +158,10 @@ class AutoTabsScaffold extends StatelessWidget {
   /// else pop parent
   final int homeIndex;
 
+  /// Whether back shows the tabs the user visited before the active one,
+  /// before it leaves the tabs; see [AutoTabsRouter.backThroughHistory].
+  final bool backThroughHistory;
+
   @override
   Widget build(BuildContext context) {
     return AutoTabsRouter(
@@ -164,6 +169,7 @@ class AutoTabsScaffold extends StatelessWidget {
       duration: animationDuration,
       lazyLoad: lazyLoad,
       homeIndex: homeIndex,
+      backThroughHistory: backThroughHistory,
       navigatorObservers: navigatorObservers,
       inheritNavigatorObservers: inheritNavigatorObservers,
       curve: animationCurve,

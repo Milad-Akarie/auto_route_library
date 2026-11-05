@@ -425,8 +425,8 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
 
   // Flutter tells Android whether the app takes back from the root
   // navigator's stack alone; while it says no, Android closes the app
-  // itself. A tabs router away from its home tab takes back too: it shows
-  // the home tab (TabsRouter.maybePop). So this corrects the value, and sends
+  // itself. A tabs router away from its home tab, or with tabs in its
+  // history, takes back too: it shows another tab (TabsRouter.maybePop). So this corrects the value, and sends
   // it again after a tab switch, which the navigator never reports.
   bool? _reportedCanHandlePop;
   bool _tabsTookBack = false;
@@ -434,7 +434,7 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
 
   bool _tabsTakeBack() {
     for (RoutingController? r = router.topMostRouter(); r != null; r = r.parent()) {
-      if (r is TabsRouter && r.homeIndex != -1 && r.activeIndex != r.homeIndex) return true;
+      if (r is TabsRouter && r._takesBack) return true;
     }
     return false;
   }

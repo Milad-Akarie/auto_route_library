@@ -800,6 +800,13 @@ AutoTabsRouter.tabBar(
 );
 ```
 
+### Back between tabs
+
+By default back leaves the tabs from whichever tab is showing. Every `AutoTabsRouter` constructor and `AutoTabsScaffold` take two options that keep it inside them:
+
+- `homeIndex: 0`: back on another tab shows tab 0 first.
+- `backThroughHistory: true`: back shows the tabs visited before, the latest first. After tabs 0, 2 and 1, back shows 2, then 0, then leaves. A tab visited again is gone back to once. With a `homeIndex` too, back shows the home tab once the history is gone through.
+
 ### A page that's reachable from several tabs
 
 Where you declare a page decides where it opens.

@@ -774,6 +774,7 @@ class TabsRouter extends RoutingController {
     required this.key,
     required this._routeData,
     this.homeIndex = -1,
+    this.backThroughHistory = false,
     required this.preload,
     required this.matchId,
     this._parent,
@@ -834,6 +835,31 @@ class TabsRouter extends RoutingController {
   /// else pop parent
   final int homeIndex;
 
+  /// Whether back shows the tabs visited before the active one, the latest
+  /// first, before it leaves the tabs.
+  ///
+  /// Back is [maybePop] and [pop], which Android's back key and the
+  /// predictive back gesture reach. While a tab is left to go back to, the
+  /// app tells Android it handles back, so Android 13 and later don't close
+  /// the app instead. Defaults to false.
+  ///
+  /// Each tab is in the history once, where it was left last: after tabs 0,
+  /// 1, 0 and 2, back shows 0, then 1. A tab whose guards keep it out is
+  /// skipped. Once the history is gone through, back goes on as it would
+  /// without it: to the [homeIndex] tab when there is one and it isn't
+  /// active, else out of the tabs.
+  ///
+  /// The history lives as long as this router and is not restored with
+  /// the app's state. When the tabs change, it keeps the tabs still there.
+  final bool backThroughHistory;
+
+  // The tabs shown before the active one, the latest last, each once.
+  final _tabHistory = <int>[];
+
+  // Whether back stays inside these tabs, by showing another one.
+  bool get _takesBack =>
+      (backThroughHistory && _tabHistory.isNotEmpty) || (homeIndex != -1 && _activeIndex != homeIndex);
+
   /// Called to preload a page before other navigation events occur
   /// if it returns true, the page has been preloaded, otherwise we assume it's already loaded
   bool Function(int index) preload;
@@ -886,7 +912,9 @@ class TabsRouter extends RoutingController {
   Future<_TabChange>? _pendingChange;
 
   // Every change of the active tab goes through here: setActiveIndex, which
-  // the tabs views call too, back to the home tab, and navigating to a tab.
+  // the tabs views call too, back to a tab, and navigating to a tab. A change
+  // that is not [remember]ed, such as one made by back, adds nothing to the
+  // tab history.
   //
   // The tab shows once the guards of its route let it in. [route] is the
   // route a navigation opens the tab with; the tab's page is then updated
@@ -899,6 +927,7 @@ class TabsRouter extends RoutingController {
     bool notify = true,
     RouteMatch<dynamic>? route,
     OnNavigationFailure? onFailure,
+    bool remember = true,
   }) {
     if (_activeIndex == index) return _TabChange.done;
     // A view asks again for the tab it moved to while its guards decide.
@@ -907,14 +936,24 @@ class TabsRouter extends RoutingController {
     final match = route ?? _pages[index].routeData._match;
     final checked = _checkTabGuards(match, onFailure: onFailure);
     if (checked is ResolverResult) {
-      return _endTabChange(change, index, match, checked, notify: notify, update: route != null, onFailure: onFailure);
+      return _endTabChange(
+        change,
+        index,
+        match,
+        checked,
+        notify: notify,
+        update: route != null,
+        onFailure: onFailure,
+        remember: remember,
+      );
     }
     _pendingTab = index;
     // A view that moved to the tab, e.g. a page view swiped to it, shows the
     // active one until the guards let the tab in.
     if (notify) notifyListeners();
     return _pendingChange = checked.then(
-      (result) => _endTabChange(change, index, match, result, update: route != null, onFailure: onFailure),
+      (result) =>
+          _endTabChange(change, index, match, result, update: route != null, onFailure: onFailure, remember: remember),
     );
   }
 
@@ -926,6 +965,7 @@ class TabsRouter extends RoutingController {
     bool notify = true,
     bool update = false,
     OnNavigationFailure? onFailure,
+    bool remember = true,
   }) {
     if (_disposed || change != _tabChanges) return .replaced;
     _pendingTab = null;
@@ -938,6 +978,12 @@ class TabsRouter extends RoutingController {
     // A guard may have overridden the route, e.g. its args.
     final updated = update || !identical(result.route, match) ? _updateTabPage(index, result.route) : null;
     final didPreload = preload(index);
+    if (backThroughHistory) {
+      _tabHistory
+        ..remove(index)
+        ..remove(_activeIndex);
+      if (remember) _tabHistory.add(_activeIndex);
+    }
     _previousIndex = _activeIndex;
     _activeIndex = index;
     if (notify) {
@@ -1020,15 +1066,9 @@ class TabsRouter extends RoutingController {
   @override
   @optionalTypeArgs
   Future<bool> maybePop<T extends Object?>([T? result]) {
-    if (homeIndex != -1 && _activeIndex != homeIndex) {
-      // When the guards of the home tab keep it out, back goes on as it
-      // would from the home tab.
-      Future<bool> popOrParent(_TabChange change) =>
-          change == .rejected ? _maybePopParent<T>(result) : SynchronousFuture<bool>(true);
-      final change = _changeTab(homeIndex);
-      return change is _TabChange ? popOrParent(change) : change.then(popOrParent);
-    }
-    return _maybePopParent<T>(result);
+    final shown = _showTabOnBack();
+    if (shown is bool) return shown ? SynchronousFuture<bool>(true) : _maybePopParent<T>(result);
+    return shown.then((shown) => shown ? true : _maybePopParent<T>(result));
   }
 
   Future<bool> _maybePopParent<T extends Object?>(T? result) {
@@ -1041,22 +1081,38 @@ class TabsRouter extends RoutingController {
   @override
   @optionalTypeArgs
   void pop<T extends Object?>([T? result]) {
-    if (homeIndex != -1 && _activeIndex != homeIndex) {
-      // When the guards of the home tab keep it out, back goes on as it
-      // would from the home tab.
-      void popParent(_TabChange change) {
-        if (change == .rejected) _parent?.pop(result);
-      }
-
-      final change = _changeTab(homeIndex);
-      if (change is _TabChange) {
-        popParent(change);
-      } else {
-        unawaited(change.then(popParent));
-      }
-    } else if (_parent != null) {
-      _parent!.pop(result);
+    void popParentUnless({required bool shown}) {
+      if (!shown) _parent?.pop(result);
     }
+
+    final shown = _showTabOnBack();
+    if (shown is bool) {
+      popParentUnless(shown: shown);
+    } else {
+      unawaited(shown.then((shown) => popParentUnless(shown: shown)));
+    }
+  }
+
+  // Shows the tab back goes to: the latest in the tab history, else the
+  // home tab. Answers whether it showed one; false when there is none, or
+  // when the guards of the home tab, and of every tab in the history, keep
+  // theirs out. Back then goes on as it would from the home tab.
+  FutureOr<bool> _showTabOnBack() {
+    final fromHistory = backThroughHistory && _tabHistory.isNotEmpty;
+    final FutureOr<_TabChange> change;
+    if (fromHistory) {
+      change = _changeTab(_tabHistory.removeLast(), remember: false);
+    } else if (homeIndex != -1 && _activeIndex != homeIndex) {
+      change = _changeTab(homeIndex, remember: false);
+    } else {
+      return false;
+    }
+    FutureOr<bool> next(_TabChange change) {
+      if (change != .rejected) return true;
+      return fromHistory ? _showTabOnBack() : false;
+    }
+
+    return change is _TabChange ? next(change) : change.then(next);
   }
 
   /// Pushes given [routes] to [_pages] stack
@@ -1069,9 +1125,10 @@ class TabsRouter extends RoutingController {
       final index = routesToPush.indexWhere((r) => r.key == pending.key);
       if (index != -1) routesToPush[index] = pending;
     }
+    final outgoing = _routeData.hasPendingChildren ? null : _outgoingTabsRouter();
     final preMatchedRoute = _routeData.hasPendingChildren
         ? _routeData.pendingChildren.last
-        : _outgoingTabsRouter()?._activePage?.routeData.route;
+        : outgoing?._activePage?.routeData.route;
     var guardedIndex = -1;
     Future<ResolverResult>? guarding;
     if (preMatchedRoute != null) {
@@ -1093,6 +1150,9 @@ class TabsRouter extends RoutingController {
       }
     }
 
+    if (outgoing != null) {
+      _tabHistory.addAll(_historyOf(outgoing._tabHistoryNames, routesToPush));
+    }
     if (routesToPush.isNotEmpty) {
       _pushAll(routesToPush, fromDefault: routes == null);
     }
@@ -1193,6 +1253,7 @@ class TabsRouter extends RoutingController {
     final routesToPush = _resolveRoutes(routes);
     final previousActiveRoute = stackData[previousIndex];
     final previousPages = List.of(_pages);
+    final previousHistory = _tabHistoryNames;
 
     _pages.clear();
     for (final route in routesToPush) {
@@ -1217,7 +1278,19 @@ class TabsRouter extends RoutingController {
     // previous tab. Each tabs view loads the active tab when it rebuilds with
     // the new routes.
     _activeIndex = targetIndex;
+    _tabHistory
+      ..clear()
+      ..addAll(_historyOf(previousHistory, routesToPush));
   }
+
+  List<String> get _tabHistoryNames => [for (final index in _tabHistory) _pages[index].routeData.name];
+
+  // The tab history over [routes] that [names] give, found by name as the
+  // active tab is: the tabs still there, each once, without the active one.
+  List<int> _historyOf(List<String> names, List<RouteMatch<dynamic>> routes) =>
+      {for (final name in names) routes.indexWhere((r) => r.name == name)}
+          .where((index) => index != -1 && index != _activeIndex)
+          .toList();
 
   bool _isSameTab(RouteMatch<dynamic> a, RouteMatch<dynamic> b) =>
       a.key == b.key && a.args == b.args && a.params == b.params && a.queryParams == b.queryParams;
