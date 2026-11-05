@@ -1779,6 +1779,14 @@ abstract class StackRouter extends RoutingController {
     return kept;
   }
 
+  // Why a router that AutoRouter.declarative builds can't push its own pages,
+  // and what to do instead.
+  String get _managedByWidgetMessage =>
+      'The router of ${routeData.name} is built by AutoRouter.declarative, so the list its routes callback '
+      'returns decides its pages, and push, replace and their kin can not change them. Add the route to the list '
+      'that routes callback returns, from state your app updates, or build this router with AutoRouter() to '
+      'navigate it with push and replace.';
+
   @optionalTypeArgs
   Future<T?> _push<T extends Object?>(
     PageRouteInfo route, {
@@ -1788,10 +1796,7 @@ abstract class StackRouter extends RoutingController {
     VoidCallback? onAccepted,
     int? insertAt,
   }) async {
-    assert(
-      !managedByWidget,
-      'Pages stack can be managed by either the Widget (AutoRouter.declarative) or the (StackRouter)',
-    );
+    assert(!managedByWidget, _managedByWidgetMessage);
     final match = _matchOrReportFailure(route, onFailure);
     if (match == null) {
       return null;
@@ -2143,7 +2148,7 @@ abstract class StackRouter extends RoutingController {
     Completer<void>? pushed,
     ValueChanged<RouteMatch<dynamic>>? onLastRouteAdded,
   }) async {
-    assert(!managedByWidget, 'Pages stack can be managed by either the Widget (AutoRouter.declarative) or Router');
+    assert(!managedByWidget, _managedByWidgetMessage);
 
     // A page popped since the stack was collected for reevaluation stays closed, with the pages above it.
     bool wasPopped(RouteMatch<dynamic> match) =>
