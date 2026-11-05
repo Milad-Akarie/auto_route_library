@@ -1946,15 +1946,14 @@ abstract class StackRouter extends RoutingController {
       for (final candidate in List<AutoRoutePage<Object?>>.unmodifiable(_pages).reversed) {
         _markLeaving([candidate], .removed);
         _pages.removeLast();
-        if (candidate.routeKey == anchorPage.routeKey) {
-          // use the existing match id to avoid breaking child controllers
-          toPush[0] = toPush[0].withId(anchorPage.routeData.matchId);
-          for (final ctr in _childControllers) {
-            if (ctr.matchId == candidate.routeData.matchId) {
-              ctr._markedForDataUpdate = true;
-            }
-          }
-          break;
+        // The anchor page is the first one from the top with its key.
+        if (candidate.routeKey == anchorPage.routeKey) break;
+      }
+      // use the existing match id to avoid breaking child controllers
+      toPush[0] = anchor.withId(anchorPage.routeData.matchId);
+      for (final ctr in _childControllers) {
+        if (ctr.matchId == anchorPage.routeData.matchId) {
+          ctr._markedForDataUpdate = true;
         }
       }
     }
