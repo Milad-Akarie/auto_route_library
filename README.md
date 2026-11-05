@@ -43,6 +43,7 @@
 - [Deep Linking](#deep-linking)
 - [Declarative Navigation](#declarative-navigation)
 - [Working with Paths](#working-with-paths)
+- [Route Meta](#route-meta)
 - [Route guards](#route-guards)
 - [Wrapping routes](#wrapping-routes)
 - [Navigation Observers](#navigation-observers)
@@ -1383,6 +1384,37 @@ The same tree prints at any time while debugging:
 ```dart
 debugPrint(appRouter.routeCollection.toTreeString());
 ```
+
+## Route Meta
+
+A route can carry fixed data of your own in `meta`, a `Map<String, dynamic>`. It's set where the route is declared, never in the url or the route's arguments, and every page of that route sees the same map.
+
+```dart
+AutoRoute(
+  page: CheckoutRoute.page,
+  meta: const {'hideBottomBar': true},
+),
+```
+
+Read it from the route's data in its page, `context.routeData.meta`, or from any `RouteMatch`, such as the route on top with `context.topRouteMatch.meta`. A builder that reads `context.topRouteMatch` rebuilds when that route changes, so the bottom bar of an `AutoTabsScaffold` can hide for a page pushed inside a tab:
+
+```dart
+AutoTabsScaffold(
+  routes: const [HomeTab(), ProfileTab()],
+  bottomNavigationBuilder: (context, tabsRouter) {
+    if (context.topRouteMatch.meta['hideBottomBar'] == true) {
+      return const SizedBox.shrink();
+    }
+    return BottomNavigationBar(
+      currentIndex: tabsRouter.activeIndex,
+      onTap: tabsRouter.setActiveIndex,
+      items: [...],
+    );
+  },
+)
+```
+
+In a guard, read the meta of the route being opened from `resolver.route.meta`. `router.current.meta` is the page on screen now, which at app start is the root, not the route the guard decides on.
 
 ## Route Guards
 
