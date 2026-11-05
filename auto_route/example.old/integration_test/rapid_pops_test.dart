@@ -101,9 +101,9 @@ void main() {
       unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
       unawaited(router.push(const PageRouteInfo('MyDeliveriesRoute')));
       await tester.pump();
-      router
-        ..popUntilRoot()
-        ..popUntilRoot();
+      for (var pops = 0; pops < 2; pops++) {
+        router.popUntilRoot();
+      }
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(stackNames(), ['MainRoute']);
