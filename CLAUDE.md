@@ -22,6 +22,7 @@ The old example app lives in `auto_route/example.old/` until the new one in `aut
 
 ## Every lint rule stays on
 Every analyzer and DCM rule stays on. A finding is fixed in code, never switched off, excluded or ignored.
+Before fixing a lint, load the `dart-lint` skill: it holds the shapes that fix each rule and what stays standing.
 Use the DCM MCP tools (`add_roots` with the package folder first, then `dcm_analyze` and `dcm_fix`) or the `dcm` command.
 A finding that can't be fixed without changing public API or behavior stays standing, and the report names its file, line, rule and reason.
 `.github/scripts/check_lint_rules_on.sh` proves it: it fails on a rule set to `false`, a per-rule `exclude:` or an `// ignore:` comment.
