@@ -46,9 +46,10 @@ void main() {
         // In a closure, so no local variable of this test holds the args.
         () {
           // Not const: a const instance is never garbage collected, which is
-          // what this test checks.
-          // ignore: prefer_const_constructors
-          final route = NamedRoute('DetailRoute', args: _DetailArgs(42));
+          // what this test checks. The counter is read at run time, so the
+          // instance is made when the test runs.
+          final counter = int.parse('42');
+          final route = NamedRoute('DetailRoute', args: _DetailArgs(counter));
           args = WeakReference(route.args!);
           unawaited(router.push(route));
         }();
