@@ -1222,6 +1222,16 @@ class ProductReviewScreen extends StatelessWidget {
 }
 ```
 
+#### One page per path
+
+A route's pages are known by the route's name, so `/books/1` and `/books/2` count as the same page. `navigate` to `BookDetailsRoute(id: 2)` while book 1 is in the stack goes back to that page and updates it to book 2 in place, with no transition. Set `usesPathAsKey: true` to know the pages by their matched path instead: book 2 is then a new page, pushed with its transition over book 1, and `navigate` back to book 1 pops to it.
+
+```dart
+AutoRoute(path: '/books/:id', page: BookDetailsRoute.page, usesPathAsKey: true),
+```
+
+The same holds in a declarative router: when the list of routes swaps book 1 for book 2, the page updates in place, and with `usesPathAsKey` book 2 animates in as a new page.
+
 ### Query Parameters
 
 Query parameters are accessed the same way, simply annotate the constructor parameter to hold the value of the query param with `@QueryParam('optional-alias')` and let **AutoRoute** do the rest.
