@@ -75,9 +75,7 @@ class WebAppRouter extends RootStackRouter {
 
 /// Main page of the web example, with buttons to open a user and to sign out.
 @RoutePage()
-// An example page, kept as written so the example shows the same code.
-// ignore: avoid-unnecessary-stateful-widgets
-class MainWebPage extends StatefulWidget {
+class MainWebPage extends StatelessWidget {
   /// All arguments are optional.
   const new({super.key, this.onNavigate, this.onShowUserPosts});
 
@@ -87,11 +85,6 @@ class MainWebPage extends StatefulWidget {
   /// Not used by this page.
   final VoidCallback? onShowUserPosts;
 
-  @override
-  State<MainWebPage> createState() => _MainWebPageState();
-}
-
-class _MainWebPageState extends State<MainWebPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +98,7 @@ class _MainWebPageState extends State<MainWebPage> {
               padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
                 onPressed:
-                    widget.onNavigate ??
+                    onNavigate ??
                     () async {
                       await context.pushRoute(
                         UserRoute(
@@ -249,9 +242,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 /// Posts of a user, with a nested router for the lists of all and favorite
 /// posts.
 @RoutePage()
-// An example page, kept as written so the example shows the same code.
-// ignore: avoid-unnecessary-stateful-widgets
-class UserPostsPage extends StatefulWidget {
+class UserPostsPage extends StatelessWidget {
   /// Takes the user [id], which is inherited from the parent route.
   const new({@PathParam.inherit('userID') required this.id, super.key});
 
@@ -259,19 +250,13 @@ class UserPostsPage extends StatefulWidget {
   final int id;
 
   @override
-  UserPostsPageState createState() => .new();
-}
-
-/// State of [UserPostsPage].
-class UserPostsPageState extends State<UserPostsPage> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Column(
           children: [
             Text(
-              'User Posts ${widget.id}',
+              'User Posts $id',
               style: const TextStyle(fontSize: 30),
             ),
             ElevatedButton(
@@ -302,9 +287,7 @@ class UserPostsPageState extends State<UserPostsPage> {
 
 /// Page of a user, with a nested router for the profile and the posts.
 @RoutePage()
-// An example page, kept as written so the example shows the same code.
-// ignore: avoid-unnecessary-stateful-widgets
-class UserPage extends StatefulWidget {
+class UserPage extends StatelessWidget {
   /// All arguments are optional.
   const new({
     super.key,
@@ -324,12 +307,6 @@ class UserPage extends StatefulWidget {
   final String? fragment;
 
   @override
-  UserPageState createState() => .new();
-}
-
-/// State of [UserPage].
-class UserPageState extends State<UserPage> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.red,
@@ -338,9 +315,9 @@ class UserPageState extends State<UserPage> {
         title: Builder(
           builder: (context) {
             return Text(
-              '${context.topRouteMatch.name} ${widget.id} query: '
-              '${widget.query ?? 'null'}, fragment: '
-              '${widget.fragment ?? 'null'}',
+              '${context.topRouteMatch.name} $id query: '
+              '${query ?? 'null'}, fragment: '
+              '${fragment ?? 'null'}',
             );
           },
         ),

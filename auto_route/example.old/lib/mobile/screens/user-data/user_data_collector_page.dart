@@ -6,19 +6,14 @@ import 'package:provider/provider.dart';
 /// Host of the user data flow; hands a [SettingsState] to the pages below it.
 ///
 /// It shows an empty declarative router: no step of the flow is wired up.
-// An example page, kept as written so the example shows the same code.
-// ignore: avoid-unnecessary-stateful-widgets
-class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
+class UserDataCollectorPage extends StatelessWidget
+    implements AutoRouteWrapper {
   /// Takes [onResult].
   const new({super.key, this.onResult});
 
   /// Called with the collected data when the flow ends.
   // The generated router copies this type into its args class.
-  // ignore: inference_failure_on_function_return_type
   final Function(UserData data)? onResult;
-
-  @override
-  UserDataCollectorPageState createState() => .new();
 
   @override
   Widget wrappedRoute(BuildContext context) {
@@ -27,10 +22,7 @@ class UserDataCollectorPage extends StatefulWidget implements AutoRouteWrapper {
       child: this,
     );
   }
-}
 
-/// State of [UserDataCollectorPage].
-class UserDataCollectorPageState extends State<UserDataCollectorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
