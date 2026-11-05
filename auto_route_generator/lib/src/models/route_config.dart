@@ -8,10 +8,10 @@ import 'package:code_builder/code_builder.dart' show TypeReference;
 class RouteConfig {
   /// Default constructor
   const new({
+    required this.className,
     this.name,
     this.pathParams = const [],
     this.pageType,
-    required this.className,
     this.parameters = const [],
     this.hasWrappedRoute,
     this.hasConstConstructor = false,

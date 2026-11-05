@@ -19,10 +19,10 @@ class ResolvedType {
 
   const new _({
     required this.name,
+    required this._isRecordType,
     this.import,
     this.typeArguments = const [],
     this.isNullable = false,
-    required this._isRecordType,
     this.nameInRecord,
     this.functionParts,
     this.isEnum = false,

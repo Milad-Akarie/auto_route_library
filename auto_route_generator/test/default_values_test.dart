@@ -2,7 +2,7 @@ import 'package:test/test.dart';
 
 import 'support/generate.dart';
 
-String _page(String name, {String imports = '', required String parameters, required String fields}) =>
+String _page(String name, {required String parameters, required String fields, String imports = ''}) =>
     '''
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/widgets.dart';

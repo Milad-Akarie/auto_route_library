@@ -3,12 +3,12 @@ class RouterConfig {
   /// Default constructor
   const new({
     required this.routerClassName,
-    this.replaceInRouteName,
-    this.deferredLoading = false,
-    this.isPartOfLibrary = false,
     required this.path,
     required this.cacheHash,
     required this.generateForDir,
+    this.replaceInRouteName,
+    this.deferredLoading = false,
+    this.isPartOfLibrary = false,
     this.argsEquality = false,
   });
 

@@ -15,10 +15,10 @@ const kDartFormatWidth = '// dart format width=80';
 abstract class CacheAwareBuilder<T> extends Builder {
   /// Default constructor
   new({
+    required this.annotationName,
     this.generatedExtension = '.g.dart',
     List<String> additionalOutputExtensions = const [],
     this.allowSyntaxErrors = false,
-    required this.annotationName,
     this.options,
   }) : buildExtensions = validatedBuildExtensionsFrom(options != null ? Map.of(options.config) : null, {
          '.dart': [generatedExtension, ...additionalOutputExtensions],

@@ -6,9 +6,9 @@ import 'support/generate.dart';
 /// also declared as a field in [fields]. [constructor] is `const` or empty.
 String _page(
   String name, {
-  String imports = '',
   required String parameters,
   required String fields,
+  String imports = '',
   String constructor = 'const',
 }) =>
     '''

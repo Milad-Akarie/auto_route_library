@@ -157,15 +157,15 @@ class FunctionParamConfig extends ParamConfig {
   /// Default constructor
   const new({
     required this.returnType,
-    this.params = const [],
     required super.type,
     required super.name,
-    super.alias,
     required super.isPositional,
     required super.hasRequired,
     required super.isOptional,
     required super.isNamed,
     required super.isRequired,
+    this.params = const [],
+    super.alias,
     super.defaultValueCode,
     super.defaultValueImport,
   }) : super(isPathParam: false, isQueryParam: false, isInheritedPathParam: false, isUrlFragment: false);
