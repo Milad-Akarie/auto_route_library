@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:auto_route_generator/src/code_builder/emit_source.dart';
 import 'package:auto_route_generator/src/code_builder/iterable_x.dart';
 import 'package:auto_route_generator/src/code_builder/library_builder.dart';
 import 'package:auto_route_generator/src/models/param_config.dart';
@@ -186,7 +187,7 @@ List<Class> buildRouteInfoAndArgs(RouteConfig r, RouterConfig router, DartEmitte
                     (blockBuilder) => blockBuilder
                       ..statements.addAll([
                         const Code('if (identical(this, other)) return true;'),
-                        Code('if (other is! ${typedArgsClassRefer.accept(emitter)}) return false;'),
+                        Code('if (other is! ${emitSource(typedArgsClassRefer, emitter)}) return false;'),
                         const Code('return '),
                         // Args with nothing to compare, such as a generic
                         // route's without params, are equal.
@@ -317,7 +318,7 @@ Iterable<Parameter> buildArgParams(
             defaultCode = const Code('const {}');
           } else {
             defaultCode = Code(
-              'const ${_defaultValue(p, p.defaultValueCode!.replaceFirst(_constKeyword, '')).accept(emitter)}',
+              'const ${emitSource(_defaultValue(p, p.defaultValueCode!.replaceFirst(_constKeyword, '')), emitter)}',
             );
           }
         } else {

@@ -1,5 +1,6 @@
 import 'package:auto_route_generator/build_utils.dart';
 import 'package:auto_route_generator/src/code_builder/deferred_pages_allocator.dart';
+import 'package:auto_route_generator/src/code_builder/emit_source.dart';
 import 'package:auto_route_generator/src/code_builder/route_info_builder.dart';
 import 'package:auto_route_generator/src/models/route_config.dart';
 import 'package:auto_route_generator/src/models/router_config.dart';
@@ -126,5 +127,5 @@ String generateLibrary(
       ]),
   );
 
-  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion).format(library.accept(emitter).toString());
+  return DartFormatter(languageVersion: DartFormatter.latestLanguageVersion).format(emitSource(library, emitter));
 }
