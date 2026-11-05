@@ -14,47 +14,52 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push BooksRoute with its child BookListRoute and the fragment top.
-  // Should: the page shows, and the url is /books#top.
-  testWidgets('a pushed route with children keeps its fragment in the url', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const Text('HomeRoute')),
-        ),
-        AutoRoute(
-          path: '/books',
-          page: PageInfo('BooksRoute', builder: (_) => const AutoRouter()),
-          children: [
-            AutoRoute(
-              path: '',
-              page: PageInfo(
-                'BookListRoute',
-                builder: (_) => const Scaffold(
-                  body: SafeArea(child: Text('BookListRoute')),
+  group('nested route fragment', () {
+    // Steps: push BooksRoute with its child BookListRoute and the fragment top.
+    // Should: the page shows, and the url is /books#top.
+    testWidgets('a pushed route with children keeps its fragment in the url', (
+      tester,
+    ) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const Text('HomeRoute'),
+            ),
+          ),
+          AutoRoute(
+            path: '/books',
+            page: PageInfo('BooksRoute', builder: (_) => const AutoRouter()),
+            children: [
+              AutoRoute(
+                path: '',
+                page: PageInfo(
+                  'BookListRoute',
+                  builder: (_) => const Scaffold(
+                    body: SafeArea(child: Text('BookListRoute')),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(
+        router.push(
+          const NamedRoute(
+            'BooksRoute',
+            children: [NamedRoute('BookListRoute')],
+            fragment: 'top',
+          ),
         ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(
-      router.push(
-        const NamedRoute(
-          'BooksRoute',
-          children: [NamedRoute('BookListRoute')],
-          fragment: 'top',
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('BookListRoute'), findsOneWidget);
-    expect(router.urlState.url, '/books#top');
-    await expectBrowserUrl('/books#top');
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('BookListRoute'), findsOneWidget);
+      expect(router.urlState.url, '/books#top');
+      await expectBrowserUrl('/books#top');
+    });
   });
 }

@@ -14,41 +14,43 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: ProductsRoute shows `queryParams.optString('tag')`. Open
-  // /products?tag=red&tag=blue.
-  // Should: the page builds and shows the last value, blue.
-  testWidgets(
-    'a page reading optString builds from a deep link that repeats the key',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo(
-              'HomeRoute',
-              builder: (_) => const Text('HomeRoute'),
+  group('repeated query key', () {
+    // Steps: ProductsRoute shows `queryParams.optString('tag')`. Open
+    // /products?tag=red&tag=blue.
+    // Should: the page builds and shows the last value, blue.
+    testWidgets(
+      'a page reading optString builds from a deep link that repeats the key',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const Text('HomeRoute'),
+              ),
             ),
-          ),
-          AutoRoute(
-            path: '/products',
-            page: PageInfo(
-              'ProductsRoute',
-              builder: (data) => Scaffold(
-                body: SafeArea(
-                  child: Text(
-                    'Tag ${data.queryParams.optString('tag') ?? 'null'}',
+            AutoRoute(
+              path: '/products',
+              page: PageInfo(
+                'ProductsRoute',
+                builder: (data) => Scaffold(
+                  body: SafeArea(
+                    child: Text(
+                      'Tag ${data.queryParams.optString('tag') ?? 'null'}',
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      unawaited(router.navigatePath('/products?tag=red&tag=blue'));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('Tag blue'), findsOneWidget);
-    },
-  );
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        unawaited(router.navigatePath('/products?tag=red&tag=blue'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Tag blue'), findsOneWidget);
+      },
+    );
+  });
 }

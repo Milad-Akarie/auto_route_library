@@ -13,49 +13,51 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _SplashRoute.page, path: '/', initial: true),
-        AutoRoute(
-          page: _AppRouterRoute.page,
-          path: '/app',
-          children: [
-            AutoRoute(page: _HomeRoute.page, path: '', initial: true),
-            AutoRoute(page: _TestRoute.page, path: 'test'),
-          ],
-        ),
-      ],
+  group('pop and push all', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _SplashRoute.page, path: '/', initial: true),
+          AutoRoute(
+            page: _AppRouterRoute.page,
+            path: '/app',
+            children: [
+              AutoRoute(page: _HomeRoute.page, path: '', initial: true),
+              AutoRoute(page: _TestRoute.page, path: 'test'),
+            ],
+          ),
+        ],
+      );
+    });
+
+    // Steps: open the nested router 'app_router' over a splash page, then from
+    // its only page call
+    // innerRouterOf('app_router').popAndPushAll([TestRoute()]).
+    // Should: TestRoute replaces the page inside the nested router, and the
+    // page holding the nested router stays.
+    testWidgets(
+      'popAndPushAll from the only page of a nested router replaces that page',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const _AppRouterRoute()));
+        await tester.pumpAndSettle();
+        final appRouter = router.innerRouterOf<StackRouter>(
+          _AppRouterRoute.name,
+        )!;
+
+        unawaited(appRouter.popAndPushAll([const _TestRoute()]));
+        await tester.pumpAndSettle();
+        expect(router.stack.map((p) => p.name), [
+          _SplashRoute.name,
+          _AppRouterRoute.name,
+        ]);
+        expect(appRouter.stack.map((p) => p.name), [_TestRoute.name]);
+        expect(find.text('Test'), findsOneWidget);
+        await expectBrowserUrl('/app/test');
+      },
     );
   });
-
-  // Steps: open the nested router 'app_router' over a splash page, then from
-  // its only page call
-  // innerRouterOf('app_router').popAndPushAll([TestRoute()]).
-  // Should: TestRoute replaces the page inside the nested router, and the
-  // page holding the nested router stays.
-  testWidgets(
-    'popAndPushAll from the only page of a nested router replaces that page',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(const _AppRouterRoute()));
-      await tester.pumpAndSettle();
-      final appRouter = router.innerRouterOf<StackRouter>(
-        _AppRouterRoute.name,
-      )!;
-
-      unawaited(appRouter.popAndPushAll([const _TestRoute()]));
-      await tester.pumpAndSettle();
-      expect(router.stack.map((p) => p.name), [
-        _SplashRoute.name,
-        _AppRouterRoute.name,
-      ]);
-      expect(appRouter.stack.map((p) => p.name), [_TestRoute.name]);
-      expect(find.text('Test'), findsOneWidget);
-      await expectBrowserUrl('/app/test');
-    },
-  );
 }
 
 class _SplashRoute extends PageRouteInfo<void> {

@@ -18,69 +18,72 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() => router = buildSimpleRouter());
+  group('back twice', () {
+    late RootStackRouter router;
+    setUp(() => router = buildSimpleRouter());
 
-  Future<void> pushSecondThenThird(WidgetTester tester) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(const SecondRoute()));
-    await tester.pumpAndSettle();
-    await expectBrowserUrl('/second-route');
-    unawaited(router.push(const ThirdRoute()));
-    await tester.pumpAndSettle();
-    await expectBrowserUrl('/third-route');
-    expectCurrentPage(router, ThirdRoute.name);
-    if (!kIsWeb) expect(router.navigationHistory.length, 3);
-  }
+    Future<void> pushSecondThenThird(WidgetTester tester) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(const SecondRoute()));
+      await tester.pumpAndSettle();
+      await expectBrowserUrl('/second-route');
+      unawaited(router.push(const ThirdRoute()));
+      await tester.pumpAndSettle();
+      await expectBrowserUrl('/third-route');
+      expectCurrentPage(router, ThirdRoute.name);
+      if (!kIsWeb) expect(router.navigationHistory.length, 3);
+    }
 
-  // Steps: start on FirstRoute, push SecondRoute, push ThirdRoute, then call
-  // back() twice.
-  // Should: the first back() lands on SecondRoute, the second on FirstRoute.
-  testWidgets('Calling back() twice goes back two pages', (tester) async {
-    await pushSecondThenThird(tester);
+    // Steps: start on FirstRoute, push SecondRoute, push ThirdRoute, then call
+    // back() twice.
+    // Should: the first back() lands on SecondRoute, the second on FirstRoute.
+    testWidgets('Calling back() twice goes back two pages', (tester) async {
+      await pushSecondThenThird(tester);
 
-    router.back();
-    await expectBrowserUrl('/second-route');
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, SecondRoute.name);
-    expect(router.canNavigateBack, isTrue);
+      router.back();
+      await expectBrowserUrl('/second-route');
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, SecondRoute.name);
+      expect(router.canNavigateBack, isTrue);
 
-    router.back();
-    await expectBrowserUrl('/');
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, FirstRoute.name);
-    expect(router.stack.map((p) => p.name), [FirstRoute.name]);
-    expect(router.urlState.url, '/');
-    if (!kIsWeb) expect(router.navigationHistory.length, 1);
-  });
+      router.back();
+      await expectBrowserUrl('/');
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, FirstRoute.name);
+      expect(router.stack.map((p) => p.name), [FirstRoute.name]);
+      expect(router.urlState.url, '/');
+      if (!kIsWeb) expect(router.navigationHistory.length, 1);
+    });
 
-  // Steps: start on FirstRoute, push SecondRoute, push ThirdRoute, call
-  // back(), push ThirdRoute again, then call back().
-  // Should: the second ThirdRoute is recorded, so back() lands on SecondRoute.
-  testWidgets('A page pushed after back() is recorded in the history', (
-    tester,
-  ) async {
-    await pushSecondThenThird(tester);
+    // Steps: start on FirstRoute, push SecondRoute, push ThirdRoute, call
+    // back(), push ThirdRoute again, then call back().
+    // Should: the second ThirdRoute is recorded, so back() lands on
+    // SecondRoute.
+    testWidgets('A page pushed after back() is recorded in the history', (
+      tester,
+    ) async {
+      await pushSecondThenThird(tester);
 
-    router.back();
-    await expectBrowserUrl('/second-route');
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, SecondRoute.name);
+      router.back();
+      await expectBrowserUrl('/second-route');
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, SecondRoute.name);
 
-    unawaited(router.push(const ThirdRoute()));
-    await tester.pumpAndSettle();
-    await expectBrowserUrl('/third-route');
-    expectCurrentPage(router, ThirdRoute.name);
-    if (!kIsWeb) expect(router.navigationHistory.length, 3);
+      unawaited(router.push(const ThirdRoute()));
+      await tester.pumpAndSettle();
+      await expectBrowserUrl('/third-route');
+      expectCurrentPage(router, ThirdRoute.name);
+      if (!kIsWeb) expect(router.navigationHistory.length, 3);
 
-    router.back();
-    await expectBrowserUrl('/second-route');
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, SecondRoute.name);
-    expect(router.stack.map((p) => p.name), [
-      FirstRoute.name,
-      SecondRoute.name,
-    ]);
-    if (!kIsWeb) expect(router.navigationHistory.length, 2);
+      router.back();
+      await expectBrowserUrl('/second-route');
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, SecondRoute.name);
+      expect(router.stack.map((p) => p.name), [
+        FirstRoute.name,
+        SecondRoute.name,
+      ]);
+      if (!kIsWeb) expect(router.navigationHistory.length, 2);
+    });
   });
 }

@@ -16,26 +16,28 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() => router = buildSimpleRouter());
+  group('query params on pop', () {
+    late RootStackRouter router;
+    setUp(() => router = buildSimpleRouter());
 
-  // Steps: open FirstRoute at '/?search=shoes', push SecondRoute, then pop it.
-  // Should: the url, and on web the address bar, is '/?search=shoes' again.
-  testWidgets(
-    'Popping a page restores the query params of the page underneath',
-    (tester) async {
-      await pumpRouterApp(tester, router, initialLink: '/?search=shoes');
-      expect(router.urlState.url, '/?search=shoes');
+    // Steps: open FirstRoute at '/?search=shoes', push SecondRoute, then pop it.
+    // Should: the url, and on web the address bar, is '/?search=shoes' again.
+    testWidgets(
+      'Popping a page restores the query params of the page underneath',
+      (tester) async {
+        await pumpRouterApp(tester, router, initialLink: '/?search=shoes');
+        expect(router.urlState.url, '/?search=shoes');
 
-      unawaited(router.push(const SecondRoute()));
-      await tester.pumpAndSettle();
-      expect(router.urlState.url, '/second-route');
+        unawaited(router.push(const SecondRoute()));
+        await tester.pumpAndSettle();
+        expect(router.urlState.url, '/second-route');
 
-      router.pop();
-      await tester.pumpAndSettle();
-      expectCurrentPage(router, FirstRoute.name);
-      expect(router.urlState.url, '/?search=shoes');
-      await expectBrowserUrl('/?search=shoes');
-    },
-  );
+        router.pop();
+        await tester.pumpAndSettle();
+        expectCurrentPage(router, FirstRoute.name);
+        expect(router.urlState.url, '/?search=shoes');
+        await expectBrowserUrl('/?search=shoes');
+      },
+    );
+  });
 }

@@ -15,60 +15,63 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: PageInfo(
-            'Home',
-            builder: (_) => const Scaffold(body: SafeArea(child: Text('Home'))),
+  group('custom route current result', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: PageInfo(
+              'Home',
+              builder: (_) =>
+                  const Scaffold(body: SafeArea(child: Text('Home'))),
+            ),
+            path: '/',
+            initial: true,
           ),
-          path: '/',
-          initial: true,
-        ),
-        CustomRoute(
-          page: PageInfo(
-            'Details',
-            builder: (_) =>
-                const Scaffold(body: SafeArea(child: Text('Details'))),
+          CustomRoute(
+            page: PageInfo(
+              'Details',
+              builder: (_) =>
+                  const Scaffold(body: SafeArea(child: Text('Details'))),
+            ),
+            path: '/details',
+            customRouteBuilder: <T>(context, child, page) => _ResultRoute<T>(
+              settings: page,
+              result: 'picked' as T,
+              builder: (_) => child,
+            ),
           ),
-          path: '/details',
-          customRouteBuilder: <T>(context, child, page) => _ResultRoute<T>(
-            settings: page,
-            result: 'picked' as T,
-            builder: (_) => child,
-          ),
-        ),
-      ],
-    );
-  });
-
-  final backs = {'the iOS back swipe': swipeBack, 'system back': systemBack};
-
-  // Steps: Details is a CustomRoute whose customRouteBuilder returns a
-  // CupertinoPageRoute reporting currentResult 'picked'. Push it, then go
-  // back by the iOS swipe or system back.
-  // Should: the push completes with 'picked', as Navigator.push does.
-  for (final MapEntry(key: name, value: back) in backs.entries) {
-    testWidgets("$name completes the push with the route's currentResult", (
-      tester,
-    ) async {
-      await pumpRouterApp(tester, router);
-      Object? result = 'unset';
-      unawaited(
-        router
-            .push<String>(const PageRouteInfo('Details'))
-            .then((value) => result = value),
+        ],
       );
-      await tester.pumpAndSettle();
-
-      await back(tester);
-
-      expectCurrentPage(router, 'Home');
-      expect(result, 'picked');
     });
-  }
+
+    final backs = {'the iOS back swipe': swipeBack, 'system back': systemBack};
+
+    // Steps: Details is a CustomRoute whose customRouteBuilder returns a
+    // CupertinoPageRoute reporting currentResult 'picked'. Push it, then go
+    // back by the iOS swipe or system back.
+    // Should: the push completes with 'picked', as Navigator.push does.
+    for (final MapEntry(key: name, value: back) in backs.entries) {
+      testWidgets("$name completes the push with the route's currentResult", (
+        tester,
+      ) async {
+        await pumpRouterApp(tester, router);
+        Object? result = 'unset';
+        unawaited(
+          router
+              .push<String>(const PageRouteInfo('Details'))
+              .then((value) => result = value),
+        );
+        await tester.pumpAndSettle();
+
+        await back(tester);
+
+        expectCurrentPage(router, 'Home');
+        expect(result, 'picked');
+      });
+    }
+  });
 }
 
 class _ResultRoute<T> extends CupertinoPageRoute<T> {

@@ -13,52 +13,54 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push DeferredRoute, whose page is a DeferredWidget still loading
-  // its library, go back, then let the library finish loading.
-  // Should: the late load changes nothing and throws nothing.
-  testWidgets(
-    'a deferred page popped before its library loads throws nothing',
-    (tester) async {
-      final library = Completer<void>();
-      Future<void> loadLibrary() => library.future;
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo(
-              'HomeRoute',
-              builder: (_) => const _TextPage('HomeRoute'),
-            ),
-          ),
-          AutoRoute(
-            path: '/deferred',
-            page: PageInfo(
-              'DeferredRoute',
-              builder: (_) => DeferredWidget(
-                loadLibrary,
-                () => const _TextPage('DeferredRoute'),
+  group('deferred page popped', () {
+    // Steps: push DeferredRoute, whose page is a DeferredWidget still loading
+    // its library, go back, then let the library finish loading.
+    // Should: the late load changes nothing and throws nothing.
+    testWidgets(
+      'a deferred page popped before its library loads throws nothing',
+      (tester) async {
+        final library = Completer<void>();
+        Future<void> loadLibrary() => library.future;
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const _TextPage('HomeRoute'),
               ),
             ),
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      unawaited(router.pushPath('/deferred'));
-      // Not pumpAndSettle: the loading placeholder spins until the library
-      // loads.
-      await _pumpFor(tester, const Duration(seconds: 1));
-      expect(find.byType(DeferredWidget), findsOneWidget);
-      expect(find.text('DeferredRoute'), findsNothing);
+            AutoRoute(
+              path: '/deferred',
+              page: PageInfo(
+                'DeferredRoute',
+                builder: (_) => DeferredWidget(
+                  loadLibrary,
+                  () => const _TextPage('DeferredRoute'),
+                ),
+              ),
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        unawaited(router.pushPath('/deferred'));
+        // Not pumpAndSettle: the loading placeholder spins until the library
+        // loads.
+        await _pumpFor(tester, const Duration(seconds: 1));
+        expect(find.byType(DeferredWidget), findsOneWidget);
+        expect(find.text('DeferredRoute'), findsNothing);
 
-      router.pop();
-      await _pumpFor(tester, const Duration(seconds: 1));
-      expect(find.text('HomeRoute'), findsOneWidget);
-      library.complete();
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('DeferredRoute'), findsNothing);
-    },
-  );
+        router.pop();
+        await _pumpFor(tester, const Duration(seconds: 1));
+        expect(find.text('HomeRoute'), findsOneWidget);
+        library.complete();
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('DeferredRoute'), findsNothing);
+      },
+    );
+  });
 }
 
 /// Pumps frames for [duration], 100 milliseconds apart.

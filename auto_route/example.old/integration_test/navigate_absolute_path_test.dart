@@ -11,50 +11,52 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: '/' holds a shell with 'notifications', an index shell at '' and
-  // a '*' not-found route. Tap the button on the home page that calls
-  // context.router.navigatePath('/notifications').
-  // Should: the notifications page opens at '/notifications', not the
-  // not-found page.
-  testWidgets(
-    'navigatePath() with an absolute path from a nested page opens its page',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            initial: true,
-            page: const EmptyShellRoute('UserShellRoute'),
-            children: [
-              AutoRoute(
-                path: 'notifications',
-                page: _page('NotificationsRoute'),
-              ),
-              AutoRoute(
-                path: '',
-                initial: true,
-                page: const EmptyShellRoute('IndexRoute'),
-                children: [
-                  AutoRoute(path: '', initial: true, page: _homePage),
-                  AutoRoute(path: ':id', page: _page('DynamicRoute')),
-                ],
-              ),
-              AutoRoute(path: '*', page: _page('NotFoundRoute')),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterAppWithConfig(tester, router);
-      expect(find.text('HomeRoute'), findsOneWidget);
+  group('navigate absolute path', () {
+    // Steps: '/' holds a shell with 'notifications', an index shell at '' and
+    // a '*' not-found route. Tap the button on the home page that calls
+    // context.router.navigatePath('/notifications').
+    // Should: the notifications page opens at '/notifications', not the
+    // not-found page.
+    testWidgets(
+      'navigatePath() with an absolute path from a nested page opens its page',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              initial: true,
+              page: const EmptyShellRoute('UserShellRoute'),
+              children: [
+                AutoRoute(
+                  path: 'notifications',
+                  page: _page('NotificationsRoute'),
+                ),
+                AutoRoute(
+                  path: '',
+                  initial: true,
+                  page: const EmptyShellRoute('IndexRoute'),
+                  children: [
+                    AutoRoute(path: '', initial: true, page: _homePage),
+                    AutoRoute(path: ':id', page: _page('DynamicRoute')),
+                  ],
+                ),
+                AutoRoute(path: '*', page: _page('NotFoundRoute')),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterAppWithConfig(tester, router);
+        expect(find.text('HomeRoute'), findsOneWidget);
 
-      await tester.tap(find.text('Open notifications'));
-      await tester.pumpAndSettle();
-      expect(find.text('NotFoundRoute'), findsNothing);
-      expect(find.text('NotificationsRoute'), findsOneWidget);
-      expect(router.currentPath, '/notifications');
-      await expectBrowserUrl('/notifications');
-    },
-  );
+        await tester.tap(find.text('Open notifications'));
+        await tester.pumpAndSettle();
+        expect(find.text('NotFoundRoute'), findsNothing);
+        expect(find.text('NotificationsRoute'), findsOneWidget);
+        expect(router.currentPath, '/notifications');
+        await expectBrowserUrl('/notifications');
+      },
+    );
+  });
 }
 
 PageInfo _page(String name) => .new(

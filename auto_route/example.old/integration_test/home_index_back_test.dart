@@ -20,53 +20,59 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  Future<TabsRouter> pumpApp(
-    WidgetTester tester, {
-    required int homeIndex,
-  }) async {
-    _homeIndex = homeIndex;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _tabsPage,
-          path: '/',
-          children: [
-            for (final name in _kTabNames)
-              AutoRoute(page: _page(name), path: name),
-          ],
-        ),
-      ],
+  group('home index back', () {
+    Future<TabsRouter> pumpApp(
+      WidgetTester tester, {
+      required int homeIndex,
+    }) async {
+      _homeIndex = homeIndex;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _tabsPage,
+            path: '/',
+            children: [
+              for (final name in _kTabNames)
+                AutoRoute(page: _page(name), path: name),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      return router.innerRouterOf<TabsRouter>(_tabsPage.name)!;
+    }
+
+    testWidgets(
+      'system back on another tab shows the home tab',
+      (tester) async {
+        final tabs = await pumpApp(tester, homeIndex: 0);
+        tabs.setActiveIndex(2);
+        await tester.pumpAndSettle();
+
+        await systemBack(tester);
+
+        expect(tabs.activeIndex, 0);
+        final [newsTab, ...] = _kTabNames;
+        expect(find.text(newsTab), findsOneWidget);
+        expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
+      },
     );
-    await pumpRouterApp(tester, router);
-    return router.innerRouterOf<TabsRouter>(_tabsPage.name)!;
-  }
 
-  testWidgets('system back on another tab shows the home tab', (tester) async {
-    final tabs = await pumpApp(tester, homeIndex: 0);
-    tabs.setActiveIndex(2);
-    await tester.pumpAndSettle();
+    testWidgets(
+      'system back on the first tab shows the home tab when homeIndex is '
+      'another',
+      (tester) async {
+        final tabs = await pumpApp(tester, homeIndex: 1);
+        expect(tabs.activeIndex, 0);
 
-    await systemBack(tester);
+        await systemBack(tester);
 
-    expect(tabs.activeIndex, 0);
-    final [newsTab, ...] = _kTabNames;
-    expect(find.text(newsTab), findsOneWidget);
-    expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
+        expect(tabs.activeIndex, 1);
+        final [_, feedTab, ...] = _kTabNames;
+        expect(find.text(feedTab), findsOneWidget);
+      },
+    );
   });
-
-  testWidgets(
-    'system back on the first tab shows the home tab when homeIndex is another',
-    (tester) async {
-      final tabs = await pumpApp(tester, homeIndex: 1);
-      expect(tabs.activeIndex, 0);
-
-      await systemBack(tester);
-
-      expect(tabs.activeIndex, 1);
-      final [_, feedTab, ...] = _kTabNames;
-      expect(find.text(feedTab), findsOneWidget);
-    },
-  );
 }
 
 const _kTabNames = ['NewsRoute', 'FeedRoute', 'RankingRoute', 'ProfileRoute'];

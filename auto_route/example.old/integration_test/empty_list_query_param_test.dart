@@ -12,23 +12,25 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push the items route with ids and picked both empty lists.
-  // Should: the page shows the empty lists, and the url, in the router and
-  // the browser, is '/items' with no '?'.
-  testWidgets(
-    'an empty list query param leaves no ? in the url',
-    (tester) async {
-      final router = ListRouter();
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(ItemsRoute(ids: const [], picked: const [])));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(
-        find.text('ids [] prices null flags null sorts null picked []'),
-        findsOneWidget,
-      );
-      expect(router.urlState.url, '/items');
-      await expectBrowserUrl('/items');
-    },
-  );
+  group('empty list query param', () {
+    // Steps: push the items route with ids and picked both empty lists.
+    // Should: the page shows the empty lists, and the url, in the router and
+    // the browser, is '/items' with no '?'.
+    testWidgets(
+      'an empty list query param leaves no ? in the url',
+      (tester) async {
+        final router = ListRouter();
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(ItemsRoute(ids: const [], picked: const [])));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text('ids [] prices null flags null sorts null picked []'),
+          findsOneWidget,
+        );
+        expect(router.urlState.url, '/items');
+        await expectBrowserUrl('/items');
+      },
+    );
+  });
 }

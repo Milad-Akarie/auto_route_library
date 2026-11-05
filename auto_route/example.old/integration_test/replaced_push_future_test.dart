@@ -13,34 +13,36 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() => router = buildSimpleRouter());
+  group('replaced push future', () {
+    late RootStackRouter router;
+    setUp(() => router = buildSimpleRouter());
 
-  // Steps: push SecondRoute and await it, replace it with
-  // ThirdRoute, then pop ThirdRoute.
-  // Should: the future of the first push completes once ThirdRoute is popped.
-  testWidgets(
-    'Popping a route that replaced the pushed one completes the first push '
-    'future (#2251)',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      var isCompleted = false;
-      unawaited(
-        router
-            .push<String>(const SecondRoute())
-            .then((_) => isCompleted = true),
-      );
-      await tester.pumpAndSettle();
+    // Steps: push SecondRoute and await it, replace it with
+    // ThirdRoute, then pop ThirdRoute.
+    // Should: the future of the first push completes once ThirdRoute is popped.
+    testWidgets(
+      'Popping a route that replaced the pushed one completes the first push '
+      'future (#2251)',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        var isCompleted = false;
+        unawaited(
+          router
+              .push<String>(const SecondRoute())
+              .then((_) => isCompleted = true),
+        );
+        await tester.pumpAndSettle();
 
-      unawaited(router.replace(const ThirdRoute()));
-      await tester.pumpAndSettle();
-      expectCurrentPage(router, ThirdRoute.name);
+        unawaited(router.replace(const ThirdRoute()));
+        await tester.pumpAndSettle();
+        expectCurrentPage(router, ThirdRoute.name);
 
-      router.pop();
-      await tester.pumpAndSettle();
+        router.pop();
+        await tester.pumpAndSettle();
 
-      expectCurrentPage(router, FirstRoute.name);
-      expect(isCompleted, isTrue);
-    },
-  );
+        expectCurrentPage(router, FirstRoute.name);
+        expect(isCompleted, isTrue);
+      },
+    );
+  });
 }

@@ -15,30 +15,32 @@ import 'support/route_tree_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: open '/shop/1/reviews', which no route matches, with onFailure.
-  // Should: the failure names the path and lists the tree; the page stays.
-  testWidgets('an unknown path reports the path and the route tree', (
-    tester,
-  ) async {
-    final router = buildRouteTreeRouter();
-    await pumpRouterApp(tester, router);
-    final failures = <NavigationFailure>[];
+  group('route not found tree', () {
+    // Steps: open '/shop/1/reviews', which no route matches, with onFailure.
+    // Should: the failure names the path and lists the tree; the page stays.
+    testWidgets('an unknown path reports the path and the route tree', (
+      tester,
+    ) async {
+      final router = buildRouteTreeRouter();
+      await pumpRouterApp(tester, router);
+      final failures = <NavigationFailure>[];
 
-    unawaited(router.pushPath('/shop/1/reviews', onFailure: failures.add));
-    await tester.pumpAndSettle();
+      unawaited(router.pushPath('/shop/1/reviews', onFailure: failures.add));
+      await tester.pumpAndSettle();
 
-    expect(
-      failures.singleOrNull,
-      isA<RouteNotFoundFailure>().having(
-        (failure) => failure.toString(),
-        'message',
-        allOf(
-          contains('Can not navigate to /shop/1/reviews'),
-          contains(kRouteTreeOfRouteTreeRouter),
+      expect(
+        failures.singleOrNull,
+        isA<RouteNotFoundFailure>().having(
+          (failure) => failure.toString(),
+          'message',
+          allOf(
+            contains('Can not navigate to /shop/1/reviews'),
+            contains(kRouteTreeOfRouteTreeRouter),
+          ),
         ),
-      ),
-    );
-    expect(router.current.name, 'HomeRoute');
-    expect(find.text('Home'), findsOneWidget);
+      );
+      expect(router.current.name, 'HomeRoute');
+      expect(find.text('Home'), findsOneWidget);
+    });
   });
 }

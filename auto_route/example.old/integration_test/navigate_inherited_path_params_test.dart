@@ -14,72 +14,75 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _DashboardRoute.page,
-          path: '/',
-          initial: true,
-          children: [
-            AutoRoute(
-              page: _VendorsRoute.page,
-              path: 'vendors',
-              initial: true,
-              children: [
-                AutoRoute(page: _VendorListRoute.page, path: ''),
-                AutoRoute(
-                  page: _EditVendorRoute.page,
-                  path: ':vendor-id',
-                  children: [
-                    AutoRoute(
-                      page: _VendorBranchesRoute.page,
-                      path: 'branches',
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        AutoRoute(page: _SettingsRoute.page, path: '/settings'),
-      ],
-    );
-  });
-
-  // Steps: open the vendor 'v-42' at '/vendors/:vendor-id', push a page on
-  // the root router over it, then call navigate(VendorBranchesRoute()).
-  // Should: the branches page opens under vendor 'v-42' at
-  // '/vendors/v-42/branches', not fail to parse 'vendor-id' from null.
-  testWidgets(
-    'navigate() from outside the nested router keeps the inherited path params',
-    (tester) async {
-      await pumpRouterAppWithConfig(tester, router);
-      unawaited(
-        router.navigate(
-          _DashboardRoute(
+  group('navigate inherited path params', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            page: _DashboardRoute.page,
+            path: '/',
+            initial: true,
             children: [
-              _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
+              AutoRoute(
+                page: _VendorsRoute.page,
+                path: 'vendors',
+                initial: true,
+                children: [
+                  AutoRoute(page: _VendorListRoute.page, path: ''),
+                  AutoRoute(
+                    page: _EditVendorRoute.page,
+                    path: ':vendor-id',
+                    children: [
+                      AutoRoute(
+                        page: _VendorBranchesRoute.page,
+                        path: 'branches',
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ],
           ),
-        ),
+          AutoRoute(page: _SettingsRoute.page, path: '/settings'),
+        ],
       );
-      await tester.pumpAndSettle();
-      expect(find.text('Vendor v-42'), findsOneWidget);
-      await expectBrowserUrl('/vendors/v-42');
-      unawaited(router.push(const _SettingsRoute()));
-      await tester.pumpAndSettle();
-      expect(find.text('Settings'), findsOneWidget);
+    });
 
-      unawaited(router.navigate(const _VendorBranchesRoute()));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('Branches of v-42'), findsOneWidget);
-      expect(router.urlState.url, '/vendors/v-42/branches');
-      await expectBrowserUrl('/vendors/v-42/branches');
-    },
-  );
+    // Steps: open the vendor 'v-42' at '/vendors/:vendor-id', push a page on
+    // the root router over it, then call navigate(VendorBranchesRoute()).
+    // Should: the branches page opens under vendor 'v-42' at
+    // '/vendors/v-42/branches', not fail to parse 'vendor-id' from null.
+    testWidgets(
+      'navigate() from outside the nested router keeps the inherited path '
+      'params',
+      (tester) async {
+        await pumpRouterAppWithConfig(tester, router);
+        unawaited(
+          router.navigate(
+            _DashboardRoute(
+              children: [
+                _VendorsRoute(children: [_EditVendorRoute(vendorId: 'v-42')]),
+              ],
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Vendor v-42'), findsOneWidget);
+        await expectBrowserUrl('/vendors/v-42');
+        unawaited(router.push(const _SettingsRoute()));
+        await tester.pumpAndSettle();
+        expect(find.text('Settings'), findsOneWidget);
+
+        unawaited(router.navigate(const _VendorBranchesRoute()));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Branches of v-42'), findsOneWidget);
+        expect(router.urlState.url, '/vendors/v-42/branches');
+        await expectBrowserUrl('/vendors/v-42/branches');
+      },
+    );
+  });
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {

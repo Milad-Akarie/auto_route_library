@@ -19,63 +19,66 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, path: '/'),
-        AutoRoute(page: _BookRoute.page, path: '/book'),
-        AutoRoute(page: _ChapterRoute.page, path: '/chapter'),
-      ],
+  group('optional args on back', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, path: '/'),
+          AutoRoute(page: _BookRoute.page, path: '/book'),
+          AutoRoute(page: _ChapterRoute.page, path: '/chapter'),
+        ],
+      );
+    });
+
+    // Steps: push Page1 with bookId 'some-id', push Page2 with bookId
+    // 'some-id-2', then go back: the browser's back button on web, system back
+    // elsewhere.
+    // Should: Page1 shows 'some-id' again, not a null bookId.
+    testWidgets(
+      'Going back keeps the optional argument of the page underneath',
+      (tester) async {
+        await pumpRouterAppWithConfig(tester, router);
+        unawaited(router.push(_BookRoute(bookId: 'some-id')));
+        await tester.pumpAndSettle();
+        expect(find.text('Book some-id'), findsOneWidget);
+        unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
+        await tester.pumpAndSettle();
+        expect(find.text('Chapter some-id-2'), findsOneWidget);
+        await expectBrowserUrl('/chapter');
+
+        if (kIsWeb) {
+          pressBrowserBack();
+          await expectBrowserUrl('/book');
+          await tester.pumpAndSettle();
+        } else {
+          await systemBack(tester);
+        }
+        expect(tester.takeException(), isNull);
+        expect(router.current.name, _BookRoute.name);
+        expect(find.text('Book some-id'), findsOneWidget);
+      },
     );
-  });
 
-  // Steps: push Page1 with bookId 'some-id', push Page2 with bookId
-  // 'some-id-2', then go back: the browser's back button on web, system back
-  // elsewhere.
-  // Should: Page1 shows 'some-id' again, not a null bookId.
-  testWidgets('Going back keeps the optional argument of the page underneath', (
-    tester,
-  ) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(_BookRoute(bookId: 'some-id')));
-    await tester.pumpAndSettle();
-    expect(find.text('Book some-id'), findsOneWidget);
-    unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
-    await tester.pumpAndSettle();
-    expect(find.text('Chapter some-id-2'), findsOneWidget);
-    await expectBrowserUrl('/chapter');
+    // Steps: the same, going back with back().
+    // Should: Page1 shows 'some-id' again.
+    testWidgets('back() keeps the optional argument of the page underneath', (
+      tester,
+    ) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(_BookRoute(bookId: 'some-id')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
+      await tester.pumpAndSettle();
+      await expectBrowserUrl('/chapter');
 
-    if (kIsWeb) {
-      pressBrowserBack();
+      router.back();
       await expectBrowserUrl('/book');
       await tester.pumpAndSettle();
-    } else {
-      await systemBack(tester);
-    }
-    expect(tester.takeException(), isNull);
-    expect(router.current.name, _BookRoute.name);
-    expect(find.text('Book some-id'), findsOneWidget);
-  });
-
-  // Steps: the same, going back with back().
-  // Should: Page1 shows 'some-id' again.
-  testWidgets('back() keeps the optional argument of the page underneath', (
-    tester,
-  ) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(_BookRoute(bookId: 'some-id')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(_ChapterRoute(bookId: 'some-id-2')));
-    await tester.pumpAndSettle();
-    await expectBrowserUrl('/chapter');
-
-    router.back();
-    await expectBrowserUrl('/book');
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(router.current.name, _BookRoute.name);
-    expect(find.text('Book some-id'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      expect(router.current.name, _BookRoute.name);
+      expect(find.text('Book some-id'), findsOneWidget);
+    });
   });
 }
 

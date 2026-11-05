@@ -13,38 +13,41 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: /dashboard holds AutoTabsRouter(routes: [SettingsTab()]), whose
-  // page shows its query param. Tap 'navigatePath', 'navigateToPath', then
-  // 'buildPageRoute'.
-  // Should: the page shows each new query, and the url, in the browser's
-  // address bar too on web, carries it.
-  testWidgets('navigating to a tab path with a new query shows the new query', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          page: _DashboardRoute.page,
-          path: '/dashboard',
-          initial: true,
-          children: [AutoRoute(page: _SettingsTab.page, path: 'settings')],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    expect(find.text('query: none'), findsOneWidget);
+  group('tab navigate path query', () {
+    // Steps: /dashboard holds AutoTabsRouter(routes: [SettingsTab()]), whose
+    // page shows its query param. Tap 'navigatePath', 'navigateToPath', then
+    // 'buildPageRoute'.
+    // Should: the page shows each new query, and the url, in the browser's
+    // address bar too on web, carries it.
+    testWidgets(
+      'navigating to a tab path with a new query shows the new query',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _DashboardRoute.page,
+              path: '/dashboard',
+              initial: true,
+              children: [AutoRoute(page: _SettingsTab.page, path: 'settings')],
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        expect(find.text('query: none'), findsOneWidget);
 
-    for (final (button, query) in [
-      ('navigatePath', 'path_1'),
-      ('navigateToPath', 'path_2'),
-      ('buildPageRoute', 'path_3'),
-    ]) {
-      await tester.tap(find.text(button));
-      await tester.pumpAndSettle();
-      expect(find.text('query: $query'), findsOneWidget, reason: button);
-      expect(router.urlState.url, '/dashboard/settings?query=$query');
-      await expectBrowserUrl('/dashboard/settings?query=$query');
-    }
+        for (final (button, query) in [
+          ('navigatePath', 'path_1'),
+          ('navigateToPath', 'path_2'),
+          ('buildPageRoute', 'path_3'),
+        ]) {
+          await tester.tap(find.text(button));
+          await tester.pumpAndSettle();
+          expect(find.text('query: $query'), findsOneWidget, reason: button);
+          expect(router.urlState.url, '/dashboard/settings?query=$query');
+          await expectBrowserUrl('/dashboard/settings?query=$query');
+        }
+      },
+    );
   });
 }
 

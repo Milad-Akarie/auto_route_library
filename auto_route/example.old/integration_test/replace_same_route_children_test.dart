@@ -11,41 +11,47 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: root routes '/' and '/app', a shell with the children 'users' and
-  // 'other'. Tap to push AppRoute(children: [UsersRoute]), then tap to put
-  // AppRoute(children: [OtherRoute]) over it with replace, or with
-  // pushAndPopUntil down to HomeRoute. Then go back.
-  // Should: the shell shows OtherRoute alone and the url is '/app/other', in
-  // the browser's address bar too on web, and back leaves the shell.
-  for (final (how, shouldReplace) in [
-    ('replace()', true),
-    ('pushAndPopUntil()', false),
-  ]) {
-    testWidgets('$how with the same parent route shows only its new children', (
-      tester,
-    ) async {
-      final router = _buildRouter(shouldReplace: shouldReplace);
-      await pumpRouterApp(tester, router);
-      await tester.tap(find.text('Open users'));
-      await tester.pumpAndSettle();
-      expect(find.text('UsersRoute'), findsOneWidget);
-      expect(router.urlState.url, '/app/users');
-      await expectBrowserUrl('/app/users');
+  group('replace same route children', () {
+    // Steps: root routes '/' and '/app', a shell with the children 'users' and
+    // 'other'. Tap to push AppRoute(children: [UsersRoute]), then tap to put
+    // AppRoute(children: [OtherRoute]) over it with replace, or with
+    // pushAndPopUntil down to HomeRoute. Then go back.
+    // Should: the shell shows OtherRoute alone and the url is '/app/other', in
+    // the browser's address bar too on web, and back leaves the shell.
+    for (final (how, shouldReplace) in [
+      ('replace()', true),
+      ('pushAndPopUntil()', false),
+    ]) {
+      testWidgets(
+        '$how with the same parent route shows only its new children',
+        (tester) async {
+          final router = _buildRouter(shouldReplace: shouldReplace);
+          await pumpRouterApp(tester, router);
+          await tester.tap(find.text('Open users'));
+          await tester.pumpAndSettle();
+          expect(find.text('UsersRoute'), findsOneWidget);
+          expect(router.urlState.url, '/app/users');
+          await expectBrowserUrl('/app/users');
 
-      await tester.tap(find.text('Show other'));
-      await tester.pumpAndSettle();
-      expect(find.text('OtherRoute'), findsOneWidget);
-      expect(find.text('UsersRoute'), findsNothing);
-      expect(router.stack.map((page) => page.name), ['HomeRoute', 'AppRoute']);
-      expect(router.urlState.url, '/app/other');
-      await expectBrowserUrl('/app/other');
+          await tester.tap(find.text('Show other'));
+          await tester.pumpAndSettle();
+          expect(find.text('OtherRoute'), findsOneWidget);
+          expect(find.text('UsersRoute'), findsNothing);
+          expect(router.stack.map((page) => page.name), [
+            'HomeRoute',
+            'AppRoute',
+          ]);
+          expect(router.urlState.url, '/app/other');
+          await expectBrowserUrl('/app/other');
 
-      router.pop();
-      await tester.pumpAndSettle();
-      expect(find.text('HomeRoute'), findsOneWidget);
-      expect(router.urlState.url, '/');
-    });
-  }
+          router.pop();
+          await tester.pumpAndSettle();
+          expect(find.text('HomeRoute'), findsOneWidget);
+          expect(router.urlState.url, '/');
+        },
+      );
+    }
+  });
 }
 
 const _kUsers = _Route('AppRoute', children: [_Route('UsersRoute')]);

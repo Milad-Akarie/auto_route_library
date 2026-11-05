@@ -23,75 +23,79 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final setups = {
-    'around the tabs screen': (
-      [
-        AutoRoute(page: _tab('TabA'), path: 'a'),
-        AutoRoute(page: _tab('TabB'), path: 'b'),
-      ],
-      scopeAroundTabs: true,
-      pushInTab: false,
-    ),
-    "on the active tab's page": (
-      [
-        AutoRoute(page: _tab('TabA'), path: 'a'),
-        AutoRoute(page: _guarded('TabB'), path: 'b'),
-      ],
-      scopeAroundTabs: false,
-      pushInTab: false,
-    ),
-    'on a page pushed into a stack inside a tab': (
-      [
-        AutoRoute(page: _tab('TabA'), path: 'a'),
-        AutoRoute(
-          page: _stackTab,
-          path: 'b',
-          children: [
-            AutoRoute(page: _tab('StackPage1'), path: ''),
-            AutoRoute(page: _guarded('StackPage2'), path: 'two'),
-          ],
-        ),
-      ],
-      scopeAroundTabs: false,
-      pushInTab: true,
-    ),
-  };
+  group('tabs pop scope', () {
+    final setups = {
+      'around the tabs screen': (
+        [
+          AutoRoute(page: _tab('TabA'), path: 'a'),
+          AutoRoute(page: _tab('TabB'), path: 'b'),
+        ],
+        scopeAroundTabs: true,
+        pushInTab: false,
+      ),
+      "on the active tab's page": (
+        [
+          AutoRoute(page: _tab('TabA'), path: 'a'),
+          AutoRoute(page: _guarded('TabB'), path: 'b'),
+        ],
+        scopeAroundTabs: false,
+        pushInTab: false,
+      ),
+      'on a page pushed into a stack inside a tab': (
+        [
+          AutoRoute(page: _tab('TabA'), path: 'a'),
+          AutoRoute(
+            page: _stackTab,
+            path: 'b',
+            children: [
+              AutoRoute(page: _tab('StackPage1'), path: ''),
+              AutoRoute(page: _guarded('StackPage2'), path: 'two'),
+            ],
+          ),
+        ],
+        scopeAroundTabs: false,
+        pushInTab: true,
+      ),
+    };
 
-  for (final MapEntry(key: where, value: (tabs, :scopeAroundTabs, :pushInTab))
-      in setups.entries) {
-    testWidgets(
-      'system back twice with a PopScope $where keeps the app open and the '
-      'page',
-      (tester) async {
-        _popAttempts = 0;
-        _hasScopeAroundTabs = scopeAroundTabs;
-        final router = RootStackRouter.build(
-          routes: [AutoRoute(page: _tabsScreen, path: '/', children: tabs)],
-        );
-        await pumpRouterApp(tester, router);
-        final tabsRouter = router.innerRouterOf<TabsRouter>(_tabsScreen.name)!;
-        if (!scopeAroundTabs) {
-          tabsRouter.setActiveIndex(1);
-          await tester.pumpAndSettle();
-        }
-        if (pushInTab) {
-          unawaited(
-            tabsRouter
-                .innerRouterOf<StackRouter>(_stackTab.name)!
-                .push(const _Route('StackPage2')),
+    for (final MapEntry(key: where, value: (tabs, :scopeAroundTabs, :pushInTab))
+        in setups.entries) {
+      testWidgets(
+        'system back twice with a PopScope $where keeps the app open and the '
+        'page',
+        (tester) async {
+          _popAttempts = 0;
+          _hasScopeAroundTabs = scopeAroundTabs;
+          final router = RootStackRouter.build(
+            routes: [AutoRoute(page: _tabsScreen, path: '/', children: tabs)],
           );
-          await tester.pumpAndSettle();
-        }
-        final page = router.topRoute.name;
+          await pumpRouterApp(tester, router);
+          final tabsRouter = router.innerRouterOf<TabsRouter>(
+            _tabsScreen.name,
+          )!;
+          if (!scopeAroundTabs) {
+            tabsRouter.setActiveIndex(1);
+            await tester.pumpAndSettle();
+          }
+          if (pushInTab) {
+            unawaited(
+              tabsRouter
+                  .innerRouterOf<StackRouter>(_stackTab.name)!
+                  .push(const _Route('StackPage2')),
+            );
+            await tester.pumpAndSettle();
+          }
+          final page = router.topRoute.name;
 
-        for (var attempt = 1; attempt <= 2; attempt++) {
-          await systemBack(tester);
-          expectTopPage(router, page);
-          expect(_popAttempts, attempt);
-        }
-      },
-    );
-  }
+          for (var attempt = 1; attempt <= 2; attempt++) {
+            await systemBack(tester);
+            expectTopPage(router, page);
+            expect(_popAttempts, attempt);
+          }
+        },
+      );
+    }
+  });
 }
 
 var _popAttempts = 0;

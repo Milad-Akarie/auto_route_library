@@ -14,31 +14,33 @@ import 'support/page_kinds_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: a CustomRoute with a fade transitionsBuilder and
-  // enableCupertinoBackGesture: true; push it, then swipe from the left edge
-  // of the screen.
-  // Should: on iOS and macOS the swipe pops the page; elsewhere it does
-  // nothing, as the option is for the iOS back swipe only.
-  testWidgets('A back swipe pops a custom-transition page that opts in', (
-    tester,
-  ) async {
-    final router = pageKindsRouter(
-      customTransitionsBuilder: TransitionsBuilders.fadeIn,
-      hasCustomCupertinoBackGesture: true,
-    );
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('CustomKindRoute')));
-    await tester.pumpAndSettle();
-    expectTopPage(router, 'CustomKindRoute');
+  group('custom route swipe back', () {
+    // Steps: a CustomRoute with a fade transitionsBuilder and
+    // enableCupertinoBackGesture: true; push it, then swipe from the left edge
+    // of the screen.
+    // Should: on iOS and macOS the swipe pops the page; elsewhere it does
+    // nothing, as the option is for the iOS back swipe only.
+    testWidgets('A back swipe pops a custom-transition page that opts in', (
+      tester,
+    ) async {
+      final router = pageKindsRouter(
+        customTransitionsBuilder: TransitionsBuilders.fadeIn,
+        hasCustomCupertinoBackGesture: true,
+      );
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const NamedRoute('CustomKindRoute')));
+      await tester.pumpAndSettle();
+      expectTopPage(router, 'CustomKindRoute');
 
-    await swipeBack(tester);
+      await swipeBack(tester);
 
-    // In a browser, the platform is the computer's, so a Mac swipes too.
-    final isSwipeBack =
-        defaultTargetPlatform == .iOS || defaultTargetPlatform == .macOS;
-    expect(
-      router.stack.map((page) => page.name),
-      isSwipeBack ? ['HomeRoute'] : ['HomeRoute', 'CustomKindRoute'],
-    );
+      // In a browser, the platform is the computer's, so a Mac swipes too.
+      final isSwipeBack =
+          defaultTargetPlatform == .iOS || defaultTargetPlatform == .macOS;
+      expect(
+        router.stack.map((page) => page.name),
+        isSwipeBack ? ['HomeRoute'] : ['HomeRoute', 'CustomKindRoute'],
+      );
+    });
   });
 }

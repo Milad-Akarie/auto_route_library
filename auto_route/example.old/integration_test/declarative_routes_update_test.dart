@@ -11,34 +11,36 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: a page holds an `id` in its state and builds
-  // AutoRouter.declarative(routes: (_) => [HomeRoute(id: id)]). Tap the
-  // button that changes `id`.
-  // Should: the home page shows the new id, updated in place.
-  testWidgets(
-    'changing a variable of the declarative routes rebuilds the page with it',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: _HostRoute.page,
-            initial: true,
-            children: [AutoRoute(page: _HomeRoute.page, initial: true)],
-          ),
-        ],
-      );
-      await pumpRouterAppWithConfig(tester, router);
-      expect(find.text('Home 1'), findsOneWidget);
-      final homeState = tester.state<_HomePageState>(find.byType(_HomePage));
+  group('declarative routes update', () {
+    // Steps: a page holds an `id` in its state and builds
+    // AutoRouter.declarative(routes: (_) => [HomeRoute(id: id)]). Tap the
+    // button that changes `id`.
+    // Should: the home page shows the new id, updated in place.
+    testWidgets(
+      'changing a variable of the declarative routes rebuilds the page with it',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _HostRoute.page,
+              initial: true,
+              children: [AutoRoute(page: _HomeRoute.page, initial: true)],
+            ),
+          ],
+        );
+        await pumpRouterAppWithConfig(tester, router);
+        expect(find.text('Home 1'), findsOneWidget);
+        final homeState = tester.state<_HomePageState>(find.byType(_HomePage));
 
-      await tester.tap(find.text('Next id'));
-      await tester.pumpAndSettle();
-      expect(find.text('Home 1'), findsNothing);
-      expect(find.text('Home 2'), findsOneWidget);
-      expect(tester.state(find.byType(_HomePage)), same(homeState));
-      expect(homeState.firstId, 1);
-    },
-  );
+        await tester.tap(find.text('Next id'));
+        await tester.pumpAndSettle();
+        expect(find.text('Home 1'), findsNothing);
+        expect(find.text('Home 2'), findsOneWidget);
+        expect(tester.state(find.byType(_HomePage)), same(homeState));
+        expect(homeState.firstId, 1);
+      },
+    );
+  });
 }
 
 class _HostRoute extends PageRouteInfo<void> {

@@ -17,56 +17,59 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps, as in the reporter's app: navigate from '/' to the tabs page, tap
-  // the second tab, press the browser's back button, then its forward button.
-  // Should: each button shows the tab its url names.
-  testWidgets(
-    'With includePrefixMatches, the browser back and forward buttons switch '
-    'tabs',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(page: _HomeRoute.page, path: '/'),
-          AutoRoute(
-            page: _TabsRoute.page,
-            path: '/tabs',
-            children: [
-              AutoRoute(page: _Tab1Route.page, path: 'tab-1', initial: true),
-              AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
-            ],
+  group('prefix matches tabs', () {
+    // Steps, as in the reporter's app: navigate from '/' to the tabs page, tap
+    // the second tab, press the browser's back button, then its forward button.
+    // Should: each button shows the tab its url names.
+    testWidgets(
+      'With includePrefixMatches, the browser back and forward buttons switch '
+      'tabs',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(page: _HomeRoute.page, path: '/'),
+            AutoRoute(
+              page: _TabsRoute.page,
+              path: '/tabs',
+              children: [
+                AutoRoute(page: _Tab1Route.page, path: 'tab-1', initial: true),
+                AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(
+          tester,
+          router.config(
+            includePrefixMatches: true,
+            deepLinkBuilder: (link) =>
+                link.initial ? DeepLink.defaultPath : link,
           ),
-        ],
-      );
-      await pumpRouterConfigApp(
-        tester,
-        router.config(
-          includePrefixMatches: true,
-          deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
-        ),
-      );
-      unawaited(router.navigate(const _TabsRoute()));
-      await tester.pumpAndSettle();
-      await expectBrowserUrl('/tabs/tab-1');
-      await tester.tap(find.text('Show tab 2'));
-      await tester.pumpAndSettle();
-      await expectBrowserUrl('/tabs/tab-2');
+        );
+        unawaited(router.navigate(const _TabsRoute()));
+        await tester.pumpAndSettle();
+        await expectBrowserUrl('/tabs/tab-1');
+        await tester.tap(find.text('Show tab 2'));
+        await tester.pumpAndSettle();
+        await expectBrowserUrl('/tabs/tab-2');
 
-      pressBrowserBack();
-      await expectBrowserUrl('/tabs/tab-1');
-      await tester.pumpAndSettle();
-      expect(find.text('Tab 1'), findsOneWidget);
-      expect(router.stack.map((p) => p.name), [
-        _HomeRoute.name,
-        _TabsRoute.name,
-      ]);
+        pressBrowserBack();
+        await expectBrowserUrl('/tabs/tab-1');
+        await tester.pumpAndSettle();
+        expect(find.text('Tab 1'), findsOneWidget);
+        expect(router.stack.map((p) => p.name), [
+          _HomeRoute.name,
+          _TabsRoute.name,
+        ]);
 
-      pressBrowserForward();
-      await expectBrowserUrl('/tabs/tab-2');
-      await tester.pumpAndSettle();
-      expect(find.text('Tab 2'), findsOneWidget);
-    },
-    skip: !kIsWeb,
-  );
+        pressBrowserForward();
+        await expectBrowserUrl('/tabs/tab-2');
+        await tester.pumpAndSettle();
+        expect(find.text('Tab 2'), findsOneWidget);
+      },
+      skip: !kIsWeb,
+    );
+  });
 }
 
 class _HomeRoute extends PageRouteInfo<void> {

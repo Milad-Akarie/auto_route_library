@@ -13,55 +13,57 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
-        AutoRoute(
-          page: _BookShellRoute.page,
-          path: '/books/:id',
-          children: [
-            AutoRoute(
-              page: _BookRoute.page,
-              path: '',
-              children: [
-                AutoRoute(
-                  page: _BookTabRoute.pageFor('BookOverviewRoute'),
-                  path: 'overview',
-                  initial: true,
-                ),
-                AutoRoute(
-                  page: _BookTabRoute.pageFor('BookPricingRoute'),
-                  path: 'pricing',
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
+  group('ancestor path params', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
+          AutoRoute(
+            page: _BookShellRoute.page,
+            path: '/books/:id',
+            children: [
+              AutoRoute(
+                page: _BookRoute.page,
+                path: '',
+                children: [
+                  AutoRoute(
+                    page: _BookTabRoute.pageFor('BookOverviewRoute'),
+                    path: 'overview',
+                    initial: true,
+                  ),
+                  AutoRoute(
+                    page: _BookTabRoute.pageFor('BookPricingRoute'),
+                    path: 'pricing',
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+    });
+
+    // Steps: under a shell at 'books/:id' sits BookRoute at '', whose page
+    // reads @PathParam('id'). Call router.navigate(BookRoute(id: 1,
+    // someQueryParam: 1234)).
+    // Should: the book page reads id 1 over its overview tab, and the url, and
+    // on web the address bar, is '/books/1/overview?someQueryParam=1234', not
+    // '/books/:id/overview'.
+    testWidgets(
+      "navigate() to a route fills its path param into its ancestor's path",
+      (tester) async {
+        await pumpRouterAppWithConfig(tester, router);
+        unawaited(router.navigate(_BookRoute(id: 1, someQueryParam: 1234)));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Book 1, query 1234'), findsOneWidget);
+        expect(find.text('BookOverviewRoute'), findsOneWidget);
+        expect(router.urlState.url, '/books/1/overview?someQueryParam=1234');
+        await expectBrowserUrl('/books/1/overview?someQueryParam=1234');
+      },
     );
   });
-
-  // Steps: under a shell at 'books/:id' sits BookRoute at '', whose page
-  // reads @PathParam('id'). Call router.navigate(BookRoute(id: 1,
-  // someQueryParam: 1234)).
-  // Should: the book page reads id 1 over its overview tab, and the url, and
-  // on web the address bar, is '/books/1/overview?someQueryParam=1234', not
-  // '/books/:id/overview'.
-  testWidgets(
-    "navigate() to a route fills its path param into its ancestor's path",
-    (tester) async {
-      await pumpRouterAppWithConfig(tester, router);
-      unawaited(router.navigate(_BookRoute(id: 1, someQueryParam: 1234)));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('Book 1, query 1234'), findsOneWidget);
-      expect(find.text('BookOverviewRoute'), findsOneWidget);
-      expect(router.urlState.url, '/books/1/overview?someQueryParam=1234');
-      await expectBrowserUrl('/books/1/overview?someQueryParam=1234');
-    },
-  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {

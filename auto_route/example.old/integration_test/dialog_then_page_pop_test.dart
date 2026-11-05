@@ -14,37 +14,40 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
-        AutoRoute(page: _FormRoute.page, path: '/form'),
-      ],
+  group('dialog then page pop', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
+          AutoRoute(page: _FormRoute.page, path: '/form'),
+        ],
+      );
+    });
+
+    // Steps: on a pushed page, open a dialog whose button calls
+    // context.router.maybePop(true). Once the dialog returns true, the page
+    // starts an async call without awaiting it and calls
+    // context.router.maybePop(true).
+    // Should: the dialog and then the page close, with no assertion.
+    testWidgets(
+      'maybePop on the page after popping a dialog with maybePop closes the '
+      'page',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const _FormRoute()));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Close form'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Confirm'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+        expectCurrentPage(router, _HomeRoute.name);
+      },
     );
   });
-
-  // Steps: on a pushed page, open a dialog whose button calls
-  // context.router.maybePop(true). Once the dialog returns true, the page
-  // starts an async call without awaiting it and calls
-  // context.router.maybePop(true).
-  // Should: the dialog and then the page close, with no assertion.
-  testWidgets(
-    'maybePop on the page after popping a dialog with maybePop closes the page',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(const _FormRoute()));
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('Close form'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-      expectCurrentPage(router, _HomeRoute.name);
-    },
-  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {

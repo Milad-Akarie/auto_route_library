@@ -13,43 +13,46 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  for (final kind in _TabsKind.values) {
-    // Steps: the AutoTabsRouter's builder keeps its context. Tap 'Open the
-    // second tab', then 'Back to the first tab'; both call
-    // AutoTabsRouter.of(keptContext).setActiveIndex.
-    // Should: each tab shows.
-    testWidgets(
-      '${kind.name}: setActiveIndex through the kept builder context opens the '
-      'tab',
-      (tester) async {
-        _tabsKind = kind;
-        final router = RootStackRouter.build(
-          routes: [
-            AutoRoute(
-              page: _TabsHostRoute.page,
-              path: '/',
-              initial: true,
-              children: [
-                AutoRoute(page: _FirstTabRoute.page, path: 'first'),
-                AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-              ],
-            ),
-          ],
-        );
-        await pumpRouterConfigApp(
-          tester,
-          router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
-        );
+  group('tab cached context', () {
+    for (final kind in _TabsKind.values) {
+      // Steps: the AutoTabsRouter's builder keeps its context. Tap 'Open the
+      // second tab', then 'Back to the first tab'; both call
+      // AutoTabsRouter.of(keptContext).setActiveIndex.
+      // Should: each tab shows.
+      testWidgets(
+        '${kind.name}: setActiveIndex through the kept builder context opens '
+        'the '
+        'tab',
+        (tester) async {
+          _tabsKind = kind;
+          final router = RootStackRouter.build(
+            routes: [
+              AutoRoute(
+                page: _TabsHostRoute.page,
+                path: '/',
+                initial: true,
+                children: [
+                  AutoRoute(page: _FirstTabRoute.page, path: 'first'),
+                  AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+                ],
+              ),
+            ],
+          );
+          await pumpRouterConfigApp(
+            tester,
+            router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+          );
 
-        await tester.tap(find.text('Open the second tab'));
-        await tester.pumpAndSettle();
-        expect(find.text(_SecondTabRoute.name), findsOneWidget);
-        await tester.tap(find.text('Back to the first tab'));
-        await tester.pumpAndSettle();
-        expect(find.text(_FirstTabRoute.name), findsOneWidget);
-      },
-    );
-  }
+          await tester.tap(find.text('Open the second tab'));
+          await tester.pumpAndSettle();
+          expect(find.text(_SecondTabRoute.name), findsOneWidget);
+          await tester.tap(find.text('Back to the first tab'));
+          await tester.pumpAndSettle();
+          expect(find.text(_FirstTabRoute.name), findsOneWidget);
+        },
+      );
+    }
+  });
 }
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }

@@ -11,54 +11,59 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: HomeWrapper's tabs are [feed, myProfile]; feed builds
-  // AutoTabsRouter.tabBar for [forYou, following]. Tap 'Open profile', so
-  // feed is not built yet, tap 'Reevaluate', which fires the router's
-  // reevaluateListenable, then tap 'Feed'.
-  // Should: feed shows its first tab, forYou.
-  testWidgets(
-    'a nested tab bar opened after a reevaluation shows its first tab',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(page: _SplashRoute.page, path: '/', initial: true),
-          AutoRoute(
-            page: _HomeWrapperRoute.page,
-            path: '/home',
-            children: [
-              AutoRoute(
-                page: _FeedRoute.page,
-                path: 'feed',
-                children: [
-                  AutoRoute(
-                    page: _ForYouFeedRoute.page,
-                    path: 'for-you',
-                    initial: true,
-                  ),
-                  AutoRoute(page: _FollowingFeedRoute.page, path: 'following'),
-                ],
-              ),
-              AutoRoute(page: _MyProfileRoute.page, path: 'profile'),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(
-        tester,
-        router,
-        reevaluationNotifier: _reevaluateNotifier,
-      );
+  group('nested tab bar reevaluation', () {
+    // Steps: HomeWrapper's tabs are [feed, myProfile]; feed builds
+    // AutoTabsRouter.tabBar for [forYou, following]. Tap 'Open profile', so
+    // feed is not built yet, tap 'Reevaluate', which fires the router's
+    // reevaluateListenable, then tap 'Feed'.
+    // Should: feed shows its first tab, forYou.
+    testWidgets(
+      'a nested tab bar opened after a reevaluation shows its first tab',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(page: _SplashRoute.page, path: '/', initial: true),
+            AutoRoute(
+              page: _HomeWrapperRoute.page,
+              path: '/home',
+              children: [
+                AutoRoute(
+                  page: _FeedRoute.page,
+                  path: 'feed',
+                  children: [
+                    AutoRoute(
+                      page: _ForYouFeedRoute.page,
+                      path: 'for-you',
+                      initial: true,
+                    ),
+                    AutoRoute(
+                      page: _FollowingFeedRoute.page,
+                      path: 'following',
+                    ),
+                  ],
+                ),
+                AutoRoute(page: _MyProfileRoute.page, path: 'profile'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterApp(
+          tester,
+          router,
+          reevaluationNotifier: _reevaluateNotifier,
+        );
 
-      await tester.tap(find.text('Open profile'));
-      await tester.pumpAndSettle();
-      expect(find.text(_MyProfileRoute.name), findsOneWidget);
-      await tester.tap(find.text('Reevaluate'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Feed'));
-      await tester.pumpAndSettle();
-      expect(find.text(_ForYouFeedRoute.name), findsOneWidget);
-    },
-  );
+        await tester.tap(find.text('Open profile'));
+        await tester.pumpAndSettle();
+        expect(find.text(_MyProfileRoute.name), findsOneWidget);
+        await tester.tap(find.text('Reevaluate'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Feed'));
+        await tester.pumpAndSettle();
+        expect(find.text(_ForYouFeedRoute.name), findsOneWidget);
+      },
+    );
+  });
 }
 
 final ValueNotifier<int> _reevaluateNotifier = ValueNotifier(0);

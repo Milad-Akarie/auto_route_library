@@ -11,52 +11,54 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: with semantics on, open HostRoute, a Row of Text('Left
-  // 1'), Text('Left 2'), a nested AutoRouter showing Text('Center'), and
-  // Text('Right').
-  // Should: a screen reader finds every Text.
-  testWidgets('widgets before a nested router stay in the semantics tree', (
-    tester,
-  ) async {
-    final semantics = tester.ensureSemantics();
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HostRoute',
-            builder: (_) => const Scaffold(
-              body: SafeArea(
-                child: Row(
-                  mainAxisSize: .min,
-                  children: [
-                    Text('Left 1'),
-                    Padding(padding: .all(8)),
-                    Text('Left 2'),
-                    Expanded(child: AutoRouter()),
-                    Expanded(child: Text('Right')),
-                  ],
+  group('nested router semantics', () {
+    // Steps: with semantics on, open HostRoute, a Row of Text('Left
+    // 1'), Text('Left 2'), a nested AutoRouter showing Text('Center'), and
+    // Text('Right').
+    // Should: a screen reader finds every Text.
+    testWidgets('widgets before a nested router stay in the semantics tree', (
+      tester,
+    ) async {
+      final semantics = tester.ensureSemantics();
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) => const Scaffold(
+                body: SafeArea(
+                  child: Row(
+                    mainAxisSize: .min,
+                    children: [
+                      Text('Left 1'),
+                      Padding(padding: .all(8)),
+                      Text('Left 2'),
+                      Expanded(child: AutoRouter()),
+                      Expanded(child: Text('Right')),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          children: [
-            AutoRoute(
-              path: '',
-              page: PageInfo(
-                'ChildRoute',
-                builder: (_) => const Text('Center'),
+            children: [
+              AutoRoute(
+                path: '',
+                page: PageInfo(
+                  'ChildRoute',
+                  builder: (_) => const Text('Center'),
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
 
-    for (final label in ['Left 1', 'Left 2', 'Center', 'Right']) {
-      expect(find.bySemanticsLabel(label), findsOneWidget, reason: label);
-    }
-    semantics.dispose();
+      for (final label in ['Left 1', 'Left 2', 'Center', 'Right']) {
+        expect(find.bySemanticsLabel(label), findsOneWidget, reason: label);
+      }
+      semantics.dispose();
+    });
   });
 }

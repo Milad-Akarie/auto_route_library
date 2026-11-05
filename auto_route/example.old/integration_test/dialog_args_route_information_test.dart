@@ -20,56 +20,58 @@ class _Profile {
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps (web): a route shown as a dialog, through a customRouteBuilder
-  // that returns a DialogRoute, opened with an argument that is an app class
-  // without toJson.
-  // Reported: "Converting object to an encodable object failed", thrown when
-  // the router told the browser the new route. The dialog still opened.
-  // Should: the dialog opens with its argument, nothing is thrown, and the
-  // browser shows the dialog's url.
-  testWidgets(
-    'A dialog route opened with an argument reports a state the platform '
-    'encodes',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo(
-              'HomeRoute',
-              builder: (_) => const Text('HomeRoute'),
+  group('dialog args route information', () {
+    // Steps (web): a route shown as a dialog, through a customRouteBuilder
+    // that returns a DialogRoute, opened with an argument that is an app class
+    // without toJson.
+    // Reported: "Converting object to an encodable object failed", thrown when
+    // the router told the browser the new route. The dialog still opened.
+    // Should: the dialog opens with its argument, nothing is thrown, and the
+    // browser shows the dialog's url.
+    testWidgets(
+      'A dialog route opened with an argument reports a state the platform '
+      'encodes',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const Text('HomeRoute'),
+              ),
             ),
-          ),
-          CustomRoute(
-            path: '/profile',
-            page: PageInfo(
-              'ProfileDialogRoute',
-              builder: (data) {
-                final args = data.args;
-                final name = args is _Profile ? args.name : 'none';
-                return AlertDialog(content: Text('Profile $name'));
-              },
+            CustomRoute(
+              path: '/profile',
+              page: PageInfo(
+                'ProfileDialogRoute',
+                builder: (data) {
+                  final args = data.args;
+                  final name = args is _Profile ? args.name : 'none';
+                  return AlertDialog(content: Text('Profile $name'));
+                },
+              ),
+              customRouteBuilder: <T>(context, child, page) => DialogRoute<T>(
+                context: context,
+                settings: page,
+                builder: (_) => child,
+              ),
             ),
-            customRouteBuilder: <T>(context, child, page) => DialogRoute<T>(
-              context: context,
-              settings: page,
-              builder: (_) => child,
-            ),
-          ),
-        ],
-      );
-      await pumpRouterAppWithConfig(tester, router);
+          ],
+        );
+        await pumpRouterAppWithConfig(tester, router);
 
-      unawaited(
-        router.push(
-          const NamedRoute('ProfileDialogRoute', args: _Profile('Sam')),
-        ),
-      );
-      await tester.pumpAndSettle();
+        unawaited(
+          router.push(
+            const NamedRoute('ProfileDialogRoute', args: _Profile('Sam')),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(find.text('Profile Sam'), findsOneWidget);
-      await expectBrowserUrl('/profile');
-    },
-  );
+        expect(tester.takeException(), isNull);
+        expect(find.text('Profile Sam'), findsOneWidget);
+        await expectBrowserUrl('/profile');
+      },
+    );
+  });
 }

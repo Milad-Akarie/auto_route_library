@@ -16,119 +16,121 @@ import 'support/restorable_app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Flutter's state restoration doesn't run on the web, so the routers save
-  // their pages only off the web.
+  group('restore tabs', () {
+    // Flutter's state restoration doesn't run on the web, so the routers save
+    // their pages only off the web.
 
-  RootStackRouter buildRouter() => .build(
-    routes: [
-      AutoRoute(path: '/', page: namedPage('SignUpRoute'), initial: true),
-      AutoRoute(
-        path: '/bottom',
-        page: _bottomNavigationPage,
-        children: [
-          AutoRoute(
-            path: 'home',
-            page: const EmptyShellRoute('HomeTabRoute'),
-            initial: true,
-            children: [
-              AutoRoute(path: '', page: namedPage('HomeRoute')),
-              AutoRoute(path: 'internal', page: namedPage('InternalRoute')),
-            ],
+    RootStackRouter buildRouter() => .build(
+      routes: [
+        AutoRoute(path: '/', page: namedPage('SignUpRoute'), initial: true),
+        AutoRoute(
+          path: '/bottom',
+          page: _bottomNavigationPage,
+          children: [
+            AutoRoute(
+              path: 'home',
+              page: const EmptyShellRoute('HomeTabRoute'),
+              initial: true,
+              children: [
+                AutoRoute(path: '', page: namedPage('HomeRoute')),
+                AutoRoute(path: 'internal', page: namedPage('InternalRoute')),
+              ],
+            ),
+            AutoRoute(
+              path: 'transitions',
+              page: const EmptyShellRoute('TransitionsTabRoute'),
+              children: [
+                AutoRoute(path: '', page: namedPage('TransitionsRoute')),
+                AutoRoute(
+                  path: 'details',
+                  page: namedPage('TransitionDetailsRoute'),
+                ),
+              ],
+            ),
+            AutoRoute(path: 'settings', page: namedPage('SettingsRoute')),
+          ],
+        ),
+      ],
+    );
+
+    Future<void> tapTab(WidgetTester tester, String label) async {
+      await tester.tap(find.text(label));
+      await tester.pumpAndSettle();
+    }
+
+    // Steps: replace(BottomNavigationRoute()), push(InternalRoute()) in the
+    // home tab, tap the transitions tab, then restore the app and tap the
+    // home tab.
+    // Should: the transitions tab shows after the restore, and the home tab
+    // still shows InternalRoute, with HomeRoute under it.
+    testWidgets(
+      'a tab that is not active keeps its stack after restoration',
+      (tester) async {
+        await pumpRestorableApp(tester, buildRouter);
+        unawaited(
+          RestorableRouterApp.router.replace(
+            const NamedRoute('BottomNavigationRoute'),
           ),
-          AutoRoute(
-            path: 'transitions',
-            page: const EmptyShellRoute('TransitionsTabRoute'),
-            children: [
-              AutoRoute(path: '', page: namedPage('TransitionsRoute')),
-              AutoRoute(
-                path: 'details',
-                page: namedPage('TransitionDetailsRoute'),
-              ),
-            ],
+        );
+        await tester.pumpAndSettle();
+        unawaited(
+          RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('InternalRoute'), findsOneWidget);
+        await tapTab(tester, 'transitions');
+
+        await tester.restartAndRestore();
+        await tester.pumpAndSettle();
+        expect(find.text('TransitionsRoute'), findsOneWidget);
+        await expectBrowserUrl('/bottom/transitions');
+        await tapTab(tester, 'home');
+        expect(find.text('HomeRoute'), findsNothing);
+        expect(find.text('InternalRoute'), findsOneWidget);
+        await systemBack(tester);
+        expect(find.text('HomeRoute'), findsOneWidget);
+      },
+      skip: kIsWeb,
+    );
+
+    // Steps: push InternalRoute in the home tab, tap the transitions tab and
+    // push TransitionDetailsRoute there, tap the settings tab, then restore
+    // the app and tap each tab.
+    // Should: every tab shows the page it showed before the restore.
+    testWidgets(
+      'every tab keeps its stack after restoration',
+      (tester) async {
+        await pumpRestorableApp(tester, buildRouter);
+        unawaited(
+          RestorableRouterApp.router.replace(
+            const NamedRoute('BottomNavigationRoute'),
           ),
-          AutoRoute(path: 'settings', page: namedPage('SettingsRoute')),
-        ],
-      ),
-    ],
-  );
+        );
+        await tester.pumpAndSettle();
+        unawaited(
+          RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
+        );
+        await tester.pumpAndSettle();
+        await tapTab(tester, 'transitions');
+        unawaited(
+          RestorableRouterApp.router.push(
+            const NamedRoute('TransitionDetailsRoute'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tapTab(tester, 'settings');
 
-  Future<void> tapTab(WidgetTester tester, String label) async {
-    await tester.tap(find.text(label));
-    await tester.pumpAndSettle();
-  }
-
-  // Steps: replace(BottomNavigationRoute()), push(InternalRoute()) in the
-  // home tab, tap the transitions tab, then restore the app and tap the
-  // home tab.
-  // Should: the transitions tab shows after the restore, and the home tab
-  // still shows InternalRoute, with HomeRoute under it.
-  testWidgets(
-    'a tab that is not active keeps its stack after restoration',
-    (tester) async {
-      await pumpRestorableApp(tester, buildRouter);
-      unawaited(
-        RestorableRouterApp.router.replace(
-          const NamedRoute('BottomNavigationRoute'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      unawaited(
-        RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('InternalRoute'), findsOneWidget);
-      await tapTab(tester, 'transitions');
-
-      await tester.restartAndRestore();
-      await tester.pumpAndSettle();
-      expect(find.text('TransitionsRoute'), findsOneWidget);
-      await expectBrowserUrl('/bottom/transitions');
-      await tapTab(tester, 'home');
-      expect(find.text('HomeRoute'), findsNothing);
-      expect(find.text('InternalRoute'), findsOneWidget);
-      await systemBack(tester);
-      expect(find.text('HomeRoute'), findsOneWidget);
-    },
-    skip: kIsWeb,
-  );
-
-  // Steps: push InternalRoute in the home tab, tap the transitions tab and
-  // push TransitionDetailsRoute there, tap the settings tab, then restore
-  // the app and tap each tab.
-  // Should: every tab shows the page it showed before the restore.
-  testWidgets(
-    'every tab keeps its stack after restoration',
-    (tester) async {
-      await pumpRestorableApp(tester, buildRouter);
-      unawaited(
-        RestorableRouterApp.router.replace(
-          const NamedRoute('BottomNavigationRoute'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      unawaited(
-        RestorableRouterApp.router.push(const NamedRoute('InternalRoute')),
-      );
-      await tester.pumpAndSettle();
-      await tapTab(tester, 'transitions');
-      unawaited(
-        RestorableRouterApp.router.push(
-          const NamedRoute('TransitionDetailsRoute'),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tapTab(tester, 'settings');
-
-      await tester.restartAndRestore();
-      await tester.pumpAndSettle();
-      expect(find.text('SettingsRoute'), findsOneWidget);
-      await tapTab(tester, 'transitions');
-      expect(find.text('TransitionDetailsRoute'), findsOneWidget);
-      await tapTab(tester, 'home');
-      expect(find.text('InternalRoute'), findsOneWidget);
-    },
-    skip: kIsWeb,
-  );
+        await tester.restartAndRestore();
+        await tester.pumpAndSettle();
+        expect(find.text('SettingsRoute'), findsOneWidget);
+        await tapTab(tester, 'transitions');
+        expect(find.text('TransitionDetailsRoute'), findsOneWidget);
+        await tapTab(tester, 'home');
+        expect(find.text('InternalRoute'), findsOneWidget);
+      },
+      skip: kIsWeb,
+    );
+  });
 }
 
 final _bottomNavigationPage = PageInfo(

@@ -13,72 +13,74 @@ import 'support/disposal_tracker.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push TabsHostRoute, whose page holds an
-  // AutoTabsRouter.pageView, swipe to the second tab, then go back, three
-  // times.
-  // Should: each visit's PageController is disposed when the host leaves.
-  testWidgets(
-    'leaving an AutoTabsRouter.pageView disposes its PageController',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo(
-              'HomeRoute',
-              builder: (_) => const _TextPage('HomeRoute'),
-            ),
-          ),
-          AutoRoute(
-            path: '/tabs',
-            page: PageInfo(
-              'TabsHostRoute',
-              builder: (_) => const _PageViewPage(),
-            ),
-            children: [
-              AutoRoute(
-                path: 'tab1',
-                page: PageInfo(
-                  'Tab1Route',
-                  builder: (_) => const _TextPage('Tab1Route'),
-                ),
+  group('tabs page view page controller', () {
+    // Steps: push TabsHostRoute, whose page holds an
+    // AutoTabsRouter.pageView, swipe to the second tab, then go back, three
+    // times.
+    // Should: each visit's PageController is disposed when the host leaves.
+    testWidgets(
+      'leaving an AutoTabsRouter.pageView disposes its PageController',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const _TextPage('HomeRoute'),
               ),
-              AutoRoute(
-                path: 'tab2',
-                page: PageInfo(
-                  'Tab2Route',
-                  builder: (_) => const _TextPage('Tab2Route'),
-                ),
+            ),
+            AutoRoute(
+              path: '/tabs',
+              page: PageInfo(
+                'TabsHostRoute',
+                builder: (_) => const _PageViewPage(),
               ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      final pageControllers = DisposalTracker<PageController>();
-
-      for (var visit = 0; visit < 3; visit++) {
-        unawaited(router.pushPath('/tabs'));
-        await pumpUntilFound(tester, find.text('Tab1Route'));
-        // Four fifths of the screen: a slow frame can zero the fling's speed,
-        // and the page then settles by position.
-        final width =
-            tester.view.physicalSize.width / tester.view.devicePixelRatio;
-        await tester.fling(
-          find.text('Tab1Route'),
-          Offset(-width * 0.8, 0),
-          1000,
+              children: [
+                AutoRoute(
+                  path: 'tab1',
+                  page: PageInfo(
+                    'Tab1Route',
+                    builder: (_) => const _TextPage('Tab1Route'),
+                  ),
+                ),
+                AutoRoute(
+                  path: 'tab2',
+                  page: PageInfo(
+                    'Tab2Route',
+                    builder: (_) => const _TextPage('Tab2Route'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         );
-        await tester.pumpAndSettle();
-        expect(find.text('Tab2Route'), findsOneWidget);
+        await pumpRouterApp(tester, router);
+        final pageControllers = DisposalTracker<PageController>();
 
-        await systemBack(tester);
-        expect(find.text('HomeRoute'), findsOneWidget);
-      }
-      expect(pageControllers.created, 3);
-      expect(pageControllers.undisposed, 0);
-    },
-  );
+        for (var visit = 0; visit < 3; visit++) {
+          unawaited(router.pushPath('/tabs'));
+          await pumpUntilFound(tester, find.text('Tab1Route'));
+          // Four fifths of the screen: a slow frame can zero the fling's speed,
+          // and the page then settles by position.
+          final width =
+              tester.view.physicalSize.width / tester.view.devicePixelRatio;
+          await tester.fling(
+            find.text('Tab1Route'),
+            Offset(-width * 0.8, 0),
+            1000,
+          );
+          await tester.pumpAndSettle();
+          expect(find.text('Tab2Route'), findsOneWidget);
+
+          await systemBack(tester);
+          expect(find.text('HomeRoute'), findsOneWidget);
+        }
+        expect(pageControllers.created, 3);
+        expect(pageControllers.undisposed, 0);
+      },
+    );
+  });
 }
 
 /// Shows two tabs in an AutoTabsRouter.pageView.

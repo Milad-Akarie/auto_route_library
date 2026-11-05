@@ -11,50 +11,52 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: a page holds AutoTabsRouter.tabBar under a widget whose state
-  // decides the layout around it. Switch to the second tab, then change that
-  // state so AutoTabsRouter.tabBar is built again from scratch.
-  // Should: the second tab stays active and the url stays '/second'.
-  testWidgets(
-    'Rebuilding the layout above AutoTabsRouter.tabBar keeps the active tab',
-    (tester) async {
-      addTearDown(() => _layoutNotifier.value = false);
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: _TabsHostRoute.page,
-            path: '/',
-            initial: true,
-            children: [
-              AutoRoute(
-                page: _FirstTabRoute.page,
-                path: 'first',
-                initial: true,
-              ),
-              AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterConfigApp(
-        tester,
-        router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
-      );
-      expect(find.text(_FirstTabRoute.name), findsOneWidget);
+  group('tab rebuild', () {
+    // Steps: a page holds AutoTabsRouter.tabBar under a widget whose state
+    // decides the layout around it. Switch to the second tab, then change that
+    // state so AutoTabsRouter.tabBar is built again from scratch.
+    // Should: the second tab stays active and the url stays '/second'.
+    testWidgets(
+      'Rebuilding the layout above AutoTabsRouter.tabBar keeps the active tab',
+      (tester) async {
+        addTearDown(() => _layoutNotifier.value = false);
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _TabsHostRoute.page,
+              path: '/',
+              initial: true,
+              children: [
+                AutoRoute(
+                  page: _FirstTabRoute.page,
+                  path: 'first',
+                  initial: true,
+                ),
+                AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(
+          tester,
+          router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+        );
+        expect(find.text(_FirstTabRoute.name), findsOneWidget);
 
-      await tester.tap(find.text('Go to second tab'));
-      await tester.pumpAndSettle();
-      expect(find.text(_SecondTabRoute.name), findsOneWidget);
-      expect(router.urlState.path, '/second');
+        await tester.tap(find.text('Go to second tab'));
+        await tester.pumpAndSettle();
+        expect(find.text(_SecondTabRoute.name), findsOneWidget);
+        expect(router.urlState.path, '/second');
 
-      _layoutNotifier.value = !_layoutNotifier.value;
-      await tester.pumpAndSettle();
-      expect(find.text('Side panel'), findsOneWidget);
-      expect(find.text(_SecondTabRoute.name), findsOneWidget);
-      expect(router.urlState.path, '/second');
-      await expectBrowserUrl('/second');
-    },
-  );
+        _layoutNotifier.value = !_layoutNotifier.value;
+        await tester.pumpAndSettle();
+        expect(find.text('Side panel'), findsOneWidget);
+        expect(find.text(_SecondTabRoute.name), findsOneWidget);
+        expect(router.urlState.path, '/second');
+        await expectBrowserUrl('/second');
+      },
+    );
+  });
 }
 
 // Flips the layout around the tabs: false keeps them alone, true puts a side

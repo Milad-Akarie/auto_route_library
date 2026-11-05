@@ -16,62 +16,65 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: BottomNavigationRoute '/' with tabs HomeTabRoute 'home' and
-  // SecondTabRoute 'second', each a router with an initial page; from the
-  // home page call pushPath('nowhere') with onFailure.
-  // Should: onFailure gets a RouteNotFoundFailure and the home stack stays.
-  testWidgets(
-    'pushPath of an unknown relative path reports a failure instead of pushing '
-    'the first page',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          NamedRouteDef(
-            name: 'BottomNavigationRoute',
-            path: '/',
-            builder: (_, _) => const AutoTabsScaffold(
-              routes: [
-                NamedRoute('HomeTabRoute'),
-                NamedRoute('SecondTabRoute'),
+  group('push unknown relative path', () {
+    // Steps: BottomNavigationRoute '/' with tabs HomeTabRoute 'home' and
+    // SecondTabRoute 'second', each a router with an initial page; from the
+    // home page call pushPath('nowhere') with onFailure.
+    // Should: onFailure gets a RouteNotFoundFailure and the home stack stays.
+    testWidgets(
+      'pushPath of an unknown relative path reports a failure instead of '
+      'pushing '
+      'the first page',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            NamedRouteDef(
+              name: 'BottomNavigationRoute',
+              path: '/',
+              builder: (_, _) => const AutoTabsScaffold(
+                routes: [
+                  NamedRoute('HomeTabRoute'),
+                  NamedRoute('SecondTabRoute'),
+                ],
+              ),
+              children: [
+                NamedRouteDef.shell(
+                  name: 'HomeTabRoute',
+                  path: 'home',
+                  children: [
+                    NamedRouteDef(
+                      name: 'HomeRoute',
+                      initial: true,
+                      builder: (_, _) => const TextPage('Home'),
+                    ),
+                  ],
+                ),
+                NamedRouteDef.shell(
+                  name: 'SecondTabRoute',
+                  path: 'second',
+                  children: [
+                    NamedRouteDef(
+                      name: 'SecondRoute',
+                      initial: true,
+                      builder: (_, _) => const TextPage('Second'),
+                    ),
+                  ],
+                ),
               ],
             ),
-            children: [
-              NamedRouteDef.shell(
-                name: 'HomeTabRoute',
-                path: 'home',
-                children: [
-                  NamedRouteDef(
-                    name: 'HomeRoute',
-                    initial: true,
-                    builder: (_, _) => const TextPage('Home'),
-                  ),
-                ],
-              ),
-              NamedRouteDef.shell(
-                name: 'SecondTabRoute',
-                path: 'second',
-                children: [
-                  NamedRouteDef(
-                    name: 'SecondRoute',
-                    initial: true,
-                    builder: (_, _) => const TextPage('Second'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      final home = tester.element(find.text('Home')).router;
-      final failures = <NavigationFailure>[];
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        final home = tester.element(find.text('Home')).router;
+        final failures = <NavigationFailure>[];
 
-      unawaited(home.pushPath('nowhere', onFailure: failures.add));
-      await tester.pumpAndSettle();
+        unawaited(home.pushPath('nowhere', onFailure: failures.add));
+        await tester.pumpAndSettle();
 
-      expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
-      expect(home.stack.map((p) => p.name), ['HomeRoute']);
-      await expectBrowserUrl('/home');
-    },
-  );
+        expect(failures.singleOrNull, isA<RouteNotFoundFailure>());
+        expect(home.stack.map((p) => p.name), ['HomeRoute']);
+        await expectBrowserUrl('/home');
+      },
+    );
+  });
 }

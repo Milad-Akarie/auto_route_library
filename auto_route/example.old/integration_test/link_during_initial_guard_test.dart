@@ -16,71 +16,79 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: the app starts at '/', whose MainRoute guard waits 2 seconds the
-  // first time; meanwhile the platform sends '/info?id=1', which an async
-  // deepLinkBuilder turns into DeepLink([MainRoute, InfoRoute]).
-  // Should: the stack ends as [MainRoute, InfoRoute] with InfoRoute on screen.
-  testWidgets(
-    'A link that comes while the first page waits on its guard keeps its pages',
-    (tester) async {
-      var mainGuardCalls = 0;
-      final router = RootStackRouter.build(
-        routes: [
-          NamedRouteDef(
-            name: 'MainRoute',
-            path: '/',
-            guards: [
-              AutoRouteGuard.simple((resolver, _) async {
-                final wait = mainGuardCalls++ == 0 ? 2000 : 100;
-                await Future<void>.delayed(Duration(milliseconds: wait));
-                resolver.next();
+  group('link during initial guard', () {
+    // Steps: the app starts at '/', whose MainRoute guard waits 2 seconds the
+    // first time; meanwhile the platform sends '/info?id=1', which an async
+    // deepLinkBuilder turns into DeepLink([MainRoute, InfoRoute]).
+    // Should: the stack ends as [MainRoute, InfoRoute] with InfoRoute on
+    // screen.
+    testWidgets(
+      'A link that comes while the first page waits on its guard keeps its '
+      'pages',
+      (tester) async {
+        var mainGuardCalls = 0;
+        final router = RootStackRouter.build(
+          routes: [
+            NamedRouteDef(
+              name: 'MainRoute',
+              path: '/',
+              guards: [
+                AutoRouteGuard.simple((resolver, _) async {
+                  final wait = mainGuardCalls++ == 0 ? 2000 : 100;
+                  await Future<void>.delayed(Duration(milliseconds: wait));
+                  resolver.next();
+                }),
+              ],
+              builder: (_, _) => const TextPage('Main'),
+            ),
+            NamedRouteDef(
+              name: 'InfoRoute',
+              path: '/info',
+              builder: (_, data) => TextPage(
+                'Info ${data.queryParams.optString('id') ?? 'null'}',
+              ),
+            ),
+          ],
+        );
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routeInformationParser: router.defaultRouteParser(),
+            routerDelegate: router.delegate(
+              deepLinkBuilder: (link) async {
+                if (link.initial) return DeepLink.defaultPath;
+                if (link.path != '/info') return link;
+                return DeepLink([
+                  const NamedRoute('MainRoute'),
+                  NamedRoute(
+                    'InfoRoute',
+                    queryParams: link.uri.queryParameters,
+                  ),
+                ]);
+              },
+            ),
+          ),
+        );
+        await tester.pump(const Duration(milliseconds: 100));
+        const codec = JSONMethodCodec();
+        unawaited(
+          tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+            SystemChannels.navigation.name,
+            codec.encodeMethodCall(
+              const MethodCall('pushRouteInformation', {
+                'location': '/info?id=1',
+                'state': null,
               }),
-            ],
-            builder: (_, _) => const TextPage('Main'),
+            ),
+            (_) {},
           ),
-          NamedRouteDef(
-            name: 'InfoRoute',
-            path: '/info',
-            builder: (_, data) =>
-                TextPage('Info ${data.queryParams.optString('id') ?? 'null'}'),
-          ),
-        ],
-      );
-      await tester.pumpWidget(
-        MaterialApp.router(
-          routeInformationParser: router.defaultRouteParser(),
-          routerDelegate: router.delegate(
-            deepLinkBuilder: (link) async {
-              if (link.initial) return DeepLink.defaultPath;
-              if (link.path != '/info') return link;
-              return DeepLink([
-                const NamedRoute('MainRoute'),
-                NamedRoute('InfoRoute', queryParams: link.uri.queryParameters),
-              ]);
-            },
-          ),
-        ),
-      );
-      await tester.pump(const Duration(milliseconds: 100));
-      const codec = JSONMethodCodec();
-      unawaited(
-        tester.binding.defaultBinaryMessenger.handlePlatformMessage(
-          SystemChannels.navigation.name,
-          codec.encodeMethodCall(
-            const MethodCall('pushRouteInformation', {
-              'location': '/info?id=1',
-              'state': null,
-            }),
-          ),
-          (_) {},
-        ),
-      );
-      await tester.pump(const Duration(seconds: 3));
-      await tester.pumpAndSettle();
+        );
+        await tester.pump(const Duration(seconds: 3));
+        await tester.pumpAndSettle();
 
-      expect(tester.takeException(), isNull);
-      expect(router.stack.map((p) => p.name), ['MainRoute', 'InfoRoute']);
-      expect(find.text('Info 1'), findsOneWidget);
-    },
-  );
+        expect(tester.takeException(), isNull);
+        expect(router.stack.map((p) => p.name), ['MainRoute', 'InfoRoute']);
+        expect(find.text('Info 1'), findsOneWidget);
+      },
+    );
+  });
 }

@@ -13,29 +13,35 @@ import 'support/page_kinds_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: open the home page, then push a page of each route type in turn.
-  // Should: the semantics tree holds a node whose identifier is the route
-  // name of the page shown, as UI testing tools such as Appium read it.
-  testWidgets(
-    'Each kind of page is found by its route name in the semantics tree',
-    (tester) async {
-      final handle = tester.ensureSemantics();
-      final router = pageKindsRouter();
-      await pumpRouterApp(tester, router);
+  group('page semantics identifier', () {
+    // Steps: open the home page, then push a page of each route type in turn.
+    // Should: the semantics tree holds a node whose identifier is the route
+    // name of the page shown, as UI testing tools such as Appium read it.
+    testWidgets(
+      'Each kind of page is found by its route name in the semantics tree',
+      (tester) async {
+        final handle = tester.ensureSemantics();
+        final router = pageKindsRouter();
+        await pumpRouterApp(tester, router);
 
-      for (final name in kPageKindNames) {
-        if (name != 'HomeRoute') {
-          unawaited(router.push(NamedRoute(name)));
-          await tester.pumpAndSettle();
+        for (final name in kPageKindNames) {
+          if (name != 'HomeRoute') {
+            unawaited(router.push(NamedRoute(name)));
+            await tester.pumpAndSettle();
+          }
+          expect(
+            find.bySemanticsIdentifier(name),
+            findsOneWidget,
+            reason: name,
+          );
+          expect(
+            find.semantics.byPredicate((node) => node.identifier == name),
+            findsOne,
+            reason: name,
+          );
         }
-        expect(find.bySemanticsIdentifier(name), findsOneWidget, reason: name);
-        expect(
-          find.semantics.byPredicate((node) => node.identifier == name),
-          findsOne,
-          reason: name,
-        );
-      }
-      handle.dispose();
-    },
-  );
+        handle.dispose();
+      },
+    );
+  });
 }

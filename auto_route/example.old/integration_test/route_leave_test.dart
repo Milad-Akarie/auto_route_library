@@ -16,71 +16,76 @@ import 'support/route_leave_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late List<RouteLeaveKind> leaves;
-  late ValueNotifier<bool> editorCanPop;
-  late RootStackRouter router;
+  group('route leave', () {
+    late List<RouteLeaveKind> leaves;
+    late ValueNotifier<bool> editorCanPop;
+    late RootStackRouter router;
 
-  setUp(() {
-    leaves = [];
-    editorCanPop = ValueNotifier(true);
-    router = buildRouteLeaveRouter(leaves: leaves, editorCanPop: editorCanPop);
-  });
-  tearDown(() => editorCanPop.dispose());
+    setUp(() {
+      leaves = [];
+      editorCanPop = ValueNotifier(true);
+      router = buildRouteLeaveRouter(
+        leaves: leaves,
+        editorCanPop: editorCanPop,
+      );
+    });
+    tearDown(() => editorCanPop.dispose());
 
-  Future<void> openEditor(WidgetTester tester) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.pushPath('/editor'));
-    await tester.pumpAndSettle();
-    expect(find.text('Editor'), findsOneWidget);
-  }
+    Future<void> openEditor(WidgetTester tester) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.pushPath('/editor'));
+      await tester.pumpAndSettle();
+      expect(find.text('Editor'), findsOneWidget);
+    }
 
-  // Steps: open the editor, refuse pops, press system back; allow
-  // pops, press system back again.
-  // Should: the refused back reports nothing, the second reports popped.
-  testWidgets('system back reports popped, unless the PopScope refuses it', (
-    tester,
-  ) async {
-    await openEditor(tester);
-    editorCanPop.value = false;
-    await tester.pump();
-    await systemBack(tester);
-    expect(leaves, isEmpty);
-    expect(find.text('Editor'), findsOneWidget);
+    // Steps: open the editor, refuse pops, press system back; allow
+    // pops, press system back again.
+    // Should: the refused back reports nothing, the second reports popped.
+    testWidgets('system back reports popped, unless the PopScope refuses it', (
+      tester,
+    ) async {
+      await openEditor(tester);
+      editorCanPop.value = false;
+      await tester.pump();
+      await systemBack(tester);
+      expect(leaves, isEmpty);
+      expect(find.text('Editor'), findsOneWidget);
 
-    editorCanPop.value = true;
-    await tester.pump();
-    await systemBack(tester);
-    expect(leaves, [RouteLeaveKind.popped]);
-    expect(find.text('Home'), findsOneWidget);
-  });
+      editorCanPop.value = true;
+      await tester.pump();
+      await systemBack(tester);
+      expect(leaves, [RouteLeaveKind.popped]);
+      expect(find.text('Home'), findsOneWidget);
+    });
 
-  // Steps: open the editor, push the preview, then pop it and replace the
-  // editor with the preview.
-  // Should: covered, then replaced.
-  testWidgets('a push over the page reports covered, a replace replaced', (
-    tester,
-  ) async {
-    await openEditor(tester);
-    unawaited(router.pushPath('/preview'));
-    await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.covered]);
+    // Steps: open the editor, push the preview, then pop it and replace the
+    // editor with the preview.
+    // Should: covered, then replaced.
+    testWidgets('a push over the page reports covered, a replace replaced', (
+      tester,
+    ) async {
+      await openEditor(tester);
+      unawaited(router.pushPath('/preview'));
+      await tester.pumpAndSettle();
+      expect(leaves, [RouteLeaveKind.covered]);
 
-    router.pop();
-    await tester.pumpAndSettle();
-    unawaited(router.replacePath('/preview'));
-    await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.covered, RouteLeaveKind.replaced]);
-    await expectBrowserUrl('/preview');
-  });
+      router.pop();
+      await tester.pumpAndSettle();
+      unawaited(router.replacePath('/preview'));
+      await tester.pumpAndSettle();
+      expect(leaves, [RouteLeaveKind.covered, RouteLeaveKind.replaced]);
+      await expectBrowserUrl('/preview');
+    });
 
-  // Steps: open the editor, navigate to '/'.
-  // Should: removed.
-  testWidgets('navigating to the page below reports removed', (tester) async {
-    await openEditor(tester);
-    unawaited(router.navigatePath('/'));
-    await tester.pumpAndSettle();
-    expect(leaves, [RouteLeaveKind.removed]);
-    expect(find.text('Home'), findsOneWidget);
-    await expectBrowserUrl('/');
+    // Steps: open the editor, navigate to '/'.
+    // Should: removed.
+    testWidgets('navigating to the page below reports removed', (tester) async {
+      await openEditor(tester);
+      unawaited(router.navigatePath('/'));
+      await tester.pumpAndSettle();
+      expect(leaves, [RouteLeaveKind.removed]);
+      expect(find.text('Home'), findsOneWidget);
+      await expectBrowserUrl('/');
+    });
   });
 }

@@ -12,51 +12,53 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: tabs are [first, second, third] with a two-second tab animation.
-  // Tap the third tab, tap 'Add tab' while the tab bar moves, then tap
-  // 'Close tabs' before it stops.
-  // Should: the tabs close without an error.
-  testWidgets(
-    'closing the tabs while the tab bar animates after a routes change throws '
-    'nothing',
-    (tester) async {
-      addTearDown(() {
-        _fourthAddedNotifier.value = false;
-        _showTabsNotifier.value = true;
-      });
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: _TabsHostRoute.page,
-            path: '/',
-            initial: true,
-            children: [
-              AutoRoute(
-                page: _FirstTabRoute.page,
-                path: 'first',
-                initial: true,
-              ),
-              AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-              AutoRoute(page: _ThirdTabRoute.page, path: 'third'),
-              AutoRoute(page: _FourthTabRoute.page, path: 'fourth'),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterConfigApp(
-        tester,
-        router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
-      );
+  group('tab bar dispose', () {
+    // Steps: tabs are [first, second, third] with a two-second tab animation.
+    // Tap the third tab, tap 'Add tab' while the tab bar moves, then tap
+    // 'Close tabs' before it stops.
+    // Should: the tabs close without an error.
+    testWidgets(
+      'closing the tabs while the tab bar animates after a routes change '
+      'throws nothing',
+      (tester) async {
+        addTearDown(() {
+          _fourthAddedNotifier.value = false;
+          _showTabsNotifier.value = true;
+        });
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _TabsHostRoute.page,
+              path: '/',
+              initial: true,
+              children: [
+                AutoRoute(
+                  page: _FirstTabRoute.page,
+                  path: 'first',
+                  initial: true,
+                ),
+                AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+                AutoRoute(page: _ThirdTabRoute.page, path: 'third'),
+                AutoRoute(page: _FourthTabRoute.page, path: 'fourth'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(
+          tester,
+          router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+        );
 
-      await tester.tap(find.text('Third'));
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.tap(find.text('Add tab'));
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.tap(find.text('Close tabs'));
-      await tester.pumpAndSettle();
-      expect(find.text('No tabs'), findsOneWidget);
-    },
-  );
+        await tester.tap(find.text('Third'));
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.tap(find.text('Add tab'));
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.tap(find.text('Close tabs'));
+        await tester.pumpAndSettle();
+        expect(find.text('No tabs'), findsOneWidget);
+      },
+    );
+  });
 }
 
 final ValueNotifier<bool> _fourthAddedNotifier = ValueNotifier(false);

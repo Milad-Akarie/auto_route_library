@@ -24,52 +24,58 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      defaultRouteType: const RouteType.cupertino(),
-      routes: [
-        _fade(_page('WelcomeRoute'), '/'),
-        _fade(_page('LoginRoute'), '/login'),
-        CustomRoute(
-          page: PageInfo('AuthorizedRoute', builder: (_) => const AutoRouter()),
-          path: '/authorized',
-          transitionsBuilder: TransitionsBuilders.fadeIn,
-          duration: const Duration(milliseconds: 200),
-          children: [
-            _fade(_page('HomeRoute'), 'home', isInitial: true),
-            _fade(_page('ActivityRoute'), 'activity'),
-          ],
-        ),
-      ],
+  group('android back in app', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        defaultRouteType: const RouteType.cupertino(),
+        routes: [
+          _fade(_page('WelcomeRoute'), '/'),
+          _fade(_page('LoginRoute'), '/login'),
+          CustomRoute(
+            page: PageInfo(
+              'AuthorizedRoute',
+              builder: (_) => const AutoRouter(),
+            ),
+            path: '/authorized',
+            transitionsBuilder: TransitionsBuilders.fadeIn,
+            duration: const Duration(milliseconds: 200),
+            children: [
+              _fade(_page('HomeRoute'), 'home', isInitial: true),
+              _fade(_page('ActivityRoute'), 'activity'),
+            ],
+          ),
+        ],
+      );
+    });
+
+    testWidgets(
+      'system back pops the page on top, flat or nested, and keeps the app '
+      'open',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+
+        unawaited(router.push(const _Route('LoginRoute')));
+        await tester.pumpAndSettle();
+        await systemBack(tester);
+        expectTopPage(router, 'WelcomeRoute');
+
+        unawaited(router.replaceAll([const _Route('AuthorizedRoute')]));
+        await tester.pumpAndSettle();
+        expectTopPage(router, 'HomeRoute');
+        unawaited(
+          router
+              .innerRouterOf<StackRouter>('AuthorizedRoute')!
+              .push(const _Route('ActivityRoute')),
+        );
+        await tester.pumpAndSettle();
+
+        await systemBack(tester);
+        expectTopPage(router, 'HomeRoute');
+        expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
+      },
     );
   });
-
-  testWidgets(
-    'system back pops the page on top, flat or nested, and keeps the app open',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-
-      unawaited(router.push(const _Route('LoginRoute')));
-      await tester.pumpAndSettle();
-      await systemBack(tester);
-      expectTopPage(router, 'WelcomeRoute');
-
-      unawaited(router.replaceAll([const _Route('AuthorizedRoute')]));
-      await tester.pumpAndSettle();
-      expectTopPage(router, 'HomeRoute');
-      unawaited(
-        router
-            .innerRouterOf<StackRouter>('AuthorizedRoute')!
-            .push(const _Route('ActivityRoute')),
-      );
-      await tester.pumpAndSettle();
-
-      await systemBack(tester);
-      expectTopPage(router, 'HomeRoute');
-      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
-    },
-  );
 }
 
 CustomRoute _fade(PageInfo page, String path, {bool isInitial = false}) => .new(

@@ -17,62 +17,64 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: a tabs host at '/tabs' whose tabs have no '' path and none is
-  // initial. Navigate to it from '/', tap the second tab, then go back: the
-  // browser's back button on web, router.back() elsewhere.
-  // Should: the url is '/tabs/tab-1' on the first tab, and going back shows it.
-  for (final includePrefixMatches in [false, true]) {
-    testWidgets(
-      'going back to a tabs host opened without a tab in its url '
-      'shows its first tab, includePrefixMatches: $includePrefixMatches',
-      (tester) async {
-        final router = RootStackRouter.build(
-          routes: [
-            AutoRoute(page: _HomeRoute.page, path: '/'),
-            AutoRoute(
-              page: _TabsRoute.page,
-              path: '/tabs',
-              children: [
-                AutoRoute(page: _Tab1Route.page, path: 'tab-1'),
-                AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
-              ],
+  group('tabs url without initial', () {
+    // Steps: a tabs host at '/tabs' whose tabs have no '' path and none is
+    // initial. Navigate to it from '/', tap the second tab, then go back: the
+    // browser's back button on web, router.back() elsewhere.
+    // Should: the url is '/tabs/tab-1' on the first tab, and going back shows it.
+    for (final includePrefixMatches in [false, true]) {
+      testWidgets(
+        'going back to a tabs host opened without a tab in its url '
+        'shows its first tab, includePrefixMatches: $includePrefixMatches',
+        (tester) async {
+          final router = RootStackRouter.build(
+            routes: [
+              AutoRoute(page: _HomeRoute.page, path: '/'),
+              AutoRoute(
+                page: _TabsRoute.page,
+                path: '/tabs',
+                children: [
+                  AutoRoute(page: _Tab1Route.page, path: 'tab-1'),
+                  AutoRoute(page: _Tab2Route.page, path: 'tab-2'),
+                ],
+              ),
+            ],
+          );
+          await pumpRouterConfigApp(
+            tester,
+            router.config(
+              includePrefixMatches: includePrefixMatches,
+              deepLinkBuilder: (link) =>
+                  link.initial ? DeepLink.defaultPath : link,
             ),
-          ],
-        );
-        await pumpRouterConfigApp(
-          tester,
-          router.config(
-            includePrefixMatches: includePrefixMatches,
-            deepLinkBuilder: (link) =>
-                link.initial ? DeepLink.defaultPath : link,
-          ),
-        );
-        unawaited(router.navigate(const _TabsRoute()));
-        await tester.pumpAndSettle();
-        expect(find.text('Tab 1'), findsOneWidget);
-        expect(router.currentUrl, '/tabs/tab-1');
-        await expectBrowserUrl('/tabs/tab-1');
-        await tester.tap(find.text('Show tab 2'));
-        await tester.pumpAndSettle();
-        expect(router.currentUrl, '/tabs/tab-2');
-        await expectBrowserUrl('/tabs/tab-2');
-
-        if (kIsWeb) {
-          pressBrowserBack();
+          );
+          unawaited(router.navigate(const _TabsRoute()));
+          await tester.pumpAndSettle();
+          expect(find.text('Tab 1'), findsOneWidget);
+          expect(router.currentUrl, '/tabs/tab-1');
           await expectBrowserUrl('/tabs/tab-1');
-        } else {
-          router.back();
-        }
-        await tester.pumpAndSettle();
-        expect(find.text('Tab 1'), findsOneWidget);
-        expect(router.currentUrl, '/tabs/tab-1');
-        expect(router.stack.map((p) => p.name), [
-          _HomeRoute.name,
-          _TabsRoute.name,
-        ]);
-      },
-    );
-  }
+          await tester.tap(find.text('Show tab 2'));
+          await tester.pumpAndSettle();
+          expect(router.currentUrl, '/tabs/tab-2');
+          await expectBrowserUrl('/tabs/tab-2');
+
+          if (kIsWeb) {
+            pressBrowserBack();
+            await expectBrowserUrl('/tabs/tab-1');
+          } else {
+            router.back();
+          }
+          await tester.pumpAndSettle();
+          expect(find.text('Tab 1'), findsOneWidget);
+          expect(router.currentUrl, '/tabs/tab-1');
+          expect(router.stack.map((p) => p.name), [
+            _HomeRoute.name,
+            _TabsRoute.name,
+          ]);
+        },
+      );
+    }
+  });
 }
 
 class _HomeRoute extends PageRouteInfo<void> {

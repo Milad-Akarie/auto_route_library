@@ -20,54 +20,57 @@ import 'support/web_demo_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late AuthService authService;
-  late WebAppRouter router;
-  setUp(() {
-    authService = AuthService()..isAuthenticated = true;
-    router = WebAppRouter(authService);
-  });
+  group('leading button pop', () {
+    late AuthService authService;
+    late WebAppRouter router;
+    setUp(() {
+      authService = AuthService()..isAuthenticated = true;
+      router = WebAppRouter(authService);
+    });
 
-  Future<void> openUserPage(WidgetTester tester) async {
-    await tester.tap(find.text('Navigate to user/2'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('User Profile : 2'), findsOneWidget);
-  }
-
-  Future<void> tapBack(WidgetTester tester) async {
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-  }
-
-  testWidgets(
-    'the leading button on the user page goes back to the home page',
-    (tester) async {
-      await pumpRouterApp(tester, router, reevaluationNotifier: authService);
-      expect(find.text('HomePage'), findsOneWidget);
-      await openUserPage(tester);
-
-      await tapBack(tester);
-      expect(find.text('HomePage'), findsOneWidget);
-      expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
-    },
-  );
-
-  testWidgets(
-    'back from the verify page, then the leading button, goes back to the home '
-    'page',
-    (tester) async {
-      await pumpRouterApp(tester, router, reevaluationNotifier: authService);
-      await openUserPage(tester);
-
-      await tester.tap(find.text('Posts -> '));
+    Future<void> openUserPage(WidgetTester tester) async {
+      await tester.tap(find.text('Navigate to user/2'));
       await tester.pumpAndSettle();
-      expect(router.current.name, WebVerifyRoute.name);
-
-      await tapBack(tester);
       expect(find.textContaining('User Profile : 2'), findsOneWidget);
+    }
 
-      await tapBack(tester);
-      expect(find.text('HomePage'), findsOneWidget);
-      expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
-    },
-  );
+    Future<void> tapBack(WidgetTester tester) async {
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets(
+      'the leading button on the user page goes back to the home page',
+      (tester) async {
+        await pumpRouterApp(tester, router, reevaluationNotifier: authService);
+        expect(find.text('HomePage'), findsOneWidget);
+        await openUserPage(tester);
+
+        await tapBack(tester);
+        expect(find.text('HomePage'), findsOneWidget);
+        expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
+      },
+    );
+
+    testWidgets(
+      'back from the verify page, then the leading button, goes back to the '
+      'home '
+      'page',
+      (tester) async {
+        await pumpRouterApp(tester, router, reevaluationNotifier: authService);
+        await openUserPage(tester);
+
+        await tester.tap(find.text('Posts -> '));
+        await tester.pumpAndSettle();
+        expect(router.current.name, WebVerifyRoute.name);
+
+        await tapBack(tester);
+        expect(find.textContaining('User Profile : 2'), findsOneWidget);
+
+        await tapBack(tester);
+        expect(find.text('HomePage'), findsOneWidget);
+        expect(router.stack.map((p) => p.name), [MainWebRoute.name]);
+      },
+    );
+  });
 }

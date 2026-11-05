@@ -14,36 +14,40 @@ import 'support/picker_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push PickerRoute<int> with the items 1, 2 and 3, then tap item 2.
-  // Should: the page is a PickerView<int>, and the push completes with the
-  // int 2.
-  testWidgets(
-    'Pushing PickerRoute<int> opens PickerView<int>, which pops with an int',
-    (tester) async {
-      final router = PickerRouter();
-      await pumpRouterApp(tester, router);
-      final result = router.push<int>(PickerRoute<int>(items: const [1, 2, 3]));
-      await tester.pumpAndSettle();
-      expect(find.byType(PickerView<int>), findsOneWidget);
-      await expectBrowserUrl('/picker?title=Pick');
-      await tester.tap(find.text('Item 2'));
-      await tester.pumpAndSettle();
-      final picked = await result;
-      expect(picked, 2);
-      expect(picked, isA<int>());
-    },
-  );
-
-  // Steps: open the app at the deep link /picker?title=Colors.
-  // Should: the page opens with no items and the title from the url.
-  testWidgets('A deep link opens the generic page', (tester) async {
-    final router = PickerRouter();
-    await pumpRouterApp(tester, router, initialLink: '/picker?title=Colors');
-    expect(tester.takeException(), isNull);
-    expect(
-      find.byWidgetPredicate((widget) => widget is PickerView),
-      findsOneWidget,
+  group('generic page', () {
+    // Steps: push PickerRoute<int> with the items 1, 2 and 3, then tap item 2.
+    // Should: the page is a PickerView<int>, and the push completes with the
+    // int 2.
+    testWidgets(
+      'Pushing PickerRoute<int> opens PickerView<int>, which pops with an int',
+      (tester) async {
+        final router = PickerRouter();
+        await pumpRouterApp(tester, router);
+        final result = router.push<int>(
+          PickerRoute<int>(items: const [1, 2, 3]),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byType(PickerView<int>), findsOneWidget);
+        await expectBrowserUrl('/picker?title=Pick');
+        await tester.tap(find.text('Item 2'));
+        await tester.pumpAndSettle();
+        final picked = await result;
+        expect(picked, 2);
+        expect(picked, isA<int>());
+      },
     );
-    expect(find.text('Colors from 0'), findsOneWidget);
+
+    // Steps: open the app at the deep link /picker?title=Colors.
+    // Should: the page opens with no items and the title from the url.
+    testWidgets('A deep link opens the generic page', (tester) async {
+      final router = PickerRouter();
+      await pumpRouterApp(tester, router, initialLink: '/picker?title=Colors');
+      expect(tester.takeException(), isNull);
+      expect(
+        find.byWidgetPredicate((widget) => widget is PickerView),
+        findsOneWidget,
+      );
+      expect(find.text('Colors from 0'), findsOneWidget);
+    });
   });
 }

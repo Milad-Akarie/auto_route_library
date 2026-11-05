@@ -14,32 +14,34 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, path: '/'),
-        AutoRoute(page: _CafeRoute.page, path: '/café'),
-      ],
-    );
-  });
+  group('non-ASCII url', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, path: '/'),
+          AutoRoute(page: _CafeRoute.page, path: '/café'),
+        ],
+      );
+    });
 
-  // Steps: push a page whose path is '/café', then pop it.
-  // Should: the url, and on web the address bar, is '/caf%C3%A9', then '/'.
-  testWidgets('A url with a letter outside ASCII follows the pages', (
-    tester,
-  ) async {
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(const _CafeRoute()));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(router.urlState.uri.toString(), '/caf%C3%A9');
-    await expectBrowserUrl('/caf%C3%A9');
+    // Steps: push a page whose path is '/café', then pop it.
+    // Should: the url, and on web the address bar, is '/caf%C3%A9', then '/'.
+    testWidgets('A url with a letter outside ASCII follows the pages', (
+      tester,
+    ) async {
+      await pumpRouterAppWithConfig(tester, router);
+      unawaited(router.push(const _CafeRoute()));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(router.urlState.uri.toString(), '/caf%C3%A9');
+      await expectBrowserUrl('/caf%C3%A9');
 
-    router.pop();
-    await tester.pumpAndSettle();
-    expectCurrentPage(router, FirstRoute.name);
-    await expectBrowserUrl('/');
+      router.pop();
+      await tester.pumpAndSettle();
+      expectCurrentPage(router, FirstRoute.name);
+      await expectBrowserUrl('/');
+    });
   });
 }
 

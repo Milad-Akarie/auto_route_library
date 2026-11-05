@@ -11,23 +11,25 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: open the app at '/old/1/2', which RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path')
-  // sends on.
-  // Should: the page reads '2', and the url, and on web the address bar, is '/cms/2', not '/cms/1th'.
-  testWidgets('A redirect expands a param whose name starts another whole', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, path: '/', initial: true),
-        AutoRoute(page: _CmsRoute.page, path: '/cms/:path'),
-        RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path'),
-      ],
-    );
-    await pumpRouterApp(tester, router, initialLink: '/old/1/2');
-    expect(find.text('Cms 2'), findsOneWidget);
-    expect(router.urlState.uri.toString(), '/cms/2');
-    await expectBrowserUrl('/cms/2');
+  group('redirect param name prefix', () {
+    // Steps: open the app at '/old/1/2', which RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path')
+    // sends on.
+    // Should: the page reads '2', and the url, and on web the address bar, is '/cms/2', not '/cms/1th'.
+    testWidgets('A redirect expands a param whose name starts another whole', (
+      tester,
+    ) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, path: '/', initial: true),
+          AutoRoute(page: _CmsRoute.page, path: '/cms/:path'),
+          RedirectRoute(path: '/old/:pa/:path', redirectTo: '/cms/:path'),
+        ],
+      );
+      await pumpRouterApp(tester, router, initialLink: '/old/1/2');
+      expect(find.text('Cms 2'), findsOneWidget);
+      expect(router.urlState.uri.toString(), '/cms/2');
+      await expectBrowserUrl('/cms/2');
+    });
   });
 }
 

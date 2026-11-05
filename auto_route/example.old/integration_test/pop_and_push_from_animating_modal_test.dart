@@ -12,45 +12,48 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      defaultRouteType: const RouteType.adaptive(),
-      routes: [
-        AutoRoute(path: '/', page: _First1Route.page),
-        CustomRoute(
-          path: '/modal',
-          page: _Modal1Route.page,
-          customRouteBuilder: _modalSheetBuilder,
-        ),
-      ],
-    );
-  });
+  group('pop and push from animating modal', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        defaultRouteType: const RouteType.adaptive(),
+        routes: [
+          AutoRoute(path: '/', page: _First1Route.page),
+          CustomRoute(
+            path: '/modal',
+            page: _Modal1Route.page,
+            customRouteBuilder: _modalSheetBuilder,
+          ),
+        ],
+      );
+    });
 
-  // Steps: First1Route pushes Modal1Route, a CustomRoute shown in a
-  // ModalBottomSheetRoute. While the sheet slides in, tap its button, which
-  // calls context.router.popAndPush(First1Route()).
-  // Should: the sheet closes and a new First1Route opens, with no error.
-  testWidgets('popAndPush from a modal while it slides in', (tester) async {
-    await pumpRouterApp(tester, router);
-    await tester.tap(find.text('Open modal'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 150));
+    // Steps: First1Route pushes Modal1Route, a CustomRoute shown in a
+    // ModalBottomSheetRoute. While the sheet slides in, tap its button, which
+    // calls context.router.popAndPush(First1Route()).
+    // Should: the sheet closes and a new First1Route opens, with no error.
+    testWidgets('popAndPush from a modal while it slides in', (tester) async {
+      await pumpRouterApp(tester, router);
+      await tester.tap(find.text('Open modal'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 150));
 
-    await tester.tap(find.text('Test'), warnIfMissed: false);
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    if (router.stack.length == 2 && router.current.name == _Modal1Route.name) {
-      // The sheet wasn't under the finger yet on this device; tap it once it's
-      // up.
-      await tester.tap(find.text('Test'));
+      await tester.tap(find.text('Test'), warnIfMissed: false);
       await tester.pumpAndSettle();
-    }
-    expect(router.stack.map((p) => p.name), [
-      _First1Route.name,
-      _First1Route.name,
-    ]);
-    expect(find.text('Test'), findsNothing);
+      expect(tester.takeException(), isNull);
+      if (router.stack.length == 2 &&
+          router.current.name == _Modal1Route.name) {
+        // The sheet wasn't under the finger yet on this device; tap it once
+        // it's up.
+        await tester.tap(find.text('Test'));
+        await tester.pumpAndSettle();
+      }
+      expect(router.stack.map((p) => p.name), [
+        _First1Route.name,
+        _First1Route.name,
+      ]);
+      expect(find.text('Test'), findsNothing);
+    });
   });
 }
 

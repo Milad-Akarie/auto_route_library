@@ -12,45 +12,48 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: make the browser's entry hold '/p2' with the state the engine
-  // keeps for the app, as when the user comes back from another site, then
-  // start the app there.
-  // Should: router.pathState is the saved state. (The engine keeps counting
-  // entries across the tests of one launch, so whether the app writes a new
-  // entry is checked by the headless test, which starts with a fresh history.)
-  testWidgets(
-    'an app started on a browser entry it saved a state in reads that state',
-    skip: !kIsWeb,
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo('P1', builder: (_) => const Text('P1')),
-          ),
-          AutoRoute(
-            path: '/p2',
-            page: PageInfo('P2', builder: (_) => const Text('P2')),
-          ),
-        ],
-      );
-      addTearDown(router.dispose);
-      final dispatcher = tester.binding.platformDispatcher;
-      addTearDown(dispatcher.clearDefaultRouteNameTestValue);
-      dispatcher.defaultRouteNameTestValue = '/p2';
-      saveBrowserEntryState('/p2', 'saved');
+  group('state after reload', () {
+    // Steps: make the browser's entry hold '/p2' with the state the engine
+    // keeps for the app, as when the user comes back from another site, then
+    // start the app there.
+    // Should: router.pathState is the saved state. (The engine keeps counting
+    // entries across the tests of one launch, so whether the app writes a new
+    // entry is checked by the headless test, which starts with a fresh
+    // history.)
+    testWidgets(
+      'an app started on a browser entry it saved a state in reads that state',
+      skip: !kIsWeb,
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo('P1', builder: (_) => const Text('P1')),
+            ),
+            AutoRoute(
+              path: '/p2',
+              page: PageInfo('P2', builder: (_) => const Text('P2')),
+            ),
+          ],
+        );
+        addTearDown(router.dispose);
+        final dispatcher = tester.binding.platformDispatcher;
+        addTearDown(dispatcher.clearDefaultRouteNameTestValue);
+        dispatcher.defaultRouteNameTestValue = '/p2';
+        saveBrowserEntryState('/p2', 'saved');
 
-      tester.binding.attachRootWidget(
-        tester.binding.wrapWithDefaultView(
-          MaterialApp.router(routerConfig: router.config()),
-        ),
-      );
-      tester.binding.buildOwner!.buildScope(tester.binding.rootElement!);
-      await tester.pumpAndSettle();
+        tester.binding.attachRootWidget(
+          tester.binding.wrapWithDefaultView(
+            MaterialApp.router(routerConfig: router.config()),
+          ),
+        );
+        tester.binding.buildOwner!.buildScope(tester.binding.rootElement!);
+        await tester.pumpAndSettle();
 
-      expect(router.stack.map((page) => page.name), ['P2']);
-      expect(router.pathState, 'saved');
-      await tester.pumpWidget(const SizedBox());
-    },
-  );
+        expect(router.stack.map((page) => page.name), ['P2']);
+        expect(router.pathState, 'saved');
+        await tester.pumpWidget(const SizedBox());
+      },
+    );
+  });
 }

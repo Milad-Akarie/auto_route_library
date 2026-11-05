@@ -12,46 +12,48 @@ import 'support/disposal_tracker.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  for (final disposeDelegate in [false, true]) {
-    final disposed = disposeDelegate ? 'its delegate' : 'the router';
-    // Steps: show a root router through router.config(), close the app, then
-    // dispose the router, or its delegate.
-    // Should: the router, its delegate, url provider and navigation history
-    // are all disposed.
-    testWidgets('disposing $disposed disposes all the root router created', (
-      tester,
-    ) async {
-      final notifiers = DisposalTracker<ChangeNotifier>();
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo(
-              'HomeRoute',
-              builder: (_) => const _TextPage('HomeRoute'),
+  group('root router dispose', () {
+    for (final disposeDelegate in [false, true]) {
+      final disposed = disposeDelegate ? 'its delegate' : 'the router';
+      // Steps: show a root router through router.config(), close the app, then
+      // dispose the router, or its delegate.
+      // Should: the router, its delegate, url provider and navigation history
+      // are all disposed.
+      testWidgets('disposing $disposed disposes all the root router created', (
+        tester,
+      ) async {
+        final notifiers = DisposalTracker<ChangeNotifier>();
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const _TextPage('HomeRoute'),
+              ),
             ),
-          ),
-        ],
-      );
-      await pumpRouterAppWithConfig(tester, router);
-      expect(find.text('HomeRoute'), findsOneWidget);
-      final created = <ChangeNotifier>[
-        router,
-        router.delegate(),
-        router.routeInfoProvider(),
-        router.navigationHistory,
-      ];
-      expect(created.where(notifiers.isUndisposed), hasLength(4));
-      await tester.pumpWidget(const SizedBox());
+          ],
+        );
+        await pumpRouterAppWithConfig(tester, router);
+        expect(find.text('HomeRoute'), findsOneWidget);
+        final created = <ChangeNotifier>[
+          router,
+          router.delegate(),
+          router.routeInfoProvider(),
+          router.navigationHistory,
+        ];
+        expect(created.where(notifiers.isUndisposed), hasLength(4));
+        await tester.pumpWidget(const SizedBox());
 
-      if (disposeDelegate) {
-        router.delegate().dispose();
-      } else {
-        router.dispose();
-      }
-      expect(created.where(notifiers.isUndisposed), isEmpty);
-    });
-  }
+        if (disposeDelegate) {
+          router.delegate().dispose();
+        } else {
+          router.dispose();
+        }
+        expect(created.where(notifiers.isUndisposed), isEmpty);
+      });
+    }
+  });
 }
 
 /// Shows [text] on a plain page.

@@ -15,63 +15,68 @@ import 'support/restorable_app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Flutter's state restoration doesn't run on the web, so the routers save
-  // their pages only off the web.
+  group('restore args', () {
+    // Flutter's state restoration doesn't run on the web, so the routers save
+    // their pages only off the web.
 
-  RootStackRouter buildRouter() => .build(
-    routes: [
-      AutoRoute(path: '/', page: namedPage('HomeRoute'), initial: true),
-      AutoRoute(path: '/manufacturers', page: _ManufacturersByLetterRoute.page),
-      AutoRoute(path: '/book/:id', page: _BookRoute.page),
-    ],
-  );
-
-  // Steps: push a page whose route has a required argument that isn't a
-  // path or query param, then restore the app.
-  // Should: the app comes back on the home page, without the page whose
-  // argument couldn't be saved, and without the error
-  // "ManufacturersByLetterRouteArgs can not be null".
-  testWidgets(
-    'a page whose required argument was not saved is left out on restoration',
-    (tester) async {
-      await pumpRestorableApp(tester, buildRouter);
-      unawaited(
-        RestorableRouterApp.router.push(
-          _ManufacturersByLetterRoute(letter: const _Letter('M')),
+    RootStackRouter buildRouter() => .build(
+      routes: [
+        AutoRoute(path: '/', page: namedPage('HomeRoute'), initial: true),
+        AutoRoute(
+          path: '/manufacturers',
+          page: _ManufacturersByLetterRoute.page,
         ),
-      );
-      await tester.pumpAndSettle();
-      expect(find.text('Manufacturers by M'), findsOneWidget);
+        AutoRoute(path: '/book/:id', page: _BookRoute.page),
+      ],
+    );
 
-      await tester.restartAndRestore();
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('HomeRoute'), findsOneWidget);
-      await expectBrowserUrl('/');
-    },
-    skip: kIsWeb,
-  );
+    // Steps: push a page whose route has a required argument that isn't a
+    // path or query param, then restore the app.
+    // Should: the app comes back on the home page, without the page whose
+    // argument couldn't be saved, and without the error
+    // "ManufacturersByLetterRouteArgs can not be null".
+    testWidgets(
+      'a page whose required argument was not saved is left out on restoration',
+      (tester) async {
+        await pumpRestorableApp(tester, buildRouter);
+        unawaited(
+          RestorableRouterApp.router.push(
+            _ManufacturersByLetterRoute(letter: const _Letter('M')),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text('Manufacturers by M'), findsOneWidget);
 
-  // Steps: push a page that takes its value from a path param, then
-  // restore the app.
-  // Should: the page comes back with its value, at '/book/7'.
-  testWidgets(
-    'a page that takes its value from a path param comes back',
-    (tester) async {
-      await pumpRestorableApp(tester, buildRouter);
-      unawaited(RestorableRouterApp.router.push(_BookRoute(id: 7)));
-      await tester.pumpAndSettle();
-      expect(find.text('Book 7'), findsOneWidget);
+        await tester.restartAndRestore();
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('HomeRoute'), findsOneWidget);
+        await expectBrowserUrl('/');
+      },
+      skip: kIsWeb,
+    );
 
-      await tester.restartAndRestore();
-      await tester.pumpAndSettle();
-      expect(find.text('Book 7'), findsOneWidget);
-      await expectBrowserUrl('/book/7');
-      await systemBack(tester);
-      expect(find.text('HomeRoute'), findsOneWidget);
-    },
-    skip: kIsWeb,
-  );
+    // Steps: push a page that takes its value from a path param, then
+    // restore the app.
+    // Should: the page comes back with its value, at '/book/7'.
+    testWidgets(
+      'a page that takes its value from a path param comes back',
+      (tester) async {
+        await pumpRestorableApp(tester, buildRouter);
+        unawaited(RestorableRouterApp.router.push(_BookRoute(id: 7)));
+        await tester.pumpAndSettle();
+        expect(find.text('Book 7'), findsOneWidget);
+
+        await tester.restartAndRestore();
+        await tester.pumpAndSettle();
+        expect(find.text('Book 7'), findsOneWidget);
+        await expectBrowserUrl('/book/7');
+        await systemBack(tester);
+        expect(find.text('HomeRoute'), findsOneWidget);
+      },
+      skip: kIsWeb,
+    );
+  });
 }
 
 class _Letter {

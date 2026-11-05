@@ -14,40 +14,48 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: HomeRoute, then push SecondRoute; both pages have
-  // AutoRouteAwareStateMixin. Go back.
-  // Should: SecondRoute gets didPop, then HomeRoute gets didPopNext.
-  testWidgets(
-    'going back tells the page that leaves before the page that shows again',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo('HomeRoute', builder: (_) => const RouteAwarePage()),
-          ),
-          AutoRoute(
-            path: '/second',
-            page: PageInfo(
-              'SecondRoute',
-              builder: (_) => const RouteAwarePage(),
+  group('route aware pop order', () {
+    // Steps: HomeRoute, then push SecondRoute; both pages have
+    // AutoRouteAwareStateMixin. Go back.
+    // Should: SecondRoute gets didPop, then HomeRoute gets didPopNext.
+    testWidgets(
+      'going back tells the page that leaves before the page that shows again',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const RouteAwarePage(),
+              ),
             ),
-          ),
-        ],
-      );
-      await pumpRouterApp(
-        tester,
-        router,
-        navigatorObservers: () => [AutoRouteObserver()],
-      );
-      unawaited(router.push(const NamedRoute('SecondRoute')));
-      await tester.pumpAndSettle();
-      expectTopPage(router, 'SecondRoute');
+            AutoRoute(
+              path: '/second',
+              page: PageInfo(
+                'SecondRoute',
+                builder: (_) => const RouteAwarePage(),
+              ),
+            ),
+          ],
+        );
+        await pumpRouterApp(
+          tester,
+          router,
+          navigatorObservers: () => [AutoRouteObserver()],
+        );
+        unawaited(router.push(const NamedRoute('SecondRoute')));
+        await tester.pumpAndSettle();
+        expectTopPage(router, 'SecondRoute');
 
-      routeAwareEvents.clear();
-      await systemBack(tester);
-      expectTopPage(router, 'HomeRoute');
-      expect(routeAwareEvents, ['SecondRoute.didPop', 'HomeRoute.didPopNext']);
-    },
-  );
+        routeAwareEvents.clear();
+        await systemBack(tester);
+        expectTopPage(router, 'HomeRoute');
+        expect(routeAwareEvents, [
+          'SecondRoute.didPop',
+          'HomeRoute.didPopNext',
+        ]);
+      },
+    );
+  });
 }

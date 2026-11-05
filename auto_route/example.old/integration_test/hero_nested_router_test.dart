@@ -14,66 +14,70 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps (#2024): a page with a Hero at its bottom left pushes an empty
-  // router page whose first page has the same Hero at its top right.
-  // Should: the Hero flies there; its child leaves the first page.
-  testWidgets('A Hero flies from a page to the first page of a nested router', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _FromRoute.page, path: '/'),
-        AutoRoute(
-          page: _ShellRoute.page,
-          path: '/shell',
-          children: [
-            AutoRoute(page: _ToRoute.page, path: '', initial: true),
+  group('hero nested router', () {
+    // Steps (#2024): a page with a Hero at its bottom left pushes an empty
+    // router page whose first page has the same Hero at its top right.
+    // Should: the Hero flies there; its child leaves the first page.
+    testWidgets(
+      'A Hero flies from a page to the first page of a nested router',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(page: _FromRoute.page, path: '/'),
+            AutoRoute(
+              page: _ShellRoute.page,
+              path: '/shell',
+              children: [
+                AutoRoute(page: _ToRoute.page, path: '', initial: true),
+              ],
+            ),
           ],
-        ),
-      ],
+        );
+        await pumpRouterAppWithConfig(tester, router);
+        unawaited(router.push(const _ShellRoute()));
+        await _pumpIntoFlight(tester);
+        _expectHeroInFlight();
+        await tester.pumpAndSettle();
+        expect(find.text('to'), findsOneWidget);
+      },
     );
-    await pumpRouterAppWithConfig(tester, router);
-    unawaited(router.push(const _ShellRoute()));
-    await _pumpIntoFlight(tester);
-    _expectHeroInFlight();
-    await tester.pumpAndSettle();
-    expect(find.text('to'), findsOneWidget);
-  });
 
-  // Steps (#1873): a settings router (with its own HeroControllerScope, as
-  // the comments advise) shows a page with a Hero, which pushes an account
-  // shell route whose first page has the same Hero.
-  // Should: the Hero flies to the account page.
-  testWidgets(
-    'A Hero flies from a nested router page to the first page of a shell route',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: _HeroShellRoute.page,
-            path: '/',
-            children: [
-              AutoRoute(page: _FromRoute.page, path: '', initial: true),
-              AutoRoute(
-                page: _ShellRoute.page,
-                path: 'account',
-                children: [
-                  AutoRoute(page: _ToRoute.page, path: '', initial: true),
-                ],
-              ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterAppWithConfig(tester, router);
-      expect(find.text('from'), findsOneWidget);
-      unawaited(router.push(const _ShellRoute()));
-      await _pumpIntoFlight(tester);
-      _expectHeroInFlight();
-      await tester.pumpAndSettle();
-      expect(find.text('to'), findsOneWidget);
-    },
-  );
+    // Steps (#1873): a settings router (with its own HeroControllerScope, as
+    // the comments advise) shows a page with a Hero, which pushes an account
+    // shell route whose first page has the same Hero.
+    // Should: the Hero flies to the account page.
+    testWidgets(
+      'A Hero flies from a nested router page to the first page of a shell '
+      'route',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _HeroShellRoute.page,
+              path: '/',
+              children: [
+                AutoRoute(page: _FromRoute.page, path: '', initial: true),
+                AutoRoute(
+                  page: _ShellRoute.page,
+                  path: 'account',
+                  children: [
+                    AutoRoute(page: _ToRoute.page, path: '', initial: true),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterAppWithConfig(tester, router);
+        expect(find.text('from'), findsOneWidget);
+        unawaited(router.push(const _ShellRoute()));
+        await _pumpIntoFlight(tester);
+        _expectHeroInFlight();
+        await tester.pumpAndSettle();
+        expect(find.text('to'), findsOneWidget);
+      },
+    );
+  });
 }
 
 Future<void> _pumpIntoFlight(WidgetTester tester) async {

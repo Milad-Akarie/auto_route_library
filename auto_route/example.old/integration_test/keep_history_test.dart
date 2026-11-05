@@ -15,49 +15,51 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, path: '/', keepHistory: false),
-        AutoRoute(page: SecondRoute.page, path: '/second'),
-      ],
-    );
-  });
+  group('keep history', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, path: '/', keepHistory: false),
+          AutoRoute(page: SecondRoute.page, path: '/second'),
+        ],
+      );
+    });
 
-  // Steps: open FirstRoute, which has keepHistory: false, then push
-  // SecondRoute.
-  // Should: FirstRoute leaves the stack, and on web SecondRoute takes its
-  // browser entry instead of adding one.
-  testWidgets(
-    'Pushing from a page without history replaces it',
-    (tester) async {
+    // Steps: open FirstRoute, which has keepHistory: false, then push
+    // SecondRoute.
+    // Should: FirstRoute leaves the stack, and on web SecondRoute takes its
+    // browser entry instead of adding one.
+    testWidgets(
+      'Pushing from a page without history replaces it',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        await expectBrowserUrl('/');
+        final entryBefore = browserEntryIndex();
+
+        unawaited(router.push(const SecondRoute()));
+        await tester.pumpAndSettle();
+        expect(router.stack.map((p) => p.name), [SecondRoute.name]);
+        await expectBrowserUrl('/second');
+        if (kIsWeb) expect(browserEntryIndex(), entryBefore);
+      },
+    );
+
+    // Steps: open FirstRoute, which has keepHistory: false, then replaceAll
+    // with SecondRoute, as a splash screen does.
+    // Should: on web SecondRoute takes FirstRoute's browser entry.
+    testWidgets('replaceAll from a page without history replaces its entry', (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router);
       await expectBrowserUrl('/');
       final entryBefore = browserEntryIndex();
 
-      unawaited(router.push(const SecondRoute()));
+      unawaited(router.replaceAll([const SecondRoute()]));
       await tester.pumpAndSettle();
       expect(router.stack.map((p) => p.name), [SecondRoute.name]);
       await expectBrowserUrl('/second');
       if (kIsWeb) expect(browserEntryIndex(), entryBefore);
-    },
-  );
-
-  // Steps: open FirstRoute, which has keepHistory: false, then replaceAll with
-  // SecondRoute, as a splash screen does.
-  // Should: on web SecondRoute takes FirstRoute's browser entry.
-  testWidgets('replaceAll from a page without history replaces its entry', (
-    tester,
-  ) async {
-    await pumpRouterApp(tester, router);
-    await expectBrowserUrl('/');
-    final entryBefore = browserEntryIndex();
-
-    unawaited(router.replaceAll([const SecondRoute()]));
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), [SecondRoute.name]);
-    await expectBrowserUrl('/second');
-    if (kIsWeb) expect(browserEntryIndex(), entryBefore);
+    });
   });
 }

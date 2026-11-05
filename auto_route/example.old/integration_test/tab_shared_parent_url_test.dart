@@ -13,52 +13,54 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: /dashboard has the children tests (a nested router holding test1
-  // and test2) and test3; its tabs are [Test1Route(), Test2Route(),
-  // Test3Route()]. Tap 'First', 'Second', then 'First' again.
-  // Should: the url is /dashboard/tests/test1, in the browser's address bar
-  // too on web.
-  testWidgets(
-    'the url follows the active tab when two tabs share a parent route',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          RedirectRoute(path: '/', redirectTo: '/dashboard'),
-          AutoRoute(
-            page: _DashboardRoute.page,
-            path: '/dashboard',
-            children: [
-              RedirectRoute(path: '', redirectTo: 'test3'),
-              AutoRoute(
-                page: _TestsRoute.page,
-                path: 'tests',
-                children: [
-                  AutoRoute(page: _Test1Route.page, path: 'test1'),
-                  AutoRoute(page: _Test2Route.page, path: 'test2'),
-                ],
-              ),
-              AutoRoute(page: _Test3Route.page, path: 'test3'),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      expect(router.urlState.url, '/dashboard/test3');
+  group('tab shared parent url', () {
+    // Steps: /dashboard has the children tests (a nested router holding test1
+    // and test2) and test3; its tabs are [Test1Route(), Test2Route(),
+    // Test3Route()]. Tap 'First', 'Second', then 'First' again.
+    // Should: the url is /dashboard/tests/test1, in the browser's address bar
+    // too on web.
+    testWidgets(
+      'the url follows the active tab when two tabs share a parent route',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            RedirectRoute(path: '/', redirectTo: '/dashboard'),
+            AutoRoute(
+              page: _DashboardRoute.page,
+              path: '/dashboard',
+              children: [
+                RedirectRoute(path: '', redirectTo: 'test3'),
+                AutoRoute(
+                  page: _TestsRoute.page,
+                  path: 'tests',
+                  children: [
+                    AutoRoute(page: _Test1Route.page, path: 'test1'),
+                    AutoRoute(page: _Test2Route.page, path: 'test2'),
+                  ],
+                ),
+                AutoRoute(page: _Test3Route.page, path: 'test3'),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        expect(router.urlState.url, '/dashboard/test3');
 
-      Future<void> openTab(String label, String text, String url) async {
-        await tester.tap(find.text(label));
-        await tester.pumpAndSettle();
-        expect(find.text(text), findsOneWidget);
-        expect(router.urlState.url, url);
-        await expectBrowserUrl(url);
-      }
+        Future<void> openTab(String label, String text, String url) async {
+          await tester.tap(find.text(label));
+          await tester.pumpAndSettle();
+          expect(find.text(text), findsOneWidget);
+          expect(router.urlState.url, url);
+          await expectBrowserUrl(url);
+        }
 
-      await openTab('First', _Test1Route.name, '/dashboard/tests/test1');
-      await openTab('Second', _Test2Route.name, '/dashboard/tests/test2');
-      await openTab('First', _Test1Route.name, '/dashboard/tests/test1');
-      await openTab('Third', _Test3Route.name, '/dashboard/test3');
-    },
-  );
+        await openTab('First', _Test1Route.name, '/dashboard/tests/test1');
+        await openTab('Second', _Test2Route.name, '/dashboard/tests/test2');
+        await openTab('First', _Test1Route.name, '/dashboard/tests/test1');
+        await openTab('Third', _Test3Route.name, '/dashboard/test3');
+      },
+    );
+  });
 }
 
 class _DashboardRoute extends PageRouteInfo<void> {

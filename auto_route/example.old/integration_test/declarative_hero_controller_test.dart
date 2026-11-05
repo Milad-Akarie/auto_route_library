@@ -13,55 +13,57 @@ import 'support/disposal_tracker.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push HostRoute, whose page holds an AutoRouter.declarative, then
-  // go back, three times.
-  // Should: each visit's HeroController is disposed when the host leaves.
-  testWidgets('leaving a declarative router disposes its HeroController', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HomeRoute',
-            builder: (_) => const _TextPage('HomeRoute'),
-          ),
-        ),
-        AutoRoute(
-          path: '/host',
-          page: PageInfo(
-            'HostRoute',
-            builder: (_) => AutoRouter.declarative(
-              routes: (_) => [const NamedRoute('ChildRoute')],
+  group('declarative hero controller', () {
+    // Steps: push HostRoute, whose page holds an AutoRouter.declarative, then
+    // go back, three times.
+    // Should: each visit's HeroController is disposed when the host leaves.
+    testWidgets('leaving a declarative router disposes its HeroController', (
+      tester,
+    ) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const _TextPage('HomeRoute'),
             ),
           ),
-          children: [
-            AutoRoute(
-              path: '',
-              page: PageInfo(
-                'ChildRoute',
-                builder: (_) => const _TextPage('ChildRoute'),
+          AutoRoute(
+            path: '/host',
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) => AutoRouter.declarative(
+                routes: (_) => [const NamedRoute('ChildRoute')],
               ),
             ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    // Started after the app, whose own HeroController lives until it closes.
-    final heroControllers = DisposalTracker<HeroController>();
+            children: [
+              AutoRoute(
+                path: '',
+                page: PageInfo(
+                  'ChildRoute',
+                  builder: (_) => const _TextPage('ChildRoute'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      // Started after the app, whose own HeroController lives until it closes.
+      final heroControllers = DisposalTracker<HeroController>();
 
-    for (var visit = 0; visit < 3; visit++) {
-      unawaited(router.pushPath('/host'));
-      await pumpUntilFound(tester, find.text('ChildRoute'));
-      expect(find.text('ChildRoute'), findsOneWidget);
+      for (var visit = 0; visit < 3; visit++) {
+        unawaited(router.pushPath('/host'));
+        await pumpUntilFound(tester, find.text('ChildRoute'));
+        expect(find.text('ChildRoute'), findsOneWidget);
 
-      await systemBack(tester);
-      expect(find.text('HomeRoute'), findsOneWidget);
-    }
-    expect(heroControllers.created, 3);
-    expect(heroControllers.undisposed, 0);
+        await systemBack(tester);
+        expect(find.text('HomeRoute'), findsOneWidget);
+      }
+      expect(heroControllers.created, 3);
+      expect(heroControllers.undisposed, 0);
+    });
   });
 }
 

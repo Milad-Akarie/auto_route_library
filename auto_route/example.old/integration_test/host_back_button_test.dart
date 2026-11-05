@@ -23,55 +23,57 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(path: '/', page: FirstRoute.page),
-        AutoRoute(
-          path: '/host',
-          page: _ButtonsHostRoute.page,
-          children: [
-            AutoRoute(path: '', page: SecondNested1Route.page),
-            AutoRoute(path: 'nested3', page: SecondNested3Route.page),
-          ],
-        ),
-      ],
-    );
+  group('host back button', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(path: '/', page: FirstRoute.page),
+          AutoRoute(
+            path: '/host',
+            page: _ButtonsHostRoute.page,
+            children: [
+              AutoRoute(path: '', page: SecondNested1Route.page),
+              AutoRoute(path: 'nested3', page: SecondNested3Route.page),
+            ],
+          ),
+        ],
+      );
+    });
+
+    Future<void> pushSubRoute(WidgetTester tester) async {
+      unawaited(router.push(const _ButtonsHostRoute()));
+      await tester.pumpAndSettle();
+      unawaited(
+        router
+            .innerRouterOf<StackRouter>(_ButtonsHostRoute.name)!
+            .push(const SecondNested3Route()),
+      );
+      await tester.pumpAndSettle();
+      expectTopPage(router, SecondNested3Route.name);
+    }
+
+    for (final button in [BackButton, CloseButton]) {
+      testWidgets(
+        '$button on the host page pops the nested page, then the host page',
+        (tester) async {
+          await pumpRouterApp(tester, router);
+          await pushSubRoute(tester);
+
+          await tester.tap(find.byType(button));
+          await tester.pumpAndSettle();
+
+          expect(router.current.name, _ButtonsHostRoute.name);
+          expectTopPage(router, SecondNested1Route.name);
+
+          await tester.tap(find.byType(button));
+          await tester.pumpAndSettle();
+
+          expectTopPage(router, FirstRoute.name);
+        },
+      );
+    }
   });
-
-  Future<void> pushSubRoute(WidgetTester tester) async {
-    unawaited(router.push(const _ButtonsHostRoute()));
-    await tester.pumpAndSettle();
-    unawaited(
-      router
-          .innerRouterOf<StackRouter>(_ButtonsHostRoute.name)!
-          .push(const SecondNested3Route()),
-    );
-    await tester.pumpAndSettle();
-    expectTopPage(router, SecondNested3Route.name);
-  }
-
-  for (final button in [BackButton, CloseButton]) {
-    testWidgets(
-      '$button on the host page pops the nested page, then the host page',
-      (tester) async {
-        await pumpRouterApp(tester, router);
-        await pushSubRoute(tester);
-
-        await tester.tap(find.byType(button));
-        await tester.pumpAndSettle();
-
-        expect(router.current.name, _ButtonsHostRoute.name);
-        expectTopPage(router, SecondNested1Route.name);
-
-        await tester.tap(find.byType(button));
-        await tester.pumpAndSettle();
-
-        expectTopPage(router, FirstRoute.name);
-      },
-    );
-  }
 }
 
 /// Hosts a nested stack router under a row with a BackButton and a

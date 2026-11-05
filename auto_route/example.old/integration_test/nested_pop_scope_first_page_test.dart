@@ -27,108 +27,110 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final routers = {
-    'AutoRouter': () => const AutoRouter(),
-    'AutoRouter.declarative': () =>
-        AutoRouter.declarative(routes: (_) => [const _GuardedRoute()]),
-  };
+  group('nested pop scope first page', () {
+    final routers = {
+      'AutoRouter': () => const AutoRouter(),
+      'AutoRouter.declarative': () =>
+          AutoRouter.declarative(routes: (_) => [const _GuardedRoute()]),
+    };
 
-  for (final MapEntry(key: kind, value: nestedRouter) in routers.entries) {
-    group('in an $kind', () {
-      late RootStackRouter router;
-      setUp(() {
-        _popAttempts = 0;
-        _nestedRouter = nestedRouter;
-        router = RootStackRouter.build(
-          routes: [
-            AutoRoute(page: FirstRoute.page, path: '/'),
-            AutoRoute(
-              page: _HostRoute.page,
-              path: '/host',
-              children: [AutoRoute(page: _GuardedRoute.page, path: '')],
-            ),
-          ],
-        );
-      });
-
-      Future<void> openHost(WidgetTester tester, {ThemeData? theme}) async {
-        await pumpRouterApp(tester, router, theme: theme);
-        unawaited(router.push(const _HostRoute()));
-        await tester.pumpAndSettle();
-        expectTopPage(router, _GuardedRoute.name);
-      }
-
-      void expectHostStays() {
-        expect(router.stack.map((page) => page.name), [
-          FirstRoute.name,
-          _HostRoute.name,
-        ]);
-        expectTopPage(router, _GuardedRoute.name);
-      }
-
-      Future<void> tapAppBarBack(WidgetTester tester) async {
-        await tester.tap(find.byType(BackButton));
-        await tester.pumpAndSettle();
-      }
-
-      final backs = {
-        'system back': systemBack,
-        'the app bar back button': tapAppBarBack,
-      };
-
-      for (final MapEntry(key: name, value: back) in backs.entries) {
-        testWidgets('$name keeps the host when its page has a PopScope', (
-          tester,
-        ) async {
-          await openHost(tester);
-
-          await back(tester);
-          expectHostStays();
-          expect(_popAttempts, 1);
-
-          await back(tester);
-          expectHostStays();
-          expect(_popAttempts, 2);
-        });
-      }
-
-      testWidgets(
-        'the iOS back swipe keeps the host when its page has a PopScope',
-        (tester) async {
-          await openHost(tester, theme: ThemeData(platform: .iOS));
-
-          await swipeBack(tester);
-
-          expectHostStays();
-        },
-      );
-
-      testWidgets(
-        'system back on the first page keeps the app open and the page',
-        (tester) async {
+    for (final MapEntry(key: kind, value: nestedRouter) in routers.entries) {
+      group('in an $kind', () {
+        late RootStackRouter router;
+        setUp(() {
+          _popAttempts = 0;
+          _nestedRouter = nestedRouter;
           router = RootStackRouter.build(
             routes: [
+              AutoRoute(page: FirstRoute.page, path: '/'),
               AutoRoute(
                 page: _HostRoute.page,
-                path: '/',
+                path: '/host',
                 children: [AutoRoute(page: _GuardedRoute.page, path: '')],
               ),
             ],
           );
-          await pumpRouterApp(tester, router);
-          expectTopPage(router, _GuardedRoute.name);
+        });
 
-          // Twice, as a comment on the issue reports the second back closing
-          // the app.
-          for (var attempt = 1; attempt <= 2; attempt++) {
-            await systemBack(tester);
+        Future<void> openHost(WidgetTester tester, {ThemeData? theme}) async {
+          await pumpRouterApp(tester, router, theme: theme);
+          unawaited(router.push(const _HostRoute()));
+          await tester.pumpAndSettle();
+          expectTopPage(router, _GuardedRoute.name);
+        }
+
+        void expectHostStays() {
+          expect(router.stack.map((page) => page.name), [
+            FirstRoute.name,
+            _HostRoute.name,
+          ]);
+          expectTopPage(router, _GuardedRoute.name);
+        }
+
+        Future<void> tapAppBarBack(WidgetTester tester) async {
+          await tester.tap(find.byType(BackButton));
+          await tester.pumpAndSettle();
+        }
+
+        final backs = {
+          'system back': systemBack,
+          'the app bar back button': tapAppBarBack,
+        };
+
+        for (final MapEntry(key: name, value: back) in backs.entries) {
+          testWidgets('$name keeps the host when its page has a PopScope', (
+            tester,
+          ) async {
+            await openHost(tester);
+
+            await back(tester);
+            expectHostStays();
+            expect(_popAttempts, 1);
+
+            await back(tester);
+            expectHostStays();
+            expect(_popAttempts, 2);
+          });
+        }
+
+        testWidgets(
+          'the iOS back swipe keeps the host when its page has a PopScope',
+          (tester) async {
+            await openHost(tester, theme: ThemeData(platform: .iOS));
+
+            await swipeBack(tester);
+
+            expectHostStays();
+          },
+        );
+
+        testWidgets(
+          'system back on the first page keeps the app open and the page',
+          (tester) async {
+            router = RootStackRouter.build(
+              routes: [
+                AutoRoute(
+                  page: _HostRoute.page,
+                  path: '/',
+                  children: [AutoRoute(page: _GuardedRoute.page, path: '')],
+                ),
+              ],
+            );
+            await pumpRouterApp(tester, router);
             expectTopPage(router, _GuardedRoute.name);
-            expect(_popAttempts, attempt);
-          }
-        },
-      );
-    });
-  }
+
+            // Twice, as a comment on the issue reports the second back closing
+            // the app.
+            for (var attempt = 1; attempt <= 2; attempt++) {
+              await systemBack(tester);
+              expectTopPage(router, _GuardedRoute.name);
+              expect(_popAttempts, attempt);
+            }
+          },
+        );
+      });
+    }
+  });
 }
 
 var _popAttempts = 0;

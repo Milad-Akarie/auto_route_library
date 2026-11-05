@@ -14,65 +14,67 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(() => _profileStates = 0);
+  group('override args on reevaluate', () {
+    setUp(() => _profileStates = 0);
 
-  // Steps: open the app with reevaluateListenable set, push ProfileRoute for
-  // 'u-1', then SettingsRoute over it, and fire the listenable; the guard's
-  // re-check overrides ProfileRoute's args with 'guest'. Then pop
-  // SettingsRoute.
-  // Should: the profile page shows 'guest' and was not created again.
-  testWidgets('a guard re-check overriding the args of a page shows them', (
-    tester,
-  ) async {
-    final auth = ValueNotifier(0);
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _HomeRoute.page, path: '/'),
-        AutoRoute(
-          page: _ProfileRoute.page,
-          path: '/profile',
-          guards: [
-            AutoRouteGuard.simple((resolver, _) {
-              if (resolver.isReevaluating) {
-                resolver.overrideNext(
-                  args: const _ProfileArgs(userId: 'guest'),
-                );
-              } else {
-                resolver.next();
-              }
-            }),
-          ],
-        ),
-        AutoRoute(page: _SettingsRoute.page, path: '/settings'),
-      ],
-    );
-    await pumpRouterConfigApp(
+    // Steps: open the app with reevaluateListenable set, push ProfileRoute for
+    // 'u-1', then SettingsRoute over it, and fire the listenable; the guard's
+    // re-check overrides ProfileRoute's args with 'guest'. Then pop
+    // SettingsRoute.
+    // Should: the profile page shows 'guest' and was not created again.
+    testWidgets('a guard re-check overriding the args of a page shows them', (
       tester,
-      router.config(
-        reevaluateListenable: auth,
-        deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
-      ),
-    );
-    unawaited(router.push(_ProfileRoute(userId: 'u-1')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const _SettingsRoute()));
-    await tester.pumpAndSettle();
+    ) async {
+      final auth = ValueNotifier(0);
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _HomeRoute.page, path: '/'),
+          AutoRoute(
+            page: _ProfileRoute.page,
+            path: '/profile',
+            guards: [
+              AutoRouteGuard.simple((resolver, _) {
+                if (resolver.isReevaluating) {
+                  resolver.overrideNext(
+                    args: const _ProfileArgs(userId: 'guest'),
+                  );
+                } else {
+                  resolver.next();
+                }
+              }),
+            ],
+          ),
+          AutoRoute(page: _SettingsRoute.page, path: '/settings'),
+        ],
+      );
+      await pumpRouterConfigApp(
+        tester,
+        router.config(
+          reevaluateListenable: auth,
+          deepLinkBuilder: (link) => link.initial ? DeepLink.defaultPath : link,
+        ),
+      );
+      unawaited(router.push(_ProfileRoute(userId: 'u-1')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const _SettingsRoute()));
+      await tester.pumpAndSettle();
 
-    auth.value++;
-    await tester.pumpAndSettle();
+      auth.value++;
+      await tester.pumpAndSettle();
 
-    expect(router.stack.map((page) => page.name), [
-      _HomeRoute.name,
-      _ProfileRoute.name,
-      _SettingsRoute.name,
-    ]);
-    expectTopPage(router, _SettingsRoute.name);
-    router.pop();
-    await tester.pumpAndSettle();
-    expect(find.text('Profile of guest'), findsOneWidget);
-    expect(find.text('Profile of u-1'), findsNothing);
-    expect(_profileStates, 1);
-    await expectBrowserUrl('/profile');
+      expect(router.stack.map((page) => page.name), [
+        _HomeRoute.name,
+        _ProfileRoute.name,
+        _SettingsRoute.name,
+      ]);
+      expectTopPage(router, _SettingsRoute.name);
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(find.text('Profile of guest'), findsOneWidget);
+      expect(find.text('Profile of u-1'), findsNothing);
+      expect(_profileStates, 1);
+      await expectBrowserUrl('/profile');
+    });
   });
 }
 

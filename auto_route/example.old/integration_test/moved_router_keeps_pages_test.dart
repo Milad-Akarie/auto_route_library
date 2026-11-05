@@ -12,60 +12,68 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: on a wide window, open message 2 beside the list. Make the window
-  // narrow, then go back.
-  // Should: message 2 stays open alone with its url; back shows the list.
-  testWidgets('a nested router keeps its pages when the two panes become one', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          initial: true,
-          path: '/mail',
-          page: PageInfo('MailRoute', builder: (_) => const _MailPage()),
-          children: [
+  group('moved router keeps pages', () {
+    // Steps: on a wide window, open message 2 beside the list. Make the window
+    // narrow, then go back.
+    // Should: message 2 stays open alone with its url; back shows the list.
+    testWidgets(
+      'a nested router keeps its pages when the two panes become one',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
             AutoRoute(
               initial: true,
-              path: '',
-              page: PageInfo('InboxRoute', builder: (_) => const _InboxPage()),
-            ),
-            AutoRoute(
-              path: ':id',
-              page: PageInfo(
-                'MessageRoute',
-                builder: (data) => Scaffold(
-                  body: Text('Showing message ${data.params.getString('id')}'),
+              path: '/mail',
+              page: PageInfo('MailRoute', builder: (_) => const _MailPage()),
+              children: [
+                AutoRoute(
+                  initial: true,
+                  path: '',
+                  page: PageInfo(
+                    'InboxRoute',
+                    builder: (_) => const _InboxPage(),
+                  ),
                 ),
-              ),
+                AutoRoute(
+                  path: ':id',
+                  page: PageInfo(
+                    'MessageRoute',
+                    builder: (data) => Scaffold(
+                      body: Text(
+                        'Showing message ${data.params.getString('id')}',
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
+        );
+        addTearDown(tester.view.reset);
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(900, 700);
+        await pumpRouterApp(tester, router);
+        expect(find.text('Pick a message'), findsOneWidget);
+
+        await tester.tap(find.text('Message 2'));
+        await tester.pumpAndSettle();
+        expect(find.text('Showing message 2'), findsOneWidget);
+        expect(find.text('Message 1'), findsOneWidget);
+        await expectBrowserUrl('/mail/2');
+
+        tester.view.physicalSize = const Size(400, 700);
+        await tester.pumpAndSettle();
+        expect(find.text('Showing message 2'), findsOneWidget);
+        expect(find.text('Message 1'), findsNothing);
+        expect(router.currentPath, '/mail/2');
+        await expectBrowserUrl('/mail/2');
+
+        await systemBack(tester);
+        expect(find.text('Message 1'), findsOneWidget);
+        expect(router.currentPath, '/mail');
+        await expectBrowserUrl('/mail');
+      },
     );
-    addTearDown(tester.view.reset);
-    tester.view.devicePixelRatio = 1;
-    tester.view.physicalSize = const Size(900, 700);
-    await pumpRouterApp(tester, router);
-    expect(find.text('Pick a message'), findsOneWidget);
-
-    await tester.tap(find.text('Message 2'));
-    await tester.pumpAndSettle();
-    expect(find.text('Showing message 2'), findsOneWidget);
-    expect(find.text('Message 1'), findsOneWidget);
-    await expectBrowserUrl('/mail/2');
-
-    tester.view.physicalSize = const Size(400, 700);
-    await tester.pumpAndSettle();
-    expect(find.text('Showing message 2'), findsOneWidget);
-    expect(find.text('Message 1'), findsNothing);
-    expect(router.currentPath, '/mail/2');
-    await expectBrowserUrl('/mail/2');
-
-    await systemBack(tester);
-    expect(find.text('Message 1'), findsOneWidget);
-    expect(router.currentPath, '/mail');
-    await expectBrowserUrl('/mail');
   });
 }
 

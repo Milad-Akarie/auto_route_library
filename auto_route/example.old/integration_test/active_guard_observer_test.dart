@@ -14,54 +14,58 @@ import 'support/disposal_tracker.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push HostRoute, whose page holds an AutoRouter, then go
-  // back, three times.
-  // Should: each visit's ActiveGuardObserver is disposed when the host leaves.
-  testWidgets('leaving a nested router disposes its ActiveGuardObserver', (
-    tester,
-  ) async {
-    final router = _buildRouter();
-    await pumpRouterApp(tester, router);
-    final observers = DisposalTracker<ActiveGuardObserver>();
-
-    for (var visit = 0; visit < 3; visit++) {
-      unawaited(router.pushPath('/host'));
-      await pumpUntilFound(tester, find.text('FirstChildRoute'));
-      expect(find.text('FirstChildRoute'), findsOneWidget);
-
-      await systemBack(tester);
-      expect(find.text('HomeRoute'), findsOneWidget);
-    }
-    expect(observers.created, 3);
-    expect(observers.undisposed, 0);
-  });
-
-  // Steps: in HostRoute's nested router, push SecondChildRoute, whose guard
-  // waits; go back meanwhile, then let the guard through.
-  // Should: the guard changes nothing and throws nothing.
-  testWidgets(
-    'a guard that finishes after its nested router is disposed throws nothing',
-    (tester) async {
-      final guard = _HeldGuard();
-      final router = _buildRouter(childGuards: [guard]);
+  group('active guard observer', () {
+    // Steps: push HostRoute, whose page holds an AutoRouter, then go
+    // back, three times.
+    // Should: each visit's ActiveGuardObserver is disposed when the host
+    // leaves.
+    testWidgets('leaving a nested router disposes its ActiveGuardObserver', (
+      tester,
+    ) async {
+      final router = _buildRouter();
       await pumpRouterApp(tester, router);
       final observers = DisposalTracker<ActiveGuardObserver>();
-      unawaited(router.pushPath('/host'));
-      await pumpUntilFound(tester, find.text('FirstChildRoute'));
-      final nested = router.innerRouterOf<StackRouter>('HostRoute')!;
-      unawaited(nested.push(const NamedRoute('SecondChildRoute')));
-      await tester.pump();
-      expect(nested.activeGuardObserver.guardInProgress, isTrue);
 
-      await systemBack(tester);
-      expect(find.text('HomeRoute'), findsOneWidget);
+      for (var visit = 0; visit < 3; visit++) {
+        unawaited(router.pushPath('/host'));
+        await pumpUntilFound(tester, find.text('FirstChildRoute'));
+        expect(find.text('FirstChildRoute'), findsOneWidget);
+
+        await systemBack(tester);
+        expect(find.text('HomeRoute'), findsOneWidget);
+      }
+      expect(observers.created, 3);
       expect(observers.undisposed, 0);
-      guard.release.complete();
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('HomeRoute'), findsOneWidget);
-    },
-  );
+    });
+
+    // Steps: in HostRoute's nested router, push SecondChildRoute, whose guard
+    // waits; go back meanwhile, then let the guard through.
+    // Should: the guard changes nothing and throws nothing.
+    testWidgets(
+      'a guard that finishes after its nested router is disposed throws '
+      'nothing',
+      (tester) async {
+        final guard = _HeldGuard();
+        final router = _buildRouter(childGuards: [guard]);
+        await pumpRouterApp(tester, router);
+        final observers = DisposalTracker<ActiveGuardObserver>();
+        unawaited(router.pushPath('/host'));
+        await pumpUntilFound(tester, find.text('FirstChildRoute'));
+        final nested = router.innerRouterOf<StackRouter>('HostRoute')!;
+        unawaited(nested.push(const NamedRoute('SecondChildRoute')));
+        await tester.pump();
+        expect(nested.activeGuardObserver.guardInProgress, isTrue);
+
+        await systemBack(tester);
+        expect(find.text('HomeRoute'), findsOneWidget);
+        expect(observers.undisposed, 0);
+        guard.release.complete();
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('HomeRoute'), findsOneWidget);
+      },
+    );
+  });
 }
 
 /// Lets the navigation through once [release] completes.

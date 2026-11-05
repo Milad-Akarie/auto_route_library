@@ -6,10 +6,12 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('The example app starts on the book list', (tester) async {
-    await tester.pumpWidget(const MyApp());
-    await tester.pumpAndSettle();
+  group('app smoke', () {
+    testWidgets('The example app starts on the book list', (tester) async {
+      await tester.pumpWidget(const MyApp());
+      await tester.pumpAndSettle();
 
-    expect(find.byType(BookListScreen), findsOneWidget);
+      expect(find.byType(BookListScreen), findsOneWidget);
+    });
   });
 }

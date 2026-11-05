@@ -12,45 +12,48 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  RootStackRouter buildRouter() => .build(
-    routes: [
-      AutoRoute(page: FirstRoute.page, path: '/'),
-      AutoRoute(page: SecondRoute.page, path: '/second'),
-    ],
-  );
-
-  final apps = <String, Widget Function(RootStackRouter router)>{
-    'router.config()': (router) =>
-        MaterialApp.router(routerConfig: router.config()),
-    'routerDelegate and routeInformationParser': (router) => MaterialApp.router(
-      routeInformationParser: router.defaultRouteParser(),
-      routerDelegate: router.delegate(),
-    ),
-  };
-
-  // Steps: open the app at '/second'; it shows a splash for its first
-  // frame, then builds its router.
-  // Should: the second page opens at '/second', and on web the browser holds
-  // the link in the same history entry, not two more.
-  for (final MapEntry(key: name, value: buildApp) in apps.entries) {
-    testWidgets(
-      'A deep link to a router built after the first frame adds no history '
-      'entry, with $name',
-      (tester) async {
-        final entryBefore = browserEntryIndex() ?? 0;
-        final router = buildRouter();
-        await pumpAppAtDeepLink(
-          tester,
-          '/second',
-          _Splash(builder: () => buildApp(router)),
-        );
-        expect(find.text('SecondRoute'), findsOneWidget);
-        expect(router.urlState.url, '/second');
-        await expectBrowserUrl('/second');
-        await expectAppWroteDeepLinkEntry(entryBefore);
-      },
+  group('late router deep link', () {
+    RootStackRouter buildRouter() => .build(
+      routes: [
+        AutoRoute(page: FirstRoute.page, path: '/'),
+        AutoRoute(page: SecondRoute.page, path: '/second'),
+      ],
     );
-  }
+
+    final apps = <String, Widget Function(RootStackRouter router)>{
+      'router.config()': (router) =>
+          MaterialApp.router(routerConfig: router.config()),
+      'routerDelegate and routeInformationParser': (router) =>
+          MaterialApp.router(
+            routeInformationParser: router.defaultRouteParser(),
+            routerDelegate: router.delegate(),
+          ),
+    };
+
+    // Steps: open the app at '/second'; it shows a splash for its first
+    // frame, then builds its router.
+    // Should: the second page opens at '/second', and on web the browser holds
+    // the link in the same history entry, not two more.
+    for (final MapEntry(key: name, value: buildApp) in apps.entries) {
+      testWidgets(
+        'A deep link to a router built after the first frame adds no history '
+        'entry, with $name',
+        (tester) async {
+          final entryBefore = browserEntryIndex() ?? 0;
+          final router = buildRouter();
+          await pumpAppAtDeepLink(
+            tester,
+            '/second',
+            _Splash(builder: () => buildApp(router)),
+          );
+          expect(find.text('SecondRoute'), findsOneWidget);
+          expect(router.urlState.url, '/second');
+          await expectBrowserUrl('/second');
+          await expectAppWroteDeepLinkEntry(entryBefore);
+        },
+      );
+    }
+  });
 }
 
 // Shows nothing for the app's first frame, then the app.

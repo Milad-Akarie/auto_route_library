@@ -19,63 +19,65 @@ import 'support/restorable_app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Flutter's state restoration doesn't run on the web, so the routers save
-  // their pages only off the web.
+  group('restore history', () {
+    // Flutter's state restoration doesn't run on the web, so the routers save
+    // their pages only off the web.
 
-  // The paths the generator gives these routes don't nest, so the restored
-  // url alone can't bring the pages before ProductDetails back.
-  RootStackRouter buildRouter() => .build(
-    routes: [
-      AutoRoute(
-        page: namedPage('HomeRoute'),
-        restorationId: (match) => match.name,
-        initial: true,
-      ),
-      AutoRoute(
-        page: namedPage('ProductsRoute'),
-        restorationId: (match) => match.name,
-      ),
-      AutoRoute(
-        page: namedPage('ProductDetailsRoute'),
-        restorationId: (match) => match.name,
-      ),
-    ],
-  );
-
-  // Steps: go Home, Products, ProductDetails, restore the app, then go back
-  // twice.
-  // Should: ProductDetails shows, back shows Products, then Home, and only
-  // then would Android close the app.
-  testWidgets(
-    'back after restoration returns through the pages before it',
-    (tester) async {
-      await pumpRestorableApp(tester, buildRouter);
-      unawaited(
-        RestorableRouterApp.router.push(const NamedRoute('ProductsRoute')),
-      );
-      await tester.pumpAndSettle();
-      unawaited(
-        RestorableRouterApp.router.push(
-          const NamedRoute('ProductDetailsRoute'),
+    // The paths the generator gives these routes don't nest, so the restored
+    // url alone can't bring the pages before ProductDetails back.
+    RootStackRouter buildRouter() => .build(
+      routes: [
+        AutoRoute(
+          page: namedPage('HomeRoute'),
+          restorationId: (match) => match.name,
+          initial: true,
         ),
-      );
-      await tester.pumpAndSettle();
+        AutoRoute(
+          page: namedPage('ProductsRoute'),
+          restorationId: (match) => match.name,
+        ),
+        AutoRoute(
+          page: namedPage('ProductDetailsRoute'),
+          restorationId: (match) => match.name,
+        ),
+      ],
+    );
 
-      await tester.restartAndRestore();
-      await tester.pumpAndSettle();
-      expect(find.text('ProductDetailsRoute'), findsOneWidget);
-      expect(RestorableRouterApp.router.stack.map((page) => page.name), [
-        'HomeRoute',
-        'ProductsRoute',
-        'ProductDetailsRoute',
-      ]);
+    // Steps: go Home, Products, ProductDetails, restore the app, then go back
+    // twice.
+    // Should: ProductDetails shows, back shows Products, then Home, and only
+    // then would Android close the app.
+    testWidgets(
+      'back after restoration returns through the pages before it',
+      (tester) async {
+        await pumpRestorableApp(tester, buildRouter);
+        unawaited(
+          RestorableRouterApp.router.push(const NamedRoute('ProductsRoute')),
+        );
+        await tester.pumpAndSettle();
+        unawaited(
+          RestorableRouterApp.router.push(
+            const NamedRoute('ProductDetailsRoute'),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      await systemBack(tester);
-      expect(find.text('ProductsRoute'), findsOneWidget);
-      await systemBack(tester);
-      expect(find.text('HomeRoute'), findsOneWidget);
-      expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
-    },
-    skip: kIsWeb,
-  );
+        await tester.restartAndRestore();
+        await tester.pumpAndSettle();
+        expect(find.text('ProductDetailsRoute'), findsOneWidget);
+        expect(RestorableRouterApp.router.stack.map((page) => page.name), [
+          'HomeRoute',
+          'ProductsRoute',
+          'ProductDetailsRoute',
+        ]);
+
+        await systemBack(tester);
+        expect(find.text('ProductsRoute'), findsOneWidget);
+        await systemBack(tester);
+        expect(find.text('HomeRoute'), findsOneWidget);
+        expect(await doesAndroidSendBackToFlutter(), anyOf(isNull, isFalse));
+      },
+      skip: kIsWeb,
+    );
+  });
 }

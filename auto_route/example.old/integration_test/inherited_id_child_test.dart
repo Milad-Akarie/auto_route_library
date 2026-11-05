@@ -13,53 +13,58 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
-        AutoRoute(
-          page: _ListDetailRouter.page,
-          path: '/details',
-          children: [
-            AutoRoute(
-              page: _ListDetailRoute.page,
-              initial: true,
-              path: ':id',
-              children: [
-                AutoRoute(page: _CreateListItemsRoute.page, path: ':familyId'),
-              ],
-            ),
-          ],
-        ),
-      ],
+  group('inherited id child', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _HomeRoute.page, path: '/', initial: true),
+          AutoRoute(
+            page: _ListDetailRouter.page,
+            path: '/details',
+            children: [
+              AutoRoute(
+                page: _ListDetailRoute.page,
+                initial: true,
+                path: ':id',
+                children: [
+                  AutoRoute(
+                    page: _CreateListItemsRoute.page,
+                    path: ':familyId',
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+    });
+
+    // Steps: open the list 'l-1' at '/details/:id', then push
+    // CreateListItemsRoute(familyId: 'f-1') from it.
+    // Should: the page reads the inherited id 'l-1', and the url, and on web
+    // the address bar, is '/details/l-1/f-1'.
+    testWidgets(
+      'A child route reads the id it inherits when pushed from its parent',
+      (tester) async {
+        await pumpRouterAppWithConfig(tester, router);
+        unawaited(
+          router.navigate(
+            _ListDetailRouter(children: [_ListDetailRoute(id: 'l-1')]),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final detail = tester.element(find.text('List l-1'));
+
+        unawaited(detail.router.push(_CreateListItemsRoute(familyId: 'f-1')));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Create f-1 in l-1'), findsOneWidget);
+        expect(router.urlState.url, '/details/l-1/f-1');
+        await expectBrowserUrl('/details/l-1/f-1');
+      },
     );
   });
-
-  // Steps: open the list 'l-1' at '/details/:id', then push
-  // CreateListItemsRoute(familyId: 'f-1') from it.
-  // Should: the page reads the inherited id 'l-1', and the url, and on web the
-  // address bar, is '/details/l-1/f-1'.
-  testWidgets(
-    'A child route reads the id it inherits when pushed from its parent',
-    (tester) async {
-      await pumpRouterAppWithConfig(tester, router);
-      unawaited(
-        router.navigate(
-          _ListDetailRouter(children: [_ListDetailRoute(id: 'l-1')]),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final detail = tester.element(find.text('List l-1'));
-
-      unawaited(detail.router.push(_CreateListItemsRoute(familyId: 'f-1')));
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('Create f-1 in l-1'), findsOneWidget);
-      expect(router.urlState.url, '/details/l-1/f-1');
-      await expectBrowserUrl('/details/l-1/f-1');
-    },
-  );
 }
 
 class _HomeRoute extends PageRouteInfo<void> {

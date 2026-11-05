@@ -16,36 +16,39 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: stack [Page1Route, Page2Route], then
-  // popUntilRouteWithName('Page3Route').
-  // Should: Page1Route stays on screen.
-  testWidgets('popUntilRouteWithName for a missing page keeps the first page', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        NamedRouteDef(
-          name: 'Page1Route',
-          path: '/',
-          builder: (_, _) => const TextPage('Page 1'),
-        ),
-        NamedRouteDef(
-          name: 'Page2Route',
-          path: '/page2',
-          builder: (_, _) => const TextPage('Page 2'),
-        ),
-      ],
+  group('pop until missing route', () {
+    // Steps: stack [Page1Route, Page2Route], then
+    // popUntilRouteWithName('Page3Route').
+    // Should: Page1Route stays on screen.
+    testWidgets(
+      'popUntilRouteWithName for a missing page keeps the first page',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            NamedRouteDef(
+              name: 'Page1Route',
+              path: '/',
+              builder: (_, _) => const TextPage('Page 1'),
+            ),
+            NamedRouteDef(
+              name: 'Page2Route',
+              path: '/page2',
+              builder: (_, _) => const TextPage('Page 2'),
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const NamedRoute('Page2Route')));
+        await tester.pumpAndSettle();
+
+        router.popUntilRouteWithName('Page3Route');
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(router.stack.map((p) => p.name), ['Page1Route']);
+        expect(find.text('Page 1'), findsOneWidget);
+        await expectBrowserUrl('/');
+      },
     );
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const NamedRoute('Page2Route')));
-    await tester.pumpAndSettle();
-
-    router.popUntilRouteWithName('Page3Route');
-    await tester.pumpAndSettle();
-
-    expect(tester.takeException(), isNull);
-    expect(router.stack.map((p) => p.name), ['Page1Route']);
-    expect(find.text('Page 1'), findsOneWidget);
-    await expectBrowserUrl('/');
   });
 }

@@ -13,50 +13,52 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _page('A'), path: '/', initial: true),
-        AutoRoute(page: _page('B'), path: '/b'),
-        AutoRoute(page: _page('C'), path: '/c'),
-      ],
-    );
-  });
+  group('pop right after push', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _page('A'), path: '/', initial: true),
+          AutoRoute(page: _page('B'), path: '/b'),
+          AutoRoute(page: _page('C'), path: '/c'),
+        ],
+      );
+    });
 
-  List<String> names() =>
-      router.stack.map((page) => page.routeData.name).toList();
+    List<String> names() =>
+        router.stack.map((page) => page.routeData.name).toList();
 
-  // Steps: on A, tap a button that calls push(B) then pop().
-  // Should: B is popped and A stays, with no exception.
-  testWidgets("The reporter's button: push then pop on the first page", (
-    tester,
-  ) async {
-    await pumpRouterApp(tester, router);
-
-    await tester.tap(find.text('Push and pop'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(names(), ['A']);
-    expectCurrentPage(router, 'A');
-  });
-
-  // Steps: open A, then C; tap C's button, which calls push(B) then pop().
-  // Should: the stack is [A, C] again, with C on screen.
-  testWidgets(
-    'push then pop over a pushed page leaves that page',
-    (tester) async {
+    // Steps: on A, tap a button that calls push(B) then pop().
+    // Should: B is popped and A stays, with no exception.
+    testWidgets("The reporter's button: push then pop on the first page", (
+      tester,
+    ) async {
       await pumpRouterApp(tester, router);
-      unawaited(router.push(const PageRouteInfo('C')));
-      await tester.pumpAndSettle();
 
       await tester.tap(find.text('Push and pop'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
-      expect(names(), ['A', 'C']);
-      expectCurrentPage(router, 'C');
-    },
-  );
+      expect(names(), ['A']);
+      expectCurrentPage(router, 'A');
+    });
+
+    // Steps: open A, then C; tap C's button, which calls push(B) then pop().
+    // Should: the stack is [A, C] again, with C on screen.
+    testWidgets(
+      'push then pop over a pushed page leaves that page',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const PageRouteInfo('C')));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Push and pop'));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(names(), ['A', 'C']);
+        expectCurrentPage(router, 'C');
+      },
+    );
+  });
 }
 
 PageInfo _page(String name) => .new(

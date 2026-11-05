@@ -23,100 +23,105 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    _popAttempts = 0;
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, path: '/'),
-        AutoRoute(
-          page: _OnboardingRoute.page,
-          path: '/onboarding',
-          children: [
-            AutoRoute(page: _WelcomeStepRoute.page, path: ''),
-            AutoRoute(page: _IdStepRoute.page, path: 'id'),
-          ],
-        ),
-      ],
-    );
-  });
+  group('nested pop scope step', () {
+    late RootStackRouter router;
+    setUp(() {
+      _popAttempts = 0;
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, path: '/'),
+          AutoRoute(
+            page: _OnboardingRoute.page,
+            path: '/onboarding',
+            children: [
+              AutoRoute(page: _WelcomeStepRoute.page, path: ''),
+              AutoRoute(page: _IdStepRoute.page, path: 'id'),
+            ],
+          ),
+        ],
+      );
+    });
 
-  Future<void> openIdNumberForm(WidgetTester tester, {ThemeData? theme}) async {
-    await pumpRouterApp(tester, router, theme: theme);
-    unawaited(router.push(const _OnboardingRoute()));
-    await tester.pumpAndSettle();
-    unawaited(
-      router
-          .innerRouterOf<StackRouter>(_OnboardingRoute.name)!
-          .push(const _IdStepRoute()),
-    );
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(_kChooseType));
-    await tester.pumpAndSettle();
-    expect(find.text(_kNumberForm), findsOneWidget);
-  }
+    Future<void> openIdNumberForm(
+      WidgetTester tester, {
+      ThemeData? theme,
+    }) async {
+      await pumpRouterApp(tester, router, theme: theme);
+      unawaited(router.push(const _OnboardingRoute()));
+      await tester.pumpAndSettle();
+      unawaited(
+        router
+            .innerRouterOf<StackRouter>(_OnboardingRoute.name)!
+            .push(const _IdStepRoute()),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(_kChooseType));
+      await tester.pumpAndSettle();
+      expect(find.text(_kNumberForm), findsOneWidget);
+    }
 
-  void expectOnIdStep({required bool isShowingForm}) {
-    expect(router.current.name, _OnboardingRoute.name);
-    expect(router.topRoute.name, _IdStepRoute.name);
-    expect(
-      find.text(_kNumberForm),
-      isShowingForm ? findsOneWidget : findsNothing,
-    );
-    expect(
-      find.text(_kChooseType),
-      isShowingForm ? findsNothing : findsOneWidget,
-    );
-  }
+    void expectOnIdStep({required bool isShowingForm}) {
+      expect(router.current.name, _OnboardingRoute.name);
+      expect(router.topRoute.name, _IdStepRoute.name);
+      expect(
+        find.text(_kNumberForm),
+        isShowingForm ? findsOneWidget : findsNothing,
+      );
+      expect(
+        find.text(_kChooseType),
+        isShowingForm ? findsNothing : findsOneWidget,
+      );
+    }
 
-  void expectOnWelcomeStep() {
-    expect(router.current.name, _OnboardingRoute.name);
-    expectTopPage(router, _WelcomeStepRoute.name);
-  }
+    void expectOnWelcomeStep() {
+      expect(router.current.name, _OnboardingRoute.name);
+      expectTopPage(router, _WelcomeStepRoute.name);
+    }
 
-  Future<void> tapAppBarBack(WidgetTester tester) async {
-    await tester.tap(find.byType(BackButton));
-    await tester.pumpAndSettle();
-  }
+    Future<void> tapAppBarBack(WidgetTester tester) async {
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+    }
 
-  final backs = {
-    'system back': systemBack,
-    'the app bar back button': tapAppBarBack,
-  };
+    final backs = {
+      'system back': systemBack,
+      'the app bar back button': tapAppBarBack,
+    };
 
-  for (final MapEntry(key: name, value: back) in backs.entries) {
+    for (final MapEntry(key: name, value: back) in backs.entries) {
+      testWidgets(
+        '$name on a step with a PopScope stays on the step, then leaves it',
+        (tester) async {
+          await openIdNumberForm(tester);
+
+          await back(tester);
+          expectOnIdStep(isShowingForm: false);
+          expect(_popAttempts, 1);
+
+          await back(tester);
+          expectOnWelcomeStep();
+          expect(_popAttempts, 1);
+        },
+      );
+    }
+
+    // The swipe doesn't start while a PopScope blocks the page, as in a flat
+    // route. Run with the iOS page transitions on every platform.
     testWidgets(
-      '$name on a step with a PopScope stays on the step, then leaves it',
+      'the iOS back swipe on a step with a PopScope stays on the step',
       (tester) async {
-        await openIdNumberForm(tester);
+        await openIdNumberForm(tester, theme: ThemeData(platform: .iOS));
 
-        await back(tester);
-        expectOnIdStep(isShowingForm: false);
-        expect(_popAttempts, 1);
+        await swipeBack(tester);
+        expectOnIdStep(isShowingForm: true);
 
-        await back(tester);
+        await tester.tap(find.text(_kBackToChoice));
+        await tester.pumpAndSettle();
+        await swipeBack(tester);
         expectOnWelcomeStep();
-        expect(_popAttempts, 1);
       },
     );
-  }
-
-  // The swipe doesn't start while a PopScope blocks the page, as in a flat
-  // route. Run with the iOS page transitions on every platform.
-  testWidgets(
-    'the iOS back swipe on a step with a PopScope stays on the step',
-    (tester) async {
-      await openIdNumberForm(tester, theme: ThemeData(platform: .iOS));
-
-      await swipeBack(tester);
-      expectOnIdStep(isShowingForm: true);
-
-      await tester.tap(find.text(_kBackToChoice));
-      await tester.pumpAndSettle();
-      await swipeBack(tester);
-      expectOnWelcomeStep();
-    },
-  );
+  });
 }
 
 const _kChooseType = 'Choose national ID';

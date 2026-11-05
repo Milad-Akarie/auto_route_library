@@ -12,50 +12,56 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: ParentRoute is an AutoRouter that implements AutoRouteWrapper and
-  // provides a state above its nested router, which shows ARoute. Tap a
-  // button in a child widget of ARoute that calls context.router.push(BRoute).
-  // Should: BRoute shows, and the provided state is created only once.
-  testWidgets(
-    'pushing a sibling route from a child widget keeps the host wrapper',
-    (tester) async {
-      _ProvidedState.created = 0;
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo('ParentRoute', builder: (_) => const _ParentPage()),
-            children: [
-              AutoRoute(
-                path: '',
-                page: PageInfo(
-                  'ARoute',
-                  builder: (_) =>
-                      const Scaffold(body: SafeArea(child: _AChild())),
-                ),
+  group('wrapper push from child', () {
+    // Steps: ParentRoute is an AutoRouter that implements AutoRouteWrapper and
+    // provides a state above its nested router, which shows ARoute. Tap a
+    // button in a child widget of ARoute that calls
+    // context.router.push(BRoute).
+    // Should: BRoute shows, and the provided state is created only once.
+    testWidgets(
+      'pushing a sibling route from a child widget keeps the host wrapper',
+      (tester) async {
+        _ProvidedState.created = 0;
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'ParentRoute',
+                builder: (_) => const _ParentPage(),
               ),
-              AutoRoute(
-                path: 'b',
-                page: PageInfo(
-                  'BRoute',
-                  builder: (_) =>
-                      const Scaffold(body: SafeArea(child: Text('BRoute'))),
+              children: [
+                AutoRoute(
+                  path: '',
+                  page: PageInfo(
+                    'ARoute',
+                    builder: (_) =>
+                        const Scaffold(body: SafeArea(child: _AChild())),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      expect(_ProvidedState.created, 1);
+                AutoRoute(
+                  path: 'b',
+                  page: PageInfo(
+                    'BRoute',
+                    builder: (_) =>
+                        const Scaffold(body: SafeArea(child: Text('BRoute'))),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        expect(_ProvidedState.created, 1);
 
-      await tester.tap(find.text('Push B'));
-      await tester.pumpAndSettle();
-      expectTopPage(router, 'BRoute');
-      expect(router.stack.map((page) => page.name), ['ParentRoute']);
-      expect(_ProvidedState.created, 1);
-    },
-  );
+        await tester.tap(find.text('Push B'));
+        await tester.pumpAndSettle();
+        expectTopPage(router, 'BRoute');
+        expect(router.stack.map((page) => page.name), ['ParentRoute']);
+        expect(_ProvidedState.created, 1);
+      },
+    );
+  });
 }
 
 class _ParentPage extends AutoRouter implements AutoRouteWrapper {

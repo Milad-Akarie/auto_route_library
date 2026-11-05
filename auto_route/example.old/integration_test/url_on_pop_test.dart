@@ -11,69 +11,71 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: an AutoTabsRouter tab holds a list page and a shell route
-  // 'patient/:patientId' with an optional query param ('source', left null).
-  // Push the shell route (url '/patients/patient/p-123'), then tap the back
-  // button, which calls context.maybePop().
-  // Should: the list page shows and the url goes back to '/patients', both the
-  // router's and, on web, the browser's address bar.
-  testWidgets(
-    'Popping a shell route with path params inside AutoTabsRouter reverts the '
-    'url',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            page: _TabsHostRoute.page,
-            path: '/',
-            initial: true,
-            children: [
-              AutoRoute(
-                page: _PatientsShellRoute.page,
-                path: 'patients',
-                children: [
-                  AutoRoute(
-                    page: _PatientsListRoute.page,
-                    path: '',
-                    initial: true,
-                  ),
-                  AutoRoute(
-                    page: _PatientShellRoute.page,
-                    path: 'patient/:patientId',
-                    children: [
-                      AutoRoute(
-                        page: _PatientInfoRoute.page,
-                        path: '',
-                        initial: true,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterConfigApp(
-        tester,
-        router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
-      );
-      expect(router.urlState.url, '/patients');
-      await expectBrowserUrl('/patients');
+  group('url on pop', () {
+    // Steps: an AutoTabsRouter tab holds a list page and a shell route
+    // 'patient/:patientId' with an optional query param ('source', left null).
+    // Push the shell route (url '/patients/patient/p-123'), then tap the back
+    // button, which calls context.maybePop().
+    // Should: the list page shows and the url goes back to '/patients', both
+    // the router's and, on web, the browser's address bar.
+    testWidgets(
+      'Popping a shell route with path params inside AutoTabsRouter reverts '
+      'the url',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              page: _TabsHostRoute.page,
+              path: '/',
+              initial: true,
+              children: [
+                AutoRoute(
+                  page: _PatientsShellRoute.page,
+                  path: 'patients',
+                  children: [
+                    AutoRoute(
+                      page: _PatientsListRoute.page,
+                      path: '',
+                      initial: true,
+                    ),
+                    AutoRoute(
+                      page: _PatientShellRoute.page,
+                      path: 'patient/:patientId',
+                      children: [
+                        AutoRoute(
+                          page: _PatientInfoRoute.page,
+                          path: '',
+                          initial: true,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterConfigApp(
+          tester,
+          router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+        );
+        expect(router.urlState.url, '/patients');
+        await expectBrowserUrl('/patients');
 
-      await tester.tap(find.text('Push patient'));
-      await tester.pumpAndSettle();
-      expect(find.text(_PatientInfoRoute.name), findsOneWidget);
-      expect(router.urlState.url, '/patients/patient/p-123');
-      await expectBrowserUrl('/patients/patient/p-123');
+        await tester.tap(find.text('Push patient'));
+        await tester.pumpAndSettle();
+        expect(find.text(_PatientInfoRoute.name), findsOneWidget);
+        expect(router.urlState.url, '/patients/patient/p-123');
+        await expectBrowserUrl('/patients/patient/p-123');
 
-      await tester.tap(find.byType(BackButton));
-      await tester.pumpAndSettle();
-      expect(find.text(_PatientsListRoute.name), findsOneWidget);
-      expect(router.urlState.url, '/patients');
-      await expectBrowserUrl('/patients');
-    },
-  );
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
+        expect(find.text(_PatientsListRoute.name), findsOneWidget);
+        expect(router.urlState.url, '/patients');
+        await expectBrowserUrl('/patients');
+      },
+    );
+  });
 }
 
 class _TabsHostRoute extends PageRouteInfo<void> {

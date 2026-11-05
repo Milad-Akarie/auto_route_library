@@ -13,33 +13,35 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: open the app, built from routerDelegate and
-  // routeInformationParser, at '/seconds/1%232'.
-  // Should: the page reads the whole '1#2', and on web the address bar holds
-  // the link in the same history entry, not a second one.
-  testWidgets('A deep link to an encoded url adds no history entry', (
-    tester,
-  ) async {
-    const link = '/seconds/1%232';
-    final entryBefore = browserEntryIndex() ?? 0;
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, path: '/'),
-        AutoRoute(page: _secondsPage, path: '/seconds/:id'),
-      ],
-    );
-
-    await pumpAppAtDeepLink(
+  group('encoded deep link', () {
+    // Steps: open the app, built from routerDelegate and
+    // routeInformationParser, at '/seconds/1%232'.
+    // Should: the page reads the whole '1#2', and on web the address bar holds
+    // the link in the same history entry, not a second one.
+    testWidgets('A deep link to an encoded url adds no history entry', (
       tester,
-      link,
-      MaterialApp.router(
-        routeInformationParser: router.defaultRouteParser(),
-        routerDelegate: router.delegate(),
-      ),
-    );
-    expect(find.text('id 1#2'), findsOneWidget);
-    await expectBrowserUrl(link);
-    await expectAppWroteDeepLinkEntry(entryBefore);
+    ) async {
+      const link = '/seconds/1%232';
+      final entryBefore = browserEntryIndex() ?? 0;
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, path: '/'),
+          AutoRoute(page: _secondsPage, path: '/seconds/:id'),
+        ],
+      );
+
+      await pumpAppAtDeepLink(
+        tester,
+        link,
+        MaterialApp.router(
+          routeInformationParser: router.defaultRouteParser(),
+          routerDelegate: router.delegate(),
+        ),
+      );
+      expect(find.text('id 1#2'), findsOneWidget);
+      await expectBrowserUrl(link);
+      await expectAppWroteDeepLinkEntry(entryBefore);
+    });
   });
 }
 

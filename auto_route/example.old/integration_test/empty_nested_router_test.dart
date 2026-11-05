@@ -13,38 +13,40 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: push SecondHostRoute (its nested router shows
-  // SecondNested1Route), remove that last nested page, then call maybePop on
-  // the nested router, as a back press does.
-  // Should: maybePop returns true, SecondHostRoute is popped and FirstRoute
-  // shows.
-  testWidgets(
-    'maybePop on a nested router with no pages left pops the parent router',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(path: '/', page: FirstRoute.page),
-          AutoRoute(
-            path: '/second',
-            page: SecondHostRoute.page,
-            children: [AutoRoute(path: '', page: SecondNested1Route.page)],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router);
-      unawaited(router.push(const SecondHostRoute()));
-      await tester.pumpAndSettle();
-      final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!
-        ..removeLast();
-      await tester.pumpAndSettle();
-      expect(nested.stack, isEmpty);
+  group('empty nested router', () {
+    // Steps: push SecondHostRoute (its nested router shows
+    // SecondNested1Route), remove that last nested page, then call maybePop on
+    // the nested router, as a back press does.
+    // Should: maybePop returns true, SecondHostRoute is popped and FirstRoute
+    // shows.
+    testWidgets(
+      'maybePop on a nested router with no pages left pops the parent router',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(path: '/', page: FirstRoute.page),
+            AutoRoute(
+              path: '/second',
+              page: SecondHostRoute.page,
+              children: [AutoRoute(path: '', page: SecondNested1Route.page)],
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router);
+        unawaited(router.push(const SecondHostRoute()));
+        await tester.pumpAndSettle();
+        final nested = router.innerRouterOf<StackRouter>(SecondHostRoute.name)!
+          ..removeLast();
+        await tester.pumpAndSettle();
+        expect(nested.stack, isEmpty);
 
-      final wasPopped = await nested.maybePop();
-      await tester.pumpAndSettle();
+        final wasPopped = await nested.maybePop();
+        await tester.pumpAndSettle();
 
-      expect(wasPopped, isTrue);
-      expectTopPage(router, FirstRoute.name);
-      expect(router.childControllers, isEmpty);
-    },
-  );
+        expect(wasPopped, isTrue);
+        expectTopPage(router, FirstRoute.name);
+        expect(router.childControllers, isEmpty);
+      },
+    );
+  });
 }

@@ -17,41 +17,43 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: navigate to SecondHostRoute, push SecondNested3Route in its nested
-  // router, then press the browser's back button.
-  // Should: the url and the screen both go back to SecondNested1Route.
-  testWidgets(
-    'The browser back button pops a page pushed in a nested router',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(path: '/', page: FirstRoute.page),
-          AutoRoute(
-            path: '/second',
-            page: SecondHostRoute.page,
-            children: [
-              AutoRoute(path: '', page: SecondNested1Route.page),
-              AutoRoute(path: 'nested3', page: SecondNested3Route.page),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterAppWithConfig(tester, router);
-      unawaited(router.navigate(const SecondHostRoute()));
-      await tester.pumpAndSettle();
-      unawaited(
-        router
-            .innerRouterOf<StackRouter>(SecondHostRoute.name)!
-            .push(const SecondNested3Route()),
-      );
-      await tester.pumpAndSettle();
-      await expectBrowserUrl('/second/nested3');
+  group('nested browser back', () {
+    // Steps: navigate to SecondHostRoute, push SecondNested3Route in its nested
+    // router, then press the browser's back button.
+    // Should: the url and the screen both go back to SecondNested1Route.
+    testWidgets(
+      'The browser back button pops a page pushed in a nested router',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(path: '/', page: FirstRoute.page),
+            AutoRoute(
+              path: '/second',
+              page: SecondHostRoute.page,
+              children: [
+                AutoRoute(path: '', page: SecondNested1Route.page),
+                AutoRoute(path: 'nested3', page: SecondNested3Route.page),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterAppWithConfig(tester, router);
+        unawaited(router.navigate(const SecondHostRoute()));
+        await tester.pumpAndSettle();
+        unawaited(
+          router
+              .innerRouterOf<StackRouter>(SecondHostRoute.name)!
+              .push(const SecondNested3Route()),
+        );
+        await tester.pumpAndSettle();
+        await expectBrowserUrl('/second/nested3');
 
-      pressBrowserBack();
-      await expectBrowserUrl('/second');
-      await tester.pumpAndSettle();
-      expectTopPage(router, SecondNested1Route.name);
-    },
-    skip: !kIsWeb,
-  );
+        pressBrowserBack();
+        await expectBrowserUrl('/second');
+        await tester.pumpAndSettle();
+        expectTopPage(router, SecondNested1Route.name);
+      },
+      skip: !kIsWeb,
+    );
+  });
 }

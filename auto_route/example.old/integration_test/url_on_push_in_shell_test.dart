@@ -13,59 +13,61 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: a shell around home, reports, sales and a sales detail page, all
-  // its children. Open the sales page, push the detail page by its full
-  // path, or by its route, then pop it.
-  // Should: the url is the detail page's path, in the browser's address bar
-  // too on web, then the sales page's path again after the pop.
-  for (final (how, push) in [
-    (
-      "pushPath('/reports/sales/detail')",
-      (StackRouter router) => router.pushPath('/reports/sales/detail'),
-    ),
-    (
-      'push(SalesDetailRoute())',
-      (StackRouter router) => router.push(const _Route('SalesDetailRoute')),
-    ),
-  ]) {
-    testWidgets('Pushing in a shell with $how updates the browser url', (
-      tester,
-    ) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: const EmptyShellRoute('TabShellRoute'),
-            children: [
-              AutoRoute(path: '', page: _page('HomeRoute')),
-              AutoRoute(path: 'reports', page: _page('ReportsRoute')),
-              AutoRoute(path: 'reports/sales', page: _page('SalesRoute')),
-              AutoRoute(
-                path: 'reports/sales/detail',
-                page: _page('SalesDetailRoute'),
-              ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(tester, router, initialLink: '/reports/sales');
-      expect(find.text('SalesRoute'), findsOneWidget);
-      await expectBrowserUrl('/reports/sales');
+  group('url on push in shell', () {
+    // Steps: a shell around home, reports, sales and a sales detail page, all
+    // its children. Open the sales page, push the detail page by its full
+    // path, or by its route, then pop it.
+    // Should: the url is the detail page's path, in the browser's address bar
+    // too on web, then the sales page's path again after the pop.
+    for (final (how, push) in [
+      (
+        "pushPath('/reports/sales/detail')",
+        (StackRouter router) => router.pushPath('/reports/sales/detail'),
+      ),
+      (
+        'push(SalesDetailRoute())',
+        (StackRouter router) => router.push(const _Route('SalesDetailRoute')),
+      ),
+    ]) {
+      testWidgets('Pushing in a shell with $how updates the browser url', (
+        tester,
+      ) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: const EmptyShellRoute('TabShellRoute'),
+              children: [
+                AutoRoute(path: '', page: _page('HomeRoute')),
+                AutoRoute(path: 'reports', page: _page('ReportsRoute')),
+                AutoRoute(path: 'reports/sales', page: _page('SalesRoute')),
+                AutoRoute(
+                  path: 'reports/sales/detail',
+                  page: _page('SalesDetailRoute'),
+                ),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterApp(tester, router, initialLink: '/reports/sales');
+        expect(find.text('SalesRoute'), findsOneWidget);
+        await expectBrowserUrl('/reports/sales');
 
-      final salesRouter = tester.element(find.text('SalesRoute')).router;
-      unawaited(push(salesRouter));
-      await tester.pumpAndSettle();
-      expect(find.text('SalesDetailRoute'), findsOneWidget);
-      expect(router.urlState.url, '/reports/sales/detail');
-      await expectBrowserUrl('/reports/sales/detail');
+        final salesRouter = tester.element(find.text('SalesRoute')).router;
+        unawaited(push(salesRouter));
+        await tester.pumpAndSettle();
+        expect(find.text('SalesDetailRoute'), findsOneWidget);
+        expect(router.urlState.url, '/reports/sales/detail');
+        await expectBrowserUrl('/reports/sales/detail');
 
-      salesRouter.pop();
-      await tester.pumpAndSettle();
-      expect(find.text('SalesRoute'), findsOneWidget);
-      expect(router.urlState.url, '/reports/sales');
-      await expectBrowserUrl('/reports/sales');
-    });
-  }
+        salesRouter.pop();
+        await tester.pumpAndSettle();
+        expect(find.text('SalesRoute'), findsOneWidget);
+        expect(router.urlState.url, '/reports/sales');
+        await expectBrowserUrl('/reports/sales');
+      });
+    }
+  });
 }
 
 PageInfo _page(String name) =>

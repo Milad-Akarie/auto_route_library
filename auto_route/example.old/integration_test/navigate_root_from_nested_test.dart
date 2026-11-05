@@ -14,60 +14,62 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: '/' is a Landing page with a nested router holding Empty (path
-  // ''), Lessons and Experience; Experience is a shell with its own nested
-  // router holding Sessions (path '') and Own. Open '/experience', then tap
-  // the button on the Experience page, outside its nested router, that calls
-  // context.router.navigatePath('/') or replacePath('/').
-  // Should: Empty, the default child of '/', shows, not Sessions.
-  for (final shouldReplace in [false, true]) {
-    final call = shouldReplace ? 'replacePath' : 'navigatePath';
-    testWidgets(
-      "$call('/') from a page above a nested router shows the default child of '/'",
-      (tester) async {
-        final router = RootStackRouter.build(
-          routes: [
-            AutoRoute(
-              path: '/',
-              page: PageInfo(
-                'LandingRoute',
-                builder: (_) => const AutoRouter(),
-              ),
-              children: [
-                AutoRoute(path: '', page: _page('EmptyRoute')),
-                AutoRoute(path: 'lessons', page: _page('LessonsRoute')),
-                AutoRoute(
-                  path: 'experience',
-                  page: PageInfo(
-                    'ExperienceRoute',
-                    builder: (_) =>
-                        _ExperiencePage(shouldReplace: shouldReplace),
-                  ),
-                  children: [
-                    AutoRoute(path: '', page: _page('SessionsRoute')),
-                    AutoRoute(path: 'user-sessions', page: _page('OwnRoute')),
-                  ],
+  group('navigate root from nested', () {
+    // Steps: '/' is a Landing page with a nested router holding Empty (path
+    // ''), Lessons and Experience; Experience is a shell with its own nested
+    // router holding Sessions (path '') and Own. Open '/experience', then tap
+    // the button on the Experience page, outside its nested router, that calls
+    // context.router.navigatePath('/') or replacePath('/').
+    // Should: Empty, the default child of '/', shows, not Sessions.
+    for (final shouldReplace in [false, true]) {
+      final call = shouldReplace ? 'replacePath' : 'navigatePath';
+      testWidgets(
+        "$call('/') from a page above a nested router shows the default child of '/'",
+        (tester) async {
+          final router = RootStackRouter.build(
+            routes: [
+              AutoRoute(
+                path: '/',
+                page: PageInfo(
+                  'LandingRoute',
+                  builder: (_) => const AutoRouter(),
                 ),
-              ],
-            ),
-          ],
-        );
-        await pumpRouterAppWithConfig(tester, router);
-        unawaited(router.navigatePath('/experience'));
-        await tester.pumpAndSettle();
-        expect(find.text('SessionsRoute'), findsOneWidget);
-        await expectBrowserUrl('/experience');
+                children: [
+                  AutoRoute(path: '', page: _page('EmptyRoute')),
+                  AutoRoute(path: 'lessons', page: _page('LessonsRoute')),
+                  AutoRoute(
+                    path: 'experience',
+                    page: PageInfo(
+                      'ExperienceRoute',
+                      builder: (_) =>
+                          _ExperiencePage(shouldReplace: shouldReplace),
+                    ),
+                    children: [
+                      AutoRoute(path: '', page: _page('SessionsRoute')),
+                      AutoRoute(path: 'user-sessions', page: _page('OwnRoute')),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+          await pumpRouterAppWithConfig(tester, router);
+          unawaited(router.navigatePath('/experience'));
+          await tester.pumpAndSettle();
+          expect(find.text('SessionsRoute'), findsOneWidget);
+          await expectBrowserUrl('/experience');
 
-        await tester.tap(find.text('Go to the root'));
-        await tester.pumpAndSettle();
+          await tester.tap(find.text('Go to the root'));
+          await tester.pumpAndSettle();
 
-        expect(find.text('EmptyRoute'), findsOneWidget);
-        expect(find.text('SessionsRoute'), findsNothing);
-        expect(router.currentPath, '/');
-        await expectBrowserUrl('/');
-      },
-    );
-  }
+          expect(find.text('EmptyRoute'), findsOneWidget);
+          expect(find.text('SessionsRoute'), findsNothing);
+          expect(router.currentPath, '/');
+          await expectBrowserUrl('/');
+        },
+      );
+    }
+  });
 }
 
 PageInfo _page(String name) => .new(

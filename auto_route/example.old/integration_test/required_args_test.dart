@@ -17,38 +17,40 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: FirstRoute.page, path: '/'),
-        AutoRoute(page: _SignInRoute.page, path: '/sign-in'),
-        AutoRoute(page: SecondRoute.page, path: '/forgot-password'),
-      ],
+  group('required args', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: FirstRoute.page, path: '/'),
+          AutoRoute(page: _SignInRoute.page, path: '/sign-in'),
+          AutoRoute(page: SecondRoute.page, path: '/forgot-password'),
+        ],
+      );
+    });
+
+    // Steps: push a sign-in page with a required argument the url can't
+    // hold, push another page on top, then press the browser's back button.
+    // Should: the sign-in page shows again with its argument.
+    testWidgets(
+      'The browser back button returns to a page with its required argument',
+      (tester) async {
+        await pumpRouterAppWithConfig(tester, router);
+        unawaited(router.push(_SignInRoute(email: 'sam@example.com')));
+        await tester.pumpAndSettle();
+        unawaited(router.push(const SecondRoute()));
+        await tester.pumpAndSettle();
+        await expectBrowserUrl('/forgot-password');
+
+        pressBrowserBack();
+        await expectBrowserUrl('/sign-in');
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text('Sign in as sam@example.com'), findsOneWidget);
+      },
+      skip: !kIsWeb,
     );
   });
-
-  // Steps: push a sign-in page with a required argument the url can't
-  // hold, push another page on top, then press the browser's back button.
-  // Should: the sign-in page shows again with its argument.
-  testWidgets(
-    'The browser back button returns to a page with its required argument',
-    (tester) async {
-      await pumpRouterAppWithConfig(tester, router);
-      unawaited(router.push(_SignInRoute(email: 'sam@example.com')));
-      await tester.pumpAndSettle();
-      unawaited(router.push(const SecondRoute()));
-      await tester.pumpAndSettle();
-      await expectBrowserUrl('/forgot-password');
-
-      pressBrowserBack();
-      await expectBrowserUrl('/sign-in');
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.text('Sign in as sam@example.com'), findsOneWidget);
-    },
-    skip: !kIsWeb,
-  );
 }
 
 class _SignInArgs {

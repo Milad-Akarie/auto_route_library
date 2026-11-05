@@ -12,61 +12,63 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  for (final kind in _TabsKind.values) {
-    // Steps: tabs are [nestedHost, if (extra) extra, second]; nestedHost
-    // holds a nested router. Tap 'To nested second', 'Toggle extra', then
-    // 'Re-tap active tab', which pops the active tab's nested router found
-    // with innerRouterOf to its first page.
-    // Should: the nested first page shows.
-    testWidgets(
-      '${kind.name}: re-tapping the active tab after the routes change pops '
-      'its nested router',
-      (tester) async {
-        addTearDown(() => _extraNotifier.value = false);
-        _tabsKind = kind;
-        final router = RootStackRouter.build(
-          routes: [
-            AutoRoute(
-              page: _HostRoute.page,
-              path: '/',
-              initial: true,
-              children: [
-                AutoRoute(
-                  page: _NestedHostRoute.page,
-                  path: 'nested',
-                  initial: true,
-                  children: [
-                    AutoRoute(
-                      page: _NestedFirstRoute.page,
-                      path: '',
-                      initial: true,
-                    ),
-                    AutoRoute(page: _NestedSecondRoute.page, path: 'second'),
-                  ],
-                ),
-                AutoRoute(page: _ExtraRoute.page, path: 'extra'),
-                AutoRoute(page: _SecondRoute.page, path: 'second'),
-              ],
-            ),
-          ],
-        );
-        await pumpRouterConfigApp(
-          tester,
-          router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
-        );
+  group('tab inner router', () {
+    for (final kind in _TabsKind.values) {
+      // Steps: tabs are [nestedHost, if (extra) extra, second]; nestedHost
+      // holds a nested router. Tap 'To nested second', 'Toggle extra', then
+      // 'Re-tap active tab', which pops the active tab's nested router found
+      // with innerRouterOf to its first page.
+      // Should: the nested first page shows.
+      testWidgets(
+        '${kind.name}: re-tapping the active tab after the routes change pops '
+        'its nested router',
+        (tester) async {
+          addTearDown(() => _extraNotifier.value = false);
+          _tabsKind = kind;
+          final router = RootStackRouter.build(
+            routes: [
+              AutoRoute(
+                page: _HostRoute.page,
+                path: '/',
+                initial: true,
+                children: [
+                  AutoRoute(
+                    page: _NestedHostRoute.page,
+                    path: 'nested',
+                    initial: true,
+                    children: [
+                      AutoRoute(
+                        page: _NestedFirstRoute.page,
+                        path: '',
+                        initial: true,
+                      ),
+                      AutoRoute(page: _NestedSecondRoute.page, path: 'second'),
+                    ],
+                  ),
+                  AutoRoute(page: _ExtraRoute.page, path: 'extra'),
+                  AutoRoute(page: _SecondRoute.page, path: 'second'),
+                ],
+              ),
+            ],
+          );
+          await pumpRouterConfigApp(
+            tester,
+            router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+          );
 
-        await tester.tap(find.text('To nested second'));
-        await tester.pumpAndSettle();
-        expect(find.text(_NestedSecondRoute.name), findsOneWidget);
-        await tester.tap(find.text('Toggle extra'));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('Re-tap active tab'));
-        await tester.pumpAndSettle();
-        expect(find.text(_NestedFirstRoute.name), findsOneWidget);
-        expect(find.text(_NestedSecondRoute.name), findsNothing);
-      },
-    );
-  }
+          await tester.tap(find.text('To nested second'));
+          await tester.pumpAndSettle();
+          expect(find.text(_NestedSecondRoute.name), findsOneWidget);
+          await tester.tap(find.text('Toggle extra'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('Re-tap active tab'));
+          await tester.pumpAndSettle();
+          expect(find.text(_NestedFirstRoute.name), findsOneWidget);
+          expect(find.text(_NestedSecondRoute.name), findsNothing);
+        },
+      );
+    }
+  });
 }
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }

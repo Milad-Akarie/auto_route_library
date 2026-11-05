@@ -13,39 +13,41 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _page('MenuRoute'), path: '/', initial: true),
-        AutoRoute(page: _page('RecordRoute'), path: '/record'),
-        AutoRoute(page: _page('FormRoute'), path: '/form'),
-        AutoRoute(page: _page('LoginRoute'), path: '/login'),
-      ],
-    );
-  });
+  group('replace all from deep stack', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _page('MenuRoute'), path: '/', initial: true),
+          AutoRoute(page: _page('RecordRoute'), path: '/record'),
+          AutoRoute(page: _page('FormRoute'), path: '/form'),
+          AutoRoute(page: _page('LoginRoute'), path: '/login'),
+        ],
+      );
+    });
 
-  // Steps: push RecordRoute and FormRoute over MenuRoute, then call
-  // replaceAll([LoginRoute()]) from FormRoute.
-  // Should: LoginRoute is the only page, not a blank screen.
-  testWidgets('replaceAll from the third page leaves only the new page', (
-    tester,
-  ) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const PageRouteInfo('RecordRoute')));
-    await tester.pumpAndSettle();
-    unawaited(router.push(const PageRouteInfo('FormRoute')));
-    await tester.pumpAndSettle();
+    // Steps: push RecordRoute and FormRoute over MenuRoute, then call
+    // replaceAll([LoginRoute()]) from FormRoute.
+    // Should: LoginRoute is the only page, not a blank screen.
+    testWidgets('replaceAll from the third page leaves only the new page', (
+      tester,
+    ) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const PageRouteInfo('RecordRoute')));
+      await tester.pumpAndSettle();
+      unawaited(router.push(const PageRouteInfo('FormRoute')));
+      await tester.pumpAndSettle();
 
-    unawaited(
-      tester.element(find.text('FormRoute')).router.replaceAll([
-        const PageRouteInfo('LoginRoute'),
-      ]),
-    );
-    await tester.pumpAndSettle();
-    expect(router.stack.map((p) => p.name), ['LoginRoute']);
-    expectCurrentPage(router, 'LoginRoute');
-    await expectBrowserUrl('/login');
+      unawaited(
+        tester.element(find.text('FormRoute')).router.replaceAll([
+          const PageRouteInfo('LoginRoute'),
+        ]),
+      );
+      await tester.pumpAndSettle();
+      expect(router.stack.map((p) => p.name), ['LoginRoute']);
+      expectCurrentPage(router, 'LoginRoute');
+      await expectBrowserUrl('/login');
+    });
   });
 }
 

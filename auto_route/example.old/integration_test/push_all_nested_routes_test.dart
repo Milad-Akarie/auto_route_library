@@ -14,67 +14,69 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late RootStackRouter router;
-  setUp(() {
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _BootRoute.page, path: '/', initial: true),
-        AutoRoute(
-          page: _DashboardRoute.page,
-          path: '/dashboard',
-          children: [
-            AutoRoute(page: _MetricsRoute.page, path: '', initial: true),
-            AutoRoute(
-              page: const EmptyShellRoute(_kUsersShell),
-              path: 'users',
-              children: [
-                AutoRoute(page: _UsersRoute.page, path: '', initial: true),
-                AutoRoute(page: _UserRoute.page, path: 'user'),
-              ],
-            ),
-          ],
-        ),
-      ],
+  group('push all nested routes', () {
+    late RootStackRouter router;
+    setUp(() {
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _BootRoute.page, path: '/', initial: true),
+          AutoRoute(
+            page: _DashboardRoute.page,
+            path: '/dashboard',
+            children: [
+              AutoRoute(page: _MetricsRoute.page, path: '', initial: true),
+              AutoRoute(
+                page: const EmptyShellRoute(_kUsersShell),
+                path: 'users',
+                children: [
+                  AutoRoute(page: _UsersRoute.page, path: '', initial: true),
+                  AutoRoute(page: _UserRoute.page, path: 'user'),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+    });
+
+    // Steps: open the dashboard, which shows MetricsRoute, then call
+    // innerRouterOf(DashboardRoute).replaceAll([UsersRoute(), UserRoute(userId:
+    // 1)]), then tap UserRoute's back button.
+    // Should: both routes open in one 'UsersSellRoute' shell, UserRoute on top
+    // with a back button, and back shows UsersRoute.
+    testWidgets(
+      'replaceAll with two routes of a nested router opens both in one nested '
+      'router',
+      (tester) async {
+        await pumpRouterApp(tester, router);
+        unawaited(router.replaceAll([const _DashboardRoute()]));
+        await tester.pumpAndSettle();
+        final dashboard = router.innerRouterOf<StackRouter>(
+          _DashboardRoute.name,
+        )!;
+
+        unawaited(
+          dashboard.replaceAll([
+            const _UsersRoute(),
+            const _UserRoute(userId: 1),
+          ]),
+        );
+        await tester.pumpAndSettle();
+        expect(dashboard.stack.map((p) => p.name), [_kUsersShell]);
+        final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
+        expect(shell.stack.map((p) => p.name), [
+          _UsersRoute.name,
+          _UserRoute.name,
+        ]);
+        expectTopPage(router, _UserRoute.name);
+        await expectBrowserUrl('/dashboard/users/user');
+
+        await tester.tap(find.byType(BackButton));
+        await tester.pumpAndSettle();
+        expectTopPage(router, _UsersRoute.name);
+      },
     );
   });
-
-  // Steps: open the dashboard, which shows MetricsRoute, then call
-  // innerRouterOf(DashboardRoute).replaceAll([UsersRoute(), UserRoute(userId:
-  // 1)]), then tap UserRoute's back button.
-  // Should: both routes open in one 'UsersSellRoute' shell, UserRoute on top
-  // with a back button, and back shows UsersRoute.
-  testWidgets(
-    'replaceAll with two routes of a nested router opens both in one nested '
-    'router',
-    (tester) async {
-      await pumpRouterApp(tester, router);
-      unawaited(router.replaceAll([const _DashboardRoute()]));
-      await tester.pumpAndSettle();
-      final dashboard = router.innerRouterOf<StackRouter>(
-        _DashboardRoute.name,
-      )!;
-
-      unawaited(
-        dashboard.replaceAll([
-          const _UsersRoute(),
-          const _UserRoute(userId: 1),
-        ]),
-      );
-      await tester.pumpAndSettle();
-      expect(dashboard.stack.map((p) => p.name), [_kUsersShell]);
-      final shell = dashboard.innerRouterOf<StackRouter>(_kUsersShell)!;
-      expect(shell.stack.map((p) => p.name), [
-        _UsersRoute.name,
-        _UserRoute.name,
-      ]);
-      expectTopPage(router, _UserRoute.name);
-      await expectBrowserUrl('/dashboard/users/user');
-
-      await tester.tap(find.byType(BackButton));
-      await tester.pumpAndSettle();
-      expectTopPage(router, _UsersRoute.name);
-    },
-  );
 }
 
 const _kUsersShell = 'UsersSellRoute';

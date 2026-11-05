@@ -11,30 +11,32 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: an app with an AutoRouteObserver taps a button that opens a
-  // dialog showing a route aware widget, then closes the dialog.
-  // Should: the widget shows, the dialog closes, and nothing throws.
-  testWidgets('a route aware widget in a dialog shows without throwing', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [AutoRoute(page: _HomeRoute.page, path: '/', initial: true)],
-    );
-    await pumpRouterApp(
+  group('route aware in dialog', () {
+    // Steps: an app with an AutoRouteObserver taps a button that opens a
+    // dialog showing a route aware widget, then closes the dialog.
+    // Should: the widget shows, the dialog closes, and nothing throws.
+    testWidgets('a route aware widget in a dialog shows without throwing', (
       tester,
-      router,
-      navigatorObservers: () => [AutoRouteObserver()],
-    );
+    ) async {
+      final router = RootStackRouter.build(
+        routes: [AutoRoute(page: _HomeRoute.page, path: '/', initial: true)],
+      );
+      await pumpRouterApp(
+        tester,
+        router,
+        navigatorObservers: () => [AutoRouteObserver()],
+      );
 
-    await tester.tap(find.text('Open dialog'));
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Aware'), findsOneWidget);
+      await tester.tap(find.text('Open dialog'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Aware'), findsOneWidget);
 
-    router.navigatorKey.currentState!.pop();
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expectCurrentPage(router, _HomeRoute.name);
+      router.navigatorKey.currentState!.pop();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expectCurrentPage(router, _HomeRoute.name);
+    });
   });
 }
 

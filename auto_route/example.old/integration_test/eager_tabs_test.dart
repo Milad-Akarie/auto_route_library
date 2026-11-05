@@ -16,26 +16,28 @@ import 'support/eager_tabs_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  setUp(eagerTabBuilds.clear);
+  group('eager tabs', () {
+    setUp(eagerTabBuilds.clear);
 
-  for (final kind in EagerTabsKind.values) {
-    testWidgets(
-      '${kind.name} with lazyLoad: false builds every tab before the first '
-      'switch',
-      (tester) async {
-        final router = buildEagerTabsRouter(kind);
-        await pumpRouterApp(tester, router);
+    for (final kind in EagerTabsKind.values) {
+      testWidgets(
+        '${kind.name} with lazyLoad: false builds every tab before the first '
+        'switch',
+        (tester) async {
+          final router = buildEagerTabsRouter(kind);
+          await pumpRouterApp(tester, router);
 
-        expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
+          expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
 
-        router
-            .innerRouterOf<TabsRouter>(kEagerTabsName)!
-            .setActiveIndex(kEagerTabNames.length - 1);
-        await tester.pumpAndSettle();
+          router
+              .innerRouterOf<TabsRouter>(kEagerTabsName)!
+              .setActiveIndex(kEagerTabNames.length - 1);
+          await tester.pumpAndSettle();
 
-        expect(find.text(kEagerLastTabName), findsOneWidget);
-        expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
-      },
-    );
-  }
+          expect(find.text(kEagerLastTabName), findsOneWidget);
+          expect(eagerTabBuilds, {for (final name in kEagerTabNames) name: 1});
+        },
+      );
+    }
+  });
 }

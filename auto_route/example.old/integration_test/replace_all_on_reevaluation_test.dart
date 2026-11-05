@@ -14,59 +14,61 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late _AuthRepo authRepo;
-  late RootStackRouter router;
-  setUp(() {
-    authRepo = _AuthRepo();
-    router = RootStackRouter.build(
-      routes: [
-        AutoRoute(page: _LoginRoute.page(authRepo), path: '/login'),
-        AutoRoute(
-          page: _HomeRoute.page(authRepo),
-          path: '/',
-          initial: true,
-          guards: [
-            AutoRouteGuard.simple((resolver, guardRouter) {
-              if (authRepo.isLoggedIn) {
-                resolver.next();
-                return;
-              }
-              resolver.reject();
-              unawaited(guardRouter.replaceAll([const _LoginRoute()]));
-            }),
-          ],
-        ),
-      ],
+  group('replace all on reevaluation', () {
+    late _AuthRepo authRepo;
+    late RootStackRouter router;
+    setUp(() {
+      authRepo = _AuthRepo();
+      router = RootStackRouter.build(
+        routes: [
+          AutoRoute(page: _LoginRoute.page(authRepo), path: '/login'),
+          AutoRoute(
+            page: _HomeRoute.page(authRepo),
+            path: '/',
+            initial: true,
+            guards: [
+              AutoRouteGuard.simple((resolver, guardRouter) {
+                if (authRepo.isLoggedIn) {
+                  resolver.next();
+                  return;
+                }
+                resolver.reject();
+                unawaited(guardRouter.replaceAll([const _LoginRoute()]));
+              }),
+            ],
+          ),
+        ],
+      );
+    });
+
+    // Steps: the guarded HomeRoute sends the logged-out user to LoginRoute. Tap
+    // 'Log In', which logs in and calls replaceAll([HomeRoute()]) right away.
+    // Then tap 'Log Out' and 'Log In' again.
+    // Should: each time one page is left: HomeRoute, then LoginRoute, then
+    // HomeRoute.
+    testWidgets(
+      'replaceAll right after the reevaluate listenable changes replaces the '
+      'stack',
+      (tester) async {
+        await pumpRouterApp(tester, router, reevaluationNotifier: authRepo);
+        expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
+
+        await tester.tap(find.text('Log In'));
+        await tester.pumpAndSettle();
+        expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+        expect(find.text('Home Screen'), findsOneWidget);
+        await expectBrowserUrl('/');
+
+        await tester.tap(find.text('Log Out'));
+        await tester.pumpAndSettle();
+        expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
+
+        await tester.tap(find.text('Log In'));
+        await tester.pumpAndSettle();
+        expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
+      },
     );
   });
-
-  // Steps: the guarded HomeRoute sends the logged-out user to LoginRoute. Tap
-  // 'Log In', which logs in and calls replaceAll([HomeRoute()]) right away.
-  // Then tap 'Log Out' and 'Log In' again.
-  // Should: each time one page is left: HomeRoute, then LoginRoute, then
-  // HomeRoute.
-  testWidgets(
-    'replaceAll right after the reevaluate listenable changes replaces the '
-    'stack',
-    (tester) async {
-      await pumpRouterApp(tester, router, reevaluationNotifier: authRepo);
-      expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
-
-      await tester.tap(find.text('Log In'));
-      await tester.pumpAndSettle();
-      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-      expect(find.text('Home Screen'), findsOneWidget);
-      await expectBrowserUrl('/');
-
-      await tester.tap(find.text('Log Out'));
-      await tester.pumpAndSettle();
-      expect(router.stack.map((p) => p.name), [_LoginRoute.name]);
-
-      await tester.tap(find.text('Log In'));
-      await tester.pumpAndSettle();
-      expect(router.stack.map((p) => p.name), [_HomeRoute.name]);
-    },
-  );
 }
 
 class _AuthRepo with ChangeNotifier {

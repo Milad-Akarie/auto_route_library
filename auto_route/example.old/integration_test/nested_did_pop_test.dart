@@ -13,46 +13,54 @@ import 'support/pages.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: HomeRoute, then push HostRoute, which hosts a nested router
-  // showing NestedRoute; both pages have AutoRouteAwareStateMixin. Go back.
-  // Should: NestedRoute gets didPop, then HomeRoute gets didPopNext.
-  testWidgets(
-    'a page in a nested router hears didPop when its host route is popped',
-    (tester) async {
-      final router = RootStackRouter.build(
-        routes: [
-          AutoRoute(
-            path: '/',
-            page: PageInfo('HomeRoute', builder: (_) => const RouteAwarePage()),
-          ),
-          AutoRoute(
-            path: '/host',
-            page: PageInfo('HostRoute', builder: (_) => const AutoRouter()),
-            children: [
-              AutoRoute(
-                path: '',
-                page: PageInfo(
-                  'NestedRoute',
-                  builder: (_) => const RouteAwarePage(),
-                ),
+  group('nested did pop', () {
+    // Steps: HomeRoute, then push HostRoute, which hosts a nested router
+    // showing NestedRoute; both pages have AutoRouteAwareStateMixin. Go back.
+    // Should: NestedRoute gets didPop, then HomeRoute gets didPopNext.
+    testWidgets(
+      'a page in a nested router hears didPop when its host route is popped',
+      (tester) async {
+        final router = RootStackRouter.build(
+          routes: [
+            AutoRoute(
+              path: '/',
+              page: PageInfo(
+                'HomeRoute',
+                builder: (_) => const RouteAwarePage(),
               ),
-            ],
-          ),
-        ],
-      );
-      await pumpRouterApp(
-        tester,
-        router,
-        navigatorObservers: () => [AutoRouteObserver()],
-      );
-      unawaited(router.push(const NamedRoute('HostRoute')));
-      await tester.pumpAndSettle();
-      expectTopPage(router, 'NestedRoute');
+            ),
+            AutoRoute(
+              path: '/host',
+              page: PageInfo('HostRoute', builder: (_) => const AutoRouter()),
+              children: [
+                AutoRoute(
+                  path: '',
+                  page: PageInfo(
+                    'NestedRoute',
+                    builder: (_) => const RouteAwarePage(),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+        await pumpRouterApp(
+          tester,
+          router,
+          navigatorObservers: () => [AutoRouteObserver()],
+        );
+        unawaited(router.push(const NamedRoute('HostRoute')));
+        await tester.pumpAndSettle();
+        expectTopPage(router, 'NestedRoute');
 
-      routeAwareEvents.clear();
-      await systemBack(tester);
-      expectTopPage(router, 'HomeRoute');
-      expect(routeAwareEvents, ['NestedRoute.didPop', 'HomeRoute.didPopNext']);
-    },
-  );
+        routeAwareEvents.clear();
+        await systemBack(tester);
+        expectTopPage(router, 'HomeRoute');
+        expect(routeAwareEvents, [
+          'NestedRoute.didPop',
+          'HomeRoute.didPopNext',
+        ]);
+      },
+    );
+  });
 }

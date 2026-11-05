@@ -14,30 +14,32 @@ import 'support/cart_router.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Steps: open the app at the deep link /cart?type=rm.
-  // Should: the cart page shows the enum value rm, without the "String is
-  // not a subtype of MfUserCartTypes?" type error.
-  testWidgets('A deep link reads an enum query parameter by its name', (
-    tester,
-  ) async {
-    final router = CartRouter();
-    await pumpRouterApp(tester, router, initialLink: '/cart?type=rm');
-    expect(tester.takeException(), isNull);
-    expect(router.current.name, MfUserCartRoute.name);
-    expect(find.text('Cart rm'), findsOneWidget);
-  });
+  group('enum query param', () {
+    // Steps: open the app at the deep link /cart?type=rm.
+    // Should: the cart page shows the enum value rm, without the "String is
+    // not a subtype of MfUserCartTypes?" type error.
+    testWidgets('A deep link reads an enum query parameter by its name', (
+      tester,
+    ) async {
+      final router = CartRouter();
+      await pumpRouterApp(tester, router, initialLink: '/cart?type=rm');
+      expect(tester.takeException(), isNull);
+      expect(router.current.name, MfUserCartRoute.name);
+      expect(find.text('Cart rm'), findsOneWidget);
+    });
 
-  // Steps: push the cart route with the enum value mf.
-  // Should: the url carries type=mf, the form the deep link uses.
-  testWidgets('Pushing the route writes the enum by its name in the url', (
-    tester,
-  ) async {
-    final router = CartRouter();
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(MfUserCartRoute(userCartType: .mf)));
-    await tester.pumpAndSettle();
-    expect(find.text('Cart mf'), findsOneWidget);
-    expect(router.urlState.url, '/cart?type=mf');
-    await expectBrowserUrl('/cart?type=mf');
+    // Steps: push the cart route with the enum value mf.
+    // Should: the url carries type=mf, the form the deep link uses.
+    testWidgets('Pushing the route writes the enum by its name in the url', (
+      tester,
+    ) async {
+      final router = CartRouter();
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(MfUserCartRoute(userCartType: .mf)));
+      await tester.pumpAndSettle();
+      expect(find.text('Cart mf'), findsOneWidget);
+      expect(router.urlState.url, '/cart?type=mf');
+      await expectBrowserUrl('/cart?type=mf');
+    });
   });
 }

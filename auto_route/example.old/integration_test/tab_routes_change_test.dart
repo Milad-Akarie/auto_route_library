@@ -11,70 +11,72 @@ import 'support/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  for (final kind in _TabsKind.values) {
-    // Steps: tabs are [first, second, signedIn ? account : sign-in]. Tap the
-    // first tab's counter twice, open the second tab and tap its counter
-    // once, go back to the first tab, then tap 'Sign in' so only the third
-    // route changes.
-    // Should: the first tab still shows 2 taps, the second still shows 1, and
-    // the third tab shows the account page.
-    testWidgets(
-      "${kind.name}: signing in swaps the third tab and keeps the other tabs' "
-      'state',
-      (tester) async {
-        addTearDown(() => _signedInNotifier.value = false);
-        _tabsKind = kind;
-        final router = RootStackRouter.build(
-          routes: [
-            AutoRoute(
-              page: _TabsHostRoute.page,
-              path: '/',
-              initial: true,
-              children: [
-                AutoRoute(
-                  page: _FirstTabRoute.page,
-                  path: 'first',
-                  initial: true,
-                ),
-                AutoRoute(page: _SecondTabRoute.page, path: 'second'),
-                AutoRoute(page: _SignInTabRoute.page, path: 'sign-in'),
-                AutoRoute(page: _AccountTabRoute.page, path: 'account'),
-              ],
-            ),
-          ],
-        );
-        await pumpRouterConfigApp(
-          tester,
-          router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
-        );
+  group('tab routes change', () {
+    for (final kind in _TabsKind.values) {
+      // Steps: tabs are [first, second, signedIn ? account : sign-in]. Tap the
+      // first tab's counter twice, open the second tab and tap its counter
+      // once, go back to the first tab, then tap 'Sign in' so only the third
+      // route changes.
+      // Should: the first tab still shows 2 taps, the second still shows 1, and
+      // the third tab shows the account page.
+      testWidgets(
+        '${kind.name}: signing in swaps the third tab and keeps the other '
+        "tabs' state",
+        (tester) async {
+          addTearDown(() => _signedInNotifier.value = false);
+          _tabsKind = kind;
+          final router = RootStackRouter.build(
+            routes: [
+              AutoRoute(
+                page: _TabsHostRoute.page,
+                path: '/',
+                initial: true,
+                children: [
+                  AutoRoute(
+                    page: _FirstTabRoute.page,
+                    path: 'first',
+                    initial: true,
+                  ),
+                  AutoRoute(page: _SecondTabRoute.page, path: 'second'),
+                  AutoRoute(page: _SignInTabRoute.page, path: 'sign-in'),
+                  AutoRoute(page: _AccountTabRoute.page, path: 'account'),
+                ],
+              ),
+            ],
+          );
+          await pumpRouterConfigApp(
+            tester,
+            router.config(deepLinkBuilder: (_) => DeepLink.defaultPath),
+          );
 
-        await tester.tap(find.text('First: add one'));
-        await tester.tap(find.text('First: add one'));
-        await tester.pumpAndSettle();
-        expect(find.text('First taps: 2'), findsOneWidget);
+          await tester.tap(find.text('First: add one'));
+          await tester.tap(find.text('First: add one'));
+          await tester.pumpAndSettle();
+          expect(find.text('First taps: 2'), findsOneWidget);
 
-        await tester.tap(find.text('Go to second tab'));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('Second: add one'));
-        await tester.pumpAndSettle();
-        expect(find.text('Second taps: 1'), findsOneWidget);
-        await tester.tap(find.text('Go to first tab'));
-        await tester.pumpAndSettle();
+          await tester.tap(find.text('Go to second tab'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('Second: add one'));
+          await tester.pumpAndSettle();
+          expect(find.text('Second taps: 1'), findsOneWidget);
+          await tester.tap(find.text('Go to first tab'));
+          await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Sign in'));
-        await tester.pumpAndSettle();
-        expect(find.text('First taps: 2'), findsOneWidget);
+          await tester.tap(find.text('Sign in'));
+          await tester.pumpAndSettle();
+          expect(find.text('First taps: 2'), findsOneWidget);
 
-        await tester.tap(find.text('Go to second tab'));
-        await tester.pumpAndSettle();
-        expect(find.text('Second taps: 1'), findsOneWidget);
+          await tester.tap(find.text('Go to second tab'));
+          await tester.pumpAndSettle();
+          expect(find.text('Second taps: 1'), findsOneWidget);
 
-        await tester.tap(find.text('Go to third tab'));
-        await tester.pumpAndSettle();
-        expect(find.text(_AccountTabRoute.name), findsOneWidget);
-      },
-    );
-  }
+          await tester.tap(find.text('Go to third tab'));
+          await tester.pumpAndSettle();
+          expect(find.text(_AccountTabRoute.name), findsOneWidget);
+        },
+      );
+    }
+  });
 }
 
 enum _TabsKind { indexedStack, pageView, tabBar, builder }
