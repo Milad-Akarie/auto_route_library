@@ -77,7 +77,7 @@ class _RebuildsAfterFirstFrameState extends State<_RebuildsAfterFirstFrame> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) => (context as Element).markNeedsBuild());
   }
 
   @override
