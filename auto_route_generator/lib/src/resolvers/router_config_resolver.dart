@@ -14,7 +14,7 @@ class RouterConfigResolver {
     ConstantReader autoRouter,
     AssetId input,
     ClassElement clazz, {
-    bool usesPartBuilder = false,
+    bool isPartOfLibrary = false,
     int? cacheHash,
   }) {
     final deferredLoading = autoRouter.peek('deferredLoading')?.boolValue ?? false;
@@ -27,7 +27,7 @@ class RouterConfigResolver {
       routerClassName: clazz.displayName,
       replaceInRouteName: replaceInRouteName,
       deferredLoading: deferredLoading,
-      usesPartBuilder: usesPartBuilder,
+      isPartOfLibrary: isPartOfLibrary,
       path: input.path,
       cacheHash: cacheHash,
       generateForDir: List.of(generateForDir),

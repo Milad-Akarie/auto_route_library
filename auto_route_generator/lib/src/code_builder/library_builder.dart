@@ -58,14 +58,14 @@ String generateLibrary(
   Set<String> ignoreForFile = const {},
   String? outputPath,
 }) {
-  if (router.usesPartBuilder && router.deferredLoading) {
+  if (router.isPartOfLibrary && router.deferredLoading) {
     throw ArgumentError(
       'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports!',
     );
   }
 
   final emitter = DartEmitter(
-    allocator: router.usesPartBuilder
+    allocator: router.isPartOfLibrary
         ? .none
         : DeferredPagesAllocator(
             routes,
@@ -76,13 +76,13 @@ String generateLibrary(
     useNullSafetySyntax: true,
   );
 
-  if (router.usesPartBuilder) {
+  if (router.isPartOfLibrary) {
     _throwOnRouteNamedLikePage(router, routes);
   }
 
   final deferredRoutes = routes.where((r) => r.deferredLoading == true);
 
-  if (router.usesPartBuilder && deferredRoutes.isNotEmpty) {
+  if (router.isPartOfLibrary && deferredRoutes.isNotEmpty) {
     throw ArgumentError(
       'Part-file approach will not work with deferred loading because allocator needs to mark all deferred imports! ${deferredRoutes.map((e) => e.name)}',
     );
@@ -110,7 +110,7 @@ String generateLibrary(
   final library = Library(
     (b) => b
       ..directives.addAll([
-        if (router.usesPartBuilder)
+        if (router.isPartOfLibrary)
           Directive.partOf(p.posix.relative(router.path, from: p.posix.dirname(outputPath ?? router.path))),
       ])
       ..comments.addAll([

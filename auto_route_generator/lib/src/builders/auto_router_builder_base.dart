@@ -110,13 +110,13 @@ abstract class AutoRouterBuilderBase extends CacheAwareBuilder<RouterConfig> {
     throwIf(element is! ClassElement, '${element.displayName} is not a class element', element: element);
     final clazz = element as ClassElement;
 
-    final usesPartBuilder = _hasPartDirective(clazz, buildStep.primaryOutput);
+    final isPartOfLibrary = _hasPartDirective(clazz, buildStep.primaryOutput);
 
     final router = RouterConfigResolver().resolve(
       annotation,
       buildStep.inputId,
       clazz,
-      usesPartBuilder: usesPartBuilder,
+      isPartOfLibrary: isPartOfLibrary,
       cacheHash: stepHash,
     );
 

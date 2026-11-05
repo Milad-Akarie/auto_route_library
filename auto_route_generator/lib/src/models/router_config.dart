@@ -5,7 +5,7 @@ class RouterConfig {
     required this.routerClassName,
     this.replaceInRouteName,
     this.deferredLoading = false,
-    this.usesPartBuilder = false,
+    this.isPartOfLibrary = false,
     required this.path,
     required this.cacheHash,
     required this.generateForDir,
@@ -18,7 +18,7 @@ class RouterConfig {
       routerClassName: map['routerClassName'] as String,
       replaceInRouteName: map['replaceInRouteName'] as String?,
       deferredLoading: map['deferredLoading'] as bool,
-      usesPartBuilder: map['usesPartBuilder'] as bool,
+      isPartOfLibrary: map['usesPartBuilder'] as bool,
       path: map['path'] as String,
       cacheHash: map['cacheHash'] as int?,
       generateForDir: (map['generateForDir'] as List<Object?>).cast(),
@@ -36,7 +36,7 @@ class RouterConfig {
   final bool deferredLoading;
 
   /// Whether the router should use part builder
-  final bool usesPartBuilder;
+  final bool isPartOfLibrary;
 
   /// The path to the router file
   final String path;
@@ -56,7 +56,7 @@ class RouterConfig {
       'routerClassName': routerClassName,
       'replaceInRouteName': replaceInRouteName,
       'deferredLoading': deferredLoading,
-      'usesPartBuilder': usesPartBuilder,
+      'usesPartBuilder': isPartOfLibrary,
       'path': path,
       'cacheHash': cacheHash,
       'generateForDir': generateForDir,
