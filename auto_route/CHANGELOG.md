@@ -1,3 +1,22 @@
+## Unreleased
+- **BREAKING CHANGE**: `RouteMatch.copyWith(pathParams:)` is removed; pass `params:`.
+- **BREAKING CHANGE**: `ReevaluatableRouteMatch.copyWith(pathParams:)` is removed; pass `params:`.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(params:)` is removed; pass `rawPathParams:`.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(queryParams:)` is removed; pass `rawQueryParams:`.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(children:)` is removed; pass `initialChildren:`.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(path:)` is removed; it was ignored, since a `PageRouteInfo` holds no
+  path, so drop the argument.
+- **BREAKING CHANGE**: `PageRouteInfo.copyWith(match:)` is removed; it was ignored, since a `PageRouteInfo` holds no
+  match, so drop the argument.
+- **BREAKING CHANGE**: `RouteData.setAnimation(animation)` is removed; set `routeData.animation = animation`.
+- **BREAKING CHANGE**: `NavigationResolver.next(bool continueNavigation)` no longer takes a bool; call `next()` to
+  continue or `reject()` to stop.
+- **BREAKING CHANGE**: `NavigationResolver.resolveNext(bool continueNavigation, {bool reevaluateNext})` is removed;
+  call `next()`, or `reject(reevaluateNext: false)` to stop, or `overrideNext(reevaluateNext: false)` to continue
+  without pushing the pending routes again.
+- **BREAKING CHANGE**: `NavigationResolver.nextOrBack(bool continueNavigation)` no longer takes a bool; call
+  `nextOrBack()` to continue or `reject(goBack: true)` to stop and go back.
+
 ## 12.1.0
 - **FEAT**: path and query params can be the app's own types: give `@PathParam` or `@QueryParam` a
   `ParamConverter<T>`, a top-level const, and the route reads the param with the new `Parameters.getTyped` or

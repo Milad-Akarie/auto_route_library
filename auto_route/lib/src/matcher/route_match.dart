@@ -170,13 +170,10 @@ class RouteMatch<T> {
   /// Returns a new instance of [RouteMatch]
   /// with the overridden values
   ///
-  /// Each parameter is named after the field it sets; the old name
-  /// [pathParams] still works and loses to [params] when both are passed.
+  /// Each parameter is named after the field it sets.
   RouteMatch<dynamic> copyWith({
     String? stringMatch,
     Parameters? params,
-    // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
     List<RouteMatch<dynamic>>? children,
     String? fragment,
@@ -194,7 +191,7 @@ class RouteMatch<T> {
       stringMatch: stringMatch ?? this.stringMatch,
       segments: segments ?? this.segments,
       children: children ?? this.children,
-      params: params ?? pathParams ?? this.params,
+      params: params ?? this.params,
       queryParams: queryParams ?? this.queryParams,
       fragment: fragment ?? this.fragment,
       args: args ?? this.args,
@@ -321,8 +318,6 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   ReevaluatableRouteMatch<T, R> copyWith({
     String? stringMatch,
     Parameters? params,
-    // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('Use params instead') Parameters? pathParams,
     Parameters? queryParams,
     List<RouteMatch<dynamic>>? children,
     String? fragment,
@@ -339,7 +334,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
       currentPage: currentPage,
       originalMatch: super.copyWith(
         stringMatch: stringMatch,
-        params: params ?? pathParams,
+        params: params,
         queryParams: queryParams,
         children: children,
         fragment: fragment,

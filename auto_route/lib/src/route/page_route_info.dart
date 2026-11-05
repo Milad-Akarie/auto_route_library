@@ -152,9 +152,7 @@ class PageRouteInfo<T extends Object?> {
   /// overrides
   ///
   /// Every field not overridden is kept. Each parameter is named after the
-  /// field it sets; the old names [params], [queryParams] and [children] still
-  /// work and lose to the new ones when both are passed. [path] and [match]
-  /// are ignored: a [PageRouteInfo] holds neither.
+  /// field it sets.
   PageRouteInfo copyWith({
     String? name,
     T? args,
@@ -165,29 +163,16 @@ class PageRouteInfo<T extends Object?> {
     String? stringMatch,
     String? redirectedFrom,
     bool? argsEquality,
-    // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('Use rawPathParams instead') Map<String, dynamic>? params,
-    // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('Use rawQueryParams instead') Map<String, dynamic>? queryParams,
-    // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('Use initialChildren instead') List<PageRouteInfo>? children,
-    // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('A PageRouteInfo holds no path; this is ignored') String? path,
-    // Deprecated in 12.0.0, removed in 13.0.0.
-    @Deprecated('A PageRouteInfo holds no match; this is ignored')
-    RouteMatch<dynamic>? match,
   }) {
-    final newPathParams = rawPathParams ?? params;
-    final newQueryParams = rawQueryParams ?? queryParams;
-    final newChildren = initialChildren ?? children;
     if ((name == null || identical(name, _routeName)) &&
         (fragment == null || identical(fragment, this.fragment)) &&
         (args == null || identical(args, this.args)) &&
-        (newPathParams == null ||
-            identical(newPathParams, this.rawPathParams)) &&
-        (newQueryParams == null ||
-            identical(newQueryParams, this.rawQueryParams)) &&
-        (newChildren == null || identical(newChildren, this.initialChildren)) &&
+        (rawPathParams == null ||
+            identical(rawPathParams, this.rawPathParams)) &&
+        (rawQueryParams == null ||
+            identical(rawQueryParams, this.rawQueryParams)) &&
+        (initialChildren == null ||
+            identical(initialChildren, this.initialChildren)) &&
         (stringMatch == null || identical(stringMatch, this.stringMatch)) &&
         (redirectedFrom == null ||
             identical(redirectedFrom, this.redirectedFrom)) &&
@@ -198,9 +183,9 @@ class PageRouteInfo<T extends Object?> {
     return PageRouteInfo(
       name ?? _routeName,
       args: args ?? this.args,
-      rawPathParams: newPathParams ?? this.rawPathParams,
-      rawQueryParams: newQueryParams ?? this.rawQueryParams,
-      initialChildren: newChildren ?? this.initialChildren,
+      rawPathParams: rawPathParams ?? this.rawPathParams,
+      rawQueryParams: rawQueryParams ?? this.rawQueryParams,
+      initialChildren: initialChildren ?? this.initialChildren,
       fragment: fragment ?? this.fragment,
       stringMatch: stringMatch ?? this.stringMatch,
       redirectedFrom: redirectedFrom ?? this.redirectedFrom,

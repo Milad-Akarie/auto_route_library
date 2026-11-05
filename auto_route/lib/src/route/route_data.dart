@@ -285,13 +285,6 @@ class RouteData<R> {
   /// [RoutingController.waitForTransitions] read it.
   Animation<dynamic>? animation;
 
-  /// Sets [animation].
-  // Deprecated in 12.0.0, removed in 13.0.0.
-  @Deprecated('Set animation instead')
-  // The old name, kept as a method so existing calls still compile until it is
-  // removed.
-  void setAnimation(Animation<dynamic>? value) => animation = value;
-
   /// Returns the current animation completion future
   /// if the current route is animating
   ///

@@ -235,14 +235,8 @@ class NavigationResolver {
 
   /// Lets the navigation continue to [route].
   ///
-  /// Call this, [reject] or [overrideNext] once per navigation. Passing false
-  /// is the deprecated way to reject it.
-  void next([
-    // The old way to reject, kept so existing guards compile until it is
-    // removed in 13.0.0.
-    @Deprecated('Call next() to continue or reject() to stop')
-    bool continueNavigation = true,
-  ]) => _resolve(continueNavigation: continueNavigation, reevaluateNext: true);
+  /// Call this, [reject] or [overrideNext] once per navigation.
+  void next() => _resolve(continueNavigation: true, reevaluateNext: true);
 
   /// Stops the navigation: [route] is not opened.
   ///
@@ -257,25 +251,6 @@ class NavigationResolver {
       _router.back();
     }
   }
-
-  /// Completes [_completer] with either true to continue navigation
-  /// or false to abort navigation
-  ///
-  /// if [reevaluateNext] is set to true pending routes will also be re-pushed
-  /// to stack on `RoutingController.reevaluateGuards`
-  // Deprecated in 12.0.0, removed in 13.0.0.
-  @Deprecated(
-    'Call next() or reject(reevaluateNext: false), or '
-    'overrideNext(reevaluateNext: false) to continue without '
-    'pushing the pending routes again',
-  )
-  // The deprecated signature, kept so existing guards compile until it is
-  // removed.
-  void resolveNext(bool continueNavigation, {bool reevaluateNext = true}) =>
-      _resolve(
-        continueNavigation: continueNavigation,
-        reevaluateNext: reevaluateNext,
-      );
 
   void _resolve({
     required bool continueNavigation,
@@ -399,23 +374,9 @@ class NavigationResolver {
   /// Helpful for when you want to revert to the previous
   /// url back can not navigate
   ///
-  /// Without an argument it is the same as [next]; `reject(goBack: true)`
-  /// replaces the deprecated `nextOrBack(false)`.
-  void nextOrBack([
-    // The old way to reject, kept so existing guards compile until it is
-    // removed in 13.0.0.
-    @Deprecated(
-      'Call nextOrBack() to continue or reject(goBack: true) to stop and '
-      'go back',
-    )
-    bool continueNavigation = true,
-  ]) {
-    if (continueNavigation) {
-      next();
-    } else {
-      reject(goBack: true);
-    }
-  }
+  /// The same as [next]; `reject(goBack: true)` stops the navigation and goes
+  /// back.
+  void nextOrBack() => next();
 
   // Rejects [route] when the guards that redirected the user here opened the
   // same route earlier in this chain of redirects, which would repeat without
