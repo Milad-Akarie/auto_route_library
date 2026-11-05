@@ -21,7 +21,7 @@ import 'package:flutter/widgets.dart';
 class PageRouteInfo<T extends Object?> {
   /// Default constructor
   const new(
-    String routeName, {
+    String name, {
     this.initialChildren,
     this.args,
     this.rawPathParams = const {},
@@ -30,7 +30,7 @@ class PageRouteInfo<T extends Object?> {
     this.stringMatch,
     this.redirectedFrom,
     this.argsEquality = true,
-  }) : _routeName = routeName,
+  }) : _routeName = name,
        fragment = fragment ?? '';
 
   /// Creates a new instance form [RouteMatch]
@@ -282,7 +282,7 @@ class EmptyShellRoute extends PageInfo {
 class NamedRoute<A extends Object?> extends PageRouteInfo<A> {
   /// Default constructor
   const new(
-    super.routeName, {
+    super.name, {
     List<PageRouteInfo>? children,
     super.args,
     Map<String, Object?> params = const {},
