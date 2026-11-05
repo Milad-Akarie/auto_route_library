@@ -56,24 +56,20 @@ class _DeferredWidgetState extends State<DeferredWidget> {
     /// If module was already loaded immediately create widget instead of
     /// waiting for future or zone turn.
     if (DeferredWidget._loadedModules.contains(widget.libraryLoader)) {
-      // The same method runs later from the load future, where setState is needed.
-      // ignore: avoid-unnecessary-setstate
-      _onLibraryLoaded();
+      _createLoadedChild();
     } else {
       unawaited(
         DeferredWidget._preload(widget.libraryLoader).then((_) {
           // The page can leave the tree before its library loads.
-          if (mounted) _onLibraryLoaded();
+          if (mounted) setState(_createLoadedChild);
         }),
       );
     }
   }
 
-  void _onLibraryLoaded() {
-    setState(() {
-      _loadedBuilder = widget.createWidget;
-      _loadedChild = _loadedBuilder!();
-    });
+  void _createLoadedChild() {
+    _loadedBuilder = widget.createWidget;
+    _loadedChild = _loadedBuilder!();
   }
 
   @override
