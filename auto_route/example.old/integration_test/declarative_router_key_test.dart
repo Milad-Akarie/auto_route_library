@@ -14,36 +14,37 @@ void main() {
 
   // Steps: HostRoute builds AutoRouter.declarative with a GlobalKey.
   // Should: the key finds the declarative router.
-  testWidgets('AutoRouter.declarative carries the key it is given', (
-    tester,
-  ) async {
-    final hostKey = GlobalKey();
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HostRoute',
-            builder: (_) => AutoRouter.declarative(
-              key: hostKey,
-              routes: (_) => [const NamedRoute('HomeRoute')],
-            ),
-          ),
-          children: [
-            AutoRoute(
-              path: '',
-              page: PageInfo(
-                'HomeRoute',
-                builder: (_) =>
-                    const Scaffold(body: SafeArea(child: Text('HomeRoute'))),
+  testWidgets(
+    'AutoRouter.declarative carries the key it is given',
+    (tester) async {
+      final hostKey = GlobalKey();
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HostRoute',
+              builder: (_) => AutoRouter.declarative(
+                key: hostKey,
+                routes: (_) => [const NamedRoute('HomeRoute')],
               ),
             ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    expect(find.text('HomeRoute'), findsOneWidget);
-    expect(find.byKey(hostKey), findsOneWidget);
-  });
+            children: [
+              AutoRoute(
+                path: '',
+                page: PageInfo(
+                  'HomeRoute',
+                  builder: (_) =>
+                      const Scaffold(body: SafeArea(child: Text('HomeRoute'))),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      expect(find.text('HomeRoute'), findsOneWidget);
+      expect(find.byKey(hostKey), findsOneWidget);
+    },
+  );
 }

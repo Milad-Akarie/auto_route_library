@@ -22,9 +22,7 @@ void main() {
   testWidgets(
     'pushPath of an unknown relative path reports a failure instead of pushing '
     'the first page',
-    (
-      tester,
-    ) async {
+    (tester) async {
       final router = RootStackRouter.build(
         routes: [
           NamedRouteDef(

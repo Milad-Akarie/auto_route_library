@@ -4,11 +4,7 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 class Book {
   /// All fields are required; [id] must be unique among the books of a
   /// [BooksDB].
-  const new({
-    required this.id,
-    required this.name,
-    required this.genre,
-  });
+  const new({required this.id, required this.name, required this.genre});
 
   /// The number routes use to look this book up.
   final int id;

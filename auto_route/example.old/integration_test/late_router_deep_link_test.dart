@@ -36,9 +36,7 @@ void main() {
     testWidgets(
       'A deep link to a router built after the first frame adds no history '
       'entry, with $name',
-      (
-        tester,
-      ) async {
+      (tester) async {
         final entryBefore = browserEntryIndex() ?? 0;
         final router = buildRouter();
         await pumpAppAtDeepLink(

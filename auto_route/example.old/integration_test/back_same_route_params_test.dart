@@ -22,9 +22,7 @@ void main() {
   // last one the first page.
   testWidgets(
     'Going back walks back through one route pushed with different params (flutter/flutter#186052)',
-    (
-      tester,
-    ) async {
+    (tester) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(page: FirstRoute.page, path: '/'),

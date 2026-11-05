@@ -16,56 +16,60 @@ void main() {
   // Steps: push TabsHostRoute, whose page holds an AutoTabsRouter.tabBar
   // showing an AutoTabView, tap the second tab, then go back, three times.
   // Should: each visit's PageController is disposed when the host leaves.
-  testWidgets('leaving an AutoTabView disposes its PageController', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo(
-            'HomeRoute',
-            builder: (_) => const _TextPage('HomeRoute'),
+  testWidgets(
+    'leaving an AutoTabView disposes its PageController',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo(
+              'HomeRoute',
+              builder: (_) => const _TextPage('HomeRoute'),
+            ),
           ),
-        ),
-        AutoRoute(
-          path: '/tabs',
-          page: PageInfo('TabsHostRoute', builder: (_) => const _TabBarPage()),
-          children: [
-            AutoRoute(
-              path: 'tab1',
-              page: PageInfo(
-                'Tab1Route',
-                builder: (_) => const _TextPage('Tab1Route'),
-              ),
+          AutoRoute(
+            path: '/tabs',
+            page: PageInfo(
+              'TabsHostRoute',
+              builder: (_) => const _TabBarPage(),
             ),
-            AutoRoute(
-              path: 'tab2',
-              page: PageInfo(
-                'Tab2Route',
-                builder: (_) => const _TextPage('Tab2Route'),
+            children: [
+              AutoRoute(
+                path: 'tab1',
+                page: PageInfo(
+                  'Tab1Route',
+                  builder: (_) => const _TextPage('Tab1Route'),
+                ),
               ),
-            ),
-          ],
-        ),
-      ],
-    );
-    await pumpRouterApp(tester, router);
-    final pageControllers = DisposalTracker<PageController>();
+              AutoRoute(
+                path: 'tab2',
+                page: PageInfo(
+                  'Tab2Route',
+                  builder: (_) => const _TextPage('Tab2Route'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+      await pumpRouterApp(tester, router);
+      final pageControllers = DisposalTracker<PageController>();
 
-    for (var visit = 0; visit < 3; visit++) {
-      unawaited(router.pushPath('/tabs'));
-      await pumpUntilFound(tester, find.text('Tab1Route'));
-      await tester.tap(find.text('Two'));
-      await tester.pumpAndSettle();
-      expect(find.text('Tab2Route'), findsOneWidget);
+      for (var visit = 0; visit < 3; visit++) {
+        unawaited(router.pushPath('/tabs'));
+        await pumpUntilFound(tester, find.text('Tab1Route'));
+        await tester.tap(find.text('Two'));
+        await tester.pumpAndSettle();
+        expect(find.text('Tab2Route'), findsOneWidget);
 
-      await systemBack(tester);
-      expect(find.text('HomeRoute'), findsOneWidget);
-    }
-    expect(pageControllers.created, 3);
-    expect(pageControllers.undisposed, 0);
-  });
+        await systemBack(tester);
+        expect(find.text('HomeRoute'), findsOneWidget);
+      }
+      expect(pageControllers.created, 3);
+      expect(pageControllers.undisposed, 0);
+    },
+  );
 }
 
 /// Shows two tabs in a tab bar above their AutoTabView.

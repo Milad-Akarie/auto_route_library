@@ -11,9 +11,7 @@ class TestPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(child: Text(context.routeData.name)),
-    );
+    return Scaffold(body: SafeArea(child: Text(context.routeData.name)));
   }
 }
 
@@ -37,9 +35,7 @@ class _RouteAwarePageState extends State<RouteAwarePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(child: Text(context.routeData.name)),
-    );
+    return Scaffold(body: SafeArea(child: Text(context.routeData.name)));
   }
 
   @override

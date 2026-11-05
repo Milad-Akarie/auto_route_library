@@ -16,9 +16,7 @@ class NestedNavigationApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: nestedRouter.config(),
-    );
+    return MaterialApp.router(routerConfig: nestedRouter.config());
   }
 }
 

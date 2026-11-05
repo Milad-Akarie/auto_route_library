@@ -98,9 +98,7 @@ void main() {
   testWidgets(
     'on a tab at its first page, Android leaves the app instead of popping the '
     "other tab's page",
-    (
-      tester,
-    ) async {
+    (tester) async {
       final tabs = await pumpApp(tester);
       await pushInTab(tester, tabs, 0, 'BookDetailsRoute');
       await showTab(tester, tabs, 1);

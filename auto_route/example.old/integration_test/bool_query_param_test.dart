@@ -59,21 +59,23 @@ void main() {
 
   // Steps: push the page with f: true, then restore the app.
   // Should: the restored page shows the flag true.
-  testWidgets('a restored page reads its saved bool query param', (
-    tester,
-  ) async {
-    await pumpRestorableApp(tester, buildRouter);
-    unawaited(
-      RestorableRouterApp.router.push(
-        const NamedRoute('FlagRoute', queryParams: {'f': true}),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('Flag true'), findsOneWidget);
+  testWidgets(
+    'a restored page reads its saved bool query param',
+    (tester) async {
+      await pumpRestorableApp(tester, buildRouter);
+      unawaited(
+        RestorableRouterApp.router.push(
+          const NamedRoute('FlagRoute', queryParams: {'f': true}),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Flag true'), findsOneWidget);
 
-    await tester.restartAndRestore();
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(find.text('Flag true'), findsOneWidget);
-  }, skip: kIsWeb);
+      await tester.restartAndRestore();
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Flag true'), findsOneWidget);
+    },
+    skip: kIsWeb,
+  );
 }

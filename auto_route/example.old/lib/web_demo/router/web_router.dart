@@ -79,11 +79,7 @@ class WebAppRouter extends RootStackRouter {
 // ignore: avoid-unnecessary-stateful-widgets
 class MainWebPage extends StatefulWidget {
   /// All arguments are optional.
-  const new({
-    super.key,
-    this.navigate,
-    this.showUserPosts,
-  });
+  const new({super.key, this.navigate, this.showUserPosts});
 
   /// Replaces the default of the button that opens user 2.
   final VoidCallback? navigate;
@@ -99,17 +95,12 @@ class _MainWebPageState extends State<MainWebPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: const AutoLeadingButton(),
-      ),
+      appBar: AppBar(leading: const AutoLeadingButton()),
       body: Center(
         child: Column(
           mainAxisSize: .min,
           children: [
-            const Text(
-              'HomePage',
-              style: TextStyle(fontSize: 30),
-            ),
+            const Text('HomePage', style: TextStyle(fontSize: 30)),
             Padding(
               padding: const .symmetric(vertical: 16),
               child: ElevatedButton(
@@ -159,21 +150,14 @@ class _MainWebPageState extends State<MainWebPage> {
 /// Page that shows its `id` path parameter; not part of any route.
 class QueryPage extends StatelessWidget {
   /// Takes the [id] path parameter.
-  const new({
-    super.key,
-    @pathParam this.id = '-',
-  });
+  const new({super.key, @pathParam this.id = '-'});
 
   /// The id from the path, `-` when the url has none.
   final String id;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text('Query: $id'),
-      ),
-    );
+    return Scaffold(body: Center(child: Text('Query: $id')));
   }
 }
 
@@ -267,10 +251,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
 // ignore: avoid-unnecessary-stateful-widgets
 class UserPostsPage extends StatefulWidget {
   /// Takes the user [id], which is inherited from the parent route.
-  const new({
-    @PathParam.inherit('userID') required this.id,
-    super.key,
-  });
+  const new({@PathParam.inherit('userID') required this.id, super.key});
 
   /// The id of the user whose posts show.
   final int id;
@@ -295,9 +276,7 @@ class UserPostsPageState extends State<UserPostsPage> {
               onPressed: () {
                 showDialog<void>(
                   context: context,
-                  builder: (_) => const AlertDialog(
-                    title: Text('Alert'),
-                  ),
+                  builder: (_) => const AlertDialog(title: Text('Alert')),
                 );
               },
               child: const Text('Show Dialog'),
@@ -311,9 +290,7 @@ class UserPostsPageState extends State<UserPostsPage> {
                 child: const Text('Logout'),
               ),
             ),
-            const Expanded(
-              child: AutoRouter(),
-            ),
+            const Expanded(child: AutoRouter()),
           ],
         ),
       ),
@@ -379,12 +356,7 @@ class NotFoundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: Text(
-          '404!',
-          style: TextStyle(fontSize: 28),
-        ),
-      ),
+      body: Center(child: Text('404!', style: TextStyle(fontSize: 28))),
     );
   }
 }
@@ -404,10 +376,7 @@ class UserAllPostsPage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            const Text(
-              'All Posts',
-              style: TextStyle(fontSize: 28),
-            ),
+            const Text('All Posts', style: TextStyle(fontSize: 28)),
             MaterialButton(
               color: Colors.red,
               onPressed:
@@ -442,12 +411,7 @@ class UserFavoritePostsPage extends StatelessWidget {
     return const Scaffold(
       body: Center(
         child: Column(
-          children: [
-            Text(
-              'Favorite Posts',
-              style: TextStyle(fontSize: 28),
-            ),
-          ],
+          children: [Text('Favorite Posts', style: TextStyle(fontSize: 28))],
         ),
       ),
     );

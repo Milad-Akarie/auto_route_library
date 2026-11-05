@@ -21,9 +21,7 @@ void main() {
   testWidgets(
     'an app started on a browser entry it saved a state in reads that state',
     skip: !kIsWeb,
-    (
-      tester,
-    ) async {
+    (tester) async {
       final router = RootStackRouter.build(
         routes: [
           AutoRoute(

@@ -22,11 +22,7 @@ class HomePage extends StatefulWidget {
 /// One entry of the home page navigation: the route it opens and how it looks.
 class RouteDestination {
   /// All fields are required.
-  const new({
-    required this.route,
-    required this.icon,
-    required this.label,
-  });
+  const new({required this.route, required this.icon, required this.label});
 
   /// The route that opens when this destination is chosen.
   final PageRouteInfo route;
@@ -43,11 +39,7 @@ class RouteDestination {
 class HomePageState extends State<HomePage> with TickerProviderStateMixin {
   /// The destinations of the navigation rail shown on the web.
   final destinations = [
-    RouteDestination(
-      route: BooksTab(),
-      icon: Icons.source,
-      label: 'Books',
-    ),
+    RouteDestination(route: BooksTab(), icon: Icons.source, label: 'Books'),
     RouteDestination(
       route: ProfileTab(),
       icon: Icons.person,

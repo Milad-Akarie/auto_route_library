@@ -18,9 +18,7 @@ void main() {
   testWidgets(
     'With includePrefixMatches, swiping back from a deep link animates a Hero '
     'without an error',
-    (
-      tester,
-    ) async {
+    (tester) async {
       final router = RootStackRouter.build(
         defaultRouteType: const RouteType.cupertino(),
         routes: [

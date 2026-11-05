@@ -46,32 +46,36 @@ void main() {
   // twice.
   // Should: ProductDetails shows, back shows Products, then Home, and only
   // then would Android close the app.
-  testWidgets('back after restoration returns through the pages before it', (
-    tester,
-  ) async {
-    await pumpRestorableApp(tester, buildRouter);
-    unawaited(
-      RestorableRouterApp.router.push(const NamedRoute('ProductsRoute')),
-    );
-    await tester.pumpAndSettle();
-    unawaited(
-      RestorableRouterApp.router.push(const NamedRoute('ProductDetailsRoute')),
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'back after restoration returns through the pages before it',
+    (tester) async {
+      await pumpRestorableApp(tester, buildRouter);
+      unawaited(
+        RestorableRouterApp.router.push(const NamedRoute('ProductsRoute')),
+      );
+      await tester.pumpAndSettle();
+      unawaited(
+        RestorableRouterApp.router.push(
+          const NamedRoute('ProductDetailsRoute'),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    await tester.restartAndRestore();
-    await tester.pumpAndSettle();
-    expect(find.text('ProductDetailsRoute'), findsOneWidget);
-    expect(RestorableRouterApp.router.stack.map((page) => page.name), [
-      'HomeRoute',
-      'ProductsRoute',
-      'ProductDetailsRoute',
-    ]);
+      await tester.restartAndRestore();
+      await tester.pumpAndSettle();
+      expect(find.text('ProductDetailsRoute'), findsOneWidget);
+      expect(RestorableRouterApp.router.stack.map((page) => page.name), [
+        'HomeRoute',
+        'ProductsRoute',
+        'ProductDetailsRoute',
+      ]);
 
-    await systemBack(tester);
-    expect(find.text('ProductsRoute'), findsOneWidget);
-    await systemBack(tester);
-    expect(find.text('HomeRoute'), findsOneWidget);
-    expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
-  }, skip: kIsWeb);
+      await systemBack(tester);
+      expect(find.text('ProductsRoute'), findsOneWidget);
+      await systemBack(tester);
+      expect(find.text('HomeRoute'), findsOneWidget);
+      expect(await androidSendsBackToFlutter(), anyOf(isNull, isFalse));
+    },
+    skip: kIsWeb,
+  );
 }

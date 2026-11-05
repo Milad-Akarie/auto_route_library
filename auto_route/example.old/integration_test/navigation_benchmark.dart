@@ -34,13 +34,16 @@ void main() {
     Future<void> Function(int index, Stopwatch call) step,
   ) async {
     final calls = <int>[];
-    await binding.traceAction(() async {
-      for (var index = 0; index < _steps; index++) {
-        final call = Stopwatch();
-        await step(index, call);
-        calls.add(call.elapsedMicroseconds);
-      }
-    }, reportKey: key);
+    await binding.traceAction(
+      () async {
+        for (var index = 0; index < _steps; index++) {
+          final call = Stopwatch();
+          await step(index, call);
+          calls.add(call.elapsedMicroseconds);
+        }
+      },
+      reportKey: key,
+    );
     syncMicros[key] = _median(calls);
   }
 

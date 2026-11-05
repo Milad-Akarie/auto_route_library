@@ -27,10 +27,7 @@ class CartHomeView extends StatelessWidget {
 
 @RoutePage()
 class MfUserCartView extends StatelessWidget {
-  const new({
-    @QueryParam('type') required this.userCartType,
-    super.key,
-  });
+  const new({@QueryParam('type') required this.userCartType, super.key});
 
   final MfUserCartTypes? userCartType;
 

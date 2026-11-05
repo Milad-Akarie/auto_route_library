@@ -36,17 +36,13 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp.router(
       routerConfig: _rootRouter.config(
         reevaluateListenable: authService,
-        navigatorObservers: () => [
-          AutoRouteObserver(),
-        ],
+        navigatorObservers: () => [AutoRouteObserver()],
       ),
       theme: ThemeData.light(),
       builder: (_, router) {
         return ChangeNotifierProvider<AuthService>(
           create: (_) => authService,
-          child: BooksDBProvider(
-            child: router!,
-          ),
+          child: BooksDBProvider(child: router!),
         );
       },
     );

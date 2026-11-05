@@ -27,9 +27,7 @@ void main() {
           AutoRoute(
             path: '/second',
             page: SecondHostRoute.page,
-            children: [
-              AutoRoute(path: '', page: SecondNested1Route.page),
-            ],
+            children: [AutoRoute(path: '', page: SecondNested1Route.page)],
           ),
         ],
       );

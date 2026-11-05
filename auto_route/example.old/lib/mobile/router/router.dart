@@ -54,10 +54,7 @@ class AppRouter extends RootStackRouter {
           ],
         ),
         profileRoute,
-        AutoRoute(
-          path: 'settings/:tab',
-          page: SettingsTab.page,
-        ),
+        AutoRoute(path: 'settings/:tab', page: SettingsTab.page),
       ],
     ),
     AutoRoute(page: LoginRoute.page, path: '/login'),

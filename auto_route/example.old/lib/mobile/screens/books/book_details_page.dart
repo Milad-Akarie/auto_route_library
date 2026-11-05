@@ -6,10 +6,7 @@ import 'package:material_ui/material_ui.dart';
 @RoutePage(name: 'BookDetailsRoute')
 class BookDetailsPage extends StatefulWidget {
   /// Takes the book [id], which defaults to -1 and so finds no book.
-  const new({
-    super.key,
-    @pathParam this.id = -1,
-  });
+  const new({super.key, @pathParam this.id = -1});
 
   /// The id of the book to show, read from the path.
   final int id;

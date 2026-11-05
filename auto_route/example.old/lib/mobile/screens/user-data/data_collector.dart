@@ -19,10 +19,7 @@ class SettingsState extends ChangeNotifier {
 /// What the user data flow collects: a name and a favorite book.
 class UserData {
   /// Both fields start empty.
-  const new({
-    this.name,
-    this.favoriteBook,
-  });
+  const new({this.name, this.favoriteBook});
 
   /// The name entered, or `null` when not given yet.
   final String? name;
@@ -40,10 +37,7 @@ class UserData {
 
   /// Returns a copy with [name] and [favoriteBook] replaced when they are not
   /// `null`.
-  UserData copyWith({
-    String? name,
-    String? favoriteBook,
-  }) {
+  UserData copyWith({String? name, String? favoriteBook}) {
     return UserData(
       name: name ?? this.name,
       favoriteBook: favoriteBook ?? this.favoriteBook,

@@ -55,21 +55,23 @@ void main() {
   // Steps: push a page that takes its value from a path param, then
   // restore the app.
   // Should: the page comes back with its value, at '/book/7'.
-  testWidgets('a page that takes its value from a path param comes back', (
-    tester,
-  ) async {
-    await pumpRestorableApp(tester, buildRouter);
-    unawaited(RestorableRouterApp.router.push(_BookRoute(id: 7)));
-    await tester.pumpAndSettle();
-    expect(find.text('Book 7'), findsOneWidget);
+  testWidgets(
+    'a page that takes its value from a path param comes back',
+    (tester) async {
+      await pumpRestorableApp(tester, buildRouter);
+      unawaited(RestorableRouterApp.router.push(_BookRoute(id: 7)));
+      await tester.pumpAndSettle();
+      expect(find.text('Book 7'), findsOneWidget);
 
-    await tester.restartAndRestore();
-    await tester.pumpAndSettle();
-    expect(find.text('Book 7'), findsOneWidget);
-    await expectBrowserUrl('/book/7');
-    await systemBack(tester);
-    expect(find.text('HomeRoute'), findsOneWidget);
-  }, skip: kIsWeb);
+      await tester.restartAndRestore();
+      await tester.pumpAndSettle();
+      expect(find.text('Book 7'), findsOneWidget);
+      await expectBrowserUrl('/book/7');
+      await systemBack(tester);
+      expect(find.text('HomeRoute'), findsOneWidget);
+    },
+    skip: kIsWeb,
+  );
 }
 
 class _Letter {

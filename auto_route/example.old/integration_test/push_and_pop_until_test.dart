@@ -47,9 +47,7 @@ void main() {
   testWidgets(
     'On web, the browser back button after pushAndPopUntil does not bring a '
     'removed page back',
-    (
-      tester,
-    ) async {
+    (tester) async {
       await pumpRouterAppWithConfig(tester, router);
       unawaited(router.push(const SecondRoute()));
       await tester.pumpAndSettle();

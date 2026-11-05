@@ -15,45 +15,49 @@ void main() {
   // both pages have AutoRouteAwareStateMixin. Go back.
   // Should: HomeRoute hears didPush, then didPushNext, since SecondRoute
   // covers it; going back tells SecondRoute didPop and HomeRoute didPopNext.
-  testWidgets('a page built under a deep link hears didPushNext', (
-    tester,
-  ) async {
-    final router = RootStackRouter.build(
-      routes: [
-        AutoRoute(
-          path: '/',
-          page: PageInfo('HomeRoute', builder: (_) => const RouteAwarePage()),
-        ),
-        AutoRoute(
-          path: '/second',
-          page: PageInfo('SecondRoute', builder: (_) => const RouteAwarePage()),
-        ),
-      ],
-    );
-    routeAwareEvents.clear();
-    await pumpRouterApp(
-      tester,
-      router,
-      initialLink: '/second',
-      navigatorObservers: () => [AutoRouteObserver()],
-    );
-    expectTopPage(router, 'SecondRoute');
-    expect(
-      routeAwareEvents,
-      unorderedEquals([
-        'HomeRoute.didPush',
-        'HomeRoute.didPushNext',
-        'SecondRoute.didPush',
-      ]),
-    );
-    expect(
-      routeAwareEvents.indexOf('HomeRoute.didPush'),
-      lessThan(routeAwareEvents.indexOf('HomeRoute.didPushNext')),
-    );
+  testWidgets(
+    'a page built under a deep link hears didPushNext',
+    (tester) async {
+      final router = RootStackRouter.build(
+        routes: [
+          AutoRoute(
+            path: '/',
+            page: PageInfo('HomeRoute', builder: (_) => const RouteAwarePage()),
+          ),
+          AutoRoute(
+            path: '/second',
+            page: PageInfo(
+              'SecondRoute',
+              builder: (_) => const RouteAwarePage(),
+            ),
+          ),
+        ],
+      );
+      routeAwareEvents.clear();
+      await pumpRouterApp(
+        tester,
+        router,
+        initialLink: '/second',
+        navigatorObservers: () => [AutoRouteObserver()],
+      );
+      expectTopPage(router, 'SecondRoute');
+      expect(
+        routeAwareEvents,
+        unorderedEquals([
+          'HomeRoute.didPush',
+          'HomeRoute.didPushNext',
+          'SecondRoute.didPush',
+        ]),
+      );
+      expect(
+        routeAwareEvents.indexOf('HomeRoute.didPush'),
+        lessThan(routeAwareEvents.indexOf('HomeRoute.didPushNext')),
+      );
 
-    routeAwareEvents.clear();
-    await systemBack(tester);
-    expectTopPage(router, 'HomeRoute');
-    expect(routeAwareEvents, ['SecondRoute.didPop', 'HomeRoute.didPopNext']);
-  });
+      routeAwareEvents.clear();
+      await systemBack(tester);
+      expectTopPage(router, 'HomeRoute');
+      expect(routeAwareEvents, ['SecondRoute.didPop', 'HomeRoute.didPopNext']);
+    },
+  );
 }

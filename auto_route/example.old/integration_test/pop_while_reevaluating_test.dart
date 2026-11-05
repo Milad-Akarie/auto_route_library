@@ -29,9 +29,7 @@ void main() {
     testWidgets(
       'A dialog popped right after a reevaluation starts stays closed, guard '
       'delay $guardDelay (#1643)',
-      (
-        tester,
-      ) async {
+      (tester) async {
         final user = ValueNotifier(0);
         final router = RootStackRouter.build(
           routes: [

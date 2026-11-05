@@ -113,24 +113,25 @@ void main() {
   // Steps: push a page that, 150ms later while still animating in, calls
   // popAndPushAll([FirstRoute(), SecondRoute()]), as the linked demo app does.
   // Should: no error; the stack is [MainRoute, FirstRoute, SecondRoute].
-  testWidgets('popAndPushAll while the page it pops animates in', (
-    tester,
-  ) async {
-    await pumpRouterApp(tester, router);
-    unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 150));
+  testWidgets(
+    'popAndPushAll while the page it pops animates in',
+    (tester) async {
+      await pumpRouterApp(tester, router);
+      unawaited(router.push(const PageRouteInfo('ShoppingCartRoute')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 150));
 
-    unawaited(
-      router.popAndPushAll(const [
-        PageRouteInfo('FirstRoute'),
-        PageRouteInfo('SecondRoute'),
-      ]),
-    );
-    await tester.pumpAndSettle();
-    expect(tester.takeException(), isNull);
-    expect(stackNames(), ['MainRoute', 'FirstRoute', 'SecondRoute']);
-  });
+      unawaited(
+        router.popAndPushAll(const [
+          PageRouteInfo('FirstRoute'),
+          PageRouteInfo('SecondRoute'),
+        ]),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(stackNames(), ['MainRoute', 'FirstRoute', 'SecondRoute']);
+    },
+  );
 }
 
 PageInfo _page(String name) => .new(

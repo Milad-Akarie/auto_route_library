@@ -66,11 +66,7 @@ class ProfilePageState extends State<ProfilePage> {
                   unawaited(
                     context.router.replaceAll(
                       [
-                        HomeRoute(
-                          children: [
-                            SettingsTab(tab: 'Replaced'),
-                          ],
-                        ),
+                        HomeRoute(children: [SettingsTab(tab: 'Replaced')]),
                       ],
                       updateExistingRoutes: false,
                     ),

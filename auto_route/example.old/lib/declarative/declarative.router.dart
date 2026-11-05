@@ -36,9 +36,7 @@ class DeclarativeNavigationExampleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router.config(),
-    );
+    return MaterialApp.router(routerConfig: _router.config());
   }
 }
 
@@ -252,9 +250,6 @@ class Profile {
 
   /// Returns a copy with [name] and [age] replaced when they are not `null`.
   Profile copyWith({String? name, int? age}) {
-    return Profile(
-      name: name ?? this.name,
-      age: age ?? this.age,
-    );
+    return Profile(name: name ?? this.name, age: age ?? this.age);
   }
 }

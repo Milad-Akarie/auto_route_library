@@ -34,9 +34,7 @@ void main() {
   testWidgets(
     'Logging in after leaving an earlier redirect opens the route that '
     'redirected last (#2178)',
-    (
-      tester,
-    ) async {
+    (tester) async {
       final n = GuardChangeNotifier();
       final login = AutoRouteGuard.simple((resolver, router) {
         if (n.connected) {

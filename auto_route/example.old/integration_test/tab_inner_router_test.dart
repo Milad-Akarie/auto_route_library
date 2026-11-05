@@ -21,9 +21,7 @@ void main() {
     testWidgets(
       '${kind.name}: re-tapping the active tab after the routes change pops '
       'its nested router',
-      (
-        tester,
-      ) async {
+      (tester) async {
         addTearDown(() => _extraNotifier.value = false);
         _tabsKind = kind;
         final router = RootStackRouter.build(

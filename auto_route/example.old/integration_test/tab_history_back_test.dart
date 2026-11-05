@@ -63,9 +63,7 @@ void main() {
   testWidgets(
     'system back after tabs 0, 2, 1 on the first page shows 2, then 0, then '
     'lets the app close',
-    (
-      tester,
-    ) async {
+    (tester) async {
       final tabs = await pumpApp(tester);
       expect(await androidSendsBackToFlutter(), anyOf(isNull, isTrue));
 

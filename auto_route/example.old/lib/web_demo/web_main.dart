@@ -48,9 +48,7 @@ class AppState extends State<App> {
     return MaterialApp.router(
       theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      routerConfig: _router.config(
-        reevaluateListenable: authService,
-      ),
+      routerConfig: _router.config(reevaluateListenable: authService),
     );
   }
 }
@@ -63,9 +61,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login to continue'),
-      ),
+      appBar: AppBar(title: const Text('Login to continue')),
       body: Center(
         child: Column(
           children: [
