@@ -12,7 +12,7 @@ typedef DeepLinkTransformer = Future<Uri> Function(Uri uri);
 /// An auto_route implementation for [RouterDelegate]
 class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
   /// Default constructor
-  AutoRouterDelegate(
+  new(
     this.controller, {
     this.placeholder,
     this.navRestorationScopeId,
@@ -373,7 +373,7 @@ class AutoRouterDelegate extends RouterDelegate<UrlState> with ChangeNotifier {
 }
 
 class _AutoRootRouter extends StatefulWidget {
-  const _AutoRootRouter({
+  const new({
     required this.router,
     this.navRestorationScopeId,
     this.navigatorObservers = const [],
@@ -508,16 +508,16 @@ class _AutoRootRouterState extends State<_AutoRootRouter> {
 /// Holds deep-link information
 abstract class DeepLink {
   /// Builds a deep-link from a list of `PageRouteInfo`s
-  const factory DeepLink(List<PageRouteInfo> routes, {bool navigate}) = _RoutesDeepLink;
+  const factory(List<PageRouteInfo> routes, {bool navigate}) = _RoutesDeepLink;
 
   /// Builds a deep-link from a single `PageRouteInfo`
-  factory DeepLink.single(PageRouteInfo route, {bool navigate = true}) {
+  factory single(PageRouteInfo route, {bool navigate = true}) {
     return _RoutesDeepLink([route], navigate: navigate);
   }
 
   /// Builds a deep-link form string path
-  const factory DeepLink.path(String path, {bool includePrefixMatches, bool navigate}) = _PathDeepLink;
-  const DeepLink._();
+  const factory path(String path, {bool includePrefixMatches, bool navigate}) = _PathDeepLink;
+  const new _();
 
   /// Whether this link is navigable
   ///
@@ -546,7 +546,7 @@ abstract class DeepLink {
 }
 
 class _PathDeepLink extends DeepLink {
-  const _PathDeepLink(this.path, {this.includePrefixMatches = true, this.navigate = true}) : super._();
+  const new(this.path, {this.includePrefixMatches = true, this.navigate = true}) : super._();
   final String path;
   final bool includePrefixMatches;
 
@@ -558,7 +558,7 @@ class _PathDeepLink extends DeepLink {
 }
 
 class _RoutesDeepLink extends DeepLink {
-  const _RoutesDeepLink(this.routes, {this.navigate = true}) : super._();
+  const new(this.routes, {this.navigate = true}) : super._();
   final List<PageRouteInfo> routes;
 
   /// if false the routes will be pushed instead of navigated
@@ -569,7 +569,7 @@ class _RoutesDeepLink extends DeepLink {
 }
 
 class _IgnoredDeepLink extends DeepLink {
-  const _IgnoredDeepLink() : super._();
+  const new() : super._();
 
   @override
   bool get isValid => false;
@@ -578,7 +578,7 @@ class _IgnoredDeepLink extends DeepLink {
 /// Holds information of the deep-link
 /// coming from the platform window
 class PlatformDeepLink extends DeepLink {
-  const PlatformDeepLink._(this.configuration, this.initial) : super._();
+  const new _(this.configuration, this.initial) : super._();
 
   /// The initial url state parsed from initial raw path
   final UrlState configuration;

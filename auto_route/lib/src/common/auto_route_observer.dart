@@ -341,7 +341,7 @@ class AutoRouteObserver extends AutoRouterObserver {
 /// used in [AutoRouteAware] and [AutoRouterObserver]
 class TabPageRoute {
   /// default constructor
-  const TabPageRoute({required this.routeInfo, required this.index});
+  const new({required this.routeInfo, required this.index});
 
   /// match information of the target tab
   final RouteMatch<Object?> routeInfo;

@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 /// so it can be looked up by any child widget
 class RouteDataScope extends InheritedWidget {
   /// Default reconstruct
-  const RouteDataScope({super.key, required this.routeData, required super.child});
+  const new({super.key, required this.routeData, required super.child});
 
   /// The route data to be scoped
   final RouteData<Object?> routeData;

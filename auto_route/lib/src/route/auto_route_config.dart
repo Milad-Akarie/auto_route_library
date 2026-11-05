@@ -23,7 +23,7 @@ typedef RestorationIdBuilder = String Function(RouteMatch<Object?> match);
 @immutable
 class AutoRoute {
   /// Builds a default AutoRoute instance with any [type]
-  factory AutoRoute({
+  factory({
     required PageInfo page,
     String? path,
     bool usesPathAsKey = false,
@@ -59,7 +59,7 @@ class AutoRoute {
     );
   }
 
-  AutoRoute._({
+  new _({
     this._path,
     required this.page,
     this.usesPathAsKey = false,
@@ -77,7 +77,7 @@ class AutoRoute {
     this.children,
   }) : _builder = page.builder;
 
-  AutoRoute._change({
+  new _change({
     required this.page,
     required String this._path,
     required this.usesPathAsKey,
@@ -97,7 +97,7 @@ class AutoRoute {
 
   /// Creates an AutoRoute with a single [AutoRouteGuard]
   /// callback
-  factory AutoRoute.guarded({
+  factory guarded({
     required PageInfo page,
     required OnNavigation onNavigation,
     String? path,
@@ -134,7 +134,7 @@ class AutoRoute {
   }
 
   /// .named redirect to NamedRouteDef
-  factory AutoRoute.named(
+  factory named(
     String name,
     WidgetBuilderWithData builder, {
     String? path,
@@ -308,8 +308,7 @@ class AutoRoute {
 @immutable
 class RedirectRoute extends AutoRoute {
   /// Default constructor
-  RedirectRoute({required String path, required this.redirectTo})
-    : super._(path: path, page: PageInfo.redirect, fullMatch: true);
+  new({required String path, required this.redirectTo}) : super._(path: path, page: PageInfo.redirect, fullMatch: true);
 
   /// The target path which this route should
   /// redirect to
@@ -323,7 +322,7 @@ class RedirectRoute extends AutoRoute {
 @immutable
 class MaterialRoute extends AutoRoute {
   /// default constructor
-  MaterialRoute({
+  new({
     required super.page,
     super.path,
     super.fullscreenDialog,
@@ -352,7 +351,7 @@ class MaterialRoute extends AutoRoute {
 @immutable
 class CupertinoRoute extends AutoRoute {
   /// Default constructor
-  CupertinoRoute({
+  new({
     required super.page,
     super.fullscreenDialog,
     super.maintainState,
@@ -374,7 +373,7 @@ class CupertinoRoute extends AutoRoute {
 @immutable
 class AdaptiveRoute extends AutoRoute {
   /// Default constructor
-  AdaptiveRoute({
+  new({
     required super.page,
     super.fullscreenDialog,
     super.maintainState,
@@ -405,7 +404,7 @@ class AdaptiveRoute extends AutoRoute {
 @immutable
 class CustomRoute extends AutoRoute {
   /// Default constructor
-  CustomRoute({
+  new({
     required super.page,
     super.fullscreenDialog,
     super.maintainState,
@@ -454,7 +453,7 @@ class CustomRoute extends AutoRoute {
 /// code generation
 class NamedRouteDef extends AutoRoute {
   /// Default constructor
-  NamedRouteDef({
+  new({
     super.path,
     required String name,
     super.fullscreenDialog,
@@ -474,7 +473,7 @@ class NamedRouteDef extends AutoRoute {
   }) : super._(page: PageInfo.builder(name, builder: builder));
 
   /// Creates a guarded route
-  NamedRouteDef.guarded({
+  new guarded({
     super.path,
     required String name,
     required OnNavigation onNavigation,
@@ -497,7 +496,7 @@ class NamedRouteDef extends AutoRoute {
        );
 
   /// Creates a guarded route
-  NamedRouteDef.shell({
+  new shell({
     required String name,
     super.path,
     super.fullscreenDialog,
@@ -520,7 +519,7 @@ class NamedRouteDef extends AutoRoute {
 @visibleForTesting
 class TestRoute extends AutoRoute {
   /// Default constructor
-  TestRoute(String name, {super.path, super.children, super.fullMatch, super.restorationId, super.initial})
+  new(String name, {super.path, super.children, super.fullMatch, super.restorationId, super.initial})
     : super._(page: PageInfo(name, builder: (_) => const SizedBox()));
 }
 
@@ -529,7 +528,7 @@ class TestRoute extends AutoRoute {
 @internal
 class DummyRootRoute extends AutoRoute {
   /// Default constructor
-  DummyRootRoute({required String path, super.children, super.fullMatch, super.restorationId})
+  new({required String path, super.children, super.fullMatch, super.restorationId})
     : super._(page: PageInfo.root, path: path);
 }
 
@@ -548,7 +547,7 @@ typedef OnGeneratePath = String Function(AutoRoute route);
 @immutable
 class RouteCollection {
   /// Default constructor
-  RouteCollection(this._routesMap, [this._subCollections = const {}])
+  new(this._routesMap, [this._subCollections = const {}])
     : assert(_routesMap.isNotEmpty, 'A route collection needs at least one route.');
 
   /// Creates a Map of config-entries from [routes]
@@ -558,11 +557,7 @@ class RouteCollection {
   ///
   /// if this [RouteCollection] is created by the router [root] will be true
   /// else if it's created by a parent route-entry it will be false
-  factory RouteCollection.fromList(
-    List<AutoRoute> routes, {
-    bool root = false,
-    OnGeneratePath onGeneratePath = defaultPathGenerator,
-  }) {
+  factory fromList(List<AutoRoute> routes, {bool root = false, OnGeneratePath onGeneratePath = defaultPathGenerator}) {
     final routesMarkedInitial = routes.where((e) => e.initial);
     throwIf(
       routesMarkedInitial.length > 1,

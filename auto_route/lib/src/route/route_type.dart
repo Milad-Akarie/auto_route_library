@@ -10,23 +10,23 @@ typedef CustomRouteBuilder = Route<T> Function<T>(BuildContext context, Widget c
 @immutable
 abstract class RouteType {
   /// Builds a [MaterialRouteType] route type
-  const factory RouteType.material({
+  const factory material({
     bool enablePredictiveBackGesture,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) = MaterialRouteType;
 
   /// Builds a [CupertinoRouteType] route type
-  const factory RouteType.cupertino() = CupertinoRouteType;
+  const factory cupertino() = CupertinoRouteType;
 
   /// Builds a [AdaptiveRouteType] route type
-  const factory RouteType.adaptive({
+  const factory adaptive({
     bool opaque,
     bool enablePredictiveBackGesture,
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
   }) = AdaptiveRouteType;
 
   /// Builds a [CustomRouteType] route type
-  factory RouteType.custom({
+  factory custom({
     RouteTransitionsBuilder? transitionsBuilder,
     CustomRouteBuilder? customRouteBuilder,
     Duration? duration,
@@ -39,7 +39,7 @@ abstract class RouteType {
     RouteTransitionsBuilder? predictiveBackPageTransitionsBuilder,
     bool enableCupertinoBackGesture,
   }) = CustomRouteType;
-  const RouteType._({this.opaque = true});
+  const new _({this.opaque = true});
 
   /// Whether the target [Route] should be opaque
   /// see [ModalRoute.opaque]
@@ -56,7 +56,7 @@ abstract class RouteType {
 /// Generates a route that uses [MaterialRouteTransitionMixin]
 class MaterialRouteType extends RouteType with PredictiveBackGestureMixin {
   /// Default constructor
-  const MaterialRouteType({this.enablePredictiveBackGesture = false, this.predictiveBackPageTransitionsBuilder})
+  const new({this.enablePredictiveBackGesture = false, this.predictiveBackPageTransitionsBuilder})
     : super._(opaque: true);
 
   @override
@@ -69,7 +69,7 @@ class MaterialRouteType extends RouteType with PredictiveBackGestureMixin {
 /// Generates a route that uses `CupertinoRouteTransitionMixin`
 class CupertinoRouteType extends RouteType {
   /// Default constructor
-  const CupertinoRouteType() : super._(opaque: true);
+  const new() : super._(opaque: true);
 }
 
 /// Generates a route transitions based on platform
@@ -79,11 +79,8 @@ class CupertinoRouteType extends RouteType {
 /// any other platform => [MaterialRouteTransitionMixin]
 class AdaptiveRouteType extends RouteType with PredictiveBackGestureMixin {
   /// Default constructor
-  const AdaptiveRouteType({
-    this.enablePredictiveBackGesture = false,
-    this.predictiveBackPageTransitionsBuilder,
-    super.opaque,
-  }) : super._();
+  const new({this.enablePredictiveBackGesture = false, this.predictiveBackPageTransitionsBuilder, super.opaque})
+    : super._();
 
   @override
   final bool enablePredictiveBackGesture;
@@ -95,7 +92,7 @@ class AdaptiveRouteType extends RouteType with PredictiveBackGestureMixin {
 /// Generates a route with user-defined transitions
 class CustomRouteType extends RouteType with PredictiveBackGestureMixin {
   /// Default constructor
-  CustomRouteType({
+  new({
     this.customRouteBuilder,
     this.barrierLabel,
     this.barrierColor,

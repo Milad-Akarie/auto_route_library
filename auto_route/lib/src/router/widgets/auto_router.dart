@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 /// A Wrapper for [Navigator] that handles stack-routing
 class AutoRouter extends StatefulWidget {
   /// Default constructor
-  const AutoRouter({
+  const new({
     super.key,
     this.navigatorObservers = AutoRouterDelegate.defaultNavigatorObserversBuilder,
     this.builder,
@@ -210,7 +210,7 @@ class AutoRouterState extends State<AutoRouter> {
 }
 
 class _DeclarativeAutoRouter extends StatefulWidget {
-  const _DeclarativeAutoRouter({
+  const new({
     super.key,
     required this.routesBuilder,
     this.navigatorObserversBuilder = AutoRouterDelegate.defaultNavigatorObserversBuilder,

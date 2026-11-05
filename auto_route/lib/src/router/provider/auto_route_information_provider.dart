@@ -22,10 +22,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
   ///
   /// Use the [initialRouteInformation] to set the default route information for this
   /// provider.
-  factory AutoRouteInformationProvider({
-    RouteInformation? initialRouteInformation,
-    bool Function(String? location)? neglectWhen,
-  }) {
+  factory({RouteInformation? initialRouteInformation, bool Function(String? location)? neglectWhen}) {
     // On web the engine starts the app with no state, even when the browser
     // entry it opens at holds the state the app saved there, as when the
     // user comes back to the app from another site (flutter/flutter#108697).
@@ -39,8 +36,7 @@ class AutoRouteInformationProvider extends RouteInformationProvider with Widgets
 
     return AutoRouteInformationProvider._(initialRouteInformation: initialRouteInfo, neglectIf: neglectWhen);
   }
-  AutoRouteInformationProvider._({required RouteInformation initialRouteInformation, this.neglectIf})
-    : _value = initialRouteInformation;
+  new _({required RouteInformation initialRouteInformation, this.neglectIf}) : _value = initialRouteInformation;
 
   /// if true is return the route will be
   /// reported to engine

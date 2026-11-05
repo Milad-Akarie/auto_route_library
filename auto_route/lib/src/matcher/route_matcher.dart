@@ -6,7 +6,7 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 /// the given [collection]
 class RouteMatcher {
   /// Default constructor
-  const RouteMatcher(this.collection);
+  const new(this.collection);
 
   /// The list of route-entries to match against
   final RouteCollection collection;

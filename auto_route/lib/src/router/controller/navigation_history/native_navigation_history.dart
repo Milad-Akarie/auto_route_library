@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 /// That's used for native platforms
 class NavigationHistoryImpl extends NavigationHistory {
   /// Default constructor;
-  NavigationHistoryImpl(this.router);
+  new(this.router);
 
   @override
   final StackRouter router;
@@ -146,7 +146,7 @@ class NavigationHistoryImpl extends NavigationHistory {
 
 @immutable
 class _HistoryEntry {
-  const _HistoryEntry(this.route, this.url, this.pageId);
+  const new(this.route, this.url, this.pageId);
   final RouteMatch<Object?> route;
   final String url;
 

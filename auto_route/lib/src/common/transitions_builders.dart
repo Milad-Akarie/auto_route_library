@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 // coverage:ignore-file
 /// a class that holds presets of common route transition builder
 class TransitionsBuilders {
-  const TransitionsBuilders._();
+  const new _();
 
   /// creates an animation when the route slides from right direction
   static const RouteTransitionsBuilder slideRight = _slideRight;

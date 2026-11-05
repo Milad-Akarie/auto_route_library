@@ -8,13 +8,13 @@ const ValueKey<String> _kRootKey = ValueKey('%__Root__%');
 /// An Implementation of [StackRouter] used by [AutoRouterDelegate]
 abstract class RootStackRouter extends StackRouter {
   /// Default constructor
-  RootStackRouter({super.navigatorKey}) : super(key: _kRootKey, matchId: _kRootKey) {
+  new({super.navigatorKey}) : super(key: _kRootKey, matchId: _kRootKey) {
     _navigationHistory = NavigationHistory.create(this);
   }
 
   /// Builds a new instance of [RootStackRouter]
   /// with the provided parameters
-  factory RootStackRouter.build({
+  factory build({
     required List<AutoRoute> routes,
     List<AutoRouteGuard> guards,
     GlobalKey<NavigatorState>? navigatorKey,
@@ -212,7 +212,7 @@ abstract class RootStackRouter extends StackRouter {
 }
 
 class _RootStackRouterImpl extends RootStackRouter {
-  _RootStackRouterImpl({
+  new({
     required this.routes,
     this.guards = const [],
     super.navigatorKey,
@@ -237,7 +237,7 @@ class _RootStackRouterImpl extends RootStackRouter {
 }
 
 class _RootRouteMatcher extends RouteMatcher {
-  _RootRouteMatcher(this._router) : super(_router.routeCollection);
+  new(this._router) : super(_router.routeCollection);
 
   final RootStackRouter _router;
 

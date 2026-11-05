@@ -7,18 +7,16 @@ typedef OnNavigation = FutureOr<void> Function(NavigationResolver resolver, Stac
 /// can either resume or abort the navigation event
 abstract class AutoRouteGuard {
   /// Default constructor
-  const AutoRouteGuard();
+  const new();
 
   /// Builds a simple instance that takes in the [OnNavigation] callback
-  factory AutoRouteGuard.simple(OnNavigation onNavigation, {String? debugLabel}) = AutoRouteGuardCallback;
+  factory simple(OnNavigation onNavigation, {String? debugLabel}) = AutoRouteGuardCallback;
 
   /// Builds a simple instance that returns either a redirect-to route or null for no redirect
-  factory AutoRouteGuard.redirect(PageRouteInfo? Function(NavigationResolver resolver) redirect) =
-      _AutoRouteGuardRedirectCallback;
+  factory redirect(PageRouteInfo? Function(NavigationResolver resolver) redirect) = _AutoRouteGuardRedirectCallback;
 
   /// Builds a simple instance that returns either a redirect-to path or null for no redirect
-  factory AutoRouteGuard.redirectPath(String? Function(NavigationResolver resolver) redirect) =
-      _AutoRouteGuardRedirectPathCallback;
+  factory redirectPath(String? Function(NavigationResolver resolver) redirect) = _AutoRouteGuardRedirectPathCallback;
 
   /// clients will call [NavigationResolver.next] to continue
   /// navigation or [NavigationResolver.reject] to abort navigation
@@ -39,7 +37,7 @@ abstract class AutoRouteGuard {
 }
 
 class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
-  const _AutoRouteGuardRedirectCallback(this.redirect);
+  const new(this.redirect);
   final PageRouteInfo? Function(NavigationResolver resolver) redirect;
 
   @override
@@ -58,7 +56,7 @@ class _AutoRouteGuardRedirectCallback extends AutoRouteGuard {
 }
 
 class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
-  const _AutoRouteGuardRedirectPathCallback(this.redirect);
+  const new(this.redirect);
   final String? Function(NavigationResolver resolver) redirect;
 
   @override
@@ -86,14 +84,14 @@ class _AutoRouteGuardRedirectPathCallback extends AutoRouteGuard {
 
 abstract class ReevaluateListenable extends ChangeNotifier {
   /// Default constructor
-  ReevaluateListenable();
+  new();
 
   /// Builds [ReevaluateListenable] from a stream
-  factory ReevaluateListenable.stream(Stream<Object?> stream) = _StreamReevaluateListenable;
+  factory stream(Stream<Object?> stream) = _StreamReevaluateListenable;
 }
 
 class _StreamReevaluateListenable extends ReevaluateListenable {
-  _StreamReevaluateListenable(Stream<Object?> stream) {
+  new(Stream<Object?> stream) {
     _streamSub = stream.listen((_) => notifyListeners());
   }
   late final StreamSubscription<Object?> _streamSub;
@@ -111,7 +109,7 @@ class _StreamReevaluateListenable extends ReevaluateListenable {
 /// use if there's no need to implement your own
 class AutoRouteGuardCallback extends AutoRouteGuard {
   /// Default constructor
-  const AutoRouteGuardCallback(this.onNavigate, {this.debugLabel});
+  const new(this.onNavigate, {this.debugLabel});
 
   /// The callback called by [AutoRouteGuard.onNavigation]
   final OnNavigation onNavigate;
@@ -131,7 +129,7 @@ class AutoRouteGuardCallback extends AutoRouteGuard {
 /// [NavigationResolver.overrideNext]
 class ResolverResult {
   /// Default constructor
-  const ResolverResult({required this.continueNavigation, required this.reevaluateNext, required this.route});
+  const new({required this.continueNavigation, required this.reevaluateNext, required this.route});
 
   /// Whether to resume the navigation event or abort it
   final bool continueNavigation;
@@ -161,13 +159,7 @@ final _redirectingResolvers = Expando<NavigationResolver>('redirectingResolvers'
 /// used in [AutoRouteGuard.onNavigation]
 class NavigationResolver {
   /// default constructor
-  NavigationResolver(
-    this._router,
-    this._completer,
-    this.route, {
-    this.pendingRoutes = const [],
-    this._isReevaluating = false,
-  });
+  new(this._router, this._completer, this.route, {this.pendingRoutes = const [], this._isReevaluating = false});
   final StackRouter _router;
   final Completer<ResolverResult> _completer;
 
@@ -425,7 +417,7 @@ class NavigationResolver {
 /// Holds overridable route values
 class RouteOverrides {
   /// Default constructor
-  const RouteOverrides({this.children, this.args, this.queryParams, this.fragment});
+  const new({this.children, this.args, this.queryParams, this.fragment});
 
   /// The override value of `PageRouteInfo.children`
   final List<PageRouteInfo>? children;

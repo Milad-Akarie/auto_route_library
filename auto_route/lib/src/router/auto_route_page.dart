@@ -14,7 +14,7 @@ final _shownPages = Expando<bool>();
 /// The decision happens inside of [onCreateRoute]
 class AutoRoutePage<T> extends Page<T> {
   /// Default constructor
-  AutoRoutePage({required this.routeData, required Widget child})
+  new({required this.routeData, required Widget child})
     // A false positive: a widget can implement AutoRouteWrapper.
     // ignore: avoid-unrelated-type-assertions, avoid-unrelated-type-casts
     : _child = child is AutoRouteWrapper ? WrappedRoute(child: child as AutoRouteWrapper) : child,
@@ -169,7 +169,7 @@ class AutoRoutePage<T> extends Page<T> {
 /// example new query params. So this builds the page the route holds now, and
 /// rebuilds whenever the page's router changes.
 class _CurrentPageChild extends StatelessWidget {
-  const _CurrentPageChild({required this.page});
+  const new({required this.page});
 
   /// The page the route was created with.
   final AutoRoutePage<Object?> page;
@@ -195,11 +195,7 @@ class _PageBasedMaterialPageRoute<T> extends _PageRoute<T>
         MaterialRouteTransitionMixin<T>,
         _FlutterMaterialThemeTransitionMixin<T>,
         _CustomPredictiveBackGestureMixin<T> {
-  _PageBasedMaterialPageRoute({
-    required super.page,
-    this.enablePredictiveBackGesture = false,
-    this.predictiveBackPageTransitionsBuilder,
-  });
+  new({required super.page, this.enablePredictiveBackGesture = false, this.predictiveBackPageTransitionsBuilder});
 
   @override
   final bool enablePredictiveBackGesture;
@@ -271,7 +267,7 @@ mixin _FlutterMaterialThemeTransitionMixin<T> on MaterialRouteTransitionMixin<T>
 
 class _CustomPageBasedPageRouteBuilder<T> extends _PageRoute<T>
     with _CustomPageRouteTransitionMixin<T>, _CustomPredictiveBackGestureMixin<T> {
-  _CustomPageBasedPageRouteBuilder({
+  new({
     required super.page,
     required this.routeType,
     this.enablePredictiveBackGesture = false,
@@ -301,7 +297,7 @@ class _CustomPageBasedPageRouteBuilder<T> extends _PageRoute<T>
 }
 
 class _NoAnimationPageRouteBuilder<T> extends _PageRoute<T> with _NoAnimationPageRouteTransitionMixin<T> {
-  _NoAnimationPageRouteBuilder({required super.page});
+  new({required super.page});
 
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
@@ -387,7 +383,7 @@ mixin _CustomPageRouteTransitionMixin<T> on _PageRoute<T> {
 
 class _PageBasedCupertinoPageRoute<T> extends _PageRoute<T>
     with CupertinoRouteTransitionMixin<T>, CupertinoRouteTransitionOverrideMixin<T> {
-  _PageBasedCupertinoPageRoute({required super.page, this.title});
+  new({required super.page, this.title});
 
   @override
   Widget buildContent(BuildContext context) => _page.buildPage(context);
@@ -426,7 +422,7 @@ mixin _CustomPredictiveBackGestureMixin<T> on _PageRoute<T> implements Predictiv
 }
 
 abstract class _PageRoute<T> extends PageRoute<T> {
-  _PageRoute({required AutoRoutePage<Object?> page}) : super(settings: page);
+  new({required AutoRoutePage<Object?> page}) : super(settings: page);
 
   AutoRoutePage<Object?> get _page => settings as AutoRoutePage;
 

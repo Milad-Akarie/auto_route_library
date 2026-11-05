@@ -21,7 +21,7 @@ import 'package:flutter/widgets.dart';
 @immutable
 class PageRouteInfo<T extends Object?> {
   /// Default constructor
-  const PageRouteInfo(
+  const new(
     this._routeName, {
     this.initialChildren,
     this.args,
@@ -34,7 +34,7 @@ class PageRouteInfo<T extends Object?> {
   }) : fragment = fragment ?? '';
 
   /// Creates a new instance form [RouteMatch]
-  factory PageRouteInfo.fromMatch(RouteMatch<Object?> match) {
+  factory fromMatch(RouteMatch<Object?> match) {
     return PageRouteInfo(
       match.name,
       rawPathParams: match.params.rawMap,
@@ -48,7 +48,7 @@ class PageRouteInfo<T extends Object?> {
   }
 
   /// Creates a new instance of a named route
-  const factory PageRouteInfo.named(
+  const factory named(
     String name, {
     List<PageRouteInfo>? children,
     T? args,
@@ -243,7 +243,7 @@ class PageRouteInfo<T extends Object?> {
 /// without the need for creating a new Page Widget
 class EmptyShellRoute extends PageInfo {
   /// Default constructor
-  const EmptyShellRoute(super.name) : super.emptyShell();
+  const new(super.name) : super.emptyShell();
 
   /// Creates a new instance with of [PageRouteInfo]
   PageRouteInfo call({List<PageRouteInfo>? children}) {
@@ -259,7 +259,7 @@ class EmptyShellRoute extends PageInfo {
 /// typically built with [NamedRouteDef]
 class NamedRoute<A extends Object?> extends PageRouteInfo<A> {
   /// Default constructor
-  const NamedRoute(
+  const new(
     super.name, {
     List<PageRouteInfo>? children,
     super.args,

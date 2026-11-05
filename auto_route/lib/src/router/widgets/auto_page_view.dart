@@ -9,7 +9,7 @@ import 'package:material_ui/material_ui.dart';
 /// Most of the code here is taking from flutter's `TabView`
 class AutoPageView extends StatefulWidget {
   /// Default constructor
-  const AutoPageView({
+  const new({
     super.key,
     required this.animatePageTransition,
     this.duration = const Duration(milliseconds: 300),

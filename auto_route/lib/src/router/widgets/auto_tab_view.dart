@@ -17,7 +17,7 @@ import 'package:material_ui/material_ui.dart';
 class AutoTabView extends StatefulWidget {
   /// Creates a page view with one child per tab.
 
-  const AutoTabView({
+  const new({
     super.key,
     required this.controller,
     this.physics,

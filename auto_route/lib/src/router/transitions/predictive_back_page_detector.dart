@@ -32,7 +32,7 @@ enum _PredictiveBackPhase {
 }
 
 class _PredictiveBackGestureDetector extends StatefulWidget {
-  const _PredictiveBackGestureDetector({required this.route, required this.builder});
+  const new({required this.route, required this.builder});
 
   final _PredictiveBackGestureDetectorWidgetBuilder builder;
   final PageRoute<Object?> route;
@@ -142,7 +142,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
 ///  * <https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back#shared-element-transition>,
 ///    which is the Android spec for this transition.
 class _PredictiveBackSharedElementPageTransition extends StatefulWidget {
-  const _PredictiveBackSharedElementPageTransition({
+  const new({
     required this.isDelegatedTransition,
     required this.animation,
     required this.secondaryAnimation,
@@ -349,7 +349,7 @@ class _PredictiveBackSharedElementPageTransitionState extends State<_PredictiveB
 ///  * <https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back#full-screen-surfaces>,
 ///    which is the Android spec for this transition.
 class _PredictiveBackFullscreenPageTransition extends StatefulWidget {
-  const _PredictiveBackFullscreenPageTransition({
+  const new({
     required this.animation,
     required this.secondaryAnimation,
     required this.getIsCurrent,

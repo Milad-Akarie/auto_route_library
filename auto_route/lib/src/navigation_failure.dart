@@ -7,7 +7,7 @@ typedef OnNavigationFailure = void Function(NavigationFailure failure);
 /// An abstract parent type for all navigation failures
 abstract class NavigationFailure {
   /// default const constructor
-  const NavigationFailure();
+  const new();
 }
 
 /// A failure reporting that no route matches the path or route name a
@@ -20,7 +20,7 @@ abstract class NavigationFailure {
 class RouteNotFoundFailure extends NavigationFailure {
   /// Reports [path]; [routeTree] is the app's routes from
   /// [RouteCollection.toTreeString], or null to leave them out of the message.
-  const RouteNotFoundFailure(this.path, {this.routeTree});
+  const new(this.path, {this.routeTree});
 
   /// The path, or for a navigation to a [PageRouteInfo] the route name, that
   /// no route matches.
@@ -43,7 +43,7 @@ class RouteNotFoundFailure extends NavigationFailure {
 /// by calling [NavigationResolver.reject]
 class RejectedByGuardFailure extends NavigationFailure {
   /// default constructor
-  const RejectedByGuardFailure(this.route, this.guard);
+  const new(this.route, this.guard);
 
   /// The rejected route
   final RouteMatch<Object?> route;

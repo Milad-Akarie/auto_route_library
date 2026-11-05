@@ -71,7 +71,7 @@ typedef RouteLeaveCallback = void Function(RouteLeaveKind kind);
 class AutoRouteLeaveListener extends StatefulWidget {
   /// Listens for leaves of the page whose [RouteData] is closest above this
   /// widget; throws if there is none.
-  const AutoRouteLeaveListener({super.key, required this.onLeave, required this.child});
+  const new({super.key, required this.onLeave, required this.child});
 
   /// Called with how the page was left, synchronously while the router
   /// updates its stack.

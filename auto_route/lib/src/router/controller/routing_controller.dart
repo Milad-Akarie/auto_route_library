@@ -816,7 +816,7 @@ abstract class RoutingController with ChangeNotifier {
 /// aka Tab-Routing
 class TabsRouter extends RoutingController {
   /// Default constructor
-  TabsRouter({
+  new({
     required RouteCollection routeCollection,
     required this.key,
     required this._routeData,
@@ -1475,7 +1475,7 @@ class TabsRouter extends RoutingController {
 /// An implementation of a [RoutingController] that handles stack navigation
 abstract class StackRouter extends RoutingController {
   /// Default constructor
-  StackRouter({
+  new({
     required this.key,
     required this.matchId,
     OnNestedNavigateCallBack? onNavigate,
@@ -2890,7 +2890,7 @@ abstract class StackRouter extends RoutingController {
 /// [AutoRouter] widgets
 class NestedStackRouter extends StackRouter {
   /// Default constructor
-  NestedStackRouter({
+  new({
     required RouteCollection routeCollection,
     required super.key,
     required super.matchId,
@@ -3005,7 +3005,7 @@ class NestedStackRouter extends StackRouter {
 enum _TabChange { done, rejected, replaced }
 
 class _RouterScopeResult<T extends RoutingController> {
-  const _RouterScopeResult(this.router, this.matches);
+  const new(this.router, this.matches);
   final T router;
   final List<RouteMatch<Object?>> matches;
 }
@@ -3035,7 +3035,7 @@ class PendingRoutesHandler {
 /// Observers the current guards processing navigation event
 class ActiveGuardObserver extends ValueNotifier<List<GuardEntry>> {
   /// Default controller
-  ActiveGuardObserver() : super([]);
+  new() : super([]);
 
   // A guard can finish after its router, and this observer, are disposed.
   bool _disposed = false;
@@ -3068,7 +3068,7 @@ class ActiveGuardObserver extends ValueNotifier<List<GuardEntry>> {
 /// A class that holds a guard and it's corresponding resolver
 class GuardEntry {
   /// Default constructor
-  const GuardEntry(this.guard, this._resolver);
+  const new(this.guard, this._resolver);
 
   /// The auto route guard
   final AutoRouteGuard guard;
@@ -3079,7 +3079,7 @@ class GuardEntry {
 // Stands in for the route of a page the navigator has not built yet, so a
 // [RoutePredicate] can still be asked about the page.
 class _UnshownPageRoute extends Route<Object?> {
-  _UnshownPageRoute(Page<Object?> page) : super(settings: page);
+  new(Page<Object?> page) : super(settings: page);
 
   void release() => dispose();
 }

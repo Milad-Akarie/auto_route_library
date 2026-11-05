@@ -31,7 +31,7 @@ typedef OnNavigationChanged = void Function(TabsRouter tabsRouter);
 abstract class AutoTabsRouter extends StatefulWidget {
   /// Builds an [AutoTabsRouter] to uses
   /// a [IndexedStack] to render pages
-  const factory AutoTabsRouter({
+  const factory({
     Key? key,
     List<PageRouteInfo>? routes,
     bool lazyLoad,
@@ -45,7 +45,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
     NavigatorObserversBuilder navigatorObservers,
   }) = _AutoTabsRouterIndexedStack;
 
-  const AutoTabsRouter._({
+  const new _({
     super.key,
     required this.routes,
     this.homeIndex = -1,
@@ -60,7 +60,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// With [lazyLoad] true, the default, each tab's page is built once the
   /// tab is first shown; with false, every tab's page is built with the
   /// tabs. See [AutoPageView.lazyLoad].
-  const factory AutoTabsRouter.pageView({
+  const factory pageView({
     Key? key,
     List<PageRouteInfo>? routes,
     AutoTabsPageViewBuilder? builder,
@@ -83,7 +83,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// With [lazyLoad] true, the default, each tab's page is built once the
   /// tab is first shown; with false, every tab's page is built with the
   /// tabs. See [AutoTabView.lazyLoad].
-  const factory AutoTabsRouter.tabBar({
+  const factory tabBar({
     Key? key,
     List<PageRouteInfo>? routes,
     AutoTabsTabBarBuilder? builder,
@@ -102,7 +102,7 @@ abstract class AutoTabsRouter extends StatefulWidget {
   /// Builds an [AutoTabsRouter] with a custom builder
   ///
   /// Clients can use this builder to render tabbed-pages
-  const factory AutoTabsRouter.builder({
+  const factory builder({
     Key? key,
     List<PageRouteInfo>? routes,
     required AutoTabsBuilder builder,
@@ -253,7 +253,7 @@ abstract class AutoTabsRouterState<T extends AutoTabsRouter> extends State<T> {
 
 // -----------------------------------------------------------
 class _AutoTabsRouterIndexedStack extends AutoTabsRouter {
-  const _AutoTabsRouterIndexedStack({
+  const new({
     super.key,
     super.routes,
     this.lazyLoad = true,
@@ -402,7 +402,7 @@ class _AutoTabsRouterIndexedStackState extends AutoTabsRouterState<_AutoTabsRout
 }
 
 class _IndexedStackBuilder extends StatefulWidget {
-  const _IndexedStackBuilder({
+  const new({
     required this.activeIndex,
     required this.itemBuilder,
     required this.navigatorObservers,
@@ -514,7 +514,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
 }
 
 class _AutoTabsRouterPageView extends AutoTabsRouter {
-  const _AutoTabsRouterPageView({
+  const new({
     super.key,
     super.routes,
     AutoTabsPageViewBuilder? builder,
@@ -642,7 +642,7 @@ class _AutoTabsRouterPageViewState extends AutoTabsRouterState<_AutoTabsRouterPa
 }
 
 class _AutoTabsRouterTabBar extends AutoTabsRouter {
-  const _AutoTabsRouterTabBar({
+  const new({
     super.key,
     super.routes,
     this.scrollDirection = Axis.horizontal,
@@ -797,7 +797,7 @@ class _AutoTabsRouterTabBarState extends AutoTabsRouterState<_AutoTabsRouterTabB
 }
 
 class _AutoTabsRouterBuilder extends AutoTabsRouter {
-  const _AutoTabsRouterBuilder({
+  const new({
     super.key,
     super.routes,
     this.onNavigate,
@@ -937,7 +937,7 @@ mixin _RouteAwareTabsMixin<T extends StatefulWidget> on State<T> {
 /// A Wrapper widget to utilize [AutomaticKeepAliveClientMixin]
 class KeepAliveTab extends StatefulWidget {
   /// Default contractor
-  const KeepAliveTab({super.key, required this.page, this.initiallyLoaded = true});
+  const new({super.key, required this.page, this.initiallyLoaded = true});
 
   /// Whether the tab should be initially loaded
   final bool initiallyLoaded;

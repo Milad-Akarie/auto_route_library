@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 /// it handles empty stacks and declarative routes
 class AutoRouteNavigator extends StatefulWidget {
   /// Default constructor
-  const AutoRouteNavigator({
+  const new({
     required this.router,
     required this.navigatorObservers,
     this.navRestorationScopeId,
@@ -239,7 +239,7 @@ class AutoRouteNavigatorState extends State<AutoRouteNavigator> {
 /// changes?' dialog, the page vanished and cut the dialog's animation short
 /// (flutter/flutter#111137). Navigator.pop twice animates both; so does this.
 class _PoppedPagelessTransitionDelegate<T> extends DefaultTransitionDelegate<T> {
-  const _PoppedPagelessTransitionDelegate();
+  const new();
 
   @override
   Iterable<RouteTransitionRecord> resolve({

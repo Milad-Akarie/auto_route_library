@@ -24,7 +24,7 @@ abstract class AutoRouteWrapper {
 @optionalTypeArgs
 class WrappedRoute<T extends AutoRouteWrapper> extends StatelessWidget {
   /// default constructor
-  const WrappedRoute({super.key, required this.child});
+  const new({super.key, required this.child});
 
   /// The routeble-widget that implements [AutoRouteWrapper]
   final T child;

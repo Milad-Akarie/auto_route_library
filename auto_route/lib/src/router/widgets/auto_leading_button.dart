@@ -33,7 +33,7 @@ typedef NullableWidgetBuilder = Widget Function(BuildContext context, Widget? le
 ///
 class AutoLeadingButton extends StatefulWidget {
   /// Default constructor
-  const AutoLeadingButton({
+  const new({
     super.key,
     this.color,
     bool? showIfParentCanPop,
@@ -61,7 +61,7 @@ class AutoLeadingButton extends StatefulWidget {
   ///        ..
   ///         ),
   ///     ),
-  const AutoLeadingButton.builder({
+  const new builder({
     super.key,
     this.color,
     bool? showIfParentCanPop,

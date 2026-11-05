@@ -8,7 +8,7 @@ import 'package:meta/meta_meta.dart' show Target;
 @Target({.classType})
 class AutoRouterConfig {
   /// default constructor
-  const AutoRouterConfig({
+  const new({
     this.replaceInRouteName = 'Page|Screen,Route',
     this.deferredLoading = false,
     this.generateForDir = const ['lib'],
@@ -53,7 +53,7 @@ class AutoRouterConfig {
 @Target({.classType})
 class RoutePage {
   /// default constructor
-  const RoutePage({this.name, this.deferredLoading});
+  const new({this.name, this.deferredLoading});
 
   /// The name of the generated route
   /// if not provided, a name will be generated from class name
@@ -74,11 +74,11 @@ const routePage = RoutePage();
 @Target({.parameter})
 class PathParam {
   /// default constructor
-  const PathParam([this.name, this.converter]) : _inherited = false;
+  const new([this.name, this.converter]) : _inherited = false;
 
   /// Use this constructor to inherit a dynamic-segment
   /// from a parent path
-  const PathParam.inherit([this.name, this.converter]) : _inherited = true;
+  const new inherit([this.name, this.converter]) : _inherited = true;
 
   /// name of the dynamic segment declared in path
   /// e.g /path/:id -> name = id
@@ -113,7 +113,7 @@ const inheritPathParam = PathParam.inherit();
 @Target({.parameter})
 class QueryParam {
   /// default constructor
-  const QueryParam([this.name, this.converter]);
+  const new([this.name, this.converter]);
 
   /// name of the query param from url
   ///
@@ -141,7 +141,7 @@ const queryParam = QueryParam();
 /// so it can take its value from the url fragment automatically
 @Target({.parameter})
 class UrlFragment {
-  const UrlFragment._();
+  const new _();
 }
 
 /// default UrlFragment

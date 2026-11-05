@@ -6,7 +6,7 @@ class NavigationHistoryImpl extends NavigationHistory {
   /// Default constructor
   // A stub for conditional imports: its constructor matches the real ones.
   // ignore: avoid_unused_constructor_parameters
-  NavigationHistoryImpl(StackRouter router);
+  new(StackRouter router);
 
   @override
   void back() {

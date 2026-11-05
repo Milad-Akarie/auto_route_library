@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 /// used by `StackRouter.pushWidget`
 class AutoPageRouteBuilder<T> extends PageRoute<T> {
   /// Default constructor
-  AutoPageRouteBuilder({
+  new({
     this.transitionBuilder,
     this.transitionDuration = const Duration(milliseconds: 300),
     this.opaque = true,

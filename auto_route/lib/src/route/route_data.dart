@@ -9,7 +9,7 @@ part of '../router/controller/routing_controller.dart';
 /// It also tracks ancestors by taking in a parent-route
 class RouteData<R> {
   /// Default constructor
-  RouteData({
+  new({
     required RouteMatch<Object?> route,
     required this.router,
     this._popCompleter,

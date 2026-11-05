@@ -8,7 +8,7 @@ import 'package:web/web.dart';
 /// That's used for web
 class NavigationHistoryImpl extends NavigationHistory {
   /// Default constructor
-  NavigationHistoryImpl(this.router);
+  new(this.router);
 
   @override
   final StackRouter router;

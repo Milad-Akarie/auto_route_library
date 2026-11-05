@@ -10,7 +10,7 @@ import 'package:path/path.dart' as p;
 /// AutoRoute extension of [RouteInformationParser]
 class DefaultRouteParser extends RouteInformationParser<UrlState> {
   /// Default constructor
-  DefaultRouteParser(this._matcher, {this.includePrefixMatches = false, this.deepLinkTransformer});
+  new(this._matcher, {this.includePrefixMatches = false, this.deepLinkTransformer});
   final RouteMatcher _matcher;
 
   /// If set to true all paths that's
@@ -83,7 +83,7 @@ Uri escapeForWebEngine(Uri uri) => Uri.parse(uri.toString().replaceAll('%', '%25
 /// of the url the browser shows replaces its entry instead of adding one.
 @immutable
 class _WebEngineUri implements Uri {
-  _WebEngineUri(this._uri);
+  new(this._uri);
 
   final Uri _uri;
 
@@ -209,9 +209,9 @@ class _WebEngineUri implements Uri {
 @immutable
 class AutoRouteInformation extends RouteInformation {
   /// Default constructor
-  const AutoRouteInformation({required Uri super.uri, super.state, this.replace = true}) : appUri = null;
+  const new({required Uri super.uri, super.state, this.replace = true}) : appUri = null;
 
-  const AutoRouteInformation._({required Uri super.uri, required Uri this.appUri, super.state, this.replace = true});
+  const new _({required Uri super.uri, required Uri this.appUri, super.state, this.replace = true});
 
   /// forces the current location to be replaced with this location
   final bool replace;
@@ -238,11 +238,11 @@ class AutoRouteInformation extends RouteInformation {
 @immutable
 class UrlState {
   /// Default constructor
-  const UrlState(this.uri, this.segments, {this.shouldReplace = false, this.pathState, @internal this.savedRoutes});
+  const new(this.uri, this.segments, {this.shouldReplace = false, this.pathState, @internal this.savedRoutes});
 
   /// Builds UrlState from list of
   /// route matches instead of uri
-  factory UrlState.fromSegments(List<RouteMatch<Object?>> routes, {bool shouldReplace = false, Object? state}) {
+  factory fromSegments(List<RouteMatch<Object?>> routes, {bool shouldReplace = false, Object? state}) {
     return UrlState(_buildUri(routes), routes, shouldReplace: shouldReplace, pathState: state);
   }
 

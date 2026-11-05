@@ -42,7 +42,7 @@ import 'package:material_ui/material_ui.dart'
 /// - it requires a [PageController] to be passed in
 
 class _ForceImplicitScrollPhysics extends ScrollPhysics {
-  const _ForceImplicitScrollPhysics({required this.allowImplicitScrolling, super.parent});
+  const new({required this.allowImplicitScrolling, super.parent});
 
   @override
   _ForceImplicitScrollPhysics applyTo(ScrollPhysics? ancestor) {
@@ -120,7 +120,7 @@ class EagerPageView extends StatefulWidget {
   /// See the documentation at [SliverChildListDelegate.children] for more details.
   ///
 
-  EagerPageView({
+  new({
     super.key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,

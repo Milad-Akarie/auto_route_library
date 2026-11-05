@@ -38,7 +38,7 @@
 /// the enum by its name.
 abstract class ParamConverter<T> {
   /// Lets a subclass be `const`, which an annotation argument must be.
-  const ParamConverter();
+  const new();
 
   /// Returns the value the url text [value] stands for, or `null` when the
   /// text is not one.

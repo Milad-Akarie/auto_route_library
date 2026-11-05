@@ -7,13 +7,13 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 @immutable
 class PageInfo {
   /// Default constructor
-  const PageInfo(this.name, {required this.builder});
+  const new(this.name, {required this.builder});
 
   /// Builds an empty shell [PageInfo] with a const builder
-  const PageInfo.emptyShell(this.name) : builder = _emptyShellBuilder;
+  const new emptyShell(this.name) : builder = _emptyShellBuilder;
 
   /// Builds a new instance of [PageInfo] with the given parameters
-  factory PageInfo.builder(String name, {required WidgetBuilderWithData builder}) {
+  factory builder(String name, {required WidgetBuilderWithData builder}) {
     return PageInfo(name, builder: (data) => Builder(builder: (context) => builder(context, data)));
   }
 
@@ -50,7 +50,7 @@ class PageInfo {
 /// Dummy [PageInfo] used to represent a redirect route
 class _NoBuilderPageInfo extends PageInfo {
   /// Default constructor
-  const _NoBuilderPageInfo(super.name) : super(builder: _noBuilder);
+  const new(super.name) : super(builder: _noBuilder);
 
   static Widget _noBuilder(RouteData<Object?> _) {
     throw FlutterError('PageInfo does not have a builder');

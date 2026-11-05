@@ -18,7 +18,7 @@ typedef FloatingActionButtonBuilder = Widget? Function(BuildContext context, Tab
 /// much easier and cleaner
 class AutoTabsScaffold extends StatelessWidget {
   /// Default constructor;
-  const AutoTabsScaffold({
+  const new({
     super.key,
     this.routes,
     this.lazyLoad = true,

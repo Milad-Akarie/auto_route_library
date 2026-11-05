@@ -78,7 +78,7 @@ class CupertinoPageTransition extends StatelessWidget {
   ///    when another screen is being pushed on top of this one.
   ///  * `linearTransition` is whether to perform the transitions linearly.
   ///    Used to precisely track back gesture drags.
-  CupertinoPageTransition({
+  new({
     super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
@@ -154,7 +154,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
   ///    when another screen is being pushed on top of this one.
   ///  * `linearTransition` is whether to perform the secondary transition linearly.
   ///    Used to precisely track back gesture drags.
-  CupertinoFullscreenDialogTransition({
+  new({
     super.key,
     required Animation<double> primaryRouteAnimation,
     required Animation<double> secondaryRouteAnimation,
@@ -210,12 +210,7 @@ class CupertinoFullscreenDialogTransition extends StatelessWidget {
 /// The type `T` specifies the return type of the route with which this gesture
 /// detector is associated.
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
-  const _CupertinoBackGestureDetector({
-    super.key,
-    required this.enabledCallback,
-    required this.onStartPopGesture,
-    required this.child,
-  });
+  const new({super.key, required this.enabledCallback, required this.onStartPopGesture, required this.child});
 
   final Widget child;
 
@@ -329,7 +324,7 @@ class _CupertinoBackGestureController<T> {
   /// Creates a controller for an iOS-style back gesture.
   ///
   /// The [navigator] and [controller] arguments must not be null.
-  _CupertinoBackGestureController({required this.navigator, required this.controller}) {
+  new({required this.navigator, required this.controller}) {
     navigator.didStartUserGesture();
   }
 
@@ -416,7 +411,7 @@ class _CupertinoBackGestureController<T> {
 // box it's decorating. It's like a [BoxDecoration] with only a gradient except
 // it paints on the start side of the box instead of behind the box.
 class _CupertinoEdgeShadowDecoration extends Decoration {
-  const _CupertinoEdgeShadowDecoration._([this._colors]);
+  const new _([this._colors]);
 
   static DecorationTween tween({required bool withShadow}) => .new(
     begin: const _CupertinoEdgeShadowDecoration._(), // No decoration initially.
@@ -521,7 +516,7 @@ class _CupertinoEdgeShadowDecoration extends Decoration {
 
 /// A [BoxPainter] used to draw the page transition shadow using gradients.
 class _CupertinoEdgeShadowPainter extends BoxPainter {
-  _CupertinoEdgeShadowPainter(this._decoration, VoidCallback? onChange) : super(onChange);
+  new(this._decoration, VoidCallback? onChange) : super(onChange);
 
   final _CupertinoEdgeShadowDecoration _decoration;
 

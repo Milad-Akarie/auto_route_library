@@ -10,7 +10,7 @@ import 'package:path/path.dart' as p;
 @immutable
 class RouteMatch<T> {
   /// Default constructor
-  RouteMatch({
+  new({
     required this._config,
     required this.segments,
     required this.stringMatch,
@@ -25,7 +25,7 @@ class RouteMatch<T> {
   }) : _evaluatedGuards = const [],
        id = UniqueKey();
 
-  const RouteMatch._internal({
+  const new _internal({
     required this._config,
     required this.segments,
     required this.stringMatch,
@@ -287,7 +287,7 @@ class RouteMatch<T> {
 // ignore: prefer-overriding-parent-equality
 class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
   /// Creates a new instance of [ReevaluatableRouteMatch]
-  ReevaluatableRouteMatch({required this.currentPage, required this.originalMatch})
+  new({required this.currentPage, required this.originalMatch})
     : super._internal(
         config: originalMatch._config,
         stringMatch: originalMatch.stringMatch,
@@ -367,7 +367,7 @@ class ReevaluatableRouteMatch<T, R> extends RouteMatch<T> {
 @immutable
 class HierarchySegment {
   /// Default constructor
-  const HierarchySegment(this.name, {this.pathParams, this.queryParams, this.children = const []});
+  const new(this.name, {this.pathParams, this.queryParams, this.children = const []});
 
   /// The name of the route
   final String name;
