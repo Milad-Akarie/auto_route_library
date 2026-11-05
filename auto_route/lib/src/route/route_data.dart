@@ -194,8 +194,8 @@ class RouteData<R> {
   String get fragment => _route.fragment;
 
   RouteMatch<Object?> _getTopMatch(RouteMatch<Object?> routeMatch) {
-    if (routeMatch.hasChildren) {
-      return _getTopMatch(routeMatch.children!.last);
+    if (routeMatch.children case [..., final last]) {
+      return _getTopMatch(last);
     }
     return routeMatch;
   }
@@ -204,8 +204,8 @@ class RouteData<R> {
   /// pending children, if it has not pending children
   /// this [route] is returned
   RouteMatch<Object?> get topMatch {
-    if (hasPendingChildren) {
-      return _getTopMatch(pendingChildren.last);
+    if (pendingChildren case [..., final last]) {
+      return _getTopMatch(last);
     }
     return route;
   }

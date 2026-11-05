@@ -361,9 +361,12 @@ abstract class RoutingController with ChangeNotifier {
       if (match != null) {
         // Only a stack opens listed routes one above the other; a tabs router
         // shows each listed route as its own tab.
-        final merged = this is StackRouter && matches.isNotEmpty ? _mergeIntoParent(matches.last, match) : null;
+        final previous = matches.lastOrNull;
+        final merged = this is StackRouter && previous != null ? _mergeIntoParent(previous, match) : null;
         if (merged != null) {
-          matches.last = merged;
+          matches
+            ..removeLast()
+            ..add(merged);
         } else {
           matches.add(match);
         }
@@ -382,9 +385,12 @@ abstract class RoutingController with ChangeNotifier {
     if (!next.autoFilled || next.name != previous.name) return null;
     final children = [...?previous.children];
     for (final child in next.children ?? const <RouteMatch<Object?>>[]) {
-      final merged = children.isEmpty ? null : _mergeIntoParent(children.last, child);
+      final last = children.lastOrNull;
+      final merged = last == null ? null : _mergeIntoParent(last, child);
       if (merged != null) {
-        children.last = merged;
+        children
+          ..removeLast()
+          ..add(merged);
       } else {
         children.add(child);
       }
@@ -437,17 +443,22 @@ abstract class RoutingController with ChangeNotifier {
   // whose top page is the next match, and returns the deepest of them with
   // the matches left for it.
   _RouterScopeResult<RoutingController>? _absolutePathScope(String path, {required bool includePrefixMatches}) {
-    var matches = matcher.match(path, includePrefixMatches: includePrefixMatches);
-    if (matches == null) return null;
+    final found = matcher.match(path, includePrefixMatches: includePrefixMatches);
+    if (found == null) return null;
+    var matches = found;
     var router = this;
-    while (matches!.length == 1 && matches.single.hasChildren) {
-      final match = matches.single;
+    // While a single match with children is left, its children go on in the
+    // nested router that already shows it.
+    while (true) {
+      final match = matches.singleOrNull;
+      final children = match?.children;
+      if (match == null || children == null || children.isEmpty) break;
       final top = router.stackData.lastOrNull;
       if (top == null || top.name != match.name || top.match != match.stringMatch) break;
       final child = router._topInnerControllerOf(top.key);
       if (child is! StackRouter) break;
       router = child;
-      matches = match.children;
+      matches = children;
     }
     return _RouterScopeResult(router, matches);
   }
@@ -748,8 +759,8 @@ abstract class RoutingController with ChangeNotifier {
       final childCtrl = _innerControllerOfPage(currentData);
       if (childCtrl?.hasEntries == true) {
         segments.addAll(childCtrl!.currentSegments);
-      } else if (currentData.hasPendingChildren) {
-        segments.addAll(currentData.pendingChildren.last.flattened);
+      } else if (currentData.pendingChildren case [..., final last]) {
+        segments.addAll(last.flattened);
       }
     }
     return segments;
@@ -918,10 +929,7 @@ class TabsRouter extends RoutingController {
 
   @override
   RouteData<Object?>? get currentChild {
-    if (_activeIndex < _pages.length) {
-      return _pages[_activeIndex].routeData;
-    }
-    return null;
+    return _pages.elementAtOrNull(_activeIndex)?.routeData;
   }
 
   /// The index of active page
@@ -1162,9 +1170,10 @@ class TabsRouter extends RoutingController {
       if (index != -1) routesToPush[index] = pending;
     }
     final outgoing = _routeData.hasPendingChildren ? null : _outgoingTabsRouter();
-    final preMatchedRoute = _routeData.hasPendingChildren
-        ? _routeData.pendingChildren.last
-        : outgoing?._activePage?.routeData.route;
+    final preMatchedRoute = switch (_routeData.pendingChildren) {
+      [..., final last] => last,
+      _ => outgoing?._activePage?.routeData.route,
+    };
     var guardedIndex = -1;
     Future<ResolverResult>? guarding;
     if (preMatchedRoute != null) {
@@ -1577,10 +1586,13 @@ abstract class StackRouter extends RoutingController {
     _pagesAtLastLeaveReport = List.of(_pages);
     final kinds = Map.of(_leaveKinds);
     _leaveKinds.clear();
-    if (before.isEmpty) return;
+    final oldTop = before.lastOrNull;
+    if (oldTop == null) return;
     final stillShown = now.toSet();
-    final oldTop = before.last;
-    final newTopIsNew = now.isNotEmpty && !before.contains(now.last);
+    final newTopIsNew = switch (now.lastOrNull) {
+      final newTop? => !before.contains(newTop),
+      null => false,
+    };
     final leaves = <(RouteData<Object?>, RouteLeaveKind)>[
       for (final page in previousPages.reversed)
         if (!stillShown.contains(page.routeData) && !takenOver.contains(page.routeKey))
@@ -2181,7 +2193,8 @@ abstract class StackRouter extends RoutingController {
           pageRoute,
         ],
     ];
-    if (routes.isEmpty || routes.first != _topRouteOf(navigator)) {
+    final top = routes.firstOrNull;
+    if (top == null || top != _topRouteOf(navigator)) {
       // A route the router doesn't know of is on top; pop as Flutter does.
       var met = false;
       navigator.popUntil((route) => met = predicate(route));
@@ -2200,7 +2213,6 @@ abstract class StackRouter extends RoutingController {
     }
     // A pop may close the top route's own history first, such as an open
     // drawer, so pop until the route leaves, as Navigator.popUntil does.
-    final top = routes.first;
     navigator.popUntil((route) => route != top);
     return target != -1;
   }
@@ -2954,17 +2966,14 @@ class NestedStackRouter extends StackRouter {
     final initialRoutes = hasPendingChildren
         ? List<RouteMatch<Object?>>.unmodifiable(_routeData.pendingChildren)
         : matcher.match('');
-    if (initialRoutes == null || initialRoutes.isEmpty || initialRoutes.any((route) => route.guards.isNotEmpty)) {
+    final top = initialRoutes?.lastOrNull;
+    if (initialRoutes == null || top == null || initialRoutes.any((route) => route.guards.isNotEmpty)) {
       return false;
     }
     for (final route in initialRoutes) {
       unawaited(_addNewPage(route, notify: false));
     }
-    _updateSharedPathData(
-      queryParams: initialRoutes.last.queryParams.rawMap,
-      fragment: initialRoutes.last.fragment,
-      includeAncestors: true,
-    );
+    _updateSharedPathData(queryParams: top.queryParams.rawMap, fragment: top.fragment, includeAncestors: true);
     if (hasPendingChildren) {
       _routeData.pendingChildren.clear();
     }

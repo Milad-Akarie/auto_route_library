@@ -472,7 +472,7 @@ class _IndexedStackBuilderState extends State<_IndexedStackBuilder> with _RouteA
     if (widget.tabsHash != oldWidget.tabsHash) {
       final initializedPages = {
         for (final entry in _initializedPagesTracker.entries)
-          if (entry.value && entry.key < oldWidget.stack.length) oldWidget.stack[entry.key],
+          if (entry.value) ?oldWidget.stack.elementAtOrNull(entry.key),
       };
       _initializedPagesTracker.clear();
       _setup();

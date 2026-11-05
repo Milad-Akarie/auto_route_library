@@ -166,8 +166,11 @@ class AutoRouteObserver extends AutoRouterObserver {
       final router = route.router;
       if (router is TabsRouter) {
         final previousIndex = router.previousIndex;
-        if (previousIndex != null && previousIndex >= 0 && previousIndex < router.stackData.length) {
-          final previousRoute = TabPageRoute(routeInfo: router.stackData[previousIndex].route, index: previousIndex);
+        final previous = previousIndex == null || previousIndex < 0
+            ? null
+            : router.stackData.elementAtOrNull(previousIndex);
+        if (previousIndex != null && previous != null) {
+          final previousRoute = TabPageRoute(routeInfo: previous.route, index: previousIndex);
           routeAware.didInitTabRoute(previousRoute);
         } else {
           routeAware.didInitTabRoute(null);
@@ -200,7 +203,11 @@ class AutoRouteObserver extends AutoRouterObserver {
 
   static bool _isBelowTop(RouteData<Object?> route) {
     final router = route.router;
-    return router is StackRouter && router.stackData.isNotEmpty && router.stackData.last.key != route.key;
+    return router is StackRouter &&
+        switch (router.stackData.lastOrNull) {
+          final top? => top.key != route.key,
+          null => false,
+        };
   }
 
   /// Unsubscribe [AutoRouteAware].

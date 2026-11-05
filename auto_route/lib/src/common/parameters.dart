@@ -70,7 +70,7 @@ class Parameters {
   static String? _stringOf(Object? value) => switch (value) {
     null => null,
     final String text => text,
-    final List<Object?> values => values.isEmpty ? null : values.last?.toString(),
+    final List<Object?> values => values.lastOrNull?.toString(),
     _ => value.toString(),
   };
 

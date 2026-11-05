@@ -345,10 +345,11 @@ class UrlState {
   /// e.g [Match1,Match2,Match3]
   /// will be [Match1[Match2[Match3]]]
   static RouteMatch<Object?> toHierarchy(List<RouteMatch<Object?>> segments) {
-    if (segments.length == 1) {
-      return segments.first;
-    }
-    return segments.first.copyWith(children: [toHierarchy(segments.sublist(1, segments.length))]);
+    return switch (segments) {
+      [final only] => only,
+      [final first, ...final rest] => first.copyWith(children: [toHierarchy(rest)]),
+      [] => throw StateError('No element'),
+    };
   }
 
   /// Returns a new instance of [UrlState]
@@ -367,7 +368,7 @@ class UrlState {
 
   /// Returns to topMost item in the segments list
   /// Witch is the last
-  RouteMatch<Object?>? get topMatch => hasSegments ? segments.last : null;
+  RouteMatch<Object?>? get topMatch => segments.lastOrNull;
 
   RouteMatch<Object?>? _findSegment(
     List<RouteMatch<Object?>> among,
@@ -392,13 +393,12 @@ class UrlState {
   }
 
   static Uri _buildUri(List<RouteMatch<Object?>> routes) {
-    var fullPath = '/';
-    if (routes.isEmpty) {
-      return Uri(path: fullPath);
+    final lastSegment = routes.lastOrNull;
+    if (lastSegment == null) {
+      return Uri(path: '/');
     }
-    fullPath = p.joinAll(routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch));
+    final fullPath = p.joinAll(routes.where((e) => e.stringMatch.isNotEmpty).map((e) => e.stringMatch));
     final normalized = p.normalize(fullPath);
-    final lastSegment = routes.last;
     final queryParams = <String, Object?>{};
     if (lastSegment.queryParams.isNotEmpty) {
       final queries = lastSegment.queryParams.rawMap;

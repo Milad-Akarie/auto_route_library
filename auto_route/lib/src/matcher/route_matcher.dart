@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:collection/collection.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 
 /// Matches paths and [PageRouteInfo]s with
@@ -97,7 +98,8 @@ class RouteMatcher {
       }
     }
 
-    if (matches.isEmpty || (root && _consumedSegments(matches.last) < pathSegments.length)) {
+    final last = matches.lastOrNull;
+    if (last == null || (root && _consumedSegments(last) < pathSegments.length)) {
       return null;
     }
     return matches;
@@ -125,7 +127,11 @@ class RouteMatcher {
   // path no route has doesn't match the '' route of a router.
   static int _consumedSegments(RouteMatch<Object?> match) {
     final own = match.segments.isEmpty && match.redirectedFrom != null ? 1 : match.segments.length;
-    return own + (match.hasChildren ? _consumedSegments(match.children!.last) : 0);
+    return own +
+        (switch (match.children) {
+          [..., final last] => _consumedSegments(last),
+          _ => 0,
+        });
   }
 
   // Splits a url's path at each '/': the root '/' first when the path has one,
@@ -170,14 +176,13 @@ class RouteMatcher {
       return null;
     }
 
-    if (config.fullMatch && segments.length > parts.length && (parts.isEmpty || parts.last != '*')) {
+    if (config.fullMatch && segments.length > parts.length && parts.lastOrNull != '*') {
       return null;
     }
 
     final pathParams = <String, String>{};
-    for (var index = 0; index < parts.length; index++) {
-      final segment = segments[index];
-      final part = parts[index];
+    // Fewer parts than segments, as checked above: each part has its segment.
+    for (final [part, segment] in IterableZip([parts, segments])) {
       if (part.startsWith(':')) {
         pathParams[part.substring(1)] = Uri.decodeComponent(segment);
       } else if (Uri.decodeComponent(segment) != part && part != '*') {

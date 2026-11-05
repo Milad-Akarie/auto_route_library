@@ -161,8 +161,8 @@ class AutoTabViewState extends State<AutoTabView> {
 
   LocalKey? _matchIdAt(int index) {
     final stack = _router.stack;
-    if (index < 0 || index >= stack.length) return null;
-    return stack[index].routeData.matchId;
+    if (index < 0) return null;
+    return stack.elementAtOrNull(index)?.routeData.matchId;
   }
 
   GlobalKey<KeepAliveTabState>? _tabKeyAt(int index) => _tabKeys[_matchIdAt(index)];

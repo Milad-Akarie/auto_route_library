@@ -103,12 +103,12 @@ class NavigationHistoryImpl extends NavigationHistory {
       _isNavigatingBack = true;
       _entries.removeLast();
 
-      if (_entries.isEmpty) {
+      final last = _entries.lastOrNull;
+      if (last == null) {
         _isNavigatingBack = false;
         return;
       }
 
-      final last = _entries.last;
       // navigateAll completes only when the page it lands on is popped, which may
       // be during a later back(), so back navigation ends once the router reports
       // the entry's url, or when this navigation completes, if it is still the latest.
