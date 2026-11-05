@@ -1237,14 +1237,16 @@ class TabsRouter extends RoutingController {
         // A page that needs args it can't get is reported with the reason.
         // That is the error to catch.
         // ignore: avoid_catching_errors
-      } on MissingRequiredParameterError catch (e) {
+      } on MissingRequiredParameterError catch (e, stackTrace) {
         if (fromDefault) {
-          // The new error carries the original message.
-          // ignore: avoid-throw-in-catch-block
-          throw FlutterError(
-            'Can not automatically navigate to ${route.name} because it has required parameters. '
-            'Routes must be added manually to AutoTabsRouter'
-            '\n${e.message}',
+          // The new error carries the original message and stack trace.
+          Error.throwWithStackTrace(
+            FlutterError(
+              'Can not automatically navigate to ${route.name} because it has required parameters. '
+              'Routes must be added manually to AutoTabsRouter'
+              '\n${e.message}',
+            ),
+            stackTrace,
           );
         }
         rethrow;
