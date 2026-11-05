@@ -2061,10 +2061,10 @@ AppBar(
   leading: AutoLeadingButton(),
 )
 ```
-you can also use `AutoBackButton.builder` above your Scaffold for example to provide a nullable leading widget to prevent AppBar.leadingWidth when there's no leading to show
+you can also use `AutoLeadingButton.builder` above your Scaffold for example to provide a nullable leading widget to prevent AppBar.leadingWidth when there's no leading to show
 
 ```dart
-AutoBackButton.builder(
+AutoLeadingButton.builder(
   builder: (BuildContext context, Widget? leading) {
     return  Scaffold(
       appBar: AppBar(
